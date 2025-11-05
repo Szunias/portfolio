@@ -1,10 +1,19 @@
-import { elements, state } from './state.js';
-import { TIME_UPDATE_INTERVAL, clamp, formatTime, isValidDuration } from './utils.js';
-import { renderPlaylist, updatePlaylistPlayingState, updateDurationDisplay } from './playlist.js';
+import { elements, state } from "./state.js";
+import {
+  TIME_UPDATE_INTERVAL,
+  clamp,
+  formatTime,
+  isValidDuration,
+} from "./utils.js";
+import {
+  renderPlaylist,
+  updatePlaylistPlayingState,
+  updateDurationDisplay,
+} from "./playlist.js";
 
 function ensurePlayerVisible() {
   if (elements.playerBar) {
-    elements.playerBar.classList.add('visible');
+    elements.playerBar.classList.add("visible");
   }
 }
 
@@ -19,19 +28,19 @@ export function loadTrack(index) {
   if (elements.playerArtist) elements.playerArtist.textContent = track.artist;
 
   if (elements.progressBar) {
-    elements.progressBar.style.cursor = 'pointer';
+    elements.progressBar.style.cursor = "pointer";
   }
   if (elements.progressFill) {
-    elements.progressFill.style.width = '0%';
-    elements.progressFill.classList.remove('dragging');
-    elements.progressFill.style.transition = '';
+    elements.progressFill.style.width = "0%";
+    elements.progressFill.classList.remove("dragging");
+    elements.progressFill.style.transition = "";
   }
-  if (elements.currentTime) elements.currentTime.textContent = '0:00';
-  if (elements.totalTime) elements.totalTime.textContent = '0:00';
+  if (elements.currentTime) elements.currentTime.textContent = "0:00";
+  if (elements.totalTime) elements.totalTime.textContent = "0:00";
 
   const source = Array.isArray(track.sources) ? track.sources[0] : null;
   if (source && source.url) {
-    elements.audio.preload = 'auto';
+    elements.audio.preload = "auto";
     elements.audio.src = source.url;
     elements.audio.load();
   }
@@ -44,7 +53,7 @@ export function play() {
   if (!elements.audio || !elements.audio.src) return;
 
   const playPromise = elements.audio.play();
-  if (!playPromise || typeof playPromise.then !== 'function') {
+  if (!playPromise || typeof playPromise.then !== "function") {
     state.isPlaying = true;
     return;
   }
@@ -52,16 +61,16 @@ export function play() {
   playPromise
     .then(() => {
       state.isPlaying = true;
-      if (elements.playBtn) elements.playBtn.textContent = '⏸';
-      if (elements.albumArt) elements.albumArt.classList.add('playing');
+      if (elements.playBtn) elements.playBtn.textContent = "⏸";
+      if (elements.albumArt) elements.albumArt.classList.add("playing");
       ensurePlayerVisible();
       updatePlaylistPlayingState();
     })
     .catch((error) => {
       state.isPlaying = false;
-      if (elements.playBtn) elements.playBtn.textContent = '▶';
-      if (elements.albumArt) elements.albumArt.classList.remove('playing');
-      if (error?.name === 'NotSupportedError' && state.tracks.length > 1) {
+      if (elements.playBtn) elements.playBtn.textContent = "▶";
+      if (elements.albumArt) elements.albumArt.classList.remove("playing");
+      if (error?.name === "NotSupportedError" && state.tracks.length > 1) {
         setTimeout(nextTrack, 500);
       }
     });
@@ -71,8 +80,8 @@ export function pause() {
   if (!elements.audio) return;
   elements.audio.pause();
   state.isPlaying = false;
-  if (elements.playBtn) elements.playBtn.textContent = '▶';
-  if (elements.albumArt) elements.albumArt.classList.remove('playing');
+  if (elements.playBtn) elements.playBtn.textContent = "▶";
+  if (elements.albumArt) elements.albumArt.classList.remove("playing");
   updatePlaylistPlayingState();
 }
 
@@ -93,7 +102,8 @@ export function nextTrack() {
 
 export function prevTrack() {
   if (!state.tracks.length) return;
-  state.currentTrackIndex = (state.currentTrackIndex - 1 + state.tracks.length) % state.tracks.length;
+  state.currentTrackIndex =
+    (state.currentTrackIndex - 1 + state.tracks.length) % state.tracks.length;
   loadTrack(state.currentTrackIndex);
   if (state.isPlaying) play();
 }
@@ -104,52 +114,59 @@ function handleLoadedMetadata() {
 
   if (isValidDuration(elements.audio.duration)) {
     elements.totalTime.textContent = formatTime(elements.audio.duration);
-    elements.progressBar.style.cursor = 'pointer';
+    elements.progressBar.style.cursor = "pointer";
     updateDurationDisplay(state.currentTrackIndex, elements.audio.duration);
   } else {
-    elements.totalTime.textContent = '0:00';
-    elements.progressBar.style.cursor = 'not-allowed';
+    elements.totalTime.textContent = "0:00";
+    elements.progressBar.style.cursor = "not-allowed";
   }
 }
 
 function handleTimeUpdate() {
-  if (!elements.audio || !elements.progressFill || !elements.currentTime) return;
+  if (!elements.audio || !elements.progressFill || !elements.currentTime)
+    return;
   const now = Date.now();
   if (now - state.lastTimeUpdate < TIME_UPDATE_INTERVAL) return;
   state.lastTimeUpdate = now;
 
   if (state.isDragging) return;
   if (!isValidDuration(elements.audio.duration)) {
-    if (elements.progressBar) elements.progressBar.style.cursor = 'not-allowed';
+    if (elements.progressBar) elements.progressBar.style.cursor = "not-allowed";
     return;
   }
 
   const progress = (elements.audio.currentTime / elements.audio.duration) * 100;
   elements.progressFill.style.width = `${progress}%`;
   elements.currentTime.textContent = formatTime(elements.audio.currentTime);
-  if (elements.progressBar) elements.progressBar.style.cursor = 'pointer';
+  if (elements.progressBar) elements.progressBar.style.cursor = "pointer";
 }
 
 function handleAudioError() {
-  if (!elements.audio || !elements.progressBar || !elements.progressFill || !elements.currentTime || !elements.totalTime) {
+  if (
+    !elements.audio ||
+    !elements.progressBar ||
+    !elements.progressFill ||
+    !elements.currentTime ||
+    !elements.totalTime
+  ) {
     return;
   }
 
   if (state.isDragging) {
     state.isDragging = false;
-    elements.progressFill.classList.remove('dragging');
-    elements.progressFill.style.transition = '';
-    document.removeEventListener('mousemove', handleProgressBarDrag);
-    document.removeEventListener('mouseup', handleProgressBarMouseUp);
+    elements.progressFill.classList.remove("dragging");
+    elements.progressFill.style.transition = "";
+    document.removeEventListener("mousemove", handleProgressBarDrag);
+    document.removeEventListener("mouseup", handleProgressBarMouseUp);
   }
 
-  elements.progressFill.style.width = '0%';
-  elements.currentTime.textContent = '0:00';
-  elements.totalTime.textContent = '0:00';
-  elements.progressBar.style.cursor = 'not-allowed';
+  elements.progressFill.style.width = "0%";
+  elements.currentTime.textContent = "0:00";
+  elements.totalTime.textContent = "0:00";
+  elements.progressBar.style.cursor = "not-allowed";
 
-  if (elements.progressHover) elements.progressHover.style.opacity = '0';
-  if (elements.progressTooltip) elements.progressTooltip.style.opacity = '0';
+  if (elements.progressHover) elements.progressHover.style.opacity = "0";
+  if (elements.progressTooltip) elements.progressTooltip.style.opacity = "0";
 
   pause();
 
@@ -167,22 +184,28 @@ function handleProgressBarMouseDown(event) {
   state.isDragging = true;
   state.wasPlayingBeforeDrag = !elements.audio.paused;
 
-  document.addEventListener('mousemove', handleProgressBarDrag);
-  document.addEventListener('mouseup', handleProgressBarMouseUp);
+  document.addEventListener("mousemove", handleProgressBarDrag);
+  document.addEventListener("mouseup", handleProgressBarMouseUp);
 
   event.preventDefault();
 }
 
 function handleProgressBarDrag(event) {
-  if (!state.isDragging || !elements.progressBar || !elements.progressFill || !elements.audio || !elements.currentTime) {
+  if (
+    !state.isDragging ||
+    !elements.progressBar ||
+    !elements.progressFill ||
+    !elements.audio ||
+    !elements.currentTime
+  ) {
     return;
   }
 
   if (Math.abs(event.clientX - state.dragStartX) > 3) {
     state.dragMoved = true;
-    if (!elements.progressFill.classList.contains('dragging')) {
-      elements.progressFill.classList.add('dragging');
-      elements.progressFill.style.transition = 'none';
+    if (!elements.progressFill.classList.contains("dragging")) {
+      elements.progressFill.classList.add("dragging");
+      elements.progressFill.style.transition = "none";
     }
   }
 
@@ -191,24 +214,32 @@ function handleProgressBarDrag(event) {
   const rect = elements.progressBar.getBoundingClientRect();
   const percent = clamp((event.clientX - rect.left) / rect.width, 0, 1);
   elements.progressFill.style.width = `${percent * 100}%`;
-  elements.currentTime.textContent = formatTime(percent * elements.audio.duration);
+  elements.currentTime.textContent = formatTime(
+    percent * elements.audio.duration,
+  );
 }
 
 function handleProgressBarMouseUp(event) {
-  if (!state.isDragging || !elements.progressBar || !elements.progressFill || !elements.audio || !elements.currentTime) {
+  if (
+    !state.isDragging ||
+    !elements.progressBar ||
+    !elements.progressFill ||
+    !elements.audio ||
+    !elements.currentTime
+  ) {
     return;
   }
 
-  document.removeEventListener('mousemove', handleProgressBarDrag);
-  document.removeEventListener('mouseup', handleProgressBarMouseUp);
+  document.removeEventListener("mousemove", handleProgressBarDrag);
+  document.removeEventListener("mouseup", handleProgressBarMouseUp);
 
   if (state.dragMoved) {
     const rect = elements.progressBar.getBoundingClientRect();
     const percent = clamp((event.clientX - rect.left) / rect.width, 0, 1);
     const newTime = percent * elements.audio.duration;
 
-    elements.progressFill.classList.remove('dragging');
-    elements.progressFill.style.transition = '';
+    elements.progressFill.classList.remove("dragging");
+    elements.progressFill.style.transition = "";
 
     elements.audio.currentTime = newTime;
     elements.currentTime.textContent = formatTime(newTime);
@@ -223,11 +254,20 @@ function handleProgressBarMouseUp(event) {
 }
 
 function handleProgressBarClick(event) {
-  if (!elements.audio || !elements.progressBar || !elements.progressFill || !elements.currentTime) return;
+  if (
+    !elements.audio ||
+    !elements.progressBar ||
+    !elements.progressFill ||
+    !elements.currentTime
+  )
+    return;
   if (!isValidDuration(elements.audio.duration)) return;
   if (state.dragMoved) return;
 
-  if (elements.audio.seekable.length === 0 || (elements.audio.seekable.length > 0 && elements.audio.seekable.end(0) === 0)) {
+  if (
+    elements.audio.seekable.length === 0 ||
+    (elements.audio.seekable.length > 0 && elements.audio.seekable.end(0) === 0)
+  ) {
     return;
   }
 
@@ -247,7 +287,13 @@ function handleProgressBarClick(event) {
 }
 
 function handleProgressBarMouseMove(event) {
-  if (!elements.audio || !elements.progressBar || !elements.progressHover || !elements.progressTooltip) return;
+  if (
+    !elements.audio ||
+    !elements.progressBar ||
+    !elements.progressHover ||
+    !elements.progressTooltip
+  )
+    return;
   if (state.isDragging || !isValidDuration(elements.audio.duration)) return;
 
   if (state.hoverUpdateFrame) {
@@ -265,15 +311,21 @@ function handleProgressBarMouseMove(event) {
 }
 
 function handleProgressBarMouseEnter() {
-  if (!elements.audio || !elements.progressBar || !elements.progressHover || !elements.progressTooltip) return;
+  if (
+    !elements.audio ||
+    !elements.progressBar ||
+    !elements.progressHover ||
+    !elements.progressTooltip
+  )
+    return;
   if (!isValidDuration(elements.audio.duration)) {
-    elements.progressBar.style.cursor = 'not-allowed';
+    elements.progressBar.style.cursor = "not-allowed";
     return;
   }
 
-  elements.progressBar.style.cursor = 'pointer';
-  elements.progressHover.style.opacity = '1';
-  elements.progressTooltip.style.opacity = '1';
+  elements.progressBar.style.cursor = "pointer";
+  elements.progressHover.style.opacity = "1";
+  elements.progressTooltip.style.opacity = "1";
 }
 
 function handleProgressBarMouseLeave() {
@@ -282,26 +334,26 @@ function handleProgressBarMouseLeave() {
     state.hoverUpdateFrame = null;
   }
 
-  if (elements.progressHover) elements.progressHover.style.opacity = '0';
-  if (elements.progressTooltip) elements.progressTooltip.style.opacity = '0';
+  if (elements.progressHover) elements.progressHover.style.opacity = "0";
+  if (elements.progressTooltip) elements.progressTooltip.style.opacity = "0";
 }
 
 function updateVolumeIcon(volume) {
   if (!elements.volumeIcon) return;
   if (volume === 0) {
-    elements.volumeIcon.textContent = '🔇';
+    elements.volumeIcon.textContent = "🔇";
   } else if (volume < 0.3) {
-    elements.volumeIcon.textContent = '🔈';
+    elements.volumeIcon.textContent = "🔈";
   } else if (volume < 0.7) {
-    elements.volumeIcon.textContent = '🔉';
+    elements.volumeIcon.textContent = "🔉";
   } else {
-    elements.volumeIcon.textContent = '🔊';
+    elements.volumeIcon.textContent = "🔊";
   }
 }
 
 function handlePlaylistActivation(target) {
   if (!elements.playlist) return;
-  const item = target.closest('.playlist-item');
+  const item = target.closest(".playlist-item");
   if (!item) return;
   const index = Number.parseInt(item.dataset.trackIndex, 10);
   if (Number.isNaN(index)) return;
@@ -321,60 +373,75 @@ export function bindPlayerEvents() {
   elements.audio.volume = state.previousVolume;
   if (elements.volumeSlider) {
     elements.volumeSlider.value = String(state.previousVolume * 100);
-    elements.volumeSlider.style.setProperty('--volume-percent', `${state.previousVolume * 100}%`);
+    elements.volumeSlider.style.setProperty(
+      "--volume-percent",
+      `${state.previousVolume * 100}%`,
+    );
   }
   updateVolumeIcon(state.previousVolume);
 
-  if (elements.playBtn) elements.playBtn.addEventListener('click', togglePlay);
-  if (elements.nextBtn) elements.nextBtn.addEventListener('click', nextTrack);
-  if (elements.prevBtn) elements.prevBtn.addEventListener('click', prevTrack);
+  if (elements.playBtn) elements.playBtn.addEventListener("click", togglePlay);
+  if (elements.nextBtn) elements.nextBtn.addEventListener("click", nextTrack);
+  if (elements.prevBtn) elements.prevBtn.addEventListener("click", prevTrack);
 
-  elements.audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-  elements.audio.addEventListener('timeupdate', handleTimeUpdate);
-  elements.audio.addEventListener('error', handleAudioError);
-  elements.audio.addEventListener('ended', nextTrack);
-  elements.audio.addEventListener('stalled', () => {});
-  elements.audio.addEventListener('suspend', () => {});
-  elements.audio.addEventListener('abort', () => {
-    if (elements.progressBar) elements.progressBar.style.cursor = 'not-allowed';
+  elements.audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+  elements.audio.addEventListener("timeupdate", handleTimeUpdate);
+  elements.audio.addEventListener("error", handleAudioError);
+  elements.audio.addEventListener("ended", nextTrack);
+  elements.audio.addEventListener("stalled", () => {});
+  elements.audio.addEventListener("suspend", () => {});
+  elements.audio.addEventListener("abort", () => {
+    if (elements.progressBar) elements.progressBar.style.cursor = "not-allowed";
   });
 
   if (elements.progressBar) {
-    elements.progressBar.addEventListener('mousedown', handleProgressBarMouseDown);
-    elements.progressBar.addEventListener('click', handleProgressBarClick);
-    elements.progressBar.addEventListener('mousemove', handleProgressBarMouseMove);
-    elements.progressBar.addEventListener('mouseenter', handleProgressBarMouseEnter);
-    elements.progressBar.addEventListener('mouseleave', handleProgressBarMouseLeave);
+    elements.progressBar.addEventListener(
+      "mousedown",
+      handleProgressBarMouseDown,
+    );
+    elements.progressBar.addEventListener("click", handleProgressBarClick);
+    elements.progressBar.addEventListener(
+      "mousemove",
+      handleProgressBarMouseMove,
+    );
+    elements.progressBar.addEventListener(
+      "mouseenter",
+      handleProgressBarMouseEnter,
+    );
+    elements.progressBar.addEventListener(
+      "mouseleave",
+      handleProgressBarMouseLeave,
+    );
   }
 
-  window.addEventListener('beforeunload', () => {
+  window.addEventListener("beforeunload", () => {
     if (!state.isDragging) return;
     state.isDragging = false;
     if (elements.progressFill) {
-      elements.progressFill.classList.remove('dragging');
-      elements.progressFill.style.transition = '';
+      elements.progressFill.classList.remove("dragging");
+      elements.progressFill.style.transition = "";
     }
-    document.removeEventListener('mousemove', handleProgressBarDrag);
-    document.removeEventListener('mouseup', handleProgressBarMouseUp);
+    document.removeEventListener("mousemove", handleProgressBarDrag);
+    document.removeEventListener("mouseup", handleProgressBarMouseUp);
   });
 
-  document.addEventListener('visibilitychange', () => {
+  document.addEventListener("visibilitychange", () => {
     if (!document.hidden || !state.isDragging) return;
-    handleProgressBarMouseUp(new MouseEvent('mouseup'));
+    handleProgressBarMouseUp(new MouseEvent("mouseup"));
   });
 
   if (elements.progressHover && elements.progressTooltip) {
-    elements.progressHover.style.opacity = '0';
-    elements.progressTooltip.style.opacity = '0';
+    elements.progressHover.style.opacity = "0";
+    elements.progressTooltip.style.opacity = "0";
   }
 
   if (elements.volumeSlider) {
-    elements.volumeSlider.addEventListener('input', (event) => {
+    elements.volumeSlider.addEventListener("input", (event) => {
       const input = event.target;
       if (!(input instanceof HTMLInputElement)) return;
       const volume = Number.parseFloat(input.value) / 100;
       elements.audio.volume = volume;
-      input.style.setProperty('--volume-percent', `${input.value}%`);
+      input.style.setProperty("--volume-percent", `${input.value}%`);
       updateVolumeIcon(volume);
       if (volume > 0) {
         state.previousVolume = volume;
@@ -383,32 +450,152 @@ export function bindPlayerEvents() {
   }
 
   if (elements.volumeIcon && elements.volumeSlider) {
-    elements.volumeIcon.addEventListener('click', () => {
+    elements.volumeIcon.addEventListener("click", () => {
       if (elements.audio.volume > 0) {
         state.previousVolume = elements.audio.volume;
         elements.audio.volume = 0;
-        elements.volumeSlider.value = '0';
-        elements.volumeSlider.style.setProperty('--volume-percent', '0%');
+        elements.volumeSlider.value = "0";
+        elements.volumeSlider.style.setProperty("--volume-percent", "0%");
         updateVolumeIcon(0);
       } else {
         elements.audio.volume = state.previousVolume;
         const percent = state.previousVolume * 100;
         elements.volumeSlider.value = String(percent);
-        elements.volumeSlider.style.setProperty('--volume-percent', `${percent}%`);
+        elements.volumeSlider.style.setProperty(
+          "--volume-percent",
+          `${percent}%`,
+        );
         updateVolumeIcon(state.previousVolume);
       }
     });
   }
 
   if (elements.playlist) {
-    elements.playlist.addEventListener('click', (event) => {
+    elements.playlist.addEventListener("click", (event) => {
       handlePlaylistActivation(event.target);
     });
 
-    elements.playlist.addEventListener('keydown', (event) => {
-      if (event.key !== 'Enter' && event.key !== ' ') return;
+    elements.playlist.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
       handlePlaylistActivation(event.target);
     });
+  }
+
+  // Global keyboard shortcuts for music player
+  document.addEventListener("keydown", handleKeyboardShortcuts);
+}
+
+// Keyboard shortcuts handler
+function handleKeyboardShortcuts(event) {
+  // Ignore shortcuts when user is typing in input/textarea
+  const activeElement = document.activeElement;
+  if (
+    activeElement &&
+    (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA")
+  ) {
+    return;
+  }
+
+  // Ignore if modifier keys are pressed (except for Space which works with no modifiers)
+  if (event.ctrlKey || event.altKey || event.metaKey) {
+    return;
+  }
+
+  switch (event.key.toLowerCase()) {
+    case " ": // Space - Play/Pause
+      event.preventDefault();
+      togglePlay();
+      break;
+
+    case "arrowright": // Right arrow - Skip forward 5 seconds
+      event.preventDefault();
+      if (elements.audio && isValidDuration(elements.audio.duration)) {
+        elements.audio.currentTime = Math.min(
+          elements.audio.currentTime + 5,
+          elements.audio.duration,
+        );
+      }
+      break;
+
+    case "arrowleft": // Left arrow - Skip backward 5 seconds
+      event.preventDefault();
+      if (elements.audio && isValidDuration(elements.audio.duration)) {
+        elements.audio.currentTime = Math.max(
+          elements.audio.currentTime - 5,
+          0,
+        );
+      }
+      break;
+
+    case "arrowup": // Up arrow - Volume up
+      event.preventDefault();
+      if (elements.audio && elements.volumeSlider) {
+        const newVolume = Math.min(elements.audio.volume + 0.1, 1);
+        elements.audio.volume = newVolume;
+        elements.volumeSlider.value = String(newVolume * 100);
+        elements.volumeSlider.style.setProperty(
+          "--volume-percent",
+          `${newVolume * 100}%`,
+        );
+        updateVolumeIcon(newVolume);
+        if (newVolume > 0) {
+          state.previousVolume = newVolume;
+        }
+      }
+      break;
+
+    case "arrowdown": // Down arrow - Volume down
+      event.preventDefault();
+      if (elements.audio && elements.volumeSlider) {
+        const newVolume = Math.max(elements.audio.volume - 0.1, 0);
+        elements.audio.volume = newVolume;
+        elements.volumeSlider.value = String(newVolume * 100);
+        elements.volumeSlider.style.setProperty(
+          "--volume-percent",
+          `${newVolume * 100}%`,
+        );
+        updateVolumeIcon(newVolume);
+        if (newVolume > 0) {
+          state.previousVolume = newVolume;
+        }
+      }
+      break;
+
+    case "m": // M - Mute/Unmute
+      event.preventDefault();
+      if (elements.audio && elements.volumeSlider) {
+        if (elements.audio.volume > 0) {
+          state.previousVolume = elements.audio.volume;
+          elements.audio.volume = 0;
+          elements.volumeSlider.value = "0";
+          elements.volumeSlider.style.setProperty("--volume-percent", "0%");
+          updateVolumeIcon(0);
+        } else {
+          elements.audio.volume = state.previousVolume;
+          const percent = state.previousVolume * 100;
+          elements.volumeSlider.value = String(percent);
+          elements.volumeSlider.style.setProperty(
+            "--volume-percent",
+            `${percent}%`,
+          );
+          updateVolumeIcon(state.previousVolume);
+        }
+      }
+      break;
+
+    case "n": // N - Next track
+      event.preventDefault();
+      nextTrack();
+      break;
+
+    case "p": // P - Previous track
+      event.preventDefault();
+      prevTrack();
+      break;
+
+    default:
+      // Do nothing for other keys
+      break;
   }
 }
