@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en" style="background: #0a0a0a">
+    <head>
+        <style>
+            html,
+            body {
+                background: #0a0a0a !important;
+                margin: 0;
+                padding: 0;
+            }
+            .content {
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            body.loaded .content {
+                opacity: 1;
+            }
+
+            /* === HORROR ENTRANCE === */
+            .horror-entrance {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                    180deg,
+                    #000000 0%,
+                    #0a0a0a 50%,
+                    #000000 100%
+                );
+                z-index: 99999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: horrorFadeOut 2.5s cubic-bezier(0.4, 0, 0.2, 1)
+                    forwards;
+                pointer-events: none;
+                overflow: hidden;
+            }
+
+            @keyframes horrorFadeOut {
+                0% {
+                    opacity: 1;
+                }
+                80% {
+                    opacity: 1;
+                }
+                99.9% {
+                    opacity: 0;
+                    visibility: hidden;
+                }
+                100% {
+                    opacity: 0;
+                    visibility: hidden;
+                    display: none;
+                }
+            }
+
+            .flicker-container {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(
+                    circle at 50% 0%,
+                    rgba(255, 255, 255, 0.03) 0%,
+                    transparent 70%
+                );
+                animation: flicker 2.5s ease-in-out;
+            }
+
+            @keyframes flicker {
+                0%,
+                100% {
+                    opacity: 0;
+                }
+                5%,
+                10%,
+                15%,
+                25%,
+                35%,
+                50%,
+                65%,
+                75% {
+                    opacity: 1;
+                }
+                7%,
+                12%,
+                20%,
+                30%,
+                45%,
+                60%,
+                70%,
+                80% {
+                    opacity: 0.3;
+                }
+            }
+
+            .shadow-title {
+                position: relative;
+                z-index: 10;
+                font-family: "Space Grotesk", monospace;
+                font-size: clamp(3rem, 10vw, 6rem);
+                font-weight: 900;
+                color: #ffffff;
+                text-transform: uppercase;
+                letter-spacing: 0.15em;
+                text-shadow:
+                    0 0 20px rgba(255, 255, 255, 0.8),
+                    0 0 40px rgba(200, 200, 200, 0.6),
+                    3px 3px 15px rgba(0, 0, 0, 0.9);
+                animation: titleFlicker 2.5s ease-in-out;
+            }
+
+            @keyframes titleFlicker {
+                0% {
+                    opacity: 0;
+                    transform: scale(0.8);
+                    filter: blur(10px);
+                }
+                15% {
+                    opacity: 0;
+                }
+                20% {
+                    opacity: 1;
+                    transform: scale(1.05);
+                    filter: blur(0);
+                }
+                25% {
+                    opacity: 0.7;
+                }
+                30% {
+                    opacity: 1;
+                }
+                40%,
+                75% {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                90% {
+                    opacity: 0;
+                    transform: scale(1.1);
+                    filter: blur(5px);
+                }
+                100% {
+                    opacity: 0;
+                }
+            }
+
+            .film-grain {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="noise"><feTurbulence baseFrequency="0.9" numOctaves="4"/></filter><rect width="200" height="200" filter="url(%23noise)" opacity="0.05"/></svg>');
+                opacity: 0.6;
+                animation: grainMove 0.5s steps(1) infinite;
+            }
+
+            @keyframes grainMove {
+                0%,
+                100% {
+                    transform: translate(0, 0);
+                }
+                10% {
+                    transform: translate(-5%, -10%);
+                }
+                30% {
+                    transform: translate(3%, -15%);
+                }
+                50% {
+                    transform: translate(-9%, 7%);
+                }
+                70% {
+                    transform: translate(5%, -3%);
+                }
+                90% {
+                    transform: translate(-3%, 8%);
+                }
+            }
+
+            .horror-vignette {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(
+                    circle,
+                    transparent 0%,
+                    rgba(0, 0, 0, 0.8) 70%,
+                    #000 100%
+                );
+            }
+        </style>
+        <title>Shadow Frames: Audio Design</title>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, user-scalable=no"
+        />
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="../assets/icons/favicon.svg"
+        />
+        <meta
+            name="description"
+            content="Shadow Frames: psychological horror game with audio-driven gameplay. In production."
+        />
+        <meta name="robots" content="index, follow" />
+        <link
+            rel="canonical"
+            href="https://igorszuniewicz.com/projects/shadow-frames.html"
+        />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700;900&display=swap"
+            rel="stylesheet"
+        />
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                background: #0a0a0a;
+                color: #e0e0e0;
+                font-family: "Poppins", sans-serif;
+                overflow-x: hidden;
+                scroll-behavior: smooth;
+            }
+
+            .content {
+                position: relative;
+                z-index: 1;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 2rem;
+            }
+
+            /* === BACK BUTTON === */
+            .back-button {
+                position: fixed;
+                top: 2rem;
+                left: 2rem;
+                z-index: 100;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.8rem;
+                padding: 0.8rem 1.5rem;
+                background: rgba(18, 18, 18, 0.8);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 50px;
+                color: #ffffff;
+                text-decoration: none;
+                font-size: 0.9rem;
+                font-weight: 500;
+                text-transform: uppercase;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+            }
+
+            .back-button:hover {
+                background: rgba(40, 40, 40, 0.9);
+                border-color: rgba(255, 255, 255, 0.3);
+                transform: translateX(-5px);
+            }
+
+            .back-button::before {
+                content: "←";
+                font-size: 1.2rem;
+                font-weight: bold;
+            }
+
+            /* === LANGUAGE SWITCHER === */
+            .lang-switcher {
+                position: fixed !important;
+                top: 2rem !important;
+                right: 2rem !important;
+                z-index: 1000 !important;
+                display: flex !important;
+                gap: 0.5rem;
+                background: rgba(18, 18, 18, 0.8) !important;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                border-radius: 50px;
+                padding: 0.5rem;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8) !important;
+            }
+
+            .lang-btn {
+                padding: 0.5rem 1rem;
+                background: transparent;
+                border: none;
+                border-radius: 50px;
+                color: #666 !important;
+                cursor: pointer;
+                font-weight: 500;
+                font-size: 0.9rem;
+                transition: all 0.3s ease;
+                display: flex !important;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .lang-btn:hover {
+                color: #ffffff !important;
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .lang-btn.active {
+                color: #ffffff !important;
+                background: rgba(255, 255, 255, 0.15);
+                font-weight: 600;
+            }
+
+            .lang-flag {
+                width: 20px;
+                height: 14px;
+                border-radius: 2px;
+                overflow: hidden;
+                display: block;
+            }
+
+            /* === HERO === */
+            .hero {
+                text-align: center;
+                padding: 8rem 0 4rem;
+                margin-bottom: 3rem;
+                position: relative;
+                background: linear-gradient(
+                    135deg,
+                    #000000 0%,
+                    #121212 60%,
+                    #000000 100%
+                );
+                border-radius: 20px;
+                overflow: hidden;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .hero h1 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 4rem;
+                font-weight: 900;
+                margin-bottom: 0.5rem;
+                letter-spacing: 0.05em;
+                color: #ffffff;
+                text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.9);
+            }
+
+            .hero .subtitle {
+                font-size: 1.4rem;
+                color: #888;
+                margin-bottom: 1rem;
+                text-transform: uppercase;
+                letter-spacing: 0.2em;
+                font-weight: 300;
+            }
+
+            .hero .tagline {
+                font-size: 1.3rem;
+                color: #bbb;
+                font-style: italic;
+                margin-bottom: 2rem;
+            }
+
+            .meta-badges {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+                margin-top: 2.5rem;
+            }
+
+            .meta-badge {
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                backdrop-filter: blur(10px);
+                transition: all 0.3s ease;
+            }
+
+            .meta-badge:hover {
+                background: rgba(255, 255, 255, 0.05);
+                transform: translateY(-3px);
+            }
+
+            .meta-label {
+                display: block;
+                font-size: 0.85rem;
+                color: #666;
+                margin-bottom: 0.4rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .meta-value {
+                display: block;
+                font-weight: 600;
+                color: #ffffff;
+                font-size: 1.1rem;
+            }
+
+            /* === PRODUCTION NOTICE === */
+            .production-notice {
+                background: linear-gradient(
+                    135deg,
+                    rgba(255, 165, 0, 0.15) 0%,
+                    rgba(255, 140, 0, 0.1) 100%
+                );
+                border: 2px solid rgba(255, 165, 0, 0.4);
+                padding: 1.5rem 2rem;
+                border-radius: 15px;
+                margin: 3rem 0;
+                text-align: center;
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: #fff;
+                box-shadow: 0 10px 30px rgba(255, 165, 0, 0.2);
+            }
+
+            /* === PROJECT CONTEXT === */
+            .project-context {
+                max-width: 900px;
+                margin: 3rem auto;
+                padding: 2rem;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 16px;
+                backdrop-filter: blur(10px);
+            }
+
+            .project-context h3 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 1.5rem;
+                color: #ffffff;
+                margin-bottom: 1.5rem;
+                font-weight: 600;
+                text-align: center;
+            }
+
+            .context-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .context-item {
+                padding: 1rem;
+                background: rgba(255, 255, 255, 0.02);
+                border-radius: 8px;
+                border-left: 3px solid rgba(255, 255, 255, 0.3);
+            }
+
+            .context-label {
+                font-size: 0.85rem;
+                color: rgba(255, 165, 0, 0.8);
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 0.5rem;
+            }
+
+            .context-value {
+                font-size: 1rem;
+                color: #e0e6ed;
+                line-height: 1.6;
+            }
+
+            .context-collaboration {
+                margin-top: 1.5rem;
+                padding-top: 1.5rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .context-collaboration h4 {
+                font-size: 1rem;
+                color: rgba(255, 165, 0, 0.8);
+                font-weight: 600;
+                margin-bottom: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .context-collaboration ul {
+                list-style: none;
+                padding: 0;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 0.5rem;
+            }
+
+            .context-collaboration li {
+                padding: 0.5rem 0 0.5rem 1.5rem;
+                position: relative;
+                color: #cbd5e1;
+                font-size: 0.95rem;
+            }
+
+            .context-collaboration li::before {
+                content: "▸";
+                position: absolute;
+                left: 0;
+                color: rgba(255, 165, 0, 0.8);
+                font-weight: bold;
+            }
+
+            /* === VIDEO SECTION === */
+            .video-section {
+                margin: 4rem 0;
+            }
+
+            .video-section h2 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 2.2rem;
+                color: #ffffff;
+                margin-bottom: 1.5rem;
+                font-weight: 700;
+                text-align: center;
+            }
+
+            .video-container {
+                position: relative;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                background: #000;
+                margin-bottom: 1rem;
+            }
+
+            .video-container video {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+            .video-description {
+                text-align: center;
+                font-style: italic;
+                color: #666;
+                font-size: 0.95rem;
+            }
+
+            /* === AUDIO PLAYER === */
+            .audio-section {
+                margin: 4rem 0;
+                padding: 3rem 2rem;
+                background: linear-gradient(
+                    135deg,
+                    rgba(18, 18, 18, 0.5) 0%,
+                    rgba(10, 10, 10, 0.4) 100%
+                );
+                border-radius: 20px;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                text-align: center;
+            }
+
+            .audio-section h2 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 2.2rem;
+                color: #ffffff;
+                margin-bottom: 1rem;
+                font-weight: 700;
+            }
+
+            .audio-section p {
+                color: #999;
+                margin-bottom: 2rem;
+                font-size: 1.05rem;
+            }
+
+            /* === SECTION === */
+            section {
+                margin: 4rem 0;
+                padding: 2.5rem;
+                background: linear-gradient(
+                    135deg,
+                    rgba(18, 18, 18, 0.5) 0%,
+                    rgba(10, 10, 10, 0.4) 100%
+                );
+                border-radius: 20px;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            section h2 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 2.2rem;
+                color: #ffffff;
+                margin-bottom: 1.5rem;
+                font-weight: 700;
+            }
+
+            section p {
+                color: rgba(224, 224, 224, 0.9);
+                line-height: 1.7;
+                font-size: 1.05rem;
+                margin-bottom: 1.5rem;
+            }
+
+            /* === GRID === */
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.5rem;
+                margin-top: 2rem;
+            }
+
+            .grid-item {
+                background: rgba(255, 255, 255, 0.02);
+                padding: 1.5rem;
+                border-radius: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                transition: all 0.3s ease;
+            }
+
+            .grid-item:hover {
+                background: rgba(255, 255, 255, 0.04);
+                border-color: rgba(255, 255, 255, 0.15);
+                transform: translateY(-3px);
+            }
+
+            .grid-item h4 {
+                color: #ffffff;
+                margin-bottom: 0.8rem;
+                font-size: 1.2rem;
+                font-weight: 600;
+            }
+
+            .grid-item p {
+                color: #999;
+                font-size: 1rem;
+                margin: 0;
+            }
+
+            /* === STATUS TIMELINE === */
+            .status-timeline {
+                margin: 3rem 0;
+                padding: 2rem;
+            }
+
+            .status-item {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem 0;
+                font-size: 1.2rem;
+                color: #fff;
+            }
+
+            .status-icon {
+                font-size: 1.5rem;
+            }
+
+            /* === BUTTON === */
+            .button-container {
+                text-align: center;
+                margin: 4rem 0;
+            }
+
+            .button {
+                display: inline-block;
+                padding: 1.2rem 3rem;
+                background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+                border: 2px solid rgba(255, 255, 255, 0.15);
+                border-radius: 50px;
+                color: #ffffff;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 1.1rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                transition: all 0.3s ease;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+            }
+
+            .button:hover {
+                background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
+                transform: translateY(-3px);
+                box-shadow: 0 12px 35px rgba(255, 255, 255, 0.1);
+                border-color: rgba(255, 255, 255, 0.3);
+            }
+
+            /* === FOOTER === */
+            .footer {
+                text-align: center;
+                padding: 3rem 0;
+                color: #444;
+                font-size: 0.9rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+                margin-top: 5rem;
+            }
+
+            /* === RESPONSIVE === */
+            @media (max-width: 768px) {
+                .content {
+                    padding: 1.5rem;
+                }
+                .back-button,
+                .lang-switcher {
+                    top: 1rem;
+                }
+                .hero {
+                    padding: 3rem 1rem 2rem;
+                }
+                .hero h1 {
+                    font-size: clamp(2rem, 8vw, 2.5rem);
+                }
+                .meta-badges {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+                section {
+                    padding: 1.75rem 1.25rem;
+                }
+                .grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body style="background: #0a0a0a">
+        <!-- Horror Entrance -->
+        <div class="horror-entrance">
+            <div class="horror-vignette"></div>
+            <div class="flicker-container"></div>
+            <div class="film-grain"></div>
+            <div class="shadow-title">SHADOW FRAMES</div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Language Switcher -->
+            <div class="lang-switcher">
+                <button class="lang-btn active" data-lang="en">
+                    <svg
+                        class="lang-flag"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 60 30"
+                    >
+                        <rect width="60" height="30" fill="#012169" />
+                        <path
+                            d="M0,0 L60,30 M60,0 L0,30"
+                            stroke="#fff"
+                            stroke-width="6"
+                        />
+                        <path
+                            d="M0,0 L60,30 M60,0 L0,30"
+                            stroke="#C8102E"
+                            stroke-width="4"
+                        />
+                        <path
+                            d="M30,0 v30 M0,15 h60"
+                            stroke="#fff"
+                            stroke-width="10"
+                        />
+                        <path
+                            d="M30,0 v30 M0,15 h60"
+                            stroke="#C8102E"
+                            stroke-width="6"
+                        />
+                    </svg>
+                    <span>EN</span>
+                </button>
+                <button class="lang-btn" data-lang="pl">
+                    <svg
+                        class="lang-flag"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 16 10"
+                    >
+                        <rect width="16" height="5" fill="#fff" />
+                        <rect y="5" width="16" height="5" fill="#dc143c" />
+                    </svg>
+                    <span>PL</span>
+                </button>
+                <button class="lang-btn" data-lang="nl">
+                    <svg
+                        class="lang-flag"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 9 6"
+                    >
+                        <rect width="9" height="6" fill="#21468B" />
+                        <rect width="9" height="4" fill="#fff" />
+                        <rect width="9" height="2" fill="#AE1C28" />
+                    </svg>
+                    <span>NL</span>
+                </button>
+            </div>
+
+            <!-- Back Button -->
+            <a href="/projects/" class="back-button">
+                <span data-i18n="back">Back to Projects</span>
+            </a>
+
+            <!-- Hero -->
+            <section class="hero">
+                <h1 data-i18n="title">Shadow Frames</h1>
+                <p class="subtitle" data-i18n="subtitle">Audio Design</p>
+                <p class="tagline" data-i18n="tagline">
+                    Horror game where sound is survival.
+                </p>
+                <div class="meta-badges">
+                    <div class="meta-badge">
+                        <span class="meta-label" data-i18n="meta.role.label"
+                            >Role</span
+                        >
+                        <span class="meta-value" data-i18n="meta.role.value"
+                            >Sound Designer & Audio Lead</span
+                        >
+                    </div>
+                    <div class="meta-badge">
+                        <span class="meta-label" data-i18n="meta.setting.label"
+                            >Setting</span
+                        >
+                        <span class="meta-value" data-i18n="meta.setting.value"
+                            >1960s Irish Pub</span
+                        >
+                    </div>
+                    <div class="meta-badge">
+                        <span class="meta-label" data-i18n="meta.era.label"
+                            >Era</span
+                        >
+                        <span class="meta-value" data-i18n="meta.era.value"
+                            >Analog Horror</span
+                        >
+                    </div>
+                    <div class="meta-badge">
+                        <span class="meta-label" data-i18n="meta.engine.label"
+                            >Engine</span
+                        >
+                        <span class="meta-value" data-i18n="meta.engine.value"
+                            >Unreal Engine 5</span
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- Production Notice -->
+            <div class="production-notice" data-i18n="production_notice">
+                🎮 IN PRODUCTION • Prototype Complete • Full Audio System Coming
+                Soon
+            </div>
+
+            <!-- Project Context -->
+            <section class="project-context">
+                <h3 data-i18n="context.title">Project Context</h3>
+                <div class="context-grid">
+                    <div class="context-item">
+                        <div
+                            class="context-label"
+                            data-i18n="context.type_label"
+                        >
+                            Type
+                        </div>
+                        <div
+                            class="context-value"
+                            data-i18n="context.type_value"
+                        >
+                            Multi-Institutional Project
+                        </div>
+                    </div>
+                    <div class="context-item">
+                        <div
+                            class="context-label"
+                            data-i18n="context.institution_label"
+                        >
+                            Lead Institution
+                        </div>
+                        <div
+                            class="context-value"
+                            data-i18n="context.institution_value"
+                        >
+                            Howest DAE
+                        </div>
+                    </div>
+                    <div class="context-item">
+                        <div
+                            class="context-label"
+                            data-i18n="context.year_label"
+                        >
+                            Year
+                        </div>
+                        <div
+                            class="context-value"
+                            data-i18n="context.year_value"
+                        >
+                            2025 - Present
+                        </div>
+                    </div>
+                    <div class="context-item">
+                        <div
+                            class="context-label"
+                            data-i18n="context.role_label"
+                        >
+                            My Role
+                        </div>
+                        <div
+                            class="context-value"
+                            data-i18n="context.role_value"
+                        >
+                            Sound Designer & Audio Implementer
+                        </div>
+                    </div>
+                </div>
+                <div class="context-collaboration">
+                    <h4 data-i18n="context.collaboration_title">
+                        Multi-Institutional Collaboration
+                    </h4>
+                    <ul>
+                        <li data-i18n="context.collab1">
+                            RITCS (Royal Institute for Theatre, Cinema and
+                            Sound) — Narrative Design
+                        </li>
+                        <li data-i18n="context.collab2">
+                            Ghent Conservatory — Music Composition
+                        </li>
+                        <li data-i18n="context.collab3">
+                            Howest DAE — Game Development & Audio Implementation
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Video -->
+            <div class="video-section">
+                <h2 data-i18n="video.title">First Look: Prototype Menu</h2>
+                <div class="video-container">
+                    <video
+                        controls
+                        poster="../assets/images/projects-shadowframes/ShadowFrames_Title_Var2.png"
+                    >
+                        <source
+                            src="../assets/videos/audioideation.mp4"
+                            type="video/mp4"
+                        />
+                        Your browser doesn't support video.
+                    </video>
+                </div>
+                <p class="video-description" data-i18n="video.desc">
+                    Early concept from the prototype phase. Final version coming
+                    soon.
+                </p>
+            </div>
+
+            <!-- Audio Player -->
+            <div class="audio-section">
+                <h2 data-i18n="music.title">Menu Music Concept</h2>
+                <p data-i18n="music.desc">
+                    Our composer's vision for the main menu atmosphere.
+                </p>
+                <div
+                    class="audio-player"
+                    data-audio="../assets/audio/samples/Shadow_Frame_Menu_Vibe_but_Louder.wav"
+                ></div>
+            </div>
+
+            <!-- The Concept -->
+            <section>
+                <h2 data-i18n="overview.title">The Concept</h2>
+                <p data-i18n="overview.desc">
+                    1960s Irish pub. Black and white. You have a Polaroid
+                    camera. Strange things happen. Sound tells you everything.
+                    If you mute the game, you can't play. That's the idea.
+                </p>
+            </section>
+
+            <!-- Audio Design Approach -->
+            <section>
+                <h2 data-i18n="philosophy.title">Audio Design Approach</h2>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4 data-i18n="philosophy.dread_title">
+                            Constant Tension
+                        </h4>
+                        <p data-i18n="philosophy.dread_desc">
+                            No jumpscares. Just dread building from drones and
+                            distant sounds you can't identify.
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4 data-i18n="philosophy.analog_title">
+                            1960s Authentic
+                        </h4>
+                        <p data-i18n="philosophy.analog_desc">
+                            Polaroid clicks, vinyl crackle, tube radio static.
+                            Everything period accurate.
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4 data-i18n="philosophy.ambiguity_title">
+                            Sonic Uncertainty
+                        </h4>
+                        <p data-i18n="philosophy.ambiguity_desc">
+                            Familiar sounds twisted just enough to make you
+                            question what you're hearing.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Core Systems -->
+            <section>
+                <h2 data-i18n="anomaly.title">Anomaly System</h2>
+                <p data-i18n="anomaly.desc">
+                    Three audio stages guide investigation.
+                </p>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Stage 1</h4>
+                        <p data-i18n="anomaly.alert">
+                            Alert: Something changed somewhere
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Stage 2</h4>
+                        <p data-i18n="anomaly.hint">
+                            Hint: Directional sound points you there
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Stage 3</h4>
+                        <p data-i18n="anomaly.presence">
+                            Presence: It waits until you capture it
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Camera + Enemy -->
+            <section>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4 data-i18n="camera.title">Polaroid Mechanics</h4>
+                        <p data-i18n="camera.desc">
+                            Your only defense. Also your biggest vulnerability.
+                        </p>
+                        <p data-i18n="camera.raise">
+                            Raise camera: tunnel hearing, lose awareness
+                        </p>
+                        <p data-i18n="camera.shutter">
+                            Take photo: blind and deaf for 5 seconds
+                        </p>
+                        <p data-i18n="camera.reload">
+                            Reload film: can't move for 5 seconds
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4 data-i18n="enemy.title">The Presence</h4>
+                        <p data-i18n="enemy.desc">
+                            Something's with you in the pub. Invisible. Audio
+                            only.
+                        </p>
+                        <p data-i18n="enemy.footsteps">
+                            Footsteps that stop when you look
+                        </p>
+                        <p data-i18n="enemy.whispers">
+                            Irish Gaelic voices you can't understand
+                        </p>
+                        <p data-i18n="enemy.drone">
+                            Sub-bass that grows with your mistakes
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tech Stack -->
+            <section>
+                <h2 data-i18n="technical.title">Tech Stack</h2>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Engine</h4>
+                        <p data-i18n="technical.engine">
+                            Wwise 2024.1 + Unreal Engine 5.4.4
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Audio</h4>
+                        <p data-i18n="technical.audio">
+                            HRTF spatial audio, dynamic RTPCs, environmental
+                            zones
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Tools</h4>
+                        <p data-i18n="technical.tools">
+                            Reaper DAW, Waves J37, PaulXStretch, Valhalla
+                            FreqEcho
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Performance</h4>
+                        <p data-i18n="technical.performance">
+                            Sub 5% CPU, optimized streaming
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Current Status -->
+            <section>
+                <h2 data-i18n="status.title">Current Status</h2>
+                <div class="status-timeline">
+                    <div class="status-item">
+                        <span class="status-icon">✓</span>
+                        <span data-i18n="status.proto">Prototype Complete</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-icon">◉</span>
+                        <span data-i18n="status.production"
+                            >Week 1 of Production</span
+                        >
+                    </div>
+                    <div class="status-item">
+                        <span class="status-icon">◯</span>
+                        <span data-i18n="status.coming"
+                            >Full Audio Implementation</span
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- Button -->
+            <div class="button-container">
+                <a href="/projects/" class="button" data-i18n="button.projects"
+                    >All Projects</a
+                >
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <p>&copy; Igor Szuniewicz 2025. All rights reserved.</p>
+            </footer>
+        </div>
+
+        <!-- Fixed Player -->
+        <div class="fixed-player" id="fixedPlayer">
+            <div class="fixed-player-top">
+                <button class="fixed-player-btn" id="fixedPlayerBtn">
+                    <div class="icon"></div>
+                </button>
+                <div class="fixed-player-info">
+                    <div class="fixed-player-title" id="fixedPlayerTitle">
+                        Menu Theme
+                    </div>
+                    <div class="fixed-player-subtitle">Shadow Frames</div>
+                </div>
+            </div>
+            <div class="fixed-player-progress" id="fixedPlayerProgress">
+                <div
+                    class="fixed-player-progress-bar"
+                    id="fixedPlayerProgressBar"
+                ></div>
+            </div>
+            <div class="fixed-player-time">
+                <span id="fixedPlayerCurrentTime">0:00</span>
+                <span id="fixedPlayerDuration">0:00</span>
+            </div>
+            <div class="fixed-player-volume">
+                <svg
+                    class="volume-icon"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <polygon
+                        points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
+                    ></polygon>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                <input
+                    type="range"
+                    id="volumeSlider"
+                    min="0"
+                    max="100"
+                    value="70"
+                    class="volume-slider"
+                />
+            </div>
+        </div>
+
+        <!-- Audio Player Component -->
+        <script>
+            (function injectPlayerStyles() {
+                const css = `
+      .audio-player{ --p:0deg; position:relative; width:220px; height:220px; margin:1rem auto; display:block; }
+      .audio-player::before{ content:''; position:absolute; inset:0; border-radius:50%;
+        background:
+          radial-gradient(circle at 50% 50%, rgba(255,255,255,0.06) 0 40%, transparent 41%),
+          conic-gradient(#888 var(--p), rgba(255,255,255,0.08) 0);
+        box-shadow: inset 0 0 0 6px rgba(255,255,255,0.06), 0 10px 30px rgba(0,0,0,0.4);
+      }
+      .audio-player .inner{ position:absolute; inset:18px; border-radius:50%; background:rgba(0,0,0,0.6);
+        display:flex; align-items:center; justify-content:center; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.08);
+      }
+      .audio-player button{ width:96px; height:96px; border-radius:50%; border:none; cursor:pointer; color:#fff;
+        background: linear-gradient(135deg,#333,#555); box-shadow: 0 8px 24px rgba(255, 255, 255,.15);
+        transition: transform .2s ease, box-shadow .2s ease; position:relative; display:flex; align-items:center; justify-content:center; }
+      .audio-player button:hover{ transform: scale(1.05); box-shadow:0 12px 32px rgba(255, 255, 255,.25); }
+      .audio-player button .tri{ width:0; height:0; border-left:26px solid #fff; border-top:16px solid transparent; border-bottom:16px solid transparent; margin-left:3px; }
+      .audio-player button.paused .tri{ border-left-color:transparent; border-top:0; border-bottom:0; width:20px; height:20px; position:relative; }
+      .audio-player button.paused .tri::before,.audio-player button.paused .tri::after{ content:''; position:absolute; top:0; width:6px; height:24px; background:#fff; border-radius:2px; }
+      .audio-player button.paused .tri::before{ left:-8px; }
+      .audio-player button.paused .tri::after{ left:4px; }
+      .fixed-player { position: fixed; bottom: 2rem; right: 2rem; width: 320px; background: rgba(12, 12, 12, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 16px; padding: 1rem 1.25rem; box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 999; opacity: 0; pointer-events: none; transform: translateY(20px); transition: all 0.3s ease; }
+      .fixed-player.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+      .fixed-player-top { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
+      .fixed-player-btn { width: 48px; height: 48px; border-radius: 50%; border: none; background: linear-gradient(135deg, #333, #555); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); flex-shrink: 0; }
+      .fixed-player-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2); }
+      .fixed-player-btn .icon { width: 0; height: 0; border-left: 14px solid white; border-top: 8px solid transparent; border-bottom: 8px solid transparent; margin-left: 3px; }
+      .fixed-player-btn.playing .icon { border: none; width: 12px; height: 12px; position: relative; }
+      .fixed-player-btn.playing .icon::before, .fixed-player-btn.playing .icon::after { content: ''; position: absolute; width: 4px; height: 16px; background: white; border-radius: 2px; }
+      .fixed-player-btn.playing .icon::before { left: 0; } .fixed-player-btn.playing .icon::after { left: 8px; }
+      .fixed-player-info { flex: 1; overflow: hidden; }
+      .fixed-player-title { font-size: 0.9rem; font-weight: 600; color: #fff; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .fixed-player-subtitle { font-size: 0.75rem; color: #888; }
+      .fixed-player-progress { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; overflow: hidden; margin-bottom: 0.5rem; cursor: pointer; }
+      .fixed-player-progress-bar { height: 100%; background: linear-gradient(90deg, #555, #777); width: 0%; transition: width 0.1s linear; }
+      .fixed-player-time { display: flex; justify-content: space-between; font-size: 0.7rem; color: #666; }
+      .fixed-player-volume { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+      .volume-icon { color: #666; flex-shrink: 0; }
+      .volume-slider { flex: 1; height: 4px; -webkit-appearance: none; appearance: none; background: rgba(255, 255, 255, 0.1); border-radius: 2px; outline: none; cursor: pointer; }
+      .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 12px; height: 12px; background: linear-gradient(135deg, #555, #777); border-radius: 50%; cursor: pointer; transition: all 0.2s ease; }
+      .volume-slider::-webkit-slider-thumb:hover { transform: scale(1.2); background: linear-gradient(135deg, #666, #888); }
+      .volume-slider::-moz-range-thumb { width: 12px; height: 12px; background: linear-gradient(135deg, #555, #777); border: none; border-radius: 50%; cursor: pointer; transition: all 0.2s ease; }
+      .volume-slider::-moz-range-thumb:hover { transform: scale(1.2); background: linear-gradient(135deg, #666, #888); }
+      `;
+                const style = document.createElement("style");
+                style.textContent = css;
+                document.head.appendChild(style);
+            })();
+
+            (function () {
+                let active = { audio: null, el: null };
+                const fixedPlayer = document.getElementById("fixedPlayer");
+                const fixedBtn = document.getElementById("fixedPlayerBtn");
+                const fixedTitle = document.getElementById("fixedPlayerTitle");
+                const fixedProgressBar = document.getElementById(
+                    "fixedPlayerProgressBar",
+                );
+                const fixedProgress = document.getElementById(
+                    "fixedPlayerProgress",
+                );
+                const fixedCurrentTime = document.getElementById(
+                    "fixedPlayerCurrentTime",
+                );
+                const fixedDuration = document.getElementById(
+                    "fixedPlayerDuration",
+                );
+                const volumeSlider = document.getElementById("volumeSlider");
+
+                function formatTime(seconds) {
+                    const m = Math.floor(seconds / 60);
+                    const s = Math.floor(seconds % 60);
+                    return `${m}:${s.toString().padStart(2, "0")}`;
+                }
+
+                function stopActive() {
+                    if (active.audio) {
+                        try {
+                            active.audio.pause();
+                        } catch {}
+                    }
+                    if (active.el) {
+                        active.el
+                            .querySelector("button")
+                            ?.classList.remove("paused");
+                        active.el.style.setProperty("--p", "0deg");
+                    }
+                    fixedPlayer.classList.remove("active");
+                    fixedBtn.classList.remove("playing");
+                    active = { audio: null, el: null };
+                }
+
+                function bindPlayer(el) {
+                    const src = el.getAttribute("data-audio");
+                    const btn = document.createElement("button");
+                    btn.setAttribute("aria-label", "Play audio sample");
+                    const inner = document.createElement("div");
+                    inner.className = "inner";
+                    const tri = document.createElement("div");
+                    tri.className = "tri";
+                    btn.appendChild(tri);
+                    inner.appendChild(btn);
+                    el.appendChild(inner);
+
+                    let audio = new Audio(src);
+                    audio.preload = "metadata";
+                    audio.volume = volumeSlider
+                        ? volumeSlider.value / 100
+                        : 0.7;
+                    let raf = null;
+
+                    function loop() {
+                        if (!audio.duration)
+                            return (raf = requestAnimationFrame(loop));
+                        const p = Math.min(
+                            1,
+                            audio.currentTime / audio.duration,
+                        );
+                        el.style.setProperty(
+                            "--p",
+                            `${(p * 360).toFixed(1)}deg`,
+                        );
+                        fixedProgressBar.style.width = `${(p * 100).toFixed(1)}%`;
+                        fixedCurrentTime.textContent = formatTime(
+                            audio.currentTime,
+                        );
+                        fixedDuration.textContent = formatTime(audio.duration);
+                        if (!audio.paused) raf = requestAnimationFrame(loop);
+                    }
+
+                    function play() {
+                        if (active.el && active.el !== el) stopActive();
+                        active = { audio, el };
+                        btn.classList.add("paused");
+                        fixedPlayer.classList.add("active");
+                        fixedBtn.classList.add("playing");
+                        const translations = window.translations || {};
+                        const lang = window.currentLang || "en";
+                        fixedTitle.textContent =
+                            translations[lang]?.music?.subtitle || "Menu Theme";
+                        if (volumeSlider)
+                            audio.volume = volumeSlider.value / 100;
+                        audio
+                            .play()
+                            .then(() => {
+                                raf = requestAnimationFrame(loop);
+                            })
+                            .catch(() => {
+                                stopActive();
+                            });
+                    }
+
+                    function pause() {
+                        audio.pause();
+                        btn.classList.remove("paused");
+                        cancelAnimationFrame(raf);
+                        raf = null;
+                    }
+
+                    btn.addEventListener("click", () => {
+                        if (audio.paused) play();
+                        else pause();
+                    });
+                    audio.addEventListener("ended", () => {
+                        pause();
+                        audio.currentTime = 0;
+                        el.style.setProperty("--p", "0deg");
+                        fixedProgressBar.style.width = "0%";
+                    });
+                    audio.addEventListener("error", stopActive);
+                }
+
+                fixedBtn.addEventListener("click", () => {
+                    if (active.audio) {
+                        if (active.audio.paused) {
+                            active.audio.play();
+                            fixedBtn.classList.add("playing");
+                            active.el
+                                ?.querySelector("button")
+                                ?.classList.add("paused");
+                        } else {
+                            active.audio.pause();
+                            fixedBtn.classList.remove("playing");
+                            active.el
+                                ?.querySelector("button")
+                                ?.classList.remove("paused");
+                        }
+                    }
+                });
+
+                fixedProgress.addEventListener("click", (e) => {
+                    if (active.audio) {
+                        const rect = fixedProgress.getBoundingClientRect();
+                        const percent = (e.clientX - rect.left) / rect.width;
+                        active.audio.currentTime =
+                            active.audio.duration * percent;
+                    }
+                });
+
+                // Volume control - load saved volume first
+                const savedVolume = localStorage.getItem("audioVolume");
+                if (volumeSlider && savedVolume !== null) {
+                    volumeSlider.value = savedVolume * 100;
+                }
+
+                if (volumeSlider) {
+                    volumeSlider.addEventListener("input", (e) => {
+                        const volume = e.target.value / 100;
+                        if (active.audio) {
+                            active.audio.volume = volume;
+                        }
+                        localStorage.setItem("audioVolume", volume);
+                    });
+                }
+
+                document.addEventListener("DOMContentLoaded", () => {
+                    document
+                        .querySelectorAll(".audio-player")
+                        .forEach(bindPlayer);
+                });
+            })();
+        </script>
+
+        <!-- Translation System -->
+        <script>
+            let translations = {};
+            let currentLang = localStorage.getItem("language") || "en";
+
+            function getNestedTranslation(obj, path) {
+                return path
+                    .split(".")
+                    .reduce((current, key) => current?.[key], obj);
+            }
+
+            function setLanguage(lang) {
+                currentLang = lang;
+                localStorage.setItem("language", lang);
+
+                document.querySelectorAll("[data-i18n]").forEach((el) => {
+                    const key = el.getAttribute("data-i18n");
+                    const translation = getNestedTranslation(
+                        translations[lang],
+                        key,
+                    );
+                    if (translation) {
+                        el.textContent = translation;
+                    }
+                });
+
+                document.querySelectorAll(".lang-btn").forEach((btn) => {
+                    btn.classList.toggle("active", btn.dataset.lang === lang);
+                });
+            }
+
+            async function loadTranslations() {
+                try {
+                    const response = await fetch(
+                        "../locales/shadow-frames.json",
+                    );
+                    translations = await response.json();
+                    window.translations = translations;
+                    window.currentLang = currentLang;
+                    setLanguage(currentLang);
+                } catch (error) {
+                    console.error("Failed to load translations");
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                loadTranslations();
+
+                document.querySelectorAll(".lang-btn").forEach((btn) => {
+                    btn.addEventListener("click", () => {
+                        setLanguage(btn.dataset.lang);
+                    });
+                });
+
+                setTimeout(() => {
+                    document.body.classList.add("loaded");
+                }, 100);
+            });
+        </script>
+        <script src="../assets/js/performance-boost.js" defer></script>
+    </body>
+</html>

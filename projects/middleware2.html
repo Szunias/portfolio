@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Middleware 2 - Wwise Audio Implementation by Igor Szuniewicz</title>
+  <meta name="description" content="Complete Wwise audio implementation for game level. Professional audio middleware work with spatial audio, dynamic mix, and Game Syncs by Igor Szuniewicz.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://igorszuniewicz.com/projects/middleware2.html">
+  <meta name="keywords" content="Wwise, audio middleware, game audio, Unreal Engine, spatial audio, audio implementation, Game Syncs">
+  <meta name="author" content="Igor Szuniewicz">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Middleware 2 - Wwise Audio Implementation">
+  <meta property="og:description" content="Complete audio implementation for game level mimicking real-world production workflow.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://igorszuniewicz.com/projects/middleware2.html">
+  <meta property="og:image" content="https://igorszuniewicz.com/assets/images/projects-middleware2/ellen.png">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Middleware 2 - Wwise Audio Implementation">
+  <meta name="twitter:description" content="Complete audio implementation for game level with Wwise.">
+  <meta name="twitter:image" content="https://igorszuniewicz.com/assets/images/projects-middleware2/ellen.png">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1a1f35 0%, #2a2f45 50%, #1f2437 100%);
+      color: #e0e6ed;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(78, 205, 196, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(154, 108, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(24, 191, 239, 0.08) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    /* Back button */
+    .back-button {
+      position: fixed;
+      top: 2rem;
+      left: 2rem;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .back-button:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(78, 205, 196, 0.5);
+      transform: translateX(-3px);
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Hero Section */
+    .hero {
+      padding: 8rem 0 4rem;
+      text-align: center;
+      position: relative;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(78, 205, 196, 0.2) 0%, rgba(154, 108, 255, 0.1) 50%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .hero-badge {
+      display: inline-block;
+      padding: 0.5rem 1.5rem;
+      background: linear-gradient(135deg, rgba(78, 205, 196, 0.2), rgba(154, 108, 255, 0.2));
+      border: 1px solid rgba(78, 205, 196, 0.4);
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #4ecdc4;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(3rem, 8vw, 4.5rem);
+      font-weight: 900;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #4ecdc4 0%, #9a6cff 50%, #18bfef 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    
+    .hero-subtitle {
+      font-size: 1.35rem;
+      color: #9ca3af;
+      margin-bottom: 3rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      font-weight: 400;
+    }
+    
+    /* Meta Pills */
+    .meta-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 4rem;
+    }
+    
+    .pill {
+      background: linear-gradient(135deg, rgba(78, 205, 196, 0.15), rgba(154, 108, 255, 0.12));
+      border: 1px solid rgba(78, 205, 196, 0.3);
+      padding: 0.6rem 1.2rem;
+      border-radius: 25px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    
+    .pill:hover {
+      background: linear-gradient(135deg, rgba(78, 205, 196, 0.25), rgba(154, 108, 255, 0.2));
+      border-color: rgba(78, 205, 196, 0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(78, 205, 196, 0.3);
+    }
+    
+    /* Hero Image */
+    .hero-image-section {
+      padding: 4rem 0;
+    }
+    
+    .hero-image-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(78, 205, 196, 0.2);
+      transition: all 0.4s ease;
+    }
+    
+    .hero-image-wrapper:hover {
+      transform: scale(1.02) translateY(-5px);
+      box-shadow: 0 35px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(78, 205, 196, 0.4);
+    }
+    
+    .hero-image-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    /* Overview Section */
+    .overview-section {
+      padding: 4rem 0;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .section-badge {
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      background: rgba(78, 205, 196, 0.1);
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #4ecdc4;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    
+    h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+    
+    .overview-text {
+      max-width: 900px;
+      margin: 0 auto;
+      font-size: 1.15rem;
+      line-height: 1.8;
+      color: #cfe7f8;
+    }
+    
+    /* Objectives Grid */
+    .objectives-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    
+    .objective-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(78, 205, 196, 0.2);
+      padding: 2rem;
+      border-radius: 20px;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .objective-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #4ecdc4, #9a6cff);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    
+    .objective-card:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .objective-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(78, 205, 196, 0.4);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(78, 205, 196, 0.2);
+    }
+    
+    .objective-card h3 {
+      color: #4ecdc4;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    .objective-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .objective-card li {
+      color: rgba(207, 231, 248, 0.9);
+      line-height: 1.8;
+      font-size: 1.05rem;
+      padding: 0.75rem 0;
+      padding-left: 1.75rem;
+      position: relative;
+      border-bottom: 1px solid rgba(78, 205, 196, 0.1);
+    }
+    
+    .objective-card li:last-child {
+      border-bottom: none;
+    }
+    
+    .objective-card li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #4ecdc4;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    
+    /* Features Section */
+    .features-section {
+      padding: 4rem 0;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    
+    .feature-card {
+      background: rgba(78, 205, 196, 0.08);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(78, 205, 196, 0.25);
+      padding: 2.5rem;
+      border-radius: 20px;
+      transition: all 0.4s ease;
+      text-align: center;
+    }
+    
+    .feature-card:hover {
+      background: rgba(78, 205, 196, 0.12);
+      transform: translateY(-8px);
+      border-color: rgba(78, 205, 196, 0.5);
+      box-shadow: 0 20px 50px rgba(78, 205, 196, 0.2);
+    }
+    
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+    
+    .feature-card h3 {
+      color: #ffffff;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    
+    .feature-card p {
+      color: rgba(207, 231, 248, 0.85);
+      line-height: 1.7;
+      font-size: 1.05rem;
+      margin: 0;
+    }
+    
+    /* Technical Section */
+    .technical-section {
+      padding: 4rem 0;
+      background: rgba(78, 205, 196, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(78, 205, 196, 0.2);
+      border-radius: 30px;
+      margin: 4rem 0;
+    }
+    
+    .technical-text {
+      max-width: 900px;
+      margin: 0 auto;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #cfe7f8;
+    }
+    
+    /* Footer */
+    footer {
+      padding: 4rem 0 3rem;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin-top: 4rem;
+    }
+    
+    footer p {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+    
+    footer a {
+      color: #4ecdc4;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    
+    footer a:hover {
+      color: #9a6cff;
+      text-decoration: underline;
+    }
+    
+    /* Language Switcher */
+    .lang-switcher {
+      position: fixed !important;
+      top: 2rem !important;
+      right: 2rem !important;
+      z-index: 1000 !important;
+      display: flex !important;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.08) !important;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(24, 191, 239, 0.5) !important;
+      border-radius: 50px;
+      padding: 0.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .lang-btn {
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: none;
+      border-radius: 50px;
+      color: #999 !important;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s ease;
+      display: flex !important;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .lang-btn:hover {
+      color: #4ecdc4 !important;
+      background: rgba(78, 205, 196, 0.15);
+    }
+    
+    .lang-btn.active {
+      color: #4ecdc4 !important;
+      background: rgba(78, 205, 196, 0.25);
+      font-weight: 600;
+    }
+    
+    .lang-flag {
+      width: 20px;
+      height: 14px;
+      border-radius: 2px;
+      overflow: hidden;
+      display: block;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .back-button {
+        top: 1rem;
+        left: 1rem;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+      }
+      
+      .lang-switcher {
+        top: 1rem !important;
+        right: 1rem !important;
+      }
+      
+      .hero {
+        padding: 4rem 0 3rem;
+      }
+      
+      h1 {
+        font-size: 3rem;
+      }
+      
+      .hero-subtitle {
+        font-size: 1.1rem;
+      }
+      
+      .meta-pills {
+        gap: 0.8rem;
+      }
+      
+      .pill {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+      }
+      
+      .objectives-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .overview-text, .technical-text {
+        font-size: 1rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 1.5rem;
+      }
+      
+      .objective-card {
+        padding: 1.5rem;
+      }
+      
+      .feature-card {
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Language Switcher -->
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="en">
+      <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30">
+        <rect width="60" height="30" fill="#012169"/>
+        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/>
+        <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+      </svg>
+      <span>EN</span>
+    </button>
+    <button class="lang-btn" data-lang="pl">
+      <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 10">
+        <rect width="16" height="5" fill="#fff"/>
+        <rect y="5" width="16" height="5" fill="#dc143c"/>
+      </svg>
+      <span>PL</span>
+    </button>
+    <button class="lang-btn" data-lang="nl">
+      <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 6">
+        <rect width="9" height="6" fill="#21468B"/>
+        <rect width="9" height="4" fill="#fff"/>
+        <rect width="9" height="2" fill="#AE1C28"/>
+      </svg>
+      <span>NL</span>
+    </button>
+  </div>
+  
+  <a href="/projects/" class="back-button"><span data-i18n="back">← Back to Projects</span></a>
+  
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge" data-i18n="hero.badge">🎮 Audio Middleware</div>
+        <h1 data-i18n="title">Middleware 2</h1>
+        <p class="hero-subtitle" data-i18n="subtitle">
+          Complete Wwise audio implementation for game level, mimicking real-world production workflow 
+          with spatial audio, dynamic mixing, and Game Syncs integration.
+        </p>
+        
+        <div class="meta-pills">
+          <div class="pill" data-i18n="meta.pill1">🏫 Digital Arts & Entertainment</div>
+          <div class="pill" data-i18n="meta.pill2">📝 Exam Assignment</div>
+          <div class="pill" data-i18n="meta.pill3">🎵 Wwise & Unreal Engine</div>
+          <div class="pill" data-i18n="meta.pill4">🔊 Audio Implementation</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Hero Image -->
+  <section class="hero-image-section">
+    <div class="container">
+      <div class="hero-image-wrapper">
+        <img src="../assets/images/projects-middleware2/ellen.png" alt="Middleware 2 Game Screenshot" loading="lazy" decoding="async">
+      </div>
+    </div>
+  </section>
+  
+  <!-- Overview Section -->
+  <section class="overview-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge" data-i18n="overview.badge">Project Overview</div>
+        <h2 data-i18n="overview.title">Real-World Audio Implementation</h2>
+      </div>
+      
+      <p class="overview-text" data-i18n="overview.text">
+        The goal of this exam assignment was to mimic a real-world implementation scenario. I was provided 
+        with a working game build that included a Menu and the First Level, with all events and game parameter changes 
+        already implemented. My task was to implement all audio needed to create a fully finished gameplay experience, 
+        demonstrating professional Wwise workflow and best practices.
+      </p>
+    </div>
+  </section>
+  
+  <!-- Project Objectives -->
+  <section class="objectives-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge" data-i18n="objectives.badge">Implementation Goals</div>
+        <h2 data-i18n="objectives.title">Project Objectives</h2>
+      </div>
+      
+      <div class="objectives-grid">
+        <div class="objective-card">
+          <h3 data-i18n="obj1.title">Clean Project Structure</h3>
+          <ul>
+            <li data-i18n="obj1.item1">Follow best practices for Wwise project structure</li>
+            <li data-i18n="obj1.item2">Optimize memory and CPU usage</li>
+            <li data-i18n="obj1.item3">Maintain organized asset hierarchy</li>
+          </ul>
+        </div>
+        
+        <div class="objective-card">
+          <h3 data-i18n="obj2.title">Technical Implementation</h3>
+          <ul>
+            <li data-i18n="obj2.item1">Implement all provided events</li>
+            <li data-i18n="obj2.item2">Setup correct spatialization for in-world sounds</li>
+            <li data-i18n="obj2.item3">Configure orientation and attenuation settings</li>
+            <li data-i18n="obj2.item4">Apply reverb using provided Game Syncs</li>
+          </ul>
+        </div>
+        
+        <div class="objective-card">
+          <h3 data-i18n="obj3.title">Audio Design Quality</h3>
+          <ul>
+            <li data-i18n="obj3.item1">Create a cohesive sound palette</li>
+            <li data-i18n="obj3.item2">Ensure correctness and loop sounds where needed</li>
+            <li data-i18n="obj3.item3">Avoid sync issues and cut-off sounds</li>
+            <li data-i18n="obj3.item4">Prevent repetitive sounds through variation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Key Features -->
+  <section class="features-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge" data-i18n="features.badge">Implementation Features</div>
+        <h2 data-i18n="features.title">Key Technical Features</h2>
+      </div>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">🎯</span>
+          <h3 data-i18n="feat1.title">Spatial Audio</h3>
+          <p data-i18n="feat1.desc">
+            3D spatialization with proper attenuation curves and orientation settings for immersive 
+            audio positioning throughout the game world.
+          </p>
+        </div>
+        
+        <div class="feature-card">
+          <span class="feature-icon">🔊</span>
+          <h3 data-i18n="feat2.title">Dynamic Mix</h3>
+          <p data-i18n="feat2.desc">
+            Cohesive mix that adapts to gameplay, ensuring clarity and balance across all audio 
+            elements for optimal player experience.
+          </p>
+        </div>
+        
+        <div class="feature-card">
+          <span class="feature-icon">🎮</span>
+          <h3 data-i18n="feat3.title">Game Syncs Integration</h3>
+          <p data-i18n="feat3.desc">
+            Integration of Game Syncs for reverb zones and parameter-driven audio changes, 
+            creating responsive and contextual soundscapes.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Technical Details -->
+  <section class="technical-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge" data-i18n="technical.badge">Technical Approach</div>
+        <h2 data-i18n="technical.title">Professional Implementation</h2>
+      </div>
+      
+      <p class="technical-text" data-i18n="technical.text">
+        This project demonstrates professional Wwise implementation skills including event management, 
+        Game Sync integration, 3D audio positioning, and mix optimization. The implementation follows 
+        industry best practices for memory management and CPU efficiency. All audio assets were 
+        carefully selected and processed to create a cohesive sound palette that enhances gameplay while 
+        maintaining technical performance standards required for real-time game audio.
+      </p>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>
+        <span data-i18n="footer.credit">Audio Implementation by</span> <a href="https://igorszuniewicz.com" target="_blank" rel="noopener">Igor Szuniewicz</a> | 
+        <span data-i18n="footer.project">Middleware 2 Project</span>
+      </p>
+      <p style="margin-top: 0.5rem; font-size: 0.85rem;" data-i18n="footer.copyright">
+        © 2025 Igor Szuniewicz. Exam assignment for Digital Arts & Entertainment.
+      </p>
+    </div>
+  </footer>
+  
+  <!-- Translations Data -->
+  <script type="application/json" id="translations-data" src="../locales/middleware2.json"></script>
+  
+  <!-- Language Switcher Script -->
+  <script>
+    // Load translations from inline JSON
+    let translations = {};
+    
+    async function loadTranslations() {
+      try {
+        const response = await fetch('../locales/middleware2.json');
+        translations = await response.json();
+      } catch (error) {
+        // Failed to load translations
+        translations = { en: {}, pl: {}, nl: {} };
+      }
+    }
+    
+    let currentLang = localStorage.getItem('language') || 'en';
+    
+    // Get nested value from object using dot notation
+    function getNestedValue(obj, path) {
+      return path.split('.').reduce((current, key) => current?.[key], obj);
+    }
+    
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('language', lang);
+      
+      // Update all translatable elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        const translation = getNestedValue(translations[lang], key);
+        if (translation) {
+          el.textContent = translation;
+        }
+      });
+      
+      // Update active button
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+    }
+    
+    // Initialize language on load
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadTranslations();
+      setLanguage(currentLang);
+      
+      // Add click handlers
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          setLanguage(btn.dataset.lang);
+        });
+      });
+    });
+  </script>
+</html>
