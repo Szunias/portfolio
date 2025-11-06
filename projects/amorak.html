@@ -622,50 +622,93 @@
                 box-shadow: 0 6px 25px rgba(139, 69, 19, 0.4);
             }
 
-            /* === PROJECT CONTEXT COMPACT === */
+            /* === PROJECT CONTEXT - ASYMMETRIC CREATIVE === */
             .project-context-compact {
-                max-width: 1100px;
-                margin: 3rem auto;
-                padding: 2rem;
+                max-width: 1200px;
+                margin: 4rem auto;
+                padding: 3rem 2rem;
+                position: relative;
+            }
+
+            .project-context-compact::before {
+                content: '';
+                position: absolute;
+                top: 20%;
+                right: -100px;
+                width: 400px;
+                height: 400px;
+                background: radial-gradient(circle, rgba(139, 69, 19, 0.08), transparent 70%);
+                pointer-events: none;
+                z-index: 0;
             }
 
             .project-context-compact h3 {
                 font-family: "Cinzel", serif;
-                font-size: 1.8rem;
-                color: #cd853f;
-                margin-bottom: 2rem;
-                font-weight: 600;
-                text-align: center;
+                font-size: 2.5rem;
+                background: linear-gradient(135deg, #cd853f, #daa520);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 3rem;
+                font-weight: 700;
+                text-align: left;
+                position: relative;
+                z-index: 1;
+            }
+
+            .project-context-compact h3::after {
+                content: '';
+                position: absolute;
+                bottom: -15px;
+                left: 0;
+                width: 120px;
+                height: 4px;
+                background: linear-gradient(90deg, #cd853f, transparent);
+                transform: skewX(-20deg);
             }
 
             .context-cards {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1.2rem;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: auto auto;
+                gap: 1.5rem;
+                position: relative;
+                z-index: 1;
             }
 
             .context-card {
                 display: flex;
                 align-items: center;
-                gap: 1rem;
-                padding: 1.2rem 1.5rem;
-                background: rgba(139, 69, 19, 0.08);
-                border: 1px solid rgba(139, 69, 19, 0.3);
-                border-radius: 12px;
-                transition: all 0.3s ease;
+                gap: 1.2rem;
+                padding: 1.8rem 2rem;
+                background: rgba(20, 10, 8, 0.6);
+                border: 2px solid;
+                position: relative;
+                overflow: hidden;
+                transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
                 cursor: default;
             }
 
-            .context-card:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 6px 20px rgba(139, 69, 19, 0.25);
+            .context-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+                transition: left 0.6s ease;
+            }
+
+            .context-card:hover::before {
+                left: 100%;
             }
 
             .context-card svg {
                 flex-shrink: 0;
-                width: 28px;
-                height: 28px;
-                stroke: #cd853f;
+                width: 36px;
+                height: 36px;
+                filter: drop-shadow(0 2px 8px currentColor);
+                transition: transform 0.4s ease;
             }
 
             .card-content {
@@ -673,61 +716,132 @@
             }
 
             .card-value {
-                font-size: 1rem;
-                color: #e0e6ed;
-                font-weight: 500;
-                line-height: 1.4;
+                font-size: 1.05rem;
+                color: #f0f0f0;
+                font-weight: 600;
+                line-height: 1.5;
+                letter-spacing: 0.3px;
             }
 
-            /* Card color variations */
+            /* TYPE CARD - Diagonal cut top-right */
             .type-card {
-                background: linear-gradient(135deg, rgba(139, 69, 19, 0.12), rgba(139, 69, 19, 0.05));
-                border-color: rgba(139, 69, 19, 0.4);
+                grid-column: 1 / 2;
+                grid-row: 1;
+                clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+                background: linear-gradient(145deg, rgba(139, 69, 19, 0.2), rgba(92, 46, 13, 0.15));
+                border-color: #cd853f;
             }
 
             .type-card svg {
-                stroke: #cd853f;
+                stroke: #ff8c42;
             }
 
+            .type-card:hover {
+                transform: rotate(-1deg) scale(1.03);
+                box-shadow: -8px 8px 25px rgba(139, 69, 19, 0.4);
+            }
+
+            /* DURATION CARD - Hexagon shape */
             .duration-card {
-                background: linear-gradient(135deg, rgba(205, 133, 63, 0.12), rgba(205, 133, 63, 0.05));
-                border-color: rgba(205, 133, 63, 0.4);
+                grid-column: 2 / 3;
+                grid-row: 1;
+                clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+                background: linear-gradient(160deg, rgba(205, 133, 63, 0.25), rgba(184, 115, 51, 0.12));
+                border-color: #daa520;
             }
 
             .duration-card svg {
-                stroke: #d2b48c;
+                stroke: #ffa500;
             }
 
+            .duration-card:hover {
+                transform: scale(1.08) translateY(-5px);
+                box-shadow: 0 15px 35px rgba(218, 165, 32, 0.5);
+            }
+
+            /* ROLE CARD - Skewed parallelogram */
             .role-card {
-                background: linear-gradient(135deg, rgba(160, 82, 45, 0.12), rgba(160, 82, 45, 0.05));
-                border-color: rgba(160, 82, 45, 0.4);
+                grid-column: 3 / 4;
+                grid-row: 1;
+                clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+                background: linear-gradient(175deg, rgba(160, 82, 45, 0.22), rgba(120, 62, 35, 0.1));
+                border-color: #bc8f77;
             }
 
             .role-card svg {
-                stroke: #bc8f77;
+                stroke: #cd9575;
             }
 
+            .role-card:hover {
+                transform: skewY(2deg) translateX(5px);
+                box-shadow: 10px -5px 30px rgba(160, 82, 45, 0.45);
+            }
+
+            /* DELIVERABLE CARD - Diagonal cut bottom-left (spans 2 cols) */
             .deliverable-card {
-                background: linear-gradient(135deg, rgba(184, 115, 51, 0.12), rgba(184, 115, 51, 0.05));
-                border-color: rgba(184, 115, 51, 0.4);
+                grid-column: 1 / 3;
+                grid-row: 2;
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 15% 100%);
+                background: linear-gradient(130deg, rgba(184, 115, 51, 0.28), rgba(139, 89, 41, 0.15));
+                border-color: #daa520;
+                padding: 2rem 2.5rem;
             }
 
             .deliverable-card svg {
-                stroke: #daa520;
+                stroke: #ffb84d;
+                width: 42px;
+                height: 42px;
             }
 
+            .deliverable-card:hover {
+                transform: rotate(1deg) scale(1.02);
+                box-shadow: 0 10px 40px rgba(218, 165, 32, 0.4);
+            }
+
+            /* SPECS CARD - Trapezoid */
             .specs-card {
-                background: linear-gradient(135deg, rgba(222, 184, 135, 0.12), rgba(222, 184, 135, 0.05));
-                border-color: rgba(222, 184, 135, 0.4);
+                grid-column: 3 / 4;
+                grid-row: 2;
+                clip-path: polygon(0 0, 100% 15%, 100% 100%, 0 85%);
+                background: linear-gradient(155deg, rgba(222, 184, 135, 0.2), rgba(210, 180, 140, 0.12));
+                border-color: #e8c896;
             }
 
             .specs-card svg {
-                stroke: #e8c896;
+                stroke: #f4d2a0;
             }
 
-            @media (max-width: 768px) {
+            .specs-card:hover {
+                transform: perspective(500px) rotateY(8deg);
+                box-shadow: 12px 8px 30px rgba(232, 200, 150, 0.4);
+            }
+
+            @media (max-width: 968px) {
+                .context-cards {
+                    grid-template-columns: repeat(2, 1fr);
+                    grid-template-rows: auto auto auto;
+                }
+
+                .type-card { grid-column: 1 / 2; grid-row: 1; }
+                .duration-card { grid-column: 2 / 3; grid-row: 1; }
+                .role-card { grid-column: 1 / 2; grid-row: 2; }
+                .deliverable-card { grid-column: 2 / 3; grid-row: 2; }
+                .specs-card { grid-column: 1 / 3; grid-row: 3; }
+            }
+
+            @media (max-width: 640px) {
                 .context-cards {
                     grid-template-columns: 1fr;
+                }
+
+                .context-card {
+                    clip-path: none !important;
+                    border-radius: 12px;
+                }
+
+                .type-card, .duration-card, .role-card, .deliverable-card, .specs-card {
+                    grid-column: 1 / 2 !important;
+                    grid-row: auto !important;
                 }
             }
 
@@ -960,44 +1074,60 @@
                 text-align: left;
             }
 
+            /* CHALLENGES - RED/ORANGE/YELLOW WARNING THEME (THIRD UNIQUE STYLE) */
             .challenge-card-amorak {
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(139, 69, 19, 0.3);
-                border-radius: 16px;
-                padding: 2rem;
-                transition: all 0.3s ease;
-                backdrop-filter: blur(10px);
+                background: linear-gradient(135deg, rgba(231, 76, 60, 0.08), rgba(192, 57, 43, 0.05));
+                border: 2px solid transparent;
+                border-image: linear-gradient(135deg, #e74c3c, #f39c12) 1;
+                border-radius: 0;
+                padding: 2.5rem;
+                transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                backdrop-filter: blur(15px);
                 position: relative;
-                overflow: hidden;
+                overflow: visible;
+                clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
             }
 
             .challenge-card-amorak::before {
                 content: "";
                 position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(
-                    90deg,
-                    transparent,
-                    rgba(139, 69, 19, 0.1),
-                    transparent
-                );
-                transition: left 0.5s ease;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                background: linear-gradient(45deg, #e74c3c, #f39c12, #e67e22, #e74c3c);
+                background-size: 300% 300%;
+                z-index: -1;
+                border-radius: inherit;
+                animation: gradient-border 4s ease infinite;
+                opacity: 0;
+                transition: opacity 0.5s ease;
+            }
+
+            @keyframes gradient-border {
+                0%, 100% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
             }
 
             .challenge-card-amorak:hover::before {
-                left: 100%;
+                opacity: 1;
             }
 
             .challenge-card-amorak:hover {
-                border-color: #8b4513;
-                transform: translateY(-8px);
+                transform: scale(1.03) rotate(0.5deg);
                 box-shadow:
-                    0 15px 50px rgba(0, 0, 0, 0.6),
-                    0 0 30px rgba(139, 69, 19, 0.3);
-                background: rgba(255, 255, 255, 0.05);
+                    0 20px 60px rgba(231, 76, 60, 0.4),
+                    0 0 40px rgba(243, 156, 18, 0.3),
+                    inset 0 0 30px rgba(231, 76, 60, 0.1);
+                background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(243, 156, 18, 0.12));
+            }
+
+            .challenge-card-amorak:nth-child(2) {
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+            }
+
+            .challenge-card-amorak:nth-child(3) {
+                clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
             }
 
             .challenge-icon-amorak {
@@ -1009,11 +1139,15 @@
 
             .challenge-card-amorak h4 {
                 font-family: "Sora", sans-serif;
-                font-size: 1.4rem;
-                color: #cd853f;
+                font-size: 1.5rem;
+                background: linear-gradient(135deg, #e74c3c, #f39c12);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
                 margin-bottom: 1.5rem;
-                font-weight: 600;
-                letter-spacing: -0.01em;
+                font-weight: 700;
+                letter-spacing: 0.3px;
+                text-transform: uppercase;
+                font-size: 1.2rem;
             }
 
             .challenge-content-amorak {
@@ -2069,80 +2203,192 @@
                     flex-wrap: wrap;
                 }
 
+                /* WORKFLOW - DIAGONAL TIMELINE (COMPLETELY DIFFERENT STYLE) */
                 .workflow-step {
-                    background: linear-gradient(135deg, rgba(139, 69, 19, 0.08), rgba(205, 133, 63, 0.08));
-                    border: 1px solid rgba(139, 69, 19, 0.3);
-                    border-radius: 12px;
-                    padding: 1.5rem;
-                    text-align: center;
+                    position: relative;
+                    background: transparent;
+                    border: none;
+                    padding: 2rem;
+                    text-align: left;
                     flex: 1;
-                    min-width: 200px;
-                    max-width: 250px;
-                    transition: all 0.3s ease;
+                    min-width: 280px;
+                    max-width: 320px;
+                    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
                     cursor: pointer;
                 }
 
+                .workflow-step::before {
+                    content: '';
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    width: 0;
+                    height: 0;
+                    background: radial-gradient(circle, rgba(26, 188, 156, 0.3), transparent);
+                    border-radius: 50%;
+                    transform: translate(-50%, -50%);
+                    transition: all 0.6s ease;
+                    z-index: -1;
+                }
+
+                .workflow-step:hover::before {
+                    width: 300px;
+                    height: 300px;
+                }
+
                 .workflow-step:hover {
-                    transform: translateY(-8px);
-                    border-color: rgba(205, 133, 63, 0.6);
-                    box-shadow: 0 8px 24px rgba(139, 69, 19, 0.25);
+                    transform: translateX(15px) scale(1.05);
                 }
 
                 .step-icon {
-                    margin-bottom: 1rem;
-                    color: #cd853f;
+                    position: relative;
+                    margin-bottom: 1.5rem;
+                    width: 72px;
+                    height: 72px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #1abc9c, #16a085);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 0 30px rgba(26, 188, 156, 0.5);
+                    animation: pulse-icon 3s ease-in-out infinite;
+                }
+
+                @keyframes pulse-icon {
+                    0%, 100% { box-shadow: 0 0 20px rgba(26, 188, 156, 0.4), 0 0 40px rgba(26, 188, 156, 0.2); }
+                    50% { box-shadow: 0 0 40px rgba(26, 188, 156, 0.7), 0 0 60px rgba(26, 188, 156, 0.4); }
+                }
+
+                .workflow-step:nth-child(3) .step-icon {
+                    background: linear-gradient(135deg, #3498db, #2980b9);
+                    box-shadow: 0 0 30px rgba(52, 152, 219, 0.5);
+                }
+
+                .workflow-step:nth-child(3) .step-icon {
+                    animation: pulse-icon-blue 3s ease-in-out infinite 0.5s;
+                }
+
+                @keyframes pulse-icon-blue {
+                    0%, 100% { box-shadow: 0 0 20px rgba(52, 152, 219, 0.4), 0 0 40px rgba(52, 152, 219, 0.2); }
+                    50% { box-shadow: 0 0 40px rgba(52, 152, 219, 0.7), 0 0 60px rgba(52, 152, 219, 0.4); }
+                }
+
+                .workflow-step:nth-child(5) .step-icon {
+                    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+                    box-shadow: 0 0 30px rgba(155, 89, 182, 0.5);
+                }
+
+                .workflow-step:nth-child(5) .step-icon {
+                    animation: pulse-icon-purple 3s ease-in-out infinite 1s;
+                }
+
+                @keyframes pulse-icon-purple {
+                    0%, 100% { box-shadow: 0 0 20px rgba(155, 89, 182, 0.4), 0 0 40px rgba(155, 89, 182, 0.2); }
+                    50% { box-shadow: 0 0 40px rgba(155, 89, 182, 0.7), 0 0 60px rgba(155, 89, 182, 0.4); }
                 }
 
                 .step-icon svg {
-                    width: 48px;
-                    height: 48px;
-                    stroke: currentColor;
-                    transition: all 0.3s ease;
+                    width: 36px;
+                    height: 36px;
+                    stroke: #fff;
+                    stroke-width: 2.5;
+                    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+                    transition: all 0.4s ease;
+                }
+
+                .workflow-step:hover .step-icon {
+                    transform: rotate(360deg) scale(1.15);
+                    animation: none;
                 }
 
                 .workflow-step:hover .step-icon svg {
-                    transform: scale(1.1);
-                    stroke: #d2b48c;
+                    stroke: #fff;
+                    filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.5));
                 }
 
                 .workflow-step h4 {
-                    font-size: 1.25rem;
-                    margin-bottom: 0.5rem;
-                    color: #cd853f;
+                    font-size: 1.6rem;
+                    margin-bottom: 0.8rem;
+                    color: #1abc9c;
+                    font-weight: 700;
+                    letter-spacing: 0.5px;
+                    transition: all 0.3s ease;
+                }
+
+                .workflow-step:nth-child(3) h4 {
+                    color: #3498db;
+                }
+
+                .workflow-step:nth-child(5) h4 {
+                    color: #9b59b6;
+                }
+
+                .workflow-step:hover h4 {
+                    transform: translateX(8px);
+                    text-shadow: 0 0 15px currentColor;
                 }
 
                 .workflow-step p {
-                    font-size: 0.9rem;
-                    color: #9ca3af;
-                    margin-bottom: 1rem;
+                    font-size: 1rem;
+                    color: #b0b7c3;
+                    margin-bottom: 1.2rem;
+                    font-weight: 500;
                 }
 
                 .step-details {
                     display: flex;
-                    flex-direction: column;
-                    gap: 0.5rem;
+                    flex-direction: row;
+                    gap: 0.6rem;
+                    flex-wrap: wrap;
                 }
 
                 .tech-badge {
-                    background: rgba(139, 69, 19, 0.2);
-                    padding: 0.3rem 0.8rem;
-                    border-radius: 6px;
-                    font-size: 0.75rem;
-                    color: #d2b48c;
-                    border: 1px solid rgba(139, 69, 19, 0.4);
+                    background: linear-gradient(135deg, rgba(26, 188, 156, 0.15), rgba(22, 160, 133, 0.1));
+                    padding: 0.5rem 1rem;
+                    border-radius: 20px;
+                    font-size: 0.8rem;
+                    color: #1abc9c;
+                    border: 1.5px solid rgba(26, 188, 156, 0.4);
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                }
+
+                .workflow-step:nth-child(3) .tech-badge {
+                    background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(41, 128, 185, 0.1));
+                    color: #3498db;
+                    border-color: rgba(52, 152, 219, 0.4);
+                }
+
+                .workflow-step:nth-child(5) .tech-badge {
+                    background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(142, 68, 173, 0.1));
+                    color: #9b59b6;
+                    border-color: rgba(155, 89, 182, 0.4);
+                }
+
+                .tech-badge:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 4px 15px currentColor;
                 }
 
                 .workflow-arrow {
-                    color: #8b4513;
-                    opacity: 0.5;
+                    color: #1abc9c;
+                    opacity: 0.6;
                     display: flex;
                     align-items: center;
+                    position: relative;
+                    animation: flow-arrow 2s ease-in-out infinite;
+                }
+
+                @keyframes flow-arrow {
+                    0%, 100% { opacity: 0.4; transform: translateX(0); }
+                    50% { opacity: 1; transform: translateX(10px); }
                 }
 
                 .workflow-arrow svg {
-                    width: 32px;
-                    height: 32px;
+                    width: 48px;
+                    height: 48px;
                     stroke: currentColor;
+                    filter: drop-shadow(0 0 10px currentColor);
                 }
 
                 /* Technical Specs Grid */
@@ -2449,11 +2695,11 @@
                             </p>
                             <p class="challenge-label-amorak" data-i18n="challenges.solution_label">Solution:</p>
                             <ul class="challenge-list">
-                                <li>Environment: 60-90Hz (sub rumble)</li>
-                                <li>Creature: 120-180Hz (chest punch)</li>
-                                <li>Notch filter @ 80Hz on environment</li>
-                                <li>M/S: creature mono, environment wide-stereo</li>
-                                <li>Dynamic EQ: +3dB on roar peak</li>
+                                <li data-i18n="challenges.challenge1.sol1">Environment: 60-90Hz (sub rumble)</li>
+                                <li data-i18n="challenges.challenge1.sol2">Creature: 120-180Hz (chest punch)</li>
+                                <li data-i18n="challenges.challenge1.sol3">Notch filter @ 80Hz on environment</li>
+                                <li data-i18n="challenges.challenge1.sol4">M/S: creature mono, environment wide-stereo</li>
+                                <li data-i18n="challenges.challenge1.sol5">Dynamic EQ: +3dB on roar peak</li>
                             </ul>
                         </div>
                     </div>
@@ -2475,11 +2721,11 @@
                             </p>
                             <p class="challenge-label-amorak" data-i18n="challenges.solution_label">Solution:</p>
                             <ul class="challenge-list">
-                                <li>3 ambience layers (distant/mid/close)</li>
-                                <li>Automated crossfades from camera metadata</li>
-                                <li>300ms smoothing on level changes</li>
-                                <li>Close-mic layer (<5m) with reduced reverb</li>
-                                <li>Separate IR times for intimacy</li>
+                                <li data-i18n="challenges.challenge2.sol1">3 ambience layers (distant/mid/close)</li>
+                                <li data-i18n="challenges.challenge2.sol2">Automated crossfades from camera metadata</li>
+                                <li data-i18n="challenges.challenge2.sol3">300ms smoothing on level changes</li>
+                                <li data-i18n="challenges.challenge2.sol4">Close-mic layer (<5m) with reduced reverb</li>
+                                <li data-i18n="challenges.challenge2.sol5">Separate IR times for intimacy</li>
                             </ul>
                         </div>
                     </div>
@@ -2503,11 +2749,11 @@
                             </p>
                             <p class="challenge-label-amorak" data-i18n="challenges.solution_label">Solution:</p>
                             <ul class="challenge-list">
-                                <li>Dynamic ducking: -8dB on dialogue (100ms attack, 500ms release)</li>
-                                <li>Permanent -4dB notch @ 1-3kHz in ambience</li>
-                                <li>Dialogue: +2.5kHz presence boost</li>
-                                <li>De-essing @ 6-8kHz</li>
-                                <li>HPF @ 80Hz to remove rumble bleed</li>
+                                <li data-i18n="challenges.challenge3.sol1">Dynamic ducking: -8dB on dialogue (100ms attack, 500ms release)</li>
+                                <li data-i18n="challenges.challenge3.sol2">Permanent -4dB notch @ 1-3kHz in ambience</li>
+                                <li data-i18n="challenges.challenge3.sol3">Dialogue: +2.5kHz presence boost</li>
+                                <li data-i18n="challenges.challenge3.sol4">De-essing @ 6-8kHz</li>
+                                <li data-i18n="challenges.challenge3.sol5">HPF @ 80Hz to remove rumble bleed</li>
                             </ul>
                         </div>
                     </div>
