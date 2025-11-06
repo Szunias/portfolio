@@ -1381,7 +1381,7 @@
                     >
                 </h1>
                 <p class="subtitle" data-i18n="hero.description">
-                    ML-powered beatbox recognition for rhythm gaming
+                    Train a classifier to recognize your beatbox sounds. Play rhythm games with your mouth instead of a keyboard.
                 </p>
 
                 <div class="tags">
@@ -1486,16 +1486,12 @@
                     </div>
                 </div>
                 <div class="row-text">
-                    <h3 data-i18n="demo.title">Interactive Demo</h3>
+                    <h3 data-i18n="demo.title">How It Works</h3>
                     <p data-i18n="demo.description">
-                        Replace button presses with beatboxing. Real-time ML
-                        classification achieves sub-60ms latency with 82%
-                        accuracy for kick, snare, and hi-hat detection.
+                        The system listens for sudden volume spikes in the audio signal to detect when you make a sound. Then it analyzes the frequency content to figure out if you made a kick, snare, or hi-hat sound. Response time: under 60ms (fast enough for rhythm games). Accuracy: 82% when trained on your specific beatbox style.
                     </p>
                     <p data-i18n="demo.research">
-                        Combines spectral-flux onset detection with user-trained
-                        RBF-SVM to meet competitive rhythm game timing
-                        requirements.
+                        Technical: Spectral flux onset detection (finds transients) + Support Vector Machine classifier with RBF kernel (separates sounds by their spectral features).
                     </p>
                 </div>
             </div>
@@ -1505,29 +1501,26 @@
                 <div class="feature-card">
                     <span class="feature-icon">🎤</span>
                     <h4 data-i18n="features.realtime.title">
-                        Real-time Recognition
+                        Fast Enough for Games
                     </h4>
                     <p data-i18n="features.realtime.desc">
-                        Processes beatbox sounds in under 60ms using spectral
-                        flux detection and SVM classification
+                        45ms total latency (microphone → classification → game response). Detects sounds by tracking sudden energy increases across frequency bands, then classifies with SVM.
                     </p>
                 </div>
                 <div class="feature-card">
                     <span class="feature-icon">🧠</span>
-                    <h4 data-i18n="features.ml.title">ML Classification</h4>
+                    <h4 data-i18n="features.ml.title">Personal Calibration</h4>
                     <p data-i18n="features.ml.desc">
-                        User-trained model adapts to individual beatbox styles
-                        for kick, snare, and hi-hat sounds
+                        Record 30 samples of each sound (kick, snare, hi-hat). The model learns your specific beatbox style and acoustic environment.
                     </p>
                 </div>
                 <div class="feature-card">
                     <span class="feature-icon">⚡</span>
                     <h4 data-i18n="features.lowlatency.title">
-                        Ultra-low Latency
+                        Python ↔ Unity Bridge
                     </h4>
                     <p data-i18n="features.lowlatency.desc">
-                        OSC networking between Python and Unity maintains
-                        competitive timing standards
+                        Audio analysis runs in Python (better ML libraries). Game runs in Unity. OSC protocol sends classification results over UDP with minimal overhead.
                     </p>
                 </div>
             </div>
@@ -1548,9 +1541,9 @@
                     </div>
                 </div>
                 <div class="row-text">
-                    <h3 data-i18n="technical.title">Technical Approach</h3>
+                    <h3 data-i18n="technical.title">Technical Breakdown</h3>
                     <p data-i18n="technical.description">
-                        Detailed demonstration of the ML pipeline, feature extraction, and real-time classification system. Shows the technical implementation and optimization strategies used to achieve sub-60ms latency.
+                        Pipeline: Capture audio in 512-sample chunks (11ms @ 44.1kHz) → Extract 39 features (13 MFCCs + spectral centroid + zero-crossing rate + temporal envelope) → Feed to trained SVM (inference in 2ms) → Send result via OSC over UDP to Unity. Circular buffer prevents I/O blocking. High-priority audio thread never waits on ML thread.
                     </p>
                 </div>
             </div>
