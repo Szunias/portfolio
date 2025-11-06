@@ -2183,80 +2183,192 @@
                     flex-wrap: wrap;
                 }
 
+                /* WORKFLOW - DIAGONAL TIMELINE (COMPLETELY DIFFERENT STYLE) */
                 .workflow-step {
-                    background: linear-gradient(135deg, rgba(139, 69, 19, 0.08), rgba(205, 133, 63, 0.08));
-                    border: 1px solid rgba(139, 69, 19, 0.3);
-                    border-radius: 12px;
-                    padding: 1.5rem;
-                    text-align: center;
+                    position: relative;
+                    background: transparent;
+                    border: none;
+                    padding: 2rem;
+                    text-align: left;
                     flex: 1;
-                    min-width: 200px;
-                    max-width: 250px;
-                    transition: all 0.3s ease;
+                    min-width: 280px;
+                    max-width: 320px;
+                    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
                     cursor: pointer;
                 }
 
+                .workflow-step::before {
+                    content: '';
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    width: 0;
+                    height: 0;
+                    background: radial-gradient(circle, rgba(26, 188, 156, 0.3), transparent);
+                    border-radius: 50%;
+                    transform: translate(-50%, -50%);
+                    transition: all 0.6s ease;
+                    z-index: -1;
+                }
+
+                .workflow-step:hover::before {
+                    width: 300px;
+                    height: 300px;
+                }
+
                 .workflow-step:hover {
-                    transform: translateY(-8px);
-                    border-color: rgba(205, 133, 63, 0.6);
-                    box-shadow: 0 8px 24px rgba(139, 69, 19, 0.25);
+                    transform: translateX(15px) scale(1.05);
                 }
 
                 .step-icon {
-                    margin-bottom: 1rem;
-                    color: #cd853f;
+                    position: relative;
+                    margin-bottom: 1.5rem;
+                    width: 72px;
+                    height: 72px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #1abc9c, #16a085);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 0 30px rgba(26, 188, 156, 0.5);
+                    animation: pulse-icon 3s ease-in-out infinite;
+                }
+
+                @keyframes pulse-icon {
+                    0%, 100% { box-shadow: 0 0 20px rgba(26, 188, 156, 0.4), 0 0 40px rgba(26, 188, 156, 0.2); }
+                    50% { box-shadow: 0 0 40px rgba(26, 188, 156, 0.7), 0 0 60px rgba(26, 188, 156, 0.4); }
+                }
+
+                .workflow-step:nth-child(3) .step-icon {
+                    background: linear-gradient(135deg, #3498db, #2980b9);
+                    box-shadow: 0 0 30px rgba(52, 152, 219, 0.5);
+                }
+
+                .workflow-step:nth-child(3) .step-icon {
+                    animation: pulse-icon-blue 3s ease-in-out infinite 0.5s;
+                }
+
+                @keyframes pulse-icon-blue {
+                    0%, 100% { box-shadow: 0 0 20px rgba(52, 152, 219, 0.4), 0 0 40px rgba(52, 152, 219, 0.2); }
+                    50% { box-shadow: 0 0 40px rgba(52, 152, 219, 0.7), 0 0 60px rgba(52, 152, 219, 0.4); }
+                }
+
+                .workflow-step:nth-child(5) .step-icon {
+                    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+                    box-shadow: 0 0 30px rgba(155, 89, 182, 0.5);
+                }
+
+                .workflow-step:nth-child(5) .step-icon {
+                    animation: pulse-icon-purple 3s ease-in-out infinite 1s;
+                }
+
+                @keyframes pulse-icon-purple {
+                    0%, 100% { box-shadow: 0 0 20px rgba(155, 89, 182, 0.4), 0 0 40px rgba(155, 89, 182, 0.2); }
+                    50% { box-shadow: 0 0 40px rgba(155, 89, 182, 0.7), 0 0 60px rgba(155, 89, 182, 0.4); }
                 }
 
                 .step-icon svg {
-                    width: 48px;
-                    height: 48px;
-                    stroke: currentColor;
-                    transition: all 0.3s ease;
+                    width: 36px;
+                    height: 36px;
+                    stroke: #fff;
+                    stroke-width: 2.5;
+                    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+                    transition: all 0.4s ease;
+                }
+
+                .workflow-step:hover .step-icon {
+                    transform: rotate(360deg) scale(1.15);
+                    animation: none;
                 }
 
                 .workflow-step:hover .step-icon svg {
-                    transform: scale(1.1);
-                    stroke: #d2b48c;
+                    stroke: #fff;
+                    filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.5));
                 }
 
                 .workflow-step h4 {
-                    font-size: 1.25rem;
-                    margin-bottom: 0.5rem;
-                    color: #cd853f;
+                    font-size: 1.6rem;
+                    margin-bottom: 0.8rem;
+                    color: #1abc9c;
+                    font-weight: 700;
+                    letter-spacing: 0.5px;
+                    transition: all 0.3s ease;
+                }
+
+                .workflow-step:nth-child(3) h4 {
+                    color: #3498db;
+                }
+
+                .workflow-step:nth-child(5) h4 {
+                    color: #9b59b6;
+                }
+
+                .workflow-step:hover h4 {
+                    transform: translateX(8px);
+                    text-shadow: 0 0 15px currentColor;
                 }
 
                 .workflow-step p {
-                    font-size: 0.9rem;
-                    color: #9ca3af;
-                    margin-bottom: 1rem;
+                    font-size: 1rem;
+                    color: #b0b7c3;
+                    margin-bottom: 1.2rem;
+                    font-weight: 500;
                 }
 
                 .step-details {
                     display: flex;
-                    flex-direction: column;
-                    gap: 0.5rem;
+                    flex-direction: row;
+                    gap: 0.6rem;
+                    flex-wrap: wrap;
                 }
 
                 .tech-badge {
-                    background: rgba(139, 69, 19, 0.2);
-                    padding: 0.3rem 0.8rem;
-                    border-radius: 6px;
-                    font-size: 0.75rem;
-                    color: #d2b48c;
-                    border: 1px solid rgba(139, 69, 19, 0.4);
+                    background: linear-gradient(135deg, rgba(26, 188, 156, 0.15), rgba(22, 160, 133, 0.1));
+                    padding: 0.5rem 1rem;
+                    border-radius: 20px;
+                    font-size: 0.8rem;
+                    color: #1abc9c;
+                    border: 1.5px solid rgba(26, 188, 156, 0.4);
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                }
+
+                .workflow-step:nth-child(3) .tech-badge {
+                    background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(41, 128, 185, 0.1));
+                    color: #3498db;
+                    border-color: rgba(52, 152, 219, 0.4);
+                }
+
+                .workflow-step:nth-child(5) .tech-badge {
+                    background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(142, 68, 173, 0.1));
+                    color: #9b59b6;
+                    border-color: rgba(155, 89, 182, 0.4);
+                }
+
+                .tech-badge:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 4px 15px currentColor;
                 }
 
                 .workflow-arrow {
-                    color: #8b4513;
-                    opacity: 0.5;
+                    color: #1abc9c;
+                    opacity: 0.6;
                     display: flex;
                     align-items: center;
+                    position: relative;
+                    animation: flow-arrow 2s ease-in-out infinite;
+                }
+
+                @keyframes flow-arrow {
+                    0%, 100% { opacity: 0.4; transform: translateX(0); }
+                    50% { opacity: 1; transform: translateX(10px); }
                 }
 
                 .workflow-arrow svg {
-                    width: 32px;
-                    height: 32px;
+                    width: 48px;
+                    height: 48px;
                     stroke: currentColor;
+                    filter: drop-shadow(0 0 10px currentColor);
                 }
 
                 /* Technical Specs Grid */
