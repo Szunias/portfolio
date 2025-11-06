@@ -94,6 +94,27 @@
       window.refreshMusicList();
     }
 
+    // Update tech tags if present (for projects page)
+    document.querySelectorAll("[data-tech]").forEach((container) => {
+      const key = container.getAttribute("data-tech");
+      const techArray = getNestedTranslation(
+        window.translations[lang],
+        key,
+      );
+
+      if (Array.isArray(techArray) && techArray.length > 0) {
+        container.innerHTML = techArray
+          .map(
+            (tech) =>
+              `<span class="project-tech-item">${tech}</span>`,
+          )
+          .join("");
+        container.style.display = "flex";
+      } else {
+        container.style.display = "none";
+      }
+    });
+
     // Mark translations as ready and show page smoothly
     requestAnimationFrame(() => {
       // Add class that triggers CSS opacity transition (body opacity: 0 → 1)

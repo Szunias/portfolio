@@ -460,6 +460,29 @@
                 color: #cbd5e1;
                 font-size: 0.95rem;
                 line-height: 1.7;
+                margin-bottom: 0.75rem;
+            }
+
+            .project-tech {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin-top: 0.75rem;
+                padding-top: 0.75rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .project-tech-item {
+                display: inline-flex;
+                align-items: center;
+                padding: 0.25rem 0.75rem;
+                background: rgba(96, 165, 250, 0.1);
+                border: 1px solid rgba(96, 165, 250, 0.2);
+                border-radius: 12px;
+                color: #93c5fd;
+                font-size: 0.75rem;
+                font-weight: 500;
+                white-space: nowrap;
             }
 
             /* === COMING SOON === */
@@ -916,6 +939,7 @@
                                 Funky credits theme with groove and luminous
                                 cadence.
                             </p>
+                            <div class="project-tech" data-tech="projects.ray.tech"></div>
                         </div>
                     </a>
                     <!-- Not Today Darling -->
@@ -955,6 +979,7 @@
                                 Retro-inspired audio implementation for chaotic
                                 multiplayer racing game.
                             </p>
+                            <div class="project-tech" data-tech="projects.not_today.tech"></div>
                         </div>
                     </a>
 
@@ -995,6 +1020,7 @@
                                 Atmospheric soundscapes and creature audio for
                                 horror animation.
                             </p>
+                            <div class="project-tech" data-tech="projects.amorak.tech"></div>
                         </div>
                     </a>
 
@@ -1035,6 +1061,7 @@
                                 Psychological horror game with strategic pause
                                 mechanics.
                             </p>
+                            <div class="project-tech" data-tech="projects.pause_deserve.tech"></div>
                         </div>
                     </a>
 
@@ -1071,6 +1098,7 @@
                                 Real-time ML beatbox classification with 45 ms
                                 latency.
                             </p>
+                            <div class="project-tech" data-tech="projects.audiolab.tech"></div>
                         </div>
                     </a>
 
@@ -1108,6 +1136,7 @@
                                 Adaptive audio systems with vertical layering in
                                 Wwise.
                             </p>
+                            <div class="project-tech" data-tech="projects.interactive_music.tech"></div>
                         </div>
                     </a>
 
@@ -1148,6 +1177,7 @@
                                 Complete foley and jungle ambience for 3D
                                 animation.
                             </p>
+                            <div class="project-tech" data-tech="projects.akantilado.tech"></div>
                         </div>
                     </a>
 
@@ -1185,6 +1215,7 @@
                                 Suspense sequence with layered strings and
                                 action percussion.
                             </p>
+                            <div class="project-tech" data-tech="projects.richter.tech"></div>
                         </div>
                     </a>
 
@@ -1222,6 +1253,7 @@
                             >
                                 Advanced EQ plugin with spectrum analysis.
                             </p>
+                            <div class="project-tech" data-tech="projects.audioq.tech"></div>
                         </div>
                     </a>
 
@@ -1259,6 +1291,7 @@
                             >
                                 Immersive spatial audio for virtual spaces.
                             </p>
+                            <div class="project-tech" data-tech="projects.environments.tech"></div>
                         </div>
                     </a>
 
@@ -1297,6 +1330,7 @@
                                 Audio-driven horror game. Prototype done, now in
                                 production.
                             </p>
+                            <div class="project-tech" data-tech="projects.shadow_frames.tech"></div>
                         </div>
                     </a>
 
@@ -1335,6 +1369,7 @@
                                 Thriller game jam project created in 2 days.
                                 Execute your plans as an ambitious cat.
                             </p>
+                            <div class="project-tech" data-tech="projects.pawism.tech"></div>
                         </div>
                     </a>
 
@@ -1372,6 +1407,7 @@
                             >
                                 FMOD and Wwise implementation expertise.
                             </p>
+                            <div class="project-tech" data-tech="projects.middleware.tech"></div>
                         </div>
                     </a>
 
@@ -1409,6 +1445,7 @@
                             >
                                 Automated build tool for UE projects.
                             </p>
+                            <div class="project-tech" data-tech="projects.ue_rebuilder.tech"></div>
                         </div>
                     </a>
 
@@ -1447,6 +1484,7 @@
                                 Automated Wwise integration restoration for UE
                                 projects.
                             </p>
+                            <div class="project-tech" data-tech="projects.wwise_fixer.tech"></div>
                         </div>
                     </a>
                 </div>
@@ -1564,6 +1602,58 @@
                         });
                     }
                 });
+            });
+
+            // Render tech tags after translations load
+            function renderTechTags() {
+                const techContainers = document.querySelectorAll('[data-tech]');
+                if (!techContainers.length) return;
+
+                const currentLang = window.__preloadedLang || localStorage.getItem('language') || 'en';
+                
+                // Wait for translations to be available
+                const checkTranslations = setInterval(() => {
+                    if (window.translations && window.translations[currentLang]) {
+                        clearInterval(checkTranslations);
+                        const translations = window.translations[currentLang];
+                        
+                        techContainers.forEach(container => {
+                            const key = container.getAttribute('data-tech');
+                            const techArray = getNestedValue(translations, key);
+                            
+                            if (Array.isArray(techArray) && techArray.length > 0) {
+                                container.innerHTML = techArray.map(tech => 
+                                    `<span class="project-tech-item">${tech}</span>`
+                                ).join('');
+                            } else {
+                                container.style.display = 'none';
+                            }
+                        });
+                    }
+                }, 100);
+
+                // Timeout after 5 seconds
+                setTimeout(() => clearInterval(checkTranslations), 5000);
+            }
+
+            function getNestedValue(obj, path) {
+                return path.split('.').reduce((current, key) => current && current[key], obj);
+            }
+
+            // Initialize tech tags rendering
+            function initTechTags() {
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', renderTechTags);
+                } else {
+                    renderTechTags();
+                }
+            }
+
+            initTechTags();
+
+            // Also render when language changes
+            window.addEventListener('languageChanged', () => {
+                setTimeout(renderTechTags, 100);
             });
         </script>
         <script src="../assets/js/performance-boost.js"></script>
