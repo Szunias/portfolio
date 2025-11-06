@@ -2175,48 +2175,104 @@
 
                 .plugin-chain h4 {
                     text-align: center;
-                    margin-bottom: 1.5rem;
+                    margin-bottom: 0.5rem;
                     color: #cd853f;
+                    font-size: 1.5rem;
                 }
 
-                .plugin-flow {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 0.5rem;
-                    flex-wrap: wrap;
+                .plugin-subtitle {
+                    text-align: center;
+                    color: #9ca3af;
+                    font-size: 0.9rem;
+                    margin-bottom: 2rem;
+                    font-style: italic;
+                }
+
+                .plugin-category {
+                    margin-bottom: 2.5rem;
+                }
+
+                .plugin-category:last-child {
+                    margin-bottom: 0;
+                }
+
+                .plugin-category h5 {
+                    color: #cd853f;
+                    font-size: 1.1rem;
+                    margin-bottom: 1rem;
+                    text-align: center;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+
+                .plugin-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1rem;
                 }
 
                 .plugin-node {
                     background: rgba(139, 69, 19, 0.12);
                     border: 1px solid rgba(139, 69, 19, 0.35);
                     border-radius: 8px;
-                    padding: 0.8rem 1.2rem;
+                    padding: 1rem;
                     transition: all 0.3s ease;
+                    cursor: pointer;
+                    position: relative;
+                    overflow: visible;
                 }
 
                 .plugin-node:hover {
                     background: rgba(205, 133, 63, 0.2);
                     transform: translateY(-4px);
-                    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+                    box-shadow: 0 8px 16px rgba(139, 69, 19, 0.4);
+                    border-color: rgba(205, 133, 63, 0.6);
+                    z-index: 10;
                 }
 
                 .plugin-name {
                     font-weight: 600;
                     color: #d2b48c;
-                    margin-bottom: 0.3rem;
+                    font-size: 0.95rem;
+                    text-align: center;
                 }
 
-                .plugin-settings {
-                    font-size: 0.75rem;
-                    color: #9ca3af;
-                    font-family: 'Courier New', monospace;
+                .plugin-tooltip {
+                    position: absolute;
+                    bottom: 100%;
+                    left: 50%;
+                    transform: translateX(-50%) translateY(-10px);
+                    background: rgba(18, 6, 7, 0.98);
+                    border: 1px solid rgba(205, 133, 63, 0.5);
+                    border-radius: 8px;
+                    padding: 0.8rem 1rem;
+                    width: 280px;
+                    max-width: 90vw;
+                    font-size: 0.85rem;
+                    line-height: 1.5;
+                    color: #d2b48c;
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: all 0.3s ease;
+                    pointer-events: none;
+                    z-index: 100;
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
                 }
 
-                .chain-arrow {
-                    color: #8b4513;
-                    font-size: 1.5rem;
-                    opacity: 0.5;
+                .plugin-tooltip::after {
+                    content: '';
+                    position: absolute;
+                    top: 100%;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    border: 8px solid transparent;
+                    border-top-color: rgba(18, 6, 7, 0.98);
+                }
+
+                .plugin-node:hover .plugin-tooltip {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translateX(-50%) translateY(-5px);
                 }
 
                 /* Responsive */
@@ -2233,12 +2289,13 @@
                         grid-template-columns: repeat(2, 1fr);
                     }
 
-                    .plugin-flow {
-                        flex-direction: column;
+                    .plugin-grid {
+                        grid-template-columns: 1fr;
                     }
 
-                    .chain-arrow {
-                        transform: rotate(90deg);
+                    .plugin-tooltip {
+                        width: 260px;
+                        font-size: 0.8rem;
                     }
                 }
             </style>
