@@ -1074,44 +1074,60 @@
                 text-align: left;
             }
 
+            /* CHALLENGES - RED/ORANGE/YELLOW WARNING THEME (THIRD UNIQUE STYLE) */
             .challenge-card-amorak {
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(139, 69, 19, 0.3);
-                border-radius: 16px;
-                padding: 2rem;
-                transition: all 0.3s ease;
-                backdrop-filter: blur(10px);
+                background: linear-gradient(135deg, rgba(231, 76, 60, 0.08), rgba(192, 57, 43, 0.05));
+                border: 2px solid transparent;
+                border-image: linear-gradient(135deg, #e74c3c, #f39c12) 1;
+                border-radius: 0;
+                padding: 2.5rem;
+                transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                backdrop-filter: blur(15px);
                 position: relative;
-                overflow: hidden;
+                overflow: visible;
+                clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
             }
 
             .challenge-card-amorak::before {
                 content: "";
                 position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(
-                    90deg,
-                    transparent,
-                    rgba(139, 69, 19, 0.1),
-                    transparent
-                );
-                transition: left 0.5s ease;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                background: linear-gradient(45deg, #e74c3c, #f39c12, #e67e22, #e74c3c);
+                background-size: 300% 300%;
+                z-index: -1;
+                border-radius: inherit;
+                animation: gradient-border 4s ease infinite;
+                opacity: 0;
+                transition: opacity 0.5s ease;
+            }
+
+            @keyframes gradient-border {
+                0%, 100% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
             }
 
             .challenge-card-amorak:hover::before {
-                left: 100%;
+                opacity: 1;
             }
 
             .challenge-card-amorak:hover {
-                border-color: #8b4513;
-                transform: translateY(-8px);
+                transform: scale(1.03) rotate(0.5deg);
                 box-shadow:
-                    0 15px 50px rgba(0, 0, 0, 0.6),
-                    0 0 30px rgba(139, 69, 19, 0.3);
-                background: rgba(255, 255, 255, 0.05);
+                    0 20px 60px rgba(231, 76, 60, 0.4),
+                    0 0 40px rgba(243, 156, 18, 0.3),
+                    inset 0 0 30px rgba(231, 76, 60, 0.1);
+                background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(243, 156, 18, 0.12));
+            }
+
+            .challenge-card-amorak:nth-child(2) {
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+            }
+
+            .challenge-card-amorak:nth-child(3) {
+                clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
             }
 
             .challenge-icon-amorak {
@@ -1123,11 +1139,15 @@
 
             .challenge-card-amorak h4 {
                 font-family: "Sora", sans-serif;
-                font-size: 1.4rem;
-                color: #cd853f;
+                font-size: 1.5rem;
+                background: linear-gradient(135deg, #e74c3c, #f39c12);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
                 margin-bottom: 1.5rem;
-                font-weight: 600;
-                letter-spacing: -0.01em;
+                font-weight: 700;
+                letter-spacing: 0.3px;
+                text-transform: uppercase;
+                font-size: 1.2rem;
             }
 
             .challenge-content-amorak {
