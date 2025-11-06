@@ -2,76 +2,84 @@
   "en": {
     "back": "Back to Projects",
     "title": "Pause & Deserve",
-    "tagline": "A psychological horror experience where every pause comes with a price.",
+    "tagline": "Solo-developed horror game with time manipulation mechanics. Built entirely in Blueprints with MetaSounds audio implementation.",
     "meta": {
       "year": {
         "label": "Year",
         "value": "2024"
+      },
+      "role": {
+        "label": "Role",
+        "value": "Solo Developer — Gameplay Programming (Blueprints) + Audio Design"
+      },
+      "tech": {
+        "label": "Tech Stack",
+        "value": "Unreal Engine 5, Blueprints, MetaSounds, minimal C++"
       }
     },
     "gameplay": {
-      "title": "Sound is Your Only Guide",
-      "desc": "Listen carefully - Death is getting closer. The world shifts when you freeze time. Every footstep makes your heart race. That's the essence of the game."
+      "title": "Project Overview",
+      "desc": "Solo school project that grew into a full game. Built complete gameplay loop in Blueprints: player movement, key collection, note reading, door interactions, fireplace jumpscare, boss chase sequence through forest. Time manipulation mechanic: freeze enemy temporarily, but it gets faster afterward (risk/reward trade-off)."
     },
     "overview": {
-      "title": "Creating Horror Through Sound",
-      "desc": "What you can't see will haunt you. Death's footsteps grow louder as it hunts you down. The environment groans and transforms when you pause. Every sound is designed to keep you on the edge of your seat."
+      "title": "Audio Implementation",
+      "desc": "MetaSounds-based audio system with binaural spatialization. Sound design from Soundly and Envato Elements libraries, processed and layered. Simple but effective: ambience layers, footsteps (player + enemy), UI feedback, countdown timer when pausing, minimal adaptive music. Random bush rustle trigger (11.025% chance) for ambient scares."
     },
     "soundscape": {
-      "title": "Crafting the Atmosphere",
-      "desc": "Deep drones echo through the darkness, distant screams pierce the silence, and your own footsteps betray your position. It creates an oppressive feeling without drowning out the crucial sounds you need to hear.",
-      "oppressive_title": "Constant Unease",
-      "oppressive_desc": "Low-frequency drones, distant cries, and unsettling textures that never let you feel safe",
-      "proximity_title": "Death Approaches",
-      "proximity_desc": "Audio intensity rises as Death gets closer. Your own heartbeat pounds when danger is near",
-      "environmental_title": "A Living World",
-      "environmental_desc": "Walls shift, echoes change, spaces transform. Every environmental change has its own sound"
+      "title": "Blueprint Gameplay Systems",
+      "desc": "All gameplay logic implemented in Blueprints (minimal C++). Systems built: first-person character controller, key inventory system, readable note pickups, door unlock mechanic, fireplace interaction trigger, AI chase behavior with dynamic speed scaling based on pause usage.",
+      "oppressive_title": "Time Manipulation Mechanic",
+      "oppressive_desc": "Pause button freezes enemy AI for brief window. Trade-off: enemy speed multiplier increases each use (1.0x → 1.2x → 1.5x → 2.0x). Audio feedback: countdown beep (1-second intervals), minimal music evolution.",
+      "proximity_title": "Audio Implementation Details",
+      "proximity_desc": "MetaSounds for all audio playback. Binaural spatialization via Unreal's built-in HRTF. Footsteps triggered via anim notifies. Distance attenuation: logarithmic falloff, max range 50m. Voice limit: 32 concurrent sounds, priority-based stealing.",
+      "environmental_title": "Random Environmental Triggers",
+      "environmental_desc": "Bush proximity system: when player within 3m sphere, 11.025% chance per 2-second tick to trigger rustle sound. Prevents predictability while maintaining ambient tension without audio spam."
     },
     "audio_system": {
-      "title": "Reactive Audio System",
-      "desc": "Every action triggers a sound response. Pause time and hear reality warp. Death speeds up and the audio becomes frantic. Move through different spaces and hear the acoustics change around you.",
-      "pause_title": "Time Manipulation Effects",
-      "pause_desc": "When you pause, time stretches and distorts. Pitch shifts downward, reverb extends, creating an otherworldly experience",
-      "threat_title": "Dynamic Intensity",
-      "threat_desc": "Audio escalates with Death's proximity and speed. The closer and faster it gets, the more chaotic the soundscape becomes",
-      "spatial_title": "3D Audio Positioning",
-      "spatial_desc": "Track Death's location through sound alone. Footsteps and environmental cues tell you exactly where danger lurks"
+      "title": "Sound Design Workflow",
+      "desc": "Source material from Soundly and Envato Elements. Processing: pitch shifting, layering, EQ, reverb. Exported as WAV (48kHz/16-bit) with minimal compression. Total asset footprint: ~120MB. Implementation via MetaSounds patches for real-time parameter control.",
+      "pause_title": "MetaSounds Implementation",
+      "pause_desc": "MetaSounds patch handles footsteps (anim notify triggers), ambience layers (constant loop + random one-shots), UI sounds (button presses, countdown beeps). Parameters: distance (0-50m RTPC for volume/filter), surface type (enum for footstep variation).",
+      "threat_title": "Performance Budget",
+      "threat_desc": "Voice limit: 32 concurrent (Unreal default). Priority system: UI (1.0), player footsteps (0.9), enemy footsteps (0.8), ambience (0.5). Virtualization kicks in when limit exceeded. No noticeable performance impact on target hardware (GTX 1060 equivalent).",
+      "spatial_title": "Binaural Spatialization",
+      "spatial_desc": "Unreal Engine's built-in binaural HRTF spatialization. Attenuation: logarithmic curve, inner radius 5m (full volume), outer radius 50m (silence). Enemy footsteps attached to root bone, updates per frame. Occlusion not implemented (scope limitation)."
     },
     "tension": {
-      "title": "Psychological Warfare",
-      "desc": "Sub-bass frequencies that you feel more than hear. Deceptive sounds that make you question reality. Strategic silence that makes sudden noises terrifying. Every element designed to mess with your mind.",
-      "subbass_title": "Physical Dread",
-      "subbass_desc": "Ultra-low frequencies you barely notice but feel in your chest, creating unease you can't explain",
-      "silence_title": "The Sound of Fear",
-      "silence_desc": "Quiet moments amplify sudden sounds, keeping you constantly on edge and never desensitized",
-      "misdirection_title": "Sensory Deception",
-      "misdirection_desc": "False footsteps and misleading audio cues that make you question what's real and what's imagined"
+      "title": "Technical Scope & Limitations",
+      "desc": "This was primarily a Blueprint programming project to learn Unreal's gameplay systems. Audio implementation kept intentionally simple: no advanced vertical layering, no complex RTPC networks, no Wwise/FMOD middleware. Focus was on solid gameplay feel and functional audio, not cutting-edge audio tech.",
+      "subbass_title": "What Worked Well",
+      "subbass_desc": "MetaSounds handled basic needs effectively. Binaural spatialization worked out-of-box. Anim notify footstep system reliable. Random bush triggers added unpredictability without complex logic. 11.025% chance felt right after playtesting (audio geek reference to 11.025kHz quarter sample rate).",
+      "silence_title": "What I'd Improve",
+      "silence_desc": "Add proper occlusion/obstruction for enemy through walls. Implement reverb zones for different areas. Use material-based surface types for footsteps (currently single sound). Add more granular distance-based filtering on ambience.",
+      "misdirection_title": "Key Takeaway",
+      "misdirection_desc": "Learned that simple audio implementation done well beats complex system done poorly. Priority was gameplay programming in Blueprints (player systems, AI, mechanics). Audio supported gameplay effectively without overengineering."
     },
     "mechanics": {
       "chase": {
-        "title": "The Hunter",
-        "desc": "Death relentlessly pursues you through the shifting landscape. It learns your patterns and adapts its strategy. You can never truly escape."
+        "title": "AI Chase System (Blueprint)",
+        "desc": "Simple AI behavior tree: patrol random waypoints until player spotted (line-of-sight trace), then switch to chase mode. NavMesh pathfinding with dynamic obstacle avoidance. Speed scales based on pause mechanic usage (float multiplier in BP)."
       },
       "pause": {
-        "title": "The Price of Time",
-        "desc": "Freeze Death temporarily to buy yourself precious seconds. But each use comes with a cost - Death becomes faster and more aggressive afterward."
+        "title": "Pause Mechanic Implementation",
+        "desc": "Blueprint timer system: button press → freeze enemy movement 3 seconds → increment speed multiplier (1.0 → 1.2 → 1.5 → 2.0 max) → play countdown beep every 1 second. Audio: MetaSounds trigger event, UI fadeout, countdown timer sound."
       },
       "world": {
-        "title": "Shifting Reality",
-        "desc": "The environment is never static. Walls close in, paths rearrange, lights flicker and die. Safety is always temporary."
+        "title": "Level Design & Interactions",
+        "desc": "Linear progression: forest → cabin → find key → unlock door → fireplace jumpscare → boss chase through forest. Blueprint actors for: key pickup (add to inventory), note reading (UI widget), door interaction (check inventory, play unlock anim), fireplace trigger (particle effect + audio one-shot)."
       },
       "score": {
-        "title": "How Long Can You Last?",
-        "desc": "Test your survival instincts. The game tracks your longest runs and challenges you to outthink, outmaneuver, and outlast Death itself."
+        "title": "Game Loop Structure",
+        "desc": "Core loop: explore → collect key → survive chase. Death triggers respawn at checkpoint. Blueprint save game system stores best time. Playtesting focused on pacing: how long before player gets key, how intense chase feels, when to scale difficulty via pause mechanic."
       }
     },
     "design": {
-      "title": "Design Philosophy",
-      "desc": "We wanted to create true claustrophobia. First-person perspective means you can't see what's behind you. An AI that hunts intelligently rather than cheaply. Audio that gets inside your head. Built through rapid prototyping and extensive player testing."
+      "title": "Development Approach",
+      "desc": "Solo project, 8 weeks development. Started as school assignment, expanded after positive feedback. Focused on learning Blueprint visual scripting for gameplay systems. Audio kept functional but simple to maintain scope. Priorities: working game loop > polish. Used placeholder assets early, replaced with final audio/visuals in last 2 weeks."
     },
     "tech": {
-      "title": "Audio Technology",
-      "desc": "Powered by Wwise for real-time audio control. Every sound responds to distance, speed, and player state. All mixed dynamically to create the perfect horror experience."
+      "title": "Technical Stack Summary",
+      "desc": "Engine: Unreal Engine 5.1. Programming: ~90% Blueprints, ~10% C++ (only for optimization of distance checks). Audio: MetaSounds for playback, binaural spatialization. Assets: Soundly + Envato Elements, processed in DAW, exported WAV 48kHz/16-bit. Total project size: ~450MB (geometry + textures 60%, audio 25%, blueprints 15%)."
     },
     "gallery": {
       "title": "Development Gallery",
@@ -88,11 +96,19 @@
   "pl": {
     "back": "Powrót do projektów",
     "title": "Pause & Deserve",
-    "tagline": "Doświadczenie horroru psychologicznego, w którym każda pauza ma swoją cenę.",
+    "tagline": "Solo-deweloperski horror z mechaniką manipulacji czasem. Zbudowany w całości w Blueprintach z implementacją audio w MetaSounds.",
     "meta": {
       "year": {
         "label": "Rok",
         "value": "2024"
+      },
+      "role": {
+        "label": "Rola",
+        "value": "Solo Developer — Programowanie Rozgrywki (Blueprints) + Audio Design"
+      },
+      "tech": {
+        "label": "Stos Technologiczny",
+        "value": "Unreal Engine 5, Blueprints, MetaSounds, minimalny C++"
       }
     },
     "gameplay": {
