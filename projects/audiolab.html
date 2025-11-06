@@ -1476,11 +1476,7 @@
                     <div class="video-container" id="videoContainer">
                         <video autoplay loop muted playsinline>
                             <source
-                                src="../assets/images/projects/AudioLabGif.webm"
-                                type="video/webm"
-                            />
-                            <source
-                                src="../assets/images/projects/AudioLabGif.mp4"
+                                src="../assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4"
                                 type="video/mp4"
                             />
                         </video>
@@ -1532,6 +1528,29 @@
                     <p data-i18n="features.lowlatency.desc">
                         OSC networking between Python and Unity maintains
                         competitive timing standards
+                    </p>
+                </div>
+            </div>
+
+            <!-- Technical Demo Video -->
+            <div class="row">
+                <div class="row-visual">
+                    <div class="video-container" id="technicalVideoContainer">
+                        <video autoplay loop muted playsinline>
+                            <source
+                                src="../assets/videos/AudioLab_2425_Szuniewicz_Igor_GAMEDemoVideo_Transientica.mp4"
+                                type="video/mp4"
+                            />
+                        </video>
+                        <div class="play-button-overlay">
+                            <div class="play-icon"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-text">
+                    <h3 data-i18n="technical.title">Technical Approach</h3>
+                    <p data-i18n="technical.description">
+                        Detailed demonstration of the ML pipeline, feature extraction, and real-time classification system. Shows the technical implementation and optimization strategies used to achieve sub-60ms latency.
                     </p>
                 </div>
             </div>
@@ -1759,12 +1778,21 @@
                 <div class="modal-close" id="modalClose"></div>
                 <video class="modal-video" id="modalVideo" controls>
                     <source
-                        src="../assets/images/projects/AudioLabGif.mp4"
+                        src="../assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4"
                         type="video/mp4"
                     />
+                </video>
+            </div>
+        </div>
+
+        <!-- Technical Video Modal -->
+        <div class="video-modal" id="technicalVideoModal">
+            <div class="modal-content">
+                <div class="modal-close" id="technicalModalClose"></div>
+                <video class="modal-video" id="technicalModalVideo" controls>
                     <source
-                        src="../assets/images/projects/AudioLabGif.webm"
-                        type="video/webm"
+                        src="../assets/videos/AudioLab_2425_Szuniewicz_Igor_GAMEDemoVideo_Transientica.mp4"
+                        type="video/mp4"
                     />
                 </video>
             </div>
@@ -1825,13 +1853,21 @@
         <!-- Video Modal Script -->
         <script>
             document.addEventListener("DOMContentLoaded", () => {
+                // Main video modal
                 const videoContainer =
                     document.getElementById("videoContainer");
                 const modal = document.getElementById("videoModal");
                 const modalVideo = document.getElementById("modalVideo");
                 const modalClose = document.getElementById("modalClose");
 
-                // Open modal on click
+                // Technical video modal
+                const technicalVideoContainer =
+                    document.getElementById("technicalVideoContainer");
+                const technicalModal = document.getElementById("technicalVideoModal");
+                const technicalModalVideo = document.getElementById("technicalModalVideo");
+                const technicalModalClose = document.getElementById("technicalModalClose");
+
+                // Open main modal on click
                 if (videoContainer) {
                     videoContainer.addEventListener("click", () => {
                         modal.classList.add("active");
@@ -1840,7 +1876,16 @@
                     });
                 }
 
-                // Close modal
+                // Open technical modal on click
+                if (technicalVideoContainer) {
+                    technicalVideoContainer.addEventListener("click", () => {
+                        technicalModal.classList.add("active");
+                        document.body.style.overflow = "hidden";
+                        technicalModalVideo.play();
+                    });
+                }
+
+                // Close main modal
                 function closeModal() {
                     modal.classList.remove("active");
                     document.body.style.overflow = "auto";
@@ -1848,8 +1893,20 @@
                     modalVideo.currentTime = 0;
                 }
 
+                // Close technical modal
+                function closeTechnicalModal() {
+                    technicalModal.classList.remove("active");
+                    document.body.style.overflow = "auto";
+                    technicalModalVideo.pause();
+                    technicalModalVideo.currentTime = 0;
+                }
+
                 if (modalClose) {
                     modalClose.addEventListener("click", closeModal);
+                }
+
+                if (technicalModalClose) {
+                    technicalModalClose.addEventListener("click", closeTechnicalModal);
                 }
 
                 // Close on background click
@@ -1861,13 +1918,23 @@
                     });
                 }
 
+                if (technicalModal) {
+                    technicalModal.addEventListener("click", (e) => {
+                        if (e.target === technicalModal) {
+                            closeTechnicalModal();
+                        }
+                    });
+                }
+
                 // Close on ESC key
                 document.addEventListener("keydown", (e) => {
-                    if (
-                        e.key === "Escape" &&
-                        modal.classList.contains("active")
-                    ) {
-                        closeModal();
+                    if (e.key === "Escape") {
+                        if (modal.classList.contains("active")) {
+                            closeModal();
+                        }
+                        if (technicalModal.classList.contains("active")) {
+                            closeTechnicalModal();
+                        }
                     }
                 });
             });
@@ -1970,7 +2037,7 @@
                         "@type": "VideoObject",
                         "name": "AudioLab interactive demo",
                         "description": "Beatbox-controlled gameplay footage",
-                        "contentUrl": "https://igorszuniewicz.com/assets/images/projects/AudioLabGif.mp4",
+                        "contentUrl": "https://igorszuniewicz.com/assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4",
                         "thumbnailUrl": "https://igorszuniewicz.com/assets/images/projects/AudioLabGif.jpg",
                         "encodingFormat": "video/mp4",
                         "uploadDate": "2025-01-27"
