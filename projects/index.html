@@ -572,6 +572,13 @@
                 color: #fcd34d;
             }
 
+            /* Audio middleware tags - teal/cyan color */
+            .project-tech-item.tech-middleware {
+                background: rgba(20, 184, 166, 0.15);
+                border: 1px solid rgba(20, 184, 166, 0.3);
+                color: #5eead4;
+            }
+
             /* Status badge styling */
             .project-status-badge {
                 position: absolute;
@@ -1847,6 +1854,12 @@
                                     "HLSL",
                                     "GLSL",
                                 ];
+                                // List of audio middleware to highlight
+                                const audioMiddleware = [
+                                    "Wwise",
+                                    "FMOD",
+                                    "MetaSounds",
+                                ];
 
                                 container.innerHTML = techArray
                                     .map((tech) => {
@@ -1854,9 +1867,16 @@
                                             programmingLanguages.some((lang) =>
                                                 tech.includes(lang),
                                             );
-                                        const cssClass = isProgrammingLang
-                                            ? "project-tech-item tech-programming"
-                                            : "project-tech-item";
+                                        const isMiddleware =
+                                            audioMiddleware.some((mw) =>
+                                                tech.includes(mw),
+                                            );
+                                        let cssClass = "project-tech-item";
+                                        if (isProgrammingLang) {
+                                            cssClass += " tech-programming";
+                                        } else if (isMiddleware) {
+                                            cssClass += " tech-middleware";
+                                        }
                                         return `<span class="${cssClass}">${tech}</span>`;
                                     })
                                     .join("");
