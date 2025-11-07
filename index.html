@@ -1656,29 +1656,87 @@
                 height: 16px;
             }
 
+            /* === COMIC-STYLE PROJECT SWITCHER === */
             .timeline-nav-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 2rem;
+                margin-top: 2rem;
             }
 
             .timeline-nav-item {
-                position: relative;
+                display: none; /* Hide grid items, we'll show them via JS */
+            }
+
+            .project-switcher {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 2rem;
+                width: 100%;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .project-nav-btn {
                 display: flex;
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: center;
                 gap: 0.5rem;
-                padding: 1rem 1.25rem;
-                background: linear-gradient(
-                    135deg,
-                    rgba(15, 23, 42, 0.8) 0%,
-                    rgba(30, 41, 59, 0.6) 100%
-                );
-                border: 2px solid rgba(96, 165, 250, 0.2);
+                padding: 1rem 1.5rem;
+                background: rgba(15, 23, 42, 0.6);
+                border: 2px solid rgba(96, 165, 250, 0.3);
                 border-radius: 12px;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                overflow: hidden;
+                min-width: 150px;
+            }
+
+            .project-nav-btn:hover {
+                background: rgba(15, 23, 42, 0.8);
+                border-color: rgba(96, 165, 250, 0.5);
+                transform: translateY(-2px);
+            }
+
+            .project-nav-label {
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: #60a5fa;
+            }
+
+            .project-nav-name {
+                font-size: 0.9rem;
+                color: rgba(255, 255, 255, 0.8);
+                text-align: center;
+            }
+
+            .project-current {
+                flex: 1;
+                text-align: center;
+                padding: 2rem;
+            }
+
+            .project-current-name {
+                font-family: "Sora", sans-serif;
+                font-size: clamp(2rem, 4vw, 3.5rem);
+                font-weight: 900;
+                text-transform: uppercase;
+                color: #ffffff;
+                letter-spacing: 0.05em;
+                text-shadow:
+                    -4px -4px 0 #000,
+                    4px -4px 0 #000,
+                    -4px 4px 0 #000,
+                    4px 4px 0 #000,
+                    -4px 0 0 #000,
+                    4px 0 0 #000,
+                    0 -4px 0 #000,
+                    0 4px 0 #000,
+                    0 0 20px rgba(96, 165, 250, 0.5);
+                line-height: 1.2;
             }
 
             .timeline-nav-item::before {
@@ -2032,67 +2090,74 @@
                                 </svg>
                             </a>
                         </div>
-                        <div class="timeline-nav-grid">
+                        <!-- Comic-Style Project Switcher -->
+                        <div class="project-switcher" id="project-switcher">
+                            <div class="project-nav-btn" id="prev-project">
+                                <span class="project-nav-label">PREV</span>
+                                <span
+                                    class="project-nav-name"
+                                    id="prev-project-name"
+                                    >-</span
+                                >
+                            </div>
+
+                            <div class="project-current">
+                                <div
+                                    class="project-current-name"
+                                    id="current-project-name"
+                                >
+                                    AMORAK
+                                </div>
+                            </div>
+
+                            <div class="project-nav-btn" id="next-project">
+                                <span class="project-nav-label">NEXT</span>
+                                <span
+                                    class="project-nav-name"
+                                    id="next-project-name"
+                                    >-</span
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Hidden data for projects -->
+                        <div class="timeline-nav-grid" style="display: none">
                             <div
                                 class="timeline-nav-item"
                                 data-time="0"
                                 data-project="amorak"
-                            >
-                                <span class="timeline-nav-time">00:00</span>
-                                <span class="timeline-nav-title"
-                                    >Amorak - Sound Design</span
-                                >
-                            </div>
+                                data-name="AMORAK"
+                            ></div>
                             <div
                                 class="timeline-nav-item"
                                 data-time="38"
                                 data-project="akantilado"
-                            >
-                                <span class="timeline-nav-time">00:38</span>
-                                <span class="timeline-nav-title"
-                                    >Akantilado - Animation</span
-                                >
-                            </div>
+                                data-name="AKANTILADO"
+                            ></div>
                             <div
                                 class="timeline-nav-item"
                                 data-time="58"
                                 data-project="ray"
-                            >
-                                <span class="timeline-nav-time">00:58</span>
-                                <span class="timeline-nav-title"
-                                    >Ray - Music</span
-                                >
-                            </div>
+                                data-name="RAY"
+                            ></div>
                             <div
                                 class="timeline-nav-item"
                                 data-time="102"
                                 data-project="not-today-darling"
-                            >
-                                <span class="timeline-nav-time">01:42</span>
-                                <span class="timeline-nav-title"
-                                    >Not Today Darling</span
-                                >
-                            </div>
+                                data-name="NOT TODAY DARLING"
+                            ></div>
                             <div
                                 class="timeline-nav-item"
                                 data-time="131"
                                 data-project="middleware2"
-                            >
-                                <span class="timeline-nav-time">02:11</span>
-                                <span class="timeline-nav-title"
-                                    >Ellen - Wwise</span
-                                >
-                            </div>
+                                data-name="ELLEN - WWISE"
+                            ></div>
                             <div
                                 class="timeline-nav-item"
                                 data-time="145"
                                 data-project="pause-and-deserve"
-                            >
-                                <span class="timeline-nav-time">02:25</span>
-                                <span class="timeline-nav-title"
-                                    >Pause & Deserve</span
-                                >
-                            </div>
+                                data-name="PAUSE & DESERVE"
+                            ></div>
                         </div>
                     </div>
                 </div>

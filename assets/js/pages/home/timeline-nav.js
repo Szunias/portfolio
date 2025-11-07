@@ -1,7 +1,7 @@
 /**
- * Sticky Timeline Navigation
- * Provides compact, always-visible navigation for demo reel timestamps
- * Auto-detects current project and shows project link
+ * Comic-Style Project Switcher
+ * Shows current project with prev/next navigation
+ * Auto-updates based on video playback
  */
 
 export function initTimelineNav() {
@@ -10,16 +10,32 @@ export function initTimelineNav() {
   const projectLink = document.getElementById("timeline-project-link");
   const vimeoIframe = document.getElementById("vimeo-iframe");
 
+  // New comic-style elements
+  const currentProjectName = document.getElementById("current-project-name");
+  const prevProjectBtn = document.getElementById("prev-project");
+  const nextProjectBtn = document.getElementById("next-project");
+  const prevProjectName = document.getElementById("prev-project-name");
+  const nextProjectName = document.getElementById("next-project-name");
+
   if (!timelineNav || !vimeoIframe) return;
 
   let player;
   let currentTime = 0;
+  let currentProjectIndex = 0;
+
+  // Build projects array from hidden items
+  const projects = Array.from(timelineItems).map((item) => ({
+    time: parseInt(item.dataset.time),
+    project: item.dataset.project,
+    name: item.dataset.name || item.dataset.project.toUpperCase(),
+    url: `projects/${item.dataset.project}.html`,
+  }));
 
   // Project mapping
   const projectMap = {
     amorak: { url: "projects/amorak.html", name: "Amorak" },
     akantilado: { url: "projects/akantilado.html", name: "Akantilado" },
-    ray: { url: "projects/ray.html", name: "Ray" }, // Placeholder
+    ray: { url: "projects/ray.html", name: "Ray" },
     "not-today-darling": {
       url: "projects/not-today-darling.html",
       name: "Not Today Darling",
@@ -32,14 +48,12 @@ export function initTimelineNav() {
   };
 
   // Timestamp ranges (start to next start)
-  const timestampRanges = [
-    { start: 0, end: 38, project: "amorak" },
-    { start: 38, end: 58, project: "akantilado" },
-    { start: 58, end: 102, project: "ray" },
-    { start: 102, end: 131, project: "not-today-darling" },
-    { start: 131, end: 145, project: "middleware2" },
-    { start: 145, end: Infinity, project: "pause-and-deserve" },
-  ];
+  const timestampRanges = projects.map((proj, index) => ({
+    start: proj.time,
+    end: projects[index + 1]?.time || Infinity,
+    project: proj.project,
+    index: index,
+  }));
 
   // Initialize Vimeo player
   function initPlayer() {
@@ -49,32 +63,56 @@ export function initTimelineNav() {
       // Track current time
       player.on("timeupdate", (data) => {
         currentTime = data.seconds;
-        updateActiveState();
+        updateCurrentProject();
         updateProjectLink();
       });
     }
   }
 
-  // Update active state based on current time
-  function updateActiveState() {
-    timelineItems.forEach((item) => {
-      const itemTime = parseInt(item.dataset.time);
-      const nextItem = getNextTimestamp(itemTime);
-      const isActive =
-        currentTime >= itemTime &&
-        currentTime < (nextItem ? nextItem : Infinity);
+  // Update current project display
+  function updateCurrentProject() {
+    const currentRange = timestampRanges.find(
+      (range) => currentTime >= range.start && currentTime < range.end,
+    );
 
-      item.classList.toggle("active", isActive);
-    });
+    if (currentRange) {
+      currentProjectIndex = currentRange.index;
+      updateProjectDisplay();
+    }
   }
 
-  // Get next timestamp value
-  function getNextTimestamp(currentTimestamp) {
-    const timestamps = Array.from(timelineItems)
-      .map((item) => parseInt(item.dataset.time))
-      .sort((a, b) => a - b);
-    const currentIndex = timestamps.indexOf(currentTimestamp);
-    return timestamps[currentIndex + 1] || null;
+  // Update project display (central + prev/next)
+  function updateProjectDisplay() {
+    const current = projects[currentProjectIndex];
+    const prev = projects[currentProjectIndex - 1];
+    const next = projects[currentProjectIndex + 1];
+
+    // Update central display
+    if (currentProjectName && current) {
+      currentProjectName.textContent = current.name;
+    }
+
+    // Update prev button
+    if (prev) {
+      prevProjectName.textContent = prev.name;
+      prevProjectBtn.style.opacity = "1";
+      prevProjectBtn.style.pointerEvents = "auto";
+    } else {
+      prevProjectName.textContent = "-";
+      prevProjectBtn.style.opacity = "0.3";
+      prevProjectBtn.style.pointerEvents = "none";
+    }
+
+    // Update next button
+    if (next) {
+      nextProjectName.textContent = next.name;
+      nextProjectBtn.style.opacity = "1";
+      nextProjectBtn.style.pointerEvents = "auto";
+    } else {
+      nextProjectName.textContent = "-";
+      nextProjectBtn.style.opacity = "0.3";
+      nextProjectBtn.style.pointerEvents = "none";
+    }
   }
 
   // Update project link based on current time
@@ -93,17 +131,33 @@ export function initTimelineNav() {
     }
   }
 
-  // Handle timestamp clicks
-  timelineItems.forEach((item) => {
-    item.addEventListener("click", () => {
-      const time = parseInt(item.dataset.time);
-      if (player) {
-        player.setCurrentTime(time).then(() => {
-          player.play();
-        });
-      }
-    });
+  // Navigate to specific project
+  function goToProject(index) {
+    if (player && projects[index]) {
+      const time = projects[index].time;
+      player.setCurrentTime(time).then(() => {
+        player.play();
+      });
+      currentProjectIndex = index;
+      updateProjectDisplay();
+    }
+  }
+
+  // Prev/Next button handlers
+  prevProjectBtn.addEventListener("click", () => {
+    if (currentProjectIndex > 0) {
+      goToProject(currentProjectIndex - 1);
+    }
   });
+
+  nextProjectBtn.addEventListener("click", () => {
+    if (currentProjectIndex < projects.length - 1) {
+      goToProject(currentProjectIndex + 1);
+    }
+  });
+
+  // Initialize display
+  updateProjectDisplay();
 
   // Wait for Vimeo API to load
   if (window.Vimeo) {
