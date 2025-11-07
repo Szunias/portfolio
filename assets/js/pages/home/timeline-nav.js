@@ -12,6 +12,7 @@ export function initTimelineNav() {
 
   // New comic-style elements
   const currentProjectName = document.getElementById("current-project-name");
+  const currentProjectDiv = document.querySelector(".project-current");
   const prevProjectBtn = document.getElementById("prev-project");
   const nextProjectBtn = document.getElementById("next-project");
   const prevProjectName = document.getElementById("prev-project-name");
@@ -90,6 +91,13 @@ export function initTimelineNav() {
     // Update central display
     if (currentProjectName && current) {
       currentProjectName.textContent = current.name;
+
+      // Make central project clickable
+      if (currentProjectDiv) {
+        currentProjectDiv.onclick = () => {
+          window.location.href = current.url;
+        };
+      }
     }
 
     // Update prev button
