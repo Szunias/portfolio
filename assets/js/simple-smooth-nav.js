@@ -144,6 +144,21 @@
         return;
       }
 
+      // Nie przechwytuj kliknięć w video kontenery i modale
+      const target = event.target;
+      const isVideoRelated = 
+        target.closest(".video-container") ||
+        target.closest(".video-modal") ||
+        target.closest(".modal-close") ||
+        target.closest(".play-button-overlay") ||
+        target.closest("video") ||
+        target.tagName === "VIDEO" ||
+        target.tagName === "SOURCE";
+      
+      if (isVideoRelated) {
+        return; // Don't intercept video clicks
+      }
+
       const link = event.target.closest("a");
       if (!link) {
         return;
