@@ -1797,8 +1797,195 @@
                 }
             }
 
+            /* === STICKY TIMELINE NAVIGATION === */
+            .timeline-nav {
+                position: sticky;
+                top: 80px;
+                z-index: 100;
+                margin-top: 2rem;
+                padding: 1rem 0;
+                background: linear-gradient(
+                    180deg,
+                    rgba(5, 10, 20, 0.98) 0%,
+                    rgba(5, 10, 20, 0.95) 100%
+                );
+                backdrop-filter: blur(20px);
+                border-top: 1px solid rgba(96, 165, 250, 0.2);
+                border-bottom: 1px solid rgba(96, 165, 250, 0.2);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                opacity: 0;
+                transform: translateY(-20px);
+                transition: all 0.4s ease;
+            }
+
+            .timeline-nav.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .timeline-nav-inner {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 1rem;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                overflow-x: auto;
+                overflow-y: hidden;
+                scrollbar-width: thin;
+                scrollbar-color: rgba(96, 165, 250, 0.3) transparent;
+            }
+
+            .timeline-nav-inner::-webkit-scrollbar {
+                height: 4px;
+            }
+
+            .timeline-nav-inner::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            .timeline-nav-inner::-webkit-scrollbar-thumb {
+                background: rgba(96, 165, 250, 0.3);
+                border-radius: 2px;
+            }
+
+            .timeline-nav-label {
+                font-family: "Sora", sans-serif;
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: #60a5fa;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                white-space: nowrap;
+                flex-shrink: 0;
+                margin-right: 0.5rem;
+            }
+
+            .timeline-nav-item {
+                position: relative;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+                background: rgba(30, 41, 59, 0.5);
+                border: 1px solid rgba(96, 165, 250, 0.2);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            .timeline-nav-item:hover {
+                background: rgba(30, 41, 59, 0.8);
+                border-color: rgba(96, 165, 250, 0.5);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+            }
+
+            .timeline-nav-item.active {
+                background: linear-gradient(
+                    135deg,
+                    rgba(96, 165, 250, 0.3),
+                    rgba(167, 139, 250, 0.2)
+                );
+                border-color: #60a5fa;
+                box-shadow: 0 0 20px rgba(96, 165, 250, 0.4);
+            }
+
+            .timeline-nav-time {
+                font-family: "Sora", sans-serif;
+                font-size: 0.9rem;
+                font-weight: 700;
+                color: #60a5fa;
+                letter-spacing: 1px;
+            }
+
+            .timeline-nav-title {
+                font-size: 0.85rem;
+                color: #cbd5e1;
+                font-weight: 500;
+                max-width: 150px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .timeline-nav-item.active .timeline-nav-title {
+                color: #ffffff;
+            }
+
+            /* Project Link Button */
+            .timeline-project-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+                background: linear-gradient(
+                    135deg,
+                    rgba(96, 165, 250, 0.2),
+                    rgba(167, 139, 250, 0.2)
+                );
+                border: 1px solid #60a5fa;
+                border-radius: 8px;
+                color: #60a5fa;
+                font-size: 0.85rem;
+                font-weight: 600;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                margin-left: auto;
+                flex-shrink: 0;
+            }
+
+            .timeline-project-link:hover {
+                background: linear-gradient(
+                    135deg,
+                    rgba(96, 165, 250, 0.3),
+                    rgba(167, 139, 250, 0.3)
+                );
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+            }
+
+            .timeline-project-link svg {
+                width: 14px;
+                height: 14px;
+            }
+
             /* Mobile responsiveness */
             @media (max-width: 768px) {
+                .timeline-nav {
+                    top: 60px;
+                    padding: 0.75rem 0;
+                }
+
+                .timeline-nav-label {
+                    font-size: 0.65rem;
+                }
+
+                .timeline-nav-item {
+                    padding: 0.4rem 0.75rem;
+                    gap: 0.4rem;
+                }
+
+                .timeline-nav-time {
+                    font-size: 0.8rem;
+                }
+
+                .timeline-nav-title {
+                    font-size: 0.75rem;
+                    max-width: 100px;
+                }
+
+                .timeline-project-link {
+                    padding: 0.4rem 0.75rem;
+                    font-size: 0.75rem;
+                }
+
+                .timeline-project-link svg {
+                    width: 12px;
+                    height: 12px;
+                }
+
                 .demo-reel-timestamps {
                     margin-top: 2.5rem;
                 }
@@ -2090,6 +2277,84 @@
                             </video>
                         </noscript>
                     </div>
+
+                    <!-- Sticky Timeline Navigation -->
+                    <div class="timeline-nav" id="timeline-nav">
+                        <div class="timeline-nav-inner">
+                            <span class="timeline-nav-label">Navigate:</span>
+                            <div
+                                class="timeline-nav-item"
+                                data-time="0"
+                                data-project="amorak"
+                            >
+                                <span class="timeline-nav-time">00:00</span>
+                                <span class="timeline-nav-title">Amorak</span>
+                            </div>
+                            <div
+                                class="timeline-nav-item"
+                                data-time="38"
+                                data-project="akantilado"
+                            >
+                                <span class="timeline-nav-time">00:38</span>
+                                <span class="timeline-nav-title"
+                                    >Akantilado</span
+                                >
+                            </div>
+                            <div
+                                class="timeline-nav-item"
+                                data-time="58"
+                                data-project="ray"
+                            >
+                                <span class="timeline-nav-time">00:58</span>
+                                <span class="timeline-nav-title">Ray</span>
+                            </div>
+                            <div
+                                class="timeline-nav-item"
+                                data-time="102"
+                                data-project="not-today-darling"
+                            >
+                                <span class="timeline-nav-time">01:42</span>
+                                <span class="timeline-nav-title"
+                                    >Not Today</span
+                                >
+                            </div>
+                            <div
+                                class="timeline-nav-item"
+                                data-time="131"
+                                data-project="middleware2"
+                            >
+                                <span class="timeline-nav-time">02:11</span>
+                                <span class="timeline-nav-title">Ellen</span>
+                            </div>
+                            <div
+                                class="timeline-nav-item"
+                                data-time="145"
+                                data-project="pause-and-deserve"
+                            >
+                                <span class="timeline-nav-time">02:25</span>
+                                <span class="timeline-nav-title"
+                                    >Pause & Deserve</span
+                                >
+                            </div>
+                            <a
+                                href="#"
+                                class="timeline-project-link"
+                                id="timeline-project-link"
+                                style="display: none"
+                            >
+                                <span>View Project</span>
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
                     <!-- Interactive Timestamps -->
                     <div class="demo-reel-timestamps">
                         <h3
