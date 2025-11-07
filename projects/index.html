@@ -565,6 +565,35 @@
                 white-space: nowrap;
             }
 
+            /* Programming language tags - golden/amber color */
+            .project-tech-item.tech-programming {
+                background: rgba(251, 191, 36, 0.15);
+                border: 1px solid rgba(251, 191, 36, 0.3);
+                color: #fcd34d;
+            }
+
+            /* Status badge styling */
+            .project-status-badge {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                padding: 0.35rem 0.85rem;
+                background: linear-gradient(
+                    135deg,
+                    rgba(168, 85, 247, 0.2),
+                    rgba(139, 92, 246, 0.2)
+                );
+                border: 1px solid rgba(168, 85, 247, 0.4);
+                border-radius: 20px;
+                color: #c4b5fd;
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                backdrop-filter: blur(10px);
+                z-index: 2;
+            }
+
             /* === COMING SOON === */
             .project-card.coming-soon {
                 cursor: not-allowed;
@@ -990,8 +1019,13 @@
                     >
                         <div class="project-image">
                             <span
-                                class="project-badge badge-progress"
+                                class="project-badge badge-sound"
                                 data-i18n="projects.shadow_frames.badge"
+                                >Game Audio</span
+                            >
+                            <span
+                                class="project-status-badge"
+                                data-i18n="projects.shadow_frames.status"
                                 >In Progress</span
                             >
                             <div class="collaboration-badges">
@@ -1802,11 +1836,29 @@
                                 Array.isArray(techArray) &&
                                 techArray.length > 0
                             ) {
+                                // List of programming languages to highlight
+                                const programmingLanguages = [
+                                    "C++",
+                                    "C#",
+                                    "Python",
+                                    "JavaScript",
+                                    "Java",
+                                    "Blueprint",
+                                    "HLSL",
+                                    "GLSL",
+                                ];
+
                                 container.innerHTML = techArray
-                                    .map(
-                                        (tech) =>
-                                            `<span class="project-tech-item">${tech}</span>`,
-                                    )
+                                    .map((tech) => {
+                                        const isProgrammingLang =
+                                            programmingLanguages.some((lang) =>
+                                                tech.includes(lang),
+                                            );
+                                        const cssClass = isProgrammingLang
+                                            ? "project-tech-item tech-programming"
+                                            : "project-tech-item";
+                                        return `<span class="${cssClass}">${tech}</span>`;
+                                    })
                                     .join("");
                             } else {
                                 container.style.display = "none";
