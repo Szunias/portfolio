@@ -1,5 +1,6 @@
 import { initTranslation } from "./home/translation.js";
 import { initVimeoFallback } from "./home/vimeo.js";
+import { initTimestamps } from "./home/timestamps.js";
 import { initHeaderScroll } from "./home/header-scroll.js";
 import { initScrollReveal } from "./home/scroll-reveal.js";
 import { initCounters } from "./home/counter.js";
@@ -13,6 +14,7 @@ import { initCvDropdown } from "./home/cv-dropdown.js";
 const { setLanguage, getCurrentLanguage } = initTranslation();
 
 initVimeoFallback();
+initTimestamps();
 initHeaderScroll();
 initScrollReveal();
 initCounters();
