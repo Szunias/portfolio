@@ -716,37 +716,37 @@
             <!-- Parameter Management: APVTS -->
             <section class="tech-section">
                 <div class="section-header">
-                    <div class="section-badge">JUCE Architecture</div>
-                    <h2>AudioProcessorValueTreeState</h2>
-                    <p class="section-subtitle">JUCE's parameter management system for automation and state persistence</p>
+                    <div class="section-badge" data-i18n="apvts.badge">JUCE Architecture</div>
+                    <h2 data-i18n="apvts.title">AudioProcessorValueTreeState</h2>
+                    <p class="section-subtitle" data-i18n="apvts.subtitle">Parameter management system for automation and state persistence</p>
                 </div>
 
                 <div class="explanation-grid">
                     <div class="explanation-item">
-                        <h3>WHAT</h3>
-                        <p>APVTS is JUCE's centralized parameter system that manages all plugin parameters, handles automation from DAWs, and preserves plugin state between sessions.</p>
+                        <h3 data-i18n="apvts.what.title">WHAT</h3>
+                        <p data-i18n="apvts.what.desc">APVTS manages plugin parameters, handles DAW automation, and preserves state between sessions.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>HOW</h3>
-                        <p>Parameters are defined in createParameters() using RangedAudioParameter. Each parameter has min/max/default values and is automatically exposed to the host DAW for automation.</p>
+                        <h3 data-i18n="apvts.how.title">HOW</h3>
+                        <p data-i18n="apvts.how.desc">Parameters defined via RangedAudioParameter with min/max/default values. Automatically exposed to host for automation.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>WHY</h3>
-                        <p>APVTS provides thread-safe parameter access, automatic state saving/loading, and seamless DAW integration. All parameters can be automated without additional code.</p>
+                        <h3 data-i18n="apvts.why.title">WHY</h3>
+                        <p data-i18n="apvts.why.desc">Thread-safe parameter access, automatic state management, and zero-config DAW integration.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>RESULT</h3>
-                        <p>Complete parameter automation support, persistent plugin state, and clean separation between parameter definition and audio processing logic.</p>
+                        <h3 data-i18n="apvts.result.title">RESULT</h3>
+                        <p data-i18n="apvts.result.desc">All parameters automatable without additional code. Plugin state persists across sessions.</p>
                     </div>
                 </div>
 
                 <div class="implementation-showcase">
                     <div class="code-side">
-                        <h4>PluginProcessor.cpp — Parameter Definition</h4>
+                        <h4 data-i18n="apvts.code.title">PluginProcessor.cpp — Parameter Definition</h4>
                         <div class="code-explanation">
-                            <p><strong>WHAT</strong>: Function creates and returns all plugin parameters with their ranges and default values.</p>
-                            <p><strong>HOW</strong>: Each parameter is created using AudioParameterFloat and added to a vector. The vector is converted to ParameterLayout for APVTS initialization.</p>
-                            <p><strong>WHY</strong>: Centralized parameter definition makes it easy to add new parameters and ensures consistency. All parameters are automatically automatable in DAWs.</p>
+                            <p><strong>WHAT</strong>: <span data-i18n="apvts.code.what">Creates and returns plugin parameters with ranges and defaults.</span></p>
+                            <p><strong>HOW</strong>: <span data-i18n="apvts.code.how">Each AudioParameterFloat added to vector, converted to ParameterLayout for APVTS.</span></p>
+                            <p><strong>WHY</strong>: <span data-i18n="apvts.code.why">Centralized definition ensures consistency. All parameters automatically automatable.</span></p>
                         </div>
                         <pre><code><span class="type">juce::AudioProcessorValueTreeState::ParameterLayout</span> <span class="function">createParameters</span>()
 {
@@ -778,37 +778,37 @@
             <!-- Audio Processing Pipeline -->
             <section class="tech-section">
                 <div class="section-header">
-                    <div class="section-badge">Audio Processing</div>
-                    <h2>processBlock Implementation</h2>
-                    <p class="section-subtitle">Real-time audio processing pipeline in JUCE</p>
+                    <div class="section-badge" data-i18n="processBlock.badge">Audio Processing</div>
+                    <h2 data-i18n="processBlock.title">processBlock Implementation</h2>
+                    <p class="section-subtitle" data-i18n="processBlock.subtitle">Real-time audio pipeline in JUCE</p>
                 </div>
 
                 <div class="explanation-grid">
                     <div class="explanation-item">
-                        <h3>WHAT</h3>
-                        <p>processBlock is JUCE's main audio callback called by the host DAW. It processes audio buffers in real-time, applying all effects and modifications.</p>
+                        <h3 data-i18n="processBlock.what.title">WHAT</h3>
+                        <p data-i18n="processBlock.what.desc">Main audio callback invoked by DAW. Processes buffers in real-time.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>HOW</h3>
-                        <p>Audio is fetched from AudioFilePlayer, then processed through filters, compressor, and custom tremolo. Parameters are read from APVTS using thread-safe atomic pointers.</p>
+                        <h3 data-i18n="processBlock.how.title">HOW</h3>
+                        <p data-i18n="processBlock.how.desc">Fetches audio from AudioFilePlayer, applies filters, compressor, and tremolo. Reads parameters via atomic pointers.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>WHY</h3>
-                        <p>processBlock runs in the audio thread with strict timing requirements. Using APVTS ensures lock-free parameter access without blocking the audio thread.</p>
+                        <h3 data-i18n="processBlock.why.title">WHY</h3>
+                        <p data-i18n="processBlock.why.desc">Runs in audio thread with strict timing. APVTS provides lock-free parameter access.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>RESULT</h3>
-                        <p>Low-latency, real-time audio processing with all effects applied in the correct order. No audio dropouts or glitches during parameter changes.</p>
+                        <h3 data-i18n="processBlock.result.title">RESULT</h3>
+                        <p data-i18n="processBlock.result.desc">Low-latency processing with correct effect order. No dropouts during parameter changes.</p>
                     </div>
                 </div>
 
                 <div class="implementation-showcase">
                     <div class="code-side">
-                        <h4>PluginProcessor.cpp — Audio Processing</h4>
+                        <h4 data-i18n="processBlock.code.title">PluginProcessor.cpp — Audio Processing</h4>
                         <div class="code-explanation">
-                            <p><strong>WHAT</strong>: Main audio processing function that applies all effects to incoming audio buffers.</p>
-                            <p><strong>HOW</strong>: Reads parameters from APVTS, fetches audio from file player, applies DSP effects in sequence, then applies final gain.</p>
-                            <p><strong>WHY</strong>: Sequential processing ensures effects are applied in the correct order. JUCE's DSP module provides optimized SIMD processing for filters and compressor.</p>
+                            <p><strong>WHAT</strong>: <span data-i18n="processBlock.code.what">Applies all effects to incoming audio buffers.</span></p>
+                            <p><strong>HOW</strong>: <span data-i18n="processBlock.code.how">Reads APVTS parameters, fetches audio, applies DSP in sequence, then final gain.</span></p>
+                            <p><strong>WHY</strong>: <span data-i18n="processBlock.code.why">Sequential processing ensures correct order. JUCE DSP provides SIMD optimization.</span></p>
                         </div>
                         <pre><code><span class="keyword">void</span> <span class="function">processBlock</span>(<span class="type">juce::AudioBuffer</span>&lt;<span class="type">float</span>&gt;&amp; buffer, <span class="type">juce::MidiBuffer</span>&amp; midiMessages)
 {
@@ -849,37 +849,37 @@
             <!-- Custom Tremolo -->
             <section class="tech-section">
                 <div class="section-header">
-                    <div class="section-badge">Custom DSP</div>
-                    <h2>Manual Tremolo Effect</h2>
-                    <p class="section-subtitle">Per-sample LFO implementation for amplitude modulation</p>
+                    <div class="section-badge" data-i18n="tremolo.badge">Custom DSP</div>
+                    <h2 data-i18n="tremolo.title">Tremolo Effect Implementation</h2>
+                    <p class="section-subtitle" data-i18n="tremolo.subtitle">Per-sample LFO for amplitude modulation</p>
                 </div>
 
                 <div class="explanation-grid">
                     <div class="explanation-item">
-                        <h3>WHAT</h3>
-                        <p>Tremolo is amplitude modulation using a low-frequency oscillator (LFO). The amplitude of the audio signal varies rhythmically, creating a pulsing effect.</p>
+                        <h3 data-i18n="tremolo.what.title">WHAT</h3>
+                        <p data-i18n="tremolo.what.desc">Amplitude modulation via low-frequency oscillator. Creates rhythmic pulsing effect.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>HOW</h3>
-                        <p>Sine wave LFO is calculated per sample. Each sample is multiplied by the LFO value, which ranges from minimum to maximum amplitude based on depth parameter.</p>
+                        <h3 data-i18n="tremolo.how.title">HOW</h3>
+                        <p data-i18n="tremolo.how.desc">Sine wave LFO calculated per sample. Each sample multiplied by LFO value based on depth parameter.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>WHY</h3>
-                        <p>Manual implementation provides full control over the effect. Per-sample processing ensures smooth modulation without artifacts, unlike block-based processing.</p>
+                        <h3 data-i18n="tremolo.why.title">WHY</h3>
+                        <p data-i18n="tremolo.why.desc">Manual implementation provides full control. Per-sample processing ensures smooth modulation.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>RESULT</h3>
-                        <p>Smooth, musical tremolo effect with precise control over rate and depth. No aliasing or stepping artifacts in the modulation.</p>
+                        <h3 data-i18n="tremolo.result.title">RESULT</h3>
+                        <p data-i18n="tremolo.result.desc">Smooth tremolo with precise rate/depth control. No aliasing or stepping artifacts.</p>
                     </div>
                 </div>
 
                 <div class="implementation-showcase">
                     <div class="code-side">
-                        <h4>PluginProcessor.cpp — Tremolo Implementation</h4>
+                        <h4 data-i18n="tremolo.code.title">PluginProcessor.cpp — Tremolo Implementation</h4>
                         <div class="code-explanation">
-                            <p><strong>WHAT</strong>: Custom tremolo effect using sine wave LFO for amplitude modulation.</p>
-                            <p><strong>HOW</strong>: Phase increment is calculated per sample based on LFO rate. Sine wave generates modulation value, which is applied to each sample across all channels.</p>
-                            <p><strong>WHY</strong>: Per-sample processing ensures smooth modulation. Manual implementation allows precise control over the effect's behavior compared to using JUCE's built-in LFO classes.</p>
+                            <p><strong>WHAT</strong>: <span data-i18n="tremolo.code.what">Custom tremolo using sine wave LFO for amplitude modulation.</span></p>
+                            <p><strong>HOW</strong>: <span data-i18n="tremolo.code.how">Phase increment calculated per sample. Sine wave applied to all channels.</span></p>
+                            <p><strong>WHY</strong>: <span data-i18n="tremolo.code.why">Per-sample processing ensures smoothness. Manual implementation allows precise behavior control.</span></p>
                         </div>
                         <pre><code><span class="keyword">if</span> (tremoloOn &amp;&amp; tremDepth &gt; <span class="number">0.0f</span>)
 {
@@ -911,37 +911,37 @@
             <!-- Filters & Compressor -->
             <section class="tech-section">
                 <div class="section-header">
-                    <div class="section-badge">JUCE DSP</div>
-                    <h2>Filters & Compressor</h2>
-                    <p class="section-subtitle">Professional DSP modules from JUCE's DSP library</p>
+                    <div class="section-badge" data-i18n="filters.badge">JUCE DSP</div>
+                    <h2 data-i18n="filters.title">Filters & Compressor</h2>
+                    <p class="section-subtitle" data-i18n="filters.subtitle">DSP modules from JUCE library</p>
                 </div>
 
                 <div class="explanation-grid">
                     <div class="explanation-item">
-                        <h3>WHAT</h3>
-                        <p>JUCE provides optimized DSP modules including StateVariableTPTFilter for filtering and Compressor for dynamic range control. These use SIMD optimizations for maximum performance.</p>
+                        <h3 data-i18n="filters.what.title">WHAT</h3>
+                        <p data-i18n="filters.what.desc">JUCE provides StateVariableTPTFilter and Compressor. SIMD-optimized for performance.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>HOW</h3>
-                        <p>Filters use TPT (Topology-Preserving Transform) design for zero-delay filtering. Compressor uses look-ahead and smooth envelope followers for transparent compression.</p>
+                        <h3 data-i18n="filters.how.title">HOW</h3>
+                        <p data-i18n="filters.how.desc">TPT filters use Topology-Preserving Transform for zero-delay. Compressor uses look-ahead and smooth envelopes.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>WHY</h3>
-                        <p>JUCE's DSP modules are highly optimized and tested. Using them saves development time and ensures professional-quality audio processing with minimal CPU usage.</p>
+                        <h3 data-i18n="filters.why.title">WHY</h3>
+                        <p data-i18n="filters.why.desc">JUCE DSP modules are optimized and tested. Saves development time, ensures quality.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>RESULT</h3>
-                        <p>High-quality filtering and compression with low CPU overhead. All parameters are automatable and respond smoothly to real-time changes.</p>
+                        <h3 data-i18n="filters.result.title">RESULT</h3>
+                        <p data-i18n="filters.result.desc">High-quality filtering and compression with low CPU. Parameters respond smoothly to changes.</p>
                     </div>
                 </div>
 
                 <div class="implementation-showcase">
                     <div class="code-side">
-                        <h4>PluginProcessor.cpp — DSP Setup</h4>
+                        <h4 data-i18n="filters.code.title">PluginProcessor.cpp — DSP Setup</h4>
                         <div class="code-explanation">
-                            <p><strong>WHAT</strong>: Initialization of JUCE DSP modules in prepareToPlay, which is called when audio starts.</p>
-                            <p><strong>HOW</strong>: ProcessSpec defines sample rate, block size, and channel count. All DSP modules are prepared with the same spec for consistent processing.</p>
-                            <p><strong>WHY</strong>: prepareToPlay is called before audio processing begins. This is where all DSP modules must be initialized with correct sample rate and buffer sizes.</p>
+                            <p><strong>WHAT</strong>: <span data-i18n="filters.code.what">Initialization in prepareToPlay, called before audio starts.</span></p>
+                            <p><strong>HOW</strong>: <span data-i18n="filters.code.how">ProcessSpec defines sample rate, block size, channels. All modules prepared with same spec.</span></p>
+                            <p><strong>WHY</strong>: <span data-i18n="filters.code.why">prepareToPlay called before processing. DSP modules need correct sample rate and buffer sizes.</span></p>
                         </div>
                         <pre><code><span class="keyword">void</span> <span class="function">prepareToPlay</span>(<span class="type">double</span> sampleRate, <span class="type">int</span> samplesPerBlock)
 {
@@ -967,37 +967,37 @@
             <!-- AudioFilePlayer -->
             <section class="tech-section">
                 <div class="section-header">
-                    <div class="section-badge">Audio Playback</div>
-                    <h2>AudioFilePlayer System</h2>
-                    <p class="section-subtitle">File loading, playback, and tempo manipulation</p>
+                    <div class="section-badge" data-i18n="audioPlayer.badge">Audio Playback</div>
+                    <h2 data-i18n="audioPlayer.title">AudioFilePlayer System</h2>
+                    <p class="section-subtitle" data-i18n="audioPlayer.subtitle">File loading, playback, and tempo manipulation</p>
                 </div>
 
                 <div class="explanation-grid">
                     <div class="explanation-item">
-                        <h3>WHAT</h3>
-                        <p>AudioFilePlayer manages audio file loading, playback, looping, and tempo control. It uses AudioTransportSource for playback and ResamplingAudioSource for tempo changes.</p>
+                        <h3 data-i18n="audioPlayer.what.title">WHAT</h3>
+                        <p data-i18n="audioPlayer.what.desc">Manages file loading, playback, looping, and tempo. Uses AudioTransportSource and ResamplingAudioSource.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>HOW</h3>
-                        <p>Audio files are loaded into AudioFormatReaderSource, wrapped in ResamplingAudioSource for tempo control, then connected to AudioTransportSource for playback control.</p>
+                        <h3 data-i18n="audioPlayer.how.title">HOW</h3>
+                        <p data-i18n="audioPlayer.how.desc">Files loaded into AudioFormatReaderSource, wrapped in ResamplingAudioSource, connected to AudioTransportSource.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>WHY</h3>
-                        <p>JUCE's AudioSource architecture provides clean separation of concerns. Each source handles one responsibility, making the system modular and maintainable.</p>
+                        <h3 data-i18n="audioPlayer.why.title">WHY</h3>
+                        <p data-i18n="audioPlayer.why.desc">JUCE AudioSource architecture provides clean separation. Each source handles one responsibility.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>RESULT</h3>
-                        <p>Smooth playback with tempo control from 20-300 BPM, seamless looping, and support for granular synthesis mode with random playback.</p>
+                        <h3 data-i18n="audioPlayer.result.title">RESULT</h3>
+                        <p data-i18n="audioPlayer.result.desc">Smooth playback with 20-300 BPM tempo control, seamless looping, granular mode support.</p>
                     </div>
                 </div>
 
                 <div class="implementation-showcase">
                     <div class="code-side">
-                        <h4>AudioFilePlayer.cpp — Playback System</h4>
+                        <h4 data-i18n="audioPlayer.code.title">AudioFilePlayer.cpp — Playback System</h4>
                         <div class="code-explanation">
-                            <p><strong>WHAT</strong>: AudioSource chain setup for file playback with tempo control.</p>
-                            <p><strong>HOW</strong>: File reader is wrapped in ResamplingAudioSource, which is then connected to AudioTransportSource. This chain allows tempo changes without pitch shifting.</p>
-                            <p><strong>WHY</strong>: ResamplingAudioSource changes playback speed by resampling, maintaining audio quality. AudioTransportSource provides play/stop/loop control.</p>
+                            <p><strong>WHAT</strong>: <span data-i18n="audioPlayer.code.what">AudioSource chain for playback with tempo control.</span></p>
+                            <p><strong>HOW</strong>: <span data-i18n="audioPlayer.code.how">Reader wrapped in ResamplingAudioSource, connected to AudioTransportSource.</span></p>
+                            <p><strong>WHY</strong>: <span data-i18n="audioPlayer.code.why">ResamplingAudioSource changes speed maintaining quality. AudioTransportSource provides play/stop/loop.</span></p>
                         </div>
                         <pre><code><span class="keyword">void</span> <span class="function">loadFile</span>(<span class="type">juce::File</span> file)
 {
