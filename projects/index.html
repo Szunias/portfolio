@@ -394,45 +394,125 @@
             }
 
             .badge-game {
-                background: rgba(138, 43, 226, 0.9);
-                color: #fff;
-                box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+                background: rgba(15, 23, 42, 0.95);
+                color: #93c5fd;
+                box-shadow: 0 4px 15px rgba(15, 23, 42, 0.6);
             }
 
             .badge-sound {
-                background: rgba(255, 127, 80, 0.9);
-                color: #fff;
-                box-shadow: 0 4px 15px rgba(255, 127, 80, 0.4);
+                background: rgba(23, 37, 84, 0.95);
+                color: #bfdbfe;
+                box-shadow: 0 4px 15px rgba(23, 37, 84, 0.6);
             }
 
             .badge-music {
-                background: rgba(255, 215, 0, 0.9);
-                color: #000;
-                box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+                background: rgba(30, 58, 138, 0.95);
+                color: #dbeafe;
+                box-shadow: 0 4px 15px rgba(30, 58, 138, 0.6);
             }
 
             .badge-tool {
-                background: rgba(255, 140, 0, 0.9);
-                color: #fff;
-                box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
+                background: rgba(29, 78, 216, 0.95);
+                color: #eff6ff;
+                box-shadow: 0 4px 15px rgba(29, 78, 216, 0.6);
             }
 
             .badge-plugin {
-                background: rgba(0, 255, 255, 0.9);
-                color: #000;
-                box-shadow: 0 4px 15px rgba(0, 255, 255, 0.4);
+                background: rgba(30, 64, 175, 0.95);
+                color: #dbeafe;
+                box-shadow: 0 4px 15px rgba(30, 64, 175, 0.6);
             }
 
             .badge-middleware {
-                background: rgba(0, 206, 209, 0.9);
-                color: #fff;
-                box-shadow: 0 4px 15px rgba(0, 206, 209, 0.4);
+                background: rgba(28, 100, 242, 0.95);
+                color: #e0f2fe;
+                box-shadow: 0 4px 15px rgba(28, 100, 242, 0.6);
             }
 
             .badge-progress {
-                background: rgba(255, 165, 0, 0.9);
-                color: #fff;
-                box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
+                background: rgba(37, 99, 235, 0.95);
+                color: #f0f9ff;
+                box-shadow: 0 4px 15px rgba(37, 99, 235, 0.6);
+            }
+
+            /* === COLLABORATION BADGES === */
+            .collaboration-badges {
+                position: absolute;
+                bottom: 1rem;
+                left: 1rem;
+                display: flex;
+                gap: 0.6rem;
+                z-index: 10;
+                flex-wrap: wrap;
+                max-width: calc(100% - 2rem);
+            }
+
+            .collab-badge {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 42px;
+                height: 42px;
+                padding: 0.5rem;
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 50%;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                transition: all 0.3s ease;
+                position: relative;
+            }
+
+            .collab-badge::after {
+                content: attr(data-tooltip);
+                position: absolute;
+                bottom: calc(100% + 8px);
+                left: 50%;
+                transform: translateX(-50%) translateY(5px);
+                padding: 0.5rem 0.75rem;
+                background: rgba(15, 23, 42, 0.95);
+                color: #93c5fd;
+                font-size: 0.75rem;
+                font-weight: 600;
+                white-space: nowrap;
+                border-radius: 8px;
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+                z-index: 20;
+            }
+
+            .collab-badge::before {
+                content: "";
+                position: absolute;
+                bottom: calc(100% + 2px);
+                left: 50%;
+                transform: translateX(-50%) translateY(5px);
+                border: 6px solid transparent;
+                border-top-color: rgba(15, 23, 42, 0.95);
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.3s ease;
+                z-index: 20;
+            }
+
+            .collab-badge:hover::after,
+            .collab-badge:hover::before {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+
+            .collab-badge:hover {
+                transform: translateY(-3px) scale(1.05);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+                background: rgba(255, 255, 255, 1);
+            }
+
+            .collab-badge img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                display: block;
             }
 
             .project-content {
@@ -914,14 +994,33 @@
                                 data-i18n="projects.shadow_frames.badge"
                                 >In Progress</span
                             >
-                            <img
-                                class="lazy-img"
-                                data-src="../assets/images/projects-shadowframes/ShadowFrames_Title_Var2.png"
-                                alt="Shadow Frames"
-                                onerror="this.src='../assets/images/covers/project5.webp'"
-                                loading="lazy"
-                                decoding="async"
-                            />
+                            <div class="collaboration-badges">
+                                <div class="collab-badge" data-tooltip="RITCS">
+                                    <img
+                                        src="../assets/icons/icons for projects/RITCS_Logo.png"
+                                        alt="RITCS"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                </div>
+                                <div
+                                    class="collab-badge kask"
+                                    data-tooltip="KASK Conservatory"
+                                >
+                                    <img
+                                        src="../assets/icons/icons for projects/KASK_Logo_Transparent.png"
+                                        alt="KASK"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                </div>
+                            </div>
+                            <video data-autoplay loop muted playsinline>
+                                <source
+                                    data-src="../assets/images/projects-shadowframes/Menugif.mp4"
+                                    type="video/mp4"
+                                />
+                            </video>
                         </div>
                         <div class="project-content">
                             <h3
@@ -937,240 +1036,10 @@
                                 Audio-driven horror game. Prototype done, now in
                                 production.
                             </p>
-                            <div class="project-tech" data-tech="projects.shadow_frames.tech"></div>
-                        </div>
-                    </a>
-
-                    <!-- Transientica -->
-                    <a
-                        href="audiolab.html"
-                        class="project-card"
-                        data-category="tools"
-                    >
-                        <div class="project-image">
-                            <span
-                                class="project-badge badge-tool"
-                                data-i18n="projects.audiolab.badge"
-                                >ML Audio</span
-                            >
-                            <video data-autoplay loop muted playsinline>
-                                <source
-                                    data-src="../assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4"
-                                    type="video/mp4"
-                                />
-                            </video>
-                        </div>
-                        <div class="project-content">
-                            <h3
-                                class="project-title"
-                                data-i18n="projects.audiolab.title"
-                            >
-                                Transientica: AudioLab
-                            </h3>
-                            <p
-                                class="project-description"
-                                data-i18n="projects.audiolab.description"
-                            >
-                                Real-time ML beatbox classification with 45 ms
-                                latency.
-                            </p>
-                            <div class="project-tech" data-tech="projects.audiolab.tech"></div>
-                        </div>
-                    </a>
-
-                    <!-- AudioQ -->
-                    <a
-                        href="audioq.html"
-                        class="project-card"
-                        data-category="tools"
-                    >
-                        <div class="project-image">
-                            <span
-                                class="project-badge badge-plugin"
-                                data-i18n="projects.audioq.badge"
-                                >VST Plugin</span
-                            >
-                            <img
-                                class="lazy-img"
-                                data-src="../assets/images/projects-audioq/AudioQLogo.jpeg"
-                                alt="AudioQ"
-                                onerror="this.src='../assets/images/projects-audioq/AudioQIcon512.png'"
-                                loading="lazy"
-                                decoding="async"
-                            />
-                        </div>
-                        <div class="project-content">
-                            <h3
-                                class="project-title"
-                                data-i18n="projects.audioq.title"
-                            >
-                                AudioQ
-                            </h3>
-                            <p
-                                class="project-description"
-                                data-i18n="projects.audioq.description"
-                            >
-                                Advanced EQ plugin with spectrum analysis.
-                            </p>
-                            <div class="project-tech" data-tech="projects.audioq.tech"></div>
-                        </div>
-                    </a>
-
-                    <!-- Middleware -->
-                    <a
-                        href="middleware2.html"
-                        class="project-card"
-                        data-category="game"
-                    >
-                        <div class="project-image">
-                            <span
-                                class="project-badge badge-middleware"
-                                data-i18n="projects.middleware.badge"
-                                >Middleware</span
-                            >
-                            <img
-                                class="lazy-img"
-                                data-src="../assets/images/projects/musicforgames.png"
-                                alt="Middleware"
-                                onerror="this.src='../assets/images/covers/project5.webp'"
-                                loading="lazy"
-                                decoding="async"
-                            />
-                        </div>
-                        <div class="project-content">
-                            <h3
-                                class="project-title"
-                                data-i18n="projects.middleware.title"
-                            >
-                                Middleware Integration
-                            </h3>
-                            <p
-                                class="project-description"
-                                data-i18n="projects.middleware.description"
-                            >
-                                FMOD and Wwise implementation expertise.
-                            </p>
-                            <div class="project-tech" data-tech="projects.middleware.tech"></div>
-                        </div>
-                    </a>
-
-                    <!-- Not Today Darling -->
-                    <a
-                        href="not-today-darling.html"
-                        class="project-card"
-                        data-category="game"
-                    >
-                        <div class="project-image">
-                            <span
-                                class="project-badge badge-game"
-                                data-i18n="projects.not_today.badge"
-                                >Game Audio</span
-                            >
-                            <video data-autoplay loop muted playsinline>
-                                <source
-                                    data-src="../assets/images/projects/NotTodayGIF.webm"
-                                    type="video/webm"
-                                />
-                                <source
-                                    data-src="../assets/images/projects/NotTodayGIF.mp4"
-                                    type="video/mp4"
-                                />
-                            </video>
-                        </div>
-                        <div class="project-content">
-                            <h3
-                                class="project-title"
-                                data-i18n="projects.not_today.title"
-                            >
-                                Not Today, Darling!
-                            </h3>
-                            <p
-                                class="project-description"
-                                data-i18n="projects.not_today.description"
-                            >
-                                Retro-inspired audio implementation for chaotic
-                                multiplayer racing game.
-                            </p>
-                            <div class="project-tech" data-tech="projects.not_today.tech"></div>
-                        </div>
-                    </a>
-
-                    <!-- Pause & Deserve -->
-                    <a
-                        href="pause-and-deserve.html"
-                        class="project-card"
-                        data-category="game"
-                    >
-                        <div class="project-image">
-                            <span
-                                class="project-badge badge-game"
-                                data-i18n="projects.pause_deserve.badge"
-                                >Horror Game</span
-                            >
-                            <video data-autoplay loop muted playsinline>
-                                <source
-                                    data-src="../assets/images/projects-pausedeserve/pausedeservegif.webm"
-                                    type="video/webm"
-                                />
-                                <source
-                                    data-src="../assets/images/projects-pausedeserve/pausedeservegif.mp4"
-                                    type="video/mp4"
-                                />
-                            </video>
-                        </div>
-                        <div class="project-content">
-                            <h3
-                                class="project-title"
-                                data-i18n="projects.pause_deserve.title"
-                            >
-                                Pause & Deserve
-                            </h3>
-                            <p
-                                class="project-description"
-                                data-i18n="projects.pause_deserve.description"
-                            >
-                                Psychological horror game with strategic pause
-                                mechanics.
-                            </p>
-                            <div class="project-tech" data-tech="projects.pause_deserve.tech"></div>
-                        </div>
-                    </a>
-
-                    <!-- Interactive Music -->
-                    <a
-                        href="musicforgames.html"
-                        class="project-card"
-                        data-category="music"
-                    >
-                        <div class="project-image">
-                            <span
-                                class="project-badge badge-music"
-                                data-i18n="projects.interactive_music.badge"
-                                >Music</span
-                            >
-                            <img
-                                class="lazy-img"
-                                data-src="../assets/images/projects/musicforgames.png"
-                                alt="Interactive Music"
-                                loading="lazy"
-                                decoding="async"
-                            />
-                        </div>
-                        <div class="project-content">
-                            <h3
-                                class="project-title"
-                                data-i18n="projects.interactive_music.title"
-                            >
-                                Interactive Music Design
-                            </h3>
-                            <p
-                                class="project-description"
-                                data-i18n="projects.interactive_music.description"
-                            >
-                                Adaptive audio systems with vertical layering in
-                                Wwise.
-                            </p>
-                            <div class="project-tech" data-tech="projects.interactive_music.tech"></div>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.shadow_frames.tech"
+                            ></div>
                         </div>
                     </a>
 
@@ -1211,7 +1080,261 @@
                                 Atmospheric soundscapes and creature audio for
                                 horror animation.
                             </p>
-                            <div class="project-tech" data-tech="projects.amorak.tech"></div>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.amorak.tech"
+                            ></div>
+                        </div>
+                    </a>
+
+                    <!-- Transientica -->
+                    <a
+                        href="audiolab.html"
+                        class="project-card"
+                        data-category="tools"
+                    >
+                        <div class="project-image">
+                            <span
+                                class="project-badge badge-tool"
+                                data-i18n="projects.audiolab.badge"
+                                >ML Audio</span
+                            >
+                            <video data-autoplay loop muted playsinline>
+                                <source
+                                    data-src="../assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4"
+                                    type="video/mp4"
+                                />
+                            </video>
+                        </div>
+                        <div class="project-content">
+                            <h3
+                                class="project-title"
+                                data-i18n="projects.audiolab.title"
+                            >
+                                Transientica: AudioLab
+                            </h3>
+                            <p
+                                class="project-description"
+                                data-i18n="projects.audiolab.description"
+                            >
+                                Real-time ML beatbox classification with 45 ms
+                                latency.
+                            </p>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.audiolab.tech"
+                            ></div>
+                        </div>
+                    </a>
+
+                    <!-- AudioQ -->
+                    <a
+                        href="audioq.html"
+                        class="project-card"
+                        data-category="tools"
+                    >
+                        <div class="project-image">
+                            <span
+                                class="project-badge badge-plugin"
+                                data-i18n="projects.audioq.badge"
+                                >VST Plugin</span
+                            >
+                            <img
+                                class="lazy-img"
+                                data-src="../assets/images/projects-audioq/AudioQLogo.jpeg"
+                                alt="AudioQ"
+                                onerror="this.src='../assets/images/projects-audioq/AudioQIcon512.png'"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                        </div>
+                        <div class="project-content">
+                            <h3
+                                class="project-title"
+                                data-i18n="projects.audioq.title"
+                            >
+                                AudioQ
+                            </h3>
+                            <p
+                                class="project-description"
+                                data-i18n="projects.audioq.description"
+                            >
+                                Advanced EQ plugin with spectrum analysis.
+                            </p>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.audioq.tech"
+                            ></div>
+                        </div>
+                    </a>
+
+                    <!-- Middleware -->
+                    <a
+                        href="middleware2.html"
+                        class="project-card"
+                        data-category="game"
+                    >
+                        <div class="project-image">
+                            <span
+                                class="project-badge badge-middleware"
+                                data-i18n="projects.middleware.badge"
+                                >Middleware</span
+                            >
+                            <img
+                                class="lazy-img"
+                                data-src="../assets/images/projects/musicforgames.png"
+                                alt="Middleware"
+                                onerror="this.src='../assets/images/covers/project5.webp'"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                        </div>
+                        <div class="project-content">
+                            <h3
+                                class="project-title"
+                                data-i18n="projects.middleware.title"
+                            >
+                                Middleware Integration
+                            </h3>
+                            <p
+                                class="project-description"
+                                data-i18n="projects.middleware.description"
+                            >
+                                FMOD and Wwise implementation expertise.
+                            </p>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.middleware.tech"
+                            ></div>
+                        </div>
+                    </a>
+
+                    <!-- Not Today Darling -->
+                    <a
+                        href="not-today-darling.html"
+                        class="project-card"
+                        data-category="game"
+                    >
+                        <div class="project-image">
+                            <span
+                                class="project-badge badge-game"
+                                data-i18n="projects.not_today.badge"
+                                >Game Audio</span
+                            >
+                            <video data-autoplay loop muted playsinline>
+                                <source
+                                    data-src="../assets/images/projects/NotTodayGIF.webm"
+                                    type="video/webm"
+                                />
+                                <source
+                                    data-src="../assets/images/projects/NotTodayGIF.mp4"
+                                    type="video/mp4"
+                                />
+                            </video>
+                        </div>
+                        <div class="project-content">
+                            <h3
+                                class="project-title"
+                                data-i18n="projects.not_today.title"
+                            >
+                                Not Today, Darling!
+                            </h3>
+                            <p
+                                class="project-description"
+                                data-i18n="projects.not_today.description"
+                            >
+                                Retro-inspired audio implementation for chaotic
+                                multiplayer racing game.
+                            </p>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.not_today.tech"
+                            ></div>
+                        </div>
+                    </a>
+
+                    <!-- Pause & Deserve -->
+                    <a
+                        href="pause-and-deserve.html"
+                        class="project-card"
+                        data-category="game"
+                    >
+                        <div class="project-image">
+                            <span
+                                class="project-badge badge-game"
+                                data-i18n="projects.pause_deserve.badge"
+                                >Horror Game</span
+                            >
+                            <video data-autoplay loop muted playsinline>
+                                <source
+                                    data-src="../assets/images/projects-pausedeserve/pausedeservegif.webm"
+                                    type="video/webm"
+                                />
+                                <source
+                                    data-src="../assets/images/projects-pausedeserve/pausedeservegif.mp4"
+                                    type="video/mp4"
+                                />
+                            </video>
+                        </div>
+                        <div class="project-content">
+                            <h3
+                                class="project-title"
+                                data-i18n="projects.pause_deserve.title"
+                            >
+                                Pause & Deserve
+                            </h3>
+                            <p
+                                class="project-description"
+                                data-i18n="projects.pause_deserve.description"
+                            >
+                                Psychological horror game with strategic pause
+                                mechanics.
+                            </p>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.pause_deserve.tech"
+                            ></div>
+                        </div>
+                    </a>
+
+                    <!-- Interactive Music -->
+                    <a
+                        href="musicforgames.html"
+                        class="project-card"
+                        data-category="music"
+                    >
+                        <div class="project-image">
+                            <span
+                                class="project-badge badge-music"
+                                data-i18n="projects.interactive_music.badge"
+                                >Music</span
+                            >
+                            <img
+                                class="lazy-img"
+                                data-src="../assets/images/projects/musicforgames.png"
+                                alt="Interactive Music"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                        </div>
+                        <div class="project-content">
+                            <h3
+                                class="project-title"
+                                data-i18n="projects.interactive_music.title"
+                            >
+                                Interactive Music Design
+                            </h3>
+                            <p
+                                class="project-description"
+                                data-i18n="projects.interactive_music.description"
+                            >
+                                Adaptive audio systems with vertical layering in
+                                Wwise.
+                            </p>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.interactive_music.tech"
+                            ></div>
                         </div>
                     </a>
 
@@ -1227,6 +1350,19 @@
                                 data-i18n="projects.ray.badge"
                                 >Animation</span
                             >
+                            <div class="collaboration-badges">
+                                <div
+                                    class="collab-badge kask"
+                                    data-tooltip="KASK Conservatory"
+                                >
+                                    <img
+                                        src="../assets/icons/icons for projects/KASK_Logo_Transparent.png"
+                                        alt="KASK"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                </div>
+                            </div>
                             <video data-autoplay loop muted playsinline>
                                 <source
                                     data-src="../assets/images/projects/RayGIF.webm"
@@ -1252,7 +1388,10 @@
                                 Funky credits theme with groove and luminous
                                 cadence.
                             </p>
-                            <div class="project-tech" data-tech="projects.ray.tech"></div>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.ray.tech"
+                            ></div>
                         </div>
                     </a>
 
@@ -1268,6 +1407,19 @@
                                 data-i18n="projects.akantilado.badge"
                                 >Animation</span
                             >
+                            <div class="collaboration-badges">
+                                <div
+                                    class="collab-badge kask"
+                                    data-tooltip="KASK Conservatory"
+                                >
+                                    <img
+                                        src="../assets/icons/icons for projects/KASK_Logo_Transparent.png"
+                                        alt="KASK"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                </div>
+                            </div>
                             <video data-autoplay loop muted playsinline>
                                 <source
                                     data-src="../assets/images/projects/AkantiladoGIF.webm"
@@ -1293,7 +1445,10 @@
                                 Complete foley and jungle ambience for 3D
                                 animation.
                             </p>
-                            <div class="project-tech" data-tech="projects.akantilado.tech"></div>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.akantilado.tech"
+                            ></div>
                         </div>
                     </a>
 
@@ -1331,7 +1486,10 @@
                                 Suspense sequence with layered strings and
                                 action percussion.
                             </p>
-                            <div class="project-tech" data-tech="projects.richter.tech"></div>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.richter.tech"
+                            ></div>
                         </div>
                     </a>
 
@@ -1370,7 +1528,10 @@
                                 Thriller game jam project created in 2 days.
                                 Execute your plans as an ambitious cat.
                             </p>
-                            <div class="project-tech" data-tech="projects.pawism.tech"></div>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.pawism.tech"
+                            ></div>
                         </div>
                     </a>
 
@@ -1408,7 +1569,10 @@
                             >
                                 Immersive spatial audio for virtual spaces.
                             </p>
-                            <div class="project-tech" data-tech="projects.environments.tech"></div>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.environments.tech"
+                            ></div>
                         </div>
                     </a>
 
@@ -1447,7 +1611,10 @@
                                 Automated Wwise integration restoration for UE
                                 projects.
                             </p>
-                            <div class="project-tech" data-tech="projects.wwise_fixer.tech"></div>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.wwise_fixer.tech"
+                            ></div>
                         </div>
                     </a>
 
@@ -1485,7 +1652,10 @@
                             >
                                 Automated build tool for UE projects.
                             </p>
-                            <div class="project-tech" data-tech="projects.ue_rebuilder.tech"></div>
+                            <div
+                                class="project-tech"
+                                data-tech="projects.ue_rebuilder.tech"
+                            ></div>
                         </div>
                     </a>
                 </div>
@@ -1607,27 +1777,39 @@
 
             // Render tech tags after translations load
             function renderTechTags() {
-                const techContainers = document.querySelectorAll('[data-tech]');
+                const techContainers = document.querySelectorAll("[data-tech]");
                 if (!techContainers.length) return;
 
-                const currentLang = window.__preloadedLang || localStorage.getItem('language') || 'en';
-                
+                const currentLang =
+                    window.__preloadedLang ||
+                    localStorage.getItem("language") ||
+                    "en";
+
                 // Wait for translations to be available
                 const checkTranslations = setInterval(() => {
-                    if (window.translations && window.translations[currentLang]) {
+                    if (
+                        window.translations &&
+                        window.translations[currentLang]
+                    ) {
                         clearInterval(checkTranslations);
                         const translations = window.translations[currentLang];
-                        
-                        techContainers.forEach(container => {
-                            const key = container.getAttribute('data-tech');
+
+                        techContainers.forEach((container) => {
+                            const key = container.getAttribute("data-tech");
                             const techArray = getNestedValue(translations, key);
-                            
-                            if (Array.isArray(techArray) && techArray.length > 0) {
-                                container.innerHTML = techArray.map(tech => 
-                                    `<span class="project-tech-item">${tech}</span>`
-                                ).join('');
+
+                            if (
+                                Array.isArray(techArray) &&
+                                techArray.length > 0
+                            ) {
+                                container.innerHTML = techArray
+                                    .map(
+                                        (tech) =>
+                                            `<span class="project-tech-item">${tech}</span>`,
+                                    )
+                                    .join("");
                             } else {
-                                container.style.display = 'none';
+                                container.style.display = "none";
                             }
                         });
                     }
@@ -1638,13 +1820,18 @@
             }
 
             function getNestedValue(obj, path) {
-                return path.split('.').reduce((current, key) => current && current[key], obj);
+                return path
+                    .split(".")
+                    .reduce((current, key) => current && current[key], obj);
             }
 
             // Initialize tech tags rendering
             function initTechTags() {
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', renderTechTags);
+                if (document.readyState === "loading") {
+                    document.addEventListener(
+                        "DOMContentLoaded",
+                        renderTechTags,
+                    );
                 } else {
                     renderTechTags();
                 }
@@ -1653,7 +1840,7 @@
             initTechTags();
 
             // Also render when language changes
-            window.addEventListener('languageChanged', () => {
+            window.addEventListener("languageChanged", () => {
                 setTimeout(renderTechTags, 100);
             });
         </script>

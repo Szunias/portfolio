@@ -1,209 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" style="background: #0a0a0a">
     <head>
-        <style>
-            html,
-            body {
-                background: #0a0a0a !important;
-                margin: 0;
-                padding: 0;
-            }
-            .content {
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            }
-            body.loaded .content {
-                opacity: 1;
-            }
-
-            /* === HORROR ENTRANCE === */
-            .horror-entrance {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(
-                    180deg,
-                    #000000 0%,
-                    #0a0a0a 50%,
-                    #000000 100%
-                );
-                z-index: 99999;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                animation: horrorFadeOut 2.5s cubic-bezier(0.4, 0, 0.2, 1)
-                    forwards;
-                pointer-events: none;
-                overflow: hidden;
-            }
-
-            @keyframes horrorFadeOut {
-                0% {
-                    opacity: 1;
-                }
-                80% {
-                    opacity: 1;
-                }
-                99.9% {
-                    opacity: 0;
-                    visibility: hidden;
-                }
-                100% {
-                    opacity: 0;
-                    visibility: hidden;
-                    display: none;
-                }
-            }
-
-            .flicker-container {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                background: radial-gradient(
-                    circle at 50% 0%,
-                    rgba(255, 255, 255, 0.03) 0%,
-                    transparent 70%
-                );
-                animation: flicker 2.5s ease-in-out;
-            }
-
-            @keyframes flicker {
-                0%,
-                100% {
-                    opacity: 0;
-                }
-                5%,
-                10%,
-                15%,
-                25%,
-                35%,
-                50%,
-                65%,
-                75% {
-                    opacity: 1;
-                }
-                7%,
-                12%,
-                20%,
-                30%,
-                45%,
-                60%,
-                70%,
-                80% {
-                    opacity: 0.3;
-                }
-            }
-
-            .shadow-title {
-                position: relative;
-                z-index: 10;
-                font-family: "Space Grotesk", monospace;
-                font-size: clamp(3rem, 10vw, 6rem);
-                font-weight: 900;
-                color: #ffffff;
-                text-transform: uppercase;
-                letter-spacing: 0.15em;
-                text-shadow:
-                    0 0 20px rgba(255, 255, 255, 0.8),
-                    0 0 40px rgba(200, 200, 200, 0.6),
-                    3px 3px 15px rgba(0, 0, 0, 0.9);
-                animation: titleFlicker 2.5s ease-in-out;
-            }
-
-            @keyframes titleFlicker {
-                0% {
-                    opacity: 0;
-                    transform: scale(0.8);
-                    filter: blur(10px);
-                }
-                15% {
-                    opacity: 0;
-                }
-                20% {
-                    opacity: 1;
-                    transform: scale(1.05);
-                    filter: blur(0);
-                }
-                25% {
-                    opacity: 0.7;
-                }
-                30% {
-                    opacity: 1;
-                }
-                40%,
-                75% {
-                    opacity: 1;
-                    transform: scale(1);
-                }
-                90% {
-                    opacity: 0;
-                    transform: scale(1.1);
-                    filter: blur(5px);
-                }
-                100% {
-                    opacity: 0;
-                }
-            }
-
-            .film-grain {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="noise"><feTurbulence baseFrequency="0.9" numOctaves="4"/></filter><rect width="200" height="200" filter="url(%23noise)" opacity="0.05"/></svg>');
-                opacity: 0.6;
-                animation: grainMove 0.5s steps(1) infinite;
-            }
-
-            @keyframes grainMove {
-                0%,
-                100% {
-                    transform: translate(0, 0);
-                }
-                10% {
-                    transform: translate(-5%, -10%);
-                }
-                30% {
-                    transform: translate(3%, -15%);
-                }
-                50% {
-                    transform: translate(-9%, 7%);
-                }
-                70% {
-                    transform: translate(5%, -3%);
-                }
-                90% {
-                    transform: translate(-3%, 8%);
-                }
-            }
-
-            .horror-vignette {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                background: radial-gradient(
-                    circle,
-                    transparent 0%,
-                    rgba(0, 0, 0, 0.8) 70%,
-                    #000 100%
-                );
-            }
-        </style>
-        <title>Shadow Frames: Audio Design</title>
         <meta charset="utf-8" />
         <meta
             name="viewport"
             content="width=device-width, initial-scale=1, user-scalable=no"
         />
-        <link
-            rel="icon"
-            type="image/svg+xml"
-            href="../assets/icons/favicon.svg"
-        />
+        <meta name="theme-color" content="#0a0a0a" />
+
+        <title>Shadow Frames - Audio Design | Igor Szuniewicz</title>
         <meta
             name="description"
-            content="Shadow Frames: psychological horror game with audio-driven gameplay. In production."
+            content="Lead Audio Designer on Shadow Frames - black-and-white psychological horror game. RTPC systems, spatial audio, Wwise implementation."
         />
         <meta name="robots" content="index, follow" />
         <link
@@ -211,12 +19,22 @@
             href="https://igorszuniewicz.com/projects/shadow-frames.html"
         />
 
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="../assets/icons/favicon.svg"
+        />
+
+        <!-- Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700;900&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;900&display=swap"
             rel="stylesheet"
         />
+
+        <!-- Preload language -->
+        <script src="../assets/js/preload-lang.js"></script>
 
         <style>
             * {
@@ -228,7 +46,6 @@
             html,
             body {
                 width: 100%;
-                height: 100%;
                 background: #0a0a0a;
                 color: #e0e0e0;
                 font-family: "Poppins", sans-serif;
@@ -236,6 +53,73 @@
                 scroll-behavior: smooth;
             }
 
+            /* === BACKGROUND === */
+            .bg-gradient {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                pointer-events: none;
+                background:
+                    radial-gradient(
+                        ellipse 800px 600px at 20% 30%,
+                        rgba(80, 40, 120, 0.5) 0%,
+                        transparent 60%
+                    ),
+                    radial-gradient(
+                        ellipse 700px 700px at 80% 60%,
+                        rgba(40, 60, 100, 0.45) 0%,
+                        transparent 60%
+                    ),
+                    radial-gradient(
+                        ellipse 600px 500px at 50% 90%,
+                        rgba(70, 40, 80, 0.4) 0%,
+                        transparent 60%
+                    ),
+                    linear-gradient(
+                        180deg,
+                        #0a0a12 0%,
+                        #0f0a18 30%,
+                        #0a0a12 70%,
+                        #050508 100%
+                    );
+            }
+
+            .bg-gradient::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+                opacity: 0.6;
+            }
+
+            .bg-gradient::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background-image: repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255, 255, 255, 0.01) 2px,
+                    rgba(255, 255, 255, 0.01) 4px
+                );
+                opacity: 0.3;
+                animation: scanlines 8s linear infinite;
+            }
+
+            @keyframes scanlines {
+                0% {
+                    transform: translateY(0);
+                }
+                100% {
+                    transform: translateY(10px);
+                }
+            }
+
+            /* === CONTAINER === */
             .content {
                 position: relative;
                 z-index: 1;
@@ -262,7 +146,6 @@
                 text-decoration: none;
                 font-size: 0.9rem;
                 font-weight: 500;
-                text-transform: uppercase;
                 transition: all 0.3s ease;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
             }
@@ -276,23 +159,22 @@
             .back-button::before {
                 content: "←";
                 font-size: 1.2rem;
-                font-weight: bold;
             }
 
             /* === LANGUAGE SWITCHER === */
             .lang-switcher {
-                position: fixed !important;
-                top: 2rem !important;
-                right: 2rem !important;
-                z-index: 1000 !important;
-                display: flex !important;
+                position: fixed;
+                top: 2rem;
+                right: 2rem;
+                z-index: 100;
+                display: flex;
                 gap: 0.5rem;
-                background: rgba(18, 18, 18, 0.8) !important;
+                background: rgba(18, 18, 18, 0.8);
                 backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                border: 1px solid rgba(255, 255, 255, 0.1);
                 border-radius: 50px;
                 padding: 0.5rem;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8) !important;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
             }
 
             .lang-btn {
@@ -300,33 +182,21 @@
                 background: transparent;
                 border: none;
                 border-radius: 50px;
-                color: #666 !important;
+                color: #666;
                 cursor: pointer;
                 font-weight: 500;
                 font-size: 0.9rem;
                 transition: all 0.3s ease;
-                display: flex !important;
-                align-items: center;
-                gap: 0.5rem;
             }
 
             .lang-btn:hover {
-                color: #ffffff !important;
+                color: #ffffff;
                 background: rgba(255, 255, 255, 0.1);
             }
 
             .lang-btn.active {
-                color: #ffffff !important;
+                color: #ffffff;
                 background: rgba(255, 255, 255, 0.15);
-                font-weight: 600;
-            }
-
-            .lang-flag {
-                width: 20px;
-                height: 14px;
-                border-radius: 2px;
-                overflow: hidden;
-                display: block;
             }
 
             /* === HERO === */
@@ -334,276 +204,75 @@
                 text-align: center;
                 padding: 8rem 0 4rem;
                 margin-bottom: 3rem;
-                position: relative;
-                background: linear-gradient(
-                    135deg,
-                    #000000 0%,
-                    #121212 60%,
-                    #000000 100%
-                );
-                border-radius: 20px;
-                overflow: hidden;
-                border: 1px solid rgba(255, 255, 255, 0.05);
             }
 
             .hero h1 {
                 font-family: "Space Grotesk", sans-serif;
-                font-size: 4rem;
+                font-size: clamp(2.5rem, 8vw, 4.5rem);
                 font-weight: 900;
                 margin-bottom: 0.5rem;
-                letter-spacing: 0.05em;
+                letter-spacing: -0.02em;
                 color: #ffffff;
-                text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.9);
+                text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
             }
 
             .hero .subtitle {
-                font-size: 1.4rem;
+                font-size: 1.2rem;
                 color: #888;
-                margin-bottom: 1rem;
+                margin-bottom: 0.75rem;
                 text-transform: uppercase;
-                letter-spacing: 0.2em;
-                font-weight: 300;
+                letter-spacing: 0.15em;
             }
 
             .hero .tagline {
-                font-size: 1.3rem;
+                font-size: 1.4rem;
                 color: #bbb;
                 font-style: italic;
-                margin-bottom: 2rem;
+                margin-bottom: 1.5rem;
             }
 
-            .meta-badges {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1rem;
-                margin-top: 2.5rem;
-            }
-
-            .meta-badge {
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                padding: 1rem 1.5rem;
-                border-radius: 12px;
-                backdrop-filter: blur(10px);
-                transition: all 0.3s ease;
-            }
-
-            .meta-badge:hover {
-                background: rgba(255, 255, 255, 0.05);
-                transform: translateY(-3px);
-            }
-
-            .meta-label {
-                display: block;
-                font-size: 0.85rem;
-                color: #666;
-                margin-bottom: 0.4rem;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-            }
-
-            .meta-value {
-                display: block;
-                font-weight: 600;
-                color: #ffffff;
-                font-size: 1.1rem;
-            }
-
-            /* === PRODUCTION NOTICE === */
             .production-notice {
-                background: linear-gradient(
-                    135deg,
-                    rgba(255, 165, 0, 0.15) 0%,
-                    rgba(255, 140, 0, 0.1) 100%
-                );
-                border: 2px solid rgba(255, 165, 0, 0.4);
-                padding: 1.5rem 2rem;
-                border-radius: 15px;
-                margin: 3rem 0;
-                text-align: center;
-                font-size: 1.2rem;
+                display: inline-block;
+                padding: 0.75rem 1.5rem;
+                background: rgba(37, 99, 235, 0.15);
+                border: 1px solid rgba(37, 99, 235, 0.3);
+                border-radius: 50px;
+                color: #93c5fd;
+                font-size: 0.9rem;
                 font-weight: 600;
-                color: #fff;
-                box-shadow: 0 10px 30px rgba(255, 165, 0, 0.2);
+                margin-top: 1rem;
             }
 
-            /* === PROJECT CONTEXT === */
-            .project-context {
-                max-width: 900px;
-                margin: 3rem auto;
-                padding: 2rem;
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 16px;
-                backdrop-filter: blur(10px);
-            }
-
-            .project-context h3 {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: 1.5rem;
-                color: #ffffff;
-                margin-bottom: 1.5rem;
-                font-weight: 600;
-                text-align: center;
-            }
-
-            .context-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1.5rem;
-            }
-
-            .context-item {
-                padding: 1rem;
-                background: rgba(255, 255, 255, 0.02);
-                border-radius: 8px;
-                border-left: 3px solid rgba(255, 255, 255, 0.3);
-            }
-
-            .context-label {
-                font-size: 0.85rem;
-                color: rgba(255, 165, 0, 0.8);
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                margin-bottom: 0.5rem;
-            }
-
-            .context-value {
-                font-size: 1rem;
-                color: #e0e6ed;
-                line-height: 1.6;
-            }
-
-            .context-collaboration {
-                margin-top: 1.5rem;
-                padding-top: 1.5rem;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-            }
-
-            .context-collaboration h4 {
-                font-size: 1rem;
-                color: rgba(255, 165, 0, 0.8);
-                font-weight: 600;
-                margin-bottom: 0.75rem;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-
-            .context-collaboration ul {
-                list-style: none;
-                padding: 0;
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 0.5rem;
-            }
-
-            .context-collaboration li {
-                padding: 0.5rem 0 0.5rem 1.5rem;
-                position: relative;
-                color: #cbd5e1;
-                font-size: 0.95rem;
-            }
-
-            .context-collaboration li::before {
-                content: "▸";
-                position: absolute;
-                left: 0;
-                color: rgba(255, 165, 0, 0.8);
-                font-weight: bold;
-            }
-
-            /* === VIDEO SECTION === */
-            .video-section {
-                margin: 4rem 0;
-            }
-
-            .video-section h2 {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: 2.2rem;
-                color: #ffffff;
-                margin-bottom: 1.5rem;
-                font-weight: 700;
-                text-align: center;
-            }
-
-            .video-container {
-                position: relative;
-                border-radius: 20px;
-                overflow: hidden;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                background: #000;
-                margin-bottom: 1rem;
-            }
-
-            .video-container video {
-                width: 100%;
-                height: auto;
-                display: block;
-            }
-
-            .video-description {
-                text-align: center;
-                font-style: italic;
-                color: #666;
-                font-size: 0.95rem;
-            }
-
-            /* === AUDIO PLAYER === */
-            .audio-section {
-                margin: 4rem 0;
-                padding: 3rem 2rem;
-                background: linear-gradient(
-                    135deg,
-                    rgba(18, 18, 18, 0.5) 0%,
-                    rgba(10, 10, 10, 0.4) 100%
-                );
-                border-radius: 20px;
-                border: 1px solid rgba(255, 255, 255, 0.05);
-                text-align: center;
-            }
-
-            .audio-section h2 {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: 2.2rem;
-                color: #ffffff;
-                margin-bottom: 1rem;
-                font-weight: 700;
-            }
-
-            .audio-section p {
-                color: #999;
-                margin-bottom: 2rem;
-                font-size: 1.05rem;
-            }
-
-            /* === SECTION === */
+            /* === SECTIONS === */
             section {
-                margin: 4rem 0;
+                margin: 5rem 0;
                 padding: 2.5rem;
-                background: linear-gradient(
-                    135deg,
-                    rgba(18, 18, 18, 0.5) 0%,
-                    rgba(10, 10, 10, 0.4) 100%
-                );
-                border-radius: 20px;
+                background: rgba(15, 23, 42, 0.4);
                 border: 1px solid rgba(255, 255, 255, 0.05);
+                border-radius: 20px;
+                backdrop-filter: blur(10px);
             }
 
             section h2 {
                 font-family: "Space Grotesk", sans-serif;
-                font-size: 2.2rem;
-                color: #ffffff;
+                font-size: 2rem;
+                color: #fff;
                 margin-bottom: 1.5rem;
                 font-weight: 700;
             }
 
+            section h3 {
+                font-size: 1.3rem;
+                color: #93c5fd;
+                margin: 2rem 0 1rem;
+                font-weight: 600;
+            }
+
             section p {
-                color: rgba(224, 224, 224, 0.9);
-                line-height: 1.7;
-                font-size: 1.05rem;
-                margin-bottom: 1.5rem;
+                color: #cbd5e1;
+                line-height: 1.8;
+                font-size: 1rem;
+                margin-bottom: 1rem;
             }
 
             /* === GRID === */
@@ -615,862 +284,913 @@
             }
 
             .grid-item {
-                background: rgba(255, 255, 255, 0.02);
                 padding: 1.5rem;
-                border-radius: 12px;
+                background: rgba(0, 0, 0, 0.3);
                 border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 12px;
                 transition: all 0.3s ease;
             }
 
             .grid-item:hover {
-                background: rgba(255, 255, 255, 0.04);
-                border-color: rgba(255, 255, 255, 0.15);
+                background: rgba(0, 0, 0, 0.5);
+                border-color: rgba(96, 165, 250, 0.3);
                 transform: translateY(-3px);
             }
 
             .grid-item h4 {
-                color: #ffffff;
-                margin-bottom: 0.8rem;
-                font-size: 1.2rem;
+                color: #93c5fd;
+                font-size: 1.1rem;
+                margin-bottom: 0.75rem;
                 font-weight: 600;
             }
 
             .grid-item p {
-                color: #999;
-                font-size: 1rem;
+                font-size: 0.95rem;
                 margin: 0;
             }
 
-            /* === STATUS TIMELINE === */
-            .status-timeline {
-                margin: 3rem 0;
-                padding: 2rem;
+            /* === PRODUCTION TIMELINE === */
+            .timeline {
+                margin-top: 2rem;
             }
 
-            .status-item {
+            .timeline-item {
                 display: flex;
                 align-items: center;
                 gap: 1rem;
-                padding: 1rem 0;
-                font-size: 1.2rem;
-                color: #fff;
-            }
-
-            .status-icon {
-                font-size: 1.5rem;
-            }
-
-            /* === BUTTON === */
-            .button-container {
-                text-align: center;
-                margin: 4rem 0;
-            }
-
-            .button {
-                display: inline-block;
-                padding: 1.2rem 3rem;
-                background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-                border: 2px solid rgba(255, 255, 255, 0.15);
-                border-radius: 50px;
-                color: #ffffff;
-                text-decoration: none;
-                font-weight: 600;
-                font-size: 1.1rem;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
+                padding: 1rem;
+                margin-bottom: 0.75rem;
+                background: rgba(0, 0, 0, 0.3);
+                border-left: 3px solid rgba(255, 255, 255, 0.1);
+                border-radius: 8px;
                 transition: all 0.3s ease;
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
             }
 
-            .button:hover {
-                background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
-                transform: translateY(-3px);
-                box-shadow: 0 12px 35px rgba(255, 255, 255, 0.1);
-                border-color: rgba(255, 255, 255, 0.3);
+            .timeline-item.completed {
+                border-left-color: rgba(34, 197, 94, 0.6);
             }
 
-            /* === FOOTER === */
-            .footer {
-                text-align: center;
-                padding: 3rem 0;
-                color: #444;
-                font-size: 0.9rem;
-                border-top: 1px solid rgba(255, 255, 255, 0.05);
-                margin-top: 5rem;
+            .timeline-item.current {
+                border-left-color: rgba(37, 99, 235, 0.8);
+                background: rgba(37, 99, 235, 0.1);
+            }
+
+            .timeline-icon {
+                font-size: 1.5rem;
+                min-width: 1.5rem;
+            }
+
+            .timeline-text {
+                color: #cbd5e1;
+                font-size: 0.95rem;
+            }
+
+            /* === COLLABORATION LOGOS === */
+            .collab-logos {
+                display: flex;
+                gap: 2rem;
+                justify-content: center;
+                margin: 2rem 0;
+                flex-wrap: wrap;
+            }
+
+            .collab-logo {
+                padding: 1.5rem;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 12px;
+                transition: all 0.3s ease;
+            }
+
+            .collab-logo:hover {
+                background: rgba(255, 255, 255, 0.08);
+                transform: translateY(-5px);
+            }
+
+            .collab-logo img {
+                height: 50px;
+                width: auto;
+                max-width: 120px;
+                object-fit: contain;
+                filter: brightness(0.9);
+            }
+
+            .collab-logo:hover img {
+                filter: brightness(1.1);
+            }
+
+            /* === SCREENSHOTS === */
+            .screenshot-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1.5rem;
+                margin-top: 2rem;
+            }
+
+            .screenshot {
+                position: relative;
+                border-radius: 12px;
+                overflow: hidden;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+
+            .screenshot:hover {
+                transform: scale(1.02);
+                border-color: rgba(96, 165, 250, 0.4);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            }
+
+            .screenshot img {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+            .screenshot-caption {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 1rem;
+                background: linear-gradient(
+                    to top,
+                    rgba(0, 0, 0, 0.9),
+                    transparent
+                );
+                color: #fff;
+                font-size: 0.85rem;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .screenshot:hover .screenshot-caption {
+                opacity: 1;
+            }
+
+            /* === LIGHTBOX === */
+            .lightbox {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                z-index: 1000;
+                align-items: center;
+                justify-content: center;
+                padding: 2rem;
+            }
+
+            .lightbox.active {
+                display: flex;
+            }
+
+            .lightbox img {
+                max-width: 95%;
+                max-height: 95vh;
+                object-fit: contain;
+                border-radius: 8px;
+                box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9);
+            }
+
+            .lightbox-close {
+                position: absolute;
+                top: 2rem;
+                right: 2rem;
+                font-size: 3rem;
+                color: #fff;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                line-height: 1;
+                width: 50px;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 50%;
+            }
+
+            .lightbox-close:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: scale(1.1);
+            }
+
+            /* === CODE SNIPPETS === */
+            .code-snippet {
+                background: rgba(0, 0, 0, 0.4);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 12px;
+                padding: 1.5rem;
+                margin: 1.5rem 0;
+                overflow-x: auto;
+            }
+
+            .code-snippet h4 {
+                color: #93c5fd;
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+                font-family: "Space Grotesk", sans-serif;
+                font-weight: 600;
+            }
+
+            .code-snippet pre {
+                margin: 0;
+                padding: 1rem;
+                background: rgba(0, 0, 0, 0.5);
+                border-radius: 8px;
+                overflow-x: auto;
+            }
+
+            .code-snippet code {
+                font-family: "Consolas", "Monaco", "Courier New", monospace;
+                font-size: 0.85rem;
+                line-height: 1.6;
+                color: #e0e0e0;
+            }
+
+            .code-snippet .comment {
+                color: #6b7280;
+            }
+
+            .code-snippet .keyword {
+                color: #c678dd;
+            }
+
+            .code-snippet .function {
+                color: #61afef;
+            }
+
+            .code-snippet .string {
+                color: #98c379;
+            }
+
+            .code-snippet .type {
+                color: #e5c07b;
+            }
+
+            /* === TOOL LINKS === */
+            .tool-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.75rem 1.5rem;
+                background: rgba(37, 99, 235, 0.15);
+                border: 1px solid rgba(37, 99, 235, 0.3);
+                border-radius: 50px;
+                color: #93c5fd;
+                text-decoration: none;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                margin: 0.5rem;
+            }
+
+            .tool-link:hover {
+                background: rgba(37, 99, 235, 0.25);
+                border-color: rgba(37, 99, 235, 0.5);
+                transform: translateY(-2px);
+            }
+
+            .tool-link::before {
+                content: "→";
+                font-size: 1.2rem;
+            }
+
+            /* === VIDEO === */
+            .video-container {
+                position: relative;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                background: #000;
+                margin: 2rem 0;
+            }
+
+            .video-container video {
+                width: 100%;
+                height: auto;
+                display: block;
             }
 
             /* === RESPONSIVE === */
             @media (max-width: 768px) {
                 .content {
-                    padding: 1.5rem;
+                    padding: 1.25rem;
                 }
+
+                .hero {
+                    padding: 6rem 0 3rem;
+                }
+
+                section {
+                    padding: 1.5rem;
+                    margin: 3rem 0;
+                }
+
+                .grid {
+                    grid-template-columns: 1fr;
+                }
+
                 .back-button,
                 .lang-switcher {
                     top: 1rem;
                 }
-                .hero {
-                    padding: 3rem 1rem 2rem;
+
+                .back-button {
+                    left: 1rem;
                 }
-                .hero h1 {
-                    font-size: clamp(2rem, 8vw, 2.5rem);
-                }
-                .meta-badges {
-                    grid-template-columns: repeat(2, 1fr);
-                }
-                section {
-                    padding: 1.75rem 1.25rem;
-                }
-                .grid {
-                    grid-template-columns: 1fr;
+
+                .lang-switcher {
+                    right: 1rem;
                 }
             }
         </style>
     </head>
-    <body style="background: #0a0a0a">
-        <!-- Horror Entrance -->
-        <div class="horror-entrance">
-            <div class="horror-vignette"></div>
-            <div class="flicker-container"></div>
-            <div class="film-grain"></div>
-            <div class="shadow-title">SHADOW FRAMES</div>
+    <body>
+        <!-- Background -->
+        <div class="bg-gradient"></div>
+
+        <!-- Navigation -->
+        <a href="/projects/" class="back-button" data-i18n="back"
+            >Back to Projects</a
+        >
+
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="pl">PL</button>
+            <button class="lang-btn" data-lang="nl">NL</button>
         </div>
 
         <!-- Content -->
         <div class="content">
-            <!-- Language Switcher -->
-            <div class="lang-switcher">
-                <button class="lang-btn active" data-lang="en">
-                    <svg
-                        class="lang-flag"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 60 30"
-                    >
-                        <rect width="60" height="30" fill="#012169" />
-                        <path
-                            d="M0,0 L60,30 M60,0 L0,30"
-                            stroke="#fff"
-                            stroke-width="6"
-                        />
-                        <path
-                            d="M0,0 L60,30 M60,0 L0,30"
-                            stroke="#C8102E"
-                            stroke-width="4"
-                        />
-                        <path
-                            d="M30,0 v30 M0,15 h60"
-                            stroke="#fff"
-                            stroke-width="10"
-                        />
-                        <path
-                            d="M30,0 v30 M0,15 h60"
-                            stroke="#C8102E"
-                            stroke-width="6"
-                        />
-                    </svg>
-                    <span>EN</span>
-                </button>
-                <button class="lang-btn" data-lang="pl">
-                    <svg
-                        class="lang-flag"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 16 10"
-                    >
-                        <rect width="16" height="5" fill="#fff" />
-                        <rect y="5" width="16" height="5" fill="#dc143c" />
-                    </svg>
-                    <span>PL</span>
-                </button>
-                <button class="lang-btn" data-lang="nl">
-                    <svg
-                        class="lang-flag"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 9 6"
-                    >
-                        <rect width="9" height="6" fill="#21468B" />
-                        <rect width="9" height="4" fill="#fff" />
-                        <rect width="9" height="2" fill="#AE1C28" />
-                    </svg>
-                    <span>NL</span>
-                </button>
-            </div>
-
-            <!-- Back Button -->
-            <a href="/projects/" class="back-button">
-                <span data-i18n="back">Back to Projects</span>
-            </a>
-
             <!-- Hero -->
-            <section class="hero">
+            <div class="hero">
                 <h1 data-i18n="title">Shadow Frames</h1>
-                <p class="subtitle" data-i18n="subtitle">Audio Design</p>
+                <p class="subtitle" data-i18n="subtitle">Lead Audio Designer</p>
                 <p class="tagline" data-i18n="tagline">
-                    Horror game where sound is survival.
+                    Where sound is survival.
                 </p>
-                <div class="meta-badges">
-                    <div class="meta-badge">
-                        <span class="meta-label" data-i18n="meta.role.label"
-                            >Role</span
-                        >
-                        <span class="meta-value" data-i18n="meta.role.value"
-                            >Sound Designer & Audio Lead</span
-                        >
-                    </div>
-                    <div class="meta-badge">
-                        <span class="meta-label" data-i18n="meta.setting.label"
-                            >Setting</span
-                        >
-                        <span class="meta-value" data-i18n="meta.setting.value"
-                            >1960s Irish Pub</span
-                        >
-                    </div>
-                    <div class="meta-badge">
-                        <span class="meta-label" data-i18n="meta.era.label"
-                            >Era</span
-                        >
-                        <span class="meta-value" data-i18n="meta.era.value"
-                            >Analog Horror</span
-                        >
-                    </div>
-                    <div class="meta-badge">
-                        <span class="meta-label" data-i18n="meta.engine.label"
-                            >Engine</span
-                        >
-                        <span class="meta-value" data-i18n="meta.engine.value"
-                            >Unreal Engine 5</span
-                        >
-                    </div>
+                <div class="production-notice" data-i18n="production_notice">
+                    🎮 Sprint 3/5 Production • Multi-Institutional Project
                 </div>
-            </section>
-
-            <!-- Production Notice -->
-            <div class="production-notice" data-i18n="production_notice">
-                🎮 IN PRODUCTION • Prototype Complete • Full Audio System Coming
-                Soon
             </div>
 
-            <!-- Project Context -->
-            <section class="project-context">
-                <h3 data-i18n="context.title">Project Context</h3>
-                <div class="context-grid">
-                    <div class="context-item">
-                        <div
-                            class="context-label"
-                            data-i18n="context.type_label"
-                        >
-                            Type
-                        </div>
-                        <div
-                            class="context-value"
-                            data-i18n="context.type_value"
-                        >
-                            Multi-Institutional Project
-                        </div>
+            <!-- Project Overview -->
+            <section>
+                <h2 data-i18n="context.title">Project Overview</h2>
+                <p data-i18n="concept.desc">
+                    1960s Irish pub. Black and white. You have a Polaroid
+                    camera. Strange things happen. Sound tells you everything.
+                    Mute the game, you can't play. That's the core.
+                </p>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4 data-i18n="meta.role.label">Role</h4>
+                        <p data-i18n="meta.role.value">Lead Audio Designer</p>
                     </div>
-                    <div class="context-item">
-                        <div
-                            class="context-label"
-                            data-i18n="context.institution_label"
-                        >
-                            Lead Institution
-                        </div>
-                        <div
-                            class="context-value"
-                            data-i18n="context.institution_value"
-                        >
-                            Howest DAE
-                        </div>
+                    <div class="grid-item">
+                        <h4 data-i18n="meta.setting.label">Setting</h4>
+                        <p data-i18n="meta.setting.value">1960s Irish Pub</p>
                     </div>
-                    <div class="context-item">
-                        <div
-                            class="context-label"
-                            data-i18n="context.year_label"
-                        >
-                            Year
-                        </div>
-                        <div
-                            class="context-value"
-                            data-i18n="context.year_value"
-                        >
-                            2025 - Present
-                        </div>
+                    <div class="grid-item">
+                        <h4 data-i18n="meta.style.label">Visual Style</h4>
+                        <p data-i18n="meta.style.value">Black & White</p>
                     </div>
-                    <div class="context-item">
-                        <div
-                            class="context-label"
-                            data-i18n="context.role_label"
-                        >
-                            My Role
-                        </div>
-                        <div
-                            class="context-value"
-                            data-i18n="context.role_value"
-                        >
-                            Sound Designer & Audio Implementer
-                        </div>
+                    <div class="grid-item">
+                        <h4 data-i18n="meta.engine.label">Engine</h4>
+                        <p data-i18n="meta.engine.value">Unreal Engine 5.4.4</p>
                     </div>
                 </div>
-                <div class="context-collaboration">
-                    <h4 data-i18n="context.collaboration_title">
-                        Multi-Institutional Collaboration
-                    </h4>
-                    <ul>
-                        <li data-i18n="context.collab1">
-                            RITCS (Royal Institute for Theatre, Cinema and
-                            Sound) — Narrative Design
-                        </li>
-                        <li data-i18n="context.collab2">
-                            Ghent Conservatory — Music Composition
-                        </li>
-                        <li data-i18n="context.collab3">
-                            Howest DAE — Game Development & Audio Implementation
-                        </li>
-                    </ul>
+
+                <h3 data-i18n="context.collaboration_title">
+                    Multi-Institutional Collaboration
+                </h3>
+                <div class="collab-logos">
+                    <div class="collab-logo">
+                        <img
+                            src="../assets/icons/icons for projects/RITCS_Logo.png"
+                            alt="RITCS"
+                        />
+                    </div>
+                    <div class="collab-logo">
+                        <img
+                            src="../assets/icons/icons for projects/KASK_Logo_Transparent.png"
+                            alt="KASK"
+                        />
+                    </div>
                 </div>
             </section>
 
-            <!-- Video -->
-            <div class="video-section">
-                <h2 data-i18n="video.title">First Look: Prototype Menu</h2>
-                <div class="video-container">
-                    <video
-                        controls
-                        poster="../assets/images/projects-shadowframes/ShadowFrames_Title_Var2.png"
+            <!-- Gameplay Mechanic -->
+            <section>
+                <h2 data-i18n="gameplay.title">
+                    Core Mechanic: Observe → Capture → Connect
+                </h2>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4 data-i18n="gameplay.observe_title">Observe</h4>
+                        <p data-i18n="gameplay.observe_desc">
+                            Anomalies appear every 30-50 seconds. Environmental
+                            sounds guide you to their location.
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4 data-i18n="gameplay.capture_title">Capture</h4>
+                        <p data-i18n="gameplay.capture_desc">
+                            Use your Polaroid camera to photograph the anomaly.
+                            Limited film. Reloading leaves you vulnerable.
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4 data-i18n="gameplay.connect_title">Connect</h4>
+                        <p data-i18n="gameplay.connect_desc">
+                            Arrange photos on the pin board. Correct order
+                            reveals the truth and leads to the good ending.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Audio Implementation -->
+            <section>
+                <h2 data-i18n="audio_systems.title">Audio Implementation</h2>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4 data-i18n="audio_systems.rtpc_title">
+                            RTPC-Based Dynamic System
+                        </h4>
+                        <p data-i18n="audio_systems.rtpc_desc">
+                            Adaptive ambience and player breathing intensity
+                            scale with anomaly count. Tension builds as
+                            unresolved anomalies stack.
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4 data-i18n="audio_systems.switches_title">
+                            Switch Containers & Zones
+                        </h4>
+                        <p data-i18n="audio_systems.switches_desc">
+                            Room-specific ambiences transition smoothly.
+                            Bathroom has spatialized toilet/faucet sounds.
+                            Footsteps adapt to surface materials.
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4 data-i18n="audio_systems.delegates_title">
+                            Blueprint Delegates (SOC)
+                        </h4>
+                        <p data-i18n="audio_systems.delegates_desc">
+                            Separation of Concerns architecture. Audio systems
+                            communicate through delegates for clean, modular
+                            implementation.
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4 data-i18n="audio_systems.spatial_title">
+                            HRTF Spatial Audio
+                        </h4>
+                        <p data-i18n="audio_systems.spatial_desc">
+                            3D positional audio for anomalies, enemy presence,
+                            and environmental cues. Critical for gameplay.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Implementation Showcase -->
+            <section>
+                <h2>Wwise Implementation</h2>
+                <p>
+                    Technical breakdown of audio systems built in Wwise 2024.1
+                </p>
+
+                <div class="screenshot-grid">
+                    <div class="screenshot">
+                        <img
+                            src="../assets/images/projects-shadowframes/SwitchContainer.png"
+                            alt="Switch Container"
+                            loading="lazy"
+                        />
+                        <div class="screenshot-caption">
+                            Switch Container for room-based ambience
+                        </div>
+                    </div>
+                    <div class="screenshot">
+                        <img
+                            src="../assets/images/projects-shadowframes/BP_Footstep_AudioManager.png"
+                            alt="Footstep Manager"
+                            loading="lazy"
+                        />
+                        <div class="screenshot-caption">
+                            Blueprint Footstep Audio Manager with surface
+                            detection
+                        </div>
+                    </div>
+                    <div class="screenshot">
+                        <img
+                            src="../assets/images/projects-shadowframes/BP_PlayerOneshotAudioManager.png"
+                            alt="Oneshot Manager"
+                            loading="lazy"
+                        />
+                        <div class="screenshot-caption">
+                            Player Oneshot Audio Manager with delegate
+                            communication
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Audio Documentation -->
+            <section>
+                <h2>Audio Documentation</h2>
+                <p>
+                    Comprehensive technical documentation of all audio systems,
+                    asset pipeline, and implementation details
+                </p>
+
+                <div class="grid">
+                    <div
+                        class="grid-item"
+                        style="
+                            grid-column: 1 / -1;
+                            max-width: 600px;
+                            margin: 0 auto;
+                        "
                     >
+                        <h4>📄 Sound Bible</h4>
+                        <p style="margin-bottom: 1rem">
+                            Complete audio design document covering asset lists,
+                            Wwise hierarchy, implementation guidelines, and
+                            technical specifications. Essential reference for
+                            the entire audio pipeline.
+                        </p>
+                        <a
+                            href="../assets/images/projects-shadowframes/Sound_Grp22_ShadowFrames.pdf"
+                            class="tool-link"
+                            download
+                            style="display: inline-flex"
+                        >
+                            Download Sound Bible PDF
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Development Tools -->
+            <section>
+                <h2 data-i18n="dev_tools.title">Development Tools</h2>
+                <p>Custom tools built to solve production challenges</p>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4 data-i18n="dev_tools.fixer_title">
+                            Wwise Unreal Fixer
+                        </h4>
+                        <p data-i18n="dev_tools.fixer_desc">
+                            Custom C++ plugin to auto-restore broken Wwise
+                            integration after Perforce pulls. One-click
+                            solution.
+                        </p>
+                        <a href="wwise-unreal-fixer.html" class="tool-link"
+                            >View Project</a
+                        >
+                    </div>
+                    <div class="grid-item">
+                        <h4 data-i18n="dev_tools.rebuilder_title">
+                            Unreal Engine Rebuilder
+                        </h4>
+                        <p data-i18n="dev_tools.rebuilder_desc">
+                            Automated build tool to streamline compilation
+                            workflow and reduce downtime.
+                        </p>
+                        <a href="unreal-engine-rebuilder.html" class="tool-link"
+                            >View Project</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- Production Timeline -->
+            <section>
+                <h2 data-i18n="production.title">Production Status</h2>
+                <div class="timeline">
+                    <div class="timeline-item completed">
+                        <span class="timeline-icon">✓</span>
+                        <span class="timeline-text" data-i18n="production.proto"
+                            >Prototype Complete (3 weeks)</span
+                        >
+                    </div>
+                    <div class="timeline-item completed">
+                        <span class="timeline-icon">✓</span>
+                        <span
+                            class="timeline-text"
+                            data-i18n="production.sprint1"
+                            >Sprint 1 — Core Systems</span
+                        >
+                    </div>
+                    <div class="timeline-item completed">
+                        <span class="timeline-icon">✓</span>
+                        <span
+                            class="timeline-text"
+                            data-i18n="production.sprint2"
+                            >Sprint 2 — Environment Audio</span
+                        >
+                    </div>
+                    <div class="timeline-item current">
+                        <span class="timeline-icon">◉</span>
+                        <span
+                            class="timeline-text"
+                            data-i18n="production.sprint3"
+                            >Sprint 3 — Anomaly Systems (Current)</span
+                        >
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-icon">◯</span>
+                        <span
+                            class="timeline-text"
+                            data-i18n="production.sprint4"
+                            >Sprint 4 — Enemy & Polish</span
+                        >
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-icon">◯</span>
+                        <span
+                            class="timeline-text"
+                            data-i18n="production.sprint5"
+                            >Sprint 5 — Final Integration</span
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- Video Showcase -->
+            <section>
+                <h2>Gameplay with Wwise Profiler</h2>
+                <p>Live profiling session showing audio systems in action</p>
+                <div class="video-container">
+                    <video controls loop muted>
                         <source
-                            src="../assets/videos/audioideation.mp4"
+                            src="../assets/images/projects-shadowframes/videodemoprod3withwwiseprofiler.mp4"
                             type="video/mp4"
                         />
                         Your browser doesn't support video.
                     </video>
                 </div>
-                <p class="video-description" data-i18n="video.desc">
-                    Early concept from the prototype phase. Final version coming
-                    soon.
-                </p>
-            </div>
+            </section>
 
-            <!-- Audio Player -->
-            <div class="audio-section">
-                <h2 data-i18n="music.title">Menu Music Concept</h2>
-                <p data-i18n="music.desc">
-                    Our composer's vision for the main menu atmosphere.
+            <!-- Soundscape Audio -->
+            <section>
+                <h2>Prototype Soundscape — Artistic Vision</h2>
+                <p>
+                    Early audio palette demonstrating the game's intended
+                    atmosphere and tone
                 </p>
                 <div
-                    class="audio-player"
-                    data-audio="../assets/audio/samples/Shadow_Frame_Menu_Vibe_but_Louder.wav"
-                ></div>
-            </div>
-
-            <!-- The Concept -->
-            <section>
-                <h2 data-i18n="overview.title">The Concept</h2>
-                <p data-i18n="overview.desc">
-                    1960s Irish pub. Black and white. You have a Polaroid
-                    camera. Strange things happen. Sound tells you everything.
-                    If you mute the game, you can't play. That's the idea.
-                </p>
-            </section>
-
-            <!-- Audio Design Approach -->
-            <section>
-                <h2 data-i18n="philosophy.title">Audio Design Approach</h2>
-                <div class="grid">
-                    <div class="grid-item">
-                        <h4 data-i18n="philosophy.dread_title">
-                            Constant Tension
-                        </h4>
-                        <p data-i18n="philosophy.dread_desc">
-                            No jumpscares. Just dread building from drones and
-                            distant sounds you can't identify.
-                        </p>
-                    </div>
-                    <div class="grid-item">
-                        <h4 data-i18n="philosophy.analog_title">
-                            1960s Authentic
-                        </h4>
-                        <p data-i18n="philosophy.analog_desc">
-                            Polaroid clicks, vinyl crackle, tube radio static.
-                            Everything period accurate.
-                        </p>
-                    </div>
-                    <div class="grid-item">
-                        <h4 data-i18n="philosophy.ambiguity_title">
-                            Sonic Uncertainty
-                        </h4>
-                        <p data-i18n="philosophy.ambiguity_desc">
-                            Familiar sounds twisted just enough to make you
-                            question what you're hearing.
-                        </p>
-                    </div>
+                    class="video-container"
+                    style="background: rgba(0, 0, 0, 0.6); padding: 2rem"
+                >
+                    <audio
+                        controls
+                        style="
+                            width: 100%;
+                            max-width: 600px;
+                            margin: 0 auto;
+                            display: block;
+                        "
+                    >
+                        <source
+                            src="../assets/images/projects-shadowframes/PaletteSoundscapeUpdate.mp3"
+                            type="audio/mpeg"
+                        />
+                        Your browser doesn't support audio.
+                    </audio>
                 </div>
             </section>
 
-            <!-- Core Systems -->
+            <!-- Menu Prototype -->
             <section>
-                <h2 data-i18n="anomaly.title">Anomaly System</h2>
-                <p data-i18n="anomaly.desc">
-                    Three audio stages guide investigation.
-                </p>
-                <div class="grid">
-                    <div class="grid-item">
-                        <h4>Stage 1</h4>
-                        <p data-i18n="anomaly.alert">
-                            Alert: Something changed somewhere
-                        </p>
-                    </div>
-                    <div class="grid-item">
-                        <h4>Stage 2</h4>
-                        <p data-i18n="anomaly.hint">
-                            Hint: Directional sound points you there
-                        </p>
-                    </div>
-                    <div class="grid-item">
-                        <h4>Stage 3</h4>
-                        <p data-i18n="anomaly.presence">
-                            Presence: It waits until you capture it
-                        </p>
-                    </div>
+                <h2>Menu Prototype</h2>
+                <div class="video-container">
+                    <video controls loop muted>
+                        <source
+                            src="../assets/images/projects-shadowframes/Menugif.mp4"
+                            type="video/mp4"
+                        />
+                        Your browser doesn't support video.
+                    </video>
                 </div>
             </section>
 
-            <!-- Camera + Enemy -->
+            <!-- Code Implementation -->
             <section>
-                <div class="grid">
-                    <div class="grid-item">
-                        <h4 data-i18n="camera.title">Polaroid Mechanics</h4>
-                        <p data-i18n="camera.desc">
-                            Your only defense. Also your biggest vulnerability.
-                        </p>
-                        <p data-i18n="camera.raise">
-                            Raise camera: tunnel hearing, lose awareness
-                        </p>
-                        <p data-i18n="camera.shutter">
-                            Take photo: blind and deaf for 5 seconds
-                        </p>
-                        <p data-i18n="camera.reload">
-                            Reload film: can't move for 5 seconds
-                        </p>
-                    </div>
-                    <div class="grid-item">
-                        <h4 data-i18n="enemy.title">The Presence</h4>
-                        <p data-i18n="enemy.desc">
-                            Something's with you in the pub. Invisible. Audio
-                            only.
-                        </p>
-                        <p data-i18n="enemy.footsteps">
-                            Footsteps that stop when you look
-                        </p>
-                        <p data-i18n="enemy.whispers">
-                            Irish Gaelic voices you can't understand
-                        </p>
-                        <p data-i18n="enemy.drone">
-                            Sub-bass that grows with your mistakes
-                        </p>
-                    </div>
+                <h2>C++ Implementation</h2>
+                <p>
+                    Delegate-based architecture with clean separation of
+                    concerns
+                </p>
+
+                <div class="code-snippet">
+                    <h4>
+                        FootstepComponent.h — Delegate-Based Surface Detection
+                    </h4>
+                    <pre><code><span class="comment">// Multicast delegate broadcasts surface type to Blueprint audio manager</span>
+<span class="keyword">DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</span>(<span class="type">FOnFootstepDelegate</span>, <span class="type">FName</span>, SurfaceType);
+
+<span class="keyword">UCLASS</span>(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+<span class="keyword">class</span> <span class="type">UFootstepComponent</span> : <span class="keyword">public</span> <span class="type">UActorComponent</span>
+{
+    <span class="keyword">GENERATED_BODY</span>()
+
+<span class="keyword">public</span>:
+    <span class="keyword">UPROPERTY</span>(BlueprintAssignable, Category = <span class="string">"Footstep"</span>)
+    <span class="type">FOnFootstepDelegate</span> OnFootstep;
+
+    <span class="keyword">UFUNCTION</span>(BlueprintCallable)
+    <span class="type">FName</span> <span class="function">GetCurrentSurfaceType</span>() <span class="keyword">const</span>;
+
+<span class="keyword">private</span>:
+    <span class="type">FName</span> <span class="function">DetectSurfaceType</span>() <span class="keyword">const</span>;
+};</code></pre>
+                </div>
+
+                <div class="code-snippet">
+                    <h4>
+                        FootstepComponent.cpp — Physical Material Detection with
+                        Line Trace
+                    </h4>
+                    <pre><code><span class="type">FName</span> <span class="type">UFootstepComponent</span>::<span class="function">DetectSurfaceType</span>() <span class="keyword">const</span>
+{
+    <span class="type">FHitResult</span> Hit;
+    <span class="keyword">const</span> <span class="type">FVector</span> Start = <span class="function">GetOwner</span>()-><span class="function">GetActorLocation</span>();
+    <span class="keyword">const</span> <span class="type">FVector</span> End = Start - <span class="function">FVector</span>(<span class="string">0.f</span>, <span class="string">0.f</span>, m_TraceDistance);
+
+    <span class="type">FCollisionQueryParams</span> QueryParams;
+    QueryParams.<span class="function">AddIgnoredActor</span>(<span class="function">GetOwner</span>());
+    QueryParams.bReturnPhysicalMaterial = <span class="keyword">true</span>;
+
+    <span class="keyword">if</span> (<span class="function">GetWorld</span>()-><span class="function">LineTraceSingleByChannel</span>(Hit, Start, End, ECC_Visibility, QueryParams))
+    {
+        <span class="keyword">if</span> (<span class="type">UPhysicalMaterial</span>* PhysMat = Hit.PhysMaterial.<span class="function">Get</span>())
+        {
+            <span class="comment">// Map PhysicalSurface enum to Wwise Switch names</span>
+            <span class="keyword">switch</span> (PhysMat->SurfaceType)
+            {
+                <span class="keyword">case</span> SurfaceType1: <span class="keyword">return</span> <span class="function">FName</span>(<span class="string">"Tiles"</span>);
+                <span class="keyword">case</span> SurfaceType2: <span class="keyword">return</span> <span class="function">FName</span>(<span class="string">"Wood"</span>);
+                <span class="keyword">case</span> SurfaceType4: <span class="keyword">return</span> <span class="function">FName</span>(<span class="string">"CreakyWood"</span>);
+                <span class="keyword">default</span>: <span class="keyword">return</span> <span class="function">FName</span>(<span class="string">"Concrete"</span>);
+            }
+        }
+    }
+    <span class="keyword">return</span> <span class="function">FName</span>(<span class="string">"Concrete"</span>);
+}</code></pre>
+                </div>
+
+                <div class="code-snippet">
+                    <h4>PlayerCharacter.h — Camera & Photoboard Delegates</h4>
+                    <pre><code><span class="comment">// Delegates for player actions that trigger audio events</span>
+<span class="keyword">DECLARE_DYNAMIC_MULTICAST_DELEGATE</span>(<span class="type">FOnCameraShutterDelegate</span>);
+<span class="keyword">DECLARE_DYNAMIC_MULTICAST_DELEGATE</span>(<span class="type">FOnCameraZoomInDelegate</span>);
+<span class="keyword">DECLARE_DYNAMIC_MULTICAST_DELEGATE</span>(<span class="type">FOnPhotoboardEnterDelegate</span>);
+
+<span class="keyword">UCLASS</span>()
+<span class="keyword">class</span> <span class="type">APlayerCharacter</span> : <span class="keyword">public</span> <span class="type">ACharacter</span>
+{
+    <span class="keyword">GENERATED_BODY</span>()
+
+<span class="keyword">public</span>:
+    <span class="keyword">UPROPERTY</span>(BlueprintAssignable, Category = <span class="string">"Audio"</span>)
+    <span class="type">FOnCameraShutterDelegate</span> OnCameraShutter;
+
+    <span class="keyword">UPROPERTY</span>(BlueprintAssignable, Category = <span class="string">"Audio"</span>)
+    <span class="type">FOnCameraZoomInDelegate</span> OnCameraZoomIn;
+
+    <span class="keyword">UPROPERTY</span>(BlueprintAssignable, Category = <span class="string">"Audio"</span>)
+    <span class="type">FOnPhotoboardEnterDelegate</span> OnPhotoboardEnter;
+};</code></pre>
+                </div>
+
+                <div class="code-snippet">
+                    <h4>
+                        PhotoboardWidget.cpp — Dynamic RTPC for Tension System
+                    </h4>
+                    <pre><code><span class="keyword">void</span> <span class="type">UPhotoboardWidget</span>::<span class="function">UpdateAmbientRTPC</span>()
+{
+    <span class="keyword">if</span> (!PhotosOnBoardRTPC) <span class="keyword">return</span>;
+
+    <span class="comment">// Find AkAmbientSound actor for progressive ambient system</span>
+    <span class="type">AActor</span>* TargetActor = <span class="keyword">nullptr</span>;
+    <span class="type">TArray</span><<span class="type">AActor</span>*> FoundActors;
+    <span class="type">UGameplayStatics</span>::<span class="function">GetAllActorsOfClass</span>(
+        <span class="function">GetWorld</span>(),
+        <span class="type">AAkAmbientSound</span>::<span class="function">StaticClass</span>(),
+        FoundActors
+    );
+
+    <span class="keyword">for</span> (<span class="type">AActor</span>* Actor : FoundActors)
+    {
+        <span class="keyword">if</span> (Actor && Actor-><span class="function">GetName</span>().<span class="function">Contains</span>(<span class="function">TEXT</span>(<span class="string">"AmbientProgressive"</span>)))
+        {
+            TargetActor = Actor;
+            <span class="keyword">break</span>;
+        }
+    }
+
+    <span class="comment">// RTPC value 0-5 drives ambient intensity as photos are placed</span>
+    <span class="type">UAkGameplayStatics</span>::<span class="function">SetRTPCValue</span>(
+        PhotosOnBoardRTPC,
+        m_ImportantPhotosAlreadyPlaced,
+        <span class="string">0</span>,
+        TargetActor
+    );
+}</code></pre>
                 </div>
             </section>
 
             <!-- Tech Stack -->
             <section>
-                <h2 data-i18n="technical.title">Tech Stack</h2>
+                <h2 data-i18n="tech_stack.title">Technical Stack</h2>
                 <div class="grid">
                     <div class="grid-item">
-                        <h4>Engine</h4>
-                        <p data-i18n="technical.engine">
-                            Wwise 2024.1 + Unreal Engine 5.4.4
-                        </p>
+                        <h4>Audio Middleware</h4>
+                        <p data-i18n="tech_stack.wwise">Wwise 2024.1</p>
                     </div>
                     <div class="grid-item">
-                        <h4>Audio</h4>
-                        <p data-i18n="technical.audio">
-                            HRTF spatial audio, dynamic RTPCs, environmental
-                            zones
-                        </p>
+                        <h4>Game Engine</h4>
+                        <p data-i18n="tech_stack.engine">Unreal Engine 5.4.4</p>
                     </div>
                     <div class="grid-item">
-                        <h4>Tools</h4>
-                        <p data-i18n="technical.tools">
-                            Reaper DAW, Waves J37, PaulXStretch, Valhalla
-                            FreqEcho
+                        <h4>Audio Tools</h4>
+                        <p data-i18n="tech_stack.audio_tools">
+                            Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho
                         </p>
                     </div>
                     <div class="grid-item">
                         <h4>Performance</h4>
-                        <p data-i18n="technical.performance">
+                        <p data-i18n="tech_stack.performance">
                             Sub 5% CPU, optimized streaming
                         </p>
                     </div>
                 </div>
             </section>
-
-            <!-- Current Status -->
-            <section>
-                <h2 data-i18n="status.title">Current Status</h2>
-                <div class="status-timeline">
-                    <div class="status-item">
-                        <span class="status-icon">✓</span>
-                        <span data-i18n="status.proto">Prototype Complete</span>
-                    </div>
-                    <div class="status-item">
-                        <span class="status-icon">◉</span>
-                        <span data-i18n="status.production"
-                            >Week 1 of Production</span
-                        >
-                    </div>
-                    <div class="status-item">
-                        <span class="status-icon">◯</span>
-                        <span data-i18n="status.coming"
-                            >Full Audio Implementation</span
-                        >
-                    </div>
-                </div>
-            </section>
-
-            <!-- Button -->
-            <div class="button-container">
-                <a href="/projects/" class="button" data-i18n="button.projects"
-                    >All Projects</a
-                >
-            </div>
-
-            <!-- Footer -->
-            <footer class="footer">
-                <p>&copy; Igor Szuniewicz 2025. All rights reserved.</p>
-            </footer>
         </div>
 
-        <!-- Fixed Player -->
-        <div class="fixed-player" id="fixedPlayer">
-            <div class="fixed-player-top">
-                <button class="fixed-player-btn" id="fixedPlayerBtn">
-                    <div class="icon"></div>
-                </button>
-                <div class="fixed-player-info">
-                    <div class="fixed-player-title" id="fixedPlayerTitle">
-                        Menu Theme
-                    </div>
-                    <div class="fixed-player-subtitle">Shadow Frames</div>
-                </div>
-            </div>
-            <div class="fixed-player-progress" id="fixedPlayerProgress">
-                <div
-                    class="fixed-player-progress-bar"
-                    id="fixedPlayerProgressBar"
-                ></div>
-            </div>
-            <div class="fixed-player-time">
-                <span id="fixedPlayerCurrentTime">0:00</span>
-                <span id="fixedPlayerDuration">0:00</span>
-            </div>
-            <div class="fixed-player-volume">
-                <svg
-                    class="volume-icon"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                >
-                    <polygon
-                        points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
-                    ></polygon>
-                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                </svg>
-                <input
-                    type="range"
-                    id="volumeSlider"
-                    min="0"
-                    max="100"
-                    value="70"
-                    class="volume-slider"
-                />
-            </div>
+        <!-- Lightbox -->
+        <div class="lightbox" id="lightbox">
+            <span class="lightbox-close" onclick="closeLightbox()">×</span>
+            <img id="lightbox-img" src="" alt="Screenshot" />
         </div>
 
-        <!-- Audio Player Component -->
+        <!-- Language System -->
+        <script src="../assets/js/language-system.js"></script>
         <script>
-            (function injectPlayerStyles() {
-                const css = `
-      .audio-player{ --p:0deg; position:relative; width:220px; height:220px; margin:1rem auto; display:block; }
-      .audio-player::before{ content:''; position:absolute; inset:0; border-radius:50%;
-        background:
-          radial-gradient(circle at 50% 50%, rgba(255,255,255,0.06) 0 40%, transparent 41%),
-          conic-gradient(#888 var(--p), rgba(255,255,255,0.08) 0);
-        box-shadow: inset 0 0 0 6px rgba(255,255,255,0.06), 0 10px 30px rgba(0,0,0,0.4);
-      }
-      .audio-player .inner{ position:absolute; inset:18px; border-radius:50%; background:rgba(0,0,0,0.6);
-        display:flex; align-items:center; justify-content:center; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.08);
-      }
-      .audio-player button{ width:96px; height:96px; border-radius:50%; border:none; cursor:pointer; color:#fff;
-        background: linear-gradient(135deg,#333,#555); box-shadow: 0 8px 24px rgba(255, 255, 255,.15);
-        transition: transform .2s ease, box-shadow .2s ease; position:relative; display:flex; align-items:center; justify-content:center; }
-      .audio-player button:hover{ transform: scale(1.05); box-shadow:0 12px 32px rgba(255, 255, 255,.25); }
-      .audio-player button .tri{ width:0; height:0; border-left:26px solid #fff; border-top:16px solid transparent; border-bottom:16px solid transparent; margin-left:3px; }
-      .audio-player button.paused .tri{ border-left-color:transparent; border-top:0; border-bottom:0; width:20px; height:20px; position:relative; }
-      .audio-player button.paused .tri::before,.audio-player button.paused .tri::after{ content:''; position:absolute; top:0; width:6px; height:24px; background:#fff; border-radius:2px; }
-      .audio-player button.paused .tri::before{ left:-8px; }
-      .audio-player button.paused .tri::after{ left:4px; }
-      .fixed-player { position: fixed; bottom: 2rem; right: 2rem; width: 320px; background: rgba(12, 12, 12, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 16px; padding: 1rem 1.25rem; box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 999; opacity: 0; pointer-events: none; transform: translateY(20px); transition: all 0.3s ease; }
-      .fixed-player.active { opacity: 1; pointer-events: all; transform: translateY(0); }
-      .fixed-player-top { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
-      .fixed-player-btn { width: 48px; height: 48px; border-radius: 50%; border: none; background: linear-gradient(135deg, #333, #555); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); flex-shrink: 0; }
-      .fixed-player-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2); }
-      .fixed-player-btn .icon { width: 0; height: 0; border-left: 14px solid white; border-top: 8px solid transparent; border-bottom: 8px solid transparent; margin-left: 3px; }
-      .fixed-player-btn.playing .icon { border: none; width: 12px; height: 12px; position: relative; }
-      .fixed-player-btn.playing .icon::before, .fixed-player-btn.playing .icon::after { content: ''; position: absolute; width: 4px; height: 16px; background: white; border-radius: 2px; }
-      .fixed-player-btn.playing .icon::before { left: 0; } .fixed-player-btn.playing .icon::after { left: 8px; }
-      .fixed-player-info { flex: 1; overflow: hidden; }
-      .fixed-player-title { font-size: 0.9rem; font-weight: 600; color: #fff; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .fixed-player-subtitle { font-size: 0.75rem; color: #888; }
-      .fixed-player-progress { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; overflow: hidden; margin-bottom: 0.5rem; cursor: pointer; }
-      .fixed-player-progress-bar { height: 100%; background: linear-gradient(90deg, #555, #777); width: 0%; transition: width 0.1s linear; }
-      .fixed-player-time { display: flex; justify-content: space-between; font-size: 0.7rem; color: #666; }
-      .fixed-player-volume { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255, 255, 255, 0.05); }
-      .volume-icon { color: #666; flex-shrink: 0; }
-      .volume-slider { flex: 1; height: 4px; -webkit-appearance: none; appearance: none; background: rgba(255, 255, 255, 0.1); border-radius: 2px; outline: none; cursor: pointer; }
-      .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 12px; height: 12px; background: linear-gradient(135deg, #555, #777); border-radius: 50%; cursor: pointer; transition: all 0.2s ease; }
-      .volume-slider::-webkit-slider-thumb:hover { transform: scale(1.2); background: linear-gradient(135deg, #666, #888); }
-      .volume-slider::-moz-range-thumb { width: 12px; height: 12px; background: linear-gradient(135deg, #555, #777); border: none; border-radius: 50%; cursor: pointer; transition: all 0.2s ease; }
-      .volume-slider::-moz-range-thumb:hover { transform: scale(1.2); background: linear-gradient(135deg, #666, #888); }
-      `;
-                const style = document.createElement("style");
-                style.textContent = css;
-                document.head.appendChild(style);
-            })();
-
-            (function () {
-                let active = { audio: null, el: null };
-                const fixedPlayer = document.getElementById("fixedPlayer");
-                const fixedBtn = document.getElementById("fixedPlayerBtn");
-                const fixedTitle = document.getElementById("fixedPlayerTitle");
-                const fixedProgressBar = document.getElementById(
-                    "fixedPlayerProgressBar",
-                );
-                const fixedProgress = document.getElementById(
-                    "fixedPlayerProgress",
-                );
-                const fixedCurrentTime = document.getElementById(
-                    "fixedPlayerCurrentTime",
-                );
-                const fixedDuration = document.getElementById(
-                    "fixedPlayerDuration",
-                );
-                const volumeSlider = document.getElementById("volumeSlider");
-
-                function formatTime(seconds) {
-                    const m = Math.floor(seconds / 60);
-                    const s = Math.floor(seconds % 60);
-                    return `${m}:${s.toString().padStart(2, "0")}`;
-                }
-
-                function stopActive() {
-                    if (active.audio) {
-                        try {
-                            active.audio.pause();
-                        } catch {}
-                    }
-                    if (active.el) {
-                        active.el
-                            .querySelector("button")
-                            ?.classList.remove("paused");
-                        active.el.style.setProperty("--p", "0deg");
-                    }
-                    fixedPlayer.classList.remove("active");
-                    fixedBtn.classList.remove("playing");
-                    active = { audio: null, el: null };
-                }
-
-                function bindPlayer(el) {
-                    const src = el.getAttribute("data-audio");
-                    const btn = document.createElement("button");
-                    btn.setAttribute("aria-label", "Play audio sample");
-                    const inner = document.createElement("div");
-                    inner.className = "inner";
-                    const tri = document.createElement("div");
-                    tri.className = "tri";
-                    btn.appendChild(tri);
-                    inner.appendChild(btn);
-                    el.appendChild(inner);
-
-                    let audio = new Audio(src);
-                    audio.preload = "metadata";
-                    audio.volume = volumeSlider
-                        ? volumeSlider.value / 100
-                        : 0.7;
-                    let raf = null;
-
-                    function loop() {
-                        if (!audio.duration)
-                            return (raf = requestAnimationFrame(loop));
-                        const p = Math.min(
-                            1,
-                            audio.currentTime / audio.duration,
-                        );
-                        el.style.setProperty(
-                            "--p",
-                            `${(p * 360).toFixed(1)}deg`,
-                        );
-                        fixedProgressBar.style.width = `${(p * 100).toFixed(1)}%`;
-                        fixedCurrentTime.textContent = formatTime(
-                            audio.currentTime,
-                        );
-                        fixedDuration.textContent = formatTime(audio.duration);
-                        if (!audio.paused) raf = requestAnimationFrame(loop);
-                    }
-
-                    function play() {
-                        if (active.el && active.el !== el) stopActive();
-                        active = { audio, el };
-                        btn.classList.add("paused");
-                        fixedPlayer.classList.add("active");
-                        fixedBtn.classList.add("playing");
-                        const translations = window.translations || {};
-                        const lang = window.currentLang || "en";
-                        fixedTitle.textContent =
-                            translations[lang]?.music?.subtitle || "Menu Theme";
-                        if (volumeSlider)
-                            audio.volume = volumeSlider.value / 100;
-                        audio
-                            .play()
-                            .then(() => {
-                                raf = requestAnimationFrame(loop);
-                            })
-                            .catch(() => {
-                                stopActive();
-                            });
-                    }
-
-                    function pause() {
-                        audio.pause();
-                        btn.classList.remove("paused");
-                        cancelAnimationFrame(raf);
-                        raf = null;
-                    }
-
-                    btn.addEventListener("click", () => {
-                        if (audio.paused) play();
-                        else pause();
-                    });
-                    audio.addEventListener("ended", () => {
-                        pause();
-                        audio.currentTime = 0;
-                        el.style.setProperty("--p", "0deg");
-                        fixedProgressBar.style.width = "0%";
-                    });
-                    audio.addEventListener("error", stopActive);
-                }
-
-                fixedBtn.addEventListener("click", () => {
-                    if (active.audio) {
-                        if (active.audio.paused) {
-                            active.audio.play();
-                            fixedBtn.classList.add("playing");
-                            active.el
-                                ?.querySelector("button")
-                                ?.classList.add("paused");
-                        } else {
-                            active.audio.pause();
-                            fixedBtn.classList.remove("playing");
-                            active.el
-                                ?.querySelector("button")
-                                ?.classList.remove("paused");
-                        }
-                    }
-                });
-
-                fixedProgress.addEventListener("click", (e) => {
-                    if (active.audio) {
-                        const rect = fixedProgress.getBoundingClientRect();
-                        const percent = (e.clientX - rect.left) / rect.width;
-                        active.audio.currentTime =
-                            active.audio.duration * percent;
-                    }
-                });
-
-                // Volume control - load saved volume first
-                const savedVolume = localStorage.getItem("audioVolume");
-                if (volumeSlider && savedVolume !== null) {
-                    volumeSlider.value = savedVolume * 100;
-                }
-
-                if (volumeSlider) {
-                    volumeSlider.addEventListener("input", (e) => {
-                        const volume = e.target.value / 100;
-                        if (active.audio) {
-                            active.audio.volume = volume;
-                        }
-                        localStorage.setItem("audioVolume", volume);
-                    });
-                }
-
-                document.addEventListener("DOMContentLoaded", () => {
-                    document
-                        .querySelectorAll(".audio-player")
-                        .forEach(bindPlayer);
-                });
-            })();
-        </script>
-
-        <!-- Translation System -->
-        <script>
-            let translations = {};
-            let currentLang = localStorage.getItem("language") || "en";
-
-            function getNestedTranslation(obj, path) {
-                return path
-                    .split(".")
-                    .reduce((current, key) => current?.[key], obj);
-            }
-
-            function setLanguage(lang) {
-                currentLang = lang;
-                localStorage.setItem("language", lang);
-
-                document.querySelectorAll("[data-i18n]").forEach((el) => {
-                    const key = el.getAttribute("data-i18n");
-                    const translation = getNestedTranslation(
-                        translations[lang],
-                        key,
-                    );
-                    if (translation) {
-                        el.textContent = translation;
-                    }
-                });
-
-                document.querySelectorAll(".lang-btn").forEach((btn) => {
-                    btn.classList.toggle("active", btn.dataset.lang === lang);
-                });
-            }
-
-            async function loadTranslations() {
-                try {
-                    const response = await fetch(
-                        "../locales/shadow-frames.json",
-                    );
-                    translations = await response.json();
-                    window.translations = translations;
-                    window.currentLang = currentLang;
-                    setLanguage(currentLang);
-                } catch (error) {
-                    console.error("Failed to load translations");
-                }
-            }
-
+            // Initialize language system
             document.addEventListener("DOMContentLoaded", () => {
-                loadTranslations();
+                if (typeof initLanguageSystem === "function") {
+                    initLanguageSystem("shadow-frames");
+                }
 
-                document.querySelectorAll(".lang-btn").forEach((btn) => {
-                    btn.addEventListener("click", () => {
-                        setLanguage(btn.dataset.lang);
+                // Setup screenshot lightbox
+                const screenshots = document.querySelectorAll(".screenshot");
+                screenshots.forEach((screenshot) => {
+                    screenshot.addEventListener("click", function () {
+                        const img = this.querySelector("img");
+                        const lightbox = document.getElementById("lightbox");
+                        const lightboxImg =
+                            document.getElementById("lightbox-img");
+                        lightboxImg.src = img.src;
+                        lightbox.classList.add("active");
                     });
                 });
+            });
 
-                setTimeout(() => {
-                    document.body.classList.add("loaded");
-                }, 100);
+            // Lightbox functions
+            function closeLightbox() {
+                const lightbox = document.getElementById("lightbox");
+                lightbox.classList.remove("active");
+            }
+
+            // Close lightbox on background click
+            document
+                .getElementById("lightbox")
+                .addEventListener("click", function (e) {
+                    if (e.target === this) {
+                        closeLightbox();
+                    }
+                });
+
+            // Close lightbox on ESC key
+            document.addEventListener("keydown", function (e) {
+                if (e.key === "Escape") {
+                    closeLightbox();
+                }
             });
         </script>
-        <script src="../assets/js/performance-boost.js" defer></script>
     </body>
 </html>
