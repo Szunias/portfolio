@@ -190,76 +190,84 @@
   "nl": {
     "back": "Terug naar projecten",
     "title": "Pause & Deserve",
-    "tagline": "Een psychologische horrorervaring waarbij elke pauze een prijs heeft.",
+    "tagline": "Solo-ontwikkeld horrorgame met tijdmanipulatie mechanica. Volledig gebouwd in Blueprints met MetaSounds audio-implementatie.",
     "meta": {
       "year": {
         "label": "Jaar",
         "value": "2024"
+      },
+      "role": {
+        "label": "Rol",
+        "value": "Solo Developer — Gameplay Programmering (Blueprints) + Audio Design"
+      },
+      "tech": {
+        "label": "Tech Stack",
+        "value": "Unreal Engine 5, Blueprints, MetaSounds, minimale C++"
       }
     },
     "gameplay": {
-      "title": "Geluid is je enige gids",
-      "desc": "Luister goed - de Dood komt dichterbij. De wereld verandert als je de tijd bevriest. Elke voetstap laat je hart sneller kloppen. Dat is de essentie van het spel."
+      "title": "Projectoverzicht",
+      "desc": "Solo schoolproject dat uitgroeide tot een volledige game. Complete gameplay loop gebouwd in Blueprints: speler beweging, sleutel verzameling, briefjes lezen, deur interacties, haard jumpscare, boss achtervolging door bos. Tijdmanipulatie mechanica: bevries vijand tijdelijk, maar het beweegt daarna sneller (risico/beloning trade-off)."
     },
     "overview": {
-      "title": "Horror creëren door geluid",
-      "desc": "Wat je niet ziet, zal je achtervolgen. De voetstappen van de Dood worden luider terwijl het je opjaagt. De omgeving kreunt en transformeert als je pauzeert. Elk geluid is ontworpen om je op het puntje van je stoel te houden."
+      "title": "Audio-implementatie",
+      "desc": "MetaSounds-gebaseerd audiosysteem met binaurale spatialisatie. Sound design van Soundly en Envato Elements bibliotheken, verwerkt en gelaagd. Eenvoudig maar effectief: ambience lagen, voetstappen (speler + vijand), UI feedback, afteltimer bij pauzeren, minimale adaptieve muziek. Willekeurige struik ruis trigger (11.025% kans) voor ambient schrik."
     },
     "soundscape": {
-      "title": "Atmosfeer creëren",
-      "desc": "Diepe drones echoën door de duisternis, verre kreten doorbreken de stilte, en je eigen voetstappen verraden je positie. Het creëert een benauwd gevoel zonder de cruciale geluiden te overstemmen die je moet horen.",
-      "oppressive_title": "Constante onrust",
-      "oppressive_desc": "Lagfrequente drones, verre kreten en onrustige texturen die je nooit laten voelen alsof je veilig bent",
-      "proximity_title": "De Dood nadert",
-      "proximity_desc": "Geluidsintensiteit neemt toe als de Dood dichterbij komt. Je eigen hart bonkt als gevaar nabij is",
-      "environmental_title": "Een levende wereld",
-      "environmental_desc": "Muren verschuiven, echo's veranderen, ruimtes transformeren. Elke omgevingsverandering heeft zijn eigen geluid"
+      "title": "Gameplay systemen in Blueprints",
+      "desc": "Alle gameplay logica geïmplementeerd in Blueprints (minimale C++). Gebouwde systemen: first-person character controller, sleutel inventory systeem, leesbare briefjes oppakken, deur ontgrendel mechanica, haard interactie trigger, AI achtervolging gedrag met dynamische snelheidsschaling gebaseerd op pauze gebruik.",
+      "oppressive_title": "Tijdmanipulatie mechanica",
+      "oppressive_desc": "Pauzeknop bevriest vijand AI voor kort moment. Trade-off: vijand snelheid multiplier verhoogt bij elk gebruik (1.0x → 1.2x → 1.5x → 2.0x). Audio feedback: aftelling piepjes (1-seconde intervallen), minimale muziek evolutie.",
+      "proximity_title": "Audio-implementatie details",
+      "proximity_desc": "MetaSounds voor alle audio playback. Binaurale spatialisatie via Unreal's ingebouwde HRTF. Voetstappen getriggerd via anim notifies. Afstand attenuatie: logaritmische afname, max bereik 50m. Voice limit: 32 gelijktijdige geluiden, priority-based stealing.",
+      "environmental_title": "Willekeurige omgevings triggers",
+      "environmental_desc": "Struik proximity systeem: wanneer speler binnen 3m sfeer, 11.025% kans per 2-seconden tick om ruis geluid te triggeren. Voorkomt voorspelbaarheid terwijl ambient spanning behouden blijft zonder audio spam."
     },
     "audio_system": {
-      "title": "Reactief audiosysteem",
-      "desc": "Elke actie triggert een geluidsreactie. Pauzeer de tijd en hoor hoe de realiteit vervormt. De Dood versnelt en het geluid wordt chaotisch. Beweeg door verschillende ruimtes en hoor hoe de akoestiek om je heen verandert.",
-      "pause_title": "Tijdmanipulatie-effecten",
-      "pause_desc": "Als je pauzeert, rekt de tijd uit en vervormt. Toonhoogte daalt, galm wordt langer, wat een bovennatuurlijke ervaring creëert",
-      "threat_title": "Dynamische intensiteit",
-      "threat_desc": "Geluid escaleert met de nabijheid en snelheid van de Dood. Hoe dichterbij en sneller het komt, hoe chaotischer het geluidslandschap wordt",
-      "spatial_title": "3D-geluidspositionering",
-      "spatial_desc": "Volg de locatie van de Dood alleen door geluid. Voetstappen en omgevingshints vertellen je precies waar gevaar schuilt"
+      "title": "Sound design workflow",
+      "desc": "Bronmateriaal van Soundly en Envato Elements. Verwerking: pitch shifting, layering, EQ, reverb. Geëxporteerd als WAV (48kHz/16-bit) met minimale compressie. Totale asset footprint: ~120MB. Implementatie via MetaSounds patches voor real-time parameter controle.",
+      "pause_title": "MetaSounds implementatie",
+      "pause_desc": "MetaSounds patch handelt voetstappen af (anim notify triggers), ambience lagen (constante loop + willekeurige one-shots), UI geluiden (knop presses, aftelling piepjes). Parameters: afstand (0-50m RTPC voor volume/filter), oppervlak type (enum voor voetstap variatie).",
+      "threat_title": "Performance budget",
+      "threat_desc": "Voice limit: 32 gelijktijdig (Unreal standaard). Priority systeem: UI (1.0), speler voetstappen (0.9), vijand voetstappen (0.8), ambience (0.5). Virtualisatie activeert wanneer limiet overschreden. Geen merkbare performance impact op target hardware (GTX 1060 equivalent).",
+      "spatial_title": "Binaurale spatialisatie",
+      "spatial_desc": "Unreal Engine's ingebouwde binaurale HRTF spatialisatie. Attenuatie: logaritmische curve, inner radius 5m (vol volume), outer radius 50m (stilte). Vijand voetstappen attached aan root bone, update per frame. Occlusie niet geïmplementeerd (scope beperking)."
     },
     "tension": {
-      "title": "Psychologische oorlogsvoering",
-      "desc": "Sub-basfrequenties die je meer voelt dan hoort. Misleidende geluiden die je aan het twijfelen brengen. Strategische stilte die plotselinge geluiden angstaanjagend maakt. Elk element ontworpen om met je hoofd te spelen.",
-      "subbass_title": "Fysieke angst",
-      "subbass_desc": "Ultra-lage frequenties die je nauwelijks opmerkt maar voelt in je borst, wat onrust creëert die je niet kunt verklaren",
-      "silence_title": "Het geluid van angst",
-      "silence_desc": "Stille momenten versterken plotselinge geluiden, waardoor je constant alert blijft en nooit ongevoelig wordt",
-      "misdirection_title": "Zintuiglijke misleiding",
-      "misdirection_desc": "Valse voetstappen en misleidende geluidshints die je laten twijfelen aan wat echt is en wat ingebeeld"
+      "title": "Technische scope & beperkingen",
+      "desc": "Dit was voornamelijk een Blueprint programmeer project om Unreal's gameplay systemen te leren. Audio-implementatie bewust eenvoudig gehouden: geen geavanceerde vertical layering, geen complexe RTPC netwerken, geen Wwise/FMOD middleware. Focus op solide gameplay gevoel en functionele audio, niet op geavanceerde audio tech.",
+      "subbass_title": "Wat goed werkte",
+      "subbass_desc": "MetaSounds handelde basis behoeften effectief af. Binaurale spatialisatie werkte out-of-box. Anim notify voetstap systeem betrouwbaar. Willekeurige struik triggers voegden onvoorspelbaarheid toe zonder complexe logica. 11.025% kans voelde juist na playtesting (audio geek referentie naar 11.025kHz kwart sample rate).",
+      "silence_title": "Wat ik zou verbeteren",
+      "silence_desc": "Toevoegen van juiste occlusie/obstructie voor vijand door muren. Implementeren van reverb zones voor verschillende gebieden. Gebruik van materiaal-gebaseerde oppervlak types voor voetstappen (momenteel enkel geluid). Toevoegen van meer granulaire afstand-gebaseerde filtering op ambience.",
+      "misdirection_title": "Belangrijkste lering",
+      "misdirection_desc": "Geleerd dat eenvoudige audio-implementatie goed gedaan complexe systemen slecht gedaan verslaat. Prioriteit was gameplay programmering in Blueprints (speler systemen, AI, mechanica's). Audio ondersteunde gameplay effectief zonder over-engineering."
     },
     "mechanics": {
       "chase": {
-        "title": "De Jager",
-        "desc": "De Dood jaagt je onverbiddelijk na door het verschuivende landschap. Het leert je patronen en past zijn strategie aan. Je kunt nooit echt ontsnappen."
+        "title": "AI achtervolging systeem (Blueprint)",
+        "desc": "Eenvoudige AI behavior tree: patrol willekeurige waypoints totdat speler gespot wordt (line-of-sight trace), dan overschakelen naar chase mode. NavMesh pathfinding met dynamische obstacle avoidance. Snelheid schaalt gebaseerd op pauze mechanica gebruik (float multiplier in BP)."
       },
       "pause": {
-        "title": "De prijs van tijd",
-        "desc": "Bevries de Dood tijdelijk om jezelf kostbare seconden te geven. Maar elk gebruik heeft een prijs - de Dood wordt sneller en agressiever achteraf."
+        "title": "Pauze mechanica implementatie",
+        "desc": "Blueprint timer systeem: knop druk → bevries vijand beweging 3 seconden → verhoog snelheid multiplier (1.0 → 1.2 → 1.5 → 2.0 max) → speel aftelling piepje elke 1 seconde. Audio: MetaSounds event trigger, UI fadeout, afteltimer geluid."
       },
       "world": {
-        "title": "Verschuivende realiteit",
-        "desc": "De omgeving is nooit statisch. Muren sluiten zich, paden herschikken zich, lichten flikkeren en doven. Veiligheid is altijd tijdelijk."
+        "title": "Level design & interacties",
+        "desc": "Lineaire progressie: bos → hut → vind sleutel → ontgrendel deur → haard jumpscare → boss achtervolging door bos. Blueprint actors voor: sleutel oppakken (toevoegen aan inventory), briefje lezen (UI widget), deur interactie (check inventory, speel ontgrendel animatie), haard trigger (particle effect + audio one-shot)."
       },
       "score": {
-        "title": "Hoe lang kun je volhouden?",
-        "desc": "Test je overlevingsinstincten. Het spel houdt je langste pogingen bij en daagt je uit om de Dood te overtreffen, te slim af te zijn en langer vol te houden dan de Dood zelf."
+        "title": "Game loop structuur",
+        "desc": "Kern loop: verken → verzamel sleutel → overleef achtervolging. Dood triggert respawn op checkpoint. Blueprint save game systeem slaat beste tijd op. Playtesting gefocust op pacing: hoe lang voordat speler sleutel krijgt, hoe intens achtervolging voelt, wanneer moeilijkheid schalen via pauze mechanica."
       }
     },
     "design": {
-      "title": "Ontwerpfilosofie",
-      "desc": "We wilden echte claustrofobie creëren. Eerste-persoon perspectief betekent dat je niet kunt zien wat achter je is. Een AI die slim jaagt, niet goedkoop. Audio dat in je hoofd kruipt. Gebouwd door snelle prototyping en uitgebreid spelertesten."
+      "title": "Ontwikkelingsaanpak",
+      "desc": "Solo project, 8 weken ontwikkeling. Begon als schoolopdracht, uitgebreid na positieve feedback. Gefocust op leren van Blueprint visual scripting voor gameplay systemen. Audio functioneel maar eenvoudig gehouden om scope te behouden. Prioriteiten: werkende game loop > polish. Gebruikte placeholder assets vroeg, vervangen door finale audio/visuals in laatste 2 weken."
     },
     "tech": {
-      "title": "Audiotechnologie",
-      "desc": "Aangedreven door Wwise voor real-time audiobesturing. Elk geluid reageert op afstand, snelheid en spelerstatus. Alles dynamisch gemixt om de perfecte horrorervaring te creëren."
+      "title": "Tech stack samenvatting",
+      "desc": "Engine: Unreal Engine 5.1. Programmering: ~90% Blueprints, ~10% C++ (alleen voor optimalisatie van distance checks). Audio: MetaSounds voor playback, binaurale spatialisatie. Assets: Soundly + Envato Elements, verwerkt in DAW, geëxporteerd WAV 48kHz/16-bit. Totale project grootte: ~450MB (geometrie + textures 60%, audio 25%, blueprints 15%)."
     },
     "gallery": {
       "title": "Ontwikkelingsgalerij",
