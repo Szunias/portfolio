@@ -82,6 +82,24 @@ export function initTimelineNav() {
     }
   }
 
+  // Split text into letters with audio-reactive effect
+  function makeAudioReactive(element, text) {
+    element.innerHTML = "";
+    const letters = text.split("");
+
+    letters.forEach((letter, index) => {
+      const span = document.createElement("span");
+      span.className = "letter";
+      span.textContent = letter === " " ? "\u00A0" : letter;
+
+      // Stagger animation delay for each letter (equalizer effect)
+      const delay = index * 0.05; // 50ms between each letter
+      span.style.animationDelay = `${delay}s`;
+
+      element.appendChild(span);
+    });
+  }
+
   // Update project display (central + prev/next)
   function updateProjectDisplay() {
     const current = projects[currentProjectIndex];
@@ -90,7 +108,7 @@ export function initTimelineNav() {
 
     // Update central display
     if (currentProjectName && current) {
-      currentProjectName.textContent = current.name;
+      makeAudioReactive(currentProjectName, current.name);
 
       // Make central project clickable
       if (currentProjectDiv) {
