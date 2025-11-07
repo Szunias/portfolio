@@ -1461,6 +1461,89 @@
                 .custom-video-player {
                     margin: 0 -1rem;
                 }
+
+                .challenge-cards {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            /* === CHALLENGES & SOLUTIONS === */
+            .challenge-cards {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: 2rem;
+                max-width: 1200px;
+                margin: 2rem auto 0;
+            }
+
+            .challenge-card {
+                position: relative;
+                background: rgba(0, 0, 0, 0.5);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 2rem;
+                transition: all 0.3s ease;
+                overflow: hidden;
+            }
+
+            .challenge-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+                transition: left 0.5s ease;
+            }
+
+            .challenge-card:hover::before {
+                left: 100%;
+            }
+
+            .challenge-card:hover {
+                border-color: var(--accent-blue);
+                transform: translateY(-5px);
+                box-shadow: 
+                    0 15px 50px rgba(0, 0, 0, 0.5),
+                    0 0 30px rgba(59, 130, 246, 0.2);
+            }
+
+            .challenge-icon {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+                display: inline-block;
+                filter: drop-shadow(0 4px 10px rgba(59, 130, 246, 0.3));
+            }
+
+            .challenge-card h4 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 1.4rem;
+                color: var(--accent-blue);
+                margin-bottom: 1.5rem;
+                font-weight: 600;
+            }
+
+            .challenge-content {
+                position: relative;
+                z-index: 1;
+            }
+
+            .challenge-label {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 0.85rem;
+                font-weight: 700;
+                color: var(--accent-blue);
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                margin-top: 1rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .challenge-content p {
+                font-size: 0.95rem;
+                line-height: 1.7;
+                color: var(--text-secondary);
             }
         </style>
     </head>
@@ -1933,6 +2016,31 @@
                     <p data-i18n="sections.audio_doc_desc">Complete technical documentation covering all audio systems, asset pipeline, and implementation guidelines.</p>
                 </div>
                 <a href="../assets/images/projects-shadowframes/Sound_Grp22_ShadowFrames.pdf" class="doc-link" download data-i18n="sections.download_sound_bible">Download Sound Bible PDF</a>
+            </section>
+
+            <!-- Challenges & Solutions -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="challenges.title">Challenges & Solutions</h2>
+                    <p data-i18n="challenges.desc">Problems encountered during development and how I addressed them.</p>
+                </div>
+
+                <div class="challenge-cards">
+                    <div class="challenge-card">
+                        <div class="challenge-icon">🔧</div>
+                        <h4 data-i18n="challenges.challenge1.title">Workflow Optimization Tools</h4>
+                        <div class="challenge-content">
+                            <p class="challenge-label" data-i18n="challenges.problem_label">Problem:</p>
+                            <p data-i18n="challenges.challenge1.problem" style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                Working in a multi-institutional collaboration with students, workflow issues frequently disrupted development. Wwise integration would break after Perforce pulls, and Unreal Engine compilation times were causing significant downtime.
+                            </p>
+                            <p class="challenge-label" data-i18n="challenges.solution_label">Solution:</p>
+                            <p data-i18n="challenges.challenge1.solution" style="color: var(--text-secondary);">
+                                Created Wwise Unreal Fixer and Unreal Engine Rebuilder tools to streamline the workflow. While not fully independent work (collaborative effort), these tools were primarily developed to help students work more efficiently. The Wwise Fixer automatically restores broken Wwise integration after Perforce pulls, and the Rebuilder automates the compilation process to reduce downtime.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- Tech Stack -->
