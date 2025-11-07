@@ -52,11 +52,6 @@ export function initTimelineNav() {
         updateActiveState();
         updateProjectLink();
       });
-
-      // Show timeline nav when video starts playing
-      player.on("play", () => {
-        timelineNav.classList.add("visible");
-      });
     }
   }
 
@@ -85,16 +80,16 @@ export function initTimelineNav() {
   // Update project link based on current time
   function updateProjectLink() {
     const currentRange = timestampRanges.find(
-      (range) => currentTime >= range.start && currentTime < range.end
+      (range) => currentTime >= range.start && currentTime < range.end,
     );
 
     if (currentRange && projectMap[currentRange.project]) {
       const project = projectMap[currentRange.project];
       projectLink.href = project.url;
       projectLink.querySelector("span").textContent = `View ${project.name}`;
-      projectLink.style.display = "inline-flex";
+      projectLink.classList.add("visible");
     } else {
-      projectLink.style.display = "none";
+      projectLink.classList.remove("visible");
     }
   }
 
@@ -109,25 +104,6 @@ export function initTimelineNav() {
       }
     });
   });
-
-  // Show timeline nav on scroll
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting && currentTime > 0) {
-          timelineNav.classList.add("visible");
-        }
-      });
-    },
-    {
-      threshold: 0.1,
-    }
-  );
-
-  const demoReelPlayer = document.getElementById("demo-reel-player");
-  if (demoReelPlayer) {
-    observer.observe(demoReelPlayer);
-  }
 
   // Wait for Vimeo API to load
   if (window.Vimeo) {
