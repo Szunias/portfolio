@@ -234,6 +234,9 @@
                 border-radius: 20px;
                 overflow: hidden;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+                will-change: transform;
+                transform: translateZ(0);
+                backface-visibility: hidden;
             }
 
             .hero-visual::before {
@@ -371,6 +374,117 @@
                 font-weight: 600;
             }
 
+            /* === DEVELOPMENT TIMELINE === */
+            .dev-timeline {
+                margin-top: 2rem;
+                padding: 1.5rem;
+                background: rgba(0, 0, 0, 0.4);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+            }
+
+            .timeline-container {
+                position: relative;
+                width: 100%;
+            }
+
+            .timeline-track {
+                position: relative;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1rem 0;
+            }
+
+            .timeline-progress {
+                position: absolute;
+                top: 50%;
+                left: 0;
+                height: 2px;
+                background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+                transform: translateY(-50%);
+                width: 40%;
+                z-index: 1;
+                animation: timelineProgress 2s ease-out;
+            }
+
+            @keyframes timelineProgress {
+                from { width: 0%; }
+                to { width: 40%; }
+            }
+
+            .timeline-milestone {
+                position: relative;
+                z-index: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+                flex: 1;
+            }
+
+            .milestone-dot {
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                border: 2px solid var(--border);
+                transition: all 0.3s ease;
+                position: relative;
+                z-index: 2;
+            }
+
+            .timeline-milestone.completed .milestone-dot {
+                background: var(--accent-blue);
+                border-color: var(--accent-blue);
+                box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+            }
+
+            .timeline-milestone.active .milestone-dot {
+                background: var(--accent-purple);
+                border-color: var(--accent-purple);
+                box-shadow: 0 0 15px rgba(139, 92, 246, 0.7);
+                animation: pulseActive 2s ease-in-out infinite;
+            }
+
+            @keyframes pulseActive {
+                0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(139, 92, 246, 0.7); }
+                50% { transform: scale(1.2); box-shadow: 0 0 25px rgba(139, 92, 246, 1); }
+            }
+
+            .milestone-label {
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+                font-weight: 500;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .timeline-milestone.completed .milestone-label {
+                color: var(--accent-blue);
+            }
+
+            .timeline-milestone.active .milestone-label {
+                color: var(--accent-purple);
+                font-weight: 600;
+            }
+
+            .current-indicator {
+                position: absolute;
+                top: -25px;
+                font-size: 0.7rem;
+                color: var(--accent-purple);
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                animation: fadeInOut 2s ease-in-out infinite;
+            }
+
+            @keyframes fadeInOut {
+                0%, 100% { opacity: 0.6; }
+                50% { opacity: 1; }
+            }
+
             /* === CONTENT === */
             .content {
                 position: relative;
@@ -446,6 +560,15 @@
                 gap: 2rem;
                 margin: 2.5rem 0;
                 align-items: start;
+            }
+
+            .rtpc-section .implementation-showcase {
+                grid-template-columns: 1fr;
+            }
+
+            .rtpc-section .code-side {
+                max-width: 100%;
+                overflow-x: auto;
             }
 
             .blueprint-side,
@@ -569,8 +692,9 @@
 
             .code-tooltip {
                 position: fixed;
-                width: 320px;
-                padding: 1.25rem;
+                max-width: 280px;
+                width: auto;
+                padding: 1rem;
                 background: rgba(18, 18, 18, 0.98);
                 border: 2px solid var(--accent-blue);
                 border-radius: 12px;
@@ -583,6 +707,22 @@
                 z-index: 10000;
                 backdrop-filter: blur(15px);
                 transform: translateX(-10px);
+            }
+
+            .rtpc-section .code-tooltip {
+                max-width: 240px;
+                padding: 0.75rem;
+                font-size: 0.85rem;
+            }
+
+            .rtpc-section .code-tooltip h5 {
+                font-size: 0.85rem;
+                margin-bottom: 0.4rem;
+            }
+
+            .rtpc-section .code-tooltip p {
+                font-size: 0.75rem;
+                line-height: 1.4;
             }
 
             .code-tooltip.active {
@@ -840,6 +980,40 @@
                 color: var(--text-secondary);
             }
 
+            .player-volume {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-top: 0.75rem;
+            }
+
+            .volume-label {
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+                min-width: 35px;
+            }
+
+            .volume-slider-audio {
+                flex: 1;
+                height: 6px;
+                background: rgba(255, 255, 255, 0.15);
+                border-radius: 3px;
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .volume-progress-audio {
+                height: 100%;
+                background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+                border-radius: 3px;
+                width: 100%;
+                transition: width 0.1s linear;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+
             .progress-container {
                 position: relative;
                 width: 100%;
@@ -877,6 +1051,65 @@
 
             .audio-section audio {
                 display: none;
+            }
+
+            /* === INFO ICON & TOOLTIPS === */
+            .info-icon {
+                display: inline-block;
+                width: 18px;
+                height: 18px;
+                line-height: 18px;
+                text-align: center;
+                border-radius: 50%;
+                background: rgba(59, 130, 246, 0.2);
+                color: var(--accent-blue);
+                font-size: 0.75rem;
+                font-weight: 600;
+                margin-left: 0.5rem;
+                vertical-align: middle;
+                transition: all 0.3s ease;
+            }
+
+            h3[data-explanation-title]:hover .info-icon {
+                background: rgba(59, 130, 246, 0.4);
+                transform: scale(1.1);
+            }
+
+            .explanation-tooltip {
+                position: fixed;
+                width: 300px;
+                padding: 1rem;
+                background: rgba(18, 18, 18, 0.98);
+                border: 2px solid var(--accent-blue);
+                border-radius: 12px;
+                box-shadow: 
+                    0 8px 32px rgba(0, 0, 0, 0.9),
+                    0 0 40px rgba(59, 130, 246, 0.3);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease, transform 0.3s ease;
+                z-index: 10001;
+                backdrop-filter: blur(15px);
+                transform: translateY(-10px);
+            }
+
+            .explanation-tooltip.active {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .explanation-tooltip h5 {
+                color: var(--accent-blue);
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+            }
+
+            .explanation-tooltip p {
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+                line-height: 1.6;
+                margin: 0;
             }
 
             /* === COLLAB LOGOS === */
@@ -932,9 +1165,19 @@
             }
 
             .overview-icon {
-                font-size: 2.5rem;
+                font-family: "Space Grotesk", "Inter", sans-serif;
+                font-size: 0.7rem;
+                font-weight: 600;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+                color: var(--accent-blue);
                 margin-bottom: 1rem;
                 display: block;
+                padding: 0.4rem 0.9rem;
+                background: rgba(59, 130, 246, 0.1);
+                border: 1px solid rgba(59, 130, 246, 0.3);
+                border-radius: 8px;
+                width: fit-content;
             }
 
             .overview-card h3 {
@@ -1134,6 +1377,15 @@
 
                 .hero {
                     margin-top: 70px;
+                    padding: 2rem 1rem;
+                }
+
+                .hero-visual {
+                    min-height: 300px;
+                }
+
+                .hero-logo {
+                    font-size: clamp(2rem, 8vw, 4rem);
                 }
 
                 .hero-content {
@@ -1148,6 +1400,66 @@
                 .tech-section {
                     padding: 1.5rem;
                     margin: 2rem 0;
+                }
+
+                .overview-main {
+                    grid-template-columns: 1fr;
+                }
+
+                .collab-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .custom-audio-player {
+                    padding: 1rem;
+                }
+
+                .player-controls {
+                    flex-wrap: wrap;
+                }
+
+                .code-side {
+                    padding: 1rem;
+                }
+
+                .code-side pre {
+                    font-size: 0.75rem;
+                    padding: 0.75rem;
+                }
+
+                .media-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .hero-visual {
+                    min-height: 250px;
+                }
+
+                .hero-logo {
+                    font-size: clamp(1.5rem, 6vw, 3rem);
+                }
+
+                .sound-lead-badge {
+                    padding: 0.5rem 1rem;
+                    font-size: 0.75rem;
+                }
+
+                .dev-timeline {
+                    padding: 1rem;
+                }
+
+                .timeline-milestone {
+                    font-size: 0.7rem;
+                }
+
+                .section-header h2 {
+                    font-size: 1.5rem;
+                }
+
+                .custom-video-player {
+                    margin: 0 -1rem;
                 }
             }
         </style>
@@ -1166,7 +1478,7 @@
             <!-- Hero -->
         <section class="hero">
             <div class="hero-visual">
-                <div class="sound-lead-badge">Sound Lead</div>
+                <div class="sound-lead-badge" data-i18n="sections.sound_lead">Sound Lead</div>
                 <div class="hero-logo">SHADOW<br>FRAMES</div>
             </div>
             <div class="hero-content">
@@ -1178,9 +1490,41 @@
                     <span class="badge" data-i18n="meta.style.value">Black & White</span>
                     <span class="badge" data-i18n="meta.engine.value">Unreal Engine 5.5</span>
                 </div>
-                <div class="production-badge" data-i18n="production_notice">Sprint 3/5 Production • Multi-Institutional Project</div>
+                <div class="production-badge">
+                    <strong data-i18n="sections.ongoing_project">Ongoing Project</strong> • <span data-i18n="sections.deadline">Deadline: December 10, 2024</span> • <span data-i18n="sections.sprint_dev">Sprint-based development with multiple polish phases</span>
             </div>
-        </section>
+
+                <!-- Development Timeline -->
+                <div class="dev-timeline">
+                    <div class="timeline-container">
+                        <div class="timeline-track">
+                            <div class="timeline-milestone completed">
+                                <div class="milestone-dot"></div>
+                                <span class="milestone-label" data-i18n="sections.sprint_1">Sprint 1</span>
+                    </div>
+                            <div class="timeline-milestone completed">
+                                <div class="milestone-dot"></div>
+                                <span class="milestone-label" data-i18n="sections.sprint_2">Sprint 2</span>
+                    </div>
+                            <div class="timeline-milestone active">
+                                <div class="milestone-dot"></div>
+                                <span class="milestone-label" data-i18n="sections.sprint_3">Sprint 3</span>
+                                <div class="current-indicator" data-i18n="sections.current">Current</div>
+                    </div>
+                            <div class="timeline-milestone">
+                                <div class="milestone-dot"></div>
+                                <span class="milestone-label" data-i18n="sections.sprint_4">Sprint 4</span>
+                    </div>
+                            <div class="timeline-milestone">
+                                <div class="milestone-dot"></div>
+                                <span class="milestone-label" data-i18n="sections.sprint_5">Sprint 5</span>
+                </div>
+                            <div class="timeline-progress"></div>
+                    </div>
+                    </div>
+                    </div>
+                </div>
+            </section>
 
         <!-- Main Content -->
         <div class="content">
@@ -1189,29 +1533,29 @@
                 <div class="section-header">
                 <h2 data-i18n="context.title">Project Overview</h2>
                     <p class="overview-intro" data-i18n="concept.desc">1960s Irish pub. Black and white. You have a Polaroid camera. Strange things happen. Sound tells you everything. Mute the game, you can't play. That's the core.</p>
-                </div>
+                    </div>
                 
                 <div class="overview-content">
                     <div class="overview-main">
                         <div class="overview-card">
-                            <div class="overview-icon">CONCEPT</div>
-                            <h3>Core Concept</h3>
+                            <div class="overview-icon" data-i18n="sections.concept_icon">CONCEPT</div>
+                            <h3 data-i18n="sections.core_concept">Core Concept</h3>
                             <p data-i18n="concept.desc">1960s Irish pub. Black and white. You have a Polaroid camera. Strange things happen. Sound tells you everything. Mute the game, you can't play. That's the core.</p>
-                </div>
+                    </div>
 
                         <div class="overview-card">
-                            <div class="overview-icon">ROLE</div>
-                            <h3>My Role</h3>
-                            <p>As <strong>Sound Lead</strong>, I designed and implemented the complete audio architecture for Shadow Frames. This includes dynamic footstep systems, delegate-based player audio, RTPC-driven tension progression, and Wwise integration.</p>
+                            <div class="overview-icon" data-i18n="sections.role_icon">ROLE</div>
+                            <h3 data-i18n="sections.my_role">My Role</h3>
+                            <p data-i18n="sections.my_role_desc">As Sound Lead, I designed and implemented key parts of the audio architecture for Shadow Frames. This includes dynamic footstep systems, delegate-based player audio, RTPC-driven tension progression, and Wwise integration. The full system will be significantly more advanced.</p>
                     </div>
                         
                         <div class="overview-card">
-                            <div class="overview-icon">TECH</div>
-                            <h3>Technical Stack</h3>
+                            <div class="overview-icon" data-i18n="sections.tech_icon">TECH</div>
+                            <h3 data-i18n="sections.technical_stack">Technical Stack</h3>
                             <p><strong>Unreal Engine 5.5</strong> • <strong>Wwise</strong> • <strong>C++</strong> • <strong>Blueprint</strong> • <strong>Physical Materials</strong> • <strong>RTPC</strong> • <strong>Switch Containers</strong></p>
-                    </div>
-                    </div>
-                    
+                </div>
+                </div>
+
                     <div class="collab-section">
                         <h3 data-i18n="sections.org_title" class="collab-title">Multi-Institutional Collaboration</h3>
                         <p data-i18n="sections.org_desc" class="collab-desc">This is a major collaborative project between prestigious institutions:</p>
@@ -1221,7 +1565,7 @@
                                 <div class="collab-logo-wrapper">
                                     <img src="../assets/icons/icons for projects/RITCS_Logo.png" alt="RITCS" />
                     </div>
-                                <h4>RITCS</h4>
+                                <h4 data-i18n="sections.ritcs_name">RITCS</h4>
                                 <p data-i18n="sections.ritcs_desc">Royal Institute for Theatre, Cinema & Sound — Leading narrative design and story development</p>
                     </div>
                             
@@ -1229,18 +1573,88 @@
                                 <div class="collab-logo-wrapper kask-logo">
                                     <img src="../assets/icons/icons for projects/KASK_Logo_Transparent.png" alt="KASK" />
                     </div>
-                                <h4>KASK Conservatory</h4>
+                                <h4 data-i18n="sections.kask_name">KASK Conservatory</h4>
                                 <p data-i18n="sections.kask_desc">Providing music composition expertise</p>
                     </div>
                             
                             <div class="collab-card">
                                 <div class="collab-logo-wrapper">
-                                    <div class="collab-logo-placeholder">Howest</div>
+                                    <img src="../assets/images/projects-shadowframes/nicedae.jpg" alt="Howest DAE" />
                         </div>
-                                <h4>Howest DAE</h4>
+                                <h4 data-i18n="sections.howest_name">Howest DAE</h4>
                                 <p data-i18n="sections.howest_desc">Digital Arts & Entertainment — Game development and technical audio implementation</p>
                     </div>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Audio Showcase -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="sections.audio_prototypes_title">Audio Prototypes</h2>
+                    <p data-i18n="sections.audio_prototypes_desc">Original compositions and soundscape design for Shadow Frames.</p>
+                </div>
+                
+                <div class="audio-section">
+                    <h3 style="margin-bottom: 1rem; color: var(--accent-blue); position: relative; display: inline-block; cursor: help;" 
+                        data-explanation-title="Music Prototype" 
+                        data-explanation-text="Prototype delivered after the first week of collaboration. This is the menu music concept, establishing the initial musical direction for Shadow Frames.">
+                        <span data-i18n="sections.music_title">Music Prototype</span>
+                        <span class="info-icon">ℹ</span>
+                    </h3>
+                    <div class="custom-audio-player" data-audio-src="../assets/audio/samples/Shadow_Frame_Menu_Vibe_but_Louder.wav">
+                        <audio>
+                            <source src="../assets/audio/samples/Shadow_Frame_Menu_Vibe_but_Louder.wav" type="audio/wav" />
+                        </audio>
+                        <div class="player-controls">
+                            <button class="play-pause-btn">▶</button>
+                            <div class="player-info">
+                                <div class="player-title" data-i18n="sections.menu_vibe">Shadow Frames — Menu Vibe</div>
+                                <div class="player-time"><span class="current-time">0:00</span> / <span class="total-time">0:00</span></div>
+                    </div>
+                </div>
+                        <div class="progress-container">
+                            <div class="progress-bar"></div>
+                            <div class="progress-handle"></div>
+                    </div>
+                        <div class="player-volume">
+                            <span class="volume-label" data-i18n="sections.volume_label">VOL</span>
+                            <div class="volume-slider-audio">
+                                <div class="volume-progress-audio"></div>
+                    </div>
+                </div>
+                    </div>
+                </div>
+
+                <div class="audio-section">
+                    <h3 style="margin-bottom: 1rem; color: var(--accent-blue); position: relative; display: inline-block; cursor: help;"
+                        data-explanation-title="Palette Soundscape" 
+                        data-explanation-text="Created during the prototyping phase to present my artistic vision of how the soundscape could sound. This demonstrates the ambient audio direction and palette I envisioned for Shadow Frames.">
+                        <span data-i18n="sections.soundscape_title">Palette Soundscape</span>
+                        <span class="info-icon">ℹ</span>
+                    </h3>
+                    <div class="custom-audio-player" data-audio-src="../assets/images/projects-shadowframes/PaletteSoundscapeUpdate.mp3">
+                        <audio>
+                            <source src="../assets/images/projects-shadowframes/PaletteSoundscapeUpdate.mp3" type="audio/mpeg" />
+                        </audio>
+                        <div class="player-controls">
+                            <button class="play-pause-btn">▶</button>
+                            <div class="player-info">
+                                <div class="player-title" data-i18n="sections.palette_soundscape">Palette Soundscape Update</div>
+                                <div class="player-time"><span class="current-time">0:00</span> / <span class="total-time">0:00</span></div>
+                    </div>
+                    </div>
+                        <div class="progress-container">
+                            <div class="progress-bar"></div>
+                            <div class="progress-handle"></div>
+                    </div>
+                        <div class="player-volume">
+                            <span class="volume-label" data-i18n="sections.volume_label">VOL</span>
+                            <div class="volume-slider-audio">
+                                <div class="volume-progress-audio"></div>
+                    </div>
+                    </div>
                     </div>
                 </div>
             </section>
@@ -1250,50 +1664,54 @@
                 <div class="section-header">
                     <h2 data-i18n="footstep.title">Footstep System: Surface Detection & Audio Routing</h2>
                     <p data-i18n="footstep.desc">Physical material detection drives dynamic audio switching for realistic surface-based footsteps.</p>
-                    </div>
+                </div>
 
                 <div class="explanation-grid">
                     <div class="explanation-item">
-                        <h3>WHAT</h3>
+                        <h3 data-i18n="sections.what">WHAT</h3>
                         <p data-i18n="footstep.what">System detects surface type under player (wood, tiles, concrete) and automatically switches appropriate footstep sounds in Wwise. Each player step matches the material they're walking on.</p>
-                    </div>
-                    <div class="explanation-item">
-                        <h3>HOW</h3>
-                        <p data-i18n="footstep.how">C++ component performs line trace downward from player position, detects Physical Material, maps it to Wwise Switch name, and Blueprint Audio Manager receives delegate and plays appropriate sound.</p>
-                    </div>
-                    <div class="explanation-item">
-                        <h3>WHY</h3>
-                        <p data-i18n="footstep.why">Separation of Concerns - C++ handles detection logic, Blueprint handles audio. Delegates provide loose coupling between systems. This allows easy addition of new surfaces without modifying C++ code.</p>
                 </div>
                     <div class="explanation-item">
-                        <h3>RESULT</h3>
+                        <h3 data-i18n="sections.how">HOW</h3>
+                        <p data-i18n="footstep.how">C++ component performs line trace downward from player position, detects Physical Material, maps it to Wwise Switch name, and Blueprint Audio Manager receives delegate and plays appropriate sound.</p>
+                </div>
+                    <div class="explanation-item">
+                        <h3 data-i18n="sections.why">WHY</h3>
+                        <p data-i18n="footstep.why">Separation of Concerns - C++ handles detection logic, Blueprint handles audio. Delegates provide loose coupling between systems. This allows easy addition of new surfaces without modifying C++ code.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3 data-i18n="sections.result">RESULT</h3>
                         <p data-i18n="footstep.result">Realistic footsteps matched to surface, zero manual switching, easy expansion with new materials. System works automatically for every player step.</p>
                     </div>
-                    </div>
+                </div>
 
                 <div class="implementation-showcase">
                     <div class="blueprint-side" style="position: relative;">
-                        <div class="blueprint-zoom-hint">Click to enlarge</div>
+                        <div class="blueprint-zoom-hint" data-i18n="sections.click_enlarge">Click to enlarge</div>
                         <img src="../assets/images/projects-shadowframes/BP_Footstep_AudioManager.png" alt="Footstep Blueprint" class="blueprint-img" />
                 </div>
                     <div class="code-side">
-                        <h4>FootstepComponent.cpp — Surface Detection</h4>
+                        <h4 data-i18n="sections.footstep_code_title">FootstepComponent.cpp — Surface Detection</h4>
                         <div class="code-explanation">
-                            <p><strong>WHAT:</strong> <span data-i18n="code_explanations.footstep_what">Function detects surface type under player using line trace downward from player position.</span></p>
-                            <p><strong>HOW:</strong> <span data-i18n="code_explanations.footstep_how">Line trace checks object's Physical Material, then maps SurfaceType enum to Wwise Switch name (Tiles, Wood, CreakyWood, Concrete).</span></p>
-                            <p><strong>WHY:</strong> <span data-i18n="code_explanations.footstep_why">Using Physical Material allows automatic detection without manually tagging each surface. Mapping to Switch names provides flexibility in Wwise.</span></p>
+                            <p><strong data-i18n="sections.what">WHAT</strong>: <span data-i18n="code_explanations.footstep_what">Function detects surface type under player using line trace downward from player position.</span></p>
+                            <p><strong data-i18n="sections.how">HOW</strong>: <span data-i18n="code_explanations.footstep_how">Line trace checks object's Physical Material, then maps SurfaceType enum to Wwise Switch name (Tiles, Wood, CreakyWood, Concrete).</span></p>
+                            <p><strong data-i18n="sections.why">WHY</strong>: <span data-i18n="code_explanations.footstep_why">Using Physical Material allows automatic detection without manually tagging each surface. The enum-to-Switch mapping is a one-time setup that connects Unreal's surface system to Wwise - this is configuration, not hardcoded audio calls. Audio designer can modify Switch names in Wwise without code changes.</span></p>
                 </div>
                     <pre><code><span class="type">FName</span> <span class="type">UFootstepComponent</span>::<span class="function">DetectSurfaceType</span>() <span class="keyword">const</span>
 {
-<span class="code-block-logic" data-block-title="Line Trace Setup" data-block-text="Sets up line trace from player position downward to detect surface. FHitResult stores hit information, Start is player location, End is below player by trace distance.">    <span class="type">FHitResult</span> Hit;
-    <span class="keyword">const</span> <span class="type">FVector</span> Start = <span class="function">GetOwner</span>()-><span class="function">GetActorLocation</span>();
-    <span class="keyword">const</span> <span class="type">FVector</span> End = Start - <span class="function">FVector</span>(<span class="string">0.f</span>, <span class="string">0.f</span>, m_TraceDistance);</span>
+<span class="code-block-logic" data-block-title="Null Safety Checks" data-block-text="Validates that owner and world exist before performing trace. Prevents crashes if component is used incorrectly.">    <span class="keyword">const</span> <span class="type">AActor</span>* Owner = <span class="function">GetOwner</span>();
+    <span class="keyword">const</span> <span class="type">UWorld</span>* World = <span class="function">GetWorld</span>();
+    <span class="keyword">if</span> (!Owner || !World) <span class="keyword">return</span> <span class="function">FName</span>(<span class="string">"Concrete"</span>);</span>
 
-<span class="code-block-logic" data-block-title="Query Configuration" data-block-text="Configures collision query to ignore the player actor and return Physical Material information. This is essential for detecting surface type.">    <span class="type">FCollisionQueryParams</span> QueryParams;
-    QueryParams.<span class="function">AddIgnoredActor</span>(<span class="function">GetOwner</span>());
+<span class="code-block-logic" data-block-title="Line Trace Setup" data-block-text="Sets up line trace from player position downward to detect surface. FHitResult stores hit information, Start is player location, End is below player by trace distance.">    <span class="type">FHitResult</span> Hit;
+    <span class="keyword">const</span> <span class="type">FVector</span> Start = Owner-><span class="function">GetActorLocation</span>();
+    <span class="keyword">const</span> <span class="type">FVector</span> End = Start - <span class="function">FVector</span>(<span class="string">0.f</span>, <span class="string">0.f</span>, TraceDistance);</span>
+
+<span class="code-block-logic" data-block-title="Query Configuration" data-block-text="Configures collision query to ignore the player actor and return Physical Material information. Uses ECC_WorldStatic for proper surface detection.">    <span class="type">FCollisionQueryParams</span> QueryParams;
+    QueryParams.<span class="function">AddIgnoredActor</span>(Owner);
     QueryParams.bReturnPhysicalMaterial = <span class="keyword">true</span>;</span>
 
-<span class="code-block-logic" data-block-title="Line Trace Execution" data-block-text="Performs the actual line trace. Returns true if something was hit. This detects what surface the player is standing on.">    <span class="keyword">if</span> (<span class="function">GetWorld</span>()-><span class="function">LineTraceSingleByChannel</span>(Hit, Start, End, ECC_Visibility, QueryParams))</span>
+<span class="code-block-logic" data-block-title="Line Trace Execution" data-block-text="Performs the actual line trace using ECC_WorldStatic channel for accurate surface detection. Returns true if something was hit.">    <span class="keyword">if</span> (World-><span class="function">LineTraceSingleByChannel</span>(Hit, Start, End, ECC_WorldStatic, QueryParams))</span>
     {
 <span class="code-block-logic" data-block-title="Surface Type Mapping" data-block-text="Extracts Physical Material from hit result and maps SurfaceType enum to Wwise Switch name. This connects Unreal surface detection to Wwise audio switching.">        <span class="keyword">if</span> (<span class="type">UPhysicalMaterial</span>* PhysMat = Hit.PhysMaterial.<span class="function">Get</span>())
         {
@@ -1322,34 +1740,34 @@
 
                 <div class="explanation-grid">
                     <div class="explanation-item">
-                        <h3>WHAT</h3>
+                        <h3 data-i18n="sections.what">WHAT</h3>
                         <p data-i18n="player_audio.what">System connects player actions (camera shot, zoom, photoboard entry) with appropriate audio events in Wwise. Each player action automatically triggers corresponding sound.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>HOW</h3>
+                        <h3 data-i18n="sections.how">HOW</h3>
                         <p data-i18n="player_audio.how">PlayerCharacter in C++ defines multicast delegates. When player performs action, delegate is broadcast. Blueprint Audio Manager listens to these delegates and calls appropriate Wwise Events.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>WHY</h3>
+                        <h3 data-i18n="sections.why">WHY</h3>
                         <p data-i18n="player_audio.why">Delegates provide loose coupling - PlayerCharacter knows nothing about audio, Audio Manager knows nothing about player logic. This facilitates testing, debugging, and modifications. Each system can be developed independently.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>RESULT</h3>
+                        <h3 data-i18n="sections.result">RESULT</h3>
                         <p data-i18n="player_audio.result">Clean architecture, easy addition of new audio actions, zero hardcoded calls. Audio designer can modify audio without touching player code.</p>
                     </div>
                 </div>
 
                 <div class="implementation-showcase">
                     <div class="blueprint-side" style="position: relative;">
-                        <div class="blueprint-zoom-hint">Click to enlarge</div>
+                        <div class="blueprint-zoom-hint" data-i18n="sections.click_enlarge">Click to enlarge</div>
                         <img src="../assets/images/projects-shadowframes/BP_PlayerOneshotAudioManager.png" alt="Player Audio Blueprint" class="blueprint-img" />
                     </div>
                     <div class="code-side">
-                        <h4>PlayerCharacter.h — Delegates</h4>
+                        <h4 data-i18n="sections.delegate_code_title">PlayerCharacter.h — Delegates</h4>
                         <div class="code-explanation">
-                            <p><strong>WHAT:</strong> <span data-i18n="code_explanations.delegate_what">Definition of multicast delegates for player actions that trigger audio events.</span></p>
-                            <p><strong>HOW:</strong> <span data-i18n="code_explanations.delegate_how">DECLARE_DYNAMIC_MULTICAST_DELEGATE creates delegate that can be broadcast from C++ and listened to in Blueprint. UPROPERTY(BlueprintAssignable) allows binding in Blueprint.</span></p>
-                            <p><strong>WHY:</strong> <span data-i18n="code_explanations.delegate_why">Multicast delegates allow multiple listeners (e.g. Audio Manager) to react to one action. Dynamic delegates work with Blueprint, giving audio designer full control without modifying C++ code.</span></p>
+                            <p><strong data-i18n="sections.what">WHAT</strong>: <span data-i18n="code_explanations.delegate_what">Definition of multicast delegates for player actions that trigger audio events.</span></p>
+                            <p><strong data-i18n="sections.how">HOW</strong>: <span data-i18n="code_explanations.delegate_how">DECLARE_DYNAMIC_MULTICAST_DELEGATE creates delegate that can be broadcast from C++ and listened to in Blueprint. UPROPERTY(BlueprintAssignable) allows binding in Blueprint.</span></p>
+                            <p><strong data-i18n="sections.why">WHY</strong>: <span data-i18n="code_explanations.delegate_why">Multicast delegates allow multiple listeners (e.g. Audio Manager) to react to one action. Dynamic delegates work with Blueprint, giving audio designer full control without modifying C++ code.</span></p>
                         </div>
                     <pre><code><span class="comment">// Delegates for player actions that trigger audio events</span>
 <span class="code-block-logic" data-block-title="Delegate Declarations" data-block-text="Defines three multicast delegates for player actions. Dynamic means they work with Blueprint, multicast allows multiple listeners."><span class="keyword">DECLARE_DYNAMIC_MULTICAST_DELEGATE</span>(<span class="type">FOnCameraShutterDelegate</span>);
@@ -1382,59 +1800,59 @@
 
                 <div class="explanation-grid">
                     <div class="explanation-item">
-                        <h3>WHAT</h3>
+                        <h3 data-i18n="sections.what">WHAT</h3>
                         <p data-i18n="rtpc.what">System dynamically changes ambient intensity based on number of photos placed on board. More photos = more tense atmosphere. RTPC value 0-5 controls ambient layers in Wwise.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>HOW</h3>
+                        <h3 data-i18n="sections.how">HOW</h3>
                         <p data-i18n="rtpc.how">PhotoboardWidget tracks number of important photos. When player places photo, UpdateAmbientRTPC() finds AkAmbientSound actor and sets RTPC value. Wwise automatically crossfades between ambient layers.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>WHY</h3>
+                        <h3 data-i18n="sections.why">WHY</h3>
                         <p data-i18n="rtpc.why">RTPC allows smooth transitions between tension states without jumps. Audio designer can precisely control in Wwise how each ambient layer responds to RTPC value. This gives full control over emotional progression.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>RESULT</h3>
+                        <h3 data-i18n="sections.result">RESULT</h3>
                         <p data-i18n="rtpc.result">Smooth tension progression, zero audio jumps, easy curve modification in Wwise. Atmosphere automatically adapts to player progress.</p>
                     </div>
                 </div>
 
                 <div class="code-side" style="margin-top: 2rem;">
-                    <h4>PhotoboardWidget.cpp — RTPC Update</h4>
+                    <h4 data-i18n="sections.rtpc_code_title">PhotoboardWidget.cpp — RTPC Update</h4>
                     <div class="code-explanation">
-                        <p><strong>WHAT:</strong> <span data-i18n="code_explanations.rtpc_what">Function updates RTPC value in Wwise based on number of photos placed on board.</span></p>
-                        <p><strong>HOW:</strong> <span data-i18n="code_explanations.rtpc_how">Finds AkAmbientSound actor named 'AmbientProgressive', then sets RTPC value (0-5) corresponding to number of important photos. Wwise automatically crossfades between ambient layers.</span></p>
-                        <p><strong>WHY:</strong> <span data-i18n="code_explanations.rtpc_why">RTPC allows smooth transitions between tension states. Audio designer can precisely control crossfade curves for each layer in Wwise, giving full control over emotional progression without code modifications.</span></p>
+                        <p><strong data-i18n="sections.what">WHAT</strong>: <span data-i18n="code_explanations.rtpc_what">Function updates RTPC value in Wwise based on number of photos placed on board.</span></p>
+                        <p><strong data-i18n="sections.how">HOW</strong>: <span data-i18n="code_explanations.rtpc_how">Finds AkAmbientSound actor named 'AmbientProgressive', then sets RTPC value (0-5) corresponding to number of important photos. Wwise automatically crossfades between ambient layers.</span></p>
+                        <p><strong data-i18n="sections.why">WHY</strong>: <span data-i18n="code_explanations.rtpc_why">RTPC allows smooth transitions between tension states. Audio designer can precisely control crossfade curves for each layer in Wwise, giving full control over emotional progression without code modifications.</span></p>
                     </div>
                     <pre><code><span class="keyword">void</span> <span class="type">UPhotoboardWidget</span>::<span class="function">UpdateAmbientRTPC</span>()
 {
-<span class="code-block-logic" data-block-title="Null Check" data-block-text="Safety check to ensure RTPC parameter exists before attempting to set value.">    <span class="keyword">if</span> (!PhotosOnBoardRTPC) <span class="keyword">return</span>;</span>
+<span class="code-block-logic" data-block-title="Null Safety Checks" data-block-text="Validates RTPC parameter and world exist before proceeding. Prevents crashes and ensures system is properly initialized.">    <span class="keyword">if</span> (!PhotosOnBoardRTPC) <span class="keyword">return</span>;
+    <span class="keyword">const</span> <span class="type">UWorld</span>* World = <span class="function">GetWorld</span>();
+    <span class="keyword">if</span> (!World) <span class="keyword">return</span>;</span>
 
-    <span class="comment">// Find AkAmbientSound actor for progressive ambient system</span>
-<span class="code-block-logic" data-block-title="Actor Search Setup" data-block-text="Prepares to find all AkAmbientSound actors in the level. This locates the ambient sound system that needs RTPC updates.">    <span class="type">AActor</span>* TargetActor = <span class="keyword">nullptr</span>;
+    <span class="comment">// Find actor by tag (more efficient and reliable than name search)</span>
+<span class="code-block-logic" data-block-title="Actor Search by Tag" data-block-text="Searches for AkAmbientSound actor using tag instead of name comparison. Tags are more efficient and less error-prone than string name searches. In production, this would be cached to avoid GetAllActorsOfClass every call.">    <span class="type">AActor</span>* TargetActor = <span class="keyword">nullptr</span>;
     <span class="type">TArray</span><<span class="type">AActor</span>*> FoundActors;
-    <span class="type">UGameplayStatics</span>::<span class="function">GetAllActorsOfClass</span>(
-        <span class="function">GetWorld</span>(),
-        <span class="type">AAkAmbientSound</span>::<span class="function">StaticClass</span>(),
-        FoundActors
-    );</span>
-
-<span class="code-block-logic" data-block-title="Target Actor Selection" data-block-text="Searches through all ambient sound actors to find the one named 'AmbientProgressive'. This is the specific actor that handles tension progression.">    <span class="keyword">for</span> (<span class="type">AActor</span>* Actor : FoundActors)
+    <span class="type">UGameplayStatics</span>::<span class="function">GetAllActorsOfClass</span>(World, <span class="type">AAkAmbientSound</span>::<span class="function">StaticClass</span>(), FoundActors);
+    
+    <span class="keyword">for</span> (<span class="type">AActor</span>* Actor : FoundActors)
     {
-        <span class="keyword">if</span> (Actor && Actor-><span class="function">GetName</span>().<span class="function">Contains</span>(<span class="function">TEXT</span>(<span class="string">"AmbientProgressive"</span>)))
+        <span class="keyword">if</span> (Actor && Actor-><span class="function">ActorHasTag</span>(<span class="function">FName</span>(<span class="string">"AmbientProgressive"</span>)))
         {
             TargetActor = Actor;
             <span class="keyword">break</span>;
         }
     }</span>
 
-    <span class="comment">// RTPC value 0-5 drives ambient intensity as photos are placed</span>
-<span class="code-block-logic" data-block-title="RTPC Value Update" data-block-text="Sets the RTPC value based on number of photos placed. Wwise automatically crossfades between ambient layers based on this value, creating smooth tension progression.">    <span class="type">UAkGameplayStatics</span>::<span class="function">SetRTPCValue</span>(
-        PhotosOnBoardRTPC,
-        m_ImportantPhotosAlreadyPlaced,
-        <span class="string">0</span>,
-        TargetActor
-    );</span>
+<span class="code-block-logic" data-block-title="RTPC Value Update" data-block-text="Sets the RTPC value based on number of photos placed. Wwise automatically crossfades between ambient layers based on this value, creating smooth tension progression.">    <span class="keyword">if</span> (TargetActor)
+    {
+        <span class="type">UAkGameplayStatics</span>::<span class="function">SetRTPCValue</span>(
+            PhotosOnBoardRTPC,
+            ImportantPhotosAlreadyPlaced,
+            <span class="string">0</span>,
+            TargetActor
+        );
+    }</span>
 }</code></pre>
                 </div>
             </section>
@@ -1442,26 +1860,26 @@
             <!-- Wwise Architecture -->
             <section class="tech-section">
                 <div class="section-header">
-                    <h2 data-i18n="wwise_arch.title">Wwise Architecture: Switch Containers & Room-Based Audio</h2>
-                    <p data-i18n="wwise_arch.desc">Room-specific ambiences transition smoothly as player moves through the pub.</p>
+                    <h2 data-i18n="wwise_arch.title">Wwise Architecture: Switch Containers & Photoboard Integration</h2>
+                    <p data-i18n="wwise_arch.desc">Continuation of the RTPC system - Switch Containers in Wwise respond to photos collected on the photoboard, creating dynamic ambient layers.</p>
                 </div>
 
                 <div class="explanation-grid">
                     <div class="explanation-item">
-                        <h3>WHAT</h3>
-                        <p data-i18n="wwise_arch.what">Each room in pub has unique audio atmosphere. When player moves between rooms, audio smoothly switches. Switch Container in Wwise automatically selects appropriate ambient layer.</p>
+                        <h3 data-i18n="sections.what">WHAT</h3>
+                        <p data-i18n="wwise_arch.what">Switch Container system in Wwise responds to the number of photos collected on the photoboard. As player collects more photos, different ambient layers are activated through Switch Containers, working in conjunction with the RTPC system.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>HOW</h3>
-                        <p data-i18n="wwise_arch.how">Blueprint Audio Zone Manager detects player entry into trigger zone, sets appropriate Switch in Wwise. Switch Container in Wwise contains all ambient variants for each room and automatically crossfades between them.</p>
+                        <h3 data-i18n="sections.how">HOW</h3>
+                        <p data-i18n="wwise_arch.how">The RTPC value from PhotoboardWidget (0-5 based on photos) drives Switch Container selection in Wwise. Each Switch state corresponds to different ambient layers. Wwise automatically crossfades between layers as photos are collected.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>WHY</h3>
-                        <p data-i18n="wwise_arch.why">Switch Containers provide smooth transitions without audio breaks. Audio designer can precisely control timing and crossfade curves in Wwise. This gives natural, immersive experience without artifacts.</p>
+                        <h3 data-i18n="sections.why">WHY</h3>
+                        <p data-i18n="wwise_arch.why">Switch Containers provide discrete layer control while RTPC handles smooth transitions. This combination allows for both structural changes (different ambient sets) and smooth intensity progression. Audio designer can precisely control each layer's response in Wwise.</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>RESULT</h3>
-                        <p data-i18n="wwise_arch.result">Smooth transitions between rooms, zero audio breaks, easy addition of new rooms. Each room sounds unique, creating cohesive spatial audio narrative.</p>
+                        <h3 data-i18n="sections.result">RESULT</h3>
+                        <p data-i18n="wwise_arch.result">Dynamic ambient system that responds to player progress through photoboard collection. This is a partial implementation - the full system will be significantly more advanced with additional layers and complexity.</p>
                     </div>
                 </div>
 
@@ -1479,6 +1897,9 @@
             <section class="tech-section">
                 <div class="section-header">
                     <h2 data-i18n="sections.gameplay_showcase">Gameplay Showcase</h2>
+                    <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.95rem;">
+                        <strong data-i18n="sections.gameplay_note">Note: This is a demonstration from Sprint 3 of production. The game is still in active development, far from final release. This video showcases Wwise audio systems implementation and is for demonstration purposes only.</strong>
+                    </p>
                 </div>
                 <div class="video-section">
                     <div class="custom-video-player">
@@ -1494,60 +1915,12 @@
                                 <button class="video-play-pause-btn">▶</button>
                                 <div class="video-time"><span class="video-current-time">0:00</span> / <span class="video-total-time">0:00</span></div>
                                 <div class="video-volume">
-                                    <span style="color: var(--text-primary); font-size: 0.9rem;">VOL</span>
+                                    <span style="color: var(--text-primary); font-size: 0.9rem;" data-i18n="sections.volume_label">VOL</span>
                                     <div class="volume-slider">
                                         <div class="volume-progress"></div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Audio Showcase -->
-            <section class="tech-section">
-                <div class="section-header">
-                    <h2>Audio Prototypes</h2>
-                    <p>Original compositions and soundscape design for Shadow Frames.</p>
-                </div>
-                
-                <div class="audio-section">
-                    <h3 style="margin-bottom: 1rem; color: var(--accent-blue);">Music Prototype</h3>
-                    <div class="custom-audio-player" data-audio-src="../assets/audio/samples/Shadow_Frame_Menu_Vibe_but_Louder.wav">
-                        <audio>
-                            <source src="../assets/audio/samples/Shadow_Frame_Menu_Vibe_but_Louder.wav" type="audio/wav" />
-                        </audio>
-                        <div class="player-controls">
-                            <button class="play-pause-btn">▶</button>
-                            <div class="player-info">
-                                <div class="player-title">Shadow Frames — Menu Vibe</div>
-                                <div class="player-time"><span class="current-time">0:00</span> / <span class="total-time">0:00</span></div>
-                            </div>
-                        </div>
-                        <div class="progress-container">
-                            <div class="progress-bar"></div>
-                            <div class="progress-handle"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="audio-section">
-                    <h3 style="margin-bottom: 1rem; color: var(--accent-blue);">Sound Soundscape Prototype</h3>
-                    <div class="custom-audio-player" data-audio-src="../assets/images/projects-shadowframes/PaletteSoundscapeUpdate.mp3">
-                        <audio>
-                            <source src="../assets/images/projects-shadowframes/PaletteSoundscapeUpdate.mp3" type="audio/mpeg" />
-                        </audio>
-                        <div class="player-controls">
-                            <button class="play-pause-btn">▶</button>
-                            <div class="player-info">
-                                <div class="player-title">Palette Soundscape Update</div>
-                                <div class="player-time"><span class="current-time">0:00</span> / <span class="total-time">0:00</span></div>
-                            </div>
-                        </div>
-                        <div class="progress-container">
-                            <div class="progress-bar"></div>
-                            <div class="progress-handle"></div>
                         </div>
                     </div>
                 </div>
@@ -1569,19 +1942,19 @@
                 </div>
                 <div class="explanation-grid">
                     <div class="explanation-item">
-                        <h3>Audio Middleware</h3>
+                        <h3 data-i18n="sections.audio_middleware">Audio Middleware</h3>
                         <p data-i18n="tech_stack.wwise">Wwise 2024.1</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>Game Engine</h3>
+                        <h3 data-i18n="sections.game_engine">Game Engine</h3>
                         <p data-i18n="tech_stack.engine">Unreal Engine 5.5</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>Audio Tools</h3>
+                        <h3 data-i18n="sections.audio_tools">Audio Tools</h3>
                         <p data-i18n="tech_stack.audio_tools">Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho</p>
                     </div>
                     <div class="explanation-item">
-                        <h3>Performance</h3>
+                        <h3 data-i18n="sections.performance">Performance</h3>
                         <p data-i18n="tech_stack.performance">Sub 5% CPU, optimized streaming</p>
                     </div>
                 </div>
@@ -1685,9 +2058,27 @@
                             const isRTPCSection = element.closest('.rtpc-section');
                             
                             if (isRTPCSection) {
-                                // For RTPC section, always position tooltip to the RIGHT (left side of code)
-                                tooltip.style.left = (rect.right + 20) + 'px';
-                                tooltip.style.right = 'auto';
+                                // For RTPC section, position tooltip above or to the left to avoid pushing code off screen
+                                const tooltipWidth = 240;
+                                const spaceRight = window.innerWidth - rect.right;
+                                const spaceLeft = rect.left;
+                                
+                                if (spaceRight > tooltipWidth + 20) {
+                                    // Position to the right if there's space
+                                    tooltip.style.left = (rect.right + 15) + 'px';
+                                    tooltip.style.right = 'auto';
+                                    tooltip.style.top = (rect.top - 10) + 'px';
+                                } else if (spaceLeft > tooltipWidth + 20) {
+                                    // Position to the left if there's space
+                                    tooltip.style.left = (rect.left - tooltipWidth - 15) + 'px';
+                                    tooltip.style.right = 'auto';
+                                    tooltip.style.top = (rect.top - 10) + 'px';
+                                } else {
+                                    // Position above if no horizontal space
+                                    tooltip.style.left = (rect.left + rect.width / 2 - tooltipWidth / 2) + 'px';
+                                    tooltip.style.top = (rect.top - 10) + 'px';
+                                    tooltip.style.bottom = 'auto';
+                                }
                             } else {
                                 // For other sections, position to the right, or left if not enough space
                                 const spaceRight = window.innerWidth - rect.right;
@@ -1730,8 +2121,16 @@
                 const progressContainer = player.querySelector('.progress-container');
                 const currentTimeEl = player.querySelector('.current-time');
                 const totalTimeEl = player.querySelector('.total-time');
+                const volumeSlider = player.querySelector('.volume-slider-audio');
+                const volumeProgress = player.querySelector('.volume-progress-audio');
 
                 let isPlaying = false;
+
+                // Initialize volume
+                audio.volume = 1.0;
+                if (volumeProgress) {
+                    volumeProgress.style.width = '100%';
+                }
 
                 audio.addEventListener('loadedmetadata', () => {
                     totalTimeEl.textContent = formatTime(audio.duration);
@@ -1760,6 +2159,22 @@
                     const percent = (e.clientX - rect.left) / rect.width;
                     audio.currentTime = percent * audio.duration;
                 });
+
+                if (volumeSlider && volumeProgress) {
+                    const updateVolume = (e) => {
+                        const rect = volumeSlider.getBoundingClientRect();
+                        const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                        audio.volume = percent;
+                        volumeProgress.style.width = (percent * 100) + '%';
+                    };
+                    
+                    volumeSlider.addEventListener('click', updateVolume);
+                    volumeSlider.addEventListener('mousemove', (e) => {
+                        if (e.buttons === 1) {
+                            updateVolume(e);
+                        }
+                    });
+                }
 
                 audio.addEventListener('ended', () => {
                     playBtn.textContent = '▶';
@@ -1830,6 +2245,30 @@
 
             document.addEventListener("keydown", function (e) {
                 if (e.key === "Escape") closeLightbox();
+            });
+
+            // Explanation tooltips for audio prototypes
+            const explanationTooltip = document.createElement('div');
+            explanationTooltip.className = 'explanation-tooltip';
+            document.body.appendChild(explanationTooltip);
+
+            document.querySelectorAll('h3[data-explanation-title]').forEach((element) => {
+                const title = element.getAttribute('data-explanation-title');
+                const text = element.getAttribute('data-explanation-text');
+                
+                if (title && text) {
+                    element.addEventListener('mouseenter', (e) => {
+                        const rect = element.getBoundingClientRect();
+                        explanationTooltip.innerHTML = `<h5>${title}</h5><p>${text}</p>`;
+                        explanationTooltip.style.left = (rect.left + rect.width / 2 - 150) + 'px';
+                        explanationTooltip.style.top = (rect.bottom + 15) + 'px';
+                        explanationTooltip.classList.add('active');
+                    });
+                    
+                    element.addEventListener('mouseleave', () => {
+                        explanationTooltip.classList.remove('active');
+                    });
+                }
             });
         </script>
     </body>
