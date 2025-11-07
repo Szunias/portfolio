@@ -182,18 +182,58 @@
     // Dodaj style (tylko dla preload)
     addStyles();
 
-    // Setup event listeners only once
-    if (document.body) {
-      setupEventListeners();
-    } else {
-      document.addEventListener("DOMContentLoaded", setupEventListeners, {
-        once: true,
-      });
+    // Setup event listeners
+    setupEventListeners();
+  }
+
+  // Reinitialize when page is restored from bfcache (browser back/forward button)
+  function handlePageShow(event) {
+    if (event.persisted) {
+      // Page was restored from bfcache
+      // Reset navigation state
+      isNavigating = false;
+      
+      // Close any active mobile menu overlays that might block clicks
+      const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+      const mobileMenu = document.querySelector('.mobile-menu');
+      const mobileToggle = document.querySelector('.mobile-menu-toggle');
+      
+      if (mobileMenuOverlay) {
+        mobileMenuOverlay.classList.remove('active');
+      }
+      if (mobileMenu) {
+        mobileMenu.classList.remove('active');
+      }
+      if (mobileToggle) {
+        mobileToggle.classList.remove('active');
+      }
+      
+      // Close any lightbox overlays
+      const lightbox = document.getElementById('global-lightbox');
+      if (lightbox && lightbox.classList.contains('active')) {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+      
+      // Reinitialize event listeners to ensure they work properly
+      // Use a small delay to ensure DOM is ready
+      setTimeout(() => {
+        setupEventListeners();
+      }, 0);
     }
   }
 
-  // Uruchom NATYCHMIAST
-  init();
+  // Setup event listeners immediately if body exists, otherwise wait for DOMContentLoaded
+  if (document.body) {
+    init();
+  } else {
+    document.addEventListener("DOMContentLoaded", init, {
+      once: true,
+    });
+  }
+
+  // Handle page restoration from bfcache (browser back/forward button)
+  window.addEventListener("pageshow", handlePageShow);
 
   // Export dla debugowania
   window.simpleSmoothNav = {
