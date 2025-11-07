@@ -1,1 +1,1422 @@
-<!DOCTYPE html> <html lang="pl" style="background: #0a0e12"> <head> <style> /* CRITICAL: Load immediately before anything else */ html, body { background: #0a0e12 !important; margin: 0; padding: 0; } /* Hide content until fully loaded */ .content { opacity: 0; transition: opacity 0.3s ease; } body.loaded .content { opacity: 1; } </style> <title>Not Today, Darling!: Game Audio by Igor Szuniewicz</title> <meta charset="utf-8" /> <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" /> <meta name="description" content="Not Today, Darling!: retro-inspired game audio design, implementation, and mixing by Igor Szuniewicz. Chaotic multiplayer racing game with dynamic sound effects and adaptive music." /> <meta name="keywords" content="Not Today Darling, game audio, racing game, retro audio, multiplayer game, Igor Szuniewicz, sound design, game music, audio implementation" /> <meta name="author" content="Igor Szuniewicz" /> <meta name="robots" content="index, follow" /> <link rel="canonical" href="https://igorszuniewicz.com/projects/not-today-darling.html" /> <!-- Open Graph / Facebook --> <meta property="og:type" content="video.game" /> <meta property="og:site_name" content="Igor Szuniewicz" /> <meta property="og:url" content="https://igorszuniewicz.com/projects/not-today-darling.html" /> <meta property="og:title" content="Not Today, Darling!: Game Audio by Igor Szuniewicz" /> <meta property="og:description" content="Not Today, Darling!: retro-inspired game audio design, implementation, and mixing by Igor Szuniewicz. Chaotic multiplayer racing game with dynamic sound effects and adaptive music." /> <meta property="og:image" content="https://igorszuniewicz.com/assets/images/projects/NotTodayGIF.jpg" /> <meta property="og:image:width" content="1280" /> <meta property="og:image:height" content="720" /> <meta property="og:locale" content="en_US" /> <!-- Twitter --> <meta name="twitter:card" content="summary_large_image" /> <meta name="twitter:url" content="https://igorszuniewicz.com/projects/not-today-darling.html" /> <meta name="twitter:title" content="Not Today, Darling!: Game Audio by Igor Szuniewicz" /> <meta name="twitter:description" content="Not Today, Darling!: retro-inspired game audio design, implementation, and mixing by Igor Szuniewicz. Chaotic multiplayer racing game with dynamic sound effects and adaptive music." /> <meta name="twitter:image" content="https://igorszuniewicz.com/assets/images/projects/NotTodayGIF.jpg" /> <!-- Google Search Console Verification - Already verified --> <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" /> <!-- Google Fonts --> <link rel="preconnect" href="https://fonts.googleapis.com" /> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" /> <style> /* === RESET & BASE === */ * { margin: 0; padding: 0; box-sizing: border-box; } html, body { width: 100%; height: 100%; background: linear-gradient(180deg, #0a0e12 0%, #0f1419 100%); color: #ffffff; font-family: "Poppins", sans-serif; overflow-x: hidden; scroll-behavior: smooth; } /* === BACKGROUND === */ .game-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background: linear-gradient( 180deg, rgba(10, 14, 18, 0.92) 0%, rgba(15, 20, 25, 0.95) 100% ), url("../assets/images/projects-nottoday/background/nottodaybg.jpg") center/cover no-repeat; } .game-background::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient( ellipse at 20% 30%, rgba(255, 107, 107, 0.08) 0%, transparent 50% ), radial-gradient( ellipse at 80% 70%, rgba(78, 205, 196, 0.08) 0%, transparent 50% ); } .game-background::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient( circle at 50% 30%, rgba(78, 205, 196, 0.03) 0%, transparent 40% ); animation: bgPulse 8s ease-in-out infinite; } @keyframes bgPulse { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.4; } } /* === CONTENT WRAPPER === */ .content { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 2rem; } /* === BACK BUTTON === */ .back-button { position: fixed; top: 2rem; left: 2rem; z-index: 100; display: inline-flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1.5rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(78, 205, 196, 0.3); border-radius: 50px; color: #4ecdc4; text-decoration: none; font-size: 0.9rem; font-weight: 500; letter-spacing: 0.02em; text-transform: uppercase; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); } .back-button:hover { background: rgba(78, 205, 196, 0.15); border-color: #4ecdc4; transform: translateX(-5px); box-shadow: 0 6px 30px rgba(78, 205, 196, 0.3); color: #5eddd4; } .back-button::before { content: ""; font-size: 1.2rem; font-weight: bold; } /* === LANGUAGE SWITCHER === */ .lang-switcher { position: fixed !important; top: 2rem !important; right: 2rem !important; z-index: 1000 !important; display: flex !important; gap: 0.5rem; background: rgba(255, 255, 255, 0.08) !important; backdrop-filter: blur(10px); border: 1px solid rgba(78, 205, 196, 0.5) !important; border-radius: 50px; padding: 0.5rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(78, 205, 196, 0.15) !important; } .lang-btn { padding: 0.5rem 1rem; background: transparent; border: none; border-radius: 50px; color: #999 !important; cursor: pointer; font-weight: 500; font-size: 0.9rem; font-family: "Poppins", sans-serif; transition: all 0.3s ease; display: flex !important; align-items: center; gap: 0.5rem; } .lang-btn:hover { color: #4ecdc4 !important; background: rgba(78, 205, 196, 0.1); } .lang-btn.active { color: #4ecdc4 !important; background: rgba(78, 205, 196, 0.15); font-weight: 600; } .lang-flag { width: 20px; height: 14px; border-radius: 2px; overflow: hidden; display: block; } /* === HERO SECTION === */ .hero { text-align: center; padding: 4rem 0 2rem; margin-bottom: 2rem; position: relative; } .hero::before { content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; height: 600px; background: radial-gradient( circle, rgba(78, 205, 196, 0.03) 0%, transparent 70% ); pointer-events: none; } .hero-logo { max-width: 400px; width: 100%; margin: 0 auto 1rem; filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5)); transition: all 0.4s ease; } .hero-logo:hover { transform: scale(1.02) translateY(-5px); filter: drop-shadow(0 15px 40px rgba(78, 205, 196, 0.3)); } .hero .subtitle { font-family: "Inter", sans-serif; font-size: 1rem; color: #aaa; margin-bottom: 1.5rem; line-height: 1.6; font-weight: 400; max-width: 700px; margin-left: auto; margin-right: auto; } .tags { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; } .tags span { padding: 0.5rem 1rem; background: rgba(255, 107, 107, 0.1); border: 1px solid rgba(255, 107, 107, 0.3); border-radius: 20px; font-size: 0.85rem; color: #ff6b6b; font-weight: 500; transition: all 0.3s ease; } .tags span:hover { background: rgba(255, 107, 107, 0.2); border-color: #ff6b6b; transform: translateY(-3px); box-shadow: 0 6px 25px rgba(255, 107, 107, 0.4); } /* === PROJECT CONTEXT === */ .project-context { max-width: 900px; margin: 3rem auto; padding: 2rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(78, 205, 196, 0.2); border-radius: 16px; backdrop-filter: blur(10px); } .project-context h3 { font-family: "Sora", "Inter", sans-serif; font-size: 1.5rem; color: #4ecdc4; margin-bottom: 1.5rem; font-weight: 600; text-align: center; } .context-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; } .context-item { padding: 1rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px; border-left: 3px solid #4ecdc4; } .context-label { font-size: 0.85rem; color: #ff9ff3; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; } .context-value { font-size: 1rem; color: #e0e6ed; line-height: 1.6; } .context-responsibilities { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(78, 205, 196, 0.2); } .context-responsibilities h4 { font-size: 1rem; color: #ff9ff3; font-weight: 600; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; } .context-responsibilities ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem; } .context-responsibilities li { padding: 0.5rem 0 0.5rem 1.5rem; position: relative; color: #cbd5e1; font-size: 0.95rem; } .context-responsibilities li::before { content: "▸"; position: absolute; left: 0; color: #4ecdc4; font-weight: bold; } /* === ROW LAYOUT === */ .row { display: flex; align-items: center; gap: 4rem; margin: 5rem 0; opacity: 1; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); } .row.visible { opacity: 1; transform: translateY(0); } .row.reverse { flex-direction: row-reverse; } .row-visual { flex: 1; } .row-visual img { width: 100%; border-radius: 12px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(78, 205, 196, 0.15); border: 1px solid rgba(78, 205, 196, 0.2); transition: all 0.4s ease; filter: brightness(0.9) contrast(1.1); } .row-visual img:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 50px rgba(78, 205, 196, 0.4); border-color: rgba(78, 205, 196, 0.6); filter: brightness(1) contrast(1.15); } .video-container { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(78, 205, 196, 0.1); border: 1px solid rgba(78, 205, 196, 0.3); transition: all 0.4s ease; background: #000; } .video-container:hover { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 50px rgba(78, 205, 196, 0.3); border-color: rgba(78, 205, 196, 0.6); transform: translateY(-5px); } .video-thumbnail { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer; transition: all 0.3s ease; } .video-thumbnail img { width: 100%; height: 100%; object-fit: cover; } .play-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient( 45deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1) ); backdrop-filter: blur(1px); transition: all 0.3s ease; } .video-thumbnail:hover .play-overlay { background: linear-gradient( 45deg, rgba(255, 107, 107, 0.1), rgba(255, 159, 243, 0.1) ); } .play-button { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90px; height: 90px; background: linear-gradient(135deg, #ff0844, #ff6b35); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; color: white; box-shadow: 0 8px 25px rgba(255, 8, 68, 0.4), 0 0 0 4px rgba(255, 255, 255, 0.2); transition: all 0.3s ease; } .video-thumbnail:hover .play-button { transform: translate(-50%, -50%) scale(1.2); background: linear-gradient(135deg, #ff6b6b, #ff9ff3); box-shadow: 0 15px 40px rgba(255, 107, 107, 0.6), 0 0 0 6px rgba(255, 255, 255, 0.2); } .play-button::before { content: "▶"; margin-left: 6px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); } .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; display: none; } .video-container iframe.active { display: block; } /* === LOCAL VIDEO === */ .local-video-container { border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(78, 205, 196, 0.1); border: 1px solid rgba(78, 205, 196, 0.3); transition: all 0.4s ease; background: #000; } .local-video-container:hover { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 50px rgba(78, 205, 196, 0.3); border-color: rgba(78, 205, 196, 0.6); transform: translateY(-5px); } .local-video-container video { width: 100%; height: auto; display: block; border-radius: 12px; } .row-text { flex: 1; } .row-text h3 { font-family: "Sora", "Inter", sans-serif; font-size: 2.2rem; color: #ffffff; font-weight: 700; margin-bottom: 1rem; border-left: 4px solid #4ecdc4; padding-left: 1rem; position: relative; letter-spacing: -0.02em; } .row-text h3::after { content: ""; position: absolute; left: 0; bottom: -8px; width: 60px; height: 3px; background: linear-gradient(90deg, #4ecdc4, transparent); border-radius: 2px; } .row-text p { color: #aaa; line-height: 1.8; font-size: 1rem; margin-bottom: 1.5rem; } .row-text ul { list-style: none; padding: 0; margin: 1.5rem 0; } .row-text li { padding: 0.6rem 0 0.6rem 1.8rem; position: relative; color: #999; font-size: 0.95rem; line-height: 1.7; } .row-text li::before { content: "▸"; position: absolute; left: 0.2rem; color: #4ecdc4; font-weight: bold; font-size: 1.2rem; } /* === METASOUNDS GALLERY === */ .metasounds-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin: 2rem 0; } .metasounds-gallery img { width: 100%; border-radius: 8px; border: 1px solid rgba(78, 205, 196, 0.3); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); transition: all 0.3s ease; } .metasounds-gallery img:hover { transform: translateY(-5px); border-color: #4ecdc4; box-shadow: 0 15px 50px rgba(78, 205, 196, 0.3); } /* === FIXED PLAYER === */ .fixed-player { position: fixed; bottom: 2rem; right: 2rem; width: 320px; background: rgba(15, 20, 25, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(78, 205, 196, 0.3); border-radius: 16px; padding: 1rem 1.25rem; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(78, 205, 196, 0.1); z-index: 999; opacity: 0; pointer-events: none; transform: translateY(20px); transition: all 0.3s ease; } .fixed-player.active { opacity: 1; pointer-events: all; transform: translateY(0); } .fixed-player-top { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; } .fixed-player-btn { width: 48px; height: 48px; border-radius: 50%; border: none; background: linear-gradient(135deg, #ff6b6b, #ff9ff3); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3); flex-shrink: 0; } .fixed-player-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5); } .fixed-player-btn .icon { width: 0; height: 0; border-left: 14px solid white; border-top: 8px solid transparent; border-bottom: 8px solid transparent; margin-left: 3px; } .fixed-player-btn.playing .icon { border: none; width: 12px; height: 12px; position: relative; } .fixed-player-btn.playing .icon::before, .fixed-player-btn.playing .icon::after { content: ""; position: absolute; width: 4px; height: 16px; background: white; border-radius: 2px; } .fixed-player-btn.playing .icon::before { left: 0; } .fixed-player-btn.playing .icon::after { left: 8px; } .fixed-player-info { flex: 1; overflow: hidden; } .fixed-player-title { font-size: 0.9rem; font-weight: 600; color: #fff; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .fixed-player-subtitle { font-size: 0.75rem; color: #888; } .fixed-player-progress { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; overflow: hidden; margin-bottom: 0.5rem; cursor: pointer; } .fixed-player-progress-bar { height: 100%; background: linear-gradient(90deg, #4ecdc4, #ff9ff3); width: 0%; transition: width 0.1s linear; } .fixed-player-time { display: flex; justify-content: space-between; font-size: 0.7rem; color: #666; } /* === VOICELINES === */ .voicelines-section { margin: 5rem 0; opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); } .voicelines-section.visible { opacity: 1; transform: translateY(0); } .voicelines-section h3 { font-family: "Sora", "Inter", sans-serif; font-size: 2.5rem; color: #ffffff; margin-bottom: 1rem; text-align: center; font-weight: 700; letter-spacing: -0.02em; } .voicelines-section p { text-align: center; color: #aaa; margin-bottom: 3rem; font-size: 1rem; } .voicelines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; } .voiceline-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; overflow: hidden; transition: all 0.3s ease; cursor: pointer; backdrop-filter: blur(10px); } .voiceline-item:hover { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 159, 243, 0.4); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255, 159, 243, 0.15); } .voiceline-play { display: flex; align-items: center; gap: 1rem; padding: 1rem; } .voiceline-button { width: 50px; height: 50px; background: linear-gradient(135deg, #ff9ff3, #4ecdc4); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 159, 243, 0.4); flex-shrink: 0; } .voiceline-item:hover .voiceline-button { transform: scale(1.1); background: linear-gradient(135deg, #4ecdc4, #ff9ff3); box-shadow: 0 6px 20px rgba(78, 205, 196, 0.5); } .voiceline-button.playing { background: linear-gradient(135deg, #ff6ea9, #ff0844); animation: pulse 1.5s infinite; } @keyframes pulse { 0%, 100% { box-shadow: 0 4px 15px rgba(255, 110, 169, 0.3); } 50% { box-shadow: 0 6px 25px rgba(255, 110, 169, 0.6); } } .voiceline-info { flex-grow: 1; } .voiceline-title { font-weight: 700; font-size: 1.1rem; color: #eaf7ff; margin-bottom: 0.25rem; } .voiceline-desc { color: rgba(234, 247, 255, 0.7); font-size: 0.9rem; font-style: italic; } /* === CHALLENGE CARDS === */ .challenge-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; } .challenge-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(78, 205, 196, 0.2); border-radius: 16px; padding: 2rem; transition: all 0.3s ease; backdrop-filter: blur(10px); position: relative; overflow: hidden; } .challenge-card::before { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient( 90deg, transparent, rgba(78, 205, 196, 0.08), transparent ); transition: left 0.5s ease; } .challenge-card:hover::before { left: 100%; } .challenge-card:hover { border-color: rgba(78, 205, 196, 0.5); transform: translateY(-8px); box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(78, 205, 196, 0.2); background: rgba(255, 255, 255, 0.05); } .challenge-icon { font-size: 2.5rem; margin-bottom: 1rem; display: inline-block; filter: drop-shadow(0 4px 10px rgba(78, 205, 196, 0.3)); } .challenge-card h4 { font-family: "Sora", "Inter", sans-serif; font-size: 1.4rem; color: #4ecdc4; margin-bottom: 1.5rem; font-weight: 600; letter-spacing: -0.01em; } .challenge-content { position: relative; z-index: 1; } .challenge-label { font-family: "Inter", sans-serif; font-size: 0.85rem; color: #ff9ff3; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; margin-top: 1rem; } .challenge-label:first-of-type { margin-top: 0; } .challenge-content p { font-size: 0.95rem; line-height: 1.7; } /* === TEAM === */ .team-section { margin: 5rem 0; opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); } .team-section.visible { opacity: 1; transform: translateY(0); } .team-section h3 { font-family: "Sora", "Inter", sans-serif; font-size: 2.5rem; color: #ffffff; margin-bottom: 3rem; text-align: center; font-weight: 700; letter-spacing: -0.02em; } .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; } .team-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(78, 205, 196, 0.3); border-radius: 12px; padding: 2.5rem 2rem; text-align: center; transition: all 0.3s ease; backdrop-filter: blur(10px); text-decoration: none; display: block; position: relative; overflow: hidden; } .team-card::before { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient( 90deg, transparent, rgba(78, 205, 196, 0.1), transparent ); transition: left 0.5s ease; } .team-card:hover::before { left: 100%; } .team-card:hover { border-color: #4ecdc4; transform: translateY(-8px) scale(1.02); box-shadow: 0 15px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(78, 205, 196, 0.4); background: rgba(255, 255, 255, 0.05); } .team-card strong { font-size: 1.2rem; color: #ffffff; display: block; margin-bottom: 0.5rem; } .team-card .role { color: #888; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; } /* === GALLERY === */ .gallery { margin: 5rem 0; opacity: 1; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); } .gallery.visible { opacity: 1; transform: translateY(0); } .gallery h3 { font-family: "Sora", "Inter", sans-serif; font-size: 2.5rem; color: #ffffff; margin-bottom: 3rem; text-align: center; font-weight: 700; letter-spacing: -0.02em; } .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; } .gallery-item { position: relative; border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.4s ease; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); border: 1px solid rgba(78, 205, 196, 0.2); } .gallery-item::after { content: ""; position: absolute; inset: 0; background: linear-gradient( 135deg, rgba(78, 205, 196, 0) 0%, rgba(78, 205, 196, 0.15) 100% ); opacity: 0; transition: opacity 0.4s ease; pointer-events: none; } .gallery-item:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(78, 205, 196, 0.4); border-color: rgba(78, 205, 196, 0.6); } .gallery-item:hover::after { opacity: 1; } .gallery-item img { width: 100%; height: 250px; object-fit: cover; transition: all 0.4s ease; filter: brightness(0.9) contrast(1.1); } .gallery-item:hover img { transform: scale(1.1); filter: brightness(1) contrast(1.2); } /* === DOWNLOAD SECTION === */ .download-section { margin: 5rem 0; text-align: center; opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); } .download-section.visible { opacity: 1; transform: translateY(0); } .download-section h3 { font-family: "Sora", "Inter", sans-serif; font-size: 2.5rem; color: #ffffff; margin-bottom: 1.5rem; font-weight: 700; letter-spacing: -0.02em; } .download-section p { color: #aaa; margin-bottom: 1.5rem; font-size: 1rem; } .download-section a { color: #4ecdc4; text-decoration: none; border-bottom: 1px solid rgba(78, 205, 196, 0.3); transition: all 0.3s ease; } .download-section a:hover { color: #5eddd4; border-bottom-color: #4ecdc4; } /* === BUTTON === */ .button-container { text-align: center; margin: 4rem 0; } .button { display: inline-block; padding: 1rem 2.5rem; background: rgba(78, 205, 196, 0.1); border: 2px solid rgba(78, 205, 196, 0.3); border-radius: 50px; color: #4ecdc4; text-decoration: none; font-weight: 600; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.3s ease; } .button:hover { background: rgba(78, 205, 196, 0.2); border-color: #4ecdc4; color: #5eddd4; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(78, 205, 196, 0.4); } /* === FOOTER === */ .footer { text-align: center; padding: 3rem 0; color: #666; font-size: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.05); margin-top: 5rem; } /* === RESPONSIVE === */ @media (max-width: 768px) { .content { padding: 1.5rem; } .back-button, .lang-switcher { top: 1rem; left: 1rem; right: 1rem; } .lang-switcher { right: 1rem; left: auto; gap: 0.4rem; padding: 0.4rem; } .lang-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; } .back-button { padding: 0.6rem 1.2rem; font-size: 0.8rem; gap: 0.6rem; } .hero { padding: 3rem 0 1.5rem; } .hero-logo { max-width: 100%; margin-bottom: 0.75rem; } .hero .subtitle { font-size: 0.9rem; margin-bottom: 1.25rem; line-height: 1.5; } .tags { gap: 0.5rem; margin-top: 1rem; } .tags span { padding: 0.4rem 0.8rem; font-size: 0.75rem; } .row, .row.reverse { flex-direction: column; gap: 1.5rem; margin: 2.5rem 0; } .row-text h3 { font-size: clamp(1.5rem, 6vw, 1.8rem); margin-bottom: 0.75rem; padding-left: 0.75rem; } .row-text p { font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.25rem; } .row-text li { font-size: 0.85rem; padding: 0.5rem 0 0.5rem 1.5rem; } .voicelines-section h3, .team-section h3, .gallery h3, .download-section h3 { font-size: clamp(1.75rem, 6vw, 2rem); margin-bottom: 1.5rem; } .voicelines-section p, .download-section p { font-size: 0.9rem; margin-bottom: 2rem; } .voicelines-grid { grid-template-columns: 1fr; gap: 0.75rem; } .voiceline-item { border-radius: 8px; } .voiceline-play { padding: 0.75rem; gap: 0.75rem; } .voiceline-button { width: 40px; height: 40px; font-size: 14px; } .voiceline-title { font-size: 1rem; } .voiceline-desc { font-size: 0.8rem; } .team-grid { grid-template-columns: 1fr; gap: 1rem; } .team-card { padding: 1.5rem 1.25rem; border-radius: 8px; } .team-card strong { font-size: 1.1rem; } .team-card .role { font-size: 0.8rem; } .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; } .gallery-item img { height: 180px; } .challenge-cards { grid-template-columns: 1fr; gap: 1.25rem; } .challenge-card { padding: 1.5rem; border-radius: 12px; } .challenge-icon { font-size: 2rem; margin-bottom: 0.75rem; } .challenge-card h4 { font-size: 1.2rem; margin-bottom: 1rem; } .challenge-content p { font-size: 0.85rem; line-height: 1.6; } .challenge-label { font-size: 0.75rem; margin-bottom: 0.4rem; } .fixed-player { bottom: 1rem; right: 1rem; width: 260px; padding: 0.75rem 1rem; } .fixed-player-btn { width: 40px; height: 40px; font-size: 14px; } .fixed-player-title { font-size: 0.8rem; } .fixed-player-subtitle { font-size: 0.7rem; } .metasounds-gallery { grid-template-columns: 1fr; gap: 1rem; } .video-container { border-radius: 8px; } .play-button { width: 70px; height: 70px; font-size: 28px; } .local-video-container { border-radius: 8px; } .button { padding: 0.8rem 2rem; font-size: 0.9rem; } } @media (max-width: 480px) { .content { padding: 1rem; } .back-button, .lang-switcher { top: 0.75rem; left: 0.75rem; right: 0.75rem; } .lang-switcher { right: 0.75rem; left: auto; gap: 0.3rem; padding: 0.3rem; } .lang-btn { padding: 0.3rem 0.6rem; font-size: 0.7rem; } .back-button { padding: 0.5rem 1rem; font-size: 0.75rem; gap: 0.5rem; } .hero { padding: 2.5rem 0 1.25rem; } .hero .subtitle { font-size: 0.85rem; margin-bottom: 1rem; line-height: 1.4; } .tags { gap: 0.4rem; margin-top: 0.75rem; } .tags span { padding: 0.35rem 0.7rem; font-size: 0.7rem; } .row, .row.reverse { gap: 1.25rem; margin: 2rem 0; } .row-text h3 { font-size: clamp(1.25rem, 6vw, 1.5rem); margin-bottom: 0.6rem; padding-left: 0.6rem; } .row-text p { font-size: 0.85rem; line-height: 1.5; margin-bottom: 1rem; } .row-text li { font-size: 0.8rem; padding: 0.4rem 0 0.4rem 1.25rem; } .voicelines-section h3, .team-section h3, .gallery h3, .download-section h3 { font-size: clamp(1.5rem, 6vw, 1.75rem); margin-bottom: 1.25rem; } .voicelines-section p, .download-section p { font-size: 0.85rem; margin-bottom: 1.5rem; } .voiceline-play { padding: 0.6rem; gap: 0.6rem; } .voiceline-button { width: 36px; height: 36px; font-size: 12px; } .voiceline-title { font-size: 0.9rem; } .voiceline-desc { font-size: 0.75rem; } .team-card { padding: 1.25rem 1rem; } .team-card strong { font-size: 1rem; } .team-card .role { font-size: 0.75rem; } .gallery-grid { grid-template-columns: 1fr; gap: 0.75rem; } .gallery-item img { height: 160px; } .challenge-card { padding: 1.25rem; } .challenge-icon { font-size: 1.75rem; margin-bottom: 0.6rem; } .challenge-card h4 { font-size: 1.1rem; margin-bottom: 0.8rem; } .challenge-content p { font-size: 0.8rem; line-height: 1.5; } .challenge-label { font-size: 0.7rem; margin-bottom: 0.3rem; } .fixed-player { bottom: 0.75rem; right: 0.75rem; width: 240px; padding: 0.6rem 0.8rem; } .fixed-player-btn { width: 36px; height: 36px; font-size: 12px; } .fixed-player-title { font-size: 0.75rem; } .fixed-player-subtitle { font-size: 0.65rem; } .play-button { width: 60px; height: 60px; font-size: 24px; } .button { padding: 0.7rem 1.75rem; font-size: 0.85rem; } } @media (max-width: 374px) { .content { padding: 0.75rem; } .back-button, .lang-switcher { top: 0.5rem; left: 0.5rem; right: 0.5rem; } .lang-switcher { right: 0.5rem; left: auto; gap: 0.25rem; padding: 0.25rem; } .lang-btn { padding: 0.25rem 0.5rem; font-size: 0.65rem; } .back-button { padding: 0.4rem 0.8rem; font-size: 0.7rem; gap: 0.4rem; } .hero { padding: 2rem 0 1rem; } .hero .subtitle { font-size: 0.8rem; margin-bottom: 0.8rem; line-height: 1.3; } .tags { gap: 0.3rem; margin-top: 0.6rem; } .tags span { padding: 0.3rem 0.6rem; font-size: 0.65rem; } .row, .row.reverse { gap: 1rem; margin: 1.5rem 0; } .row-text h3 { font-size: clamp(1rem, 6vw, 1.25rem); margin-bottom: 0.5rem; padding-left: 0.5rem; } .row-text p { font-size: 0.8rem; line-height: 1.4; margin-bottom: 0.8rem; } .row-text li { font-size: 0.75rem; padding: 0.35rem 0 0.35rem 1rem; } .voicelines-section h3, .team-section h3, .gallery h3, .download-section h3 { font-size: clamp(1.25rem, 6vw, 1.5rem); margin-bottom: 1rem; } .voicelines-section p, .download-section p { font-size: 0.8rem; margin-bottom: 1.25rem; } .voiceline-play { padding: 0.5rem; gap: 0.5rem; } .voiceline-button { width: 32px; height: 32px; font-size: 10px; } .voiceline-title { font-size: 0.85rem; } .voiceline-desc { font-size: 0.7rem; } .team-card { padding: 1rem 0.8rem; } .team-card strong { font-size: 0.9rem; } .team-card .role { font-size: 0.7rem; } .gallery-item img { height: 140px; } .challenge-card { padding: 1rem; } .challenge-icon { font-size: 1.5rem; margin-bottom: 0.5rem; } .challenge-card h4 { font-size: 1rem; margin-bottom: 0.6rem; } .challenge-content p { font-size: 0.75rem; line-height: 1.4; } .challenge-label { font-size: 0.65rem; margin-bottom: 0.25rem; } .fixed-player { bottom: 0.5rem; right: 0.5rem; width: 220px; padding: 0.5rem 0.7rem; } .fixed-player-btn { width: 32px; height: 32px; font-size: 10px; } .fixed-player-title { font-size: 0.7rem; } .fixed-player-subtitle { font-size: 0.6rem; } .play-button { width: 50px; height: 50px; font-size: 20px; } .button { padding: 0.6rem 1.5rem; font-size: 0.8rem; } } /* Hide audio players with placeholder audio */ .audio-player[data-audio*="placeholder.wav"] { display: none !important; } </style> <!-- Structured Data (JSON-LD) --> <script type="application/ld+json"> { "@context": "https://schema.org", "@graph": [ { "@type": "VideoGame", "@id": "https://igorszuniewicz.com/projects/not-today-darling.html#game", "url": "https://igorszuniewicz.com/projects/not-today-darling.html", "name": "Not Today, Darling!", "description": "Retro-inspired game audio design, implementation, and mixing for chaotic multiplayer racing game with dynamic sound effects and adaptive music.", "genre": ["Racing", "Multiplayer", "Arcade"], "gamePlatform": "PC", "datePublished": "2025", "author": { "@id": "https://igorszuniewicz.com/#person" }, "creator": { "@id": "https://igorszuniewicz.com/#person" }, "image": { "@type": "ImageObject", "url": "https://igorszuniewicz.com/assets/images/projects/NotTodayGIF.jpg", "width": 1280, "height": 720 }, "keywords": [ "game audio", "racing game", "retro audio", "multiplayer", "sound design", "adaptive music" ], "breadcrumb": { "@type": "BreadcrumbList", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://igorszuniewicz.com/" }, { "@type": "ListItem", "position": 2, "name": "Projects", "item": "https://igorszuniewicz.com/projects/" }, { "@type": "ListItem", "position": 3, "name": "Not Today, Darling!", "item": "https://igorszuniewicz.com/projects/not-today-darling.html" } ] } }, { "@type": "Person", "@id": "https://igorszuniewicz.com/#person", "name": "Igor Szuniewicz", "url": "https://igorszuniewicz.com", "sameAs": [ "https://github.com/Szunias", "https://www.linkedin.com/in/igor-szuniewicz-a6877a2a3", "https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6", "https://igorszuniewicz.itch.io" ], "jobTitle": [ "Audio Designer", "Composer", "Audio Engineer" ] } ] } </script> </head> <body style="background: #0a0e12; margin: 0; padding: 0"> <!-- Background --> <div class="game-background"></div> <!-- Content --> <div class="content"> <!-- Language Switcher --> <div class="lang-switcher"> <button class="lang-btn" data-lang="en"> <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" > <rect width="60" height="30" fill="#012169" /> <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" /> <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4" /> <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" /> <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" /> </svg> <span>EN</span> </button> <button class="lang-btn active" data-lang="pl"> <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 10" > <rect width="16" height="5" fill="#fff" /> <rect y="5" width="16" height="5" fill="#dc143c" /> </svg> <span>PL</span> </button> <button class="lang-btn" data-lang="nl"> <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 6" > <rect width="9" height="6" fill="#21468B" /> <rect width="9" height="4" fill="#fff" /> <rect width="9" height="2" fill="#AE1C28" /> </svg> <span>NL</span> </button> </div> <!-- Back Button --> <a href="/projects/" class="back-button"> <span data-i18n="back">Powrót do projektów</span> </a> <!-- Hero --> <section class="hero"> <img class="hero-logo" src="../assets/images/logos/NotTodayGameLogo.png" alt="Not Today, Darling!" loading="lazy" decoding="async" /> <p class="subtitle" data-i18n="subtitle"> Chaotyczna wieloosobowa gra platformowa, gdzie strategia spotyka się z szybkością </p> <div class="tags"> <span data-i18n="meta.school" >Digital Arts and Entertainment</span > <span data-i18n="meta.released">Wydano: 25 maja 2025</span> <span data-i18n="meta.platforms" >Platformy: Windows, Linux</span > <span data-i18n="meta.engine">Silnik: Unreal Engine</span> <span data-i18n="meta.modes" >Tryby: Lokalny multiplayer (1–4)</span > </div> </section> <!-- Project Context --> <section class="project-context"> <h3 data-i18n="context.title">Project Context</h3> <div class="context-grid"> <div class="context-item"> <div class="context-label" data-i18n="context.type_label" > Type </div> <div class="context-value" data-i18n="context.type_value" > Student Project </div> </div> <div class="context-item"> <div class="context-label" data-i18n="context.institution_label" > Institution </div> <div class="context-value" data-i18n="context.institution_value" > DAE Belgium </div> </div> <div class="context-item"> <div class="context-label" data-i18n="context.year_label" > Year </div> <div class="context-value" data-i18n="context.year_value" > 2025 </div> </div> <div class="context-item"> <div class="context-label" data-i18n="context.duration_label" > Duration </div> <div class="context-value" data-i18n="context.duration_value" > 12 weeks </div> </div> <div class="context-item"> <div class="context-label" data-i18n="context.team_label" > Team Size </div> <div class="context-value" data-i18n="context.team_value" > 8 developers </div> </div> <div class="context-item"> <div class="context-label" data-i18n="context.role_label" > My Role </div> <div class="context-value" data-i18n="context.role_value" > Audio Designer (Solo) </div> </div> </div> <div class="context-responsibilities"> <h4 data-i18n="context.responsibilities_title"> Responsibilities </h4> <ul> <li data-i18n="context.resp1">Sound Design</li> <li data-i18n="context.resp2"> Audio Implementation (MetaSounds) </li> <li data-i18n="context.resp3">Mixing & Mastering</li> <li data-i18n="context.resp4">Voiceover Direction</li> </ul> </div> </section> <!-- Audio Direction --> <div class="row reverse"> <div class="row-visual"> <img src="../assets/images/projects/NotTodayPic3.png" alt="Audio direction visuals" loading="lazy" decoding="async" /> </div> <div class="row-text"> <h3 data-i18n="audioDirection.title">Kierunek Audio</h3> <p data-i18n="audioDirection.desc"> Audio projektowałem pod czytelność i energię wyścigu: wyraźna telemetria zdarzeń, dynamiczna publiczność i UI, które nie zagłusza gry. Brzmienie celowo „arcade”, ale z kontrolą transjentów i selektywnym nasyceniem, by utrzymać gęsty miks w 1–4 graczach. </p> <ul> <li data-i18n="audioDirection.b1"> Warstwy: gameplay > czytelność UI > crowd/ambience </li> <li data-i18n="audioDirection.b2"> Wskaźniki stanów (start, bursty, hazardy, finisz) </li> <li data-i18n="audioDirection.b3"> Ograniczenie maskowania widmem i priorytety zdarzeń </li> </ul> <div class="audio-player" data-audio="../assets/audio/tracks/placeholder.wav" aria-label="Play sample - Audio Direction" ></div> </div> </div> <!-- MetaSounds Implementation --> <div class="row"> <div class="row-visual"> <div class="metasounds-gallery"> <!-- Tutaj wklej screenshoty MetaSounds --> <img src="../assets/images/projects/NotTodayPic1.png" alt="MetaSound patch example" loading="lazy" decoding="async" /> <img src="../assets/images/projects/NotTodayPic3.png" alt="MetaSound patch example" loading="lazy" decoding="async" /> </div> </div> <div class="row-text"> <h3 data-i18n="metasounds.title">MetaSounds</h3> <p data-i18n="metasounds.desc"> Cały system audio zbudowany w MetaSounds – nowoczesnym systemie proceduralno-parametrycznym w Unreal Engine. Pozwala na reaktywny, modularny sound design reagujący na gameplay w czasie rzeczywistym. </p> <ul> <li data-i18n="metasounds.b1"> Proceduralne warstwy zależne od prędkości i stanu gry </li> <li data-i18n="metasounds.b2"> Parametryczne kontrolery dla pitch/filtrów/modulacji </li> <li data-i18n="metasounds.b3"> Modularne patche umożliwiające szybkie iteracje </li> </ul> <div class="audio-player" data-audio="../assets/audio/tracks/placeholder.wav" aria-label="Play sample - MetaSounds" ></div> </div> </div> <!-- Audio Role Overview --> <div class="row"> <div class="row-visual"> <img src="../assets/images/projects/NotTodayPic1.png" alt="Gameplay screenshot" loading="lazy" decoding="async" /> </div> <div class="row-text"> <h3 data-i18n="role.title">Rola — Audio</h3> <p data-i18n="role.desc"> Odpowiadałem za sound effects, implementację i miks: paleta SFX gameplayu, UI, warstwy crowd/ambience oraz integrację i miks w silniku dla czytelności przy szybkiej akcji. System reaguje na stany wyścigu i zdarzenia gracza. </p> <ul> <li data-i18n="gameplay.li1"> Responsywne SFX powiązane z akcjami gracza i przeszkodami </li> <li data-i18n="gameplay.li2"> Hierarchia miksu zoptymalizowana pod czytelność (1–4 graczy) </li> <li data-i18n="gameplay.li3"> Niewchodzące w drogę warstwy dynamiczne przy intensywnych momentach </li> </ul> </div> </div> <!-- SFX System --> <div class="row reverse"> <div class="row-visual"> <img src="../assets/images/projects/NotTodayPic4.png" alt="SFX System" loading="lazy" decoding="async" /> </div> <div class="row-text"> <h3 data-i18n="sfxSystem.title">SFX System</h3> <p data-i18n="sfxSystem.desc"> A parametric library: speed, track surface and cooldown windows drive layers and transients. Boost/burst has its own RPM curves and noise sweetener. Collisions use weights and thresholds to avoid spam. </p> <ul> <li data-i18n="sfxSystem.b1"> Track materials (asphalt/sand/metal) with smooth crossfades </li> <li data-i18n="sfxSystem.b2"> Hazards/slip – pitch/LPF dependent on camera and speed </li> <li data-i18n="sfxSystem.b3"> Countdown/Start and Finish stingers as round anchors </li> </ul> </div> </div> <!-- Mix & Dynamics --> <div class="row"> <div class="row-visual"> <img src="../assets/images/projects/NotTodayPic2.png" alt="Mix & Dynamics" loading="lazy" decoding="async" /> </div> <div class="row-text"> <h3 data-i18n="mix.title">Mix & Dynamics</h3> <p data-i18n="mix.desc"> Priority‑based mix with ducking: callouts and UI sit above the bed while the crowd 'breathes' with race momentum. Submix processing reins in peaks and keeps loudness consistent during chaos. </p> <ul> <li data-i18n="mix.b1"> Side‑chain ducking for UI/callouts over gameplay </li> <li data-i18n="mix.b2"> Automatic crowd/ambience rides from state and position </li> <li data-i18n="mix.b3"> Gain staging and reduced spectral masking </li> </ul> </div> </div> <!-- Unreal Integration --> <div class="row reverse"> <div class="row-visual"> <img src="../assets/images/projects/NotTodayPic3.png" alt="Unreal Integration" loading="lazy" decoding="async" /> </div> <div class="row-text"> <h3 data-i18n="integration.title">Unreal Integration</h3> <p data-i18n="integration.desc"> Sound Cues with parameters and Submix buses. Concurrency prevents event pile‑ups; attenuation profiles shape distance; light bus limiting stabilizes perceived loudness at scale. </p> <ul> <li data-i18n="integration.b1"> Race state parameters + speed/camera inputs </li> <li data-i18n="integration.b2"> Submixes: UI, Gameplay, Ambience + limiter on Master </li> <li data-i18n="integration.b3"> Concurrency and collision trigger thresholds </li> </ul> </div> </div> <!-- Technical Metrics --> <div class="row"> <div class="row-visual"> <img src="../assets/images/projects/NotTodayPic1.png" alt="Technical Metrics" loading="lazy" decoding="async" /> </div> <div class="row-text"> <h3 data-i18n="metrics.title">Technical Metrics</h3> <p data-i18n="metrics.desc"> Comprehensive breakdown of audio implementation scope, performance metrics, and resource management. </p> <ul> <li> <strong data-i18n="metrics.events" >320+ audio events</strong > — <span data-i18n="metrics.events_desc" >Across 12 categories: player actions, environment, UI, crowd, hazards, boost, collision, surface transitions, state changes, countdowns, finishes, and victory stingers</span > </li> <li> <strong data-i18n="metrics.footprint" >180 MB audio footprint</strong > — <span data-i18n="metrics.footprint_desc" >Optimized with streaming and compression (Vorbis @ variable quality). ~450 source files processed to final assets</span > </li> <li> <strong data-i18n="metrics.voice_count" >Max 32 concurrent voices</strong > — <span data-i18n="metrics.voice_count_desc" >Priority-based voice culling: UI/gameplay critical (priority 1.0) > player SFX (0.8) > crowd/ambience (0.5). Automatic stealing on overflow</span > </li> <li> <strong data-i18n="metrics.latency" >< 45ms input-to-audio</strong > — <span data-i18n="metrics.latency_desc" >Maintained across all gameplay scenarios with real-time parameter modulation and MetaSounds processing</span > </li> <li> <strong data-i18n="metrics.memory" >~85 MB peak RAM usage</strong > — <span data-i18n="metrics.memory_desc" >Includes loaded banks, streaming buffer, and active DSP. Managed via Unreal's audio streaming system</span > </li> </ul> </div> </div> <!-- Video Trailer --> <div class="row reverse"> <div class="row-visual"> <div class="video-container"> <div class="video-thumbnail"> <img src="../assets/images/projects/NotTodayPic2.png" alt="Not Today, Darling! Trailer" loading="lazy" decoding="async" /> <div class="play-overlay"></div> <div class="play-button"></div> </div> <iframe src="about:blank" data-src="https://www.youtube-nocookie.com/embed/6lFEvyicea0?rel=0&modestbranding=1&color=white&autoplay=1" allow="autoplay; encrypted-media" allowfullscreen ></iframe> </div> </div> <div class="row-text"> <h3 data-i18n="video.title"> Obejrzyj trailer</h3> <p data-i18n="video.description"> Wyścig z czasem. Przechytrz babcie. Wygraj wszystko! Ta chaotyczna gra wieloosobowa łączy szybką akcję z przemyślaną strategią. </p> </div> </div> <!-- Single Player Walkthrough --> <div class="row"> <div class="row-visual"> <div class="local-video-container"> <video controls preload="metadata"> <source src="../assets/images/projects-nottoday/2025-10-12 16-52-48.mp4" type="video/mp4" /> Your browser does not support the video tag. </video> </div> </div> <div class="row-text"> <h3 data-i18n="walkthrough.title"> Single Player Walkthrough </h3> <p data-i18n="walkthrough.desc"> Zobacz pełne przejście gry w trybie single player. Ten materiał pokazuje kompletną rozgrywkę oraz wszystkie mechaniki gameplayu. </p> </div> </div> <!-- Technical Challenges & Solutions --> <section class="voicelines-section"> <h3 data-i18n="challenges.title">Challenges & Solutions</h3> <p data-i18n="challenges.desc" style=" text-align: center; color: #aaa; max-width: 800px; margin: 0 auto 3rem; " > Real-world problems encountered during development and the technical solutions implemented. </p> <div class="challenge-cards"> <div class="challenge-card"> <h4 data-i18n="challenges.challenge1.title"> 4-Player Mix Clarity </h4> <div class="challenge-content"> <p class="challenge-label" data-i18n="challenges.problem_label" > Problem: </p> <p data-i18n="challenges.challenge1.problem" style="color: #999; margin-bottom: 1rem" > With up to 4 simultaneous players, collision and boost sounds would stack and cause frequency masking, making UI feedback inaudible. </p> <p class="challenge-label" data-i18n="challenges.solution_label" > Solution: </p> <p data-i18n="challenges.challenge1.solution" style="color: #aaa" > Implemented priority-based concurrency limiting (max 4 collision sounds at once) with intelligent voice stealing. Added frequency-conscious EQ curves per player slot (slot 1: 200-800Hz focus, slot 2: 800-2kHz, etc.) and applied sidechain ducking on crowd/ambience when UI events trigger (-6dB duck, 50ms attack, 200ms release). </p> </div> </div> <div class="challenge-card"> <h4 data-i18n="challenges.challenge2.title"> Surface Transition Pops </h4> <div class="challenge-content"> <p class="challenge-label" data-i18n="challenges.problem_label" > Problem: </p> <p data-i18n="challenges.challenge2.problem" style="color: #999; margin-bottom: 1rem" > Players moving between track materials (asphalt sand to metal) caused audible pops due to instant layer switching. </p> <p class="challenge-label" data-i18n="challenges.solution_label" > Solution: </p> <p data-i18n="challenges.challenge2.solution" style="color: #aaa" > Replaced instant switches with crossfade system using Unreal's blend containers. Added 150ms crossfade time with equal-power curve. Surface detection uses overlap sphere with 0.2s cooldown to prevent rapid transitions. </p> </div> </div> <div class="challenge-card"> <h4 data-i18n="challenges.challenge3.title"> Boost Sound Memory Spikes </h4> <div class="challenge-content"> <p class="challenge-label" data-i18n="challenges.problem_label" > Problem: </p> <p data-i18n="challenges.challenge3.problem" style="color: #999; margin-bottom: 1rem" > Original boost SFX used 4-layer system with 24-bit WAV files, causing 40MB memory spikes per instance (x4 players = potential 160MB spike). </p> <p class="challenge-label" data-i18n="challenges.solution_label" > Solution: </p> <p data-i18n="challenges.challenge3.solution" style="color: #aaa" > Refactored to procedural MetaSounds patch: noise generator + band-pass filter sweep + pitch modulation driven by boost intensity parameter. Reduced to <2MB per instance while maintaining sonic character. Added RPM-style pitch curve for organic acceleration feel. </p> </div> </div> </div> </section> <!-- Team --> <section class="team-section"> <h3 data-i18n="team.title">Zespół</h3> <div class="team-grid"> <a href="https://knapeczadam.itch.io" class="team-card" target="_blank" rel="noopener noreferrer" > <strong>Ádám Knapecz</strong> <div class="role">Dev</div> </a> <a href="https://stevenchiefo.itch.io" class="team-card" target="_blank" rel="noopener noreferrer" > <strong>Steven van den Hoven</strong> <div class="role">Dev</div> </a> <div class="team-card"> <strong>Ioanna Efthymiadou</strong> <div class="role">Artist</div> </div> <a href="https://freyaspes.itch.io" class="team-card" target="_blank" rel="noopener noreferrer" > <strong>Freya Lesschaeve</strong> <div class="role">Artist</div> </a> <a href="https://oelandr.itch.io" class="team-card" target="_blank" rel="noopener noreferrer" > <strong>Roeland Van Sichem De Combe</strong> <div class="role">Artist</div> </a> <a href="https://igorszuniewicz.itch.io" class="team-card" target="_blank" rel="noopener noreferrer" > <strong>Igor Szuniewicz</strong> <div class="role">Audio</div> </a> </div> </section> <!-- Gallery --> <section class="gallery"> <h3 data-i18n="gallery.title">Galeria</h3> <div class="gallery-grid"> <div class="gallery-item"> <img src="../assets/images/logos/NotTodayGameLogo.png" alt="Not Today, Darling! logo" loading="lazy" decoding="async" /> </div> <div class="gallery-item"> <img src="../assets/images/projects/NotTodayPic1.png" alt="Gameplay 1" loading="lazy" decoding="async" /> </div> <div class="gallery-item"> <img src="../assets/images/projects/NotTodayPic2.png" alt="Gameplay 2" loading="lazy" decoding="async" /> </div> <div class="gallery-item"> <img src="../assets/images/projects/NotTodayPic3.png" alt="Gameplay 3" loading="lazy" decoding="async" /> </div> <div class="gallery-item"> <img src="../assets/images/projects/NotTodayPic4.png" alt="Gameplay 4" loading="lazy" decoding="async" /> </div> <div class="gallery-item"> <picture> <source srcset="../assets/images/covers/Console.webp" type="image/webp" /> <img src="../assets/images/covers/Console.png" alt="Console controls" loading="lazy" decoding="async" /> </picture> </div> <div class="gallery-item"> <picture> <source srcset="../assets/images/covers/keyboard.webp" type="image/webp" /> <img src="../assets/images/covers/keyboard.png" alt="Keyboard controls" loading="lazy" decoding="async" /> </picture> </div> </div> </section> <!-- Download --> <section class="download-section"> <h3 data-i18n="download.title">Pobierz</h3> <p data-i18n="download.desc">Pobierz grę na itch.io:</p> <p> <a href="https://freyaspes.itch.io/not-today-darling" target="_blank" rel="noopener noreferrer" >Not Today, Darling! on itch.io</a > </p> <p style="color: #888; font-size: 0.95rem; margin-top: 0.5rem" data-i18n="download.sizes" > Windows build (1.0 GB), Linux build (967 MB) </p> </section> <!-- Button --> <div class="button-container"> <a href="/projects/" class="button" data-i18n="button.projects" >Wszystkie Projekty</a > </div> <!-- Footer --> <footer class="footer"> <p>&copy; Igor Szuniewicz 2025. All rights reserved.</p> </footer> </div> <!-- Fixed Player --> <div class="fixed-player" id="fixedPlayer"> <div class="fixed-player-top"> <button class="fixed-player-btn" id="fixedPlayerBtn"> <div class="icon"></div> </button> <div class="fixed-player-info"> <div class="fixed-player-title" id="fixedPlayerTitle"> Audio Sample </div> <div class="fixed-player-subtitle">Not Today, Darling!</div> </div> </div> <div class="fixed-player-progress" id="fixedPlayerProgress"> <div class="fixed-player-progress-bar" id="fixedPlayerProgressBar" ></div> </div> <div class="fixed-player-time"> <span id="fixedPlayerCurrentTime">0:00</span> <span id="fixedPlayerDuration">0:00</span> </div> </div> <!-- Translation Data --> <script type="module" src="../assets/js/pages/not-today-darling.js" ></script> <script src="../assets/js/performance-boost.js" defer></script> </body> </html> 
+<!doctype html>
+<html lang="en" style="background: #0a0a0a">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, user-scalable=no"
+        />
+        <meta name="theme-color" content="#0a0a0a" />
+
+        <title>Not Today, Darling! - Audio Design | Igor Szuniewicz</title>
+        <meta
+            name="description"
+            content="Audio Designer on Not Today, Darling! - chaotic multiplayer racing game. MetaSounds implementation, procedural audio."
+        />
+        <meta name="robots" content="index, follow" />
+        <link
+            rel="canonical"
+            href="https://igorszuniewicz.com/projects/not-today-darling.html"
+        />
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="../assets/icons/favicon.svg"
+        />
+
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;900&display=swap"
+            rel="stylesheet"
+        />
+
+        <script src="../assets/js/preload-lang.js"></script>
+
+        <style>
+            :root {
+                --bg-primary: #0a0a0a;
+                --bg-card: rgba(18, 18, 18, 0.8);
+                --text-primary: #ffffff;
+                --text-secondary: #b0b0b0;
+                --accent-red: #ff6b6b;
+                --accent-cyan: #4ecdc4;
+                --border: rgba(255, 255, 255, 0.1);
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Inter", sans-serif;
+                background: var(--bg-primary);
+                color: var(--text-primary);
+                line-height: 1.6;
+                overflow-x: hidden;
+                position: relative;
+            }
+
+            /* === BACKGROUND === */
+            .bg-animated {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                pointer-events: none;
+                overflow: hidden;
+            }
+
+            .bg-animated::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background:
+                    radial-gradient(
+                        ellipse 1400px 1200px at 15% 25%,
+                        rgba(255, 107, 107, 0.2) 0%,
+                        transparent 60%
+                    ),
+                    radial-gradient(
+                        ellipse 1300px 1300px at 85% 65%,
+                        rgba(78, 205, 196, 0.18) 0%,
+                        transparent 60%
+                    ),
+                    radial-gradient(
+                        ellipse 1200px 1000px at 50% 90%,
+                        rgba(255, 159, 243, 0.15) 0%,
+                        transparent 60%
+                    ),
+                    linear-gradient(
+                        135deg,
+                        #0a0a0a 0%,
+                        #0f0f15 25%,
+                        #0a0a12 50%,
+                        #0f0f15 75%,
+                        #0a0a0a 100%
+                    );
+            }
+
+            /* === NAVIGATION === */
+            .nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1.5rem 2rem;
+                background: rgba(10, 10, 10, 0.9);
+                backdrop-filter: blur(20px);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .back-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.6rem 1.2rem;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                color: var(--text-primary);
+                text-decoration: none;
+                font-size: 0.9rem;
+                font-weight: 500;
+                transition: all 0.2s;
+            }
+
+            .back-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateX(-3px);
+            }
+
+            .lang-switcher {
+                display: flex;
+                gap: 0.25rem;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 0.25rem;
+            }
+
+            .lang-btn {
+                padding: 0.5rem 1rem;
+                background: transparent;
+                border: none;
+                border-radius: 6px;
+                color: var(--text-secondary);
+                cursor: pointer;
+                font-size: 0.85rem;
+                font-weight: 500;
+                transition: all 0.2s;
+                font-family: inherit;
+            }
+
+            .lang-btn.active {
+                background: rgba(255, 107, 107, 0.2);
+                color: var(--text-primary);
+            }
+
+            /* === HERO === */
+            .hero {
+                margin-top: 80px;
+                position: relative;
+                min-height: 70vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 4rem 2rem;
+            }
+
+            .hero-visual {
+                width: 100%;
+                max-width: 1200px;
+                margin: 0 auto 3rem;
+                position: relative;
+                min-height: 500px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-image: url("../assets/images/projects-nottoday/background/nottodaybg.jpg");
+                background-size: cover;
+                background-position: center;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            }
+
+            .hero-visual::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    to bottom,
+                    rgba(10, 10, 10, 0.7) 0%,
+                    rgba(10, 10, 10, 0.5) 30%,
+                    rgba(10, 10, 10, 0.3) 50%,
+                    rgba(10, 10, 10, 0.5) 70%,
+                    rgba(10, 10, 10, 0.7) 100%
+                );
+                z-index: 1;
+            }
+
+            .hero-logo-img {
+                max-width: 500px;
+                width: 90%;
+                position: relative;
+                z-index: 2;
+                filter: drop-shadow(0 10px 40px rgba(255, 107, 107, 0.3));
+            }
+
+            .audio-lead-badge {
+                position: absolute;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 0.75rem 2rem;
+                background: linear-gradient(
+                    135deg,
+                    rgba(255, 107, 107, 0.3),
+                    rgba(78, 205, 196, 0.3)
+                );
+                border: 2px solid rgba(255, 107, 107, 0.6);
+                border-radius: 50px;
+                font-size: 0.9rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.2em;
+                color: var(--accent-red);
+                backdrop-filter: blur(15px);
+                box-shadow: 0 4px 20px rgba(255, 107, 107, 0.4);
+                z-index: 3;
+            }
+
+            .hero-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 2rem;
+                text-align: center;
+            }
+
+            .hero .subtitle {
+                font-size: 1.1rem;
+                color: var(--text-secondary);
+                margin-bottom: 0.5rem;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                font-weight: 600;
+            }
+
+            .hero .tagline {
+                font-size: 1.3rem;
+                color: var(--text-secondary);
+                font-style: italic;
+                margin-bottom: 2rem;
+            }
+
+            .hero-badges {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                justify-content: center;
+                margin-bottom: 2rem;
+            }
+
+            .badge {
+                padding: 0.5rem 1rem;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                font-size: 0.85rem;
+                color: var(--text-secondary);
+                transition: all 0.3s ease;
+            }
+
+            .badge:hover {
+                background: rgba(255, 107, 107, 0.1);
+                border-color: rgba(255, 107, 107, 0.3);
+                transform: translateY(-2px);
+            }
+
+            .completion-badge {
+                display: inline-block;
+                padding: 0.6rem 1.2rem;
+                background: rgba(78, 205, 196, 0.15);
+                border: 1px solid rgba(78, 205, 196, 0.3);
+                border-radius: 8px;
+                color: #4ecdc4;
+                font-size: 0.9rem;
+                font-weight: 600;
+            }
+
+            /* === CONTENT === */
+            .content {
+                position: relative;
+                z-index: 1;
+                max-width: 1400px;
+                margin: 4rem auto;
+                padding: 0 2rem;
+            }
+
+            .tech-section {
+                position: relative;
+                z-index: 1;
+                margin: 4rem 0;
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 3rem;
+                backdrop-filter: blur(10px);
+                transition: all 0.3s ease;
+            }
+
+            .tech-section:hover {
+                border-color: rgba(255, 107, 107, 0.3);
+                box-shadow: 0 8px 32px rgba(255, 107, 107, 0.1);
+            }
+
+            .section-header {
+                margin-bottom: 2.5rem;
+            }
+
+            .section-header h2 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: clamp(1.8rem, 3vw, 2.5rem);
+                font-weight: 700;
+                margin-bottom: 0.5rem;
+            }
+
+            .section-header p {
+                font-size: 1.1rem;
+                color: var(--text-secondary);
+                line-height: 1.7;
+            }
+
+            .explanation-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+                margin: 2rem 0;
+            }
+
+            .explanation-item {
+                padding: 1.5rem;
+                background: rgba(0, 0, 0, 0.4);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .explanation-item::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: linear-gradient(
+                    90deg,
+                    var(--accent-red),
+                    var(--accent-cyan)
+                );
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .explanation-item:hover {
+                transform: translateY(-3px);
+                border-color: rgba(255, 107, 107, 0.4);
+                box-shadow: 0 8px 24px rgba(255, 107, 107, 0.15);
+            }
+
+            .explanation-item:hover::before {
+                opacity: 0.6;
+            }
+
+            .explanation-item h3 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 1.1rem;
+                color: var(--accent-cyan);
+                margin-bottom: 0.75rem;
+                font-weight: 600;
+            }
+
+            .explanation-item p {
+                color: var(--text-secondary);
+                font-size: 0.95rem;
+                line-height: 1.6;
+            }
+
+            /* === CODE IMPLEMENTATION === */
+            .implementation-showcase {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+                margin: 2.5rem 0;
+                align-items: start;
+            }
+
+            .blueprint-side,
+            .code-side {
+                background: rgba(0, 0, 0, 0.5);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                overflow: hidden;
+            }
+
+            .blueprint-side {
+                padding: 1rem;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .blueprint-side:hover {
+                transform: scale(1.02);
+            }
+
+            .blueprint-side img {
+                width: 100%;
+                height: auto;
+                display: block;
+                border-radius: 8px;
+            }
+
+            .code-side {
+                padding: 1.5rem;
+            }
+
+            .code-side h4 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 1rem;
+                color: var(--accent-cyan);
+                margin-bottom: 1rem;
+                font-weight: 600;
+            }
+
+            .code-side pre {
+                margin: 0;
+                padding: 1rem;
+                background: rgba(0, 0, 0, 0.8);
+                border-radius: 8px;
+                overflow-x: auto;
+                position: relative;
+            }
+
+            .code-side code {
+                font-family: "Consolas", "Monaco", monospace;
+                font-size: 0.85rem;
+                line-height: 1.5;
+                color: #e0e0e0;
+            }
+
+            .code-side .comment {
+                color: #6b7280;
+            }
+            .code-side .keyword {
+                color: #c678dd;
+            }
+            .code-side .function {
+                color: #61afef;
+            }
+            .code-side .string {
+                color: #98c379;
+            }
+            .code-side .type {
+                color: #e5c07b;
+            }
+
+            /* === INTERACTIVE CODE BLOCKS === */
+            .code-block-logic {
+                display: block;
+                padding: 8px 12px;
+                margin: 4px 0;
+                border-radius: 6px;
+                transition: all 0.3s ease;
+                cursor: help;
+                position: relative;
+                border-left: 3px solid transparent;
+            }
+
+            .code-block-logic:hover {
+                background: rgba(255, 107, 107, 0.15);
+                border-left-color: var(--accent-red);
+                box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+                transform: translateX(4px);
+            }
+
+            .code-tooltip {
+                position: fixed;
+                max-width: 280px;
+                padding: 1rem;
+                background: rgba(18, 18, 18, 0.98);
+                border: 2px solid var(--accent-red);
+                border-radius: 12px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+                z-index: 10000;
+                backdrop-filter: blur(15px);
+            }
+
+            .code-tooltip.active {
+                opacity: 1;
+            }
+
+            .code-tooltip h5 {
+                color: var(--accent-red);
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+                font-weight: 600;
+            }
+
+            .code-tooltip p {
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+                line-height: 1.6;
+                margin: 0;
+            }
+
+            /* === METASOUNDS PLACEHOLDER === */
+            .metasounds-placeholder {
+                background: rgba(0, 0, 0, 0.5);
+                border: 2px dashed rgba(255, 107, 107, 0.3);
+                border-radius: 12px;
+                padding: 3rem 2rem;
+                text-align: center;
+                margin: 2rem 0;
+            }
+
+            .metasounds-placeholder h4 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 1.3rem;
+                color: var(--accent-red);
+                margin-bottom: 1rem;
+            }
+
+            .metasounds-placeholder p {
+                color: var(--text-secondary);
+                font-size: 0.95rem;
+            }
+
+            .metasounds-placeholder-icon {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+                opacity: 0.5;
+            }
+
+            /* === MEDIA === */
+            .media-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1.5rem;
+                margin: 2rem 0;
+            }
+
+            .media-item {
+                border-radius: 12px;
+                overflow: hidden;
+                border: 1px solid var(--border);
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .media-item:hover {
+                transform: scale(1.02);
+                border-color: var(--accent-red);
+            }
+
+            .media-item img {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+            /* === CUSTOM VIDEO PLAYER === */
+            .custom-video-player {
+                position: relative;
+                background: #000;
+                border-radius: 16px;
+                overflow: hidden;
+                border: 1px solid var(--border);
+            }
+
+            .custom-video-player video {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+            .video-controls {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: linear-gradient(
+                    to top,
+                    rgba(0, 0, 0, 0.9),
+                    transparent
+                );
+                padding: 1.5rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .custom-video-player:hover .video-controls {
+                opacity: 1;
+            }
+
+            .video-progress-container {
+                position: relative;
+                width: 100%;
+                height: 6px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 3px;
+                cursor: pointer;
+            }
+
+            .video-progress-bar {
+                height: 100%;
+                background: linear-gradient(
+                    90deg,
+                    var(--accent-red),
+                    var(--accent-cyan)
+                );
+                border-radius: 3px;
+                width: 0%;
+                transition: width 0.1s linear;
+            }
+
+            .video-controls-bottom {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .video-play-pause-btn {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: 2px solid var(--accent-red);
+                background: rgba(255, 107, 107, 0.2);
+                color: var(--accent-red);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+                flex-shrink: 0;
+            }
+
+            .video-play-pause-btn:hover {
+                background: rgba(255, 107, 107, 0.3);
+            }
+
+            .video-time {
+                font-size: 0.85rem;
+                color: var(--text-primary);
+                font-family: monospace;
+            }
+
+            .video-volume {
+                margin-left: auto;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .volume-slider {
+                width: 80px;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 2px;
+                cursor: pointer;
+                position: relative;
+            }
+
+            .volume-progress {
+                height: 100%;
+                background: var(--accent-red);
+                border-radius: 2px;
+                width: 100%;
+            }
+
+            /* === TEAM === */
+            .team-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+                margin: 2rem 0;
+            }
+
+            .team-card {
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 2rem;
+                text-align: center;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                display: block;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .team-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255, 107, 107, 0.1),
+                    transparent
+                );
+                transition: left 0.5s ease;
+            }
+
+            .team-card:hover::before {
+                left: 100%;
+            }
+
+            .team-card:hover {
+                border-color: var(--accent-cyan);
+                transform: translateY(-5px);
+                box-shadow: 0 10px 40px rgba(78, 205, 196, 0.2);
+            }
+
+            .team-card strong {
+                font-size: 1.1rem;
+                color: var(--text-primary);
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+
+            .team-card .role {
+                color: var(--text-secondary);
+                font-size: 0.85rem;
+                text-transform: uppercase;
+            }
+
+            /* === LIGHTBOX === */
+            .lightbox {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.98);
+                z-index: 10000;
+                align-items: center;
+                justify-content: center;
+                padding: 2rem;
+            }
+
+            .lightbox.active {
+                display: flex;
+            }
+
+            .lightbox img {
+                max-width: 95%;
+                max-height: 95vh;
+                object-fit: contain;
+                border-radius: 12px;
+            }
+
+            .lightbox-close {
+                position: absolute;
+                top: 2rem;
+                right: 2rem;
+                font-size: 3rem;
+                color: var(--text-primary);
+                cursor: pointer;
+                width: 50px;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 50%;
+                transition: all 0.2s;
+            }
+
+            .lightbox-close:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: rotate(90deg);
+            }
+
+            /* === RESPONSIVE === */
+            @media (max-width: 1024px) {
+                .explanation-grid,
+                .implementation-showcase {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .hero-visual {
+                    min-height: 300px;
+                }
+
+                .tech-section {
+                    padding: 1.5rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="bg-animated"></div>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="/projects/" class="back-btn" data-i18n="back">← Back</a>
+            <div class="lang-switcher">
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="pl">PL</button>
+                <button class="lang-btn" data-lang="nl">NL</button>
+            </div>
+        </nav>
+
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-visual">
+                <div class="audio-lead-badge" data-i18n="hero.badge">
+                    Audio Designer
+                </div>
+                <img
+                    src="../assets/images/logos/NotTodayGameLogo.png"
+                    alt="Not Today, Darling!"
+                    class="hero-logo-img"
+                />
+            </div>
+            <div class="hero-content">
+                <p class="subtitle" data-i18n="hero.subtitle">
+                    12-Week Student Project
+                </p>
+                <p class="tagline" data-i18n="hero.tagline">
+                    Chaotic multiplayer racing with procedural audio
+                </p>
+                <div class="hero-badges">
+                    <span class="badge">Unreal Engine 5</span>
+                    <span class="badge">MetaSounds</span>
+                    <span class="badge">1-4 Players</span>
+                    <span class="badge">Solo Audio</span>
+                </div>
+                <div class="completion-badge">
+                    <strong data-i18n="hero.status">Released May 2025</strong> •
+                    <span data-i18n="hero.duration">12 weeks</span> •
+                    <span data-i18n="hero.school">DAE Belgium</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Overview -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="overview.title">Project Overview</h2>
+                    <p data-i18n="overview.desc">
+                        Solo audio designer. 320+ events. 100% MetaSounds.
+                    </p>
+                </div>
+
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3 data-i18n="overview.role">ROLE</h3>
+                        <p data-i18n="overview.role_desc">
+                            Solo audio: design, implementation, mix. 12 weeks.
+                        </p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3 data-i18n="overview.tech">TECH</h3>
+                        <p data-i18n="overview.tech_desc">
+                            MetaSounds procedural. Parameter-driven. Priority
+                            mix.
+                        </p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3 data-i18n="overview.scope">SCOPE</h3>
+                        <p data-i18n="overview.scope_desc">
+                            320+ events. 180MB. 32 voices. <45ms latency.
+                        </p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3 data-i18n="overview.result">RESULT</h3>
+                        <p data-i18n="overview.result_desc">
+                            itch.io May 2025. Windows/Linux. 1-4 players.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MetaSounds -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="metasounds.title">MetaSounds</h2>
+                    <p data-i18n="metasounds.desc">
+                        Procedural audio. Real-time parameters.
+                    </p>
+                </div>
+
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3 data-i18n="sections.what">WHAT</h3>
+                        <p data-i18n="metasounds.what">
+                            Node-based procedural. Speed, surface, player count
+                            drive parameters.
+                        </p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3 data-i18n="sections.result">RESULT</h3>
+                        <p data-i18n="metasounds.result">
+                            Reactive audio. Smooth crossfades. <2MB per
+                            instance.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="metasounds-placeholder">
+                    <div class="metasounds-placeholder-icon">🎛️</div>
+                    <h4 data-i18n="metasounds.placeholder_title">
+                        MetaSounds Screenshots Coming Soon
+                    </h4>
+                    <p data-i18n="metasounds.placeholder_desc">
+                        Boost system, surface detection, collision audio.
+                        Pending Perforce recovery.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Audio Triggering with MetaSounds -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="triggering.title">Audio Triggering</h2>
+                    <p data-i18n="triggering.desc">
+                        Simple checks trigger MetaSounds. No delegates.
+                    </p>
+                </div>
+
+                <div class="implementation-showcase">
+                    <div class="blueprint-side">
+                        <img
+                            src="../assets/images/projects/NotTodayPic3.png"
+                            alt="Blueprint"
+                        />
+                    </div>
+                    <div class="code-side">
+                        <h4 data-i18n="triggering.code_title">
+                            RaceCharacter.h — MetaSound Properties
+                        </h4>
+                        <pre><code><span class="comment">// MetaSound sources for audio events</span>
+
+<span class="keyword">UCLASS</span>()
+<span class="keyword">class</span> <span class="type">ARaceCharacter</span> : <span class="keyword">public</span> <span class="type">ACharacter</span>
+{
+<span class="keyword">public</span>:
+<span class="code-block-logic" data-block-title="MetaSound Properties" data-block-text="MetaSounds are procedural audio sources. EditAnywhere allows designers to assign MetaSound assets in editor without code changes.">    <span class="keyword">UPROPERTY</span>(EditAnywhere, Category = <span class="string">"Audio"</span>)
+    <span class="type">UMetaSoundSource</span>* CollisionMetaSound;
+
+    <span class="keyword">UPROPERTY</span>(EditAnywhere, Category = <span class="string">"Audio"</span>)
+    <span class="type">UMetaSoundSource</span>* BoostMetaSound;
+
+    <span class="keyword">UPROPERTY</span>(EditAnywhere, Category = <span class="string">"Audio"</span>)
+    <span class="type">UMetaSoundSource</span>* SurfaceMetaSound;</span>
+
+    <span class="keyword">void</span> <span class="function">OnCollision</span>();
+    <span class="keyword">void</span> <span class="function">OnBoost</span>();
+};</code></pre>
+
+                        <h4
+                            style="margin-top: 1.5rem"
+                            data-i18n="triggering.impl_title"
+                        >
+                            RaceCharacter.cpp — Simple Triggering
+                        </h4>
+                        <pre><code><span class="keyword">void</span> <span class="type">ARaceCharacter</span>::<span class="function">OnCollision</span>()
+{
+<span class="code-block-logic" data-block-title="Null Safety Check" data-block-text="Standard null check. Prevents crash if designer forgot to assign MetaSound asset in Blueprint.">    <span class="keyword">if</span> (CollisionMetaSound)</span>
+    {
+<span class="code-block-logic" data-block-title="Play MetaSound One-Shot" data-block-text="PlaySound2D fires MetaSound one-shot. MetaSound asset assigned in Blueprint. All parameters configured in MetaSound graph - designer controls sound entirely without code changes.">        <span class="type">UGameplayStatics</span>::<span class="function">PlaySound2D</span>(<span class="keyword">this</span>, CollisionMetaSound);
+    }
+}</span>
+
+<span class="keyword">void</span> <span class="type">ARaceCharacter</span>::<span class="function">OnBoost</span>()
+{
+<span class="code-block-logic" data-block-title="Same Pattern" data-block-text="Same simple pattern: null check, PlaySound2D. MetaSound handles all audio logic internally. Designer tweaks boost behavior entirely in MetaSound editor - pitch, filters, procedural generation, etc.">    <span class="keyword">if</span> (BoostMetaSound)
+    {
+        <span class="type">UGameplayStatics</span>::<span class="function">PlaySound2D</span>(<span class="keyword">this</span>, BoostMetaSound);
+    }
+}</span></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Surface System -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="surface.title">Surface Transitions</h2>
+                    <p data-i18n="surface.desc">
+                        Smooth crossfades between materials.
+                    </p>
+                </div>
+
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3 data-i18n="challenges.problem_label">PROBLEM</h3>
+                        <p data-i18n="surface.problem">
+                            Instant switches = pops. Rapid transitions = spam.
+                        </p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3 data-i18n="challenges.solution_label">SOLUTION</h3>
+                        <p data-i18n="surface.solution">
+                            150ms crossfade. 0.2s cooldown. Equal-power curve.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mix -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="mix.title">4-Player Mix</h2>
+                    <p data-i18n="mix.desc">
+                        Priority-based. Prevents masking.
+                    </p>
+                </div>
+
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3 data-i18n="challenges.problem_label">PROBLEM</h3>
+                        <p data-i18n="mix.problem">
+                            4 players = stacked sounds. UI inaudible.
+                        </p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3 data-i18n="challenges.solution_label">SOLUTION</h3>
+                        <p data-i18n="mix.solution">
+                            Max 4 collisions. EQ per slot. Sidechain (-6dB,
+                            50ms/200ms).
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Video -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="video.title">Gameplay</h2>
+                </div>
+                <div class="custom-video-player">
+                    <video loop preload="metadata">
+                        <source
+                            src="../assets/images/projects-nottoday/2025-10-12 16-52-48.mp4"
+                            type="video/mp4"
+                        />
+                    </video>
+                    <div class="video-controls">
+                        <div class="video-progress-container">
+                            <div class="video-progress-bar"></div>
+                        </div>
+                        <div class="video-controls-bottom">
+                            <button class="video-play-pause-btn">▶</button>
+                            <div class="video-time">
+                                <span class="video-current-time">0:00</span> /
+                                <span class="video-total-time">0:00</span>
+                            </div>
+                            <div class="video-volume">
+                                <span
+                                    style="
+                                        color: var(--text-primary);
+                                        font-size: 0.9rem;
+                                    "
+                                    data-i18n="sections.volume_label"
+                                    >VOL</span
+                                >
+                                <div class="volume-slider">
+                                    <div class="volume-progress"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Screenshots -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="screenshots.title">Screenshots</h2>
+                </div>
+                <div class="media-grid">
+                    <div class="media-item">
+                        <img
+                            src="../assets/images/projects/NotTodayPic1.png"
+                            alt="Gameplay 1"
+                        />
+                    </div>
+                    <div class="media-item">
+                        <img
+                            src="../assets/images/projects/NotTodayPic2.png"
+                            alt="Gameplay 2"
+                        />
+                    </div>
+                    <div class="media-item">
+                        <img
+                            src="../assets/images/projects/NotTodayPic3.png"
+                            alt="Gameplay 3"
+                        />
+                    </div>
+                    <div class="media-item">
+                        <img
+                            src="../assets/images/projects/NotTodayPic4.png"
+                            alt="Gameplay 4"
+                        />
+                    </div>
+                </div>
+            </section>
+
+            <!-- Team -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="team.title">Team</h2>
+                </div>
+                <div class="team-grid">
+                    <a
+                        href="https://knapeczadam.itch.io"
+                        class="team-card"
+                        target="_blank"
+                    >
+                        <strong>Ádám Knapecz</strong>
+                        <div class="role">Developer</div>
+                    </a>
+                    <a
+                        href="https://stevenchiefo.itch.io"
+                        class="team-card"
+                        target="_blank"
+                    >
+                        <strong>Steven van den Hoven</strong>
+                        <div class="role">Developer</div>
+                    </a>
+                    <div class="team-card">
+                        <strong>Ioanna Efthymiadou</strong>
+                        <div class="role">Artist</div>
+                    </div>
+                    <a
+                        href="https://freyaspes.itch.io"
+                        class="team-card"
+                        target="_blank"
+                    >
+                        <strong>Freya Lesschaeve</strong>
+                        <div class="role">Artist</div>
+                    </a>
+                    <a
+                        href="https://oelandr.itch.io"
+                        class="team-card"
+                        target="_blank"
+                    >
+                        <strong>Roeland Van Sichem De Combe</strong>
+                        <div class="role">Artist</div>
+                    </a>
+                    <a
+                        href="https://igorszuniewicz.itch.io"
+                        class="team-card"
+                        target="_blank"
+                    >
+                        <strong>Igor Szuniewicz</strong>
+                        <div class="role">Audio Designer</div>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Download -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="download.title">Download</h2>
+                </div>
+                <p>
+                    <a
+                        href="https://freyaspes.itch.io/not-today-darling"
+                        target="_blank"
+                        style="
+                            color: var(--accent-cyan);
+                            text-decoration: none;
+                            border-bottom: 1px solid var(--accent-cyan);
+                        "
+                        data-i18n="download.link"
+                    >
+                        Not Today, Darling! on itch.io
+                    </a>
+                </p>
+                <p
+                    style="color: var(--text-secondary); margin-top: 0.5rem"
+                    data-i18n="download.size"
+                >
+                    Windows (1.0 GB) • Linux (967 MB)
+                </p>
+            </section>
+        </div>
+
+        <!-- Lightbox -->
+        <div class="lightbox" id="lightbox">
+            <span class="lightbox-close" onclick="closeLightbox()">×</span>
+            <img id="lightbox-img" src="" alt="Screenshot" />
+        </div>
+
+        <!-- Scripts -->
+        <script>
+            const TRANSLATION_PATH = "../locales/not-today-darling.json";
+
+            function getNestedTranslation(obj, path) {
+                return path
+                    .split(".")
+                    .reduce((current, key) => current?.[key], obj);
+            }
+
+            function applyTranslations(translations, lang) {
+                const langTranslations = translations[lang] || {};
+
+                document.querySelectorAll("[data-i18n]").forEach((element) => {
+                    const key = element.getAttribute("data-i18n");
+                    const translation = getNestedTranslation(
+                        langTranslations,
+                        key,
+                    );
+                    if (translation) {
+                        element.textContent = translation;
+                    }
+                });
+
+                document.querySelectorAll(".lang-btn").forEach((button) => {
+                    button.classList.toggle(
+                        "active",
+                        button.dataset.lang === lang,
+                    );
+                });
+            }
+
+            document.addEventListener("DOMContentLoaded", async () => {
+                const stored = localStorage.getItem("language");
+                const defaultLang = stored || "en";
+                let translations = {};
+
+                try {
+                    const response = await fetch(TRANSLATION_PATH);
+                    if (!response.ok)
+                        throw new Error(`HTTP ${response.status}`);
+                    translations = await response.json();
+                    applyTranslations(translations, defaultLang);
+                } catch (error) {
+                    console.error("Failed to load translations", error);
+                }
+
+                document.querySelectorAll(".lang-btn").forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const lang = button.dataset.lang;
+                        localStorage.setItem("language", lang);
+                        applyTranslations(translations, lang);
+                    });
+                });
+
+                // Interactive code tooltips
+                const tooltip = document.createElement("div");
+                tooltip.className = "code-tooltip";
+                document.body.appendChild(tooltip);
+
+                const logicElements =
+                    document.querySelectorAll(".code-block-logic");
+                logicElements.forEach((element) => {
+                    const title = element.getAttribute("data-block-title");
+                    const text = element.getAttribute("data-block-text");
+
+                    if (title && text) {
+                        element.addEventListener("mouseenter", (e) => {
+                            const rect = element.getBoundingClientRect();
+                            tooltip.innerHTML = `<h5>${title}</h5><p>${text}</p>`;
+
+                            const spaceRight = window.innerWidth - rect.right;
+
+                            if (spaceRight > 350) {
+                                tooltip.style.left = rect.right + 20 + "px";
+                            } else {
+                                tooltip.style.left = rect.left - 340 + "px";
+                            }
+
+                            tooltip.style.top =
+                                Math.max(10, rect.top - 10) + "px";
+                            tooltip.classList.add("active");
+                        });
+
+                        element.addEventListener("mouseleave", () => {
+                            tooltip.classList.remove("active");
+                        });
+                    }
+                });
+
+                // Lightbox
+                const mediaItems = document.querySelectorAll(
+                    ".media-item, .blueprint-side",
+                );
+                mediaItems.forEach((item) => {
+                    const img = item.querySelector("img");
+                    if (img) {
+                        item.addEventListener("click", function () {
+                            const lightbox =
+                                document.getElementById("lightbox");
+                            const lightboxImg =
+                                document.getElementById("lightbox-img");
+                            lightboxImg.src = img.src;
+                            lightbox.classList.add("active");
+                        });
+                    }
+                });
+            });
+
+            function closeLightbox() {
+                document.getElementById("lightbox").classList.remove("active");
+            }
+
+            document
+                .getElementById("lightbox")
+                .addEventListener("click", function (e) {
+                    if (e.target === this) closeLightbox();
+                });
+
+            document.addEventListener("keydown", function (e) {
+                if (e.key === "Escape") closeLightbox();
+            });
+
+            // Custom Video Player
+            function formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, "0")}`;
+            }
+
+            const videoPlayer = document.querySelector(".custom-video-player");
+            if (videoPlayer) {
+                const video = videoPlayer.querySelector("video");
+                const playBtn = videoPlayer.querySelector(
+                    ".video-play-pause-btn",
+                );
+                const progressBar = videoPlayer.querySelector(
+                    ".video-progress-bar",
+                );
+                const progressContainer = videoPlayer.querySelector(
+                    ".video-progress-container",
+                );
+                const currentTimeEl = videoPlayer.querySelector(
+                    ".video-current-time",
+                );
+                const totalTimeEl =
+                    videoPlayer.querySelector(".video-total-time");
+                const volumeSlider =
+                    videoPlayer.querySelector(".volume-slider");
+                const volumeProgress =
+                    videoPlayer.querySelector(".volume-progress");
+
+                let isPlaying = false;
+
+                video.addEventListener("loadedmetadata", () => {
+                    totalTimeEl.textContent = formatTime(video.duration);
+                    video.volume = 1.0;
+                });
+
+                video.addEventListener("timeupdate", () => {
+                    const progress = (video.currentTime / video.duration) * 100;
+                    progressBar.style.width = progress + "%";
+                    currentTimeEl.textContent = formatTime(video.currentTime);
+                });
+
+                playBtn.addEventListener("click", () => {
+                    if (isPlaying) {
+                        video.pause();
+                        playBtn.textContent = "▶";
+                        isPlaying = false;
+                    } else {
+                        video.play();
+                        playBtn.textContent = "⏸";
+                        isPlaying = true;
+                    }
+                });
+
+                progressContainer.addEventListener("click", (e) => {
+                    const rect = progressContainer.getBoundingClientRect();
+                    const percent = (e.clientX - rect.left) / rect.width;
+                    video.currentTime = percent * video.duration;
+                });
+
+                volumeSlider.addEventListener("click", (e) => {
+                    const rect = volumeSlider.getBoundingClientRect();
+                    const percent = (e.clientX - rect.left) / rect.width;
+                    video.volume = Math.max(0, Math.min(1, percent));
+                    volumeProgress.style.width = video.volume * 100 + "%";
+                });
+
+                video.addEventListener("ended", () => {
+                    playBtn.textContent = "▶";
+                    isPlaying = false;
+                });
+            }
+        </script>
+    </body>
+</html>
