@@ -2,59 +2,51 @@
 <html lang="en" style="background: #0a0a0a">
     <head>
         <meta charset="utf-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, user-scalable=no"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <meta name="theme-color" content="#0a0a0a" />
 
         <title>Shadow Frames - Audio Design | Igor Szuniewicz</title>
-        <meta
-            name="description"
-            content="Lead Audio Designer on Shadow Frames - black-and-white psychological horror game. RTPC systems, spatial audio, Wwise implementation."
-        />
+        <meta name="description" content="Lead Audio Designer on Shadow Frames - black-and-white psychological horror game. RTPC systems, spatial audio, Wwise implementation." />
         <meta name="robots" content="index, follow" />
-        <link
-            rel="canonical"
-            href="https://igorszuniewicz.com/projects/shadow-frames.html"
-        />
-
-        <link
-            rel="icon"
-            type="image/svg+xml"
-            href="../assets/icons/favicon.svg"
-        />
+        <link rel="canonical" href="https://igorszuniewicz.com/projects/shadow-frames.html" />
+        <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
 
         <!-- Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;900&display=swap"
-            rel="stylesheet"
-        />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
 
-        <!-- Preload language -->
         <script src="../assets/js/preload-lang.js"></script>
 
         <style>
+            :root {
+                --bg-primary: #0a0a0a;
+                --bg-secondary: #121212;
+                --bg-card: rgba(18, 18, 18, 0.8);
+                --text-primary: #ffffff;
+                --text-secondary: #b0b0b0;
+                --accent-blue: #3b82f6;
+                --accent-purple: #8b5cf6;
+                --border: rgba(255, 255, 255, 0.1);
+            }
+
             * {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
             }
 
-            html,
             body {
-                width: 100%;
-                background: #0a0a0a;
-                color: #e0e0e0;
-                font-family: "Poppins", sans-serif;
+                font-family: "Inter", sans-serif;
+                background: var(--bg-primary);
+                color: var(--text-primary);
+                line-height: 1.6;
                 overflow-x: hidden;
-                scroll-behavior: smooth;
+                position: relative;
             }
 
-            /* === BACKGROUND === */
-            .bg-gradient {
+            /* === FANCY BACKGROUND === */
+            .bg-animated {
                 position: fixed;
                 top: 0;
                 left: 0;
@@ -62,371 +54,1013 @@
                 height: 100%;
                 z-index: 0;
                 pointer-events: none;
+                overflow: hidden;
+            }
+
+            .bg-animated::before {
+                content: "";
+                position: absolute;
+                inset: 0;
                 background:
-                    radial-gradient(
-                        ellipse 800px 600px at 20% 30%,
-                        rgba(80, 40, 120, 0.5) 0%,
-                        transparent 60%
-                    ),
-                    radial-gradient(
-                        ellipse 700px 700px at 80% 60%,
-                        rgba(40, 60, 100, 0.45) 0%,
-                        transparent 60%
-                    ),
-                    radial-gradient(
-                        ellipse 600px 500px at 50% 90%,
-                        rgba(70, 40, 80, 0.4) 0%,
-                        transparent 60%
-                    ),
-                    linear-gradient(
-                        180deg,
-                        #0a0a12 0%,
-                        #0f0a18 30%,
-                        #0a0a12 70%,
-                        #050508 100%
-                    );
+                    radial-gradient(ellipse 1400px 1200px at 15% 25%, rgba(59, 130, 246, 0.25) 0%, transparent 60%),
+                    radial-gradient(ellipse 1300px 1300px at 85% 65%, rgba(139, 92, 246, 0.22) 0%, transparent 60%),
+                    radial-gradient(ellipse 1200px 1000px at 50% 90%, rgba(6, 182, 212, 0.18) 0%, transparent 60%),
+                    radial-gradient(ellipse 1000px 800px at 30% 70%, rgba(236, 72, 153, 0.12) 0%, transparent 50%),
+                    linear-gradient(135deg, #0a0a0a 0%, #0f0f15 25%, #0a0a12 50%, #0f0f15 75%, #0a0a0a 100%);
+                animation: bgPulse 10s ease-in-out infinite;
             }
 
-            .bg-gradient::before {
+            .bg-animated::after {
                 content: "";
                 position: absolute;
                 inset: 0;
-                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+                background-image: 
+                    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.015) 2px, rgba(255, 255, 255, 0.015) 4px),
+                    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
                 opacity: 0.6;
+                animation: scanlines 12s linear infinite;
             }
 
-            .bg-gradient::after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                background-image: repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(255, 255, 255, 0.01) 2px,
-                    rgba(255, 255, 255, 0.01) 4px
-                );
-                opacity: 0.3;
-                animation: scanlines 8s linear infinite;
+            @keyframes bgPulse {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.95; transform: scale(1.02); }
             }
 
             @keyframes scanlines {
-                0% {
-                    transform: translateY(0);
-                }
-                100% {
-                    transform: translateY(10px);
-                }
+                0% { transform: translateY(0); }
+                100% { transform: translateY(20px); }
             }
 
-            /* === CONTAINER === */
-            .content {
+            .floating-shapes {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+            }
+
+            .shape {
+                position: absolute;
+                border-radius: 50%;
+                filter: blur(60px);
+                opacity: 0.1;
+                animation: float 20s ease-in-out infinite;
+            }
+
+            .shape:nth-child(1) {
+                width: 400px;
+                height: 400px;
+                background: var(--accent-blue);
+                top: 10%;
+                left: 10%;
+                animation-delay: 0s;
+            }
+
+            .shape:nth-child(2) {
+                width: 300px;
+                height: 300px;
+                background: var(--accent-purple);
+                top: 60%;
+                right: 15%;
+                animation-delay: 5s;
+            }
+
+            .shape:nth-child(3) {
+                width: 350px;
+                height: 350px;
+                background: var(--accent-cyan);
+                bottom: 10%;
+                left: 50%;
+                animation-delay: 10s;
+            }
+
+            @keyframes float {
+                0%, 100% { transform: translate(0, 0) scale(1); }
+                33% { transform: translate(30px, -30px) scale(1.1); }
+                66% { transform: translate(-20px, 20px) scale(0.9); }
+            }
+
+            /* === NAVIGATION === */
+            .nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1.5rem 2rem;
+                background: rgba(10, 10, 10, 0.9);
+                backdrop-filter: blur(20px);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .hero {
                 position: relative;
                 z-index: 1;
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 2rem;
             }
 
-            /* === BACK BUTTON === */
-            .back-button {
-                position: fixed;
-                top: 2rem;
-                left: 2rem;
-                z-index: 100;
+            .back-btn {
                 display: inline-flex;
                 align-items: center;
-                gap: 0.8rem;
-                padding: 0.8rem 1.5rem;
-                background: rgba(18, 18, 18, 0.8);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 50px;
-                color: #ffffff;
+                gap: 0.5rem;
+                padding: 0.6rem 1.2rem;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                color: var(--text-primary);
                 text-decoration: none;
                 font-size: 0.9rem;
                 font-weight: 500;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+                transition: all 0.2s;
             }
 
-            .back-button:hover {
-                background: rgba(40, 40, 40, 0.9);
-                border-color: rgba(255, 255, 255, 0.3);
-                transform: translateX(-5px);
+            .back-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateX(-3px);
             }
 
-            .back-button::before {
-                content: "←";
-                font-size: 1.2rem;
-            }
-
-            /* === LANGUAGE SWITCHER === */
             .lang-switcher {
-                position: fixed;
-                top: 2rem;
-                right: 2rem;
-                z-index: 100;
                 display: flex;
-                gap: 0.5rem;
-                background: rgba(18, 18, 18, 0.8);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 50px;
-                padding: 0.5rem;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+                gap: 0.25rem;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 0.25rem;
             }
 
             .lang-btn {
                 padding: 0.5rem 1rem;
                 background: transparent;
                 border: none;
-                border-radius: 50px;
-                color: #666;
+                border-radius: 6px;
+                color: var(--text-secondary);
                 cursor: pointer;
+                font-size: 0.85rem;
                 font-weight: 500;
-                font-size: 0.9rem;
-                transition: all 0.3s ease;
-            }
-
-            .lang-btn:hover {
-                color: #ffffff;
-                background: rgba(255, 255, 255, 0.1);
+                transition: all 0.2s;
+                font-family: inherit;
             }
 
             .lang-btn.active {
-                color: #ffffff;
-                background: rgba(255, 255, 255, 0.15);
+                background: rgba(59, 130, 246, 0.2);
+                color: var(--text-primary);
             }
 
             /* === HERO === */
             .hero {
+                margin-top: 80px;
+                position: relative;
+                min-height: 70vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 4rem 2rem;
+            }
+
+            .hero-visual {
+                width: 100%;
+                max-width: 1200px;
+                margin: 0 auto 3rem;
+                position: relative;
+                min-height: 500px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-image: url('../assets/images/projects-shadowframes/bgshadow.jpeg');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            }
+
+            .hero-visual::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    to bottom,
+                    rgba(10, 10, 10, 0.7) 0%,
+                    rgba(10, 10, 10, 0.5) 30%,
+                    rgba(10, 10, 10, 0.3) 50%,
+                    rgba(10, 10, 10, 0.5) 70%,
+                    rgba(10, 10, 10, 0.7) 100%
+                );
+                z-index: 1;
+            }
+
+            .hero-logo {
+                font-family: "Space Grotesk", "Inter", sans-serif;
+                font-size: clamp(3.5rem, 10vw, 7rem);
+                font-weight: 700;
+                color: var(--text-primary);
+                text-shadow: 
+                    0 0 20px rgba(255, 255, 255, 0.4),
+                    0 0 40px rgba(59, 130, 246, 0.3),
+                    0 0 60px rgba(139, 92, 246, 0.2),
+                    2px 2px 0px rgba(0, 0, 0, 0.9);
+                letter-spacing: 0.08em;
+                position: relative;
+                z-index: 2;
+                animation: titleGlow 3s ease-in-out infinite;
+                text-transform: uppercase;
+            }
+
+            @keyframes titleGlow {
+                0%, 100% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(59, 130, 246, 0.2), 0 0 60px rgba(139, 92, 246, 0.1); }
+                50% { text-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 60px rgba(59, 130, 246, 0.4), 0 0 90px rgba(139, 92, 246, 0.3); }
+            }
+
+            .hero-logo::before {
+                content: "";
+                position: absolute;
+                inset: -20px;
+                border: 2px solid rgba(255, 255, 255, 0.1);
+                border-radius: 20px;
+                animation: borderPulse 4s ease-in-out infinite;
+            }
+
+            @keyframes borderPulse {
+                0%, 100% { opacity: 0.3; transform: scale(1); }
+                50% { opacity: 0.6; transform: scale(1.05); }
+            }
+
+            .sound-lead-badge {
+                position: absolute;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 0.75rem 2rem;
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
+                border: 2px solid rgba(59, 130, 246, 0.6);
+                border-radius: 50px;
+                font-size: 0.9rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.2em;
+                color: var(--accent-blue);
+                backdrop-filter: blur(15px);
+                box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+                animation: badgeFloat 3s ease-in-out infinite;
+                z-index: 3;
+            }
+
+            @keyframes badgeFloat {
+                0%, 100% { transform: translateX(-50%) translateY(0); }
+                50% { transform: translateX(-50%) translateY(-5px); }
+            }
+
+            .hero-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 2rem;
                 text-align: center;
-                padding: 8rem 0 4rem;
-                margin-bottom: 3rem;
             }
 
             .hero h1 {
                 font-family: "Space Grotesk", sans-serif;
-                font-size: clamp(2.5rem, 8vw, 4.5rem);
+                font-size: clamp(2.5rem, 6vw, 4rem);
                 font-weight: 900;
-                margin-bottom: 0.5rem;
+                margin-bottom: 1rem;
                 letter-spacing: -0.02em;
-                color: #ffffff;
-                text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
             }
 
             .hero .subtitle {
-                font-size: 1.2rem;
-                color: #888;
-                margin-bottom: 0.75rem;
+                font-size: 1.1rem;
+                color: var(--text-secondary);
+                margin-bottom: 0.5rem;
                 text-transform: uppercase;
-                letter-spacing: 0.15em;
+                letter-spacing: 0.1em;
+                font-weight: 600;
             }
 
             .hero .tagline {
-                font-size: 1.4rem;
-                color: #bbb;
+                font-size: 1.3rem;
+                color: var(--text-secondary);
                 font-style: italic;
-                margin-bottom: 1.5rem;
+                margin-bottom: 2rem;
             }
 
-            .production-notice {
+            .hero-badges {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                justify-content: center;
+                margin-bottom: 2rem;
+            }
+
+            .badge {
+                padding: 0.5rem 1rem;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                font-size: 0.85rem;
+                color: var(--text-secondary);
+            }
+
+            .production-badge {
                 display: inline-block;
-                padding: 0.75rem 1.5rem;
-                background: rgba(37, 99, 235, 0.15);
-                border: 1px solid rgba(37, 99, 235, 0.3);
-                border-radius: 50px;
+                padding: 0.6rem 1.2rem;
+                background: rgba(59, 130, 246, 0.15);
+                border: 1px solid rgba(59, 130, 246, 0.3);
+                border-radius: 8px;
                 color: #93c5fd;
                 font-size: 0.9rem;
                 font-weight: 600;
-                margin-top: 1rem;
             }
 
-            /* === SECTIONS === */
-            section {
-                margin: 5rem 0;
-                padding: 2.5rem;
-                background: rgba(15, 23, 42, 0.4);
-                border: 1px solid rgba(255, 255, 255, 0.05);
+            /* === CONTENT === */
+            .content {
+                position: relative;
+                z-index: 1;
+                max-width: 1400px;
+                margin: 4rem auto;
+                padding: 0 2rem;
+            }
+
+            /* === TECHNICAL SECTION === */
+            .tech-section {
+                position: relative;
+                z-index: 1;
+                margin: 4rem 0;
+                background: var(--bg-card);
+                border: 1px solid var(--border);
                 border-radius: 20px;
+                padding: 3rem;
                 backdrop-filter: blur(10px);
             }
 
-            section h2 {
+            .section-header {
+                margin-bottom: 2.5rem;
+            }
+
+            .section-header h2 {
                 font-family: "Space Grotesk", sans-serif;
-                font-size: 2rem;
-                color: #fff;
-                margin-bottom: 1.5rem;
+                font-size: clamp(1.8rem, 3vw, 2.5rem);
                 font-weight: 700;
+                margin-bottom: 0.5rem;
+                letter-spacing: -0.01em;
             }
 
-            section h3 {
-                font-size: 1.3rem;
-                color: #93c5fd;
-                margin: 2rem 0 1rem;
-                font-weight: 600;
-            }
-
-            section p {
-                color: #cbd5e1;
-                line-height: 1.8;
-                font-size: 1rem;
-                margin-bottom: 1rem;
-            }
-
-            /* === GRID === */
-            .grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 1.5rem;
-                margin-top: 2rem;
-            }
-
-            .grid-item {
-                padding: 1.5rem;
-                background: rgba(0, 0, 0, 0.3);
-                border: 1px solid rgba(255, 255, 255, 0.08);
-                border-radius: 12px;
-                transition: all 0.3s ease;
-            }
-
-            .grid-item:hover {
-                background: rgba(0, 0, 0, 0.5);
-                border-color: rgba(96, 165, 250, 0.3);
-                transform: translateY(-3px);
-            }
-
-            .grid-item h4 {
-                color: #93c5fd;
+            .section-header p {
                 font-size: 1.1rem;
+                color: var(--text-secondary);
+                line-height: 1.7;
+            }
+
+            /* === EXPLANATION GRID === */
+            .explanation-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+                margin: 2rem 0;
+            }
+
+            .explanation-item {
+                padding: 1.5rem;
+                background: rgba(0, 0, 0, 0.4);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+            }
+
+            .explanation-item h3 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 1.1rem;
+                color: var(--accent-blue);
                 margin-bottom: 0.75rem;
                 font-weight: 600;
             }
 
-            .grid-item p {
+            .explanation-item p {
+                color: var(--text-secondary);
                 font-size: 0.95rem;
-                margin: 0;
+                line-height: 1.6;
             }
 
-            /* === PRODUCTION TIMELINE === */
-            .timeline {
-                margin-top: 2rem;
-            }
-
-            .timeline-item {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                padding: 1rem;
-                margin-bottom: 0.75rem;
-                background: rgba(0, 0, 0, 0.3);
-                border-left: 3px solid rgba(255, 255, 255, 0.1);
-                border-radius: 8px;
-                transition: all 0.3s ease;
-            }
-
-            .timeline-item.completed {
-                border-left-color: rgba(34, 197, 94, 0.6);
-            }
-
-            .timeline-item.current {
-                border-left-color: rgba(37, 99, 235, 0.8);
-                background: rgba(37, 99, 235, 0.1);
-            }
-
-            .timeline-icon {
-                font-size: 1.5rem;
-                min-width: 1.5rem;
-            }
-
-            .timeline-text {
-                color: #cbd5e1;
-                font-size: 0.95rem;
-            }
-
-            /* === COLLABORATION LOGOS === */
-            .collab-logos {
-                display: flex;
+            /* === BLUEPRINT + CODE LAYOUT === */
+            .implementation-showcase {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
                 gap: 2rem;
-                justify-content: center;
-                margin: 2rem 0;
-                flex-wrap: wrap;
+                margin: 2.5rem 0;
+                align-items: start;
             }
 
-            .collab-logo {
-                padding: 1.5rem;
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.1);
+            .blueprint-side,
+            .code-side {
+                background: rgba(0, 0, 0, 0.5);
+                border: 1px solid var(--border);
                 border-radius: 12px;
+                overflow: hidden;
+            }
+
+            .blueprint-side {
+                padding: 1rem;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .blueprint-side:hover {
+                transform: scale(1.02);
+            }
+
+            .blueprint-side img {
+                width: 100%;
+                height: auto;
+                display: block;
+                border-radius: 8px;
+                transition: all 0.3s;
+            }
+
+            .blueprint-side:hover img {
+                box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+            }
+
+            .blueprint-zoom-hint {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                padding: 0.5rem 1rem;
+                background: rgba(0, 0, 0, 0.8);
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                font-size: 0.85rem;
+                color: var(--text-secondary);
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+
+            .blueprint-side:hover .blueprint-zoom-hint {
+                opacity: 1;
+            }
+
+            .code-side {
+                padding: 1.5rem;
+            }
+
+            .code-side h4 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 1rem;
+                color: var(--accent-cyan);
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+            }
+
+            .code-explanation {
+                margin-bottom: 1rem;
+                padding: 1rem;
+                background: rgba(59, 130, 246, 0.1);
+                border-left: 3px solid var(--accent-blue);
+                border-radius: 6px;
+            }
+
+            .code-explanation p {
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+                line-height: 1.6;
+                margin: 0.5rem 0;
+            }
+
+            .code-explanation strong {
+                color: var(--accent-blue);
+                font-weight: 600;
+            }
+
+            /* === INTERACTIVE CODE === */
+            .code-side pre {
+                position: relative;
+            }
+
+            .code-block-logic {
+                display: block;
+                padding: 8px 12px;
+                margin: 4px 0;
+                border-radius: 6px;
                 transition: all 0.3s ease;
+                cursor: help;
+                position: relative;
+                border-left: 3px solid transparent;
             }
 
-            .collab-logo:hover {
-                background: rgba(255, 255, 255, 0.08);
-                transform: translateY(-5px);
+            .code-block-logic:hover {
+                background: rgba(59, 130, 246, 0.15);
+                border-left-color: var(--accent-blue);
+                box-shadow: 
+                    0 0 20px rgba(59, 130, 246, 0.3),
+                    0 0 40px rgba(59, 130, 246, 0.2),
+                    inset 0 0 20px rgba(59, 130, 246, 0.1);
+                transform: translateX(4px);
+                animation: borderColorShift 3s ease-in-out infinite;
             }
 
-            .collab-logo img {
-                height: 50px;
-                width: auto;
-                max-width: 120px;
-                object-fit: contain;
-                filter: brightness(0.9);
+            @keyframes borderColorShift {
+                0% { border-left-color: var(--accent-blue); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.2), inset 0 0 20px rgba(59, 130, 246, 0.1); }
+                33% { border-left-color: var(--accent-purple); box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), 0 0 40px rgba(139, 92, 246, 0.2), inset 0 0 20px rgba(139, 92, 246, 0.1); }
+                66% { border-left-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(6, 182, 212, 0.3), 0 0 40px rgba(6, 182, 212, 0.2), inset 0 0 20px rgba(6, 182, 212, 0.1); }
+                100% { border-left-color: var(--accent-blue); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.2), inset 0 0 20px rgba(59, 130, 246, 0.1); }
             }
 
-            .collab-logo:hover img {
-                filter: brightness(1.1);
+            /* Special positioning for Photoboard Widget section - tooltip on left side */
+            .rtpc-section .code-tooltip.active {
+                left: auto !important;
             }
 
-            /* === SCREENSHOTS === */
-            .screenshot-grid {
+            .code-tooltip {
+                position: fixed;
+                width: 320px;
+                padding: 1.25rem;
+                background: rgba(18, 18, 18, 0.98);
+                border: 2px solid var(--accent-blue);
+                border-radius: 12px;
+                box-shadow: 
+                    0 8px 32px rgba(0, 0, 0, 0.9),
+                    0 0 40px rgba(59, 130, 246, 0.3);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease, transform 0.3s ease;
+                z-index: 10000;
+                backdrop-filter: blur(15px);
+                transform: translateX(-10px);
+            }
+
+            .code-tooltip.active {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            .code-tooltip h5 {
+                color: var(--accent-blue);
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+                font-weight: 600;
+                border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+                padding-bottom: 0.5rem;
+            }
+
+            .code-tooltip p {
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+                line-height: 1.6;
+                margin: 0.5rem 0;
+            }
+
+            .code-side pre {
+                margin: 0;
+                padding: 1rem;
+                background: rgba(0, 0, 0, 0.8);
+                border-radius: 8px;
+                overflow-x: auto;
+            }
+
+            .code-side code {
+                font-family: "Consolas", "Monaco", monospace;
+                font-size: 0.85rem;
+                line-height: 1.5;
+                color: #e0e0e0;
+            }
+
+            .code-side .comment { color: #6b7280; }
+            .code-side .keyword { color: #c678dd; }
+            .code-side .function { color: #61afef; }
+            .code-side .string { color: #98c379; }
+            .code-side .type { color: #e5c07b; }
+
+            /* === MEDIA GRID === */
+            .media-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
                 gap: 1.5rem;
-                margin-top: 2rem;
+                margin: 2rem 0;
             }
 
-            .screenshot {
-                position: relative;
+            .media-item {
                 border-radius: 12px;
                 overflow: hidden;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                transition: all 0.3s ease;
+                border: 1px solid var(--border);
                 cursor: pointer;
+                transition: all 0.3s;
             }
 
-            .screenshot:hover {
+            .media-item:hover {
                 transform: scale(1.02);
-                border-color: rgba(96, 165, 250, 0.4);
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+                border-color: var(--accent-blue);
             }
 
-            .screenshot img {
+            .media-item img {
                 width: 100%;
                 height: auto;
                 display: block;
             }
 
-            .screenshot-caption {
+            /* === VIDEO === */
+            .video-section {
+                margin: 3rem 0;
+            }
+
+            .video-wrapper {
+                border-radius: 16px;
+                overflow: hidden;
+                border: 1px solid var(--border);
+                background: #000;
+            }
+
+            .video-wrapper video {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+            /* === CUSTOM VIDEO PLAYER === */
+            .custom-video-player {
+                position: relative;
+                background: #000;
+                border-radius: 16px;
+                overflow: hidden;
+                border: 1px solid var(--border);
+            }
+
+            .custom-video-player video {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+            .video-controls {
                 position: absolute;
                 bottom: 0;
                 left: 0;
                 right: 0;
-                padding: 1rem;
-                background: linear-gradient(
-                    to top,
-                    rgba(0, 0, 0, 0.9),
-                    transparent
-                );
-                color: #fff;
-                font-size: 0.85rem;
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+                padding: 1.5rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
                 opacity: 0;
                 transition: opacity 0.3s ease;
             }
 
-            .screenshot:hover .screenshot-caption {
+            .custom-video-player:hover .video-controls {
                 opacity: 1;
+            }
+
+            .video-progress-container {
+                position: relative;
+                width: 100%;
+                height: 6px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 3px;
+                cursor: pointer;
+            }
+
+            .video-progress-bar {
+                height: 100%;
+                background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+                border-radius: 3px;
+                width: 0%;
+                transition: width 0.1s linear;
+            }
+
+            .video-controls-bottom {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .video-play-pause-btn {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: 2px solid var(--accent-blue);
+                background: rgba(59, 130, 246, 0.2);
+                color: var(--accent-blue);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+                flex-shrink: 0;
+            }
+
+            .video-play-pause-btn:hover {
+                background: rgba(59, 130, 246, 0.3);
+            }
+
+            .video-time {
+                font-size: 0.85rem;
+                color: var(--text-primary);
+                font-family: monospace;
+            }
+
+            .video-volume {
+                margin-left: auto;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .volume-slider {
+                width: 80px;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 2px;
+                cursor: pointer;
+                position: relative;
+            }
+
+            .volume-progress {
+                height: 100%;
+                background: var(--accent-blue);
+                border-radius: 2px;
+                width: 100%;
+            }
+
+            /* === CUSTOM AUDIO PLAYER === */
+            .audio-section {
+                background: rgba(0, 0, 0, 0.5);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 2rem;
+                margin: 2rem 0;
+            }
+
+            .custom-audio-player {
+                max-width: 800px;
+                margin: 0 auto;
+                background: rgba(18, 18, 18, 0.8);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 1.5rem;
+            }
+
+            .player-controls {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .play-pause-btn {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                border: 2px solid var(--accent-blue);
+                background: rgba(59, 130, 246, 0.1);
+                color: var(--accent-blue);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                transition: all 0.3s ease;
+                flex-shrink: 0;
+            }
+
+            .play-pause-btn:hover {
+                background: rgba(59, 130, 246, 0.2);
+                transform: scale(1.05);
+            }
+
+            .player-info {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .player-title {
+                font-weight: 600;
+                color: var(--text-primary);
+                margin-bottom: 0.25rem;
+                font-size: 0.95rem;
+            }
+
+            .player-time {
+                font-size: 0.85rem;
+                color: var(--text-secondary);
+            }
+
+            .progress-container {
+                position: relative;
+                width: 100%;
+                height: 6px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 3px;
+                cursor: pointer;
+                margin-top: 0.5rem;
+            }
+
+            .progress-bar {
+                height: 100%;
+                background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+                border-radius: 3px;
+                width: 0%;
+                transition: width 0.1s linear;
+            }
+
+            .progress-handle {
+                position: absolute;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                width: 14px;
+                height: 14px;
+                background: var(--accent-blue);
+                border-radius: 50%;
+                opacity: 0;
+                transition: opacity 0.2s ease;
+                pointer-events: none;
+            }
+
+            .progress-container:hover .progress-handle {
+                opacity: 1;
+            }
+
+            .audio-section audio {
+                display: none;
+            }
+
+            /* === COLLAB LOGOS === */
+            /* === OVERVIEW SECTION === */
+            .overview-section {
+                background: linear-gradient(135deg, rgba(10, 10, 10, 0.95), rgba(15, 15, 20, 0.95));
+            }
+
+            .overview-intro {
+                font-size: 1.2rem;
+                line-height: 1.8;
+                color: var(--text-primary);
+                font-weight: 500;
+                margin-top: 1rem;
+            }
+
+            .overview-content {
+                margin-top: 3rem;
+            }
+
+            .overview-main {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 2rem;
+                margin-bottom: 4rem;
+            }
+
+            .overview-card {
+                padding: 2rem;
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+                border: 1px solid rgba(59, 130, 246, 0.3);
+                border-radius: 16px;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .overview-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-cyan));
+                opacity: 0.6;
+            }
+
+            .overview-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 40px rgba(59, 130, 246, 0.2);
+                border-color: rgba(59, 130, 246, 0.5);
+            }
+
+            .overview-icon {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+                display: block;
+            }
+
+            .overview-card h3 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 1.3rem;
+                font-weight: 700;
+                color: var(--accent-blue);
+                margin-bottom: 1rem;
+            }
+
+            .overview-card p {
+                color: var(--text-secondary);
+                line-height: 1.7;
+                font-size: 0.95rem;
+            }
+
+            .overview-card strong {
+                color: var(--text-primary);
+                font-weight: 600;
+            }
+
+            .collab-section {
+                margin-top: 3rem;
+                padding-top: 3rem;
+                border-top: 1px solid var(--border);
+            }
+
+            .collab-title {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: var(--accent-blue);
+                margin-bottom: 0.5rem;
+            }
+
+            .collab-desc {
+                color: var(--text-secondary);
+                margin-bottom: 2rem;
+                font-size: 1.05rem;
+            }
+
+            .collab-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 2rem;
+            }
+
+            .collab-card {
+                padding: 2rem;
+                background: rgba(0, 0, 0, 0.4);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                text-align: center;
+                transition: all 0.3s ease;
+            }
+
+            .collab-card:hover {
+                transform: translateY(-5px);
+                border-color: var(--accent-blue);
+                box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15);
+            }
+
+            .collab-logo-wrapper {
+                height: 80px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 1.5rem;
+            }
+
+            .collab-logo-wrapper img {
+                max-height: 80px;
+                max-width: 100%;
+                width: auto;
+                filter: brightness(0.9);
+            }
+
+            .collab-logo-wrapper.kask-logo {
+                background: #ffffff;
+                border-radius: 8px;
+                padding: 1rem;
+            }
+
+            .collab-logo-placeholder {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--accent-blue);
+                padding: 1rem 2rem;
+                background: rgba(59, 130, 246, 0.1);
+                border: 2px solid var(--accent-blue);
+                border-radius: 12px;
+            }
+
+            .collab-card h4 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 1.2rem;
+                font-weight: 700;
+                color: var(--accent-blue);
+                margin-bottom: 1rem;
+            }
+
+            .collab-card p {
+                color: var(--text-secondary);
+                font-size: 0.9rem;
+                line-height: 1.6;
+            }
+
+            /* === DOCUMENT LINK === */
+            .doc-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.75rem 1.5rem;
+                background: rgba(59, 130, 246, 0.15);
+                border: 1px solid rgba(59, 130, 246, 0.3);
+                border-radius: 10px;
+                color: #93c5fd;
+                text-decoration: none;
+                font-weight: 500;
+                transition: all 0.2s;
+                margin-top: 1rem;
+            }
+
+            .doc-link:hover {
+                background: rgba(59, 130, 246, 0.25);
+                transform: translateY(-2px);
             }
 
             /* === LIGHTBOX === */
@@ -437,8 +1071,8 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0, 0, 0, 0.95);
-                z-index: 1000;
+                background: rgba(0, 0, 0, 0.98);
+                z-index: 10000;
                 align-items: center;
                 justify-content: center;
                 padding: 2rem;
@@ -452,8 +1086,7 @@
                 max-width: 95%;
                 max-height: 95vh;
                 object-fit: contain;
-                border-radius: 8px;
-                box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9);
+                border-radius: 12px;
             }
 
             .lightbox-close {
@@ -461,10 +1094,8 @@
                 top: 2rem;
                 right: 2rem;
                 font-size: 3rem;
-                color: #fff;
+                color: var(--text-primary);
                 cursor: pointer;
-                transition: all 0.3s ease;
-                line-height: 1;
                 width: 50px;
                 height: 50px;
                 display: flex;
@@ -472,571 +1103,199 @@
                 justify-content: center;
                 background: rgba(255, 255, 255, 0.1);
                 border-radius: 50%;
+                transition: all 0.2s;
             }
 
             .lightbox-close:hover {
                 background: rgba(255, 255, 255, 0.2);
-                transform: scale(1.1);
-            }
-
-            /* === CODE SNIPPETS === */
-            .code-snippet {
-                background: rgba(0, 0, 0, 0.4);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 12px;
-                padding: 1.5rem;
-                margin: 1.5rem 0;
-                overflow-x: auto;
-            }
-
-            .code-snippet h4 {
-                color: #93c5fd;
-                font-size: 1rem;
-                margin-bottom: 0.75rem;
-                font-family: "Space Grotesk", sans-serif;
-                font-weight: 600;
-            }
-
-            .code-snippet pre {
-                margin: 0;
-                padding: 1rem;
-                background: rgba(0, 0, 0, 0.5);
-                border-radius: 8px;
-                overflow-x: auto;
-            }
-
-            .code-snippet code {
-                font-family: "Consolas", "Monaco", "Courier New", monospace;
-                font-size: 0.85rem;
-                line-height: 1.6;
-                color: #e0e0e0;
-            }
-
-            .code-snippet .comment {
-                color: #6b7280;
-            }
-
-            .code-snippet .keyword {
-                color: #c678dd;
-            }
-
-            .code-snippet .function {
-                color: #61afef;
-            }
-
-            .code-snippet .string {
-                color: #98c379;
-            }
-
-            .code-snippet .type {
-                color: #e5c07b;
-            }
-
-            /* === TOOL LINKS === */
-            .tool-link {
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-                padding: 0.75rem 1.5rem;
-                background: rgba(37, 99, 235, 0.15);
-                border: 1px solid rgba(37, 99, 235, 0.3);
-                border-radius: 50px;
-                color: #93c5fd;
-                text-decoration: none;
-                font-weight: 500;
-                transition: all 0.3s ease;
-                margin: 0.5rem;
-            }
-
-            .tool-link:hover {
-                background: rgba(37, 99, 235, 0.25);
-                border-color: rgba(37, 99, 235, 0.5);
-                transform: translateY(-2px);
-            }
-
-            .tool-link::before {
-                content: "→";
-                font-size: 1.2rem;
-            }
-
-            /* === VIDEO === */
-            .video-container {
-                position: relative;
-                border-radius: 16px;
-                overflow: hidden;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                background: #000;
-                margin: 2rem 0;
-            }
-
-            .video-container video {
-                width: 100%;
-                height: auto;
-                display: block;
+                transform: rotate(90deg);
             }
 
             /* === RESPONSIVE === */
-            @media (max-width: 768px) {
-                .content {
-                    padding: 1.25rem;
-                }
-
-                .hero {
-                    padding: 6rem 0 3rem;
-                }
-
-                section {
-                    padding: 1.5rem;
-                    margin: 3rem 0;
-                }
-
-                .grid {
+            @media (max-width: 1024px) {
+                .explanation-grid,
+                .implementation-showcase {
                     grid-template-columns: 1fr;
                 }
 
-                .back-button,
-                .lang-switcher {
-                    top: 1rem;
+                .content {
+                    padding: 0 1.5rem;
                 }
 
-                .back-button {
-                    left: 1rem;
+                .tech-section {
+                    padding: 2rem;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .nav {
+                    padding: 1rem 1.5rem;
                 }
 
-                .lang-switcher {
-                    right: 1rem;
+                .hero {
+                    margin-top: 70px;
+                }
+
+                .hero-content {
+                    padding: 0 1rem;
+                }
+
+                .content {
+                    padding: 0 1rem;
+                    margin: 2rem auto;
+                }
+
+                .tech-section {
+                    padding: 1.5rem;
+                    margin: 2rem 0;
                 }
             }
         </style>
     </head>
     <body>
-        <!-- Background -->
-        <div class="bg-gradient"></div>
-
         <!-- Navigation -->
-        <a href="/projects/" class="back-button" data-i18n="back"
-            >Back to Projects</a
-        >
-
+        <nav class="nav">
+            <a href="/projects/" class="back-btn" data-i18n="back">← Back</a>
         <div class="lang-switcher">
             <button class="lang-btn active" data-lang="en">EN</button>
             <button class="lang-btn" data-lang="pl">PL</button>
             <button class="lang-btn" data-lang="nl">NL</button>
         </div>
+        </nav>
 
-        <!-- Content -->
-        <div class="content">
             <!-- Hero -->
-            <div class="hero">
-                <h1 data-i18n="title">Shadow Frames</h1>
-                <p class="subtitle" data-i18n="subtitle">Lead Audio Designer</p>
-                <p class="tagline" data-i18n="tagline">
-                    Where sound is survival.
-                </p>
-                <div class="production-notice" data-i18n="production_notice">
-                    🎮 Sprint 3/5 Production • Multi-Institutional Project
-                </div>
+        <section class="hero">
+            <div class="hero-visual">
+                <div class="sound-lead-badge">Sound Lead</div>
+                <div class="hero-logo">SHADOW<br>FRAMES</div>
             </div>
+            <div class="hero-content">
+                <p class="subtitle" data-i18n="subtitle">Lead Audio Designer</p>
+                <p class="tagline" data-i18n="tagline">Where sound is survival.</p>
+                <div class="hero-badges">
+                    <span class="badge" data-i18n="meta.role.value">Lead Audio Designer</span>
+                    <span class="badge" data-i18n="meta.setting.value">1960s Irish Pub</span>
+                    <span class="badge" data-i18n="meta.style.value">Black & White</span>
+                    <span class="badge" data-i18n="meta.engine.value">Unreal Engine 5.5</span>
+                </div>
+                <div class="production-badge" data-i18n="production_notice">Sprint 3/5 Production • Multi-Institutional Project</div>
+            </div>
+        </section>
 
+        <!-- Main Content -->
+        <div class="content">
             <!-- Project Overview -->
-            <section>
+            <section class="tech-section overview-section">
+                <div class="section-header">
                 <h2 data-i18n="context.title">Project Overview</h2>
-                <p data-i18n="concept.desc">
-                    1960s Irish pub. Black and white. You have a Polaroid
-                    camera. Strange things happen. Sound tells you everything.
-                    Mute the game, you can't play. That's the core.
-                </p>
-
-                <div class="grid">
-                    <div class="grid-item">
-                        <h4 data-i18n="meta.role.label">Role</h4>
-                        <p data-i18n="meta.role.value">Lead Audio Designer</p>
-                    </div>
-                    <div class="grid-item">
-                        <h4 data-i18n="meta.setting.label">Setting</h4>
-                        <p data-i18n="meta.setting.value">1960s Irish Pub</p>
-                    </div>
-                    <div class="grid-item">
-                        <h4 data-i18n="meta.style.label">Visual Style</h4>
-                        <p data-i18n="meta.style.value">Black & White</p>
-                    </div>
-                    <div class="grid-item">
-                        <h4 data-i18n="meta.engine.label">Engine</h4>
-                        <p data-i18n="meta.engine.value">Unreal Engine 5.4.4</p>
-                    </div>
+                    <p class="overview-intro" data-i18n="concept.desc">1960s Irish pub. Black and white. You have a Polaroid camera. Strange things happen. Sound tells you everything. Mute the game, you can't play. That's the core.</p>
+                </div>
+                
+                <div class="overview-content">
+                    <div class="overview-main">
+                        <div class="overview-card">
+                            <div class="overview-icon">CONCEPT</div>
+                            <h3>Core Concept</h3>
+                            <p data-i18n="concept.desc">1960s Irish pub. Black and white. You have a Polaroid camera. Strange things happen. Sound tells you everything. Mute the game, you can't play. That's the core.</p>
                 </div>
 
-                <h3 data-i18n="context.collaboration_title">
-                    Multi-Institutional Collaboration
-                </h3>
-                <div class="collab-logos">
-                    <div class="collab-logo">
-                        <img
-                            src="../assets/icons/icons for projects/RITCS_Logo.png"
-                            alt="RITCS"
-                        />
+                        <div class="overview-card">
+                            <div class="overview-icon">ROLE</div>
+                            <h3>My Role</h3>
+                            <p>As <strong>Sound Lead</strong>, I designed and implemented the complete audio architecture for Shadow Frames. This includes dynamic footstep systems, delegate-based player audio, RTPC-driven tension progression, and Wwise integration.</p>
                     </div>
-                    <div class="collab-logo">
-                        <img
-                            src="../assets/icons/icons for projects/KASK_Logo_Transparent.png"
-                            alt="KASK"
-                        />
+                        
+                        <div class="overview-card">
+                            <div class="overview-icon">TECH</div>
+                            <h3>Technical Stack</h3>
+                            <p><strong>Unreal Engine 5.5</strong> • <strong>Wwise</strong> • <strong>C++</strong> • <strong>Blueprint</strong> • <strong>Physical Materials</strong> • <strong>RTPC</strong> • <strong>Switch Containers</strong></p>
                     </div>
-                </div>
-            </section>
-
-            <!-- Gameplay Mechanic -->
-            <section>
-                <h2 data-i18n="gameplay.title">
-                    Core Mechanic: Observe → Capture → Connect
-                </h2>
-                <div class="grid">
-                    <div class="grid-item">
-                        <h4 data-i18n="gameplay.observe_title">Observe</h4>
-                        <p data-i18n="gameplay.observe_desc">
-                            Anomalies appear every 30-50 seconds. Environmental
-                            sounds guide you to their location.
-                        </p>
                     </div>
-                    <div class="grid-item">
-                        <h4 data-i18n="gameplay.capture_title">Capture</h4>
-                        <p data-i18n="gameplay.capture_desc">
-                            Use your Polaroid camera to photograph the anomaly.
-                            Limited film. Reloading leaves you vulnerable.
-                        </p>
+                    
+                    <div class="collab-section">
+                        <h3 data-i18n="sections.org_title" class="collab-title">Multi-Institutional Collaboration</h3>
+                        <p data-i18n="sections.org_desc" class="collab-desc">This is a major collaborative project between prestigious institutions:</p>
+                        
+                        <div class="collab-grid">
+                            <div class="collab-card">
+                                <div class="collab-logo-wrapper">
+                                    <img src="../assets/icons/icons for projects/RITCS_Logo.png" alt="RITCS" />
                     </div>
-                    <div class="grid-item">
-                        <h4 data-i18n="gameplay.connect_title">Connect</h4>
-                        <p data-i18n="gameplay.connect_desc">
-                            Arrange photos on the pin board. Correct order
-                            reveals the truth and leads to the good ending.
-                        </p>
+                                <h4>RITCS</h4>
+                                <p data-i18n="sections.ritcs_desc">Royal Institute for Theatre, Cinema & Sound — Leading narrative design and story development</p>
                     </div>
-                </div>
-            </section>
-
-            <!-- Audio Implementation -->
-            <section>
-                <h2 data-i18n="audio_systems.title">Audio Implementation</h2>
-
-                <div class="grid">
-                    <div class="grid-item">
-                        <h4 data-i18n="audio_systems.rtpc_title">
-                            RTPC-Based Dynamic System
-                        </h4>
-                        <p data-i18n="audio_systems.rtpc_desc">
-                            Adaptive ambience and player breathing intensity
-                            scale with anomaly count. Tension builds as
-                            unresolved anomalies stack.
-                        </p>
+                            
+                            <div class="collab-card">
+                                <div class="collab-logo-wrapper kask-logo">
+                                    <img src="../assets/icons/icons for projects/KASK_Logo_Transparent.png" alt="KASK" />
                     </div>
-                    <div class="grid-item">
-                        <h4 data-i18n="audio_systems.switches_title">
-                            Switch Containers & Zones
-                        </h4>
-                        <p data-i18n="audio_systems.switches_desc">
-                            Room-specific ambiences transition smoothly.
-                            Bathroom has spatialized toilet/faucet sounds.
-                            Footsteps adapt to surface materials.
-                        </p>
+                                <h4>KASK Conservatory</h4>
+                                <p data-i18n="sections.kask_desc">Providing music composition expertise</p>
                     </div>
-                    <div class="grid-item">
-                        <h4 data-i18n="audio_systems.delegates_title">
-                            Blueprint Delegates (SOC)
-                        </h4>
-                        <p data-i18n="audio_systems.delegates_desc">
-                            Separation of Concerns architecture. Audio systems
-                            communicate through delegates for clean, modular
-                            implementation.
-                        </p>
-                    </div>
-                    <div class="grid-item">
-                        <h4 data-i18n="audio_systems.spatial_title">
-                            HRTF Spatial Audio
-                        </h4>
-                        <p data-i18n="audio_systems.spatial_desc">
-                            3D positional audio for anomalies, enemy presence,
-                            and environmental cues. Critical for gameplay.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Implementation Showcase -->
-            <section>
-                <h2>Wwise Implementation</h2>
-                <p>
-                    Technical breakdown of audio systems built in Wwise 2024.1
-                </p>
-
-                <div class="screenshot-grid">
-                    <div class="screenshot">
-                        <img
-                            src="../assets/images/projects-shadowframes/SwitchContainer.png"
-                            alt="Switch Container"
-                            loading="lazy"
-                        />
-                        <div class="screenshot-caption">
-                            Switch Container for room-based ambience
+                            
+                            <div class="collab-card">
+                                <div class="collab-logo-wrapper">
+                                    <div class="collab-logo-placeholder">Howest</div>
                         </div>
+                                <h4>Howest DAE</h4>
+                                <p data-i18n="sections.howest_desc">Digital Arts & Entertainment — Game development and technical audio implementation</p>
                     </div>
-                    <div class="screenshot">
-                        <img
-                            src="../assets/images/projects-shadowframes/BP_Footstep_AudioManager.png"
-                            alt="Footstep Manager"
-                            loading="lazy"
-                        />
-                        <div class="screenshot-caption">
-                            Blueprint Footstep Audio Manager with surface
-                            detection
-                        </div>
-                    </div>
-                    <div class="screenshot">
-                        <img
-                            src="../assets/images/projects-shadowframes/BP_PlayerOneshotAudioManager.png"
-                            alt="Oneshot Manager"
-                            loading="lazy"
-                        />
-                        <div class="screenshot-caption">
-                            Player Oneshot Audio Manager with delegate
-                            communication
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Audio Documentation -->
-            <section>
-                <h2>Audio Documentation</h2>
-                <p>
-                    Comprehensive technical documentation of all audio systems,
-                    asset pipeline, and implementation details
-                </p>
-
-                <div class="grid">
-                    <div
-                        class="grid-item"
-                        style="
-                            grid-column: 1 / -1;
-                            max-width: 600px;
-                            margin: 0 auto;
-                        "
-                    >
-                        <h4>📄 Sound Bible</h4>
-                        <p style="margin-bottom: 1rem">
-                            Complete audio design document covering asset lists,
-                            Wwise hierarchy, implementation guidelines, and
-                            technical specifications. Essential reference for
-                            the entire audio pipeline.
-                        </p>
-                        <a
-                            href="../assets/images/projects-shadowframes/Sound_Grp22_ShadowFrames.pdf"
-                            class="tool-link"
-                            download
-                            style="display: inline-flex"
-                        >
-                            Download Sound Bible PDF
-                        </a>
+            <!-- Footstep System -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="footstep.title">Footstep System: Surface Detection & Audio Routing</h2>
+                    <p data-i18n="footstep.desc">Physical material detection drives dynamic audio switching for realistic surface-based footsteps.</p>
                     </div>
+
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3>WHAT</h3>
+                        <p data-i18n="footstep.what">System detects surface type under player (wood, tiles, concrete) and automatically switches appropriate footstep sounds in Wwise. Each player step matches the material they're walking on.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>HOW</h3>
+                        <p data-i18n="footstep.how">C++ component performs line trace downward from player position, detects Physical Material, maps it to Wwise Switch name, and Blueprint Audio Manager receives delegate and plays appropriate sound.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>WHY</h3>
+                        <p data-i18n="footstep.why">Separation of Concerns - C++ handles detection logic, Blueprint handles audio. Delegates provide loose coupling between systems. This allows easy addition of new surfaces without modifying C++ code.</p>
                 </div>
-            </section>
-
-            <!-- Development Tools -->
-            <section>
-                <h2 data-i18n="dev_tools.title">Development Tools</h2>
-                <p>Custom tools built to solve production challenges</p>
-
-                <div class="grid">
-                    <div class="grid-item">
-                        <h4 data-i18n="dev_tools.fixer_title">
-                            Wwise Unreal Fixer
-                        </h4>
-                        <p data-i18n="dev_tools.fixer_desc">
-                            Custom C++ plugin to auto-restore broken Wwise
-                            integration after Perforce pulls. One-click
-                            solution.
-                        </p>
-                        <a href="wwise-unreal-fixer.html" class="tool-link"
-                            >View Project</a
-                        >
+                    <div class="explanation-item">
+                        <h3>RESULT</h3>
+                        <p data-i18n="footstep.result">Realistic footsteps matched to surface, zero manual switching, easy expansion with new materials. System works automatically for every player step.</p>
                     </div>
-                    <div class="grid-item">
-                        <h4 data-i18n="dev_tools.rebuilder_title">
-                            Unreal Engine Rebuilder
-                        </h4>
-                        <p data-i18n="dev_tools.rebuilder_desc">
-                            Automated build tool to streamline compilation
-                            workflow and reduce downtime.
-                        </p>
-                        <a href="unreal-engine-rebuilder.html" class="tool-link"
-                            >View Project</a
-                        >
                     </div>
+
+                <div class="implementation-showcase">
+                    <div class="blueprint-side" style="position: relative;">
+                        <div class="blueprint-zoom-hint">Click to enlarge</div>
+                        <img src="../assets/images/projects-shadowframes/BP_Footstep_AudioManager.png" alt="Footstep Blueprint" class="blueprint-img" />
                 </div>
-            </section>
-
-            <!-- Production Timeline -->
-            <section>
-                <h2 data-i18n="production.title">Production Status</h2>
-                <div class="timeline">
-                    <div class="timeline-item completed">
-                        <span class="timeline-icon">✓</span>
-                        <span class="timeline-text" data-i18n="production.proto"
-                            >Prototype Complete (3 weeks)</span
-                        >
-                    </div>
-                    <div class="timeline-item completed">
-                        <span class="timeline-icon">✓</span>
-                        <span
-                            class="timeline-text"
-                            data-i18n="production.sprint1"
-                            >Sprint 1 — Core Systems</span
-                        >
-                    </div>
-                    <div class="timeline-item completed">
-                        <span class="timeline-icon">✓</span>
-                        <span
-                            class="timeline-text"
-                            data-i18n="production.sprint2"
-                            >Sprint 2 — Environment Audio</span
-                        >
-                    </div>
-                    <div class="timeline-item current">
-                        <span class="timeline-icon">◉</span>
-                        <span
-                            class="timeline-text"
-                            data-i18n="production.sprint3"
-                            >Sprint 3 — Anomaly Systems (Current)</span
-                        >
-                    </div>
-                    <div class="timeline-item">
-                        <span class="timeline-icon">◯</span>
-                        <span
-                            class="timeline-text"
-                            data-i18n="production.sprint4"
-                            >Sprint 4 — Enemy & Polish</span
-                        >
-                    </div>
-                    <div class="timeline-item">
-                        <span class="timeline-icon">◯</span>
-                        <span
-                            class="timeline-text"
-                            data-i18n="production.sprint5"
-                            >Sprint 5 — Final Integration</span
-                        >
-                    </div>
+                    <div class="code-side">
+                        <h4>FootstepComponent.cpp — Surface Detection</h4>
+                        <div class="code-explanation">
+                            <p><strong>WHAT:</strong> <span data-i18n="code_explanations.footstep_what">Function detects surface type under player using line trace downward from player position.</span></p>
+                            <p><strong>HOW:</strong> <span data-i18n="code_explanations.footstep_how">Line trace checks object's Physical Material, then maps SurfaceType enum to Wwise Switch name (Tiles, Wood, CreakyWood, Concrete).</span></p>
+                            <p><strong>WHY:</strong> <span data-i18n="code_explanations.footstep_why">Using Physical Material allows automatic detection without manually tagging each surface. Mapping to Switch names provides flexibility in Wwise.</span></p>
                 </div>
-            </section>
-
-            <!-- Video Showcase -->
-            <section>
-                <h2>Gameplay with Wwise Profiler</h2>
-                <p>Live profiling session showing audio systems in action</p>
-                <div class="video-container">
-                    <video controls loop muted>
-                        <source
-                            src="../assets/images/projects-shadowframes/videodemoprod3withwwiseprofiler.mp4"
-                            type="video/mp4"
-                        />
-                        Your browser doesn't support video.
-                    </video>
-                </div>
-            </section>
-
-            <!-- Soundscape Audio -->
-            <section>
-                <h2>Prototype Soundscape — Artistic Vision</h2>
-                <p>
-                    Early audio palette demonstrating the game's intended
-                    atmosphere and tone
-                </p>
-                <div
-                    class="video-container"
-                    style="background: rgba(0, 0, 0, 0.6); padding: 2rem"
-                >
-                    <audio
-                        controls
-                        style="
-                            width: 100%;
-                            max-width: 600px;
-                            margin: 0 auto;
-                            display: block;
-                        "
-                    >
-                        <source
-                            src="../assets/images/projects-shadowframes/PaletteSoundscapeUpdate.mp3"
-                            type="audio/mpeg"
-                        />
-                        Your browser doesn't support audio.
-                    </audio>
-                </div>
-            </section>
-
-            <!-- Menu Prototype -->
-            <section>
-                <h2>Menu Prototype</h2>
-                <div class="video-container">
-                    <video controls loop muted>
-                        <source
-                            src="../assets/images/projects-shadowframes/Menugif.mp4"
-                            type="video/mp4"
-                        />
-                        Your browser doesn't support video.
-                    </video>
-                </div>
-            </section>
-
-            <!-- Code Implementation -->
-            <section>
-                <h2>C++ Implementation</h2>
-                <p>
-                    Delegate-based architecture with clean separation of
-                    concerns
-                </p>
-
-                <div class="code-snippet">
-                    <h4>
-                        FootstepComponent.h — Delegate-Based Surface Detection
-                    </h4>
-                    <pre><code><span class="comment">// Multicast delegate broadcasts surface type to Blueprint audio manager</span>
-<span class="keyword">DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam</span>(<span class="type">FOnFootstepDelegate</span>, <span class="type">FName</span>, SurfaceType);
-
-<span class="keyword">UCLASS</span>(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-<span class="keyword">class</span> <span class="type">UFootstepComponent</span> : <span class="keyword">public</span> <span class="type">UActorComponent</span>
-{
-    <span class="keyword">GENERATED_BODY</span>()
-
-<span class="keyword">public</span>:
-    <span class="keyword">UPROPERTY</span>(BlueprintAssignable, Category = <span class="string">"Footstep"</span>)
-    <span class="type">FOnFootstepDelegate</span> OnFootstep;
-
-    <span class="keyword">UFUNCTION</span>(BlueprintCallable)
-    <span class="type">FName</span> <span class="function">GetCurrentSurfaceType</span>() <span class="keyword">const</span>;
-
-<span class="keyword">private</span>:
-    <span class="type">FName</span> <span class="function">DetectSurfaceType</span>() <span class="keyword">const</span>;
-};</code></pre>
-                </div>
-
-                <div class="code-snippet">
-                    <h4>
-                        FootstepComponent.cpp — Physical Material Detection with
-                        Line Trace
-                    </h4>
                     <pre><code><span class="type">FName</span> <span class="type">UFootstepComponent</span>::<span class="function">DetectSurfaceType</span>() <span class="keyword">const</span>
 {
-    <span class="type">FHitResult</span> Hit;
+<span class="code-block-logic" data-block-title="Line Trace Setup" data-block-text="Sets up line trace from player position downward to detect surface. FHitResult stores hit information, Start is player location, End is below player by trace distance.">    <span class="type">FHitResult</span> Hit;
     <span class="keyword">const</span> <span class="type">FVector</span> Start = <span class="function">GetOwner</span>()-><span class="function">GetActorLocation</span>();
-    <span class="keyword">const</span> <span class="type">FVector</span> End = Start - <span class="function">FVector</span>(<span class="string">0.f</span>, <span class="string">0.f</span>, m_TraceDistance);
+    <span class="keyword">const</span> <span class="type">FVector</span> End = Start - <span class="function">FVector</span>(<span class="string">0.f</span>, <span class="string">0.f</span>, m_TraceDistance);</span>
 
-    <span class="type">FCollisionQueryParams</span> QueryParams;
+<span class="code-block-logic" data-block-title="Query Configuration" data-block-text="Configures collision query to ignore the player actor and return Physical Material information. This is essential for detecting surface type.">    <span class="type">FCollisionQueryParams</span> QueryParams;
     QueryParams.<span class="function">AddIgnoredActor</span>(<span class="function">GetOwner</span>());
-    QueryParams.bReturnPhysicalMaterial = <span class="keyword">true</span>;
+    QueryParams.bReturnPhysicalMaterial = <span class="keyword">true</span>;</span>
 
-    <span class="keyword">if</span> (<span class="function">GetWorld</span>()-><span class="function">LineTraceSingleByChannel</span>(Hit, Start, End, ECC_Visibility, QueryParams))
+<span class="code-block-logic" data-block-title="Line Trace Execution" data-block-text="Performs the actual line trace. Returns true if something was hit. This detects what surface the player is standing on.">    <span class="keyword">if</span> (<span class="function">GetWorld</span>()-><span class="function">LineTraceSingleByChannel</span>(Hit, Start, End, ECC_Visibility, QueryParams))</span>
     {
-        <span class="keyword">if</span> (<span class="type">UPhysicalMaterial</span>* PhysMat = Hit.PhysMaterial.<span class="function">Get</span>())
+<span class="code-block-logic" data-block-title="Surface Type Mapping" data-block-text="Extracts Physical Material from hit result and maps SurfaceType enum to Wwise Switch name. This connects Unreal surface detection to Wwise audio switching.">        <span class="keyword">if</span> (<span class="type">UPhysicalMaterial</span>* PhysMat = Hit.PhysMaterial.<span class="function">Get</span>())
         {
             <span class="comment">// Map PhysicalSurface enum to Wwise Switch names</span>
             <span class="keyword">switch</span> (PhysMat->SurfaceType)
@@ -1046,96 +1305,284 @@
                 <span class="keyword">case</span> SurfaceType4: <span class="keyword">return</span> <span class="function">FName</span>(<span class="string">"CreakyWood"</span>);
                 <span class="keyword">default</span>: <span class="keyword">return</span> <span class="function">FName</span>(<span class="string">"Concrete"</span>);
             }
-        }
+        }</span>
     }
     <span class="keyword">return</span> <span class="function">FName</span>(<span class="string">"Concrete"</span>);
 }</code></pre>
                 </div>
+                </div>
+            </section>
 
-                <div class="code-snippet">
-                    <h4>PlayerCharacter.h — Camera & Photoboard Delegates</h4>
+            <!-- Player Audio System -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="player_audio.title">Player Audio System: Delegate-Based Communication</h2>
+                    <p data-i18n="player_audio.desc">Clean separation between player actions and audio responses using Blueprint delegates.</p>
+                </div>
+
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3>WHAT</h3>
+                        <p data-i18n="player_audio.what">System connects player actions (camera shot, zoom, photoboard entry) with appropriate audio events in Wwise. Each player action automatically triggers corresponding sound.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>HOW</h3>
+                        <p data-i18n="player_audio.how">PlayerCharacter in C++ defines multicast delegates. When player performs action, delegate is broadcast. Blueprint Audio Manager listens to these delegates and calls appropriate Wwise Events.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>WHY</h3>
+                        <p data-i18n="player_audio.why">Delegates provide loose coupling - PlayerCharacter knows nothing about audio, Audio Manager knows nothing about player logic. This facilitates testing, debugging, and modifications. Each system can be developed independently.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>RESULT</h3>
+                        <p data-i18n="player_audio.result">Clean architecture, easy addition of new audio actions, zero hardcoded calls. Audio designer can modify audio without touching player code.</p>
+                    </div>
+                </div>
+
+                <div class="implementation-showcase">
+                    <div class="blueprint-side" style="position: relative;">
+                        <div class="blueprint-zoom-hint">Click to enlarge</div>
+                        <img src="../assets/images/projects-shadowframes/BP_PlayerOneshotAudioManager.png" alt="Player Audio Blueprint" class="blueprint-img" />
+                    </div>
+                    <div class="code-side">
+                        <h4>PlayerCharacter.h — Delegates</h4>
+                        <div class="code-explanation">
+                            <p><strong>WHAT:</strong> <span data-i18n="code_explanations.delegate_what">Definition of multicast delegates for player actions that trigger audio events.</span></p>
+                            <p><strong>HOW:</strong> <span data-i18n="code_explanations.delegate_how">DECLARE_DYNAMIC_MULTICAST_DELEGATE creates delegate that can be broadcast from C++ and listened to in Blueprint. UPROPERTY(BlueprintAssignable) allows binding in Blueprint.</span></p>
+                            <p><strong>WHY:</strong> <span data-i18n="code_explanations.delegate_why">Multicast delegates allow multiple listeners (e.g. Audio Manager) to react to one action. Dynamic delegates work with Blueprint, giving audio designer full control without modifying C++ code.</span></p>
+                        </div>
                     <pre><code><span class="comment">// Delegates for player actions that trigger audio events</span>
-<span class="keyword">DECLARE_DYNAMIC_MULTICAST_DELEGATE</span>(<span class="type">FOnCameraShutterDelegate</span>);
+<span class="code-block-logic" data-block-title="Delegate Declarations" data-block-text="Defines three multicast delegates for player actions. Dynamic means they work with Blueprint, multicast allows multiple listeners."><span class="keyword">DECLARE_DYNAMIC_MULTICAST_DELEGATE</span>(<span class="type">FOnCameraShutterDelegate</span>);
 <span class="keyword">DECLARE_DYNAMIC_MULTICAST_DELEGATE</span>(<span class="type">FOnCameraZoomInDelegate</span>);
-<span class="keyword">DECLARE_DYNAMIC_MULTICAST_DELEGATE</span>(<span class="type">FOnPhotoboardEnterDelegate</span>);
+<span class="keyword">DECLARE_DYNAMIC_MULTICAST_DELEGATE</span>(<span class="type">FOnPhotoboardEnterDelegate</span>);</span>
 
 <span class="keyword">UCLASS</span>()
 <span class="keyword">class</span> <span class="type">APlayerCharacter</span> : <span class="keyword">public</span> <span class="type">ACharacter</span>
 {
-    <span class="keyword">GENERATED_BODY</span>()
-
 <span class="keyword">public</span>:
-    <span class="keyword">UPROPERTY</span>(BlueprintAssignable, Category = <span class="string">"Audio"</span>)
+<span class="code-block-logic" data-block-title="Blueprint Exposure" data-block-text="Makes delegates visible in Blueprint editor. Audio Manager can bind to these without touching C++ code, enabling clean separation of concerns.">    <span class="keyword">UPROPERTY</span>(BlueprintAssignable, Category = <span class="string">"Audio"</span>)
     <span class="type">FOnCameraShutterDelegate</span> OnCameraShutter;
 
     <span class="keyword">UPROPERTY</span>(BlueprintAssignable, Category = <span class="string">"Audio"</span>)
     <span class="type">FOnCameraZoomInDelegate</span> OnCameraZoomIn;
 
     <span class="keyword">UPROPERTY</span>(BlueprintAssignable, Category = <span class="string">"Audio"</span>)
-    <span class="type">FOnPhotoboardEnterDelegate</span> OnPhotoboardEnter;
+    <span class="type">FOnPhotoboardEnterDelegate</span> OnPhotoboardEnter;</span>
 };</code></pre>
                 </div>
+                </div>
+            </section>
 
-                <div class="code-snippet">
-                    <h4>
-                        PhotoboardWidget.cpp — Dynamic RTPC for Tension System
-                    </h4>
+            <!-- RTPC Dynamic System -->
+            <section class="tech-section rtpc-section">
+                <div class="section-header">
+                    <h2 data-i18n="rtpc.title">Dynamic Tension System: RTPC-Driven Ambience</h2>
+                    <p data-i18n="rtpc.desc">Progressive ambient intensity scales with game state - photos placed on board increase tension.</p>
+                </div>
+
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3>WHAT</h3>
+                        <p data-i18n="rtpc.what">System dynamically changes ambient intensity based on number of photos placed on board. More photos = more tense atmosphere. RTPC value 0-5 controls ambient layers in Wwise.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>HOW</h3>
+                        <p data-i18n="rtpc.how">PhotoboardWidget tracks number of important photos. When player places photo, UpdateAmbientRTPC() finds AkAmbientSound actor and sets RTPC value. Wwise automatically crossfades between ambient layers.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>WHY</h3>
+                        <p data-i18n="rtpc.why">RTPC allows smooth transitions between tension states without jumps. Audio designer can precisely control in Wwise how each ambient layer responds to RTPC value. This gives full control over emotional progression.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>RESULT</h3>
+                        <p data-i18n="rtpc.result">Smooth tension progression, zero audio jumps, easy curve modification in Wwise. Atmosphere automatically adapts to player progress.</p>
+                    </div>
+                </div>
+
+                <div class="code-side" style="margin-top: 2rem;">
+                    <h4>PhotoboardWidget.cpp — RTPC Update</h4>
+                    <div class="code-explanation">
+                        <p><strong>WHAT:</strong> <span data-i18n="code_explanations.rtpc_what">Function updates RTPC value in Wwise based on number of photos placed on board.</span></p>
+                        <p><strong>HOW:</strong> <span data-i18n="code_explanations.rtpc_how">Finds AkAmbientSound actor named 'AmbientProgressive', then sets RTPC value (0-5) corresponding to number of important photos. Wwise automatically crossfades between ambient layers.</span></p>
+                        <p><strong>WHY:</strong> <span data-i18n="code_explanations.rtpc_why">RTPC allows smooth transitions between tension states. Audio designer can precisely control crossfade curves for each layer in Wwise, giving full control over emotional progression without code modifications.</span></p>
+                    </div>
                     <pre><code><span class="keyword">void</span> <span class="type">UPhotoboardWidget</span>::<span class="function">UpdateAmbientRTPC</span>()
 {
-    <span class="keyword">if</span> (!PhotosOnBoardRTPC) <span class="keyword">return</span>;
+<span class="code-block-logic" data-block-title="Null Check" data-block-text="Safety check to ensure RTPC parameter exists before attempting to set value.">    <span class="keyword">if</span> (!PhotosOnBoardRTPC) <span class="keyword">return</span>;</span>
 
     <span class="comment">// Find AkAmbientSound actor for progressive ambient system</span>
-    <span class="type">AActor</span>* TargetActor = <span class="keyword">nullptr</span>;
+<span class="code-block-logic" data-block-title="Actor Search Setup" data-block-text="Prepares to find all AkAmbientSound actors in the level. This locates the ambient sound system that needs RTPC updates.">    <span class="type">AActor</span>* TargetActor = <span class="keyword">nullptr</span>;
     <span class="type">TArray</span><<span class="type">AActor</span>*> FoundActors;
     <span class="type">UGameplayStatics</span>::<span class="function">GetAllActorsOfClass</span>(
         <span class="function">GetWorld</span>(),
         <span class="type">AAkAmbientSound</span>::<span class="function">StaticClass</span>(),
         FoundActors
-    );
+    );</span>
 
-    <span class="keyword">for</span> (<span class="type">AActor</span>* Actor : FoundActors)
+<span class="code-block-logic" data-block-title="Target Actor Selection" data-block-text="Searches through all ambient sound actors to find the one named 'AmbientProgressive'. This is the specific actor that handles tension progression.">    <span class="keyword">for</span> (<span class="type">AActor</span>* Actor : FoundActors)
     {
         <span class="keyword">if</span> (Actor && Actor-><span class="function">GetName</span>().<span class="function">Contains</span>(<span class="function">TEXT</span>(<span class="string">"AmbientProgressive"</span>)))
         {
             TargetActor = Actor;
             <span class="keyword">break</span>;
         }
-    }
+    }</span>
 
     <span class="comment">// RTPC value 0-5 drives ambient intensity as photos are placed</span>
-    <span class="type">UAkGameplayStatics</span>::<span class="function">SetRTPCValue</span>(
+<span class="code-block-logic" data-block-title="RTPC Value Update" data-block-text="Sets the RTPC value based on number of photos placed. Wwise automatically crossfades between ambient layers based on this value, creating smooth tension progression.">    <span class="type">UAkGameplayStatics</span>::<span class="function">SetRTPCValue</span>(
         PhotosOnBoardRTPC,
         m_ImportantPhotosAlreadyPlaced,
         <span class="string">0</span>,
         TargetActor
-    );
+    );</span>
 }</code></pre>
                 </div>
             </section>
 
+            <!-- Wwise Architecture -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="wwise_arch.title">Wwise Architecture: Switch Containers & Room-Based Audio</h2>
+                    <p data-i18n="wwise_arch.desc">Room-specific ambiences transition smoothly as player moves through the pub.</p>
+                </div>
+
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3>WHAT</h3>
+                        <p data-i18n="wwise_arch.what">Each room in pub has unique audio atmosphere. When player moves between rooms, audio smoothly switches. Switch Container in Wwise automatically selects appropriate ambient layer.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>HOW</h3>
+                        <p data-i18n="wwise_arch.how">Blueprint Audio Zone Manager detects player entry into trigger zone, sets appropriate Switch in Wwise. Switch Container in Wwise contains all ambient variants for each room and automatically crossfades between them.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>WHY</h3>
+                        <p data-i18n="wwise_arch.why">Switch Containers provide smooth transitions without audio breaks. Audio designer can precisely control timing and crossfade curves in Wwise. This gives natural, immersive experience without artifacts.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>RESULT</h3>
+                        <p data-i18n="wwise_arch.result">Smooth transitions between rooms, zero audio breaks, easy addition of new rooms. Each room sounds unique, creating cohesive spatial audio narrative.</p>
+                    </div>
+                </div>
+
+                <div class="media-grid">
+                    <div class="media-item">
+                        <img src="../assets/images/projects-shadowframes/SwitchContainer.png" alt="Wwise Switch Container" class="blueprint-img" />
+                    </div>
+                    <div class="media-item">
+                        <img src="../assets/images/projects-shadowframes/PhotosOnBoard.png" alt="Photos on Board System" class="blueprint-img" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- Media Showcase -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="sections.gameplay_showcase">Gameplay Showcase</h2>
+                </div>
+                <div class="video-section">
+                    <div class="custom-video-player">
+                        <video loop>
+                            <source src="../assets/images/projects-shadowframes/videodemoprod3withwwiseprofiler.mp4" type="video/mp4" />
+                            Your browser doesn't support video.
+                        </video>
+                        <div class="video-controls">
+                            <div class="video-progress-container">
+                                <div class="video-progress-bar"></div>
+                            </div>
+                            <div class="video-controls-bottom">
+                                <button class="video-play-pause-btn">▶</button>
+                                <div class="video-time"><span class="video-current-time">0:00</span> / <span class="video-total-time">0:00</span></div>
+                                <div class="video-volume">
+                                    <span style="color: var(--text-primary); font-size: 0.9rem;">VOL</span>
+                                    <div class="volume-slider">
+                                        <div class="volume-progress"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Audio Showcase -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2>Audio Prototypes</h2>
+                    <p>Original compositions and soundscape design for Shadow Frames.</p>
+                </div>
+                
+                <div class="audio-section">
+                    <h3 style="margin-bottom: 1rem; color: var(--accent-blue);">Music Prototype</h3>
+                    <div class="custom-audio-player" data-audio-src="../assets/audio/samples/Shadow_Frame_Menu_Vibe_but_Louder.wav">
+                        <audio>
+                            <source src="../assets/audio/samples/Shadow_Frame_Menu_Vibe_but_Louder.wav" type="audio/wav" />
+                        </audio>
+                        <div class="player-controls">
+                            <button class="play-pause-btn">▶</button>
+                            <div class="player-info">
+                                <div class="player-title">Shadow Frames — Menu Vibe</div>
+                                <div class="player-time"><span class="current-time">0:00</span> / <span class="total-time">0:00</span></div>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar"></div>
+                            <div class="progress-handle"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="audio-section">
+                    <h3 style="margin-bottom: 1rem; color: var(--accent-blue);">Sound Soundscape Prototype</h3>
+                    <div class="custom-audio-player" data-audio-src="../assets/images/projects-shadowframes/PaletteSoundscapeUpdate.mp3">
+                        <audio>
+                            <source src="../assets/images/projects-shadowframes/PaletteSoundscapeUpdate.mp3" type="audio/mpeg" />
+                        </audio>
+                        <div class="player-controls">
+                            <button class="play-pause-btn">▶</button>
+                            <div class="player-info">
+                                <div class="player-title">Palette Soundscape Update</div>
+                                <div class="player-time"><span class="current-time">0:00</span> / <span class="total-time">0:00</span></div>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar"></div>
+                            <div class="progress-handle"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Documentation -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <h2 data-i18n="sections.audio_doc">Audio Documentation</h2>
+                    <p data-i18n="sections.audio_doc_desc">Complete technical documentation covering all audio systems, asset pipeline, and implementation guidelines.</p>
+                </div>
+                <a href="../assets/images/projects-shadowframes/Sound_Grp22_ShadowFrames.pdf" class="doc-link" download data-i18n="sections.download_sound_bible">Download Sound Bible PDF</a>
+            </section>
+
             <!-- Tech Stack -->
-            <section>
+            <section class="tech-section">
+                <div class="section-header">
                 <h2 data-i18n="tech_stack.title">Technical Stack</h2>
-                <div class="grid">
-                    <div class="grid-item">
-                        <h4>Audio Middleware</h4>
+                </div>
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3>Audio Middleware</h3>
                         <p data-i18n="tech_stack.wwise">Wwise 2024.1</p>
                     </div>
-                    <div class="grid-item">
-                        <h4>Game Engine</h4>
-                        <p data-i18n="tech_stack.engine">Unreal Engine 5.4.4</p>
+                    <div class="explanation-item">
+                        <h3>Game Engine</h3>
+                        <p data-i18n="tech_stack.engine">Unreal Engine 5.5</p>
                     </div>
-                    <div class="grid-item">
-                        <h4>Audio Tools</h4>
-                        <p data-i18n="tech_stack.audio_tools">
-                            Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho
-                        </p>
+                    <div class="explanation-item">
+                        <h3>Audio Tools</h3>
+                        <p data-i18n="tech_stack.audio_tools">Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho</p>
                     </div>
-                    <div class="grid-item">
-                        <h4>Performance</h4>
-                        <p data-i18n="tech_stack.performance">
-                            Sub 5% CPU, optimized streaming
-                        </p>
+                    <div class="explanation-item">
+                        <h3>Performance</h3>
+                        <p data-i18n="tech_stack.performance">Sub 5% CPU, optimized streaming</p>
                     </div>
                 </div>
             </section>
@@ -1147,49 +1594,242 @@
             <img id="lightbox-img" src="" alt="Screenshot" />
         </div>
 
-        <!-- Language System -->
-        <script src="../assets/js/language-system.js"></script>
+        <!-- Scripts -->
         <script>
-            // Initialize language system
-            document.addEventListener("DOMContentLoaded", () => {
-                if (typeof initLanguageSystem === "function") {
-                    initLanguageSystem("shadow-frames");
-                }
+            const TRANSLATION_PATH = '../locales/shadow-frames.json';
 
-                // Setup screenshot lightbox
-                const screenshots = document.querySelectorAll(".screenshot");
-                screenshots.forEach((screenshot) => {
-                    screenshot.addEventListener("click", function () {
-                        const img = this.querySelector("img");
-                        const lightbox = document.getElementById("lightbox");
-                        const lightboxImg =
-                            document.getElementById("lightbox-img");
-                        lightboxImg.src = img.src;
-                        lightbox.classList.add("active");
-                    });
-                });
-            });
-
-            // Lightbox functions
-            function closeLightbox() {
-                const lightbox = document.getElementById("lightbox");
-                lightbox.classList.remove("active");
+            function getNestedTranslation(obj, path) {
+                return path.split('.').reduce((current, key) => current?.[key], obj);
             }
 
-            // Close lightbox on background click
-            document
-                .getElementById("lightbox")
-                .addEventListener("click", function (e) {
-                    if (e.target === this) {
-                        closeLightbox();
+            function applyTranslations(translations, lang) {
+                const langTranslations = translations[lang] || {};
+
+                document.querySelectorAll('[data-i18n]').forEach((element) => {
+                    const key = element.getAttribute('data-i18n');
+                    const translation = getNestedTranslation(langTranslations, key);
+                    if (translation) {
+                        element.textContent = translation;
                     }
                 });
 
-            // Close lightbox on ESC key
-            document.addEventListener("keydown", function (e) {
-                if (e.key === "Escape") {
-                    closeLightbox();
+                document.querySelectorAll('.lang-btn').forEach((button) => {
+                    button.classList.toggle('active', button.dataset.lang === lang);
+                });
+            }
+
+            document.addEventListener("DOMContentLoaded", async () => {
+                const stored = localStorage.getItem('language');
+                const defaultLang = stored || 'en';
+                let translations = {};
+
+                try {
+                    const response = await fetch(TRANSLATION_PATH);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    translations = await response.json();
+                    applyTranslations(translations, defaultLang);
+                } catch (error) {
+                    console.error('Failed to load translations', error);
                 }
+
+                document.querySelectorAll('.lang-btn').forEach((button) => {
+                    button.addEventListener('click', () => {
+                        const lang = button.dataset.lang;
+                        localStorage.setItem('language', lang);
+                        applyTranslations(translations, lang);
+                    });
+                });
+
+                // Lightbox for media items
+                const mediaItems = document.querySelectorAll(".media-item");
+                mediaItems.forEach((item) => {
+                    const img = item.querySelector("img");
+                    if (img) {
+                        item.addEventListener("click", function () {
+                        const lightbox = document.getElementById("lightbox");
+                            const lightboxImg = document.getElementById("lightbox-img");
+                        lightboxImg.src = img.src;
+                        lightbox.classList.add("active");
+                    });
+                    }
+                });
+
+                // Lightbox for blueprints
+                const blueprintImages = document.querySelectorAll(".blueprint-img");
+                blueprintImages.forEach((img) => {
+                    img.style.cursor = "zoom-in";
+                    img.addEventListener("click", function () {
+                const lightbox = document.getElementById("lightbox");
+                        const lightboxImg = document.getElementById("lightbox-img");
+                        lightboxImg.src = img.src;
+                        lightbox.classList.add("active");
+                });
+            });
+
+                // Interactive code blocks with logic explanations
+                const tooltip = document.createElement('div');
+                tooltip.className = 'code-tooltip';
+                document.body.appendChild(tooltip);
+
+                const logicElements = document.querySelectorAll('.code-block-logic');
+                logicElements.forEach((element) => {
+                    const title = element.getAttribute('data-block-title');
+                    const text = element.getAttribute('data-block-text');
+                    
+                    if (title && text) {
+                        element.addEventListener('mouseenter', (e) => {
+                            const rect = element.getBoundingClientRect();
+                            tooltip.innerHTML = `<h5>${title}</h5><p>${text}</p>`;
+                            
+                            // Check if element is in rtpc-section (Photoboard Widget)
+                            const isRTPCSection = element.closest('.rtpc-section');
+                            
+                            if (isRTPCSection) {
+                                // For RTPC section, always position tooltip to the RIGHT (left side of code)
+                                tooltip.style.left = (rect.right + 20) + 'px';
+                                tooltip.style.right = 'auto';
+                            } else {
+                                // For other sections, position to the right, or left if not enough space
+                                const spaceRight = window.innerWidth - rect.right;
+                                
+                                if (spaceRight > 350) {
+                                    tooltip.style.left = (rect.right + 20) + 'px';
+                                    tooltip.style.right = 'auto';
+                                } else {
+                                    tooltip.style.left = (rect.left - 340) + 'px';
+                                    tooltip.style.right = 'auto';
+                                }
+                            }
+                            
+                            tooltip.style.top = Math.max(10, rect.top - 10) + 'px';
+                            tooltip.classList.add('active');
+                        });
+                        
+                        element.addEventListener('mouseleave', () => {
+                            tooltip.classList.remove('active');
+                        });
+                    }
+                });
+            });
+
+            function closeLightbox() {
+                document.getElementById("lightbox").classList.remove("active");
+            }
+
+            // Custom Audio Players
+            function formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            document.querySelectorAll('.custom-audio-player').forEach((player) => {
+                const audio = player.querySelector('audio');
+                const playBtn = player.querySelector('.play-pause-btn');
+                const progressBar = player.querySelector('.progress-bar');
+                const progressContainer = player.querySelector('.progress-container');
+                const currentTimeEl = player.querySelector('.current-time');
+                const totalTimeEl = player.querySelector('.total-time');
+
+                let isPlaying = false;
+
+                audio.addEventListener('loadedmetadata', () => {
+                    totalTimeEl.textContent = formatTime(audio.duration);
+                });
+
+                audio.addEventListener('timeupdate', () => {
+                    const progress = (audio.currentTime / audio.duration) * 100;
+                    progressBar.style.width = progress + '%';
+                    currentTimeEl.textContent = formatTime(audio.currentTime);
+                });
+
+                playBtn.addEventListener('click', () => {
+                    if (isPlaying) {
+                        audio.pause();
+                        playBtn.textContent = '▶';
+                        isPlaying = false;
+                    } else {
+                        audio.play();
+                        playBtn.textContent = '⏸';
+                        isPlaying = true;
+                    }
+                });
+
+                progressContainer.addEventListener('click', (e) => {
+                    const rect = progressContainer.getBoundingClientRect();
+                    const percent = (e.clientX - rect.left) / rect.width;
+                    audio.currentTime = percent * audio.duration;
+                });
+
+                audio.addEventListener('ended', () => {
+                    playBtn.textContent = '▶';
+                    isPlaying = false;
+                    progressBar.style.width = '0%';
+                });
+            });
+
+            // Custom Video Player
+            const videoPlayer = document.querySelector('.custom-video-player');
+            if (videoPlayer) {
+                const video = videoPlayer.querySelector('video');
+                const playBtn = videoPlayer.querySelector('.video-play-pause-btn');
+                const progressBar = videoPlayer.querySelector('.video-progress-bar');
+                const progressContainer = videoPlayer.querySelector('.video-progress-container');
+                const currentTimeEl = videoPlayer.querySelector('.video-current-time');
+                const totalTimeEl = videoPlayer.querySelector('.video-total-time');
+                const volumeSlider = videoPlayer.querySelector('.volume-slider');
+                const volumeProgress = videoPlayer.querySelector('.volume-progress');
+
+                let isPlaying = false;
+
+                video.addEventListener('loadedmetadata', () => {
+                    totalTimeEl.textContent = formatTime(video.duration);
+                    video.volume = 1.0;
+                });
+
+                video.addEventListener('timeupdate', () => {
+                    const progress = (video.currentTime / video.duration) * 100;
+                    progressBar.style.width = progress + '%';
+                    currentTimeEl.textContent = formatTime(video.currentTime);
+                });
+
+                playBtn.addEventListener('click', () => {
+                    if (isPlaying) {
+                        video.pause();
+                        playBtn.textContent = '▶';
+                        isPlaying = false;
+                    } else {
+                        video.play();
+                        playBtn.textContent = '⏸';
+                        isPlaying = true;
+                    }
+                });
+
+                progressContainer.addEventListener('click', (e) => {
+                    const rect = progressContainer.getBoundingClientRect();
+                    const percent = (e.clientX - rect.left) / rect.width;
+                    video.currentTime = percent * video.duration;
+                });
+
+                volumeSlider.addEventListener('click', (e) => {
+                    const rect = volumeSlider.getBoundingClientRect();
+                    const percent = (e.clientX - rect.left) / rect.width;
+                    video.volume = Math.max(0, Math.min(1, percent));
+                    volumeProgress.style.width = (video.volume * 100) + '%';
+                });
+
+                video.addEventListener('ended', () => {
+                    playBtn.textContent = '▶';
+                    isPlaying = false;
+                });
+            }
+
+            document.getElementById("lightbox").addEventListener("click", function (e) {
+                if (e.target === this) closeLightbox();
+            });
+
+            document.addEventListener("keydown", function (e) {
+                if (e.key === "Escape") closeLightbox();
             });
         </script>
     </body>

@@ -95,6 +95,63 @@
       "engine": "Unreal Engine 5.4.4",
       "audio_tools": "Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho",
       "performance": "Sub 5% CPU, optimized streaming"
+    },
+    "footstep": {
+      "title": "Footstep System: Surface Detection & Audio Routing",
+      "desc": "Physical material detection drives dynamic audio switching for realistic surface-based footsteps.",
+      "what": "System detects surface type under player (wood, tiles, concrete) and automatically switches appropriate footstep sounds in Wwise. Each player step matches the material they're walking on.",
+      "how": "C++ component performs line trace downward from player position, detects Physical Material, maps it to Wwise Switch name, and Blueprint Audio Manager receives delegate and plays appropriate sound.",
+      "why": "Separation of Concerns - C++ handles detection logic, Blueprint handles audio. Delegates provide loose coupling between systems. This allows easy addition of new surfaces without modifying C++ code.",
+      "result": "Realistic footsteps matched to surface, zero manual switching, easy expansion with new materials. System works automatically for every player step."
+    },
+    "player_audio": {
+      "title": "Player Audio System: Delegate-Based Communication",
+      "desc": "Clean separation between player actions and audio responses using Blueprint delegates.",
+      "what": "System connects player actions (camera shot, zoom, photoboard entry) with appropriate audio events in Wwise. Each player action automatically triggers corresponding sound.",
+      "how": "PlayerCharacter in C++ defines multicast delegates. When player performs action, delegate is broadcast. Blueprint Audio Manager listens to these delegates and calls appropriate Wwise Events.",
+      "why": "Delegates provide loose coupling - PlayerCharacter knows nothing about audio, Audio Manager knows nothing about player logic. This facilitates testing, debugging, and modifications. Each system can be developed independently.",
+      "result": "Clean architecture, easy addition of new audio actions, zero hardcoded calls. Audio designer can modify audio without touching player code."
+    },
+    "rtpc": {
+      "title": "Dynamic Tension System: RTPC-Driven Ambience",
+      "desc": "Progressive ambient intensity scales with game state - photos placed on board increase tension.",
+      "what": "System dynamically changes ambient intensity based on number of photos placed on board. More photos = more tense atmosphere. RTPC value 0-5 controls ambient layers in Wwise.",
+      "how": "PhotoboardWidget tracks number of important photos. When player places photo, UpdateAmbientRTPC() finds AkAmbientSound actor and sets RTPC value. Wwise automatically crossfades between ambient layers.",
+      "why": "RTPC allows smooth transitions between tension states without jumps. Audio designer can precisely control in Wwise how each ambient layer responds to RTPC value. This gives full control over emotional progression.",
+      "result": "Smooth tension progression, zero audio jumps, easy curve modification in Wwise. Atmosphere automatically adapts to player progress."
+    },
+    "wwise_arch": {
+      "title": "Wwise Architecture: Switch Containers & Room-Based Audio",
+      "desc": "Room-specific ambiences transition smoothly as player moves through the pub.",
+      "what": "Each room in pub has unique audio atmosphere. When player moves between rooms, audio smoothly switches. Switch Container in Wwise automatically selects appropriate ambient layer.",
+      "how": "Blueprint Audio Zone Manager detects player entry into trigger zone, sets appropriate Switch in Wwise. Switch Container in Wwise contains all ambient variants for each room and automatically crossfades between them.",
+      "why": "Switch Containers provide smooth transitions without audio breaks. Audio designer can precisely control timing and crossfade curves in Wwise. This gives natural, immersive experience without artifacts.",
+      "result": "Smooth transitions between rooms, zero audio breaks, easy addition of new rooms. Each room sounds unique, creating cohesive spatial audio narrative."
+    },
+    "sections": {
+      "gameplay_showcase": "Gameplay Showcase",
+      "audio_doc": "Audio Documentation",
+      "audio_doc_desc": "Complete technical documentation covering all audio systems, asset pipeline, and implementation guidelines.",
+      "download_sound_bible": "📄 Download Sound Bible PDF",
+      "soundscape_title": "Prototype Soundscape",
+      "music_title": "Shadow Frames — Music Prototype",
+      "music_desc": "Original music composition for the game's atmosphere and emotional progression.",
+      "org_title": "Multi-Institutional Collaboration",
+      "org_desc": "This is a major collaborative project between prestigious institutions:",
+      "ritcs_desc": "RITCS (Royal Institute for Theatre, Cinema & Sound) — Leading narrative design and story development",
+      "kask_desc": "KASK Conservatory — Providing music composition expertise",
+      "howest_desc": "Howest DAE (Digital Arts & Entertainment) — Game development and technical audio implementation"
+    },
+    "code_explanations": {
+      "footstep_what": "Function detects surface type under player using line trace downward from player position.",
+      "footstep_how": "Line trace checks object's Physical Material, then maps SurfaceType enum to Wwise Switch name (Tiles, Wood, CreakyWood, Concrete).",
+      "footstep_why": "Using Physical Material allows automatic detection without manually tagging each surface. Mapping to Switch names provides flexibility in Wwise.",
+      "delegate_what": "Definition of multicast delegates for player actions that trigger audio events.",
+      "delegate_how": "DECLARE_DYNAMIC_MULTICAST_DELEGATE creates delegate that can be broadcast from C++ and listened to in Blueprint. UPROPERTY(BlueprintAssignable) allows binding in Blueprint.",
+      "delegate_why": "Multicast delegates allow multiple listeners (e.g. Audio Manager) to react to one action. Dynamic delegates work with Blueprint, giving audio designer full control without modifying C++ code.",
+      "rtpc_what": "Function updates RTPC value in Wwise based on number of photos placed on board.",
+      "rtpc_how": "Finds AkAmbientSound actor named 'AmbientProgressive', then sets RTPC value (0-5) corresponding to number of important photos. Wwise automatically crossfades between ambient layers.",
+      "rtpc_why": "RTPC allows smooth transitions between tension states. Audio designer can precisely control crossfade curves for each layer in Wwise, giving full control over emotional progression without code modifications."
     }
   },
   "pl": {
@@ -193,6 +250,63 @@
       "engine": "Unreal Engine 5.4.4",
       "audio_tools": "Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho",
       "performance": "Poniżej 5% CPU, zoptymalizowany streaming"
+    },
+    "footstep": {
+      "title": "System Kroków: Wykrywanie Powierzchni & Routing Audio",
+      "desc": "Wykrywanie materiału fizycznego napędza dynamiczne przełączanie audio dla realistycznych kroków dopasowanych do powierzchni.",
+      "what": "System wykrywa typ powierzchni pod graczem (drewno, płytki, beton) i automatycznie przełącza odpowiednie dźwięki kroków w Wwise. Każdy krok gracza jest dopasowany do materiału, po którym chodzi.",
+      "how": "C++ component wykonuje line trace w dół od pozycji gracza, wykrywa Physical Material, mapuje go na nazwę Switch w Wwise, a Blueprint Audio Manager odbiera delegate i odtwarza odpowiedni dźwięk.",
+      "why": "Separation of Concerns - C++ zajmuje się logiką wykrywania, Blueprint obsługuje audio. Delegates zapewniają luźne sprzężenie między systemami. To pozwala na łatwe dodawanie nowych powierzchni bez modyfikacji kodu C++.",
+      "result": "Realistyczne kroki dopasowane do powierzchni, zero ręcznego przełączania, łatwa rozbudowa o nowe materiały. System działa automatycznie dla każdego kroku gracza."
+    },
+    "player_audio": {
+      "title": "System Audio Gracza: Komunikacja przez Delegates",
+      "desc": "Czyste oddzielenie między akcjami gracza a odpowiedziami audio używając Blueprint delegates.",
+      "what": "System łączy akcje gracza (strzał aparatem, zoom, wejście do photoboard) z odpowiednimi eventami audio w Wwise. Każda akcja gracza automatycznie wywołuje odpowiedni dźwięk.",
+      "how": "PlayerCharacter w C++ definiuje multicast delegates. Gdy gracz wykonuje akcję, delegate jest broadcastowany. Blueprint Audio Manager nasłuchuje tych delegate'ów i wywołuje odpowiednie Wwise Events.",
+      "why": "Delegates zapewniają luźne sprzężenie - PlayerCharacter nie wie nic o audio, Audio Manager nie wie nic o logice gracza. To ułatwia testowanie, debugowanie i modyfikacje. Każdy system może być rozwijany niezależnie.",
+      "result": "Czysta architektura, łatwe dodawanie nowych akcji audio, zero hardcoded'owanych wywołań. Audio designer może modyfikować audio bez dotykania kodu gracza."
+    },
+    "rtpc": {
+      "title": "Dynamiczny System Napięcia: Ambient Sterowany RTPC",
+      "desc": "Progresywna intensywność ambientu skaluje się ze stanem gry - zdjęcia umieszczone na tablicy zwiększają napięcie.",
+      "what": "System dynamicznie zmienia intensywność ambientu w zależności od liczby zdjęć umieszczonych na tablicy. Im więcej zdjęć, tym bardziej napięta atmosfera. RTPC value 0-5 kontroluje warstwy ambientu w Wwise.",
+      "how": "PhotoboardWidget śledzi liczbę ważnych zdjęć. Gdy gracz umieszcza zdjęcie, UpdateAmbientRTPC() znajduje AkAmbientSound actor i ustawia RTPC value. Wwise automatycznie crossfade'uje między warstwami ambientu.",
+      "why": "RTPC pozwala na płynne przejścia między stanami napięcia bez skoków. Audio designer może w Wwise precyzyjnie kontrolować, jak każda warstwa ambientu reaguje na RTPC value. To daje pełną kontrolę nad emocjonalną progresją.",
+      "result": "Płynna progresja napięcia, zero skoków w audio, łatwa modyfikacja krzywych w Wwise. Atmosfera automatycznie dostosowuje się do postępu gracza."
+    },
+    "wwise_arch": {
+      "title": "Architektura Wwise: Switch Containers & Audio Pokojowe",
+      "desc": "Atmosfery specyficzne dla pokoi płynnie się przełączają gdy gracz porusza się po pubie.",
+      "what": "Każdy pokój w pubie ma swoją unikalną atmosferę audio. Gdy gracz przechodzi między pokojami, audio płynnie się przełącza. Switch Container w Wwise automatycznie wybiera odpowiednią warstwę ambientu.",
+      "how": "Blueprint Audio Zone Manager wykrywa wejście gracza do trigger zone, ustawia odpowiedni Switch w Wwise. Switch Container w Wwise zawiera wszystkie warianty ambientu dla każdego pokoju i automatycznie crossfade'uje między nimi.",
+      "why": "Switch Containers zapewniają płynne przejścia bez przerw w audio. Audio designer może w Wwise precyzyjnie kontrolować timing i krzywe crossfade. To daje naturalne, immersyjne doświadczenie bez artefaktów.",
+      "result": "Płynne przejścia między pokojami, zero przerw w audio, łatwe dodawanie nowych pokoi. Każdy pokój brzmi unikalnie, tworząc spójną przestrzenną narrację audio."
+    },
+    "sections": {
+      "gameplay_showcase": "Pokaz Rozgrywki",
+      "audio_doc": "Dokumentacja Audio",
+      "audio_doc_desc": "Kompletna dokumentacja techniczna obejmująca wszystkie systemy audio, pipeline assetów i wytyczne implementacji.",
+      "download_sound_bible": "📄 Pobierz Sound Bible PDF",
+      "soundscape_title": "Prototyp Soundscape",
+      "music_title": "Shadow Frames — Prototyp Muzyki",
+      "music_desc": "Oryginalna kompozycja muzyczna dla atmosfery gry i progresji emocjonalnej.",
+      "org_title": "Współpraca Międzyinstytucjonalna",
+      "org_desc": "To duży projekt współpracy między prestiżowymi instytucjami:",
+      "ritcs_desc": "RITCS (Royal Institute for Theatre, Cinema & Sound) — Prowadzenie narrative design i rozwoju historii",
+      "kask_desc": "Konserwatorium KASK — Dostarczanie ekspertyzy w kompozycji muzycznej",
+      "howest_desc": "Howest DAE (Digital Arts & Entertainment) — Game development i techniczna implementacja audio"
+    },
+    "code_explanations": {
+      "footstep_what": "Funkcja wykrywa typ powierzchni pod graczem używając line trace w dół od pozycji gracza.",
+      "footstep_how": "Line trace sprawdza Physical Material obiektu, a następnie mapuje SurfaceType enum na nazwę Switch w Wwise (Tiles, Wood, CreakyWood, Concrete).",
+      "footstep_why": "Użycie Physical Material pozwala na automatyczne wykrywanie bez ręcznego tagowania każdej powierzchni. Mapowanie na nazwy Switch zapewnia elastyczność w Wwise.",
+      "delegate_what": "Definicja multicast delegate'ów dla akcji gracza które wywołują audio events.",
+      "delegate_how": "DECLARE_DYNAMIC_MULTICAST_DELEGATE tworzy delegate który może być broadcastowany z C++ i nasłuchiwany w Blueprint. UPROPERTY(BlueprintAssignable) pozwala na binding w Blueprint.",
+      "delegate_why": "Multicast delegates pozwalają wielu listenerom (np. Audio Manager) reagować na jedną akcję. Dynamic delegates działają z Blueprint, co daje audio designerowi pełną kontrolę bez modyfikacji kodu C++.",
+      "rtpc_what": "Funkcja aktualizuje RTPC value w Wwise na podstawie liczby zdjęć umieszczonych na tablicy.",
+      "rtpc_how": "Znajduje AkAmbientSound actor o nazwie 'AmbientProgressive', następnie ustawia RTPC value (0-5) odpowiadającą liczbie ważnych zdjęć. Wwise automatycznie crossfade'uje między warstwami ambientu.",
+      "rtpc_why": "RTPC pozwala na płynne przejścia między stanami napięcia. Audio designer może w Wwise precyzyjnie kontrolować krzywe crossfade dla każdej warstwy, dając pełną kontrolę nad emocjonalną progresją bez modyfikacji kodu."
     }
   },
   "nl": {
@@ -291,6 +405,63 @@
       "engine": "Unreal Engine 5.4.4",
       "audio_tools": "Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho",
       "performance": "Onder 5% CPU, geoptimaliseerde streaming"
+    },
+    "footstep": {
+      "title": "Voetstap Systeem: Oppervlak Detectie & Audio Routing",
+      "desc": "Fysieke materiaal detectie drijft dynamische audio schakeling voor realistische oppervlak-gebaseerde voetstappen.",
+      "what": "Systeem detecteert oppervlaktetype onder speler (hout, tegels, beton) en schakelt automatisch geschikte voetstap geluiden in Wwise. Elke speler stap matcht het materiaal waarop ze lopen.",
+      "how": "C++ component voert line trace uit naar beneden vanaf speler positie, detecteert Physical Material, mapt het naar Wwise Switch naam, en Blueprint Audio Manager ontvangt delegate en speelt geschikt geluid af.",
+      "why": "Separation of Concerns - C++ handelt detectie logica af, Blueprint handelt audio af. Delegates zorgen voor losse koppeling tussen systemen. Dit maakt toevoegen van nieuwe oppervlakken gemakkelijk zonder C++ code te wijzigen.",
+      "result": "Realistische voetstappen gematcht aan oppervlak, nul handmatige schakeling, gemakkelijke uitbreiding met nieuwe materialen. Systeem werkt automatisch voor elke speler stap."
+    },
+    "player_audio": {
+      "title": "Speler Audio Systeem: Delegate-Gebaseerde Communicatie",
+      "desc": "Schone scheiding tussen speler acties en audio reacties met Blueprint delegates.",
+      "what": "Systeem verbindt speler acties (camera schot, zoom, photoboard entry) met geschikte audio events in Wwise. Elke speler actie triggert automatisch corresponderend geluid.",
+      "how": "PlayerCharacter in C++ definieert multicast delegates. Wanneer speler actie uitvoert, delegate wordt uitgezonden. Blueprint Audio Manager luistert naar deze delegates en roept geschikte Wwise Events aan.",
+      "why": "Delegates zorgen voor losse koppeling - PlayerCharacter weet niets over audio, Audio Manager weet niets over speler logica. Dit vergemakkelijkt testen, debuggen en wijzigingen. Elk systeem kan onafhankelijk ontwikkeld worden.",
+      "result": "Schone architectuur, gemakkelijke toevoeging van nieuwe audio acties, nul hardcoded calls. Audio designer kan audio wijzigen zonder speler code aan te raken."
+    },
+    "rtpc": {
+      "title": "Dynamisch Spanning Systeem: RTPC-Gedreven Ambience",
+      "desc": "Progressieve ambient intensiteit schaalt met game state - foto's geplaatst op bord verhogen spanning.",
+      "what": "Systeem verandert dynamisch ambient intensiteit op basis van aantal foto's geplaatst op bord. Meer foto's = meer gespannen atmosfeer. RTPC waarde 0-5 controleert ambient lagen in Wwise.",
+      "how": "PhotoboardWidget volgt aantal belangrijke foto's. Wanneer speler foto plaatst, UpdateAmbientRTPC() vindt AkAmbientSound actor en zet RTPC waarde. Wwise crossfade automatisch tussen ambient lagen.",
+      "why": "RTPC maakt vloeiende overgangen tussen spanning staten zonder sprongen. Audio designer kan precies controleren in Wwise hoe elke ambient laag reageert op RTPC waarde. Dit geeft volledige controle over emotionele progressie.",
+      "result": "Vloeiende spanning progressie, nul audio sprongen, gemakkelijke curve wijziging in Wwise. Atmosfeer past automatisch aan aan speler voortgang."
+    },
+    "wwise_arch": {
+      "title": "Wwise Architectuur: Switch Containers & Kamer-Gebaseerd Audio",
+      "desc": "Kamer-specifieke ambiences wisselen soepel wanneer speler door pub beweegt.",
+      "what": "Elke kamer in pub heeft unieke audio atmosfeer. Wanneer speler tussen kamers beweegt, audio wisselt soepel. Switch Container in Wwise selecteert automatisch geschikte ambient laag.",
+      "how": "Blueprint Audio Zone Manager detecteert speler entry in trigger zone, zet geschikte Switch in Wwise. Switch Container in Wwise bevat alle ambient varianten voor elke kamer en crossfade automatisch tussen hen.",
+      "why": "Switch Containers zorgen voor vloeiende overgangen zonder audio onderbrekingen. Audio designer kan precies timing en crossfade curves controleren in Wwise. Dit geeft natuurlijke, meeslepende ervaring zonder artefacten.",
+      "result": "Vloeiende overgangen tussen kamers, nul audio onderbrekingen, gemakkelijke toevoeging van nieuwe kamers. Elke kamer klinkt uniek, creëert samenhangende ruimtelijke audio narratief."
+    },
+    "sections": {
+      "gameplay_showcase": "Gameplay Showcase",
+      "audio_doc": "Audio Documentatie",
+      "audio_doc_desc": "Volledige technische documentatie die alle audio systemen, asset pipeline en implementatie richtlijnen dekt.",
+      "download_sound_bible": "📄 Download Sound Bible PDF",
+      "soundscape_title": "Prototype Soundscape",
+      "music_title": "Shadow Frames — Muziek Prototype",
+      "music_desc": "Originele muziekcompositie voor de sfeer van het spel en emotionele progressie.",
+      "org_title": "Multi-institutionele Samenwerking",
+      "org_desc": "Dit is een groot collaboratief project tussen prestigieuze instellingen:",
+      "ritcs_desc": "RITCS (Royal Institute for Theatre, Cinema & Sound) — Leidend in narrative design en verhaalontwikkeling",
+      "kask_desc": "KASK Conservatorium — Biedt expertise in muziekcompositie",
+      "howest_desc": "Howest DAE (Digital Arts & Entertainment) — Game development en technische audio-implementatie"
+    },
+    "code_explanations": {
+      "footstep_what": "Functie detecteert oppervlaktetype onder speler met line trace naar beneden vanaf speler positie.",
+      "footstep_how": "Line trace controleert object's Physical Material, mapt dan SurfaceType enum naar Wwise Switch naam (Tiles, Wood, CreakyWood, Concrete).",
+      "footstep_why": "Gebruik van Physical Material maakt automatische detectie mogelijk zonder handmatig taggen van elk oppervlak. Mapping naar Switch namen biedt flexibiliteit in Wwise.",
+      "delegate_what": "Definitie van multicast delegates voor speler acties die audio events triggeren.",
+      "delegate_how": "DECLARE_DYNAMIC_MULTICAST_DELEGATE creëert delegate die kan worden uitgezonden vanuit C++ en beluisterd in Blueprint. UPROPERTY(BlueprintAssignable) maakt binding in Blueprint mogelijk.",
+      "delegate_why": "Multicast delegates maken het mogelijk dat meerdere listeners (bijv. Audio Manager) reageren op één actie. Dynamic delegates werken met Blueprint, wat audio designer volledige controle geeft zonder C++ code te wijzigen.",
+      "rtpc_what": "Functie werkt RTPC waarde bij in Wwise op basis van aantal foto's geplaatst op bord.",
+      "rtpc_how": "Vindt AkAmbientSound actor genaamd 'AmbientProgressive', zet dan RTPC waarde (0-5) overeenkomend met aantal belangrijke foto's. Wwise crossfade automatisch tussen ambient lagen.",
+      "rtpc_why": "RTPC maakt vloeiende overgangen tussen spanning staten mogelijk. Audio designer kan precies crossfade curves controleren voor elke laag in Wwise, wat volledige controle geeft over emotionele progressie zonder code wijzigingen."
     }
   }
 }
