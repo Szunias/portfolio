@@ -1904,7 +1904,7 @@
                     <h4 data-i18n="sections.rtpc_code_title">PhotoboardWidget.cpp — RTPC Update</h4>
                     <div class="code-explanation">
                         <p><strong data-i18n="sections.what">WHAT</strong>: <span data-i18n="code_explanations.rtpc_what">Function updates RTPC value in Wwise based on number of photos placed on board.</span></p>
-                        <p><strong data-i18n="sections.how">HOW</strong>: <span data-i18n="code_explanations.rtpc_how">Finds AkAmbientSound actor named 'AmbientProgressive', then sets RTPC value (0-5) corresponding to number of important photos. Wwise automatically crossfades between ambient layers.</span></p>
+                        <p><strong data-i18n="sections.how">HOW</strong>: <span data-i18n="code_explanations.rtpc_how">Validates world exists, then finds AkAmbientSound actor by tag 'AmbientProgressive' (more efficient and reliable than name string search). Sets RTPC value (0-5) corresponding to number of important photos. Wwise automatically crossfades between ambient layers.</span></p>
                         <p><strong data-i18n="sections.why">WHY</strong>: <span data-i18n="code_explanations.rtpc_why">RTPC allows smooth transitions between tension states. Audio designer can precisely control crossfade curves for each layer in Wwise, giving full control over emotional progression without code modifications.</span></p>
                     </div>
                     <pre><code><span class="keyword">void</span> <span class="type">UPhotoboardWidget</span>::<span class="function">UpdateAmbientRTPC</span>()
@@ -1914,7 +1914,7 @@
     <span class="keyword">if</span> (!World) <span class="keyword">return</span>;</span>
 
     <span class="comment">// Find actor by tag (more efficient and reliable than name search)</span>
-<span class="code-block-logic" data-block-title="Actor Search by Tag" data-block-text="Searches for AkAmbientSound actor using tag instead of name comparison. Tags are more efficient and less error-prone than string name searches. In production, this would be cached to avoid GetAllActorsOfClass every call.">    <span class="type">AActor</span>* TargetActor = <span class="keyword">nullptr</span>;
+<span class="code-block-logic" data-block-title="Actor Search by Tag" data-block-text="Searches for AkAmbientSound actor using tag instead of name comparison. Tags are more efficient and less error-prone than string name searches. The actor reference could be cached for better performance in frequently called functions.">    <span class="type">AActor</span>* TargetActor = <span class="keyword">nullptr</span>;
     <span class="type">TArray</span><<span class="type">AActor</span>*> FoundActors;
     <span class="type">UGameplayStatics</span>::<span class="function">GetAllActorsOfClass</span>(World, <span class="type">AAkAmbientSound</span>::<span class="function">StaticClass</span>(), FoundActors);
     

@@ -1,159 +1,91 @@
-# Shadow Frames - Analiza Red Flagów dla Audio Recruitera
+# Shadow Frames - Rzeczywiste Red Flagi (Niespójności, Błędy Logiczne, Kłamstwa)
 
-## 🔴 KRYTYCZNE PROBLEMY (Must Fix)
+## 🔴 KRYTYCZNE NIESPÓJNOŚCI
 
-### 1. **PRZESZŁA DATA DEADLINE** ⚠️ CRITICAL
-- **Problem**: Deadline "December 10, 2024" jest przeszły (obecnie 2025)
-- **Gdzie**: Linia 1494 w HTML, linia 149 w locales/shadow-frames.json
-- **Dlaczego to problem**: 
-  - Recruiter widzi "Ongoing Project" + przeszły deadline = niespójność
-  - Wygląda jak niedopatrzenie lub brak aktualizacji
-  - Może sugerować, że projekt nie został ukończony w terminie
-- **Rozwiązanie**: 
-  - Zmień na przyszłą datę (np. "Q2 2025") LUB
-  - Zmień na "Completed Project" i podaj datę ukończenia LUB
-  - Usuń konkretną datę, zostaw tylko "Sprint-based development"
-
-### 2. **NIESPÓJNOŚĆ WERSJI ENGINE** ⚠️ MEDIUM
-- **Problem**: W różnych miejscach są różne wersje Unreal Engine
-  - `meta.engine.value`: "Unreal Engine 5.4.4" 
-  - `tech_stack.engine`: "Unreal Engine 5.5"
-  - W HTML w niektórych miejscach jest 5.5
+### 1. **NIESPÓJNOŚĆ: Opis vs Kod - "named" vs "tag"**
+- **Problem**: W HTML (linia 1907) opis mówi: "Finds AkAmbientSound actor **named** 'AmbientProgressive'"
+- **Rzeczywistość**: Kod używa **TAG** (ActorHasTag), nie name search
 - **Gdzie**: 
-  - locales/shadow-frames.json linie 23, 95, 216, 288, 409, 481
-  - projects/shadow-frames.html linia 1491, 1555, 1950
+  - HTML: `projects/shadow-frames.html:1907` - opis mówi "named"
+  - Kod: `projects/shadow-frames.html:1923` - używa `ActorHasTag("AmbientProgressive")`
+  - JSON: `locales/shadow-frames.json:202` - poprawnie mówi "by tag"
+- **Dlaczego to problem**: Recruiter sprawdzający kod zobaczy, że opis nie odpowiada implementacji. To wygląda na brak dbałości o szczegóły lub copy-paste z innego projektu.
+- **Rozwiązanie**: Popraw opis w HTML/translations żeby mówił "by tag" zamiast "named"
+
+### 2. **KOD NIE PRODUCTION-READY - Komentarz w kodzie**
+- **Problem**: Komentarz w kodzie mówi: "In production, this would be cached to avoid GetAllActorsOfClass every call"
+- **Gdzie**: `projects/shadow-frames.html:1917` - tooltip dla kodu RTPC
 - **Dlaczego to problem**: 
-  - Wygląda na brak dbałości o szczegóły
-  - Recruiter może pomyśleć, że nie wiesz, jakiej wersji używasz
-- **Rozwiązanie**: Ujednolic wszystkie miejsca do jednej wersji (sprawdź faktyczną wersję projektu)
-
-### 3. **BRAK KONKRETNYCH METRYK** ⚠️ MEDIUM-HIGH
-- **Problem**: Inne projekty (Not Today Darling, AudioLab) mają sekcje z metrykami:
-  - Liczba eventów audio (~70 events)
-  - Latencja (<45ms)
-  - Memory footprint (180 MB)
-  - Voice count (max 32 voices)
-- **Shadow Frames**: Brak takich metryk
-- **Dlaczego to problem**:
-  - Recruiter porównuje projekty - brak metryk wygląda słabo
-  - Brak konkretnych liczb sugeruje, że nie mierzysz wyników
-  - W branży audio konkretne metryki są standardem
-- **Rozwiązanie**: Dodaj sekcję "Technical Metrics" podobną do innych projektów
-
-### 4. **TIMELINE VS DEADLINE NIESPÓJNOŚĆ** ⚠️ MEDIUM
-- **Problem**: 
-  - Timeline pokazuje "Sprint 3/5" jako aktywny
-  - Deadline był "December 10, 2024" (przeszły)
-  - Status: "Ongoing Project"
-- **Dlaczego to problem**:
-  - Jeśli deadline minął, ale jesteś w Sprint 3/5, wygląda na opóźnienia
-  - Nie ma informacji, czy projekt został ukończony
-- **Rozwiązanie**: 
-  - Zaktualizuj status (Completed/In Progress/Delayed)
-  - Dodaj informację o rzeczywistym stanie projektu
-
-## 🟡 ŚREDNIE PROBLEMY (Should Fix)
-
-### 5. **BRAK INFORMACJI O WYNIKU PROJEKTU**
-- **Problem**: Nie ma informacji, czy projekt został ukończony, wydany, pokazany na showcase, etc.
-- **Dlaczego to problem**: Recruiter chce wiedzieć, czy projekt był sukcesem
-- **Rozwiązanie**: Dodaj sekcję "Project Status" z informacją o:
-  - Czy projekt został ukończony
-  - Gdzie można go zobaczyć/grać (jeśli dostępny)
-  - Feedback/reakcje (jeśli dostępne)
-
-### 6. **NIEJASNA ROLE W ZESPOLE**
-- **Problem**: "Sound Lead" - ale jaki był rozmiar zespołu audio? Ilu ludzi pod Tobą?
-- **Dlaczego to problem**: 
-  - "Lead" bez kontekstu może być mylące
-  - Recruiter nie wie, czy to solo projekt czy duży zespół
-- **Rozwiązanie**: Dodaj informację o:
-  - Rozmiar zespołu audio
-  - Twoje konkretne odpowiedzialności vs. innych członków
-
-### 7. **BRAK CHALLENGES & SOLUTIONS**
-- **Problem**: Inne projekty mają sekcje "Challenges & Solutions" (np. Not Today Darling ma 3 wyzwania)
-- **Shadow Frames**: Brak takiej sekcji
-- **Dlaczego to problem**:
-  - Recruiter chce widzieć problem-solving skills
-  - Pokazuje dojrzałość i doświadczenie
-- **Rozwiązanie**: Dodaj 2-3 konkretne wyzwania z rozwiązaniami
-
-### 8. **KOD Z KOMENTARZEM O OPTYMALIZACJI**
-- **Problem**: W komentarzu kodu RTPC jest napisane: "In production, this would be cached to avoid GetAllActorsOfClass every call"
-- **Dlaczego to problem**:
   - Sugeruje, że kod nie jest production-ready
-  - Recruiter może pomyśleć, że nie optymalizujesz kodu
+  - Jeśli to portfolio, pokazujesz kod z założeniem, że trzeba go jeszcze poprawić
+  - Recruiter może pomyśleć, że nie kończysz rzeczy, które zaczynasz
 - **Rozwiązanie**: 
-  - Albo zaimplementuj cache, albo usuń komentarz, albo dodaj notatkę, że to wersja prototypowa
+  - Albo zaimplementuj cache
+  - Albo usuń komentarz o cache (zostaw tylko o tag vs name)
+  - Albo dodaj notatkę, że to prototyp/demo, a production używa cache
 
-### 9. **BRAK INFORMACJI O PERFORMANCE**
-- **Problem**: Sekcja "Performance" mówi tylko "Sub 5% CPU, optimized streaming"
-- **Dlaczego to problem**:
-  - To bardzo ogólne
-  - Brak konkretnych liczb (CPU usage, memory, voice count, etc.)
-- **Rozwiązanie**: Dodaj konkretne metryki jak w innych projektach
+## 🟡 ŚREDNIE PROBLEMY (Potencjalne Niespójności)
 
-## 🟢 DROBNE PROBLEMY (Nice to Fix)
+### 3. **NIESPÓJNOŚĆ: "Sound Lead" vs "Lead Audio Designer"**
+- **Problem**: Używasz obu terminów zamiennie:
+  - Badge: "Sound Lead"
+  - Subtitle: "Lead Audio Designer"
+  - Opis roli: "As Sound Lead"
+- **Gdzie**: Wszędzie w projekcie
+- **Dlaczego to problem**: To nie jest faktyczna niespójność (oba są poprawne), ale może być mylące. W branży "Lead Audio Designer" jest bardziej formalne.
+- **Rozwiązanie**: Ujednolicić na "Lead Audio Designer" wszędzie (bardziej profesjonalne)
 
-### 10. **BRAK LINKÓW DO PROJEKTU**
-- **Problem**: Nie ma linków do:
-  - Strony gry (jeśli dostępna)
-  - Trailer/demo na YouTube/Vimeo
-  - Sound Bible PDF (link jest, ale sprawdź czy działa)
-- **Rozwiązanie**: Dodaj linki, jeśli dostępne
+### 4. **PRZESADNE TWIERDZENIA - "will be significantly more advanced"**
+- **Problem**: Powtarzasz to 2 razy:
+  - "The full system will be significantly more advanced"
+  - "The full system will be significantly more advanced with additional layers and complexity"
+- **Gdzie**: 
+  - `projects/shadow-frames.html:1632` - opis roli
+  - `projects/shadow-frames.html:1965` - Wwise Architecture result
+- **Dlaczego to problem**: 
+  - Brzmi jak wymówka "to co pokazuję to tylko mała część"
+  - Recruiter chce widzieć faktyczne osiągnięcia, nie obietnice
+  - Powtórzenie sugeruje, że nie masz konkretów do pokazania
+- **Rozwiązanie**: 
+  - Zmień na coś bardziej konkretnego: "Additional features planned: [lista]" 
+  - LUB usuń i skup się na tym, co faktycznie zrobiłeś
 
-### 11. **BRAK INFORMACJI O COLLABORATION**
-- **Problem**: Jest sekcja o współpracy z instytucjami, ale brak info o:
-  - Jak komunikowałeś się między instytucjami
-  - Jakie były wyzwania w multi-institutional collaboration
-  - Jak zarządzałeś workflow
-- **Rozwiązanie**: Dodaj 1-2 zdania o współpracy
+## 🟢 DROBNE NIESPÓJNOŚCI
 
-### 12. **AUDIO SAMPLES - BRAK KONTEKSTU**
-- **Problem**: Audio samples (Menu Vibe, Palette Soundscape) mają tooltips, ale brak:
-  - Informacji o stylu/technikach użytych
-  - Kontekstu (kiedy w grze się pojawia)
-- **Rozwiązanie**: Dodaj więcej kontekstu do audio samples
+### 5. **Komentarz w kodzie vs Opis - Tag Search**
+- **Problem**: Komentarz w kodzie (linia 1916) mówi "Find actor by tag (more efficient and reliable than name search)", ale tooltip (linia 1917) mówi o cache, nie o tag vs name.
+- **Dlaczego to problem**: Nie jest to faktyczna niespójność, ale pokazuje, że komentarze nie są zsynchronizowane z opisami.
+- **Rozwiązanie**: Upewnij się, że wszystkie opisy są spójne
 
-## ✅ CO DZIAŁA DOBRZE
+## ✅ CO JEST OK
 
-1. ✅ Pliki audio istnieją i działają
-2. ✅ Video demo jest dostępne
-3. ✅ Kod jest dobrze udokumentowany z tooltips
-4. ✅ Wizualna prezentacja jest profesjonalna
-5. ✅ Multi-language support działa
-6. ✅ Technical stack jest jasno przedstawiony
-7. ✅ Kod pokazuje dobre praktyki (null checks, delegates, etc.)
+1. ✅ Deadline Q2 2025 jest spójny z "Ongoing Project" i Sprint 3/5
+2. ✅ Unreal Engine 5.5 jest ujednolicony wszędzie
+3. ✅ Timeline jest logiczny (Sprint 3/5 aktywny)
+4. ✅ Opisy techniczne są poprawne (delegates, RTPC, switches)
+5. ✅ Kod jest poprawny technicznie (tylko komentarze mogą wprowadzać w błąd)
 
 ## 📋 PRIORYTETOWA LISTA NAPRAW
 
-### Natychmiast (przed wysłaniem portfolio):
-1. ✅ Napraw deadline (usunąć lub zaktualizować)
-2. ✅ Ujednolic wersję Unreal Engine
-3. ✅ Dodaj konkretne metryki techniczne
+### Natychmiast (krytyczne):
+1. ✅ **Popraw opis RTPC** - zmień "named" na "by tag" w tłumaczeniach/HTML
+2. ✅ **Usuń lub zmień komentarz o cache** - albo zaimplementuj, albo usuń, albo zaznacz że to prototyp
 
 ### Wkrótce:
-4. ✅ Dodaj Challenges & Solutions
-5. ✅ Zaktualizuj status projektu (Completed/Ongoing)
-6. ✅ Dodaj informację o rozmiarze zespołu
+3. ✅ Ujednolic "Sound Lead" vs "Lead Audio Designer" (opcjonalne, ale lepsze)
+4. ✅ Zmień "will be significantly more advanced" na coś bardziej konkretnego
 
-### W miarę możliwości:
-7. ✅ Zoptymalizuj kod RTPC (lub usuń komentarz)
-8. ✅ Dodaj linki do projektu (jeśli dostępne)
-9. ✅ Rozszerz informacje o audio samples
+## 🎯 PODSUMOWANIE DLA RECRUITERA
 
-## 🎯 REKOMENDACJE DLA RECRUITERA
+**Rzeczywiste red flagi:**
+- ❌ Opis nie odpowiada kodowi (named vs tag) - **FAKTYCZNA NIESPÓJNOŚĆ**
+- ❌ Kod z komentarzem "this would be cached in production" - **SUGERUJE NIE-PRODUCTION-READY**
 
-**Pozytywne aspekty:**
-- Dobra znajomość Wwise i Unreal Engine
-- Rozumienie architektury audio (delegates, RTPC, Switch Containers)
-- Profesjonalna prezentacja kodu
-- C++ skills są widoczne
+**Nie są red flagi (ale można poprawić):**
+- ⚠️ Użycie "Sound Lead" i "Lead Audio Designer" zamiennie (oba poprawne, ale może być mylące)
+- ⚠️ Powtarzanie "will be significantly more advanced" (brzmi jak wymówka)
 
-**Obszary do wyjaśnienia:**
-- Status projektu (ukończony/czy w trakcie)
-- Rozmiar zespołu i zakres odpowiedzialności jako Lead
-- Konkretne metryki i wyniki projektu
-- Wyzwania napotkane i rozwiązania
-
+**Co działa dobrze:**
+- ✅ Kod jest poprawny technicznie
+- ✅ Timeline i deadline są spójne
+- ✅ Techniczne opisy są dokładne (poza jednym błędem)
