@@ -1,1 +1,1327 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>AudioQ - Professional Audio Sampler Plugin by Igor Szuniewicz</title> <meta name="description" content="JUCE-based audio sampler with granular synthesis, tremolo effects, and real-time DSP. Free VST/AU plugin for music producers."> <meta name="robots" content="index, follow"> <link rel="canonical" href="https://igorszuniewicz.com/projects/audioq.html"> <meta name="keywords" content="audio plugin, VST, AU, JUCE, granular synthesis, sampler, music production, DSP, audio effects"> <meta name="author" content="Igor Szuniewicz"> <!-- Open Graph --> <meta property="og:title" content="AudioQ - Professional Audio Sampler Plugin"> <meta property="og:description" content="JUCE-based audio sampler with granular synthesis and real-time effects. Free download."> <meta property="og:type" content="website"> <meta property="og:url" content="https://igorszuniewicz.com/projects/audioq.html"> <meta property="og:image" content="https://igorszuniewicz.com/assets/images/projects-audioq/AudioQPicture.png"> <!-- Twitter Card --> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="AudioQ - Professional Audio Sampler Plugin"> <meta name="twitter:description" content="JUCE-based audio sampler with granular synthesis and real-time effects."> <meta name="twitter:image" content="https://igorszuniewicz.com/assets/images/projects-audioq/AudioQPicture.png"> <!-- Favicon --> <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"> <!-- Google Fonts --> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"> <style> /* Back button */ .back-button { position: fixed; top: 2rem; left: 2rem; z-index: 1000; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.75rem 1.5rem; border-radius: 50px; color: #fff; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; } .back-button:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(154, 108, 255, 0.5); transform: translateX(-3px); } @media (max-width: 768px) { .back-button { top: 1rem; left: 1rem; padding: 0.6rem 1.2rem; font-size: 0.85rem; } } * { margin: 0; padding: 0; box-sizing: border-box; } body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%); color: #e0e6ed; line-height: 1.6; overflow-x: hidden; } .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; } /* Hero Section */ .hero { padding: 8rem 0 6rem; text-align: center; position: relative; } .hero::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; background: radial-gradient(circle, rgba(154, 108, 255, 0.15) 0%, rgba(255, 110, 169, 0.1) 50%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 0; } .hero-content { position: relative; z-index: 1; } .hero-badge { display: inline-block; padding: 0.5rem 1.5rem; background: linear-gradient(135deg, rgba(154, 108, 255, 0.2), rgba(255, 110, 169, 0.2)); border: 1px solid rgba(154, 108, 255, 0.4); border-radius: 50px; font-size: 0.85rem; font-weight: 600; color: #9a6cff; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2rem; } .brand-container { margin-bottom: 1.5rem; } .brand-main { font-family: 'Space Grotesk', sans-serif; font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 900; letter-spacing: 8px; background: linear-gradient(135deg, #18bfef 0%, #9a6cff 50%, #ff6ea9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.1; display: inline-block; } .brand-tagline { font-size: 1.2rem; color: #9a6cff; text-transform: uppercase; letter-spacing: 3px; font-weight: 600; margin-top: 1rem; } .hero-subtitle { font-size: 1.35rem; color: #9ca3af; margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto; font-weight: 400; } /* CTA Buttons */ .cta-buttons { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4rem; } .btn { display: inline-flex; align-items: center; gap: 0.75rem; padding: 1.25rem 2.5rem; font-size: 1.1rem; font-weight: 600; text-decoration: none; border-radius: 50px; transition: all 0.3s ease; position: relative; overflow: hidden; } .btn-primary { background: linear-gradient(135deg, #9a6cff 0%, #ff6ea9 100%); color: #fff; box-shadow: 0 8px 30px rgba(154, 108, 255, 0.4); } .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(154, 108, 255, 0.6); } .btn-secondary { background: rgba(255, 255, 255, 0.05); color: #fff; border: 2px solid rgba(255, 255, 255, 0.1); } .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); transform: translateY(-3px); } .btn-icon { font-size: 1.3rem; } /* Stats */ .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 2rem; max-width: 900px; margin: 0 auto; } .stat-card { background: rgba(255, 255, 255, 0.03); padding: 2rem; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.06); text-align: center; transition: all 0.3s ease; } .stat-card:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(154, 108, 255, 0.3); transform: translateY(-5px); } .stat-value { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #9a6cff, #ff6ea9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: block; margin-bottom: 0.5rem; } .stat-label { font-size: 0.9rem; color: #9ca3af; font-weight: 500; } /* Screenshot Section */ .screenshot-section { padding: 4rem 0; text-align: center; } .screenshot-wrapper { max-width: 1000px; margin: 0 auto; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(154, 108, 255, 0.3); border: 1px solid rgba(154, 108, 255, 0.2); } .screenshot-wrapper img { width: 100%; height: auto; display: block; } /* Features Section */ .features { padding: 6rem 0; } .section-header { text-align: center; margin-bottom: 4rem; } .section-badge { display: inline-block; padding: 0.4rem 1.2rem; background: rgba(154, 108, 255, 0.1); border-radius: 50px; font-size: 0.8rem; font-weight: 600; color: #9a6cff; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1rem; } h2 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1rem; color: #fff; } .section-subtitle { font-size: 1.15rem; color: #9ca3af; max-width: 600px; margin: 0 auto; } .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; } .feature-card { background: rgba(255, 255, 255, 0.03); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.06); transition: all 0.3s ease; } .feature-card:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(154, 108, 255, 0.3); transform: translateY(-5px); } .feature-icon { font-size: 2.5rem; margin-bottom: 1.5rem; display: block; } .feature-card h3 { font-size: 1.4rem; font-weight: 600; margin-bottom: 1rem; color: #fff; } .feature-card p { color: #9ca3af; line-height: 1.7; } /* Tech Stack */ .tech-section { padding: 4rem 0; } .tech-stack { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; max-width: 800px; margin: 0 auto; } .tech-badge { padding: 0.75rem 1.5rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 50px; font-weight: 500; color: #e0e6ed; font-size: 0.95rem; } /* Video Section */ .video-section { padding: 4rem 0; text-align: center; } .video-wrapper { max-width: 900px; margin: 0 auto; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); border: 1px solid rgba(154, 108, 255, 0.2); } .video-wrapper video { width: 100%; height: auto; display: block; } /* Download CTA */ .download-cta { padding: 6rem 0; text-align: center; background: rgba(154, 108, 255, 0.05); border-top: 1px solid rgba(154, 108, 255, 0.1); border-bottom: 1px solid rgba(154, 108, 255, 0.1); } .download-cta h2 { margin-bottom: 1.5rem; } .download-cta p { font-size: 1.2rem; color: #9ca3af; margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto; } /* Footer */ footer { padding: 3rem 0; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.06); } footer p { color: #6b7280; font-size: 0.9rem; } footer a { color: #9a6cff; text-decoration: none; } footer a:hover { text-decoration: underline; } /* Responsive */ @media (max-width: 768px) { .container { padding: 0 1.5rem; } .back-button, .lang-switcher { top: 1rem; left: 1rem; right: 1rem; } .lang-switcher { right: 1rem; left: auto; gap: 0.4rem; padding: 0.4rem; } .lang-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; } .back-button { padding: 0.6rem 1.2rem; font-size: 0.8rem; gap: 0.6rem; } .hero { padding: 3rem 0 2rem; } .hero-badge { padding: 0.4rem 1.2rem; font-size: 0.75rem; margin-bottom: 1.5rem; } .brand-main { font-size: clamp(2.5rem, 8vw, 3rem); letter-spacing: 4px; margin-bottom: 0.75rem; } .brand-tagline { font-size: 1rem; letter-spacing: 2px; margin-top: 0.75rem; } .hero-subtitle { font-size: 1rem; margin-bottom: 2rem; line-height: 1.6; } .cta-buttons { flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 3rem; } .btn { width: 100%; max-width: 300px; justify-content: center; padding: 1rem 2rem; font-size: 1rem; } .btn-icon { font-size: 1.1rem; } .stats { grid-template-columns: repeat(2, 1fr); gap: 1.25rem; } .stat-card { padding: 1.5rem 1rem; border-radius: 12px; } .stat-value { font-size: 2rem; margin-bottom: 0.4rem; } .stat-label { font-size: 0.8rem; } .screenshot-section { padding: 3rem 0; } .screenshot-wrapper { border-radius: 12px; } .features { padding: 4rem 0; } .section-header { margin-bottom: 3rem; } .section-badge { padding: 0.3rem 1rem; font-size: 0.75rem; margin-bottom: 0.8rem; } h2 { font-size: clamp(1.75rem, 6vw, 2.5rem); margin-bottom: 0.8rem; } .section-subtitle { font-size: 1rem; line-height: 1.6; } .features-grid { grid-template-columns: 1fr; gap: 1.5rem; } .feature-card { padding: 2rem; border-radius: 12px; } .feature-icon { font-size: 2rem; margin-bottom: 1.25rem; } .feature-card h3 { font-size: 1.2rem; margin-bottom: 0.8rem; } .feature-card p { font-size: 0.9rem; line-height: 1.6; } .tech-section { padding: 3rem 0; } .tech-stack { gap: 0.75rem; } .tech-badge { padding: 0.6rem 1.2rem; font-size: 0.85rem; } .video-section { padding: 3rem 0; } .video-wrapper { border-radius: 12px; } .download-cta { padding: 4rem 0; } .download-cta h2 { margin-bottom: 1.25rem; } .download-cta p { font-size: 1rem; margin-bottom: 2rem; line-height: 1.6; } } @media (max-width: 480px) { .container { padding: 0 1rem; } .back-button, .lang-switcher { top: 0.75rem; left: 0.75rem; right: 0.75rem; } .lang-switcher { right: 0.75rem; left: auto; gap: 0.3rem; padding: 0.3rem; } .lang-btn { padding: 0.3rem 0.6rem; font-size: 0.7rem; } .back-button { padding: 0.5rem 1rem; font-size: 0.75rem; gap: 0.5rem; } .hero { padding: 2.5rem 0 1.75rem; } .hero-badge { padding: 0.35rem 1rem; font-size: 0.7rem; margin-bottom: 1.25rem; } .brand-main { font-size: clamp(2rem, 8vw, 2.5rem); letter-spacing: 3px; margin-bottom: 0.6rem; } .brand-tagline { font-size: 0.9rem; letter-spacing: 1.5px; margin-top: 0.6rem; } .hero-subtitle { font-size: 0.9rem; margin-bottom: 1.75rem; line-height: 1.5; } .cta-buttons { gap: 0.8rem; margin-bottom: 2.5rem; } .btn { padding: 0.9rem 1.75rem; font-size: 0.9rem; max-width: 280px; } .btn-icon { font-size: 1rem; } .stats { grid-template-columns: 1fr; gap: 1rem; } .stat-card { padding: 1.25rem 0.8rem; border-radius: 10px; } .stat-value { font-size: 1.75rem; margin-bottom: 0.3rem; } .stat-label { font-size: 0.75rem; } .screenshot-section { padding: 2.5rem 0; } .features { padding: 3rem 0; } .section-header { margin-bottom: 2.5rem; } .section-badge { padding: 0.25rem 0.8rem; font-size: 0.7rem; margin-bottom: 0.6rem; } h2 { font-size: clamp(1.5rem, 6vw, 2rem); margin-bottom: 0.6rem; } .section-subtitle { font-size: 0.9rem; line-height: 1.5; } .features-grid { gap: 1.25rem; } .feature-card { padding: 1.75rem; border-radius: 10px; } .feature-icon { font-size: 1.75rem; margin-bottom: 1rem; } .feature-card h3 { font-size: 1.1rem; margin-bottom: 0.6rem; } .feature-card p { font-size: 0.85rem; line-height: 1.5; } .tech-section { padding: 2.5rem 0; } .tech-stack { gap: 0.6rem; } .tech-badge { padding: 0.5rem 1rem; font-size: 0.8rem; } .video-section { padding: 2.5rem 0; } .download-cta { padding: 3rem 0; } .download-cta h2 { margin-bottom: 1rem; } .download-cta p { font-size: 0.9rem; margin-bottom: 1.75rem; line-height: 1.5; } } @media (max-width: 374px) { .container { padding: 0 0.75rem; } .back-button, .lang-switcher { top: 0.5rem; left: 0.5rem; right: 0.5rem; } .lang-switcher { right: 0.5rem; left: auto; gap: 0.25rem; padding: 0.25rem; } .lang-btn { padding: 0.25rem 0.5rem; font-size: 0.65rem; } .back-button { padding: 0.4rem 0.8rem; font-size: 0.7rem; gap: 0.4rem; } .hero { padding: 2rem 0 1.5rem; } .hero-badge { padding: 0.3rem 0.8rem; font-size: 0.65rem; margin-bottom: 1rem; } .brand-main { font-size: clamp(1.75rem, 8vw, 2rem); letter-spacing: 2px; margin-bottom: 0.5rem; } .brand-tagline { font-size: 0.8rem; letter-spacing: 1px; margin-top: 0.5rem; } .hero-subtitle { font-size: 0.8rem; margin-bottom: 1.5rem; line-height: 1.4; } .cta-buttons { gap: 0.6rem; margin-bottom: 2rem; } .btn { padding: 0.8rem 1.5rem; font-size: 0.85rem; max-width: 260px; } .btn-icon { font-size: 0.9rem; } .stat-card { padding: 1rem 0.6rem; border-radius: 8px; } .stat-value { font-size: 1.5rem; margin-bottom: 0.25rem; } .stat-label { font-size: 0.7rem; } .screenshot-section { padding: 2rem 0; } .features { padding: 2.5rem 0; } .section-header { margin-bottom: 2rem; } .section-badge { padding: 0.2rem 0.6rem; font-size: 0.65rem; margin-bottom: 0.5rem; } h2 { font-size: clamp(1.25rem, 6vw, 1.75rem); margin-bottom: 0.5rem; } .section-subtitle { font-size: 0.8rem; line-height: 1.4; } .features-grid { gap: 1rem; } .feature-card { padding: 1.5rem; border-radius: 8px; } .feature-icon { font-size: 1.5rem; margin-bottom: 0.8rem; } .feature-card h3 { font-size: 1rem; margin-bottom: 0.5rem; } .feature-card p { font-size: 0.8rem; line-height: 1.4; } .tech-section { padding: 2rem 0; } .tech-stack { gap: 0.5rem; } .tech-badge { padding: 0.4rem 0.8rem; font-size: 0.75rem; } .video-section { padding: 2rem 0; } .download-cta { padding: 2.5rem 0; } .download-cta h2 { margin-bottom: 0.8rem; } .download-cta p { font-size: 0.8rem; margin-bottom: 1.5rem; line-height: 1.4; } } </style> </head> <body> <a href="/projects/" class="back-button" data-i18n="back">Back to Projects</a> <!-- Language Switcher --> <div class="lang-switcher" style="position: fixed; top: 2rem; right: 2rem; z-index: 1000; display: flex; gap: 0.5rem; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px); border: 1px solid rgba(154, 108, 255, 0.5); border-radius: 50px; padding: 0.5rem;"> <button class="lang-btn active" data-lang="en" style="padding: 0.5rem 1rem; background: transparent; border: none; border-radius: 50px; color: #999; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: all 0.3s ease;"><span>EN</span></button> <button class="lang-btn" data-lang="pl" style="padding: 0.5rem 1rem; background: transparent; border: none; border-radius: 50px; color: #999; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: all 0.3s ease;"><span>PL</span></button> <button class="lang-btn" data-lang="nl" style="padding: 0.5rem 1rem; background: transparent; border: none; border-radius: 50px; color: #999; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: all 0.3s ease;"><span>NL</span></button> </div> <!-- Hero Section --> <section class="hero"> <div class="container"> <div class="hero-content"> <div class="hero-badge" data-i18n="hero.badge">Audio Plugin</div> <div class="brand-container"> <h1 class="brand-main" data-i18n="hero.brandMain">AUDIO<span style="color: #ff6ea9;">Q</span></h1> <div class="brand-tagline" data-i18n="hero.brandTagline">Advanced Audio Sampler</div> </div> <p class="hero-subtitle" data-i18n="hero.subtitle"> JUCE-based audio sampler with granular synthesis, tremolo effects, and professional DSP processing. Perfect for music producers and sound designers. </p> <div class="cta-buttons"> <a href="https://github.com/Szunias/AudioQ/releases/latest" class="btn btn-primary" target="_blank" rel="noopener"> <span data-i18n="hero.downloadPlugin">Download Plugin</span> </a> <a href="https://github.com/Szunias/AudioQ" class="btn btn-secondary" target="_blank" rel="noopener"> <span data-i18n="hero.viewGithub">View on GitHub</span> </a> </div> <div class="stats"> <div class="stat-card"> <span class="stat-value" data-i18n="stats.value1">10+</span> <span class="stat-label" data-i18n="stats.label1">DSP Effects</span> </div> <div class="stat-card"> <span class="stat-value" data-i18n="stats.value2">Real-time</span> <span class="stat-label" data-i18n="stats.label2">Processing</span> </div> <div class="stat-card"> <span class="stat-value" data-i18n="stats.value3">VST/AU</span> <span class="stat-label" data-i18n="stats.label3">Format Support</span> </div> <div class="stat-card"> <span class="stat-value" data-i18n="stats.value4">Free</span> <span class="stat-label" data-i18n="stats.label4">Open Source</span> </div> </div> </div> </div> </section> <!-- Screenshot --> <section class="screenshot-section"> <div class="container"> <div class="screenshot-wrapper"> <img src="../assets/images/projects-audioq/AudioQPicture.png" alt="AudioQ Plugin Interface" loading="lazy" decoding="async"> </div> </div> </section> <!-- Features Section --> <section class="features"> <div class="container"> <div class="section-header"> <div class="section-badge" data-i18n="features.badge">Key Features</div> <h2 data-i18n="features.title">Professional Audio Processing</h2> <p class="section-subtitle" data-i18n="features.subtitle"> Everything you need for creative sound manipulation </p> </div> <div class="features-grid"> <div class="feature-card"> <h3 data-i18n="features.f1.title">Drag & Drop Loading</h3> <p data-i18n="features.f1.desc">Seamlessly load audio files (WAV, AIFF, MP3) with intuitive drag-and-drop interface. Instant waveform visualization and playback control.</p> </div> <div class="feature-card"> <h3 data-i18n="features.f2.title">Granular Synthesis</h3> <p data-i18n="features.f2.desc">Advanced granular synthesis mode for textural manipulation. Control grain size, random playback, and crossfade transitions for unique sound design.</p> </div> <div class="feature-card"> <h3 data-i18n="features.f3.title">Custom Tremolo Effect</h3> <p data-i18n="features.f3.desc">Manual DSP implementation with LFO calculation and per-sample amplitude modulation. Full control over rate and depth parameters.</p> </div> <div class="feature-card"> <h3 data-i18n="features.f4.title">Filter System</h3> <p data-i18n="features.f4.desc">High/Low-pass filtering with real-time parameter control. Frequency range from 20Hz to 20kHz for precise tonal shaping.</p> </div> <div class="feature-card"> <h3 data-i18n="features.f5.title">Built-in Compressor</h3> <p data-i18n="features.f5.desc">Professional compressor with full parameter automation. Control threshold, ratio, attack, and release for dynamic range management.</p> </div> <div class="feature-card"> <h3 data-i18n="features.f6.title">Advanced Looping</h3> <p data-i18n="features.f6.desc">User-defined loop regions with tempo adjustment (20-300 BPM). Perfect for creating rhythmic patterns and sustained textures.</p> </div> <div class="feature-card"> <h3 data-i18n="features.f7.title">Dual Waveform Display</h3> <p data-i18n="features.f7.desc">Offline and real-time waveform visualization. Monitor your audio processing with professional-grade visual feedback.</p> </div> <div class="feature-card"> <h3 data-i18n="features.f8.title">Volume Safety System</h3> <p data-i18n="features.f8.desc">Built-in peak protection with automatic detection. Prevents audio damage with smart volume monitoring and safety alerts.</p> </div> <div class="feature-card"> <h3 data-i18n="features.f9.title">Full Automation</h3> <p data-i18n="features.f9.desc">AudioProcessorValueTreeState for complete parameter automation. All controls can be automated in your DAW for dynamic performances.</p> </div> </div> </div> </section> <!-- Video Section --> <section class="video-section"> <div class="container"> <div class="section-header"> <div class="section-badge" data-i18n="demo.badge">Demo</div> <h2 data-i18n="demo.title">See AudioQ in Action</h2> </div> <div class="video-wrapper"> <video controls poster="../assets/images/projects-audioq/AudioQPicture.png"> <source src="../assets/images/projects-audioq/AudioQ-Showcase.mp4" type="video/mp4"> Your browser does not support the video tag. </video> </div> </div> </section> <!-- Tech Stack --> <section class="tech-section"> <div class="container"> <div class="section-header"> <div class="section-badge" data-i18n="tech.badge">Technology</div> <h2 data-i18n="tech.title">Built With Industry Standards</h2> </div> <div class="tech-stack"> <div class="tech-badge">JUCE Framework</div> <div class="tech-badge">C++</div> <div class="tech-badge">VST3 / AU</div> <div class="tech-badge">Custom DSP</div> <div class="tech-badge">Real-time Processing</div> <div class="tech-badge">Cross-platform</div> </div> </div> </section> <!-- Download CTA --> <section class="download-cta"> <div class="container"> <h2 data-i18n="cta.title">Ready to Create Amazing Sounds?</h2> <p data-i18n="cta.subtitle">Download AudioQ now and explore professional audio sampling and granular synthesis.</p> <div class="cta-buttons"> <a href="https://github.com/Szunias/AudioQ/releases/latest" class="btn btn-primary" target="_blank" rel="noopener"> <span data-i18n="cta.download">Download Latest Release</span> </a> <a href="https://github.com/Szunias/AudioQ" class="btn btn-secondary" target="_blank" rel="noopener"> <span data-i18n="cta.source">View Source Code</span> </a> </div> </div> </section> <!-- Footer --> <footer> <div class="container"> <p> Created by <a href="https://igorszuniewicz.com" target="_blank" rel="noopener">Igor Szuniewicz</a> | Open Source on <a href="https://github.com/Szunias/AudioQ" target="_blank" rel="noopener">GitHub</a> </p> <p style="margin-top: 0.5rem; font-size: 0.85rem;"> © 2025 Igor Szuniewicz. Free for personal and commercial use. </p> </div> </footer> <!-- Translations Data --> <script type="application/json" id="translations-data" src="../locales/audioq.json"></script> <!-- Translation Script --> <script> let translations = {}; async function loadTranslations() { try { const response = await fetch('../locales/audioq.json'); translations = await response.json(); } catch (error) { // Failed to load translations translations = { en: {}, pl: {}, nl: {} }; } } let currentLang = localStorage.getItem('language') || 'en'; // Get nested value from object using dot notation function getNestedValue(obj, path) { return path.split('.').reduce((current, key) => current?.[key], obj); } function setLanguage(lang) { currentLang = lang; localStorage.setItem('language', lang); // Update all translatable elements document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); const translation = getNestedValue(translations[lang], key); if (translation) { // Use innerHTML for elements that may contain HTML (like brandMain) // but ensure no emojis are present if (typeof translation === 'string' && translation.includes('<')) { el.innerHTML = translation; } else { el.textContent = translation; } } }); // Update active button document.querySelectorAll('.lang-btn').forEach(btn => { btn.classList.toggle('active', btn.dataset.lang === lang); }); } // Initialize language on load document.addEventListener('DOMContentLoaded', async () => { await loadTranslations(); setLanguage(currentLang); // Add click handlers document.querySelectorAll('.lang-btn').forEach(btn => { btn.addEventListener('click', () => { setLanguage(btn.dataset.lang); }); }); }); </script> <style> .lang-btn.active { background: linear-gradient(135deg, #9a6cff, #ff6ea9) !important; color: #fff !important; } .lang-btn:hover { background: rgba(255, 255, 255, 0.15) !important; color: #fff !important; } </style> </body> </html> 
+<!doctype html>
+<html lang="en" style="background: #050505">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <meta name="theme-color" content="#050505" />
+        <title>AudioQ - Professional Audio Sampler Plugin by Igor Szuniewicz</title>
+        <meta name="description" content="JUCE-based audio sampler with granular synthesis, tremolo effects, and real-time DSP. Free VST/AU plugin for music producers." />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://igorszuniewicz.com/projects/audioq.html" />
+        <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
+        
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
+        
+        <script src="../assets/js/preload-lang.js"></script>
+        
+        <style>
+            :root {
+                --bg-primary: #050505;
+                --bg-secondary: #0d0d0d;
+                --bg-card: rgba(13, 13, 13, 0.8);
+                --text-primary: #ffffff;
+                --text-secondary: #b0b0b0;
+                --accent-blue: #3b82f6;
+                --accent-purple: #9a6cff;
+                --accent-pink: #ff6ea9;
+                --accent-cyan: #18bfef;
+                --border: rgba(255, 255, 255, 0.1);
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Inter", sans-serif;
+                background: var(--bg-primary);
+                color: var(--text-primary);
+                line-height: 1.6;
+                overflow-x: hidden;
+                position: relative;
+            }
+
+            /* === ANIMATED BACKGROUND === */
+            .bg-animated {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                pointer-events: none;
+                overflow: hidden;
+            }
+
+            .bg-animated::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background:
+                    radial-gradient(ellipse 1600px 1400px at 20% 30%, rgba(154, 108, 255, 0.15) 0%, transparent 70%),
+                    radial-gradient(ellipse 1500px 1500px at 80% 70%, rgba(255, 110, 169, 0.12) 0%, transparent 70%),
+                    radial-gradient(ellipse 1400px 1200px at 50% 10%, rgba(24, 191, 239, 0.1) 0%, transparent 70%),
+                    radial-gradient(ellipse 1200px 1000px at 70% 50%, rgba(154, 108, 255, 0.08) 0%, transparent 60%),
+                    linear-gradient(180deg, #050505 0%, #0a0a0f 20%, #080810 40%, #0a0a0f 60%, #080810 80%, #050505 100%);
+                animation: bgPulse 12s ease-in-out infinite;
+            }
+
+            .bg-animated::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background-image: 
+                    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255, 255, 255, 0.008) 3px, rgba(255, 255, 255, 0.008) 6px),
+                    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+                opacity: 0.4;
+                animation: scanlines 15s linear infinite;
+            }
+
+            @keyframes bgPulse {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.95; transform: scale(1.02); }
+            }
+
+            @keyframes scanlines {
+                0% { transform: translateY(0); }
+                100% { transform: translateY(20px); }
+            }
+
+            .floating-shapes {
+                position: fixed;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            .shape {
+                position: absolute;
+                border-radius: 50%;
+                filter: blur(80px);
+                opacity: 0.08;
+                animation: float 25s ease-in-out infinite;
+            }
+
+            .shape:nth-child(1) {
+                width: 500px;
+                height: 500px;
+                background: var(--accent-purple);
+                top: 15%;
+                left: 5%;
+                animation-delay: 0s;
+            }
+
+            .shape:nth-child(2) {
+                width: 400px;
+                height: 400px;
+                background: var(--accent-pink);
+                top: 55%;
+                right: 10%;
+                animation-delay: 7s;
+            }
+
+            .shape:nth-child(3) {
+                width: 450px;
+                height: 450px;
+                background: var(--accent-cyan);
+                bottom: 15%;
+                left: 45%;
+                animation-delay: 14s;
+            }
+
+            @keyframes float {
+                0%, 100% { transform: translate(0, 0) scale(1); }
+                33% { transform: translate(30px, -30px) scale(1.1); }
+                66% { transform: translate(-20px, 20px) scale(0.9); }
+            }
+
+            /* === NAVIGATION === */
+            .nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1.5rem 2rem;
+                background: rgba(5, 5, 5, 0.9);
+                backdrop-filter: blur(20px);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .back-btn {
+                color: var(--text-primary);
+                text-decoration: none;
+                font-weight: 500;
+                transition: color 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .back-btn:hover {
+                color: var(--accent-purple);
+            }
+
+            .lang-switcher {
+                display: flex;
+                gap: 0.5rem;
+                background: rgba(255, 255, 255, 0.05);
+                padding: 0.5rem;
+                border-radius: 50px;
+                border: 1px solid var(--border);
+            }
+
+            .lang-btn {
+                padding: 0.5rem 1rem;
+                background: transparent;
+                border: none;
+                border-radius: 50px;
+                color: var(--text-secondary);
+                cursor: pointer;
+                font-weight: 500;
+                font-size: 0.9rem;
+                transition: all 0.3s ease;
+            }
+
+            .lang-btn.active {
+                background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+                color: #fff;
+            }
+
+            .lang-btn:hover:not(.active) {
+                background: rgba(255, 255, 255, 0.1);
+                color: #fff;
+            }
+
+            /* === HERO === */
+            .hero {
+                position: relative;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 8rem 2rem 4rem;
+                z-index: 1;
+            }
+
+            .hero-content {
+                max-width: 1200px;
+                width: 100%;
+                text-align: center;
+            }
+
+            .hero-badge {
+                display: inline-block;
+                padding: 0.5rem 1.5rem;
+                background: rgba(154, 108, 255, 0.1);
+                border: 1px solid rgba(154, 108, 255, 0.3);
+                border-radius: 50px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: var(--accent-purple);
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                margin-bottom: 2rem;
+            }
+
+            .hero-title {
+                font-family: 'Space Grotesk', sans-serif;
+                font-size: clamp(3rem, 8vw, 6rem);
+                font-weight: 900;
+                letter-spacing: 8px;
+                background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 50%, var(--accent-pink) 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                line-height: 1.1;
+                margin-bottom: 1rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.5rem;
+                color: var(--text-secondary);
+                margin-bottom: 3rem;
+                max-width: 700px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-cta {
+                display: flex;
+                gap: 1.5rem;
+                justify-content: center;
+                flex-wrap: wrap;
+                margin-bottom: 4rem;
+            }
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 1.25rem 2.5rem;
+                font-size: 1.1rem;
+                font-weight: 600;
+                text-decoration: none;
+                border-radius: 50px;
+                transition: all 0.3s ease;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-pink) 100%);
+                color: #fff;
+                box-shadow: 0 8px 30px rgba(154, 108, 255, 0.4);
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 12px 40px rgba(154, 108, 255, 0.6);
+            }
+
+            .btn-secondary {
+                background: rgba(255, 255, 255, 0.05);
+                color: #fff;
+                border: 2px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .btn-secondary:hover {
+                background: rgba(255, 255, 255, 0.1);
+                border-color: rgba(255, 255, 255, 0.2);
+                transform: translateY(-3px);
+            }
+
+            .hero-image {
+                max-width: 1000px;
+                width: 100%;
+                margin: 4rem auto 0;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(154, 108, 255, 0.3);
+                border: 1px solid rgba(154, 108, 255, 0.2);
+            }
+
+            .hero-image img {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+            /* === CONTENT === */
+            .content {
+                position: relative;
+                z-index: 1;
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 0 2rem;
+            }
+
+            /* === SECTION STYLES === */
+            .tech-section {
+                padding: 6rem 0;
+                position: relative;
+            }
+
+            .section-header {
+                text-align: center;
+                margin-bottom: 4rem;
+            }
+
+            .section-badge {
+                display: inline-block;
+                padding: 0.4rem 1.2rem;
+                background: rgba(154, 108, 255, 0.1);
+                border-radius: 50px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                color: var(--accent-purple);
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                margin-bottom: 1rem;
+            }
+
+            .section-header h2 {
+                font-family: 'Space Grotesk', sans-serif;
+                font-size: clamp(2rem, 4vw, 3rem);
+                font-weight: 700;
+                margin-bottom: 1rem;
+                color: #fff;
+            }
+
+            .section-subtitle {
+                font-size: 1.15rem;
+                color: var(--text-secondary);
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            /* === EXPLANATION GRID === */
+            .explanation-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 2rem;
+                margin-bottom: 4rem;
+            }
+
+            .explanation-item {
+                background: rgba(255, 255, 255, 0.03);
+                padding: 2rem;
+                border-radius: 16px;
+                border: 1px solid rgba(255, 255, 255, 0.06);
+            }
+
+            .explanation-item h3 {
+                font-size: 1rem;
+                font-weight: 700;
+                color: var(--accent-purple);
+                margin-bottom: 1rem;
+                letter-spacing: 2px;
+            }
+
+            .explanation-item p {
+                color: var(--text-secondary);
+                line-height: 1.7;
+            }
+
+            /* === CODE SHOWCASE === */
+            .implementation-showcase {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                margin-top: 3rem;
+            }
+
+            .code-side {
+                background: rgba(0, 0, 0, 0.6);
+                border-radius: 16px;
+                padding: 2rem;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .code-side h4 {
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: var(--accent-cyan);
+                margin-bottom: 1.5rem;
+            }
+
+            .code-explanation {
+                background: rgba(154, 108, 255, 0.05);
+                padding: 1.5rem;
+                border-radius: 12px;
+                border-left: 3px solid var(--accent-purple);
+                margin-bottom: 2rem;
+            }
+
+            .code-explanation p {
+                color: var(--text-secondary);
+                margin-bottom: 0.75rem;
+                line-height: 1.7;
+            }
+
+            .code-explanation p:last-child {
+                margin-bottom: 0;
+            }
+
+            .code-explanation strong {
+                color: var(--accent-purple);
+            }
+
+            .code-side pre {
+                margin: 0;
+                padding: 0;
+                background: transparent;
+                overflow-x: auto;
+            }
+
+            .code-side code {
+                font-family: "Consolas", "Monaco", monospace;
+                font-size: 0.9rem;
+                line-height: 1.6;
+                color: #e0e0e0;
+                display: block;
+            }
+
+            .code-side .comment { color: #6b7280; font-style: italic; }
+            .code-side .keyword { color: #c678dd; }
+            .code-side .function { color: #61afef; }
+            .code-side .string { color: #98c379; }
+            .code-side .type { color: #e5c07b; }
+            .code-side .number { color: #d19a66; }
+
+            /* === INTERACTIVE CODE BLOCKS === */
+            .code-block-logic {
+                display: block;
+                padding: 8px 12px;
+                margin: 4px 0;
+                border-radius: 6px;
+                transition: all 0.3s ease;
+                cursor: help;
+                position: relative;
+                border-left: 3px solid transparent;
+            }
+
+            .code-block-logic:hover {
+                background: rgba(154, 108, 255, 0.15);
+                border-left-color: var(--accent-purple);
+                box-shadow: 
+                    0 0 20px rgba(154, 108, 255, 0.3),
+                    0 0 40px rgba(154, 108, 255, 0.2),
+                    inset 0 0 20px rgba(154, 108, 255, 0.1);
+                transform: translateX(4px);
+            }
+
+            .code-tooltip {
+                position: fixed;
+                max-width: 300px;
+                width: auto;
+                padding: 1rem;
+                background: rgba(18, 18, 18, 0.98);
+                border: 2px solid var(--accent-purple);
+                border-radius: 12px;
+                box-shadow: 
+                    0 8px 32px rgba(0, 0, 0, 0.9),
+                    0 0 40px rgba(154, 108, 255, 0.3);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+                z-index: 10000;
+                backdrop-filter: blur(15px);
+            }
+
+            .code-tooltip.active {
+                opacity: 1;
+            }
+
+            .code-tooltip h5 {
+                color: var(--accent-purple);
+                font-size: 1rem;
+                font-weight: 700;
+                margin-bottom: 0.5rem;
+            }
+
+            .code-tooltip p {
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+                line-height: 1.6;
+                margin: 0;
+            }
+
+            /* === FEATURES GRID === */
+            .features-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 2rem;
+                margin-top: 3rem;
+            }
+
+            .feature-card {
+                background: rgba(255, 255, 255, 0.03);
+                padding: 2.5rem;
+                border-radius: 16px;
+                border: 1px solid rgba(255, 255, 255, 0.06);
+                transition: all 0.3s ease;
+            }
+
+            .feature-card:hover {
+                background: rgba(255, 255, 255, 0.05);
+                border-color: rgba(154, 108, 255, 0.3);
+                transform: translateY(-5px);
+            }
+
+            .feature-card h3 {
+                font-size: 1.4rem;
+                font-weight: 600;
+                margin-bottom: 1rem;
+                color: #fff;
+            }
+
+            .feature-card p {
+                color: var(--text-secondary);
+                line-height: 1.7;
+            }
+
+            /* === VIDEO SECTION === */
+            .video-section {
+                padding: 4rem 0;
+                text-align: center;
+            }
+
+            .video-wrapper {
+                max-width: 900px;
+                margin: 0 auto;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+                border: 1px solid rgba(154, 108, 255, 0.2);
+            }
+
+            .video-wrapper video {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+            /* === TECH STACK === */
+            .tech-stack {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+                justify-content: center;
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            .tech-badge {
+                padding: 0.75rem 1.5rem;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.06);
+                border-radius: 50px;
+                font-weight: 500;
+                color: #e0e6ed;
+                font-size: 0.95rem;
+            }
+
+            /* === DOWNLOAD CTA === */
+            .download-cta {
+                padding: 6rem 0;
+                text-align: center;
+                background: rgba(154, 108, 255, 0.05);
+                border-top: 1px solid rgba(154, 108, 255, 0.1);
+                border-bottom: 1px solid rgba(154, 108, 255, 0.1);
+                margin-top: 4rem;
+            }
+
+            /* === FOOTER === */
+            footer {
+                padding: 3rem 0;
+                text-align: center;
+                border-top: 1px solid rgba(255, 255, 255, 0.06);
+            }
+
+            footer p {
+                color: #6b7280;
+                font-size: 0.9rem;
+            }
+
+            footer a {
+                color: var(--accent-purple);
+                text-decoration: none;
+            }
+
+            footer a:hover {
+                text-decoration: underline;
+            }
+
+            /* === RESPONSIVE === */
+            @media (max-width: 768px) {
+                .nav {
+                    padding: 1rem;
+                }
+
+                .hero {
+                    padding: 6rem 1rem 3rem;
+                }
+
+                .hero-title {
+                    font-size: clamp(2rem, 8vw, 3.5rem);
+                    letter-spacing: 4px;
+                }
+
+                .hero-subtitle {
+                    font-size: 1.2rem;
+                }
+
+                .hero-cta {
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .btn {
+                    width: 100%;
+                    max-width: 300px;
+                    justify-content: center;
+                }
+
+                .content {
+                    padding: 0 1rem;
+                }
+
+                .tech-section {
+                    padding: 4rem 0;
+                }
+
+                .explanation-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .features-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Animated Background -->
+        <div class="bg-animated"></div>
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="/projects/" class="back-btn" data-i18n="back">← Back</a>
+            <div class="lang-switcher">
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="pl">PL</button>
+                <button class="lang-btn" data-lang="nl">NL</button>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge" data-i18n="hero.badge">Audio Plugin</div>
+                <h1 class="hero-title" data-i18n="hero.brandMain">AUDIO<span style="color: #ff6ea9;">Q</span></h1>
+                <p class="hero-subtitle" data-i18n="hero.subtitle">
+                    JUCE-based audio sampler with granular synthesis, tremolo effects, and professional DSP processing. Perfect for music producers and sound designers.
+                </p>
+                <div class="hero-cta">
+                    <a href="https://github.com/Szunias/AudioQ/releases/latest" class="btn btn-primary" target="_blank" rel="noopener">
+                        <span data-i18n="hero.downloadPlugin">Download Plugin</span>
+                    </a>
+                    <a href="https://github.com/Szunias/AudioQ" class="btn btn-secondary" target="_blank" rel="noopener">
+                        <span data-i18n="hero.viewGithub">View on GitHub</span>
+                    </a>
+                </div>
+                <div class="hero-image">
+                    <img src="../assets/images/projects-audioq/AudioQPicture.png" alt="AudioQ Plugin Interface" loading="lazy" decoding="async">
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Parameter Management: APVTS -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <div class="section-badge">JUCE Architecture</div>
+                    <h2>AudioProcessorValueTreeState</h2>
+                    <p class="section-subtitle">JUCE's parameter management system for automation and state persistence</p>
+                </div>
+
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3>WHAT</h3>
+                        <p>APVTS is JUCE's centralized parameter system that manages all plugin parameters, handles automation from DAWs, and preserves plugin state between sessions.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>HOW</h3>
+                        <p>Parameters are defined in createParameters() using RangedAudioParameter. Each parameter has min/max/default values and is automatically exposed to the host DAW for automation.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>WHY</h3>
+                        <p>APVTS provides thread-safe parameter access, automatic state saving/loading, and seamless DAW integration. All parameters can be automated without additional code.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>RESULT</h3>
+                        <p>Complete parameter automation support, persistent plugin state, and clean separation between parameter definition and audio processing logic.</p>
+                    </div>
+                </div>
+
+                <div class="implementation-showcase">
+                    <div class="code-side">
+                        <h4>PluginProcessor.cpp — Parameter Definition</h4>
+                        <div class="code-explanation">
+                            <p><strong>WHAT</strong>: Function creates and returns all plugin parameters with their ranges and default values.</p>
+                            <p><strong>HOW</strong>: Each parameter is created using AudioParameterFloat and added to a vector. The vector is converted to ParameterLayout for APVTS initialization.</p>
+                            <p><strong>WHY</strong>: Centralized parameter definition makes it easy to add new parameters and ensures consistency. All parameters are automatically automatable in DAWs.</p>
+                        </div>
+                        <pre><code><span class="type">juce::AudioProcessorValueTreeState::ParameterLayout</span> <span class="function">createParameters</span>()
+{
+    <span class="type">std::vector</span>&lt;<span class="type">std::unique_ptr</span>&lt;<span class="type">juce::RangedAudioParameter</span>&gt;&gt; params;
+
+<span class="code-block-logic" data-block-title="Gain Parameter" data-block-text="Gain parameter controls overall output volume. Range 0.0 to 3.1623 (approximately +10dB) allows both attenuation and amplification.">    params.<span class="function">push_back</span>(<span class="type">std::make_unique</span>&lt;<span class="type">juce::AudioParameterFloat</span>&gt;(
+        <span class="string">"GAIN"</span>, <span class="string">"Gain"</span>, <span class="number">0.0f</span>, <span class="number">3.1623f</span>, <span class="number">1.0f</span>
+    ));</span>
+
+<span class="code-block-logic" data-block-title="Tempo Parameter" data-block-text="Tempo parameter controls playback speed via resampling. Range 20-300 BPM allows extreme time-stretching for creative effects. Default 120 BPM is standard tempo.">    params.<span class="function">push_back</span>(<span class="type">std::make_unique</span>&lt;<span class="type">juce::AudioParameterFloat</span>&gt;(
+        <span class="string">"TEMPO"</span>, <span class="string">"Tempo (BPM)"</span>, <span class="number">20.0f</span>, <span class="number">300.0f</span>, <span class="number">120.0f</span>
+    ));</span>
+
+<span class="code-block-logic" data-block-title="Filter Parameters" data-block-text="Low-pass and high-pass filter cutoff frequencies. Full audio range 20Hz-20kHz allows complete tonal control. Defaults set to no filtering (LPF at max, HPF at min).">    params.<span class="function">push_back</span>(<span class="type">std::make_unique</span>&lt;<span class="type">juce::AudioParameterFloat</span>&gt;(
+        <span class="string">"LPF"</span>, <span class="string">"LPF (Hz)"</span>, <span class="number">20.0f</span>, <span class="number">20000.0f</span>, <span class="number">20000.0f</span>
+    ));
+    params.<span class="function">push_back</span>(<span class="type">std::make_unique</span>&lt;<span class="type">juce::AudioParameterFloat</span>&gt;(
+        <span class="string">"HPF"</span>, <span class="string">"HPF (Hz)"</span>, <span class="number">20.0f</span>, <span class="number">20000.0f</span>, <span class="number">20.0f</span>
+    ));</span>
+
+    <span class="comment">// Compressor, granular, and tremolo parameters...</span>
+    
+    <span class="keyword">return</span> { params.<span class="function">begin</span>(), params.<span class="function">end</span>() };
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Audio Processing Pipeline -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <div class="section-badge">Audio Processing</div>
+                    <h2>processBlock Implementation</h2>
+                    <p class="section-subtitle">Real-time audio processing pipeline in JUCE</p>
+                </div>
+
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3>WHAT</h3>
+                        <p>processBlock is JUCE's main audio callback called by the host DAW. It processes audio buffers in real-time, applying all effects and modifications.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>HOW</h3>
+                        <p>Audio is fetched from AudioFilePlayer, then processed through filters, compressor, and custom tremolo. Parameters are read from APVTS using thread-safe atomic pointers.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>WHY</h3>
+                        <p>processBlock runs in the audio thread with strict timing requirements. Using APVTS ensures lock-free parameter access without blocking the audio thread.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>RESULT</h3>
+                        <p>Low-latency, real-time audio processing with all effects applied in the correct order. No audio dropouts or glitches during parameter changes.</p>
+                    </div>
+                </div>
+
+                <div class="implementation-showcase">
+                    <div class="code-side">
+                        <h4>PluginProcessor.cpp — Audio Processing</h4>
+                        <div class="code-explanation">
+                            <p><strong>WHAT</strong>: Main audio processing function that applies all effects to incoming audio buffers.</p>
+                            <p><strong>HOW</strong>: Reads parameters from APVTS, fetches audio from file player, applies DSP effects in sequence, then applies final gain.</p>
+                            <p><strong>WHY</strong>: Sequential processing ensures effects are applied in the correct order. JUCE's DSP module provides optimized SIMD processing for filters and compressor.</p>
+                        </div>
+                        <pre><code><span class="keyword">void</span> <span class="function">processBlock</span>(<span class="type">juce::AudioBuffer</span>&lt;<span class="type">float</span>&gt;&amp; buffer, <span class="type">juce::MidiBuffer</span>&amp; midiMessages)
+{
+    <span class="comment">// Volume safety check</span>
+<span class="code-block-logic" data-block-title="Volume Safety Check" data-block-text="Prevents audio damage by stopping playback if dangerous volume levels are detected. Protects both speakers and user's hearing.">    <span class="keyword">if</span> (dangerousVolumeDetected) {
+        buffer.<span class="function">clear</span>();
+        <span class="keyword">return</span>;
+    }</span>
+
+<span class="code-block-logic" data-block-title="Parameter Reading" data-block-text="APVTS provides thread-safe parameter access via atomic pointers. getRawParameterValue returns lock-free access perfect for audio thread.">    <span class="type">float</span> gainValue = *apvts.<span class="function">getRawParameterValue</span>(<span class="string">"GAIN"</span>);
+    <span class="type">float</span> tempoValue = *apvts.<span class="function">getRawParameterValue</span>(<span class="string">"TEMPO"</span>);
+    <span class="type">float</span> lpfCutoff = *apvts.<span class="function">getRawParameterValue</span>(<span class="string">"LPF"</span>);
+    <span class="type">float</span> hpfCutoff = *apvts.<span class="function">getRawParameterValue</span>(<span class="string">"HPF"</span>);</span>
+
+<span class="code-block-logic" data-block-title="Tempo Control" data-block-text="Calculates resampling ratio based on tempo. AudioFilePlayer uses ResamplingAudioSource to change playback speed without pitch shifting.">    <span class="type">double</span> ratio = (<span class="type">double</span>)tempoValue / <span class="number">120.0</span>;
+    audioFilePlayer.<span class="function">setResamplingRatio</span>(ratio);</span>
+
+<span class="code-block-logic" data-block-title="Audio Source Fetching" data-block-text="AudioFilePlayer implements AudioSource interface. getNextAudioBlock fills the buffer with audio samples from the loaded file, handling looping and granular modes.">    <span class="type">juce::AudioSourceChannelInfo</span> info(buffer);
+    audioFilePlayer.<span class="function">getNextAudioBlock</span>(info);</span>
+
+<span class="code-block-logic" data-block-title="Filter Configuration" data-block-text="JUCE's StateVariableTPTFilter uses TPT (Topology-Preserving Transform) design for zero-delay filtering. Cutoff frequencies are updated before processing.">    lpf.<span class="function">setCutoffFrequency</span>(lpfCutoff);
+    hpf.<span class="function">setCutoffFrequency</span>(hpfCutoff);</span>
+
+<span class="code-block-logic" data-block-title="DSP Processing" data-block-text="JUCE DSP module uses AudioBlock and ProcessContext for efficient SIMD-optimized processing. Filters and compressor process in-place for maximum performance.">    <span class="type">juce::dsp::AudioBlock</span>&lt;<span class="type">float</span>&gt; dspBlock(buffer);
+    <span class="type">juce::dsp::ProcessContextReplacing</span>&lt;<span class="type">float</span>&gt; ctx(dspBlock);
+    lpf.<span class="function">process</span>(ctx);
+    hpf.<span class="function">process</span>(ctx);
+    compressor.<span class="function">process</span>(ctx);</span>
+
+    <span class="comment">// Custom tremolo and final gain applied here...</span>
+    
+    buffer.<span class="function">applyGain</span>(gainValue);
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Custom Tremolo -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <div class="section-badge">Custom DSP</div>
+                    <h2>Manual Tremolo Effect</h2>
+                    <p class="section-subtitle">Per-sample LFO implementation for amplitude modulation</p>
+                </div>
+
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3>WHAT</h3>
+                        <p>Tremolo is amplitude modulation using a low-frequency oscillator (LFO). The amplitude of the audio signal varies rhythmically, creating a pulsing effect.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>HOW</h3>
+                        <p>Sine wave LFO is calculated per sample. Each sample is multiplied by the LFO value, which ranges from minimum to maximum amplitude based on depth parameter.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>WHY</h3>
+                        <p>Manual implementation provides full control over the effect. Per-sample processing ensures smooth modulation without artifacts, unlike block-based processing.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>RESULT</h3>
+                        <p>Smooth, musical tremolo effect with precise control over rate and depth. No aliasing or stepping artifacts in the modulation.</p>
+                    </div>
+                </div>
+
+                <div class="implementation-showcase">
+                    <div class="code-side">
+                        <h4>PluginProcessor.cpp — Tremolo Implementation</h4>
+                        <div class="code-explanation">
+                            <p><strong>WHAT</strong>: Custom tremolo effect using sine wave LFO for amplitude modulation.</p>
+                            <p><strong>HOW</strong>: Phase increment is calculated per sample based on LFO rate. Sine wave generates modulation value, which is applied to each sample across all channels.</p>
+                            <p><strong>WHY</strong>: Per-sample processing ensures smooth modulation. Manual implementation allows precise control over the effect's behavior compared to using JUCE's built-in LFO classes.</p>
+                        </div>
+                        <pre><code><span class="keyword">if</span> (tremoloOn &amp;&amp; tremDepth &gt; <span class="number">0.0f</span>)
+{
+    <span class="type">int</span> numSamples = buffer.<span class="function">getNumSamples</span>();
+    <span class="type">int</span> numChannels = buffer.<span class="function">getNumChannels</span>();
+
+<span class="code-block-logic" data-block-title="Phase Increment Calculation" data-block-text="Calculates phase increment per sample based on LFO rate and sample rate. Converts Hz to radians per sample for sine wave generation. This ensures the LFO completes one cycle at the specified rate.">    <span class="type">float</span> phaseInc = (<span class="type">float</span>)(<span class="number">2.0</span> * <span class="type">juce::MathConstants</span>&lt;<span class="type">double</span>&gt;::pi * tremRate / currentSR);</span>
+
+    <span class="keyword">for</span> (<span class="type">int</span> sample = <span class="number">0</span>; sample &lt; numSamples; ++sample)
+    {
+<span class="code-block-logic" data-block-title="LFO Generation" data-block-text="Sine wave LFO ranges from 0 to 1. The formula (1 - depth) + (depth * LFO) ensures that at depth=0 there's no modulation, and at depth=1 the amplitude varies from 0 to 1.">        <span class="type">float</span> lfoVal = <span class="number">0.5f</span> + <span class="number">0.5f</span> * <span class="function">std::sin</span>(tremoloPhase);
+        <span class="type">float</span> amplitude = (<span class="number">1.0f</span> - tremDepth) + (tremDepth * lfoVal);</span>
+
+<span class="code-block-logic" data-block-title="Per-Sample Processing" data-block-text="Applies amplitude modulation to each sample across all channels. Direct buffer access via getWritePointer provides maximum performance for real-time processing.">        <span class="keyword">for</span> (<span class="type">int</span> ch = <span class="number">0</span>; ch &lt; numChannels; ++ch)
+        {
+            <span class="type">float</span>* writePtr = buffer.<span class="function">getWritePointer</span>(ch);
+            writePtr[sample] *= amplitude;
+        }</span>
+
+        tremoloPhase += phaseInc;
+<span class="code-block-logic" data-block-title="Phase Wrapping" data-block-text="Wraps phase to prevent overflow. Keeps phase value within 0 to 2π range for continuous sine wave generation.">        <span class="keyword">if</span> (tremoloPhase &gt; <span class="type">juce::MathConstants</span>&lt;<span class="type">float</span>&gt;::twoPi)
+            tremoloPhase -= <span class="type">juce::MathConstants</span>&lt;<span class="type">float</span>&gt;::twoPi;
+    }</span>
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filters & Compressor -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <div class="section-badge">JUCE DSP</div>
+                    <h2>Filters & Compressor</h2>
+                    <p class="section-subtitle">Professional DSP modules from JUCE's DSP library</p>
+                </div>
+
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3>WHAT</h3>
+                        <p>JUCE provides optimized DSP modules including StateVariableTPTFilter for filtering and Compressor for dynamic range control. These use SIMD optimizations for maximum performance.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>HOW</h3>
+                        <p>Filters use TPT (Topology-Preserving Transform) design for zero-delay filtering. Compressor uses look-ahead and smooth envelope followers for transparent compression.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>WHY</h3>
+                        <p>JUCE's DSP modules are highly optimized and tested. Using them saves development time and ensures professional-quality audio processing with minimal CPU usage.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>RESULT</h3>
+                        <p>High-quality filtering and compression with low CPU overhead. All parameters are automatable and respond smoothly to real-time changes.</p>
+                    </div>
+                </div>
+
+                <div class="implementation-showcase">
+                    <div class="code-side">
+                        <h4>PluginProcessor.cpp — DSP Setup</h4>
+                        <div class="code-explanation">
+                            <p><strong>WHAT</strong>: Initialization of JUCE DSP modules in prepareToPlay, which is called when audio starts.</p>
+                            <p><strong>HOW</strong>: ProcessSpec defines sample rate, block size, and channel count. All DSP modules are prepared with the same spec for consistent processing.</p>
+                            <p><strong>WHY</strong>: prepareToPlay is called before audio processing begins. This is where all DSP modules must be initialized with correct sample rate and buffer sizes.</p>
+                        </div>
+                        <pre><code><span class="keyword">void</span> <span class="function">prepareToPlay</span>(<span class="type">double</span> sampleRate, <span class="type">int</span> samplesPerBlock)
+{
+<span class="code-block-logic" data-block-title="ProcessSpec Configuration" data-block-text="ProcessSpec defines the audio processing environment. All JUCE DSP modules require this spec for initialization. Ensures consistent sample rate and buffer size across all modules.">    <span class="type">juce::dsp::ProcessSpec</span> spec;
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = (<span class="type">juce::uint32</span>)samplesPerBlock;
+    spec.numChannels = <span class="number">2</span>;</span>
+
+<span class="code-block-logic" data-block-title="Filter Initialization" data-block-text="StateVariableTPTFilter provides zero-delay filtering using TPT design. Low-pass and high-pass filters are prepared and reset to ensure clean startup.">    lpf.<span class="function">setType</span>(<span class="type">juce::dsp::StateVariableTPTFilterType</span>::lowpass);
+    hpf.<span class="function">setType</span>(<span class="type">juce::dsp::StateVariableTPTFilterType</span>::highpass);
+    lpf.<span class="function">prepare</span>(spec);
+    hpf.<span class="function">prepare</span>(spec);
+    lpf.<span class="function">reset</span>();
+    hpf.<span class="function">reset</span>();</span>
+
+<span class="code-block-logic" data-block-title="Compressor Initialization" data-block-text="JUCE's Compressor module provides professional dynamic range control. Prepared with the same spec to ensure proper operation at the current sample rate.">    compressor.<span class="function">prepare</span>(spec);
+    compressor.<span class="function">reset</span>();</span>
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AudioFilePlayer -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <div class="section-badge">Audio Playback</div>
+                    <h2>AudioFilePlayer System</h2>
+                    <p class="section-subtitle">File loading, playback, and tempo manipulation</p>
+                </div>
+
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3>WHAT</h3>
+                        <p>AudioFilePlayer manages audio file loading, playback, looping, and tempo control. It uses AudioTransportSource for playback and ResamplingAudioSource for tempo changes.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>HOW</h3>
+                        <p>Audio files are loaded into AudioFormatReaderSource, wrapped in ResamplingAudioSource for tempo control, then connected to AudioTransportSource for playback control.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>WHY</h3>
+                        <p>JUCE's AudioSource architecture provides clean separation of concerns. Each source handles one responsibility, making the system modular and maintainable.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>RESULT</h3>
+                        <p>Smooth playback with tempo control from 20-300 BPM, seamless looping, and support for granular synthesis mode with random playback.</p>
+                    </div>
+                </div>
+
+                <div class="implementation-showcase">
+                    <div class="code-side">
+                        <h4>AudioFilePlayer.cpp — Playback System</h4>
+                        <div class="code-explanation">
+                            <p><strong>WHAT</strong>: AudioSource chain setup for file playback with tempo control.</p>
+                            <p><strong>HOW</strong>: File reader is wrapped in ResamplingAudioSource, which is then connected to AudioTransportSource. This chain allows tempo changes without pitch shifting.</p>
+                            <p><strong>WHY</strong>: ResamplingAudioSource changes playback speed by resampling, maintaining audio quality. AudioTransportSource provides play/stop/loop control.</p>
+                        </div>
+                        <pre><code><span class="keyword">void</span> <span class="function">loadFile</span>(<span class="type">juce::File</span> file)
+{
+<span class="code-block-logic" data-block-title="File Reading" data-block-text="AudioFormatManager detects file format and creates appropriate reader. Supports WAV, AIFF, MP3 and other formats JUCE can decode.">    <span class="type">juce::AudioFormatReader</span>* reader = formatManager.<span class="function">createReaderFor</span>(file);
+    <span class="keyword">if</span> (reader != <span class="keyword">nullptr</span>) {
+        <span class="type">juce::AudioFormatReaderSource</span>* source = <span class="keyword">new</span> <span class="type">juce::AudioFormatReaderSource</span>(reader, <span class="keyword">true</span>);</span>
+
+<span class="code-block-logic" data-block-title="Resampling Setup" data-block-text="ResamplingAudioSource wraps the file source to enable tempo control. Resampling ratio of 1.0 means normal speed, 2.0 means double speed (one octave up in pitch if not compensated).">        resamplingSource.<span class="function">setSource</span>(source, <span class="number">0</span>, <span class="keyword">nullptr</span>, reader-&gt;sampleRate);
+        resamplingSource.<span class="function">setResamplingRatio</span>(<span class="number">1.0</span>);</span>
+
+<span class="code-block-logic" data-block-title="Transport Setup" data-block-text="AudioTransportSource provides play/stop/loop control. It manages the playback position and handles looping automatically when setLooping is enabled.">        transportSource.<span class="function">setSource</span>(&amp;resamplingSource, <span class="number">0</span>, <span class="keyword">nullptr</span>, reader-&gt;sampleRate);
+        transportSource.<span class="function">setLooping</span>(<span class="keyword">true</span>);
+        transportSource.<span class="function">prepareToPlay</span>(samplesPerBlock, sampleRate);
+    }
+}</span>
+
+<span class="code-block-logic" data-block-title="Tempo Control" data-block-text="Changing resampling ratio alters playback speed. Ratio is calculated from BPM: ratio = desiredBPM / 120.0. This changes speed without affecting pitch in time-stretching scenarios.">    <span class="keyword">void</span> <span class="function">setResamplingRatio</span>(<span class="type">double</span> ratio) {
+        resamplingSource.<span class="function">setResamplingRatio</span>(ratio);
+    }</span>
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <div class="section-badge" data-i18n="features.badge">Key Features</div>
+                    <h2 data-i18n="features.title">Professional Audio Processing</h2>
+                    <p class="section-subtitle" data-i18n="features.subtitle">Everything you need for creative sound manipulation</p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3 data-i18n="features.f1.title">Drag & Drop Loading</h3>
+                        <p data-i18n="features.f1.desc">Seamlessly load audio files (WAV, AIFF, MP3) with intuitive drag-and-drop interface. Instant waveform visualization and playback control.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 data-i18n="features.f2.title">Granular Synthesis</h3>
+                        <p data-i18n="features.f2.desc">Advanced granular synthesis mode for textural manipulation. Control grain size, random playback, and crossfade transitions for unique sound design.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 data-i18n="features.f3.title">Custom Tremolo Effect</h3>
+                        <p data-i18n="features.f3.desc">Manual DSP implementation with LFO calculation and per-sample amplitude modulation. Full control over rate and depth parameters.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 data-i18n="features.f4.title">Filter System</h3>
+                        <p data-i18n="features.f4.desc">High/Low-pass filtering with real-time parameter control. Frequency range from 20Hz to 20kHz for precise tonal shaping.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 data-i18n="features.f5.title">Built-in Compressor</h3>
+                        <p data-i18n="features.f5.desc">Professional compressor with full parameter automation. Control threshold, ratio, attack, and release for dynamic range management.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 data-i18n="features.f6.title">Advanced Looping</h3>
+                        <p data-i18n="features.f6.desc">User-defined loop regions with tempo adjustment (20-300 BPM). Perfect for creating rhythmic patterns and sustained textures.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 data-i18n="features.f7.title">Dual Waveform Display</h3>
+                        <p data-i18n="features.f7.desc">Offline and real-time waveform visualization. Monitor your audio processing with professional-grade visual feedback.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 data-i18n="features.f8.title">Volume Safety System</h3>
+                        <p data-i18n="features.f8.desc">Built-in peak protection with automatic detection. Prevents audio damage with smart volume monitoring and safety alerts.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 data-i18n="features.f9.title">Full Automation</h3>
+                        <p data-i18n="features.f9.desc">AudioProcessorValueTreeState for complete parameter automation. All controls can be automated in your DAW for dynamic performances.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Video Section -->
+            <section class="video-section">
+                <div class="section-header">
+                    <div class="section-badge" data-i18n="demo.badge">Demo</div>
+                    <h2 data-i18n="demo.title">See AudioQ in Action</h2>
+                </div>
+                <div class="video-wrapper">
+                    <video controls poster="../assets/images/projects-audioq/AudioQPicture.png">
+                        <source src="../assets/images/projects-audioq/AudioQ-Showcase.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </section>
+
+            <!-- Tech Stack -->
+            <section class="tech-section">
+                <div class="section-header">
+                    <div class="section-badge" data-i18n="tech.badge">Technology</div>
+                    <h2 data-i18n="tech.title">Built With Industry Standards</h2>
+                </div>
+                <div class="tech-stack">
+                    <div class="tech-badge">JUCE Framework</div>
+                    <div class="tech-badge">C++</div>
+                    <div class="tech-badge">VST3 / AU</div>
+                    <div class="tech-badge">Custom DSP</div>
+                    <div class="tech-badge">Real-time Processing</div>
+                    <div class="tech-badge">Cross-platform</div>
+                </div>
+            </section>
+
+            <!-- Download CTA -->
+            <section class="download-cta">
+                <div class="section-header">
+                    <h2 data-i18n="cta.title">Ready to Create Amazing Sounds?</h2>
+                    <p class="section-subtitle" data-i18n="cta.subtitle">Download AudioQ now and explore professional audio sampling and granular synthesis.</p>
+                </div>
+                <div class="hero-cta">
+                    <a href="https://github.com/Szunias/AudioQ/releases/latest" class="btn btn-primary" target="_blank" rel="noopener">
+                        <span data-i18n="cta.download">Download Latest Release</span>
+                    </a>
+                    <a href="https://github.com/Szunias/AudioQ" class="btn btn-secondary" target="_blank" rel="noopener">
+                        <span data-i18n="cta.source">View Source Code</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="content">
+                <p>
+                    Created by <a href="https://igorszuniewicz.com" target="_blank" rel="noopener">Igor Szuniewicz</a> | 
+                    Open Source on <a href="https://github.com/Szunias/AudioQ" target="_blank" rel="noopener">GitHub</a>
+                </p>
+                <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+                    © 2025 Igor Szuniewicz. Free for personal and commercial use.
+                </p>
+            </div>
+        </footer>
+
+        <!-- Translation Script -->
+        <script>
+            let translations = {};
+            
+            async function loadTranslations() {
+                try {
+                    const response = await fetch('../locales/audioq.json');
+                    translations = await response.json();
+                } catch (error) {
+                    translations = { en: {}, pl: {}, nl: {} };
+                }
+            }
+
+            let currentLang = localStorage.getItem('language') || 'en';
+
+            function getNestedValue(obj, path) {
+                return path.split('.').reduce((current, key) => current?.[key], obj);
+            }
+
+            function setLanguage(lang) {
+                currentLang = lang;
+                localStorage.setItem('language', lang);
+
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    const translation = getNestedValue(translations[lang], key);
+                    if (translation) {
+                        if (typeof translation === 'string' && translation.includes('<')) {
+                            el.innerHTML = translation;
+                        } else {
+                            el.textContent = translation;
+                        }
+                    }
+                });
+
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.lang === lang);
+                });
+            }
+
+            // Interactive code blocks with tooltips
+            document.addEventListener('DOMContentLoaded', async () => {
+                await loadTranslations();
+                setLanguage(currentLang);
+
+                // Language switcher
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        setLanguage(btn.dataset.lang);
+                    });
+                });
+
+                // Code tooltips
+                const tooltip = document.createElement('div');
+                tooltip.className = 'code-tooltip';
+                document.body.appendChild(tooltip);
+
+                const logicElements = document.querySelectorAll('.code-block-logic');
+                logicElements.forEach((element) => {
+                    const title = element.getAttribute('data-block-title');
+                    const text = element.getAttribute('data-block-text');
+                    
+                    if (title && text) {
+                        element.addEventListener('mouseenter', (e) => {
+                            const rect = element.getBoundingClientRect();
+                            tooltip.innerHTML = `<h5>${title}</h5><p>${text}</p>`;
+                            
+                            // Reset all positioning styles
+                            tooltip.style.left = '';
+                            tooltip.style.right = '';
+                            tooltip.style.top = '';
+                            tooltip.style.maxWidth = '';
+                            tooltip.style.visibility = 'hidden';
+                            tooltip.style.display = 'block';
+                            tooltip.style.opacity = '0';
+                            
+                            // Make tooltip temporarily visible to measure
+                            tooltip.classList.add('active');
+                            void tooltip.offsetWidth; // Force layout
+                            
+                            const tooltipRect = tooltip.getBoundingClientRect();
+                            let tooltipWidth = tooltipRect.width || 300;
+                            const tooltipHeight = tooltipRect.height || 150;
+                            
+                            const margin = 20;
+                            const viewportWidth = window.innerWidth;
+                            const viewportHeight = window.innerHeight;
+                            
+                            // Calculate space available on each side
+                            const spaceRight = viewportWidth - rect.right - margin;
+                            const spaceLeft = rect.left - margin;
+                            
+                            // Determine position - prefer right, but check if tooltip fits
+                            let positionRight = false;
+                            let finalWidth = tooltipWidth;
+                            
+                            // Try right side first
+                            if (spaceRight >= tooltipWidth) {
+                                // Fits perfectly on right
+                                positionRight = true;
+                                finalWidth = tooltipWidth;
+                            } else if (spaceLeft >= tooltipWidth) {
+                                // Fits on left
+                                positionRight = false;
+                                finalWidth = tooltipWidth;
+                            } else {
+                                // Doesn't fit on either side - choose side with more space
+                                if (spaceRight >= spaceLeft && spaceRight >= 200) {
+                                    // Use right with constrained width
+                                    positionRight = true;
+                                    finalWidth = Math.max(200, spaceRight - 10);
+                                } else if (spaceLeft >= 200) {
+                                    // Use left with constrained width
+                                    positionRight = false;
+                                    finalWidth = Math.max(200, spaceLeft - 10);
+                                } else {
+                                    // Very little space - use right with minimum width
+                                    positionRight = true;
+                                    finalWidth = Math.max(200, Math.min(tooltipWidth, viewportWidth - 40));
+                                }
+                            }
+                            
+                            // Apply width constraint if needed
+                            if (finalWidth < tooltipWidth) {
+                                tooltip.style.maxWidth = finalWidth + 'px';
+                                void tooltip.offsetWidth; // Re-measure
+                                const newRect = tooltip.getBoundingClientRect();
+                                finalWidth = newRect.width;
+                            }
+                            
+                            // Position horizontally
+                            if (positionRight) {
+                                tooltip.style.left = (rect.right + margin) + 'px';
+                                tooltip.style.right = 'auto';
+                                
+                                // Verify it doesn't go off-screen
+                                const leftPos = rect.right + margin;
+                                if (leftPos + finalWidth > viewportWidth - 10) {
+                                    tooltip.style.left = (viewportWidth - finalWidth - 10) + 'px';
+                                }
+                            } else {
+                                tooltip.style.left = 'auto';
+                                tooltip.style.right = (viewportWidth - rect.left + margin) + 'px';
+                                
+                                // Verify it doesn't go off-screen
+                                const rightPos = viewportWidth - rect.left + margin;
+                                const calculatedLeft = viewportWidth - rightPos - finalWidth;
+                                if (calculatedLeft < 10) {
+                                    tooltip.style.right = (viewportWidth - finalWidth - 10) + 'px';
+                                }
+                            }
+                            
+                            // Vertical positioning
+                            const spaceBelow = viewportHeight - rect.bottom;
+                            const spaceAbove = rect.top;
+                            
+                            if (spaceBelow >= tooltipHeight + 10) {
+                                tooltip.style.top = Math.max(10, rect.top) + 'px';
+                            } else if (spaceAbove >= tooltipHeight + 10) {
+                                tooltip.style.top = (rect.bottom - tooltipHeight - 10) + 'px';
+                            } else {
+                                tooltip.style.top = Math.max(10, Math.min(rect.top, viewportHeight - tooltipHeight - 10)) + 'px';
+                            }
+                            
+                            // Final safety check - ensure tooltip is fully visible
+                            void tooltip.offsetWidth;
+                            const finalRect = tooltip.getBoundingClientRect();
+                            
+                            if (finalRect.right > viewportWidth - 10) {
+                                tooltip.style.left = (viewportWidth - finalRect.width - 10) + 'px';
+                            }
+                            if (finalRect.left < 10) {
+                                tooltip.style.left = '10px';
+                            }
+                            
+                            // Make tooltip visible
+                            tooltip.style.visibility = 'visible';
+                            tooltip.style.opacity = '1';
+                        });
+                        
+                        element.addEventListener('mouseleave', () => {
+                            tooltip.classList.remove('active');
+                            tooltip.style.maxWidth = '';
+                            tooltip.style.left = '';
+                            tooltip.style.right = '';
+                            tooltip.style.top = '';
+                            tooltip.style.visibility = '';
+                            tooltip.style.opacity = '';
+                        });
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
