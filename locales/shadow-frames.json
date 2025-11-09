@@ -34,15 +34,15 @@
       "role_label": "My Role",
       "role_value": "Lead Audio Designer & Technical Implementer",
       "collaboration_title": "Multi-Institutional Collaboration",
-      "collab1": "RITCS — Narrative Design & Story",
-      "collab2": "KASK Conservatory — Music Composition",
-      "collab3": "Howest DAE — Game Development & Audio Implementation"
+      "collab1": "RITCS: Narrative Design & Story",
+      "collab2": "KASK Conservatory: Music Composition",
+      "collab3": "Howest DAE: Game Development & Audio Implementation"
     },
     "concept": {
       "title": "The Game",
       "subtitle": "Black-and-white psychological horror",
       "short": "Black-and-white horror game where you photograph paranormal events in a 1960s Irish pub. Sound is your main tool for finding anomalies.",
-      "detailed": "You have a Polaroid camera and 12 shots. Anomalies happen every 30-50 seconds—glasses levitate, shadows move on their own, chairs spin. Audio cues tell you where to look: a glass clinks, footsteps echo from nowhere, a chair scrapes across the floor. Without sound, you're blind. Once you capture the evidence, arrange the photos on a corkboard in chronological order to piece together what's happening.",
+      "detailed": "You have a Polaroid camera and 12 shots. Anomalies happen every 30-50 seconds. Glasses levitate, shadows move on their own, chairs spin. Audio cues tell you where to look: a glass clinks, footsteps echo from nowhere, a chair scrapes across the floor. Without sound, you're blind. Once you capture the evidence, arrange the photos on a corkboard in chronological order to piece together what's happening.",
       "desc": "You're trapped in a black-and-white 1960s Irish pub where reality is breaking down. Anomalies appear every 30 to 50 seconds, and sound is your only tool for finding them. Put on headphones and listen carefully. A glass clinks in the corner. Footsteps echo from an empty hallway. A chair scrapes across the floor by itself. Follow the audio to locate each disturbance, then photograph it. You have exactly 12 shots, so choose wisely.\n\nThe pub has constant supernatural activity. Glasses levitate off the bar. Shadows detach from their owners and move independently. Chairs spin on their own. The grainy black-and-white aesthetic makes everything feel like a forgotten photograph from decades ago.\n\nAudio is the core mechanic. Mute the game and you can't find anomalies. You won't know where to look, what's happening, or how to survive. Every creak, whisper, and crash is information.\n\nOnce you've captured your evidence, race to the corkboard and arrange the photos in the correct chronological order. This is how you piece together what's happening and why. But work quickly. Something is hunting you through the pub, and time is running out."
     },
     "gameplay": {
@@ -59,11 +59,11 @@
       "rtpc_title": "RTPC-Based Dynamic System",
       "rtpc_desc": "Ambient sound and player breathing get more intense with each anomaly that spawns. More anomalies = higher tension.",
       "switches_title": "Switch Containers & Zones",
-      "switches_desc": "Each room has its own ambient layers that crossfade as you move. Bathroom has spatialized toilet and faucet sounds. Footsteps change based on surface—wood, tiles, concrete.",
+      "switches_desc": "Each room has its own ambient layers that crossfade as you move. Bathroom has spatialized toilet and faucet sounds. Footsteps change based on surface. Wood, tiles, concrete.",
       "delegates_title": "Blueprint Delegates (SOC)",
-      "delegates_desc": "Audio systems communicate through delegates. C++ handles game logic, Blueprint handles audio. Keeps everything modular—change one without breaking the other.",
+      "delegates_desc": "Audio systems communicate through delegates. C++ handles game logic, Blueprint handles audio. Keeps everything modular. Change one without breaking the other.",
       "spatial_title": "HRTF Spatial Audio",
-      "spatial_desc": "Full 3D positional audio for anomalies, enemy, and environmental cues. Spatial accuracy is required for gameplay—you can't find threats without it."
+      "spatial_desc": "Full 3D positional audio for anomalies, enemy, and environmental cues. Spatial accuracy is required for gameplay. You can't find threats without it."
     },
     "dev_tools": {
       "title": "Development Tools",
@@ -75,11 +75,11 @@
     "production": {
       "title": "Production Status",
       "proto": "✓ Prototype Complete (3 weeks)",
-      "sprint1": "✓ Sprint 1 — Core Systems",
-      "sprint2": "✓ Sprint 2 — Environment Audio",
-      "sprint3": "◉ Sprint 3 — Anomaly Systems (Current)",
-      "sprint4": "◯ Sprint 4 — Enemy & Polish",
-      "sprint5": "◯ Sprint 5 — Final Integration"
+      "sprint1": "✓ Sprint 1: Core Systems",
+      "sprint2": "✓ Sprint 2: Environment Audio",
+      "sprint3": "◉ Sprint 3: Anomaly Systems (Current)",
+      "sprint4": "◯ Sprint 4: Enemy & Polish",
+      "sprint5": "◯ Sprint 5: Final Integration"
     },
     "anomalies": {
       "title": "Anomaly Types",
@@ -95,12 +95,11 @@
       "title": "Technical Stack",
       "wwise": "Wwise 2024.1",
       "engine": "Unreal Engine 5.5",
-      "audio_tools": "Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho",
-      "performance": "Sub 5% CPU, optimized streaming"
+      "audio_tools": "Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho"
     },
     "footstep": {
       "title": "Footstep System: Surface Detection & Audio Routing",
-      "desc": "Footsteps change based on what you're walking on—wood, tiles, concrete. The system detects the surface and switches sounds in Wwise automatically.",
+      "desc": "Footsteps change based on what you're walking on. Wood, tiles, concrete. The system detects the surface and switches sounds in Wwise automatically.",
       "what": "C++ component does a line trace down from the player, checks the Physical Material, and maps it to a Wwise Switch (Tiles, Wood, CreakyWood, Concrete).",
       "how": "Physical Material is detected using Unreal's surface system. That gets mapped to a Switch name. Blueprint Audio Manager gets the delegate and plays the right sound in Wwise.",
       "why": "C++ handles detection, Blueprint handles audio. I can add new surfaces without touching C++ code. Audio designer can change Switch names in Wwise without code changes.",
@@ -108,18 +107,18 @@
     },
     "player_audio": {
       "title": "Player Audio System: Delegate-Based Communication",
-      "desc": "Player actions trigger audio through delegates. Camera shot, zoom, photoboard interaction—each action calls the right Wwise event.",
+      "desc": "Player actions trigger audio through delegates. Camera shot, zoom, photoboard interaction. Each action calls the right Wwise event.",
       "what": "PlayerCharacter (C++) defines multicast delegates. When you take a photo or zoom, the delegate broadcasts. Blueprint Audio Manager listens and plays the sound.",
       "how": "DECLARE_DYNAMIC_MULTICAST_DELEGATE creates delegates that work with Blueprint. UPROPERTY(BlueprintAssignable) allows binding in Blueprint. Multicast means multiple listeners can react to one action.",
       "why": "PlayerCharacter doesn't know anything about audio. Audio Manager doesn't know anything about player logic. I can test and change each independently.",
-      "result": "Adding new audio actions is easy—no hardcoded calls. Audio designers can change sounds in Wwise without touching player code."
+      "result": "Adding new audio actions is easy. No hardcoded calls. Audio designers can change sounds in Wwise without touching player code."
     },
     "rtpc": {
       "title": "Dynamic Tension System: RTPC-Driven Ambience",
       "desc": "More photos on the board = higher tension. Ambient intensity increases as you progress.",
       "what": "RTPC value (0-5) controls ambient layers in Wwise. PhotoboardWidget tracks how many photos you've placed. More photos = higher RTPC value = more intense ambience.",
       "how": "When you place a photo, UpdateAmbientRTPC() finds the AkAmbientSound actor (tagged 'AmbientProgressive') and sets the RTPC value. Wwise crossfades between ambient layers based on that value.",
-      "why": "RTPC gives smooth transitions between tension states—no audio jumps. Audio designer controls crossfade curves in Wwise without touching code.",
+      "why": "RTPC gives smooth transitions between tension states. No audio jumps. I control crossfade curves in Wwise without touching code.",
       "result": "Tension builds smoothly as you progress. Tweak curves in Wwise, atmosphere adapts automatically."
     },
     "wwise_arch": {
@@ -128,11 +127,11 @@
       "what": "RTPC value (0-5 from photos) drives Switch Container selection in Wwise. Each Switch state has different ambient layers. RTPC handles smooth crossfades, Switch Containers handle structural changes.",
       "how": "PhotoboardWidget sends RTPC value. Wwise uses that to pick the right Switch state and crossfade between layers.",
       "why": "Switch Containers give discrete layer control. RTPC gives smooth transitions. Together: structural changes (different ambient sets) and intensity progression.",
-      "result": "Ambient responds to player progress. This is partial implementation—full system will have more layers and complexity."
+      "result": "Ambient responds to player progress. This is partial implementation. Full system will have more layers and complexity."
     },
     "sections": {
       "gameplay_showcase": "Gameplay Showcase",
-      "gameplay_note": "Note: This is a demonstration from Sprint 3 of production. The game is still in active development, far from final release. This video showcases Wwise audio systems implementation and is for demonstration purposes only.",
+      "gameplay_note": "Sprint 3 work-in-progress. Game is still in development.",
       "audio_doc": "Audio Documentation",
       "audio_doc_desc": "Complete technical documentation covering all audio systems, asset pipeline, and implementation guidelines.",
       "download_sound_bible": "📄 Download Sound Bible PDF",
@@ -143,9 +142,9 @@
       "music_desc": "Original music composition for the game's atmosphere and emotional progression.",
       "org_title": "Multi-Institutional Collaboration",
       "org_desc": "Multi-institutional collaboration between:",
-      "ritcs_desc": "RITCS (Royal Institute for Theatre, Cinema & Sound) — Leading narrative design and story development",
-      "kask_desc": "KASK Conservatory — Providing music composition expertise",
-      "howest_desc": "Howest DAE (Digital Arts & Entertainment) — Game development and technical audio implementation",
+      "ritcs_desc": "RITCS (Royal Institute for Theatre, Cinema & Sound): Narrative design and story",
+      "kask_desc": "KASK Conservatory: Music composition",
+      "howest_desc": "Howest DAE (Digital Arts & Entertainment): Game development and technical audio implementation",
       "sound_lead": "Sound Lead",
       "ongoing_project": "Ongoing Project",
       "deadline": "Target: Q1 2026 (Sprint 5)",
@@ -161,12 +160,12 @@
       "tech_icon": "TECH",
       "core_concept": "Core Concept",
       "my_role": "My Role",
-      "my_role_desc": "Sound Lead for this multi-institutional student project. I designed and implemented the audio architecture: dynamic footstep systems, delegate-based player audio, RTPC-driven tension progression, and Wwise integration. More systems in development for final release.",
+      "my_role_desc": "Sound Lead for this multi-institutional student project. I built the audio architecture: dynamic footstep systems, delegate-based player audio, RTPC-driven tension progression, and Wwise integration. More systems in development for final release.",
       "technical_stack": "Technical Stack",
       "ritcs_name": "RITCS",
       "kask_name": "KASK Conservatory",
       "howest_name": "Howest DAE",
-      "menu_vibe": "Shadow Frames — Menu Vibe",
+      "menu_vibe": "Shadow Frames: Menu Vibe",
       "palette_soundscape": "Palette Soundscape Update",
       "volume_label": "VOL",
       "what": "WHAT",
@@ -174,9 +173,9 @@
       "why": "WHY",
       "result": "RESULT",
       "click_enlarge": "Click to enlarge",
-      "footstep_code_title": "FootstepComponent.cpp — Surface Detection",
-      "delegate_code_title": "PlayerCharacter.h — Delegates",
-      "rtpc_code_title": "PhotoboardWidget.cpp — RTPC Update",
+      "footstep_code_title": "FootstepComponent.cpp: Surface Detection",
+      "delegate_code_title": "PlayerCharacter.h: Delegates",
+      "rtpc_code_title": "PhotoboardWidget.cpp: RTPC Update",
       "audio_middleware": "Audio Middleware",
       "game_engine": "Game Engine",
       "audio_tools": "Audio Tools",
@@ -202,18 +201,18 @@
       "delegate_why": "Multicast delegates allow multiple listeners (e.g. Audio Manager) to react to one action. Dynamic delegates work with Blueprint, giving audio designer full control without modifying C++ code.",
       "rtpc_what": "Function updates RTPC value in Wwise based on number of photos placed on board.",
       "rtpc_how": "Validates world exists, then finds AkAmbientSound actor by tag 'AmbientProgressive' (more efficient and reliable than name string search). Sets RTPC value (0-5) corresponding to number of important photos. Wwise automatically crossfades between ambient layers.",
-      "rtpc_why": "RTPC allows smooth transitions between tension states. Audio designer can precisely control crossfade curves for each layer in Wwise, giving full control over emotional progression without code modifications."
+      "rtpc_why": "RTPC gives smooth transitions between tension states. I can control crossfade curves for each layer in Wwise, giving full control over emotional progression without code modifications."
     },
     "media_captions": {
-      "switch_container": "Wwise Switch Container setup — controls which ambient layers play based on how many photos are on the board",
-      "photos_on_board": "Photo board — collected Polaroid snapshots that reveal the story as you arrange them correctly"
+      "switch_container": "Wwise Switch Container setup: controls which ambient layers play based on how many photos are on the board",
+      "photos_on_board": "Photo board: collected Polaroid snapshots that reveal the story as you arrange them correctly"
     }
   },
   "pl": {
     "back": "Powrót do projektów",
     "title": "Shadow Frames",
     "subtitle": "Lead Audio Designer",
-    "tagline": "Psychologiczny horror napędzany dźwiękiem",
+    "tagline": "Psychologiczny horror oparty na dźwięku",
     "production_notice": "🎮 Sprint 3/5 Produkcji  •  Projekt Międzyinstytucjonalny",
     "meta": {
       "role": {
@@ -244,16 +243,16 @@
       "role_label": "Moja rola",
       "role_value": "Lead Audio Designer & Implementer Techniczny",
       "collaboration_title": "Współpraca międzyinstytucjonalna",
-      "collab1": "RITCS — Narrative Design & Historia",
-      "collab2": "Konserwatorium KASK — Kompozycja muzyczna",
-      "collab3": "Howest DAE — Game Development & Implementacja audio"
+      "collab1": "RITCS: Narrative Design & Historia",
+      "collab2": "Konserwatorium KASK: Kompozycja muzyczna",
+      "collab3": "Howest DAE: Game Development & Implementacja audio"
     },
     "concept": {
       "title": "Gra",
       "subtitle": "Czarno-biały psychologiczny horror",
       "short": "Czarno-biały horror, w którym fotografujesz paranormalne zdarzenia w irlandzkim pubie z lat 60. Dźwięk jest głównym narzędziem do znajdowania anomalii.",
-      "detailed": "Masz aparat Polaroid i 12 zdjęć. Anomalie występują co 30-50 sekund—szklanki lewitują, cienie poruszają się same, krzesła się obracają. Dźwiękowe wskazówki mowią gdzie patrzeć: szklanka dzwoni, kroki rozbrzmiewają znikąd, krzesło zgrzyta po podłodze. Bez dźwięku jesteś ślepy. Kiedy zbierzesz dowody, ułóż zdjęcia na tablicy korkowej w kolejności chronologicznej, żeby złożyć całość historii.",
-      "desc": "Jesteś uwięziony w czarno-białym irlandzkim pubie z lat 60., gdzie rzeczywistość się rozpada. Anomalie pojawiają się co 30 do 50 sekund, a dźwięk to jedyne narzędzie, które pozwala je odnaleźć. Załóż słuchawki i słuchaj uważnie. Szklanka dzwoni w kącie. Kroki rozbrzmiewają z pustego korytarza. Krzesło zgrzyta po podłodze samo z siebie. Podążaj za dźwiękiem, żeby zlokalizować każde zakłócenie, a potem je sfotografuj. Masz dokładnie 12 zdjęć, więc wybieraj mądrze.\n\nPub żyje nadprzyrodzoną aktywnością. Szklanki lewitują nad barem. Cienie oderwane od swoich właścicieli poruszają się niezależnie. Krzesła wirują samodzielnie. Ziarnista, czarno-biała estetyka sprawia, że wszystko wygląda jak zapomniana fotografia sprzed dekad.\n\nDźwięk to nie tylko atmosfera—to kluczowa mechanika. Wycisz grę, a jesteś ślepy. Nie będziesz wiedział, gdzie patrzeć, co się dzieje, ani jak przeżyć. Każde skrzypnięcie, szept i trzask to informacja.\n\nKiedy zbierzesz dowody, biegnij do tablicy korkowej i ułóż zdjęcia w prawidłowej kolejności chronologicznej. To sposób, w jaki składasz w całość, co się dzieje i dlaczego. Ale pracuj szybko. Coś cię tropi przez pub, a czas ucieka."
+      "detailed": "Masz aparat Polaroid i 12 zdjęć. Anomalie występują co 30-50 sekund. Szklanki lewitują, cienie poruszają się same, krzesła się obracają. Dźwiękowe wskazówki mowią gdzie patrzeć: szklanka dzwoni, kroki rozbrzmiewają znikąd, krzesło zgrzyta po podłodze. Bez dźwięku jesteś ślepy. Kiedy zbierzesz dowody, ułóż zdjęcia na tablicy korkowej w kolejności chronologicznej, żeby złożyć całość historii.",
+      "desc": "Jesteś uwięziony w czarno-białym irlandzkim pubie z lat 60., gdzie rzeczywistość się rozpada. Anomalie pojawiają się co 30 do 50 sekund, a dźwięk to jedyne narzędzie, które pozwala je odnaleźć. Załóż słuchawki i słuchaj uważnie. Szklanka dzwoni w kącie. Kroki rozbrzmiewają z pustego korytarza. Krzesło zgrzyta po podłodze samo z siebie. Podążaj za dźwiękiem, żeby zlokalizować każde zakłócenie, a potem je sfotografuj. Masz dokładnie 12 zdjęć, więc wybieraj mądrze.\n\nPub żyje nadprzyrodzoną aktywnością. Szklanki lewitują nad barem. Cienie oderwane od swoich właścicieli poruszają się niezależnie. Krzesła wirują samodzielnie. Ziarnista, czarno-biała estetyka sprawia, że wszystko wygląda jak zapomniana fotografia sprzed dekad.\n\nDźwięk to nie tylko atmosfera. To kluczowa mechanika. Wycisz grę, a jesteś ślepy. Nie będziesz wiedział, gdzie patrzeć, co się dzieje, ani jak przeżyć. Każde skrzypnięcie, szept i trzask to informacja.\n\nKiedy zbierzesz dowody, biegnij do tablicy korkowej i ułóż zdjęcia w prawidłowej kolejności chronologicznej. To sposób, w jaki składasz w całość, co się dzieje i dlaczego. Ale pracuj szybko. Coś cię tropi przez pub, a czas ucieka."
     },
     "gameplay": {
       "title": "Główna mechanika: Obserwuj → Sfotografuj → Połącz",
@@ -271,33 +270,33 @@
       "switches_title": "Switch Containers & Strefy",
       "switches_desc": "Atmosfery specyficzne dla pokoi płynnie się przełączają podczas przemieszczania się przez przestrzeń. Łazienka ma przestrzenne dźwięki toalety i kranu, podczas gdy kroki dynamicznie dostosowują się do rodzaju podłoża.",
       "delegates_title": "Blueprint Delegates (SOC)",
-      "delegates_desc": "Architektura Separation of Concerns, w której systemy audio komunikują się przez delegaty, umożliwiając czystą i modularną implementację.",
+      "delegates_desc": "Architektura Separation of Concerns, w której systemy audio komunikują się przez delegaty. Czysta i modularna implementacja.",
       "spatial_title": "HRTF Dźwięk przestrzenny 3D",
       "spatial_desc": "Dźwięk pozycyjny 3D dla anomalii, obecności wroga i wskazówek środowiskowych, który jest kluczowy dla rozgrywki."
     },
     "dev_tools": {
       "title": "Narzędzia deweloperskie",
       "fixer_title": "Wwise Unreal Fixer",
-      "fixer_desc": "Własna wtyczka C++, która automatycznie przywraca zepsutą integrację Wwise po pull z Perforce—rozwiązanie jednym kliknięciem.",
+      "fixer_desc": "Własna wtyczka C++, która automatycznie przywraca zepsutą integrację Wwise po pull z Perforce. Rozwiązanie jednym kliknięciem.",
       "rebuilder_title": "Unreal Engine Rebuilder",
       "rebuilder_desc": "Zautomatyzowane narzędzie build do usprawnienia workflow kompilacji i redukcji przestojów."
     },
     "production": {
       "title": "Status produkcji",
       "proto": "✓ Prototyp ukończony (3 tygodnie)",
-      "sprint1": "✓ Sprint 1 — Systemy podstawowe",
-      "sprint2": "✓ Sprint 2 — Audio środowiska",
-      "sprint3": "◉ Sprint 3 — Systemy anomalii (Aktualnie)",
-      "sprint4": "◯ Sprint 4 — Wróg & Polish",
-      "sprint5": "◯ Sprint 5 — Finalna integracja"
+      "sprint1": "✓ Sprint 1: Systemy podstawowe",
+      "sprint2": "✓ Sprint 2: Audio środowiska",
+      "sprint3": "◉ Sprint 3: Systemy anomalii (Aktualnie)",
+      "sprint4": "◯ Sprint 4: Wróg & Polish",
+      "sprint5": "◯ Sprint 5: Finalna integracja"
     },
     "anomalies": {
       "title": "Typy anomalii",
       "desc": "Częściowo losowe zakłócenia, które nasilają się w miarę postępu gry.",
       "object_title": "Anomalie obiektów",
-      "object_desc": "Krzesła obracają się same, szklanki unoszą w powietrzu, a sztućce brzęczą bez powodu—codzienne obiekty zaczynają łamać prawa fizyki.",
+      "object_desc": "Krzesła obracają się same, szklanki unoszą w powietrzu, a sztućce brzęczą bez powodu. Codzienne obiekty zaczynają łamać prawa fizyki.",
       "env_title": "Anomalie środowiskowe",
-      "env_desc": "Sama przestrzeń ulega wypaczeniu i dystorsji—szum radia wybucha znikąd, światła migoczą erratycznie, a zegar przyspiesza swoje tykanie.",
+      "env_desc": "Sama przestrzeń ulega wypaczeniu i dystorsji. Szum radia wybucha znikąd, światła migoczą erratycznie, a zegar przyspiesza swoje tykanie.",
       "shadow_title": "Anomalie cieni",
       "shadow_desc": "Ludzkie sylwetki materializują się w ciemności, cienie oddzielają się od swoich źródłowych obiektów i poruszają niezależnie, a ruch występuje tam, gdzie żadne źródło światła nie mogłoby go rzucić."
     },
@@ -305,44 +304,43 @@
       "title": "Stack technologiczny",
       "wwise": "Wwise 2024.1",
       "engine": "Unreal Engine 5.5",
-      "audio_tools": "Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho",
-      "performance": "Poniżej 5% CPU, zoptymalizowany streaming"
+      "audio_tools": "Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho"
     },
     "footstep": {
       "title": "System Kroków: Wykrywanie Powierzchni & Routing Audio",
-      "desc": "Wykrywanie materiału fizycznego napędza dynamiczne przełączanie audio dla realistycznych kroków dopasowanych do powierzchni.",
+      "desc": "Wykrywanie materiału fizycznego kontroluje dynamiczne przełączanie audio dla realistycznych kroków dopasowanych do powierzchni.",
       "what": "System wykrywa typ powierzchni pod graczem (drewno, płytki, beton) i automatycznie przełącza odpowiednie dźwięki kroków w Wwise. Każdy krok gracza jest dopasowany do materiału, po którym chodzi.",
       "how": "Komponent C++ wykonuje line trace w dół od pozycji gracza, wykrywa Physical Material, mapuje go na nazwę Switch w Wwise, a Blueprint Audio Manager odbiera delegate i odtwarza odpowiedni dźwięk.",
-      "why": "Separation of Concerns - C++ zajmuje się logiką wykrywania, Blueprint obsługuje audio. Delegates zapewniają luźne sprzężenie między systemami. To pozwala na łatwe dodawanie nowych powierzchni bez modyfikacji kodu C++.",
-      "result": "To tworzy realistyczne kroki dopasowane automatycznie do każdej powierzchni, bez wymaganego ręcznego przełączania, z łatwą rozbudową o nowe materiały—system obsługuje każdy krok gracza bez interwencji."
+      "why": "Separation of Concerns - C++ zajmuje się logiką wykrywania, Blueprint obsługuje audio. Delegates dają luźne sprzężenie między systemami. Mogę dodawać nowe powierzchnie bez modyfikacji kodu C++.",
+      "result": "To tworzy realistyczne kroki dopasowane automatycznie do każdej powierzchni, bez wymaganego ręcznego przełączania, z łatwą rozbudową o nowe materiały. System obsługuje każdy krok gracza bez interwencji."
     },
     "player_audio": {
       "title": "System Audio Gracza: Komunikacja przez Delegates",
       "desc": "Czyste oddzielenie między akcjami gracza a odpowiedziami audio używając Blueprint delegates.",
       "what": "System łączy akcje gracza (strzał aparatem, zoom, wejście do photoboard) z odpowiednimi eventami audio w Wwise. Każda akcja gracza automatycznie wywołuje odpowiedni dźwięk.",
       "how": "PlayerCharacter w C++ definiuje multicast delegates. Gdy gracz wykonuje akcję, delegate jest broadcastowany. Blueprint Audio Manager nasłuchuje tych delegate'ów i wywołuje odpowiednie Wwise Events.",
-      "why": "Delegates zapewniają luźne sprzężenie, gdzie PlayerCharacter nie wie nic o audio, a Audio Manager nie wie nic o logice gracza, co ułatwia testowanie, debugowanie i modyfikacje—każdy system może być rozwijany niezależnie.",
-      "result": "Rezultatem jest czysta architektura umożliwiająca proste dodawanie nowych akcji audio bez na stałe wpisanych wywołań, gdzie audio designer może modyfikować dźwięki swobodnie bez dotykania kodu gracza."
+      "why": "Delegates dają luźne sprzężenie, gdzie PlayerCharacter nie wie nic o audio, a Audio Manager nie wie nic o logice gracza. Łatwiejsze testowanie, debugowanie i modyfikacje. Każdy system może być rozwijany niezależnie.",
+      "result": "Czysta architektura, gdzie można łatwo dodawać nowe akcje audio bez na stałe wpisanych wywołań. Audio designer może modyfikować dźwięki swobodnie bez dotykania kodu gracza."
     },
     "rtpc": {
       "title": "Dynamiczny System Napięcia: Ambient Sterowany RTPC",
       "desc": "Intensywność ambientu progresywnie zmienia się w zależności od stanu gry - zdjęcia umieszczone na tablicy zwiększają napięcie.",
       "what": "System dynamicznie zmienia intensywność ambientu w zależności od liczby zdjęć umieszczonych na tablicy. Im więcej zdjęć, tym bardziej napięta atmosfera. RTPC value 0-5 kontroluje warstwy ambientu w Wwise.",
       "how": "PhotoboardWidget śledzi liczbę ważnych zdjęć. Gdy gracz umieszcza zdjęcie, UpdateAmbientRTPC() znajduje AkAmbientSound actor i ustawia RTPC value. Wwise automatycznie wykonuje crossfade między warstwami ambientu.",
-      "why": "RTPC pozwala na płynne przejścia między stanami napięcia bez skoków. Audio designer może w Wwise precyzyjnie kontrolować, jak każda warstwa ambientu reaguje na RTPC value. To daje pełną kontrolę nad emocjonalną progresją.",
+      "why": "RTPC daje płynne przejścia między stanami napięcia bez skoków. Kontroluję krzywe crossfade w Wwise bez dotykania kodu.",
       "result": "To tworzy płynną progresję napięcia bez żadnych skoków audio, z łatwą modyfikacją krzywych w Wwise, gdzie atmosfera automatycznie dostosowuje się do postępu gracza."
     },
     "wwise_arch": {
       "title": "Architektura Wwise: Switch Containers & Integracja z Photoboard",
       "desc": "Kontynuacja systemu RTPC - Switch Containers w Wwise reagują na zdjęcia zebrane na photoboard, tworząc dynamiczne warstwy ambientu.",
-      "what": "System Switch Container w Wwise reaguje na liczbę zdjęć zebranych na photoboard. Gdy gracz zbiera więcej zdjęć, różne warstwy ambientu są aktywowane przez Switch Containers, współpracując z systemem RTPC.",
+      "what": "System Switch Container w Wwise reaguje na liczbę zdjęć zebranych na photoboard. Gdy gracz zbiera więcej zdjęć, Switch Containers aktywują różne warstwy ambientu, współpracując z systemem RTPC.",
       "how": "Wartość RTPC z PhotoboardWidget (0-5 na podstawie zdjęć) steruje wyborem Switch Container w Wwise. Każdy stan Switch odpowiada różnym warstwom ambientu. Wwise automatycznie wykonuje crossfade między warstwami gdy zdjęcia są zbierane.",
-      "why": "Switch Containers zapewniają dyskretną kontrolę warstw, podczas gdy RTPC obsługuje płynne przejścia. Ta kombinacja pozwala na zarówno strukturalne zmiany (różne zestawy ambientu) jak i płynną progresję intensywności. Audio designer może precyzyjnie kontrolować odpowiedź każdej warstwy w Wwise.",
-      "result": "Dynamiczny system ambientu reagujący na postęp gracza przez zbieranie zdjęć na photoboard. To częściowa implementacja - pełny system będzie znacznie bardziej zaawansowany z dodatkowymi warstwami i złożonością."
+      "why": "Switch Containers dają dyskretną kontrolę warstw, RTPC obsługuje płynne przejścia. Ta kombinacja daje strukturalne zmiany (różne zestawy ambientu) i płynną progresję intensywności. Mogę kontrolować odpowiedź każdej warstwy w Wwise.",
+      "result": "Dynamiczny system ambientu reagujący na postęp gracza przez zbieranie zdjęć na photoboard. To częściowa implementacja - pełny system będzie znacznie większy z dodatkowymi warstwami i złożonością."
     },
     "sections": {
       "gameplay_showcase": "Pokaz Rozgrywki",
-      "gameplay_note": "Uwaga: To demonstracja z Sprintu 3 produkcji. Gra jest nadal w aktywnej fazie rozwoju, daleko od finalnego wydania. Ten film prezentuje implementację systemów audio Wwise i służy wyłącznie do celów demonstracyjnych.",
+      "gameplay_note": "Praca w toku z Sprintu 3. Gra jest nadal w produkcji.",
       "audio_doc": "Dokumentacja Audio",
       "audio_doc_desc": "Kompletna dokumentacja techniczna obejmująca wszystkie systemy audio, pipeline assetów i wytyczne implementacji.",
       "download_sound_bible": "📄 Pobierz Sound Bible PDF",
@@ -353,9 +351,9 @@
       "music_desc": "Oryginalna kompozycja muzyczna dla atmosfery gry i progresji emocjonalnej.",
       "org_title": "Współpraca Międzyinstytucjonalna",
       "org_desc": "Wieloinstytucjonalna współpraca pomiędzy:",
-      "ritcs_desc": "RITCS (Royal Institute for Theatre, Cinema & Sound) — Prowadzenie narrative design i rozwoju historii",
-      "kask_desc": "Konserwatorium KASK — Dostarczanie ekspertyzy w kompozycji muzycznej",
-      "howest_desc": "Howest DAE (Digital Arts & Entertainment) — Game development i techniczna implementacja audio",
+      "ritcs_desc": "RITCS (Royal Institute for Theatre, Cinema & Sound): Narrative design i historia",
+      "kask_desc": "Konserwatorium KASK: Kompozycja muzyczna",
+      "howest_desc": "Howest DAE (Digital Arts & Entertainment): Game development i techniczna implementacja audio",
       "sound_lead": "Sound Lead",
       "ongoing_project": "Projekt w toku",
       "deadline": "Termin: Q2 2025",
@@ -371,12 +369,12 @@
       "tech_icon": "TECH",
       "core_concept": "Główna Koncepcja",
       "my_role": "Moja Rola",
-      "my_role_desc": "Jako Sound Lead zaprojektowałem i zaimplementowałem architekturę audio dla Shadow Frames: dynamiczne systemy kroków, audio gracza oparte na delegate'ach, progresję napięcia sterowaną RTPC oraz integrację Wwise. Dodatkowe systemy są w fazie rozwoju przed finalnym wydaniem.",
+      "my_role_desc": "Jako Sound Lead zbudowałem architekturę audio dla Shadow Frames: dynamiczne systemy kroków, audio gracza oparte na delegate'ach, progresję napięcia sterowaną RTPC oraz integrację Wwise. Dodatkowe systemy są w fazie rozwoju przed finalnym wydaniem.",
       "technical_stack": "Stack technologiczny",
       "ritcs_name": "RITCS",
       "kask_name": "Konserwatorium KASK",
       "howest_name": "Howest DAE",
-      "menu_vibe": "Shadow Frames — Menu Vibe",
+      "menu_vibe": "Shadow Frames: Menu Vibe",
       "palette_soundscape": "Palette Soundscape Update",
       "volume_label": "VOL",
       "what": "CO",
@@ -384,9 +382,9 @@
       "why": "DLACZEGO",
       "result": "REZULTAT",
       "click_enlarge": "Kliknij aby powiększyć",
-      "footstep_code_title": "FootstepComponent.cpp — Wykrywanie Powierzchni",
-      "delegate_code_title": "PlayerCharacter.h — Delegaty",
-      "rtpc_code_title": "PhotoboardWidget.cpp — Aktualizacja RTPC",
+      "footstep_code_title": "FootstepComponent.cpp: Wykrywanie Powierzchni",
+      "delegate_code_title": "PlayerCharacter.h: Delegaty",
+      "rtpc_code_title": "PhotoboardWidget.cpp: Aktualizacja RTPC",
       "audio_middleware": "Middleware Audio",
       "game_engine": "Silnik Gry",
       "audio_tools": "Narzędzia Audio",
@@ -412,11 +410,11 @@
       "delegate_why": "Multicast delegates pozwalają wielu listenerom (np. Audio Manager) reagować na jedną akcję. Dynamic delegates działają z Blueprint, co daje audio designerowi pełną kontrolę bez modyfikacji kodu C++.",
       "rtpc_what": "Funkcja aktualizuje RTPC value w Wwise na podstawie liczby zdjęć umieszczonych na tablicy.",
       "rtpc_how": "Waliduje istnienie world, następnie znajduje AkAmbientSound actor po tagu 'AmbientProgressive' (bardziej wydajne i niezawodne niż wyszukiwanie po nazwie string). Ustawia RTPC value (0-5) odpowiadającą liczbie ważnych zdjęć. Wwise automatycznie wykonuje crossfade między warstwami ambientu.",
-      "rtpc_why": "RTPC pozwala na płynne przejścia między stanami napięcia. Audio designer może w Wwise precyzyjnie kontrolować krzywe crossfade dla każdej warstwy, dając pełną kontrolę nad emocjonalną progresją bez modyfikacji kodu."
+      "rtpc_why": "RTPC daje płynne przejścia między stanami napięcia. Mogę kontrolować krzywe crossfade dla każdej warstwy w Wwise, dając pełną kontrolę nad emocjonalną progresją bez modyfikacji kodu."
     },
     "media_captions": {
-      "switch_container": "Konfiguracja Wwise Switch Container — kontroluje, które warstwy ambientu są odtwarzane w zależności od liczby zdjęć na tablicy",
-      "photos_on_board": "Tablica ze zdjęciami — zebrane fotografie Polaroid, które układasz w odpowiedniej kolejności, aby odkryć historię"
+      "switch_container": "Konfiguracja Wwise Switch Container: kontroluje, które warstwy ambientu są odtwarzane w zależności od liczby zdjęć na tablicy",
+      "photos_on_board": "Tablica ze zdjęciami: zebrane fotografie Polaroid, które układasz w odpowiedniej kolejności, aby odkryć historię"
     }
   },
   "nl": {
@@ -454,16 +452,16 @@
       "role_label": "Mijn rol",
       "role_value": "Lead Audio Designer & Technische Implementer",
       "collaboration_title": "Multi-institutionele samenwerking",
-      "collab1": "RITCS — Narrative Design & Verhaal",
-      "collab2": "KASK Conservatorium — Muziekcompositie",
-      "collab3": "Howest DAE — Game Development & Audio-implementatie"
+      "collab1": "RITCS: Narrative Design & Verhaal",
+      "collab2": "KASK Conservatorium: Muziekcompositie",
+      "collab3": "Howest DAE: Game Development & Audio-implementatie"
     },
     "concept": {
       "title": "De Game",
       "subtitle": "Zwart-wit psychologische horror",
       "short": "Zwart-wit horror game waarin je paranormale gebeurtenissen fotografeert in een Ierse pub uit de jaren 60. Geluid is je belangrijkste tool om anomalieën te vinden.",
-      "detailed": "Je hebt een Polaroid-camera en 12 foto's. Anomalieën gebeuren elke 30-50 seconden—glazen zweven, schaduwen bewegen zelfstandig, stoelen draaien. Audio cues vertellen waar je moet kijken: een glas rinkelt, voetstappen echoën uit het niets, een stoel schraapt over de vloer. Zonder geluid ben je blind. Als je het bewijs hebt verzameld, rangschik je de foto's op een prikbord in chronologische volgorde om erachter te komen wat er gebeurt.",
-      "desc": "Je zit gevangen in een zwart-witte Ierse pub uit de jaren 60 waar de werkelijkheid instort. Anomalieën verschijnen elke 30 tot 50 seconden, en geluid is je enige middel om ze te vinden. Zet je koptelefoon op en luister goed. Een glas rinkelt in de hoek. Voetstappen echoën vanuit een lege gang. Een stoel schraapt vanzelf over de vloer. Volg het geluid om elke verstoring te lokaliseren en fotografeer het dan. Je hebt precies 12 foto's, dus kies verstandig.\n\nDe pub bruist van bovennatuurlijke activiteit. Glazen zweven boven de bar. Schaduwen loskomen van hun eigenaren en bewegen onafhankelijk. Stoelen draaien vanzelf. De korrelige zwart-wit esthetiek doet alles aanvoelen als een vergeten foto van tientallen jaren geleden.\n\nGeluid is niet alleen atmosferisch—het is de kernmechaniek. Demp het spel en je bent blind. Je weet niet waar je moet kijken, wat er gebeurt, of hoe je moet overleven. Elk gekraak, gefluister en geknal is informatie.\n\nZodra je je bewijs hebt verzameld, ren je naar het prikbord en rangschik je de foto's in de juiste chronologische volgorde. Zo puzzel je samen wat er gebeurt en waarom. Maar werk snel. Iets jaagt je door de pub, en de tijd loopt af."
+      "detailed": "Je hebt een Polaroid-camera en 12 foto's. Anomalieën gebeuren elke 30-50 seconden. Glazen zweven, schaduwen bewegen zelfstandig, stoelen draaien. Audio cues vertellen waar je moet kijken: een glas rinkelt, voetstappen echoën uit het niets, een stoel schraapt over de vloer. Zonder geluid ben je blind. Als je het bewijs hebt verzameld, rangschik je de foto's op een prikbord in chronologische volgorde om erachter te komen wat er gebeurt.",
+      "desc": "Je zit gevangen in een zwart-witte Ierse pub uit de jaren 60 waar de werkelijkheid instort. Anomalieën verschijnen elke 30 tot 50 seconden, en geluid is je enige middel om ze te vinden. Zet je koptelefoon op en luister goed. Een glas rinkelt in de hoek. Voetstappen echoën vanuit een lege gang. Een stoel schraapt vanzelf over de vloer. Volg het geluid om elke verstoring te lokaliseren en fotografeer het dan. Je hebt precies 12 foto's, dus kies verstandig.\n\nDe pub bruist van bovennatuurlijke activiteit. Glazen zweven boven de bar. Schaduwen loskomen van hun eigenaren en bewegen onafhankelijk. Stoelen draaien vanzelf. De korrelige zwart-wit esthetiek doet alles aanvoelen als een vergeten foto van tientallen jaren geleden.\n\nGeluid is niet alleen atmosferisch. Het is de kernmechaniek. Demp het spel en je bent blind. Je weet niet waar je moet kijken, wat er gebeurt, of hoe je moet overleven. Elk gekraak, gefluister en geknal is informatie.\n\nZodra je je bewijs hebt verzameld, ren je naar het prikbord en rangschik je de foto's in de juiste chronologische volgorde. Zo puzzel je samen wat er gebeurt en waarom. Maar werk snel. Iets jaagt je door de pub, en de tijd loopt af."
     },
     "gameplay": {
       "title": "Kernmechanisme: Observeer → Vastleggen → Verbinden",
@@ -477,37 +475,37 @@
     "audio_systems": {
       "title": "Audio-implementatie",
       "rtpc_title": "RTPC-gebaseerd dynamisch systeem",
-      "rtpc_desc": "De ambient soundscape en speler ademintensiteit passen zich dynamisch aan het aantal aanwezige anomalieën aan, waarbij spanning dienovereenkomstig escaleert naarmate onopgeloste anomalieën zich opstapelen.",
+      "rtpc_desc": "Ambient soundscape en speler ademintensiteit reageren op het aantal anomalieën. Meer anomalieën = hogere spanning.",
       "switches_title": "Switch Containers & Zones",
       "switches_desc": "Elke kamer heeft unieke ambient lagen die soepel overgaan terwijl je door de ruimte beweegt. De badkamer bevat gespatializeerde toilet- en kraangeluiden, terwijl voetstappen dynamisch aanpassen op basis van oppervlaktematerialen.",
       "delegates_title": "Blueprint Delegates (SOC)",
-      "delegates_desc": "Separation of Concerns architectuur waarbij audiosystemen communiceren via delegates, wat schone en modulaire implementatie mogelijk maakt.",
+      "delegates_desc": "Separation of Concerns architectuur waarbij audiosystemen communiceren via delegates. Geeft schone en modulaire implementatie.",
       "spatial_title": "HRTF Spatial Audio",
       "spatial_desc": "3D positionele audio voor anomalieën, vijandelijke aanwezigheid en omgevingscues die cruciaal is voor gameplay."
     },
     "dev_tools": {
       "title": "Ontwikkeltools",
       "fixer_title": "Wwise Unreal Fixer",
-      "fixer_desc": "Een custom C++ plugin die automatisch gebroken Wwise integratie herstelt na Perforce pulls—oplossing met één klik.",
+      "fixer_desc": "Een custom C++ plugin die automatisch gebroken Wwise integratie herstelt na Perforce pulls. Oplossing met één klik.",
       "rebuilder_title": "Unreal Engine Rebuilder",
       "rebuilder_desc": "Geautomatiseerde build tool om compilatie workflow te stroomlijnen en downtime te verminderen."
     },
     "production": {
       "title": "Productiestatus",
       "proto": "✓ Prototype Compleet (3 weken)",
-      "sprint1": "✓ Sprint 1 — Kernsystemen",
-      "sprint2": "✓ Sprint 2 — Omgevingsaudio",
-      "sprint3": "◉ Sprint 3 — Anomalie systemen (Huidig)",
-      "sprint4": "◯ Sprint 4 — Vijand & Polish",
-      "sprint5": "◯ Sprint 5 — Definitieve Integratie"
+      "sprint1": "✓ Sprint 1: Kernsystemen",
+      "sprint2": "✓ Sprint 2: Omgevingsaudio",
+      "sprint3": "◉ Sprint 3: Anomalie systemen (Huidig)",
+      "sprint4": "◯ Sprint 4: Vijand & Polish",
+      "sprint5": "◯ Sprint 5: Definitieve Integratie"
     },
     "anomalies": {
       "title": "Anomalie types",
       "desc": "Semi-gerandomiseerde storingen die escaleren naarmate het spel vordert.",
       "object_title": "Object anomalieën",
-      "object_desc": "Stoelen draaien op eigen houtje, glazen zweven in de lucht, en bestek rammelt zonder oorzaak—alledaagse objecten beginnen de wetten van de fysica te tarten.",
+      "object_desc": "Stoelen draaien op eigen houtje, glazen zweven in de lucht, en bestek rammelt zonder oorzaak. Alledaagse objecten beginnen de wetten van de fysica te tarten.",
       "env_title": "Omgevings anomalieën",
-      "env_desc": "De ruimte zelf vervormt en verstoort—radio static barst uit het niets los, lichten flikkeren erratisch, en de klok versnelt zijn tikken.",
+      "env_desc": "De ruimte zelf vervormt en verstoort. Radio static barst uit het niets los, lichten flikkeren erratisch, en de klok versnelt zijn tikken.",
       "shadow_title": "Schaduw anomalieën",
       "shadow_desc": "Menselijke silhouetten materialiseren in de duisternis, schaduwen loskomen van hun bronobjecten en bewegen onafhankelijk, en beweging vindt plaats op plekken waar geen lichtbron het zou kunnen werpen."
     },
@@ -515,21 +513,20 @@
       "title": "Technische stack",
       "wwise": "Wwise 2024.1",
       "engine": "Unreal Engine 5.5",
-      "audio_tools": "Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho",
-      "performance": "Onder 5% CPU, geoptimaliseerde streaming"
+      "audio_tools": "Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho"
     },
     "footstep": {
       "title": "Voetstap Systeem: Oppervlak Detectie & Audio Routing",
-      "desc": "Fysieke materiaal detectie drijft dynamische audio schakeling voor realistische oppervlak-gebaseerde voetstappen.",
+      "desc": "Fysieke materiaal detectie stuurt dynamische audio schakeling voor realistische oppervlak-gebaseerde voetstappen.",
       "what": "Systeem detecteert oppervlaktetype onder speler (hout, tegels, beton) en schakelt automatisch geschikte voetstap geluiden in Wwise. Elke speler stap matcht het materiaal waarop ze lopen.",
       "how": "C++ component voert line trace uit naar beneden vanaf speler positie, detecteert Physical Material, mapt het naar Wwise Switch naam, en Blueprint Audio Manager ontvangt delegate en speelt geschikt geluid af.",
       "why": "Separation of Concerns - C++ handelt detectie logica af, Blueprint handelt audio af. Delegates zorgen voor losse koppeling tussen systemen. Dit maakt toevoegen van nieuwe oppervlakken gemakkelijk zonder C++ code te wijzigen.",
-      "result": "Dit produceert realistische voetstappen die automatisch overeenkomen met elk oppervlak, zonder vereiste handmatige schakeling, met gemakkelijke uitbreiding voor nieuwe materialen—het systeem handelt elke speler stap automatisch af zonder interventie."
+      "result": "Dit produceert realistische voetstappen die automatisch overeenkomen met elk oppervlak, zonder vereiste handmatige schakeling, met gemakkelijke uitbreiding voor nieuwe materialen. Het systeem handelt elke speler stap automatisch af zonder interventie."
     },
     "player_audio": {
       "title": "Speler Audio Systeem: Delegate-Gebaseerde Communicatie",
       "desc": "Schone scheiding tussen speler acties en audio reacties met Blueprint delegates.",
-      "what": "Systeem verbindt speler acties (camera schot, zoom, photoboard entry) met geschikte audio events in Wwise. Elke speler actie triggert automatisch corresponderend geluid.",
+      "what": "Systeem verbindt speler acties (camera schot, zoom, photoboard entry) met geschikte audio events in Wwise. Elke speler actie activeert automatisch corresponderend geluid.",
       "how": "PlayerCharacter in C++ definieert multicast delegates. Wanneer speler actie uitvoert, delegate wordt uitgezonden. Blueprint Audio Manager luistert naar deze delegates en roept geschikte Wwise Events aan.",
       "why": "Delegates zorgen voor losse koppeling - PlayerCharacter weet niets over audio, Audio Manager weet niets over speler logica. Dit vergemakkelijkt testen, debuggen en wijzigingen. Elk systeem kan onafhankelijk ontwikkeld worden.",
       "result": "Het resultaat is een schone architectuur die het toevoegen van nieuwe audio acties eenvoudig maakt, zonder hardcoded calls, waar audio designer geluiden vrijelijk kan wijzigen zonder speler code aan te raken."
@@ -539,16 +536,16 @@
       "desc": "Progressieve ambient intensiteit schaalt met game state - foto's geplaatst op bord verhogen spanning.",
       "what": "Systeem verandert dynamisch ambient intensiteit op basis van aantal foto's geplaatst op bord. Meer foto's = meer gespannen atmosfeer. RTPC waarde 0-5 controleert ambient lagen in Wwise.",
       "how": "PhotoboardWidget volgt aantal belangrijke foto's. Wanneer speler foto plaatst, UpdateAmbientRTPC() vindt AkAmbientSound actor en zet RTPC waarde. Wwise crossfade automatisch tussen ambient lagen.",
-      "why": "RTPC maakt vloeiende overgangen tussen spanning staten zonder sprongen. Audio designer kan precies controleren in Wwise hoe elke ambient laag reageert op RTPC waarde. Dit geeft volledige controle over emotionele progressie.",
+      "why": "RTPC geeft vloeiende overgangen tussen spanning staten zonder sprongen. Ik controleer crossfade curves in Wwise zonder code aan te raken.",
       "result": "Dit creëert een vloeiende spanning progressie zonder schokkerige audio sprongen, met gemakkelijke curve aanpassingen binnen Wwise, waar de atmosfeer automatisch aanpast aan speler voortgang."
     },
     "wwise_arch": {
       "title": "Wwise Architectuur: Switch Containers & Photoboard Integratie",
       "desc": "Voortzetting van het RTPC systeem - Switch Containers in Wwise reageren op foto's verzameld op het photoboard, creërend dynamische ambient lagen.",
-      "what": "Switch Container systeem in Wwise reageert op aantal foto's verzameld op photoboard. Wanneer speler meer foto's verzamelt, verschillende ambient lagen worden geactiveerd via Switch Containers, werkend in combinatie met RTPC systeem.",
-      "how": "De RTPC waarde van PhotoboardWidget (0-5 gebaseerd op foto's) drijft Switch Container selectie in Wwise. Elke Switch staat correspondeert met verschillende ambient lagen. Wwise crossfade automatisch tussen lagen wanneer foto's worden verzameld.",
-      "why": "Switch Containers bieden discrete laag controle terwijl RTPC vloeiende overgangen behandelt. Deze combinatie maakt zowel structurele veranderingen (verschillende ambient sets) als vloeiende intensiteit progressie mogelijk. Audio designer kan precies elke laag's respons controleren in Wwise.",
-      "result": "Dynamisch ambient systeem dat reageert op speler progressie door photoboard verzameling. Dit is een gedeeltelijke implementatie - het volledige systeem zal aanzienlijk geavanceerder zijn met extra lagen en complexiteit."
+      "what": "Switch Container systeem in Wwise reageert op aantal foto's verzameld op photoboard. Wanneer speler meer foto's verzamelt, Switch Containers activeren verschillende ambient lagen, werkend in combinatie met RTPC systeem.",
+      "how": "De RTPC waarde van PhotoboardWidget (0-5 gebaseerd op foto's) stuurt Switch Container selectie in Wwise. Elke Switch staat correspondeert met verschillende ambient lagen. Wwise crossfade automatisch tussen lagen wanneer foto's worden verzameld.",
+      "why": "Switch Containers bieden discrete laag controle, RTPC behandelt vloeiende overgangen. Deze combinatie geeft structurele veranderingen (verschillende ambient sets) en vloeiende intensiteit progressie. Ik kan elke laag's respons controleren in Wwise.",
+      "result": "Dynamisch ambient systeem dat reageert op speler progressie door photoboard verzameling. Dit is een gedeeltelijke implementatie - het volledige systeem zal veel groter zijn met extra lagen en complexiteit."
     },
     "sections": {
       "gameplay_showcase": "Gameplay Showcase",
@@ -561,10 +558,10 @@
       "music_title": "Muziek Prototype",
       "music_desc": "Originele muziekcompositie voor de sfeer van het spel en emotionele progressie.",
       "org_title": "Multi-institutionele Samenwerking",
-      "org_desc": "Dit is een groot collaboratief project tussen prestigieuze instellingen:",
-      "ritcs_desc": "RITCS (Royal Institute for Theatre, Cinema & Sound) — Leidend in narrative design en verhaalontwikkeling",
-      "kask_desc": "KASK Conservatorium — Biedt expertise in muziekcompositie",
-      "howest_desc": "Howest DAE (Digital Arts & Entertainment) — Game development en technische audio-implementatie",
+      "org_desc": "Multi-institutionele samenwerking tussen:",
+      "ritcs_desc": "RITCS (Royal Institute for Theatre, Cinema & Sound): Narrative design en verhaal",
+      "kask_desc": "KASK Conservatorium: Muziekcompositie",
+      "howest_desc": "Howest DAE (Digital Arts & Entertainment): Game development en technische audio-implementatie",
       "sound_lead": "Sound Lead",
       "ongoing_project": "Lopend Project",
       "deadline": "Target: Q1 2026 (Sprint 5)",
@@ -580,12 +577,12 @@
       "tech_icon": "TECH",
       "core_concept": "Kern Concept",
       "my_role": "Mijn Rol",
-      "my_role_desc": "Als Sound Lead heb ik belangrijke delen van de audio architectuur voor Shadow Frames ontworpen en geïmplementeerd. Dit omvat dynamische voetstap systemen, delegate-gebaseerde speler audio, RTPC-gedreven spanning progressie, en Wwise integratie. Het volledige systeem zal aanzienlijk geavanceerder zijn.",
+      "my_role_desc": "Als Sound Lead heb ik de audio architectuur voor Shadow Frames gebouwd: dynamische voetstap systemen, delegate-gebaseerde speler audio, RTPC-gedreven spanning progressie, en Wwise integratie. Het volledige systeem zal veel groter zijn.",
       "technical_stack": "Technische Stack",
       "ritcs_name": "RITCS",
       "kask_name": "KASK Conservatorium",
       "howest_name": "Howest DAE",
-      "menu_vibe": "Shadow Frames — Menu Vibe",
+      "menu_vibe": "Shadow Frames: Menu Vibe",
       "palette_soundscape": "Palette Soundscape Update",
       "volume_label": "VOL",
       "what": "WAT",
@@ -593,14 +590,14 @@
       "why": "WAAROM",
       "result": "RESULTAAT",
       "click_enlarge": "Klik om te vergroten",
-      "footstep_code_title": "FootstepComponent.cpp — Oppervlak Detectie",
-      "delegate_code_title": "PlayerCharacter.h — Delegates",
-      "rtpc_code_title": "PhotoboardWidget.cpp — RTPC Update",
+      "footstep_code_title": "FootstepComponent.cpp: Oppervlak Detectie",
+      "delegate_code_title": "PlayerCharacter.h: Delegates",
+      "rtpc_code_title": "PhotoboardWidget.cpp: RTPC Update",
       "audio_middleware": "Audio Middleware",
       "game_engine": "Game Engine",
       "audio_tools": "Audio Tools",
       "performance": "Prestaties",
-      "gameplay_note": "Opmerking: Dit is een demonstratie van Sprint 3 van productie. Het spel is nog steeds in actieve ontwikkeling, ver van de finale release. Deze video toont Wwise audio systemen implementatie en is alleen voor demonstratiedoeleinden."
+      "gameplay_note": "Sprint 3 werk in uitvoering. Game is nog in ontwikkeling."
     },
     "challenges": {
       "title": "Uitdagingen & Oplossingen",
@@ -617,16 +614,16 @@
       "footstep_what": "Functie detecteert oppervlaktetype onder speler met line trace naar beneden vanaf speler positie.",
       "footstep_how": "Valideert dat owner en world bestaan, voert dan line trace uit met ECC_WorldStatic kanaal. Controleert object's Physical Material en mapt SurfaceType enum naar Wwise Switch naam (Tiles, Wood, CreakyWood, Concrete).",
       "footstep_why": "Gebruik van Physical Material maakt automatische detectie mogelijk zonder handmatig taggen van elk oppervlak. De enum-naar-Switch mapping is een eenmalige setup die Unreal's oppervlak systeem verbindt met Wwise - dit is configuratie, geen hardcoded audio calls. Audio designer kan Switch namen in Wwise wijzigen zonder code wijzigingen.",
-      "delegate_what": "Definitie van multicast delegates voor speler acties die audio events triggeren.",
+      "delegate_what": "Definitie van multicast delegates voor speler acties die audio events activeren.",
       "delegate_how": "DECLARE_DYNAMIC_MULTICAST_DELEGATE creëert delegate die kan worden uitgezonden vanuit C++ en beluisterd in Blueprint. UPROPERTY(BlueprintAssignable) maakt binding in Blueprint mogelijk.",
       "delegate_why": "Multicast delegates maken het mogelijk dat meerdere listeners (bijv. Audio Manager) reageren op één actie. Dynamic delegates werken met Blueprint, wat audio designer volledige controle geeft zonder C++ code te wijzigen.",
       "rtpc_what": "Functie werkt RTPC waarde bij in Wwise op basis van aantal foto's geplaatst op bord.",
       "rtpc_how": "Valideert dat world bestaat, vindt dan AkAmbientSound actor via tag 'AmbientProgressive' (efficiënter en betrouwbaarder dan naam string zoeken). Zet RTPC waarde (0-5) overeenkomend met aantal belangrijke foto's. Wwise crossfade automatisch tussen ambient lagen.",
-      "rtpc_why": "RTPC maakt vloeiende overgangen tussen spanning staten mogelijk. Audio designer kan precies crossfade curves controleren voor elke laag in Wwise, wat volledige controle geeft over emotionele progressie zonder code wijzigingen."
+      "rtpc_why": "RTPC geeft vloeiende overgangen tussen spanning staten. Ik kan crossfade curves controleren voor elke laag in Wwise, wat volledige controle geeft over emotionele progressie zonder code wijzigingen."
     },
     "media_captions": {
-      "switch_container": "Wwise Switch Container configuratie — bepaalt welke ambient lagen afspelen op basis van het aantal foto's op het bord",
-      "photos_on_board": "Fotobord — verzamelde Polaroid foto's die het verhaal onthullen wanneer je ze in de juiste volgorde plaatst"
+      "switch_container": "Wwise Switch Container configuratie: bepaalt welke ambient lagen afspelen op basis van het aantal foto's op het bord",
+      "photos_on_board": "Fotobord: verzamelde Polaroid foto's die het verhaal onthullen wanneer je ze in de juiste volgorde plaatst"
     }
   }
 }

@@ -15,37 +15,37 @@
       "role": "ROLE",
       "role_desc": "Audio Designer & Technical Implementer. Sound design, MetaSounds implementation, mixing. 2 programmers, 3 artists, 12 weeks.",
       "tech": "TECH",
-      "tech_desc": "MetaSounds as sole SFX source. All parameters driven by gameplay. Track surfaces crossfade procedurally. Mix prioritizes UI telemetry vs. collisions via limiters and sidechain.",
+      "tech_desc": "MetaSounds as sole SFX source. All parameters come from gameplay. Track surfaces crossfade procedurally. Mix puts UI telemetry first over collisions using limiters and sidechain.",
       "scope": "SCOPE",
-      "scope_desc": "32 concurrent voices, sub-45ms latency. Content packed in 180MB.",
+      "scope_desc": "320+ audio events, all built with MetaSounds.",
       "result": "RESULT",
       "result_desc": "Released on itch.io May 2025. Windows and Linux builds."
     },
     "metasounds": {
       "title": "MetaSounds Implementation",
-      "desc": "I used MetaSounds for all SFX. Every parameter is driven by gameplay—engine speed, surface type, collision force.",
+      "desc": "I used MetaSounds for all SFX. Every parameter comes from gameplay. Engine speed, surface type, collision force.",
       "what": "MetaSounds graphs for boosts, surfaces, collisions. I edited samples in Reaper, then loaded them into arrays in MetaSounds, added randomizers for variation.",
       "how": "Node graphs take gameplay parameters as inputs. Engine speed drives pitch. Surface type picks from sample arrays. Collision force controls which samples play and their intensity.",
       "why": "MetaSounds let me organize samples in arrays and randomize playback. Parameters respond frame-perfect to gameplay. Easier to manage than hundreds of separate sound cues.",
-      "result": "Small memory footprint. Real-time response. Infinite variation from limited assets.",
+      "result": "Never sounds repetitive.",
       "placeholder_title": "MetaSounds Implementation",
       "placeholder_desc": "Boost system, surface detection, collision graphs."
     },
     "triggering": {
       "title": "Audio Architecture",
-      "desc": "Centralized systems for UI, items, and engine audio. Direct calls—no delegates needed here.",
+      "desc": "Centralized systems for UI, items, and engine audio. Direct calls. No delegates needed here.",
       "what": "UAudioManager (GameInstanceSubsystem) handles all UI clicks project-wide. ItemHolderComponent handles pickup/use sounds per item type. GrandmaCharacter manages engine audio with EngineSpeed parameter.",
       "how": "UAudioManager exposes PlayUISelect() and PlayUIHover() everywhere. ItemHolderComponent uses switch statements based on EItemType enum. Engine audio uses UAudioComponent with SetFloatParameter for real-time pitch.",
       "why": "Centralized = no duplication across Blueprints. GameInstanceSubsystem makes UI audio global. Switch statements keep item logic in one spot. AudioComponent parameters give smooth engine pitch changes.",
       "result": "Clean setup. Zero duplication. Easy to debug. Single source of truth per system.",
-      "code_title": "AudioManager.cpp — Global UI Audio",
-      "impl_title": "ItemHolderComponent.cpp — Item Sounds"
+      "code_title": "AudioManager.cpp: Global UI Audio",
+      "impl_title": "ItemHolderComponent.cpp: Item Sounds"
     },
     "surface": {
       "title": "Surface Transitions",
       "desc": "Crossfade system for smooth material switches.",
       "problem": "Instant switches caused pops. Rapid transitions spammed audio layer, burying UI and collision sounds.",
-      "solution": "150ms equal-power crossfade with 0.2s cooldown. Surface changes trigger new MetaSound instance while fading out the previous one. Cooldown prevents transition spam during surface edge riding."
+      "solution": "150ms equal-power crossfade with 0.2s cooldown. Surface changes start new MetaSound instance while fading out the previous one. Cooldown prevents transition spam during surface edge riding."
     },
     "mix": {
       "title": "4-Player Mix Strategy",
@@ -59,8 +59,8 @@
       "solution_label": "SOLUTION",
       "memory": {
         "title": "Memory Spikes",
-        "problem": "Original four-layer boost system: 40MB per instance. Four players = 160MB spike. Unacceptable.",
-        "solution": "Rebuilt it as procedural MetaSound—noise generation, filtering, pitch modulation. Under 2MB per instance. Added RPM curve to keep it sounding organic."
+        "problem": "Original boost system was too heavy. Four players meant stuttering.",
+        "solution": "Rebuilt as procedural MetaSound. Noise generation, filtering, pitch modulation. Way lighter. Added RPM curve to keep it sounding organic."
       }
     },
     "sections": {
@@ -75,7 +75,7 @@
       "ui_manager": "GameInstanceSubsystem makes UI sounds globally accessible. Any Blueprint or C++ code can call PlayUISelect() without needing sound asset references.",
       "null_check": "Standard null check. Prevents crash if UISelectSound not assigned in Blueprint.",
       "play_ui_sound": "PlaySound2D fires UI click. Sound assigned in GameInstance Blueprint. Works project-wide without duplication.",
-      "item_switch": "Switch statement maps EItemType enum to corresponding sound. CreamPie gets PickupSound_CreamPie, Handpin gets PickupSound_HandPin, etc. Centralized logic—add new item, add new case.",
+      "item_switch": "Switch statement maps EItemType enum to corresponding sound. CreamPie gets PickupSound_CreamPie, Handpin gets PickupSound_HandPin, etc. Centralized logic. Add new item, add new case.",
       "engine_param": "SetFloatParameter updates EngineSpeed in real time. AudioComponent plays looping engine sound. MetaSound graph inside uses EngineSpeed to modulate pitch. Smooth transitions, no audio pops."
     },
     "video": {
@@ -84,19 +84,19 @@
     "screenshots": {
       "title": "Screenshots",
       "captions": {
-        "pic1": "Character select screen showing Penny—one of the playable grandmas in the race",
+        "pic1": "Character select screen showing Penny. One of the playable grandmas in the race",
         "pic2": "Mid-race action with power-ups and environmental hazards",
         "pic3": "Starting line with four players ready to race through the apartment",
         "pic4": "Level overview showing the apartment layout with multiple racing paths"
       }
     },
     "media_captions": {
-      "ms_pickup": "MetaSound graph for pickup items — uses parameter inputs to control pitch and volume based on gameplay state",
-      "ms_powerups": "MetaSound graph for powerup effects — procedurally generates audio with real-time parameter modulation",
-      "ms_mono_array": "MetaSound Mono Array setup — manages multiple audio sources with synchronized parameter control",
-      "sound_classes": "Sound Class hierarchy — organizes audio into categories (SFX, Music, UI) for centralized volume control and mixing",
-      "attenuation": "Attenuation preset settings — defines how sound volume decreases with distance using falloff curves",
-      "sound_structures": "Sound data structures — custom audio configuration structs for organizing sound assets and parameters"
+      "ms_pickup": "MetaSound graph for pickup items: uses parameter inputs to control pitch and volume based on gameplay state",
+      "ms_powerups": "MetaSound graph for powerup effects: procedurally generates audio with real-time parameter modulation",
+      "ms_mono_array": "MetaSound Mono Array setup: manages multiple audio sources with synchronized parameter control",
+      "sound_classes": "Sound Class hierarchy: organizes audio into categories (SFX, Music, UI) for centralized volume control and mixing",
+      "attenuation": "Attenuation preset settings: defines how sound volume decreases with distance using falloff curves",
+      "sound_structures": "Sound data structures: custom audio configuration structs for organizing sound assets and parameters"
     },
     "team": {
       "title": "Team"
@@ -123,9 +123,9 @@
       "role": "ROLA",
       "role_desc": "Audio Designer & Technical Implementer. Sound design, implementacja MetaSounds, mixing. 2 programistów, 3 artystów, 12 tygodni.",
       "tech": "TECH",
-      "tech_desc": "MetaSounds jako jedyne źródło SFX. Wszystkie parametry sterowane przez gameplay. Powierzchnie torów crossfadują proceduralnie. Mix priorytetyzuje telemetrię UI vs. kolizje przez limitery i sidechain.",
+      "tech_desc": "MetaSounds jako jedyne źródło SFX. Wszystkie parametry sterowane przez gameplay. Powierzchnie torów crossfadują proceduralnie. Mix stawia na pierwszym miejscu telemetrię UI nad kolizjami przez limitery i sidechain.",
       "scope": "ZAKRES",
-      "scope_desc": "32 jednoczesne głosy, latencja poniżej 45ms. Zawartość spakowana w 180MB.",
+      "scope_desc": "320+ audio events, all built with MetaSounds.",
       "result": "REZULTAT",
       "result_desc": "Wydane na itch.io w maju 2025. Buildy Windows i Linux."
     },
@@ -135,7 +135,7 @@
       "what": "Grafy MetaSounds dla boostów, powierzchni i kolizji. Edytowałem sample w Reaperze, potem wrzuciłem je do arrayów MetaSound z randomizacją dla wariacji.",
       "how": "Grafy nodów pobierają parametry gameplay jako wejścia. Prędkość silnika steruje pitch. Typ powierzchni wybiera z arrayów sampli. Siła kolizji kontroluje które sample są odtwarzane i ich intensywność.",
       "why": "MetaSounds pozwalają mi organizować sample w arraye i randomizować odtwarzanie. Parametry reagują frame-perfect na gameplay. Łatwiejsze w zarządzaniu niż setki osobnych sound cue.",
-      "result": "Kompaktowy memory footprint. Odpowiedź parametrów w czasie rzeczywistym. Nieskończona wariacja z ograniczonych assetów.",
+      "result": "Never sounds repetitive.",
       "placeholder_title": "Screeny MetaSounds Wkrótce",
       "placeholder_desc": "System boost, detekcja powierzchni, grafy audio kolizji. Oczekiwanie na recovery z Perforce."
     },
@@ -144,16 +144,16 @@
       "desc": "Scentralizowane systemy dla UI, itemów i audio silnika. Bezpośrednie wywołania, bez delegatów.",
       "what": "UAudioManager (GameInstanceSubsystem) obsługuje globalne kliknięcia UI. ItemHolderComponent centralizuje pickup/use SFX per typ itemu. GrandmaCharacter zarządza audio silnika z parametrem EngineSpeed.",
       "how": "UAudioManager eksponuje PlayUISelect() i PlayUIHover() dla całego projektu. ItemHolderComponent używa switch statements do odpalania dźwięków bazując na EItemType enum. Audio silnika używa UAudioComponent z SetFloatParameter dla real-time odpowiedzi prędkości.",
-      "why": "Scentralizowane systemy zapobiegają duplikacji dźwięków w Blueprintach. GameInstanceSubsystem czyni audio UI globalnie dostępnym. Switch statements trzymają logikę itemów w jednym miejscu. Parametry AudioComponent umożliwiają płynną modulację pitch silnika.",
+      "why": "Scentralizowane systemy zapobiegają duplikacji dźwięków w Blueprintach. GameInstanceSubsystem czyni audio UI globalnie dostępnym. Switch statements trzymają logikę itemów w jednym miejscu. Parametry AudioComponent dają płynną modulację pitch silnika.",
       "result": "Czysta architektura. Zero duplikacji. Łatwy debugging. Single source of truth dla każdego systemu audio.",
-      "code_title": "AudioManager.cpp — Globalne Audio UI",
-      "impl_title": "ItemHolderComponent.cpp — Dźwięki Itemów"
+      "code_title": "AudioManager.cpp: Globalne Audio UI",
+      "impl_title": "ItemHolderComponent.cpp: Dźwięki Itemów"
     },
     "surface": {
       "title": "Przejścia Powierzchni",
       "desc": "System crossfade dla płynnych przełączeń materiału.",
       "problem": "Natychmiastowe przełączenia powodowały popy. Szybkie przejścia spamowały warstwę audio, zakopując UI i dźwięki kolizji.",
-      "solution": "150ms equal-power crossfade z 0.2s cooldownem. Zmiany powierzchni triggerują nową instancję MetaSound podczas fade out poprzedniej. Cooldown zapobiega spamowi przejść podczas jazdy po krawędziach powierzchni."
+      "solution": "150ms equal-power crossfade z 0.2s cooldownem. Zmiany powierzchni wywołują nową instancję MetaSound podczas fade out poprzedniej. Cooldown zapobiega spamowi przejść podczas jazdy po krawędziach powierzchni."
     },
     "mix": {
       "title": "Strategia Miksu 4-Graczy",
@@ -167,8 +167,8 @@
       "solution_label": "ROZWIĄZANIE",
       "memory": {
         "title": "Skoki Pamięci",
-        "problem": "Oryginalny czterowarstwowy system boost żarł 40MB na instancję. Z czterema graczami to skok o 160MB—kompletnie nie do zaakceptowania.",
-        "solution": "Przebudowałem go jako proceduralny MetaSound używający generowania szumu, filtrowania i modulacji pitch. Poniżej 2MB na instancję. Dodałem krzywą RPM żeby brzmiało organicznie."
+        "problem": "Oryginalny system boost był zbyt ciężki. Czterech graczy = przeciążenie.",
+        "solution": "Przebudowałem go jako proceduralny MetaSound używający generowania szumu, filtrowania i modulacji pitch. Dużo lżejszy. Dodałem krzywą RPM żeby brzmiało organicznie."
       }
     },
     "sections": {
@@ -183,7 +183,7 @@
       "ui_manager": "GameInstanceSubsystem czyni dźwięki UI globalnie dostępnymi. Każdy Blueprint lub kod C++ może wywołać PlayUISelect() bez potrzeby posiadania referencji do assetów dźwiękowych.",
       "null_check": "Standardowy null check. Zapobiega crashowi jeśli UISelectSound nie jest przypisany w Blueprint.",
       "play_ui_sound": "PlaySound2D odpala kliknięcie UI. Dźwięk przypisany w Blueprint GameInstance. Działa w całym projekcie bez duplikacji.",
-      "item_switch": "Switch statement mapuje EItemType enum na odpowiedni dźwięk. CreamPie dostaje PickupSound_CreamPie, Handpin dostaje PickupSound_HandPin, etc. Scentralizowana logika—dodaj nowy item, dodaj nowy case.",
+      "item_switch": "Switch statement mapuje EItemType enum na odpowiedni dźwięk. CreamPie dostaje PickupSound_CreamPie, Handpin dostaje PickupSound_HandPin, etc. Scentralizowana logika. Dodaj nowy item, dodaj nowy case.",
       "engine_param": "SetFloatParameter aktualizuje EngineSpeed w czasie rzeczywistym. AudioComponent odtwarza zapętlony dźwięk silnika. Graf MetaSound wewnątrz używa EngineSpeed do modulacji pitch. Płynne przejścia, bez popów audio."
     },
     "video": {
@@ -192,19 +192,19 @@
     "screenshots": {
       "title": "Zrzuty Ekranu",
       "captions": {
-        "pic1": "Ekran wyboru postaci pokazujący Penny—jedną z grywalnych babci w wyścigu",
+        "pic1": "Ekran wyboru postaci pokazujący Penny. Jedną z grywalnych babci w wyścigu",
         "pic2": "Akcja w trakcie wyścigu z power-upami i przeszkodami środowiskowymi",
         "pic3": "Linia startu z czterema graczami gotowymi do wyścigu przez mieszkanie",
         "pic4": "Przegąd poziomu pokazujący układ mieszkania z wieloma ścieżkami wyścigowymi"
       }
     },
     "media_captions": {
-      "ms_pickup": "Graf MetaSound dla podnoszonych przedmiotów — używa parametrów wejściowych do kontroli pitch i głośności na podstawie stanu rozgrywki",
-      "ms_powerups": "Graf MetaSound dla efektów power-upów — generuje proceduralnie audio z modulacją parametrów w czasie rzeczywistym",
-      "ms_mono_array": "Konfiguracja MetaSound Mono Array — zarządza wieloma źródłami audio z zsynchronizowaną kontrolą parametrów",
-      "sound_classes": "Hierarchia klas dźwięków — organizuje audio w kategorie (SFX, Muzyka, UI) do centralnej kontroli głośności i miksowania",
-      "attenuation": "Ustawienia presetów tłumienia — definiuje jak głośność dźwięku maleje z odległością używając krzywych spadku",
-      "sound_structures": "Struktury danych dźwięku — niestandardowe struktury konfiguracji audio do organizacji assetów dźwiękowych i parametrów"
+      "ms_pickup": "Graf MetaSound dla podnoszonych przedmiotów: używa parametrów wejściowych do kontroli pitch i głośności na podstawie stanu rozgrywki",
+      "ms_powerups": "Graf MetaSound dla efektów power-upów: generuje proceduralnie audio z modulacją parametrów w czasie rzeczywistym",
+      "ms_mono_array": "Konfiguracja MetaSound Mono Array: zarządza wieloma źródłami audio z zsynchronizowaną kontrolą parametrów",
+      "sound_classes": "Hierarchia klas dźwięków: organizuje audio w kategorie (SFX, Muzyka, UI) do centralnej kontroli głośności i miksowania",
+      "attenuation": "Ustawienia presetów tłumienia: definiuje jak głośność dźwięku maleje z odległością używając krzywych spadku",
+      "sound_structures": "Struktury danych dźwięku: niestandardowe struktury konfiguracji audio do organizacji assetów dźwiękowych i parametrów"
     },
     "team": {
       "title": "Zespół"
@@ -231,9 +231,9 @@
       "role": "ROL",
       "role_desc": "Audio Designer & Technische Implementer. Sound design, MetaSounds implementatie, mixing. 2 programmeurs, 3 artiesten, 12 weken.",
       "tech": "TECH",
-      "tech_desc": "MetaSounds als enige SFX bron. Alle parameters gestuurd door gameplay. Baan oppervlakken crossfaden procedureel. Mix geeft prioriteit aan UI telemetrie vs. botsingen via limiters en sidechain.",
+      "tech_desc": "MetaSounds als enige SFX bron. Alle parameters gestuurd door gameplay. Baan oppervlakken crossfaden procedureel. Mix geeft prioriteit aan UI telemetrie vs. Botsingen via limiters en sidechain.",
       "scope": "BEREIK",
-      "scope_desc": "32 gelijktijdige stemmen, sub-45ms latentie. Content verpakt in 180MB.",
+      "scope_desc": "320+ audio events, all built with MetaSounds.",
       "result": "RESULTAAT",
       "result_desc": "Uitgebracht op itch.io mei 2025. Windows en Linux builds."
     },
@@ -243,7 +243,7 @@
       "what": "MetaSounds grafieken voor boosts, oppervlakken en botsingen. Ik bewerkte samples in Reaper en voerde ze in MetaSound arrays met randomizers voor variatie.",
       "how": "Node grafieken nemen gameplay parameters als inputs. Motor snelheid stuurt pitch. Oppervlak type kiest uit sample arrays. Botsing kracht controleert welke samples afspelen en hun intensiteit.",
       "why": "MetaSounds laten me samples organiseren in arrays en afspelen randomiseren. Parameters reageren frame-perfect op gameplay. Makkelijker te beheren dan honderden aparte sound cues.",
-      "result": "Compacte memory footprint. Real-time parameter response. Oneindige variatie van eindige assets.",
+      "result": "Never sounds repetitive.",
       "placeholder_title": "MetaSounds Screenshots Binnenkort",
       "placeholder_desc": "Boost systeem, oppervlak detectie, collision audio grafieken. Wachtend op Perforce herstel."
     },
@@ -254,14 +254,14 @@
       "how": "UAudioManager biedt PlayUISelect() en PlayUIHover() project-breed. ItemHolderComponent gebruikt switch statements om geluiden af te vuren gebaseerd op EItemType enum. Motor audio gebruikt UAudioComponent met SetFloatParameter voor real-time snelheid response.",
       "why": "Gecentraliseerde systemen voorkomen geluid duplicatie over Blueprints. GameInstanceSubsystem maakt UI audio globaal toegankelijk. Switch statements houden item logica op één plek. AudioComponent parameters maken vloeiende motor pitch modulatie mogelijk.",
       "result": "Schone architectuur. Nul duplicatie. Gemakkelijke debugging. Single source of truth voor elk audio systeem.",
-      "code_title": "AudioManager.cpp — Globale UI Audio",
-      "impl_title": "ItemHolderComponent.cpp — Item Geluiden"
+      "code_title": "AudioManager.cpp: Globale UI Audio",
+      "impl_title": "ItemHolderComponent.cpp: Item Geluiden"
     },
     "surface": {
       "title": "Oppervlak Overgangen",
       "desc": "Crossfade systeem voor soepele materiaal switches.",
       "problem": "Directe switches veroorzaakten pops. Snelle overgangen spamden audio layer, begraven UI en collision geluiden.",
-      "solution": "150ms equal-power crossfade met 0.2s cooldown. Oppervlak wijzigingen triggeren nieuwe MetaSound instantie tijdens fade out van vorige. Cooldown voorkomt transition spam tijdens oppervlak rand rijden."
+      "solution": "150ms equal-power crossfade met 0.2s cooldown. Oppervlak wijzigingen starten nieuwe MetaSound instantie tijdens fade out van vorige. Cooldown voorkomt transition spam tijdens oppervlak rand rijden."
     },
     "mix": {
       "title": "4-Speler Mix Strategie",
@@ -275,8 +275,8 @@
       "solution_label": "OPLOSSING",
       "memory": {
         "title": "Geheugen Pieken",
-        "problem": "Het originele vier-laags boost systeem at 40MB per instantie. Met vier spelers is dat een 160MB piek—volledig onacceptabel.",
-        "solution": "Ik bouwde het opnieuw als een procedurele MetaSound met ruis generatie, filtering en pitch modulatie. Onder 2MB per instantie. Voegde een RPM curve toe om het organisch te laten klinken."
+        "problem": "Het originele boost systeem was te zwaar. Vier spelers betekende stuttering.",
+        "solution": "Ik bouwde het opnieuw als een procedurele MetaSound met ruis generatie, filtering en pitch modulatie. Veel lichter. Voegde een RPM curve toe om het organisch te laten klinken."
       }
     },
     "sections": {
@@ -291,7 +291,7 @@
       "ui_manager": "GameInstanceSubsystem maakt UI geluiden globaal toegankelijk. Elke Blueprint of C++ code kan PlayUISelect() aanroepen zonder geluid asset referenties nodig te hebben.",
       "null_check": "Standaard null check. Voorkomt crash als UISelectSound niet is toegewezen in Blueprint.",
       "play_ui_sound": "PlaySound2D vuurt UI click af. Geluid toegewezen in GameInstance Blueprint. Werkt project-breed zonder duplicatie.",
-      "item_switch": "Switch statement mapt EItemType enum naar corresponderend geluid. CreamPie krijgt PickupSound_CreamPie, Handpin krijgt PickupSound_HandPin, etc. Gecentraliseerde logica—voeg nieuw item toe, voeg nieuwe case toe.",
+      "item_switch": "Switch statement mapt EItemType enum naar corresponderend geluid. CreamPie krijgt PickupSound_CreamPie, Handpin krijgt PickupSound_HandPin, etc. Gecentraliseerde logica. Voeg nieuw item toe, voeg nieuwe case toe.",
       "engine_param": "SetFloatParameter werkt EngineSpeed bij in real-time. AudioComponent speelt looping motor geluid. MetaSound graaf binnenin gebruikt EngineSpeed om pitch te moduleren. Vloeiende transities, geen audio pops."
     },
     "video": {
@@ -300,19 +300,19 @@
     "screenshots": {
       "title": "Screenshots",
       "captions": {
-        "pic1": "Karakterselectie scherm met Penny—een van de speelbare oma's in de race",
+        "pic1": "Karakterselectie scherm met Penny. Een van de speelbare oma's in de race",
         "pic2": "Race actie met power-ups en omgevingsgevaren",
         "pic3": "Startlijn met vier spelers klaar om door het appartement te racen",
         "pic4": "Level overzicht met de appartement layout en meerdere race paden"
       }
     },
     "media_captions": {
-      "ms_pickup": "MetaSound grafiek voor pickup items — gebruikt parameter inputs om pitch en volume te controleren op basis van gameplay state",
-      "ms_powerups": "MetaSound grafiek voor powerup effecten — genereert procedureel audio met real-time parameter modulatie",
-      "ms_mono_array": "MetaSound Mono Array setup — beheert meerdere audiobronnen met gesynchroniseerde parameter controle",
-      "sound_classes": "Sound Class hiërarchie — organiseert audio in categorieën (SFX, Muziek, UI) voor gecentraliseerde volume controle en mixing",
-      "attenuation": "Attenuation preset instellingen — definieert hoe geluidsvolume afneemt met afstand met behulp van falloff curves",
-      "sound_structures": "Sound data structures — aangepaste audio configuratie structs voor het organiseren van sound assets en parameters"
+      "ms_pickup": "MetaSound grafiek voor pickup items: gebruikt parameter inputs om pitch en volume te controleren op basis van gameplay state",
+      "ms_powerups": "MetaSound grafiek voor powerup effecten: genereert procedureel audio met real-time parameter modulatie",
+      "ms_mono_array": "MetaSound Mono Array setup: beheert meerdere audiobronnen met gesynchroniseerde parameter controle",
+      "sound_classes": "Sound Class hiërarchie: organiseert audio in categorieën (SFX, Muziek, UI) voor gecentraliseerde volume controle en mixing",
+      "attenuation": "Attenuation preset instellingen: definieert hoe geluidsvolume afneemt met afstand met behulp van falloff curves",
+      "sound_structures": "Sound data structures: aangepaste audio configuratie structs voor het organiseren van sound assets en parameters"
     },
     "team": {
       "title": "Team"
