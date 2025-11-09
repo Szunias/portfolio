@@ -23,21 +23,21 @@
     },
     "metasounds": {
       "title": "MetaSounds Implementation",
-      "desc": "MetaSounds as sole SFX source. Every parameter comes from gameplay.",
-      "what": "MetaSounds graphs for boosts, surfaces, and collisions. All audio generated procedurally—no static samples for gameplay events.",
-      "how": "Node graphs take gameplay parameters as inputs. Engine speed drives pitch. Surface type selects material. Collision force controls impact intensity.",
-      "why": "Procedural generation keeps memory footprint low. Single MetaSound replaces dozens of static files. Parameters react frame-perfect to gameplay state.",
-      "result": "Compact memory footprint. Real-time parameter response. Infinite variation from finite assets.",
+      "desc": "I used MetaSounds for all SFX. Every parameter is driven by gameplay—engine speed, surface type, collision force.",
+      "what": "MetaSounds graphs for boosts, surfaces, collisions. All audio generated procedurally. No static samples for gameplay events.",
+      "how": "Node graphs take gameplay parameters as inputs. Engine speed drives pitch. Surface type picks the material. Collision force controls impact intensity.",
+      "why": "Procedural keeps memory low. One MetaSound replaces dozens of static files. Parameters respond frame-perfect to gameplay.",
+      "result": "Small memory footprint. Real-time response. Infinite variation from limited assets.",
       "placeholder_title": "MetaSounds Screenshots Coming Soon",
-      "placeholder_desc": "Boost system, surface detection, collision audio graphs. Pending Perforce recovery."
+      "placeholder_desc": "Boost system, surface detection, collision graphs. Pending Perforce recovery."
     },
     "triggering": {
       "title": "Audio Architecture",
-      "desc": "Centralized systems for UI, items, and engine audio. Direct calls, no delegates.",
-      "what": "UAudioManager (GameInstanceSubsystem) handles global UI clicks. ItemHolderComponent centralizes pickup/use SFX per item type. GrandmaCharacter manages engine audio with EngineSpeed parameter.",
-      "how": "UAudioManager exposes PlayUISelect() and PlayUIHover() project-wide. ItemHolderComponent uses switch statements to fire sounds based on EItemType enum. Engine audio uses UAudioComponent with SetFloatParameter for real-time speed response.",
-      "why": "Centralized systems prevent sound duplication across Blueprints. GameInstanceSubsystem makes UI audio globally accessible. Switch statements keep item logic in one place. AudioComponent parameters enable smooth engine pitch modulation.",
-      "result": "Clean architecture. Zero duplication. Easy debugging. Single source of truth for each audio system.",
+      "desc": "Centralized systems for UI, items, and engine audio. Direct calls—no delegates needed here.",
+      "what": "UAudioManager (GameInstanceSubsystem) handles all UI clicks project-wide. ItemHolderComponent handles pickup/use sounds per item type. GrandmaCharacter manages engine audio with EngineSpeed parameter.",
+      "how": "UAudioManager exposes PlayUISelect() and PlayUIHover() everywhere. ItemHolderComponent uses switch statements based on EItemType enum. Engine audio uses UAudioComponent with SetFloatParameter for real-time pitch.",
+      "why": "Centralized = no duplication across Blueprints. GameInstanceSubsystem makes UI audio global. Switch statements keep item logic in one spot. AudioComponent parameters give smooth engine pitch changes.",
+      "result": "Clean setup. Zero duplication. Easy to debug. Single source of truth per system.",
       "code_title": "AudioManager.cpp — Global UI Audio",
       "impl_title": "ItemHolderComponent.cpp — Item Sounds"
     },
@@ -59,8 +59,8 @@
       "solution_label": "SOLUTION",
       "memory": {
         "title": "Memory Spikes",
-        "problem": "The original four-layer boost system ate 40MB per instance. With four players, that's a 160MB spike—completely unacceptable.",
-        "solution": "I rebuilt it as a procedural MetaSound using noise generation, filtering, and pitch modulation. Under 2MB per instance. Added an RPM curve to keep it sounding organic."
+        "problem": "Original four-layer boost system: 40MB per instance. Four players = 160MB spike. Unacceptable.",
+        "solution": "Rebuilt it as procedural MetaSound—noise generation, filtering, pitch modulation. Under 2MB per instance. Added RPM curve to keep it sounding organic."
       }
     },
     "sections": {

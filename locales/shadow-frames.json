@@ -41,7 +41,7 @@
     "concept": {
       "title": "The Game",
       "subtitle": "Black-and-white psychological horror",
-      "desc": "Anomalies spawn every 30-50 seconds. Sound is your only way to locate them—follow the audio, photograph what you find. You have 12 shots total.\n\n1960s Irish pub rendered in black and white. Glasses levitate, shadows detach from objects, chairs spin without cause.\n\nMute the game and anomalies become impossible to locate. Audio isn't optional—it's mechanical.\n\nArrange your photos on the pin board in the correct sequence before the entity hunting you succeeds."
+      "desc": "Anomalies spawn every 30-50 seconds. Sound is how you find them—follow the audio, photograph what you see. You have 12 shots.\n\n1960s Irish pub in black and white. Glasses float, shadows move on their own, chairs spin.\n\nMute the game and you can't locate anomalies. Audio isn't decoration—it's how the game works.\n\nArrange your photos on the board in the right order before the thing hunting you gets you."
     },
     "gameplay": {
       "title": "Core Mechanic: Observe → Capture → Connect",
@@ -55,13 +55,13 @@
     "audio_systems": {
       "title": "Audio Implementation",
       "rtpc_title": "RTPC-Based Dynamic System",
-      "rtpc_desc": "The ambient soundscape and player breathing intensity adapt dynamically to the number of anomalies present. As unresolved anomalies accumulate, tension escalates accordingly.",
+      "rtpc_desc": "Ambient sound and player breathing get more intense with each anomaly that spawns. More anomalies = higher tension.",
       "switches_title": "Switch Containers & Zones",
-      "switches_desc": "Each room features unique ambient layers that transition seamlessly as you move through the space. The bathroom includes spatialized toilet and faucet sounds, while footsteps dynamically adjust based on surface materials.",
+      "switches_desc": "Each room has its own ambient layers that crossfade as you move. Bathroom has spatialized toilet and faucet sounds. Footsteps change based on surface—wood, tiles, concrete.",
       "delegates_title": "Blueprint Delegates (SOC)",
-      "delegates_desc": "Separation of Concerns architecture where audio systems communicate through delegates, enabling clean and modular implementation.",
+      "delegates_desc": "Audio systems communicate through delegates. C++ handles game logic, Blueprint handles audio. Keeps everything modular—change one without breaking the other.",
       "spatial_title": "HRTF Spatial Audio",
-      "spatial_desc": "Full 3D positional audio brings anomalies, enemy presence, and environmental cues to life. This spatial accuracy is essential for gameplay—without it, players cannot navigate the threats effectively."
+      "spatial_desc": "Full 3D positional audio for anomalies, enemy, and environmental cues. Spatial accuracy is required for gameplay—you can't find threats without it."
     },
     "dev_tools": {
       "title": "Development Tools",
@@ -98,35 +98,35 @@
     },
     "footstep": {
       "title": "Footstep System: Surface Detection & Audio Routing",
-      "desc": "Physical material detection drives dynamic audio switching for realistic surface-based footsteps.",
-      "what": "System detects surface type under player (wood, tiles, concrete) and automatically switches appropriate footstep sounds in Wwise. Each player step matches the material they're walking on.",
-      "how": "C++ component performs line trace downward from player position, detects Physical Material, maps it to Wwise Switch name, and Blueprint Audio Manager receives delegate and plays appropriate sound.",
-      "why": "Separation of Concerns - C++ handles detection logic, Blueprint handles audio. Delegates provide loose coupling between systems, enabling easy addition of new surfaces without modifying C++ code.",
-      "result": "This produces realistic footsteps that match each surface automatically, with no manual switching required. New materials can be added easily, and the system handles every player step without intervention."
+      "desc": "Footsteps change based on what you're walking on—wood, tiles, concrete. The system detects the surface and switches sounds in Wwise automatically.",
+      "what": "C++ component does a line trace down from the player, checks the Physical Material, and maps it to a Wwise Switch (Tiles, Wood, CreakyWood, Concrete).",
+      "how": "Physical Material is detected using Unreal's surface system. That gets mapped to a Switch name. Blueprint Audio Manager gets the delegate and plays the right sound in Wwise.",
+      "why": "C++ handles detection, Blueprint handles audio—separation of concerns. I can add new surfaces without touching C++ code. Audio designer can change Switch names in Wwise without code changes.",
+      "result": "Footsteps match every surface automatically. No manual work needed. Adding new materials is straightforward."
     },
     "player_audio": {
       "title": "Player Audio System: Delegate-Based Communication",
-      "desc": "Clean separation between player actions and audio responses using Blueprint delegates.",
-      "what": "System connects player actions (camera shot, zoom, photoboard entry) with appropriate audio events in Wwise. Each player action automatically triggers corresponding sound.",
-      "how": "PlayerCharacter in C++ defines multicast delegates. When player performs action, delegate is broadcast. Blueprint Audio Manager listens to these delegates and calls appropriate Wwise Events.",
-      "why": "Delegates provide loose coupling - PlayerCharacter knows nothing about audio, Audio Manager knows nothing about player logic. Each system can be tested and modified independently.",
-      "result": "The result is a clean architecture that makes adding new audio actions straightforward, with no hardcoded calls. Audio designers can modify sounds freely without touching any player code."
+      "desc": "Player actions trigger audio through delegates. Camera shot, zoom, photoboard interaction—each action calls the right Wwise event.",
+      "what": "PlayerCharacter (C++) defines multicast delegates. When you take a photo or zoom, the delegate broadcasts. Blueprint Audio Manager listens and plays the sound.",
+      "how": "DECLARE_DYNAMIC_MULTICAST_DELEGATE creates delegates that work with Blueprint. UPROPERTY(BlueprintAssignable) allows binding in Blueprint. Multicast means multiple listeners can react to one action.",
+      "why": "PlayerCharacter doesn't know anything about audio. Audio Manager doesn't know anything about player logic. I can test and change each independently.",
+      "result": "Adding new audio actions is easy—no hardcoded calls. Audio designers can change sounds in Wwise without touching player code."
     },
     "rtpc": {
       "title": "Dynamic Tension System: RTPC-Driven Ambience",
-      "desc": "Ambient intensity progressively increases based on game state—the more photos you place on the board, the higher the tension climbs.",
-      "what": "The system dynamically adjusts ambient intensity based on how many photos have been placed on the board. As the photo count increases, so does the atmospheric tension. An RTPC value ranging from 0-5 controls the ambient layers in Wwise.",
-      "how": "PhotoboardWidget tracks number of important photos. When player places photo, UpdateAmbientRTPC() finds AkAmbientSound actor and sets RTPC value. Wwise automatically crossfades between ambient layers.",
-      "why": "RTPC enables smooth transitions between tension states without jumps. Audio designer can precisely control in Wwise how each ambient layer responds to RTPC value, providing full control over emotional progression.",
-      "result": "This creates a smooth tension progression with no jarring audio jumps. Curve adjustments can be made easily within Wwise, and the atmosphere automatically adapts to player progress."
+      "desc": "More photos on the board = higher tension. Ambient intensity increases as you progress.",
+      "what": "RTPC value (0-5) controls ambient layers in Wwise. PhotoboardWidget tracks how many photos you've placed. More photos = higher RTPC value = more intense ambience.",
+      "how": "When you place a photo, UpdateAmbientRTPC() finds the AkAmbientSound actor (tagged 'AmbientProgressive') and sets the RTPC value. Wwise crossfades between ambient layers based on that value.",
+      "why": "RTPC gives smooth transitions between tension states—no audio jumps. Audio designer controls crossfade curves in Wwise without touching code.",
+      "result": "Tension builds smoothly as you progress. Tweak curves in Wwise, atmosphere adapts automatically."
     },
     "wwise_arch": {
       "title": "Wwise Architecture: Switch Containers & Photoboard Integration",
-      "desc": "Continuation of the RTPC system - Switch Containers in Wwise respond to photos collected on the photoboard, creating dynamic ambient layers.",
-      "what": "Switch Container system in Wwise responds to the number of photos collected on the photoboard. As player collects more photos, different ambient layers are activated through Switch Containers, working in conjunction with the RTPC system.",
-      "how": "The RTPC value from PhotoboardWidget (0-5 based on photos) drives Switch Container selection in Wwise. Each Switch state corresponds to different ambient layers. Wwise automatically crossfades between layers as photos are collected.",
-      "why": "Switch Containers provide discrete layer control while RTPC handles smooth transitions. Together, they enable both structural changes (different ambient sets) and smooth intensity progression. Audio designer can precisely control each layer's response in Wwise.",
-      "result": "Dynamic ambient system that responds to player progress through photoboard collection. Additional layers and complexity are in development for final release."
+      "desc": "Switch Containers work with the RTPC system. More photos collected = different ambient layers activate.",
+      "what": "RTPC value (0-5 from photos) drives Switch Container selection in Wwise. Each Switch state has different ambient layers. RTPC handles smooth crossfades, Switch Containers handle structural changes.",
+      "how": "PhotoboardWidget sends RTPC value. Wwise uses that to pick the right Switch state and crossfade between layers.",
+      "why": "Switch Containers give discrete layer control. RTPC gives smooth transitions. Together: structural changes (different ambient sets) and intensity progression.",
+      "result": "Ambient responds to player progress. This is partial implementation—full system will have more layers and complexity."
     },
     "sections": {
       "gameplay_showcase": "Gameplay Showcase",
@@ -159,7 +159,7 @@
       "tech_icon": "TECH",
       "core_concept": "Core Concept",
       "my_role": "My Role",
-      "my_role_desc": "As Sound Lead, I designed and implemented the audio architecture for Shadow Frames: dynamic footstep systems, delegate-based player audio, RTPC-driven tension progression, and Wwise integration. Additional systems are in development for final release.",
+      "my_role_desc": "Sound Lead for this multi-institutional student project. I designed and implemented the audio architecture: dynamic footstep systems, delegate-based player audio, RTPC-driven tension progression, and Wwise integration. More systems in development for final release.",
       "technical_stack": "Technical Stack",
       "ritcs_name": "RITCS",
       "kask_name": "KASK Conservatory",
@@ -187,8 +187,8 @@
       "solution_label": "Solution:",
       "challenge1": {
         "title": "Workflow Optimization Tools",
-        "problem": "Working in a multi-institutional collaboration with students, workflow issues frequently disrupted development. Wwise integration would break after Perforce pulls, and Unreal Engine compilation times were causing significant downtime.",
-        "solution": "Created Wwise Unreal Fixer and Unreal Engine Rebuilder tools to streamline the workflow. While not fully independent work (collaborative effort), these tools were primarily developed to help students work more efficiently. The Wwise Fixer automatically restores broken Wwise integration after Perforce pulls, and the Rebuilder automates the compilation process to reduce downtime."
+        "problem": "Multi-institutional student project meant workflow issues. Wwise integration broke after Perforce pulls. Unreal compilation took forever—major downtime.",
+        "solution": "Built Wwise Unreal Fixer and Unreal Engine Rebuilder to fix this. Wwise Fixer restores broken integration after Perforce pulls (one click). Rebuilder automates compilation to cut downtime. Made these primarily to help the student team work faster."
       }
     },
     "code_explanations": {
