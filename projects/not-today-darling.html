@@ -458,6 +458,7 @@
                 padding: 1rem;
                 cursor: pointer;
                 transition: all 0.3s;
+                position: relative;
             }
 
             .blueprint-side:hover {
@@ -469,6 +470,25 @@
                 height: auto;
                 display: block;
                 border-radius: 8px;
+            }
+
+            .blueprint-zoom-hint {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                padding: 0.5rem 1rem;
+                background: rgba(0, 0, 0, 0.8);
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                font-size: 0.85rem;
+                color: var(--text-secondary);
+                opacity: 0;
+                transition: opacity 0.3s;
+                z-index: 10;
+            }
+
+            .blueprint-side:hover .blueprint-zoom-hint {
+                opacity: 1;
             }
 
             .code-side {
@@ -976,9 +996,9 @@
             <!-- MetaSounds -->
             <section class="tech-section">
                 <div class="section-header">
-                    <h2 data-i18n="metasounds.title">MetaSounds</h2>
+                    <h2 data-i18n="metasounds.title">MetaSounds Implementation</h2>
                     <p data-i18n="metasounds.desc">
-                        Procedural audio. Real-time parameters.
+                        Node-based procedural audio engine driving all gameplay sounds.
                     </p>
                 </div>
 
@@ -986,45 +1006,92 @@
                     <div class="explanation-item">
                         <h3 data-i18n="sections.what">WHAT</h3>
                         <p data-i18n="metasounds.what">
-                            MetaSounds uses node-based graphs to generate audio
-                            procedurally. Gameplay parameters like speed,
-                            surface type, and player count drive the sound in
-                            real time.
+                            MetaSounds generates audio procedurally using node graphs. Speed modulates pitch, surface type controls sample selection, player count scales mix complexity.
+                        </p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3 data-i18n="sections.how">HOW</h3>
+                        <p data-i18n="metasounds.how">
+                            Each MetaSound asset contains parameter inputs connected to gameplay variables. Speed maps to pitch multiplier (0.8x-1.3x), surface enum selects crossfaded samples, collision force drives impact volume.
+                        </p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3 data-i18n="sections.why">WHY</h3>
+                        <p data-i18n="metasounds.why">
+                            Procedural generation keeps memory footprint low while maintaining variety. One MetaSound asset replaces dozens of static audio files. Parameters respond frame-perfect to gameplay state.
                         </p>
                     </div>
                     <div class="explanation-item">
                         <h3 data-i18n="sections.result">RESULT</h3>
                         <p data-i18n="metasounds.result">
-                            The audio reacts instantly. Speed affects pitch.
-                            Surface transitions crossfade smoothly. Each
-                            MetaSound instance stays under 2MB.
+                            Sub-2MB per MetaSound instance. Real-time parameter response with zero latency. Infinite variation from finite assets.
                         </p>
                     </div>
                 </div>
 
-                <div class="metasounds-placeholder">
-                    <div class="metasounds-placeholder-icon">🎛️</div>
-                    <h4 data-i18n="metasounds.placeholder_title">
-                        MetaSounds Screenshots Coming Soon
-                    </h4>
-                    <p data-i18n="metasounds.placeholder_desc">
-                        Boost system, surface detection, collision audio.
-                        Pending Perforce recovery.
-                    </p>
+                <div class="media-grid">
+                    <div class="media-item">
+                        <img
+                            src="../assets/images/projects-nottoday/MS_Pickup.png"
+                            alt="MetaSound Pickup System"
+                        />
+                    </div>
+                    <div class="media-item">
+                        <img
+                            src="../assets/images/projects-nottoday/MS_Powerups.png"
+                            alt="MetaSound Powerup System"
+                        />
+                    </div>
+                    <div class="media-item">
+                        <img
+                            src="../assets/images/projects-nottoday/MSP_MonoArray.png"
+                            alt="MetaSound Mono Array"
+                        />
+                    </div>
                 </div>
             </section>
 
-            <!-- Audio Triggering with MetaSounds -->
+            <!-- Audio Architecture -->
             <section class="tech-section">
                 <div class="section-header">
-                    <h2 data-i18n="triggering.title">Audio Triggering</h2>
+                    <h2 data-i18n="triggering.title">Audio Architecture</h2>
                     <p data-i18n="triggering.desc">
-                        Simple checks trigger MetaSounds. No delegates.
+                        Centralized systems for UI, items, and engine audio. Direct calls, no delegates.
                     </p>
+                </div>
+
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3 data-i18n="sections.what">WHAT</h3>
+                        <p data-i18n="triggering.what">
+                            UAudioManager (GameInstanceSubsystem) handles global UI clicks. ItemHolderComponent centralizes pickup/use SFX per item type. GrandmaCharacter manages engine audio with EngineSpeed parameter.
+                        </p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3 data-i18n="sections.how">HOW</h3>
+                        <p data-i18n="triggering.how">
+                            UAudioManager exposes PlayUISelect() and PlayUIHover() project-wide. ItemHolderComponent uses switch statements to fire sounds based on EItemType enum. Engine audio uses UAudioComponent with SetFloatParameter for real-time speed response.
+                        </p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3 data-i18n="sections.why">WHY</h3>
+                        <p data-i18n="triggering.why">
+                            Centralized systems prevent sound duplication across Blueprints. GameInstanceSubsystem makes UI audio globally accessible. Switch statements keep item logic in one place. AudioComponent parameters enable smooth engine pitch modulation.
+                        </p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3 data-i18n="sections.result">RESULT</h3>
+                        <p data-i18n="triggering.result">
+                            Clean architecture. Zero duplication. Easy debugging. Single source of truth for each audio system.
+                        </p>
+                    </div>
                 </div>
 
                 <div class="implementation-showcase">
                     <div class="blueprint-side">
+                        <div class="blueprint-zoom-hint" data-i18n="sections.click_enlarge">
+                            Click to enlarge
+                        </div>
                         <img
                             src="../assets/images/projects/NotTodayPic3.png"
                             alt="Blueprint"
@@ -1032,48 +1099,69 @@
                     </div>
                     <div class="code-side">
                         <h4 data-i18n="triggering.code_title">
-                            RaceCharacter.h — MetaSound Properties
+                            AudioManager.cpp — Global UI Audio
                         </h4>
-                        <pre><code><span class="comment">// MetaSound sources for audio events</span>
+                        <pre><code><span class="comment">// GameInstanceSubsystem for project-wide UI audio</span>
 
-<span class="keyword">UCLASS</span>()
-<span class="keyword">class</span> <span class="type">ARaceCharacter</span> : <span class="keyword">public</span> <span class="type">ACharacter</span>
+<span class="keyword">void</span> <span class="type">UAudioManager</span>::<span class="function">PlayUISelect</span>()
 {
-<span class="keyword">public</span>:
-<span class="code-block-logic" data-block-title="MetaSound Properties" data-block-text="MetaSounds are procedural audio sources. EditAnywhere allows designers to assign MetaSound assets in editor without code changes.">    <span class="keyword">UPROPERTY</span>(EditAnywhere, Category = <span class="string">"Audio"</span>)
-    <span class="type">UMetaSoundSource</span>* CollisionMetaSound;
+<span class="code-block-logic" data-block-title="Global UI System" data-block-text-key="code_explanations.ui_manager">    <span class="keyword">if</span> (UISelectSound)</span>
+    {
+<span class="code-block-logic" data-block-title="Fire UI Click" data-block-text-key="code_explanations.play_ui_sound">        <span class="type">UGameplayStatics</span>::<span class="function">PlaySound2D</span>(<span class="function">GetWorld</span>(), UISelectSound);
+    }
+}</span>
 
-    <span class="keyword">UPROPERTY</span>(EditAnywhere, Category = <span class="string">"Audio"</span>)
-    <span class="type">UMetaSoundSource</span>* BoostMetaSound;
-
-    <span class="keyword">UPROPERTY</span>(EditAnywhere, Category = <span class="string">"Audio"</span>)
-    <span class="type">UMetaSoundSource</span>* SurfaceMetaSound;</span>
-
-    <span class="keyword">void</span> <span class="function">OnCollision</span>();
-    <span class="keyword">void</span> <span class="function">OnBoost</span>();
-};</code></pre>
+<span class="keyword">void</span> <span class="type">UAudioManager</span>::<span class="function">PlayUIHover</span>()
+{
+<span class="code-block-logic" data-block-title="Null Check" data-block-text-key="code_explanations.null_check">    <span class="keyword">if</span> (UIHoverSound)
+    {
+        <span class="type">UGameplayStatics</span>::<span class="function">PlaySound2D</span>(<span class="function">GetWorld</span>(), UIHoverSound);
+    }
+}</span></code></pre>
 
                         <h4
                             style="margin-top: 1.5rem"
                             data-i18n="triggering.impl_title"
                         >
-                            RaceCharacter.cpp — Simple Triggering
+                            ItemHolderComponent.cpp — Item Sounds
                         </h4>
-                        <pre><code><span class="keyword">void</span> <span class="type">ARaceCharacter</span>::<span class="function">OnCollision</span>()
-{
-<span class="code-block-logic" data-block-title="Null Safety Check" data-block-text="Standard null check. Prevents crash if designer forgot to assign MetaSound asset in Blueprint.">    <span class="keyword">if</span> (CollisionMetaSound)</span>
-    {
-<span class="code-block-logic" data-block-title="Play MetaSound One-Shot" data-block-text="PlaySound2D fires MetaSound one-shot. MetaSound asset assigned in Blueprint. All parameters configured in MetaSound graph - designer controls sound entirely without code changes.">        <span class="type">UGameplayStatics</span>::<span class="function">PlaySound2D</span>(<span class="keyword">this</span>, CollisionMetaSound);
-    }
-}</span>
+                        <pre><code><span class="comment">// Centralized pickup sounds per item type</span>
 
-<span class="keyword">void</span> <span class="type">ARaceCharacter</span>::<span class="function">OnBoost</span>()
+<span class="keyword">void</span> <span class="type">UItemHolderComponent</span>::<span class="function">PlayMetasound</span>(<span class="type">EItemType</span> ItemType) <span class="keyword">const</span>
 {
-<span class="code-block-logic" data-block-title="Same Pattern" data-block-text="Same simple pattern: null check, PlaySound2D. MetaSound handles all audio logic internally. Designer tweaks boost behavior entirely in MetaSound editor - pitch, filters, procedural generation, etc.">    <span class="keyword">if</span> (BoostMetaSound)
+<span class="code-block-logic" data-block-title="Item Type Switch" data-block-text-key="code_explanations.item_switch">    <span class="keyword">switch</span> (ItemType)
     {
-        <span class="type">UGameplayStatics</span>::<span class="function">PlaySound2D</span>(<span class="keyword">this</span>, BoostMetaSound);
+    <span class="keyword">case</span> <span class="type">EItemType</span>::CreamPie:
+        <span class="keyword">if</span> (PickupSound_CreamPie)
+            <span class="type">UGameplayStatics</span>::<span class="function">PlaySound2D</span>(<span class="keyword">this</span>, PickupSound_CreamPie);
+        <span class="keyword">break</span>;
+    <span class="keyword">case</span> <span class="type">EItemType</span>::Handpin:
+        <span class="keyword">if</span> (PickupSound_HandPin)
+            <span class="type">UGameplayStatics</span>::<span class="function">PlaySound2D</span>(<span class="keyword">this</span>, PickupSound_HandPin);
+        <span class="keyword">break</span>;
     }
 }</span></code></pre>
+                    </div>
+                </div>
+
+                <div class="media-grid" style="margin-top: 2rem;">
+                    <div class="media-item">
+                        <img
+                            src="../assets/images/projects-nottoday/SoundClasses.png"
+                            alt="Unreal Engine Sound Classes"
+                        />
+                    </div>
+                    <div class="media-item">
+                        <img
+                            src="../assets/images/projects-nottoday/AttenuationPresets.png"
+                            alt="Attenuation Presets"
+                        />
+                    </div>
+                    <div class="media-item">
+                        <img
+                            src="../assets/images/projects-nottoday/SoundStructures.png"
+                            alt="Sound Structures"
+                        />
                     </div>
                 </div>
             </section>
@@ -1333,6 +1421,7 @@
                 const stored = localStorage.getItem("language");
                 const defaultLang = stored || "en";
                 let translations = {};
+                let currentLang = defaultLang;
 
                 try {
                     const response = await fetch(TRANSLATION_PATH);
@@ -1344,47 +1433,64 @@
                     console.error("Failed to load translations", error);
                 }
 
-                document.querySelectorAll(".lang-btn").forEach((button) => {
-                    button.addEventListener("click", () => {
-                        const lang = button.dataset.lang;
-                        localStorage.setItem("language", lang);
-                        applyTranslations(translations, lang);
-                    });
-                });
-
                 // Interactive code tooltips
                 const tooltip = document.createElement("div");
                 tooltip.className = "code-tooltip";
                 document.body.appendChild(tooltip);
 
-                const logicElements =
-                    document.querySelectorAll(".code-block-logic");
-                logicElements.forEach((element) => {
-                    const title = element.getAttribute("data-block-title");
-                    const text = element.getAttribute("data-block-text");
+                const updateTooltips = () => {
+                    const logicElements =
+                        document.querySelectorAll(".code-block-logic");
+                    logicElements.forEach((element) => {
+                        const title = element.getAttribute("data-block-title");
+                        const textKey = element.getAttribute("data-block-text-key");
+                        const text = element.getAttribute("data-block-text");
 
-                    if (title && text) {
-                        element.addEventListener("mouseenter", (e) => {
-                            const rect = element.getBoundingClientRect();
-                            tooltip.innerHTML = `<h5>${title}</h5><p>${text}</p>`;
+                        // Get text from translation key if available, otherwise use direct text
+                        const langTranslations = translations[currentLang] || {};
+                        const tooltipText = textKey
+                            ? getNestedTranslation(langTranslations, textKey) || text
+                            : text;
 
-                            const spaceRight = window.innerWidth - rect.right;
+                        if (title && tooltipText) {
+                            // Remove existing listeners
+                            const newElement = element.cloneNode(true);
+                            element.parentNode.replaceChild(newElement, element);
 
-                            if (spaceRight > 350) {
-                                tooltip.style.left = rect.right + 20 + "px";
-                            } else {
-                                tooltip.style.left = rect.left - 340 + "px";
-                            }
+                            newElement.addEventListener("mouseenter", (e) => {
+                                const rect = newElement.getBoundingClientRect();
+                                tooltip.innerHTML = `<h5>${title}</h5><p>${tooltipText}</p>`;
 
-                            tooltip.style.top =
-                                Math.max(10, rect.top - 10) + "px";
-                            tooltip.classList.add("active");
-                        });
+                                const spaceRight = window.innerWidth - rect.right;
 
-                        element.addEventListener("mouseleave", () => {
-                            tooltip.classList.remove("active");
-                        });
-                    }
+                                if (spaceRight > 350) {
+                                    tooltip.style.left = rect.right + 20 + "px";
+                                } else {
+                                    tooltip.style.left = rect.left - 340 + "px";
+                                }
+
+                                tooltip.style.top =
+                                    Math.max(10, rect.top - 10) + "px";
+                                tooltip.classList.add("active");
+                            });
+
+                            newElement.addEventListener("mouseleave", () => {
+                                tooltip.classList.remove("active");
+                            });
+                        }
+                    });
+                };
+
+                updateTooltips();
+
+                document.querySelectorAll(".lang-btn").forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const lang = button.dataset.lang;
+                        currentLang = lang;
+                        localStorage.setItem("language", lang);
+                        applyTranslations(translations, lang);
+                        updateTooltips();
+                    });
                 });
 
                 // Lightbox
