@@ -24,12 +24,12 @@
     "metasounds": {
       "title": "MetaSounds Implementation",
       "desc": "I used MetaSounds for all SFX. Every parameter is driven by gameplay—engine speed, surface type, collision force.",
-      "what": "MetaSounds graphs for boosts, surfaces, collisions. I edited samples in Reaper, then fed them into MetaSound arrays with randomizers for variation.",
+      "what": "MetaSounds graphs for boosts, surfaces, collisions. I edited samples in Reaper, then loaded them into arrays in MetaSounds, added randomizers for variation.",
       "how": "Node graphs take gameplay parameters as inputs. Engine speed drives pitch. Surface type picks from sample arrays. Collision force controls which samples play and their intensity.",
       "why": "MetaSounds let me organize samples in arrays and randomize playback. Parameters respond frame-perfect to gameplay. Easier to manage than hundreds of separate sound cues.",
       "result": "Small memory footprint. Real-time response. Infinite variation from limited assets.",
-      "placeholder_title": "MetaSounds Screenshots Coming Soon",
-      "placeholder_desc": "Boost system, surface detection, collision graphs. Pending Perforce recovery."
+      "placeholder_title": "MetaSounds Implementation",
+      "placeholder_desc": "Boost system, surface detection, collision graphs."
     },
     "triggering": {
       "title": "Audio Architecture",
@@ -45,13 +45,13 @@
       "title": "Surface Transitions",
       "desc": "Crossfade system for smooth material switches.",
       "problem": "Instant switches caused pops. Rapid transitions spammed audio layer, burying UI and collision sounds.",
-      "solution": "150ms equal-power crossfade with 0.2s cooldown. Surface changes trigger new MetaSound instance while fading out previous. Cooldown prevents transition spam during surface edge riding."
+      "solution": "150ms equal-power crossfade with 0.2s cooldown. Surface changes trigger new MetaSound instance while fading out the previous one. Cooldown prevents transition spam during surface edge riding."
     },
     "mix": {
       "title": "4-Player Mix Strategy",
       "desc": "Priority system and ducking prevent frequency masking.",
       "problem": "Four players stacked collision sounds until UI feedback disappeared entirely. No headroom, constant clipping.",
-      "solution": "Collision cap: 4 simultaneous events max. Each slot gets dedicated EQ curve. Sidechain ducking: -6dB with 50ms attack, 200ms release. Player-local events bypass cap."
+      "solution": "Capped at 4 simultaneous collision events. Each slot gets dedicated EQ curve. Sidechain ducking: -6dB with 50ms attack, 200ms release. Player-local events bypass cap."
     },
     "challenges": {
       "title": "Challenges",
@@ -76,7 +76,7 @@
       "null_check": "Standard null check. Prevents crash if UISelectSound not assigned in Blueprint.",
       "play_ui_sound": "PlaySound2D fires UI click. Sound assigned in GameInstance Blueprint. Works project-wide without duplication.",
       "item_switch": "Switch statement maps EItemType enum to corresponding sound. CreamPie gets PickupSound_CreamPie, Handpin gets PickupSound_HandPin, etc. Centralized logic—add new item, add new case.",
-      "engine_param": "SetFloatParameter updates EngineSpeed in real-time. AudioComponent plays looping engine sound. MetaSound graph inside uses EngineSpeed to modulate pitch. Smooth transitions, no audio pops."
+      "engine_param": "SetFloatParameter updates EngineSpeed in real time. AudioComponent plays looping engine sound. MetaSound graph inside uses EngineSpeed to modulate pitch. Smooth transitions, no audio pops."
     },
     "video": {
       "title": "Gameplay"

@@ -7,6 +7,11 @@
   'use strict';
 
   // Firebase Configuration
+  // NOTE: Firebase API keys are meant to be public for web apps.
+  // Security is enforced through Firebase Security Rules, not by hiding the API key.
+  // Ensure your Firebase Realtime Database has proper security rules configured:
+  // - Read: Allow all (for visit counter display)
+  // - Write: Rate-limited through visitor hash system (24h cooldown)
   const firebaseConfig = {
     apiKey: "AIzaSyBA2enzFHX7aljA2RMQ46YZ093z9N4lbGM",
     authDomain: "igorszuniewicz-9ddfc.firebaseapp.com",
