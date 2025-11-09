@@ -11,35 +11,35 @@
     },
     "overview": {
       "title": "Project Overview",
-      "desc": "Top-down multiplayer racing game where 1-4 players compete in chaotic races. I was the solo audio designer on a 6-person student team.",
+      "desc": "Top-down 1-4 player kart racer with destruction and power-ups. Solo audio designer on 6-person student team.",
       "role": "ROLE",
-      "role_desc": "Solo audio designer. Handled sound design, MetaSounds implementation, and mixing. Two programmers, three artists, 12 weeks to ship.",
+      "role_desc": "Audio Designer & Technical Implementer. Sound design, MetaSounds implementation, mixing. 2 programmers, 3 artists, 12 weeks.",
       "tech": "TECH",
-      "tech_desc": "MetaSounds for procedural audio. Speed, surface type, and player count drive real-time modulation. Priority-based mixing prevents sonic mud.",
+      "tech_desc": "MetaSounds as sole SFX source. All parameters driven by gameplay. Track surfaces crossfade procedurally. Mix prioritizes UI telemetry vs. collisions via limiters and sidechain.",
       "scope": "SCOPE",
-      "scope_desc": "320+ events in 180MB. Engine handles 32 concurrent voices with sub-45ms latency.",
+      "scope_desc": "32 concurrent voices, sub-45ms latency. Content packed in 180MB.",
       "result": "RESULT",
-      "result_desc": "Released on itch.io May 2025. Windows and Linux builds. 1-4 players local multiplayer."
+      "result_desc": "Released on itch.io May 2025. Windows and Linux builds."
     },
     "metasounds": {
       "title": "MetaSounds Implementation",
-      "desc": "Node-based procedural audio engine driving all gameplay sounds.",
-      "what": "MetaSounds generates audio procedurally using node graphs. Speed modulates pitch, surface type controls sample selection, player count scales mix complexity.",
-      "how": "Each MetaSound asset contains parameter inputs connected to gameplay variables. Speed maps to pitch multiplier (0.8x-1.3x), surface enum selects crossfaded samples, collision force drives impact volume.",
-      "why": "Procedural generation keeps memory footprint low while maintaining variety. One MetaSound asset replaces dozens of static audio files. Parameters respond frame-perfect to gameplay state.",
-      "result": "Sub-2MB per MetaSound instance. Real-time parameter response with zero latency. Infinite variation from finite assets.",
+      "desc": "MetaSounds as sole SFX source. Every parameter comes from gameplay.",
+      "what": "MetaSounds graphs for boosts, surfaces, and collisions. All audio generated procedurally—no static samples for gameplay events.",
+      "how": "Node graphs take gameplay parameters as inputs. Engine speed drives pitch. Surface type selects material. Collision force controls impact intensity.",
+      "why": "Procedural generation keeps memory footprint low. Single MetaSound replaces dozens of static files. Parameters react frame-perfect to gameplay state.",
+      "result": "Compact memory footprint. Real-time parameter response. Infinite variation from finite assets.",
       "placeholder_title": "MetaSounds Screenshots Coming Soon",
       "placeholder_desc": "Boost system, surface detection, collision audio graphs. Pending Perforce recovery."
     },
     "triggering": {
-      "title": "Audio Triggering",
-      "desc": "Direct triggering without delegates. Simple conditional checks fire MetaSounds.",
-      "what": "System connects gameplay events (collision, boost, surface change) directly to MetaSound playback. Each event type has dedicated MetaSound asset reference.",
-      "how": "C++ game code calls PlaySound2D() with MetaSound asset pointer. Null checks prevent crashes. No intermediate systems, no event queues, no delegates.",
-      "why": "Small team, 12-week deadline. Delegates add complexity with no benefit here. Direct calls are easier to debug and trace. Audio designer assigns assets in Blueprint—no code changes needed.",
-      "result": "Zero-overhead triggering. Audio fires same frame as gameplay event. Easy to trace in profiler. No hidden event broadcasting.",
-      "code_title": "RaceCharacter.h — MetaSound Properties",
-      "impl_title": "RaceCharacter.cpp — Direct Triggering"
+      "title": "Audio Architecture",
+      "desc": "Centralized systems for UI, items, and engine audio. Direct calls, no delegates.",
+      "what": "UAudioManager (GameInstanceSubsystem) handles global UI clicks. ItemHolderComponent centralizes pickup/use SFX per item type. GrandmaCharacter manages engine audio with EngineSpeed parameter.",
+      "how": "UAudioManager exposes PlayUISelect() and PlayUIHover() project-wide. ItemHolderComponent uses switch statements to fire sounds based on EItemType enum. Engine audio uses UAudioComponent with SetFloatParameter for real-time speed response.",
+      "why": "Centralized systems prevent sound duplication across Blueprints. GameInstanceSubsystem makes UI audio globally accessible. Switch statements keep item logic in one place. AudioComponent parameters enable smooth engine pitch modulation.",
+      "result": "Clean architecture. Zero duplication. Easy debugging. Single source of truth for each audio system.",
+      "code_title": "AudioManager.cpp — Global UI Audio",
+      "impl_title": "ItemHolderComponent.cpp — Item Sounds"
     },
     "surface": {
       "title": "Surface Transitions",
@@ -72,10 +72,11 @@
       "click_enlarge": "Click to enlarge"
     },
     "code_explanations": {
-      "metasound_properties": "MetaSounds are procedural audio sources. EditAnywhere allows designers to assign MetaSound assets in editor without code changes.",
-      "null_check": "Standard null check. Prevents crash if designer forgot to assign MetaSound asset in Blueprint.",
-      "play_metasound": "PlaySound2D fires MetaSound one-shot. MetaSound asset assigned in Blueprint. All parameters configured in MetaSound graph—designer controls sound entirely without code changes.",
-      "boost_trigger": "Same pattern: null check, PlaySound2D. MetaSound handles all audio logic internally. Designer tweaks boost behavior entirely in MetaSound editor—pitch, filters, procedural generation, etc."
+      "ui_manager": "GameInstanceSubsystem makes UI sounds globally accessible. Any Blueprint or C++ code can call PlayUISelect() without needing sound asset references.",
+      "null_check": "Standard null check. Prevents crash if UISelectSound not assigned in Blueprint.",
+      "play_ui_sound": "PlaySound2D fires UI click. Sound assigned in GameInstance Blueprint. Works project-wide without duplication.",
+      "item_switch": "Switch statement maps EItemType enum to corresponding sound. CreamPie gets PickupSound_CreamPie, Handpin gets PickupSound_HandPin, etc. Centralized logic—add new item, add new case.",
+      "engine_param": "SetFloatParameter updates EngineSpeed in real-time. AudioComponent plays looping engine sound. MetaSound graph inside uses EngineSpeed to modulate pitch. Smooth transitions, no audio pops."
     },
     "video": {
       "title": "Gameplay"
@@ -104,35 +105,35 @@
     },
     "overview": {
       "title": "Przegląd Projektu",
-      "desc": "Multiplayer wyścigówka z widokiem z góry dla 1-4 graczy w chaotycznych wyścigach. Byłem jedynym audio designerem w 6-osobowym studenckim zespole.",
+      "desc": "Top-down 1-4 graczy kart racer z destrukcją i power-upami. Solo audio designer w 6-osobowym studenckim zespole.",
       "role": "ROLA",
-      "role_desc": "Solo audio designer. Sound design, implementacja MetaSounds i mixing. Dwóch programistów, trzech artystów, 12 tygodni na ship.",
+      "role_desc": "Audio Designer & Technical Implementer. Sound design, implementacja MetaSounds, mixing. 2 programistów, 3 artystów, 12 tygodni.",
       "tech": "TECH",
-      "tech_desc": "MetaSounds do proceduralnego audio. Prędkość, typ powierzchni i liczba graczy sterują modulacją w czasie rzeczywistym. Mix oparty na priorytetach zapobiega sonic mud.",
+      "tech_desc": "MetaSounds jako jedyne źródło SFX. Wszystkie parametry sterowane przez gameplay. Powierzchnie torów crossfadują proceduralnie. Mix priorytetyzuje telemetrię UI vs. kolizje przez limitery i sidechain.",
       "scope": "ZAKRES",
-      "scope_desc": "320+ eventów w 180MB. Silnik obsługuje 32 głosy jednocześnie przy latencji poniżej 45ms.",
+      "scope_desc": "32 jednoczesne głosy, latencja poniżej 45ms. Zawartość spakowana w 180MB.",
       "result": "REZULTAT",
-      "result_desc": "Wydane na itch.io w maju 2025. Buildy Windows i Linux. Multiplayer lokalny 1-4 graczy."
+      "result_desc": "Wydane na itch.io w maju 2025. Buildy Windows i Linux."
     },
     "metasounds": {
       "title": "Implementacja MetaSounds",
-      "desc": "Nodowy engine proceduralnego audio napędzający wszystkie dźwięki gameplay.",
-      "what": "MetaSounds generuje audio proceduralnie używając grafów nodów. Prędkość moduluje pitch, typ powierzchni kontroluje wybór sampli, liczba graczy skaluje złożoność miksu.",
-      "how": "Każdy asset MetaSound zawiera wejścia parametrów połączone ze zmiennymi gameplay. Prędkość mapuje się na mnożnik pitch (0.8x-1.3x), enum powierzchni wybiera crossfadowane sample, siła kolizji steruje głośnością uderzenia.",
-      "why": "Generowanie proceduralne utrzymuje niski memory footprint przy zachowaniu różnorodności. Jeden asset MetaSound zastępuje dziesiątki statycznych plików audio. Parametry reagują frame-perfect na stan gameplay.",
-      "result": "Poniżej 2MB na instancję MetaSound. Odpowiedź parametrów w czasie rzeczywistym bez latencji. Nieskończona wariacja z ograniczonych assetów.",
+      "desc": "MetaSounds jako jedyne źródło SFX. Każdy parametr pochodzi z gameplayu.",
+      "what": "Grafy MetaSounds dla boostów, powierzchni i kolizji. Całe audio generowane proceduralnie—brak statycznych sampli dla eventów gameplay.",
+      "how": "Grafy nodów pobierają parametry gameplay jako wejścia. Prędkość silnika steruje pitch. Typ powierzchni wybiera materiał. Siła kolizji kontroluje intensywność uderzenia.",
+      "why": "Generowanie proceduralne utrzymuje niski memory footprint. Pojedynczy MetaSound zastępuje dziesiątki statycznych plików. Parametry reagują frame-perfect na stan gameplay.",
+      "result": "Kompaktowy memory footprint. Odpowiedź parametrów w czasie rzeczywistym. Nieskończona wariacja z ograniczonych assetów.",
       "placeholder_title": "Screeny MetaSounds Wkrótce",
       "placeholder_desc": "System boost, detekcja powierzchni, grafy audio kolizji. Oczekiwanie na recovery z Perforce."
     },
     "triggering": {
-      "title": "Triggerowanie Audio",
-      "desc": "Bezpośrednie triggerowanie bez delegatów. Proste checky warunkowe odpalają MetaSounds.",
-      "what": "System łączy eventy gameplay (kolizja, boost, zmiana powierzchni) bezpośrednio z playbackiem MetaSound. Każdy typ eventu ma dedykowaną referencję assetu MetaSound.",
-      "how": "Kod C++ gry wywołuje PlaySound2D() z pointerem assetu MetaSound. Null checky zapobiegają crashom. Brak pośrednich systemów, brak kolejek eventów, brak delegatów.",
-      "why": "Mały zespół, 12-tygodniowy deadline. Delegaty dodają complexity bez korzyści tutaj. Bezpośrednie wywołania łatwiejsze do debugowania i śledzenia. Audio designer przypisuje assety w Blueprint—brak potrzeby zmian w kodzie.",
-      "result": "Triggerowanie zero-overhead. Audio odpala w tej samej klatce co event gameplay. Łatwe śledzenie w profilerze. Brak ukrytego broadcastingu eventów.",
-      "code_title": "RaceCharacter.h — Właściwości MetaSound",
-      "impl_title": "RaceCharacter.cpp — Bezpośrednie Triggerowanie"
+      "title": "Architektura Audio",
+      "desc": "Scentralizowane systemy dla UI, itemów i audio silnika. Bezpośrednie wywołania, bez delegatów.",
+      "what": "UAudioManager (GameInstanceSubsystem) obsługuje globalne kliknięcia UI. ItemHolderComponent centralizuje pickup/use SFX per typ itemu. GrandmaCharacter zarządza audio silnika z parametrem EngineSpeed.",
+      "how": "UAudioManager eksponuje PlayUISelect() i PlayUIHover() dla całego projektu. ItemHolderComponent używa switch statements do odpalania dźwięków bazując na EItemType enum. Audio silnika używa UAudioComponent z SetFloatParameter dla real-time odpowiedzi prędkości.",
+      "why": "Scentralizowane systemy zapobiegają duplikacji dźwięków w Blueprintach. GameInstanceSubsystem czyni audio UI globalnie dostępnym. Switch statements trzymają logikę itemów w jednym miejscu. Parametry AudioComponent umożliwiają płynną modulację pitch silnika.",
+      "result": "Czysta architektura. Zero duplikacji. Łatwy debugging. Single source of truth dla każdego systemu audio.",
+      "code_title": "AudioManager.cpp — Globalne Audio UI",
+      "impl_title": "ItemHolderComponent.cpp — Dźwięki Itemów"
     },
     "surface": {
       "title": "Przejścia Powierzchni",
@@ -165,10 +166,11 @@
       "click_enlarge": "Kliknij aby powiększyć"
     },
     "code_explanations": {
-      "metasound_properties": "MetaSounds to proceduralne źródła audio. EditAnywhere pozwala designerom przypisać assety MetaSound w edytorze bez zmian w kodzie.",
-      "null_check": "Standardowy null check. Zapobiega crashowi jeśli designer zapomniał przypisać asset MetaSound w Blueprint.",
-      "play_metasound": "PlaySound2D odpala MetaSound one-shot. Asset MetaSound przypisany w Blueprint. Wszystkie parametry skonfigurowane w grafie MetaSound—designer kontroluje dźwięk całkowicie bez zmian w kodzie.",
-      "boost_trigger": "Ten sam pattern: null check, PlaySound2D. MetaSound obsługuje całą logikę audio wewnętrznie. Designer modyfikuje zachowanie boost całkowicie w edytorze MetaSound—pitch, filtry, generowanie proceduralne, etc."
+      "ui_manager": "GameInstanceSubsystem czyni dźwięki UI globalnie dostępnymi. Każdy Blueprint lub kod C++ może wywołać PlayUISelect() bez potrzeby posiadania referencji do assetów dźwiękowych.",
+      "null_check": "Standardowy null check. Zapobiega crashowi jeśli UISelectSound nie jest przypisany w Blueprint.",
+      "play_ui_sound": "PlaySound2D odpala kliknięcie UI. Dźwięk przypisany w Blueprint GameInstance. Działa w całym projekcie bez duplikacji.",
+      "item_switch": "Switch statement mapuje EItemType enum na odpowiedni dźwięk. CreamPie dostaje PickupSound_CreamPie, Handpin dostaje PickupSound_HandPin, etc. Scentralizowana logika—dodaj nowy item, dodaj nowy case.",
+      "engine_param": "SetFloatParameter aktualizuje EngineSpeed w czasie rzeczywistym. AudioComponent odtwarza zapętlony dźwięk silnika. Graf MetaSound wewnątrz używa EngineSpeed do modulacji pitch. Płynne przejścia, bez popów audio."
     },
     "video": {
       "title": "Gameplay"
@@ -197,35 +199,35 @@
     },
     "overview": {
       "title": "Projectoverzicht",
-      "desc": "Top-down multiplayer racegame voor 1-4 spelers in chaotische races. Ik was de enige audio designer in een team van 6 studenten.",
+      "desc": "Top-down 1-4 speler kart racer met destructie en power-ups. Solo audio designer in 6-persoons studententeam.",
       "role": "ROL",
-      "role_desc": "Solo audio designer. Sound design, MetaSounds implementatie en mixing. Twee programmeurs, drie artiesten, 12 weken om te shippen.",
+      "role_desc": "Audio Designer & Technische Implementer. Sound design, MetaSounds implementatie, mixing. 2 programmeurs, 3 artiesten, 12 weken.",
       "tech": "TECH",
-      "tech_desc": "MetaSounds voor procedurele audio. Snelheid, oppervlaktype en aantal spelers sturen real-time modulatie aan. Prioriteit-gebaseerde mixing voorkomt sonic mud.",
+      "tech_desc": "MetaSounds als enige SFX bron. Alle parameters gestuurd door gameplay. Baan oppervlakken crossfaden procedureel. Mix geeft prioriteit aan UI telemetrie vs. botsingen via limiters en sidechain.",
       "scope": "BEREIK",
-      "scope_desc": "320+ events in 180MB. Engine verwerkt 32 gelijktijdige stemmen met sub-45ms latentie.",
+      "scope_desc": "32 gelijktijdige stemmen, sub-45ms latentie. Content verpakt in 180MB.",
       "result": "RESULTAAT",
-      "result_desc": "Uitgebracht op itch.io mei 2025. Windows en Linux builds. 1-4 spelers lokale multiplayer."
+      "result_desc": "Uitgebracht op itch.io mei 2025. Windows en Linux builds."
     },
     "metasounds": {
       "title": "MetaSounds Implementatie",
-      "desc": "Node-gebaseerde procedurele audio engine voor alle gameplay geluiden.",
-      "what": "MetaSounds genereert audio procedureel met node grafieken. Snelheid moduleert pitch, oppervlaktype controleert sample selectie, aantal spelers schaalt mix complexiteit.",
-      "how": "Elke MetaSound asset bevat parameter inputs verbonden met gameplay variabelen. Snelheid mapt naar pitch multiplier (0.8x-1.3x), oppervlak enum selecteert crossfaded samples, collision force drijft impact volume.",
-      "why": "Procedurele generatie houdt memory footprint laag terwijl variatie behouden blijft. Eén MetaSound asset vervangt tientallen statische audio files. Parameters reageren frame-perfect op gameplay state.",
-      "result": "Sub-2MB per MetaSound instantie. Real-time parameter response met nul latentie. Oneindige variatie van eindige assets.",
+      "desc": "MetaSounds als enige SFX bron. Elke parameter komt van gameplay.",
+      "what": "MetaSounds grafieken voor boosts, oppervlakken en botsingen. Alle audio procedureel gegenereerd—geen statische samples voor gameplay events.",
+      "how": "Node grafieken nemen gameplay parameters als inputs. Motor snelheid stuurt pitch. Oppervlak type selecteert materiaal. Botsing kracht controleert impact intensiteit.",
+      "why": "Procedurele generatie houdt memory footprint laag. Enkele MetaSound vervangt tientallen statische files. Parameters reageren frame-perfect op gameplay state.",
+      "result": "Compacte memory footprint. Real-time parameter response. Oneindige variatie van eindige assets.",
       "placeholder_title": "MetaSounds Screenshots Binnenkort",
       "placeholder_desc": "Boost systeem, oppervlak detectie, collision audio grafieken. Wachtend op Perforce herstel."
     },
     "triggering": {
-      "title": "Audio Triggering",
-      "desc": "Directe triggering zonder delegates. Simpele voorwaardelijke checks vuren MetaSounds af.",
-      "what": "Systeem verbindt gameplay events (collision, boost, surface change) direct met MetaSound playback. Elk event type heeft toegewijde MetaSound asset referentie.",
-      "how": "C++ game code roept PlaySound2D() aan met MetaSound asset pointer. Null checks voorkomen crashes. Geen tussenliggende systemen, geen event queues, geen delegates.",
-      "why": "Klein team, 12-weken deadline. Delegates voegen complexiteit toe zonder voordeel hier. Directe calls zijn makkelijker te debuggen en traceren. Audio designer wijst assets toe in Blueprint—geen code wijzigingen nodig.",
-      "result": "Zero-overhead triggering. Audio vuurt zelfde frame als gameplay event. Makkelijk te traceren in profiler. Geen verborgen event broadcasting.",
-      "code_title": "RaceCharacter.h — MetaSound Properties",
-      "impl_title": "RaceCharacter.cpp — Directe Triggering"
+      "title": "Audio Architectuur",
+      "desc": "Gecentraliseerde systemen voor UI, items en motor audio. Directe calls, geen delegates.",
+      "what": "UAudioManager (GameInstanceSubsystem) handelt globale UI clicks af. ItemHolderComponent centraliseert pickup/use SFX per item type. GrandmaCharacter beheert motor audio met EngineSpeed parameter.",
+      "how": "UAudioManager biedt PlayUISelect() en PlayUIHover() project-breed. ItemHolderComponent gebruikt switch statements om geluiden af te vuren gebaseerd op EItemType enum. Motor audio gebruikt UAudioComponent met SetFloatParameter voor real-time snelheid response.",
+      "why": "Gecentraliseerde systemen voorkomen geluid duplicatie over Blueprints. GameInstanceSubsystem maakt UI audio globaal toegankelijk. Switch statements houden item logica op één plek. AudioComponent parameters maken vloeiende motor pitch modulatie mogelijk.",
+      "result": "Schone architectuur. Nul duplicatie. Gemakkelijke debugging. Single source of truth voor elk audio systeem.",
+      "code_title": "AudioManager.cpp — Globale UI Audio",
+      "impl_title": "ItemHolderComponent.cpp — Item Geluiden"
     },
     "surface": {
       "title": "Oppervlak Overgangen",
@@ -258,10 +260,11 @@
       "click_enlarge": "Klik om te vergroten"
     },
     "code_explanations": {
-      "metasound_properties": "MetaSounds zijn procedurele audio bronnen. EditAnywhere stelt designers in staat MetaSound assets toe te wijzen in editor zonder code wijzigingen.",
-      "null_check": "Standaard null check. Voorkomt crash als designer vergat MetaSound asset toe te wijzen in Blueprint.",
-      "play_metasound": "PlaySound2D vuurt MetaSound one-shot af. MetaSound asset toegewezen in Blueprint. Alle parameters geconfigureerd in MetaSound graaf—designer controleert geluid volledig zonder code wijzigingen.",
-      "boost_trigger": "Zelfde patroon: null check, PlaySound2D. MetaSound handelt alle audio logica intern af. Designer past boost gedrag volledig aan in MetaSound editor—pitch, filters, procedurele generatie, etc."
+      "ui_manager": "GameInstanceSubsystem maakt UI geluiden globaal toegankelijk. Elke Blueprint of C++ code kan PlayUISelect() aanroepen zonder geluid asset referenties nodig te hebben.",
+      "null_check": "Standaard null check. Voorkomt crash als UISelectSound niet is toegewezen in Blueprint.",
+      "play_ui_sound": "PlaySound2D vuurt UI click af. Geluid toegewezen in GameInstance Blueprint. Werkt project-breed zonder duplicatie.",
+      "item_switch": "Switch statement mapt EItemType enum naar corresponderend geluid. CreamPie krijgt PickupSound_CreamPie, Handpin krijgt PickupSound_HandPin, etc. Gecentraliseerde logica—voeg nieuw item toe, voeg nieuwe case toe.",
+      "engine_param": "SetFloatParameter werkt EngineSpeed bij in real-time. AudioComponent speelt looping motor geluid. MetaSound graaf binnenin gebruikt EngineSpeed om pitch te moduleren. Vloeiende transities, geen audio pops."
     },
     "video": {
       "title": "Gameplay"

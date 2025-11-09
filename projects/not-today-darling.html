@@ -1040,12 +1040,12 @@
                 </div>
             </section>
 
-            <!-- Audio Triggering with MetaSounds -->
+            <!-- Audio Architecture -->
             <section class="tech-section">
                 <div class="section-header">
-                    <h2 data-i18n="triggering.title">Audio Triggering</h2>
+                    <h2 data-i18n="triggering.title">Audio Architecture</h2>
                     <p data-i18n="triggering.desc">
-                        Direct triggering without delegates. Simple conditional checks fire MetaSounds.
+                        Centralized systems for UI, items, and engine audio. Direct calls, no delegates.
                     </p>
                 </div>
 
@@ -1053,25 +1053,25 @@
                     <div class="explanation-item">
                         <h3 data-i18n="sections.what">WHAT</h3>
                         <p data-i18n="triggering.what">
-                            System connects gameplay events (collision, boost, surface change) directly to MetaSound playback. Each event type has dedicated MetaSound asset reference.
+                            UAudioManager (GameInstanceSubsystem) handles global UI clicks. ItemHolderComponent centralizes pickup/use SFX per item type. GrandmaCharacter manages engine audio with EngineSpeed parameter.
                         </p>
                     </div>
                     <div class="explanation-item">
                         <h3 data-i18n="sections.how">HOW</h3>
                         <p data-i18n="triggering.how">
-                            C++ game code calls PlaySound2D() with MetaSound asset pointer. Null checks prevent crashes. No intermediate systems, no event queues, no delegates.
+                            UAudioManager exposes PlayUISelect() and PlayUIHover() project-wide. ItemHolderComponent uses switch statements to fire sounds based on EItemType enum. Engine audio uses UAudioComponent with SetFloatParameter for real-time speed response.
                         </p>
                     </div>
                     <div class="explanation-item">
                         <h3 data-i18n="sections.why">WHY</h3>
                         <p data-i18n="triggering.why">
-                            Small team, 12-week deadline. Delegates add complexity with no benefit here. Direct calls are easier to debug and trace. Audio designer assigns assets in Blueprint—no code changes needed.
+                            Centralized systems prevent sound duplication across Blueprints. GameInstanceSubsystem makes UI audio globally accessible. Switch statements keep item logic in one place. AudioComponent parameters enable smooth engine pitch modulation.
                         </p>
                     </div>
                     <div class="explanation-item">
                         <h3 data-i18n="sections.result">RESULT</h3>
                         <p data-i18n="triggering.result">
-                            Zero-overhead triggering. Audio fires same frame as gameplay event. Easy to trace in profiler. No hidden event broadcasting.
+                            Clean architecture. Zero duplication. Easy debugging. Single source of truth for each audio system.
                         </p>
                     </div>
                 </div>
@@ -1088,46 +1088,46 @@
                     </div>
                     <div class="code-side">
                         <h4 data-i18n="triggering.code_title">
-                            RaceCharacter.h — MetaSound Properties
+                            AudioManager.cpp — Global UI Audio
                         </h4>
-                        <pre><code><span class="comment">// MetaSound sources for audio events</span>
+                        <pre><code><span class="comment">// GameInstanceSubsystem for project-wide UI audio</span>
 
-<span class="keyword">UCLASS</span>()
-<span class="keyword">class</span> <span class="type">ARaceCharacter</span> : <span class="keyword">public</span> <span class="type">ACharacter</span>
+<span class="keyword">void</span> <span class="type">UAudioManager</span>::<span class="function">PlayUISelect</span>()
 {
-<span class="keyword">public</span>:
-<span class="code-block-logic" data-block-title="MetaSound Properties" data-block-text-key="code_explanations.metasound_properties">    <span class="keyword">UPROPERTY</span>(EditAnywhere, Category = <span class="string">"Audio"</span>)
-    <span class="type">UMetaSoundSource</span>* CollisionMetaSound;
+<span class="code-block-logic" data-block-title="Global UI System" data-block-text-key="code_explanations.ui_manager">    <span class="keyword">if</span> (UISelectSound)</span>
+    {
+<span class="code-block-logic" data-block-title="Fire UI Click" data-block-text-key="code_explanations.play_ui_sound">        <span class="type">UGameplayStatics</span>::<span class="function">PlaySound2D</span>(<span class="function">GetWorld</span>(), UISelectSound);
+    }
+}</span>
 
-    <span class="keyword">UPROPERTY</span>(EditAnywhere, Category = <span class="string">"Audio"</span>)
-    <span class="type">UMetaSoundSource</span>* BoostMetaSound;
-
-    <span class="keyword">UPROPERTY</span>(EditAnywhere, Category = <span class="string">"Audio"</span>)
-    <span class="type">UMetaSoundSource</span>* SurfaceMetaSound;</span>
-
-    <span class="keyword">void</span> <span class="function">OnCollision</span>();
-    <span class="keyword">void</span> <span class="function">OnBoost</span>();
-};</code></pre>
+<span class="keyword">void</span> <span class="type">UAudioManager</span>::<span class="function">PlayUIHover</span>()
+{
+<span class="code-block-logic" data-block-title="Null Check" data-block-text-key="code_explanations.null_check">    <span class="keyword">if</span> (UIHoverSound)
+    {
+        <span class="type">UGameplayStatics</span>::<span class="function">PlaySound2D</span>(<span class="function">GetWorld</span>(), UIHoverSound);
+    }
+}</span></code></pre>
 
                         <h4
                             style="margin-top: 1.5rem"
                             data-i18n="triggering.impl_title"
                         >
-                            RaceCharacter.cpp — Direct Triggering
+                            ItemHolderComponent.cpp — Item Sounds
                         </h4>
-                        <pre><code><span class="keyword">void</span> <span class="type">ARaceCharacter</span>::<span class="function">OnCollision</span>()
-{
-<span class="code-block-logic" data-block-title="Null Safety Check" data-block-text-key="code_explanations.null_check">    <span class="keyword">if</span> (CollisionMetaSound)</span>
-    {
-<span class="code-block-logic" data-block-title="Play MetaSound One-Shot" data-block-text-key="code_explanations.play_metasound">        <span class="type">UGameplayStatics</span>::<span class="function">PlaySound2D</span>(<span class="keyword">this</span>, CollisionMetaSound);
-    }
-}</span>
+                        <pre><code><span class="comment">// Centralized pickup sounds per item type</span>
 
-<span class="keyword">void</span> <span class="type">ARaceCharacter</span>::<span class="function">OnBoost</span>()
+<span class="keyword">void</span> <span class="type">UItemHolderComponent</span>::<span class="function">PlayMetasound</span>(<span class="type">EItemType</span> ItemType) <span class="keyword">const</span>
 {
-<span class="code-block-logic" data-block-title="Same Pattern" data-block-text-key="code_explanations.boost_trigger">    <span class="keyword">if</span> (BoostMetaSound)
+<span class="code-block-logic" data-block-title="Item Type Switch" data-block-text-key="code_explanations.item_switch">    <span class="keyword">switch</span> (ItemType)
     {
-        <span class="type">UGameplayStatics</span>::<span class="function">PlaySound2D</span>(<span class="keyword">this</span>, BoostMetaSound);
+    <span class="keyword">case</span> <span class="type">EItemType</span>::CreamPie:
+        <span class="keyword">if</span> (PickupSound_CreamPie)
+            <span class="type">UGameplayStatics</span>::<span class="function">PlaySound2D</span>(<span class="keyword">this</span>, PickupSound_CreamPie);
+        <span class="keyword">break</span>;
+    <span class="keyword">case</span> <span class="type">EItemType</span>::Handpin:
+        <span class="keyword">if</span> (PickupSound_HandPin)
+            <span class="type">UGameplayStatics</span>::<span class="function">PlaySound2D</span>(<span class="keyword">this</span>, PickupSound_HandPin);
+        <span class="keyword">break</span>;
     }
 }</span></code></pre>
                     </div>
