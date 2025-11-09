@@ -201,7 +201,7 @@
       "delegate_why": "Multicast delegates allow multiple listeners (e.g. Audio Manager) to react to one action. Dynamic delegates work with Blueprint, giving audio designer full control without modifying C++ code.",
       "rtpc_what": "Function updates RTPC value in Wwise based on number of photos placed on board.",
       "rtpc_how": "Validates world exists, then finds AkAmbientSound actor by tag 'AmbientProgressive' (more efficient and reliable than name string search). Sets RTPC value (0-5) corresponding to number of important photos. Wwise automatically crossfades between ambient layers.",
-      "rtpc_why": "RTPC allows smooth transitions between tension states. I can control crossfade curves for each layer in Wwise, giving full control over emotional progression without code modifications."
+      "rtpc_why": "RTPC gives smooth transitions between tension states. I can control crossfade curves for each layer in Wwise, giving full control over emotional progression without code modifications."
     },
     "media_captions": {
       "switch_container": "Wwise Switch Container setup: controls which ambient layers play based on how many photos are on the board",
@@ -212,7 +212,7 @@
     "back": "Powrót do projektów",
     "title": "Shadow Frames",
     "subtitle": "Lead Audio Designer",
-    "tagline": "Psychologiczny horror napędzany dźwiękiem",
+    "tagline": "Psychologiczny horror oparty na dźwięku",
     "production_notice": "🎮 Sprint 3/5 Produkcji  •  Projekt Międzyinstytucjonalny",
     "meta": {
       "role": {
@@ -308,7 +308,7 @@
     },
     "footstep": {
       "title": "System Kroków: Wykrywanie Powierzchni & Routing Audio",
-      "desc": "Wykrywanie materiału fizycznego napędza dynamiczne przełączanie audio dla realistycznych kroków dopasowanych do powierzchni.",
+      "desc": "Wykrywanie materiału fizycznego kontroluje dynamiczne przełączanie audio dla realistycznych kroków dopasowanych do powierzchni.",
       "what": "System wykrywa typ powierzchni pod graczem (drewno, płytki, beton) i automatycznie przełącza odpowiednie dźwięki kroków w Wwise. Każdy krok gracza jest dopasowany do materiału, po którym chodzi.",
       "how": "Komponent C++ wykonuje line trace w dół od pozycji gracza, wykrywa Physical Material, mapuje go na nazwę Switch w Wwise, a Blueprint Audio Manager odbiera delegate i odtwarza odpowiedni dźwięk.",
       "why": "Separation of Concerns - C++ zajmuje się logiką wykrywania, Blueprint obsługuje audio. Delegates dają luźne sprzężenie między systemami. Mogę dodawać nowe powierzchnie bez modyfikacji kodu C++.",
@@ -327,7 +327,7 @@
       "desc": "Intensywność ambientu progresywnie zmienia się w zależności od stanu gry - zdjęcia umieszczone na tablicy zwiększają napięcie.",
       "what": "System dynamicznie zmienia intensywność ambientu w zależności od liczby zdjęć umieszczonych na tablicy. Im więcej zdjęć, tym bardziej napięta atmosfera. RTPC value 0-5 kontroluje warstwy ambientu w Wwise.",
       "how": "PhotoboardWidget śledzi liczbę ważnych zdjęć. Gdy gracz umieszcza zdjęcie, UpdateAmbientRTPC() znajduje AkAmbientSound actor i ustawia RTPC value. Wwise automatycznie wykonuje crossfade między warstwami ambientu.",
-      "why": "RTPC pozwala na płynne przejścia między stanami napięcia bez skoków. Kontroluję krzywe crossfade w Wwise bez dotykania kodu.",
+      "why": "RTPC daje płynne przejścia między stanami napięcia bez skoków. Kontroluję krzywe crossfade w Wwise bez dotykania kodu.",
       "result": "To tworzy płynną progresję napięcia bez żadnych skoków audio, z łatwą modyfikacją krzywych w Wwise, gdzie atmosfera automatycznie dostosowuje się do postępu gracza."
     },
     "wwise_arch": {
@@ -410,7 +410,7 @@
       "delegate_why": "Multicast delegates pozwalają wielu listenerom (np. Audio Manager) reagować na jedną akcję. Dynamic delegates działają z Blueprint, co daje audio designerowi pełną kontrolę bez modyfikacji kodu C++.",
       "rtpc_what": "Funkcja aktualizuje RTPC value w Wwise na podstawie liczby zdjęć umieszczonych na tablicy.",
       "rtpc_how": "Waliduje istnienie world, następnie znajduje AkAmbientSound actor po tagu 'AmbientProgressive' (bardziej wydajne i niezawodne niż wyszukiwanie po nazwie string). Ustawia RTPC value (0-5) odpowiadającą liczbie ważnych zdjęć. Wwise automatycznie wykonuje crossfade między warstwami ambientu.",
-      "rtpc_why": "RTPC pozwala na płynne przejścia między stanami napięcia. Mogę kontrolować krzywe crossfade dla każdej warstwy w Wwise, dając pełną kontrolę nad emocjonalną progresją bez modyfikacji kodu."
+      "rtpc_why": "RTPC daje płynne przejścia między stanami napięcia. Mogę kontrolować krzywe crossfade dla każdej warstwy w Wwise, dając pełną kontrolę nad emocjonalną progresją bez modyfikacji kodu."
     },
     "media_captions": {
       "switch_container": "Konfiguracja Wwise Switch Container: kontroluje, które warstwy ambientu są odtwarzane w zależności od liczby zdjęć na tablicy",
@@ -475,7 +475,7 @@
     "audio_systems": {
       "title": "Audio-implementatie",
       "rtpc_title": "RTPC-gebaseerd dynamisch systeem",
-      "rtpc_desc": "De ambient soundscape en speler ademintensiteit passen zich dynamisch aan het aantal aanwezige anomalieën aan, waarbij spanning dienovereenkomstig escaleert naarmate onopgeloste anomalieën zich opstapelen.",
+      "rtpc_desc": "Ambient soundscape en speler ademintensiteit reageren op het aantal anomalieën. Meer anomalieën = hogere spanning.",
       "switches_title": "Switch Containers & Zones",
       "switches_desc": "Elke kamer heeft unieke ambient lagen die soepel overgaan terwijl je door de ruimte beweegt. De badkamer bevat gespatializeerde toilet- en kraangeluiden, terwijl voetstappen dynamisch aanpassen op basis van oppervlaktematerialen.",
       "delegates_title": "Blueprint Delegates (SOC)",
@@ -517,7 +517,7 @@
     },
     "footstep": {
       "title": "Voetstap Systeem: Oppervlak Detectie & Audio Routing",
-      "desc": "Fysieke materiaal detectie drijft dynamische audio schakeling voor realistische oppervlak-gebaseerde voetstappen.",
+      "desc": "Fysieke materiaal detectie stuurt dynamische audio schakeling voor realistische oppervlak-gebaseerde voetstappen.",
       "what": "Systeem detecteert oppervlaktetype onder speler (hout, tegels, beton) en schakelt automatisch geschikte voetstap geluiden in Wwise. Elke speler stap matcht het materiaal waarop ze lopen.",
       "how": "C++ component voert line trace uit naar beneden vanaf speler positie, detecteert Physical Material, mapt het naar Wwise Switch naam, en Blueprint Audio Manager ontvangt delegate en speelt geschikt geluid af.",
       "why": "Separation of Concerns - C++ handelt detectie logica af, Blueprint handelt audio af. Delegates zorgen voor losse koppeling tussen systemen. Dit maakt toevoegen van nieuwe oppervlakken gemakkelijk zonder C++ code te wijzigen.",
@@ -536,14 +536,14 @@
       "desc": "Progressieve ambient intensiteit schaalt met game state - foto's geplaatst op bord verhogen spanning.",
       "what": "Systeem verandert dynamisch ambient intensiteit op basis van aantal foto's geplaatst op bord. Meer foto's = meer gespannen atmosfeer. RTPC waarde 0-5 controleert ambient lagen in Wwise.",
       "how": "PhotoboardWidget volgt aantal belangrijke foto's. Wanneer speler foto plaatst, UpdateAmbientRTPC() vindt AkAmbientSound actor en zet RTPC waarde. Wwise crossfade automatisch tussen ambient lagen.",
-      "why": "RTPC maakt vloeiende overgangen tussen spanning staten zonder sprongen. Ik controleer crossfade curves in Wwise zonder code aan te raken.",
+      "why": "RTPC geeft vloeiende overgangen tussen spanning staten zonder sprongen. Ik controleer crossfade curves in Wwise zonder code aan te raken.",
       "result": "Dit creëert een vloeiende spanning progressie zonder schokkerige audio sprongen, met gemakkelijke curve aanpassingen binnen Wwise, waar de atmosfeer automatisch aanpast aan speler voortgang."
     },
     "wwise_arch": {
       "title": "Wwise Architectuur: Switch Containers & Photoboard Integratie",
       "desc": "Voortzetting van het RTPC systeem - Switch Containers in Wwise reageren op foto's verzameld op het photoboard, creërend dynamische ambient lagen.",
       "what": "Switch Container systeem in Wwise reageert op aantal foto's verzameld op photoboard. Wanneer speler meer foto's verzamelt, verschillende ambient lagen worden geactiveerd via Switch Containers, werkend in combinatie met RTPC systeem.",
-      "how": "De RTPC waarde van PhotoboardWidget (0-5 gebaseerd op foto's) drijft Switch Container selectie in Wwise. Elke Switch staat correspondeert met verschillende ambient lagen. Wwise crossfade automatisch tussen lagen wanneer foto's worden verzameld.",
+      "how": "De RTPC waarde van PhotoboardWidget (0-5 gebaseerd op foto's) stuurt Switch Container selectie in Wwise. Elke Switch staat correspondeert met verschillende ambient lagen. Wwise crossfade automatisch tussen lagen wanneer foto's worden verzameld.",
       "why": "Switch Containers bieden discrete laag controle, RTPC behandelt vloeiende overgangen. Deze combinatie maakt structurele veranderingen (verschillende ambient sets) en vloeiende intensiteit progressie mogelijk. Ik kan elke laag's respons controleren in Wwise.",
       "result": "Dynamisch ambient systeem dat reageert op speler progressie door photoboard verzameling. Dit is een gedeeltelijke implementatie - het volledige systeem zal aanzienlijk geavanceerder zijn met extra lagen en complexiteit."
     },
@@ -558,7 +558,7 @@
       "music_title": "Muziek Prototype",
       "music_desc": "Originele muziekcompositie voor de sfeer van het spel en emotionele progressie.",
       "org_title": "Multi-institutionele Samenwerking",
-      "org_desc": "Dit is een groot collaboratief project tussen prestigieuze instellingen:",
+      "org_desc": "Multi-institutionele samenwerking tussen:",
       "ritcs_desc": "RITCS (Royal Institute for Theatre, Cinema & Sound): Narrative design en verhaal",
       "kask_desc": "KASK Conservatorium: Muziekcompositie",
       "howest_desc": "Howest DAE (Digital Arts & Entertainment): Game development en technische audio-implementatie",
@@ -614,12 +614,12 @@
       "footstep_what": "Functie detecteert oppervlaktetype onder speler met line trace naar beneden vanaf speler positie.",
       "footstep_how": "Valideert dat owner en world bestaan, voert dan line trace uit met ECC_WorldStatic kanaal. Controleert object's Physical Material en mapt SurfaceType enum naar Wwise Switch naam (Tiles, Wood, CreakyWood, Concrete).",
       "footstep_why": "Gebruik van Physical Material maakt automatische detectie mogelijk zonder handmatig taggen van elk oppervlak. De enum-naar-Switch mapping is een eenmalige setup die Unreal's oppervlak systeem verbindt met Wwise - dit is configuratie, geen hardcoded audio calls. Audio designer kan Switch namen in Wwise wijzigen zonder code wijzigingen.",
-      "delegate_what": "Definitie van multicast delegates voor speler acties die audio events triggeren.",
+      "delegate_what": "Definitie van multicast delegates voor speler acties die audio events activeren.",
       "delegate_how": "DECLARE_DYNAMIC_MULTICAST_DELEGATE creëert delegate die kan worden uitgezonden vanuit C++ en beluisterd in Blueprint. UPROPERTY(BlueprintAssignable) maakt binding in Blueprint mogelijk.",
       "delegate_why": "Multicast delegates maken het mogelijk dat meerdere listeners (bijv. Audio Manager) reageren op één actie. Dynamic delegates werken met Blueprint, wat audio designer volledige controle geeft zonder C++ code te wijzigen.",
       "rtpc_what": "Functie werkt RTPC waarde bij in Wwise op basis van aantal foto's geplaatst op bord.",
       "rtpc_how": "Valideert dat world bestaat, vindt dan AkAmbientSound actor via tag 'AmbientProgressive' (efficiënter en betrouwbaarder dan naam string zoeken). Zet RTPC waarde (0-5) overeenkomend met aantal belangrijke foto's. Wwise crossfade automatisch tussen ambient lagen.",
-      "rtpc_why": "RTPC maakt vloeiende overgangen tussen spanning staten mogelijk. Ik kan crossfade curves controleren voor elke laag in Wwise, wat volledige controle geeft over emotionele progressie zonder code wijzigingen."
+      "rtpc_why": "RTPC geeft vloeiende overgangen tussen spanning staten. Ik kan crossfade curves controleren voor elke laag in Wwise, wat volledige controle geeft over emotionele progressie zonder code wijzigingen."
     },
     "media_captions": {
       "switch_container": "Wwise Switch Container configuratie: bepaalt welke ambient lagen afspelen op basis van het aantal foto's op het bord",
