@@ -385,12 +385,57 @@
                 overflow: hidden;
                 box-shadow: 0 20px 60px rgba(154, 108, 255, 0.3);
                 border: 1px solid rgba(154, 108, 255, 0.2);
+                position: relative;
+                cursor: pointer;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            .hero-image:hover {
+                transform: scale(1.02);
+                box-shadow: 0 25px 70px rgba(154, 108, 255, 0.4);
             }
 
             .hero-image img {
                 width: 100%;
                 height: auto;
                 display: block;
+            }
+
+            .hero-image video {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+            .hero-image .play-overlay {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 80px;
+                height: 80px;
+                background: rgba(154, 108, 255, 0.9);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                pointer-events: none;
+                transition: all 0.3s ease;
+            }
+
+            .hero-image:hover .play-overlay {
+                background: rgba(154, 108, 255, 1);
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+
+            .hero-image .play-overlay::after {
+                content: '';
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 15px 0 15px 25px;
+                border-color: transparent transparent transparent #fff;
+                margin-left: 5px;
             }
 
             /* === CONTENT === */
@@ -816,13 +861,26 @@
                         <span data-i18n="hero.viewGithub">View on GitHub</span>
                     </a>
                 </div>
-                <div class="hero-image">
+                <div class="hero-image" id="heroMedia">
                     <img
                         src="../assets/images/projects-audioq/AudioQPicture.png"
                         alt="AudioQ Plugin Interface"
                         loading="lazy"
                         decoding="async"
+                        id="heroThumbnail"
                     />
+                    <video
+                        id="heroVideo"
+                        style="display: none;"
+                        controls
+                        poster="../assets/images/projects-audioq/AudioQPicture.png"
+                    >
+                        <source
+                            src="../assets/images/projects-audioq/AudioQ-Showcase.mp4"
+                            type="video/mp4"
+                        />
+                    </video>
+                    <div class="play-overlay" id="playOverlay"></div>
                 </div>
             </div>
         </section>
@@ -1444,25 +1502,6 @@
                 </div>
             </section>
 
-            <!-- Video Section -->
-            <section class="video-section">
-                <div class="section-header">
-                    <div class="section-badge" data-i18n="demo.badge">Demo</div>
-                    <h2 data-i18n="demo.title">See AudioQ in Action</h2>
-                </div>
-                <div class="video-wrapper">
-                    <video
-                        controls
-                        poster="../assets/images/projects-audioq/AudioQPicture.png"
-                    >
-                        <source
-                            src="../assets/images/projects-audioq/AudioQ-Showcase.mp4"
-                            type="video/mp4"
-                        />
-                        Your browser does not support the video tag.
-                    </video>
-                </div>
-            </section>
 
             <!-- Tech Stack -->
             <section class="tech-section">
@@ -1583,6 +1622,21 @@
 
                 document.querySelectorAll(".lang-btn").forEach((btn) => {
                     btn.classList.toggle("active", btn.dataset.lang === lang);
+                });
+            }
+
+            // Hero video player
+            const heroMedia = document.getElementById('heroMedia');
+            const heroThumbnail = document.getElementById('heroThumbnail');
+            const heroVideo = document.getElementById('heroVideo');
+            const playOverlay = document.getElementById('playOverlay');
+
+            if (heroMedia) {
+                heroMedia.addEventListener('click', () => {
+                    heroThumbnail.style.display = 'none';
+                    playOverlay.style.display = 'none';
+                    heroVideo.style.display = 'block';
+                    heroVideo.play();
                 });
             }
 
