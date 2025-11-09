@@ -1,24 +1,20 @@
 # 🎮 Igor Szuniewicz — Game Audio Portfolio
 
-> **Professional game audio designer specializing in interactive music, sound design, and real-time audio implementation for games**
+> **Game audio designer specializing in interactive music, sound design, and real-time audio implementation**
 
 [![Website](https://img.shields.io/badge/Website-igorszuniewicz.com-60a5fa?style=for-the-badge)](https://igorszuniewicz.com)
 [![License](https://img.shields.io/badge/License-All%20Rights%20Reserved-red?style=for-the-badge)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-AAA%20Ready-00ff00?style=for-the-badge)](#)
-[![Contributing](https://img.shields.io/badge/Contributing-Welcome-green?style=for-the-badge)](CONTRIBUTING.md)
 [![Documentation](https://img.shields.io/badge/Documentation-Complete-blue?style=for-the-badge)](docs/)
 
 ---
 
 ## ✨ Features
 
-### 🎯 **AAA-Ready Portfolio**
-Designed for professional game audio positions:
-- 🔊 **Technical Skills Matrix** — Detailed proficiency levels (Wwise, FMOD, MetaSounds, Unreal, Unity)
-- 📊 **Project Metrics** — Concrete numbers (320+ events, 45ms latency, memory budgets)
-- 🔧 **Challenges & Solutions** — Real-world problems solved with technical depth
-- 🎬 **Demo Reel Section** — Prominent showcase placeholder ready for content
-- 🎨 **Audio Philosophy** — Professional sound design approach and principles
+### 🎯 **Portfolio Highlights**
+- 🔊 **Technical Skills** — Proficiency levels for Wwise, FMOD, MetaSounds, Unreal, Unity
+- 📊 **Project Metrics** — Concrete numbers: 320+ events, 45ms latency, memory budgets
+- 🔧 **Challenges & Solutions** — Real problems solved with technical explanations
+- 🎨 **Audio Philosophy** — Sound design approach and principles
 
 ### 🌍 **Multi-Language Support**
 Full internationalization across **3 languages**:
@@ -167,30 +163,16 @@ Beatbox-controlled rhythm game using machine learning.
 
 ---
 
-## 🎯 Portfolio Highlights
-
-|| Feature | Description | Impact |
-||---------|-------------|--------|
-|| 🎬 **Demo Reel** | Placeholder section ready for showcase video | First thing hiring managers see |
-|| 🔊 **Technical Skills** | Proficiency matrix with clear levels (Expert, Advanced, Intermediate) | No guessing — instant clarity |
-|| 📊 **Project Metrics** | Concrete numbers: events, memory, latency, voice counts | Shows scale and technical depth |
-|| 🔧 **Challenges** | 9 real-world problems + technical solutions | Demonstrates problem-solving |
-|| 🎨 **Audio Philosophy** | 4 core principles: clarity, technical foundation, layering, collaboration | Professional maturity |
-|| 🌐 **Multi-Language** | Full EN/PL/NL support across all content | International-ready |
-
----
-
 ## 📝 Recent Updates
 
-### **v3.0** - October 2025 🎮 **AAA AUDIO READY**
+### **v3.0** - November 2025
 
-#### 🎯 **Portfolio Transformation**
-- 🔊 **Technical Skills Matrix** — Added comprehensive proficiency breakdown (about.html)
-- 🎬 **Demo Reel Section** — Professional placeholder ready for showcase video (index.html)
+#### 🎯 **Portfolio Updates**
+- 🔊 **Technical Skills Matrix** — Added proficiency breakdown (about.html)
 - 📊 **Project Metrics** — Added concrete numbers: 320+ events, 45ms latency, memory budgets
-- 🔧 **Challenges & Solutions** — 9 real-world problems solved across 3 projects
-- 🎨 **Audio Philosophy** — Professional sound design approach (4 core principles)
-- 💬 **Industry Terminology** — Upgraded to AAA standards (RTPC, state-based, HDR mixing)
+- 🔧 **Challenges & Solutions** — 9 problems solved across 3 projects
+- 🎨 **Audio Philosophy** — Sound design approach (4 core principles)
+- 💬 **Technical Terminology** — RTPC, state-based music, HDR mixing
 
 #### 📁 **Files Updated**
 - `about.html` — Technical Skills Matrix + Audio Philosophy
@@ -198,13 +180,6 @@ Beatbox-controlled rhythm game using machine learning.
 - `locales/not-today-darling.json` — Metrics + 3 challenges (EN/PL/NL)
 - `locales/amorak.json` — 3 challenges (EN/PL/NL)
 - `locales/audiolab.json` — 3 challenges (EN/PL/NL)
-
-#### 📊 **Impact**
-Portfolio now demonstrates:
-✅ Technical competency with concrete metrics  
-✅ Problem-solving skills with real challenges  
-✅ Professional maturity with audio philosophy  
-✅ Industry-standard terminology throughout  
 
 **See full details:** [Changelog](CHANGELOG.md)
 
@@ -285,8 +260,6 @@ This is a portfolio website. All code, content, music, and designs are proprieta
 
 <div align="center">
 
-**Made with** ❤️ **and** 🎵
-
-⭐ **Star this repo if you found it interesting!**
+**Built with HTML, CSS, and JavaScript**
 
 </div>
