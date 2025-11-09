@@ -270,7 +270,7 @@
       "switches_title": "Switch Containers & Strefy",
       "switches_desc": "Atmosfery specyficzne dla pokoi płynnie się przełączają podczas przemieszczania się przez przestrzeń. Łazienka ma przestrzenne dźwięki toalety i kranu, podczas gdy kroki dynamicznie dostosowują się do rodzaju podłoża.",
       "delegates_title": "Blueprint Delegates (SOC)",
-      "delegates_desc": "Architektura Separation of Concerns, w której systemy audio komunikują się przez delegaty, umożliwiając czystą i modularną implementację.",
+      "delegates_desc": "Architektura Separation of Concerns, w której systemy audio komunikują się przez delegaty. Czysta i modularna implementacja.",
       "spatial_title": "HRTF Dźwięk przestrzenny 3D",
       "spatial_desc": "Dźwięk pozycyjny 3D dla anomalii, obecności wroga i wskazówek środowiskowych, który jest kluczowy dla rozgrywki."
     },
@@ -311,7 +311,7 @@
       "desc": "Wykrywanie materiału fizycznego napędza dynamiczne przełączanie audio dla realistycznych kroków dopasowanych do powierzchni.",
       "what": "System wykrywa typ powierzchni pod graczem (drewno, płytki, beton) i automatycznie przełącza odpowiednie dźwięki kroków w Wwise. Każdy krok gracza jest dopasowany do materiału, po którym chodzi.",
       "how": "Komponent C++ wykonuje line trace w dół od pozycji gracza, wykrywa Physical Material, mapuje go na nazwę Switch w Wwise, a Blueprint Audio Manager odbiera delegate i odtwarza odpowiedni dźwięk.",
-      "why": "Separation of Concerns - C++ zajmuje się logiką wykrywania, Blueprint obsługuje audio. Delegates zapewniają luźne sprzężenie między systemami. To pozwala na łatwe dodawanie nowych powierzchni bez modyfikacji kodu C++.",
+      "why": "Separation of Concerns - C++ zajmuje się logiką wykrywania, Blueprint obsługuje audio. Delegates dają luźne sprzężenie między systemami. Mogę dodawać nowe powierzchnie bez modyfikacji kodu C++.",
       "result": "To tworzy realistyczne kroki dopasowane automatycznie do każdej powierzchni, bez wymaganego ręcznego przełączania, z łatwą rozbudową o nowe materiały. System obsługuje każdy krok gracza bez interwencji."
     },
     "player_audio": {
@@ -319,8 +319,8 @@
       "desc": "Czyste oddzielenie między akcjami gracza a odpowiedziami audio używając Blueprint delegates.",
       "what": "System łączy akcje gracza (strzał aparatem, zoom, wejście do photoboard) z odpowiednimi eventami audio w Wwise. Każda akcja gracza automatycznie wywołuje odpowiedni dźwięk.",
       "how": "PlayerCharacter w C++ definiuje multicast delegates. Gdy gracz wykonuje akcję, delegate jest broadcastowany. Blueprint Audio Manager nasłuchuje tych delegate'ów i wywołuje odpowiednie Wwise Events.",
-      "why": "Delegates zapewniają luźne sprzężenie, gdzie PlayerCharacter nie wie nic o audio, a Audio Manager nie wie nic o logice gracza, co ułatwia testowanie, debugowanie i modyfikacje. Każdy system może być rozwijany niezależnie.",
-      "result": "Rezultatem jest czysta architektura umożliwiająca proste dodawanie nowych akcji audio bez na stałe wpisanych wywołań, gdzie audio designer może modyfikować dźwięki swobodnie bez dotykania kodu gracza."
+      "why": "Delegates dają luźne sprzężenie, gdzie PlayerCharacter nie wie nic o audio, a Audio Manager nie wie nic o logice gracza. Łatwiejsze testowanie, debugowanie i modyfikacje. Każdy system może być rozwijany niezależnie.",
+      "result": "Czysta architektura, która pozwala na proste dodawanie nowych akcji audio bez na stałe wpisanych wywołań. Audio designer może modyfikować dźwięki swobodnie bez dotykania kodu gracza."
     },
     "rtpc": {
       "title": "Dynamiczny System Napięcia: Ambient Sterowany RTPC",
@@ -335,7 +335,7 @@
       "desc": "Kontynuacja systemu RTPC - Switch Containers w Wwise reagują na zdjęcia zebrane na photoboard, tworząc dynamiczne warstwy ambientu.",
       "what": "System Switch Container w Wwise reaguje na liczbę zdjęć zebranych na photoboard. Gdy gracz zbiera więcej zdjęć, różne warstwy ambientu są aktywowane przez Switch Containers, współpracując z systemem RTPC.",
       "how": "Wartość RTPC z PhotoboardWidget (0-5 na podstawie zdjęć) steruje wyborem Switch Container w Wwise. Każdy stan Switch odpowiada różnym warstwom ambientu. Wwise automatycznie wykonuje crossfade między warstwami gdy zdjęcia są zbierane.",
-      "why": "Switch Containers zapewniają dyskretną kontrolę warstw, podczas gdy RTPC obsługuje płynne przejścia. Ta kombinacja pozwala na zarówno strukturalne zmiany (różne zestawy ambientu) jak i płynną progresję intensywności. Audio designer może precyzyjnie kontrolować odpowiedź każdej warstwy w Wwise.",
+      "why": "Switch Containers dają dyskretną kontrolę warstw, RTPC obsługuje płynne przejścia. Ta kombinacja pozwala na strukturalne zmiany (różne zestawy ambientu) i płynną progresję intensywności. Mogę kontrolować odpowiedź każdej warstwy w Wwise.",
       "result": "Dynamiczny system ambientu reagujący na postęp gracza przez zbieranie zdjęć na photoboard. To częściowa implementacja - pełny system będzie znacznie bardziej zaawansowany z dodatkowymi warstwami i złożonością."
     },
     "sections": {
@@ -544,7 +544,7 @@
       "desc": "Voortzetting van het RTPC systeem - Switch Containers in Wwise reageren op foto's verzameld op het photoboard, creërend dynamische ambient lagen.",
       "what": "Switch Container systeem in Wwise reageert op aantal foto's verzameld op photoboard. Wanneer speler meer foto's verzamelt, verschillende ambient lagen worden geactiveerd via Switch Containers, werkend in combinatie met RTPC systeem.",
       "how": "De RTPC waarde van PhotoboardWidget (0-5 gebaseerd op foto's) drijft Switch Container selectie in Wwise. Elke Switch staat correspondeert met verschillende ambient lagen. Wwise crossfade automatisch tussen lagen wanneer foto's worden verzameld.",
-      "why": "Switch Containers bieden discrete laag controle terwijl RTPC vloeiende overgangen behandelt. Deze combinatie maakt zowel structurele veranderingen (verschillende ambient sets) als vloeiende intensiteit progressie mogelijk. Audio designer kan precies elke laag's respons controleren in Wwise.",
+      "why": "Switch Containers bieden discrete laag controle, RTPC behandelt vloeiende overgangen. Deze combinatie maakt structurele veranderingen (verschillende ambient sets) en vloeiende intensiteit progressie mogelijk. Ik kan elke laag's respons controleren in Wwise.",
       "result": "Dynamisch ambient systeem dat reageert op speler progressie door photoboard verzameling. Dit is een gedeeltelijke implementatie - het volledige systeem zal aanzienlijk geavanceerder zijn met extra lagen en complexiteit."
     },
     "sections": {
