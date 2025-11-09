@@ -1,0 +1,1 @@
+In the design folder you place all design assets + all design documents (art bible, tech doc, game design doc)
