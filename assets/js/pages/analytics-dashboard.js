@@ -24,7 +24,21 @@
     const authOverlay = document.getElementById('auth-overlay');
     const authForm = document.getElementById('auth-form');
     const authError = document.getElementById('auth-error');
-    const password = 'analytics2025'; // Change this password!
+
+    // SECURITY WARNING: Client-side password authentication provides NO real security!
+    // Anyone can view this source code and see the password.
+    // For demo mode, authentication is disabled.
+    // For production: implement proper backend authentication with sessions/JWT.
+
+    // In demo mode, skip authentication entirely
+    if (DEMO_MODE) {
+      if (authOverlay) authOverlay.style.display = 'none';
+      loadAnalytics();
+      return;
+    }
+
+    // For production mode, would need backend authentication
+    const password = 'CHANGE_ME_USE_BACKEND_AUTH'; // This is insecure!
 
     // Check if already authenticated
     if (sessionStorage.getItem('analytics_auth') === 'true') {
