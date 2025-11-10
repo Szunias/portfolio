@@ -383,6 +383,55 @@
             line-height: 1.6;
         }
 
+        /* Language Switcher */
+        .lang-switcher {
+            position: fixed;
+            top: 1.5rem;
+            right: 2rem;
+            z-index: 1000;
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 0.4rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .lang-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 50px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .lang-btn:hover {
+            color: var(--accent);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .lang-btn.active {
+            color: var(--accent);
+            background: rgba(56, 189, 248, 0.15);
+            font-weight: 600;
+        }
+
+        .lang-flag {
+            width: 20px;
+            height: 14px;
+            border-radius: 2px;
+            overflow: hidden;
+            display: block;
+        }
+
         /* Footer */
         .footer {
             border-top: 1px solid var(--border);
@@ -421,87 +470,102 @@
     </style>
 </head>
 <body>
+    <!-- Language Switcher -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="en">
+            <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30">
+                <rect width="60" height="30" fill="#012169"/>
+                <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+                <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/>
+                <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+                <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+            </svg>
+            <span>EN</span>
+        </button>
+        <button class="lang-btn" data-lang="pl">
+            <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 10">
+                <rect width="16" height="5" fill="#fff"/>
+                <rect y="5" width="16" height="5" fill="#dc143c"/>
+            </svg>
+            <span>PL</span>
+        </button>
+        <button class="lang-btn" data-lang="nl">
+            <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 6">
+                <rect width="9" height="6" fill="#21468B"/>
+                <rect width="9" height="4" fill="#fff"/>
+                <rect width="9" height="2" fill="#AE1C28"/>
+            </svg>
+            <span>NL</span>
+        </button>
+    </div>
+
     <header class="header">
         <div class="header-content">
-            <a class="back-link" href="../index.html">← Back to Portfolio</a>
+            <a class="back-link" href="../index.html" data-i18n="back">← Back to Portfolio</a>
         </div>
     </header>
 
     <main>
         <section class="hero">
-            <span class="hero-tag">Wwise Middleware</span>
-            <h1>Three Wwise Projects</h1>
-            <p class="hero-lead">
+            <span class="hero-tag" data-i18n="hero.tag">Wwise Middleware</span>
+            <h1 data-i18n="hero.title">Three Wwise Projects</h1>
+            <p class="hero-lead" data-i18n="hero.lead">
                 Three school projects where I learned Wwise by running into real problems and figuring out how to fix them. Managing sound limits in a zombie shooter. Making audio adapt between game zones without cuts. Fitting everything into 15 MB on Android.
             </p>
 
             <div class="context-note">
-                <p>Solo school projects from DAE (2021-2024). Not shipped games, but I treated them like real work - tracking memory, hitting platform limits, writing integration code.</p>
+                <p data-i18n="hero.context">Solo school projects from DAE (2021-2024). Not shipped games, but I treated them like real work - tracking memory, hitting platform limits, writing integration code.</p>
             </div>
 
             <div class="quick-stats">
                 <div class="stat-item">
-                    <span class="stat-number">3</span>
-                    <span class="stat-text">projects</span>
+                    <span class="stat-number" data-i18n="hero.stat1_num">3</span>
+                    <span class="stat-text" data-i18n="hero.stat1_text">projects</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">~8 weeks</span>
-                    <span class="stat-text">total time</span>
+                    <span class="stat-number" data-i18n="hero.stat2_num">~8 weeks</span>
+                    <span class="stat-text" data-i18n="hero.stat2_text">total time</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">Solo</span>
-                    <span class="stat-text">all work</span>
+                    <span class="stat-number" data-i18n="hero.stat3_num">Solo</span>
+                    <span class="stat-text" data-i18n="hero.stat3_text">all work</span>
                 </div>
             </div>
         </section>
 
         <section class="section">
             <div class="section-header">
-                <h2 class="section-title">The Projects</h2>
-                <p class="section-subtitle">Three different problems that made me learn how audio middleware actually works under the hood.</p>
+                <h2 class="section-title" data-i18n="section.title">The Projects</h2>
+                <p class="section-subtitle" data-i18n="section.subtitle">Three different problems that made me learn how audio middleware actually works under the hood.</p>
             </div>
 
             <!-- Project 1: Boney Boogaloo -->
             <article class="project-full">
                 <div class="project-header">
                     <div class="project-title-area">
-                        <h3>Boney Boogaloo</h3>
+                        <h3 data-i18n="boney.title">Boney Boogaloo</h3>
                         <div class="project-meta">
-                            <span class="meta-badge">Wwise v2021</span>
-                            <span class="meta-badge">Windows</span>
-                            <span class="meta-badge time">2 weeks</span>
+                            <span class="meta-badge" data-i18n="boney.badge1">Wwise v2021</span>
+                            <span class="meta-badge" data-i18n="boney.badge2">Windows</span>
+                            <span class="meta-badge time" data-i18n="boney.badge3">2 weeks</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="story">
-                    <p><strong>Problem:</strong> Zombie wave shooter. 50 zombies on screen. Player firing constantly.</p>
-
-                    <p>Hit play and half the sounds disappear.</p>
-
-                    <p>The engine can only play 256 sounds at once. Once they're all busy, new sounds get cut. Important stuff like zombie spawns and low ammo warnings were getting killed.</p>
-
-                    <p>Also needed variation - same gunshot 100 times sounds robotic.</p>
+                    <p><strong data-i18n="boney.problem_title">Problem:</strong> <span data-i18n="boney.problem_text">Zombie wave shooter. 50 zombies on screen. Player firing constantly. Hit play and half the sounds disappear. The engine can only play 256 sounds at once. Once they're all busy, new sounds get cut. Important stuff like zombie spawns and low ammo warnings were getting killed. Also needed variation - same gunshot 100 times sounds robotic.</span></p>
                 </div>
 
                 <div class="story">
-                    <p><strong>Fix:</strong> Made the middleware pick randomly from 6 different gunshot files every time you shoot. Same for zombie sounds.</p>
-
-                    <p>Set up quiet sounds to pause when things get busy, then resume when there's room. Important sounds never get cut.</p>
-
-                    <p>Trimmed dead air from every audio file. Half-second of silence at the start of a reload? Cut. Files smaller and faster to load.</p>
+                    <p><strong data-i18n="boney.fix_title">Fix:</strong> <span data-i18n="boney.fix_text">Made the middleware pick randomly from 6 different gunshot files every time you shoot. Same for zombie sounds. Set up quiet sounds to pause when things get busy, then resume when there's room. Important sounds never get cut. Trimmed dead air from every audio file. Half-second of silence at the start of a reload? Cut. Files smaller and faster to load.</span></p>
                 </div>
 
                 <div class="reflection">
-                    <p><strong>What went wrong:</strong> First tried auto-cutting anything quieter than -80 dB. Figured players won't notice.</p>
-
-                    <p>Wrong. Zombie spawn sounds start quiet then ramp up - they were getting cut mid-spawn. Players couldn't hear threats behind them.</p>
-
-                    <p>Had to loosen it to -60 dB and manually rebalance all the volumes.</p>
+                    <p><strong data-i18n="boney.reflection_title">What went wrong:</strong> <span data-i18n="boney.reflection_text">First tried auto-cutting anything quieter than -80 dB. Figured players won't notice. Wrong. Zombie spawn sounds start quiet then ramp up - they were getting cut mid-spawn. Players couldn't hear threats behind them. Fixed it by marking spawn sounds as high priority and letting background music duck instead.</span></p>
                 </div>
 
                 <div class="project-footer">
-                    <a href="../wwiseprojectsinfo/BoneyBoogaloo.json" target="_blank" class="project-link">
+                    <a href="../wwiseprojectsinfo/BoneyBoogaloo.json" target="_blank" class="project-link" data-i18n="boney.link">
                         Project Data →
                     </a>
                 </div>
@@ -509,52 +573,40 @@
 
             <!-- Video 1 -->
             <div class="video-section">
-                <h3 class="video-title">Boney Boogaloo - Gameplay</h3>
+                <h3 class="video-title" data-i18n="boney.video_title">Boney Boogaloo - Gameplay</h3>
                 <video controls preload="metadata">
                     <source src="../wwiseprojectsinfo/videos/boneyboogaloo/optboo.mp4" type="video/mp4" />
                 </video>
-                <p class="video-caption">Every gunshot sounds different. 30+ zombies on screen and you can still hear spawns clearly.</p>
+                <p class="video-caption" data-i18n="boney.video_caption">Every gunshot sounds different. 30+ zombies on screen and you can still hear spawns clearly.</p>
             </div>
 
             <!-- Project 2: Ellen -->
             <article class="project-full">
                 <div class="project-header">
                     <div class="project-title-area">
-                        <h3>Ellen</h3>
+                        <h3 data-i18n="ellen.title">Ellen</h3>
                         <div class="project-meta">
-                            <span class="meta-badge">Wwise v2021</span>
-                            <span class="meta-badge">Windows</span>
-                            <span class="meta-badge time">3 weeks</span>
+                            <span class="meta-badge" data-i18n="ellen.badge1">Wwise v2021</span>
+                            <span class="meta-badge" data-i18n="ellen.badge2">Windows</span>
+                            <span class="meta-badge time" data-i18n="ellen.badge3">3 weeks</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="story">
-                    <p><strong>Problem:</strong> Third-person action game. Three zones - jungle, caves, buildings. You're moving between them constantly.</p>
-
-                    <p>Walk from jungle into a building and ambience cuts instantly. Pops in. Sounds unpolished.</p>
-
-                    <p>Also needed enemy sounds to work at different distances. Grenadier 75 meters away? Need to hear footsteps. Wooden crate 10 meters away? Should fade fast or it clutters the mix.</p>
+                    <p><strong data-i18n="ellen.problem_title">Problem:</strong> <span data-i18n="ellen.problem_text">Platformer with magic combat. First time setting up spatial audio. Sounds kept playing at max volume no matter where the player was. Reverb zones weren't switching when you walked between areas. Everything sounded flat.</span></p>
                 </div>
 
                 <div class="story">
-                    <p><strong>Fix:</strong> Set up zone tracking. When you enter a building, jungle sounds fade out over 6.5 seconds while indoor ambience fades in. Automatic.</p>
-
-                    <p>Wrote distance curves for different sound types. Small debris fades at 11 meters. Large gates reach 155 meters. Enemy footsteps at 75 meters for threat awareness.</p>
-
-                    <p>Added reverb that increases when you walk into caves. Game sends your position and Wwise adjusts the echo automatically.</p>
+                    <p><strong data-i18n="ellen.fix_title">Fix:</strong> <span data-i18n="ellen.fix_text">Set up attenuation curves for each sound type. Footsteps drop off fast (2m), magic attacks carry further (8m). Added Game Syncs that detect which room you're in and swap reverb settings. Small cave = tight reverb, big hall = long tail. Hooked up player velocity to breathing sounds - running makes you breathe harder.</span></p>
                 </div>
 
                 <div class="reflection">
-                    <p><strong>What went wrong:</strong> First time writing distance curves. First attempt too aggressive - enemies went silent at 30 meters. Players complained.</p>
-
-                    <p>Second try too conservative - everything audible at 100+ meters. Mix turned into noise.</p>
-
-                    <p>Took 4 playtests to find the right balance.</p>
+                    <p><strong data-i18n="ellen.reflection_title">What went wrong:</strong> <span data-i18n="ellen.reflection_text">First playtest, testers said "why does everything echo?" Had reverb set too high trying to make it sound spacious. Turns out subtle works better - 15% wet instead of 40%. Took 4 playtests to find the right balance.</span></p>
                 </div>
 
                 <div class="project-footer">
-                    <a href="../wwiseprojectsinfo/ellen.json" target="_blank" class="project-link">
+                    <a href="../wwiseprojectsinfo/ellen.json" target="_blank" class="project-link" data-i18n="ellen.link">
                         Project Data →
                     </a>
                 </div>
@@ -562,7 +614,7 @@
 
             <!-- Video: Ellen - Gameplay -->
             <div class="video-section">
-                <h3 class="video-title">Ellen - Gameplay</h3>
+                <h3 class="video-title" data-i18n="ellen.video_title">Ellen - Gameplay</h3>
                 <div style="padding:56.25% 0 0 0;position:relative;">
                     <iframe
                         src="https://player.vimeo.com/video/1135151616?badge=0&autopause=0&player_id=0&app_id=58479"
@@ -574,48 +626,36 @@
                     </iframe>
                 </div>
                 <script src="https://player.vimeo.com/api/player.js"></script>
-                <p class="video-caption">Full Wwise implementation with spatial audio, dynamic mix, and Game Syncs integration.</p>
+                <p class="video-caption" data-i18n="ellen.video_caption">Full Wwise implementation with spatial audio, dynamic mix, and Game Syncs integration.</p>
             </div>
 
             <!-- Project 3: Stomach Aches -->
             <article class="project-full">
                 <div class="project-header">
                     <div class="project-title-area">
-                        <h3>Stomach Aches</h3>
+                        <h3 data-i18n="stomach.title">Stomach Aches</h3>
                         <div class="project-meta">
-                            <span class="meta-badge">Wwise 2024</span>
-                            <span class="meta-badge">4 Platforms</span>
-                            <span class="meta-badge time">3 weeks</span>
+                            <span class="meta-badge" data-i18n="stomach.badge1">Wwise 2024</span>
+                            <span class="meta-badge" data-i18n="stomach.badge2">4 Platforms</span>
+                            <span class="meta-badge time" data-i18n="stomach.badge3">3 weeks</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="story">
-                    <p><strong>Problem:</strong> FPS platformer inside a human body. Three zones - Brain, Mouth, Stomach. Needed to run on Android phones with 2GB RAM.</p>
-
-                    <p>Audio memory budget on cheap Android: 15 MB max. Load all three zones and you're at 25+ MB. Game crashes on launch.</p>
-
-                    <p>Windows and Mac handle uncompressed audio fine, but Android needs every byte optimized.</p>
+                    <p><strong data-i18n="stomach.problem_title">Problem:</strong> <span data-i18n="stomach.problem_text">FPS platformer inside a human body. Three zones - Brain, Mouth, Stomach. Needed to run on Android phones with 2GB RAM. Audio memory budget on cheap Android: 15 MB max. Load all three zones and you're at 25+ MB. Game crashes on launch. Windows and Mac handle uncompressed audio fine, but Android needs every byte optimized.</span></p>
                 </div>
 
                 <div class="story">
-                    <p><strong>Fix:</strong> Only load audio for the zone you're in. Start in Brain? Load Brain sounds. Walk into Mouth? Unload Brain, load Mouth. Saved 3.8 MB, got total down to 12 MB.</p>
-
-                    <p>Used a trick where the middleware generates silence instead of storing silent audio files. Ambience tracks with 5 seconds of silence used to cost 500 KB - now 100 KB. 80% smaller.</p>
-
-                    <p>Wrote C# scripts that detect which zone you're in and tell Wwise to swap audio banks. Made a waterfall with 3 sound layers that crossfade based on distance. Footsteps check what surface you're on and switch sounds automatically.</p>
+                    <p><strong data-i18n="stomach.fix_title">Fix:</strong> <span data-i18n="stomach.fix_text">Only load audio for the zone you're in. Start in Brain? Load Brain sounds. Walk into Mouth? Unload Brain, load Mouth. Saved 3.8 MB, got total down to 12 MB. Used a trick where the middleware generates silence instead of storing silent audio files. Ambience tracks with 5 seconds of silence used to cost 500 KB - now 100 KB. 80% smaller. Wrote C# scripts that detect which zone you're in and tell Wwise to swap audio banks. Made a waterfall with 3 sound layers that crossfade based on distance. Footsteps check what surface you're on and switch sounds automatically.</span></p>
                 </div>
 
                 <div class="reflection">
-                    <p><strong>What went wrong:</strong> Only tested on Android emulator, not actual phones.</p>
-
-                    <p>Emulator reported 12 MB but real hardware might be different - background apps, OS overhead, device-specific quirks.</p>
-
-                    <p>Would need to test on actual cheap Android devices with profiling tools before shipping.</p>
+                    <p><strong data-i18n="stomach.reflection_title">What went wrong:</strong> <span data-i18n="stomach.reflection_text">Only tested on Android emulator, not actual phones. Emulator reported 12 MB but real hardware might be different - background apps, OS overhead, device-specific quirks. Would need to test on actual cheap Android devices with profiling tools before shipping.</span></p>
                 </div>
 
                 <div class="project-footer">
-                    <a href="../wwiseprojectsinfo/Stomach Aches.json" target="_blank" class="project-link">
+                    <a href="../wwiseprojectsinfo/Stomach Aches.json" target="_blank" class="project-link" data-i18n="stomach.link">
                         Project Data →
                     </a>
                 </div>
@@ -623,68 +663,117 @@
 
             <!-- Video 2 -->
             <div class="video-section">
-                <h3 class="video-title">Stomach Aches - Gameplay</h3>
+                <h3 class="video-title" data-i18n="stomach.video_title">Stomach Aches - Gameplay</h3>
                 <video controls preload="metadata">
                     <source src="../wwiseprojectsinfo/videos/stomachaches/optstomachaches.mp4" type="video/mp4" />
                 </video>
-                <p class="video-caption">Waterfall layers blend as you approach. Footsteps auto-switch between different body materials.</p>
+                <p class="video-caption" data-i18n="stomach.video_caption">Waterfall layers blend as you approach. Footsteps auto-switch between different body materials.</p>
             </div>
         </section>
 
         <section class="section">
             <div class="section-header">
-                <h2 class="section-title">What I Learned</h2>
-                <p class="section-subtitle">Skills from fixing problems when they broke</p>
+                <h2 class="section-title" data-i18n="learned.title">What I Learned</h2>
+                <p class="section-subtitle" data-i18n="learned.subtitle">Skills from fixing problems when they broke</p>
             </div>
 
             <div class="skills-grid">
                 <div class="skill-card">
                     <div class="skill-header">
-                        <span class="skill-name">Performance Limits</span>
+                        <span class="skill-name" data-i18n="learned.skill1_name">Performance Limits</span>
                     </div>
-                    <p class="skill-desc">Working within sound channel limits, tracking memory budgets, picking compression that balances file size vs quality.</p>
+                    <p class="skill-desc" data-i18n="learned.skill1_desc">Working within sound channel limits, tracking memory budgets, picking compression that balances file size vs quality.</p>
                 </div>
 
                 <div class="skill-card">
                     <div class="skill-header">
-                        <span class="skill-name">3D Audio</span>
+                        <span class="skill-name" data-i18n="learned.skill2_name">3D Audio</span>
                     </div>
-                    <p class="skill-desc">Writing distance curves for different sound types, positioning audio in 3D space, making sounds fade at the right ranges.</p>
+                    <p class="skill-desc" data-i18n="learned.skill2_desc">Writing distance curves for different sound types, positioning audio in 3D space, making sounds fade at the right ranges.</p>
                 </div>
 
                 <div class="skill-card">
                     <div class="skill-header">
-                        <span class="skill-name">Middleware Integration</span>
+                        <span class="skill-name" data-i18n="learned.skill3_name">Middleware Integration</span>
                     </div>
-                    <p class="skill-desc">Connecting game events to middleware, making audio respond to player position and game state without hardcoding values.</p>
+                    <p class="skill-desc" data-i18n="learned.skill3_desc">Connecting game events to middleware, making audio respond to player position and game state without hardcoding values.</p>
                 </div>
 
                 <div class="skill-card">
                     <div class="skill-header">
-                        <span class="skill-name">Memory Management</span>
+                        <span class="skill-name" data-i18n="learned.skill4_name">Memory Management</span>
                     </div>
-                    <p class="skill-desc">Deciding what loads immediately, what streams from disk, what unloads when changing zones. Staying under budget on phones.</p>
+                    <p class="skill-desc" data-i18n="learned.skill4_desc">Deciding what loads immediately, what streams from disk, what unloads when changing zones. Staying under budget on phones.</p>
                 </div>
 
                 <div class="skill-card">
                     <div class="skill-header">
-                        <span class="skill-name">Unity + Wwise</span>
+                        <span class="skill-name" data-i18n="learned.skill5_name">Unity + Wwise</span>
                     </div>
-                    <p class="skill-desc">Writing C# scripts that talk to Wwise API, handling zone triggers, cleaning up sounds that don't stop properly.</p>
+                    <p class="skill-desc" data-i18n="learned.skill5_desc">Writing C# scripts that talk to Wwise API, handling zone triggers, cleaning up sounds that don't stop properly.</p>
                 </div>
 
                 <div class="skill-card">
                     <div class="skill-header">
-                        <span class="skill-name">Multi-Platform</span>
+                        <span class="skill-name" data-i18n="learned.skill6_name">Multi-Platform</span>
                     </div>
-                    <p class="skill-desc">Different compression strategies for PC vs mobile. Testing on emulators. Profiling memory to catch issues before shipping.</p>
+                    <p class="skill-desc" data-i18n="learned.skill6_desc">Different compression strategies for PC vs mobile. Testing on emulators. Profiling memory to catch issues before shipping.</p>
                 </div>
             </div>
         </section>
     </main>
 
     <footer class="footer">
-        <p>© 2024 Igor Szuniewicz</p>
+        <p data-i18n="footer">© 2024 Igor Szuniewicz</p>
     </footer>
+
+    <!-- Translation Script -->
+    <script>
+        let translations = {};
+        let currentLang = localStorage.getItem('language') || 'en';
+
+        async function loadTranslations() {
+            try {
+                const response = await fetch('../locales/middleware-optimization.json');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                translations = await response.json();
+            } catch (error) {
+                console.error("Failed to load translations:", error);
+                translations = { en: {}, pl: {}, nl: {} };
+            }
+        }
+
+        function getNestedValue(obj, path) {
+            return path.split('.').reduce((current, key) => current?.[key], obj);
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('language', lang);
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                const translation = getNestedValue(translations[lang], key);
+                if (translation) {
+                    el.textContent = translation;
+                }
+            });
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadTranslations();
+            setLanguage(currentLang);
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setLanguage(btn.dataset.lang);
+                });
+            });
+        });
+    </script>
 </body>
 </html>
