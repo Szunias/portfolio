@@ -1,1113 +1,751 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Wwise Production & Optimization - Igor Szuniewicz</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
-            rel="stylesheet"
-        />
-        <style>
-            :root {
-                --bg: #0b1120;
-                --overlay: #111a2b;
-                --card: #121f36;
-                --border: rgba(148, 163, 184, 0.25);
-                --text: #e2e8f0;
-                --muted: #94a3b8;
-                --accent: #38bdf8;
-                --accent-soft: rgba(56, 189, 248, 0.12);
-                --accent-green: #34d399;
-                --accent-orange: #fb923c;
-            }
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wwise Projects & Audio Middleware - Igor Szuniewicz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #0a0e1a;
+            --bg-elevated: #111827;
+            --bg-card: #1a2332;
+            --border: rgba(148, 163, 184, 0.15);
+            --border-hover: rgba(56, 189, 248, 0.4);
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-green: #34d399;
+            --accent-purple: #a78bfa;
+            --accent-orange: #fb923c;
+        }
 
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-            body {
-                font-family:
-                    "Inter",
-                    system-ui,
-                    -apple-system,
-                    BlinkMacSystemFont,
-                    "Segoe UI",
-                    sans-serif;
-                background: var(--bg);
-                color: var(--text);
-                line-height: 1.7;
-            }
+        body {
+            font-family: "Inter", system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
 
-            a {
-                color: var(--accent);
-                text-decoration: none;
-            }
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
 
-            a:hover {
-                text-decoration: underline;
-            }
+        a:hover {
+            color: #7dd3fc;
+        }
 
-            .masthead {
-                background: linear-gradient(135deg, #0f172a, #0b1120 60%);
-                padding: 2.5rem 1.5rem 3rem;
-                border-bottom: 1px solid var(--border);
-            }
+        /* Header */
+        .header {
+            background: linear-gradient(to bottom, rgba(10, 14, 26, 0.95), rgba(10, 14, 26, 0.8));
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-            .nav-row {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 1rem;
-                flex-wrap: wrap;
-            }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-            .back-link {
-                font-weight: 600;
-                color: var(--muted);
-            }
+        .back-link {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
 
+        .back-link:hover {
+            color: var(--accent);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            background: rgba(56, 189, 248, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #0a0e1a;
+        }
+
+        .btn-primary:hover {
+            background: #7dd3fc;
+            border-color: #7dd3fc;
+        }
+
+        /* Hero */
+        .hero {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--border-hover);
+            border-radius: 20px;
+            color: var(--accent);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #f1f5f9 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-lead {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: "Space Grotesk", sans-serif;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Section */
+        .section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(2rem, 3vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .project-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-purple));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .project-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-number {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .project-title {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-version {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .project-description {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tag {
+            padding: 0.35rem 0.75rem;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .project-highlights {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-highlights li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .project-highlights li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        .project-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .project-link {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .project-link:hover {
+            gap: 0.75rem;
+        }
+
+        /* Video Demo */
+        .video-section {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .video-title {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .video-caption {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Comparison Table */
+        .comparison {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .comparison table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison th,
+        .comparison td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison th {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .comparison td {
+            font-size: 0.95rem;
+        }
+
+        .comparison tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .skill-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .skill-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .skill-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .skill-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(167, 139, 250, 0.1));
+            border: 1px solid var(--border-hover);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .cta-title {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-text {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
             .hero {
-                max-width: 900px;
-                margin-top: 2.5rem;
+                padding: 3rem 1.5rem;
             }
 
-            .hero h1 {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: clamp(2.5rem, 4.5vw, 3.75rem);
-                margin-bottom: 1rem;
-                line-height: 1.1;
+            .section {
+                padding: 3rem 1.5rem;
             }
 
-            .hero .eyebrow {
-                text-transform: uppercase;
-                letter-spacing: 0.2em;
-                color: var(--muted);
-                font-weight: 600;
-                margin-bottom: 0.5rem;
-                font-size: 0.85rem;
-            }
-
-            .hero .lede {
-                color: var(--muted);
-                font-size: 1.1rem;
-                margin-bottom: 1.5rem;
+            .projects-grid {
+                grid-template-columns: 1fr;
             }
 
             .hero-stats {
-                list-style: none;
-                display: flex;
-                gap: 1.5rem;
-                flex-wrap: wrap;
-                color: var(--text);
-                font-weight: 600;
-                margin-bottom: 1.5rem;
-            }
-
-            .hero-stats li {
-                padding: 0.6rem 1rem;
-                background: var(--accent-soft);
-                border-radius: 999px;
-                border: 1px solid var(--border);
-            }
-
-            .contact-prompt {
-                margin-top: 1.25rem;
-                padding: 1.1rem 1.25rem;
-                border: 1px solid var(--border);
-                border-radius: 18px;
-                background: rgba(15, 23, 42, 0.8);
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.5rem 1.5rem;
-                align-items: center;
-                font-size: 0.95rem;
-            }
-
-            .contact-prompt strong {
-                font-family: "Space Grotesk", sans-serif;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                font-size: 0.85rem;
-                color: var(--muted);
-            }
-
-            .contact-prompt a {
-                font-weight: 600;
-                color: var(--accent);
-            }
-
-            .highlight-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                gap: 1rem;
-                margin-top: 1.5rem;
-            }
-
-            .highlight-card {
-                background: var(--overlay);
-                border: 1px solid var(--border);
-                border-radius: 18px;
-                padding: 1.35rem;
-            }
-
-            .highlight-card h3 {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: 1rem;
-                margin-bottom: 0.4rem;
-            }
-
-            .highlight-card p {
-                color: var(--muted);
-                font-size: 0.95rem;
-                margin: 0;
-            }
-
-            .quick-nav {
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-                gap: 0.75rem;
-                color: var(--muted);
-                font-size: 0.95rem;
-            }
-
-            .quick-nav a {
-                padding: 0.35rem 0.8rem;
-                border-radius: 999px;
-                border: 1px solid transparent;
-                color: var(--text);
-                background: rgba(148, 163, 184, 0.15);
-                font-weight: 500;
-            }
-
-            .quick-nav a:hover {
-                border-color: var(--accent);
-                color: var(--accent);
-                text-decoration: none;
-            }
-
-            .page {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 4rem 1.5rem 4rem;
-            }
-
-            .project {
-                margin-bottom: 4rem;
-            }
-
-            .comparison {
-                margin-bottom: 3rem;
-                background: var(--overlay);
-                border: 1px solid var(--border);
-                border-radius: 24px;
-                padding: 2rem;
-            }
-
-            .comparison h2 {
-                font-family: "Space Grotesk", sans-serif;
-                margin-bottom: 1rem;
-            }
-
-            .comparison table {
-                width: 100%;
-                border-collapse: collapse;
-                font-size: 0.95rem;
-            }
-
-            .comparison th,
-            .comparison td {
-                padding: 0.75rem 0.5rem;
-                border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-                text-align: left;
-                vertical-align: top;
-            }
-
-            .comparison th {
-                color: var(--muted);
-                font-weight: 600;
-                font-size: 0.85rem;
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-            }
-
-            .comparison tbody tr:last-child td {
-                border-bottom: none;
-            }
-
-            .project-heading {
-                margin-bottom: 1.5rem;
-            }
-
-            .project-heading .eyebrow {
-                text-transform: uppercase;
-                letter-spacing: 0.15em;
-                color: var(--accent);
-                font-size: 0.85rem;
-                font-weight: 600;
-                margin-bottom: 0.5rem;
-            }
-
-            .project-heading h2 {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: clamp(2rem, 3vw, 2.8rem);
-                margin-bottom: 0.75rem;
-            }
-
-            .project-intro {
-                color: var(--muted);
-            }
-
-            .chip-row {
-                display: flex;
-                gap: 0.5rem;
-                flex-wrap: wrap;
-                margin-top: 1rem;
-            }
-
-            .chip {
-                padding: 0.35rem 0.8rem;
-                border-radius: 999px;
-                border: 1px solid var(--border);
-                font-size: 0.85rem;
-                color: var(--muted);
-            }
-
-            .project-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
                 gap: 1.5rem;
             }
 
-            .card {
-                background: var(--card);
-                border: 1px solid var(--border);
-                border-radius: 20px;
-                padding: 1.75rem;
-                min-height: 100%;
+            .stat-value {
+                font-size: 1.5rem;
             }
 
-            .card h3 {
-                font-size: 1.1rem;
-                margin-bottom: 0.85rem;
-                font-family: "Space Grotesk", sans-serif;
-            }
-
-            .snapshot-list {
-                display: grid;
-                gap: 0.85rem;
-            }
-
-            .snapshot-list div {
-                border-left: 3px solid rgba(56, 189, 248, 0.35);
-                padding-left: 0.75rem;
-            }
-
-            .snapshot-list dt {
-                font-weight: 600;
-                color: var(--muted);
-                font-size: 0.85rem;
-            }
-
-            .snapshot-list dd {
-                margin-left: 0;
-            }
-
-            .impact-list {
-                list-style: none;
-                display: grid;
-                gap: 0.75rem;
-            }
-
-            .impact-list li strong {
-                display: block;
-                font-size: 0.95rem;
-                margin-bottom: 0.2rem;
-                color: var(--accent);
-            }
-
-            .systems-list {
-                list-style: none;
-                display: grid;
-                gap: 0.65rem;
-            }
-
-            .systems-list li::before {
-                content: "•";
-                color: var(--accent);
-                margin-right: 0.4rem;
-            }
-
-            .media-block {
-                margin-top: 1.5rem;
-                background: var(--overlay);
-                border-radius: 20px;
-                border: 1px solid var(--border);
-                padding: 1.25rem;
-            }
-
-            .media-block video {
-                width: 100%;
-                border-radius: 12px;
-                border: 1px solid var(--border);
-            }
-
-            .media-block figcaption {
-                margin-top: 0.75rem;
-                font-size: 0.9rem;
-                color: var(--muted);
-            }
-
-            .evidence-links {
-                display: flex;
-                flex-wrap: wrap;
+            .header-actions {
+                flex-direction: column;
                 gap: 0.5rem;
-                margin-top: 0.8rem;
             }
-
-            .evidence-link {
-                padding: 0.35rem 0.9rem;
-                border-radius: 999px;
-                border: 1px solid rgba(56, 189, 248, 0.35);
-                color: var(--accent);
-                font-size: 0.85rem;
-                font-weight: 600;
-                display: inline-flex;
-                align-items: center;
-                gap: 0.4rem;
-            }
-
-            .evidence-link:hover {
-                text-decoration: none;
-                border-color: var(--accent);
-            }
-
-            .glossary {
-                margin-top: 2rem;
-                background: var(--overlay);
-                border: 1px solid var(--border);
-                border-radius: 24px;
-                padding: 2rem;
-            }
-
-            .glossary-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                gap: 1rem;
-            }
-
-            details {
-                background: var(--card);
-                border-radius: 16px;
-                border: 1px solid var(--border);
-                padding: 1rem 1.25rem;
-            }
-
-            details summary {
-                font-weight: 600;
-                cursor: pointer;
-            }
-
-            .process {
-                margin-top: 3rem;
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 1.25rem;
-            }
-
-            .process-card {
-                background: var(--overlay);
-                border: 1px solid var(--border);
-                border-radius: 20px;
-                padding: 1.5rem;
-            }
-
-            .process-card span {
-                display: inline-block;
-                font-weight: 700;
-                color: var(--accent-orange);
-                margin-bottom: 0.2rem;
-            }
-
-            .site-footer {
-                border-top: 1px solid var(--border);
-                padding: 2rem 1.5rem 3rem;
-                text-align: center;
-                color: var(--muted);
-            }
-
-            .recruiter-faq {
-                margin-top: 3rem;
-                background: var(--overlay);
-                border: 1px solid var(--border);
-                border-radius: 24px;
-                padding: 2rem;
-            }
-
-            .recruiter-faq h2 {
-                font-family: "Space Grotesk", sans-serif;
-                margin-bottom: 1.2rem;
-            }
-
-            .recruiter-faq details + details {
-                margin-top: 0.8rem;
-            }
-
-            @media (max-width: 720px) {
-                .hero-stats li,
-                .quick-nav a {
-                    width: 100%;
-                    text-align: center;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <header class="masthead">
-            <div class="nav-row">
-                <a class="back-link" href="../index.html"
-                    >← Back to portfolio</a
-                >
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a class="back-link" href="../index.html">← Back to Portfolio</a>
+            <div class="header-actions">
+                <a href="../cv/Igor_Szuniewicz_CV.pdf" target="_blank" class="btn">Download CV</a>
+                <a href="../contact.html" class="btn btn-primary">Get in Touch</a>
             </div>
-            <div class="hero">
-                <p class="eyebrow">Wwise production & optimization</p>
-                <h1>Middleware case studies purpose-built for production.</h1>
-                <p class="lede">
-                    Each project below starts with a snapshot, highlights the
-                    impact, and then shows the systems I delivered. Less jargon,
-                    more proof of how I keep builds performant.
-                </p>
-                <ul class="hero-stats">
-                    <li>3 projects · Wwise 2021 → 2024</li>
-                    <li>Platforms: Windows, Mac, Android & Android_Low</li>
-                    <li>
-                        Focus: Random Containers · RTPC mixing · Zone soundbanks
-                    </li>
-                </ul>
-                <div class="quick-nav">
-                    <span>Jump to:</span>
-                    <a href="#boney">Boney Boogaloo</a>
-                    <a href="#ellen">Ellen</a>
-                    <a href="#stomach">Stomach Aches</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <span class="hero-tag">Wwise Audio Middleware</span>
+            <h1>Professional Wwise Projects</h1>
+            <p class="hero-lead">
+                Three production-ready Wwise implementations showcasing technical sound design, optimization workflows, and middleware integration across multiple platforms and game genres.
+            </p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Projects</div>
                 </div>
-                <div class="highlight-grid">
-                    <article class="highlight-card">
-                        <h3>Proven in shipped stacks</h3>
-                        <p>
-                            Unity + Wwise integrations with AkState, AkSwitch,
-                            and custom RTPC scripts already exercised across
-                            combat, exploration, and mobile builds.
-                        </p>
-                    </article>
-                    <article class="highlight-card">
-                        <h3>Performance first</h3>
-                        <p>
-                            Voice budgets, trims, compression choices, and load
-                            strategies referenced directly to profiling data so
-                            you can see the guardrails.
-                        </p>
-                    </article>
-                    <article class="highlight-card">
-                        <h3>Plug-and-play collaboration</h3>
-                        <p>
-                            Every system is documented with the exact JSON /
-                            script source so engineers, designers, and audio
-                            leads can verify quickly.
-                        </p>
-                    </article>
+                <div class="stat">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">Platforms</div>
                 </div>
-                <div class="contact-prompt">
-                    <strong>Open to</strong>
-                    <span>
-                        Senior audio middleware / technical sound design roles
-                        (remote-friendly). I can walk you through these systems
-                        live within 48 hours.
-                    </span>
-                    <a href="../contact.html">Book a quick call →</a>
-                    <a
-                        href="../cv/Igor_Szuniewicz_CV.pdf"
-                        target="_blank"
-                        rel="noopener"
-                        >Download CV</a
-                    >
+                <div class="stat">
+                    <div class="stat-value">2021-2024</div>
+                    <div class="stat-label">Wwise Versions</div>
                 </div>
             </div>
-        </header>
+        </section>
 
-        <main class="page">
-            <section class="comparison" aria-label="Project comparison table">
-                <h2>Comparing the three builds</h2>
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Project Showcase</h2>
+                <p class="section-subtitle">Each project demonstrates different aspects of professional Wwise implementation</p>
+            </div>
+
+            <div class="projects-grid">
+                <!-- Boney Boogaloo -->
+                <div class="project-card">
+                    <div class="project-number">Project 01</div>
+                    <h3 class="project-title">Boney Boogaloo</h3>
+                    <div class="project-version">Wwise v2021.1.14 · Windows</div>
+                    <p class="project-description">
+                        Zombie shooter demonstrating random container workflows and voice management. Built with 44 audio assets across 10 containers with strict performance budgets.
+                    </p>
+                    <div class="project-tags">
+                        <span class="tag">Random Containers</span>
+                        <span class="tag">Voice Budget</span>
+                        <span class="tag">Manual Optimization</span>
+                    </div>
+                    <ul class="project-highlights">
+                        <li>10 containers managing 44 sound assets</li>
+                        <li>256 voice global limit with virtualization</li>
+                        <li>Hand-trimmed assets for optimal performance</li>
+                        <li>Seamless ambience loop with custom regions</li>
+                    </ul>
+                    <div class="project-footer">
+                        <a href="../wwiseprojectsinfo/BoneyBoogaloo.json" target="_blank" class="project-link">
+                            View Technical Data →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Ellen -->
+                <div class="project-card">
+                    <div class="project-number">Project 02</div>
+                    <h3 class="project-title">Ellen</h3>
+                    <div class="project-version">Wwise v2021.1.14 · Windows</div>
+                    <p class="project-description">
+                        Third-person action game featuring state-driven ambience, RTPC reverb control, and content-aware compression strategies for different audio types.
+                    </p>
+                    <div class="project-tags">
+                        <span class="tag">State System</span>
+                        <span class="tag">RTPC Reverb</span>
+                        <span class="tag">3D Audio</span>
+                    </div>
+                    <ul class="project-highlights">
+                        <li>6.5s crossfades for zone transitions</li>
+                        <li>10 custom attenuation curves (11m - 155m)</li>
+                        <li>4 AUX buses with RTPC control</li>
+                        <li>Material-based footstep system</li>
+                    </ul>
+                    <div class="project-footer">
+                        <a href="../wwiseprojectsinfo/ellen.json" target="_blank" class="project-link">
+                            View Technical Data →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Stomach Aches -->
+                <div class="project-card">
+                    <div class="project-number">Project 03</div>
+                    <h3 class="project-title">Stomach Aches</h3>
+                    <div class="project-version">Wwise 2024.1.2 · Multi-platform</div>
+                    <p class="project-description">
+                        FPS platformer with zone-based soundbank loading and Android_Low optimization. Runtime memory footprint of 10-15 MB across four platforms.
+                    </p>
+                    <div class="project-tags">
+                        <span class="tag">Zone Loading</span>
+                        <span class="tag">Mobile Optimization</span>
+                        <span class="tag">RTPC Waterfall</span>
+                    </div>
+                    <ul class="project-highlights">
+                        <li>Windows, Mac, Android, Android_Low support</li>
+                        <li>Dynamic zone loading saves 3.8 MB RAM</li>
+                        <li>Silence plugin for 80% memory reduction</li>
+                        <li>Custom C# scripts for integration</li>
+                    </ul>
+                    <div class="project-footer">
+                        <a href="../wwiseprojectsinfo/Stomach Aches.json" target="_blank" class="project-link">
+                            View Technical Data →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Demonstrations -->
+            <div class="video-section">
+                <h3 class="video-title">🎥 Boney Boogaloo - In-Game Demo</h3>
+                <video controls preload="metadata">
+                    <source src="../wwiseprojectsinfo/videos/boneyboogaloo/optboo.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+                <p class="video-caption">Random container playback and voice management in action</p>
+            </div>
+
+            <div class="video-section">
+                <h3 class="video-title">🎥 Stomach Aches - Zone Loading System</h3>
+                <video controls preload="metadata">
+                    <source src="../wwiseprojectsinfo/videos/stomachaches/optstomachaches.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+                <p class="video-caption">Dynamic soundbank loading and RTPC waterfall mixing</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Technical Comparison</h2>
+                <p class="section-subtitle">Quick overview of each project's focus and capabilities</p>
+            </div>
+
+            <div class="comparison">
                 <table>
                     <thead>
                         <tr>
                             <th>Project</th>
-                            <th>Focus</th>
+                            <th>Primary Focus</th>
                             <th>Platforms</th>
-                            <th>Key proof</th>
+                            <th>Key Achievement</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>
-                                <strong>Boney Boogaloo</strong><br />Wwise
-                                v2021.1.14 Build 8108
-                            </td>
-                            <td>
-                                Random container architecture + manual editing
-                                workflow
-                            </td>
+                            <td><strong>Boney Boogaloo</strong></td>
+                            <td>Random container architecture</td>
                             <td>Windows</td>
-                            <td>
-                                10 containers / 44 assets · Global voice limit
-                                256 (see BoneyBoogaloo.json)
-                            </td>
+                            <td>256 voice limit with no audible culling</td>
                         </tr>
                         <tr>
-                            <td>
-                                <strong>Ellen</strong><br />Wwise v2021.1.14
-                                Build 8108
-                            </td>
-                            <td>
-                                State-driven ambience, RTPC reverb,
-                                content-aware compression
-                            </td>
+                            <td><strong>Ellen</strong></td>
+                            <td>State-driven mixing & RTPC</td>
                             <td>Windows</td>
-                            <td>
-                                MusicZone 6.5 s crossfades · 4 AUX buses with
-                                RTPC control (see ellen.json)
-                            </td>
+                            <td>Seamless zone transitions with 6.5s fades</td>
                         </tr>
                         <tr>
-                            <td>
-                                <strong>Stomach Aches</strong><br />Wwise
-                                2024.1.2.8726
-                            </td>
-                            <td>
-                                Zone-based soundbanks, Android_Low profile, RTPC
-                                waterfall
-                            </td>
-                            <td>Windows / Mac / Android / Android_Low</td>
-                            <td>
-                                Runtime 10–15 MB · 3.8 MB saved via dynamic
-                                banks · RTPC blend (see Stomach Aches.json)
-                            </td>
+                            <td><strong>Stomach Aches</strong></td>
+                            <td>Multi-platform optimization</td>
+                            <td>Windows, Mac, Android</td>
+                            <td>10-15 MB runtime with zone loading</td>
                         </tr>
                     </tbody>
                 </table>
-            </section>
-            <section class="project" id="boney">
-                <div class="project-heading">
-                    <p class="eyebrow">Project 01 · Windows</p>
-                    <h2>Boney Boogaloo</h2>
-                    <p class="project-intro">
-                        Zombie shooter implemented in Wwise v2021.1.14 Build
-                        8108 to prove out random container workflows, voice
-                        management, and manual optimization on a 44-asset
-                        library.
-                    </p>
-                    <div class="chip-row">
-                        <span class="chip">Random Containers</span>
-                        <span class="chip">Voice management</span>
-                        <span class="chip">Manual editing</span>
-                    </div>
-                    <div class="evidence-links">
-                        <a
-                            class="evidence-link"
-                            href="../wwiseprojectsinfo/BoneyBoogaloo.json"
-                            target="_blank"
-                            rel="noopener"
-                            >Evidence: JSON</a
-                        >
-                    </div>
-                </div>
-                <div class="project-grid">
-                    <article class="card snapshot">
-                        <h3>Snapshot</h3>
-                        <dl class="snapshot-list">
-                            <div>
-                                <dt>Wwise build</dt>
-                                <dd>
-                                    v2021.1.14 Build 8108 · Target platform:
-                                    Windows
-                                </dd>
-                            </div>
-                            <div>
-                                <dt>Scope</dt>
-                                <dd>
-                                    10 containers (9 Random + 1 Sequence)
-                                    covering 44 sound assets
-                                </dd>
-                            </div>
-                            <div>
-                                <dt>Voice budget</dt>
-                                <dd>
-                                    Global cap 256 · Queue virtualization · -80
-                                    dB culling · Ambience limited to 1
-                                </dd>
-                            </div>
-                            <div>
-                                <dt>Toolkit</dt>
-                                <dd>
-                                    Random container library, SC_Round_Progress,
-                                    ADPCM/PCM conversion, trim + fade editing
-                                </dd>
-                            </div>
-                        </dl>
-                    </article>
-                    <article class="card">
-                        <h3>Impact</h3>
-                        <ul class="impact-list">
-                            <li>
-                                <strong>Variation ready.</strong>
-                                Random Containers cover guns, zombie spawns,
-                                gore hits, player hurt VO, and knife stabs, so
-                                one Unity event automatically cycles six shots,
-                                six spawns, three gore layers, and four hurt
-                                lines.
-                            </li>
-                            <li>
-                                <strong>Voice ceiling protected.</strong>
-                                Global 256 cap, Queue virtualization, -80 dB
-                                culling, and a single ambience instance keep
-                                enemy rushes within budget.
-                            </li>
-                            <li>
-                                <strong>Seamless ambience.</strong>
-                                Forest loop runs on a custom 30.87s–102.41s
-                                region with 1.4s fade-in / 1.8s fade-out, so the
-                                background never pops or stutters.
-                            </li>
-                            <li>
-                                <strong>Hand-trimmed assets.</strong>
-                                Reloads trimmed 0.495 s, cock 0.192 s, announcer
-                                VO 1.1–1.2 s, and ammo loads 0.19–0.21 s to
-                                remove silence without touching fidelity.
-                            </li>
-                        </ul>
-                    </article>
-                    <article class="card">
-                        <h3>Systems delivered</h3>
-                        <ul class="systems-list">
-                            <li>
-                                Random container network for weapons, zombies,
-                                gore, player hurt, and stealth reveals with
-                                volume offsets (-2 dB to -7 dB) baked in.
-                            </li>
-                            <li>
-                                SC_Round_Progress sequence container guarantees
-                                Round 1 → 4 announcer order after trims and
-                                level matching.
-                            </li>
-                            <li>
-                                Ambience bus capped at one instance plus custom
-                                loop points, fades, and ADPCM/PCM conversion
-                                keep CPU and RAM predictable.
-                            </li>
-                        </ul>
-                    </article>
-                </div>
-                <figure class="media-block">
-                    <video controls preload="metadata">
-                        <source
-                            src="../wwiseprojectsinfo/videos/boneyboogaloo/optboo.mp4"
-                            type="video/mp4"
-                        />
-                        Your browser does not support the video tag.
-                    </video>
-                    <figcaption>
-                        Demo: Random container playback and trimmed ambience
-                        inside the Windows build.
-                    </figcaption>
-                </figure>
-            </section>
+            </div>
+        </section>
 
-            <section class="project" id="ellen">
-                <div class="project-heading">
-                    <p class="eyebrow">Project 02 · Windows</p>
-                    <h2>Ellen</h2>
-                    <p class="project-intro">
-                        Third-person action vertical slice focused on
-                        state-driven ambience, RTPC-based reverb, and
-                        content-aware compression in Wwise v2021.1.14 (Windows
-                        reference platform).
-                    </p>
-                    <div class="chip-row">
-                        <span class="chip">State-driven ambience</span>
-                        <span class="chip">RTPC reverb</span>
-                        <span class="chip">Targeted compression</span>
-                    </div>
-                    <div class="evidence-links">
-                        <a
-                            class="evidence-link"
-                            href="../wwiseprojectsinfo/ellen.json"
-                            target="_blank"
-                            rel="noopener"
-                            >Evidence: JSON</a
-                        >
-                    </div>
-                </div>
-                <div class="project-grid">
-                    <article class="card snapshot">
-                        <h3>Snapshot</h3>
-                        <dl class="snapshot-list">
-                            <div>
-                                <dt>State system</dt>
-                                <dd>
-                                    MusicZone state group controls SC_AMB with
-                                    6.5s crossfades for Jungle, Main Chamber,
-                                    and Building zones.
-                                </dd>
-                            </div>
-                            <div>
-                                <dt>Attenuation coverage</dt>
-                                <dd>
-                                    10 custom curves (11 m box debris → 155 m
-                                    gate) for footsteps, grenades, gates, and UI
-                                    cues.
-                                </dd>
-                            </div>
-                            <div>
-                                <dt>Reverb network</dt>
-                                <dd>
-                                    4 AUX buses (Cave, StoreRoom, Stone Big,
-                                    Stone Small) driven by Reverb_* RTPCs via
-                                    AkRTPCManager.
-                                </dd>
-                            </div>
-                            <div>
-                                <dt>Compression plan</dt>
-                                <dd>
-                                    Music Vorbis Q8, Ambience Q7, SFX Vorbis Q5
-                                    @ 44.1 kHz, VO ADPCM, UI Vorbis Low with
-                                    streaming enabled for large loops.
-                                </dd>
-                            </div>
-                        </dl>
-                    </article>
-                    <article class="card">
-                        <h3>Impact</h3>
-                        <ul class="impact-list">
-                            <li>
-                                <strong>Frictionless zone transitions.</strong>
-                                ContinuousPlayback + 6.5 s fades mean entering a
-                                building only sets a state; Wwise handles the
-                                transition with no bespoke scripting.
-                            </li>
-                            <li>
-                                <strong>Gameplay-first attenuation.</strong>
-                                Grenadier footsteps stay audible at 75 m for
-                                threat awareness while box debris collapses at
-                                11 m, keeping the mix tidy.
-                            </li>
-                            <li>
-                                <strong>Mix-ready reverb control.</strong>
-                                Designers ride Reverb_* RTPC sliders (Cave,
-                                StoreRoom, Stone Big/Small) directly in-editor
-                                instead of requesting code tweaks.
-                            </li>
-                            <li>
-                                <strong>Right-size compression.</strong>
-                                Music stays at Vorbis Q8, ambience Q7 prevents
-                                loop artifacts, SFX sit at Q5, and UI uses low
-                                quality Vorbis to save disk.
-                            </li>
-                        </ul>
-                    </article>
-                    <article class="card">
-                        <h3>Systems delivered</h3>
-                        <ul class="systems-list">
-                            <li>
-                                SC_AMB state mappings for Jungle, Main Chamber,
-                                and Building layers, plus AMB_Addition loops for
-                                secondary textures.
-                            </li>
-                            <li>
-                                Material + locomotion footstep switches
-                                (SWC_Footsteps, SWC_Ellen_Land) supply
-                                per-surface variation with Random Containers.
-                            </li>
-                            <li>
-                                Enemy audio (Chomper, Grenadier, Teleporter)
-                                uses 3D positioning, cone attenuation, and
-                                dedicated aux sends for spatial clarity.
-                            </li>
-                            <li>
-                                Unity scripts rely on AkState, AkSwitch, and
-                                AkRTPCManager so design changes propagate to
-                                Wwise without bespoke code.
-                            </li>
-                        </ul>
-                    </article>
-                </div>
-            </section>
-
-            <section class="project" id="stomach">
-                <div class="project-heading">
-                    <p class="eyebrow">Project 03 · Multi-platform</p>
-                    <h2>Stomach Aches</h2>
-                    <p class="project-intro">
-                        FPS platformer set inside a human body. Built with Wwise
-                        2024.1.2.8726 + Unity C# API to target Windows, Mac,
-                        Android, and Android_Low devices with strict RAM
-                        budgets.
-                    </p>
-                    <div class="chip-row">
-                        <span class="chip">Zone-based banks</span>
-                        <span class="chip">Android_Low profile</span>
-                        <span class="chip">Silence plugin</span>
-                        <span class="chip">RTPC waterfall</span>
-                    </div>
-                    <div class="evidence-links">
-                        <a
-                            class="evidence-link"
-                            href="../wwiseprojectsinfo/Stomach Aches.json"
-                            target="_blank"
-                            rel="noopener"
-                            >Evidence: JSON</a
-                        >
-                    </div>
-                </div>
-                <div class="project-grid">
-                    <article class="card snapshot">
-                        <h3>Snapshot</h3>
-                        <dl class="snapshot-list">
-                            <div>
-                                <dt>Platforms</dt>
-                                <dd>
-                                    Windows · Mac · Android · Android_Low
-                                    (dedicated soundbank directories)
-                                </dd>
-                            </div>
-                            <div>
-                                <dt>Soundbank plan</dt>
-                                <dd>
-                                    Init + General stay loaded; Brain (670 KB),
-                                    Mouth (384 KB), Stomach (2.8 MB), and Music
-                                    banks load on demand.
-                                </dd>
-                            </div>
-                            <div>
-                                <dt>Runtime footprint</dt>
-                                <dd>
-                                    ~10–15 MB (General ≈10 MB + active zone 1–3
-                                    MB) according to memory profile.
-                                </dd>
-                            </div>
-                            <div>
-                                <dt>Key scripts</dt>
-                                <dd>
-                                    WwiseStateBridge.cs,
-                                    WaterfallDistanceRTPC.cs,
-                                    SurfaceIdentifier.cs, RandomAreaWwise.cs,
-                                    SneezeProjectile.cs.
-                                </dd>
-                            </div>
-                        </dl>
-                    </article>
-                    <article class="card">
-                        <h3>Impact</h3>
-                        <ul class="impact-list">
-                            <li>
-                                <strong>Zone loading saves RAM.</strong>
-                                WwiseStateBridge swaps Brain/Mouth/Stomach banks
-                                as the player moves, saving ~3.8 MB versus
-                                keeping every zone resident.
-                            </li>
-                            <li>
-                                <strong>Sculpted waterfall mix.</strong>
-                                DistanceToWaterfall RTPC crossfades
-                                Splashes_Close (130 KB, 0–10 m), Main_Mid (6.3
-                                MB, 10–50 m), and Rumbling_Far (3.6 MB, 50+ m)
-                                with per-frame updates from
-                                WaterfallDistanceRTPC.cs.
-                            </li>
-                            <li>
-                                <strong>Silence plugin efficiency.</strong>
-                                Brain and Mouth ambiences use Wwise Silence
-                                sources for timing gaps, trimming ~80% of the
-                                memory silent WAVs would consume.
-                            </li>
-                            <li>
-                                <strong>Streaming where it counts.</strong>
-                                Brain_Song_Track streams from disk, so only ~220
-                                KB of VO thoughts stay resident while music
-                                reads straight from storage.
-                            </li>
-                            <li>
-                                <strong>No orphaned voices.</strong>
-                                SneezeProjectile caches playback IDs and calls
-                                StopPlayingID on destroy so looping snot
-                                projectiles never leak voices.
-                            </li>
-                        </ul>
-                    </article>
-                    <article class="card">
-                        <h3>Systems delivered</h3>
-                        <ul class="systems-list">
-                            <li>
-                                WwiseStateBridge.cs routes Unity trigger
-                                colliders to GameStage states, which in turn
-                                load the correct zone bank and ambience.
-                            </li>
-                            <li>
-                                SurfaceIdentifier.cs tags Gut, Thongue, and
-                                Skull materials; Controller.cs raycasts before
-                                each footstep to set the right switch.
-                            </li>
-                            <li>
-                                RandomAreaWwise.cs spawns positioned one-shots
-                                inside configurable 3D volumes for organic zone
-                                details.
-                            </li>
-                            <li>
-                                WaterfallDistanceRTPC.cs + SneezeProjectile.cs
-                                demonstrate explicit RTPC updates and
-                                StopPlayingID-based cleanup.
-                            </li>
-                        </ul>
-                    </article>
-                </div>
-                <figure class="media-block">
-                    <video controls preload="metadata">
-                        <source
-                            src="../wwiseprojectsinfo/videos/stomachaches/optstomachaches.mp4"
-                            type="video/mp4"
-                        />
-                        Your browser does not support the video tag.
-                    </video>
-                    <figcaption>
-                        Demo: Zone-based loading, waterfall RTPC blend, and
-                        SurfaceIdentifier footsteps inside the Stomach level.
-                    </figcaption>
-                </figure>
-            </section>
-
-            <section class="glossary" id="glossary">
-                <h2
-                    style="
-                        font-family: &quot;Space Grotesk&quot;, sans-serif;
-                        margin-bottom: 1rem;
-                    "
-                >
-                    Glossary & cheat notes
-                </h2>
-                <div class="glossary-grid">
-                    <details open>
-                        <summary>Random Container</summary>
-                        <p>
-                            Wwise object that picks one asset from a pool each
-                            trigger—perfect for gunshots or footsteps so a
-                            single event covers every variation.
-                        </p>
-                    </details>
-                    <details>
-                        <summary>RTPC</summary>
-                        <p>
-                            Real-Time Parameter Control. Game code
-                            (WaterfallDistanceRTPC.cs) feeds live numbers to
-                            Wwise so the engine fades layers or reverb sends
-                            automatically.
-                        </p>
-                    </details>
-                    <details>
-                        <summary>Soundbank</summary>
-                        <p>
-                            Packaged bundle of events + audio. Keeping only Init
-                            + General resident and streaming the active zone
-                            keeps RAM predictable.
-                        </p>
-                    </details>
-                    <details>
-                        <summary>Silence plugin</summary>
-                        <p>
-                            Generates procedural silence inside Wwise
-                            containers. It replaces recorded blank audio and
-                            saves ~80% memory on gap-heavy ambiences.
-                        </p>
-                    </details>
-                    <details>
-                        <summary>Streaming</summary>
-                        <p>
-                            Large music or ambience files read from disk with a
-                            rolling buffer (e.g., Brain_Song_Track) instead of
-                            living entirely in RAM.
-                        </p>
-                    </details>
-                </div>
-            </section>
-
-            <div class="process">
-                <article class="process-card">
-                    <span>01 · Kickoff</span>
-                    <p>
-                        Collect target platforms, voice budgets, and priority
-                        experiences. Define which systems stay resident vs load
-                        on demand.
-                    </p>
-                </article>
-                <article class="process-card">
-                    <span>02 · Build</span>
-                    <p>
-                        Prototype in Wwise first (containers, states, RTPC),
-                        then hook up Unity scripts (AkState, WwiseStateBridge,
-                        SetRTPCValue) so designers can iterate without code.
-                    </p>
-                </article>
-                <article class="process-card">
-                    <span>03 · Verify</span>
-                    <p>
-                        Log profiling data (voice limits, memory snapshots) and
-                        trim / compress only when I can cite the before and
-                        after numbers.
-                    </p>
-                </article>
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Core Competencies</h2>
+                <p class="section-subtitle">Technical skills demonstrated across these projects</p>
             </div>
 
-            <section class="recruiter-faq" aria-label="Recruiter questions">
-                <h2>Recruiter FAQ</h2>
-                <details open>
-                    <summary>How do I verify these results quickly?</summary>
-                    <p>
-                        Each project surfaces an “Evidence: JSON” link directly
-                        to the data in
-                        <code>wwiseprojectsinfo/</code>, plus an embedded
-                        gameplay clip. If you only have a minute, skim the
-                        comparison table at the top for focus, platforms, and
-                        proof.
-                    </p>
-                </details>
-                <details>
-                    <summary>What role do you play on teams?</summary>
-                    <p>
-                        I own Wwise + Unity integration end to end—states, RTPC
-                        scripts, bank strategy, and voice/memory profiling—while
-                        partnering with gameplay engineers for triggers and
-                        providing designers with editable parameters inside
-                        Wwise.
-                    </p>
-                </details>
-                <details>
-                    <summary>What’s your availability?</summary>
-                    <p>
-                        I’m interviewing for audio middleware / technical sound
-                        design roles (remote or hybrid) and can run a live
-                        walkthrough within 48 hours. Use the call-to-action
-                        above or the contact page for a fast reply.
-                    </p>
-                </details>
-            </section>
-        </main>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <div class="skill-icon">🎯</div>
+                    <div class="skill-name">Performance Optimization</div>
+                    <div class="skill-desc">Memory management, voice budgets, compression strategies</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🔊</div>
+                    <div class="skill-name">Spatial Audio</div>
+                    <div class="skill-desc">3D positioning, attenuation, cone settings</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">⚙️</div>
+                    <div class="skill-name">Game Syncs</div>
+                    <div class="skill-desc">States, switches, RTPC integration</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">📦</div>
+                    <div class="skill-name">Soundbank Strategy</div>
+                    <div class="skill-desc">Dynamic loading, streaming, zone management</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🎨</div>
+                    <div class="skill-name">Mixing & Design</div>
+                    <div class="skill-desc">Content-aware compression, variation, coherent palette</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🔗</div>
+                    <div class="skill-name">Unity Integration</div>
+                    <div class="skill-desc">C# scripting, AkState, custom managers</div>
+                </div>
+            </div>
+        </section>
 
-        <footer class="site-footer">
-            <p>© 2024 Igor Szuniewicz — Wwise production & optimization</p>
-            <p>
-                Need a deeper dive? <a href="../contact.html">Get in touch</a>.
-            </p>
-        </footer>
-    </body>
+        <section class="section">
+            <div class="cta-section">
+                <h2 class="cta-title">Let's Work Together</h2>
+                <p class="cta-text">
+                    Looking for an audio middleware specialist who understands both the creative and technical sides of game audio? I'm available for senior technical sound design and middleware roles.
+                </p>
+                <div class="cta-buttons">
+                    <a href="../contact.html" class="btn btn-primary">Schedule a Call</a>
+                    <a href="../cv/Igor_Szuniewicz_CV.pdf" target="_blank" class="btn">Download Full CV</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="../index.html">Home</a>
+            <a href="../contact.html">Contact</a>
+            <a href="../cv/Igor_Szuniewicz_CV.pdf" target="_blank">CV</a>
+        </div>
+        <p>© 2024 Igor Szuniewicz — Wwise Audio Middleware Specialist</p>
+    </footer>
+</body>
 </html>
