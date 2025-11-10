@@ -1,33 +1,27 @@
-<!doctype html>
-<html lang="en" style="background: #0a0a0a">
+﻿<!doctype html>
+<html lang="en">
     <head>
         <meta charset="utf-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, user-scalable=no"
-        />
-        <meta name="theme-color" content="#0a0a0a" />
-
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Wwise Production & Optimization - Igor Szuniewicz</title>
-
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;900&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
             rel="stylesheet"
         />
-
         <style>
             :root {
-                --bg-primary: #0a0a0a;
-                --bg-card: rgba(18, 18, 18, 0.85);
-                --text-primary: #ffffff;
-                --text-secondary: #b0b0b0;
-                --accent-blue: #3b82f6;
-                --accent-purple: #8b5cf6;
-                --accent-cyan: #06b6d4;
-                --accent-green: #10b981;
-                --border: rgba(255, 255, 255, 0.1);
+                --bg: #0b1120;
+                --overlay: #111a2b;
+                --card: #121f36;
+                --border: rgba(148, 163, 184, 0.25);
+                --text: #e2e8f0;
+                --muted: #94a3b8;
+                --accent: #38bdf8;
+                --accent-soft: rgba(56, 189, 248, 0.12);
+                --accent-green: #34d399;
+                --accent-orange: #fb923c;
             }
 
             * {
@@ -37,1675 +31,1082 @@
             }
 
             body {
-                font-family: "Inter", sans-serif;
-                background: var(--bg-primary);
-                color: var(--text-primary);
-                line-height: 1.6;
-                overflow-x: hidden;
+                font-family:
+                    "Inter",
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+                background: var(--bg);
+                color: var(--text);
+                line-height: 1.7;
             }
 
-            .bg-animated {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: 0;
-                pointer-events: none;
+            a {
+                color: var(--accent);
+                text-decoration: none;
             }
 
-            .bg-animated::before {
-                content: "";
-                position: absolute;
-                inset: 0;
-                background:
-                    radial-gradient(
-                        ellipse 1400px 1200px at 15% 25%,
-                        rgba(59, 130, 246, 0.2) 0%,
-                        transparent 60%
-                    ),
-                    radial-gradient(
-                        ellipse 1300px 1300px at 85% 65%,
-                        rgba(139, 92, 246, 0.18) 0%,
-                        transparent 60%
-                    ),
-                    radial-gradient(
-                        ellipse 1200px 1000px at 50% 90%,
-                        rgba(6, 182, 212, 0.15) 0%,
-                        transparent 60%
-                    ),
-                    linear-gradient(
-                        135deg,
-                        #0a0a0a 0%,
-                        #0f0f15 50%,
-                        #0a0a0a 100%
-                    );
-                animation: bgPulse 15s ease-in-out infinite;
+            a:hover {
+                text-decoration: underline;
             }
 
-            @keyframes bgPulse {
-                0%,
-                100% {
-                    opacity: 1;
-                    transform: scale(1);
-                }
-                50% {
-                    opacity: 0.9;
-                    transform: scale(1.02);
-                }
-            }
-
-            .nav {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                z-index: 1000;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 1.5rem 2rem;
-                background: rgba(10, 10, 10, 0.95);
-                backdrop-filter: blur(20px);
+            .masthead {
+                background: linear-gradient(135deg, #0f172a, #0b1120 60%);
+                padding: 2.5rem 1.5rem 3rem;
                 border-bottom: 1px solid var(--border);
             }
 
-            .back-btn {
-                display: inline-flex;
+            .nav-row {
+                display: flex;
+                justify-content: space-between;
                 align-items: center;
-                gap: 0.5rem;
-                padding: 0.6rem 1.2rem;
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid var(--border);
-                border-radius: 8px;
-                color: var(--text-primary);
-                text-decoration: none;
-                font-size: 0.9rem;
-                font-weight: 500;
-                transition: all 0.2s;
+                gap: 1rem;
+                flex-wrap: wrap;
             }
 
-            .back-btn:hover {
-                background: rgba(255, 255, 255, 0.1);
-                transform: translateX(-3px);
+            .back-link {
+                font-weight: 600;
+                color: var(--muted);
             }
 
             .hero {
-                margin-top: 80px;
-                position: relative;
-                min-height: 85vh;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                padding: 4rem 2rem;
+                max-width: 900px;
+                margin-top: 2.5rem;
             }
 
-            .hero-visual {
-                width: 100%;
-                max-width: 1300px;
-                margin: 0 auto 3rem;
-                position: relative;
-                min-height: 550px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: linear-gradient(
-                    135deg,
-                    rgba(59, 130, 246, 0.12),
-                    rgba(139, 92, 246, 0.12)
-                );
-                border-radius: 24px;
-                overflow: hidden;
-                box-shadow:
-                    0 25px 70px rgba(0, 0, 0, 0.9),
-                    0 0 0 1px rgba(59, 130, 246, 0.2),
-                    inset 0 0 80px rgba(59, 130, 246, 0.05);
-                border: 1px solid rgba(59, 130, 246, 0.2);
-            }
-
-            .hero-visual::before {
-                content: "";
-                position: absolute;
-                inset: 0;
-                background:
-                    radial-gradient(
-                        circle at 30% 40%,
-                        rgba(59, 130, 246, 0.15),
-                        transparent 50%
-                    ),
-                    radial-gradient(
-                        circle at 70% 60%,
-                        rgba(139, 92, 246, 0.15),
-                        transparent 50%
-                    );
-                animation: heroGlow 8s ease-in-out infinite;
-            }
-
-            @keyframes heroGlow {
-                0%,
-                100% {
-                    opacity: 0.6;
-                }
-                50% {
-                    opacity: 1;
-                }
-            }
-
-            .hero-logo {
+            .hero h1 {
                 font-family: "Space Grotesk", sans-serif;
-                font-size: clamp(3.5rem, 10vw, 8rem);
-                font-weight: 900;
-                color: var(--text-primary);
-                text-shadow:
-                    0 0 30px rgba(59, 130, 246, 0.5),
-                    0 0 60px rgba(139, 92, 246, 0.3),
-                    0 4px 20px rgba(0, 0, 0, 0.8);
-                letter-spacing: -0.02em;
-                position: relative;
-                z-index: 2;
-                text-align: center;
+                font-size: clamp(2.5rem, 4.5vw, 3.75rem);
+                margin-bottom: 1rem;
                 line-height: 1.1;
             }
 
-            .wwise-badge {
-                position: absolute;
-                top: 30px;
-                left: 50%;
-                transform: translateX(-50%);
-                padding: 0.85rem 2.5rem;
-                background: linear-gradient(
-                    135deg,
-                    rgba(59, 130, 246, 0.25),
-                    rgba(139, 92, 246, 0.25)
-                );
-                border: 2px solid rgba(59, 130, 246, 0.5);
-                border-radius: 50px;
-                font-size: 0.95rem;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.25em;
-                color: #93c5fd;
-                backdrop-filter: blur(20px);
-                box-shadow:
-                    0 6px 25px rgba(59, 130, 246, 0.4),
-                    inset 0 0 20px rgba(59, 130, 246, 0.1);
-                z-index: 3;
-                animation: badgeFloat 4s ease-in-out infinite;
-            }
-
-            @keyframes badgeFloat {
-                0%,
-                100% {
-                    transform: translateX(-50%) translateY(0);
-                }
-                50% {
-                    transform: translateX(-50%) translateY(-8px);
-                }
-            }
-
-            .hero-content {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 0 2rem;
-                text-align: center;
-            }
-
-            .hero .subtitle {
-                font-size: 1.3rem;
-                color: var(--text-secondary);
-                margin-bottom: 1rem;
-                text-transform: uppercase;
-                letter-spacing: 0.15em;
-                font-weight: 600;
-            }
-
-            .hero .tagline {
-                font-size: 1.5rem;
-                color: var(--text-secondary);
-                font-weight: 300;
-                margin-bottom: 2.5rem;
-                max-width: 800px;
-                margin-left: auto;
-                margin-right: auto;
-                line-height: 1.6;
-            }
-
-            .hero-badges {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 1rem;
-                justify-content: center;
-            }
-
-            .badge {
-                padding: 0.65rem 1.4rem;
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid var(--border);
-                border-radius: 8px;
-                font-size: 0.9rem;
-                color: var(--text-secondary);
-                font-weight: 500;
-                transition: all 0.3s ease;
-            }
-
-            .badge:hover {
-                background: rgba(59, 130, 246, 0.1);
-                border-color: rgba(59, 130, 246, 0.3);
-                transform: translateY(-2px);
-                color: var(--text-primary);
-            }
-
-            .content {
-                position: relative;
-                z-index: 1;
-                max-width: 1400px;
-                margin: 6rem auto;
-                padding: 0 2rem;
-            }
-
-            .project-card {
-                position: relative;
-                margin: 5rem 0;
-                background: var(--bg-card);
-                border: 1px solid var(--border);
-                border-radius: 24px;
-                padding: 4rem;
-                backdrop-filter: blur(20px);
-                transition: all 0.4s ease;
-                overflow: hidden;
-            }
-
-            .project-card::before {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 4px;
-                background: linear-gradient(
-                    90deg,
-                    var(--accent-blue),
-                    var(--accent-purple),
-                    var(--accent-cyan)
-                );
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            }
-
-            .project-card:hover::before {
-                opacity: 1;
-            }
-
-            .project-card:hover {
-                border-color: rgba(59, 130, 246, 0.4);
-                box-shadow: 0 12px 40px rgba(59, 130, 246, 0.15);
-                transform: translateY(-4px);
-            }
-
-            .project-header {
-                margin-bottom: 3rem;
-            }
-
-            .project-number {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: 0.9rem;
-                color: var(--accent-blue);
-                font-weight: 700;
+            .hero .eyebrow {
                 text-transform: uppercase;
                 letter-spacing: 0.2em;
-                margin-bottom: 0.5rem;
-            }
-
-            .project-title {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: clamp(2rem, 4vw, 3.5rem);
-                font-weight: 800;
-                margin-bottom: 1rem;
-                background: linear-gradient(
-                    135deg,
-                    var(--text-primary),
-                    var(--text-secondary)
-                );
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            }
-
-            .project-subtitle {
-                font-size: 1.2rem;
-                color: var(--text-secondary);
-                line-height: 1.8;
-                max-width: 900px;
-            }
-
-            .project-context {
-                background: rgba(59, 130, 246, 0.08);
-                border-left: 4px solid var(--accent-blue);
-                padding: 2rem;
-                border-radius: 12px;
-                margin: 2.5rem 0;
-            }
-
-            .project-context h3 {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: 1.3rem;
-                color: var(--accent-blue);
-                margin-bottom: 1rem;
-                font-weight: 600;
-            }
-
-            .project-context p {
-                color: var(--text-secondary);
-                line-height: 1.8;
-                font-size: 1.05rem;
-            }
-
-            .metrics-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 2rem;
-                margin: 3rem 0;
-            }
-
-            .metric-card {
-                background: rgba(0, 0, 0, 0.4);
-                border: 1px solid var(--border);
-                border-radius: 16px;
-                padding: 2rem;
-                text-align: center;
-                transition: all 0.3s ease;
-                position: relative;
-                overflow: hidden;
-            }
-
-            .metric-card::before {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 2px;
-                background: linear-gradient(
-                    90deg,
-                    var(--accent-blue),
-                    var(--accent-purple)
-                );
-                transform: scaleX(0);
-                transition: transform 0.3s ease;
-            }
-
-            .metric-card:hover::before {
-                transform: scaleX(1);
-            }
-
-            .metric-card:hover {
-                border-color: var(--accent-blue);
-                transform: translateY(-6px);
-                box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
-            }
-
-            .metric-value {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: 3.5rem;
-                font-weight: 800;
-                color: var(--accent-blue);
-                display: block;
-                margin-bottom: 0.75rem;
-                line-height: 1;
-            }
-
-            .metric-label {
-                font-size: 0.95rem;
-                color: var(--text-secondary);
-                text-transform: uppercase;
-                letter-spacing: 0.1em;
+                color: var(--muted);
                 font-weight: 600;
                 margin-bottom: 0.5rem;
-            }
-
-            .metric-description {
                 font-size: 0.85rem;
-                color: var(--text-secondary);
-                line-height: 1.5;
-                opacity: 0.8;
             }
 
-            .features-section {
-                margin: 3rem 0;
+            .hero .lede {
+                color: var(--muted);
+                font-size: 1.1rem;
+                margin-bottom: 1.5rem;
             }
 
-            .features-section h3 {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: 1.8rem;
-                color: var(--text-primary);
-                margin-bottom: 2rem;
-                font-weight: 700;
-            }
-
-            .features-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 2rem;
-            }
-
-            .feature-card {
-                background: rgba(0, 0, 0, 0.3);
-                border: 1px solid var(--border);
-                border-radius: 12px;
-                padding: 2rem;
-                transition: all 0.3s ease;
-            }
-
-            .feature-card:hover {
-                border-color: rgba(59, 130, 246, 0.3);
-                transform: translateX(8px);
-                background: rgba(59, 130, 246, 0.05);
-            }
-
-            .feature-title {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: 1.2rem;
-                color: var(--accent-blue);
-                margin-bottom: 1rem;
+            .hero-stats {
+                list-style: none;
+                display: flex;
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                color: var(--text);
                 font-weight: 600;
+                margin-bottom: 1.5rem;
             }
 
-            .feature-description {
-                color: var(--text-secondary);
-                line-height: 1.7;
+            .hero-stats li {
+                padding: 0.6rem 1rem;
+                background: var(--accent-soft);
+                border-radius: 999px;
+                border: 1px solid var(--border);
+            }
+
+            .contact-prompt {
+                margin-top: 1.25rem;
+                padding: 1.1rem 1.25rem;
+                border: 1px solid var(--border);
+                border-radius: 18px;
+                background: rgba(15, 23, 42, 0.8);
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem 1.5rem;
+                align-items: center;
                 font-size: 0.95rem;
             }
 
-            .code-showcase {
-                background: rgba(0, 0, 0, 0.6);
-                border: 1px solid var(--border);
-                border-radius: 16px;
-                padding: 2rem;
-                margin: 3rem 0;
-                font-family: "Consolas", "Monaco", monospace;
-                font-size: 0.9rem;
-                line-height: 1.9;
-                color: #e0e0e0;
-                overflow-x: auto;
+            .contact-prompt strong {
+                font-family: "Space Grotesk", sans-serif;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                font-size: 0.85rem;
+                color: var(--muted);
             }
 
-            .code-showcase pre {
+            .contact-prompt a {
+                font-weight: 600;
+                color: var(--accent);
+            }
+
+            .highlight-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 1rem;
+                margin-top: 1.5rem;
+            }
+
+            .highlight-card {
+                background: var(--overlay);
+                border: 1px solid var(--border);
+                border-radius: 18px;
+                padding: 1.35rem;
+            }
+
+            .highlight-card h3 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 1rem;
+                margin-bottom: 0.4rem;
+            }
+
+            .highlight-card p {
+                color: var(--muted);
+                font-size: 0.95rem;
                 margin: 0;
             }
 
-            .glossary-section {
-                background: rgba(139, 92, 246, 0.08);
-                border: 1px solid rgba(139, 92, 246, 0.3);
-                border-radius: 16px;
-                padding: 3rem;
-                margin: 4rem 0;
+            .quick-nav {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.75rem;
+                color: var(--muted);
+                font-size: 0.95rem;
             }
 
-            .glossary-section h3 {
+            .quick-nav a {
+                padding: 0.35rem 0.8rem;
+                border-radius: 999px;
+                border: 1px solid transparent;
+                color: var(--text);
+                background: rgba(148, 163, 184, 0.15);
+                font-weight: 500;
+            }
+
+            .quick-nav a:hover {
+                border-color: var(--accent);
+                color: var(--accent);
+                text-decoration: none;
+            }
+
+            .page {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 4rem 1.5rem 4rem;
+            }
+
+            .project {
+                margin-bottom: 4rem;
+            }
+
+            .comparison {
+                margin-bottom: 3rem;
+                background: var(--overlay);
+                border: 1px solid var(--border);
+                border-radius: 24px;
+                padding: 2rem;
+            }
+
+            .comparison h2 {
                 font-family: "Space Grotesk", sans-serif;
-                font-size: 1.8rem;
-                color: var(--accent-purple);
-                margin-bottom: 2rem;
-                font-weight: 700;
+                margin-bottom: 1rem;
+            }
+
+            .comparison table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.95rem;
+            }
+
+            .comparison th,
+            .comparison td {
+                padding: 0.75rem 0.5rem;
+                border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+                text-align: left;
+                vertical-align: top;
+            }
+
+            .comparison th {
+                color: var(--muted);
+                font-weight: 600;
+                font-size: 0.85rem;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+            }
+
+            .comparison tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+            .project-heading {
+                margin-bottom: 1.5rem;
+            }
+
+            .project-heading .eyebrow {
+                text-transform: uppercase;
+                letter-spacing: 0.15em;
+                color: var(--accent);
+                font-size: 0.85rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+            }
+
+            .project-heading h2 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: clamp(2rem, 3vw, 2.8rem);
+                margin-bottom: 0.75rem;
+            }
+
+            .project-intro {
+                color: var(--muted);
+            }
+
+            .chip-row {
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+                margin-top: 1rem;
+            }
+
+            .chip {
+                padding: 0.35rem 0.8rem;
+                border-radius: 999px;
+                border: 1px solid var(--border);
+                font-size: 0.85rem;
+                color: var(--muted);
+            }
+
+            .project-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .card {
+                background: var(--card);
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 1.75rem;
+                min-height: 100%;
+            }
+
+            .card h3 {
+                font-size: 1.1rem;
+                margin-bottom: 0.85rem;
+                font-family: "Space Grotesk", sans-serif;
+            }
+
+            .snapshot-list {
+                display: grid;
+                gap: 0.85rem;
+            }
+
+            .snapshot-list div {
+                border-left: 3px solid rgba(56, 189, 248, 0.35);
+                padding-left: 0.75rem;
+            }
+
+            .snapshot-list dt {
+                font-weight: 600;
+                color: var(--muted);
+                font-size: 0.85rem;
+            }
+
+            .snapshot-list dd {
+                margin-left: 0;
+            }
+
+            .impact-list {
+                list-style: none;
+                display: grid;
+                gap: 0.75rem;
+            }
+
+            .impact-list li strong {
+                display: block;
+                font-size: 0.95rem;
+                margin-bottom: 0.2rem;
+                color: var(--accent);
+            }
+
+            .systems-list {
+                list-style: none;
+                display: grid;
+                gap: 0.65rem;
+            }
+
+            .systems-list li::before {
+                content: "•";
+                color: var(--accent);
+                margin-right: 0.4rem;
+            }
+
+            .media-block {
+                margin-top: 1.5rem;
+                background: var(--overlay);
+                border-radius: 20px;
+                border: 1px solid var(--border);
+                padding: 1.25rem;
+            }
+
+            .media-block video {
+                width: 100%;
+                border-radius: 12px;
+                border: 1px solid var(--border);
+            }
+
+            .media-block figcaption {
+                margin-top: 0.75rem;
+                font-size: 0.9rem;
+                color: var(--muted);
+            }
+
+            .evidence-links {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin-top: 0.8rem;
+            }
+
+            .evidence-link {
+                padding: 0.35rem 0.9rem;
+                border-radius: 999px;
+                border: 1px solid rgba(56, 189, 248, 0.35);
+                color: var(--accent);
+                font-size: 0.85rem;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+
+            .evidence-link:hover {
+                text-decoration: none;
+                border-color: var(--accent);
+            }
+
+            .glossary {
+                margin-top: 2rem;
+                background: var(--overlay);
+                border: 1px solid var(--border);
+                border-radius: 24px;
+                padding: 2rem;
             }
 
             .glossary-grid {
                 display: grid;
-                gap: 1.5rem;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 1rem;
             }
 
-            .glossary-item {
-                background: rgba(0, 0, 0, 0.3);
-                border-left: 3px solid var(--accent-purple);
-                padding: 1.5rem;
-                border-radius: 8px;
+            details {
+                background: var(--card);
+                border-radius: 16px;
+                border: 1px solid var(--border);
+                padding: 1rem 1.25rem;
             }
 
-            .glossary-term {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: 1.1rem;
-                color: var(--accent-purple);
+            details summary {
                 font-weight: 600;
-                margin-bottom: 0.5rem;
+                cursor: pointer;
             }
 
-            .glossary-definition {
-                color: var(--text-secondary);
-                line-height: 1.7;
-                font-size: 0.95rem;
-            }
-
-            .why-matters {
-                background: rgba(16, 185, 129, 0.08);
-                border-left: 4px solid var(--accent-green);
-                padding: 1.5rem;
-                border-radius: 8px;
-                margin: 1.5rem 0;
-            }
-
-            .why-matters-title {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: 1rem;
-                color: var(--accent-green);
-                font-weight: 600;
-                margin-bottom: 0.75rem;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-            }
-
-            .why-matters p {
-                color: var(--text-secondary);
-                line-height: 1.7;
-                font-size: 0.95rem;
-                margin: 0;
-            }
-
-            .problem-solution {
+            .process {
+                margin-top: 3rem;
                 display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 2rem;
-                margin: 2rem 0;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.25rem;
             }
 
-            .problem-box,
-            .solution-box {
+            .process-card {
+                background: var(--overlay);
+                border: 1px solid var(--border);
+                border-radius: 20px;
                 padding: 1.5rem;
-                border-radius: 12px;
             }
 
-            .problem-box {
-                background: rgba(239, 68, 68, 0.08);
-                border-left: 4px solid #ef4444;
+            .process-card span {
+                display: inline-block;
+                font-weight: 700;
+                color: var(--accent-orange);
+                margin-bottom: 0.2rem;
             }
 
-            .solution-box {
-                background: rgba(16, 185, 129, 0.08);
-                border-left: 4px solid var(--accent-green);
-            }
-
-            .problem-box h4,
-            .solution-box h4 {
-                font-family: "Space Grotesk", sans-serif;
-                font-size: 1.1rem;
-                font-weight: 600;
-                margin-bottom: 0.75rem;
-            }
-
-            .problem-box h4 {
-                color: #ef4444;
-            }
-
-            .solution-box h4 {
-                color: var(--accent-green);
-            }
-
-            .problem-box p,
-            .solution-box p {
-                color: var(--text-secondary);
-                line-height: 1.7;
-                font-size: 0.95rem;
-            }
-
-            @media (max-width: 768px) {
-                .problem-solution {
-                    grid-template-columns: 1fr;
-                }
-            }
-
-            footer {
-                text-align: center;
-                padding: 4rem 2rem;
-                color: var(--text-secondary);
-                position: relative;
-                z-index: 1;
+            .site-footer {
                 border-top: 1px solid var(--border);
-                margin-top: 6rem;
+                padding: 2rem 1.5rem 3rem;
+                text-align: center;
+                color: var(--muted);
             }
 
-            @media (max-width: 768px) {
-                .project-card {
-                    padding: 2.5rem 2rem;
-                }
-                .metrics-grid {
-                    grid-template-columns: repeat(2, 1fr);
-                }
-                .features-grid {
-                    grid-template-columns: 1fr;
-                }
-                .hero-visual {
-                    min-height: 350px;
+            .recruiter-faq {
+                margin-top: 3rem;
+                background: var(--overlay);
+                border: 1px solid var(--border);
+                border-radius: 24px;
+                padding: 2rem;
+            }
+
+            .recruiter-faq h2 {
+                font-family: "Space Grotesk", sans-serif;
+                margin-bottom: 1.2rem;
+            }
+
+            .recruiter-faq details + details {
+                margin-top: 0.8rem;
+            }
+
+            @media (max-width: 720px) {
+                .hero-stats li,
+                .quick-nav a {
+                    width: 100%;
+                    text-align: center;
                 }
             }
         </style>
     </head>
     <body>
-        <div class="bg-animated"></div>
-
-        <nav class="nav">
-            <a href="../index.html" class="back-btn">← Back to Portfolio</a>
-        </nav>
-
-        <section class="hero">
-            <div class="hero-visual">
-                <div class="wwise-badge">Production Portfolio</div>
-                <div class="hero-logo">WWISE<br />OPTIMIZATION</div>
+        <header class="masthead">
+            <div class="nav-row">
+                <a class="back-link" href="../index.html"
+                    >← Back to portfolio</a
+                >
             </div>
-            <div class="hero-content">
-                <p class="subtitle">Middleware Implementation</p>
-                <p class="tagline">
-                    Three Wwise implementation projects: random container
-                    architecture, RTPC systems, state-driven audio, and
-                    multi-platform optimization. Technical focus on systems
-                    implementation and workflow development.
+            <div class="hero">
+                <p class="eyebrow">Wwise production & optimization</p>
+                <h1>Middleware case studies purpose-built for production.</h1>
+                <p class="lede">
+                    Each project below starts with a snapshot, highlights the
+                    impact, and then shows the systems I delivered. Less jargon,
+                    more proof of how I keep builds performant.
                 </p>
-                <div class="hero-badges">
-                    <span class="badge">Wwise 2021.1 & 2022.1</span>
-                    <span class="badge">Windows / Android / iOS</span>
-                    <span class="badge">Unity Integration</span>
+                <ul class="hero-stats">
+                    <li>3 projects · Wwise 2021 → 2024</li>
+                    <li>Platforms: Windows, Mac, Android & Android_Low</li>
+                    <li>
+                        Focus: Random Containers · RTPC mixing · Zone soundbanks
+                    </li>
+                </ul>
+                <div class="quick-nav">
+                    <span>Jump to:</span>
+                    <a href="#boney">Boney Boogaloo</a>
+                    <a href="#ellen">Ellen</a>
+                    <a href="#stomach">Stomach Aches</a>
+                </div>
+                <div class="highlight-grid">
+                    <article class="highlight-card">
+                        <h3>Proven in shipped stacks</h3>
+                        <p>
+                            Unity + Wwise integrations with AkState, AkSwitch,
+                            and custom RTPC scripts already exercised across
+                            combat, exploration, and mobile builds.
+                        </p>
+                    </article>
+                    <article class="highlight-card">
+                        <h3>Performance first</h3>
+                        <p>
+                            Voice budgets, trims, compression choices, and load
+                            strategies referenced directly to profiling data so
+                            you can see the guardrails.
+                        </p>
+                    </article>
+                    <article class="highlight-card">
+                        <h3>Plug-and-play collaboration</h3>
+                        <p>
+                            Every system is documented with the exact JSON /
+                            script source so engineers, designers, and audio
+                            leads can verify quickly.
+                        </p>
+                    </article>
+                </div>
+                <div class="contact-prompt">
+                    <strong>Open to</strong>
+                    <span>
+                        Senior audio middleware / technical sound design roles
+                        (remote-friendly). I can walk you through these systems
+                        live within 48 hours.
+                    </span>
+                    <a href="../contact.html">Book a quick call →</a>
+                    <a
+                        href="../cv/Igor_Szuniewicz_CV.pdf"
+                        target="_blank"
+                        rel="noopener"
+                        >Download CV</a
+                    >
                 </div>
             </div>
-        </section>
+        </header>
 
-        <div class="content">
-            <!-- GLOSSARY SECTION -->
-            <section class="glossary-section">
-                <h3>Technical Terms Explained</h3>
-                <div class="glossary-grid">
-                    <div class="glossary-item">
-                        <div class="glossary-term">Random Container</div>
-                        <p class="glossary-definition">
-                            A Wwise structure that randomly selects one sound
-                            from a pool each time it's triggered. Example: When
-                            a gun fires, it picks 1 of 6 different shot sounds.
-                            This prevents repetitive audio fatigue in games
-                            where actions happen frequently (shooting 100+ times
-                            per session). Without this, players would hear the
-                            exact same gunshot every single time, breaking
-                            immersion.
-                        </p>
-                    </div>
-                    <div class="glossary-item">
-                        <div class="glossary-term">
-                            RTPC (Real-Time Parameter Control)
-                        </div>
-                        <p class="glossary-definition">
-                            A system that adjusts audio based on game variables
-                            in real-time. Example: A waterfall sound gets louder
-                            as you approach it, quieter as you walk away. The
-                            game sends distance values to Wwise every frame, and
-                            Wwise smoothly adjusts volume/mixing automatically.
-                            This creates dynamic, responsive audio that reacts
-                            to player movement without manual triggers.
-                        </p>
-                    </div>
-                    <div class="glossary-item">
-                        <div class="glossary-term">
-                            Auxiliary Bus (Reverb Bus)
-                        </div>
-                        <p class="glossary-definition">
-                            An audio processing channel that applies
-                            environmental effects like reverb (echo). When you
-                            walk from a forest into a cave, sounds suddenly have
-                            echo - that's an auxiliary bus adding cave reverb.
-                            Multiple buses allow different spaces to sound
-                            distinct: small room reverb vs large cathedral
-                            reverb. This makes environments feel authentic and
-                            spatially believable.
-                        </p>
-                    </div>
-                    <div class="glossary-item">
-                        <div class="glossary-term">
-                            State Group (Game States)
-                        </div>
-                        <p class="glossary-definition">
-                            A Wwise system that changes audio based on game
-                            situations. Example: When player enters "Brain
-                            Zone", Wwise automatically loads Brain soundbank and
-                            starts Brain ambient music. When leaving, it unloads
-                            that bank and loads the next zone's audio. This
-                            enables dynamic music and ambience that responds to
-                            gameplay without manual scripting for every
-                            transition.
-                        </p>
-                    </div>
-                    <div class="glossary-item">
-                        <div class="glossary-term">Soundbank</div>
-                        <p class="glossary-definition">
-                            A packaged file containing audio assets and
-                            metadata. Think of it as a ZIP file of sounds that
-                            gets loaded into memory. Smart soundbank
-                            organization = better performance. Example: Loading
-                            only "Combat Sounds" bank during fights instead of
-                            loading ALL game audio at once saves 50MB+ of RAM.
-                        </p>
-                    </div>
-                    <div class="glossary-item">
-                        <div class="glossary-term">Attenuation</div>
-                        <p class="glossary-definition">
-                            How sound volume decreases with distance. In real
-                            life, footsteps 50 meters away are quieter than
-                            footsteps 5 meters away. Attenuation profiles
-                            control this in games: Enemy footsteps audible at
-                            75m helps gameplay (hear threats before seeing
-                            them), while small object destruction only audible
-                            at 11m prevents audio clutter. Custom curves per
-                            sound type = better spatial awareness.
-                        </p>
-                    </div>
-                    <div class="glossary-item">
-                        <div class="glossary-term">
-                            Vorbis Quality Factor (Q5, Q7, Q8)
-                        </div>
-                        <p class="glossary-definition">
-                            Compression quality setting for OGG Vorbis audio
-                            codec (0 = worst quality/smallest file, 10 = best
-                            quality/largest file). Q8 for music preserves all
-                            frequencies and dynamics. Q5 for sound effects is
-                            "good enough" while saving 40% file size. Q1 for UI
-                            clicks is barely noticeable but saves 70% space.
-                            Content-aware compression = smaller builds without
-                            sacrificing important audio.
-                        </p>
-                    </div>
-                    <div class="glossary-item">
-                        <div class="glossary-term">Streaming Audio</div>
-                        <p class="glossary-definition">
-                            Playing audio directly from disk instead of loading
-                            it entirely into RAM. A 3-minute music track might
-                            be 25MB. Loaded in memory = 25MB RAM used. Streamed
-                            from disk = only 512KB buffer in RAM. Critical for
-                            mobile games where every MB matters. Trade-off:
-                            slight CPU cost for disk reading, but modern devices
-                            handle this easily for 1-2 music tracks.
-                        </p>
-                    </div>
-                </div>
+        <main class="page">
+            <section class="comparison" aria-label="Project comparison table">
+                <h2>Comparing the three builds</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Project</th>
+                            <th>Focus</th>
+                            <th>Platforms</th>
+                            <th>Key proof</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>Boney Boogaloo</strong><br />Wwise
+                                v2021.1.14 Build 8108
+                            </td>
+                            <td>
+                                Random container architecture + manual editing
+                                workflow
+                            </td>
+                            <td>Windows</td>
+                            <td>
+                                10 containers / 44 assets · Global voice limit
+                                256 (see BoneyBoogaloo.json)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Ellen</strong><br />Wwise v2021.1.14
+                                Build 8108
+                            </td>
+                            <td>
+                                State-driven ambience, RTPC reverb,
+                                content-aware compression
+                            </td>
+                            <td>Windows</td>
+                            <td>
+                                MusicZone 6.5 s crossfades · 4 AUX buses with
+                                RTPC control (see ellen.json)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Stomach Aches</strong><br />Wwise
+                                2024.1.2.8726
+                            </td>
+                            <td>
+                                Zone-based soundbanks, Android_Low profile, RTPC
+                                waterfall
+                            </td>
+                            <td>Windows / Mac / Android / Android_Low</td>
+                            <td>
+                                Runtime 10–15 MB · 3.8 MB saved via dynamic
+                                banks · RTPC blend (see Stomach Aches.json)
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </section>
-
-            <!-- PROJECT 1: BONEY BOOGALOO -->
-            <article class="project-card">
-                <div class="project-header">
-                    <div class="project-number">Project 01</div>
-                    <h2 class="project-title">Boney Boogaloo</h2>
-                    <p class="project-subtitle">
-                        Foundation project establishing core Wwise workflows:
-                        random container architecture, voice management, and
-                        manual optimization techniques.
+            <section class="project" id="boney">
+                <div class="project-heading">
+                    <p class="eyebrow">Project 01 · Windows</p>
+                    <h2>Boney Boogaloo</h2>
+                    <p class="project-intro">
+                        Zombie shooter implemented in Wwise v2021.1.14 Build
+                        8108 to prove out random container workflows, voice
+                        management, and manual optimization on a 44-asset
+                        library.
                     </p>
-                </div>
-
-                <div class="project-context">
-                    <h3>About This Project</h3>
-                    <p>
-                        Zombie shooter built with Wwise v2021.1.14 Build 8108
-                        for Windows. First full Wwise implementation focusing on
-                        core middleware workflows: Random Container architecture
-                        for audio variation, voice management systems, and
-                        manual optimization techniques. Priority was
-                        establishing foundational workflows rather than final
-                        audio polish.
-                    </p>
-                </div>
-
-                <div class="problem-solution">
-                    <div class="problem-box">
-                        <h4>Implementation Focus</h4>
-                        <p>
-                            Repetitive audio in high-frequency actions (200+
-                            gunshots per session) creates listener fatigue.
-                            Implemented Random Containers pooling 6 gunshot
-                            variations - each trigger automatically selects
-                            different audio. Combined with aggressive silence
-                            trimming and ADPCM compression to meet 50MB build
-                            constraint (achieved 35MB final footprint).
-                        </p>
+                    <div class="chip-row">
+                        <span class="chip">Random Containers</span>
+                        <span class="chip">Voice management</span>
+                        <span class="chip">Manual editing</span>
                     </div>
-                    <div class="solution-box">
-                        <h4>Technical Outcome</h4>
-                        <p>
-                            Random Containers provide middleware-level variation
-                            - single event trigger, automatic sound selection.
-                            Manual silence trimming achieved 30% file size
-                            reduction without quality degradation. ADPCM
-                            compression balanced decode efficiency with size
-                            constraints. Final build: 35MB (30% under budget).
-                        </p>
+                    <div class="evidence-links">
+                        <a
+                            class="evidence-link"
+                            href="../wwiseprojectsinfo/BoneyBoogaloo.json"
+                            target="_blank"
+                            rel="noopener"
+                            >Evidence: JSON</a
+                        >
                     </div>
                 </div>
-
-                <div class="video-section" style="margin: 2rem 0">
-                    <video
-                        controls
-                        style="
-                            width: 100%;
-                            max-width: 1200px;
-                            border-radius: 8px;
-                            border: 1px solid var(--border);
-                        "
-                    >
+                <div class="project-grid">
+                    <article class="card snapshot">
+                        <h3>Snapshot</h3>
+                        <dl class="snapshot-list">
+                            <div>
+                                <dt>Wwise build</dt>
+                                <dd>
+                                    v2021.1.14 Build 8108 · Target platform:
+                                    Windows
+                                </dd>
+                            </div>
+                            <div>
+                                <dt>Scope</dt>
+                                <dd>
+                                    10 containers (9 Random + 1 Sequence)
+                                    covering 44 sound assets
+                                </dd>
+                            </div>
+                            <div>
+                                <dt>Voice budget</dt>
+                                <dd>
+                                    Global cap 256 · Queue virtualization · -80
+                                    dB culling · Ambience limited to 1
+                                </dd>
+                            </div>
+                            <div>
+                                <dt>Toolkit</dt>
+                                <dd>
+                                    Random container library, SC_Round_Progress,
+                                    ADPCM/PCM conversion, trim + fade editing
+                                </dd>
+                            </div>
+                        </dl>
+                    </article>
+                    <article class="card">
+                        <h3>Impact</h3>
+                        <ul class="impact-list">
+                            <li>
+                                <strong>Variation ready.</strong>
+                                Random Containers cover guns, zombie spawns,
+                                gore hits, player hurt VO, and knife stabs, so
+                                one Unity event automatically cycles six shots,
+                                six spawns, three gore layers, and four hurt
+                                lines.
+                            </li>
+                            <li>
+                                <strong>Voice ceiling protected.</strong>
+                                Global 256 cap, Queue virtualization, -80 dB
+                                culling, and a single ambience instance keep
+                                enemy rushes within budget.
+                            </li>
+                            <li>
+                                <strong>Seamless ambience.</strong>
+                                Forest loop runs on a custom 30.87s–102.41s
+                                region with 1.4s fade-in / 1.8s fade-out, so the
+                                background never pops or stutters.
+                            </li>
+                            <li>
+                                <strong>Hand-trimmed assets.</strong>
+                                Reloads trimmed 0.495 s, cock 0.192 s, announcer
+                                VO 1.1–1.2 s, and ammo loads 0.19–0.21 s to
+                                remove silence without touching fidelity.
+                            </li>
+                        </ul>
+                    </article>
+                    <article class="card">
+                        <h3>Systems delivered</h3>
+                        <ul class="systems-list">
+                            <li>
+                                Random container network for weapons, zombies,
+                                gore, player hurt, and stealth reveals with
+                                volume offsets (-2 dB to -7 dB) baked in.
+                            </li>
+                            <li>
+                                SC_Round_Progress sequence container guarantees
+                                Round 1 → 4 announcer order after trims and
+                                level matching.
+                            </li>
+                            <li>
+                                Ambience bus capped at one instance plus custom
+                                loop points, fades, and ADPCM/PCM conversion
+                                keep CPU and RAM predictable.
+                            </li>
+                        </ul>
+                    </article>
+                </div>
+                <figure class="media-block">
+                    <video controls preload="metadata">
                         <source
                             src="../wwiseprojectsinfo/videos/boneyboogaloo/optboo.mp4"
                             type="video/mp4"
                         />
                         Your browser does not support the video tag.
                     </video>
-                </div>
+                    <figcaption>
+                        Demo: Random container playback and trimmed ambience
+                        inside the Windows build.
+                    </figcaption>
+                </figure>
+            </section>
 
-                <div class="why-matters">
-                    <div class="why-matters-title">Key Takeaway</div>
-                    <p>
-                        Middleware-level variation (Random Containers) reduces
-                        code complexity compared to game-side randomization.
-                        Manual optimization workflows (trimming, compression)
-                        scale efficiently across projects. Foundational
-                        techniques established here apply to larger-scale
-                        implementations regardless of asset count.
+            <section class="project" id="ellen">
+                <div class="project-heading">
+                    <p class="eyebrow">Project 02 · Windows</p>
+                    <h2>Ellen</h2>
+                    <p class="project-intro">
+                        Third-person action vertical slice focused on
+                        state-driven ambience, RTPC-based reverb, and
+                        content-aware compression in Wwise v2021.1.14 (Windows
+                        reference platform).
                     </p>
-                </div>
-
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <span class="metric-value">10</span>
-                        <div class="metric-label">Audio Containers</div>
-                        <p class="metric-description">
-                            9 random + 1 sequence container
-                        </p>
+                    <div class="chip-row">
+                        <span class="chip">State-driven ambience</span>
+                        <span class="chip">RTPC reverb</span>
+                        <span class="chip">Targeted compression</span>
                     </div>
-                    <div class="metric-card">
-                        <span class="metric-value">44</span>
-                        <div class="metric-label">Sound Assets</div>
-                        <p class="metric-description">
-                            Across all gameplay categories
-                        </p>
-                    </div>
-                    <div class="metric-card">
-                        <span class="metric-value">30%</span>
-                        <div class="metric-label">File Size Reduction</div>
-                        <p class="metric-description">
-                            Via aggressive silence trimming
-                        </p>
-                    </div>
-                    <div class="metric-card">
-                        <span class="metric-value">256</span>
-                        <div class="metric-label">Voice Limit</div>
-                        <p class="metric-description">
-                            Global voice management
-                        </p>
+                    <div class="evidence-links">
+                        <a
+                            class="evidence-link"
+                            href="../wwiseprojectsinfo/ellen.json"
+                            target="_blank"
+                            rel="noopener"
+                            >Evidence: JSON</a
+                        >
                     </div>
                 </div>
-
-                <div class="features-section">
-                    <h3>Technical Details</h3>
-                    <div class="features-grid">
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                Random Container Architecture
+                <div class="project-grid">
+                    <article class="card snapshot">
+                        <h3>Snapshot</h3>
+                        <dl class="snapshot-list">
+                            <div>
+                                <dt>State system</dt>
+                                <dd>
+                                    MusicZone state group controls SC_AMB with
+                                    6.5s crossfades for Jungle, Main Chamber,
+                                    and Building zones.
+                                </dd>
                             </div>
-                            <p class="feature-description">
-                                Implemented 9 Random Containers: 6 gunshot
-                                variations, 6 zombie spawns, 4 death sounds, 3
-                                gore impacts. Each trigger automatically selects
-                                from pool without code-side randomization.
-                                Volume balancing (-2dB to -5dB) ensures
-                                consistent perceived loudness across variations.
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    Middleware-side solution eliminates need for
-                                    game-side randomization code. Single event
-                                    call in Unity, variation handled by Wwise.
-                                    Reduces code complexity and iteration time -
-                                    audio designer adjusts without programmer
-                                    involvement.
-                                </p>
+                            <div>
+                                <dt>Attenuation coverage</dt>
+                                <dd>
+                                    10 custom curves (11 m box debris → 155 m
+                                    gate) for footsteps, grenades, gates, and UI
+                                    cues.
+                                </dd>
                             </div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                Manual Audio Optimization
+                            <div>
+                                <dt>Reverb network</dt>
+                                <dd>
+                                    4 AUX buses (Cave, StoreRoom, Stone Big,
+                                    Stone Small) driven by Reverb_* RTPCs via
+                                    AkRTPCManager.
+                                </dd>
                             </div>
-                            <p class="feature-description">
-                                Aggressive silence trimming applied to all
-                                assets (0.19s to 1.2s per file). Gun reload:
-                                0.495s trimmed. Announcer lines: 1.1-1.2s
-                                removed from tail. Result: 30% file size
-                                reduction (50MB → 35MB) without quality
-                                degradation.
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    Manual optimization saved 15MB through
-                                    silence removal alone. Combined with ADPCM
-                                    compression, achieved build target with 30%
-                                    margin. Time-intensive for large projects
-                                    but practical for 44-asset scope.
-                                </p>
+                            <div>
+                                <dt>Compression plan</dt>
+                                <dd>
+                                    Music Vorbis Q8, Ambience Q7, SFX Vorbis Q5
+                                    @ 44.1 kHz, VO ADPCM, UI Vorbis Low with
+                                    streaming enabled for large loops.
+                                </dd>
                             </div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">Simple Signal Flow</div>
-                            <p class="feature-description">
-                                Direct signal routing: events → sounds → Master
-                                Bus → output. Zero effects chain minimizes CPU
-                                overhead. ADPCM/PCM compression (default
-                                conversion). Volume threshold at -80dB for
-                                automatic voice culling of inaudible sounds.
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    Zero DSP effects = minimal CPU overhead
-                                    (sub-5ms on target hardware). -80dB
-                                    threshold prevents voice limit saturation
-                                    during dense combat scenarios (20+ enemies +
-                                    gunfire + ambient). Automatic voice culling
-                                    maintains 256 voice budget headroom.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                Sequence Container for Announcer
-                            </div>
-                            <p class="feature-description">
-                                Sequence Container (non-random) for round
-                                progression: linear playback (Round 1 → 2 → 3 →
-                                4). Each announcer VO trimmed 1.1-1.2s from
-                                tail, volume adjusted -1dB for consistent
-                                output.
-                            </p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                Custom Loop Region Ambience
-                            </div>
-                            <p class="feature-description">
-                                Forest ambience with manual loop region (30.87s
-                                to 102.41s), 1.4s fade-in, 1.8s fade-out for
-                                seamless transition. Global instance limit of 1
-                                prevents overlapping ambient loops. Custom loop
-                                editing eliminates audible artifacts.
-                            </p>
-                        </div>
-                    </div>
+                        </dl>
+                    </article>
+                    <article class="card">
+                        <h3>Impact</h3>
+                        <ul class="impact-list">
+                            <li>
+                                <strong>Frictionless zone transitions.</strong>
+                                ContinuousPlayback + 6.5 s fades mean entering a
+                                building only sets a state; Wwise handles the
+                                transition with no bespoke scripting.
+                            </li>
+                            <li>
+                                <strong>Gameplay-first attenuation.</strong>
+                                Grenadier footsteps stay audible at 75 m for
+                                threat awareness while box debris collapses at
+                                11 m, keeping the mix tidy.
+                            </li>
+                            <li>
+                                <strong>Mix-ready reverb control.</strong>
+                                Designers ride Reverb_* RTPC sliders (Cave,
+                                StoreRoom, Stone Big/Small) directly in-editor
+                                instead of requesting code tweaks.
+                            </li>
+                            <li>
+                                <strong>Right-size compression.</strong>
+                                Music stays at Vorbis Q8, ambience Q7 prevents
+                                loop artifacts, SFX sit at Q5, and UI uses low
+                                quality Vorbis to save disk.
+                            </li>
+                        </ul>
+                    </article>
+                    <article class="card">
+                        <h3>Systems delivered</h3>
+                        <ul class="systems-list">
+                            <li>
+                                SC_AMB state mappings for Jungle, Main Chamber,
+                                and Building layers, plus AMB_Addition loops for
+                                secondary textures.
+                            </li>
+                            <li>
+                                Material + locomotion footstep switches
+                                (SWC_Footsteps, SWC_Ellen_Land) supply
+                                per-surface variation with Random Containers.
+                            </li>
+                            <li>
+                                Enemy audio (Chomper, Grenadier, Teleporter)
+                                uses 3D positioning, cone attenuation, and
+                                dedicated aux sends for spatial clarity.
+                            </li>
+                            <li>
+                                Unity scripts rely on AkState, AkSwitch, and
+                                AkRTPCManager so design changes propagate to
+                                Wwise without bespoke code.
+                            </li>
+                        </ul>
+                    </article>
                 </div>
-            </article>
+            </section>
 
-            <!-- PROJECT 2: ELLEN -->
-            <article class="project-card">
-                <div class="project-header">
-                    <div class="project-number">Project 02</div>
-                    <h2 class="project-title">Ellen</h2>
-                    <p class="project-subtitle">
-                        Intermediate systems implementation: state-driven
-                        adaptive audio, RTPC reverb control, and content-aware
-                        compression strategies for optimization.
+            <section class="project" id="stomach">
+                <div class="project-heading">
+                    <p class="eyebrow">Project 03 · Multi-platform</p>
+                    <h2>Stomach Aches</h2>
+                    <p class="project-intro">
+                        FPS platformer set inside a human body. Built with Wwise
+                        2024.1.2.8726 + Unity C# API to target Windows, Mac,
+                        Android, and Android_Low devices with strict RAM
+                        budgets.
                     </p>
-                </div>
-
-                <div class="project-context">
-                    <h3>About This Project</h3>
-                    <p>
-                        Third-person action game built with Wwise v2021.1.14 for
-                        Windows. Three distinct zones: Jungle (outdoor), Main
-                        Chamber (large interior), Buildings (corridors).
-                        Implementation focus: State Groups for zone-based
-                        transitions, RTPC systems for distance-driven reverb,
-                        and content-aware compression differentiation across
-                        asset types.
-                    </p>
-                </div>
-
-                <div class="problem-solution">
-                    <div class="problem-box">
-                        <h4>Implementation Focus</h4>
-                        <p>
-                            Zone transitions require smooth crossfades between
-                            environmental layers without hard cuts. Compression
-                            optimization: uniform quality settings waste
-                            resources - music requires high fidelity, UI assets
-                            don't. Attenuation profiles: enemy footsteps audible
-                            at 75m for gameplay advantage, small destructibles
-                            limited to 11m to prevent audio clutter.
-                        </p>
+                    <div class="chip-row">
+                        <span class="chip">Zone-based banks</span>
+                        <span class="chip">Android_Low profile</span>
+                        <span class="chip">Silence plugin</span>
+                        <span class="chip">RTPC waterfall</span>
                     </div>
-                    <div class="solution-box">
-                        <h4>Technical Outcome</h4>
-                        <p>
-                            State Groups provide automatic transition handling:
-                            Unity trigger volumes set state, Wwise crossfades
-                            layers (6.5s duration). Content-aware compression
-                            achieved 40% size reduction: Music Q8 (maximum
-                            fidelity), SFX Q5 (balanced), UI Low (minimal).
-                            Custom attenuation: Grenadier footsteps 75m
-                            (tactical information), destructibles 11m (mix
-                            clarity).
-                        </p>
+                    <div class="evidence-links">
+                        <a
+                            class="evidence-link"
+                            href="../wwiseprojectsinfo/Stomach Aches.json"
+                            target="_blank"
+                            rel="noopener"
+                            >Evidence: JSON</a
+                        >
                     </div>
                 </div>
-
-                <div class="why-matters">
-                    <div class="why-matters-title">Key Takeaway</div>
-                    <p>
-                        State-driven systems enable automatic zone transitions
-                        without manual scripting. Content-aware compression
-                        allocates quality budget strategically - high fidelity
-                        where perceptible (music), aggressive compression where
-                        negligible (UI). Custom attenuation serves dual purpose:
-                        gameplay information (enemy positioning) and mix control
-                        (environmental clarity).
-                    </p>
+                <div class="project-grid">
+                    <article class="card snapshot">
+                        <h3>Snapshot</h3>
+                        <dl class="snapshot-list">
+                            <div>
+                                <dt>Platforms</dt>
+                                <dd>
+                                    Windows · Mac · Android · Android_Low
+                                    (dedicated soundbank directories)
+                                </dd>
+                            </div>
+                            <div>
+                                <dt>Soundbank plan</dt>
+                                <dd>
+                                    Init + General stay loaded; Brain (670 KB),
+                                    Mouth (384 KB), Stomach (2.8 MB), and Music
+                                    banks load on demand.
+                                </dd>
+                            </div>
+                            <div>
+                                <dt>Runtime footprint</dt>
+                                <dd>
+                                    ~10–15 MB (General ≈10 MB + active zone 1–3
+                                    MB) according to memory profile.
+                                </dd>
+                            </div>
+                            <div>
+                                <dt>Key scripts</dt>
+                                <dd>
+                                    WwiseStateBridge.cs,
+                                    WaterfallDistanceRTPC.cs,
+                                    SurfaceIdentifier.cs, RandomAreaWwise.cs,
+                                    SneezeProjectile.cs.
+                                </dd>
+                            </div>
+                        </dl>
+                    </article>
+                    <article class="card">
+                        <h3>Impact</h3>
+                        <ul class="impact-list">
+                            <li>
+                                <strong>Zone loading saves RAM.</strong>
+                                WwiseStateBridge swaps Brain/Mouth/Stomach banks
+                                as the player moves, saving ~3.8 MB versus
+                                keeping every zone resident.
+                            </li>
+                            <li>
+                                <strong>Sculpted waterfall mix.</strong>
+                                DistanceToWaterfall RTPC crossfades
+                                Splashes_Close (130 KB, 0–10 m), Main_Mid (6.3
+                                MB, 10–50 m), and Rumbling_Far (3.6 MB, 50+ m)
+                                with per-frame updates from
+                                WaterfallDistanceRTPC.cs.
+                            </li>
+                            <li>
+                                <strong>Silence plugin efficiency.</strong>
+                                Brain and Mouth ambiences use Wwise Silence
+                                sources for timing gaps, trimming ~80% of the
+                                memory silent WAVs would consume.
+                            </li>
+                            <li>
+                                <strong>Streaming where it counts.</strong>
+                                Brain_Song_Track streams from disk, so only ~220
+                                KB of VO thoughts stay resident while music
+                                reads straight from storage.
+                            </li>
+                            <li>
+                                <strong>No orphaned voices.</strong>
+                                SneezeProjectile caches playback IDs and calls
+                                StopPlayingID on destroy so looping snot
+                                projectiles never leak voices.
+                            </li>
+                        </ul>
+                    </article>
+                    <article class="card">
+                        <h3>Systems delivered</h3>
+                        <ul class="systems-list">
+                            <li>
+                                WwiseStateBridge.cs routes Unity trigger
+                                colliders to GameStage states, which in turn
+                                load the correct zone bank and ambience.
+                            </li>
+                            <li>
+                                SurfaceIdentifier.cs tags Gut, Thongue, and
+                                Skull materials; Controller.cs raycasts before
+                                each footstep to set the right switch.
+                            </li>
+                            <li>
+                                RandomAreaWwise.cs spawns positioned one-shots
+                                inside configurable 3D volumes for organic zone
+                                details.
+                            </li>
+                            <li>
+                                WaterfallDistanceRTPC.cs + SneezeProjectile.cs
+                                demonstrate explicit RTPC updates and
+                                StopPlayingID-based cleanup.
+                            </li>
+                        </ul>
+                    </article>
                 </div>
-
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <span class="metric-value">4</span>
-                        <div class="metric-label">Reverb Buses</div>
-                        <p class="metric-description">
-                            RTPC-controlled environmental acoustics
-                        </p>
-                    </div>
-                    <div class="metric-card">
-                        <span class="metric-value">10</span>
-                        <div class="metric-label">Attenuation Profiles</div>
-                        <p class="metric-description">
-                            Range: 11m (boxes) to 155m (gates)
-                        </p>
-                    </div>
-                    <div class="metric-card">
-                        <span class="metric-value">5</span>
-                        <div class="metric-label">Compression Strategies</div>
-                        <p class="metric-description">
-                            Content-aware per asset type
-                        </p>
-                    </div>
-                    <div class="metric-card">
-                        <span class="metric-value">40%</span>
-                        <div class="metric-label">Size Optimized</div>
-                        <p class="metric-description">
-                            Via differentiated compression
-                        </p>
-                    </div>
-                </div>
-
-                <div class="features-section">
-                    <h3>Technical Details</h3>
-                    <div class="features-grid">
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                State-Driven Adaptive Ambience
-                            </div>
-                            <p class="feature-description">
-                                Switch Container (SC_AMB) controlled by
-                                MusicZone state group. Unity trigger volumes
-                                detect zone entry, set state, Wwise handles
-                                layer crossfades (6.5s duration).
-                                ContinuousPlayback mode ensures smooth
-                                transitions without abrupt stops.
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    Zone transition (Jungle → Building): ambient
-                                    layers crossfade over 6.5s without hard
-                                    cuts. Jungle birds fade out simultaneously
-                                    as building drone fades in. Middleware-level
-                                    automation eliminates per-transition
-                                    scripting requirements.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                Compression Strategy Differentiation
-                            </div>
-                            <p class="feature-description">
-                                Content-aware compression per asset type: Music
-                                (Vorbis Q8 - maximum fidelity), Ambience (Q7 -
-                                loop-safe), SFX (Q5 @ 44.1kHz - balanced), Voice
-                                (ADPCM - efficient decode), UI (Low - minimal
-                                footprint). Strategy achieved 40% build size
-                                reduction versus uniform compression.
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    Uniform Q8: excessive build size, wasted on
-                                    UI assets. Uniform Q5: compressed music
-                                    artifacts. Differentiated approach:
-                                    optimized build size while maintaining music
-                                    quality. Allocates quality budget
-                                    strategically.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                Dynamic Reverb System
-                            </div>
-                            <p class="feature-description">
-                                Four auxiliary buses with Wwise RoomVerb: Cave
-                                (Hall_Medium_Dark), StoreRoom (Room_Medium),
-                                StoneBig (outdoor), StoneSmall (corridors).
-                                Unity scripts drive RTPC values (0.0-1.0) for
-                                position-based reverb crossfading.
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    Environmental acoustics match spatial
-                                    context: cave footsteps exhibit long dark
-                                    reverb tail, corridor footsteps produce
-                                    short tight reflections. RTPC control
-                                    enables smooth reverb transitions during
-                                    zone traversal.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                3D Footstep System with Surface Detection
-                            </div>
-                            <p class="feature-description">
-                                Switch Container (SWC_Footsteps) with dual
-                                switch axes: Material (Grass/Earth/Puddle/Stone)
-                                and Locomotion (Walking/Running). Unity raycasts
-                                every 2 units of movement, SurfaceIdentifier
-                                component provides material data, switch set
-                                before event post. 3D positioning with
-                                distance-based attenuation.
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    Automatic surface-appropriate footstep
-                                    selection (grass vs stone, walking vs
-                                    running). Enemy Grenadier footsteps audible
-                                    at 75m with directional positioning provides
-                                    tactical threat awareness. Raycast-based
-                                    detection system scales to arbitrary surface
-                                    types.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                Blend Containers for Layered Audio
-                            </div>
-                            <p class="feature-description">
-                                Blend Container (BL_Teleporter_Ambient_Loop)
-                                composites two layers: AMB_Drone_Rumble_01 +
-                                SFX_Magic_Teleport_Idle_Growly_01. Simultaneous
-                                playback with 3D positioning and 65m
-                                attenuation. Single event trigger, real-time
-                                mixing in Wwise. Applied to environmental
-                                objects (teleporters, interactive elements).
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    Single event triggers composite audio (low
-                                    rumble + magical growl). Layer balance
-                                    adjustable in Wwise without code
-                                    modification. Middleware-side layering
-                                    provides faster iteration than pre-mixed
-                                    audio files.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="video-section" style="margin: 2rem 0">
-                    <div style="padding: 56.25% 0 0 0; position: relative">
-                        <iframe
-                            src="https://player.vimeo.com/video/1135151616?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
-                            frameborder="0"
-                            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin"
-                            style="
-                                position: absolute;
-                                top: 0;
-                                left: 0;
-                                width: 100%;
-                                height: 100%;
-                            "
-                            title="ellen"
-                        ></iframe>
-                    </div>
-                    <script src="https://player.vimeo.com/api/player.js"></script>
-                </div>
-
-                <div class="code-showcase">
-                    <pre>
-Compression Strategy Per Asset Type:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Conv_Music_OGG_High      → Codec: Vorbis OGG Quality Factor 8
-                            Sample Rate: Original (no resampling)
-                            Use: Music tracks, preserves dynamics
-
-Conv_Ambience_OGG_High   → Codec: Vorbis OGG Quality Factor 7
-                            Sample Rate: Original
-                            Use: Looping ambience, prevents artifacts
-
-Conv_SFX_OGG_Med         → Codec: Vorbis OGG Quality Factor 5
-                            Sample Rate: 44100 Hz
-                            Use: Sound effects, balances quality/size
-
-Conv_VO_ADPCM            → Codec: ADPCM
-                            Sample Rate: 44100 Hz
-                            Use: Dialogue, efficient CPU decode
-
-Conv_UI_OGG_Low          → Codec: Vorbis OGG Low Quality
-                            Use: UI sounds, minimal file size
-
-Result: 40% overall size reduction while improving music quality</pre
-                    >
-                </div>
-            </article>
-
-            <!-- PROJECT 3: STOMACH ACHES -->
-            <article class="project-card">
-                <div class="project-header">
-                    <div class="project-number">Project 03</div>
-                    <h2 class="project-title">Stomach Aches</h2>
-                    <p class="project-subtitle">
-                        Advanced optimization project: zone-based soundbank
-                        loading, RTPC-driven dynamic mixing, multi-platform
-                        builds, and mobile memory constraints.
-                    </p>
-                </div>
-
-                <div class="project-context">
-                    <h3>About This Project</h3>
-                    <p>
-                        FPS platformer built with Wwise v2022.1.11 Build 8346
-                        for four platforms: Windows, Mac, Android, and
-                        Android_Low (budget devices). Three body zones: Brain,
-                        Stomach, Heart. Implementation focus: zone-based
-                        soundbank loading for memory optimization, RTPC-driven
-                        distance mixing, and multi-platform builds with
-                        platform-specific compression.
-                    </p>
-                </div>
-
-                <div class="problem-solution">
-                    <div class="problem-box">
-                        <h4>Implementation Focus</h4>
-                        <p>
-                            Mobile RAM constraints: Android budget devices
-                            (2-3GB total system RAM) cannot support 50MB+ audio
-                            footprints. Requires zone-specific loading - load
-                            Brain audio only when in Brain zone. Stomach
-                            waterfall requires distance-based layer mixing:
-                            close proximity = splashing detail, far distance =
-                            rumble, smooth crossfades between. Memory
-                            optimization: Wwise Silence plugin versus silent WAV
-                            files.
-                        </p>
-                    </div>
-                    <div class="solution-box">
-                        <h4>Technical Outcome</h4>
-                        <p>
-                            Zone-based soundbanks: Brain (670KB) loads on
-                            demand, saves 3.8MB versus full loading. RTPC
-                            waterfall: 3 layers (Close 130KB, Mid 6.3MB, Far
-                            3.6MB) crossfade via distance. Per-frame script
-                            updates, Wwise handles mixing. Silence plugin: 0
-                            bytes versus 132KB WAV (80% reduction). Music
-                            streaming: 512KB buffer versus 25MB full load.
-                            Runtime footprint: 13-18MB total, Android_Low
-                            compatible.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="why-matters">
-                    <div class="why-matters-title">Key Takeaway</div>
-                    <p>
-                        Zone-based loading enables scalable memory management -
-                        load only active zone assets. RTPC distance mixing
-                        provides smooth audio transitions without discrete
-                        switching. Silence plugin: advanced Wwise optimization
-                        using procedural generation to eliminate file storage.
-                        Multi-platform workflow: single project generates
-                        platform-specific builds with appropriate compression
-                        (Android_Low: aggressive, Windows/Mac: full fidelity).
-                    </p>
-                </div>
-
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <span class="metric-value">6</span>
-                        <div class="metric-label">Soundbanks</div>
-                        <p class="metric-description">
-                            Init + General + 3 zones + Music
-                        </p>
-                    </div>
-                    <div class="metric-card">
-                        <span class="metric-value">4</span>
-                        <div class="metric-label">Platforms</div>
-                        <p class="metric-description">
-                            Win/Mac/Android/Android_Low
-                        </p>
-                    </div>
-                    <div class="metric-card">
-                        <span class="metric-value">3.8MB</span>
-                        <div class="metric-label">Memory Saved</div>
-                        <p class="metric-description">Via zone-based loading</p>
-                    </div>
-                    <div class="metric-card">
-                        <span class="metric-value">80%</span>
-                        <div class="metric-label">Silence Optimized</div>
-                        <p class="metric-description">
-                            Procedural vs WAV files
-                        </p>
-                    </div>
-                </div>
-
-                <div class="features-section">
-                    <h3>Technical Details</h3>
-                    <div class="features-grid">
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                Zone-Based Soundbank Loading
-                            </div>
-                            <p class="feature-description">
-                                Six soundbanks with dynamic loading: Init
-                                (persistent), General (persistent), BrainZone
-                                (670KB), MouthZone (384KB), StomachZone (2.8MB),
-                                Music (streaming). Unity WwiseStateBridge
-                                detects zone entry, loads corresponding bank,
-                                unloads previous. Only active zone + General
-                                loaded at runtime.
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    Prevents simultaneous loading of all zones
-                                    (saves 3.8MB). Runtime memory: 10-15MB
-                                    (General + active zone) versus 18MB+ (all
-                                    zones). Critical for Android_Low devices
-                                    with limited RAM. Automatic bank management
-                                    via state system eliminates manual
-                                    load/unload scripting.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                RTPC-Driven Waterfall System
-                            </div>
-                            <p class="feature-description">
-                                Stomach zone waterfall: 3-layer Blend Container
-                                with distance-based crossfading. Splashes_Close
-                                (130KB, 0-10m) provides high-frequency detail,
-                                Main_Mid (6.3MB, 10-50m) full-spectrum flow,
-                                Rumbling_Far (3.6MB, 50+m) low-frequency rumble.
-                                WaterfallDistanceRTPC.cs calculates
-                                player-to-waterfall distance per frame, sends
-                                RTPC value to Wwise. Total asset size: 10MB.
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    Distance-based layer selection: 5m = crisp
-                                    splashes, 30m = full waterfall roar, 60m =
-                                    deep rumble. Smooth RTPC crossfades
-                                    eliminate discrete switching artifacts. 10MB
-                                    footprint justified as primary environmental
-                                    feature of largest zone. Spatial audio
-                                    implementation without hard-coded distance
-                                    triggers.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                Multi-Platform Optimization
-                            </div>
-                            <p class="feature-description">
-                                Unified soundbank structure across four
-                                platforms: Windows/Mac (full quality), Android
-                                (standard mobile), Android_Low (aggressive
-                                compression Q3 vs Q5). Platform-specific
-                                compression configured in Wwise platform
-                                settings. Single project generates all builds.
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    Single project maintenance for four platform
-                                    builds. Android_Low receives higher
-                                    compression ratios for reduced storage
-                                    footprint on budget devices. Windows/Mac
-                                    maintain full quality for capable hardware.
-                                    Identical event structure across platforms -
-                                    only compression differs. Scalable workflow
-                                    for multi-platform shipping.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                Streaming Audio Implementation
-                            </div>
-                            <p class="feature-description">
-                                Brain_Song_Track streams from disk versus RAM
-                                loading. VO thoughts (220KB) remain in-memory
-                                for instant triggering. Music continuous
-                                playback, VO random triggers. Streaming: 512KB
-                                buffer versus 25MB full load per 3-minute track
-                                (98% memory reduction).
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    Three music tracks: 75MB RAM (full load)
-                                    versus 1.5MB (streaming). Critical for
-                                    mobile platforms with 2GB total RAM.
-                                    Trade-off: 2-3% CPU for disk I/O, acceptable
-                                    on modern devices. Enables music libraries
-                                    without RAM saturation. Essential technique
-                                    for mobile-constrained environments.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                Wwise Silence Plugin
-                            </div>
-                            <p class="feature-description">
-                                Procedural silence generation via Wwise Silence
-                                plugin replaces WAV files in random containers.
-                                Brain ambient: 1.5s/2s silence variations. Mouth
-                                ambient: 1.5s/2s/3s variations. Applied to all
-                                zone ambient containers requiring gap timing.
-                                Saves approximately 80% memory per silence
-                                instance.
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    2-second silent WAV: 352KB (44.1kHz stereo
-                                    16-bit). 2-second procedural silence: 0
-                                    bytes. Across 20 silence variations: ~7MB
-                                    saved. Non-obvious optimization requiring
-                                    advanced Wwise knowledge. Efficient use of
-                                    middleware features for memory-constrained
-                                    platforms.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                Explicit Voice Management
-                            </div>
-                            <p class="feature-description">
-                                SneezeProjectile caches playback ID on loop
-                                start, explicitly calls StopPlayingID() on
-                                destroy. Prevents orphaned audio voices. Death
-                                sounds use temporary GameObjects for spatial
-                                positioning after source destruction. Manual
-                                voice lifecycle management prevents resource
-                                leaks.
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    Projectile destruction without explicit
-                                    stop: loop continues indefinitely at
-                                    destruction position, consuming 1 voice
-                                    permanently. 50 projectiles = 50 orphaned
-                                    voices = voice limit saturation.
-                                    StopPlayingID() prevents resource leak.
-                                    Critical pattern for spawned/destroyed
-                                    objects with looping audio. Maintains voice
-                                    budget health.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                Footstep System with Body Zone Surfaces
-                            </div>
-                            <p class="feature-description">
-                                Material switch system adapted for body zone
-                                surfaces: Gut (soft organic), Thongue (wet
-                                surface), Skull (hard bone). Controller.cs
-                                raycasts every 2 units of movement,
-                                SurfaceIdentifier component provides material
-                                data, Material switch set before footstep event
-                                post. Architectural pattern reused from Ellen
-                                project.
-                            </p>
-                            <div class="why-matters" style="margin-top: 1rem">
-                                <div class="why-matters-title">Impact</div>
-                                <p>
-                                    Automatic surface-appropriate footstep
-                                    selection: stomach = organic wet sounds,
-                                    skull = hard echoing sounds. Workflow
-                                    scalability: same architecture applies
-                                    across projects without system redesign.
-                                    Raycast-based detection extensible to
-                                    arbitrary surface types.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="video-section" style="margin: 2rem 0">
-                    <video
-                        controls
-                        style="
-                            width: 100%;
-                            max-width: 1200px;
-                            border-radius: 8px;
-                            border: 1px solid var(--border);
-                        "
-                    >
+                <figure class="media-block">
+                    <video controls preload="metadata">
                         <source
                             src="../wwiseprojectsinfo/videos/stomachaches/optstomachaches.mp4"
                             type="video/mp4"
                         />
                         Your browser does not support the video tag.
                     </video>
+                    <figcaption>
+                        Demo: Zone-based loading, waterfall RTPC blend, and
+                        SurfaceIdentifier footsteps inside the Stomach level.
+                    </figcaption>
+                </figure>
+            </section>
+
+            <section class="glossary" id="glossary">
+                <h2
+                    style="
+                        font-family: &quot;Space Grotesk&quot;, sans-serif;
+                        margin-bottom: 1rem;
+                    "
+                >
+                    Glossary & cheat notes
+                </h2>
+                <div class="glossary-grid">
+                    <details open>
+                        <summary>Random Container</summary>
+                        <p>
+                            Wwise object that picks one asset from a pool each
+                            trigger—perfect for gunshots or footsteps so a
+                            single event covers every variation.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>RTPC</summary>
+                        <p>
+                            Real-Time Parameter Control. Game code
+                            (WaterfallDistanceRTPC.cs) feeds live numbers to
+                            Wwise so the engine fades layers or reverb sends
+                            automatically.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Soundbank</summary>
+                        <p>
+                            Packaged bundle of events + audio. Keeping only Init
+                            + General resident and streaming the active zone
+                            keeps RAM predictable.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Silence plugin</summary>
+                        <p>
+                            Generates procedural silence inside Wwise
+                            containers. It replaces recorded blank audio and
+                            saves ~80% memory on gap-heavy ambiences.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Streaming</summary>
+                        <p>
+                            Large music or ambience files read from disk with a
+                            rolling buffer (e.g., Brain_Song_Track) instead of
+                            living entirely in RAM.
+                        </p>
+                    </details>
                 </div>
+            </section>
 
-                <div class="code-showcase">
-                    <pre>
-Zone-Based Soundbank Architecture:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-BNK_Init          → Persistent  (States, Switches, Bus, Effects)
-BNK_General       → Persistent  (Weapons, Player, Enemies, Waterfall 10MB)
-BNK_BrainZone     → Dynamic     (670KB - loaded on Brain state)
-BNK_MouthZone     → Dynamic     (384KB - loaded on Mouth state)
-BNK_StomachZone   → Dynamic     (2.8MB - loaded on Stomach state)
-BNK_Music         → Dynamic     (220KB in-memory + streaming)
+            <div class="process">
+                <article class="process-card">
+                    <span>01 · Kickoff</span>
+                    <p>
+                        Collect target platforms, voice budgets, and priority
+                        experiences. Define which systems stay resident vs load
+                        on demand.
+                    </p>
+                </article>
+                <article class="process-card">
+                    <span>02 · Build</span>
+                    <p>
+                        Prototype in Wwise first (containers, states, RTPC),
+                        then hook up Unity scripts (AkState, WwiseStateBridge,
+                        SetRTPCValue) so designers can iterate without code.
+                    </p>
+                </article>
+                <article class="process-card">
+                    <span>03 · Verify</span>
+                    <p>
+                        Log profiling data (voice limits, memory snapshots) and
+                        trim / compress only when I can cite the before and
+                        after numbers.
+                    </p>
+                </article>
+            </div>
 
-Memory Savings: ~3.8MB by not loading all zones simultaneously
-Runtime Memory: 10-15MB (BNK_General + active zone)</pre
-                    >
-                </div>
+            <section class="recruiter-faq" aria-label="Recruiter questions">
+                <h2>Recruiter FAQ</h2>
+                <details open>
+                    <summary>How do I verify these results quickly?</summary>
+                    <p>
+                        Each project surfaces an “Evidence: JSON” link directly
+                        to the data in
+                        <code>wwiseprojectsinfo/</code>, plus an embedded
+                        gameplay clip. If you only have a minute, skim the
+                        comparison table at the top for focus, platforms, and
+                        proof.
+                    </p>
+                </details>
+                <details>
+                    <summary>What role do you play on teams?</summary>
+                    <p>
+                        I own Wwise + Unity integration end to end—states, RTPC
+                        scripts, bank strategy, and voice/memory profiling—while
+                        partnering with gameplay engineers for triggers and
+                        providing designers with editable parameters inside
+                        Wwise.
+                    </p>
+                </details>
+                <details>
+                    <summary>What’s your availability?</summary>
+                    <p>
+                        I’m interviewing for audio middleware / technical sound
+                        design roles (remote or hybrid) and can run a live
+                        walkthrough within 48 hours. Use the call-to-action
+                        above or the contact page for a fast reply.
+                    </p>
+                </details>
+            </section>
+        </main>
 
-                <div class="code-showcase">
-                    <pre>
-RTPC Waterfall System - Distance-Based Blend Container:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// WaterfallDistanceRTPC.cs - Real-time distance calculation
-void Update()
-{
-    float distance = Vector3.Distance(
-        playerListener.position,
-        transform.position
-    );
-    AkSoundEngine.SetRTPCValue(
-        "DistanceToWaterfall",
-        distance,
-        gameObject
-    );
-}
-
-Wwise Blend Container Crossfade Points:
-0-10m   → Splashes_Close  (130KB)  - High-freq splash details
-10-50m  → Main_Mid        (6.3MB)  - Full-spectrum waterfall
-50+m    → Rumbling_Far    (3.6MB)  - Low-freq distant rumble
-
-Total: ~10MB for smooth distance-based spatial mixing</pre
-                    >
-                </div>
-
-                <div class="features-section">
-                    <h3>Layered Ambient Design Per Zone</h3>
-                    <div class="features-grid">
-                        <div class="feature-card">
-                            <div class="feature-title">Brain Zone (670KB)</div>
-                            <p class="feature-description">
-                                Base_Layer (408KB) continuous foundational
-                                ambience + Intermittent_Layer random container
-                                with SFX1_01 (183KB), SFX1_02 (79KB) + Silence
-                                plugin (1.5s, 2s). Organic soundscape with
-                                random neural sounds and natural gaps.
-                            </p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">Mouth Zone (384KB)</div>
-                            <p class="feature-description">
-                                Base_Layer (178KB) wet organic loop +
-                                Intermittent_Layer with ShortGulp (20KB),
-                                ShortGulp2 (18KB), LongGulp (168KB) + Silence
-                                (1.5s, 2s, 3s). Realistic throat environment
-                                with varied gulp timings.
-                            </p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-title">
-                                Stomach Zone (2.8MB - Largest)
-                            </div>
-                            <p class="feature-description">
-                                Base_Layer (1.2MB) deep stomach rumble +
-                                Low_Layer (929KB) sub-bass for depth +
-                                Intermittent_Layer with 7 Gas Pipe Burst
-                                variations (67-135KB each) + SFX1 (53KB) +
-                                SFX1_01 (72KB). Complex 3-layer soundscape with
-                                dynamic gas burst events.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </article>
-        </div>
-
-        <footer>
-            <p style="font-size: 1.1rem; font-weight: 600">
-                &copy; 2024 Igor Szuniewicz
-            </p>
-            <p style="margin-top: 0.75rem; opacity: 0.7">
-                Three Wwise projects: Random Containers, RTPC Systems, and
-                Multi-Platform Builds
+        <footer class="site-footer">
+            <p>© 2024 Igor Szuniewicz — Wwise production & optimization</p>
+            <p>
+                Need a deeper dive? <a href="../contact.html">Get in touch</a>.
             </p>
         </footer>
     </body>
