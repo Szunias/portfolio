@@ -618,16 +618,21 @@
         }
 
         .story {
-            font-size: 1.1rem;
-            color: #e2e8f0;
-            line-height: 2;
+            font-size: 1.15rem;
+            color: #ffffff;
+            line-height: 1.8;
             margin-bottom: 2rem;
             font-family: "Outfit", sans-serif;
             font-weight: 400;
+            background: rgba(10, 14, 26, 0.6);
+            border: 1px solid rgba(154, 108, 255, 0.15);
+            border-radius: 12px;
+            padding: 2rem;
+            backdrop-filter: blur(5px);
         }
 
         .story p {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .story p:last-child {
@@ -966,7 +971,10 @@
                 </div>
 
                 <div class="story">
-                    <p data-i18n="boney.desc">Zombie wave shooter where 50+ zombies attack simultaneously. My first Wwise project over 2 weeks. The main challenge was the 256-voice limit - when the player fires constantly while zombies spawn everywhere, new sounds stop playing because all channels are busy. I set up random containers with 6 gunshot variations, 6 zombie spawn sounds, 4 player hurt clips. Every shot picks a different file so it doesn't sound robotic. Did volume balancing directly in Wwise: -2dB on gunshots to prevent clipping, +4dB on player hurt because recordings were quiet, -5dB on zombies so they don't drown everything out. Trimmed silence from every file (gun reload had 0.5s dead air at start, announcer 1.2s at end). Used ADPCM compression to keep file sizes down. Simple routing - everything to Master Bus, no effects, 2D audio only. Sequential container for round announcer (1→2→3→4) and custom loop points for the ambient track. Total of 44 sounds across 9 random containers.</p>
+                    <p data-i18n="boney.p1">Zombie wave shooter. Up to 5 zombies on screen at once. My first Wwise project.</p>
+                    <p data-i18n="boney.p2">Hit the 256-voice limit fast - player firing constantly plus zombie spawns. Set up random containers with 6 gunshot variations and 6 spawn sounds so nothing sounds repetitive.</p>
+                    <p data-i18n="boney.p3">Did volume balancing in Wwise (-2dB on shots, +4dB on player hurt, -5dB on zombies). Trimmed silence from files. Used ADPCM compression.</p>
+                    <p data-i18n="boney.p4">44 sounds total across 9 random containers. Simple routing to Master Bus, no effects, 2D audio only.</p>
                 </div>
             </article>
 
@@ -1001,7 +1009,10 @@
                 </div>
 
                 <div class="story">
-                    <p data-i18n="ellen.desc">Platformer with magic combat where I tackled spatial audio for the first time. Spent 3 weeks building 10 different attenuation curves for various sound types - Chomper enemy at 25m max range, Grenadier at 45m, his footsteps at 75m, explosions at 100m, big gate sounds at 155m. Material switching on footsteps works through raycasts every 2 Unity units, checking SurfaceIdentifier components to set switches (Grass/Earth/Puddle/Stone). Adaptive ambience uses State groups - MusicZone has ExploreJungle/EnteredBuilding/EnteredMainChamber states that trigger different ambient layers with 6.5s crossfades. Set up 4 auxiliary reverb buses (Cave uses Hall_Medium_Dark, StoreRoom uses Room_Medium, StoneBig uses Have_U_Ever_Been_Outside, StoneSmall uses Hall_Small), all controlled via RTPC parameters. Blend containers handle layered sounds like the teleporter (drone + magical element). Content-aware compression strategy: Music at Q8 OGG, Ambience Q7, SFX Q5, voice-over as ADPCM, UI as Low OGG. Hierarchical mixer with user volume controls through RTPCs.</p>
+                    <p data-i18n="ellen.p1">Platformer with magic combat. First time doing spatial audio.</p>
+                    <p data-i18n="ellen.p2">Built 10 attenuation curves - enemies at 25m, footsteps at 75m, explosions at 100m. Material switching on footsteps through raycasts checking surface types.</p>
+                    <p data-i18n="ellen.p3">Adaptive ambience with State groups - different zones crossfade ambient layers over 6.5 seconds. Set up 4 reverb buses for different room sizes.</p>
+                    <p data-i18n="ellen.p4">Compression strategy: Music Q8 OGG, Ambience Q7, SFX Q5, voice ADPCM.</p>
                 </div>
             </article>
 
@@ -1028,7 +1039,10 @@
                 </div>
 
                 <div class="story">
-                    <p data-i18n="stomach.desc">FPS platformer set inside a human body with three zones - Brain, Mouth, Stomach. Built over 3 weeks for 4 platforms (Windows/Mac/Android/Android_Low). The big challenge was Android - cheap phones with 2GB RAM have a 15MB audio limit. Implemented zone-based soundbank loading through Unity C# WwiseStateBridge script. Each zone has its own bank: BNK_Init and BNK_General stay loaded always, while BNK_BrainZone/BNK_MouthZone/BNK_StomachZone load dynamically through State changes. Brain is ~670KB, Mouth ~384KB, Stomach ~2.8MB (largest because of 3 layers + 7 gas burst variations). Used Wwise Silence plugin instead of silent audio files, saving 80% memory on gaps in random containers. The waterfall system uses an RTPC - WaterfallDistanceRTPC.cs updates every frame, and the waterfall blend container has 3 layers: Splashes_Close (130KB), Main_Mid (6.3MB, the largest single asset), Rumbling_Far (3.6MB). They crossfade based on distance. Material switching for footsteps through SurfaceIdentifier (Gut/Thongue/Skull surfaces). Music streams in the Brain zone to save RAM. Each zone has layered ambience with random containers and intermittent SFX. Proper loop management - SneezeProjectile stores _loopID and explicitly stops it via AkSoundEngine.StopPlayingID() to prevent orphaned loops.</p>
+                    <p data-i18n="stomach.p1">FPS platformer inside a human body. Three zones - Brain, Mouth, Stomach. Had to run on Android with 2GB RAM.</p>
+                    <p data-i18n="stomach.p2">15MB audio limit on cheap Android. Implemented zone-based soundbank loading - only load audio for the zone you're in. Brain 670KB, Mouth 384KB, Stomach 2.8MB.</p>
+                    <p data-i18n="stomach.p3">Used Wwise Silence plugin instead of silent files (80% memory saved). Waterfall system with RTPC - 3 layers crossfade based on distance: Close 130KB, Mid 6.3MB, Far 3.6MB.</p>
+                    <p data-i18n="stomach.p4">Material switching for footsteps. Music streams to save RAM. Proper loop cleanup to prevent orphaned sounds.</p>
                 </div>
             </article>
         </section>

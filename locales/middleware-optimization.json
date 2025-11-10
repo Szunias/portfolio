@@ -22,27 +22,36 @@
       "badge1": "Wwise v2021",
       "badge2": "Windows",
       "badge3": "2 weeks",
-      "desc": "Zombie wave shooter where 50+ zombies attack simultaneously. My first Wwise project over 2 weeks. The main challenge was the 256-voice limit - when the player fires constantly while zombies spawn everywhere, new sounds stop playing because all channels are busy. I set up random containers with 6 gunshot variations, 6 zombie spawn sounds, 4 player hurt clips. Every shot picks a different file so it doesn't sound robotic. Did volume balancing directly in Wwise: -2dB on gunshots to prevent clipping, +4dB on player hurt because recordings were quiet, -5dB on zombies so they don't drown everything out. Trimmed silence from every file (gun reload had 0.5s dead air at start, announcer 1.2s at end). Used ADPCM compression to keep file sizes down. Simple routing - everything to Master Bus, no effects, 2D audio only. Sequential container for round announcer (1→2→3→4) and custom loop points for the ambient track. Total of 44 sounds across 9 random containers.",
+      "p1": "Zombie wave shooter. Up to 5 zombies on screen at once. My first Wwise project.",
+      "p2": "Hit the 256-voice limit fast - player firing constantly plus zombie spawns. Set up random containers with 6 gunshot variations and 6 spawn sounds so nothing sounds repetitive.",
+      "p3": "Did volume balancing in Wwise (-2dB on shots, +4dB on player hurt, -5dB on zombies). Trimmed silence from files. Used ADPCM compression.",
+      "p4": "44 sounds total across 9 random containers. Simple routing to Master Bus, no effects, 2D audio only.",
       "video_title": "Boney Boogaloo - Gameplay",
-      "video_caption": "Every gunshot sounds different. 30+ zombies on screen and you can still hear spawns clearly."
+      "video_caption": "Every gunshot sounds different. Up to 5 zombies on screen."
     },
     "ellen": {
       "title": "Ellen",
       "badge1": "Wwise v2021",
       "badge2": "Windows",
       "badge3": "3 weeks",
-      "desc": "Platformer with magic combat where I tackled spatial audio for the first time. Spent 3 weeks building 10 different attenuation curves for various sound types - Chomper enemy at 25m max range, Grenadier at 45m, his footsteps at 75m, explosions at 100m, big gate sounds at 155m. Material switching on footsteps works through raycasts every 2 Unity units, checking SurfaceIdentifier components to set switches (Grass/Earth/Puddle/Stone). Adaptive ambience uses State groups - MusicZone has ExploreJungle/EnteredBuilding/EnteredMainChamber states that trigger different ambient layers with 6.5s crossfades. Set up 4 auxiliary reverb buses (Cave uses Hall_Medium_Dark, StoreRoom uses Room_Medium, StoneBig uses Have_U_Ever_Been_Outside, StoneSmall uses Hall_Small), all controlled via RTPC parameters. Blend containers handle layered sounds like the teleporter (drone + magical element). Content-aware compression strategy: Music at Q8 OGG, Ambience Q7, SFX Q5, voice-over as ADPCM, UI as Low OGG. Hierarchical mixer with user volume controls through RTPCs.",
+      "p1": "Platformer with magic combat. First time doing spatial audio.",
+      "p2": "Built 10 attenuation curves - enemies at 25m, footsteps at 75m, explosions at 100m. Material switching on footsteps through raycasts checking surface types.",
+      "p3": "Adaptive ambience with State groups - different zones crossfade ambient layers over 6.5 seconds. Set up 4 reverb buses for different room sizes.",
+      "p4": "Compression strategy: Music Q8 OGG, Ambience Q7, SFX Q5, voice ADPCM.",
       "video_title": "Ellen - Gameplay",
-      "video_caption": "Full Wwise implementation with spatial audio, dynamic mix, and Game Syncs integration."
+      "video_caption": "Spatial audio with dynamic reverb and material switching."
     },
     "stomach": {
       "title": "Stomach Aches",
       "badge1": "Wwise 2024",
       "badge2": "4 Platforms",
       "badge3": "3 weeks",
-      "desc": "FPS platformer set inside a human body with three zones - Brain, Mouth, Stomach. Built over 3 weeks for 4 platforms (Windows/Mac/Android/Android_Low). The big challenge was Android - cheap phones with 2GB RAM have a 15MB audio limit. Implemented zone-based soundbank loading through Unity C# WwiseStateBridge script. Each zone has its own bank: BNK_Init and BNK_General stay loaded always, while BNK_BrainZone/BNK_MouthZone/BNK_StomachZone load dynamically through State changes. Brain is ~670KB, Mouth ~384KB, Stomach ~2.8MB (largest because of 3 layers + 7 gas burst variations). Used Wwise Silence plugin instead of silent audio files, saving 80% memory on gaps in random containers. The waterfall system uses an RTPC - WaterfallDistanceRTPC.cs updates every frame, and the waterfall blend container has 3 layers: Splashes_Close (130KB), Main_Mid (6.3MB, the largest single asset), Rumbling_Far (3.6MB). They crossfade based on distance. Material switching for footsteps through SurfaceIdentifier (Gut/Thongue/Skull surfaces). Music streams in the Brain zone to save RAM. Each zone has layered ambience with random containers and intermittent SFX. Proper loop management - SneezeProjectile stores _loopID and explicitly stops it via AkSoundEngine.StopPlayingID() to prevent orphaned loops.",
+      "p1": "FPS platformer inside a human body. Three zones - Brain, Mouth, Stomach. Had to run on Android with 2GB RAM.",
+      "p2": "15MB audio limit on cheap Android. Implemented zone-based soundbank loading - only load audio for the zone you're in. Brain 670KB, Mouth 384KB, Stomach 2.8MB.",
+      "p3": "Used Wwise Silence plugin instead of silent files (80% memory saved). Waterfall system with RTPC - 3 layers crossfade based on distance: Close 130KB, Mid 6.3MB, Far 3.6MB.",
+      "p4": "Material switching for footsteps. Music streams to save RAM. Proper loop cleanup to prevent orphaned sounds.",
       "video_title": "Stomach Aches - Gameplay",
-      "video_caption": "Waterfall layers blend as you approach. Footsteps auto-switch between different body materials."
+      "video_caption": "Waterfall layers blend as you approach. Zone-based loading keeps memory under 15MB."
     },
     "learned": {
       "title": "What I Learned",
@@ -85,27 +94,36 @@
       "badge1": "Wwise v2021",
       "badge2": "Windows",
       "badge3": "2 tygodnie",
-      "desc": "Wave shooter z zombie gdzie 50+ zombie atakuje jednocześnie. Mój pierwszy projekt Wwise przez 2 tygodnie. Główne wyzwanie to limit 256 głosów - jak gracz strzela non-stop a zombie spawnują się wszędzie, nowe dźwięki przestają się odtwarzać bo wszystkie kanały zajęte. Zrobiłem random containers z 6 wariantami strzałów, 6 dźwiękami spawnu zombie, 4 clipami obrażeń gracza. Każdy strzał wybiera inny plik więc nie brzmi robotycznie. Volume balancing bezpośrednio w Wwise: -2dB na strzałach żeby nie clippowały, +4dB na obrażeniach gracza bo nagrania były ciche, -5dB na zombie żeby nie zagłuszały wszystkiego. Wyciąłem ciszę z każdego pliku (przeładowanie broni miało 0.5s ciszy na początku, announcer 1.2s na końcu). ADPCM compression żeby utrzymać małe rozmiary plików. Prosty routing - wszystko do Master Bus, zero efektów, tylko 2D audio. Sequential container dla announcer'a rund (1→2→3→4) i custom loop points dla ambient tracku. Razem 44 dźwięki w 9 random containers.",
+      "p1": "Wave shooter z zombie. Maksymalnie 5 zombie na raz. Mój pierwszy projekt Wwise.",
+      "p2": "Szybko trafiłem w limit 256 głosów - gracz strzela non-stop plus spawny zombie. Zrobiłem random containers z 6 wariantami strzałów i 6 dźwiękami spawnu żeby nic się nie powtarzało.",
+      "p3": "Volume balancing w Wwise (-2dB na strzałach, +4dB na obrażeniach gracza, -5dB na zombie). Wyciąłem ciszę z plików. ADPCM compression.",
+      "p4": "44 dźwięki razem w 9 random containers. Prosty routing do Master Bus, zero efektów, tylko 2D audio.",
       "video_title": "Boney Boogaloo - Gameplay",
-      "video_caption": "Każdy strzał brzmi inaczej. 30+ zombie na ekranie i spawny nadal słychać wyraźnie."
+      "video_caption": "Każdy strzał brzmi inaczej. Maksymalnie 5 zombie na ekranie."
     },
     "ellen": {
       "title": "Ellen",
       "badge1": "Wwise v2021",
       "badge2": "Windows",
       "badge3": "3 tygodnie",
-      "desc": "Platformówka z magiczną walką gdzie po raz pierwszy robiłem spatial audio. Spędziłem 3 tygodnie budując 10 różnych krzywych atenuacji dla różnych typów dźwięków - wróg Chomper na 25m max zasięgu, Grenadier na 45m, jego kroki na 75m, eksplozje na 100m, duże bramy na 155m. Material switching na krokach działa przez raycast co 2 Unity units, sprawdza SurfaceIdentifier component żeby ustawić switch (Grass/Earth/Puddle/Stone). Adaptywny ambient używa State groups - MusicZone ma stany ExploreJungle/EnteredBuilding/EnteredMainChamber które triggerują różne warstwy ambientu z 6.5s crossfade. Ustawiłem 4 auxiliary reverb busy (Cave używa Hall_Medium_Dark, StoreRoom Room_Medium, StoneBig Have_U_Ever_Been_Outside, StoneSmall Hall_Small), wszystkie kontrolowane przez parametry RTPC. Blend containers obsługują layerowane dźwięki jak teleporter (drone + magiczny element). Strategia kompresji zależna od contentu: Muzyka Q8 OGG, Ambient Q7, SFX Q5, voice-over ADPCM, UI Low OGG. Hierarchiczny mixer z user volume controls przez RTPC.",
+      "p1": "Platformówka z magiczną walką. Pierwszy raz spatial audio.",
+      "p2": "Zbudowałem 10 krzywych atenuacji - wrogowie na 25m, kroki na 75m, eksplozje na 100m. Material switching na krokach przez raycast sprawdzający typ powierzchni.",
+      "p3": "Adaptywny ambient z State groups - różne strefy crossfadują warstwy ambientu przez 6.5 sekundy. 4 reverb busy dla różnych rozmiarów pomieszczeń.",
+      "p4": "Strategia kompresji: Muzyka Q8 OGG, Ambient Q7, SFX Q5, voice ADPCM.",
       "video_title": "Ellen - Gameplay",
-      "video_caption": "Pełna implementacja Wwise z audio przestrzennym, dynamicznym miksem i integracją Game Syncs."
+      "video_caption": "Spatial audio z dynamicznym reverbem i material switching."
     },
     "stomach": {
       "title": "Stomach Aches",
       "badge1": "Wwise 2024",
       "badge2": "4 platformy",
       "badge3": "3 tygodnie",
-      "desc": "FPS platformówka w ludzkim ciele z trzema strefami - Mózg, Usta, Żołądek. Zrobione przez 3 tygodnie na 4 platformy (Windows/Mac/Android/Android_Low). Główne wyzwanie to Android - tanie telefony z 2GB RAM mają limit 15MB audio. Zaimplementowałem zone-based soundbank loading przez Unity C# skrypt WwiseStateBridge. Każda strefa ma własny bank: BNK_Init i BNK_General loaded zawsze, a BNK_BrainZone/BNK_MouthZone/BNK_StomachZone ładują się dynamicznie przez zmiany State. Mózg to ~670KB, Usta ~384KB, Żołądek ~2.8MB (największy przez 3 warstwy + 7 wariantów gas bursts). Użyłem Wwise Silence plugin zamiast cichych plików audio, oszczędzając 80% pamięci na przerwach w random containers. System wodospadu używa RTPC - WaterfallDistanceRTPC.cs updateuje co frame, a waterfall blend container ma 3 warstwy: Splashes_Close (130KB), Main_Mid (6.3MB, największy single asset), Rumbling_Far (3.6MB). Crossfadują się w zależności od odległości. Material switching dla kroków przez SurfaceIdentifier (powierzchnie Gut/Thongue/Skull). Muzyka streamuje w strefie Mózgu żeby oszczędzić RAM. Każda strefa ma layerowany ambient z random containers i intermittentnymi SFX. Proper loop management - SneezeProjectile przechowuje _loopID i explicitly stopuje przez AkSoundEngine.StopPlayingID() żeby zapobiec orphaned loops.",
+      "p1": "FPS platformówka w ludzkim ciele. Trzy strefy - Mózg, Usta, Żołądek. Musiało działać na Androidzie z 2GB RAM.",
+      "p2": "15MB limit audio na tanich Androidach. Zaimplementowałem zone-based soundbank loading - ładuj tylko audio dla strefy w której jesteś. Mózg 670KB, Usta 384KB, Żołądek 2.8MB.",
+      "p3": "Wwise Silence plugin zamiast cichych plików (80% oszczędności pamięci). System wodospadu z RTPC - 3 warstwy crossfadują w zależności od odległości: Close 130KB, Mid 6.3MB, Far 3.6MB.",
+      "p4": "Material switching dla kroków. Muzyka streamuje żeby oszczędzić RAM. Proper loop cleanup żeby zapobiec orphaned sounds.",
       "video_title": "Stomach Aches - Gameplay",
-      "video_caption": "Warstwy wodospadu mieszają się jak się zbliżasz. Kroki automatycznie przełączają się między różnymi materiałami ciała."
+      "video_caption": "Warstwy wodospadu mieszają się jak się zbliżasz. Zone loading trzyma pamięć poniżej 15MB."
     },
     "learned": {
       "title": "Czego się nauczyłem",
@@ -148,27 +166,36 @@
       "badge1": "Wwise v2021",
       "badge2": "Windows",
       "badge3": "2 weken",
-      "desc": "Zombie wave shooter waar 50+ zombies tegelijk aanvallen. Mijn eerste Wwise project over 2 weken. De grote uitdaging was de 256-voice limiet - wanneer de speler constant schiet terwijl zombies overal spawnen, stoppen nieuwe geluiden met afspelen omdat alle kanalen bezet zijn. Ik sette random containers op met 6 geweerschot variaties, 6 zombie spawn geluiden, 4 speler pijn clips. Elk schot kiest een ander bestand dus het klinkt niet robotisch. Volume balancing direct in Wwise gedaan: -2dB op geweerschoten om clipping te voorkomen, +4dB op speler pijn omdat opnames stil waren, -5dB op zombies zodat ze niet alles overstemmen. Stilte verwijderd uit elk bestand (geweer herladen had 0.5s dode lucht aan het begin, announcer 1.2s aan het eind). ADPCM compressie gebruikt om bestandsgroottes klein te houden. Simpele routing - alles naar Master Bus, geen effecten, alleen 2D audio. Sequential container voor round announcer (1→2→3→4) en custom loop points voor de ambient track. Totaal 44 geluiden over 9 random containers.",
+      "p1": "Zombie wave shooter. Maximaal 5 zombies tegelijk op scherm. Mijn eerste Wwise project.",
+      "p2": "Raakte snel de 256-voice limiet - speler schiet constant plus zombie spawns. Random containers met 6 geweerschot variaties en 6 spawn geluiden zodat niets herhaalt.",
+      "p3": "Volume balancing in Wwise (-2dB op schoten, +4dB op speler pijn, -5dB op zombies). Stilte uit bestanden verwijderd. ADPCM compressie.",
+      "p4": "44 geluiden totaal over 9 random containers. Simpele routing naar Master Bus, geen effecten, alleen 2D audio.",
       "video_title": "Boney Boogaloo - Gameplay",
-      "video_caption": "Elk geweerschot klinkt anders. 30+ zombies op scherm en je hoort spawns nog steeds duidelijk."
+      "video_caption": "Elk geweerschot klinkt anders. Maximaal 5 zombies op scherm."
     },
     "ellen": {
       "title": "Ellen",
       "badge1": "Wwise v2021",
       "badge2": "Windows",
       "badge3": "3 weken",
-      "desc": "Platformer met magisch gevecht waar ik voor het eerst spatial audio deed. 3 weken besteed aan het bouwen van 10 verschillende attenuatie curves voor verschillende geluidstypen - Chomper vijand op 25m max bereik, Grenadier op 45m, zijn voetstappen op 75m, explosies op 100m, grote poort geluiden op 155m. Material switching op voetstappen werkt via raycasts elke 2 Unity units, checkt SurfaceIdentifier components om switches in te stellen (Grass/Earth/Puddle/Stone). Adaptieve ambience gebruikt State groups - MusicZone heeft ExploreJungle/EnteredBuilding/EnteredMainChamber states die verschillende ambient lagen triggeren met 6.5s crossfades. 4 auxiliary reverb bussen opgezet (Cave gebruikt Hall_Medium_Dark, StoreRoom gebruikt Room_Medium, StoneBig gebruikt Have_U_Ever_Been_Outside, StoneSmall gebruikt Hall_Small), allemaal gecontroleerd via RTPC parameters. Blend containers handelen gelaagde geluiden af zoals de teleporter (drone + magisch element). Content-aware compressie strategie: Muziek op Q8 OGG, Ambience Q7, SFX Q5, voice-over als ADPCM, UI als Low OGG. Hiërarchische mixer met gebruiker volume controls via RTPCs.",
+      "p1": "Platformer met magisch gevecht. Eerste keer spatial audio.",
+      "p2": "10 attenuatie curves gebouwd - vijanden op 25m, voetstappen op 75m, explosies op 100m. Material switching op voetstappen via raycasts die oppervlaktetypes checken.",
+      "p3": "Adaptieve ambience met State groups - verschillende zones crossfaden ambient lagen over 6.5 seconden. 4 reverb bussen voor verschillende kamergroottes.",
+      "p4": "Compressie strategie: Muziek Q8 OGG, Ambience Q7, SFX Q5, voice ADPCM.",
       "video_title": "Ellen - Gameplay",
-      "video_caption": "Volledige Wwise implementatie met spatial audio, dynamische mix en Game Syncs integratie."
+      "video_caption": "Spatial audio met dynamische reverb en material switching."
     },
     "stomach": {
       "title": "Stomach Aches",
       "badge1": "Wwise 2024",
       "badge2": "4 Platforms",
       "badge3": "3 weken",
-      "desc": "FPS platformer in een menselijk lichaam met drie zones - Brein, Mond, Maag. Gebouwd over 3 weken voor 4 platforms (Windows/Mac/Android/Android_Low). De grote uitdaging was Android - goedkope telefoons met 2GB RAM hebben een 15MB audio limiet. Zone-based soundbank loading geïmplementeerd via Unity C# WwiseStateBridge script. Elke zone heeft zijn eigen bank: BNK_Init en BNK_General blijven altijd geladen, terwijl BNK_BrainZone/BNK_MouthZone/BNK_StomachZone dynamisch laden via State changes. Brein is ~670KB, Mond ~384KB, Maag ~2.8MB (grootste door 3 lagen + 7 gas burst variaties). Wwise Silence plugin gebruikt in plaats van stille audiobestanden, 80% geheugen bespaard op gaps in random containers. Het waterval systeem gebruikt een RTPC - WaterfallDistanceRTPC.cs update elk frame, en de waterval blend container heeft 3 lagen: Splashes_Close (130KB), Main_Mid (6.3MB, het grootste enkele asset), Rumbling_Far (3.6MB). Ze crossfaden op basis van afstand. Material switching voor voetstappen via SurfaceIdentifier (Gut/Thongue/Skull oppervlakken). Muziek streamt in de Brein zone om RAM te besparen. Elke zone heeft gelaagde ambience met random containers en intermitterende SFX. Juist loop management - SneezeProjectile slaat _loopID op en stopt het expliciet via AkSoundEngine.StopPlayingID() om zwevende loops te voorkomen.",
+      "p1": "FPS platformer in een menselijk lichaam. Drie zones - Brein, Mond, Maag. Moest draaien op Android met 2GB RAM.",
+      "p2": "15MB audio limiet op goedkope Android. Zone-based soundbank loading geïmplementeerd - laad alleen audio voor de zone waar je bent. Brein 670KB, Mond 384KB, Maag 2.8MB.",
+      "p3": "Wwise Silence plugin in plaats van stille bestanden (80% geheugen bespaard). Waterval systeem met RTPC - 3 lagen crossfaden op basis van afstand: Close 130KB, Mid 6.3MB, Far 3.6MB.",
+      "p4": "Material switching voor voetstappen. Muziek streamt om RAM te besparen. Juiste loop cleanup om zwevende geluiden te voorkomen.",
       "video_title": "Stomach Aches - Gameplay",
-      "video_caption": "Waterval lagen mengen als je dichterbij komt. Voetstappen wisselen automatisch tussen verschillende lichaamsmaterialen."
+      "video_caption": "Waterval lagen mengen als je dichterbij komt. Zone loading houdt geheugen onder 15MB."
     },
     "learned": {
       "title": "Wat ik heb geleerd",
