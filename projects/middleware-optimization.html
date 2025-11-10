@@ -79,11 +79,6 @@
             color: var(--accent);
         }
 
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
         .btn {
             padding: 0.6rem 1.2rem;
             border-radius: 8px;
@@ -374,14 +369,7 @@
         }
 
         .skill-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
             margin-bottom: 0.75rem;
-        }
-
-        .skill-icon {
-            font-size: 1.75rem;
         }
 
         .skill-name {
@@ -393,39 +381,6 @@
             font-size: 0.9rem;
             color: var(--text-muted);
             line-height: 1.6;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(167, 139, 250, 0.1));
-            border: 1px solid var(--border-hover);
-            border-radius: 16px;
-            padding: 3rem 2.5rem;
-            margin-top: 4rem;
-        }
-
-        .cta-content {
-            max-width: 700px;
-        }
-
-        .cta-title {
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .cta-text {
-            font-size: 1.05rem;
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-            line-height: 1.7;
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
         }
 
         /* Footer */
@@ -458,10 +413,6 @@
                 font-size: 1.5rem;
             }
 
-            .header-actions {
-                gap: 0.5rem;
-            }
-
             .btn {
                 padding: 0.5rem 1rem;
                 font-size: 0.85rem;
@@ -473,10 +424,6 @@
     <header class="header">
         <div class="header-content">
             <a class="back-link" href="../index.html">← Back to Portfolio</a>
-            <div class="header-actions">
-                <a href="../cv/Igor_Szuniewicz_CV.pdf" target="_blank" class="btn">CV</a>
-                <a href="../contact.html" class="btn btn-primary">Contact</a>
-            </div>
         </div>
     </header>
 
@@ -528,21 +475,29 @@
                 </div>
 
                 <div class="story">
-                    <p>Zombie wave shooter. 50 zombies spawn on screen groaning and shuffling around. Player firing constantly. Ambient music, environment sounds, UI feedback all happening at once.</p>
+                    <p><strong>Problem:</strong> Zombie wave shooter. 50 zombies on screen. Player firing constantly.</p>
 
-                    <p>Hit play and half the sounds disappear. The audio engine can only play 256 sounds simultaneously - think of it like having 256 speakers. Once they're all busy, new sounds get cut. Important gameplay audio like zombie spawns and low ammo warnings were getting killed because background loops were hogging all the channels.</p>
+                    <p>Hit play and half the sounds disappear.</p>
 
-                    <p>Needed to stay under that 256 limit while also making sure the same gunshot doesn't loop 100 times - that sounds robotic.</p>
+                    <p>The engine can only play 256 sounds at once. Once they're all busy, new sounds get cut. Important stuff like zombie spawns and low ammo warnings were getting killed.</p>
+
+                    <p>Also needed variation - same gunshot 100 times sounds robotic.</p>
                 </div>
 
                 <div class="story">
-                    <p>Fixed it by making the middleware pick randomly from 6 different gunshot files every time you shoot. Same for zombie sounds - groans, shuffles, attacks all randomize. Set up the quiet stuff (like distant ambient sounds) to pause when things get busy, then resume when there's room again. That way important sounds never get cut.</p>
+                    <p><strong>Fix:</strong> Made the middleware pick randomly from 6 different gunshot files every time you shoot. Same for zombie sounds.</p>
 
-                    <p>Also went through every audio file and trimmed dead air manually. Half-second of silence at the start of a reload? Cut. Zombie groan with a long tail of room noise? Trimmed. Made files smaller and faster to load.</p>
+                    <p>Set up quiet sounds to pause when things get busy, then resume when there's room. Important sounds never get cut.</p>
+
+                    <p>Trimmed dead air from every audio file. Half-second of silence at the start of a reload? Cut. Files smaller and faster to load.</p>
                 </div>
 
                 <div class="reflection">
-                    <p>First tried setting the system to auto-cut anything quieter than -80 dB. Figured if it's that quiet, players won't notice. Wrong. Zombie spawn sounds start quiet then ramp up - they were getting cut mid-spawn and players couldn't hear threats behind them. Had to loosen it to -60 dB and manually rebalance all the volumes instead.</p>
+                    <p><strong>What went wrong:</strong> First tried auto-cutting anything quieter than -80 dB. Figured players won't notice.</p>
+
+                    <p>Wrong. Zombie spawn sounds start quiet then ramp up - they were getting cut mid-spawn. Players couldn't hear threats behind them.</p>
+
+                    <p>Had to loosen it to -60 dB and manually rebalance all the volumes.</p>
                 </div>
 
                 <div class="project-footer">
@@ -575,23 +530,27 @@
                 </div>
 
                 <div class="story">
-                    <p>Third-person action game. Three zones - dense jungle, echoing caves, concrete buildings. You're moving between them constantly during combat.</p>
+                    <p><strong>Problem:</strong> Third-person action game. Three zones - jungle, caves, buildings. You're moving between them constantly.</p>
 
-                    <p>Problem: walk from jungle into a building and jungle ambience cuts instantly, building ambience pops in. Feels jarring and unpolished. Players notice audio cuts like that.</p>
+                    <p>Walk from jungle into a building and ambience cuts instantly. Pops in. Sounds unpolished.</p>
 
-                    <p>Also needed enemy sounds to work at different distances. Grenadier 75 meters away throwing explosives at you? You need to hear those footsteps for situational awareness. But a wooden crate breaking 10 meters behind you? Should fade fast or it clutters the audio mix.</p>
+                    <p>Also needed enemy sounds to work at different distances. Grenadier 75 meters away? Need to hear footsteps. Wooden crate 10 meters away? Should fade fast or it clutters the mix.</p>
                 </div>
 
                 <div class="story">
-                    <p>Set up zone tracking in Wwise. When you enter a building, jungle sounds fade out over 6.5 seconds while indoor ambience fades in. Happens automatically, no need to script fade curves in code.</p>
+                    <p><strong>Fix:</strong> Set up zone tracking. When you enter a building, jungle sounds fade out over 6.5 seconds while indoor ambience fades in. Automatic.</p>
 
-                    <p>Wrote distance curves for different sound types. Small debris fades at 11 meters. Large mechanical gates reach 155 meters. Enemy footsteps sit at 75 meters for threat awareness. Each sound has a range that matches how important it is for gameplay.</p>
+                    <p>Wrote distance curves for different sound types. Small debris fades at 11 meters. Large gates reach 155 meters. Enemy footsteps at 75 meters for threat awareness.</p>
 
-                    <p>Added reverb that increases when you walk into caves. Game sends your position to Wwise and it adjusts the echo automatically. Can tweak how much reverb without recompiling the game.</p>
+                    <p>Added reverb that increases when you walk into caves. Game sends your position and Wwise adjusts the echo automatically.</p>
                 </div>
 
                 <div class="reflection">
-                    <p>First time writing distance curves from scratch. First attempt was too aggressive - enemies went silent at 30 meters and players complained they couldn't hear approaching threats. Second try was too conservative - everything audible at 100+ meters and the mix turned into noise. Took 4 playtests with actual gameplay to find the right balance.</p>
+                    <p><strong>What went wrong:</strong> First time writing distance curves. First attempt too aggressive - enemies went silent at 30 meters. Players complained.</p>
+
+                    <p>Second try too conservative - everything audible at 100+ meters. Mix turned into noise.</p>
+
+                    <p>Took 4 playtests to find the right balance.</p>
                 </div>
 
                 <div class="project-footer">
@@ -615,23 +574,27 @@
                 </div>
 
                 <div class="story">
-                    <p>FPS platformer set inside a human body. Three big zones - Brain, Mouth, Stomach. Needed to run on Windows, Mac, and Android phones with 2GB RAM.</p>
+                    <p><strong>Problem:</strong> FPS platformer inside a human body. Three zones - Brain, Mouth, Stomach. Needed to run on Android phones with 2GB RAM.</p>
 
-                    <p>Audio memory budget on cheap Android phones: 15 MB maximum. Load all three zones at once and you're sitting at 25+ MB. Game crashes on launch. Can't ship that.</p>
+                    <p>Audio memory budget on cheap Android: 15 MB max. Load all three zones and you're at 25+ MB. Game crashes on launch.</p>
 
-                    <p>Windows and Mac can handle uncompressed audio fine, but Android needs every byte optimized. Different builds for different platforms but same audio content.</p>
+                    <p>Windows and Mac handle uncompressed audio fine, but Android needs every byte optimized.</p>
                 </div>
 
                 <div class="story">
-                    <p>Fixed it by only loading audio for the zone you're currently in. Start in Brain? Load Brain sounds. Walk into Mouth? Unload Brain, load Mouth. Saved 3.8 MB doing that, got total memory down to around 12 MB.</p>
+                    <p><strong>Fix:</strong> Only load audio for the zone you're in. Start in Brain? Load Brain sounds. Walk into Mouth? Unload Brain, load Mouth. Saved 3.8 MB, got total down to 12 MB.</p>
 
-                    <p>Used a trick where the middleware generates silence procedurally instead of storing silent audio files. Had ambience tracks with 5 seconds of silence that used to cost 500 KB - now they're 100 KB. 80% smaller for gaps.</p>
+                    <p>Used a trick where the middleware generates silence instead of storing silent audio files. Ambience tracks with 5 seconds of silence used to cost 500 KB - now 100 KB. 80% smaller.</p>
 
-                    <p>Wrote C# scripts that detect which zone you're in and tell Wwise to swap the audio banks. Also made a waterfall that has 3 different sound layers - close splashes, mid-range flow, distant rumble - that crossfade based on how far you are. Footsteps check what surface you're standing on (gut tissue, tongue, skull bone) and switch sounds automatically.</p>
+                    <p>Wrote C# scripts that detect which zone you're in and tell Wwise to swap audio banks. Made a waterfall with 3 sound layers that crossfade based on distance. Footsteps check what surface you're on and switch sounds automatically.</p>
                 </div>
 
                 <div class="reflection">
-                    <p>Only tested on Android emulator running on my PC, not actual phones. Emulator reported 12 MB memory usage but real hardware might be different - background apps eating RAM, OS overhead, device-specific quirks. Would need to test on actual cheap Android devices with profiling tools before calling this ready for production.</p>
+                    <p><strong>What went wrong:</strong> Only tested on Android emulator, not actual phones.</p>
+
+                    <p>Emulator reported 12 MB but real hardware might be different - background apps, OS overhead, device-specific quirks.</p>
+
+                    <p>Would need to test on actual cheap Android devices with profiling tools before shipping.</p>
                 </div>
 
                 <div class="project-footer">
@@ -660,7 +623,6 @@
             <div class="skills-grid">
                 <div class="skill-card">
                     <div class="skill-header">
-                        <span class="skill-icon">🎯</span>
                         <span class="skill-name">Performance Limits</span>
                     </div>
                     <p class="skill-desc">Working within sound channel limits, tracking memory budgets, picking compression that balances file size vs quality.</p>
@@ -668,7 +630,6 @@
 
                 <div class="skill-card">
                     <div class="skill-header">
-                        <span class="skill-icon">🔊</span>
                         <span class="skill-name">3D Audio</span>
                     </div>
                     <p class="skill-desc">Writing distance curves for different sound types, positioning audio in 3D space, making sounds fade at the right ranges.</p>
@@ -676,7 +637,6 @@
 
                 <div class="skill-card">
                     <div class="skill-header">
-                        <span class="skill-icon">⚙️</span>
                         <span class="skill-name">Middleware Integration</span>
                     </div>
                     <p class="skill-desc">Connecting game events to middleware, making audio respond to player position and game state without hardcoding values.</p>
@@ -684,7 +644,6 @@
 
                 <div class="skill-card">
                     <div class="skill-header">
-                        <span class="skill-icon">📦</span>
                         <span class="skill-name">Memory Management</span>
                     </div>
                     <p class="skill-desc">Deciding what loads immediately, what streams from disk, what unloads when changing zones. Staying under budget on phones.</p>
@@ -692,7 +651,6 @@
 
                 <div class="skill-card">
                     <div class="skill-header">
-                        <span class="skill-icon">🔗</span>
                         <span class="skill-name">Unity + Wwise</span>
                     </div>
                     <p class="skill-desc">Writing C# scripts that talk to Wwise API, handling zone triggers, cleaning up sounds that don't stop properly.</p>
@@ -700,25 +658,9 @@
 
                 <div class="skill-card">
                     <div class="skill-header">
-                        <span class="skill-icon">📱</span>
                         <span class="skill-name">Multi-Platform</span>
                     </div>
                     <p class="skill-desc">Different compression strategies for PC vs mobile. Testing on emulators. Profiling memory to catch issues before shipping.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <div class="cta-section">
-                <div class="cta-content">
-                    <h2 class="cta-title">Looking for Work</h2>
-                    <p class="cta-text">
-                        Looking for junior/mid audio middleware or technical sound design roles. These school projects taught me how to solve performance problems and work within platform constraints. Want to work on shipped games with real teams and production pipelines.
-                    </p>
-                    <div class="cta-buttons">
-                        <a href="../contact.html" class="btn btn-primary">Get in Touch</a>
-                        <a href="../cv/Igor_Szuniewicz_CV.pdf" target="_blank" class="btn">Download CV</a>
-                    </div>
                 </div>
             </div>
         </section>
