@@ -634,108 +634,6 @@
             margin-bottom: 0;
         }
 
-        .story strong {
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 1.25rem;
-            display: block;
-            margin-bottom: 0.75rem;
-            margin-top: 1.5rem;
-            font-family: "Orbitron", sans-serif;
-            -webkit-text-stroke: 1px rgba(0, 0, 0, 0.6);
-            text-stroke: 1px rgba(0, 0, 0, 0.6);
-            text-shadow:
-                0 0 20px rgba(154, 108, 255, 0.3),
-                1px 1px 3px rgba(0, 0, 0, 0.7);
-        }
-
-        .story strong:first-child {
-            margin-top: 0;
-        }
-
-        .reflection {
-            background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(154, 108, 255, 0.15));
-            border-left: 5px solid var(--accent-purple);
-            padding: 2.5rem 2.5rem;
-            border-radius: 16px;
-            margin-top: 3rem;
-            font-size: 1.1rem;
-            color: #e2e8f0;
-            line-height: 2;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(154, 108, 255, 0.2);
-            font-family: "Outfit", sans-serif;
-        }
-
-        .reflection::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(
-                circle at top left,
-                rgba(154, 108, 255, 0.2),
-                transparent 60%
-            );
-            pointer-events: none;
-        }
-
-        .reflection:hover {
-            background: linear-gradient(135deg, rgba(167, 139, 250, 0.25), rgba(154, 108, 255, 0.2));
-            box-shadow: 0 8px 25px rgba(154, 108, 255, 0.3);
-            border-left-color: #b794f6;
-        }
-
-        .reflection strong {
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 1.3rem;
-            display: block;
-            margin-bottom: 1rem;
-            font-family: "Orbitron", sans-serif;
-            -webkit-text-stroke: 1px rgba(0, 0, 0, 0.6);
-            text-stroke: 1px rgba(0, 0, 0, 0.6);
-            text-shadow:
-                0 0 20px rgba(154, 108, 255, 0.3),
-                1px 1px 3px rgba(0, 0, 0, 0.7);
-        }
-
-        .reflection p {
-            position: relative;
-            z-index: 1;
-            margin-bottom: 1.2rem;
-        }
-
-        .reflection p:last-child {
-            margin-bottom: 0;
-        }
-
-        .project-footer {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border);
-            margin-top: 1.5rem;
-        }
-
-        .project-link {
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: gap 0.2s;
-        }
-
-        .project-link:hover {
-            gap: 0.75rem;
-        }
-
         /* Video Demo */
         .video-section {
             background: linear-gradient(145deg, rgba(17, 24, 39, 0.6), rgba(26, 35, 50, 0.5));
@@ -1068,31 +966,7 @@
                 </div>
 
                 <div class="story">
-                    <p><strong data-i18n="boney.problem_title">Problem:</strong></p>
-                    <p data-i18n="boney.problem_p1">Zombie wave shooter. 50 zombies on screen. Player firing constantly.</p>
-                    <p data-i18n="boney.problem_p2">Hit play and half the sounds disappear.</p>
-                    <p data-i18n="boney.problem_p3">The engine can only play 256 sounds at once. Once they're all busy, new sounds get cut. Important stuff like zombie spawns and low ammo warnings were getting killed.</p>
-                    <p data-i18n="boney.problem_p4">Also needed variation - same gunshot 100 times sounds robotic.</p>
-                </div>
-
-                <div class="story">
-                    <p><strong data-i18n="boney.fix_title">Fix:</strong></p>
-                    <p data-i18n="boney.fix_p1">Made the middleware pick randomly from 6 different gunshot files every time you shoot. Same for zombie sounds.</p>
-                    <p data-i18n="boney.fix_p2">Set up quiet sounds to pause when things get busy, then resume when there's room. Important sounds never get cut.</p>
-                    <p data-i18n="boney.fix_p3">Trimmed dead air from every audio file. Half-second of silence at the start of a reload? Cut. Files smaller and faster to load.</p>
-                </div>
-
-                <div class="reflection">
-                    <p><strong data-i18n="boney.reflection_title">What went wrong:</strong></p>
-                    <p data-i18n="boney.reflection_p1">First tried auto-cutting anything quieter than -80 dB. Figured players won't notice.</p>
-                    <p data-i18n="boney.reflection_p2">Wrong. Zombie spawn sounds start quiet then ramp up - they were getting cut mid-spawn. Players couldn't hear threats behind them.</p>
-                    <p data-i18n="boney.reflection_p3">Fixed it by marking spawn sounds as high priority and letting background music duck instead.</p>
-                </div>
-
-                <div class="project-footer">
-                    <a href="../wwiseprojectsinfo/BoneyBoogaloo.json" target="_blank" class="project-link" data-i18n="boney.link">
-                        Project Data →
-                    </a>
+                    <p data-i18n="boney.desc">Zombie wave shooter where 50+ zombies attack simultaneously. My first Wwise project over 2 weeks. The main challenge was the 256-voice limit - when the player fires constantly while zombies spawn everywhere, new sounds stop playing because all channels are busy. I set up random containers with 6 gunshot variations, 6 zombie spawn sounds, 4 player hurt clips. Every shot picks a different file so it doesn't sound robotic. Did volume balancing directly in Wwise: -2dB on gunshots to prevent clipping, +4dB on player hurt because recordings were quiet, -5dB on zombies so they don't drown everything out. Trimmed silence from every file (gun reload had 0.5s dead air at start, announcer 1.2s at end). Used ADPCM compression to keep file sizes down. Simple routing - everything to Master Bus, no effects, 2D audio only. Sequential container for round announcer (1→2→3→4) and custom loop points for the ambient track. Total of 44 sounds across 9 random containers.</p>
                 </div>
             </article>
 
@@ -1127,30 +1001,7 @@
                 </div>
 
                 <div class="story">
-                    <p><strong data-i18n="ellen.problem_title">Problem:</strong></p>
-                    <p data-i18n="ellen.problem_p1">Platformer with magic combat. First time setting up spatial audio.</p>
-                    <p data-i18n="ellen.problem_p2">Sounds kept playing at max volume no matter where the player was. Reverb zones weren't switching when you walked between areas.</p>
-                    <p data-i18n="ellen.problem_p3">Everything sounded flat.</p>
-                </div>
-
-                <div class="story">
-                    <p><strong data-i18n="ellen.fix_title">Fix:</strong></p>
-                    <p data-i18n="ellen.fix_p1">Set up attenuation curves for each sound type. Footsteps drop off fast (2m), magic attacks carry further (8m).</p>
-                    <p data-i18n="ellen.fix_p2">Added Game Syncs that detect which room you're in and swap reverb settings. Small cave = tight reverb, big hall = long tail.</p>
-                    <p data-i18n="ellen.fix_p3">Hooked up player velocity to breathing sounds - running makes you breathe harder.</p>
-                </div>
-
-                <div class="reflection">
-                    <p><strong data-i18n="ellen.reflection_title">What went wrong:</strong></p>
-                    <p data-i18n="ellen.reflection_p1">First playtest, testers said "why does everything echo?"</p>
-                    <p data-i18n="ellen.reflection_p2">Had reverb set too high trying to make it sound spacious. Turns out subtle works better - 15% wet instead of 40%.</p>
-                    <p data-i18n="ellen.reflection_p3">Took 4 playtests to find the right balance.</p>
-                </div>
-
-                <div class="project-footer">
-                    <a href="../wwiseprojectsinfo/ellen.json" target="_blank" class="project-link" data-i18n="ellen.link">
-                        Project Data →
-                    </a>
+                    <p data-i18n="ellen.desc">Platformer with magic combat where I tackled spatial audio for the first time. Spent 3 weeks building 10 different attenuation curves for various sound types - Chomper enemy at 25m max range, Grenadier at 45m, his footsteps at 75m, explosions at 100m, big gate sounds at 155m. Material switching on footsteps works through raycasts every 2 Unity units, checking SurfaceIdentifier components to set switches (Grass/Earth/Puddle/Stone). Adaptive ambience uses State groups - MusicZone has ExploreJungle/EnteredBuilding/EnteredMainChamber states that trigger different ambient layers with 6.5s crossfades. Set up 4 auxiliary reverb buses (Cave uses Hall_Medium_Dark, StoreRoom uses Room_Medium, StoneBig uses Have_U_Ever_Been_Outside, StoneSmall uses Hall_Small), all controlled via RTPC parameters. Blend containers handle layered sounds like the teleporter (drone + magical element). Content-aware compression strategy: Music at Q8 OGG, Ambience Q7, SFX Q5, voice-over as ADPCM, UI as Low OGG. Hierarchical mixer with user volume controls through RTPCs.</p>
                 </div>
             </article>
 
@@ -1177,30 +1028,7 @@
                 </div>
 
                 <div class="story">
-                    <p><strong data-i18n="stomach.problem_title">Problem:</strong></p>
-                    <p data-i18n="stomach.problem_p1">FPS platformer inside a human body. Three zones - Brain, Mouth, Stomach. Needed to run on Android phones with 2GB RAM.</p>
-                    <p data-i18n="stomach.problem_p2">Audio memory budget on cheap Android: 15 MB max. Load all three zones and you're at 25+ MB. Game crashes on launch.</p>
-                    <p data-i18n="stomach.problem_p3">Windows and Mac handle uncompressed audio fine, but Android needs every byte optimized.</p>
-                </div>
-
-                <div class="story">
-                    <p><strong data-i18n="stomach.fix_title">Fix:</strong></p>
-                    <p data-i18n="stomach.fix_p1">Only load audio for the zone you're in. Start in Brain? Load Brain sounds. Walk into Mouth? Unload Brain, load Mouth. Saved 3.8 MB, got total down to 12 MB.</p>
-                    <p data-i18n="stomach.fix_p2">Used a trick where the middleware generates silence instead of storing silent audio files. Ambience tracks with 5 seconds of silence used to cost 500 KB - now 100 KB. 80% smaller.</p>
-                    <p data-i18n="stomach.fix_p3">Wrote C# scripts that detect which zone you're in and tell Wwise to swap audio banks. Made a waterfall with 3 sound layers that crossfade based on distance. Footsteps check what surface you're on and switch sounds automatically.</p>
-                </div>
-
-                <div class="reflection">
-                    <p><strong data-i18n="stomach.reflection_title">What went wrong:</strong></p>
-                    <p data-i18n="stomach.reflection_p1">Only tested on Android emulator, not actual phones.</p>
-                    <p data-i18n="stomach.reflection_p2">Emulator reported 12 MB but real hardware might be different - background apps, OS overhead, device-specific quirks.</p>
-                    <p data-i18n="stomach.reflection_p3">Would need to test on actual cheap Android devices with profiling tools before shipping.</p>
-                </div>
-
-                <div class="project-footer">
-                    <a href="../wwiseprojectsinfo/Stomach Aches.json" target="_blank" class="project-link" data-i18n="stomach.link">
-                        Project Data →
-                    </a>
+                    <p data-i18n="stomach.desc">FPS platformer set inside a human body with three zones - Brain, Mouth, Stomach. Built over 3 weeks for 4 platforms (Windows/Mac/Android/Android_Low). The big challenge was Android - cheap phones with 2GB RAM have a 15MB audio limit. Implemented zone-based soundbank loading through Unity C# WwiseStateBridge script. Each zone has its own bank: BNK_Init and BNK_General stay loaded always, while BNK_BrainZone/BNK_MouthZone/BNK_StomachZone load dynamically through State changes. Brain is ~670KB, Mouth ~384KB, Stomach ~2.8MB (largest because of 3 layers + 7 gas burst variations). Used Wwise Silence plugin instead of silent audio files, saving 80% memory on gaps in random containers. The waterfall system uses an RTPC - WaterfallDistanceRTPC.cs updates every frame, and the waterfall blend container has 3 layers: Splashes_Close (130KB), Main_Mid (6.3MB, the largest single asset), Rumbling_Far (3.6MB). They crossfade based on distance. Material switching for footsteps through SurfaceIdentifier (Gut/Thongue/Skull surfaces). Music streams in the Brain zone to save RAM. Each zone has layered ambience with random containers and intermittent SFX. Proper loop management - SneezeProjectile stores _loopID and explicitly stops it via AkSoundEngine.StopPlayingID() to prevent orphaned loops.</p>
                 </div>
             </article>
         </section>
