@@ -1,0 +1,560 @@
+{
+  "project_info": {
+    "name": "WwiseExam",
+    "wwise_version": "v2021.1.14",
+    "build": "8108",
+    "platforms": [
+      {
+        "name": "Windows",
+        "id": "{D366CADC-63B1-430F-AD7D-FF35E6C13D28}",
+        "reference_platform": "Windows"
+      }
+    ],
+    "languages": [
+      "English(US)",
+      "External",
+      "Mixed",
+      "SFX"
+    ]
+  },
+
+  "optimization": {
+    "global_voice_limit": 256,
+    "volume_threshold_db": -80,
+    "max_dangerous_virtual_voices": 50,
+
+    "compression_settings": {
+      "ambience": {
+        "name": "Conv_Ambience_OGG_High",
+        "codec": "Vorbis OGG",
+        "quality_factor": 7,
+        "sample_rate": "Original (0 = no resampling)",
+        "description": "High quality compression for looping ambient sounds"
+      },
+      "music": {
+        "name": "Conv_Music_OGG_High",
+        "codec": "Vorbis OGG",
+        "quality_factor": 8,
+        "description": "Highest quality compression for music tracks"
+      },
+      "sfx": {
+        "name": "Conv_SFX_OGG_Med",
+        "codec": "Vorbis OGG",
+        "quality_factor": 5,
+        "sample_rate": 44100,
+        "description": "Medium quality compression for SFX to balance quality and file size"
+      },
+      "voice": {
+        "name": "Conv_VO_ADPCM",
+        "codec": "ADPCM",
+        "sample_rate": 44100,
+        "description": "ADPCM compression for voice-overs - lightweight and efficient"
+      },
+      "ui": {
+        "name": "Conv_UI_OGG_Low",
+        "codec": "Vorbis OGG",
+        "description": "Low quality compression for UI sounds (minimal file size)"
+      }
+    },
+
+    "attenuation_curves": {
+      "description": "Distance-based volume attenuation with custom falloff curves",
+      "attenuations": [
+        {
+          "name": "ATT_Chomper",
+          "max_radius_meters": 25,
+          "curve_type": "Linear falloff from 0dB to -200dB",
+          "uses_cone": true,
+          "description": "Close-range enemy attenuation"
+        },
+        {
+          "name": "ATT_Grenadier",
+          "max_radius_meters": 45,
+          "curve_type": "Linear falloff from 0dB to -200dB",
+          "uses_cone": true,
+          "description": "Medium-range enemy attenuation"
+        },
+        {
+          "name": "ATT_Grenadier_Footsteps",
+          "max_radius_meters": 75,
+          "curve_type": "Linear falloff from 0dB to -200dB",
+          "uses_cone": true,
+          "description": "Extended range for enemy footsteps"
+        },
+        {
+          "name": "ATT_Grenade_Bounce",
+          "max_radius_meters": 85,
+          "curve_type": "Linear falloff from 0dB to -200dB",
+          "uses_cone": true,
+          "description": "Long-range for grenade physics sounds"
+        },
+        {
+          "name": "ATT_Grenadier_Explosion",
+          "max_radius_meters": 100,
+          "curve_type": "Linear falloff from 0dB to -200dB",
+          "uses_cone": true,
+          "cone_inner_angle": 165,
+          "description": "Wide area explosion attenuation"
+        },
+        {
+          "name": "ATT_Teleporter",
+          "max_radius_meters": 65,
+          "curve_type": "Linear falloff from 0dB to -200dB",
+          "uses_cone": true,
+          "description": "Ambient loop for teleporter objects"
+        },
+        {
+          "name": "ATT_CrystalSwitch",
+          "max_radius_meters": 60,
+          "curve_type": "Linear falloff from 0dB to -200dB",
+          "uses_cone": true,
+          "description": "Interactive switch objects"
+        },
+        {
+          "name": "ATT_Dropship",
+          "max_radius_meters": 65,
+          "curve_type": "Linear falloff from 0dB to -200dB",
+          "uses_cone": true,
+          "cone_inner_angle": 170,
+          "description": "Vehicle ambient loop"
+        },
+        {
+          "name": "ATT_Gate",
+          "max_radius_meters": 155,
+          "curve_type": "Linear falloff from 0dB to -200dB",
+          "uses_cone": true,
+          "cone_inner_angle": 205,
+          "description": "Large mechanical door sounds"
+        },
+        {
+          "name": "ATT_BoxDestruction",
+          "max_radius_meters": 11,
+          "curve_type": "Linear falloff from 0dB to -200dB",
+          "uses_cone": true,
+          "description": "Small destructible object"
+        }
+      ]
+    }
+  },
+
+  "mixer_architecture": {
+    "description": "Hierarchical bus structure with RTPC volume control",
+    "master_bus": {
+      "name": "Master Audio Bus",
+      "volume_rtpc": "User_Master_Volume (0.0-1.0 mapped to -200dB to 0dB)"
+    },
+    "child_buses": [
+      {
+        "name": "Music_Bus",
+        "volume_offset_db": -3,
+        "volume_rtpc": "User_Music_Volume",
+        "description": "Main music bus with user volume control"
+      },
+      {
+        "name": "Ambience_Bus",
+        "volume_offset_db": -3,
+        "description": "Ambient sounds and environmental loops"
+      },
+      {
+        "name": "SFX_Bus",
+        "description": "General sound effects"
+      },
+      {
+        "name": "ShortSFX_Bus",
+        "description": "Short, one-shot sound effects"
+      },
+      {
+        "name": "VO_Bus",
+        "volume_offset_db": 1,
+        "description": "Voice-overs and dialogue (boosted +1dB)"
+      },
+      {
+        "name": "Foley_Bus",
+        "volume_offset_db": -1,
+        "description": "Character movement and foley sounds"
+      },
+      {
+        "name": "Enemies_Bus",
+        "description": "Enemy sounds and AI audio"
+      },
+      {
+        "name": "UI_Bus",
+        "volume_offset_db": -4,
+        "description": "User interface sounds (reduced -4dB)"
+      }
+    ],
+    "aux_buses": [
+      {
+        "name": "AUX_Reverb_Cave",
+        "effect": "Wwise RoomVerb - Hall_Medium_Dark preset",
+        "rtpc": "Reverb_Cave (0.0-1.0 controls send level)",
+        "description": "Large cave reverb for underground areas"
+      },
+      {
+        "name": "AUX_Reverb_StoreRoom",
+        "effect": "Wwise RoomVerb - Room_Medium preset",
+        "rtpc": "Reverb_StoreRoom",
+        "description": "Medium room reverb for interior spaces"
+      },
+      {
+        "name": "AUX_Reverb_StoneBig",
+        "effect": "Wwise RoomVerb - Have_U_Ever_Been_Outside preset",
+        "rtpc": "Reverb_StoneSurroundingsBig",
+        "description": "Large outdoor stone reverb"
+      },
+      {
+        "name": "AUX_Reverb_StoneSmall",
+        "effect": "Wwise RoomVerb - Hall_Small preset",
+        "rtpc": "Reverb_StoneSurroundingsSmall",
+        "description": "Small corridor/hallway reverb"
+      }
+    ]
+  },
+
+  "dynamic_audio_system": {
+    "game_parameters_rtpc": [
+      {
+        "name": "User_Master_Volume",
+        "range": "0.0 - 1.0",
+        "usage": "Master volume slider control"
+      },
+      {
+        "name": "User_Music_Volume",
+        "range": "0.0 - 1.0",
+        "usage": "Music volume slider control"
+      },
+      {
+        "name": "User_SFX_Volume",
+        "range": "0.0 - 1.0",
+        "usage": "SFX volume slider control"
+      },
+      {
+        "name": "Reverb_Cave",
+        "range": "0.0 - 1.0",
+        "usage": "Dynamic cave reverb send level"
+      },
+      {
+        "name": "Reverb_StoreRoom",
+        "range": "0.0 - 1.0",
+        "usage": "Dynamic room reverb send level"
+      },
+      {
+        "name": "Reverb_StoneSurroundingsBig",
+        "range": "0.0 - 1.0",
+        "usage": "Dynamic outdoor reverb send level"
+      },
+      {
+        "name": "Reverb_StoneSurroundingsSmall",
+        "range": "0.0 - 1.0",
+        "usage": "Dynamic corridor reverb send level"
+      }
+    ],
+
+    "state_groups": [
+      {
+        "name": "MusicZone",
+        "states": ["None", "EnteredBuilding", "EnteredMainChamber", "ExploreJungle", "MainMenu"],
+        "description": "Controls adaptive ambient music based on player location",
+        "implementation": "Switch Container 'SC_AMB' uses this state to crossfade between different ambient tracks with 6.5s fade in/out"
+      },
+      {
+        "name": "EnemyAlert",
+        "states": ["None", "Calm", "Spotted"],
+        "description": "Tracks enemy AI awareness for adaptive music"
+      },
+      {
+        "name": "MusicMode",
+        "states": ["None", "Normal", "BossFight"],
+        "description": "Transitions music between normal gameplay and combat"
+      }
+    ],
+
+    "switch_groups": [
+      {
+        "name": "Material",
+        "switches": ["Grass", "Earth", "Puddle", "Stone"],
+        "usage": "Footstep surface material switching"
+      },
+      {
+        "name": "Locomotion",
+        "switches": ["Walking", "Running"],
+        "usage": "Footstep playback rate/intensity"
+      },
+      {
+        "name": "Damageable",
+        "switches": ["Box", "Chomper", "Grenadier"],
+        "usage": "Impact sound variations based on target type"
+      },
+      {
+        "name": "ChomperFootType",
+        "switches": ["Front", "Back"],
+        "usage": "Different sounds for front/back legs of Chomper enemy"
+      },
+      {
+        "name": "Activated",
+        "switches": ["Active", "Inactive"],
+        "usage": "Interactive object state changes"
+      },
+      {
+        "name": "InfoZone",
+        "switches": ["INFO1", "INFO2", "INFO3", "INFO4", "INFO4b", "INFO5"],
+        "usage": "Switch Container for UI info zone sound selection"
+      }
+    ]
+  },
+
+  "adaptive_ambience_waterfall": {
+    "description": "Advanced cross-fading ambient system using State-driven Switch Container",
+    "container_name": "SC_AMB",
+    "behavior": "ContinuousPlayback with per-state fade times",
+    "fade_in_time": 6.5,
+    "fade_out_time": 6.5,
+
+    "state_mappings": [
+      {
+        "state": "ExploreJungle (MusicZone)",
+        "sounds": ["AMB_Harbor", "AMB_Jungle", "AMB_Wind_Desert_Gusts_01"],
+        "description": "Outdoor jungle environment - plays harbor ambience, jungle sounds, and wind"
+      },
+      {
+        "state": "EnteredMainChamber (MusicZone)",
+        "sounds": ["AMB_CountrySide", "AMB_Wind_Desert_Gusts_02"],
+        "description": "Large open chamber - countryside ambience with different wind layer"
+      },
+      {
+        "state": "EnteredBuilding (MusicZone)",
+        "sounds": ["AMB_Drone_Chakra_Space_01"],
+        "description": "Interior space - single drone ambient layer"
+      }
+    ],
+
+    "special_layer": {
+      "name": "AMB_Addition",
+      "type": "3D Positioned Sound",
+      "attenuation": "ATT_Chomper (25m radius)",
+      "volume_offset_db": -12,
+      "reverb_sends": [
+        "AUX_Reverb_Cave",
+        "AUX_Reverb_StoneBig",
+        "AUX_Reverb_StoneSmall",
+        "AUX_Reverb_StoreRoom"
+      ],
+      "description": "Ethereal ambient addition layer with distance-based falloff and reverb"
+    },
+
+    "technical_details": {
+      "continue_playback": true,
+      "loop_enabled": true,
+      "crossfade_behavior": "Sounds continue playing during transition and fade smoothly"
+    }
+  },
+
+  "blend_containers": {
+    "description": "Used for layered sound design with real-time mixing",
+    "examples": [
+      {
+        "name": "BL_Teleporter_Ambient_Loop",
+        "layers": ["AMB_Drone_Rumble_01", "SFX_Magic_Teleport_Idle_Growly_01"],
+        "3d_spatialization": true,
+        "attenuation": "ATT_Teleporter (65m)",
+        "description": "Layered ambient loop for teleporter objects combining drone and magical element"
+      }
+    ]
+  },
+
+  "event_structure": {
+    "categories": [
+      {
+        "folder": "Ellen (Player Character)",
+        "events": [
+          "Ellen_Footstep - Triggers footstep SWC + breathing sounds",
+          "Ellen_Jump - Cloth movement + jump breath",
+          "Ellen_Land - Landing impact with surface switching",
+          "Ellen_Hurt - Damage taken vocalization",
+          "Ellen_Death - Death vocalization",
+          "Ellen_AcidPool_Death - Special acid pool death (Blend Container + death voice)",
+          "Ellen_Respawn - Respawn magic spell effect + vocalization",
+          "Ellen_Attack_Emote - Attack vocalization"
+        ]
+      },
+      {
+        "folder": "Enemies",
+        "subfolders": [
+          {
+            "name": "Chomper",
+            "events": [
+              "Chomper_Footstep - Enemy footstep system",
+              "Chomper_Attack - Bite attack sound",
+              "Chomper_Grunt - Idle vocalization",
+              "Chomper_Death - Death sound",
+              "Chomper_Spotted - Alert/aggro sound"
+            ]
+          },
+          {
+            "name": "Grenadier",
+            "events": [
+              "Grenadier_Footstep - Heavy enemy footsteps + BossFight state trigger",
+              "Grenadier_Fire_Ranged - Ranged weapon fire",
+              "Grenadier_Melee - Melee attack",
+              "Grenadier_Get_Hit - Damage reaction",
+              "Grenadier_Die - Death sound + Blend Container + Normal music state",
+              "Grenadier_Shield_Charge - Shield charge ability",
+              "Grenade_Bounce - Grenade physics bounce",
+              "Grenade_Explode - Explosion impact"
+            ]
+          }
+        ]
+      },
+      {
+        "folder": "Environment",
+        "events": [
+          "Ambience - Plays SC_AMB switch container + AMB_Addition layer",
+          "Dropship - Vehicle ambient loop",
+          "Fireflies - (Empty event)",
+          "Point_Swamp_Acid_Pool - (Empty event)"
+        ]
+      },
+      {
+        "folder": "Interactables",
+        "subfolders": [
+          {
+            "name": "Doors",
+            "events": ["Door_Open_Big - Large mechanical door slide"]
+          },
+          {
+            "name": "CrystalSwitch",
+            "events": [
+              "CrystalSwitch_Activate - Crystal activation sound",
+              "CrystalSwitch_Ambient_Loop - Idle crystal hum"
+            ]
+          },
+          {
+            "name": "PressurePad",
+            "events": [
+              "PressurePad_Activate - (Empty)",
+              "PressurePad_Ambient_Loop - (Empty)"
+            ]
+          },
+          {
+            "name": "HealthCrate",
+            "events": [
+              "Health_Crate_Open - (Empty)",
+              "Health_Crate_Ambient_Loop - (Empty)"
+            ]
+          }
+        ],
+        "other_events": [
+          "Teleporter_Ambient_Loop - Blend Container with 3D positioning",
+          "DestructibleBox_Break - Box destruction sound"
+        ]
+      },
+      {
+        "folder": "Staff (Weapon)",
+        "events": [
+          "Staff_Pick_Up - Pickup sound",
+          "Staff_Swing - Swing whoosh",
+          "Staff_Hit - Impact sound"
+        ]
+      },
+      {
+        "folder": "UI",
+        "events": [
+          "Menu_Buttons_Mouse_Over - Hover sound with pitch randomization (-253 to +379 cents)",
+          "Menu_Buttons_Confirm - Confirmation beep",
+          "Menu_Buttons_Back - Back/cancel sound",
+          "Menu_Buttons_Start_Game - Game start transition (Blend Container with 2 sounds)",
+          "Info_Zone_Activated - Info zone Switch Container triggered by InfoZone switch group"
+        ]
+      },
+      {
+        "folder": "Music",
+        "events": [
+          "Music - Plays MUSIC Root + sets Normal state in MusicMode"
+        ]
+      }
+    ]
+  },
+
+  "advanced_techniques": {
+    "random_containers": {
+      "description": "Used for footsteps and variations",
+      "examples": [
+        "RC_Ellen_Run_Breath - Random breath sounds during running",
+        "RC_Chomper_Attack - Randomized attack sounds",
+        "RC_Grenade_Bounce - Random bounce variations"
+      ]
+    },
+
+    "switch_containers": {
+      "description": "Dynamic audio selection based on game state",
+      "examples": [
+        "SWC_Footsteps - Material-based footstep switching (Grass/Earth/Puddle/Stone)",
+        "SWC_Ellen_Land - Landing sounds with material switching",
+        "SWC_Zones_Text - UI voice lines based on InfoZone switch"
+      ]
+    },
+
+    "blend_containers_advanced": {
+      "description": "Real-time layered mixing",
+      "examples": [
+        "BL_Teleporter_Ambient_Loop - 2 layers blended",
+        "BL_Ellen_AcidPool - Death in acid pool effect",
+        "BL_Staff_Hit/Swing/Pick_Up - Weapon sound layering",
+        "BL_InfoZone - UI info zone base container",
+        "BL_UI_Game_Start - Game start layered transition"
+      ]
+    },
+
+    "3d_audio": {
+      "description": "3D positioned sounds with attenuation and spatialization",
+      "spatialization_mode": "Position + Orientation (value=1)",
+      "examples": [
+        "AMB_Addition - 3D ambient layer",
+        "BL_Teleporter_Ambient_Loop - 3D looping object",
+        "All footsteps and enemy sounds use 3D positioning"
+      ]
+    },
+
+    "rtpc_curves": {
+      "description": "Real-time parameter control with custom curves",
+      "curve_type": "Linear interpolation (Flags=3)",
+      "examples": [
+        "Master/Music/SFX volume sliders: 0.0→-200dB, 1.0→0dB",
+        "Reverb sends: 0.0→-200dB (off), 1.0→0dB (full wet)"
+      ]
+    }
+  },
+
+  "soundbank_configuration": {
+    "output_path": "..\\..\\Wwise_Ellen_0_3\\WwiseExam_Data\\StreamingAssets\\Audio\\GeneratedSoundBanks\\Windows\\",
+    "generate_xml": true,
+    "generate_json": false,
+    "generate_header": false,
+    "include_soundbank_names": true,
+    "copy_streamed_files": true,
+    "post_generation_cmd": "Copy Streamed Files"
+  },
+
+  "code_integration_notes": {
+    "unity_integration": "Project uses Wwise Unity Integration",
+    "soundbank_path": "StreamingAssets/Audio/GeneratedSoundBanks/Windows/",
+    "expected_scripts": [
+      "AkAmbient - For ambient sound sources",
+      "AkGameObj - For 3D game objects with audio",
+      "AkState - For setting MusicZone/EnemyAlert/MusicMode states",
+      "AkSwitch - For Material/Locomotion switching",
+      "AkRTPCManager - For controlling reverb parameters and volume sliders"
+    ]
+  },
+
+  "workflow_summary": {
+    "compression_strategy": "Content-aware: Music=Q8, Ambience=Q7, SFX=Q5, VO=ADPCM, UI=Low OGG",
+    "memory_optimization": "256 voice limit + virtual voice system with 50 dangerous voice threshold",
+    "cpu_optimization": "Selective 3D positioning, efficient attenuation curves, pooled Random/Switch containers",
+    "streaming": "Large ambient loops and music tracks marked for streaming",
+    "reverb_system": "4 auxiliary reverb buses controlled via RTPC for dynamic spatial simulation",
+    "adaptive_music": "State-based music zone system with smooth 6.5s crossfades",
+    "footstep_system": "Material + Locomotion switches with Random Containers for variation",
+    "enemy_audio": "Distance-based attenuation with cone attenuation for directionality"
+  }
+}
