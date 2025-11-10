@@ -539,7 +539,7 @@
             <span class="hero-tag">Wwise Middleware</span>
             <h1>Three Wwise Projects</h1>
             <p class="hero-lead">
-                School projects where I learned how Wwise actually works when things break. Had to keep 50+ zombies making noise without the audio cutting out. Built audio that smoothly transitions between jungle, caves, and buildings. Fit an entire game into 15 MB of RAM on Android phones.
+                School projects where I learned how Wwise works when things break. Kept 50+ zombies making noise without audio cutting out. Built transitions between jungle, caves, and buildings. Squeezed a game into 15 MB of RAM on Android.
             </p>
 
             <div class="context-note">
@@ -565,7 +565,7 @@
         <section class="section">
             <div class="section-header">
                 <h2 class="section-title">The Projects</h2>
-                <p class="section-subtitle">Three different technical problems that forced me to actually understand how the middleware works.</p>
+                <p class="section-subtitle">Three different problems that made me figure out how the middleware works.</p>
             </div>
 
             <!-- Project 1: Boney Boogaloo -->
@@ -611,7 +611,7 @@
                 </div>
 
                 <div class="story">
-                    <p>Fixed it with random containers - every gunshot picks from 6 different variations, zombie sounds randomize between groans and shuffles. Set up voice virtualization so quiet sounds pause instead of dying completely.</p>
+                    <p>Fixed it with random containers - every gunshot picks from 6 different variations, zombie sounds randomize between groans and shuffles. Set up voice virtualization so quiet sounds pause instead of stopping.</p>
 
                     <p>Also trimmed silence from every file manually. That half-second of nothing at the start of a reload sound? Gone. Zombie groan tail that's just room noise? Cut. Files load faster and use less memory.</p>
                 </div>
@@ -659,7 +659,7 @@
 
                     <p>Problem: step from jungle into building and audio cuts instantly. Jungle ambience stops, building ambience starts. Jarring as hell.</p>
 
-                    <p>Also enemy footsteps needed different ranges. Grenadier 75 meters away throwing explosives? Need to hear that for awareness. Debris falling 10 meters behind you? Should fade fast or it clutters the mix.</p>
+                    <p>Enemy footsteps needed different ranges. Grenadier 75 meters away throwing explosives? Need to hear that for awareness. Debris falling 10 meters behind you? Should fade fast or it clutters the mix.</p>
                 </div>
 
                 <div class="numbers">
@@ -686,13 +686,13 @@
                 <div class="story">
                     <p>Used Wwise states for zones. It tracks where you are and crossfades ambience over 6.5 seconds automatically. Walk into a building and jungle fades out while room tone fades in. No manual scripting.</p>
 
-                    <p>Wrote 10 attenuation curves. Debris cuts at 11m, gates reach 155m, grenadier footsteps at 75m. Each sound has a distance that matches its importance.</p>
+                    <p>Wrote 10 attenuation curves. Debris cuts at 11m, gates reach 155m, grenadier footsteps at 75m.</p>
 
                     <p>Added 4 reverb channels controlled by game parameters. Walk into a cave and reverb increases automatically. Can tweak amounts in Wwise without recompiling.</p>
                 </div>
 
                 <div class="reflection">
-                    <p>First time writing attenuation curves from scratch. First try: too aggressive, enemies went silent at 30m. Second try: too conservative, everything audible at 100m+ and mix was mush. Took 4 playtests to dial it in. Lesson: iterate based on actual gameplay, not guessing.</p>
+                    <p>First time writing attenuation curves from scratch. First try: too aggressive, enemies went silent at 30m. Second try: too conservative, everything audible at 100m+ and mix was mush. Took 4 playtests to dial it in.</p>
                 </div>
 
                 <div class="project-footer">
@@ -751,7 +751,7 @@
                 </div>
 
                 <div class="story">
-                    <p>Solution: dynamic soundbank loading. Only load audio for current zone. In Brain? Load Brain. Enter Mouth? Unload Brain, load Mouth. Saved 3.8 MB, total down to ~12 MB.</p>
+                    <p>Fixed it with dynamic soundbank loading. Only load audio for current zone. In Brain? Load Brain. Enter Mouth? Unload Brain, load Mouth. Saved 3.8 MB, got it down to ~12 MB.</p>
 
                     <p>Used Wwise Silence plugin for ambience gaps. Instead of storing silent WAV files (which still eat memory), plugin generates procedural silence. Track with 5 seconds of silence went from 500 KB to 100 KB. 80% reduction.</p>
 
