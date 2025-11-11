@@ -331,7 +331,32 @@
             body.is-scrolling a,
             body.is-scrolling button {
                 pointer-events: auto !important;
-            } /* === RESET === */
+            }
+
+            /* GPU acceleration for smooth animations */
+            .project-card,
+            .btn,
+            .hero-content,
+            .cv-dropdown-menu {
+                will-change: transform;
+            }
+
+            /* Disable heavy animations on mobile for 60fps */
+            @media (max-width: 768px) {
+                .bg-orbs,
+                .bg-grid,
+                .bg-orbs::before {
+                    animation: none !important;
+                    transform: none !important;
+                }
+
+                /* Simplify transitions on mobile */
+                * {
+                    transition-duration: 0.2s !important;
+                }
+            }
+
+            /* === RESET === */
             *,
             *::before,
             *::after {
@@ -571,7 +596,10 @@
                 font-weight: 600;
                 font-size: 0.95rem;
                 text-decoration: none;
-                transition: all 0.3s ease;
+                transition:
+                    transform 0.3s ease,
+                    box-shadow 0.3s ease,
+                    background 0.3s ease;
                 cursor: pointer;
                 border: none;
                 letter-spacing: 0.02em;
@@ -644,7 +672,10 @@
                 align-items: center;
                 gap: 8px;
                 border-radius: 8px;
-                transition: all 0.3s ease;
+                transition:
+                    transform 0.3s ease,
+                    background 0.3s ease,
+                    box-shadow 0.3s ease;
                 text-decoration: none;
             }
             .cv-dropdown-toggle:hover {
@@ -672,7 +703,10 @@
                 opacity: 0;
                 visibility: hidden;
                 transform: translateY(-10px);
-                transition: all 0.3s ease;
+                transition:
+                    opacity 0.3s ease,
+                    visibility 0.3s ease,
+                    transform 0.3s ease;
                 pointer-events: none;
                 z-index: 1000;
                 backdrop-filter: blur(10px);
@@ -689,7 +723,10 @@
                 padding: 1rem 1.2rem;
                 color: #e0e6ed;
                 text-decoration: none;
-                transition: all 0.2s ease;
+                transition:
+                    background 0.2s ease,
+                    color 0.2s ease,
+                    padding-left 0.2s ease;
                 border-bottom: 1px solid rgba(96, 165, 250, 0.1);
             }
             .cv-dropdown-item:last-child {
@@ -784,7 +821,7 @@
                 border: none;
                 overflow: hidden;
                 box-shadow: none;
-                transition: all 0.5s ease;
+                transition: transform 0.5s ease;
                 cursor: pointer;
             }
             .demo-reel-player:hover {
@@ -939,10 +976,13 @@
                 overflow: hidden;
                 border: 2px solid transparent;
                 background-clip: padding-box;
-                transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                transition:
+                    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                    box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
                 cursor: pointer;
                 backdrop-filter: blur(10px);
                 text-decoration: none;
+                transform: translateZ(0); /* Force GPU acceleration */
             } /* Gradient border effect */
             .project-card::after {
                 content: "";
@@ -1143,7 +1183,9 @@
                 background: rgba(30, 41, 59, 0.3);
                 border-radius: 20px;
                 border: 1px solid rgba(255, 255, 255, 0.05);
-                transition: all 0.3s ease;
+                transition:
+                    border-color 0.3s ease,
+                    transform 0.3s ease;
             }
             .stat-card:hover {
                 border-color: rgba(96, 165, 250, 0.3);
@@ -1216,7 +1258,10 @@
                 border-radius: 50%;
                 color: #9ca3af;
                 text-decoration: none;
-                transition: all 0.3s ease;
+                transition:
+                    background 0.3s ease,
+                    color 0.3s ease,
+                    transform 0.3s ease;
             }
             .social-link:hover {
                 background: rgba(96, 165, 250, 0.2);
