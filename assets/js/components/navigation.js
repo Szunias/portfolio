@@ -20,7 +20,7 @@ function loadNavigation() {
               <button class="lang-btn" data-lang="nl">NL</button>
             </li>
           </ul>
-          <button class="mobile-menu-toggle" aria-label="Toggle mobile menu">
+          <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu">
             <span></span>
             <span></span>
             <span></span>
@@ -33,7 +33,7 @@ function loadNavigation() {
     <div class="mobile-menu-overlay"></div>
 
     <!-- Mobile Menu -->
-    <div class="mobile-menu">
+    <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
       <ul class="mobile-nav-links">
         <li><a href="/" data-i18n="nav_home">Home</a></li>
         <li><a href="/about.html" data-i18n="nav_about">About</a></li>
@@ -170,12 +170,16 @@ function initMobileMenu() {
       toggle?.classList.remove("active");
       menu?.classList.remove("active");
       overlay?.classList.remove("active");
+      toggle?.setAttribute("aria-expanded", "false");
+      menu?.setAttribute("aria-hidden", "true");
     };
 
     const openMenu = () => {
       toggle?.classList.add("active");
       menu?.classList.add("active");
       overlay?.classList.add("active");
+      toggle?.setAttribute("aria-expanded", "true");
+      menu?.setAttribute("aria-hidden", "false");
     };
 
     document.addEventListener("click", (event) => {

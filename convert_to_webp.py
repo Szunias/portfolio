@@ -7,7 +7,9 @@ Optimized for web performance
 import os
 import sys
 from pathlib import Path
+
 from PIL import Image
+
 
 def convert_png_to_webp(png_path, quality=85):
     """Convert a PNG file to WebP format"""
@@ -16,19 +18,19 @@ def convert_png_to_webp(png_path, quality=85):
         img = Image.open(png_path)
 
         # Convert RGBA to RGB if necessary (WebP supports both but RGB is smaller)
-        if img.mode == 'RGBA':
+        if img.mode == "RGBA":
             # Create a white background
-            background = Image.new('RGB', img.size, (255, 255, 255))
+            background = Image.new("RGB", img.size, (255, 255, 255))
             background.paste(img, mask=img.split()[3])  # 3 is the alpha channel
             img = background
-        elif img.mode != 'RGB':
-            img = img.convert('RGB')
+        elif img.mode != "RGB":
+            img = img.convert("RGB")
 
         # Generate output path
-        webp_path = png_path.with_suffix('.webp')
+        webp_path = png_path.with_suffix(".webp")
 
         # Save as WebP
-        img.save(webp_path, 'WebP', quality=quality, method=6)
+        img.save(webp_path, "WebP", quality=quality, method=6)
 
         # Get file sizes
         png_size = os.path.getsize(png_path)
@@ -45,6 +47,7 @@ def convert_png_to_webp(png_path, quality=85):
         print(f"✗ Error converting {png_path.name}: {e}\n")
         return False
 
+
 def main():
     # Files to convert
     covers_dir = Path("assets/images/covers")
@@ -52,24 +55,28 @@ def main():
     cv_dir = Path("assets/images/projects-cv")
 
     files_to_convert = [
-        # Covers (biggest impact for music.html)
+        # Covers - ALL large PNG files (music.html)
         covers_dir / "Cage.png",
         covers_dir / "caplanepourmoi.png",
+        covers_dir / "Console.png",
+        covers_dir / "dwaadwdw.png",
         covers_dir / "EdgeOfLife.png",
         covers_dir / "epka.png",
         covers_dir / "epkam.png",
+        covers_dir / "GnosienneAlbumCover.png",
         covers_dir / "keyboard.png",
+        covers_dir / "nottoday.png",
+        covers_dir / "nottodaydar.png",  # BIGGEST: 4.3MB
+        covers_dir / "project5.png",
         covers_dir / "PSY.png",
+        covers_dir / "richter.png",
         covers_dir / "Run.png",
         covers_dir / "Syncopations.png",
         covers_dir / "ThatsItCover.png",
         covers_dir / "Tribal.png",
-        covers_dir / "project5.png",
-        covers_dir / "Console.png",
-
-        # CV (biggest single file)
+        covers_dir / "XianClashCover.png",
+        # CV (if exists)
         cv_dir / "1000016681_upscayl_5x_remacri-4x.png",
-
         # Large project images
         projects_dir / "amorak.png",
         projects_dir / "NotTodayPic1.png",
@@ -95,7 +102,7 @@ def main():
             continue
 
         # Check if WebP already exists
-        webp_file = png_file.with_suffix('.webp')
+        webp_file = png_file.with_suffix(".webp")
         if webp_file.exists():
             print(f"⊘ Skipping {png_file.name} (WebP exists)\n")
             continue
@@ -114,8 +121,11 @@ def main():
     print(f"Converted: {converted} images")
     print(f"Total PNG size:  {total_png_size / 1024 / 1024:.2f} MB")
     print(f"Total WebP size: {total_webp_size / 1024 / 1024:.2f} MB")
-    print(f"Total saved:     {(total_png_size - total_webp_size) / 1024 / 1024:.2f} MB ({((total_png_size - total_webp_size) / total_png_size) * 100:.1f}%)")
+    print(
+        f"Total saved:     {(total_png_size - total_webp_size) / 1024 / 1024:.2f} MB ({((total_png_size - total_webp_size) / total_png_size) * 100:.1f}%)"
+    )
     print("=" * 60)
+
 
 if __name__ == "__main__":
     main()

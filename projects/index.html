@@ -885,15 +885,26 @@
             /* === ANIMATIONS === */
             .fade-in {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
                 transition:
-                    opacity 0.8s ease,
-                    transform 0.8s ease;
+                    opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .fade-in.visible {
                 opacity: 1;
                 transform: translateY(0);
+            }
+
+            /* Staggered animation for project cards - wave pattern */
+            .project-card.fade-in:nth-child(3n + 1) {
+                transition-delay: 0s;
+            }
+            .project-card.fade-in:nth-child(3n + 2) {
+                transition-delay: 0.08s;
+            }
+            .project-card.fade-in:nth-child(3n + 3) {
+                transition-delay: 0.16s;
             }
         </style>
 
@@ -978,7 +989,11 @@
                         audio development tools.
                     </p>
 
-                    <div class="filters" role="group" aria-label="Project filters">
+                    <div
+                        class="filters"
+                        role="group"
+                        aria-label="Project filters"
+                    >
                         <button
                             class="filter-btn active"
                             data-filter="all"
@@ -1022,11 +1037,15 @@
                     </div>
                 </div>
 
-                <div class="projects-grid fade-in" role="list" aria-label="Projects showcase">
+                <div
+                    class="projects-grid"
+                    role="list"
+                    aria-label="Projects showcase"
+                >
                     <!-- Shadow Frames -->
                     <a
                         href="shadow-frames.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="game"
                         aria-label="Shadow Frames - Game Audio project"
                     >
@@ -1062,9 +1081,9 @@
                                     />
                                 </div>
                             </div>
-                            <video data-autoplay loop muted playsinline>
+                            <video autoplay loop muted playsinline>
                                 <source
-                                    data-src="../assets/images/projects-shadowframes/Menugif.mp4"
+                                    src="../assets/images/projects-shadowframes/Menugif.mp4"
                                     type="video/mp4"
                                 />
                             </video>
@@ -1093,7 +1112,7 @@
                     <!-- Amorak -->
                     <a
                         href="amorak.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="sound"
                     >
                         <div class="project-image">
@@ -1102,13 +1121,13 @@
                                 data-i18n="projects.amorak.badge"
                                 >Sound Design</span
                             >
-                            <video data-autoplay loop muted playsinline>
+                            <video autoplay loop muted playsinline>
                                 <source
-                                    data-src="../assets/images/projects/AmorakGIF.webm"
+                                    src="../assets/images/projects/AmorakGIF.webm"
                                     type="video/webm"
                                 />
                                 <source
-                                    data-src="../assets/images/projects/AmorakGIF.mp4"
+                                    src="../assets/images/projects/AmorakGIF.mp4"
                                     type="video/mp4"
                                 />
                             </video>
@@ -1137,7 +1156,7 @@
                     <!-- Transientica -->
                     <a
                         href="audiolab.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="tools"
                     >
                         <div class="project-image">
@@ -1146,9 +1165,9 @@
                                 data-i18n="projects.audiolab.badge"
                                 >ML Audio</span
                             >
-                            <video data-autoplay loop muted playsinline>
+                            <video autoplay loop muted playsinline>
                                 <source
-                                    data-src="../assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4"
+                                    src="../assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4"
                                     type="video/mp4"
                                 />
                             </video>
@@ -1177,7 +1196,7 @@
                     <!-- AudioQ -->
                     <a
                         href="audioq.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="tools"
                     >
                         <div class="project-image">
@@ -1187,11 +1206,9 @@
                                 >VST Plugin</span
                             >
                             <img
-                                class="lazy-img"
-                                data-src="../assets/images/projects-audioq/AudioQLogo.jpeg"
+                                src="../assets/images/projects-audioq/AudioQLogo.jpeg"
                                 alt="AudioQ"
                                 onerror="this.src='../assets/images/projects-audioq/AudioQIcon512.png'"
-                                loading="lazy"
                                 decoding="async"
                             />
                         </div>
@@ -1218,7 +1235,7 @@
                     <!-- Wwise Projects Portfolio -->
                     <a
                         href="middleware-optimization.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="game"
                     >
                         <div class="project-image">
@@ -1228,10 +1245,8 @@
                                 >Middleware</span
                             >
                             <img
-                                class="lazy-img"
-                                data-src="../assets/images/projects/musicforgames.png"
+                                src="../assets/images/projects/musicforgames.png"
                                 alt="Wwise Projects Portfolio"
-                                loading="lazy"
                                 decoding="async"
                             />
                         </div>
@@ -1246,7 +1261,8 @@
                                 class="project-description"
                                 data-i18n="projects.middleware_optimization.description"
                             >
-                                Three Wwise projects solving real production problems.
+                                Three Wwise projects solving real production
+                                problems.
                             </p>
                             <div
                                 class="project-tech"
@@ -1258,7 +1274,7 @@
                     <!-- Not Today Darling -->
                     <a
                         href="not-today-darling.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="game"
                     >
                         <div class="project-image">
@@ -1267,13 +1283,13 @@
                                 data-i18n="projects.not_today.badge"
                                 >Game Audio</span
                             >
-                            <video data-autoplay loop muted playsinline>
+                            <video autoplay loop muted playsinline>
                                 <source
-                                    data-src="../assets/images/projects/NotTodayGIF.webm"
+                                    src="../assets/images/projects/NotTodayGIF.webm"
                                     type="video/webm"
                                 />
                                 <source
-                                    data-src="../assets/images/projects/NotTodayGIF.mp4"
+                                    src="../assets/images/projects/NotTodayGIF.mp4"
                                     type="video/mp4"
                                 />
                             </video>
@@ -1302,7 +1318,7 @@
                     <!-- Pause & Deserve -->
                     <a
                         href="pause-and-deserve.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="game"
                     >
                         <div class="project-image">
@@ -1346,7 +1362,7 @@
                     <!-- Interactive Music -->
                     <a
                         href="musicforgames.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="music"
                     >
                         <div class="project-image">
@@ -1387,7 +1403,7 @@
                     <!-- Ray Animation -->
                     <a
                         href="ray-animation.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="sound"
                     >
                         <div class="project-image">
@@ -1444,7 +1460,7 @@
                     <!-- Akantilado -->
                     <a
                         href="akantilado.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="sound"
                     >
                         <div class="project-image">
@@ -1501,7 +1517,7 @@
                     <!-- Richter -->
                     <a
                         href="richter.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="sound"
                     >
                         <div class="project-image">
@@ -1542,7 +1558,7 @@
                     <!-- Pawism -->
                     <a
                         href="pawism.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="game"
                     >
                         <div class="project-image">
@@ -1584,7 +1600,7 @@
                     <!-- Environments -->
                     <a
                         href="environments.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="sound"
                     >
                         <div class="project-image">
@@ -1625,7 +1641,7 @@
                     <!-- Wwise Unreal Fixer -->
                     <a
                         href="wwise-unreal-fixer.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="tools"
                     >
                         <div class="project-image">
@@ -1667,7 +1683,7 @@
                     <!-- Unreal Engine Rebuilder -->
                     <a
                         href="unreal-engine-rebuilder.html"
-                        class="project-card"
+                        class="project-card fade-in"
                         data-category="tools"
                     >
                         <div class="project-image">

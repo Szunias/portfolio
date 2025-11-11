@@ -1,7 +1,7 @@
 /**
  * Google Analytics 4 - Privacy-Friendly Implementation
  * Igor Szuniewicz Portfolio
- * 
+ *
  * Features:
  * - Privacy-first approach (minimal data collection)
  * - GDPR compliant
@@ -11,27 +11,27 @@
 
 // Configuration
 const GA_CONFIG = {
-  measurementId: 'G-36J3DWT6QW', // Google Analytics 4 Measurement ID
+  measurementId: "G-36J3DWT6QW", // Google Analytics 4 Measurement ID
   anonymizeIp: true,
   allowGoogleAnalytics: false, // Default to false, user can opt-in
-  debug: false // Set to true for development
+  debug: false, // Set to true for development
 };
 
 // Check if user has consented to analytics
 function hasAnalyticsConsent() {
   // Check localStorage for user preference
-  const consent = localStorage.getItem('analytics-consent');
-  return consent === 'true';
+  const consent = localStorage.getItem("analytics-consent");
+  return consent === "true";
 }
 
 // Set analytics consent
 function setAnalyticsConsent(consent) {
-  localStorage.setItem('analytics-consent', consent.toString());
+  localStorage.setItem("analytics-consent", consent.toString());
   if (consent) {
     initializeAnalytics();
   } else {
     // Disable analytics if user opts out
-    window['ga-disable-' + GA_CONFIG.measurementId] = true;
+    window["ga-disable-" + GA_CONFIG.measurementId] = true;
   }
 }
 
@@ -42,43 +42,45 @@ function initializeAnalytics() {
   }
 
   // Load gtag script
-  const script = document.createElement('script');
+  const script = document.createElement("script");
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_CONFIG.measurementId}`;
   document.head.appendChild(script);
 
   // Initialize gtag
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
+  function gtag() {
+    dataLayer.push(arguments);
+  }
   window.gtag = gtag;
-  gtag('js', new Date());
-  
+  gtag("js", new Date());
+
   // Configure GA4 with privacy settings
-  gtag('config', GA_CONFIG.measurementId, {
+  gtag("config", GA_CONFIG.measurementId, {
     anonymize_ip: GA_CONFIG.anonymizeIp,
     allow_google_signals: false,
     allow_ad_personalization_signals: false,
-    cookie_flags: 'SameSite=Strict;Secure',
+    cookie_flags: "SameSite=Strict;Secure",
     // Custom parameters for audio portfolio
     custom_map: {
-      'custom_parameter_1': 'project_type',
-      'custom_parameter_2': 'audio_category'
-    }
+      custom_parameter_1: "project_type",
+      custom_parameter_2: "audio_category",
+    },
   });
 
   if (GA_CONFIG.debug) {
-    console.log('Google Analytics 4 initialized with privacy settings');
+    // Google Analytics 4 initialized with privacy settings
   }
 }
 
 // Track page views (only if consent given)
 function trackPageView(pagePath, pageTitle) {
   if (!hasAnalyticsConsent()) return;
-  
+
   if (window.gtag) {
-    gtag('config', GA_CONFIG.measurementId, {
+    gtag("config", GA_CONFIG.measurementId, {
       page_path: pagePath,
-      page_title: pageTitle
+      page_title: pageTitle,
     });
   }
 }
@@ -86,42 +88,42 @@ function trackPageView(pagePath, pageTitle) {
 // Track custom events (portfolio specific)
 function trackPortfolioEvent(eventName, parameters = {}) {
   if (!hasAnalyticsConsent()) return;
-  
+
   if (window.gtag) {
-    gtag('event', eventName, {
-      event_category: 'portfolio_interaction',
-      ...parameters
+    gtag("event", eventName, {
+      event_category: "portfolio_interaction",
+      ...parameters,
     });
   }
 }
 
 // Track project views
 function trackProjectView(projectName, projectType) {
-  trackPortfolioEvent('project_view', {
+  trackPortfolioEvent("project_view", {
     project_name: projectName,
-    project_type: projectType
+    project_type: projectType,
   });
 }
 
 // Track audio interactions
 function trackAudioInteraction(audioType, action) {
-  trackPortfolioEvent('audio_interaction', {
+  trackPortfolioEvent("audio_interaction", {
     audio_type: audioType,
-    interaction_action: action
+    interaction_action: action,
   });
 }
 
 // Track CV downloads
 function trackCVDownload() {
-  trackPortfolioEvent('cv_download', {
-    event_category: 'conversion'
+  trackPortfolioEvent("cv_download", {
+    event_category: "conversion",
   });
 }
 
 // Track contact form interactions
 function trackContactInteraction(action) {
-  trackPortfolioEvent('contact_interaction', {
-    contact_action: action
+  trackPortfolioEvent("contact_interaction", {
+    contact_action: action,
   });
 }
 
@@ -129,16 +131,20 @@ function trackContactInteraction(action) {
 // Google Analytics icon by Freepik from Flaticon (https://www.flaticon.com/free-icons/google)
 function showAnalyticsConsentBanner() {
   // Only show on index.html (main page)
-  if (!window.location.pathname.endsWith('index.html') && window.location.pathname !== '/' && !window.location.pathname.endsWith('/')) {
+  if (
+    !window.location.pathname.endsWith("index.html") &&
+    window.location.pathname !== "/" &&
+    !window.location.pathname.endsWith("/")
+  ) {
     return;
   }
-  
-  if (localStorage.getItem('analytics-consent') !== null) {
+
+  if (localStorage.getItem("analytics-consent") !== null) {
     return; // User already made a choice
   }
 
   // Check if banner was already shown in this session
-  if (sessionStorage.getItem('analytics-banner-shown') === 'true') {
+  if (sessionStorage.getItem("analytics-banner-shown") === "true") {
     return; // Banner already shown in this session
   }
 
@@ -148,8 +154,8 @@ function showAnalyticsConsentBanner() {
     return;
   }
 
-  const banner = document.createElement('div');
-  banner.id = 'analytics-consent-banner';
+  const banner = document.createElement("div");
+  banner.id = "analytics-consent-banner";
   banner.style.cssText = `
     position: fixed;
     bottom: 20px;
@@ -172,15 +178,17 @@ function showAnalyticsConsentBanner() {
   `;
 
   // Get current language
-  const currentLang = localStorage.getItem('language') || 'en';
-  
+  const currentLang = localStorage.getItem("language") || "en";
+
   // Get translations with better fallback
-  const analyticsTitle = window.translations?.[currentLang]?.analytics?.title || 
-                        window.translations?.en?.analytics?.title || 
-                        'Analytics';
-  const analyticsMessage = window.translations?.[currentLang]?.analytics?.message || 
-                          window.translations?.en?.analytics?.message || 
-                          'No personal data • Site only';
+  const analyticsTitle =
+    window.translations?.[currentLang]?.analytics?.title ||
+    window.translations?.en?.analytics?.title ||
+    "Analytics";
+  const analyticsMessage =
+    window.translations?.[currentLang]?.analytics?.message ||
+    window.translations?.en?.analytics?.message ||
+    "No personal data • Site only";
 
   banner.innerHTML = `
     <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
@@ -201,55 +209,58 @@ function showAnalyticsConsentBanner() {
   document.body.appendChild(banner);
 
   // Mark banner as shown in this session
-  sessionStorage.setItem('analytics-banner-shown', 'true');
+  sessionStorage.setItem("analytics-banner-shown", "true");
 
   // Function to update banner text when language changes
   function updateBannerText() {
-    const currentLang = localStorage.getItem('language') || 'en';
-    const analyticsTitle = window.translations?.[currentLang]?.analytics?.title || 
-                          window.translations?.en?.analytics?.title || 
-                          'Analytics';
-    const analyticsMessage = window.translations?.[currentLang]?.analytics?.message || 
-                            window.translations?.en?.analytics?.message || 
-                            'No personal data • Site only';
-    
-    const titleEl = banner.querySelector('span');
-    const messageEl = banner.querySelector('div:last-child');
-    
+    const currentLang = localStorage.getItem("language") || "en";
+    const analyticsTitle =
+      window.translations?.[currentLang]?.analytics?.title ||
+      window.translations?.en?.analytics?.title ||
+      "Analytics";
+    const analyticsMessage =
+      window.translations?.[currentLang]?.analytics?.message ||
+      window.translations?.en?.analytics?.message ||
+      "No personal data • Site only";
+
+    const titleEl = banner.querySelector("span");
+    const messageEl = banner.querySelector("div:last-child");
+
     if (titleEl) titleEl.textContent = analyticsTitle;
-    if (messageEl) messageEl.innerHTML = `<span style="color: #60a5fa; font-weight: 500;">${analyticsMessage}</span>`;
+    if (messageEl)
+      messageEl.innerHTML = `<span style="color: #60a5fa; font-weight: 500;">${analyticsMessage}</span>`;
   }
 
   // Listen for language changes
-  window.addEventListener('languageChanged', updateBannerText);
+  window.addEventListener("languageChanged", updateBannerText);
 
   // Smooth slide up from bottom
   requestAnimationFrame(() => {
-    banner.style.opacity = '1';
-    banner.style.transform = 'translateY(0)';
+    banner.style.opacity = "1";
+    banner.style.transform = "translateY(0)";
   });
 
   // Auto-hide after 4 seconds
   let autoHideTimer = setTimeout(() => {
     if (banner.isConnected) {
-      banner.style.opacity = '0';
-      banner.style.transform = 'translateY(20px)';
+      banner.style.opacity = "0";
+      banner.style.transform = "translateY(20px)";
       setTimeout(() => banner.remove(), 300);
     }
   }, 4000);
 
   // Hover to pause auto-hide
-  banner.addEventListener('mouseenter', () => {
+  banner.addEventListener("mouseenter", () => {
     // Pause auto-hide on hover
     clearTimeout(autoHideTimer);
   });
 
-  banner.addEventListener('mouseleave', () => {
+  banner.addEventListener("mouseleave", () => {
     // Resume auto-hide after 2 seconds
     autoHideTimer = setTimeout(() => {
       if (banner.isConnected) {
-        banner.style.opacity = '0';
-        banner.style.transform = 'translateY(20px)';
+        banner.style.opacity = "0";
+        banner.style.transform = "translateY(20px)";
         setTimeout(() => banner.remove(), 300);
       }
     }, 2000);
@@ -257,8 +268,8 @@ function showAnalyticsConsentBanner() {
 }
 
 // Initialize when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
     showAnalyticsConsentBanner();
     // Auto-initialize if user previously consented
     if (hasAnalyticsConsent()) {
@@ -280,5 +291,5 @@ window.analytics = {
   trackCVDownload,
   trackContactInteraction,
   setAnalyticsConsent,
-  hasAnalyticsConsent
+  hasAnalyticsConsent,
 };
