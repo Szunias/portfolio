@@ -1,4 +1,5 @@
 import { ensureVimeoPlayerAPI } from "./vimeo-api.js";
+import { IS_DEV } from "../../config/constants.js";
 
 /**
  * Comic-Style Project Switcher
@@ -187,6 +188,8 @@ export function initTimelineNav() {
       initPlayer(Vimeo);
     })
     .catch((error) => {
-      console.error("Unable to initialize Vimeo player", error);
+      if (IS_DEV) {
+        console.error("Unable to initialize Vimeo player", error);
+      }
     });
 }

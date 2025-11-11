@@ -1240,14 +1240,13 @@
       headerScrollHandler();
     }
 
-    // Initialize immediately
-    initHeaderScrollEffect();
-
-    // Also initialize after DOM is fully loaded (defensive approach)
-    document.addEventListener('DOMContentLoaded', initHeaderScrollEffect);
-
-    // Also initialize after window is fully loaded (extra defensive)
-    window.addEventListener('load', initHeaderScrollEffect);
+    // Initialize only once when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initHeaderScrollEffect, { once: true });
+    } else {
+      // DOM already loaded
+      initHeaderScrollEffect();
+    }
 
     // Form submission
     document.getElementById('contact-form').addEventListener('submit', async function(e) {
@@ -1376,4 +1375,3 @@
   <script src="assets/js/translations.js" defer></script>
 </body>
 </html>
-

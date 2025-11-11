@@ -10,6 +10,15 @@
   if (window.__performanceBoostInitialized) return;
   window.__performanceBoostInitialized = true;
 
+  // Development-only logging (disabled in production)
+  const isDev =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
+  const devLog = {
+    warn: isDev ? console.warn.bind(console) : () => {},
+    error: isDev ? console.error.bind(console) : () => {},
+  };
+
   /**
    * Optimize video loading - lazy load sources and autoplay when visible
    */
@@ -32,7 +41,7 @@
 
                 // Check if sources exist before processing
                 if (sources.length === 0) {
-                  console.warn("No video sources found for video:", video);
+                  devLog.warn("No video sources found for video:", video);
                   videoObserver.unobserve(video);
                   return;
                 }
@@ -43,7 +52,7 @@
                     source.src = src;
                     source.removeAttribute("data-src");
                   } else {
-                    console.warn(
+                    devLog.warn(
                       "Empty data-src attribute found for video source:",
                       source,
                     );
@@ -56,7 +65,7 @@
                 video.addEventListener(
                   "error",
                   (e) => {
-                    console.error("Video loading error:", e);
+                    devLog.error("Video loading error:", e);
                     videoObserver.unobserve(video);
                   },
                   { once: true },

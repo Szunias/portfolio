@@ -4,8 +4,19 @@ import {
   preloadAllDurations,
   bindDurationRequests,
 } from "./music/durations.js";
-import { bindPlayerEvents, loadTrack } from "./music/player-controls.js";
+import {
+  bindPlayerEvents,
+  loadTrack,
+  cleanupPlayerEvents,
+} from "./music/player-controls.js";
 import { initPageEffects } from "./music/ui-effects.js";
+import { IS_DEV } from "../config/constants.js";
+
+// Initialize error tracking (auto-initializes)
+import "../utils/error-tracker.js";
+
+// Initialize ARIA labels for accessibility
+import { initAriaLabels } from "../utils/aria-labels.js";
 
 async function fetchTracks() {
   try {
@@ -44,8 +55,9 @@ function exposeRefreshHook() {
     try {
       renderPlaylistAndPrefetch();
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Failed to refresh music list", error);
+      if (IS_DEV) {
+        console.error("Failed to refresh music list", error);
+      }
     }
   };
 }
@@ -61,6 +73,9 @@ async function init() {
   initialiseFilters();
   exposeRefreshHook();
 
+  // Initialize accessibility enhancements
+  initAriaLabels();
+
   try {
     state.tracks = await fetchTracks();
     renderPlaylistAndPrefetch();
@@ -74,6 +89,18 @@ async function init() {
   } catch (error) {
     showError(`Failed to load tracks. Error: ${error.message}`);
   }
+}
+
+// Cleanup on page unload to prevent memory leaks
+window.addEventListener("beforeunload", () => {
+  cleanupPlayerEvents();
+});
+
+// Cleanup for smooth navigation (if implemented)
+if (window.smoothNav) {
+  window.smoothNav.onNavigateAway?.(() => {
+    cleanupPlayerEvents();
+  });
 }
 
 init();

@@ -164,7 +164,9 @@
           img.setAttribute("decoding", "async");
           try {
             img.fetchPriority = "low";
-          } catch (_) {}
+          } catch (_) {
+            // fetchPriority not supported, fallback to attribute
+          }
           img.setAttribute("fetchpriority", "low");
         } else {
           // First visible becomes hero
@@ -173,7 +175,9 @@
             img.setAttribute("loading", "eager");
             try {
               img.fetchPriority = "high";
-            } catch (_) {}
+            } catch (_) {
+              // fetchPriority not supported, fallback to attribute
+            }
             img.setAttribute("fetchpriority", "high");
             heroAssigned = true;
           } else {
@@ -191,7 +195,9 @@
           img.setAttribute("loading", "lazy");
           try {
             img.fetchPriority = "low";
-          } catch (_) {}
+          } catch (_) {
+            // fetchPriority not supported, fallback to attribute
+          }
           img.setAttribute("fetchpriority", "low");
         }
       });

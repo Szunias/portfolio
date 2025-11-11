@@ -1,46 +1,11 @@
-const TRANSLATION_PATH = '../locales/amorak.json';
+/**
+ * Amorak Project Translation Module
+ * Uses unified translation utility
+ */
 
-function getNestedTranslation(obj, path) {
-  return path.split('.').reduce((current, key) => current?.[key], obj);
-}
-
-function applyTranslations(translations, lang) {
-  const langTranslations = translations[lang] || {};
-
-  document.querySelectorAll('[data-i18n]').forEach((element) => {
-    const key = element.getAttribute('data-i18n');
-    const translation = getNestedTranslation(langTranslations, key);
-    if (translation) {
-      element.textContent = translation;
-    }
-  });
-
-  document.querySelectorAll('.lang-btn').forEach((button) => {
-    button.classList.toggle('active', button.dataset.lang === lang);
-  });
-}
+import { initTranslations } from "../../utils/i18n.js";
 
 export function initTranslations() {
-  document.addEventListener('DOMContentLoaded', async () => {
-    const storedLang = localStorage.getItem('language') || 'en';
-    let translations = {};
-
-    try {
-      const response = await fetch(TRANSLATION_PATH);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      translations = await response.json();
-      applyTranslations(translations, storedLang);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to load Amorak translations', error);
-    }
-
-    document.querySelectorAll('.lang-btn').forEach((button) => {
-      button.addEventListener('click', () => {
-        const lang = button.dataset.lang;
-        localStorage.setItem('language', lang);
-        applyTranslations(translations, lang);
-      });
-    });
-  });
+  // Unified translation system will auto-detect amorak.json
+  return initTranslations();
 }

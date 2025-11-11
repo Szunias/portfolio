@@ -101,17 +101,42 @@ export function renderPlaylist() {
       (track.desc && typeof track.desc === "object" && track.desc.en) ||
       (typeof track.desc === "string" ? track.desc : "");
 
-    item.innerHTML = `
-      <div class="playlist-cover">
-        <img data-src="${track.cover}" alt="${track.title}" class="lazy-cover" loading="lazy" decoding="async" width="60" height="60">
-      </div>
-      <div class="playlist-info">
-        <div class="playlist-track-title">${track.title}</div>
-        <div class="playlist-track-artist">${track.artist}</div>
-        ${description ? `<div class="playlist-track-desc">${description}</div>` : ""}
-      </div>
-    `;
+    // Build DOM safely without innerHTML to prevent XSS
+    const cover = document.createElement("div");
+    cover.className = "playlist-cover";
 
+    const img = document.createElement("img");
+    img.setAttribute("data-src", track.cover);
+    img.alt = track.title;
+    img.className = "lazy-cover";
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.width = 60;
+    img.height = 60;
+    cover.appendChild(img);
+
+    const info = document.createElement("div");
+    info.className = "playlist-info";
+
+    const title = document.createElement("div");
+    title.className = "playlist-track-title";
+    title.textContent = track.title;
+    info.appendChild(title);
+
+    const artist = document.createElement("div");
+    artist.className = "playlist-track-artist";
+    artist.textContent = track.artist;
+    info.appendChild(artist);
+
+    if (description) {
+      const desc = document.createElement("div");
+      desc.className = "playlist-track-desc";
+      desc.textContent = description;
+      info.appendChild(desc);
+    }
+
+    item.appendChild(cover);
+    item.appendChild(info);
     item.appendChild(durationEl);
     elements.playlist.appendChild(item);
     renderedIndexes.push(globalIndex);

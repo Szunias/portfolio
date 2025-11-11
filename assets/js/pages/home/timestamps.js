@@ -1,4 +1,5 @@
 import { ensureVimeoPlayerAPI } from "./vimeo-api.js";
+import { IS_DEV } from "../../config/constants.js";
 
 /**
  * Demo Reel Timestamps - Interactive Vimeo Player Controls
@@ -21,7 +22,9 @@ export function initTimestamps() {
         setupActiveTimestampHighlight(player, timestampButtons);
       })
       .catch((error) => {
-        console.error("Unable to load Vimeo API", error);
+        if (IS_DEV) {
+          console.error("Unable to load Vimeo API", error);
+        }
       });
   };
 
@@ -59,7 +62,9 @@ function wireTimestampButtons(player, timestampButtons) {
           setTimeout(() => button.classList.remove("active"), 300);
         })
         .catch((error) => {
-          console.error("Error setting time:", error);
+          if (IS_DEV) {
+            console.error("Error setting time:", error);
+          }
         });
     });
   });

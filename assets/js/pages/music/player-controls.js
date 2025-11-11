@@ -1,10 +1,8 @@
 import { elements, state } from "./state.js";
-import {
-  TIME_UPDATE_INTERVAL,
-  clamp,
-  formatTime,
-  isValidDuration,
-} from "./utils.js";
+import { clamp, formatTime, isValidDuration } from "./utils.js";
+import { AUDIO_CONFIG } from "../../config/constants.js";
+
+const { TIME_UPDATE_INTERVAL } = AUDIO_CONFIG;
 import {
   renderPlaylist,
   updatePlaylistPlayingState,
@@ -340,6 +338,85 @@ function handleProgressBarMouseLeave() {
   if (elements.progressTooltip) elements.progressTooltip.style.opacity = "0";
 }
 
+// Touch event handlers for mobile support
+function handleProgressBarTouchStart(event) {
+  if (!elements.audio || !isValidDuration(elements.audio.duration)) return;
+
+  event.preventDefault(); // Prevent scrolling while dragging
+
+  const touch = event.touches[0];
+  state.isDragging = true;
+  state.dragStartX = touch.clientX;
+
+  if (elements.progressFill) {
+    elements.progressFill.classList.add("dragging");
+    elements.progressFill.style.transition = "none";
+  }
+
+  // Add touch move/end listeners to document for better tracking
+  document.addEventListener("touchmove", handleProgressBarTouchMove, {
+    passive: false,
+  });
+  document.addEventListener("touchend", handleProgressBarTouchEnd, {
+    passive: false,
+  });
+}
+
+function handleProgressBarTouchMove(event) {
+  if (!state.isDragging || !elements.audio || !elements.progressBar) return;
+
+  event.preventDefault();
+
+  const touch = event.touches[0];
+  const rect = elements.progressBar.getBoundingClientRect();
+  const offsetX = touch.clientX - rect.left;
+  const percentage = clamp(offsetX / rect.width, 0, 1);
+  const newTime = percentage * elements.audio.duration;
+
+  // Update visual feedback immediately
+  if (elements.progressFill) {
+    elements.progressFill.style.width = `${percentage * 100}%`;
+  }
+  if (elements.currentTime) {
+    elements.currentTime.textContent = formatTime(newTime);
+  }
+
+  // Update tooltip position if exists
+  if (elements.progressTooltip) {
+    elements.progressTooltip.textContent = formatTime(newTime);
+    elements.progressTooltip.style.left = `${percentage * 100}%`;
+    elements.progressTooltip.style.opacity = "1";
+  }
+}
+
+function handleProgressBarTouchEnd(event) {
+  if (!state.isDragging || !elements.audio || !elements.progressBar) return;
+
+  event.preventDefault();
+
+  const touch = event.changedTouches[0];
+  const rect = elements.progressBar.getBoundingClientRect();
+  const offsetX = touch.clientX - rect.left;
+  const percentage = clamp(offsetX / rect.width, 0, 1);
+
+  // Set the actual audio time
+  elements.audio.currentTime = percentage * elements.audio.duration;
+
+  // Cleanup
+  state.isDragging = false;
+  if (elements.progressFill) {
+    elements.progressFill.classList.remove("dragging");
+    elements.progressFill.style.transition = "";
+  }
+  if (elements.progressTooltip) {
+    elements.progressTooltip.style.opacity = "0";
+  }
+
+  // Remove document listeners
+  document.removeEventListener("touchmove", handleProgressBarTouchMove);
+  document.removeEventListener("touchend", handleProgressBarTouchEnd);
+}
+
 function updateVolumeIcon(volume) {
   if (!elements.volumeIcon) return;
   if (volume === 0) {
@@ -397,6 +474,7 @@ export function bindPlayerEvents() {
   });
 
   if (elements.progressBar) {
+    // Mouse events
     elements.progressBar.addEventListener(
       "mousedown",
       handleProgressBarMouseDown,
@@ -413,6 +491,23 @@ export function bindPlayerEvents() {
     elements.progressBar.addEventListener(
       "mouseleave",
       handleProgressBarMouseLeave,
+    );
+
+    // Touch events for mobile support
+    elements.progressBar.addEventListener(
+      "touchstart",
+      handleProgressBarTouchStart,
+      { passive: false },
+    );
+    elements.progressBar.addEventListener(
+      "touchmove",
+      handleProgressBarTouchMove,
+      { passive: false },
+    );
+    elements.progressBar.addEventListener(
+      "touchend",
+      handleProgressBarTouchEnd,
+      { passive: false },
     );
   }
 
@@ -486,6 +581,39 @@ export function bindPlayerEvents() {
 
   // Global keyboard shortcuts for music player
   document.addEventListener("keydown", handleKeyboardShortcuts);
+}
+
+/**
+ * Cleanup function to remove event listeners and prevent memory leaks
+ * Call this when navigating away from the music page or before re-initializing
+ */
+export function cleanupPlayerEvents() {
+  // Remove global keyboard shortcut listener
+  document.removeEventListener("keydown", handleKeyboardShortcuts);
+
+  // Remove audio element listeners
+  if (elements.audio) {
+    elements.audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+    elements.audio.removeEventListener("timeupdate", handleTimeUpdate);
+    elements.audio.removeEventListener("error", handleAudioError);
+    elements.audio.removeEventListener("ended", nextTrack);
+  }
+
+  // Clean up drag state if active
+  if (state.isDragging) {
+    state.isDragging = false;
+    if (elements.progressFill) {
+      elements.progressFill.classList.remove("dragging");
+      elements.progressFill.style.transition = "";
+    }
+  }
+
+  // ALWAYS remove mouse/touch listeners (even if not dragging)
+  // This prevents memory leaks if drag was interrupted
+  document.removeEventListener("mousemove", handleProgressBarDrag);
+  document.removeEventListener("mouseup", handleProgressBarMouseUp);
+  document.removeEventListener("touchmove", handleProgressBarTouchMove);
+  document.removeEventListener("touchend", handleProgressBarTouchEnd);
 }
 
 // Keyboard shortcuts handler
