@@ -5,29 +5,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
 
-        <!-- ═══════════════════════════════════════════════════════════════════
-       CRITICAL INLINE RESOURCES - MUST LOAD FIRST
-       These prevent visual flashing and ensure smooth initial render
-  ═══════════════════════════════════════════════════════════════════ -->
-
-        <!-- CRITICAL 1: Language Preload - Prevents language flicker -->
         <script>
-            /**
-             * Sets correct language BEFORE any content renders
-             * Execution time: <1ms | Size: ~200 bytes
-             * MUST be synchronous (blocks rendering intentionally)
-             */
             (function () {
                 "use strict";
                 const savedLang = localStorage.getItem("language") || "en";
                 document.documentElement.setAttribute("lang", savedLang);
-                window.__preloadedLang = savedLang; // Cache for translation system
+                window.__preloadedLang = savedLang;
             })();
         </script>
 
-        <!-- CRITICAL 2: Base styles - Prevents white flash -->
         <style>
-            /* Dark theme background - loads immediately */
             html {
                 color-scheme: dark;
                 background:
@@ -52,7 +39,6 @@
                     #000 !important;
             }
 
-            /* Hide translatable content until translations load - PREVENTS FLICKER */
             body {
                 margin: 0;
                 padding: 0;
@@ -94,7 +80,6 @@
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://igorszuniewicz.com/about.html" />
 
-        <!-- Open Graph / Facebook -->
         <meta property="og:type" content="profile" />
         <meta property="og:site_name" content="Igor Szuniewicz" />
         <meta
@@ -119,7 +104,6 @@
         <meta property="og:locale:alternate" content="pl_PL" />
         <meta property="og:locale:alternate" content="nl_NL" />
 
-        <!-- Twitter -->
         <meta name="twitter:card" content="summary_large_image" />
         <meta
             name="twitter:url"
@@ -138,11 +122,8 @@
             content="https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg"
         />
 
-        <!-- Google Search Console Verification - Already verified -->
-
         <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
 
-        <!-- Resource Hints for Performance -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
@@ -155,11 +136,7 @@
         />
         <link rel="preload" href="assets/js/translations.js" as="script" />
 
-        <!-- Preload language to prevent flicker -->
         <script src="assets/js/preload-lang.js"></script>
-
-        <!-- Smooth navigation - prevents white flash during page transitions -->
-        
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -176,14 +153,11 @@
             />
         </noscript>
 
-        <!-- Navigation Styles -->
         <link rel="stylesheet" href="assets/css/global/navigation.css" />
 
         <style>
             /* === RESET === */
-            *,
-            *::before,
-            *::after {
+            * {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
@@ -192,7 +166,7 @@
             /* === BASE === */
             html {
                 scroll-behavior: smooth;
-                font-size: 15px;
+                font-size: 16px;
             }
 
             body {
@@ -208,13 +182,13 @@
 
             /* === BACKGROUND === */
             .bg-gradient {
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
-                z-index: 0 !important;
-                pointer-events: none !important;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                pointer-events: none;
                 background:
                     radial-gradient(
                         circle at 22% 18%,
@@ -239,19 +213,7 @@
                         #010308 0%,
                         #040812 52%,
                         #08111d 100%
-                    ) !important;
-            }
-
-            .header {
-                position: fixed !important;
-                z-index: 1010 !important;
-            }
-
-            .hero,
-            section,
-            main {
-                position: relative;
-                z-index: 1;
+                    );
             }
 
             .bg-gradient::before {
@@ -281,33 +243,57 @@
                 );
             }
 
+            .header {
+                position: fixed;
+                z-index: 1010;
+            }
+
+            main {
+                position: relative;
+                z-index: 1;
+            }
+
             .container {
-                max-width: 1400px !important;
-                margin: 0 auto !important;
-                padding: 0 2rem !important;
-                position: relative !important;
-                z-index: 1 !important;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 2rem;
             }
 
             /* === HERO SECTION === */
             .hero {
-                padding: 8rem 0 2rem;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
                 text-align: center;
+                padding: 8rem 2rem 4rem;
+            }
+
+            .hero-content {
+                max-width: 900px;
             }
 
             .avatar {
-                width: 150px;
-                height: 150px;
+                width: 140px;
+                height: 140px;
                 border-radius: 50%;
                 border: 3px solid rgba(96, 165, 250, 0.3);
                 margin-bottom: 2rem;
                 object-fit: cover;
+                transition: all 0.3s ease;
+            }
+
+            .avatar:hover {
+                transform: scale(1.05);
+                border-color: rgba(96, 165, 250, 0.6);
+                box-shadow: 0 0 40px rgba(96, 165, 250, 0.3);
             }
 
             .hero h1 {
                 font-family: "Sora", sans-serif;
                 font-size: clamp(2.5rem, 5vw, 4rem);
-                font-weight: 700;
+                font-weight: 800;
                 margin-bottom: 1rem;
                 background: linear-gradient(
                     135deg,
@@ -318,105 +304,200 @@
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
-                text-shadow: 0 6px 18px rgba(15, 23, 42, 0.5);
+                line-height: 1.2;
             }
 
-            .hero .subtitle {
-                font-size: 1.25rem;
+            .hero-bio {
+                font-size: 1.15rem;
                 color: #9ca3af;
                 max-width: 700px;
-                margin: 0 auto 2rem;
-                line-height: 1.8;
+                margin: 0 auto 2.5rem;
+                line-height: 1.7;
             }
 
-            /* === VALUE PROPS === */
-            .value-props {
+            /* Stats Grid - Interactive */
+            .stats-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 1.5rem;
-                margin: 2rem 0;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2rem;
+                margin: 3rem auto 0;
+                max-width: 700px;
             }
 
-            .value-card {
+            .stat-card {
+                text-align: center;
                 padding: 1.5rem;
-                background: rgba(96, 165, 250, 0.03);
-                border: 1px solid rgba(96, 165, 250, 0.1);
+                background: rgba(15, 23, 42, 0.5);
+                border: 1px solid rgba(96, 165, 250, 0.2);
                 border-radius: 12px;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .stat-card::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    135deg,
+                    rgba(96, 165, 250, 0.1),
+                    rgba(139, 92, 246, 0.1)
+                );
+                opacity: 0;
+                transition: opacity 0.4s ease;
+            }
+
+            .stat-card:hover::before {
+                opacity: 1;
+            }
+
+            .stat-card:hover {
+                border-color: rgba(96, 165, 250, 0.5);
+                transform: translateY(-8px) scale(1.05);
+                box-shadow: 0 12px 40px rgba(96, 165, 250, 0.2);
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: #60a5fa;
+                display: block;
+                margin-bottom: 0.5rem;
+                position: relative;
+                z-index: 1;
                 transition: all 0.3s ease;
             }
 
-            .value-card:hover {
-                background: rgba(96, 165, 250, 0.06);
-                border-color: rgba(96, 165, 250, 0.2);
-                transform: translateY(-2px);
+            .stat-card:hover .stat-number {
+                transform: scale(1.15);
+                text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
             }
 
-            .value-card h3 {
-                font-size: 1.1rem;
-                font-weight: 600;
-                color: #60a5fa;
+            .stat-label {
+                font-size: 0.9rem;
+                color: #9ca3af;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                position: relative;
+                z-index: 1;
+            }
+
+            /* === MAIN CONTENT GRID === */
+            .content-section {
+                padding: 4rem 0;
+            }
+
+            .section-header {
+                text-align: center;
+                margin-bottom: 3rem;
+            }
+
+            .section-title {
+                font-family: "Sora", sans-serif;
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: #fff;
                 margin-bottom: 0.5rem;
             }
 
-            .value-card p {
-                font-size: 0.95rem;
+            .section-subtitle {
+                font-size: 1rem;
                 color: #9ca3af;
-                line-height: 1.6;
             }
 
-            /* === ACHIEVEMENTS SECTION === */
-            .achievements-section {
-                padding: 3rem 0;
-                background: rgba(96, 165, 250, 0.02);
-            }
-
-            .achievements-grid {
+            /* === BENTO GRID LAYOUT === */
+            .bento-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 2rem;
+                grid-template-columns: repeat(12, 1fr);
+                gap: 1.5rem;
+                margin-bottom: 4rem;
             }
 
-            .achievement-card {
+            .bento-item {
                 background: rgba(15, 23, 42, 0.6);
-                border: 1px solid rgba(96, 165, 250, 0.2);
+                border: 1px solid rgba(96, 165, 250, 0.15);
                 border-radius: 16px;
                 padding: 2rem;
-                text-align: center;
-                transition: all 0.3s ease;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
             }
 
-            .achievement-card:hover {
+            .bento-item::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 4px;
+                background: linear-gradient(90deg, #60a5fa, #a78bfa);
+                transform: scaleX(0);
+                transform-origin: left;
+                transition: transform 0.4s ease;
+            }
+
+            .bento-item:hover::before {
+                transform: scaleX(1);
+            }
+
+            .bento-item:hover {
                 border-color: rgba(96, 165, 250, 0.4);
                 transform: translateY(-5px);
-                box-shadow: 0 10px 30px rgba(96, 165, 250, 0.15);
+                box-shadow: 0 12px 40px rgba(96, 165, 250, 0.2);
+                background: rgba(15, 23, 42, 0.8);
             }
 
-            .achievement-icon {
-                width: 64px;
-                height: 64px;
-                margin: 0 auto 1.5rem;
+            /* Grid spanning */
+            .span-6 {
+                grid-column: span 6;
+            }
+            .span-4 {
+                grid-column: span 4;
+            }
+            .span-8 {
+                grid-column: span 8;
+            }
+            .span-12 {
+                grid-column: span 12;
+            }
+
+            /* Card headers */
+            .bento-header {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .bento-icon {
+                width: 48px;
+                height: 48px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 background: linear-gradient(
                     135deg,
-                    rgba(96, 165, 250, 0.15),
-                    rgba(139, 92, 246, 0.15)
+                    rgba(96, 165, 250, 0.2),
+                    rgba(139, 92, 246, 0.2)
                 );
                 border: 2px solid rgba(96, 165, 250, 0.3);
-                border-radius: 16px;
-                transition: all 0.3s ease;
+                border-radius: 12px;
+                flex-shrink: 0;
+                transition: all 0.4s ease;
             }
 
-            .achievement-card:hover .achievement-icon {
-                transform: scale(1.1) rotate(5deg);
-                border-color: rgba(96, 165, 250, 0.5);
+            .bento-item:hover .bento-icon {
+                transform: rotate(10deg) scale(1.1);
+                border-color: rgba(96, 165, 250, 0.6);
                 box-shadow: 0 8px 24px rgba(96, 165, 250, 0.3);
             }
 
-            .achievement-icon svg {
-                width: 32px;
-                height: 32px;
+            .bento-icon svg {
+                width: 24px;
+                height: 24px;
                 stroke: #60a5fa;
                 fill: none;
                 stroke-width: 2;
@@ -424,118 +505,187 @@
                 stroke-linejoin: round;
             }
 
-            .achievement-card h3 {
-                font-size: 1.2rem;
-                font-weight: 600;
-                color: #60a5fa;
-                margin-bottom: 0.75rem;
-            }
-
-            .achievement-card p {
-                color: #9ca3af;
-                line-height: 1.6;
-                font-size: 0.95rem;
-            }
-
-            /* === SKILLS SECTION === */
-            .skills-section {
-                padding: 3rem 0;
-            }
-
-            .section-title {
-                font-family: "Sora", sans-serif;
-                font-size: 2.5rem;
-                font-weight: 700;
-                text-align: center;
-                margin-bottom: 3rem;
-                color: #fff;
-            }
-
-            /* Skills Grid */
-            .skills-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 2rem;
-                margin-top: 3rem;
-            }
-
-            .skill-category {
-                background: rgba(15, 23, 42, 0.6);
-                border: 1px solid rgba(96, 165, 250, 0.1);
-                border-radius: 12px;
-                padding: 2rem;
-                transition: all 0.3s ease;
-            }
-
-            .skill-category:hover {
-                border-color: rgba(96, 165, 250, 0.3);
-                background: rgba(15, 23, 42, 0.8);
-            }
-
-            .skill-category h3 {
+            .bento-title {
                 font-size: 1.25rem;
                 font-weight: 600;
-                color: #60a5fa;
-                margin-bottom: 1.5rem;
-                padding-bottom: 0.75rem;
-                border-bottom: 1px solid rgba(96, 165, 250, 0.2);
+                color: #fff;
+                transition: color 0.3s ease;
             }
 
-            .skill-tags {
+            .bento-item:hover .bento-title {
+                color: #60a5fa;
+            }
+
+            .bento-content p {
+                color: #9ca3af;
+                line-height: 1.7;
+                margin-bottom: 1rem;
+            }
+
+            .bento-content ul {
+                list-style: none;
                 display: flex;
                 flex-wrap: wrap;
                 gap: 0.75rem;
             }
 
-            .skill-tag {
+            .bento-content li {
                 padding: 0.5rem 1rem;
-                background: linear-gradient(
-                    135deg,
-                    rgba(96, 165, 250, 0.15),
-                    rgba(139, 92, 246, 0.15)
-                );
+                background: rgba(96, 165, 250, 0.1);
                 border: 1px solid rgba(96, 165, 250, 0.3);
-                border-radius: 20px;
+                border-radius: 8px;
                 color: #60a5fa;
                 font-size: 0.9rem;
                 font-weight: 500;
                 transition: all 0.3s ease;
             }
 
-            .skill-tag:hover {
-                background: linear-gradient(
-                    135deg,
-                    rgba(96, 165, 250, 0.25),
-                    rgba(139, 92, 246, 0.25)
-                );
+            .bento-content li:hover {
+                background: rgba(96, 165, 250, 0.2);
                 border-color: rgba(96, 165, 250, 0.5);
                 transform: translateY(-2px);
             }
 
-            @media (max-width: 768px) {
-                .skills-grid {
-                    grid-template-columns: 1fr;
-                    gap: 1.5rem;
-                }
+            /* === SKILLS SHOWCASE === */
+            .skills-showcase {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+                margin-top: 2rem;
+            }
+
+            .skill-category-card {
+                background: rgba(15, 23, 42, 0.6);
+                border: 1px solid rgba(96, 165, 250, 0.15);
+                border-radius: 16px;
+                padding: 2rem;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .skill-category-card::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(
+                    circle at top right,
+                    rgba(96, 165, 250, 0.15),
+                    transparent 70%
+                );
+                opacity: 0;
+                transition: opacity 0.4s ease;
+            }
+
+            .skill-category-card:hover::before {
+                opacity: 1;
+            }
+
+            .skill-category-card:hover {
+                border-color: rgba(96, 165, 250, 0.4);
+                transform: translateY(-8px) scale(1.02);
+                box-shadow: 0 16px 48px rgba(96, 165, 250, 0.25);
+            }
+
+            .skill-category-header {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+                position: relative;
+                z-index: 1;
+            }
+
+            .skill-category-icon {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(
+                    135deg,
+                    rgba(96, 165, 250, 0.3),
+                    rgba(139, 92, 246, 0.3)
+                );
+                border-radius: 10px;
+                transition: all 0.4s ease;
+            }
+
+            .skill-category-card:hover .skill-category-icon {
+                transform: rotate(15deg) scale(1.2);
+                box-shadow: 0 8px 24px rgba(96, 165, 250, 0.4);
+            }
+
+            .skill-category-title {
+                font-size: 1.15rem;
+                font-weight: 600;
+                color: #fff;
+                position: relative;
+                z-index: 1;
+            }
+
+            .skill-items {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                position: relative;
+                z-index: 1;
+            }
+
+            .skill-item {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem;
+                background: rgba(96, 165, 250, 0.05);
+                border: 1px solid rgba(96, 165, 250, 0.2);
+                border-radius: 10px;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+
+            .skill-item:hover {
+                background: rgba(96, 165, 250, 0.15);
+                border-color: rgba(96, 165, 250, 0.5);
+                transform: translateX(8px);
+            }
+
+            .skill-item-name {
+                flex: 1;
+                font-weight: 500;
+                color: #60a5fa;
+            }
+
+            .skill-item-badge {
+                padding: 0.25rem 0.75rem;
+                background: rgba(16, 185, 129, 0.2);
+                border: 1px solid rgba(16, 185, 129, 0.4);
+                border-radius: 20px;
+                font-size: 0.8rem;
+                color: #10b981;
+                font-weight: 600;
+            }
+
+            .skill-item-projects {
+                font-size: 0.85rem;
+                color: #9ca3af;
+                margin-top: 0.5rem;
+                padding-left: 1rem;
+                border-left: 2px solid rgba(96, 165, 250, 0.3);
             }
 
             /* === TIMELINE === */
-            .timeline-section {
-                padding: 3rem 0;
-                background: rgba(96, 165, 250, 0.02);
-            }
-
             .timeline {
                 position: relative;
-                max-width: 800px;
-                margin: 0 auto;
-                padding-left: 2.5rem;
+                padding: 2rem 0;
             }
 
             .timeline::before {
                 content: "";
                 position: absolute;
-                left: 0;
+                left: 50%;
+                transform: translateX(-50%);
                 top: 0;
                 bottom: 0;
                 width: 2px;
@@ -543,77 +693,184 @@
             }
 
             .timeline-item {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 3rem;
+                margin-bottom: 3rem;
                 position: relative;
-                margin-bottom: 2rem;
             }
 
-            .timeline-item:last-child {
-                margin-bottom: 0;
-            }
-
-            .timeline-dot {
-                position: absolute;
-                left: -2.5rem;
-                top: 0.5rem;
-                width: 10px;
-                height: 10px;
-                background: #60a5fa;
-                border-radius: 50%;
-                border: 2px solid #0a0e12;
-                transform: translateX(-1px);
+            .timeline-item:nth-child(even) .timeline-content:first-child {
+                order: 2;
             }
 
             .timeline-content {
                 background: rgba(15, 23, 42, 0.6);
-                border: 1px solid rgba(96, 165, 250, 0.1);
+                border: 1px solid rgba(96, 165, 250, 0.2);
                 border-radius: 12px;
-                padding: 1.5rem;
-                transition: all 0.3s ease;
+                padding: 2rem;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
             }
 
             .timeline-content:hover {
-                background: rgba(15, 23, 42, 0.8);
-                border-color: rgba(96, 165, 250, 0.3);
-                transform: translateX(8px);
+                border-color: rgba(96, 165, 250, 0.5);
+                transform: scale(1.05);
+                box-shadow: 0 12px 40px rgba(96, 165, 250, 0.25);
+                background: rgba(15, 23, 42, 0.9);
             }
 
             .timeline-year {
                 font-size: 0.85rem;
                 color: #60a5fa;
                 font-weight: 600;
-                margin-bottom: 0.5rem;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
+                margin-bottom: 0.75rem;
             }
 
             .timeline-content h3 {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #fff;
+                margin-bottom: 0.75rem;
+                transition: color 0.3s ease;
+            }
+
+            .timeline-content:hover h3 {
+                color: #60a5fa;
+            }
+
+            .timeline-content p {
+                color: #9ca3af;
+                line-height: 1.7;
+            }
+
+            .timeline-dot {
+                position: absolute;
+                left: 50%;
+                top: 2rem;
+                transform: translateX(-50%);
+                width: 16px;
+                height: 16px;
+                background: #60a5fa;
+                border: 4px solid #0a0e12;
+                border-radius: 50%;
+                z-index: 10;
+                transition: all 0.3s ease;
+            }
+
+            .timeline-item:hover .timeline-dot {
+                width: 24px;
+                height: 24px;
+                box-shadow: 0 0 20px rgba(96, 165, 250, 0.8);
+            }
+
+            /* === PROJECT SHOWCASE CARDS === */
+            .project-showcase {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1.5rem;
+                margin-top: 2rem;
+            }
+
+            .project-card {
+                background: rgba(15, 23, 42, 0.6);
+                border: 1px solid rgba(96, 165, 250, 0.15);
+                border-radius: 16px;
+                padding: 0;
+                overflow: hidden;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
+            }
+
+            .project-card:hover {
+                border-color: rgba(96, 165, 250, 0.5);
+                transform: translateY(-10px);
+                box-shadow: 0 16px 48px rgba(96, 165, 250, 0.3);
+            }
+
+            .project-image {
+                width: 100%;
+                height: 200px;
+                background: linear-gradient(
+                    135deg,
+                    rgba(96, 165, 250, 0.2),
+                    rgba(139, 92, 246, 0.2)
+                );
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 3rem;
+                transition: all 0.4s ease;
+            }
+
+            .project-card:hover .project-image {
+                transform: scale(1.1);
+                background: linear-gradient(
+                    135deg,
+                    rgba(96, 165, 250, 0.3),
+                    rgba(139, 92, 246, 0.3)
+                );
+            }
+
+            .project-info {
+                padding: 1.5rem;
+            }
+
+            .project-title {
                 font-size: 1.15rem;
                 font-weight: 600;
                 color: #fff;
                 margin-bottom: 0.5rem;
             }
 
-            .timeline-content p {
+            .project-desc {
+                font-size: 0.9rem;
                 color: #9ca3af;
                 line-height: 1.6;
-                font-size: 0.95rem;
+                margin-bottom: 1rem;
             }
 
-            /* === CTA SECTION === */
+            .project-tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .project-tag {
+                padding: 0.25rem 0.75rem;
+                background: rgba(96, 165, 250, 0.1);
+                border: 1px solid rgba(96, 165, 250, 0.3);
+                border-radius: 20px;
+                font-size: 0.8rem;
+                color: #60a5fa;
+            }
+
+            /* === CTA === */
             .cta-section {
                 padding: 4rem 0;
+                text-align: center;
             }
 
             .cta-card {
                 background: linear-gradient(
                     135deg,
-                    rgba(96, 165, 250, 0.08),
-                    rgba(139, 92, 246, 0.08)
+                    rgba(96, 165, 250, 0.1),
+                    rgba(139, 92, 246, 0.1)
                 );
-                border: 2px solid rgba(96, 165, 250, 0.2);
+                border: 2px solid rgba(96, 165, 250, 0.3);
                 border-radius: 20px;
                 padding: 3rem;
-                text-align: center;
+                max-width: 800px;
+                margin: 0 auto;
+                transition: all 0.4s ease;
+            }
+
+            .cta-card:hover {
+                border-color: rgba(96, 165, 250, 0.5);
+                box-shadow: 0 16px 48px rgba(96, 165, 250, 0.25);
+                transform: translateY(-5px);
             }
 
             .cta-title {
@@ -628,9 +885,6 @@
                 font-size: 1.1rem;
                 color: #9ca3af;
                 margin-bottom: 2rem;
-                max-width: 600px;
-                margin-left: auto;
-                margin-right: auto;
             }
 
             .cta-buttons {
@@ -646,7 +900,26 @@
                 font-weight: 600;
                 font-size: 1rem;
                 text-decoration: none;
-                transition: all 0.3s ease;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .cta-btn::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    135deg,
+                    rgba(255, 255, 255, 0.1),
+                    transparent
+                );
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .cta-btn:hover::before {
+                opacity: 1;
             }
 
             .cta-btn.primary {
@@ -656,8 +929,8 @@
             }
 
             .cta-btn.primary:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 32px rgba(16, 185, 129, 0.4);
+                transform: translateY(-5px) scale(1.05);
+                box-shadow: 0 12px 40px rgba(16, 185, 129, 0.5);
             }
 
             .cta-btn.secondary {
@@ -667,406 +940,96 @@
             }
 
             .cta-btn.secondary:hover {
-                background: rgba(96, 165, 250, 0.1);
-                border-color: rgba(96, 165, 250, 0.5);
-            }
-
-            /* === PHILOSOPHY === */
-            .philosophy-section {
-                padding: 3rem 0;
-            }
-
-            .philosophy-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 2rem;
-            }
-
-            .philosophy-card {
-                background: rgba(15, 23, 42, 0.6);
-                border: 1px solid rgba(96, 165, 250, 0.1);
-                border-radius: 16px;
-                padding: 2rem;
-                transition: all 0.3s ease;
-                position: relative;
-                overflow: hidden;
-            }
-
-            .philosophy-card::before {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 4px;
-                background: linear-gradient(90deg, #60a5fa, #a78bfa);
-                transform: scaleX(0);
-                transform-origin: left;
-                transition: transform 0.3s ease;
-            }
-
-            .philosophy-card:hover::before {
-                transform: scaleX(1);
-            }
-
-            .philosophy-card:hover {
-                background: rgba(15, 23, 42, 0.8);
-                border-color: rgba(96, 165, 250, 0.3);
-                transform: translateY(-8px);
-            }
-
-            .philosophy-number {
-                font-size: 3rem;
-                font-weight: 700;
-                background: linear-gradient(135deg, #60a5fa, #a78bfa);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                line-height: 1;
-                margin-bottom: 1rem;
-                opacity: 0.3;
-            }
-
-            .philosophy-card h3 {
-                font-size: 1.25rem;
-                font-weight: 600;
-                color: #fff;
-                margin-bottom: 0.75rem;
-            }
-
-            .philosophy-card p {
-                color: #9ca3af;
-                line-height: 1.6;
-                font-size: 0.95rem;
-            }
-
-            /* === STATS === */
-            .stats {
-                display: flex;
-                justify-content: center;
-                gap: 4rem;
-                padding: 2rem 0;
-                border-top: 1px solid rgba(255, 255, 255, 0.05);
-                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-                margin: 2rem 0;
-            }
-
-            .stat-item {
-                text-align: center;
-            }
-
-            .stat-number {
-                font-size: 3rem;
-                font-weight: 700;
-                color: #60a5fa;
-                display: block;
-                margin-bottom: 0.5rem;
-            }
-
-            .stat-label {
-                font-size: 0.9rem;
-                color: #9ca3af;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
+                background: rgba(96, 165, 250, 0.15);
+                border-color: rgba(96, 165, 250, 0.6);
+                transform: translateY(-5px) scale(1.05);
+                box-shadow: 0 12px 40px rgba(96, 165, 250, 0.3);
             }
 
             /* === RESPONSIVE === */
+            @media (max-width: 1024px) {
+                .span-6,
+                .span-4,
+                .span-8 {
+                    grid-column: span 12;
+                }
+
+                .timeline::before {
+                    left: 0;
+                }
+
+                .timeline-item {
+                    grid-template-columns: 1fr;
+                    gap: 1.5rem;
+                    padding-left: 2rem;
+                }
+
+                .timeline-item:nth-child(even) .timeline-content:first-child {
+                    order: 1;
+                }
+
+                .timeline-dot {
+                    left: 0;
+                    transform: translateX(-50%);
+                }
+            }
+
             @media (max-width: 768px) {
                 .container {
-                    padding: 0 1.25rem !important;
+                    padding: 0 1.5rem;
                 }
 
                 .hero {
-                    padding: 7rem 0 2.5rem;
+                    padding: 7rem 1.5rem 3rem;
+                    min-height: auto;
                 }
 
                 .avatar {
                     width: 120px;
                     height: 120px;
-                    margin-bottom: 1.5rem;
                 }
 
                 .hero h1 {
-                    font-size: clamp(1.75rem, 6vw, 2.5rem);
-                    margin-bottom: 0.75rem;
+                    font-size: clamp(2rem, 8vw, 3rem);
                 }
 
-                .hero .subtitle {
+                .hero-bio {
                     font-size: 1rem;
-                    margin-bottom: 1.5rem;
-                    line-height: 1.6;
                 }
 
-                .value-props {
+                .stats-grid {
                     grid-template-columns: 1fr;
                     gap: 1rem;
-                    margin: 1.5rem 0;
                 }
 
-                .value-card {
-                    padding: 1.25rem;
-                    border-radius: 10px;
+                .bento-grid {
+                    gap: 1rem;
                 }
 
-                .value-card h3 {
-                    font-size: 1rem;
-                    margin-bottom: 0.4rem;
-                }
-
-                .value-card p {
-                    font-size: 0.9rem;
-                }
-
-                .skills-section {
-                    padding: 2.5rem 0;
+                .bento-item {
+                    padding: 1.5rem;
                 }
 
                 .section-title {
-                    font-size: clamp(1.75rem, 6vw, 2.25rem);
-                    margin-bottom: 2rem;
+                    font-size: 2rem;
                 }
 
-                .skills-grid {
-                    grid-template-columns: 1fr;
-                    gap: 1.5rem;
-                    margin-top: 2rem;
-                }
-
-                .skill-category {
+                .timeline-content {
                     padding: 1.5rem;
-                    border-radius: 16px;
                 }
 
-                .skill-category h3 {
-                    font-size: 1.1rem;
-                    margin-bottom: 1rem;
-                }
-
-                .skill-tags {
-                    gap: 0.5rem;
-                }
-
-                .skill-tag {
-                    padding: 0.4rem 0.8rem;
-                    font-size: 0.8rem;
-                    border-radius: 12px;
-                }
-
-                .stats {
-                    flex-direction: column;
-                    gap: 1.5rem;
-                    padding: 1.5rem 0;
-                    margin: 1.5rem 0;
-                }
-
-                .stat-number {
-                    font-size: 2.25rem;
-                }
-
-                .stat-label {
-                    font-size: 0.8rem;
-                }
-
-                .timeline {
-                    padding-left: 1.5rem;
-                }
-
-                .timeline-dot {
-                    left: -1.5rem;
-                    width: 12px;
-                    height: 12px;
-                }
-
-                .timeline-item {
-                    margin-bottom: 2rem;
-                    padding-left: 1.5rem;
-                }
-
-                .timeline-item h3 {
-                    font-size: 1.1rem;
-                    margin-bottom: 0.5rem;
-                }
-
-                .timeline-item p {
-                    font-size: 0.9rem;
-                }
-
-                .philosophy-grid {
+                .skills-showcase {
                     grid-template-columns: 1fr;
-                    gap: 1.5rem;
-                }
-
-                .philosophy-card {
-                    padding: 1.5rem;
-                    border-radius: 16px;
-                }
-
-                .philosophy-number {
-                    font-size: 2.25rem;
-                    margin-bottom: 0.75rem;
-                }
-
-                .philosophy-card h3 {
-                    font-size: 1.1rem;
-                    margin-bottom: 0.6rem;
-                }
-
-                .philosophy-card p {
-                    font-size: 0.9rem;
-                }
-            }
-
-            @media (max-width: 480px) {
-                .container {
-                    padding: 0 1rem !important;
-                }
-
-                .hero {
-                    padding: 6rem 0 2rem;
-                }
-
-                .avatar {
-                    width: 100px;
-                    height: 100px;
-                    margin-bottom: 1.25rem;
-                }
-
-                .hero h1 {
-                    font-size: clamp(1.5rem, 6vw, 2rem);
-                    margin-bottom: 0.6rem;
-                }
-
-                .hero .subtitle {
-                    font-size: 0.9rem;
-                    margin-bottom: 1.25rem;
-                    line-height: 1.5;
-                }
-
-                .value-props {
-                    gap: 0.75rem;
-                    margin: 1.25rem 0;
-                }
-
-                .value-card {
-                    padding: 1rem;
-                    border-radius: 8px;
-                }
-
-                .value-card h3 {
-                    font-size: 0.95rem;
-                    margin-bottom: 0.35rem;
-                }
-
-                .value-card p {
-                    font-size: 0.85rem;
-                    line-height: 1.5;
-                }
-
-                .skills-section {
-                    padding: 2rem 0;
-                }
-
-                .section-title {
-                    font-size: clamp(1.5rem, 6vw, 1.75rem);
-                    margin-bottom: 1.5rem;
-                }
-
-                .skills-grid {
-                    gap: 1.25rem;
-                    margin-top: 1.5rem;
-                }
-
-                .skill-category {
-                    padding: 1.25rem;
-                    border-radius: 12px;
-                }
-
-                .skill-category h3 {
-                    font-size: 1rem;
-                    margin-bottom: 0.75rem;
-                }
-
-                .skill-tags {
-                    gap: 0.4rem;
-                }
-
-                .skill-tag {
-                    padding: 0.35rem 0.7rem;
-                    font-size: 0.75rem;
-                    border-radius: 10px;
-                }
-
-                .stats {
-                    gap: 1.25rem;
-                    padding: 1.25rem 0;
-                    margin: 1.25rem 0;
-                }
-
-                .stat-number {
-                    font-size: 1.75rem;
-                }
-
-                .stat-label {
-                    font-size: 0.75rem;
-                }
-
-                .timeline {
-                    padding-left: 1.25rem;
-                }
-
-                .timeline-dot {
-                    left: -1.25rem;
-                    width: 10px;
-                    height: 10px;
-                }
-
-                .timeline-item {
-                    margin-bottom: 1.5rem;
-                    padding-left: 1.25rem;
-                }
-
-                .timeline-item h3 {
-                    font-size: 1rem;
-                    margin-bottom: 0.4rem;
-                }
-
-                .timeline-item p {
-                    font-size: 0.85rem;
-                    line-height: 1.5;
-                }
-
-                .philosophy-grid {
-                    gap: 1.25rem;
-                }
-
-                .philosophy-card {
-                    padding: 1.25rem;
-                    border-radius: 12px;
-                }
-
-                .philosophy-number {
-                    font-size: 1.75rem;
-                    margin-bottom: 0.6rem;
-                }
-
-                .philosophy-card h3 {
-                    font-size: 1rem;
-                    margin-bottom: 0.5rem;
-                }
-
-                .philosophy-card p {
-                    font-size: 0.85rem;
-                    line-height: 1.5;
                 }
             }
 
             /* === ANIMATIONS === */
             .fade-in {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
                 transition:
-                    opacity 0.8s ease,
-                    transform 0.8s ease;
+                    opacity 0.6s ease,
+                    transform 0.6s ease;
             }
 
             .fade-in.visible {
@@ -1074,153 +1037,21 @@
                 transform: translateY(0);
             }
 
-            /* === VERY SMALL MOBILE (320px-374px) === */
-            @media (max-width: 374px) {
-                .container {
-                    padding: 0 0.75rem !important;
+            @keyframes float {
+                0%,
+                100% {
+                    transform: translateY(0);
                 }
+                50% {
+                    transform: translateY(-10px);
+                }
+            }
 
-                .hero {
-                    padding: 5.5rem 0 1.75rem;
-                }
-
-                .avatar {
-                    width: 90px;
-                    height: 90px;
-                    margin-bottom: 1rem;
-                }
-
-                .hero h1 {
-                    font-size: clamp(1.25rem, 6vw, 1.5rem);
-                    margin-bottom: 0.5rem;
-                }
-
-                .hero .subtitle {
-                    font-size: 0.85rem;
-                    margin-bottom: 1rem;
-                    line-height: 1.4;
-                }
-
-                .value-props {
-                    gap: 0.6rem;
-                    margin: 1rem 0;
-                }
-
-                .value-card {
-                    padding: 0.875rem;
-                    border-radius: 6px;
-                }
-
-                .value-card h3 {
-                    font-size: 0.9rem;
-                    margin-bottom: 0.3rem;
-                }
-
-                .value-card p {
-                    font-size: 0.8rem;
-                    line-height: 1.4;
-                }
-
-                .skills-section {
-                    padding: 1.75rem 0;
-                }
-
-                .section-title {
-                    font-size: clamp(1.25rem, 6vw, 1.5rem);
-                    margin-bottom: 1.25rem;
-                }
-
-                .skills-grid {
-                    gap: 1rem;
-                    margin-top: 1.25rem;
-                }
-
-                .skill-category {
-                    padding: 1rem;
-                    border-radius: 10px;
-                }
-
-                .skill-category h3 {
-                    font-size: 0.95rem;
-                    margin-bottom: 0.6rem;
-                }
-
-                .skill-tags {
-                    gap: 0.3rem;
-                }
-
-                .skill-tag {
-                    padding: 0.3rem 0.6rem;
-                    font-size: 0.7rem;
-                    border-radius: 8px;
-                }
-
-                .stats {
-                    gap: 1rem;
-                    padding: 1rem 0;
-                    margin: 1rem 0;
-                }
-
-                .stat-number {
-                    font-size: 1.5rem;
-                }
-
-                .stat-label {
-                    font-size: 0.7rem;
-                }
-
-                .timeline {
-                    padding-left: 1rem;
-                }
-
-                .timeline-dot {
-                    left: -1rem;
-                    width: 8px;
-                    height: 8px;
-                }
-
-                .timeline-item {
-                    margin-bottom: 1.25rem;
-                    padding-left: 1rem;
-                }
-
-                .timeline-item h3 {
-                    font-size: 0.95rem;
-                    margin-bottom: 0.35rem;
-                }
-
-                .timeline-item p {
-                    font-size: 0.8rem;
-                    line-height: 1.4;
-                }
-
-                .philosophy-grid {
-                    gap: 1rem;
-                }
-
-                .philosophy-card {
-                    padding: 1rem;
-                    border-radius: 10px;
-                }
-
-                .philosophy-number {
-                    font-size: 1.5rem;
-                    margin-bottom: 0.5rem;
-                }
-
-                .philosophy-card h3 {
-                    font-size: 0.95rem;
-                    margin-bottom: 0.4rem;
-                }
-
-                .philosophy-card p {
-                    font-size: 0.8rem;
-                    line-height: 1.4;
-                }
+            .stat-card:hover {
+                animation: float 2s ease-in-out infinite;
             }
         </style>
 
-        <!-- Structured Data (JSON-LD) -->
         <script type="application/ld+json">
             {
                 "@context": "https://schema.org",
@@ -1250,71 +1081,15 @@
                         ],
                         "description": "Audio designer for games. I build interactive music systems in Wwise/FMOD, design sound for animation, and write audio tools in C++/Python.",
                         "email": "igorszuniewiczwork@gmail.com",
-                        "address": {
-                            "@type": "PostalAddress",
-                            "addressCountry": "BE",
-                            "addressLocality": "Kortrijk",
-                            "addressRegion": "Belgium"
-                        },
                         "knowsAbout": [
                             "Game Audio",
                             "Interactive Music",
                             "Sound Design",
-                            "Audio Programming",
-                            "DSP",
                             "Wwise",
                             "FMOD",
                             "Unreal Engine",
-                            "Unity",
-                            "Music Composition",
-                            "Real-time Audio",
-                            "Adaptive Music",
-                            "Audio Middleware"
-                        ],
-                        "hasOccupation": {
-                            "@type": "Occupation",
-                            "name": "Audio Designer & Composer",
-                            "occupationLocation": {
-                                "@type": "Country",
-                                "name": "Belgium"
-                            },
-                            "skills": [
-                                "Interactive Music Systems",
-                                "Game Audio Implementation",
-                                "Digital Signal Processing",
-                                "Audio Middleware (Wwise, FMOD)",
-                                "Game Engines (Unreal, Unity)",
-                                "Sound Design",
-                                "Music Composition"
-                            ]
-                        }
-                    },
-                    {
-                        "@type": "AboutPage",
-                        "@id": "https://igorszuniewicz.com/about.html#aboutpage",
-                        "url": "https://igorszuniewicz.com/about.html",
-                        "name": "About Igor Szuniewicz",
-                        "description": "Audio designer studying at DAE Belgium. Working with Wwise/FMOD, building tools in C++/Python, designing sound for games and horror.",
-                        "mainEntity": {
-                            "@id": "https://igorszuniewicz.com/#person"
-                        },
-                        "breadcrumb": {
-                            "@type": "BreadcrumbList",
-                            "itemListElement": [
-                                {
-                                    "@type": "ListItem",
-                                    "position": 1,
-                                    "name": "Home",
-                                    "item": "https://igorszuniewicz.com/"
-                                },
-                                {
-                                    "@type": "ListItem",
-                                    "position": 2,
-                                    "name": "About",
-                                    "item": "https://igorszuniewicz.com/about.html"
-                                }
-                            ]
-                        }
+                            "Unity"
+                        ]
                     }
                 ]
             }
@@ -1322,17 +1097,12 @@
     </head>
 
     <body>
-        <!-- Skip to main content for keyboard users -->
-        <a href="#main" class="skip-link">Skip to main content</a>
-
         <div class="bg-gradient"></div>
-
-        <!-- Navigation loaded by navigation.js -->
 
         <main>
             <!-- Hero Section -->
             <section class="hero">
-                <div class="container">
+                <div class="hero-content">
                     <picture>
                         <source
                             srcset="cv/pieknyportret_square.webp"
@@ -1340,249 +1110,416 @@
                         />
                         <img
                             data-src="cv/pieknyportret_square.png"
-                            alt="Igor Szuniewicz - Audio Designer and Developer specializing in game audio, interactive music systems, and real-time DSP"
+                            alt="Igor Szuniewicz - Audio Designer and Developer"
                             class="avatar lazy-img"
                             loading="lazy"
-                            decoding="async"
-                            width="200"
-                            height="200"
+                            width="140"
+                            height="140"
                         />
                     </picture>
 
-                    <h1
-                        data-i18n="about_role"
-                        style="
-                            font-family: &quot;Sora&quot;, sans-serif;
-                            font-size: clamp(2rem, 5vw, 3.5rem);
-                            font-weight: 800;
-                            color: #e0e7ff;
-                            letter-spacing: 0.02em;
-                            text-shadow:
-                                0 2px 8px rgba(96, 165, 250, 0.3),
-                                0 4px 16px rgba(96, 165, 250, 0.2);
-                            line-height: 1.2;
-                        "
-                    >
-                        Audio Designer & Developer
-                    </h1>
-                    <p class="subtitle" data-i18n="about_bio">
-                        Specialized in building scalable interactive audio
-                        systems and custom tools that streamline game audio
-                        workflows. Expert in Wwise, FMOD, and Unreal Engine with
-                        proven ability to deliver production-ready solutions.
+                    <h1 data-i18n="about_role">Audio Designer & Developer</h1>
+                    <p class="hero-bio" data-i18n="about_bio">
+                        Building interactive audio systems and pipeline tools
+                        for games. Specialized in Wwise, FMOD, Unreal Engine,
+                        and C++/Python development.
                     </p>
 
-                    <!-- Value Propositions -->
-                    <div class="value-props fade-in">
-                        <div class="value-card">
-                            <h3 data-i18n="value_systems_title">
-                                Interactive Systems
-                            </h3>
-                            <p data-i18n="value_systems_desc">
-                                Built adaptive music systems and dynamic audio
-                                engines that respond to gameplay in real-time
-                            </p>
+                    <div class="stats-grid fade-in">
+                        <div class="stat-card">
+                            <span class="stat-number">15+</span>
+                            <span class="stat-label" data-i18n="stat_projects"
+                                >Projects</span
+                            >
                         </div>
-                        <div class="value-card">
-                            <h3 data-i18n="value_tools_title">
-                                Pipeline Optimization
-                            </h3>
-                            <p data-i18n="value_tools_desc">
-                                Developed custom tools (Wwise Unreal Fixer,
-                                Unreal Rebuilder) that automate workflows and
-                                reduce iteration time
-                            </p>
+                        <div class="stat-card">
+                            <span class="stat-number">4</span>
+                            <span class="stat-label" data-i18n="stat_tools"
+                                >Pipeline Tools</span
+                            >
                         </div>
-                        <div class="value-card">
-                            <h3 data-i18n="value_technical_title">
-                                Technical Problem Solving
-                            </h3>
-                            <p data-i18n="value_technical_desc">
-                                Bridge between audio and engineering teams with
-                                C++, Python, and Blueprint scripting expertise
-                            </p>
+                        <div class="stat-card">
+                            <span class="stat-number">3</span>
+                            <span class="stat-label" data-i18n="stat_years"
+                                >Years Experience</span
+                            >
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Stats -->
-            <section class="container">
-                <div class="stats fade-in">
-                    <div class="stat-item">
-                        <span class="stat-number">15+</span>
-                        <span class="stat-label" data-i18n="stat_projects"
-                            >Student Projects</span
-                        >
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">2</span>
-                        <span class="stat-label" data-i18n="stat_tools"
-                            >Pipeline Tools</span
-                        >
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">8+</span>
-                        <span class="stat-label" data-i18n="stat_delivery"
-                            >Completed Projects</span
-                        >
-                    </div>
-                </div>
-            </section>
-
-            <!-- Achievements Section -->
-            <section class="achievements-section">
+            <!-- Skills Showcase Section -->
+            <section
+                class="content-section"
+                style="background: rgba(96, 165, 250, 0.02)"
+            >
                 <div class="container">
-                    <h2
-                        class="section-title fade-in"
-                        data-i18n="achievements_title"
-                    >
-                        Notable Work
-                    </h2>
-                    <div class="achievements-grid fade-in">
-                        <div class="achievement-card">
-                            <div class="achievement-icon">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
+                    <div class="section-header fade-in">
+                        <h2 class="section-title" data-i18n="about_tech_title">
+                            Technical Skills
+                        </h2>
+                        <p class="section-subtitle" data-i18n="skills_subtitle">
+                            Core competencies with project examples
+                        </p>
+                    </div>
+
+                    <div class="skills-showcase fade-in">
+                        <!-- Game Audio Middleware -->
+                        <div class="skill-category-card">
+                            <div class="skill-category-header">
+                                <div class="skill-category-icon">🎮</div>
+                                <h3
+                                    class="skill-category-title"
+                                    data-i18n="tech_middleware_title"
                                 >
-                                    <path d="M12 14l9-5-9-5-9 5 9 5z" />
-                                    <path
-                                        d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
-                                    />
-                                    <path
-                                        d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
-                                    />
-                                </svg>
+                                    Game Audio Middleware
+                                </h3>
                             </div>
-                            <h3 data-i18n="achievement_thesis_title">
-                                Bachelor Thesis
-                            </h3>
-                            <p data-i18n="achievement_thesis_desc">
-                                ML-powered beatbox classification system using
-                                TensorFlow and LibROSA
-                            </p>
+                            <div class="skill-items">
+                                <div class="skill-item">
+                                    <span class="skill-item-name">Wwise</span>
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="wwise_projects"
+                                >
+                                    Not Today Darling, Pause & Deserve
+                                </div>
+                                <div class="skill-item">
+                                    <span class="skill-item-name">FMOD</span>
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="fmod_projects"
+                                >
+                                    Richter, Middleware Audio Tools
+                                </div>
+                                <div class="skill-item">
+                                    <span class="skill-item-name"
+                                        >Unreal Engine</span
+                                    >
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="unreal_projects"
+                                >
+                                    Not Today Darling, Pause & Deserve
+                                </div>
+                            </div>
                         </div>
-                        <div class="achievement-card">
-                            <div class="achievement-icon">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
+
+                        <!-- DAWs & Production -->
+                        <div class="skill-category-card">
+                            <div class="skill-category-header">
+                                <div class="skill-category-icon">🎛️</div>
+                                <h3
+                                    class="skill-category-title"
+                                    data-i18n="tech_daw_title"
                                 >
-                                    <path
-                                        d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"
-                                    />
-                                    <circle cx="12" cy="12" r="2" />
-                                    <path d="M14.5 9.5l-5 5m0-5l5 5" />
-                                </svg>
+                                    DAWs & Production
+                                </h3>
                             </div>
-                            <h3 data-i18n="achievement_tools_title">
-                                Production Tools
-                            </h3>
-                            <p data-i18n="achievement_tools_desc">
-                                Built 4 pipeline tools that fix critical
-                                Wwise/Unreal integration issues
-                            </p>
+                            <div class="skill-items">
+                                <div class="skill-item">
+                                    <span class="skill-item-name">Reaper</span>
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="reaper_projects"
+                                >
+                                    All project sound design & mixing
+                                </div>
+                                <div class="skill-item">
+                                    <span class="skill-item-name"
+                                        >Ableton Live</span
+                                    >
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="ableton_projects"
+                                >
+                                    Music production & sound design
+                                </div>
+                                <div class="skill-item">
+                                    <span class="skill-item-name"
+                                        >FL Studio</span
+                                    >
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="fl_projects"
+                                >
+                                    Music composition & arrangement
+                                </div>
+                            </div>
                         </div>
-                        <div class="achievement-card">
-                            <div class="achievement-icon">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
+
+                        <!-- Programming & Tools -->
+                        <div class="skill-category-card">
+                            <div class="skill-category-header">
+                                <div class="skill-category-icon">💻</div>
+                                <h3
+                                    class="skill-category-title"
+                                    data-i18n="tech_programming_title"
                                 >
-                                    <rect
-                                        x="2"
-                                        y="3"
-                                        width="20"
-                                        height="14"
-                                        rx="2"
-                                    />
-                                    <path d="M8 21h8" />
-                                    <path d="M12 17v4" />
-                                    <path d="M7 8l3 3-3 3m5-6h4" />
-                                </svg>
+                                    Programming & Tools
+                                </h3>
                             </div>
-                            <h3 data-i18n="achievement_games_title">
-                                Shipped Projects
-                            </h3>
-                            <p data-i18n="achievement_games_desc">
-                                Lead audio on 8+ student game projects from
-                                prototype to delivery
-                            </p>
+                            <div class="skill-items">
+                                <div class="skill-item">
+                                    <span class="skill-item-name">C++</span>
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="cpp_projects"
+                                >
+                                    Audio plugins, Wwise integration tools
+                                </div>
+                                <div class="skill-item">
+                                    <span class="skill-item-name">C#</span>
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="csharp_projects"
+                                >
+                                    Unity audio scripting, custom tools
+                                </div>
+                                <div class="skill-item">
+                                    <span class="skill-item-name">Python</span>
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="python_projects"
+                                >
+                                    ML audio analysis, pipeline automation
+                                </div>
+                                <div class="skill-item">
+                                    <span class="skill-item-name"
+                                        >Blueprints</span
+                                    >
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="blueprints_projects"
+                                >
+                                    Audio systems in Unreal Engine
+                                </div>
+                                <div class="skill-item">
+                                    <span class="skill-item-name"
+                                        >Git • Perforce</span
+                                    >
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="vcs_projects"
+                                >
+                                    Version control for team projects
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Specialized -->
+                        <div class="skill-category-card">
+                            <div class="skill-category-header">
+                                <div class="skill-category-icon">🔬</div>
+                                <h3
+                                    class="skill-category-title"
+                                    data-i18n="tech_specialized_title"
+                                >
+                                    Specialized
+                                </h3>
+                            </div>
+                            <div class="skill-items">
+                                <div class="skill-item">
+                                    <span class="skill-item-name"
+                                        >JUCE Framework</span
+                                    >
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="juce_projects"
+                                >
+                                    Audio plugin development
+                                </div>
+                                <div class="skill-item">
+                                    <span class="skill-item-name"
+                                        >TensorFlow • ML Audio</span
+                                    >
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="tensorflow_projects"
+                                >
+                                    Beatbox classification thesis project
+                                </div>
+                                <div class="skill-item">
+                                    <span class="skill-item-name"
+                                        >3D Spatial Audio & HRTF</span
+                                    >
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="spatial_projects"
+                                >
+                                    Immersive audio implementation
+                                </div>
+                                <div class="skill-item">
+                                    <span class="skill-item-name"
+                                        >DSP Algorithm Development</span
+                                    >
+                                </div>
+                                <div
+                                    class="skill-item-projects"
+                                    data-i18n="dsp_projects"
+                                >
+                                    Custom audio effects & processors
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Skills Section -->
-            <section class="skills-section">
+            <!-- Work Section -->
+            <section class="content-section">
                 <div class="container">
-                    <h2
-                        class="section-title fade-in"
-                        data-i18n="about_tech_title"
-                    >
-                        Technical Expertise
-                    </h2>
+                    <div class="section-header fade-in">
+                        <h2
+                            class="section-title"
+                            data-i18n="achievements_title"
+                        >
+                            Notable Work
+                        </h2>
+                        <p
+                            class="section-subtitle"
+                            data-i18n="achievements_subtitle"
+                        >
+                            Key projects and achievements
+                        </p>
+                    </div>
 
-                    <div class="skills-grid fade-in">
-                        <!-- Game Audio -->
-                        <div class="skill-category">
-                            <h3 data-i18n="tech_middleware_title">
-                                Game Audio
-                            </h3>
-                            <div class="skill-tags">
-                                <div class="skill-tag">Wwise</div>
-                                <div class="skill-tag">FMOD Studio</div>
-                                <div class="skill-tag">Unreal Engine 5</div>
-                                <div class="skill-tag">Unity</div>
+                    <div class="bento-grid fade-in">
+                        <!-- Thesis -->
+                        <div class="bento-item span-4">
+                            <div class="bento-header">
+                                <div class="bento-icon">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                    >
+                                        <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                                        <path
+                                            d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
+                                        />
+                                    </svg>
+                                </div>
+                                <h3
+                                    class="bento-title"
+                                    data-i18n="achievement_thesis_title"
+                                >
+                                    Bachelor Thesis
+                                </h3>
+                            </div>
+                            <div class="bento-content">
+                                <p data-i18n="achievement_thesis_desc">
+                                    ML-powered beatbox classification system
+                                    using TensorFlow and LibROSA
+                                </p>
                             </div>
                         </div>
 
-                        <!-- Production -->
-                        <div class="skill-category">
-                            <h3 data-i18n="tech_production_title">
-                                Production & DAWs
-                            </h3>
-                            <div class="skill-tags">
-                                <div class="skill-tag">Reaper</div>
-                                <div class="skill-tag">Logic Pro</div>
-                                <div class="skill-tag">Studio One</div>
-                                <div class="skill-tag">Sound Design</div>
+                        <!-- Tools -->
+                        <div class="bento-item span-4">
+                            <div class="bento-header">
+                                <div class="bento-icon">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"
+                                        />
+                                    </svg>
+                                </div>
+                                <h3
+                                    class="bento-title"
+                                    data-i18n="achievement_tools_title"
+                                >
+                                    Production Tools
+                                </h3>
+                            </div>
+                            <div class="bento-content">
+                                <p data-i18n="achievement_tools_desc">
+                                    Built 4 pipeline tools that fix critical
+                                    Wwise/Unreal integration issues
+                                </p>
                             </div>
                         </div>
 
-                        <!-- Development -->
-                        <div class="skill-category">
-                            <h3 data-i18n="tech_scripting_title">
-                                Development
-                            </h3>
-                            <div class="skill-tags">
-                                <div class="skill-tag">Blueprints</div>
-                                <div class="skill-tag">C#</div>
-                                <div class="skill-tag">Python</div>
-                                <div class="skill-tag">C++</div>
+                        <!-- Projects -->
+                        <div class="bento-item span-4">
+                            <div class="bento-header">
+                                <div class="bento-icon">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                    >
+                                        <rect
+                                            x="2"
+                                            y="3"
+                                            width="20"
+                                            height="14"
+                                            rx="2"
+                                        />
+                                        <path d="M8 21h8" />
+                                        <path d="M12 17v4" />
+                                        <path d="M7 8l3 3-3 3m5-6h4" />
+                                    </svg>
+                                </div>
+                                <h3
+                                    class="bento-title"
+                                    data-i18n="achievement_games_title"
+                                >
+                                    Game Projects
+                                </h3>
+                            </div>
+                            <div class="bento-content">
+                                <p data-i18n="achievement_games_desc">
+                                    Lead audio on 8+ student game projects from
+                                    prototype to delivery
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Journey Timeline -->
-            <section class="timeline-section">
+            <!-- Timeline Section -->
+            <section
+                class="content-section"
+                style="background: rgba(96, 165, 250, 0.02)"
+            >
                 <div class="container">
-                    <h2
-                        class="section-title fade-in"
-                        data-i18n="about_journey_title"
-                    >
-                        Journey
-                    </h2>
+                    <div class="section-header fade-in">
+                        <h2
+                            class="section-title"
+                            data-i18n="about_journey_title"
+                        >
+                            Journey
+                        </h2>
+                        <p
+                            class="section-subtitle"
+                            data-i18n="journey_subtitle"
+                        >
+                            Education & experience
+                        </p>
+                    </div>
 
                     <div class="timeline fade-in">
                         <div class="timeline-item">
-                            <div class="timeline-dot"></div>
                             <div class="timeline-content">
                                 <div class="timeline-year">2023 - Present</div>
                                 <h3 data-i18n="timeline_dae_title">
@@ -1594,9 +1531,12 @@
                                     pipelines at Howest Kortrijk, Belgium.
                                 </p>
                             </div>
+                            <div class="timeline-dot"></div>
+                            <div></div>
                         </div>
 
                         <div class="timeline-item">
+                            <div></div>
                             <div class="timeline-dot"></div>
                             <div class="timeline-content">
                                 <div class="timeline-year">2019 - 2023</div>
@@ -1612,7 +1552,6 @@
                         </div>
 
                         <div class="timeline-item">
-                            <div class="timeline-dot"></div>
                             <div class="timeline-content">
                                 <div class="timeline-year">2013 - 2019</div>
                                 <h3 data-i18n="timeline_piano_title">
@@ -1621,67 +1560,141 @@
                                 <p data-i18n="timeline_piano_desc">
                                     Classical piano education at First Degree
                                     State Music School in Kołobrzeg, Poland.
-                                    Building foundation in music theory and
-                                    performance.
                                 </p>
                             </div>
+                            <div class="timeline-dot"></div>
+                            <div></div>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- Philosophy Section -->
-            <section class="philosophy-section">
+            <section class="content-section">
                 <div class="container">
-                    <h2 class="section-title fade-in">Design Philosophy</h2>
+                    <div class="section-header fade-in">
+                        <h2 class="section-title" data-i18n="philosophy_title">
+                            Design Philosophy
+                        </h2>
+                        <p
+                            class="section-subtitle"
+                            data-i18n="philosophy_subtitle"
+                        >
+                            How I approach audio design
+                        </p>
+                    </div>
 
-                    <div class="philosophy-grid fade-in">
-                        <div class="philosophy-card">
-                            <div class="philosophy-number">01</div>
-                            <h3 data-i18n="principle_clarity_title">
-                                Clarity First, Always
-                            </h3>
-                            <p data-i18n="principle_clarity_desc">
-                                In game audio, readability trumps everything. I
-                                design from gameplay telemetry outward—ensuring
-                                critical feedback is never masked.
-                            </p>
+                    <div class="bento-grid fade-in">
+                        <div class="bento-item span-6">
+                            <div class="bento-header">
+                                <div class="bento-icon">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                    >
+                                        <circle cx="12" cy="12" r="10" />
+                                        <path d="M12 6v6l4 2" />
+                                    </svg>
+                                </div>
+                                <h3
+                                    class="bento-title"
+                                    data-i18n="principle_clarity_title"
+                                >
+                                    Clarity First
+                                </h3>
+                            </div>
+                            <div class="bento-content">
+                                <p data-i18n="principle_clarity_desc">
+                                    Game audio needs to be clear. What does the
+                                    player need to hear right now? Mix
+                                    hierarchy, frequency separation, ducking.
+                                </p>
+                            </div>
                         </div>
 
-                        <div class="philosophy-card">
-                            <div class="philosophy-number">02</div>
-                            <h3 data-i18n="principle_technical_title">
-                                Technical Foundation
-                            </h3>
-                            <p data-i18n="principle_technical_desc">
-                                Understanding technical constraints—voice
-                                counts, memory budgets, CPU limits—enables
-                                better creative decisions.
-                            </p>
+                        <div class="bento-item span-6">
+                            <div class="bento-header">
+                                <div class="bento-icon">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                                        />
+                                    </svg>
+                                </div>
+                                <h3
+                                    class="bento-title"
+                                    data-i18n="principle_technical_title"
+                                >
+                                    Know Your Limits
+                                </h3>
+                            </div>
+                            <div class="bento-content">
+                                <p data-i18n="principle_technical_desc">
+                                    Understanding limits helps: voice counts,
+                                    memory, CPU. Build systems that scale
+                                    without breaking budget.
+                                </p>
+                            </div>
                         </div>
 
-                        <div class="philosophy-card">
-                            <div class="philosophy-number">03</div>
-                            <h3 data-i18n="principle_layering_title">
-                                Parametric Design
-                            </h3>
-                            <p data-i18n="principle_layering_desc">
-                                I approach sound design as modular layering:
-                                transients for impact, body for presence,
-                                texture for character.
-                            </p>
+                        <div class="bento-item span-6">
+                            <div class="bento-header">
+                                <div class="bento-icon">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                    >
+                                        <path d="M4 5h16M4 12h16M4 19h16" />
+                                    </svg>
+                                </div>
+                                <h3
+                                    class="bento-title"
+                                    data-i18n="principle_layering_title"
+                                >
+                                    Layers & Parameters
+                                </h3>
+                            </div>
+                            <div class="bento-content">
+                                <p data-i18n="principle_layering_desc">
+                                    Design sounds in layers: transient for
+                                    punch, body for weight, texture for
+                                    character. Blend them in real-time.
+                                </p>
+                            </div>
                         </div>
 
-                        <div class="philosophy-card">
-                            <div class="philosophy-number">04</div>
-                            <h3 data-i18n="principle_collaboration_title">
-                                Collaborative Iteration
-                            </h3>
-                            <p data-i18n="principle_collaboration_desc">
-                                Great audio comes from feedback loops with
-                                designers, programmers, and players. I document
-                                my work and iterate based on playtesting.
-                            </p>
+                        <div class="bento-item span-6">
+                            <div class="bento-header">
+                                <div class="bento-icon">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                    >
+                                        <path d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </div>
+                                <h3
+                                    class="bento-title"
+                                    data-i18n="principle_collaboration_title"
+                                >
+                                    Iterate with Feedback
+                                </h3>
+                            </div>
+                            <div class="bento-content">
+                                <p data-i18n="principle_collaboration_desc">
+                                    Audio needs input from designers,
+                                    programmers, and players. Document systems
+                                    and iterate based on playtests.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1717,44 +1730,31 @@
             </section>
         </main>
 
-        <!-- Scripts -->
         <script src="assets/js/components/navigation.js" defer></script>
         <script src="assets/js/translations.js" defer></script>
 
-        <!-- Scroll reveal animations -->
         <script>
-            // Scroll reveal - optimized for performance and earlier reveal
+            // Scroll reveal
             function initScrollReveal() {
-                const observerOptions = {
-                    threshold: 0.05,
-                    rootMargin: "0px 0px -100px 0px",
-                };
+                const observer = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add("visible");
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    },
+                    { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
+                );
 
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach((entry) => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add("visible");
-                            // Stop observing once visible to improve performance
-                            observer.unobserve(entry.target);
-                        }
-                    });
-                }, observerOptions);
-
-                document.querySelectorAll(".fade-in").forEach((el) => {
-                    observer.observe(el);
-                });
+                document
+                    .querySelectorAll(".fade-in")
+                    .forEach((el) => observer.observe(el));
             }
 
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", initScrollReveal);
-            } else {
-                initScrollReveal();
-            }
-        </script>
-
-        <!-- Lazy load avatar image -->
-        <script>
-            (function () {
+            // Lazy load avatar
+            function initLazyImage() {
                 const lazyImg = document.querySelector(
                     "img.lazy-img[data-src]",
                 );
@@ -1767,7 +1767,6 @@
                                 const img = entry.target;
                                 img.src = img.getAttribute("data-src");
                                 img.removeAttribute("data-src");
-                                img.classList.add("loaded");
                                 observer.unobserve(img);
                             }
                         });
@@ -1775,10 +1774,18 @@
                     observer.observe(lazyImg);
                 } else {
                     lazyImg.src = lazyImg.getAttribute("data-src");
-                    lazyImg.classList.add("loaded");
                 }
-            })();
+            }
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", () => {
+                    initScrollReveal();
+                    initLazyImage();
+                });
+            } else {
+                initScrollReveal();
+                initLazyImage();
+            }
         </script>
     </body>
 </html>
-
