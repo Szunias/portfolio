@@ -50,6 +50,7 @@ class TranslationManager {
       "amorak.html": "../locales/amorak.json",
       "akantilado.html": "../locales/akantilado.json",
       "ray-animation.html": "../locales/ray-animation.json",
+      "pawism.html": "../locales/pawism.json",
       "not-today-darling.html": "../locales/not-today-darling.json",
       "environments.html": "../locales/environments.json",
       "audiolab.html": "../locales/audiolab.json",
