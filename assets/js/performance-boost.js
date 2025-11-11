@@ -209,7 +209,7 @@
           return;
         if (link.hasAttribute("target")) return;
 
-        const url = new URL(href, window.location.origin);
+        const url = new URL(href, window.location.href);
         if (url.origin !== window.location.origin) return;
         if (url.pathname.endsWith(".zip") || url.pathname.endsWith(".pdf"))
           return;
