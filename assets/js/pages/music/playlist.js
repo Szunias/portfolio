@@ -1,8 +1,8 @@
-import { elements, state } from './state.js';
-import { formatTime } from './utils.js';
+import { elements, state } from "./state.js";
+import { formatTime } from "./utils.js";
 
 function getOrCreateCoverObserver() {
-  if (!('IntersectionObserver' in window)) {
+  if (!("IntersectionObserver" in window)) {
     return null;
   }
 
@@ -12,19 +12,19 @@ function getOrCreateCoverObserver() {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           const img = entry.target;
-          const src = img.getAttribute('data-src');
+          const src = img.getAttribute("data-src");
           if (src) {
             img.src = src;
-            img.removeAttribute('data-src');
-            img.classList.add('loaded');
+            img.removeAttribute("data-src");
+            img.classList.add("loaded");
           }
           state.globalCoverObserver.unobserve(img);
         });
       },
       {
-        rootMargin: '50px',
-        threshold: 0.01
-      }
+        rootMargin: "50px",
+        threshold: 0.01,
+      },
     );
   }
 
@@ -33,7 +33,9 @@ function getOrCreateCoverObserver() {
 
 function initLazyCoverLoading() {
   if (!elements.playlist) return;
-  const lazyCovers = elements.playlist.querySelectorAll('img.lazy-cover[data-src]');
+  const lazyCovers = elements.playlist.querySelectorAll(
+    "img.lazy-cover[data-src]",
+  );
   const observer = getOrCreateCoverObserver();
 
   if (observer) {
@@ -43,50 +45,61 @@ function initLazyCoverLoading() {
 
   // Fallback for browsers without IntersectionObserver
   lazyCovers.forEach((img) => {
-    const src = img.getAttribute('data-src');
+    const src = img.getAttribute("data-src");
     if (!src) return;
     img.src = src;
-    img.classList.add('loaded');
+    img.classList.add("loaded");
   });
 }
 
 export function renderPlaylist() {
-  if (!elements.playlist) return;
+  if (!elements.playlist) return [];
 
-  elements.playlist.innerHTML = '';
+  elements.playlist.innerHTML = "";
   state.durationElements.clear();
+  const renderedIndexes = [];
 
   const filteredTracks =
-    state.currentFilter === 'all'
+    state.currentFilter === "all"
       ? state.tracks
-      : state.tracks.filter((track) => Array.isArray(track.tags) && track.tags.includes(state.currentFilter));
+      : state.tracks.filter(
+          (track) =>
+            Array.isArray(track.tags) &&
+            track.tags.includes(state.currentFilter),
+        );
 
-  const currentLang = localStorage.getItem('language') || 'en';
+  const currentLang = localStorage.getItem("language") || "en";
 
   filteredTracks.forEach((track) => {
     const globalIndex = state.tracks.indexOf(track);
-    const item = document.createElement('div');
-    item.className = 'playlist-item';
+    const item = document.createElement("div");
+    item.className = "playlist-item";
     item.dataset.trackIndex = String(globalIndex);
-    item.setAttribute('role', 'button');
+    item.setAttribute("role", "button");
     item.tabIndex = 0;
-    item.setAttribute('aria-label', `Play ${track.title} by ${track.artist}`);
-    if (globalIndex === state.currentTrackIndex) item.classList.add('active');
+    item.setAttribute("aria-label", `Play ${track.title} by ${track.artist}`);
+    if (globalIndex === state.currentTrackIndex) item.classList.add("active");
 
-    const durationEl = document.createElement('div');
-    durationEl.className = 'playlist-duration';
+    const durationEl = document.createElement("div");
+    durationEl.className = "playlist-duration";
     state.durationElements.set(globalIndex, durationEl);
 
     if (state.trackDurations.has(globalIndex)) {
       durationEl.textContent = state.trackDurations.get(globalIndex);
+    } else if (Number.isFinite(track.length) && track.length > 0) {
+      const formatted = formatTime(track.length);
+      state.trackDurations.set(globalIndex, formatted);
+      durationEl.textContent = formatted;
     } else {
-      durationEl.textContent = '--:--';
+      durationEl.textContent = "--:--";
     }
 
     const description =
-      (track.desc && typeof track.desc === 'object' && track.desc[currentLang]) ||
-      (track.desc && typeof track.desc === 'object' && track.desc.en) ||
-      (typeof track.desc === 'string' ? track.desc : '');
+      (track.desc &&
+        typeof track.desc === "object" &&
+        track.desc[currentLang]) ||
+      (track.desc && typeof track.desc === "object" && track.desc.en) ||
+      (typeof track.desc === "string" ? track.desc : "");
 
     item.innerHTML = `
       <div class="playlist-cover">
@@ -95,28 +108,30 @@ export function renderPlaylist() {
       <div class="playlist-info">
         <div class="playlist-track-title">${track.title}</div>
         <div class="playlist-track-artist">${track.artist}</div>
-        ${description ? `<div class="playlist-track-desc">${description}</div>` : ''}
+        ${description ? `<div class="playlist-track-desc">${description}</div>` : ""}
       </div>
     `;
 
     item.appendChild(durationEl);
     elements.playlist.appendChild(item);
+    renderedIndexes.push(globalIndex);
   });
 
   requestAnimationFrame(() => initLazyCoverLoading());
+  return renderedIndexes;
 }
 
 export function updatePlaylistPlayingState() {
   if (!elements.playlist) return;
-  elements.playlist.querySelectorAll('.playlist-item').forEach((item) => {
-    item.classList.remove('playing');
+  elements.playlist.querySelectorAll(".playlist-item").forEach((item) => {
+    item.classList.remove("playing");
   });
 
   if (!state.isPlaying) return;
   const selector = `.playlist-item[data-track-index="${state.currentTrackIndex}"]`;
   const currentItem = elements.playlist.querySelector(selector);
   if (currentItem) {
-    currentItem.classList.add('playing');
+    currentItem.classList.add("playing");
   }
 }
 
@@ -133,11 +148,11 @@ export function updateDurationDisplay(index, durationSeconds) {
 
 export function bindFilterTags(onFilterChange) {
   elements.filterTags.forEach((tag) => {
-    tag.addEventListener('click', () => {
-      elements.filterTags.forEach((t) => t.classList.remove('active'));
-      tag.classList.add('active');
-      state.currentFilter = tag.dataset.filter || 'all';
-      if (typeof onFilterChange === 'function') {
+    tag.addEventListener("click", () => {
+      elements.filterTags.forEach((t) => t.classList.remove("active"));
+      tag.classList.add("active");
+      state.currentFilter = tag.dataset.filter || "all";
+      if (typeof onFilterChange === "function") {
         onFilterChange();
       }
     });

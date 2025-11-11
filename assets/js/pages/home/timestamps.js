@@ -1,74 +1,71 @@
+import { ensureVimeoPlayerAPI } from "./vimeo-api.js";
+
 /**
  * Demo Reel Timestamps - Interactive Vimeo Player Controls
  * Allows users to jump to specific moments in the demo reel
  */
 
 export function initTimestamps() {
-  // Wait for DOM to be ready
+  const init = () => {
+    const iframe = document.getElementById("vimeo-iframe");
+    const timestampButtons = document.querySelectorAll(".timestamp-item");
+
+    if (!iframe || timestampButtons.length === 0) {
+      return;
+    }
+
+    ensureVimeoPlayerAPI()
+      .then((Vimeo) => {
+        const player = new Vimeo.Player(iframe);
+        wireTimestampButtons(player, timestampButtons);
+        setupActiveTimestampHighlight(player, timestampButtons);
+      })
+      .catch((error) => {
+        console.error("Unable to load Vimeo API", error);
+      });
+  };
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", setupTimestamps);
+    document.addEventListener("DOMContentLoaded", init, { once: true });
   } else {
-    setupTimestamps();
+    init();
   }
 }
 
-function setupTimestamps() {
-  const iframe = document.getElementById("vimeo-iframe");
-  const timestampButtons = document.querySelectorAll(".timestamp-item");
-
-  if (!iframe || timestampButtons.length === 0) {
-    return;
-  }
-
-  // Initialize Vimeo Player
-  // Player.js is already loaded via script tag in index.html
-  if (typeof Vimeo === "undefined") {
-    console.error("Vimeo Player API not loaded");
-    return;
-  }
-
-  const player = new Vimeo.Player(iframe);
-
-  // Add click handlers to all timestamp buttons
+function wireTimestampButtons(player, timestampButtons) {
   timestampButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const time = parseInt(button.getAttribute("data-time"), 10);
+      if (Number.isNaN(time)) return;
 
-      if (!isNaN(time)) {
-        // Set the video time
-        player
-          .setCurrentTime(time)
-          .then(() => {
-            // Play the video if it's not already playing
-            player.getPaused().then((paused) => {
-              if (paused) {
-                player.play();
-              }
-            });
-
-            // Scroll to video smoothly
-            const demoReelPlayer = document.getElementById("demo-reel-player");
-            if (demoReelPlayer) {
-              demoReelPlayer.scrollIntoView({
-                behavior: "smooth",
-                block: "center",
-              });
+      player
+        .setCurrentTime(time)
+        .then(() => {
+          player.getPaused().then((paused) => {
+            if (paused) {
+              player.play();
             }
-
-            // Visual feedback - add active class temporarily
-            button.classList.add("active");
-            setTimeout(() => {
-              button.classList.remove("active");
-            }, 300);
-          })
-          .catch((error) => {
-            console.error("Error setting time:", error);
           });
-      }
+
+          const demoReelPlayer = document.getElementById("demo-reel-player");
+          if (demoReelPlayer) {
+            demoReelPlayer.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          }
+
+          button.classList.add("active");
+          setTimeout(() => button.classList.remove("active"), 300);
+        })
+        .catch((error) => {
+          console.error("Error setting time:", error);
+        });
     });
   });
+}
 
-  // Optional: Highlight current timestamp as video plays
+function setupActiveTimestampHighlight(player, timestampButtons) {
   player.on("timeupdate", (data) => {
     const currentTime = data.seconds;
 
@@ -79,7 +76,6 @@ function setupTimestamps() {
         ? parseInt(nextButton.getAttribute("data-time"), 10)
         : Infinity;
 
-      // If current time is between this timestamp and the next one
       if (currentTime >= time && currentTime < nextTime) {
         button.classList.add("playing");
       } else {

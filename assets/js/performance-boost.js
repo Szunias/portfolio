@@ -14,13 +14,16 @@
    * Optimize video loading - lazy load sources and autoplay when visible
    */
   function optimizeVideoLoading() {
-    const videos = document.querySelectorAll("video[data-autoplay]");
+    const videos = document.querySelectorAll(
+      "video[data-autoplay], video[data-lazy-video]",
+    );
 
     if ("IntersectionObserver" in window) {
       const videoObserver = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             const video = entry.target;
+            const shouldAutoplay = video.hasAttribute("data-autoplay");
 
             if (entry.isIntersecting) {
               // Load video sources if not already loaded
@@ -59,18 +62,20 @@
                   { once: true },
                 );
 
-                video.addEventListener(
-                  "loadeddata",
-                  () => {
-                    video.play().catch(() => {
-                      // Autoplay prevented by browser - silently fail
-                    });
-                  },
-                  { once: true },
-                );
+                if (shouldAutoplay) {
+                  video.addEventListener(
+                    "loadeddata",
+                    () => {
+                      video.play().catch(() => {
+                        // Autoplay prevented by browser - silently fail
+                      });
+                    },
+                    { once: true },
+                  );
+                }
 
                 video.load();
-              } else if (video.paused) {
+              } else if (shouldAutoplay && video.paused) {
                 // Already loaded, just play
                 video.play().catch(() => {
                   // Silently handle play failure
@@ -92,6 +97,7 @@
     } else {
       // Fallback for browsers without IntersectionObserver
       videos.forEach((video) => {
+        const shouldAutoplay = video.hasAttribute("data-autoplay");
         const sources = video.querySelectorAll("source[data-src]");
         if (sources.length > 0) {
           sources.forEach((source) => {
@@ -101,11 +107,50 @@
             }
           });
           video.load();
-          video.play().catch(() => {
-            // Silently handle play failure
-          });
+          if (shouldAutoplay) {
+            video.play().catch(() => {
+              // Silently handle play failure
+            });
+          }
         }
       });
+    }
+  }
+
+  /**
+   * Lazy-load heavy embeds such as Vimeo/YouTube iframes
+   */
+  function optimizeIframeLoading() {
+    const iframes = document.querySelectorAll("iframe[data-lazy-iframe]");
+    if (!iframes.length) return;
+
+    const loadIframe = (iframe) => {
+      const src = iframe.getAttribute("data-src");
+      if (!src) return;
+      iframe.src = src;
+      iframe.removeAttribute("data-src");
+      iframe.removeAttribute("data-lazy-iframe");
+    };
+
+    if ("IntersectionObserver" in window) {
+      const iframeObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              loadIframe(entry.target);
+              iframeObserver.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          rootMargin: "200px",
+          threshold: 0.01,
+        },
+      );
+
+      iframes.forEach((iframe) => iframeObserver.observe(iframe));
+    } else {
+      iframes.forEach(loadIframe);
     }
   }
 
@@ -366,8 +411,9 @@
     // Run critical optimizations immediately
     optimizeScrollListeners();
 
-    // Video loading is critical for UX - run earlier
+    // Video & iframe loading are critical for UX - run earlier
     optimizeVideoLoading();
+    optimizeIframeLoading();
 
     // Images gatekeep the project list visibility, so start lazy loading now
     optimizeImages();

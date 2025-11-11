@@ -1,3 +1,5 @@
+import { ensureVimeoPlayerAPI } from "./vimeo-api.js";
+
 /**
  * Comic-Style Project Switcher
  * Shows current project with prev/next navigation
@@ -56,18 +58,13 @@ export function initTimelineNav() {
     index: index,
   }));
 
-  // Initialize Vimeo player
-  function initPlayer() {
-    if (window.Vimeo) {
-      player = new window.Vimeo.Player(vimeoIframe);
-
-      // Track current time
-      player.on("timeupdate", (data) => {
-        currentTime = data.seconds;
-        updateCurrentProject();
-        updateProjectLink();
-      });
-    }
+  function initPlayer(Vimeo) {
+    player = new Vimeo.Player(vimeoIframe);
+    player.on("timeupdate", (data) => {
+      currentTime = data.seconds;
+      updateCurrentProject();
+      updateProjectLink();
+    });
   }
 
   // Update current project display
@@ -185,16 +182,11 @@ export function initTimelineNav() {
   // Initialize display
   updateProjectDisplay();
 
-  // Wait for Vimeo API to load
-  if (window.Vimeo) {
-    initPlayer();
-  } else {
-    // Poll for Vimeo API
-    const checkVimeo = setInterval(() => {
-      if (window.Vimeo) {
-        clearInterval(checkVimeo);
-        initPlayer();
-      }
-    }, 100);
-  }
+  ensureVimeoPlayerAPI()
+    .then((Vimeo) => {
+      initPlayer(Vimeo);
+    })
+    .catch((error) => {
+      console.error("Unable to initialize Vimeo player", error);
+    });
 }

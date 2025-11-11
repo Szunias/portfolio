@@ -10,6 +10,7 @@ import {
   updatePlaylistPlayingState,
   updateDurationDisplay,
 } from "./playlist.js";
+import { preloadAllDurations } from "./durations.js";
 
 function ensurePlayerVisible() {
   if (elements.playerBar) {
@@ -40,13 +41,14 @@ export function loadTrack(index) {
 
   const source = Array.isArray(track.sources) ? track.sources[0] : null;
   if (source && source.url) {
-    elements.audio.preload = "auto";
+    elements.audio.preload = "metadata";
     elements.audio.src = source.url;
     elements.audio.load();
   }
 
   renderPlaylist();
   updatePlaylistPlayingState();
+  preloadAllDurations([state.currentTrackIndex]);
 }
 
 export function play() {
