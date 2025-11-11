@@ -1,1367 +1,1759 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Wwise Projects - Igor Szuniewicz</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
-    <style>
-        :root {
-            --bg-primary: #050505;
-            --bg-secondary: #0a0e1a;
-            --bg-elevated: #111827;
-            --bg-card: rgba(26, 35, 50, 0.8);
-            --border: rgba(148, 163, 184, 0.15);
-            --border-hover: rgba(56, 189, 248, 0.5);
-            --text: #ffffff;
-            --text-muted: #b4bcc8;
-            --text-dimmed: #94a3b8;
-            --accent: #38bdf8;
-            --accent-cyan: #18bfef;
-            --accent-green: #34d399;
-            --accent-purple: #9a6cff;
-            --accent-pink: #ff6ea9;
-            --accent-orange: #fb923c;
-            --accent-red: #f87171;
-        }
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Wwise Projects - Igor Szuniewicz</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800;900&family=Bebas+Neue&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg-primary: #050505;
+                --bg-secondary: #0a0e1a;
+                --bg-elevated: #111827;
+                --bg-card: rgba(26, 35, 50, 0.8);
+                --border: rgba(148, 163, 184, 0.15);
+                --border-hover: rgba(56, 189, 248, 0.5);
+                --text: #ffffff;
+                --text-muted: #b4bcc8;
+                --text-dimmed: #94a3b8;
+                --accent: #38bdf8;
+                --accent-cyan: #18bfef;
+                --accent-green: #34d399;
+                --accent-purple: #9a6cff;
+                --accent-pink: #ff6ea9;
+                --accent-orange: #fb923c;
+                --accent-red: #f87171;
+            }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
 
-        body {
-            font-family: "Outfit", sans-serif;
-            background: var(--bg-primary);
-            color: var(--text);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-            position: relative;
-        }
+            body {
+                font-family: "Outfit", sans-serif;
+                background: var(--bg-primary);
+                color: var(--text);
+                line-height: 1.6;
+                -webkit-font-smoothing: antialiased;
+                overflow-x: hidden;
+                position: relative;
+            }
 
-        /* === ANIMATED BACKGROUND === */
-        .bg-animated {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
+            /* === ANIMATED BACKGROUND === */
+            .bg-animated {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                pointer-events: none;
+                overflow: hidden;
+            }
 
-        .bg-animated::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: #0a0a0a;
-        }
+            .bg-animated::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: #0a0a0a;
+            }
 
-        .bg-animated::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background-image:
-                repeating-linear-gradient(
+            .bg-animated::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background-image: repeating-linear-gradient(
                     0deg,
                     transparent,
                     transparent 3px,
                     rgba(255, 255, 255, 0.005) 3px,
                     rgba(255, 255, 255, 0.005) 6px
                 );
-            opacity: 0.3;
-            animation: scanlines 20s linear infinite;
-        }
-
-        @keyframes bgPulse {
-            0%, 100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.95;
-                transform: scale(1.02);
-            }
-        }
-
-        @keyframes scanlines {
-            0% {
-                transform: translateY(0);
-            }
-            100% {
-                transform: translateY(20px);
-            }
-        }
-
-        .floating-shapes {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .shape {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.1;
-            animation: float 25s ease-in-out infinite;
-        }
-
-        .shape:nth-child(1) {
-            width: 500px;
-            height: 500px;
-            background: var(--accent-purple);
-            top: 15%;
-            left: 5%;
-            animation-delay: 0s;
-        }
-
-        .shape:nth-child(2) {
-            width: 400px;
-            height: 400px;
-            background: var(--accent-cyan);
-            top: 55%;
-            right: 10%;
-            animation-delay: 7s;
-        }
-
-        .shape:nth-child(3) {
-            width: 450px;
-            height: 450px;
-            background: var(--accent-pink);
-            bottom: 15%;
-            left: 45%;
-            animation-delay: 14s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-            }
-            33% {
-                transform: translate(30px, -30px) scale(1.1);
-            }
-            66% {
-                transform: translate(-20px, 20px) scale(0.9);
-            }
-        }
-
-        a {
-            color: var(--accent);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        a:hover {
-            color: #7dd3fc;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(to bottom, rgba(10, 14, 26, 0.95), rgba(10, 14, 26, 0.85));
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            padding: 1.5rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .back-link {
-            color: var(--text-muted);
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-
-        .back-link:hover {
-            color: var(--accent);
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            border: 2px solid rgba(148, 163, 184, 0.2);
-            background: linear-gradient(135deg, rgba(26, 35, 50, 0.8), rgba(17, 24, 39, 0.9));
-            color: var(--text);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-block;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn:hover {
-            border-color: var(--accent-purple);
-            background: linear-gradient(135deg, rgba(154, 108, 255, 0.2), rgba(56, 189, 248, 0.15));
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(154, 108, 255, 0.2);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
-            border-color: transparent;
-            color: #ffffff;
-            box-shadow: 0 6px 20px rgba(154, 108, 255, 0.3);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #b794f6, #7dd3fc);
-            box-shadow: 0 8px 30px rgba(154, 108, 255, 0.4);
-            transform: translateY(-3px);
-        }
-
-        /* Hero */
-        .hero {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 2rem 5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero::before {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(
-                circle,
-                rgba(154, 108, 255, 0.08) 0%,
-                transparent 70%
-            );
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .hero-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3rem;
-            margin-bottom: 2rem;
-        }
-
-        .hero-content {
-            width: 100%;
-            text-align: center;
-        }
-
-        .wwise-logo-container {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 2rem 3rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 40px rgba(154, 108, 255, 0.2);
-            transition: all 0.3s ease;
-            margin-top: 2rem;
-        }
-
-        .wwise-logo-container:hover {
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 50px rgba(154, 108, 255, 0.3);
-            transform: translateY(-4px);
-        }
-
-        .wwise-logo {
-            width: 200px;
-            height: auto;
-            display: block;
-        }
-
-        @media (max-width: 768px) {
-            .wwise-logo {
-                width: 160px;
+                opacity: 0.3;
+                animation: scanlines 20s linear infinite;
             }
 
-            .wwise-logo-container {
-                padding: 1.5rem 2rem;
-            }
-        }
-
-        .hero-tag {
-            display: inline-block;
-            padding: 0.5rem 1.5rem;
-            background: linear-gradient(135deg, rgba(154, 108, 255, 0.15), rgba(56, 189, 248, 0.15));
-            border: 1px solid rgba(154, 108, 255, 0.3);
-            border-radius: 50px;
-            color: var(--accent-purple);
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(154, 108, 255, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .hero-tag:hover {
-            background: linear-gradient(135deg, rgba(154, 108, 255, 0.2), rgba(56, 189, 248, 0.2));
-            border-color: rgba(154, 108, 255, 0.5);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 30px rgba(154, 108, 255, 0.3);
-        }
-
-        .hero h1 {
-            font-family: "Outfit", sans-serif;
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            font-weight: 800;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            color: #ffffff;
-            letter-spacing: 0.01em;
-            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-        }
-
-        .hero-lead {
-            font-size: 1.3rem;
-            color: #ffffff;
-            max-width: 900px;
-            margin: 0 auto 2rem;
-            line-height: 1.9;
-            text-align: center;
-            font-weight: 500;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
-        }
-
-        .context-note {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(24, 191, 239, 0.08));
-            border-left: 4px solid var(--accent-cyan);
-            padding: 1.5rem 1.75rem;
-            border-radius: 12px;
-            margin: 0 auto 3rem;
-            max-width: 750px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.1);
-            text-align: center;
-        }
-
-        .context-note::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(
-                circle at top left,
-                rgba(56, 189, 248, 0.1),
-                transparent 60%
-            );
-            pointer-events: none;
-        }
-
-        .context-note:hover {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(24, 191, 239, 0.12));
-            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.15);
-            border-left-color: #7dd3fc;
-        }
-
-        .context-note p {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            line-height: 1.8;
-            position: relative;
-            z-index: 1;
-        }
-
-        .quick-stats {
-            display: flex;
-            gap: 2.5rem;
-            flex-wrap: wrap;
-            margin: 2rem auto 0;
-            justify-content: center;
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: baseline;
-            gap: 0.75rem;
-            padding: 1rem 1.5rem;
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(154, 108, 255, 0.05));
-            border-radius: 12px;
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.05);
-        }
-
-        .stat-item:hover {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(154, 108, 255, 0.08));
-            border-color: rgba(56, 189, 248, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.15);
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-family: "Space Grotesk", sans-serif;
-        }
-
-        .stat-text {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        /* Section */
-        .section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 2rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .section-header {
-            margin-bottom: 4rem;
-            text-align: center;
-        }
-
-        .section-title {
-            font-family: "Orbitron", sans-serif;
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 800;
-            margin-bottom: 1rem;
-            color: #ffffff;
-            -webkit-text-stroke: 1.5px rgba(0, 0, 0, 0.7);
-            text-stroke: 1.5px rgba(0, 0, 0, 0.7);
-            text-shadow:
-                0 0 30px rgba(154, 108, 255, 0.4),
-                0 0 60px rgba(56, 189, 248, 0.2),
-                2px 2px 4px rgba(0, 0, 0, 0.8);
-        }
-
-        .section-subtitle {
-            font-size: 1.15rem;
-            color: var(--text-muted);
-            max-width: 700px;
-            line-height: 1.8;
-            margin: 0 auto;
-        }
-
-        /* Project Card */
-        .project-full {
-            background: linear-gradient(145deg, rgba(26, 35, 50, 0.6), rgba(17, 24, 39, 0.8));
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            border-radius: 20px;
-            padding: 3rem;
-            margin-bottom: 5rem;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .project-full::after {
-            content: "";
-            position: absolute;
-            bottom: -2.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 2px;
-            background: linear-gradient(
-                90deg,
-                transparent 0%,
-                rgba(154, 108, 255, 0.5) 20%,
-                rgba(56, 189, 248, 0.5) 50%,
-                rgba(255, 110, 169, 0.5) 80%,
-                transparent 100%
-            );
-            box-shadow: 0 0 20px rgba(154, 108, 255, 0.5);
-        }
-
-        .project-full:last-of-type::after {
-            display: none;
-        }
-
-        .project-full::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 100%;
-            background: linear-gradient(
-                135deg,
-                rgba(154, 108, 255, 0.03) 0%,
-                transparent 50%,
-                rgba(56, 189, 248, 0.03) 100%
-            );
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            pointer-events: none;
-        }
-
-        .project-full.active:hover::before {
-            opacity: 1;
-        }
-
-        .project-header {
-            margin-bottom: 1.5rem;
-        }
-
-        .project-title-area {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 2rem;
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
-        }
-
-        .project-title-area h3 {
-            font-family: "Outfit", sans-serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: 0.02em;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-            margin-bottom: 0.5rem;
-        }
-
-        .project-meta {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .meta-badge {
-            padding: 0.6rem 1.4rem;
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(154, 108, 255, 0.2));
-            border: 2px solid rgba(56, 189, 248, 0.5);
-            border-radius: 8px;
-            font-size: 0.9rem;
-            color: #ffffff;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .meta-badge:hover {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.35), rgba(154, 108, 255, 0.3));
-            border-color: rgba(56, 189, 248, 0.7);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.3);
-        }
-
-        .meta-badge.time {
-            background: linear-gradient(135deg, rgba(251, 146, 60, 0.25), rgba(248, 113, 113, 0.2));
-            border-color: rgba(251, 146, 60, 0.5);
-            color: #ffffff;
-            box-shadow: 0 4px 15px rgba(251, 146, 60, 0.2);
-        }
-
-        .meta-badge.time:hover {
-            background: linear-gradient(135deg, rgba(251, 146, 60, 0.35), rgba(248, 113, 113, 0.3));
-            border-color: rgba(251, 146, 60, 0.7);
-            box-shadow: 0 6px 20px rgba(251, 146, 60, 0.3);
-        }
-
-        .story {
-            font-size: 1.05rem;
-            color: #e2e8f0;
-            line-height: 1.7;
-            margin-bottom: 2rem;
-            font-family: "Outfit", sans-serif;
-            font-weight: 400;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(236, 72, 153, 0.2);
-            border-radius: 16px;
-            padding: 2.5rem;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-        }
-
-        .story p {
-            margin-bottom: 0.8rem;
-            position: relative;
-            padding-left: 1.2rem;
-        }
-
-        .story p::before {
-            content: "▸";
-            position: absolute;
-            left: 0;
-            color: rgba(236, 72, 153, 0.6);
-            font-weight: 700;
-        }
-
-        .story p:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Video Demo */
-        .video-section {
-            background: linear-gradient(145deg, rgba(17, 24, 39, 0.6), rgba(26, 35, 50, 0.5));
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(148, 163, 184, 0.15);
-            border-radius: 20px;
-            padding: 0;
-            margin-bottom: 3rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .video-section::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(
-                circle at top right,
-                rgba(154, 108, 255, 0.05),
-                transparent 60%
-            );
-            pointer-events: none;
-        }
-
-        .video-section:hover {
-            border-color: rgba(154, 108, 255, 0.3);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .video-title {
-            font-family: "Orbitron", sans-serif;
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 0;
-            padding: 1.5rem 2rem 1rem;
-            color: #ffffff;
-            -webkit-text-stroke: 1px rgba(0, 0, 0, 0.6);
-            text-stroke: 1px rgba(0, 0, 0, 0.6);
-            text-shadow:
-                0 0 20px rgba(56, 189, 248, 0.4),
-                1px 1px 3px rgba(0, 0, 0, 0.7);
-            position: relative;
-            z-index: 1;
-        }
-
-        video, iframe {
-            width: 100%;
-            border-radius: 0;
-            border: none;
-            background: #000;
-            position: relative;
-            z-index: 1;
-            transition: all 0.3s ease;
-        }
-
-        .video-caption {
-            padding: 1rem 2rem 1.5rem;
-            font-size: 1rem;
-            color: #cbd5e1;
-            line-height: 1.8;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Skills Grid */
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .skill-card {
-            background: linear-gradient(145deg, rgba(26, 35, 50, 0.5), rgba(17, 24, 39, 0.7));
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            border-radius: 16px;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease-out;
-        }
-
-        .skill-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, var(--accent-purple), var(--accent-cyan));
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .skill-card.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .skill-card.active:hover {
-            border-color: rgba(154, 108, 255, 0.3);
-            box-shadow:
-                0 12px 40px rgba(0, 0, 0, 0.3),
-                0 0 30px rgba(154, 108, 255, 0.1);
-            transform: translateY(-5px);
-            background: linear-gradient(145deg, rgba(26, 35, 50, 0.7), rgba(17, 24, 39, 0.9));
-        }
-
-        .skill-card:hover::before {
-            opacity: 1;
-        }
-
-        .skill-header {
-            margin-bottom: 1rem;
-        }
-
-        .skill-name {
-            font-weight: 700;
-            font-size: 1.25rem;
-            background: linear-gradient(135deg, var(--text), var(--accent-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .skill-desc {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            line-height: 1.7;
-        }
-
-        /* Language Switcher */
-        .lang-switcher {
-            position: fixed;
-            top: 1.5rem;
-            right: 2rem;
-            z-index: 10000;
-            display: flex;
-            gap: 0.5rem;
-            background: linear-gradient(135deg, rgba(26, 35, 50, 0.95), rgba(17, 24, 39, 0.95));
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(154, 108, 255, 0.3);
-            border-radius: 50px;
-            padding: 0.5rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 40px rgba(154, 108, 255, 0.15);
-            transition: all 0.3s ease;
-        }
-
-        .lang-switcher:hover {
-            border-color: rgba(154, 108, 255, 0.5);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 50px rgba(154, 108, 255, 0.25);
-        }
-
-        .lang-btn {
-            padding: 0.6rem 1.2rem;
-            background: transparent;
-            border: none;
-            border-radius: 50px;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .lang-btn:hover {
-            color: var(--accent-cyan);
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(154, 108, 255, 0.1));
-            transform: translateY(-1px);
-        }
-
-        .lang-btn.active {
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
-            color: #ffffff;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(154, 108, 255, 0.3);
-        }
-
-        .lang-flag {
-            width: 20px;
-            height: 14px;
-            border-radius: 2px;
-            overflow: hidden;
-            display: block;
-        }
-
-        /* Footer */
-        .footer {
-            border-top: 1px solid var(--border);
-            padding: 2.5rem 2rem;
-            text-align: center;
-            color: var(--text-muted);
-        }
-
-        /* Scroll Reveal Animation */
-        .project-full {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.7s ease-out;
-        }
-
-        .project-full.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .project-full.active:hover {
-            border-color: rgba(154, 108, 255, 0.4);
-            box-shadow:
-                0 20px 50px rgba(0, 0, 0, 0.4),
-                0 0 40px rgba(154, 108, 255, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            transform: translateY(-4px);
-        }
-
-        /* Audio Player Component */
-        .audio-player {
-            --p: 0deg;
-            position: relative;
-            width: 220px;
-            height: 220px;
-            margin: 2rem auto;
-            display: block;
-        }
-
-        .audio-player::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            background: radial-gradient(circle at 50% 50%, rgba(154, 108, 255, 0.10) 0 40%, transparent 41%),
-                conic-gradient(#9a6cff var(--p), rgba(255, 255, 255, 0.08) 0);
-            box-shadow: inset 0 0 0 6px rgba(154, 108, 255, 0.15),
-                0 10px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        .audio-player .inner {
-            position: absolute;
-            inset: 18px;
-            border-radius: 50%;
-            background: rgba(10, 10, 16, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 0 0 0 2px rgba(154, 108, 255, 0.12);
-        }
-
-        .audio-player button {
-            width: 96px;
-            height: 96px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            color: #fff;
-            background: linear-gradient(135deg, #9a6cff, #ff6b35);
-            box-shadow: 0 8px 24px rgba(154, 108, 255, .35);
-            transition: transform .2s ease, box-shadow .2s ease;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .audio-player button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 32px rgba(154, 108, 255, .5);
-        }
-
-        .audio-player button .tri {
-            width: 0;
-            height: 0;
-            border-left: 26px solid #fff;
-            border-top: 16px solid transparent;
-            border-bottom: 16px solid transparent;
-            margin-left: 3px;
-        }
-
-        .audio-player button.paused .tri {
-            border-left-color: transparent;
-            border-top: 0;
-            border-bottom: 0;
-            width: 20px;
-            height: 20px;
-            position: relative;
-        }
-
-        .audio-player button.paused .tri::before,
-        .audio-player button.paused .tri::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            width: 6px;
-            height: 24px;
-            background: #fff;
-            border-radius: 2px;
-        }
-
-        .audio-player button.paused .tri::before {
-            left: -8px;
-        }
-
-        .audio-player button.paused .tri::after {
-            left: 4px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero {
-                padding: 2.5rem 1.5rem 3rem;
+            @keyframes bgPulse {
+                0%,
+                100% {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                50% {
+                    opacity: 0.95;
+                    transform: scale(1.02);
+                }
             }
 
-            .section {
-                padding: 3rem 1.5rem;
+            @keyframes scanlines {
+                0% {
+                    transform: translateY(0);
+                }
+                100% {
+                    transform: translateY(20px);
+                }
             }
 
-            .project-full {
-                padding: 1.75rem;
+            .floating-shapes {
+                position: fixed;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                z-index: 0;
+                pointer-events: none;
             }
 
-            .quick-stats {
-                gap: 1.5rem;
+            .shape {
+                position: absolute;
+                border-radius: 50%;
+                filter: blur(100px);
+                opacity: 0.1;
+                animation: float 25s ease-in-out infinite;
             }
 
-            .stat-number {
-                font-size: 1.5rem;
+            .shape:nth-child(1) {
+                width: 500px;
+                height: 500px;
+                background: var(--accent-purple);
+                top: 15%;
+                left: 5%;
+                animation-delay: 0s;
+            }
+
+            .shape:nth-child(2) {
+                width: 400px;
+                height: 400px;
+                background: var(--accent-cyan);
+                top: 55%;
+                right: 10%;
+                animation-delay: 7s;
+            }
+
+            .shape:nth-child(3) {
+                width: 450px;
+                height: 450px;
+                background: var(--accent-pink);
+                bottom: 15%;
+                left: 45%;
+                animation-delay: 14s;
+            }
+
+            @keyframes float {
+                0%,
+                100% {
+                    transform: translate(0, 0) scale(1);
+                }
+                33% {
+                    transform: translate(30px, -30px) scale(1.1);
+                }
+                66% {
+                    transform: translate(-20px, 20px) scale(0.9);
+                }
+            }
+
+            a {
+                color: var(--accent);
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+
+            a:hover {
+                color: #7dd3fc;
+            }
+
+            /* Header */
+            .header {
+                background: linear-gradient(
+                    to bottom,
+                    rgba(10, 14, 26, 0.95),
+                    rgba(10, 14, 26, 0.85)
+                );
+                backdrop-filter: blur(20px);
+                border-bottom: 1px solid var(--border);
+                padding: 1.5rem 0;
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+            }
+
+            .header-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .back-link {
+                color: var(--text-muted);
+                font-weight: 600;
+                font-size: 0.9rem;
+                transition: color 0.2s;
+            }
+
+            .back-link:hover {
+                color: var(--accent);
             }
 
             .btn {
-                padding: 0.5rem 1rem;
-                font-size: 0.85rem;
+                padding: 0.75rem 1.5rem;
+                border-radius: 50px;
+                font-weight: 600;
+                font-size: 0.95rem;
+                border: 2px solid rgba(148, 163, 184, 0.2);
+                background: linear-gradient(
+                    135deg,
+                    rgba(26, 35, 50, 0.8),
+                    rgba(17, 24, 39, 0.9)
+                );
+                color: var(--text);
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                display: inline-block;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             }
 
+            .btn:hover {
+                border-color: var(--accent-purple);
+                background: linear-gradient(
+                    135deg,
+                    rgba(154, 108, 255, 0.2),
+                    rgba(56, 189, 248, 0.15)
+                );
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(154, 108, 255, 0.2);
+            }
+
+            .btn-primary {
+                background: linear-gradient(
+                    135deg,
+                    var(--accent-purple),
+                    var(--accent-cyan)
+                );
+                border-color: transparent;
+                color: #ffffff;
+                box-shadow: 0 6px 20px rgba(154, 108, 255, 0.3);
+            }
+
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #b794f6, #7dd3fc);
+                box-shadow: 0 8px 30px rgba(154, 108, 255, 0.4);
+                transform: translateY(-3px);
+            }
+
+            /* Hero */
+            .hero {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 4rem 2rem 5rem;
+                position: relative;
+                z-index: 1;
+            }
+
+            .hero::before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 800px;
+                height: 800px;
+                background: radial-gradient(
+                    circle,
+                    rgba(154, 108, 255, 0.08) 0%,
+                    transparent 70%
+                );
+                pointer-events: none;
+                z-index: -1;
+            }
+
+            .hero-header {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 3rem;
+                margin-bottom: 2rem;
+            }
+
+            .hero-content {
+                width: 100%;
+                text-align: center;
+            }
+
+            .wwise-logo-container {
+                background: #ffffff;
+                border-radius: 16px;
+                padding: 2rem 3rem;
+                box-shadow:
+                    0 8px 30px rgba(0, 0, 0, 0.3),
+                    0 0 40px rgba(154, 108, 255, 0.2);
+                transition: all 0.3s ease;
+                margin-top: 2rem;
+            }
+
+            .wwise-logo-container:hover {
+                box-shadow:
+                    0 12px 40px rgba(0, 0, 0, 0.4),
+                    0 0 50px rgba(154, 108, 255, 0.3);
+                transform: translateY(-4px);
+            }
+
+            .wwise-logo {
+                width: 200px;
+                height: auto;
+                display: block;
+            }
+
+            @media (max-width: 768px) {
+                .wwise-logo {
+                    width: 160px;
+                }
+
+                .wwise-logo-container {
+                    padding: 1.5rem 2rem;
+                }
+            }
+
+            .hero-tag {
+                display: inline-block;
+                padding: 0.5rem 1.5rem;
+                background: linear-gradient(
+                    135deg,
+                    rgba(154, 108, 255, 0.15),
+                    rgba(56, 189, 248, 0.15)
+                );
+                border: 1px solid rgba(154, 108, 255, 0.3);
+                border-radius: 50px;
+                color: var(--accent-purple);
+                font-size: 0.85rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                margin-bottom: 2rem;
+                box-shadow: 0 4px 20px rgba(154, 108, 255, 0.2);
+                transition: all 0.3s ease;
+            }
+
+            .hero-tag:hover {
+                background: linear-gradient(
+                    135deg,
+                    rgba(154, 108, 255, 0.2),
+                    rgba(56, 189, 248, 0.2)
+                );
+                border-color: rgba(154, 108, 255, 0.5);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 30px rgba(154, 108, 255, 0.3);
+            }
+
+            .hero h1 {
+                font-family: "Outfit", sans-serif;
+                font-size: clamp(2.5rem, 6vw, 4rem);
+                font-weight: 800;
+                line-height: 1.2;
+                margin-bottom: 1.5rem;
+                color: #ffffff;
+                letter-spacing: 0.01em;
+                text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+            }
+
+            .hero-lead {
+                font-size: 1.3rem;
+                color: #ffffff;
+                max-width: 900px;
+                margin: 0 auto 2rem;
+                line-height: 1.9;
+                text-align: center;
+                font-weight: 500;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            }
+
+            .context-note {
+                background: linear-gradient(
+                    135deg,
+                    rgba(56, 189, 248, 0.12),
+                    rgba(24, 191, 239, 0.08)
+                );
+                border-left: 4px solid var(--accent-cyan);
+                padding: 1.5rem 1.75rem;
+                border-radius: 12px;
+                margin: 0 auto 3rem;
+                max-width: 750px;
+                position: relative;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(56, 189, 248, 0.1);
+                text-align: center;
+            }
+
+            .context-note::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: radial-gradient(
+                    circle at top left,
+                    rgba(56, 189, 248, 0.1),
+                    transparent 60%
+                );
+                pointer-events: none;
+            }
+
+            .context-note:hover {
+                background: linear-gradient(
+                    135deg,
+                    rgba(56, 189, 248, 0.15),
+                    rgba(24, 191, 239, 0.12)
+                );
+                box-shadow: 0 6px 20px rgba(56, 189, 248, 0.15);
+                border-left-color: #7dd3fc;
+            }
+
+            .context-note p {
+                font-size: 0.95rem;
+                color: var(--text-muted);
+                line-height: 1.8;
+                position: relative;
+                z-index: 1;
+            }
+
+            .quick-stats {
+                display: flex;
+                gap: 2.5rem;
+                flex-wrap: wrap;
+                margin: 2rem auto 0;
+                justify-content: center;
+            }
+
+            .stat-item {
+                display: flex;
+                align-items: baseline;
+                gap: 0.75rem;
+                padding: 1rem 1.5rem;
+                background: linear-gradient(
+                    135deg,
+                    rgba(56, 189, 248, 0.08),
+                    rgba(154, 108, 255, 0.05)
+                );
+                border-radius: 12px;
+                border: 1px solid rgba(56, 189, 248, 0.2);
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(56, 189, 248, 0.05);
+            }
+
+            .stat-item:hover {
+                background: linear-gradient(
+                    135deg,
+                    rgba(56, 189, 248, 0.12),
+                    rgba(154, 108, 255, 0.08)
+                );
+                border-color: rgba(56, 189, 248, 0.4);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(56, 189, 248, 0.15);
+            }
+
+            .stat-number {
+                font-size: 2rem;
+                font-weight: 800;
+                background: linear-gradient(
+                    135deg,
+                    var(--accent-cyan),
+                    var(--accent-purple)
+                );
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                font-family: "Space Grotesk", sans-serif;
+            }
+
+            .stat-text {
+                font-size: 0.95rem;
+                color: var(--text-muted);
+                font-weight: 500;
+            }
+
+            /* Section */
+            .section {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 4rem 2rem;
+                position: relative;
+                z-index: 1;
+            }
+
+            .section-header {
+                margin-bottom: 4rem;
+                text-align: center;
+            }
+
+            .section-title {
+                font-family: "Orbitron", sans-serif;
+                font-size: clamp(2rem, 4vw, 3rem);
+                font-weight: 800;
+                margin-bottom: 1rem;
+                color: #ffffff;
+                -webkit-text-stroke: 1.5px rgba(0, 0, 0, 0.7);
+                text-stroke: 1.5px rgba(0, 0, 0, 0.7);
+                text-shadow:
+                    0 0 30px rgba(154, 108, 255, 0.4),
+                    0 0 60px rgba(56, 189, 248, 0.2),
+                    2px 2px 4px rgba(0, 0, 0, 0.8);
+            }
+
+            .section-subtitle {
+                font-size: 1.15rem;
+                color: var(--text-muted);
+                max-width: 700px;
+                line-height: 1.8;
+                margin: 0 auto;
+            }
+
+            /* Project Card */
+            .project-full {
+                background: linear-gradient(
+                    145deg,
+                    rgba(26, 35, 50, 0.6),
+                    rgba(17, 24, 39, 0.8)
+                );
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(148, 163, 184, 0.1);
+                border-radius: 20px;
+                padding: 3rem;
+                margin-bottom: 5rem;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .project-full::after {
+                content: "";
+                position: absolute;
+                bottom: -2.5rem;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 200px;
+                height: 2px;
+                background: linear-gradient(
+                    90deg,
+                    transparent 0%,
+                    rgba(154, 108, 255, 0.5) 20%,
+                    rgba(56, 189, 248, 0.5) 50%,
+                    rgba(255, 110, 169, 0.5) 80%,
+                    transparent 100%
+                );
+                box-shadow: 0 0 20px rgba(154, 108, 255, 0.5);
+            }
+
+            .project-full:last-of-type::after {
+                display: none;
+            }
+
+            .project-full::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 100%;
+                background: linear-gradient(
+                    135deg,
+                    rgba(154, 108, 255, 0.03) 0%,
+                    transparent 50%,
+                    rgba(56, 189, 248, 0.03) 100%
+                );
+                opacity: 0;
+                transition: opacity 0.4s ease;
+                pointer-events: none;
+            }
+
+            .project-full.active:hover::before {
+                opacity: 1;
+            }
+
+            .project-header {
+                margin-bottom: 1.5rem;
+            }
+
+            .project-title-area {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 2rem;
+                flex-wrap: wrap;
+                margin-bottom: 1rem;
+            }
+
+            .project-title-area h3 {
+                font-family: "Outfit", sans-serif;
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: #ffffff;
+                letter-spacing: 0.02em;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+                margin-bottom: 0.5rem;
+            }
+
+            .project-meta {
+                display: flex;
+                gap: 0.75rem;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+
+            .meta-badge {
+                padding: 0.6rem 1.4rem;
+                background: linear-gradient(
+                    135deg,
+                    rgba(56, 189, 248, 0.25),
+                    rgba(154, 108, 255, 0.2)
+                );
+                border: 2px solid rgba(56, 189, 248, 0.5);
+                border-radius: 8px;
+                font-size: 0.9rem;
+                color: #ffffff;
+                font-weight: 700;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .meta-badge:hover {
+                background: linear-gradient(
+                    135deg,
+                    rgba(56, 189, 248, 0.35),
+                    rgba(154, 108, 255, 0.3)
+                );
+                border-color: rgba(56, 189, 248, 0.7);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(56, 189, 248, 0.3);
+            }
+
+            .meta-badge.time {
+                background: linear-gradient(
+                    135deg,
+                    rgba(251, 146, 60, 0.25),
+                    rgba(248, 113, 113, 0.2)
+                );
+                border-color: rgba(251, 146, 60, 0.5);
+                color: #ffffff;
+                box-shadow: 0 4px 15px rgba(251, 146, 60, 0.2);
+            }
+
+            .meta-badge.time:hover {
+                background: linear-gradient(
+                    135deg,
+                    rgba(251, 146, 60, 0.35),
+                    rgba(248, 113, 113, 0.3)
+                );
+                border-color: rgba(251, 146, 60, 0.7);
+                box-shadow: 0 6px 20px rgba(251, 146, 60, 0.3);
+            }
+
+            .story {
+                font-size: 1.05rem;
+                color: #e2e8f0;
+                line-height: 1.7;
+                margin-bottom: 2rem;
+                font-family: "Outfit", sans-serif;
+                font-weight: 400;
+                background: rgba(0, 0, 0, 0.5);
+                border: 1px solid rgba(236, 72, 153, 0.2);
+                border-radius: 16px;
+                padding: 2.5rem;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            }
+
+            .story p {
+                margin-bottom: 0.8rem;
+                position: relative;
+                padding-left: 1.2rem;
+            }
+
+            .story p::before {
+                content: "▸";
+                position: absolute;
+                left: 0;
+                color: rgba(236, 72, 153, 0.6);
+                font-weight: 700;
+            }
+
+            .story p:last-child {
+                margin-bottom: 0;
+            }
+
+            /* Video Demo */
+            .video-section {
+                background: linear-gradient(
+                    145deg,
+                    rgba(17, 24, 39, 0.6),
+                    rgba(26, 35, 50, 0.5)
+                );
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(148, 163, 184, 0.15);
+                border-radius: 20px;
+                padding: 0;
+                margin-bottom: 3rem;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .video-section::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: radial-gradient(
+                    circle at top right,
+                    rgba(154, 108, 255, 0.05),
+                    transparent 60%
+                );
+                pointer-events: none;
+            }
+
+            .video-section:hover {
+                border-color: rgba(154, 108, 255, 0.3);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+            }
+
+            .video-title {
+                font-family: "Orbitron", sans-serif;
+                font-size: 1.4rem;
+                font-weight: 700;
+                margin-bottom: 0;
+                padding: 1.5rem 2rem 1rem;
+                color: #ffffff;
+                -webkit-text-stroke: 1px rgba(0, 0, 0, 0.6);
+                text-stroke: 1px rgba(0, 0, 0, 0.6);
+                text-shadow:
+                    0 0 20px rgba(56, 189, 248, 0.4),
+                    1px 1px 3px rgba(0, 0, 0, 0.7);
+                position: relative;
+                z-index: 1;
+            }
+
+            video,
+            iframe {
+                width: 100%;
+                border-radius: 0;
+                border: none;
+                background: #000;
+                position: relative;
+                z-index: 1;
+                transition: all 0.3s ease;
+            }
+
+            .video-caption {
+                padding: 1rem 2rem 1.5rem;
+                font-size: 1rem;
+                color: #cbd5e1;
+                line-height: 1.8;
+                position: relative;
+                z-index: 1;
+            }
+
+            /* Skills Grid */
+            .skills-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 2rem;
+                margin-top: 3rem;
+            }
+
+            .skill-card {
+                background: linear-gradient(
+                    145deg,
+                    rgba(26, 35, 50, 0.5),
+                    rgba(17, 24, 39, 0.7)
+                );
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(148, 163, 184, 0.1);
+                border-radius: 16px;
+                padding: 2rem;
+                position: relative;
+                overflow: hidden;
+                opacity: 0;
+                transform: translateY(30px);
+                transition: all 0.6s ease-out;
+            }
+
+            .skill-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+                background: linear-gradient(
+                    180deg,
+                    var(--accent-purple),
+                    var(--accent-cyan)
+                );
+                opacity: 0;
+                transition: opacity 0.4s ease;
+            }
+
+            .skill-card.active {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .skill-card.active:hover {
+                border-color: rgba(154, 108, 255, 0.3);
+                box-shadow:
+                    0 12px 40px rgba(0, 0, 0, 0.3),
+                    0 0 30px rgba(154, 108, 255, 0.1);
+                transform: translateY(-5px);
+                background: linear-gradient(
+                    145deg,
+                    rgba(26, 35, 50, 0.7),
+                    rgba(17, 24, 39, 0.9)
+                );
+            }
+
+            .skill-card:hover::before {
+                opacity: 1;
+            }
+
+            .skill-header {
+                margin-bottom: 1rem;
+            }
+
+            .skill-name {
+                font-weight: 700;
+                font-size: 1.25rem;
+                background: linear-gradient(
+                    135deg,
+                    var(--text),
+                    var(--accent-cyan)
+                );
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .skill-desc {
+                font-size: 0.95rem;
+                color: var(--text-muted);
+                line-height: 1.7;
+            }
+
+            /* Language Switcher */
+            .lang-switcher {
+                position: fixed;
+                top: 1.5rem;
+                right: 2rem;
+                z-index: 10000;
+                display: flex;
+                gap: 0.5rem;
+                background: linear-gradient(
+                    135deg,
+                    rgba(26, 35, 50, 0.95),
+                    rgba(17, 24, 39, 0.95)
+                );
+                backdrop-filter: blur(20px);
+                border: 2px solid rgba(154, 108, 255, 0.3);
+                border-radius: 50px;
+                padding: 0.5rem;
+                box-shadow:
+                    0 8px 30px rgba(0, 0, 0, 0.4),
+                    0 0 40px rgba(154, 108, 255, 0.15);
+                transition: all 0.3s ease;
+            }
+
+            .lang-switcher:hover {
+                border-color: rgba(154, 108, 255, 0.5);
+                box-shadow:
+                    0 12px 40px rgba(0, 0, 0, 0.5),
+                    0 0 50px rgba(154, 108, 255, 0.25);
+            }
+
+            .lang-btn {
+                padding: 0.6rem 1.2rem;
+                background: transparent;
+                border: none;
+                border-radius: 50px;
+                color: var(--text-muted);
+                cursor: pointer;
+                font-weight: 500;
+                font-size: 0.9rem;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .lang-btn:hover {
+                color: var(--accent-cyan);
+                background: linear-gradient(
+                    135deg,
+                    rgba(56, 189, 248, 0.15),
+                    rgba(154, 108, 255, 0.1)
+                );
+                transform: translateY(-1px);
+            }
+
+            .lang-btn.active {
+                background: linear-gradient(
+                    135deg,
+                    var(--accent-purple),
+                    var(--accent-cyan)
+                );
+                color: #ffffff;
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(154, 108, 255, 0.3);
+            }
+
+            .lang-flag {
+                width: 20px;
+                height: 14px;
+                border-radius: 2px;
+                overflow: hidden;
+                display: block;
+            }
+
+            /* Footer */
+            .footer {
+                border-top: 1px solid var(--border);
+                padding: 2.5rem 2rem;
+                text-align: center;
+                color: var(--text-muted);
+            }
+
+            /* Scroll Reveal Animation */
+            .project-full {
+                opacity: 0;
+                transform: translateY(40px);
+                transition: all 0.7s ease-out;
+            }
+
+            .project-full.active {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .project-full.active:hover {
+                border-color: rgba(154, 108, 255, 0.4);
+                box-shadow:
+                    0 20px 50px rgba(0, 0, 0, 0.4),
+                    0 0 40px rgba(154, 108, 255, 0.15),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+                transform: translateY(-4px);
+            }
+
+            /* Audio Player Component */
             .audio-player {
-                width: 180px;
-                height: 180px;
+                --p: 0deg;
+                position: relative;
+                width: 220px;
+                height: 220px;
+                margin: 2rem auto;
+                display: block;
+            }
+
+            .audio-player::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                border-radius: 50%;
+                background:
+                    radial-gradient(
+                        circle at 50% 50%,
+                        rgba(154, 108, 255, 0.1) 0 40%,
+                        transparent 41%
+                    ),
+                    conic-gradient(
+                        #9a6cff var(--p),
+                        rgba(255, 255, 255, 0.08) 0
+                    );
+                box-shadow:
+                    inset 0 0 0 6px rgba(154, 108, 255, 0.15),
+                    0 10px 30px rgba(0, 0, 0, 0.4);
+            }
+
+            .audio-player .inner {
+                position: absolute;
+                inset: 18px;
+                border-radius: 50%;
+                background: rgba(10, 10, 16, 0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: inset 0 0 0 2px rgba(154, 108, 255, 0.12);
             }
 
             .audio-player button {
-                width: 80px;
-                height: 80px;
+                width: 96px;
+                height: 96px;
+                border-radius: 50%;
+                border: none;
+                cursor: pointer;
+                color: #fff;
+                background: linear-gradient(135deg, #9a6cff, #ff6b35);
+                box-shadow: 0 8px 24px rgba(154, 108, 255, 0.35);
+                transition:
+                    transform 0.2s ease,
+                    box-shadow 0.2s ease;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
-        }
-    </style>
-</head>
-<body>
-    <!-- Animated Background -->
-    <div class="bg-animated"></div>
-    <div class="floating-shapes">
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-    </div>
 
-    <!-- Language Switcher -->
-    <div class="lang-switcher">
-        <button class="lang-btn active" data-lang="en">
-            <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30">
-                <rect width="60" height="30" fill="#012169"/>
-                <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
-                <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/>
-                <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
-                <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
-            </svg>
-            <span>EN</span>
-        </button>
-        <button class="lang-btn" data-lang="pl">
-            <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 10">
-                <rect width="16" height="5" fill="#fff"/>
-                <rect y="5" width="16" height="5" fill="#dc143c"/>
-            </svg>
-            <span>PL</span>
-        </button>
-        <button class="lang-btn" data-lang="nl">
-            <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 6">
-                <rect width="9" height="6" fill="#21468B"/>
-                <rect width="9" height="4" fill="#fff"/>
-                <rect width="9" height="2" fill="#AE1C28"/>
-            </svg>
-            <span>NL</span>
-        </button>
-    </div>
+            .audio-player button:hover {
+                transform: scale(1.05);
+                box-shadow: 0 12px 32px rgba(154, 108, 255, 0.5);
+            }
 
-    <header class="header">
-        <div class="header-content">
-            <a class="back-link" href="../index.html" data-i18n="back">← Back to Portfolio</a>
+            .audio-player button .tri {
+                width: 0;
+                height: 0;
+                border-left: 26px solid #fff;
+                border-top: 16px solid transparent;
+                border-bottom: 16px solid transparent;
+                margin-left: 3px;
+            }
+
+            .audio-player button.paused .tri {
+                border-left-color: transparent;
+                border-top: 0;
+                border-bottom: 0;
+                width: 20px;
+                height: 20px;
+                position: relative;
+            }
+
+            .audio-player button.paused .tri::before,
+            .audio-player button.paused .tri::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                width: 6px;
+                height: 24px;
+                background: #fff;
+                border-radius: 2px;
+            }
+
+            .audio-player button.paused .tri::before {
+                left: -8px;
+            }
+
+            .audio-player button.paused .tri::after {
+                left: 4px;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .hero {
+                    padding: 2.5rem 1.5rem 3rem;
+                }
+
+                .section {
+                    padding: 3rem 1.5rem;
+                }
+
+                .project-full {
+                    padding: 1.75rem;
+                }
+
+                .quick-stats {
+                    gap: 1.5rem;
+                }
+
+                .stat-number {
+                    font-size: 1.5rem;
+                }
+
+                .btn {
+                    padding: 0.5rem 1rem;
+                    font-size: 0.85rem;
+                }
+
+                .audio-player {
+                    width: 180px;
+                    height: 180px;
+                }
+
+                .audio-player button {
+                    width: 80px;
+                    height: 80px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Animated Background -->
+        <div class="bg-animated"></div>
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
         </div>
-    </header>
 
-    <main>
-        <section class="hero">
-            <div class="hero-header">
-                <div class="hero-content">
-                    <span class="hero-tag" data-i18n="hero.tag">Wwise Middleware</span>
-                    <h1 data-i18n="hero.title">Three Wwise Projects</h1>
-                    <p class="hero-lead" data-i18n="hero.lead">
-                        Three school projects where I learned Wwise by running into real problems and figuring out how to fix them. Managing sound limits in a zombie shooter. Making audio adapt between game zones without cuts. Fitting everything into 15 MB on Android.
+        <!-- Language Switcher -->
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="en">
+                <svg
+                    class="lang-flag"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 60 30"
+                >
+                    <rect width="60" height="30" fill="#012169" />
+                    <path
+                        d="M0,0 L60,30 M60,0 L0,30"
+                        stroke="#fff"
+                        stroke-width="6"
+                    />
+                    <path
+                        d="M0,0 L60,30 M60,0 L0,30"
+                        stroke="#C8102E"
+                        stroke-width="4"
+                    />
+                    <path
+                        d="M30,0 v30 M0,15 h60"
+                        stroke="#fff"
+                        stroke-width="10"
+                    />
+                    <path
+                        d="M30,0 v30 M0,15 h60"
+                        stroke="#C8102E"
+                        stroke-width="6"
+                    />
+                </svg>
+                <span>EN</span>
+            </button>
+            <button class="lang-btn" data-lang="pl">
+                <svg
+                    class="lang-flag"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 16 10"
+                >
+                    <rect width="16" height="5" fill="#fff" />
+                    <rect y="5" width="16" height="5" fill="#dc143c" />
+                </svg>
+                <span>PL</span>
+            </button>
+            <button class="lang-btn" data-lang="nl">
+                <svg
+                    class="lang-flag"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 9 6"
+                >
+                    <rect width="9" height="6" fill="#21468B" />
+                    <rect width="9" height="4" fill="#fff" />
+                    <rect width="9" height="2" fill="#AE1C28" />
+                </svg>
+                <span>NL</span>
+            </button>
+        </div>
+
+        <header class="header">
+            <div class="header-content">
+                <a class="back-link" href="./index.html" data-i18n="back"
+                    >← Back to Projects</a
+                >
+            </div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="hero-header">
+                    <div class="hero-content">
+                        <span class="hero-tag" data-i18n="hero.tag"
+                            >Wwise Middleware</span
+                        >
+                        <h1 data-i18n="hero.title">Three Wwise Projects</h1>
+                        <p class="hero-lead" data-i18n="hero.lead">
+                            Three school projects where I learned Wwise by
+                            running into real problems and figuring out how to
+                            fix them. Managing sound limits in a zombie shooter.
+                            Making audio adapt between game zones without cuts.
+                            Fitting everything into 15 MB on Android.
+                        </p>
+                    </div>
+                    <div class="wwise-logo-container">
+                        <img
+                            src="../assets/images/projects-pausedeserve/wwise_logo_rgb-77Awrfoo.png"
+                            alt="Wwise Logo"
+                            class="wwise-logo"
+                        />
+                    </div>
+                </div>
+
+                <div class="context-note">
+                    <p data-i18n="hero.context">
+                        Solo school projects from DAE (2021-2024). Not shipped
+                        games, but I treated them like real work - tracking
+                        memory, hitting platform limits, writing integration
+                        code.
                     </p>
                 </div>
-                <div class="wwise-logo-container">
-                    <img src="../assets/images/projects-pausedeserve/wwise_logo_rgb-77Awrfoo.png" alt="Wwise Logo" class="wwise-logo">
-                </div>
-            </div>
 
-            <div class="context-note">
-                <p data-i18n="hero.context">Solo school projects from DAE (2021-2024). Not shipped games, but I treated them like real work - tracking memory, hitting platform limits, writing integration code.</p>
-            </div>
-
-            <div class="quick-stats">
-                <div class="stat-item">
-                    <span class="stat-number" data-i18n="hero.stat1_num">3</span>
-                    <span class="stat-text" data-i18n="hero.stat1_text">projects</span>
+                <div class="quick-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" data-i18n="hero.stat1_num"
+                            >3</span
+                        >
+                        <span class="stat-text" data-i18n="hero.stat1_text"
+                            >projects</span
+                        >
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-i18n="hero.stat2_num"
+                            >~8 weeks</span
+                        >
+                        <span class="stat-text" data-i18n="hero.stat2_text"
+                            >total time</span
+                        >
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-i18n="hero.stat3_num"
+                            >Solo</span
+                        >
+                        <span class="stat-text" data-i18n="hero.stat3_text"
+                            >all work</span
+                        >
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-number" data-i18n="hero.stat2_num">~8 weeks</span>
-                    <span class="stat-text" data-i18n="hero.stat2_text">total time</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" data-i18n="hero.stat3_num">Solo</span>
-                    <span class="stat-text" data-i18n="hero.stat3_text">all work</span>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <section class="section">
-            <div class="section-header">
-                <h2 class="section-title" data-i18n="section.title">The Projects</h2>
-                <p class="section-subtitle" data-i18n="section.subtitle">Three different problems that made me learn how audio middleware actually works under the hood.</p>
-            </div>
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title" data-i18n="section.title">
+                        The Projects
+                    </h2>
+                    <p class="section-subtitle" data-i18n="section.subtitle">
+                        Three different problems that made me learn how audio
+                        middleware actually works under the hood.
+                    </p>
+                </div>
 
-            <!-- Project 1: Boney Boogaloo -->
-            <article class="project-full">
-                <div class="project-header">
-                    <div class="project-title-area">
-                        <h3 data-i18n="boney.title">Boney Boogaloo</h3>
-                        <div class="project-meta">
-                            <span class="meta-badge" data-i18n="boney.badge1">Wwise v2021</span>
-                            <span class="meta-badge" data-i18n="boney.badge2">Windows</span>
-                            <span class="meta-badge time" data-i18n="boney.badge3">2 weeks</span>
+                <!-- Project 1: Boney Boogaloo -->
+                <article class="project-full">
+                    <div class="project-header">
+                        <div class="project-title-area">
+                            <h3 data-i18n="boney.title">Boney Boogaloo</h3>
+                            <div class="project-meta">
+                                <span
+                                    class="meta-badge"
+                                    data-i18n="boney.badge1"
+                                    >Wwise v2021</span
+                                >
+                                <span
+                                    class="meta-badge"
+                                    data-i18n="boney.badge2"
+                                    >Windows</span
+                                >
+                                <span
+                                    class="meta-badge time"
+                                    data-i18n="boney.badge3"
+                                    >2 weeks</span
+                                >
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Video Section -->
-                <div class="video-section">
-                    <h3 class="video-title" data-i18n="boney.video_title">Boney Boogaloo - Gameplay</h3>
-                    <video controls preload="metadata" poster="../wwiseprojectsinfo/images/BoneyBoogaloo.png">
-                        <source src="../wwiseprojectsinfo/videos/boneyboogaloo/optboo.mp4" type="video/mp4" />
-                    </video>
-                    <p class="video-caption" data-i18n="boney.video_caption">Every gunshot sounds different. 30+ zombies on screen and you can still hear spawns clearly.</p>
-                </div>
+                    <!-- Video Section -->
+                    <div class="video-section">
+                        <h3 class="video-title" data-i18n="boney.video_title">
+                            Boney Boogaloo - Gameplay
+                        </h3>
+                        <video
+                            controls
+                            preload="metadata"
+                            poster="../wwiseprojectsinfo/images/BoneyBoogaloo.png"
+                        >
+                            <source
+                                src="../wwiseprojectsinfo/videos/boneyboogaloo/optboo.mp4"
+                                type="video/mp4"
+                            />
+                        </video>
+                        <p
+                            class="video-caption"
+                            data-i18n="boney.video_caption"
+                        >
+                            Every gunshot sounds different. 30+ zombies on
+                            screen and you can still hear spawns clearly.
+                        </p>
+                    </div>
 
-                <div class="story">
-                    <p data-i18n="boney.p1">Zombie wave shooter. Up to 5 zombies on screen at once. My first Wwise project.</p>
-                    <p data-i18n="boney.p2">Hit the 256-voice limit fast - player firing constantly plus zombie spawns. Set up random containers with 6 gunshot variations and 6 spawn sounds so nothing sounds repetitive.</p>
-                    <p data-i18n="boney.p3">Did volume balancing in Wwise (-2dB on shots, +4dB on player hurt, -5dB on zombies). Trimmed silence from files. Used ADPCM compression.</p>
-                    <p data-i18n="boney.p4">44 sounds total across 9 random containers. Simple routing to Master Bus, no effects, 2D audio only.</p>
-                </div>
-            </article>
+                    <div class="story">
+                        <p data-i18n="boney.p1">
+                            Zombie wave shooter. Up to 5 zombies on screen at
+                            once. My first Wwise project.
+                        </p>
+                        <p data-i18n="boney.p2">
+                            Hit the 256-voice limit fast - player firing
+                            constantly plus zombie spawns. Set up random
+                            containers with 6 gunshot variations and 6 spawn
+                            sounds so nothing sounds repetitive.
+                        </p>
+                        <p data-i18n="boney.p3">
+                            Did volume balancing in Wwise (-2dB on shots, +4dB
+                            on player hurt, -5dB on zombies). Trimmed silence
+                            from files. Used ADPCM compression.
+                        </p>
+                        <p data-i18n="boney.p4">
+                            44 sounds total across 9 random containers. Simple
+                            routing to Master Bus, no effects, 2D audio only.
+                        </p>
+                    </div>
+                </article>
 
-            <!-- Project 2: Ellen -->
-            <article class="project-full">
-                <div class="project-header">
-                    <div class="project-title-area">
-                        <h3 data-i18n="ellen.title">Ellen</h3>
-                        <div class="project-meta">
-                            <span class="meta-badge" data-i18n="ellen.badge1">Wwise v2021</span>
-                            <span class="meta-badge" data-i18n="ellen.badge2">Windows</span>
-                            <span class="meta-badge time" data-i18n="ellen.badge3">3 weeks</span>
+                <!-- Project 2: Ellen -->
+                <article class="project-full">
+                    <div class="project-header">
+                        <div class="project-title-area">
+                            <h3 data-i18n="ellen.title">Ellen</h3>
+                            <div class="project-meta">
+                                <span
+                                    class="meta-badge"
+                                    data-i18n="ellen.badge1"
+                                    >Wwise v2021</span
+                                >
+                                <span
+                                    class="meta-badge"
+                                    data-i18n="ellen.badge2"
+                                    >Windows</span
+                                >
+                                <span
+                                    class="meta-badge time"
+                                    data-i18n="ellen.badge3"
+                                    >3 weeks</span
+                                >
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Video Section -->
-                <div class="video-section">
-                    <h3 class="video-title" data-i18n="ellen.video_title">Ellen - Gameplay</h3>
-                    <div style="padding:56.25% 0 0 0;position:relative;">
-                        <iframe data-lazy-iframe loading="lazy"
-                             data-src="https://player.vimeo.com/video/1135151616?badge=0&autopause=0&player_id=0&app_id=58479"
-                            frameborder="0"
-                            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin"
-                            style="position:absolute;top:0;left:0;width:100%;height:100%;"
-                            title="Ellen - Wwise Integration">
-                        </iframe>
+                    <!-- Video Section -->
+                    <div class="video-section">
+                        <h3 class="video-title" data-i18n="ellen.video_title">
+                            Ellen - Gameplay
+                        </h3>
+                        <div style="padding: 56.25% 0 0 0; position: relative">
+                            <iframe
+                                data-lazy-iframe
+                                loading="lazy"
+                                data-src="https://player.vimeo.com/video/1135151616?badge=0&autopause=0&player_id=0&app_id=58479"
+                                frameborder="0"
+                                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                style="
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                "
+                                title="Ellen - Wwise Integration"
+                            >
+                            </iframe>
+                        </div>
+                        <script src="https://player.vimeo.com/api/player.js"></script>
+                        <p
+                            class="video-caption"
+                            data-i18n="ellen.video_caption"
+                        >
+                            Full Wwise implementation with spatial audio,
+                            dynamic mix, and Game Syncs integration.
+                        </p>
                     </div>
-                    <script src="https://player.vimeo.com/api/player.js"></script>
-                    <p class="video-caption" data-i18n="ellen.video_caption">Full Wwise implementation with spatial audio, dynamic mix, and Game Syncs integration.</p>
-                </div>
 
-                <div class="story">
-                    <p data-i18n="ellen.p1">Platformer with magic combat. First time doing spatial audio.</p>
-                    <p data-i18n="ellen.p2">Built 10 attenuation curves - enemies at 25m, footsteps at 75m, explosions at 100m. Material switching on footsteps through raycasts checking surface types.</p>
-                    <p data-i18n="ellen.p3">Adaptive ambience with State groups - different zones crossfade ambient layers over 6.5 seconds. Set up 4 reverb buses for different room sizes.</p>
-                    <p data-i18n="ellen.p4">Compression strategy: Music Q8 OGG, Ambience Q7, SFX Q5, voice ADPCM.</p>
-                </div>
-            </article>
+                    <div class="story">
+                        <p data-i18n="ellen.p1">
+                            Platformer with magic combat. First time doing
+                            spatial audio.
+                        </p>
+                        <p data-i18n="ellen.p2">
+                            Built 10 attenuation curves - enemies at 25m,
+                            footsteps at 75m, explosions at 100m. Material
+                            switching on footsteps through raycasts checking
+                            surface types.
+                        </p>
+                        <p data-i18n="ellen.p3">
+                            Adaptive ambience with State groups - different
+                            zones crossfade ambient layers over 6.5 seconds. Set
+                            up 4 reverb buses for different room sizes.
+                        </p>
+                        <p data-i18n="ellen.p4">
+                            Compression strategy: Music Q8 OGG, Ambience Q7, SFX
+                            Q5, voice ADPCM.
+                        </p>
+                    </div>
+                </article>
 
-            <!-- Project 3: Stomach Aches -->
-            <article class="project-full">
-                <div class="project-header">
-                    <div class="project-title-area">
-                        <h3 data-i18n="stomach.title">Stomach Aches</h3>
-                        <div class="project-meta">
-                            <span class="meta-badge" data-i18n="stomach.badge1">Wwise 2024</span>
-                            <span class="meta-badge" data-i18n="stomach.badge2">4 Platforms</span>
-                            <span class="meta-badge time" data-i18n="stomach.badge3">3 weeks</span>
+                <!-- Project 3: Stomach Aches -->
+                <article class="project-full">
+                    <div class="project-header">
+                        <div class="project-title-area">
+                            <h3 data-i18n="stomach.title">Stomach Aches</h3>
+                            <div class="project-meta">
+                                <span
+                                    class="meta-badge"
+                                    data-i18n="stomach.badge1"
+                                    >Wwise 2024</span
+                                >
+                                <span
+                                    class="meta-badge"
+                                    data-i18n="stomach.badge2"
+                                    >4 Platforms</span
+                                >
+                                <span
+                                    class="meta-badge time"
+                                    data-i18n="stomach.badge3"
+                                    >3 weeks</span
+                                >
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Video Section -->
-                <div class="video-section">
-                    <h3 class="video-title" data-i18n="stomach.video_title">Stomach Aches - Gameplay</h3>
-                    <video controls preload="metadata" poster="../wwiseprojectsinfo/images/StomachAches.png">
-                        <source src="../wwiseprojectsinfo/videos/stomachaches/optstomachaches.mp4" type="video/mp4" />
-                    </video>
-                    <p class="video-caption" data-i18n="stomach.video_caption">Waterfall layers blend as you approach. Footsteps auto-switch between different body materials.</p>
-                </div>
-
-                <div class="story">
-                    <p data-i18n="stomach.p1">FPS platformer inside a human body. Three zones - Brain, Mouth, Stomach. Had to run on Android with 2GB RAM.</p>
-                    <p data-i18n="stomach.p2">15MB audio limit on cheap Android. Implemented zone-based soundbank loading - only load audio for the zone you're in. Brain 670KB, Mouth 384KB, Stomach 2.8MB.</p>
-                    <p data-i18n="stomach.p3">Used Wwise Silence plugin instead of silent files (80% memory saved). Waterfall system with RTPC - 3 layers crossfade based on distance: Close 130KB, Mid 6.3MB, Far 3.6MB.</p>
-                    <p data-i18n="stomach.p4">Material switching for footsteps. Music streams to save RAM. Proper loop cleanup to prevent orphaned sounds.</p>
-                </div>
-            </article>
-        </section>
-
-        <section class="section">
-            <div class="section-header">
-                <h2 class="section-title" data-i18n="learned.title">What I Learned</h2>
-                <p class="section-subtitle" data-i18n="learned.subtitle">Skills from fixing problems when they broke</p>
-            </div>
-
-            <div class="skills-grid">
-                <div class="skill-card">
-                    <div class="skill-header">
-                        <span class="skill-name" data-i18n="learned.skill1_name">Performance Limits</span>
+                    <!-- Video Section -->
+                    <div class="video-section">
+                        <h3 class="video-title" data-i18n="stomach.video_title">
+                            Stomach Aches - Gameplay
+                        </h3>
+                        <video
+                            controls
+                            preload="metadata"
+                            poster="../wwiseprojectsinfo/images/StomachAches.png"
+                        >
+                            <source
+                                src="../wwiseprojectsinfo/videos/stomachaches/optstomachaches.mp4"
+                                type="video/mp4"
+                            />
+                        </video>
+                        <p
+                            class="video-caption"
+                            data-i18n="stomach.video_caption"
+                        >
+                            Waterfall layers blend as you approach. Footsteps
+                            auto-switch between different body materials.
+                        </p>
                     </div>
-                    <p class="skill-desc" data-i18n="learned.skill1_desc">Working within sound channel limits, tracking memory budgets, picking compression that balances file size vs quality.</p>
-                </div>
 
-                <div class="skill-card">
-                    <div class="skill-header">
-                        <span class="skill-name" data-i18n="learned.skill2_name">3D Audio</span>
+                    <div class="story">
+                        <p data-i18n="stomach.p1">
+                            FPS platformer inside a human body. Three zones -
+                            Brain, Mouth, Stomach. Had to run on Android with
+                            2GB RAM.
+                        </p>
+                        <p data-i18n="stomach.p2">
+                            15MB audio limit on cheap Android. Implemented
+                            zone-based soundbank loading - only load audio for
+                            the zone you're in. Brain 670KB, Mouth 384KB,
+                            Stomach 2.8MB.
+                        </p>
+                        <p data-i18n="stomach.p3">
+                            Used Wwise Silence plugin instead of silent files
+                            (80% memory saved). Waterfall system with RTPC - 3
+                            layers crossfade based on distance: Close 130KB, Mid
+                            6.3MB, Far 3.6MB.
+                        </p>
+                        <p data-i18n="stomach.p4">
+                            Material switching for footsteps. Music streams to
+                            save RAM. Proper loop cleanup to prevent orphaned
+                            sounds.
+                        </p>
                     </div>
-                    <p class="skill-desc" data-i18n="learned.skill2_desc">Writing distance curves for different sound types, positioning audio in 3D space, making sounds fade at the right ranges.</p>
+                </article>
+            </section>
+
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title" data-i18n="learned.title">
+                        What I Learned
+                    </h2>
+                    <p class="section-subtitle" data-i18n="learned.subtitle">
+                        Skills from fixing problems when they broke
+                    </p>
                 </div>
 
-                <div class="skill-card">
-                    <div class="skill-header">
-                        <span class="skill-name" data-i18n="learned.skill3_name">Middleware Integration</span>
+                <div class="skills-grid">
+                    <div class="skill-card">
+                        <div class="skill-header">
+                            <span
+                                class="skill-name"
+                                data-i18n="learned.skill1_name"
+                                >Performance Limits</span
+                            >
+                        </div>
+                        <p class="skill-desc" data-i18n="learned.skill1_desc">
+                            Working within sound channel limits, tracking memory
+                            budgets, picking compression that balances file size
+                            vs quality.
+                        </p>
                     </div>
-                    <p class="skill-desc" data-i18n="learned.skill3_desc">Connecting game events to middleware, making audio respond to player position and game state without hardcoding values.</p>
-                </div>
 
-                <div class="skill-card">
-                    <div class="skill-header">
-                        <span class="skill-name" data-i18n="learned.skill4_name">Memory Management</span>
+                    <div class="skill-card">
+                        <div class="skill-header">
+                            <span
+                                class="skill-name"
+                                data-i18n="learned.skill2_name"
+                                >3D Audio</span
+                            >
+                        </div>
+                        <p class="skill-desc" data-i18n="learned.skill2_desc">
+                            Writing distance curves for different sound types,
+                            positioning audio in 3D space, making sounds fade at
+                            the right ranges.
+                        </p>
                     </div>
-                    <p class="skill-desc" data-i18n="learned.skill4_desc">Deciding what loads immediately, what streams from disk, what unloads when changing zones. Staying under budget on phones.</p>
-                </div>
 
-                <div class="skill-card">
-                    <div class="skill-header">
-                        <span class="skill-name" data-i18n="learned.skill5_name">Unity + Wwise</span>
+                    <div class="skill-card">
+                        <div class="skill-header">
+                            <span
+                                class="skill-name"
+                                data-i18n="learned.skill3_name"
+                                >Middleware Integration</span
+                            >
+                        </div>
+                        <p class="skill-desc" data-i18n="learned.skill3_desc">
+                            Connecting game events to middleware, making audio
+                            respond to player position and game state without
+                            hardcoding values.
+                        </p>
                     </div>
-                    <p class="skill-desc" data-i18n="learned.skill5_desc">Writing C# scripts that talk to Wwise API, handling zone triggers, cleaning up sounds that don't stop properly.</p>
-                </div>
 
-                <div class="skill-card">
-                    <div class="skill-header">
-                        <span class="skill-name" data-i18n="learned.skill6_name">Multi-Platform</span>
+                    <div class="skill-card">
+                        <div class="skill-header">
+                            <span
+                                class="skill-name"
+                                data-i18n="learned.skill4_name"
+                                >Memory Management</span
+                            >
+                        </div>
+                        <p class="skill-desc" data-i18n="learned.skill4_desc">
+                            Deciding what loads immediately, what streams from
+                            disk, what unloads when changing zones. Staying
+                            under budget on phones.
+                        </p>
                     </div>
-                    <p class="skill-desc" data-i18n="learned.skill6_desc">Different compression strategies for PC vs mobile. Testing on emulators. Profiling memory to catch issues before shipping.</p>
+
+                    <div class="skill-card">
+                        <div class="skill-header">
+                            <span
+                                class="skill-name"
+                                data-i18n="learned.skill5_name"
+                                >Unity + Wwise</span
+                            >
+                        </div>
+                        <p class="skill-desc" data-i18n="learned.skill5_desc">
+                            Writing C# scripts that talk to Wwise API, handling
+                            zone triggers, cleaning up sounds that don't stop
+                            properly.
+                        </p>
+                    </div>
+
+                    <div class="skill-card">
+                        <div class="skill-header">
+                            <span
+                                class="skill-name"
+                                data-i18n="learned.skill6_name"
+                                >Multi-Platform</span
+                            >
+                        </div>
+                        <p class="skill-desc" data-i18n="learned.skill6_desc">
+                            Different compression strategies for PC vs mobile.
+                            Testing on emulators. Profiling memory to catch
+                            issues before shipping.
+                        </p>
+                    </div>
                 </div>
-            </div>
-        </section>
-    </main>
+            </section>
+        </main>
 
-    <footer class="footer">
-        <p data-i18n="footer">© 2024 Igor Szuniewicz</p>
-    </footer>
+        <footer class="footer">
+            <p data-i18n="footer">© 2024 Igor Szuniewicz</p>
+        </footer>
 
-    <!-- Translation Script -->
-    <script>
-        let translations = {};
-        let currentLang = localStorage.getItem('language') || 'en';
+        <!-- Translation Script -->
+        <script>
+            let translations = {};
+            let currentLang = localStorage.getItem("language") || "en";
 
-        async function loadTranslations() {
-            try {
-                const response = await fetch('../locales/middleware-optimization.json');
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                translations = await response.json();
-            } catch (error) {
-                console.error("Failed to load translations:", error);
-                translations = { en: {}, pl: {}, nl: {} };
+            async function loadTranslations() {
+                try {
+                    const response = await fetch(
+                        "../locales/middleware-optimization.json",
+                    );
+                    if (!response.ok)
+                        throw new Error(
+                            `HTTP error! status: ${response.status}`,
+                        );
+                    translations = await response.json();
+                } catch (error) {
+                    console.error("Failed to load translations:", error);
+                    translations = { en: {}, pl: {}, nl: {} };
+                }
             }
-        }
 
-        function getNestedValue(obj, path) {
-            return path.split('.').reduce((current, key) => current?.[key], obj);
-        }
+            function getNestedValue(obj, path) {
+                return path
+                    .split(".")
+                    .reduce((current, key) => current?.[key], obj);
+            }
 
-        function setLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('language', lang);
+            function setLanguage(lang) {
+                currentLang = lang;
+                localStorage.setItem("language", lang);
 
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                const translation = getNestedValue(translations[lang], key);
-                if (translation) {
-                    el.textContent = translation;
-                }
-            });
-
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === lang);
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadTranslations();
-            setLanguage(currentLang);
-
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    setLanguage(btn.dataset.lang);
-                });
-            });
-        });
-
-        // Scroll Reveal Animation
-        function reveal() {
-            const reveals = document.querySelectorAll('.project-full, .skill-card');
-
-            reveals.forEach(element => {
-                const windowHeight = window.innerHeight;
-                const elementTop = element.getBoundingClientRect().top;
-                const elementVisible = 150;
-
-                if (elementTop < windowHeight - elementVisible) {
-                    element.classList.add('active');
-                }
-            });
-        }
-
-        window.addEventListener('scroll', reveal);
-        window.addEventListener('DOMContentLoaded', reveal);
-    </script>
-
-    <!-- Audio Player Script -->
-    <script>
-        (function() {
-            let active = { audio: null, el: null };
-
-            function bindPlayer(el) {
-                const src = el.getAttribute('data-audio') || '';
-                if (!src) return; // Skip if no audio source
-
-                const btn = document.createElement('button');
-                btn.setAttribute('aria-label', el.getAttribute('aria-label') || 'Play sample');
-                const inner = document.createElement('div');
-                inner.className = 'inner';
-                const tri = document.createElement('div');
-                tri.className = 'tri';
-                btn.appendChild(tri);
-                inner.appendChild(btn);
-                el.appendChild(inner);
-
-                let audio = new Audio(src);
-                audio.preload = 'metadata';
-                let raf = null;
-
-                function loop() {
-                    if (!audio.duration) {
-                        raf = requestAnimationFrame(loop);
-                        return;
+                document.querySelectorAll("[data-i18n]").forEach((el) => {
+                    const key = el.getAttribute("data-i18n");
+                    const translation = getNestedValue(translations[lang], key);
+                    if (translation) {
+                        el.textContent = translation;
                     }
-                    const p = Math.min(1, audio.currentTime / audio.duration);
-                    el.style.setProperty('--p', `${(p * 360).toFixed(1)}deg`);
-                    if (!audio.paused) raf = requestAnimationFrame(loop);
-                }
+                });
 
-                function play() {
-                    if (active.el && active.el !== el) stopActive();
-                    active = { audio, el };
-                    btn.classList.add('paused');
-                    audio.play().then(() => {
-                        raf = requestAnimationFrame(loop);
-                    }).catch(() => {
-                        stopActive();
+                document.querySelectorAll(".lang-btn").forEach((btn) => {
+                    btn.classList.toggle("active", btn.dataset.lang === lang);
+                });
+            }
+
+            document.addEventListener("DOMContentLoaded", async () => {
+                await loadTranslations();
+                setLanguage(currentLang);
+
+                document.querySelectorAll(".lang-btn").forEach((btn) => {
+                    btn.addEventListener("click", () => {
+                        setLanguage(btn.dataset.lang);
                     });
-                }
-
-                function pause() {
-                    audio.pause();
-                    btn.classList.remove('paused');
-                    cancelAnimationFrame(raf);
-                    raf = null;
-                }
-
-                btn.addEventListener('click', () => {
-                    if (audio.paused) play();
-                    else pause();
                 });
-
-                audio.addEventListener('ended', () => {
-                    pause();
-                    audio.currentTime = 0;
-                    el.style.setProperty('--p', '0deg');
-                });
-
-                audio.addEventListener('error', stopActive);
-            }
-
-            function stopActive() {
-                if (active.audio) {
-                    try { active.audio.pause(); } catch {}
-                }
-                if (active.el) {
-                    active.el.querySelector('button')?.classList.remove('paused');
-                    active.el.style.setProperty('--p', '0deg');
-                }
-                active = { audio: null, el: null };
-            }
-
-            document.addEventListener('DOMContentLoaded', () => {
-                document.querySelectorAll('.audio-player').forEach(bindPlayer);
             });
-        })();
-    </script>
-</body>
+
+            // Scroll Reveal Animation
+            function reveal() {
+                const reveals = document.querySelectorAll(
+                    ".project-full, .skill-card",
+                );
+
+                reveals.forEach((element) => {
+                    const windowHeight = window.innerHeight;
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+
+                    if (elementTop < windowHeight - elementVisible) {
+                        element.classList.add("active");
+                    }
+                });
+            }
+
+            window.addEventListener("scroll", reveal);
+            window.addEventListener("DOMContentLoaded", reveal);
+        </script>
+
+        <!-- Audio Player Script -->
+        <script>
+            (function () {
+                let active = { audio: null, el: null };
+
+                function bindPlayer(el) {
+                    const src = el.getAttribute("data-audio") || "";
+                    if (!src) return; // Skip if no audio source
+
+                    const btn = document.createElement("button");
+                    btn.setAttribute(
+                        "aria-label",
+                        el.getAttribute("aria-label") || "Play sample",
+                    );
+                    const inner = document.createElement("div");
+                    inner.className = "inner";
+                    const tri = document.createElement("div");
+                    tri.className = "tri";
+                    btn.appendChild(tri);
+                    inner.appendChild(btn);
+                    el.appendChild(inner);
+
+                    let audio = new Audio(src);
+                    audio.preload = "metadata";
+                    let raf = null;
+
+                    function loop() {
+                        if (!audio.duration) {
+                            raf = requestAnimationFrame(loop);
+                            return;
+                        }
+                        const p = Math.min(
+                            1,
+                            audio.currentTime / audio.duration,
+                        );
+                        el.style.setProperty(
+                            "--p",
+                            `${(p * 360).toFixed(1)}deg`,
+                        );
+                        if (!audio.paused) raf = requestAnimationFrame(loop);
+                    }
+
+                    function play() {
+                        if (active.el && active.el !== el) stopActive();
+                        active = { audio, el };
+                        btn.classList.add("paused");
+                        audio
+                            .play()
+                            .then(() => {
+                                raf = requestAnimationFrame(loop);
+                            })
+                            .catch(() => {
+                                stopActive();
+                            });
+                    }
+
+                    function pause() {
+                        audio.pause();
+                        btn.classList.remove("paused");
+                        cancelAnimationFrame(raf);
+                        raf = null;
+                    }
+
+                    btn.addEventListener("click", () => {
+                        if (audio.paused) play();
+                        else pause();
+                    });
+
+                    audio.addEventListener("ended", () => {
+                        pause();
+                        audio.currentTime = 0;
+                        el.style.setProperty("--p", "0deg");
+                    });
+
+                    audio.addEventListener("error", stopActive);
+                }
+
+                function stopActive() {
+                    if (active.audio) {
+                        try {
+                            active.audio.pause();
+                        } catch {}
+                    }
+                    if (active.el) {
+                        active.el
+                            .querySelector("button")
+                            ?.classList.remove("paused");
+                        active.el.style.setProperty("--p", "0deg");
+                    }
+                    active = { audio: null, el: null };
+                }
+
+                document.addEventListener("DOMContentLoaded", () => {
+                    document
+                        .querySelectorAll(".audio-player")
+                        .forEach(bindPlayer);
+                });
+            })();
+        </script>
+    </body>
 </html>
