@@ -369,9 +369,13 @@
     // Video loading is critical for UX - run earlier
     optimizeVideoLoading();
 
+    // Images gatekeep the project list visibility, so start lazy loading now
+    optimizeImages();
+
     // Defer non-critical optimizations
     requestIdleCallback(
       () => {
+        // Re-run in case new lazy images were injected after the initial pass
         optimizeImages();
         setupLinkPrefetch();
         reduceMotionDuringScroll();
