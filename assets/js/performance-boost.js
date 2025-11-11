@@ -97,7 +97,7 @@
           });
         },
         {
-          rootMargin: "300px", // Start loading 300px before visible
+          rootMargin: "600px", // Start loading 600px before visible (aggressive prefetch)
           threshold: 0.01,
         },
       );
@@ -152,7 +152,7 @@
           });
         },
         {
-          rootMargin: "200px",
+          rootMargin: "400px", // Prefetch iframes earlier
           threshold: 0.01,
         },
       );
@@ -283,7 +283,7 @@
           });
         },
         {
-          rootMargin: "300px",
+          rootMargin: "600px", // Aggressive image prefetch
           threshold: 0.01,
         },
       );
