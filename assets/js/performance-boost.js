@@ -83,7 +83,7 @@
           });
         },
         {
-          rootMargin: "100px", // Start loading 100px before visible
+          rootMargin: "300px", // Start loading 300px before visible
           threshold: 0.01,
         },
       );
