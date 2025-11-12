@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .lang-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+        .lang-btn {
+            padding: 8px 16px;
+            background: #333;
+            border: 1px solid #555;
+            color: #999;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .lang-btn:hover {
+            background: #444;
+            color: #fff;
+        }
+        .lang-btn.active {
+            background: #0066cc;
+            color: #fff;
+            border-color: #0088ff;
+        }
+        h1 {
+            color: #0088ff;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+        .test-item {
+            padding: 10px;
+            margin: 10px 0;
+            background: #333;
+            border-left: 3px solid #0066cc;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .status.success {
+            background: #00aa00;
+            color: #fff;
+        }
+        .status.error {
+            background: #cc0000;
+            color: #fff;
+        }
+        .status.loading {
+            background: #ffaa00;
+            color: #000;
+        }
+        pre {
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Language Switcher -->
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="pl">PL</button>
+            <button class="lang-btn" data-lang="nl">NL</button>
+        </div>
+
+        <h1>Translation System Test</h1>
+
+        <div class="test-section">
+            <h2>Test Results</h2>
+            <div id="test-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Project Pages Status</h2>
+            <div id="project-status"></div>
+        </div>
+    </div>
+
+    <script>
+        const projectPages = [
+            { name: 'Akantilado', path: 'projects/akantilado.html', hasTranslation: true },
+            { name: 'Amorak', path: 'projects/amorak.html', hasTranslation: true },
+            { name: 'Ray Animation', path: 'projects/ray-animation.html', hasTranslation: true },
+            { name: 'Not Today Darling', path: 'projects/not-today-darling.html', hasTranslation: true },
+            { name: 'Pawism', path: 'projects/pawism.html', hasTranslation: true },
+            { name: 'Richter', path: 'projects/richter.html', hasTranslation: true },
+            { name: 'Environments', path: 'projects/environments.html', hasTranslation: true }
+        ];
+
+        async function testTranslationFile(filename) {
+            try {
+                const response = await fetch(`locales/${filename}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const data = await response.json();
+                return { success: true, data, filename };
+            } catch (error) {
+                return { success: false, error: error.message, filename };
+            }
+        }
+
+        async function testProjectTranslationFile(filename) {
+            try {
+                // Try different paths
+                const paths = [`locales/${filename}`, `../locales/${filename}`, `../../locales/${filename}`];
+
+                for (const path of paths) {
+                    try {
+                        const response = await fetch(path);
+                        if (response.ok) {
+                            const data = await response.json();
+                            return { success: true, data, filename, path };
+                        }
+                    } catch (e) {
+                        continue;
+                    }
+                }
+                throw new Error('File not found in any path');
+            } catch (error) {
+                return { success: false, error: error.message, filename };
+            }
+        }
+
+        async function runTests() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<div class="test-item">Running tests... <span class="status loading">LOADING</span></div>';
+
+            const translationFiles = [
+                'akantilado.json',
+                'amorak.json',
+                'ray-animation.json',
+                'not-today-darling.json',
+                'pawism.json',
+                'richter.json',
+                'environments.json',
+                'projects.json',
+                'shared.json'
+            ];
+
+            let html = '';
+
+            for (const file of translationFiles) {
+                const result = await testProjectTranslationFile(file);
+
+                if (result.success) {
+                    const languages = Object.keys(result.data);
+                    const hasAllLanguages = languages.includes('en') && languages.includes('pl') && languages.includes('nl');
+
+                    html += `
+                        <div class="test-item">
+                            <strong>${file}</strong>
+                            <span class="status ${hasAllLanguages ? 'success' : 'error'}">
+                                ${hasAllLanguages ? 'OK' : 'MISSING LANGUAGES'}
+                            </span>
+                            <br>
+                            <small>Languages found: ${languages.join(', ')}</small>
+                            ${result.path ? `<br><small>Path: ${result.path}</small>` : ''}
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="test-item">
+                            <strong>${file}</strong>
+                            <span class="status error">FAILED</span>
+                            <br>
+                            <small>Error: ${result.error}</small>
+                        </div>
+                    `;
+                }
+            }
+
+            resultsDiv.innerHTML = html;
+        }
+
+        async function testProjectPages() {
+            const statusDiv = document.getElementById('project-status');
+            let html = '';
+
+            for (const project of projectPages) {
+                html += `
+                    <div class="test-item">
+                        <strong>${project.name}</strong>
+                        <small>(${project.path})</small>
+                        <span class="status ${project.hasTranslation ? 'success' : 'error'}">
+                            ${project.hasTranslation ? 'TRANSLATION READY' : 'NO TRANSLATION'}
+                        </span>
+                    </div>
+                `;
+            }
+
+            statusDiv.innerHTML = html;
+        }
+
+        // Test localStorage
+        function testLocalStorage() {
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+                console.log('✅ localStorage is working');
+            } catch (e) {
+                console.error('❌ localStorage is not available:', e);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            testLocalStorage();
+            runTests();
+            testProjectPages();
+
+            // Test language switching
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const lang = btn.dataset.lang;
+                    console.log('Language switched to:', lang);
+                    localStorage.setItem('language', lang);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation System Check</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .status-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .project-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .status-loading {
+            background: #ffa500;
+        }
+        .status-success {
+            background: #00ff00;
+            animation: none;
+        }
+        .status-error {
+            background: #ff0000;
+            animation: none;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .check-item {
+            padding: 8px 0;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .check-icon {
+            font-size: 1.2rem;
+        }
+        .info {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+        .test-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        .summary {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        .summary h2 {
+            margin-bottom: 20px;
+        }
+        .summary-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            display: block;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 Translation System Check</h1>
+
+        <div class="summary" id="summary">
+            <h2>Checking all project pages...</h2>
+            <div class="summary-stats">
+                <div class="stat">
+                    <span class="stat-number" id="totalPages">0</span>
+                    <span class="stat-label">Total Pages</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" id="successPages">0</span>
+                    <span class="stat-label">Working</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" id="errorPages">0</span>
+                    <span class="stat-label">Issues</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-grid" id="statusGrid"></div>
+    </div>
+
+    <script>
+        const projects = [
+            { name: 'Akantilado', file: 'akantilado', path: 'projects/akantilado.html' },
+            { name: 'Amorak', file: 'amorak', path: 'projects/amorak.html' },
+            { name: 'Ray Animation', file: 'ray-animation', path: 'projects/ray-animation.html' },
+            { name: 'Not Today Darling', file: 'not-today-darling', path: 'projects/not-today-darling.html' },
+            { name: 'Pawism', file: 'pawism', path: 'projects/pawism.html' },
+            { name: 'Pause & Deserve', file: 'pause-and-deserve', path: 'projects/pause-and-deserve.html' },
+            { name: 'Richter', file: 'richter', path: 'projects/richter.html' },
+            { name: '3D Environments', file: 'environments', path: 'projects/environments.html' },
+            { name: 'Wwise Unreal Fixer', file: 'wwise-unreal-fixer', path: 'projects/wwise-unreal-fixer.html' },
+            { name: 'UE Rebuilder', file: 'unreal-engine-rebuilder', path: 'projects/unreal-engine-rebuilder.html' },
+            { name: 'AudioLab', file: 'audiolab', path: 'projects/audiolab.html' },
+            { name: 'Middleware Optimization', file: 'middleware-optimization', path: 'projects/middleware-optimization.html' },
+            { name: 'AudioQ', file: 'audioq', path: 'projects/audioq.html' },
+            { name: 'Middleware 2', file: 'middleware2', path: 'projects/middleware2.html' },
+            { name: 'Music for Games', file: 'musicforgames', path: 'projects/musicforgames.html' }
+        ];
+
+        let successCount = 0;
+        let errorCount = 0;
+
+        async function checkTranslationFile(project) {
+            const results = {
+                jsonExists: false,
+                hasAllLanguages: false,
+                languages: [],
+                error: null
+            };
+
+            try {
+                const response = await fetch(`locales/${project.file}.json`);
+                if (response.ok) {
+                    results.jsonExists = true;
+                    const data = await response.json();
+                    results.languages = Object.keys(data);
+                    results.hasAllLanguages = ['en', 'pl', 'nl'].every(lang => results.languages.includes(lang));
+                } else {
+                    results.error = `HTTP ${response.status}`;
+                }
+            } catch (error) {
+                results.error = error.message;
+            }
+
+            return results;
+        }
+
+        async function checkHTMLFile(project) {
+            const results = {
+                exists: false,
+                hasTranslationScript: false,
+                error: null
+            };
+
+            try {
+                const response = await fetch(project.path);
+                if (response.ok) {
+                    results.exists = true;
+                    const html = await response.text();
+                    results.hasTranslationScript = html.includes('project-translations.js');
+                } else {
+                    results.error = `HTTP ${response.status}`;
+                }
+            } catch (error) {
+                results.error = error.message;
+            }
+
+            return results;
+        }
+
+        function createStatusCard(project, jsonResult, htmlResult) {
+            const card = document.createElement('div');
+            card.className = 'status-card';
+
+            const allGood = jsonResult.jsonExists && jsonResult.hasAllLanguages &&
+                           htmlResult.exists && htmlResult.hasTranslationScript;
+
+            if (allGood) successCount++;
+            else errorCount++;
+
+            const statusClass = allGood ? 'status-success' : 'status-error';
+
+            card.innerHTML = `
+                <div class="project-name">
+                    <span>${project.name}</span>
+                    <span class="status-indicator ${statusClass}"></span>
+                </div>
+
+                <div class="check-item">
+                    <span class="check-icon">${jsonResult.jsonExists ? '✅' : '❌'}</span>
+                    <span>Translation JSON exists</span>
+                </div>
+
+                <div class="check-item">
+                    <span class="check-icon">${jsonResult.hasAllLanguages ? '✅' : '❌'}</span>
+                    <span>All languages (EN, PL, NL)</span>
+                </div>
+
+                <div class="check-item">
+                    <span class="check-icon">${htmlResult.exists ? '✅' : '❌'}</span>
+                    <span>HTML file accessible</span>
+                </div>
+
+                <div class="check-item">
+                    <span class="check-icon">${htmlResult.hasTranslationScript ? '✅' : '❌'}</span>
+                    <span>Translation script included</span>
+                </div>
+
+                ${jsonResult.error || htmlResult.error ? `
+                    <div class="info" style="background: rgba(255,0,0,0.2);">
+                        <strong>Error:</strong> ${jsonResult.error || htmlResult.error}
+                    </div>
+                ` : ''}
+
+                ${jsonResult.languages.length > 0 ? `
+                    <div class="info">
+                        <strong>Languages found:</strong> ${jsonResult.languages.join(', ')}
+                    </div>
+                ` : ''}
+
+                <button class="test-button" onclick="window.open('${project.path}', '_blank')">
+                    Open Page →
+                </button>
+            `;
+
+            return card;
+        }
+
+        async function runChecks() {
+            const grid = document.getElementById('statusGrid');
+            grid.innerHTML = '';
+            successCount = 0;
+            errorCount = 0;
+
+            document.getElementById('totalPages').textContent = projects.length;
+
+            for (const project of projects) {
+                const jsonResult = await checkTranslationFile(project);
+                const htmlResult = await checkHTMLFile(project);
+
+                const card = createStatusCard(project, jsonResult, htmlResult);
+                grid.appendChild(card);
+
+                // Update counters
+                document.getElementById('successPages').textContent = successCount;
+                document.getElementById('errorPages').textContent = errorCount;
+            }
+
+            // Update summary
+            const summaryDiv = document.getElementById('summary');
+            if (errorCount === 0) {
+                summaryDiv.querySelector('h2').innerHTML = '✅ All translation systems are working!';
+                summaryDiv.style.background = 'rgba(0, 255, 0, 0.1)';
+            } else {
+                summaryDiv.querySelector('h2').innerHTML = `⚠️ ${errorCount} page(s) have issues`;
+                summaryDiv.style.background = 'rgba(255, 165, 0, 0.1)';
+            }
+        }
+
+        // Run checks on load
+        document.addEventListener('DOMContentLoaded', runChecks);
+    </script>
+</body>
+</html>
