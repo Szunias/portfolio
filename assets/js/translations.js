@@ -196,13 +196,30 @@
       "/": "index.json",
     };
 
-    // For projects/index.html
-    if (path.includes("projects/")) {
-      return "projects.json";
+    // Project-specific translations
+    const projectMap = {
+      "unreal-engine-rebuilder.html": "unreal-engine-rebuilder.json",
+      "wwise-unreal-fixer.html": "wwise-unreal-fixer.json",
+      "richter.html": "richter.json",
+      "environments.html": "environments.json",
+      "amorak.html": "amorak.json",
+      "akantilado.html": "akantilado.json",
+      "ray-animation.html": "ray-animation.json",
+      "pawism.html": "pawism.json",
+      "not-today-darling.html": "not-today-darling.json",
+      "audiolab.html": "audiolab.json",
+      "pause-and-deserve.html": "pause-and-deserve.json",
+      "shadow-frames.html": "shadow-frames.json",
+      "middleware-optimization.html": "middleware-optimization.json",
+    };
+
+    // Check if this is a project page
+    if (path.includes("projects/") && projectMap[filename]) {
+      return projectMap[filename];
     }
 
     // Special case for projects/index.html
-    if (path === "/projects/" || path === "/projects/index.html") {
+    if (path === "/projects/" || path === "/projects/index.html" || filename === "index.html" && path.includes("projects/")) {
       return "projects.json";
     }
 
