@@ -641,9 +641,44 @@
             }
 
             .hexagon:hover .hexagon-inner {
-                background: rgba(51, 65, 85, 0.8);
-                border-color: rgba(148, 163, 184, 0.6);
-                box-shadow: 0 8px 32px rgba(96, 165, 250, 0.15);
+                background: rgba(51, 65, 85, 0.9);
+                border-color: rgba(96, 165, 250, 0.8);
+                box-shadow:
+                    0 0 40px rgba(96, 165, 250, 0.4),
+                    0 0 80px rgba(96, 165, 250, 0.2),
+                    inset 0 0 60px rgba(96, 165, 250, 0.1);
+            }
+
+            .hexagon.color-blue:hover .hexagon-inner {
+                box-shadow:
+                    0 0 40px rgba(59, 130, 246, 0.5),
+                    0 0 80px rgba(59, 130, 246, 0.25),
+                    inset 0 0 60px rgba(59, 130, 246, 0.15);
+                border-color: rgba(59, 130, 246, 0.8);
+            }
+
+            .hexagon.color-purple:hover .hexagon-inner {
+                box-shadow:
+                    0 0 40px rgba(168, 85, 247, 0.5),
+                    0 0 80px rgba(168, 85, 247, 0.25),
+                    inset 0 0 60px rgba(168, 85, 247, 0.15);
+                border-color: rgba(168, 85, 247, 0.8);
+            }
+
+            .hexagon.color-green:hover .hexagon-inner {
+                box-shadow:
+                    0 0 40px rgba(34, 197, 94, 0.5),
+                    0 0 80px rgba(34, 197, 94, 0.25),
+                    inset 0 0 60px rgba(34, 197, 94, 0.15);
+                border-color: rgba(34, 197, 94, 0.8);
+            }
+
+            .hexagon.color-orange:hover .hexagon-inner {
+                box-shadow:
+                    0 0 40px rgba(251, 146, 60, 0.5),
+                    0 0 80px rgba(251, 146, 60, 0.25),
+                    inset 0 0 60px rgba(251, 146, 60, 0.15);
+                border-color: rgba(251, 146, 60, 0.8);
             }
 
             .hexagon-icon {
@@ -689,9 +724,9 @@
                 opacity: 0;
                 pointer-events: none;
                 transition: all 0.3s ease;
-                z-index: 100;
+                z-index: 150;
                 backdrop-filter: blur(10px);
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
             }
 
             .hexagon:hover .hexagon-tooltip {
@@ -711,26 +746,38 @@
             }
 
             .connection-line {
-                stroke-width: 2;
+                stroke-width: 3;
                 stroke-linecap: round;
                 opacity: 0;
-                transition: opacity 0.3s ease;
-                filter: drop-shadow(0 0 8px currentColor);
+                transition: opacity 0.4s ease;
+                filter: drop-shadow(0 0 12px currentColor);
+                stroke-dasharray: 8 4;
             }
 
             .connection-line.visible {
-                opacity: 1;
-                animation: pulse-line 2s ease-in-out infinite;
+                opacity: 0.9;
+                animation:
+                    flow-line 3s linear infinite,
+                    pulse-glow 2s ease-in-out infinite;
             }
 
-            @keyframes pulse-line {
+            @keyframes flow-line {
+                0% {
+                    stroke-dashoffset: 0;
+                }
+                100% {
+                    stroke-dashoffset: 24;
+                }
+            }
+
+            @keyframes pulse-glow {
                 0%,
                 100% {
-                    stroke-width: 2;
+                    filter: drop-shadow(0 0 12px currentColor);
                     opacity: 0.8;
                 }
                 50% {
-                    stroke-width: 3;
+                    filter: drop-shadow(0 0 20px currentColor);
                     opacity: 1;
                 }
             }
