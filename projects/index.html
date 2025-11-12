@@ -8,6 +8,13 @@
         />
         <meta name="theme-color" content="#000000" />
 
+        <!-- Security headers -->
+        <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+        <meta
+            http-equiv="Referrer-Policy"
+            content="strict-origin-when-cross-origin"
+        />
+
         <!-- CRITICAL: Prevent white flash - inline styles load FIRST -->
         <style>
             html {
@@ -93,7 +100,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Sora:wght@400;500;600;700;800&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Sora:wght@600;700;800&display=swap"
             rel="stylesheet"
         />
 
@@ -113,6 +120,7 @@
             html {
                 scroll-behavior: smooth;
                 font-size: 15px;
+                scroll-padding-top: 80px; /* Prevent content hiding under fixed navigation */
             }
 
             body {
@@ -758,9 +766,11 @@
                 }
 
                 .filter-btn {
-                    padding: 0.5rem 0.85rem;
+                    padding: 0.6rem 1rem;
                     font-size: 0.75rem;
                     border-radius: 18px;
+                    min-height: 44px; /* WCAG AA touch target */
+                    min-width: 44px;
                 }
 
                 .projects-grid {
@@ -905,6 +915,155 @@
             .project-card.fade-in:nth-child(3n + 3) {
                 transition-delay: 0.16s;
             }
+
+            /* === CSS DESIGN TOKENS === */
+            :root {
+                /* Colors */
+                --color-primary: #60a5fa;
+                --color-primary-dark: #3b82f6;
+                --color-secondary: #a78bfa;
+                --color-accent: #ec4899;
+                --color-success: #10b981;
+                --color-success-dark: #059669;
+
+                /* Background colors */
+                --bg-dark: #0a0e12;
+                --bg-card: rgba(15, 23, 42, 0.6);
+                --bg-card-hover: rgba(15, 23, 42, 0.8);
+
+                /* Text colors */
+                --text-primary: #fff;
+                --text-secondary: #b0b8c9;
+                --text-muted: #94a3b8;
+
+                /* Opacity levels */
+                --opacity-subtle: 0.1;
+                --opacity-light: 0.2;
+                --opacity-medium: 0.3;
+                --opacity-strong: 0.6;
+
+                /* Spacing scale */
+                --space-xs: 0.5rem;
+                --space-sm: 0.75rem;
+                --space-md: 1rem;
+                --space-lg: 1.5rem;
+                --space-xl: 2rem;
+                --space-2xl: 3rem;
+                --space-3xl: 4rem;
+
+                /* Border radius */
+                --radius-sm: 8px;
+                --radius-md: 12px;
+                --radius-lg: 16px;
+                --radius-xl: 20px;
+                --radius-full: 50%;
+
+                /* Shadows */
+                --shadow-sm: 0 4px 12px rgba(96, 165, 250, 0.2);
+                --shadow-md: 0 8px 24px rgba(96, 165, 250, 0.3);
+                --shadow-lg: 0 12px 40px rgba(96, 165, 250, 0.3);
+                --shadow-xl: 0 16px 48px rgba(96, 165, 250, 0.3);
+
+                /* Transitions */
+                --transition-fast: 0.2s ease;
+                --transition-base: 0.3s ease;
+                --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+                /* Typography */
+                --font-body:
+                    "Poppins", -apple-system, BlinkMacSystemFont, sans-serif;
+                --font-heading: "Sora", sans-serif;
+            }
+
+            /* === SKIP LINK === */
+            .skip-link {
+                position: fixed;
+                top: -100px;
+                left: 0;
+                background: var(--color-success);
+                color: var(--text-primary);
+                padding: var(--space-sm) var(--space-lg);
+                text-decoration: none;
+                z-index: 9999;
+                border-radius: 0 0 var(--radius-sm) 0;
+                transition: top var(--transition-fast);
+            }
+
+            .skip-link:focus {
+                top: 0;
+            }
+
+            /* === ACCESSIBILITY: FOCUS STATES === */
+            .project-card:focus-visible,
+            .filter-btn:focus-visible,
+            a:focus-visible {
+                outline: 2px solid var(--color-primary);
+                outline-offset: 4px;
+                border-radius: var(--radius-md);
+            }
+
+            /* === ACCESSIBILITY: REDUCED MOTION === */
+            @media (prefers-reduced-motion: reduce) {
+                *,
+                *::before,
+                *::after {
+                    animation-duration: 0.01ms !important;
+                    animation-iteration-count: 1 !important;
+                    transition-duration: 0.01ms !important;
+                    scroll-behavior: auto !important;
+                }
+
+                .fade-in,
+                .project-card video,
+                .bg-orbs {
+                    animation: none !important;
+                }
+            }
+
+            /* === PRINT STYLES === */
+            @media print {
+                .skip-link,
+                .bg-gradient,
+                .bg-grid,
+                .bg-orbs,
+                nav,
+                .filter-container {
+                    display: none !important;
+                }
+
+                body {
+                    background: white !important;
+                    color: black !important;
+                }
+
+                h1,
+                h2,
+                h3,
+                h4,
+                h5,
+                h6,
+                p,
+                li,
+                a {
+                    color: black !important;
+                }
+
+                .project-card {
+                    break-inside: avoid;
+                    page-break-inside: avoid;
+                }
+
+                a[href^="http"]::after {
+                    content: " (" attr(href) ")";
+                    font-size: 0.8em;
+                    color: #666;
+                }
+
+                * {
+                    box-shadow: none !important;
+                    text-shadow: none !important;
+                }
+            }
         </style>
 
         <!-- Structured Data (JSON-LD) -->
@@ -962,6 +1121,8 @@
         </script>
     </head>
     <body>
+        <!-- Skip to main content for keyboard users -->
+        <a href="#main-content" class="skip-link">Skip to main content</a>
         <!-- Background -->
         <div class="bg-gradient"></div>
         <div class="bg-grid"></div>
