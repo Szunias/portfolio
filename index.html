@@ -2348,12 +2348,35 @@
                                 const iframe =
                                     document.getElementById("vimeo-iframe");
                                 if (iframe) {
-                                    iframe.addEventListener(
-                                        "load",
+                                    // Watch for src attribute change (lazy loading)
+                                    const observer = new MutationObserver(
                                         function () {
-                                            this.classList.add("loaded");
+                                            if (iframe.src) {
+                                                // src was added by lazy loading, add loaded class after short delay
+                                                setTimeout(function () {
+                                                    iframe.classList.add(
+                                                        "loaded",
+                                                    );
+                                                }, 500);
+                                                observer.disconnect();
+                                            }
                                         },
                                     );
+
+                                    observer.observe(iframe, {
+                                        attributes: true,
+                                        attributeFilter: ["src"],
+                                    });
+
+                                    // Fallback if src already exists
+                                    if (iframe.src) {
+                                        iframe.addEventListener(
+                                            "load",
+                                            function () {
+                                                this.classList.add("loaded");
+                                            },
+                                        );
+                                    }
                                 }
                             })();
                         </script>
