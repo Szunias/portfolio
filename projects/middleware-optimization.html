@@ -1581,8 +1581,180 @@
         </footer>
 
         <!-- Translation Script -->
-        <!-- Translation System -->
+        <script>
+            let translations = {};
+            let currentLang = localStorage.getItem("language") || "en";
 
-        <script src="../assets/js/project-translations.js"></script>
+            async function loadTranslations() {
+                try {
+                    const response = await fetch(
+                        "../locales/middleware-optimization.json",
+                    );
+                    if (!response.ok)
+                        throw new Error(
+                            `HTTP error! status: ${response.status}`,
+                        );
+                    translations = await response.json();
+                } catch (error) {
+                    console.error("Failed to load translations:", error);
+                    translations = { en: {}, pl: {}, nl: {} };
+                }
+            }
+
+            function getNestedValue(obj, path) {
+                return path
+                    .split(".")
+                    .reduce((current, key) => current?.[key], obj);
+            }
+
+            function setLanguage(lang) {
+                currentLang = lang;
+                localStorage.setItem("language", lang);
+
+                document.querySelectorAll("[data-i18n]").forEach((el) => {
+                    const key = el.getAttribute("data-i18n");
+                    const translation = getNestedValue(translations[lang], key);
+                    if (translation) {
+                        el.textContent = translation;
+                    }
+                });
+
+                document.querySelectorAll(".lang-btn").forEach((btn) => {
+                    btn.classList.toggle("active", btn.dataset.lang === lang);
+                });
+            }
+
+            document.addEventListener("DOMContentLoaded", async () => {
+                await loadTranslations();
+                setLanguage(currentLang);
+
+                document.querySelectorAll(".lang-btn").forEach((btn) => {
+                    btn.addEventListener("click", () => {
+                        setLanguage(btn.dataset.lang);
+                    });
+                });
+            });
+
+            // Scroll Reveal Animation
+            function reveal() {
+                const reveals = document.querySelectorAll(
+                    ".project-full, .skill-card",
+                );
+
+                reveals.forEach((element) => {
+                    const windowHeight = window.innerHeight;
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+
+                    if (elementTop < windowHeight - elementVisible) {
+                        element.classList.add("active");
+                    }
+                });
+            }
+
+            window.addEventListener("scroll", reveal);
+            window.addEventListener("DOMContentLoaded", reveal);
+        </script>
+
+        <!-- Audio Player Script -->
+        <script>
+            (function () {
+                let active = { audio: null, el: null };
+
+                function bindPlayer(el) {
+                    const src = el.getAttribute("data-audio") || "";
+                    if (!src) return; // Skip if no audio source
+
+                    const btn = document.createElement("button");
+                    btn.setAttribute(
+                        "aria-label",
+                        el.getAttribute("aria-label") || "Play sample",
+                    );
+                    const inner = document.createElement("div");
+                    inner.className = "inner";
+                    const tri = document.createElement("div");
+                    tri.className = "tri";
+                    btn.appendChild(tri);
+                    inner.appendChild(btn);
+                    el.appendChild(inner);
+
+                    let audio = new Audio(src);
+                    audio.preload = "metadata";
+                    let raf = null;
+
+                    function loop() {
+                        if (!audio.duration) {
+                            raf = requestAnimationFrame(loop);
+                            return;
+                        }
+                        const p = Math.min(
+                            1,
+                            audio.currentTime / audio.duration,
+                        );
+                        el.style.setProperty(
+                            "--p",
+                            `${(p * 360).toFixed(1)}deg`,
+                        );
+                        if (!audio.paused) raf = requestAnimationFrame(loop);
+                    }
+
+                    function play() {
+                        if (active.el && active.el !== el) stopActive();
+                        active = { audio, el };
+                        btn.classList.add("paused");
+                        audio
+                            .play()
+                            .then(() => {
+                                raf = requestAnimationFrame(loop);
+                            })
+                            .catch(() => {
+                                stopActive();
+                            });
+                    }
+
+                    function pause() {
+                        audio.pause();
+                        btn.classList.remove("paused");
+                        cancelAnimationFrame(raf);
+                        raf = null;
+                    }
+
+                    btn.addEventListener("click", () => {
+                        if (audio.paused) play();
+                        else pause();
+                    });
+
+                    audio.addEventListener("ended", () => {
+                        pause();
+                        audio.currentTime = 0;
+                        el.style.setProperty("--p", "0deg");
+                    });
+
+                    audio.addEventListener("error", stopActive);
+                }
+
+                function stopActive() {
+                    if (active.audio) {
+                        try {
+                            active.audio.pause();
+                        } catch {}
+                    }
+                    if (active.el) {
+                        active.el
+                            .querySelector("button")
+                            ?.classList.remove("paused");
+                        active.el.style.setProperty("--p", "0deg");
+                    }
+                    active = { audio: null, el: null };
+                }
+
+                document.addEventListener("DOMContentLoaded", () => {
+                    document
+                        .querySelectorAll(".audio-player")
+                        .forEach(bindPlayer);
+                });
+            })();
+        </script>
+        <script src="../assets/js/performance-boost.js" defer></script>
     </body>
 </html>

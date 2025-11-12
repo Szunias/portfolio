@@ -14,69 +14,29 @@
         </script>
         <!-- CRITICAL 2: Base styles - Prevents white flash -->
         <style>
-            /* === CSS DESIGN TOKENS === */
-            :root {
-                /* Colors */
-                --color-primary: #60a5fa;
-                --color-primary-dark: #3b82f6;
-                --color-secondary: #a78bfa;
-                --color-accent: #ec4899;
-                --color-success: #10b981;
-                --color-success-dark: #059669;
-
-                /* Background colors */
-                --bg-dark: #0a0e12;
-                --bg-card: rgba(15, 23, 42, 0.6);
-                --bg-card-hover: rgba(15, 23, 42, 0.8);
-
-                /* Text colors */
-                --text-primary: #fff;
-                --text-secondary: #b0b8c9;
-                --text-muted: #94a3b8;
-
-                /* Opacity levels */
-                --opacity-subtle: 0.1;
-                --opacity-light: 0.2;
-                --opacity-medium: 0.3;
-                --opacity-strong: 0.6;
-
-                /* Spacing scale */
-                --space-xs: 0.5rem;
-                --space-sm: 0.75rem;
-                --space-md: 1rem;
-                --space-lg: 1.5rem;
-                --space-xl: 2rem;
-                --space-2xl: 3rem;
-                --space-3xl: 4rem;
-
-                /* Border radius */
-                --radius-sm: 8px;
-                --radius-md: 12px;
-                --radius-lg: 16px;
-                --radius-xl: 20px;
-                --radius-full: 50%;
-
-                /* Shadows */
-                --shadow-sm: 0 4px 12px rgba(96, 165, 250, 0.2);
-                --shadow-md: 0 8px 24px rgba(96, 165, 250, 0.3);
-                --shadow-lg: 0 12px 40px rgba(96, 165, 250, 0.3);
-                --shadow-xl: 0 16px 48px rgba(96, 165, 250, 0.3);
-
-                /* Transitions */
-                --transition-fast: 0.2s ease;
-                --transition-base: 0.3s ease;
-                --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
-                /* Typography */
-                --font-body:
-                    "Poppins", -apple-system, BlinkMacSystemFont, sans-serif;
-                --font-heading: "Sora", sans-serif;
-            }
-
             /* Dark theme background - loads immediately */
             html {
                 color-scheme: dark;
-                background: #000;
+                background:
+                    radial-gradient(
+                        circle at 20% 20%,
+                        rgba(59, 130, 246, 0.4) 0%,
+                        rgba(59, 130, 246, 0.09) 40%,
+                        transparent 70%
+                    ),
+                    radial-gradient(
+                        circle at 80% 80%,
+                        rgba(139, 92, 246, 0.35) 0%,
+                        rgba(139, 92, 246, 0.08) 40%,
+                        transparent 70%
+                    ),
+                    radial-gradient(
+                        circle at 50% 50%,
+                        rgba(236, 72, 153, 0.25) 0%,
+                        rgba(236, 72, 153, 0.05) 50%,
+                        transparent 80%
+                    ),
+                    #000 !important;
             } /* Hide translatable content until translations load - PREVENTS FLICKER */
             body {
                 margin: 0;
@@ -125,7 +85,7 @@
         />
         <meta
             name="description"
-            content="Game audio designer: Wwise, C++, Unreal Engine. Interactive music, audio middleware, production tools. Available 2026 internship (EU)."
+            content="Game audio designer specializing in Wwise, C++, and Unreal Engine. Building interactive music systems, implementing audio middleware, and creating production tools. Available for 2026 internship (3-6 months, EU passport, relocation-ready)."
         />
         <meta
             name="keywords"
@@ -137,6 +97,7 @@
             content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
         />
         <link rel="canonical" href="https://igorszuniewicz.com/" />
+        <meta name="theme-color" content="#000000" />
         <!-- Google Search Console Verification - Already verified -->
         <!-- Resource Hints for Performance -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -208,17 +169,20 @@
         <!-- Web App Manifest -->
         <link rel="manifest" href="manifest.json" />
         <!-- Preloader removed for production -->
+        <!-- Performance: Critical resource hints -->
+        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         <!-- Don't preload lazy-loaded assets - defeats the purpose -->
-        <!-- Google Fonts - optimized loading (reduced from 12 to 6 weights) -->
+        <!-- Google Fonts - optimized loading -->
         <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Sora:wght@600;700;800&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Sora:wght@400;500;600;700;800&display=swap"
             rel="stylesheet"
             media="print"
             onload="this.media='all'"
         />
         <noscript>
             <link
-                href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Sora:wght@600;700;800&display=swap"
+                href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Sora:wght@400;500;600;700;800&display=swap"
                 rel="stylesheet"
             />
         </noscript>
@@ -370,8 +334,12 @@
             }
 
             /* GPU acceleration for smooth animations */
-            /* Removed permanent will-change - causes performance issues
-               Apply dynamically during interactions if needed */
+            .project-card,
+            .btn,
+            .hero-content,
+            .cv-dropdown-menu {
+                will-change: transform;
+            }
 
             /* Disable heavy animations on mobile for 60fps */
             @media (max-width: 768px) {
@@ -399,7 +367,6 @@
             html {
                 scroll-behavior: smooth;
                 font-size: 15px;
-                scroll-padding-top: 80px; /* Prevent content hiding under fixed navigation */
             }
             body {
                 font-family:
@@ -637,24 +604,6 @@
                 border: none;
                 letter-spacing: 0.02em;
             }
-            /* === SKIP LINK === */
-            .skip-link {
-                position: fixed;
-                top: -100px;
-                left: 0;
-                background: var(--color-success);
-                color: var(--text-primary);
-                padding: var(--space-sm) var(--space-lg);
-                text-decoration: none;
-                z-index: 9999;
-                border-radius: 0 0 var(--radius-sm) 0;
-                transition: top var(--transition-fast);
-            }
-
-            .skip-link:focus {
-                top: 0;
-            }
-
             .btn-primary {
                 background: linear-gradient(135deg, #3b82f6, #6366f1);
                 color: #fff;
@@ -867,30 +816,13 @@
                 max-width: 900px;
                 margin: 0 auto;
                 aspect-ratio: 16 / 9;
-                background: #0a0e12;
+                background: transparent;
                 border-radius: 24px;
                 border: none;
                 overflow: hidden;
                 box-shadow: none;
                 transition: transform 0.5s ease;
                 cursor: pointer;
-            }
-
-            .vimeo-wrapper {
-                position: relative;
-                width: 100%;
-                height: 100%;
-                background: #0a0e12;
-            }
-
-            .vimeo-wrapper iframe {
-                background: #0a0e12;
-                opacity: 0;
-                transition: opacity 0.5s ease;
-            }
-
-            .vimeo-wrapper iframe.loaded {
-                opacity: 1;
             }
             .demo-reel-player:hover {
                 transform: translateY(-8px);
@@ -1513,9 +1445,8 @@
                     font-size: 0.85rem;
                 }
                 .btn {
-                    padding: 0.875rem 1.25rem; /* Ensures 44px minimum touch target */
+                    padding: 0.8rem 1.1rem;
                     font-size: 0.85rem;
-                    min-height: 44px;
                 }
                 section {
                     padding: 2.5rem 0;
@@ -1962,222 +1893,20 @@
                     gap: 1rem;
                 }
             }
-
-            /* === ACCESSIBILITY: FOCUS STATES === */
-            .btn:focus-visible,
-            .project-card:focus-visible,
-            .stat-card:focus-visible,
-            .timeline-nav-item:focus-visible {
-                outline: 2px solid var(--color-primary);
-                outline-offset: 4px;
-                border-radius: var(--radius-md);
-            }
-
-            /* === CORE TECHNOLOGIES SECTION === */
-            .core-tech-section {
-                padding: 4rem 0;
-                background: rgba(255, 255, 255, 0.02);
-            }
-
-            .core-tech-header {
-                text-align: center;
-                margin-bottom: 3rem;
-            }
-
-            .core-tech-title {
-                font-size: 2.5rem;
-                margin: 1rem 0;
-            }
-
-            .core-tech-description {
-                max-width: 800px;
-                margin: 0 auto;
-            }
-
-            .core-tech-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 2rem;
-                max-width: 1200px;
-                margin: 0 auto;
-            }
-
-            .core-tech-card {
-                background: rgba(255, 255, 255, 0.05);
-                border-radius: 16px;
-                padding: 2rem;
-                text-align: center;
-                transition:
-                    transform var(--transition-base),
-                    box-shadow var(--transition-base);
-            }
-
-            .core-tech-card:hover {
-                transform: translateY(-4px);
-                box-shadow: var(--shadow-md);
-            }
-
-            .core-tech-card-wwise {
-                border: 1px solid rgba(78, 205, 196, 0.3);
-            }
-
-            .core-tech-card-cpp {
-                border: 1px solid rgba(154, 108, 255, 0.3);
-            }
-
-            .core-tech-card-unreal {
-                border: 1px solid rgba(24, 191, 239, 0.3);
-            }
-
-            .core-tech-icon {
-                margin-bottom: 1rem;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 64px;
-            }
-
-            .core-tech-icon-wwise {
-                color: #4ecdc4;
-            }
-
-            .core-tech-icon-cpp {
-                color: #9a6cff;
-            }
-
-            .core-tech-icon-unreal {
-                color: #18bfef;
-            }
-
-            .core-tech-card h3 {
-                font-size: 1.5rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .core-tech-card-wwise h3 {
-                color: #4ecdc4;
-            }
-
-            .core-tech-card-cpp h3 {
-                color: #9a6cff;
-            }
-
-            .core-tech-card-unreal h3 {
-                color: #18bfef;
-            }
-
-            .core-tech-card p {
-                color: #aaa;
-                line-height: 1.6;
-            }
-
-            /* === ACCESSIBILITY: REDUCED MOTION === */
-            @media (prefers-reduced-motion: reduce) {
-                *,
-                *::before,
-                *::after {
-                    animation-duration: 0.01ms !important;
-                    animation-iteration-count: 1 !important;
-                    transition-duration: 0.01ms !important;
-                    scroll-behavior: auto !important;
-                }
-
-                .bg-orbs,
-                .orb,
-                .fade-in,
-                .project-card video {
-                    animation: none !important;
-                }
-            }
-
-            /* === PRINT STYLES === */
-            @media print {
-                /* Hide non-essential elements */
-                .skip-link,
-                .bg-gradient,
-                .bg-grid,
-                .bg-orbs,
-                nav,
-                .hero-cta,
-                .back-to-top,
-                .social-links,
-                .cv-dropdown-menu,
-                .demo-reel-player,
-                .project-switcher,
-                .timeline-nav {
-                    display: none !important;
-                }
-
-                /* Reset colors for print */
-                body {
-                    background: white !important;
-                    color: black !important;
-                }
-
-                /* Ensure text is readable */
-                h1,
-                h2,
-                h3,
-                h4,
-                h5,
-                h6,
-                p,
-                li,
-                a {
-                    color: black !important;
-                }
-
-                /* Page breaks */
-                .project-card,
-                .stat-card,
-                .core-tech-card,
-                section {
-                    break-inside: avoid;
-                    page-break-inside: avoid;
-                }
-
-                section {
-                    page-break-after: auto;
-                }
-
-                /* Expand links */
-                a[href^="http"]::after {
-                    content: " (" attr(href) ")";
-                    font-size: 0.8em;
-                    color: #666;
-                }
-
-                /* Remove shadows and effects */
-                * {
-                    box-shadow: none !important;
-                    text-shadow: none !important;
-                }
-
-                /* Simplify layout */
-                .hero {
-                    min-height: auto;
-                    padding: 2rem 0;
-                }
-
-                .container {
-                    max-width: 100%;
-                }
-
-                /* Show URLs for important links */
-                .btn::after {
-                    content: " [" attr(href) "]";
-                    font-size: 0.75em;
-                }
-            }
         </style>
     </head>
     <body>
         <!-- Skip to main content for keyboard users -->
-        <a href="#main-content" class="skip-link">Skip to main content</a>
+        <a href="#main" class="skip-link">Skip to main content</a>
         <!-- Background -->
         <div class="bg-gradient"></div>
         <div class="bg-grid"></div>
-        <div class="bg-orbs"></div>
+        <div class="bg-orbs">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+            <div class="orb orb-4"></div>
+        </div>
         <!-- Navigation loaded by navigation.js -->
         <!-- Hero -->
         <section
@@ -2328,6 +2057,7 @@
                                 data-lazy-iframe
                                 id="vimeo-iframe"
                                 data-src="https://player.vimeo.com/video/1131121335?badge=0&autopause=0&player_id=0&app_id=58479&controls=1&title=0&byline=0&portrait=0"
+                                frameborder="0"
                                 loading="lazy"
                                 allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
                                 style="
@@ -2342,44 +2072,6 @@
                                 title="Showreel"
                             ></iframe>
                         </div>
-                        <script>
-                            // Fade in iframe after it loads to prevent white flash
-                            (function () {
-                                const iframe =
-                                    document.getElementById("vimeo-iframe");
-                                if (iframe) {
-                                    // Watch for src attribute change (lazy loading)
-                                    const observer = new MutationObserver(
-                                        function () {
-                                            if (iframe.src) {
-                                                // src was added by lazy loading, add loaded class after short delay
-                                                setTimeout(function () {
-                                                    iframe.classList.add(
-                                                        "loaded",
-                                                    );
-                                                }, 500);
-                                                observer.disconnect();
-                                            }
-                                        },
-                                    );
-
-                                    observer.observe(iframe, {
-                                        attributes: true,
-                                        attributeFilter: ["src"],
-                                    });
-
-                                    // Fallback if src already exists
-                                    if (iframe.src) {
-                                        iframe.addEventListener(
-                                            "load",
-                                            function () {
-                                                this.classList.add("loaded");
-                                            },
-                                        );
-                                    }
-                                }
-                            })();
-                        </script>
                         <style>
                             .timestamp-item.active {
                                 background: rgba(96, 165, 250, 0.3);
@@ -2443,8 +2135,6 @@
                                 <div
                                     class="project-current-name"
                                     id="current-project-name"
-                                    aria-live="polite"
-                                    aria-atomic="true"
                                 >
                                     AMORAK
                                 </div>
@@ -2507,33 +2197,66 @@
         <section
             id="core-tech"
             aria-label="Core Technologies"
-            class="core-tech-section"
+            style="padding: 4rem 0; background: rgba(255, 255, 255, 0.02)"
         >
             <div class="container">
-                <div class="section-header fade-in core-tech-header">
+                <div
+                    class="section-header fade-in"
+                    style="text-align: center; margin-bottom: 3rem"
+                >
                     <div class="section-label" data-i18n="core_tech.label">
                         Core Technologies
                     </div>
                     <h2
-                        class="section-title core-tech-title"
+                        class="section-title"
+                        style="font-size: 2.5rem; margin: 1rem 0"
                         data-i18n="core_tech.title"
                     >
                         Wwise, C++, & Unreal Engine
                     </h2>
                     <p
-                        class="section-description core-tech-description"
+                        class="section-description"
+                        style="max-width: 800px; margin: 0 auto"
                         data-i18n="core_tech.description"
                     ></p>
                 </div>
-                <div class="core-tech-grid">
-                    <div class="core-tech-card core-tech-card-wwise">
-                        <div class="core-tech-icon core-tech-icon-wwise">
+                <div
+                    style="
+                        display: grid;
+                        grid-template-columns: repeat(
+                            auto-fit,
+                            minmax(280px, 1fr)
+                        );
+                        gap: 2rem;
+                        max-width: 1200px;
+                        margin: 0 auto;
+                    "
+                >
+                    <div
+                        style="
+                            background: rgba(255, 255, 255, 0.05);
+                            border: 1px solid rgba(78, 205, 196, 0.3);
+                            border-radius: 16px;
+                            padding: 2rem;
+                            text-align: center;
+                        "
+                    >
+                        <div
+                            style="
+                                margin-bottom: 1rem;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                height: 64px;
+                            "
+                        >
                             <svg
                                 width="64"
                                 height="64"
                                 viewBox="0 0 64 64"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
+                                style="color: #4ecdc4"
                             >
                                 <path
                                     d="M20 20L20 44"
@@ -2585,17 +2308,46 @@
                                 />
                             </svg>
                         </div>
-                        <h3 data-i18n="core_tech.wwise.title">Wwise</h3>
-                        <p data-i18n="core_tech.wwise.description"></p>
+                        <h3
+                            style="
+                                font-size: 1.5rem;
+                                margin-bottom: 0.5rem;
+                                color: #4ecdc4;
+                            "
+                            data-i18n="core_tech.wwise.title"
+                        >
+                            Wwise
+                        </h3>
+                        <p
+                            style="color: #aaa; line-height: 1.6"
+                            data-i18n="core_tech.wwise.description"
+                        ></p>
                     </div>
-                    <div class="core-tech-card core-tech-card-cpp">
-                        <div class="core-tech-icon core-tech-icon-cpp">
+                    <div
+                        style="
+                            background: rgba(255, 255, 255, 0.05);
+                            border: 1px solid rgba(154, 108, 255, 0.3);
+                            border-radius: 16px;
+                            padding: 2rem;
+                            text-align: center;
+                        "
+                    >
+                        <div
+                            style="
+                                margin-bottom: 1rem;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                height: 64px;
+                            "
+                        >
                             <svg
                                 width="64"
                                 height="64"
                                 viewBox="0 0 64 64"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
+                                style="color: #9a6cff"
                             >
                                 <path
                                     d="M18 20C18 18 20 16 22 16L26 16C28 16 30 18 30 20L30 44C30 46 28 48 26 48L22 48C20 48 18 46 18 44L18 20Z"
@@ -2649,19 +2401,46 @@
                                 />
                             </svg>
                         </div>
-                        <h3 data-i18n="core_tech.cpp.title">
+                        <h3
+                            style="
+                                font-size: 1.5rem;
+                                margin-bottom: 0.5rem;
+                                color: #9a6cff;
+                            "
+                            data-i18n="core_tech.cpp.title"
+                        >
                             C++ Audio Programming
                         </h3>
-                        <p data-i18n="core_tech.cpp.description"></p>
+                        <p
+                            style="color: #aaa; line-height: 1.6"
+                            data-i18n="core_tech.cpp.description"
+                        ></p>
                     </div>
-                    <div class="core-tech-card core-tech-card-unreal">
-                        <div class="core-tech-icon core-tech-icon-unreal">
+                    <div
+                        style="
+                            background: rgba(255, 255, 255, 0.05);
+                            border: 1px solid rgba(24, 191, 239, 0.3);
+                            border-radius: 16px;
+                            padding: 2rem;
+                            text-align: center;
+                        "
+                    >
+                        <div
+                            style="
+                                margin-bottom: 1rem;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                height: 64px;
+                            "
+                        >
                             <svg
                                 width="64"
                                 height="64"
                                 viewBox="0 0 64 64"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
+                                style="color: #18bfef"
                             >
                                 <path
                                     d="M32 12L48 20L48 36L32 44L16 36L16 20L32 12Z"
@@ -2720,16 +2499,26 @@
                                 />
                             </svg>
                         </div>
-                        <h3 data-i18n="core_tech.unreal.title">
+                        <h3
+                            style="
+                                font-size: 1.5rem;
+                                margin-bottom: 0.5rem;
+                                color: #18bfef;
+                            "
+                            data-i18n="core_tech.unreal.title"
+                        >
                             Unreal Engine
                         </h3>
-                        <p data-i18n="core_tech.unreal.description"></p>
+                        <p
+                            style="color: #aaa; line-height: 1.6"
+                            data-i18n="core_tech.unreal.description"
+                        ></p>
                     </div>
                 </div>
             </div>
         </section>
         <!-- Featured Projects -->
-        <main id="main-content">
+        <main>
             <section
                 id="work"
                 aria-label="Featured projects"
