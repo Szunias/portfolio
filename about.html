@@ -546,7 +546,196 @@
                 transform: translateY(-2px);
             }
 
-            /* === SKILLS SHOWCASE === */
+            /* === SKILLS HEXAGON GRID === */
+            .skills-hexagon-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-top: 3rem;
+                padding: 2rem 0;
+                max-width: 650px;
+                margin-left: auto;
+                margin-right: auto;
+                position: relative;
+            }
+
+            .hexagon {
+                position: relative;
+                width: 120px;
+                height: 138px;
+                margin: -18px 4px 0 4px;
+                cursor: pointer;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                opacity: 1;
+            }
+
+            /* Honeycomb offset - shift every 6th, 7th, 8th in second row */
+            .hexagon:nth-child(n + 6):nth-child(-n + 8) {
+                margin-left: 66px;
+            }
+
+            .hexagon:nth-child(n + 11):nth-child(-n + 13) {
+                margin-left: 66px;
+            }
+
+            .hexagon:hover {
+                transform: scale(1.2) translateY(-8px);
+                z-index: 10;
+            }
+
+            /* Dimming effect when hovering */
+            .skills-hexagon-container.dimmed .hexagon {
+                opacity: 0.25;
+                filter: blur(1px);
+            }
+
+            .skills-hexagon-container.dimmed .hexagon.active,
+            .skills-hexagon-container.dimmed .hexagon.connected {
+                opacity: 1;
+                filter: blur(0);
+            }
+
+            .skills-hexagon-container.dimmed .hexagon.active {
+                transform: scale(1.25) translateY(-10px);
+            }
+
+            .hexagon-inner {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                clip-path: polygon(
+                    50% 0%,
+                    100% 25%,
+                    100% 75%,
+                    50% 100%,
+                    0% 75%,
+                    0% 25%
+                );
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 1.5rem;
+                transition: all 0.4s ease;
+                backdrop-filter: blur(10px);
+            }
+
+            .hexagon.color-blue .hexagon-inner {
+                background: rgba(30, 41, 59, 0.6);
+                border: 1px solid rgba(71, 85, 105, 0.5);
+            }
+
+            .hexagon.color-purple .hexagon-inner {
+                background: rgba(30, 41, 59, 0.6);
+                border: 1px solid rgba(71, 85, 105, 0.5);
+            }
+
+            .hexagon.color-green .hexagon-inner {
+                background: rgba(30, 41, 59, 0.6);
+                border: 1px solid rgba(71, 85, 105, 0.5);
+            }
+
+            .hexagon.color-orange .hexagon-inner {
+                background: rgba(30, 41, 59, 0.6);
+                border: 1px solid rgba(71, 85, 105, 0.5);
+            }
+
+            .hexagon:hover .hexagon-inner {
+                background: rgba(51, 65, 85, 0.8);
+                border-color: rgba(148, 163, 184, 0.6);
+                box-shadow: 0 8px 32px rgba(96, 165, 250, 0.15);
+            }
+
+            .hexagon-icon {
+                width: 48px;
+                height: 48px;
+                margin-bottom: 0.5rem;
+                opacity: 0.95;
+                object-fit: contain;
+                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            }
+
+            .hexagon-icon[src*=".png"] {
+                object-fit: contain;
+            }
+
+            svg.hexagon-icon {
+                fill: currentColor;
+                font-size: 2rem;
+            }
+
+            .hexagon-name {
+                font-size: 0.85rem;
+                font-weight: 700;
+                text-align: center;
+                color: #fff;
+                line-height: 1.3;
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
+            }
+
+            .hexagon-tooltip {
+                position: absolute;
+                bottom: -70px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(15, 23, 42, 0.98);
+                padding: 0.75rem 1rem;
+                border-radius: 8px;
+                border: 1px solid rgba(96, 165, 250, 0.4);
+                font-size: 0.75rem;
+                color: #e0e7ff;
+                white-space: nowrap;
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.3s ease;
+                z-index: 100;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            }
+
+            .hexagon:hover .hexagon-tooltip {
+                opacity: 1;
+                bottom: -60px;
+            }
+
+            /* Connection lines */
+            #hexagon-connections {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: 5;
+            }
+
+            .connection-line {
+                stroke-width: 2;
+                stroke-linecap: round;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                filter: drop-shadow(0 0 8px currentColor);
+            }
+
+            .connection-line.visible {
+                opacity: 1;
+                animation: pulse-line 2s ease-in-out infinite;
+            }
+
+            @keyframes pulse-line {
+                0%,
+                100% {
+                    stroke-width: 2;
+                    opacity: 0.8;
+                }
+                50% {
+                    stroke-width: 3;
+                    opacity: 1;
+                }
+            }
+
+            /* === OLD SKILLS SHOWCASE === */
             .skills-showcase {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -727,65 +916,40 @@
                 align-items: center;
                 gap: 1rem;
                 padding: 1rem;
-                background: rgba(96, 165, 250, 0.05);
-                border: 1px solid rgba(96, 165, 250, 0.2);
+                background: transparent;
+                border: none;
                 border-radius: 10px;
                 transition: all 0.3s ease;
                 cursor: pointer;
             }
 
-            .skill-item:hover {
-                background: rgba(96, 165, 250, 0.15);
-                border-color: rgba(96, 165, 250, 0.5);
-                transform: translateX(8px);
+            .skill-item:hover .skill-item-name {
+                font-size: 1.1em;
+                font-weight: 600;
+                color: #fff;
+                letter-spacing: 0.3px;
             }
 
-            /* Skill item colors per category */
-            .color-blue .skill-item {
-                background: rgba(96, 165, 250, 0.05);
-                border-color: rgba(96, 165, 250, 0.2);
-            }
-            .color-blue .skill-item:hover {
-                background: rgba(96, 165, 250, 0.15);
-                border-color: rgba(96, 165, 250, 0.5);
-                box-shadow: 0 4px 16px rgba(96, 165, 250, 0.2);
-            }
-
-            .color-purple .skill-item {
-                background: rgba(168, 85, 247, 0.05);
-                border-color: rgba(168, 85, 247, 0.2);
-            }
-            .color-purple .skill-item:hover {
-                background: rgba(168, 85, 247, 0.15);
-                border-color: rgba(168, 85, 247, 0.5);
-                box-shadow: 0 4px 16px rgba(168, 85, 247, 0.2);
-            }
-
-            .color-green .skill-item {
-                background: rgba(34, 197, 94, 0.05);
-                border-color: rgba(34, 197, 94, 0.2);
-            }
-            .color-green .skill-item:hover {
-                background: rgba(34, 197, 94, 0.15);
-                border-color: rgba(34, 197, 94, 0.5);
-                box-shadow: 0 4px 16px rgba(34, 197, 94, 0.2);
-            }
-
-            .color-orange .skill-item {
-                background: rgba(251, 146, 60, 0.05);
-                border-color: rgba(251, 146, 60, 0.2);
-            }
-            .color-orange .skill-item:hover {
-                background: rgba(251, 146, 60, 0.15);
-                border-color: rgba(251, 146, 60, 0.5);
-                box-shadow: 0 4px 16px rgba(251, 146, 60, 0.2);
-                transform: translateX(8px);
+            .skill-item:hover .skill-item-projects {
+                opacity: 0.9;
             }
 
             .skill-item-name {
                 flex: 1;
-                font-weight: 500;
-                color: #60a5fa;
+                font-weight: 600;
+                color: #e0e7ff;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.95rem;
+            }
+
+            .skill-icon {
+                width: 20px;
+                height: 20px;
+                fill: currentColor;
+                opacity: 0.8;
             }
 
             .skill-item-badge {
@@ -804,6 +968,7 @@
                 margin-top: 0.5rem;
                 padding-left: 1rem;
                 border-left: 2px solid rgba(96, 165, 250, 0.3);
+                transition: all 0.3s ease;
             }
 
             /* === TIMELINE === */
@@ -1294,224 +1459,298 @@
                         </p>
                     </div>
 
-                    <div class="skills-showcase fade-in">
-                        <!-- Game Audio Middleware -->
-                        <div class="skill-category-card color-blue">
-                            <div class="skill-category-header">
-                                <div class="skill-category-icon">🎮</div>
-                                <h3
-                                    class="skill-category-title"
-                                    data-i18n="tech_middleware_title"
-                                >
-                                    Game Audio Middleware
-                                </h3>
+                    <div class="skills-hexagon-container fade-in">
+                        <!-- Wwise -->
+                        <div class="hexagon color-blue" data-skill="wwise">
+                            <div class="hexagon-inner">
+                                <img
+                                    src="honeyicons/wwiselogo.png"
+                                    alt="Wwise"
+                                    class="hexagon-icon"
+                                />
+                                <span class="hexagon-name">Wwise</span>
                             </div>
-                            <div class="skill-items">
-                                <div class="skill-item">
-                                    <span class="skill-item-name">Wwise</span>
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="wwise_projects"
-                                >
-                                    Not Today Darling, Pause & Deserve
-                                </div>
-                                <div class="skill-item">
-                                    <span class="skill-item-name">FMOD</span>
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="fmod_projects"
-                                >
-                                    Richter, Middleware Audio Tools
-                                </div>
-                                <div class="skill-item">
-                                    <span class="skill-item-name"
-                                        >Unreal Engine</span
-                                    >
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="unreal_projects"
-                                >
-                                    Not Today Darling, Pause & Deserve
-                                </div>
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="wwise_projects"
+                            >
+                                Not Today Darling, Pause & Deserve
                             </div>
                         </div>
 
-                        <!-- DAWs & Production -->
-                        <div class="skill-category-card color-purple">
-                            <div class="skill-category-header">
-                                <div class="skill-category-icon">🎛️</div>
-                                <h3
-                                    class="skill-category-title"
-                                    data-i18n="tech_daw_title"
-                                >
-                                    DAWs & Production
-                                </h3>
+                        <!-- FMOD -->
+                        <div class="hexagon color-blue" data-skill="fmod">
+                            <div class="hexagon-inner">
+                                <img
+                                    src="honeyicons/fmodlogo.png"
+                                    alt="FMOD"
+                                    class="hexagon-icon"
+                                />
+                                <span class="hexagon-name">FMOD</span>
                             </div>
-                            <div class="skill-items">
-                                <div class="skill-item">
-                                    <span class="skill-item-name">Reaper</span>
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="reaper_projects"
-                                >
-                                    All project sound design & mixing
-                                </div>
-                                <div class="skill-item">
-                                    <span class="skill-item-name"
-                                        >Ableton Live</span
-                                    >
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="ableton_projects"
-                                >
-                                    Music production & sound design
-                                </div>
-                                <div class="skill-item">
-                                    <span class="skill-item-name"
-                                        >FL Studio</span
-                                    >
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="fl_projects"
-                                >
-                                    Music composition & arrangement
-                                </div>
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="fmod_projects"
+                            >
+                                Richter, Middleware Audio Tools
                             </div>
                         </div>
 
-                        <!-- Programming & Tools -->
-                        <div class="skill-category-card color-green">
-                            <div class="skill-category-header">
-                                <div class="skill-category-icon">💻</div>
-                                <h3
-                                    class="skill-category-title"
-                                    data-i18n="tech_programming_title"
-                                >
-                                    Programming & Tools
-                                </h3>
+                        <!-- Unreal Engine -->
+                        <div class="hexagon color-blue" data-skill="unreal">
+                            <div class="hexagon-inner">
+                                <img
+                                    src="honeyicons/Unreal_Engine-Logo.wine.png"
+                                    alt="Unreal Engine"
+                                    class="hexagon-icon"
+                                />
+
+                                <span class="hexagon-name">Unreal</span>
                             </div>
-                            <div class="skill-items">
-                                <div class="skill-item">
-                                    <span class="skill-item-name">C++</span>
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="cpp_projects"
-                                >
-                                    Audio plugins, Wwise integration tools
-                                </div>
-                                <div class="skill-item">
-                                    <span class="skill-item-name">C#</span>
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="csharp_projects"
-                                >
-                                    Unity audio scripting, custom tools
-                                </div>
-                                <div class="skill-item">
-                                    <span class="skill-item-name">Python</span>
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="python_projects"
-                                >
-                                    ML audio analysis, pipeline automation
-                                </div>
-                                <div class="skill-item">
-                                    <span class="skill-item-name"
-                                        >Blueprints</span
-                                    >
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="blueprints_projects"
-                                >
-                                    Audio systems in Unreal Engine
-                                </div>
-                                <div class="skill-item">
-                                    <span class="skill-item-name"
-                                        >Git • Perforce</span
-                                    >
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="vcs_projects"
-                                >
-                                    Version control for team projects
-                                </div>
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="unreal_projects"
+                            >
+                                Not Today Darling, Pause & Deserve
                             </div>
                         </div>
 
-                        <!-- Specialized -->
-                        <div class="skill-category-card color-orange">
-                            <div class="skill-category-header">
-                                <div class="skill-category-icon">🔬</div>
-                                <h3
-                                    class="skill-category-title"
-                                    data-i18n="tech_specialized_title"
-                                >
-                                    Specialized
-                                </h3>
+                        <!-- Reaper -->
+                        <div class="hexagon color-purple" data-skill="reaper">
+                            <div class="hexagon-inner">
+                                <img
+                                    src="honeyicons/REAPER_logo.png"
+                                    alt="Reaper"
+                                    class="hexagon-icon"
+                                />
+                                <span class="hexagon-name">Reaper</span>
                             </div>
-                            <div class="skill-items">
-                                <div class="skill-item">
-                                    <span class="skill-item-name"
-                                        >JUCE Framework</span
-                                    >
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="juce_projects"
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="reaper_projects"
+                            >
+                                All project sound design & mixing
+                            </div>
+                        </div>
+
+                        <!-- Ableton Live -->
+                        <div class="hexagon color-purple" data-skill="ableton">
+                            <div class="hexagon-inner">
+                                <img
+                                    src="honeyicons/abletonlogo.png"
+                                    alt="Ableton"
+                                    class="hexagon-icon"
+                                />
+                                <span class="hexagon-name">Ableton</span>
+                            </div>
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="ableton_projects"
+                            >
+                                Music production & sound design
+                            </div>
+                        </div>
+
+                        <!-- FL Studio -->
+                        <div class="hexagon color-purple" data-skill="flstudio">
+                            <div class="hexagon-inner">
+                                <img
+                                    src="honeyicons/flstudiologo.png"
+                                    alt="FL Studio"
+                                    class="hexagon-icon"
+                                />
+                                <span class="hexagon-name">FL Studio</span>
+                            </div>
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="fl_projects"
+                            >
+                                Music composition & arrangement
+                            </div>
+                        </div>
+
+                        <!-- C++ -->
+                        <div class="hexagon color-green" data-skill="cpp">
+                            <div class="hexagon-inner">
+                                <img
+                                    src="honeyicons/c++logo.png"
+                                    alt="C++"
+                                    class="hexagon-icon"
+                                />
+
+                                <span class="hexagon-name">C++</span>
+                            </div>
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="cpp_projects"
+                            >
+                                Audio plugins, Wwise integration tools
+                            </div>
+                        </div>
+
+                        <!-- C# -->
+                        <div class="hexagon color-green" data-skill="csharp">
+                            <div class="hexagon-inner">
+                                <img
+                                    src="honeyicons/c# logo.png"
+                                    alt="C#"
+                                    class="hexagon-icon"
+                                />
+                                <span class="hexagon-name">C#</span>
+                            </div>
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="csharp_projects"
+                            >
+                                Unity audio scripting, custom tools
+                            </div>
+                        </div>
+
+                        <!-- Python -->
+                        <div class="hexagon color-green" data-skill="python">
+                            <div class="hexagon-inner">
+                                <img
+                                    src="honeyicons/pythonlogo.png"
+                                    alt="Python"
+                                    class="hexagon-icon"
+                                />
+
+                                <span class="hexagon-name">Python</span>
+                            </div>
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="python_projects"
+                            >
+                                ML audio analysis, pipeline automation
+                            </div>
+                        </div>
+
+                        <!-- Blueprints -->
+                        <div
+                            class="hexagon color-green"
+                            data-skill="blueprints"
+                        >
+                            <div class="hexagon-inner">
+                                <svg
+                                    class="hexagon-icon"
+                                    role="img"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
                                 >
-                                    Audio plugin development
-                                </div>
-                                <div class="skill-item">
-                                    <span class="skill-item-name"
-                                        >TensorFlow • ML Audio</span
-                                    >
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="tensorflow_projects"
-                                >
-                                    Beatbox classification thesis project
-                                </div>
-                                <div class="skill-item">
-                                    <span class="skill-item-name"
-                                        >3D Spatial Audio & HRTF</span
-                                    >
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="spatial_projects"
-                                >
-                                    Immersive audio implementation
-                                </div>
-                                <div class="skill-item">
-                                    <span class="skill-item-name"
-                                        >DSP Algorithm Development</span
-                                    >
-                                </div>
-                                <div
-                                    class="skill-item-projects"
-                                    data-i18n="dsp_projects"
-                                >
-                                    Custom audio effects & processors
-                                </div>
+                                    <path
+                                        d="M4 4h16v2H4V4zm0 5h7v10H4V9zm9 0h7v4h-7V9zm0 6h7v4h-7v-4z"
+                                        fill="currentColor"
+                                    />
+                                </svg>
+                                <span class="hexagon-name">Blueprints</span>
+                            </div>
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="blueprints_projects"
+                            >
+                                Audio systems in Unreal Engine
+                            </div>
+                        </div>
+
+                        <!-- Git -->
+                        <div class="hexagon color-green" data-skill="git">
+                            <div class="hexagon-inner">
+                                <img
+                                    src="honeyicons/github.png"
+                                    alt="Git"
+                                    class="hexagon-icon"
+                                />
+
+                                <span class="hexagon-name">Git</span>
+                            </div>
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="vcs_projects"
+                            >
+                                Version control for team projects
+                            </div>
+                        </div>
+
+                        <!-- JUCE -->
+                        <div class="hexagon color-orange" data-skill="juce">
+                            <div class="hexagon-inner">
+                                <img
+                                    src="honeyicons/JUCE_Logo.png"
+                                    alt="JUCE"
+                                    class="hexagon-icon"
+                                />
+                                <span class="hexagon-name">JUCE</span>
+                            </div>
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="juce_projects"
+                            >
+                                Audio plugin development
+                            </div>
+                        </div>
+
+                        <!-- TensorFlow -->
+                        <div
+                            class="hexagon color-orange"
+                            data-skill="tensorflow"
+                        >
+                            <div class="hexagon-inner">
+                                <img
+                                    src="honeyicons/tensorflowlogo.png"
+                                    alt="TensorFlow"
+                                    class="hexagon-icon"
+                                />
+
+                                <span class="hexagon-name">TensorFlow</span>
+                            </div>
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="tensorflow_projects"
+                            >
+                                Beatbox classification thesis project
+                            </div>
+                        </div>
+
+                        <!-- 3D Spatial Audio -->
+                        <div class="hexagon color-orange" data-skill="spatial">
+                            <div class="hexagon-inner">
+                                <img
+                                    src="honeyicons/3DAudio.png"
+                                    alt="3D Audio"
+                                    class="hexagon-icon"
+                                />
+                                <span class="hexagon-name">3D Audio</span>
+                            </div>
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="spatial_projects"
+                            >
+                                Immersive audio implementation
+                            </div>
+                        </div>
+
+                        <!-- DSP -->
+                        <div class="hexagon color-orange" data-skill="dsp">
+                            <div class="hexagon-inner">
+                                <img
+                                    src="honeyicons/dsplogo.png"
+                                    alt="DSP"
+                                    class="hexagon-icon"
+                                />
+                                <span class="hexagon-name">DSP</span>
+                            </div>
+                            <div
+                                class="hexagon-tooltip"
+                                data-i18n="dsp_projects"
+                            >
+                                Custom audio effects & processors
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Work Section -->
+            
             <section class="content-section">
                 <div class="container">
                     <div class="section-header fade-in">
@@ -1917,6 +2156,126 @@
                 initScrollReveal();
                 initLazyImage();
             }
+        </script>
+
+        <!-- Hexagon connections script -->
+        <script>
+            (function () {
+                // Map of skill connections
+                const connections = {
+                    wwise: ["unreal", "cpp", "csharp"],
+                    fmod: ["unreal", "cpp", "csharp"],
+                    unreal: ["wwise", "fmod", "cpp", "blueprints"],
+                    reaper: ["ableton", "flstudio"],
+                    ableton: ["reaper", "flstudio"],
+                    flstudio: ["reaper", "ableton"],
+                    cpp: ["wwise", "fmod", "unreal", "juce", "dsp"],
+                    csharp: ["wwise", "fmod", "unreal"],
+                    python: ["tensorflow", "git", "dsp"],
+                    blueprints: ["unreal", "wwise", "fmod"],
+                    git: ["python", "cpp", "csharp"],
+                    juce: ["cpp", "dsp"],
+                    tensorflow: ["python", "dsp"],
+                    spatial: ["unreal", "wwise", "fmod", "dsp"],
+                    dsp: ["cpp", "juce", "tensorflow", "spatial"],
+                };
+
+                const container = document.querySelector(
+                    ".skills-hexagon-container",
+                );
+                const hexagons = document.querySelectorAll(
+                    ".hexagon[data-skill]",
+                );
+
+                // Create SVG overlay for connection lines
+                const svg = document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "svg",
+                );
+                svg.id = "hexagon-connections";
+                svg.style.position = "absolute";
+                svg.style.top = "0";
+                svg.style.left = "0";
+                svg.style.width = "100%";
+                svg.style.height = "100%";
+                svg.style.pointerEvents = "none";
+                svg.style.zIndex = "5";
+                container.style.position = "relative";
+                container.appendChild(svg);
+
+                // Get center position of hexagon
+                function getHexCenter(hex) {
+                    const rect = hex.getBoundingClientRect();
+                    const containerRect = container.getBoundingClientRect();
+                    return {
+                        x: rect.left + rect.width / 2 - containerRect.left,
+                        y: rect.top + rect.height / 2 - containerRect.top,
+                    };
+                }
+
+                // Create line element
+                function createLine(from, to, color) {
+                    const line = document.createElementNS(
+                        "http://www.w3.org/2000/svg",
+                        "line",
+                    );
+                    line.setAttribute("x1", from.x);
+                    line.setAttribute("y1", from.y);
+                    line.setAttribute("x2", to.x);
+                    line.setAttribute("y2", to.y);
+                    line.setAttribute("stroke", color);
+                    line.classList.add("connection-line");
+                    return line;
+                }
+
+                // Add hover listeners
+                hexagons.forEach((hex) => {
+                    hex.addEventListener("mouseenter", function () {
+                        const skill = this.getAttribute("data-skill");
+                        const connectedSkills = connections[skill] || [];
+
+                        // Add dimming effect
+                        container.classList.add("dimmed");
+                        this.classList.add("active");
+
+                        // Highlight connected hexagons
+                        const connectedHexagons = [];
+                        hexagons.forEach((h) => {
+                            const s = h.getAttribute("data-skill");
+                            if (connectedSkills.includes(s)) {
+                                h.classList.add("connected");
+                                connectedHexagons.push(h);
+                            }
+                        });
+
+                        // Draw connection lines
+                        const fromPos = getHexCenter(this);
+                        const hexColor = window.getComputedStyle(
+                            this.querySelector(".hexagon-inner"),
+                        ).borderColor;
+
+                        connectedHexagons.forEach((connectedHex) => {
+                            const toPos = getHexCenter(connectedHex);
+                            const line = createLine(fromPos, toPos, hexColor);
+                            line.classList.add("visible");
+                            svg.appendChild(line);
+                        });
+                    });
+
+                    hex.addEventListener("mouseleave", function () {
+                        // Remove dimming
+                        container.classList.remove("dimmed");
+                        hexagons.forEach((h) => {
+                            h.classList.remove("active", "connected");
+                        });
+
+                        // Remove all lines
+                        while (svg.firstChild) {
+                            svg.removeChild(svg.firstChild);
+                        }
+                    });
+                });
+            })();
         </script>
     </body>
 </html>
