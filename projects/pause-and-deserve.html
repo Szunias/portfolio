@@ -1239,11 +1239,8 @@ window.__preloadedLang=savedLang;
                     audio.addEventListener("error", stopActive);
                 } // Fixed player controls fixedBtn.addEventListener("click", () => { if (active.audio) { if (active.audio.paused) { active.audio.play(); fixedBtn.classList.add("playing"); active.el ?.querySelector("button") ?.classList.add("paused"); } else { active.audio.pause(); fixedBtn.classList.remove("playing"); active.el ?.querySelector("button") ?.classList.remove("paused"); } } }); fixedProgress.addEventListener("click", (e) => { if (active.audio) { const rect = fixedProgress.getBoundingClientRect(); const percent = (e.clientX - rect.left) / rect.width; active.audio.currentTime = active.audio.duration * percent; } }); document.addEventListener("DOMContentLoaded", () => { document .querySelectorAll(".audio-player") .forEach(bindPlayer); }); })();
     </script>
-    <!-- Translation Data -->
-    <script>
-        let translations = {};
-        let currentLang = localStorage.getItem("language") || "en"; // Helper function to get nested translation value function getNestedTranslation(obj, path) { return path .split(".") .reduce((current, key) => current?.[key], obj); } function setLanguage(lang) { currentLang = lang; localStorage.setItem("language", lang); document.querySelectorAll("[data-i18n]").forEach((el) => { const key = el.getAttribute("data-i18n"); const translation = getNestedTranslation( translations[lang], key, ); if (translation) { el.innerHTML = translation; } }); document.querySelectorAll(".lang-btn").forEach((btn) => { btn.classList.toggle("active", btn.dataset.lang === lang); }); } // Load translations from JSON file async function loadTranslations() { try { const response = await fetch( "../locales/pause-and-deserve.json", ); translations = await response.json(); setLanguage(currentLang); } catch (error) { // Failed to load translations } } // Initialize language on load document.addEventListener("DOMContentLoaded", () => { loadTranslations(); document.querySelectorAll(".lang-btn").forEach((btn) => { btn.addEventListener("click", () => { setLanguage(btn.dataset.lang); }); }); });
-    </script>
+    <!-- Translation Module -->
+    <script type="module" src="../assets/js/pages/pause-and-deserve.js"></script>
     <!-- Lightbox Script -->
     <script>
         (function() {
