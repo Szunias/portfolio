@@ -39,7 +39,17 @@ export default [
         confirm: 'readonly',
         prompt: 'readonly',
         gtag: 'readonly',
-        dataLayer: 'readonly'
+        dataLayer: 'readonly',
+        Intl: 'readonly',
+        performance: 'readonly',
+        PerformanceObserver: 'readonly',
+        firebase: 'readonly',
+        screen: 'readonly',
+        Blob: 'readonly',
+        CSS: 'readonly',
+        FontFace: 'readonly',
+        requestIdleCallback: 'readonly',
+        cancelIdleCallback: 'readonly'
       }
     },
     rules: {

@@ -19,7 +19,7 @@
           inThrottle = true;
           setTimeout(() => inThrottle = false, limit);
         }
-      }
+      };
     },
 
     // Debounce function for search/input events

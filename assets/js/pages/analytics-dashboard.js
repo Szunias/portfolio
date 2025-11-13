@@ -6,8 +6,9 @@
 (function() {
   'use strict';
 
-  let currentData = null;
-  let charts = {};
+  // Disabled for future use when analytics are implemented
+  // let currentData = null;
+  // const charts = {};
 
   // Configuration
   const API_ENDPOINT = '/api/analytics.php'; // Backend endpoint for real data
@@ -106,7 +107,8 @@
         }
       }
 
-      currentData = data;
+      // Store data for future use (currently unused but ready for expansion)
+      // currentData = data;
       renderDashboard(data);
 
       // Hide loading, show dashboard

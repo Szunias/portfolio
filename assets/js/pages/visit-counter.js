@@ -13,13 +13,13 @@
   // - Read: Allow all (for visit counter display)
   // - Write: Rate-limited through visitor hash system (24h cooldown)
   const firebaseConfig = {
-    apiKey: "AIzaSyBA2enzFHX7aljA2RMQ46YZ093z9N4lbGM",
-    authDomain: "igorszuniewicz-9ddfc.firebaseapp.com",
-    databaseURL: "https://igorszuniewicz-9ddfc-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "igorszuniewicz-9ddfc",
-    storageBucket: "igorszuniewicz-9ddfc.firebasestorage.app",
-    messagingSenderId: "478087683913",
-    appId: "1:478087683913:web:737f0cca1837d4acf04498"
+    apiKey: 'AIzaSyBA2enzFHX7aljA2RMQ46YZ093z9N4lbGM',
+    authDomain: 'igorszuniewicz-9ddfc.firebaseapp.com',
+    databaseURL: 'https://igorszuniewicz-9ddfc-default-rtdb.europe-west1.firebasedatabase.app',
+    projectId: 'igorszuniewicz-9ddfc',
+    storageBucket: 'igorszuniewicz-9ddfc.firebasestorage.app',
+    messagingSenderId: '478087683913',
+    appId: '1:478087683913:web:737f0cca1837d4acf04498'
   };
 
   const BASE_COUNT = 2533; // Historical starting count

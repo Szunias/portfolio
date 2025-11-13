@@ -55,10 +55,6 @@
 
       // Check for font-display support
       this.supportsFontDisplay = CSS.supports && CSS.supports('font-display', 'swap');
-
-      // Font support detected
-        fontDisplay: this.supportsFontDisplay
-      });
     },
 
     setupFontFaces: function() {

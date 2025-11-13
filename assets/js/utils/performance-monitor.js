@@ -91,7 +91,7 @@
         // Cumulative Layout Shift (CLS)
         try {
           let clsValue = 0;
-          let clsEntries = [];
+          const clsEntries = [];
 
           this.observers.cls = new PerformanceObserver((list) => {
             const entries = list.getEntries();

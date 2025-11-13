@@ -6,12 +6,12 @@
 
 export const PERFORMANCE_CONFIG = {
   // Lazy loading
-  LAZY_LOAD_MARGIN: "300px",
+  LAZY_LOAD_MARGIN: '300px',
   LAZY_LOAD_THRESHOLD: 0.01,
 
   // Intersection Observer
   INTERSECTION_THRESHOLD: 0.01,
-  INTERSECTION_ROOT_MARGIN: "50px",
+  INTERSECTION_ROOT_MARGIN: '50px',
 
   // Debounce & Throttle
   DEBOUNCE_DELAY: 150,
@@ -36,9 +36,9 @@ export const ANIMATION_CONFIG = {
   PRELOAD_STYLE_REMOVAL_DELAY: 150, // delay before removing preload styles
 
   // Easing
-  EASE_OUT: "cubic-bezier(0.4, 0, 0.2, 1)",
-  EASE_IN_OUT: "cubic-bezier(0.4, 0, 0.6, 1)",
-  EASE_BOUNCE: "cubic-bezier(0.68, -0.55, 0.265, 1.55)",
+  EASE_OUT: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  EASE_IN_OUT: 'cubic-bezier(0.4, 0, 0.6, 1)',
+  EASE_BOUNCE: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
 };
 
 export const SCROLL_CONFIG = {
@@ -47,7 +47,7 @@ export const SCROLL_CONFIG = {
   HEADER_SCROLL_DISTANCE: 100,
 
   // Smooth scrolling
-  SCROLL_BEHAVIOR: "smooth",
+  SCROLL_BEHAVIOR: 'smooth',
   SCROLL_OFFSET: 80,
 };
 
@@ -79,11 +79,11 @@ export const BREAKPOINTS = {
 };
 
 export const STORAGE_KEYS = {
-  LANGUAGE: "language",
-  THEME: "theme",
-  VOLUME: "playerVolume",
-  ANALYTICS_CONSENT: "analyticsConsent",
-  LAST_PLAYED_TRACK: "lastPlayedTrack",
+  LANGUAGE: 'language',
+  THEME: 'theme',
+  VOLUME: 'playerVolume',
+  ANALYTICS_CONSENT: 'analyticsConsent',
+  LAST_PLAYED_TRACK: 'lastPlayedTrack',
 };
 
 export const API_CONFIG = {
@@ -93,7 +93,7 @@ export const API_CONFIG = {
 
   // Headers
   DEFAULT_HEADERS: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 };
 
@@ -108,7 +108,7 @@ export const ACCESSIBILITY_CONFIG = {
   // Focus
   FOCUS_OUTLINE_WIDTH: 3,
   FOCUS_OUTLINE_OFFSET: 2,
-  FOCUS_OUTLINE_COLOR: "#60a5fa",
+  FOCUS_OUTLINE_COLOR: '#60a5fa',
 
   // Contrast
   MIN_CONTRAST_RATIO: 4.5, // WCAG AA for normal text
@@ -125,30 +125,30 @@ export const REGEX_PATTERNS = {
 };
 
 // Default language
-export const DEFAULT_LANG = "en";
-export const SUPPORTED_LANGS = ["en", "pl", "nl"];
+export const DEFAULT_LANG = 'en';
+export const SUPPORTED_LANGS = ['en', 'pl', 'nl'];
 
 // Environment detection
 export const IS_DEV =
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1";
+  window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1';
 export const IS_PROD = !IS_DEV;
 
 // Feature detection
 export const FEATURES = {
-  HAS_INTERSECTION_OBSERVER: "IntersectionObserver" in window,
-  HAS_IDLE_CALLBACK: "requestIdleCallback" in window,
+  HAS_INTERSECTION_OBSERVER: 'IntersectionObserver' in window,
+  HAS_IDLE_CALLBACK: 'requestIdleCallback' in window,
   HAS_WEBP: (() => {
-    const canvas = document.createElement("canvas");
-    return canvas.toDataURL("image/webp").indexOf("data:image/webp") === 0;
+    const canvas = document.createElement('canvas');
+    return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
   })(),
   HAS_AVIF: (() => {
-    const canvas = document.createElement("canvas");
-    return canvas.toDataURL("image/avif").indexOf("data:image/avif") === 0;
+    const canvas = document.createElement('canvas');
+    return canvas.toDataURL('image/avif').indexOf('data:image/avif') === 0;
   })(),
-  PREFERS_REDUCED_MOTION: window.matchMedia("(prefers-reduced-motion: reduce)")
+  PREFERS_REDUCED_MOTION: window.matchMedia('(prefers-reduced-motion: reduce)')
     .matches,
-  PREFERS_HIGH_CONTRAST: window.matchMedia("(prefers-contrast: high)").matches,
+  PREFERS_HIGH_CONTRAST: window.matchMedia('(prefers-contrast: high)').matches,
 };
 
 // Export all as default object for convenience

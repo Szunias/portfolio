@@ -1,36 +1,36 @@
-import { initElements, elements, state } from "./music/state.js";
-import { renderPlaylist, bindFilterTags } from "./music/playlist.js";
+import { initElements, elements, state } from './music/state.js';
+import { renderPlaylist, bindFilterTags } from './music/playlist.js';
 import {
   preloadAllDurations,
   bindDurationRequests,
-} from "./music/durations.js";
+} from './music/durations.js';
 import {
   bindPlayerEvents,
   loadTrack,
   cleanupPlayerEvents,
-} from "./music/player-controls.js";
-import { initPageEffects } from "./music/ui-effects.js";
-import { IS_DEV } from "../config/constants.js";
+} from './music/player-controls.js';
+import { initPageEffects } from './music/ui-effects.js';
+import { IS_DEV } from '../config/constants.js';
 
 // Initialize error tracking (auto-initializes)
-import "../utils/error-tracker.js";
+import '../utils/error-tracker.js';
 
 // Initialize ARIA labels for accessibility
-import { initAriaLabels } from "../utils/aria-labels.js";
+import { initAriaLabels } from '../utils/aria-labels.js';
 
 async function fetchTracks() {
   try {
-    const response = await fetch("assets/audio/tracks.json");
+    const response = await fetch('assets/audio/tracks.json');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
     if (!Array.isArray(data)) {
-      throw new Error("Invalid track data format");
+      throw new Error('Invalid track data format');
     }
     return data;
   } catch (error) {
-    throw new Error(error.message || "Failed to load tracks");
+    throw new Error(error.message || 'Failed to load tracks');
   }
 }
 
@@ -56,7 +56,7 @@ function exposeRefreshHook() {
       renderPlaylistAndPrefetch();
     } catch (error) {
       if (IS_DEV) {
-        console.error("Failed to refresh music list", error);
+        console.error('Failed to refresh music list', error);
       }
     }
   };
@@ -83,7 +83,7 @@ async function init() {
     if (state.tracks.length > 0) {
       loadTrack(0);
       if (elements.playerBar) {
-        elements.playerBar.classList.add("visible");
+        elements.playerBar.classList.add('visible');
       }
     }
   } catch (error) {
@@ -92,7 +92,7 @@ async function init() {
 }
 
 // Cleanup on page unload to prevent memory leaks
-window.addEventListener("beforeunload", () => {
+window.addEventListener('beforeunload', () => {
   cleanupPlayerEvents();
 });
 
