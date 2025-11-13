@@ -11,7 +11,15 @@
 
   // Configuration
   const API_ENDPOINT = '/api/analytics.php'; // Backend endpoint for real data
-  const DEMO_MODE = true; // Temporary: back to demo mode to debug
+
+  // ⚠️ WARNING: DEMO MODE ONLY - NO AUTHENTICATION
+  // This dashboard is in DEMO mode and shows sample data only.
+  // For production use with real analytics data, you MUST:
+  // 1. Set DEMO_MODE = false
+  // 2. Implement proper backend authentication (JWT/OAuth/Sessions)
+  // 3. Never use client-side password checks (insecure!)
+  // 4. Validate all API requests server-side
+  const DEMO_MODE = true;
 
   // Initialize dashboard
   function initDashboard() {
