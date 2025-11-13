@@ -48,9 +48,10 @@
   // ============================================================================
 
   let isNavigating = false;
-  let currentPath = window.location.pathname;
+  let currentPath = window.location.pathname;  // Will be normalized in init()
   const pageCache = new Map();
   const preloadQueue = new Set();
+  const activePreloadTimeouts = new Map();  // Track active timeouts to prevent duplicates
   let scrollAnimationObserver = null;  // Prevent memory leak
 
   // ============================================================================
@@ -91,15 +92,30 @@
 
     if (!href || href === '#') return false;
 
+    // Ignoruj anchor links (#section) - to tylko hash, niech przeglądarka scrolluje normalnie
+    if (href.startsWith('#')) {
+      return false;
+    }
+
+    // Ignoruj anchor links na tej samej stronie (/page.html#section)
+    // Wyciągnij pathname i hash z href
+    try {
+      const url = new URL(href, window.location.origin);
+      // Jeśli pathname taki sam jak current, ale jest hash - to anchor link
+      if (normalizeUrl(url.pathname) === currentPath && url.hash) {
+        return false;  // Pozwól przeglądarce obsłużyć scroll do anchora
+      }
+    } catch {
+      // Jeśli URL parsing nie udał się, kontynuuj normalnie
+    }
+
     // Ignoruj zewnętrzne linki
     if (href.startsWith('http://') || href.startsWith('https://')) {
       if (!isSameOrigin(href)) return false;
     }
 
     // Ignoruj specjalne protokoły
-    if (href.startsWith('mailto:') ||
-        href.startsWith('tel:') ||
-        href.startsWith('#')) {
+    if (href.startsWith('mailto:') || href.startsWith('tel:')) {
       return false;
     }
 
@@ -113,7 +129,7 @@
       return false;
     }
 
-    // Ignoruj jeśli to ten sam URL
+    // Ignoruj jeśli to ten sam URL (pathname bez hash)
     const targetPath = normalizeUrl(href);
     if (targetPath === currentPath) return false;
 
@@ -145,13 +161,22 @@
 
     const targetPath = normalizeUrl(href);
 
-    // Nie preloaduj jeśli już jest w cache lub w kolejce
-    if (pageCache.has(targetPath) || preloadQueue.has(targetPath)) return;
+    // Nie preloaduj jeśli już jest w cache, w kolejce, lub timeout już działa
+    if (pageCache.has(targetPath) ||
+        preloadQueue.has(targetPath) ||
+        activePreloadTimeouts.has(targetPath)) {
+      return;
+    }
 
+    // Dodaj do queue i ustaw timeout
     preloadQueue.add(targetPath);
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
+      activePreloadTimeouts.delete(targetPath);  // Usuń timeout po wykonaniu
       preloadPage(targetPath);
     }, CONFIG.preloadDelay);
+
+    // Śledź aktywny timeout
+    activePreloadTimeouts.set(targetPath, timeoutId);
   }
 
   // ============================================================================
@@ -179,9 +204,13 @@
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
 
+    // Get main element
+    const mainElement = doc.querySelector('main');
+
     return {
       title: doc.title || '',
-      main: doc.querySelector('main')?.innerHTML || '',
+      // Use null jeśli brak main, nie empty string (null !== '' dla warunków)
+      main: mainElement ? mainElement.innerHTML : null,
       body: doc.body.innerHTML,
 
       // Metadata
@@ -242,8 +271,20 @@
   }
 
   function clearCache() {
+    // Clear cache
     pageCache.clear();
     preloadQueue.clear();
+
+    // Cancel all pending preload timeouts
+    activePreloadTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+    activePreloadTimeouts.clear();
+
+    // Disconnect scroll animation observer
+    if (scrollAnimationObserver) {
+      scrollAnimationObserver.disconnect();
+      scrollAnimationObserver = null;
+    }
+
     log('Cache cleared');
   }
 
@@ -553,6 +594,9 @@
 
   function init() {
     log('Initializing Enhanced Smooth Navigation');
+
+    // Normalize currentPath
+    currentPath = normalizeUrl(currentPath);
 
     // Event listeners
     document.addEventListener('click', handleLinkClick, true);
