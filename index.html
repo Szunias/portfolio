@@ -12,6 +12,31 @@
         <script>
             /** * Sets correct language BEFORE any content renders * Execution time: <1ms | Size: ~200 bytes * MUST be synchronous (blocks rendering intentionally) */ (function () { "use strict"; const savedLang = localStorage.getItem("language") || "en"; document.documentElement.setAttribute("lang", savedLang); window.__preloadedLang = savedLang; // Cache for translation system })();
         </script>
+        <!-- CRITICAL 1.5: Inline Critical Translations - Bulletproof i18n (0ms load) -->
+        <script>
+            /**
+             * Critical translations inline for instant loading
+             * Ensures navigation/footer work immediately, even if JSON fails
+             * Size: ~2KB | Load time: 0ms (already in HTML)
+             */
+            window.__I18N__ = {
+                "en": {
+                    "nav": {"home": "Home", "work": "Work", "about": "About", "projects": "Projects", "music": "Music", "contact": "Contact"},
+                    "footer": {"projects": "Projects", "music": "Music", "about": "About", "contact": "Contact"},
+                    "error": {"loading": "Loading...", "failed": "Failed to load content", "retry": "Retry"}
+                },
+                "pl": {
+                    "nav": {"home": "Start", "work": "Portfolio", "about": "O mnie", "projects": "Projekty", "music": "Muzyka", "contact": "Kontakt"},
+                    "footer": {"projects": "Projekty", "music": "Muzyka", "about": "O mnie", "contact": "Kontakt"},
+                    "error": {"loading": "Ładowanie...", "failed": "Nie udało się załadować treści", "retry": "Spróbuj ponownie"}
+                },
+                "nl": {
+                    "nav": {"home": "Home", "work": "Portfolio", "about": "Over", "projects": "Projecten", "music": "Muziek", "contact": "Contact"},
+                    "footer": {"projects": "Projecten", "music": "Muziek", "about": "Over", "contact": "Contact"},
+                    "error": {"loading": "Laden...", "failed": "Inhoud kan niet worden geladen", "retry": "Opnieuw proberen"}
+                }
+            };
+        </script>
         <!-- CRITICAL 2: Base styles - Prevents white flash -->
         <style>
             /* Dark theme background - loads immediately */
@@ -109,7 +134,6 @@
             href="assets/js/components/navigation.js"
             as="script"
         />
-        <link rel="preload" href="assets/js/translations.js" as="script" />
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Igor Szuniewicz" />
@@ -3146,7 +3170,21 @@
         <script type="module" src="assets/js/simple-smooth-nav.js" defer></script>
         <script type="module" src="assets/js/components/navigation.js" defer></script>
         <script type="module" src="assets/js/components/custom-cursor.js" defer></script>
-        <script type="module" src="assets/js/translations.js" defer></script>
+        <!-- Bulletproof i18n System - 5-layer fallback, never crashes -->
+        <script type="module">
+            import i18n from '/assets/js/refactored/services/BulletproofI18n.js';
+
+            // Initialize bulletproof translation system
+            i18n.init().catch(error => {
+                console.error('i18n initialization failed:', error);
+                // Page still works with inline critical translations!
+            });
+
+            // Optional: Listen for language changes
+            window.addEventListener('languageChanged', (event) => {
+                console.log('Language changed to:', event.detail.language);
+            });
+        </script>
         <script type="module" src="assets/js/performance-boost.js" defer></script>
         <script type="module" src="assets/js/analytics.js" defer></script>
         <!-- UX Enhancement Components -->
