@@ -112,6 +112,14 @@ export class EventEmitter {
   listenerCount(event) {
     return this._events.has(event) ? this._events.get(event).length : 0;
   }
+
+  /**
+   * Get array of event names with registered listeners
+   * @returns {string[]} Array of event names
+   */
+  eventNames() {
+    return Array.from(this._events.keys());
+  }
 }
 
 export default EventEmitter;

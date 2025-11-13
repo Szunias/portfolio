@@ -245,7 +245,7 @@ export function toggle(target, display = 'block') {
   if (!element) return false;
 
   const isHidden = element.style.display === 'none' ||
-                   getComputedStyle(element).display === 'none';
+                   window.getComputedStyle(element).display === 'none';
 
   if (isHidden) {
     element.style.display = display;
@@ -562,7 +562,7 @@ export function slideDown(target, duration = 300) {
 
   return new Promise((resolve) => {
     element.style.removeProperty('display');
-    let display = getComputedStyle(element).display;
+    let display = window.getComputedStyle(element).display;
     if (display === 'none') display = 'block';
     element.style.display = display;
 

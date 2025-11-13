@@ -26,7 +26,7 @@
 
 import { EventEmitter } from '../core/EventEmitter.js';
 import { Storage } from '../utils/storage.js';
-import { AUDIO_CONFIG, STORAGE_KEYS, KEYS, CSS_CLASSES } from '../core/config.js';
+import { AUDIO_CONFIG, STORAGE_KEYS, KEYS } from '../core/config.js';
 
 export class AudioPlayer extends EventEmitter {
   /**

@@ -9,7 +9,6 @@
  */
 
 import { EventEmitter } from '../core/EventEmitter.js';
-import { CSS_CLASSES } from '../core/config.js';
 
 export class Toast extends EventEmitter {
   /**
@@ -345,8 +344,8 @@ class ToastManager {
 // Create singleton instance
 const toastManager = new ToastManager();
 
-// Export both the class and the manager
-export { Toast, toastManager as default };
+// Export the manager as default
+export default toastManager;
 
 // Also export static methods for convenience
 export const toast = {

@@ -27,7 +27,7 @@ class StorageManager {
       localStorage.setItem(test, test);
       localStorage.removeItem(test);
       return true;
-    } catch (e) {
+    } catch (_e) {
       console.warn('localStorage not available, using memory fallback');
       return false;
     }

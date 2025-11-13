@@ -149,7 +149,7 @@ export function isValidEmail(email) {
 }
 
 /**
- * Validate URL
+ * Validate URL (HTTP/HTTPS only)
  * @param {string} url - URL to validate
  * @returns {boolean} Whether URL is valid
  * @example
@@ -157,8 +157,8 @@ export function isValidEmail(email) {
  */
 export function isValidURL(url) {
   try {
-    new URL(url);
-    return true;
+    const parsed = new URL(url);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
   } catch {
     return false;
   }

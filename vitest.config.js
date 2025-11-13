@@ -12,6 +12,10 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
+      // Only check coverage for refactored files
+      include: [
+        'assets/js/refactored/**/*.js'
+      ],
       exclude: [
         'node_modules/',
         'dist/',
@@ -19,7 +23,9 @@ export default defineConfig({
         '**/*.config.js',
         '**/*.config.ts',
         '**/vendor/**',
-        'assets/js/refactored/README.md'
+        'assets/js/refactored/README.md',
+        '**/*.test.js',
+        '**/*.spec.js'
       ],
       thresholds: {
         lines: 70,
