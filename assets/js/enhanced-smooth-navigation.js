@@ -51,6 +51,7 @@
   let currentPath = window.location.pathname;
   const pageCache = new Map();
   const preloadQueue = new Set();
+  let scrollAnimationObserver = null;  // Prevent memory leak
 
   // ============================================================================
   // UTILITIES
@@ -301,7 +302,7 @@
   async function navigateWithFallback(url) {
     log('Using CSS transition fallback');
 
-    const mainEl = document.querySelector('main');
+    let mainEl = document.querySelector('main');
     if (!mainEl) {
       // Brak main, użyj standardowej nawigacji
       throw new Error('No main element found');
@@ -317,7 +318,15 @@
     const pageData = await loadPage(url);
     updatePageContent(pageData, url);
 
-    // Fade in
+    // WAŻNE: Po updatePageContent, stary mainEl może być zastąpiony!
+    // Pobierz NOWY element z DOM
+    mainEl = document.querySelector('main');
+    if (!mainEl) {
+      log('Warning: No main element after update');
+      return;
+    }
+
+    // Fade in NOWEGO elementu
     mainEl.style.transition = `opacity ${CONFIG.fadeInDuration}ms ease-in`;
     requestAnimationFrame(() => {
       mainEl.style.opacity = '1';
@@ -341,32 +350,35 @@
 
     // Aktualizuj main content
     const mainEl = document.querySelector('main');
+
+    // Happy path: mamy main element i nową zawartość
     if (mainEl && pageData.main) {
       mainEl.innerHTML = pageData.main;
     } else {
-      // Fallback: jeśli nie ma <main>, zastąp cały body ZACHOWUJĄC header
+      // Fallback: jeśli brakuje main lub zawartości, spróbuj wyciągnąć z body
+      log('Warning: Missing main element or content, using fallback');
+
       const newBody = document.createElement('div');
       newBody.innerHTML = pageData.body;
 
       const newMain = newBody.querySelector('main');
-      if (newMain) {
-        // Jeśli nowa strona ma <main>, dodaj go do body
-        const oldMain = document.querySelector('main');
-        if (oldMain) {
-          oldMain.parentNode.replaceChild(newMain, oldMain);
-        } else {
-          // Nie ma starego <main>, dodaj nowy po headerze
-          const header = document.querySelector('header');
-          if (header && header.nextSibling) {
-            document.body.insertBefore(newMain, header.nextSibling);
-          } else {
-            document.body.appendChild(newMain);
-          }
-        }
-      } else {
+      if (!newMain) {
         // Brak <main> na nowej stronie - to nie powinno się zdarzyć
         // Fallback do standardowej nawigacji
         throw new Error('No <main> element found in new page');
+      }
+
+      // Jeśli nowa strona ma <main>, zastąp stary lub dodaj nowy
+      if (mainEl) {
+        mainEl.parentNode.replaceChild(newMain, mainEl);
+      } else {
+        // Nie ma starego <main>, dodaj nowy po headerze
+        const header = document.querySelector('header');
+        if (header && header.nextSibling) {
+          document.body.insertBefore(newMain, header.nextSibling);
+        } else {
+          document.body.appendChild(newMain);
+        }
       }
     }
 
@@ -477,7 +489,14 @@
 
     if (fadeElements.length === 0) return;
 
-    const observer = new IntersectionObserver((entries) => {
+    // Disconnect poprzedni observer aby uniknąć memory leak
+    if (scrollAnimationObserver) {
+      scrollAnimationObserver.disconnect();
+      scrollAnimationObserver = null;
+    }
+
+    // Utwórz nowy observer
+    scrollAnimationObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
@@ -488,9 +507,10 @@
       rootMargin: '0px 0px -50px 0px'
     });
 
+    // Obserwuj wszystkie elementy
     fadeElements.forEach(el => {
       el.classList.remove('visible');
-      observer.observe(el);
+      scrollAnimationObserver.observe(el);
     });
   }
 
@@ -519,6 +539,11 @@
     if (e.state && e.state.path) {
       log('Popstate:', e.state.path);
       navigateToPage(e.state.path);
+    } else {
+      // Brak state - użytkownik wrócił do strony sprzed SPA
+      // Przeładuj stronę normalnie
+      log('Popstate without state - reloading');
+      window.location.reload();
     }
   }
 
