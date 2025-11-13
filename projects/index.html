@@ -1871,6 +1871,13 @@
       type="module"
       src="../assets/js/components/custom-cursor.js"
     ></script>
-    <script type="module" src="../assets/js/translations.js"></script>
+            <!-- Bulletproof i18n System - 5-layer fallback, never crashes -->
+        <script type="module">
+            import i18n from '/assets/js/refactored/services/BulletproofI18n.js';
+            i18n.init().catch(error => {
+                console.error('i18n initialization failed:', error);
+                // Page still works with inline critical translations!
+            });
+        </script>
   </body>
 </html>

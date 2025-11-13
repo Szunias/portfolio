@@ -11,6 +11,32 @@ document.documentElement.setAttribute("lang",savedLang);
 window.__preloadedLang=savedLang;
 })();
     </script>
+        <!-- CRITICAL 1.5: Inline Critical Translations - Bulletproof i18n (0ms load) -->
+        <script>
+            /**
+             * Critical translations inline for instant loading
+             * Ensures navigation/footer work immediately, even if JSON fails
+             * Size: ~2KB | Load time: 0ms (already in HTML)
+             */
+            window.__I18N__ = {
+                "en": {
+                    "nav": {"home": "Home", "work": "Work", "about": "About", "projects": "Projects", "music": "Music", "contact": "Contact"},
+                    "footer": {"projects": "Projects", "music": "Music", "about": "About", "contact": "Contact"},
+                    "error": {"loading": "Loading...", "failed": "Failed to load content", "retry": "Retry"}
+                },
+                "pl": {
+                    "nav": {"home": "Start", "work": "Portfolio", "about": "O mnie", "projects": "Projekty", "music": "Muzyka", "contact": "Kontakt"},
+                    "footer": {"projects": "Projekty", "music": "Muzyka", "about": "O mnie", "contact": "Kontakt"},
+                    "error": {"loading": "Ładowanie...", "failed": "Nie udało się załadować treści", "retry": "Spróbuj ponownie"}
+                },
+                "nl": {
+                    "nav": {"home": "Home", "work": "Portfolio", "about": "Over", "projects": "Projecten", "music": "Muziek", "contact": "Contact"},
+                    "footer": {"projects": "Projecten", "music": "Muziek", "about": "Over", "contact": "Contact"},
+                    "error": {"loading": "Laden...", "failed": "Inhoud kan niet worden geladen", "retry": "Opnieuw proberen"}
+                }
+            };
+        </script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
@@ -812,7 +838,14 @@ window.__preloadedLang=savedLang;
             </p>
         </div>
     </footer>
-    <script type="module" src="../assets/js/translations.js"></script>
+            <!-- Bulletproof i18n System - 5-layer fallback, never crashes -->
+        <script type="module">
+            import i18n from '/assets/js/refactored/services/BulletproofI18n.js';
+            i18n.init().catch(error => {
+                console.error('i18n initialization failed:', error);
+                // Page still works with inline critical translations!
+            });
+        </script>
 </body>
 
 </html>
