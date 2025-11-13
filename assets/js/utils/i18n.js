@@ -89,6 +89,9 @@ class TranslationManager {
    */
   applyTranslations(lang = this.currentLang) {
     const langPack = this.translations[lang] || {};
+    const elementsWithI18n = document.querySelectorAll('[data-i18n]');
+    console.log('[i18n.applyTranslations] Applying', lang, 'translations to', elementsWithI18n.length, 'elements');
+    console.log('[i18n.applyTranslations] LangPack keys:', Object.keys(langPack).length);
 
     // Translate text content
     document.querySelectorAll('[data-i18n]').forEach((el) => {
@@ -223,11 +226,14 @@ class TranslationManager {
    * @param {string} lang - Language code (en, pl, nl)
    */
   setLanguage(lang) {
+    console.log('[i18n.setLanguage] Setting language to:', lang, 'Translations loaded:', Object.keys(this.translations).length > 0);
     this.currentLang = lang;
     storage.set('language', lang);
 
     if (Object.keys(this.translations).length > 0) {
       this.applyTranslations(lang);
+    } else {
+      console.warn('[i18n.setLanguage] No translations loaded yet!');
     }
 
     // Update modal content if it exists and is open
@@ -371,9 +377,11 @@ class TranslationManager {
    * Uses event delegation for dynamic buttons
    */
   bindLanguageButtons() {
+    console.log('[i18n.bindLanguageButtons] Binding click handler to document');
     document.addEventListener('click', (event) => {
       const langBtn = event.target.closest('.lang-btn');
       if (langBtn && langBtn.dataset.lang) {
+        console.log('[i18n.bindLanguageButtons] Language button clicked:', langBtn.dataset.lang);
         this.setLanguage(langBtn.dataset.lang);
       }
     });
@@ -406,14 +414,16 @@ class TranslationManager {
    * @returns {Promise<void>}
    */
   async init(customPath = null) {
+    console.log('[i18n.init] Called with customPath:', customPath, 'isInitialized:', this.isInitialized);
+
     if (this.isInitialized) {
-      if (IS_DEV) {
-        console.warn('Translation manager already initialized');
-      }
+      console.warn('[i18n.init] Translation manager already initialized - skipping');
       return;
     }
 
+    console.log('[i18n.init] Binding language buttons...');
     this.bindLanguageButtons();
+    console.log('[i18n.init] Loading translations...');
     await this.loadTranslations(customPath);
   }
 }
