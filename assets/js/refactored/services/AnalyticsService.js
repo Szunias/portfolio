@@ -55,6 +55,18 @@ class AnalyticsService extends EventEmitter {
   }
 
   /**
+   * Debug logging helper
+   * Only logs when debugMode is enabled
+   * @private
+   * @param {...any} args - Arguments to log
+   */
+  _log(...args) {
+    if (this.debugMode) {
+      console.log(...args);
+    }
+  }
+
+  /**
    * Initialize Google Analytics
    *
    * @param {string} measurementId - Google Analytics Measurement ID (G-XXXXXXXXXX)
@@ -97,7 +109,7 @@ class AnalyticsService extends EventEmitter {
       this.emit('initialized', { measurementId });
 
       if (this.debugMode) {
-        console.log(`[AnalyticsService] Initialized with ID: ${measurementId}`);
+        this._log(`[AnalyticsService] Initialized with ID: ${measurementId}`);
       }
     } catch (error) {
       console.error('[AnalyticsService] Initialization failed:', error);
@@ -125,7 +137,7 @@ class AnalyticsService extends EventEmitter {
     this.emit('consentChanged', { consent });
 
     if (this.debugMode) {
-      console.log(`[AnalyticsService] Consent set to: ${consent}`);
+      this._log(`[AnalyticsService] Consent set to: ${consent}`);
     }
   }
 
@@ -144,14 +156,14 @@ class AnalyticsService extends EventEmitter {
     if (!this.isInitialized) {
       this.eventQueue.push({ eventName, parameters });
       if (this.debugMode) {
-        console.log(`[AnalyticsService] Event queued: ${eventName}`, parameters);
+        this._log(`[AnalyticsService] Event queued: ${eventName}`, parameters);
       }
       return;
     }
 
     if (!this.hasConsent && !this.debugMode) {
       if (this.debugMode) {
-        console.log(`[AnalyticsService] Event not tracked (no consent): ${eventName}`);
+        this._log(`[AnalyticsService] Event not tracked (no consent): ${eventName}`);
       }
       return;
     }
@@ -162,7 +174,7 @@ class AnalyticsService extends EventEmitter {
       this.emit('eventTracked', { eventName, parameters });
 
       if (this.debugMode) {
-        console.log(`[AnalyticsService] Event tracked: ${eventName}`, parameters);
+        this._log(`[AnalyticsService] Event tracked: ${eventName}`, parameters);
       }
     } catch (error) {
       console.error(`[AnalyticsService] Failed to track event "${eventName}":`, error);
@@ -348,7 +360,7 @@ class AnalyticsService extends EventEmitter {
       this.emit('userPropertiesSet', { properties });
 
       if (this.debugMode) {
-        console.log('[AnalyticsService] User properties set:', properties);
+        this._log('[AnalyticsService] User properties set:', properties);
       }
     } catch (error) {
       console.error('[AnalyticsService] Failed to set user properties:', error);
@@ -373,7 +385,7 @@ class AnalyticsService extends EventEmitter {
     this.emit('enabledChanged', { enabled });
 
     if (this.debugMode) {
-      console.log(`[AnalyticsService] Analytics ${enabled ? 'enabled' : 'disabled'}`);
+      this._log(`[AnalyticsService] Analytics ${enabled ? 'enabled' : 'disabled'}`);
     }
   }
 
@@ -466,7 +478,7 @@ class AnalyticsService extends EventEmitter {
     this.isInitialized = false;
 
     if (this.debugMode) {
-      console.log('[AnalyticsService] Service destroyed');
+      this._log('[AnalyticsService] Service destroyed');
     }
   }
 }

@@ -76,8 +76,26 @@ class TranslationService extends EventEmitter {
      */
     this.isInitialized = false;
 
+    /**
+     * Debug mode flag
+     * @type {boolean}
+     */
+    this.debugMode = false;
+
     // Bind methods
     this._handleStorageChange = this._handleStorageChange.bind(this);
+  }
+
+  /**
+   * Debug logging helper
+   * Only logs when debugMode is enabled
+   * @private
+   * @param {...any} args - Arguments to log
+   */
+  _log(...args) {
+    if (this.debugMode) {
+      console.log(...args);
+    }
   }
 
   /**
@@ -112,7 +130,7 @@ class TranslationService extends EventEmitter {
       this.isInitialized = true;
       this.emit('initialized', { language: this.currentLanguage });
 
-      console.log(`[TranslationService] Initialized with language: ${this.currentLanguage}`);
+      this._log(`[TranslationService] Initialized with language: ${this.currentLanguage}`);
     } catch (error) {
       console.error('[TranslationService] Initialization failed:', error);
       // Fall back to default language
@@ -157,13 +175,13 @@ class TranslationService extends EventEmitter {
       this._setCurrentLanguage(language);
 
       this.emit('languageLoaded', { language, translations });
-      console.log(`[TranslationService] Language "${language}" loaded successfully`);
+      this._log(`[TranslationService] Language "${language}" loaded successfully`);
     } catch (error) {
       console.error(`[TranslationService] Failed to load language "${language}":`, error);
 
       // Try to fall back to default language
       if (language !== DEFAULT_LANGUAGE) {
-        console.log(`[TranslationService] Falling back to ${DEFAULT_LANGUAGE}`);
+        this._log(`[TranslationService] Falling back to ${DEFAULT_LANGUAGE}`);
         await this.loadLanguage(DEFAULT_LANGUAGE);
       } else {
         throw new Error('Failed to load default language translations');
@@ -183,7 +201,7 @@ class TranslationService extends EventEmitter {
    */
   async changeLanguage(language) {
     if (language === this.currentLanguage) {
-      console.log(`[TranslationService] Already using language "${language}"`);
+      this._log(`[TranslationService] Already using language "${language}"`);
       return;
     }
 
@@ -201,7 +219,7 @@ class TranslationService extends EventEmitter {
         previousLanguage
       });
 
-      console.log(`[TranslationService] Language changed from "${previousLanguage}" to "${language}"`);
+      this._log(`[TranslationService] Language changed from "${previousLanguage}" to "${language}"`);
     } catch (error) {
       console.error('[TranslationService] Failed to change language:', error);
       throw error;
@@ -404,7 +422,7 @@ class TranslationService extends EventEmitter {
       const newLanguage = event.newValue;
 
       if (newLanguage !== this.currentLanguage) {
-        console.log(`[TranslationService] Language changed in another tab to "${newLanguage}"`);
+        this._log(`[TranslationService] Language changed in another tab to "${newLanguage}"`);
         this.changeLanguage(newLanguage);
       }
     }
@@ -419,7 +437,7 @@ class TranslationService extends EventEmitter {
     this.loadingPromises.clear();
     this.isInitialized = false;
 
-    console.log('[TranslationService] Service destroyed');
+    this._log('[TranslationService] Service destroyed');
   }
 }
 
