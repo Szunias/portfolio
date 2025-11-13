@@ -31,16 +31,16 @@
     cacheCritical: true,     // Czy cache'ować krytyczne strony przy starcie
 
     // Debug
-    debug: false             // Logi w konsoli
+    debug: true             // Logi w konsoli
   };
 
-  // Krytyczne strony do preloadu
+  // Krytyczne strony do preloadu (już znormalizowane)
   const CRITICAL_PAGES = [
     '/',
-    '/index.html',
     '/about.html',
-    '/projects/',
-    '/projects/index.html'
+    '/projects',
+    '/contact.html',
+    '/music.html'
   ];
 
   // ============================================================================
@@ -65,7 +65,7 @@
   }
 
   function normalizeUrl(url) {
-    // Normalizuj URL (usuń trailing slash, zachowaj index.html)
+    // Normalizuj URL (usuń trailing slash, konwertuj index.html do /)
     try {
       const urlObj = new URL(url, window.location.origin);
       let pathname = urlObj.pathname;
@@ -73,6 +73,16 @@
       // Usuń trailing slash (oprócz root '/')
       if (pathname.length > 1 && pathname.endsWith('/')) {
         pathname = pathname.slice(0, -1);
+      }
+
+      // Konwertuj /index.html → /
+      if (pathname === '/index.html') {
+        pathname = '/';
+      }
+
+      // Konwertuj /xxx/index.html → /xxx
+      if (pathname.endsWith('/index.html')) {
+        pathname = pathname.slice(0, -11); // Remove '/index.html'
       }
 
       return pathname;
@@ -109,9 +119,11 @@
     try {
       const url = new URL(href, window.location.origin);
       // Jeśli pathname taki sam jak current, ale jest hash - to anchor link
-      // normalizeUrl() już usuwa trailing slash, więc normalizujemy url.pathname też
-      const normalizedPath = normalizeUrl(url.href);  // Normalize complete URL
+      // Używamy url.pathname (nie url.href!) bo to tylko pathname
+      const normalizedPath = normalizeUrl(url.pathname);
+      log('  Checking anchor:', normalizedPath, '===', currentPath, '&& hash:', url.hash);
       if (normalizedPath === currentPath && url.hash) {
+        log('  → Anchor link on same page, allowing browser scroll');
         return false;  // Pozwól przeglądarce obsłużyć scroll do anchora
       }
     } catch {
@@ -150,12 +162,18 @@
     if (!link) return;
 
     const href = link.getAttribute('href');
-    if (!shouldInterceptLink(link, href)) return;
+    log('Link clicked:', href);
+
+    if (!shouldInterceptLink(link, href)) {
+      log('Link not intercepted:', href);
+      return;
+    }
 
     e.preventDefault();
     e.stopPropagation();
 
     const targetPath = normalizeUrl(href);
+    log('Navigating to normalized path:', targetPath, 'from href:', href);
     navigateToPage(targetPath);
   }
 
@@ -252,14 +270,20 @@
   }
 
   async function loadPage(url) {
+    log('loadPage called for:', url);
+
     // Sprawdź cache
     if (pageCache.has(url)) {
-      log('Loading from cache:', url);
-      return pageCache.get(url);
+      log('✓ Loading from cache:', url);
+      const cached = pageCache.get(url);
+      log('  Cached page title:', cached.title);
+      return cached;
     }
 
     // Fetch i cache
+    log('⚠ Cache miss, fetching:', url);
     const pageData = await fetchPage(url);
+    log('✓ Fetched page:', url, 'title:', pageData.title);
     addToCache(url, pageData);
 
     return pageData;
@@ -291,7 +315,13 @@
     }
 
     pageCache.set(url, pageData);
-    log('Cached:', url, `(${pageCache.size}/${CONFIG.cacheSize})`);
+    log('✓ Cached:', url, `(${pageCache.size}/${CONFIG.cacheSize})`, '- Title:', pageData.title);
+
+    // Log all cache keys for debugging
+    if (CONFIG.debug) {
+      const allKeys = Array.from(pageCache.keys());
+      log('  Cache keys:', allKeys.join(', '));
+    }
   }
 
   function clearCache() {
@@ -318,12 +348,16 @@
 
   async function navigateToPage(url) {
     if (isNavigating) {
-      log('Navigation in progress, ignoring:', url);
+      log('⚠ Navigation in progress, ignoring:', url);
       return;
     }
 
     isNavigating = true;
-    log('Navigating to:', url);
+    log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    log('▶ NAVIGATION START');
+    log('  From:', currentPath);
+    log('  To:', url);
+    log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
     try {
       // Sprawdź czy przeglądarka wspiera View Transition API
@@ -339,10 +373,16 @@
         currentPath = url;
       }
 
-      log('Navigation complete:', url);
+      log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      log('✓ NAVIGATION COMPLETE');
+      log('  Current path:', currentPath);
+      log('  Current title:', document.title);
+      log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
     } catch (error) {
-      log('Navigation failed:', error);
+      log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      log('✗ NAVIGATION FAILED:', error);
+      log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       // Fallback do standardowej nawigacji
       window.location.href = url;
     } finally {
@@ -405,23 +445,37 @@
   }
 
   function updatePageContent(pageData, url) {
-    log('Updating page content');
+    log('━━━ updatePageContent START ━━━');
+    log('  URL:', url);
+    log('  Page title:', pageData.title);
+    log('  Current document title:', document.title);
+    log('  Inline styles count:', pageData.styles?.inline?.length || 0);
 
     // Aktualizuj title
     document.title = pageData.title;
+    log('✓ Title updated to:', pageData.title);
 
     // CRITICAL: Load styles BEFORE updating content!
     updateStyles(pageData.styles);
+    log('✓ Styles updated');
 
     // Aktualizuj meta tags
     updateMetaTags(pageData.meta);
 
     // Aktualizuj main content
     const mainEl = document.querySelector('main');
+    log('  Main element found:', !!mainEl);
+    log('  New content length:', pageData.main?.length || 0);
+    log('  New content preview:', pageData.main?.substring(0, 100) || 'null');
 
     // Happy path: mamy main element i nową zawartość (null = brak, "" = pusty ale OK)
     if (mainEl && pageData.main !== null) {
+      const oldContentPreview = mainEl.innerHTML.substring(0, 100);
       mainEl.innerHTML = pageData.main;  // "" is valid (empty main)
+      const newContentPreview = mainEl.innerHTML.substring(0, 100);
+      log('✓ Main content updated');
+      log('  Old content:', oldContentPreview);
+      log('  New content:', newContentPreview);
     } else {
       // Fallback: jeśli brakuje main lub zawartości, spróbuj wyciągnąć z body
       log('Warning: Missing main element or content, using fallback');
@@ -458,6 +512,11 @@
 
     // Zaznacz aktywny link w nawigacji
     updateActiveNavLink(url);
+
+    log('━━━ updatePageContent COMPLETE ━━━');
+    log('  Final document.title:', document.title);
+    log('  Final URL:', url);
+    log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   }
 
   function updateStyles(styles) {
