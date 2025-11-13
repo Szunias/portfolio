@@ -13,7 +13,7 @@
 const GA_CONFIG = {
   measurementId: "G-36J3DWT6QW", // Google Analytics 4 Measurement ID
   anonymizeIp: true,
-  allowGoogleAnalytics: false, // Default to false, user can opt-in
+  allowGoogleAnalytics: true, // Enable Google Analytics (with user consent)
   debug: false, // Set to true for development
 };
 
@@ -191,7 +191,7 @@ function showAnalyticsConsentBanner() {
     "No personal data • Site only";
 
   banner.innerHTML = `
-    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
       <svg width="12" height="12" viewBox="0 0 24 24" style="opacity: 0.9;">
         <!-- Google Analytics icon by Freepik from Flaticon -->
         <path fill="#ea4335" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -201,8 +201,16 @@ function showAnalyticsConsentBanner() {
       </svg>
       <span style="font-weight: 500; font-size: 9px; letter-spacing: 0.3px; text-transform: uppercase; opacity: 0.9;">${analyticsTitle}</span>
     </div>
-    <div style="font-size: 9px; opacity: 0.8; line-height: 1.1;">
+    <div style="font-size: 9px; opacity: 0.8; line-height: 1.2; margin-bottom: 6px;">
       <span style="color: #60a5fa; font-weight: 500;">${analyticsMessage}</span>
+    </div>
+    <div style="display: flex; gap: 6px; margin-top: 6px;">
+      <button id="analytics-accept" style="flex: 1; background: rgba(96, 165, 250, 0.2); border: 1px solid rgba(96, 165, 250, 0.4); color: #60a5fa; padding: 4px 8px; border-radius: 4px; font-size: 9px; cursor: pointer; font-weight: 500; transition: all 0.2s;">
+        Accept
+      </button>
+      <button id="analytics-decline" style="flex: 1; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 4px 8px; border-radius: 4px; font-size: 9px; cursor: pointer; font-weight: 500; transition: all 0.2s;">
+        Decline
+      </button>
     </div>
   `;
 
@@ -210,6 +218,42 @@ function showAnalyticsConsentBanner() {
 
   // Mark banner as shown in this session
   sessionStorage.setItem("analytics-banner-shown", "true");
+
+  // Add click handlers for accept/decline buttons
+  const acceptBtn = banner.querySelector("#analytics-accept");
+  const declineBtn = banner.querySelector("#analytics-decline");
+
+  const removeBanner = () => {
+    clearTimeout(autoHideTimer);
+    banner.style.opacity = "0";
+    banner.style.transform = "translateY(20px)";
+    setTimeout(() => banner.remove(), 300);
+  };
+
+  acceptBtn.addEventListener("click", () => {
+    setAnalyticsConsent(true);
+    removeBanner();
+  });
+
+  declineBtn.addEventListener("click", () => {
+    setAnalyticsConsent(false);
+    removeBanner();
+  });
+
+  // Add hover effects
+  acceptBtn.addEventListener("mouseenter", () => {
+    acceptBtn.style.background = "rgba(96, 165, 250, 0.3)";
+  });
+  acceptBtn.addEventListener("mouseleave", () => {
+    acceptBtn.style.background = "rgba(96, 165, 250, 0.2)";
+  });
+
+  declineBtn.addEventListener("mouseenter", () => {
+    declineBtn.style.background = "rgba(239, 68, 68, 0.2)";
+  });
+  declineBtn.addEventListener("mouseleave", () => {
+    declineBtn.style.background = "rgba(239, 68, 68, 0.1)";
+  });
 
   // Function to update banner text when language changes
   function updateBannerText() {
@@ -240,31 +284,8 @@ function showAnalyticsConsentBanner() {
     banner.style.transform = "translateY(0)";
   });
 
-  // Auto-hide after 4 seconds
-  let autoHideTimer = setTimeout(() => {
-    if (banner.isConnected) {
-      banner.style.opacity = "0";
-      banner.style.transform = "translateY(20px)";
-      setTimeout(() => banner.remove(), 300);
-    }
-  }, 4000);
-
-  // Hover to pause auto-hide
-  banner.addEventListener("mouseenter", () => {
-    // Pause auto-hide on hover
-    clearTimeout(autoHideTimer);
-  });
-
-  banner.addEventListener("mouseleave", () => {
-    // Resume auto-hide after 2 seconds
-    autoHideTimer = setTimeout(() => {
-      if (banner.isConnected) {
-        banner.style.opacity = "0";
-        banner.style.transform = "translateY(20px)";
-        setTimeout(() => banner.remove(), 300);
-      }
-    }, 2000);
-  });
+  // No auto-hide - user must click Accept or Decline
+  let autoHideTimer = null;
 }
 
 // Initialize when DOM is ready
