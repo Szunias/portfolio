@@ -1,2024 +1,1964 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" style="background: #0a0a0a">
-    <head>
-        <style>
-            html,
-            body {
-                background: #0a0a0a !important;
-                margin: 0;
-                padding: 0;
-            }
-            .content {
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            }
-            body.loaded .content {
-                opacity: 1;
-            }
-        </style>
-        <title>
-            Transientica: AudioLab: Beatbox Rhythm Game | ML Audio by Igor
-            Szuniewicz
-        </title>
-        <meta charset="utf-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, user-scalable=no"
-        />
-        <meta
-            name="description"
-            content="Transientica: AudioLab: Real-time ML beatbox classification with 45ms latency. Beatbox-controlled rhythm game using machine learning audio processing by Igor Szuniewicz."
-        />
-        <meta
-            name="keywords"
-            content="Transientica AudioLab, beatbox ML, machine learning audio, real-time classification, rhythm game, Igor Szuniewicz, DSP, audio processing, 45ms latency"
-        />
-        <meta name="author" content="Igor Szuniewicz" />
-        <meta name="robots" content="index, follow" />
-        <link
-            rel="canonical"
-            href="https://igorszuniewicz.com/projects/audiolab.html"
-        />
+  <head>
+    <script>
+/** Language preload - prevents lang flicker */
+(function(){
+"use strict";
+const savedLang=localStorage.getItem("language")||"en";
+document.documentElement.setAttribute("lang",savedLang);
+window.__preloadedLang=savedLang;
+})();
+    </script>
+    <style>
+      html,
+      body {
+        background: #0a0a0a !important;
+        margin: 0;
+        padding: 0;
+      }
+      .content {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      body.loaded .content {
+        opacity: 1;
+      }
+    </style>
+    <title>
+      Transientica: AudioLab: Beatbox Rhythm Game | ML Audio by Igor Szuniewicz
+    </title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <meta
+      name="description"
+      content="Transientica: AudioLab: Real-time ML beatbox classification with 45ms latency. Beatbox-controlled rhythm game using machine learning audio processing by Igor Szuniewicz."
+    />
+    <meta
+      name="keywords"
+      content="Transientica AudioLab, beatbox ML, machine learning audio, real-time classification, rhythm game, Igor Szuniewicz, DSP, audio processing, 45ms latency"
+    />
+    <meta name="author" content="Igor Szuniewicz" />
+    <meta name="robots" content="index, follow" />
+    <link
+      rel="canonical"
+      href="https://igorszuniewicz.com/projects/audiolab.html"
+    />
 
-        <!-- Open Graph / Facebook -->
-        <meta property="og:type" content="video.game" />
-        <meta property="og:site_name" content="Igor Szuniewicz" />
-        <meta
-            property="og:url"
-            content="https://igorszuniewicz.com/projects/audiolab.html"
-        />
-        <meta
-            property="og:title"
-            content="Transientica: AudioLab: Beatbox Rhythm Game | ML Audio by Igor Szuniewicz"
-        />
-        <meta
-            property="og:description"
-            content="Transientica: AudioLab: Real-time ML beatbox classification with 45ms latency. Beatbox-controlled rhythm game using machine learning audio processing by Igor Szuniewicz."
-        />
-        <meta
-            property="og:image"
-            content="https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg"
-        />
-        <meta property="og:image:width" content="1280" />
-        <meta property="og:image:height" content="720" />
-        <meta property="og:locale" content="en_US" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="video.game" />
+    <meta property="og:site_name" content="Igor Szuniewicz" />
+    <meta
+      property="og:url"
+      content="https://igorszuniewicz.com/projects/audiolab.html"
+    />
+    <meta
+      property="og:title"
+      content="Transientica: AudioLab: Beatbox Rhythm Game | ML Audio by Igor Szuniewicz"
+    />
+    <meta
+      property="og:description"
+      content="Transientica: AudioLab: Real-time ML beatbox classification with 45ms latency. Beatbox-controlled rhythm game using machine learning audio processing by Igor Szuniewicz."
+    />
+    <meta
+      property="og:image"
+      content="https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg"
+    />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="720" />
+    <meta property="og:locale" content="en_US" />
 
-        <!-- Twitter -->
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta
-            name="twitter:url"
-            content="https://igorszuniewicz.com/projects/audiolab.html"
-        />
-        <meta
-            name="twitter:title"
-            content="Transientica: AudioLab: Beatbox Rhythm Game | ML Audio by Igor Szuniewicz"
-        />
-        <meta
-            name="twitter:description"
-            content="Transientica: AudioLab: Real-time ML beatbox classification with 45ms latency. Beatbox-controlled rhythm game using machine learning audio processing by Igor Szuniewicz."
-        />
-        <meta
-            name="twitter:image"
-            content="https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg"
-        />
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:url"
+      content="https://igorszuniewicz.com/projects/audiolab.html"
+    />
+    <meta
+      name="twitter:title"
+      content="Transientica: AudioLab: Beatbox Rhythm Game | ML Audio by Igor Szuniewicz"
+    />
+    <meta
+      name="twitter:description"
+      content="Transientica: AudioLab: Real-time ML beatbox classification with 45ms latency. Beatbox-controlled rhythm game using machine learning audio processing by Igor Szuniewicz."
+    />
+    <meta
+      name="twitter:image"
+      content="https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg"
+    />
 
-        <!-- Google Search Console Verification - Already verified -->
+    <!-- Google Search Console Verification - Already verified -->
 
-        <link
-            rel="icon"
-            type="image/svg+xml"
-            href="../assets/icons/favicon.svg"
-        />
+    <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
 
-        <!-- Google Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700;800;900&display=swap"
-            rel="stylesheet"
-        />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
 
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-            html,
-            body {
-                width: 100%;
-                height: 100%;
-                background: #0a0a0a;
-                color: #ffffff;
-                font-family: "Poppins", sans-serif;
-                overflow-x: hidden;
-                scroll-behavior: smooth;
-            }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        background: #0a0a0a;
+        color: #ffffff;
+        font-family: "Poppins", sans-serif;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+      }
 
-            /* === BACKGROUND === */
-            .tech-background {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: 0;
-                background:
-                    linear-gradient(
-                        180deg,
-                        rgba(10, 10, 10, 0.95) 0%,
-                        rgba(12, 18, 24, 0.98) 50%,
-                        rgba(10, 10, 10, 0.95) 100%
-                    ),
-                    repeating-linear-gradient(
-                        0deg,
-                        rgba(24, 191, 239, 0.03) 0px,
-                        transparent 1px,
-                        transparent 40px,
-                        rgba(24, 191, 239, 0.03) 41px
-                    ),
-                    repeating-linear-gradient(
-                        90deg,
-                        rgba(154, 108, 255, 0.03) 0px,
-                        transparent 1px,
-                        transparent 40px,
-                        rgba(154, 108, 255, 0.03) 41px
-                    );
-            }
+      /* === BACKGROUND === */
+      .tech-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(10, 10, 10, 0.95) 0%,
+            rgba(12, 18, 24, 0.98) 50%,
+            rgba(10, 10, 10, 0.95) 100%
+          ),
+          repeating-linear-gradient(
+            0deg,
+            rgba(24, 191, 239, 0.03) 0px,
+            transparent 1px,
+            transparent 40px,
+            rgba(24, 191, 239, 0.03) 41px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(154, 108, 255, 0.03) 0px,
+            transparent 1px,
+            transparent 40px,
+            rgba(154, 108, 255, 0.03) 41px
+          );
+      }
 
-            .tech-background::before {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background:
-                    radial-gradient(
-                        ellipse at 30% 20%,
-                        rgba(24, 191, 239, 0.05) 0%,
-                        transparent 50%
-                    ),
-                    radial-gradient(
-                        ellipse at 70% 80%,
-                        rgba(154, 108, 255, 0.04) 0%,
-                        transparent 50%
-                    );
-            }
+      .tech-background::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+          radial-gradient(
+            ellipse at 30% 20%,
+            rgba(24, 191, 239, 0.05) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 70% 80%,
+            rgba(154, 108, 255, 0.04) 0%,
+            transparent 50%
+          );
+      }
 
-            .tech-background::after {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: radial-gradient(
-                    circle at 50% 30%,
-                    rgba(24, 191, 239, 0.02) 0%,
-                    transparent 40%
-                );
-                animation: bgPulse 8s ease-in-out infinite;
-            }
+      .tech-background::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+          circle at 50% 30%,
+          rgba(24, 191, 239, 0.02) 0%,
+          transparent 40%
+        );
+        animation: bgPulse 8s ease-in-out infinite;
+      }
 
-            @keyframes bgPulse {
-                0%,
-                100% {
-                    opacity: 0.15;
+      @keyframes bgPulse {
+        0%,
+        100% {
+          opacity: 0.15;
+        }
+        50% {
+          opacity: 0.25;
+        }
+      }
+
+      /* === CONTENT WRAPPER === */
+      .content {
+        position: relative;
+        z-index: 1;
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      /* === BACK BUTTON === */
+      .back-button {
+        position: fixed;
+        top: 2rem;
+        left: 2rem;
+        z-index: 100;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.8rem 1.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(24, 191, 239, 0.3);
+        border-radius: 50px;
+        color: #18bfef;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .back-button:hover {
+        background: rgba(24, 191, 239, 0.15);
+        border-color: #18bfef;
+        transform: translateX(-5px);
+        box-shadow: 0 6px 30px rgba(24, 191, 239, 0.3);
+        color: #9a6cff;
+      }
+
+      .back-button::before {
+        content: "←";
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+
+      /* === LANGUAGE SWITCHER === */
+      .lang-switcher {
+        position: fixed !important;
+        top: 2rem !important;
+        right: 2rem !important;
+        z-index: 1000 !important;
+        display: flex !important;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.08) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(24, 191, 239, 0.5) !important;
+        border-radius: 50px;
+        padding: 0.5rem;
+        box-shadow:
+          0 4px 20px rgba(0, 0, 0, 0.3),
+          0 0 20px rgba(24, 191, 239, 0.15) !important;
+      }
+
+      .lang-btn {
+        padding: 0.5rem 1rem;
+        background: transparent;
+        border: none;
+        border-radius: 50px;
+        color: #999 !important;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 0.9rem;
+        font-family: "Poppins", sans-serif;
+        transition: all 0.3s ease;
+        display: flex !important;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .lang-btn:hover {
+        color: #18bfef !important;
+        background: rgba(24, 191, 239, 0.1);
+      }
+
+      .lang-btn.active {
+        color: #18bfef !important;
+        background: rgba(24, 191, 239, 0.15);
+        font-weight: 600;
+      }
+
+      .lang-flag {
+        width: 20px;
+        height: 14px;
+        border-radius: 2px;
+        overflow: hidden;
+        display: block;
+      }
+
+      /* === HERO SECTION === */
+      .hero {
+        text-align: center;
+        padding: 8rem 0 4rem;
+        margin-bottom: 4rem;
+        position: relative;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(
+          circle,
+          rgba(24, 191, 239, 0.08) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+        animation: heroGlow 3s ease-in-out infinite;
+      }
+
+      @keyframes heroGlow {
+        0%,
+        100% {
+          opacity: 0.5;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        50% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1.1);
+        }
+      }
+
+      .hero h1 {
+        font-family: "Sora", sans-serif;
+        font-size: clamp(3rem, 8vw, 5rem);
+        font-weight: 900;
+        margin-bottom: 1rem;
+        letter-spacing: 0.05em;
+        letter-spacing: -0.02em;
+        text-transform: uppercase;
+        line-height: 1.1;
+        color: #ffffff;
+        position: relative;
+        z-index: 1;
+        background: linear-gradient(
+          135deg,
+          #18bfef 0%,
+          #9a6cff 50%,
+          #ff6ea9 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+      }
+
+      .hero .subtitle-small {
+        display: block;
+        font-size: 0.55em;
+        font-weight: 500;
+        color: #888;
+        margin-top: 0.8rem;
+        letter-spacing: 0.2em;
+        background: linear-gradient(135deg, #888 0%, #666 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero .subtitle {
+        font-family: "Poppins", sans-serif;
+        font-size: 1.15rem;
+        color: #999;
+        margin-bottom: 2rem;
+        line-height: 1.7;
+        font-weight: 400;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .tags {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+
+      .tags span {
+        padding: 0.6rem 1.3rem;
+        background: rgba(24, 191, 239, 0.1);
+        border: 1px solid rgba(24, 191, 239, 0.3);
+        border-radius: 25px;
+        font-size: 0.9rem;
+        color: #18bfef;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .tags span:hover {
+        background: rgba(24, 191, 239, 0.2);
+        border-color: #18bfef;
+        color: #9a6cff;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 25px rgba(24, 191, 239, 0.4);
+      }
+
+      /* === PROJECT CONTEXT === */
+      .project-context {
+        max-width: 900px;
+        margin: 3rem auto;
+        padding: 2rem;
+        background: rgba(24, 191, 239, 0.05);
+        border: 1px solid rgba(24, 191, 239, 0.2);
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+      }
+
+      .project-context h3 {
+        font-family: "Sora", "Inter", sans-serif;
+        font-size: 1.5rem;
+        color: #18bfef;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .context-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .context-item {
+        padding: 1rem;
+        background: rgba(24, 191, 239, 0.05);
+        border-radius: 8px;
+        border-left: 3px solid #18bfef;
+      }
+
+      .context-label {
+        font-size: 0.85rem;
+        color: #9a6cff;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+      }
+
+      .context-value {
+        font-size: 1rem;
+        color: #e0e6ed;
+        line-height: 1.6;
+      }
+
+      /* === VIDEO ROW === */
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 4rem;
+        margin: 5rem 0;
+        opacity: 1;
+        transform: translateY(20px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .row.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .row-visual {
+        flex: 1;
+      }
+
+      .video-container {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow:
+          0 20px 60px rgba(0, 0, 0, 0.5),
+          0 0 30px rgba(24, 191, 239, 0.1);
+        border: 1px solid rgba(24, 191, 239, 0.3);
+        transition: all 0.4s ease;
+        cursor: pointer;
+      }
+
+      .video-container:hover {
+        box-shadow:
+          0 30px 80px rgba(0, 0, 0, 0.7),
+          0 0 50px rgba(24, 191, 239, 0.3);
+        border-color: rgba(24, 191, 239, 0.6);
+        transform: translateY(-5px);
+      }
+
+      .video-container video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* === PLAY BUTTON OVERLAY === */
+      .play-button-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(24, 191, 239, 0.15);
+        backdrop-filter: blur(10px);
+        border: 3px solid rgba(24, 191, 239, 0.6);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        pointer-events: none;
+      }
+
+      .video-container:hover .play-button-overlay {
+        background: rgba(24, 191, 239, 0.25);
+        border-color: #18bfef;
+        box-shadow:
+          0 0 40px rgba(24, 191, 239, 0.6),
+          0 0 80px rgba(24, 191, 239, 0.3);
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+
+      .play-button-overlay::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 1px solid rgba(24, 191, 239, 0.3);
+        animation: pulse-ring 2s ease-out infinite;
+      }
+
+      @keyframes pulse-ring {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1.5);
+          opacity: 0;
+        }
+      }
+
+      .play-icon {
+        width: 0;
+        height: 0;
+        border-left: 28px solid #18bfef;
+        border-top: 18px solid transparent;
+        border-bottom: 18px solid transparent;
+        margin-left: 8px;
+        filter: drop-shadow(0 0 10px rgba(24, 191, 239, 0.8));
+        transition: all 0.3s ease;
+      }
+
+      .video-container:hover .play-icon {
+        border-left-color: #9a6cff;
+        filter: drop-shadow(0 0 20px rgba(154, 108, 255, 0.9));
+      }
+
+      .video-container.playing .play-button-overlay {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* === VIDEO MODAL === */
+      .video-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+        animation: fadeIn 0.3s ease;
+      }
+
+      .video-modal.active {
+        display: flex;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .modal-content {
+        position: relative;
+        width: 90%;
+        max-width: 1200px;
+        background: rgba(10, 10, 10, 0.8);
+        border-radius: 16px;
+        overflow: hidden;
+        border: 2px solid rgba(24, 191, 239, 0.3);
+        box-shadow:
+          0 30px 100px rgba(0, 0, 0, 0.9),
+          0 0 60px rgba(24, 191, 239, 0.2);
+        animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      @keyframes scaleIn {
+        from {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .modal-video {
+        width: 100%;
+        display: block;
+        background: #000;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(24, 191, 239, 0.5);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+      }
+
+      .modal-close:hover {
+        background: rgba(24, 191, 239, 0.2);
+        border-color: #18bfef;
+        transform: rotate(90deg);
+        box-shadow: 0 0 30px rgba(24, 191, 239, 0.5);
+      }
+
+      .modal-close::before,
+      .modal-close::after {
+        content: "";
+        position: absolute;
+        width: 24px;
+        height: 3px;
+        background: #18bfef;
+        border-radius: 2px;
+      }
+
+      .modal-close::before {
+        transform: rotate(45deg);
+      }
+
+      .modal-close::after {
+        transform: rotate(-45deg);
+      }
+
+      .row-text {
+        flex: 1;
+      }
+
+      .row-text h3 {
+        font-family: "Sora", sans-serif;
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        color: #ffffff;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        border-left: 4px solid #18bfef;
+        padding-left: 1rem;
+        position: relative;
+        letter-spacing: -0.02em;
+      }
+
+      .row-text h3::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -8px;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #18bfef, transparent);
+        border-radius: 2px;
+      }
+
+      .row-text p {
+        color: #aaa;
+        line-height: 1.7;
+        font-size: 0.95rem;
+        margin-bottom: 1.25rem;
+      }
+
+      /* === FEATURES GRID === */
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 5rem 0;
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .features-grid.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .feature-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(24, 191, 239, 0.2);
+        border-radius: 16px;
+        padding: 2.5rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .feature-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(24, 191, 239, 0.1),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .feature-card:hover::before {
+        left: 100%;
+      }
+
+      .feature-card:hover {
+        border-color: #18bfef;
+        transform: translateY(-8px);
+        box-shadow:
+          0 15px 60px rgba(0, 0, 0, 0.7),
+          0 0 40px rgba(24, 191, 239, 0.3);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .feature-card h4 {
+        font-family: "Sora", sans-serif;
+        font-size: 1.15rem;
+        color: #18bfef;
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+
+      .feature-card p {
+        color: #999;
+        line-height: 1.7;
+      }
+
+      /* === STATS === */
+      .stats {
+        margin: 5rem 0;
+        text-align: center;
+        opacity: 1;
+        transform: translateY(20px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .stats.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .stats h3 {
+        font-family: "Sora", sans-serif;
+        font-size: clamp(1.75rem, 3vw, 2.25rem);
+        color: #ffffff;
+        margin-bottom: 3rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(24, 191, 239, 0.3);
+        border-radius: 12px;
+        padding: 2.5rem 1.5rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card:hover {
+        border-color: #18bfef;
+        transform: translateY(-8px) scale(1.02);
+        box-shadow:
+          0 15px 60px rgba(0, 0, 0, 0.7),
+          0 0 40px rgba(24, 191, 239, 0.4);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .stat-value {
+        font-family: "Sora", sans-serif;
+        font-size: clamp(2rem, 4vw, 2.5rem);
+        font-weight: 800;
+        background: linear-gradient(135deg, #18bfef, #9a6cff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        display: block;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.03em;
+      }
+
+      .stat-label {
+        font-size: 0.85rem;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 500;
+      }
+
+      /* === AUDIOLAB CHALLENGE CARDS === */
+      .challenge-cards-audiolab {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: left;
+      }
+
+      .challenge-card-audiolab {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(24, 191, 239, 0.3);
+        border-radius: 16px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .challenge-card-audiolab::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(24, 191, 239, 0.1),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .challenge-card-audiolab:hover::before {
+        left: 100%;
+      }
+
+      .challenge-card-audiolab:hover {
+        border-color: #18bfef;
+        transform: translateY(-8px);
+        box-shadow:
+          0 15px 50px rgba(0, 0, 0, 0.6),
+          0 0 30px rgba(24, 191, 239, 0.3);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .challenge-card-audiolab h4 {
+        font-family: "Sora", sans-serif;
+        font-size: 1.15rem;
+        background: linear-gradient(135deg, #18bfef, #9a6cff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .challenge-content-audiolab {
+        position: relative;
+        z-index: 1;
+      }
+
+      .challenge-label-audiolab {
+        font-family: "Sora", sans-serif;
+        font-size: 0.85rem;
+        color: #18bfef;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .challenge-label-audiolab:first-of-type {
+        margin-top: 0;
+      }
+
+      /* === TECH STACK === */
+      .tech-stack {
+        margin: 5rem 0;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .tech-stack.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .tech-stack h3 {
+        font-family: "Sora", sans-serif;
+        font-size: clamp(1.75rem, 3vw, 2.25rem);
+        color: #ffffff;
+        margin-bottom: 3rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1.5rem;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .tech-item {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(24, 191, 239, 0.2);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        color: #18bfef;
+      }
+
+      .tech-item:hover {
+        border-color: #18bfef;
+        background: rgba(24, 191, 239, 0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(24, 191, 239, 0.2);
+      }
+
+      /* === BUTTON === */
+      .button-container {
+        text-align: center;
+        margin: 4rem 0;
+      }
+
+      .button {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        background: rgba(24, 191, 239, 0.1);
+        border: 2px solid rgba(24, 191, 239, 0.3);
+        border-radius: 50px;
+        color: #18bfef;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: all 0.3s ease;
+      }
+
+      .button:hover {
+        background: rgba(24, 191, 239, 0.2);
+        border-color: #18bfef;
+        color: #9a6cff;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(24, 191, 239, 0.4);
+      }
+
+      /* === FOOTER === */
+      .footer {
+        text-align: center;
+        padding: 3rem 0;
+        color: #666;
+        font-size: 0.9rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        margin-top: 5rem;
+      }
+
+      /* === RESPONSIVE === */
+      @media (max-width: 768px) {
+        .back-button {
+          top: 1rem;
+          left: 1rem;
+          padding: 0.6rem 1.2rem;
+          font-size: 0.85rem;
+        }
+
+        .hero {
+          padding: 4rem 0 2rem;
+        }
+
+        .hero h1 {
+          font-size: 3rem;
+        }
+
+        .row {
+          flex-direction: column;
+          gap: 2rem;
+          margin: 3rem 0;
+        }
+
+        .row-text h3 {
+          font-size: 1.8rem;
+        }
+
+        .stats h3,
+        .tech-stack h3 {
+          font-size: 2rem;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hero h1 {
+          font-size: 2.2rem;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* FIX: hero and first content section always visible */
+      .hero {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+      }
+      .row:first-of-type {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+      }
+
+      /* === BEATBOX ENTRANCE ANIMATION === */
+      .beatbox-entrance {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+          circle at center,
+          #0c1218 0%,
+          #0a0a0a 70%,
+          #000 100%
+        );
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: entranceFadeOut 1.2s ease-out 2.5s forwards;
+        pointer-events: none;
+      }
+
+      @keyframes entranceFadeOut {
+        99.9% {
+          opacity: 0;
+          visibility: hidden;
+        }
+        to {
+          opacity: 0;
+          visibility: hidden;
+          display: none;
+        }
+      }
+
+      .sound-wave {
+        position: absolute;
+        width: 4px;
+        background: linear-gradient(to top, #18bfef, #9a6cff);
+        border-radius: 2px;
+        animation: waveUp 0.8s ease-in-out infinite;
+      }
+
+      .sound-wave:nth-child(1) {
+        left: 35%;
+        height: 60px;
+        animation-delay: 0s;
+      }
+      .sound-wave:nth-child(2) {
+        left: 40%;
+        height: 100px;
+        animation-delay: 0.1s;
+      }
+      .sound-wave:nth-child(3) {
+        left: 45%;
+        height: 140px;
+        animation-delay: 0.2s;
+      }
+      .sound-wave:nth-child(4) {
+        left: 55%;
+        height: 140px;
+        animation-delay: 0.3s;
+      }
+      .sound-wave:nth-child(5) {
+        left: 60%;
+        height: 100px;
+        animation-delay: 0.4s;
+      }
+
+      @keyframes waveUp {
+        0%,
+        100% {
+          transform: scaleY(0.3);
+          opacity: 0.5;
+        }
+        50% {
+          transform: scaleY(1);
+          opacity: 1;
+        }
+      }
+
+      .entrance-title {
+        position: absolute;
+        bottom: 30%;
+        font-family: "Sora", sans-serif;
+        font-size: clamp(3rem, 8vw, 5rem);
+        font-weight: 900;
+        background: linear-gradient(135deg, #18bfef, #9a6cff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: 0.1em;
+        animation: titleFade 0.8s ease-out 0.5s both;
+      }
+
+      @keyframes titleFade {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "VideoGame",
+            "@id": "https://igorszuniewicz.com/projects/audiolab.html#game",
+            "url": "https://igorszuniewicz.com/projects/audiolab.html",
+            "name": "Transientica: AudioLab",
+            "description": "Real-time ML beatbox classification with 45ms latency. Beatbox-controlled rhythm game using machine learning audio processing.",
+            "genre": ["Rhythm", "Music", "Educational", "ML"],
+            "gamePlatform": "PC",
+            "datePublished": "2025",
+            "author": {
+              "@id": "https://igorszuniewicz.com/#person"
+            },
+            "creator": {
+              "@id": "https://igorszuniewicz.com/#person"
+            },
+            "image": {
+              "@type": "ImageObject",
+              "url": "https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg",
+              "width": 1280,
+              "height": 720
+            },
+            "keywords": [
+              "machine learning",
+              "beatbox",
+              "rhythm game",
+              "real-time classification",
+              "DSP",
+              "audio processing",
+              "45ms latency"
+            ],
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://igorszuniewicz.com/"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Projects",
+                  "item": "https://igorszuniewicz.com/projects/"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 3,
+                  "name": "Transientica: AudioLab",
+                  "item": "https://igorszuniewicz.com/projects/audiolab.html"
                 }
-                50% {
-                    opacity: 0.25;
-                }
-            }
-
-            /* === CONTENT WRAPPER === */
-            .content {
-                position: relative;
-                z-index: 1;
-                max-width: 1300px;
-                margin: 0 auto;
-                padding: 2rem;
-            }
-
-            /* === BACK BUTTON === */
-            .back-button {
-                position: fixed;
-                top: 2rem;
-                left: 2rem;
-                z-index: 100;
-                display: inline-flex;
-                align-items: center;
-                gap: 0.8rem;
-                padding: 0.8rem 1.5rem;
-                background: rgba(255, 255, 255, 0.05);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(24, 191, 239, 0.3);
-                border-radius: 50px;
-                color: #18bfef;
-                text-decoration: none;
-                font-size: 0.9rem;
-                font-weight: 500;
-                letter-spacing: 0.02em;
-                text-transform: uppercase;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            }
-
-            .back-button:hover {
-                background: rgba(24, 191, 239, 0.15);
-                border-color: #18bfef;
-                transform: translateX(-5px);
-                box-shadow: 0 6px 30px rgba(24, 191, 239, 0.3);
-                color: #9a6cff;
-            }
-
-            .back-button::before {
-                content: "←";
-                font-size: 1.2rem;
-                font-weight: bold;
-            }
-
-            /* === LANGUAGE SWITCHER === */
-            .lang-switcher {
-                position: fixed !important;
-                top: 2rem !important;
-                right: 2rem !important;
-                z-index: 1000 !important;
-                display: flex !important;
-                gap: 0.5rem;
-                background: rgba(255, 255, 255, 0.08) !important;
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(24, 191, 239, 0.5) !important;
-                border-radius: 50px;
-                padding: 0.5rem;
-                box-shadow:
-                    0 4px 20px rgba(0, 0, 0, 0.3),
-                    0 0 20px rgba(24, 191, 239, 0.15) !important;
-            }
-
-            .lang-btn {
-                padding: 0.5rem 1rem;
-                background: transparent;
-                border: none;
-                border-radius: 50px;
-                color: #999 !important;
-                cursor: pointer;
-                font-weight: 500;
-                font-size: 0.9rem;
-                font-family: "Poppins", sans-serif;
-                transition: all 0.3s ease;
-                display: flex !important;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
-            .lang-btn:hover {
-                color: #18bfef !important;
-                background: rgba(24, 191, 239, 0.1);
-            }
-
-            .lang-btn.active {
-                color: #18bfef !important;
-                background: rgba(24, 191, 239, 0.15);
-                font-weight: 600;
-            }
-
-            .lang-flag {
-                width: 20px;
-                height: 14px;
-                border-radius: 2px;
-                overflow: hidden;
-                display: block;
-            }
-
-            /* === HERO SECTION === */
-            .hero {
-                text-align: center;
-                padding: 8rem 0 4rem;
-                margin-bottom: 4rem;
-                position: relative;
-            }
-
-            .hero::before {
-                content: "";
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 600px;
-                height: 600px;
-                background: radial-gradient(
-                    circle,
-                    rgba(24, 191, 239, 0.08) 0%,
-                    transparent 70%
-                );
-                pointer-events: none;
-                animation: heroGlow 3s ease-in-out infinite;
-            }
-
-            @keyframes heroGlow {
-                0%,
-                100% {
-                    opacity: 0.5;
-                    transform: translate(-50%, -50%) scale(1);
-                }
-                50% {
-                    opacity: 1;
-                    transform: translate(-50%, -50%) scale(1.1);
-                }
-            }
-
-            .hero h1 {
-                font-family: "Sora", sans-serif;
-                font-size: clamp(3rem, 8vw, 5rem);
-                font-weight: 900;
-                margin-bottom: 1rem;
-                letter-spacing: 0.05em;
-                letter-spacing: -0.02em;
-                text-transform: uppercase;
-                line-height: 1.1;
-                color: #ffffff;
-                position: relative;
-                z-index: 1;
-                background: linear-gradient(
-                    135deg,
-                    #18bfef 0%,
-                    #9a6cff 50%,
-                    #ff6ea9 100%
-                );
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                text-shadow: none;
-            }
-
-            .hero .subtitle-small {
-                display: block;
-                font-size: 0.55em;
-                font-weight: 500;
-                color: #888;
-                margin-top: 0.8rem;
-                letter-spacing: 0.2em;
-                background: linear-gradient(135deg, #888 0%, #666 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-            }
-
-            .hero .subtitle {
-                font-family: "Poppins", sans-serif;
-                font-size: 1.15rem;
-                color: #999;
-                margin-bottom: 2rem;
-                line-height: 1.7;
-                font-weight: 400;
-                max-width: 800px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .tags {
-                display: flex;
-                gap: 1rem;
-                justify-content: center;
-                flex-wrap: wrap;
-                margin-top: 2rem;
-            }
-
-            .tags span {
-                padding: 0.6rem 1.3rem;
-                background: rgba(24, 191, 239, 0.1);
-                border: 1px solid rgba(24, 191, 239, 0.3);
-                border-radius: 25px;
-                font-size: 0.9rem;
-                color: #18bfef;
-                font-weight: 500;
-                transition: all 0.3s ease;
-            }
-
-            .tags span:hover {
-                background: rgba(24, 191, 239, 0.2);
-                border-color: #18bfef;
-                color: #9a6cff;
-                transform: translateY(-3px);
-                box-shadow: 0 6px 25px rgba(24, 191, 239, 0.4);
-            }
-
-            /* === PROJECT CONTEXT === */
-            .project-context {
-                max-width: 900px;
-                margin: 3rem auto;
-                padding: 2rem;
-                background: rgba(24, 191, 239, 0.05);
-                border: 1px solid rgba(24, 191, 239, 0.2);
-                border-radius: 16px;
-                backdrop-filter: blur(10px);
-            }
-
-            .project-context h3 {
-                font-family: "Sora", "Inter", sans-serif;
-                font-size: 1.5rem;
-                color: #18bfef;
-                margin-bottom: 1.5rem;
-                font-weight: 600;
-                text-align: center;
-            }
-
-            .context-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1.5rem;
-            }
-
-            .context-item {
-                padding: 1rem;
-                background: rgba(24, 191, 239, 0.05);
-                border-radius: 8px;
-                border-left: 3px solid #18bfef;
-            }
-
-            .context-label {
-                font-size: 0.85rem;
-                color: #9a6cff;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                margin-bottom: 0.5rem;
-            }
-
-            .context-value {
-                font-size: 1rem;
-                color: #e0e6ed;
-                line-height: 1.6;
-            }
-
-            /* === VIDEO ROW === */
-            .row {
-                display: flex;
-                align-items: center;
-                gap: 4rem;
-                margin: 5rem 0;
-                opacity: 1;
-                transform: translateY(20px);
-                transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            }
-
-            .row.visible {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            .row-visual {
-                flex: 1;
-            }
-
-            .video-container {
-                position: relative;
-                padding-bottom: 56.25%;
-                height: 0;
-                border-radius: 12px;
-                overflow: hidden;
-                box-shadow:
-                    0 20px 60px rgba(0, 0, 0, 0.5),
-                    0 0 30px rgba(24, 191, 239, 0.1);
-                border: 1px solid rgba(24, 191, 239, 0.3);
-                transition: all 0.4s ease;
-                cursor: pointer;
-            }
-
-            .video-container:hover {
-                box-shadow:
-                    0 30px 80px rgba(0, 0, 0, 0.7),
-                    0 0 50px rgba(24, 191, 239, 0.3);
-                border-color: rgba(24, 191, 239, 0.6);
-                transform: translateY(-5px);
-            }
-
-            .video-container video {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-            }
-
-            /* === PLAY BUTTON OVERLAY === */
-            .play-button-overlay {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                z-index: 10;
-                width: 100px;
-                height: 100px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: rgba(24, 191, 239, 0.15);
-                backdrop-filter: blur(10px);
-                border: 3px solid rgba(24, 191, 239, 0.6);
-                border-radius: 50%;
-                transition: all 0.3s ease;
-                pointer-events: none;
-            }
-
-            .video-container:hover .play-button-overlay {
-                background: rgba(24, 191, 239, 0.25);
-                border-color: #18bfef;
-                box-shadow:
-                    0 0 40px rgba(24, 191, 239, 0.6),
-                    0 0 80px rgba(24, 191, 239, 0.3);
-                transform: translate(-50%, -50%) scale(1.1);
-            }
-
-            .play-button-overlay::before {
-                content: "";
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                border-radius: 50%;
-                border: 1px solid rgba(24, 191, 239, 0.3);
-                animation: pulse-ring 2s ease-out infinite;
-            }
-
-            @keyframes pulse-ring {
-                0% {
-                    transform: scale(1);
-                    opacity: 1;
-                }
-                100% {
-                    transform: scale(1.5);
-                    opacity: 0;
-                }
-            }
-
-            .play-icon {
-                width: 0;
-                height: 0;
-                border-left: 28px solid #18bfef;
-                border-top: 18px solid transparent;
-                border-bottom: 18px solid transparent;
-                margin-left: 8px;
-                filter: drop-shadow(0 0 10px rgba(24, 191, 239, 0.8));
-                transition: all 0.3s ease;
-            }
-
-            .video-container:hover .play-icon {
-                border-left-color: #9a6cff;
-                filter: drop-shadow(0 0 20px rgba(154, 108, 255, 0.9));
-            }
-
-            .video-container.playing .play-button-overlay {
-                opacity: 0;
-                pointer-events: none;
-            }
-
-            /* === VIDEO MODAL === */
-            .video-modal {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.95);
-                z-index: 9999;
-                align-items: center;
-                justify-content: center;
-                backdrop-filter: blur(10px);
-                animation: fadeIn 0.3s ease;
-            }
-
-            .video-modal.active {
-                display: flex;
-            }
-
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                }
-                to {
-                    opacity: 1;
-                }
-            }
-
-            .modal-content {
-                position: relative;
-                width: 90%;
-                max-width: 1200px;
-                background: rgba(10, 10, 10, 0.8);
-                border-radius: 16px;
-                overflow: hidden;
-                border: 2px solid rgba(24, 191, 239, 0.3);
-                box-shadow:
-                    0 30px 100px rgba(0, 0, 0, 0.9),
-                    0 0 60px rgba(24, 191, 239, 0.2);
-                animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            }
-
-            @keyframes scaleIn {
-                from {
-                    transform: scale(0.8);
-                    opacity: 0;
-                }
-                to {
-                    transform: scale(1);
-                    opacity: 1;
-                }
-            }
-
-            .modal-video {
-                width: 100%;
-                display: block;
-                background: #000;
-            }
-
-            .modal-close {
-                position: absolute;
-                top: 1.5rem;
-                right: 1.5rem;
-                width: 50px;
-                height: 50px;
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(10px);
-                border: 2px solid rgba(24, 191, 239, 0.5);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                z-index: 10;
-            }
-
-            .modal-close:hover {
-                background: rgba(24, 191, 239, 0.2);
-                border-color: #18bfef;
-                transform: rotate(90deg);
-                box-shadow: 0 0 30px rgba(24, 191, 239, 0.5);
-            }
-
-            .modal-close::before,
-            .modal-close::after {
-                content: "";
-                position: absolute;
-                width: 24px;
-                height: 3px;
-                background: #18bfef;
-                border-radius: 2px;
-            }
-
-            .modal-close::before {
-                transform: rotate(45deg);
-            }
-
-            .modal-close::after {
-                transform: rotate(-45deg);
-            }
-
-            .row-text {
-                flex: 1;
-            }
-
-            .row-text h3 {
-                font-family: "Sora", sans-serif;
-                font-size: clamp(1.5rem, 3vw, 2rem);
-                color: #ffffff;
-                font-weight: 700;
-                margin-bottom: 1rem;
-                border-left: 4px solid #18bfef;
-                padding-left: 1rem;
-                position: relative;
-                letter-spacing: -0.02em;
-            }
-
-            .row-text h3::after {
-                content: "";
-                position: absolute;
-                left: 0;
-                bottom: -8px;
-                width: 60px;
-                height: 3px;
-                background: linear-gradient(90deg, #18bfef, transparent);
-                border-radius: 2px;
-            }
-
-            .row-text p {
-                color: #aaa;
-                line-height: 1.7;
-                font-size: 0.95rem;
-                margin-bottom: 1.25rem;
-            }
-
-            /* === FEATURES GRID === */
-            .features-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 2rem;
-                margin: 5rem 0;
-                opacity: 0;
-                transform: translateY(50px);
-                transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            }
-
-            .features-grid.visible {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            .feature-card {
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(24, 191, 239, 0.2);
-                border-radius: 16px;
-                padding: 2.5rem;
-                transition: all 0.3s ease;
-                position: relative;
-                overflow: hidden;
-            }
-
-            .feature-card::before {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(
-                    90deg,
-                    transparent,
-                    rgba(24, 191, 239, 0.1),
-                    transparent
-                );
-                transition: left 0.5s ease;
-            }
-
-            .feature-card:hover::before {
-                left: 100%;
-            }
-
-            .feature-card:hover {
-                border-color: #18bfef;
-                transform: translateY(-8px);
-                box-shadow:
-                    0 15px 60px rgba(0, 0, 0, 0.7),
-                    0 0 40px rgba(24, 191, 239, 0.3);
-                background: rgba(255, 255, 255, 0.05);
-            }
-
-
-            .feature-card h4 {
-                font-family: "Sora", sans-serif;
-                font-size: 1.15rem;
-                color: #18bfef;
-                margin-bottom: 1rem;
-                font-weight: 700;
-            }
-
-            .feature-card p {
-                color: #999;
-                line-height: 1.7;
-            }
-
-            /* === STATS === */
-            .stats {
-                margin: 5rem 0;
-                text-align: center;
-                opacity: 1;
-                transform: translateY(20px);
-                transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            }
-
-            .stats.visible {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            .stats h3 {
-                font-family: "Sora", sans-serif;
-                font-size: clamp(1.75rem, 3vw, 2.25rem);
-                color: #ffffff;
-                margin-bottom: 3rem;
-                font-weight: 700;
-                letter-spacing: -0.02em;
-            }
-
-            .stats-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 2rem;
-                max-width: 1000px;
-                margin: 0 auto;
-            }
-
-            .stat-card {
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(24, 191, 239, 0.3);
-                border-radius: 12px;
-                padding: 2.5rem 1.5rem;
-                transition: all 0.3s ease;
-                backdrop-filter: blur(10px);
-                position: relative;
-                overflow: hidden;
-            }
-
-            .stat-card:hover {
-                border-color: #18bfef;
-                transform: translateY(-8px) scale(1.02);
-                box-shadow:
-                    0 15px 60px rgba(0, 0, 0, 0.7),
-                    0 0 40px rgba(24, 191, 239, 0.4);
-                background: rgba(255, 255, 255, 0.05);
-            }
-
-            .stat-value {
-                font-family: "Sora", sans-serif;
-                font-size: clamp(2rem, 4vw, 2.5rem);
-                font-weight: 800;
-                background: linear-gradient(135deg, #18bfef, #9a6cff);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                display: block;
-                margin-bottom: 0.5rem;
-                letter-spacing: -0.03em;
-            }
-
-            .stat-label {
-                font-size: 0.85rem;
-                color: #888;
-                text-transform: uppercase;
-                letter-spacing: 0.1em;
-                font-weight: 500;
-            }
-
-            /* === AUDIOLAB CHALLENGE CARDS === */
-            .challenge-cards-audiolab {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-                gap: 2rem;
-                max-width: 1200px;
-                margin: 0 auto;
-                text-align: left;
-            }
-
-            .challenge-card-audiolab {
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(24, 191, 239, 0.3);
-                border-radius: 16px;
-                padding: 2rem;
-                transition: all 0.3s ease;
-                backdrop-filter: blur(10px);
-                position: relative;
-                overflow: hidden;
-            }
-
-            .challenge-card-audiolab::before {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(
-                    90deg,
-                    transparent,
-                    rgba(24, 191, 239, 0.1),
-                    transparent
-                );
-                transition: left 0.5s ease;
-            }
-
-            .challenge-card-audiolab:hover::before {
-                left: 100%;
-            }
-
-            .challenge-card-audiolab:hover {
-                border-color: #18bfef;
-                transform: translateY(-8px);
-                box-shadow:
-                    0 15px 50px rgba(0, 0, 0, 0.6),
-                    0 0 30px rgba(24, 191, 239, 0.3);
-                background: rgba(255, 255, 255, 0.05);
-            }
-
-
-            .challenge-card-audiolab h4 {
-                font-family: "Sora", sans-serif;
-                font-size: 1.15rem;
-                background: linear-gradient(135deg, #18bfef, #9a6cff);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                margin-bottom: 1.5rem;
-                font-weight: 600;
-                letter-spacing: -0.01em;
-            }
-
-            .challenge-content-audiolab {
-                position: relative;
-                z-index: 1;
-            }
-
-            .challenge-label-audiolab {
-                font-family: "Sora", sans-serif;
-                font-size: 0.85rem;
-                color: #18bfef;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-                margin-bottom: 0.5rem;
-                margin-top: 1rem;
-            }
-
-            .challenge-label-audiolab:first-of-type {
-                margin-top: 0;
-            }
-
-            /* === TECH STACK === */
-            .tech-stack {
-                margin: 5rem 0;
-                text-align: center;
-                opacity: 0;
-                transform: translateY(50px);
-                transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            }
-
-            .tech-stack.visible {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            .tech-stack h3 {
-                font-family: "Sora", sans-serif;
-                font-size: clamp(1.75rem, 3vw, 2.25rem);
-                color: #ffffff;
-                margin-bottom: 3rem;
-                font-weight: 700;
-                letter-spacing: -0.02em;
-            }
-
-            .tech-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                gap: 1.5rem;
-                max-width: 900px;
-                margin: 0 auto;
-            }
-
-            .tech-item {
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(24, 191, 239, 0.2);
-                border-radius: 12px;
-                padding: 1.5rem;
-                transition: all 0.3s ease;
-                font-weight: 600;
-                color: #18bfef;
-            }
-
-            .tech-item:hover {
-                border-color: #18bfef;
-                background: rgba(24, 191, 239, 0.1);
-                transform: translateY(-5px);
-                box-shadow: 0 10px 30px rgba(24, 191, 239, 0.2);
-            }
-
-            /* === BUTTON === */
-            .button-container {
-                text-align: center;
-                margin: 4rem 0;
-            }
-
-            .button {
-                display: inline-block;
-                padding: 1rem 2.5rem;
-                background: rgba(24, 191, 239, 0.1);
-                border: 2px solid rgba(24, 191, 239, 0.3);
-                border-radius: 50px;
-                color: #18bfef;
-                text-decoration: none;
-                font-weight: 600;
-                font-size: 1rem;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-                transition: all 0.3s ease;
-            }
-
-            .button:hover {
-                background: rgba(24, 191, 239, 0.2);
-                border-color: #18bfef;
-                color: #9a6cff;
-                transform: translateY(-3px);
-                box-shadow: 0 10px 30px rgba(24, 191, 239, 0.4);
-            }
-
-            /* === FOOTER === */
-            .footer {
-                text-align: center;
-                padding: 3rem 0;
-                color: #666;
-                font-size: 0.9rem;
-                border-top: 1px solid rgba(255, 255, 255, 0.05);
-                margin-top: 5rem;
-            }
-
-            /* === RESPONSIVE === */
-            @media (max-width: 768px) {
-                .back-button {
-                    top: 1rem;
-                    left: 1rem;
-                    padding: 0.6rem 1.2rem;
-                    font-size: 0.85rem;
-                }
-
-                .hero {
-                    padding: 4rem 0 2rem;
-                }
-
-                .hero h1 {
-                    font-size: 3rem;
-                }
-
-                .row {
-                    flex-direction: column;
-                    gap: 2rem;
-                    margin: 3rem 0;
-                }
-
-                .row-text h3 {
-                    font-size: 1.8rem;
-                }
-
-                .stats h3,
-                .tech-stack h3 {
-                    font-size: 2rem;
-                }
-
-                .stats-grid {
-                    grid-template-columns: repeat(2, 1fr);
-                }
-
-                .features-grid {
-                    grid-template-columns: 1fr;
-                }
-            }
-
-            @media (max-width: 480px) {
-                .hero h1 {
-                    font-size: 2.2rem;
-                }
-
-                .stats-grid {
-                    grid-template-columns: 1fr;
-                }
-            }
-
-            /* FIX: hero and first content section always visible */
-            .hero {
-                opacity: 1 !important;
-                transform: translateY(0) !important;
-            }
-            .row:first-of-type {
-                opacity: 1 !important;
-                transform: translateY(0) !important;
-            }
-
-            /* === BEATBOX ENTRANCE ANIMATION === */
-            .beatbox-entrance {
-                position: fixed;
-                inset: 0;
-                background: radial-gradient(
-                    circle at center,
-                    #0c1218 0%,
-                    #0a0a0a 70%,
-                    #000 100%
-                );
-                z-index: 99999;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                animation: entranceFadeOut 1.2s ease-out 2.5s forwards;
-                pointer-events: none;
-            }
-
-            @keyframes entranceFadeOut {
-                99.9% {
-                    opacity: 0;
-                    visibility: hidden;
-                }
-                to {
-                    opacity: 0;
-                    visibility: hidden;
-                    display: none;
-                }
-            }
-
-            .sound-wave {
-                position: absolute;
-                width: 4px;
-                background: linear-gradient(to top, #18bfef, #9a6cff);
-                border-radius: 2px;
-                animation: waveUp 0.8s ease-in-out infinite;
-            }
-
-            .sound-wave:nth-child(1) {
-                left: 35%;
-                height: 60px;
-                animation-delay: 0s;
-            }
-            .sound-wave:nth-child(2) {
-                left: 40%;
-                height: 100px;
-                animation-delay: 0.1s;
-            }
-            .sound-wave:nth-child(3) {
-                left: 45%;
-                height: 140px;
-                animation-delay: 0.2s;
-            }
-            .sound-wave:nth-child(4) {
-                left: 55%;
-                height: 140px;
-                animation-delay: 0.3s;
-            }
-            .sound-wave:nth-child(5) {
-                left: 60%;
-                height: 100px;
-                animation-delay: 0.4s;
-            }
-
-            @keyframes waveUp {
-                0%,
-                100% {
-                    transform: scaleY(0.3);
-                    opacity: 0.5;
-                }
-                50% {
-                    transform: scaleY(1);
-                    opacity: 1;
-                }
-            }
-
-
-            .entrance-title {
-                position: absolute;
-                bottom: 30%;
-                font-family: "Sora", sans-serif;
-                font-size: clamp(3rem, 8vw, 5rem);
-                font-weight: 900;
-                background: linear-gradient(135deg, #18bfef, #9a6cff);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                letter-spacing: 0.1em;
-                animation: titleFade 0.8s ease-out 0.5s both;
-            }
-
-            @keyframes titleFade {
-                from {
-                    opacity: 0;
-                    transform: translateY(20px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-        </style>
-
-        <!-- Structured Data (JSON-LD) -->
-        <script type="application/ld+json">
-            {
-                "@context": "https://schema.org",
-                "@graph": [
-                    {
-                        "@type": "VideoGame",
-                        "@id": "https://igorszuniewicz.com/projects/audiolab.html#game",
-                        "url": "https://igorszuniewicz.com/projects/audiolab.html",
-                        "name": "Transientica: AudioLab",
-                        "description": "Real-time ML beatbox classification with 45ms latency. Beatbox-controlled rhythm game using machine learning audio processing.",
-                        "genre": ["Rhythm", "Music", "Educational", "ML"],
-                        "gamePlatform": "PC",
-                        "datePublished": "2025",
-                        "author": {
-                            "@id": "https://igorszuniewicz.com/#person"
-                        },
-                        "creator": {
-                            "@id": "https://igorszuniewicz.com/#person"
-                        },
-                        "image": {
-                            "@type": "ImageObject",
-                            "url": "https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg",
-                            "width": 1280,
-                            "height": 720
-                        },
-                        "keywords": [
-                            "machine learning",
-                            "beatbox",
-                            "rhythm game",
-                            "real-time classification",
-                            "DSP",
-                            "audio processing",
-                            "45ms latency"
-                        ],
-                        "breadcrumb": {
-                            "@type": "BreadcrumbList",
-                            "itemListElement": [
-                                {
-                                    "@type": "ListItem",
-                                    "position": 1,
-                                    "name": "Home",
-                                    "item": "https://igorszuniewicz.com/"
-                                },
-                                {
-                                    "@type": "ListItem",
-                                    "position": 2,
-                                    "name": "Projects",
-                                    "item": "https://igorszuniewicz.com/projects/"
-                                },
-                                {
-                                    "@type": "ListItem",
-                                    "position": 3,
-                                    "name": "Transientica: AudioLab",
-                                    "item": "https://igorszuniewicz.com/projects/audiolab.html"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "@type": "Person",
-                        "@id": "https://igorszuniewicz.com/#person",
-                        "name": "Igor Szuniewicz",
-                        "url": "https://igorszuniewicz.com",
-                        "sameAs": [
-                            "https://github.com/Szunias",
-                            "https://www.linkedin.com/in/igor-szuniewicz-a6877a2a3",
-                            "https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6",
-                            "https://igorszuniewicz.itch.io"
-                        ],
-                        "jobTitle": [
-                            "Audio Designer",
-                            "Composer",
-                            "Audio Engineer",
-                            "ML Engineer"
-                        ]
-                    }
-                ]
-            }
-        </script>
-    </head>
-    <body style="background: #0a0a0a; margin: 0; padding: 0">
-        <!-- Beatbox Entrance Animation -->
-        <div class="beatbox-entrance">
-            <div class="sound-wave">
-</div>
-            <div class="sound-wave">
-</div>
-            <div class="sound-wave">
-</div>
-            <div class="sound-wave">
-</div>
-            <div class="sound-wave">
-</div>
-            <div class="entrance-title">AUDIOLAB</div>
+              ]
+            }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://igorszuniewicz.com/#person",
+            "name": "Igor Szuniewicz",
+            "url": "https://igorszuniewicz.com",
+            "sameAs": [
+              "https://github.com/Szunias",
+              "https://www.linkedin.com/in/igor-szuniewicz-a6877a2a3",
+              "https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6",
+              "https://igorszuniewicz.itch.io"
+            ],
+            "jobTitle": [
+              "Audio Designer",
+              "Composer",
+              "Audio Engineer",
+              "ML Engineer"
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body style="background: #0a0a0a; margin: 0; padding: 0">
+    <!-- Beatbox Entrance Animation -->
+    <div class="beatbox-entrance">
+      <div class="sound-wave"></div>
+      <div class="sound-wave"></div>
+      <div class="sound-wave"></div>
+      <div class="sound-wave"></div>
+      <div class="sound-wave"></div>
+      <div class="entrance-title">AUDIOLAB</div>
+    </div>
+
+    <!-- Background -->
+    <div class="tech-background"></div>
+
+    <!-- Content -->
+    <div class="content">
+      <!-- Language Switcher -->
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="en">
+          <svg
+            class="lang-flag"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 60 30"
+          >
+            <rect width="60" height="30" fill="#012169" />
+            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" />
+            <path
+              d="M0,0 L60,30 M60,0 L0,30"
+              stroke="#C8102E"
+              stroke-width="4"
+            />
+            <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" />
+            <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" />
+          </svg>
+          <span>EN</span>
+        </button>
+        <button class="lang-btn" data-lang="pl">
+          <svg
+            class="lang-flag"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 10"
+          >
+            <rect width="16" height="5" fill="#fff" />
+            <rect y="5" width="16" height="5" fill="#dc143c" />
+          </svg>
+          <span>PL</span>
+        </button>
+        <button class="lang-btn" data-lang="nl">
+          <svg
+            class="lang-flag"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 9 6"
+          >
+            <rect width="9" height="6" fill="#21468B" />
+            <rect width="9" height="4" fill="#fff" />
+            <rect width="9" height="2" fill="#AE1C28" />
+          </svg>
+          <span>NL</span>
+        </button>
+      </div>
+
+      <!-- Back Button -->
+      <a href="/projects/" class="back-button">
+        <span data-i18n="back">Back to Projects</span>
+      </a>
+
+      <!-- Hero -->
+      <section class="hero">
+        <h1>
+          AUDIOLAB
+          <span class="subtitle-small" data-i18n="hero.subtitle"
+            >VOCAL PERCUSSION CONTROLLER</span
+          >
+        </h1>
+        <p class="subtitle" data-i18n="hero.description">
+          Make kick, snare, and hi-hat sounds with your mouth. The system
+          detects which drum you're imitating and triggers the corresponding
+          lane in a rhythm game. Inspired by NIME research on alternative
+          musical interfaces.
+        </p>
+
+        <div class="tags">
+          <span data-i18n="tags.ml">Machine Learning</span>
+          <span data-i18n="tags.audio">Real-time Audio</span>
+          <span data-i18n="tags.unity">Unity Engine</span>
+          <span data-i18n="tags.python">Python</span>
+          <span data-i18n="tags.latency">&lt;60ms Latency</span>
         </div>
+      </section>
 
-        <!-- Background -->
-        <div class="tech-background">
-</div>
-
-        <!-- Content -->
-        <div class="content">
-            <!-- Language Switcher -->
-            <div class="lang-switcher">
-                <button class="lang-btn active" data-lang="en">
-                    <svg
-                        class="lang-flag"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 60 30"
-                    >
-                        <rect width="60" height="30" fill="#012169" />
-                        <path
-                            d="M0,0 L60,30 M60,0 L0,30"
-                            stroke="#fff"
-                            stroke-width="6"
-                        />
-                        <path
-                            d="M0,0 L60,30 M60,0 L0,30"
-                            stroke="#C8102E"
-                            stroke-width="4"
-                        />
-                        <path
-                            d="M30,0 v30 M0,15 h60"
-                            stroke="#fff"
-                            stroke-width="10"
-                        />
-                        <path
-                            d="M30,0 v30 M0,15 h60"
-                            stroke="#C8102E"
-                            stroke-width="6"
-                        />
-                    </svg>
-                    <span>EN</span>
-                </button>
-                <button class="lang-btn" data-lang="pl">
-                    <svg
-                        class="lang-flag"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 16 10"
-                    >
-                        <rect width="16" height="5" fill="#fff" />
-                        <rect y="5" width="16" height="5" fill="#dc143c" />
-                    </svg>
-                    <span>PL</span>
-                </button>
-                <button class="lang-btn" data-lang="nl">
-                    <svg
-                        class="lang-flag"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 9 6"
-                    >
-                        <rect width="9" height="6" fill="#21468B" />
-                        <rect width="9" height="4" fill="#fff" />
-                        <rect width="9" height="2" fill="#AE1C28" />
-                    </svg>
-                    <span>NL</span>
-                </button>
+      <!-- Project Context -->
+      <section class="project-context">
+        <h3 data-i18n="context.title">Project Context</h3>
+        <div class="context-grid">
+          <div class="context-item">
+            <div class="context-label" data-i18n="context.type_label">Type</div>
+            <div class="context-value" data-i18n="context.type_value">
+              Student Research Project
             </div>
-
-            <!-- Back Button -->
-            <a href="/projects/" class="back-button">
-                <span data-i18n="back">Back to Projects</span>
-            </a>
-
-            <!-- Hero -->
-            <section class="hero">
-                <h1>
-                    AUDIOLAB
-                    <span class="subtitle-small" data-i18n="hero.subtitle"
-                        >VOCAL PERCUSSION CONTROLLER</span
-                    >
-                </h1>
-                <p class="subtitle" data-i18n="hero.description">
-                    Make kick, snare, and hi-hat sounds with your mouth. The system detects which drum you're imitating and triggers the corresponding lane in a rhythm game. Inspired by NIME research on alternative musical interfaces.
-                </p>
-
-                <div class="tags">
-                    <span data-i18n="tags.ml">Machine Learning</span>
-                    <span data-i18n="tags.audio">Real-time Audio</span>
-                    <span data-i18n="tags.unity">Unity Engine</span>
-                    <span data-i18n="tags.python">Python</span>
-                    <span data-i18n="tags.latency">&lt;60ms Latency</span>
-                </div>
-            </section>
-
-            <!-- Project Context -->
-            <section class="project-context">
-                <h3 data-i18n="context.title">Project Context</h3>
-                <div class="context-grid">
-                    <div class="context-item">
-                        <div
-                            class="context-label"
-                            data-i18n="context.type_label"
-                        >
-                            Type
-                        </div>
-                        <div
-                            class="context-value"
-                            data-i18n="context.type_value"
-                        >
-                            Student Research Project
-                        </div>
-                    </div>
-                    <div class="context-item">
-                        <div
-                            class="context-label"
-                            data-i18n="context.institution_label"
-                        >
-                            Institution
-                        </div>
-                        <div
-                            class="context-value"
-                            data-i18n="context.institution_value"
-                        >
-                            Howest DAE
-                        </div>
-                    </div>
-                    <div class="context-item">
-                        <div
-                            class="context-label"
-                            data-i18n="context.year_label"
-                        >
-                            Year
-                        </div>
-                        <div
-                            class="context-value"
-                            data-i18n="context.year_value"
-                        >
-                            2025
-                        </div>
-                    </div>
-                    <div class="context-item">
-                        <div
-                            class="context-label"
-                            data-i18n="context.duration_label"
-                        >
-                            Duration
-                        </div>
-                        <div
-                            class="context-value"
-                            data-i18n="context.duration_value"
-                        >
-                            5 months
-                        </div>
-                    </div>
-                    <div class="context-item">
-                        <div
-                            class="context-label"
-                            data-i18n="context.role_label"
-                        >
-                            My Role
-                        </div>
-                        <div
-                            class="context-value"
-                            data-i18n="context.role_value"
-                        >
-                            Audio Programmer & Designer
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Video Showcase -->
-            <div class="row">
-                <div class="row-visual">
-                    <div class="video-container" id="videoContainer">
-                        <video autoplay loop muted playsinline>
-                            <source
-                                src="../assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4"
-                                type="video/mp4"
-                            />
-                        </video>
-                        <div class="play-button-overlay">
-                            <div class="play-icon">
-</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row-text">
-                    <h3 data-i18n="demo.title">How It Works</h3>
-                    <p data-i18n="demo.description">
-                        First breakthrough: extracted 13 MFCC features from ~60 training samples. The classifier recognized my mouth-kick almost every time in controlled conditions with my specific microphone. Added spectral centroid (kicks are lower frequency), zero-crossing rate (snares have more high-frequency content), and temporal envelope analysis to distinguish similar-sounding percussion.
-                    </p>
-                    <p data-i18n="demo.research">
-                        Pipeline: Onset detection via spectral flux → extract 39 audio features → SVM classifier (RBF kernel) → OSC message to Unity game over UDP. Response time under 60ms. Accuracy: 82% across different microphones and room acoustics.
-                    </p>
-                </div>
+          </div>
+          <div class="context-item">
+            <div class="context-label" data-i18n="context.institution_label">
+              Institution
             </div>
-
-            <!-- Features Grid -->
-            <div class="features-grid">
-                <div class="feature-card">
-                    <h4 data-i18n="features.realtime.title">
-                        Real-Time Challenge
-                    </h4>
-                    <p data-i18n="features.realtime.desc">
-                        Rhythm games need sub-60ms latency or they feel broken. Achieved 45ms end-to-end by reducing FFT window to 512 samples, switching from neural nets to lightweight SVM (2ms inference), and using UDP for zero handshake overhead.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <h4 data-i18n="features.ml.title">Personal Training</h4>
-                    <p data-i18n="features.ml.desc">
-                        Everyone's mouth percussion sounds different. Record 30 samples of each drum type with your microphone. The SVM learns your specific timbre and your room's acoustics. Started with 60 samples total - worked surprisingly well.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <h4 data-i18n="features.lowlatency.title">
-                        Two-Process Architecture
-                    </h4>
-                    <p data-i18n="features.lowlatency.desc">
-                        Python has better ML libraries (scikit-learn, LibROSA). Unity has better game dev tools. Bridge them via OSC over UDP. Audio thread runs real-time priority, ML thread processes buffered data - no dropouts.
-                    </p>
-                </div>
+            <div class="context-value" data-i18n="context.institution_value">
+              Howest DAE
             </div>
-
-            <!-- Technical Demo Video -->
-            <div class="row">
-                <div class="row-visual">
-                    <div class="video-container" id="technicalVideoContainer">
-                        <video autoplay loop muted playsinline>
-                            <source
-                                src="../assets/videos/AudioLab_2425_Szuniewicz_Igor_GAMEDemoVideo_Transientica.mp4"
-                                type="video/mp4"
-                            />
-                        </video>
-                        <div class="play-button-overlay">
-                            <div class="play-icon">
-</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row-text">
-                    <h3 data-i18n="technical.title">What Made It Work</h3>
-                    <p data-i18n="technical.description">
-                        The key insight: kick, snare, and hi-hat have overlapping spectral content but different envelope shapes. Kicks have sharp attack + quick decay. Snares have attack + sustained noise tail. Hi-hats are all high-frequency transient. Adding temporal envelope analysis on top of MFCCs boosted accuracy from 78% to 92% for trained users.
-                    </p>
-                    <p data-i18n="technical.pipeline">
-                        Built validation scripts to measure classification accuracy in real-time. This showed that 60 training samples was enough for the "aha moment" - it actually worked with my microphone in my room. Scaling to 30 samples per class made it robust across different acoustic conditions.
-                    </p>
-                </div>
+          </div>
+          <div class="context-item">
+            <div class="context-label" data-i18n="context.year_label">Year</div>
+            <div class="context-value" data-i18n="context.year_value">2025</div>
+          </div>
+          <div class="context-item">
+            <div class="context-label" data-i18n="context.duration_label">
+              Duration
             </div>
-
-            <!-- Stats -->
-            <section class="stats">
-                <h3 data-i18n="stats.title">Performance Metrics</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-value">&lt;60ms</span>
-                        <span class="stat-label" data-i18n="stats.latency"
-                            >Latency</span
-                        >
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-value">82%</span>
-                        <span class="stat-label" data-i18n="stats.accuracy"
-                            >Accuracy</span
-                        >
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-value">3</span>
-                        <span class="stat-label" data-i18n="stats.sounds"
-                            >Sound Classes</span
-                        >
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-value">2025</span>
-                        <span class="stat-label" data-i18n="stats.year"
-                            >Year</span
-                        >
-                    </div>
-                </div>
-            </section>
-
-            <!-- Tech Stack -->
-            <section class="tech-stack">
-                <h3 data-i18n="tech.title">Technology Stack</h3>
-                <div class="tech-grid">
-                    <div class="tech-item">Python</div>
-                    <div class="tech-item">Unity</div>
-                    <div class="tech-item">LibROSA</div>
-                    <div class="tech-item">scikit-learn</div>
-                    <div class="tech-item">OSC Protocol</div>
-                    <div class="tech-item">RBF-SVM</div>
-                </div>
-            </section>
-
-            <!-- Development Challenges -->
-            <section class="stats">
-                <h3 data-i18n="challenges.title">Development Challenges</h3>
-                <div class="challenge-cards-audiolab">
-                    <div class="challenge-card-audiolab">
-                        <h4 data-i18n="challenges.challenge1.title">
-                            Achieving <50ms End-to-End Latency
-                        </h4>
-                        <div class="challenge-content-audiolab">
-                            <p
-                                class="challenge-label-audiolab"
-                                data-i18n="challenges.problem_label"
-                            >
-                                Problem:
-                            </p>
-                            <p
-                                data-i18n="challenges.challenge1.problem"
-                                style="
-                                    color: #aaa;
-                                    margin-bottom: 1rem;
-                                    font-size: 0.95rem;
-                                    line-height: 1.7;
-                                "
-                            >
-                                Initial prototype had ~180ms latency (audio
-                                capture → feature extraction → ML inference →
-                                OSC send → game response), making gameplay feel
-                                sluggish and unresponsive.
-                            </p>
-                            <p
-                                class="challenge-label-audiolab"
-                                data-i18n="challenges.solution_label"
-                            >
-                                Solution:
-                            </p>
-                            <p
-                                data-i18n="challenges.challenge1.solution"
-                                style="
-                                    color: #bbb;
-                                    font-size: 0.95rem;
-                                    line-height: 1.7;
-                                "
-                            >
-                                Optimized entire pipeline: reduced FFT window to
-                                512 samples (11ms @ 44.1kHz), implemented
-                                circular buffer to eliminate I/O blocking, moved
-                                to lightweight SVM classifier (inference <2ms
-                                vs. 15ms for neural net), and used UDP for OSC
-                                (zero handshake overhead). Achieved final 45ms
-                                latency with 92% accuracy maintained.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="challenge-card-audiolab">
-                        <h4 data-i18n="challenges.challenge2.title">
-                            Beatbox Sound Similarity (Kick vs. Snare)
-                        </h4>
-                        <div class="challenge-content-audiolab">
-                            <p
-                                class="challenge-label-audiolab"
-                                data-i18n="challenges.problem_label"
-                            >
-                                Problem:
-                            </p>
-                            <p
-                                data-i18n="challenges.challenge2.problem"
-                                style="
-                                    color: #aaa;
-                                    margin-bottom: 1rem;
-                                    font-size: 0.95rem;
-                                    line-height: 1.7;
-                                "
-                            >
-                                Kick and snare beatbox sounds share overlapping
-                                spectral content (both have transients + noise),
-                                causing frequent misclassification especially
-                                during rapid patterns.
-                            </p>
-                            <p
-                                class="challenge-label-audiolab"
-                                data-i18n="challenges.solution_label"
-                            >
-                                Solution:
-                            </p>
-                            <p
-                                data-i18n="challenges.challenge2.solution"
-                                style="
-                                    color: #bbb;
-                                    font-size: 0.95rem;
-                                    line-height: 1.7;
-                                "
-                            >
-                                Enhanced feature set beyond MFCCs: added
-                                spectral centroid (kick = lower, snare =
-                                higher), zero-crossing rate (snare has more HF
-                                content), and temporal envelope shape analysis
-                                (kick = sharp attack + quick decay, snare =
-                                attack + sustained noise). Trained separate
-                                models for solo hits vs. patterns. Accuracy
-                                improved from 78% to 92%.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="challenge-card-audiolab">
-                        <h4 data-i18n="challenges.challenge3.title">
-                            Real-time Performance Without Audio Dropouts
-                        </h4>
-                        <div class="challenge-content-audiolab">
-                            <p
-                                class="challenge-label-audiolab"
-                                data-i18n="challenges.problem_label"
-                            >
-                                Problem:
-                            </p>
-                            <p
-                                data-i18n="challenges.challenge3.problem"
-                                style="
-                                    color: #aaa;
-                                    margin-bottom: 1rem;
-                                    font-size: 0.95rem;
-                                    line-height: 1.7;
-                                "
-                            >
-                                Heavy ML processing caused periodic audio buffer
-                                underruns on weaker CPUs, resulting in clicks
-                                and missed classifications.
-                            </p>
-                            <p
-                                class="challenge-label-audiolab"
-                                data-i18n="challenges.solution_label"
-                            >
-                                Solution:
-                            </p>
-                            <p
-                                data-i18n="challenges.challenge3.solution"
-                                style="
-                                    color: #bbb;
-                                    font-size: 0.95rem;
-                                    line-height: 1.7;
-                                "
-                            >
-                                Decoupled audio capture thread from ML inference
-                                thread using lock-free ringbuffer. Audio runs on
-                                high-priority real-time thread (never blocks),
-                                while ML runs on separate worker thread
-                                processing buffered data. Added graceful
-                                degradation: if inference takes >15ms, system
-                                skips that frame and continues (better to miss
-                                one classification than dropout audio).
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Back Button -->
-            <div class="button-container">
-                <a href="/projects/" class="button" data-i18n="button.projects"
-                    >All Projects</a
-                >
+            <div class="context-value" data-i18n="context.duration_value">
+              5 months
             </div>
-
-            <!-- Footer -->
-            <footer class="footer">
-                <p>&copy; Igor Szuniewicz 2025. All rights reserved.</p>
-            </footer>
+          </div>
+          <div class="context-item">
+            <div class="context-label" data-i18n="context.role_label">
+              My Role
+            </div>
+            <div class="context-value" data-i18n="context.role_value">
+              Audio Programmer & Designer
+            </div>
+          </div>
         </div>
+      </section>
 
-        <!-- Video Modal -->
-        <div class="video-modal" id="videoModal">
-            <div class="modal-content">
-                <div class="modal-close" id="modalClose">
-</div>
-                <video class="modal-video" id="modalVideo" controls>
-                    <source
-                        src="../assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4"
-                        type="video/mp4"
-                    />
-                </video>
+      <!-- Video Showcase -->
+      <div class="row">
+        <div class="row-visual">
+          <div class="video-container" id="videoContainer">
+            <video autoplay loop muted playsinline>
+              <source
+                src="../assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4"
+                type="video/mp4"
+              />
+            </video>
+            <div class="play-button-overlay">
+              <div class="play-icon"></div>
             </div>
+          </div>
         </div>
+        <div class="row-text">
+          <h3 data-i18n="demo.title">How It Works</h3>
+          <p data-i18n="demo.description">
+            First breakthrough: extracted 13 MFCC features from ~60 training
+            samples. The classifier recognized my mouth-kick almost every time
+            in controlled conditions with my specific microphone. Added spectral
+            centroid (kicks are lower frequency), zero-crossing rate (snares
+            have more high-frequency content), and temporal envelope analysis to
+            distinguish similar-sounding percussion.
+          </p>
+          <p data-i18n="demo.research">
+            Pipeline: Onset detection via spectral flux → extract 39 audio
+            features → SVM classifier (RBF kernel) → OSC message to Unity game
+            over UDP. Response time under 60ms. Accuracy: 82% across different
+            microphones and room acoustics.
+          </p>
+        </div>
+      </div>
 
-        <!-- Technical Video Modal -->
-        <div class="video-modal" id="technicalVideoModal">
-            <div class="modal-content">
-                <div class="modal-close" id="technicalModalClose">
-</div>
-                <video class="modal-video" id="technicalModalVideo" controls>
-                    <source
-                        src="../assets/videos/AudioLab_2425_Szuniewicz_Igor_GAMEDemoVideo_Transientica.mp4"
-                        type="video/mp4"
-                    />
-                </video>
+      <!-- Features Grid -->
+      <div class="features-grid">
+        <div class="feature-card">
+          <h4 data-i18n="features.realtime.title">Real-Time Challenge</h4>
+          <p data-i18n="features.realtime.desc">
+            Rhythm games need sub-60ms latency or they feel broken. Achieved
+            45ms end-to-end by reducing FFT window to 512 samples, switching
+            from neural nets to lightweight SVM (2ms inference), and using UDP
+            for zero handshake overhead.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h4 data-i18n="features.ml.title">Personal Training</h4>
+          <p data-i18n="features.ml.desc">
+            Everyone's mouth percussion sounds different. Record 30 samples of
+            each drum type with your microphone. The SVM learns your specific
+            timbre and your room's acoustics. Started with 60 samples total -
+            worked surprisingly well.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h4 data-i18n="features.lowlatency.title">
+            Two-Process Architecture
+          </h4>
+          <p data-i18n="features.lowlatency.desc">
+            Python has better ML libraries (scikit-learn, LibROSA). Unity has
+            better game dev tools. Bridge them via OSC over UDP. Audio thread
+            runs real-time priority, ML thread processes buffered data - no
+            dropouts.
+          </p>
+        </div>
+      </div>
+
+      <!-- Technical Demo Video -->
+      <div class="row">
+        <div class="row-visual">
+          <div class="video-container" id="technicalVideoContainer">
+            <video autoplay loop muted playsinline>
+              <source
+                src="../assets/videos/AudioLab_2425_Szuniewicz_Igor_GAMEDemoVideo_Transientica.mp4"
+                type="video/mp4"
+              />
+            </video>
+            <div class="play-button-overlay">
+              <div class="play-icon"></div>
             </div>
+          </div>
         </div>
+        <div class="row-text">
+          <h3 data-i18n="technical.title">What Made It Work</h3>
+          <p data-i18n="technical.description">
+            The key insight: kick, snare, and hi-hat have overlapping spectral
+            content but different envelope shapes. Kicks have sharp attack +
+            quick decay. Snares have attack + sustained noise tail. Hi-hats are
+            all high-frequency transient. Adding temporal envelope analysis on
+            top of MFCCs boosted accuracy from 78% to 92% for trained users.
+          </p>
+          <p data-i18n="technical.pipeline">
+            Built validation scripts to measure classification accuracy in
+            real-time. This showed that 60 training samples was enough for the
+            "aha moment" - it actually worked with my microphone in my room.
+            Scaling to 30 samples per class made it robust across different
+            acoustic conditions.
+          </p>
+        </div>
+      </div>
 
-        <!-- Translation Script -->
-        <script>
-            let translations = {};
-            let currentLang = localStorage.getItem("language") || "en";
+      <!-- Stats -->
+      <section class="stats">
+        <h3 data-i18n="stats.title">Performance Metrics</h3>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value">&lt;60ms</span>
+            <span class="stat-label" data-i18n="stats.latency">Latency</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">82%</span>
+            <span class="stat-label" data-i18n="stats.accuracy">Accuracy</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">3</span>
+            <span class="stat-label" data-i18n="stats.sounds"
+              >Sound Classes</span
+            >
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">2025</span>
+            <span class="stat-label" data-i18n="stats.year">Year</span>
+          </div>
+        </div>
+      </section>
 
-            function getNestedTranslation(obj, path) {
-                return path
-                    .split(".")
-                    .reduce((current, key) => current?.[key], obj);
+      <!-- Tech Stack -->
+      <section class="tech-stack">
+        <h3 data-i18n="tech.title">Technology Stack</h3>
+        <div class="tech-grid">
+          <div class="tech-item">Python</div>
+          <div class="tech-item">Unity</div>
+          <div class="tech-item">LibROSA</div>
+          <div class="tech-item">scikit-learn</div>
+          <div class="tech-item">OSC Protocol</div>
+          <div class="tech-item">RBF-SVM</div>
+        </div>
+      </section>
+
+      <!-- Development Challenges -->
+      <section class="stats">
+        <h3 data-i18n="challenges.title">Development Challenges</h3>
+        <div class="challenge-cards-audiolab">
+          <div class="challenge-card-audiolab">
+            <h4 data-i18n="challenges.challenge1.title">
+              Achieving &lt;50ms End-to-End Latency
+            </h4>
+            <div class="challenge-content-audiolab">
+              <p
+                class="challenge-label-audiolab"
+                data-i18n="challenges.problem_label"
+              >
+                Problem:
+              </p>
+              <p
+                data-i18n="challenges.challenge1.problem"
+                style="
+                  color: #aaa;
+                  margin-bottom: 1rem;
+                  font-size: 0.95rem;
+                  line-height: 1.7;
+                "
+              >
+                Initial prototype had ~180ms latency (audio capture → feature
+                extraction → ML inference → OSC send → game response), making
+                gameplay feel sluggish and unresponsive.
+              </p>
+              <p
+                class="challenge-label-audiolab"
+                data-i18n="challenges.solution_label"
+              >
+                Solution:
+              </p>
+              <p
+                data-i18n="challenges.challenge1.solution"
+                style="color: #bbb; font-size: 0.95rem; line-height: 1.7"
+              >
+                Optimized entire pipeline: reduced FFT window to 512 samples
+                (11ms @ 44.1kHz), implemented circular buffer to eliminate I/O
+                blocking, moved to lightweight SVM classifier (inference &lt;2ms
+                vs. 15ms for neural net), and used UDP for OSC (zero handshake
+                overhead). Achieved final 45ms latency with 92% accuracy
+                maintained.
+              </p>
+            </div>
+          </div>
+
+          <div class="challenge-card-audiolab">
+            <h4 data-i18n="challenges.challenge2.title">
+              Beatbox Sound Similarity (Kick vs. Snare)
+            </h4>
+            <div class="challenge-content-audiolab">
+              <p
+                class="challenge-label-audiolab"
+                data-i18n="challenges.problem_label"
+              >
+                Problem:
+              </p>
+              <p
+                data-i18n="challenges.challenge2.problem"
+                style="
+                  color: #aaa;
+                  margin-bottom: 1rem;
+                  font-size: 0.95rem;
+                  line-height: 1.7;
+                "
+              >
+                Kick and snare beatbox sounds share overlapping spectral content
+                (both have transients + noise), causing frequent
+                misclassification especially during rapid patterns.
+              </p>
+              <p
+                class="challenge-label-audiolab"
+                data-i18n="challenges.solution_label"
+              >
+                Solution:
+              </p>
+              <p
+                data-i18n="challenges.challenge2.solution"
+                style="color: #bbb; font-size: 0.95rem; line-height: 1.7"
+              >
+                Enhanced feature set beyond MFCCs: added spectral centroid (kick
+                = lower, snare = higher), zero-crossing rate (snare has more HF
+                content), and temporal envelope shape analysis (kick = sharp
+                attack + quick decay, snare = attack + sustained noise). Trained
+                separate models for solo hits vs. patterns. Accuracy improved
+                from 78% to 92%.
+              </p>
+            </div>
+          </div>
+
+          <div class="challenge-card-audiolab">
+            <h4 data-i18n="challenges.challenge3.title">
+              Real-time Performance Without Audio Dropouts
+            </h4>
+            <div class="challenge-content-audiolab">
+              <p
+                class="challenge-label-audiolab"
+                data-i18n="challenges.problem_label"
+              >
+                Problem:
+              </p>
+              <p
+                data-i18n="challenges.challenge3.problem"
+                style="
+                  color: #aaa;
+                  margin-bottom: 1rem;
+                  font-size: 0.95rem;
+                  line-height: 1.7;
+                "
+              >
+                Heavy ML processing caused periodic audio buffer underruns on
+                weaker CPUs, resulting in clicks and missed classifications.
+              </p>
+              <p
+                class="challenge-label-audiolab"
+                data-i18n="challenges.solution_label"
+              >
+                Solution:
+              </p>
+              <p
+                data-i18n="challenges.challenge3.solution"
+                style="color: #bbb; font-size: 0.95rem; line-height: 1.7"
+              >
+                Decoupled audio capture thread from ML inference thread using
+                lock-free ringbuffer. Audio runs on high-priority real-time
+                thread (never blocks), while ML runs on separate worker thread
+                processing buffered data. Added graceful degradation: if
+                inference takes >15ms, system skips that frame and continues
+                (better to miss one classification than dropout audio).
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back Button -->
+      <div class="button-container">
+        <a href="/projects/" class="button" data-i18n="button.projects"
+          >All Projects</a
+        >
+      </div>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <p>&copy; Igor Szuniewicz 2025. All rights reserved.</p>
+      </footer>
+    </div>
+
+    <!-- Video Modal -->
+    <div class="video-modal" id="videoModal">
+      <div class="modal-content">
+        <div class="modal-close" id="modalClose"></div>
+        <video class="modal-video" id="modalVideo" controls>
+          <source
+            src="../assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+    </div>
+
+    <!-- Technical Video Modal -->
+    <div class="video-modal" id="technicalVideoModal">
+      <div class="modal-content">
+        <div class="modal-close" id="technicalModalClose"></div>
+        <video class="modal-video" id="technicalModalVideo" controls>
+          <source
+            src="../assets/videos/AudioLab_2425_Szuniewicz_Igor_GAMEDemoVideo_Transientica.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+    </div>
+
+    <!-- Translation Script -->
+    <script>
+      let translations = {};
+      let currentLang = localStorage.getItem("language") || "en";
+
+      function getNestedTranslation(obj, path) {
+        return path.split(".").reduce((current, key) => current?.[key], obj);
+      }
+
+      function setLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem("language", lang);
+
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          const translation = getNestedTranslation(translations[lang], key);
+          if (translation) {
+            el.innerHTML = translation;
+          }
+        });
+
+        document.querySelectorAll(".lang-btn").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.lang === lang);
+        });
+      }
+
+      async function loadTranslations() {
+        try {
+          const response = await fetch("../locales/audiolab.json");
+          translations = await response.json();
+          setLanguage(currentLang);
+        } catch (error) {
+          // Failed to load translations
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadTranslations();
+
+        document.querySelectorAll(".lang-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            setLanguage(btn.dataset.lang);
+          });
+        });
+      });
+    </script>
+
+    <!-- Video Modal Script -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Main video modal
+        const videoContainer = document.getElementById("videoContainer");
+        const modal = document.getElementById("videoModal");
+        const modalVideo = document.getElementById("modalVideo");
+        const modalClose = document.getElementById("modalClose");
+
+        // Technical video modal
+        const technicalVideoContainer = document.getElementById(
+          "technicalVideoContainer",
+        );
+        const technicalModal = document.getElementById("technicalVideoModal");
+        const technicalModalVideo = document.getElementById(
+          "technicalModalVideo",
+        );
+        const technicalModalClose = document.getElementById(
+          "technicalModalClose",
+        );
+
+        // Open main modal on click
+        if (videoContainer) {
+          videoContainer.addEventListener("click", () => {
+            modal.classList.add("active");
+            document.body.style.overflow = "hidden";
+            modalVideo.play();
+          });
+        }
+
+        // Open technical modal on click
+        if (technicalVideoContainer) {
+          technicalVideoContainer.addEventListener("click", () => {
+            technicalModal.classList.add("active");
+            document.body.style.overflow = "hidden";
+            technicalModalVideo.play();
+          });
+        }
+
+        // Close main modal
+        function closeModal() {
+          modal.classList.remove("active");
+          document.body.style.overflow = "auto";
+          modalVideo.pause();
+          modalVideo.currentTime = 0;
+        }
+
+        // Close technical modal
+        function closeTechnicalModal() {
+          technicalModal.classList.remove("active");
+          document.body.style.overflow = "auto";
+          technicalModalVideo.pause();
+          technicalModalVideo.currentTime = 0;
+        }
+
+        if (modalClose) {
+          modalClose.addEventListener("click", closeModal);
+        }
+
+        if (technicalModalClose) {
+          technicalModalClose.addEventListener("click", closeTechnicalModal);
+        }
+
+        // Close on background click
+        if (modal) {
+          modal.addEventListener("click", (e) => {
+            if (e.target === modal) {
+              closeModal();
             }
+          });
+        }
 
-            function setLanguage(lang) {
-                currentLang = lang;
-                localStorage.setItem("language", lang);
-
-                document.querySelectorAll("[data-i18n]").forEach((el) => {
-                    const key = el.getAttribute("data-i18n");
-                    const translation = getNestedTranslation(
-                        translations[lang],
-                        key,
-                    );
-                    if (translation) {
-                        el.innerHTML = translation;
-                    }
-                });
-
-                document.querySelectorAll(".lang-btn").forEach((btn) => {
-                    btn.classList.toggle("active", btn.dataset.lang === lang);
-                });
+        if (technicalModal) {
+          technicalModal.addEventListener("click", (e) => {
+            if (e.target === technicalModal) {
+              closeTechnicalModal();
             }
+          });
+        }
 
-            async function loadTranslations() {
-                try {
-                    const response = await fetch("../locales/audiolab.json");
-                    translations = await response.json();
-                    setLanguage(currentLang);
-                } catch (error) {
-                    // Failed to load translations
-                }
+        // Close on ESC key
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            if (modal.classList.contains("active")) {
+              closeModal();
             }
-
-            document.addEventListener("DOMContentLoaded", () => {
-                loadTranslations();
-
-                document.querySelectorAll(".lang-btn").forEach((btn) => {
-                    btn.addEventListener("click", () => {
-                        setLanguage(btn.dataset.lang);
-                    });
-                });
-            });
-        </script>
-
-        <!-- Video Modal Script -->
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                // Main video modal
-                const videoContainer =
-                    document.getElementById("videoContainer");
-                const modal = document.getElementById("videoModal");
-                const modalVideo = document.getElementById("modalVideo");
-                const modalClose = document.getElementById("modalClose");
-
-                // Technical video modal
-                const technicalVideoContainer =
-                    document.getElementById("technicalVideoContainer");
-                const technicalModal = document.getElementById("technicalVideoModal");
-                const technicalModalVideo = document.getElementById("technicalModalVideo");
-                const technicalModalClose = document.getElementById("technicalModalClose");
-
-                // Open main modal on click
-                if (videoContainer) {
-                    videoContainer.addEventListener("click", () => {
-                        modal.classList.add("active");
-                        document.body.style.overflow = "hidden";
-                        modalVideo.play();
-                    });
-                }
-
-                // Open technical modal on click
-                if (technicalVideoContainer) {
-                    technicalVideoContainer.addEventListener("click", () => {
-                        technicalModal.classList.add("active");
-                        document.body.style.overflow = "hidden";
-                        technicalModalVideo.play();
-                    });
-                }
-
-                // Close main modal
-                function closeModal() {
-                    modal.classList.remove("active");
-                    document.body.style.overflow = "auto";
-                    modalVideo.pause();
-                    modalVideo.currentTime = 0;
-                }
-
-                // Close technical modal
-                function closeTechnicalModal() {
-                    technicalModal.classList.remove("active");
-                    document.body.style.overflow = "auto";
-                    technicalModalVideo.pause();
-                    technicalModalVideo.currentTime = 0;
-                }
-
-                if (modalClose) {
-                    modalClose.addEventListener("click", closeModal);
-                }
-
-                if (technicalModalClose) {
-                    technicalModalClose.addEventListener("click", closeTechnicalModal);
-                }
-
-                // Close on background click
-                if (modal) {
-                    modal.addEventListener("click", (e) => {
-                        if (e.target === modal) {
-                            closeModal();
-                        }
-                    });
-                }
-
-                if (technicalModal) {
-                    technicalModal.addEventListener("click", (e) => {
-                        if (e.target === technicalModal) {
-                            closeTechnicalModal();
-                        }
-                    });
-                }
-
-                // Close on ESC key
-                document.addEventListener("keydown", (e) => {
-                    if (e.key === "Escape") {
-                        if (modal.classList.contains("active")) {
-                            closeModal();
-                        }
-                        if (technicalModal.classList.contains("active")) {
-                            closeTechnicalModal();
-                        }
-                    }
-                });
-            });
-        </script>
-
-        <!-- Scroll Reveal Animation Script -->
-        <script>
-            window.addEventListener("load", () => {
-                document.body.classList.add("loaded");
-            });
-
-            const observerOptions = {
-                threshold: 0.15,
-                rootMargin: "0px 0px 300px 0px",
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add("visible");
-                    }
-                });
-            }, observerOptions);
-
-            document.addEventListener("DOMContentLoaded", () => {
-                setTimeout(() => {
-                    document.body.classList.add("loaded");
-                }, 100);
-
-                const rows = document.querySelectorAll(".row");
-                const stats = document.querySelector(".stats");
-                const techStack = document.querySelector(".tech-stack");
-                const featuresGrid = document.querySelector(".features-grid");
-
-                // Immediately show elements that are already in viewport
-                const checkInitialVisibility = (element) => {
-                    const rect = element.getBoundingClientRect();
-                    const isVisible =
-                        rect.top < window.innerHeight && rect.bottom > 0;
-                    if (isVisible) {
-                        element.classList.add("visible");
-                    }
-                };
-
-                rows.forEach((row) => {
-                    checkInitialVisibility(row);
-                    observer.observe(row);
-                });
-                if (stats) {
-                    checkInitialVisibility(stats);
-                    observer.observe(stats);
-                }
-                if (techStack) observer.observe(techStack);
-                if (featuresGrid) observer.observe(featuresGrid);
-
-                const statCards = document.querySelectorAll(".stat-card");
-                statCards.forEach((card, index) => {
-                    card.style.transitionDelay = `${index * 0.1}s`;
-                });
-
-                const featureCards = document.querySelectorAll(".feature-card");
-                featureCards.forEach((card, index) => {
-                    card.style.transitionDelay = `${index * 0.1}s`;
-                });
-            });
-        </script>
-        <script type="application/ld+json">
-            {
-                "@context": "https://schema.org",
-                "@type": "CreativeWork",
-                "@id": "https://igorszuniewicz.com/projects/audiolab.html#creativework",
-                "name": "AudioLab - Machine Learning Beatbox Recognition",
-                "url": "https://igorszuniewicz.com/projects/audiolab.html",
-                "headline": "ML-powered beatbox recognition for rhythm gaming",
-                "description": "AudioLab replaces controller inputs with real-time beatbox detection. A user-trained SVM classifier recognises kick, snare and hi-hat with sub-60ms latency for competitive rhythm games.",
-                "datePublished": "2025-01-27",
-                "inLanguage": ["en", "pl", "nl"],
-                "image": "https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg",
-                "keywords": [
-                    "Machine Learning",
-                    "Beatbox",
-                    "Audio Programming",
-                    "Unity",
-                    "Python"
-                ],
-                "genre": [
-                    "Game Audio",
-                    "Interactive Music",
-                    "Machine Learning"
-                ],
-                "timeRequired": "PT5M",
-                "creator": { "@id": "https://igorszuniewicz.com/#person" },
-                "isPartOf": { "@id": "https://igorszuniewicz.com/#portfolio" },
-                "about": [
-                    { "@type": "Thing", "name": "Real-time audio" },
-                    { "@type": "Thing", "name": "Rhythm games" }
-                ],
-                "workExample": [
-                    {
-                        "@type": "VideoObject",
-                        "name": "AudioLab interactive demo",
-                        "description": "Beatbox-controlled gameplay footage",
-                        "contentUrl": "https://igorszuniewicz.com/assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4",
-                        "thumbnailUrl": "https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg",
-                        "encodingFormat": "video/mp4",
-                        "uploadDate": "2025-01-27"
-                    }
-                ]
+            if (technicalModal.classList.contains("active")) {
+              closeTechnicalModal();
             }
-        </script>
-        <script src="../assets/js/performance-boost.js" defer>
-</script>
-    </body>
+          }
+        });
+      });
+    </script>
+
+    <!-- Scroll Reveal Animation Script -->
+    <script>
+      window.addEventListener("load", () => {
+        document.body.classList.add("loaded");
+      });
+
+      const observerOptions = {
+        threshold: 0.15,
+        rootMargin: "0px 0px 300px 0px",
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      }, observerOptions);
+
+      document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+          document.body.classList.add("loaded");
+        }, 100);
+
+        const rows = document.querySelectorAll(".row");
+        const stats = document.querySelector(".stats");
+        const techStack = document.querySelector(".tech-stack");
+        const featuresGrid = document.querySelector(".features-grid");
+
+        // Immediately show elements that are already in viewport
+        const checkInitialVisibility = (element) => {
+          const rect = element.getBoundingClientRect();
+          const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+          if (isVisible) {
+            element.classList.add("visible");
+          }
+        };
+
+        rows.forEach((row) => {
+          checkInitialVisibility(row);
+          observer.observe(row);
+        });
+        if (stats) {
+          checkInitialVisibility(stats);
+          observer.observe(stats);
+        }
+        if (techStack) observer.observe(techStack);
+        if (featuresGrid) observer.observe(featuresGrid);
+
+        const statCards = document.querySelectorAll(".stat-card");
+        statCards.forEach((card, index) => {
+          card.style.transitionDelay = `${index * 0.1}s`;
+        });
+
+        const featureCards = document.querySelectorAll(".feature-card");
+        featureCards.forEach((card, index) => {
+          card.style.transitionDelay = `${index * 0.1}s`;
+        });
+      });
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        "@id": "https://igorszuniewicz.com/projects/audiolab.html#creativework",
+        "name": "AudioLab - Machine Learning Beatbox Recognition",
+        "url": "https://igorszuniewicz.com/projects/audiolab.html",
+        "headline": "ML-powered beatbox recognition for rhythm gaming",
+        "description": "AudioLab replaces controller inputs with real-time beatbox detection. A user-trained SVM classifier recognises kick, snare and hi-hat with sub-60ms latency for competitive rhythm games.",
+        "datePublished": "2025-01-27",
+        "inLanguage": ["en", "pl", "nl"],
+        "image": "https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg",
+        "keywords": [
+          "Machine Learning",
+          "Beatbox",
+          "Audio Programming",
+          "Unity",
+          "Python"
+        ],
+        "genre": ["Game Audio", "Interactive Music", "Machine Learning"],
+        "timeRequired": "PT5M",
+        "creator": { "@id": "https://igorszuniewicz.com/#person" },
+        "isPartOf": { "@id": "https://igorszuniewicz.com/#portfolio" },
+        "about": [
+          { "@type": "Thing", "name": "Real-time audio" },
+          { "@type": "Thing", "name": "Rhythm games" }
+        ],
+        "workExample": [
+          {
+            "@type": "VideoObject",
+            "name": "AudioLab interactive demo",
+            "description": "Beatbox-controlled gameplay footage",
+            "contentUrl": "https://igorszuniewicz.com/assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4",
+            "thumbnailUrl": "https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg",
+            "encodingFormat": "video/mp4",
+            "uploadDate": "2025-01-27"
+          }
+        ]
+      }
+    </script>
+    <script
+      type="module"
+      src="../assets/js/performance-boost.js"
+      defer
+    ></script>
+  </body>
 </html>

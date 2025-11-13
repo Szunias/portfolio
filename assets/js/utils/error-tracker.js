@@ -142,7 +142,7 @@ class ErrorTracker {
       }
 
       localStorage.setItem('errorLog', JSON.stringify(stored));
-    } catch (e) {
+    } catch (_e) {
       // Silently fail
     }
   }
@@ -162,7 +162,7 @@ class ErrorTracker {
   getStoredErrors() {
     try {
       return JSON.parse(localStorage.getItem('errorLog') || '[]');
-    } catch (e) {
+    } catch (_e) {
       return [];
     }
   }
@@ -174,7 +174,7 @@ class ErrorTracker {
     this.errors = [];
     try {
       localStorage.removeItem('errorLog');
-    } catch (e) {
+    } catch (_e) {
       // Silently fail
     }
   }

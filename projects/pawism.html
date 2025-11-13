@@ -1,645 +1,737 @@
-<!DOCTYPE HTML>
-<html lang="en" style="background:#000;">
-<head>
-<style>
-/* CRITICAL: Load immediately before anything else */
-html, body {
-  background: linear-gradient(180deg, rgba(10, 8, 15, 0.85) 0%, rgba(20, 15, 25, 0.90) 60%, rgba(15, 10, 20, 0.95) 100%),
-    url('../assets/images/projects-pawism/AdobeStock_1676516316.jpeg') center/cover no-repeat fixed !important;
-  margin: 0;
-  padding: 0;
-  background-attachment: fixed;
-}
+<!DOCTYPE html>
+<html lang="en" style="background: #000">
+  <head>
+    <script>
+/** Language preload - prevents lang flicker */
+(function(){
+"use strict";
+const savedLang=localStorage.getItem("language")||"en";
+document.documentElement.setAttribute("lang",savedLang);
+window.__preloadedLang=savedLang;
+})();
+    </script>
+    <style>
+      /* CRITICAL: Load immediately before anything else */
+      html,
+      body {
+        background:
+          linear-gradient(
+            180deg,
+            rgba(10, 8, 15, 0.85) 0%,
+            rgba(20, 15, 25, 0.9) 60%,
+            rgba(15, 10, 20, 0.95) 100%
+          ),
+          url("../assets/images/projects-pawism/AdobeStock_1676516316.jpeg")
+            center/cover no-repeat fixed !important;
+        margin: 0;
+        padding: 0;
+        background-attachment: fixed;
+      }
 
-/* Content visible immediately */
-.content {
-  opacity: 1;
-  transition: opacity 0.3s ease;
-}
-</style>
-<title>Paw-ism: 2-Day Game Jam Thriller</title>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-<link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
-<meta name="description" content="Paw-ism: thriller game jam project created in 2 days by Igor Szuniewicz" />
-<meta name="robots" content="index, follow" />
-<link rel="canonical" href="https://igorszuniewicz.com/projects/pawism.html" />
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="../assets/js/preload-lang.js"></script>
-<style>
-/* === RESET & BASE === */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+      /* Content visible immediately */
+      .content {
+        opacity: 1;
+        transition: opacity 0.3s ease;
+      }
+    </style>
+    <title>Paw-ism: 2-Day Game Jam Thriller</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
+    <meta
+      name="description"
+      content="Paw-ism: thriller game jam project created in 2 days by Igor Szuniewicz"
+    />
+    <meta name="robots" content="index, follow" />
+    <link
+      rel="canonical"
+      href="https://igorszuniewicz.com/projects/pawism.html"
+    />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Creepster&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" src="../assets/js/preload-lang.js"></script>
+    <style>
+      /* === RESET & BASE === */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-html, body {
-  width: 100%;
-  height: 100%;
-  color: #e8d8d8;
-  font-family: 'Poppins', sans-serif;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-}
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        color: #e8d8d8;
+        font-family: "Poppins", sans-serif;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+      }
 
-/* === CONTENT WRAPPER === */
-.content {
-  position: relative;
-  z-index: 1;
-}
+      /* === CONTENT WRAPPER === */
+      .content {
+        position: relative;
+        z-index: 1;
+      }
 
-/* === BACK BUTTON === */
-.back-button {
-  position: fixed;
-  top: 2rem;
-  left: 2rem;
-  z-index: 1000;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: rgba(20, 10, 25, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(139, 69, 255, 0.3);
-  border-radius: 50px;
-  color: #e8d8d8;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-}
+      /* === BACK BUTTON === */
+      .back-button {
+        position: fixed;
+        top: 2rem;
+        left: 2rem;
+        z-index: 1000;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: rgba(20, 10, 25, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(139, 69, 255, 0.3);
+        border-radius: 50px;
+        color: #e8d8d8;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+      }
 
-.back-button:hover {
-  background: rgba(30, 15, 40, 0.9);
-  border-color: rgba(139, 69, 255, 0.6);
-  transform: translateX(-3px);
-  box-shadow: 0 4px 20px rgba(139, 69, 255, 0.3);
-}
+      .back-button:hover {
+        background: rgba(30, 15, 40, 0.9);
+        border-color: rgba(139, 69, 255, 0.6);
+        transform: translateX(-3px);
+        box-shadow: 0 4px 20px rgba(139, 69, 255, 0.3);
+      }
 
-/* === LANGUAGE SWITCHER === */
-.lang-switcher {
-  position: fixed;
-  top: 2rem;
-  right: 2rem;
-  z-index: 1000;
-  display: flex;
-  gap: 0.5rem;
-  background: rgba(20, 10, 25, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(139, 69, 255, 0.3);
-  border-radius: 50px;
-  padding: 0.5rem;
-}
+      /* === LANGUAGE SWITCHER === */
+      .lang-switcher {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        z-index: 1000;
+        display: flex;
+        gap: 0.5rem;
+        background: rgba(20, 10, 25, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(139, 69, 255, 0.3);
+        border-radius: 50px;
+        padding: 0.5rem;
+      }
 
-.lang-btn {
-  padding: 0.5rem 1rem;
-  background: transparent;
-  border: none;
-  border-radius: 50px;
-  color: #999;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-}
+      .lang-btn {
+        padding: 0.5rem 1rem;
+        background: transparent;
+        border: none;
+        border-radius: 50px;
+        color: #999;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+      }
 
-.lang-btn:hover {
-  background: rgba(139, 69, 255, 0.2);
-  color: #e8d8d8;
-}
+      .lang-btn:hover {
+        background: rgba(139, 69, 255, 0.2);
+        color: #e8d8d8;
+      }
 
-.lang-btn.active {
-  background: linear-gradient(135deg, #8b45ff, #ff45a5);
-  color: #fff;
-}
+      .lang-btn.active {
+        background: linear-gradient(135deg, #8b45ff, #ff45a5);
+        color: #fff;
+      }
 
-/* === HERO SECTION === */
-.hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 6rem 2rem 4rem;
-  position: relative;
-  overflow: hidden;
-}
+      /* === HERO SECTION === */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 6rem 2rem 4rem;
+        position: relative;
+        overflow: hidden;
+      }
 
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 800px;
-  height: 800px;
-  background: radial-gradient(circle, rgba(139, 69, 255, 0.15) 0%, rgba(255, 69, 165, 0.08) 50%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  animation: pulse 8s ease-in-out infinite;
-}
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 800px;
+        height: 800px;
+        background: radial-gradient(
+          circle,
+          rgba(139, 69, 255, 0.15) 0%,
+          rgba(255, 69, 165, 0.08) 50%,
+          transparent 70%
+        );
+        border-radius: 50%;
+        pointer-events: none;
+        animation: pulse 8s ease-in-out infinite;
+      }
 
-@keyframes pulse {
-  0%, 100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.3;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.1);
-    opacity: 0.5;
-  }
-}
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0.3;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.1);
+          opacity: 0.5;
+        }
+      }
 
-.hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 1200px;
-}
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+      }
 
-.hero-badge {
-  display: inline-block;
-  padding: 0.5rem 1.5rem;
-  background: rgba(139, 69, 255, 0.2);
-  border: 1px solid rgba(139, 69, 255, 0.4);
-  border-radius: 50px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #8b45ff;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 2rem;
-  animation: fadeInDown 1s ease;
-}
+      .hero-badge {
+        display: inline-block;
+        padding: 0.5rem 1.5rem;
+        background: rgba(139, 69, 255, 0.2);
+        border: 1px solid rgba(139, 69, 255, 0.4);
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #8b45ff;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 2rem;
+        animation: fadeInDown 1s ease;
+      }
 
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-.logo-container {
-  margin-bottom: 2rem;
-  animation: fadeIn 1.5s ease;
-}
+      .logo-container {
+        margin-bottom: 2rem;
+        animation: fadeIn 1.5s ease;
+      }
 
-.logo-container img {
-  max-width: 400px;
-  width: 100%;
-  height: auto;
-  filter: drop-shadow(0 10px 40px rgba(139, 69, 255, 0.4));
-}
+      .logo-container img {
+        max-width: 400px;
+        width: 100%;
+        height: auto;
+        filter: drop-shadow(0 10px 40px rgba(139, 69, 255, 0.4));
+      }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
 
-.hero-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(2.5rem, 7vw, 5rem);
-  font-weight: 900;
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, #ffffff 0%, #8b45ff 50%, #ff45a5 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: -0.02em;
-  animation: fadeInUp 1s ease 0.2s both;
-}
+      .hero-title {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(2.5rem, 7vw, 5rem);
+        font-weight: 900;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #8b45ff 50%,
+          #ff45a5 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.02em;
+        animation: fadeInUp 1s ease 0.2s both;
+      }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-.hero-subtitle {
-  font-size: 1.25rem;
-  color: #c0b0c0;
-  max-width: 700px;
-  margin: 0 auto 3rem;
-  line-height: 1.7;
-  animation: fadeInUp 1s ease 0.4s both;
-}
+      .hero-subtitle {
+        font-size: 1.25rem;
+        color: #c0b0c0;
+        max-width: 700px;
+        margin: 0 auto 3rem;
+        line-height: 1.7;
+        animation: fadeInUp 1s ease 0.4s both;
+      }
 
-/* === CTA BUTTONS === */
-.cta-buttons {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 4rem;
-  animation: fadeInUp 1s ease 0.6s both;
-}
+      /* === CTA BUTTONS === */
+      .cta-buttons {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 4rem;
+        animation: fadeInUp 1s ease 0.6s both;
+      }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 2rem;
-  font-size: 1rem;
-  font-weight: 600;
-  text-decoration: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-}
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+      }
 
-.btn-primary {
-  background: linear-gradient(135deg, #8b45ff 0%, #ff45a5 100%);
-  color: #fff;
-  box-shadow: 0 8px 30px rgba(139, 69, 255, 0.4);
-}
+      .btn-primary {
+        background: linear-gradient(135deg, #8b45ff 0%, #ff45a5 100%);
+        color: #fff;
+        box-shadow: 0 8px 30px rgba(139, 69, 255, 0.4);
+      }
 
-.btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(139, 69, 255, 0.6);
-}
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 40px rgba(139, 69, 255, 0.6);
+      }
 
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-  border: 2px solid rgba(139, 69, 255, 0.3);
-}
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        border: 2px solid rgba(139, 69, 255, 0.3);
+      }
 
-.btn-secondary:hover {
-  background: rgba(139, 69, 255, 0.2);
-  border-color: rgba(139, 69, 255, 0.5);
-  transform: translateY(-3px);
-}
+      .btn-secondary:hover {
+        background: rgba(139, 69, 255, 0.2);
+        border-color: rgba(139, 69, 255, 0.5);
+        transform: translateY(-3px);
+      }
 
-/* === STATS === */
-.stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 2rem;
-  max-width: 900px;
-  margin: 0 auto;
-  animation: fadeInUp 1s ease 0.8s both;
-}
+      /* === STATS === */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 2rem;
+        max-width: 900px;
+        margin: 0 auto;
+        animation: fadeInUp 1s ease 0.8s both;
+      }
 
-.stat-card {
-  background: rgba(20, 10, 25, 0.5);
-  padding: 2rem;
-  border-radius: 16px;
-  border: 1px solid rgba(139, 69, 255, 0.2);
-  text-align: center;
-  transition: all 0.3s ease;
-}
+      .stat-card {
+        background: rgba(20, 10, 25, 0.5);
+        padding: 2rem;
+        border-radius: 16px;
+        border: 1px solid rgba(139, 69, 255, 0.2);
+        text-align: center;
+        transition: all 0.3s ease;
+      }
 
-.stat-card:hover {
-  background: rgba(30, 15, 40, 0.6);
-  border-color: rgba(139, 69, 255, 0.4);
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(139, 69, 255, 0.3);
-}
+      .stat-card:hover {
+        background: rgba(30, 15, 40, 0.6);
+        border-color: rgba(139, 69, 255, 0.4);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(139, 69, 255, 0.3);
+      }
 
-.stat-value {
-  font-size: 2.5rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #8b45ff, #ff45a5);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  display: block;
-  margin-bottom: 0.5rem;
-}
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #8b45ff, #ff45a5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
 
-.stat-label {
-  font-size: 0.9rem;
-  color: #9ca3af;
-  font-weight: 500;
-}
+      .stat-label {
+        font-size: 0.9rem;
+        color: #9ca3af;
+        font-weight: 500;
+      }
 
-/* === SECTION === */
-.section {
-  padding: 6rem 2rem;
-  position: relative;
-}
+      /* === SECTION === */
+      .section {
+        padding: 6rem 2rem;
+        position: relative;
+      }
 
-.section-header {
-  text-align: center;
-  margin-bottom: 4rem;
-}
+      .section-header {
+        text-align: center;
+        margin-bottom: 4rem;
+      }
 
-.section-badge {
-  display: inline-block;
-  padding: 0.4rem 1.2rem;
-  background: rgba(139, 69, 255, 0.1);
-  border-radius: 50px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #8b45ff;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-}
+      .section-badge {
+        display: inline-block;
+        padding: 0.4rem 1.2rem;
+        background: rgba(139, 69, 255, 0.1);
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #8b45ff;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+      }
 
-.section-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #fff;
-}
+      .section-title {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #fff;
+      }
 
-.section-subtitle {
-  font-size: 1.15rem;
-  color: #9ca3af;
-  max-width: 600px;
-  margin: 0 auto;
-}
+      .section-subtitle {
+        font-size: 1.15rem;
+        color: #9ca3af;
+        max-width: 600px;
+        margin: 0 auto;
+      }
 
-/* === CONTENT GRID === */
-.content-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+      /* === CONTENT GRID === */
+      .content-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
 
-.content-card {
-  background: rgba(20, 10, 25, 0.5);
-  padding: 2.5rem;
-  border-radius: 16px;
-  border: 1px solid rgba(139, 69, 255, 0.2);
-  transition: all 0.3s ease;
-}
+      .content-card {
+        background: rgba(20, 10, 25, 0.5);
+        padding: 2.5rem;
+        border-radius: 16px;
+        border: 1px solid rgba(139, 69, 255, 0.2);
+        transition: all 0.3s ease;
+      }
 
-.content-card:hover {
-  background: rgba(30, 15, 40, 0.6);
-  border-color: rgba(139, 69, 255, 0.4);
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(139, 69, 255, 0.3);
-}
+      .content-card:hover {
+        background: rgba(30, 15, 40, 0.6);
+        border-color: rgba(139, 69, 255, 0.4);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(139, 69, 255, 0.3);
+      }
 
-.content-card h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  color: #fff;
-}
+      .content-card h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #fff;
+      }
 
-.content-card p {
-  color: #c0b0c0;
-  line-height: 1.7;
-}
+      .content-card p {
+        color: #c0b0c0;
+        line-height: 1.7;
+      }
 
-.content-icon {
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
-  display: block;
-}
+      .content-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        display: block;
+      }
 
-/* === TEAM SECTION === */
-.team-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+      /* === TEAM SECTION === */
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
 
-.team-member {
-  text-align: center;
-  padding: 1.5rem;
-}
+      .team-member {
+        text-align: center;
+        padding: 1.5rem;
+      }
 
-.team-role {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #8b45ff;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 0.5rem;
-}
+      .team-role {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #8b45ff;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+      }
 
-.team-name {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: #e8d8d8;
-}
+      .team-name {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #e8d8d8;
+      }
 
-/* === FOOTER === */
-footer {
-  padding: 3rem 2rem;
-  text-align: center;
-  border-top: 1px solid rgba(139, 69, 255, 0.2);
-}
+      /* === FOOTER === */
+      footer {
+        padding: 3rem 2rem;
+        text-align: center;
+        border-top: 1px solid rgba(139, 69, 255, 0.2);
+      }
 
-footer p {
-  color: #6b7280;
-  font-size: 0.9rem;
-}
+      footer p {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
 
-footer a {
-  color: #8b45ff;
-  text-decoration: none;
-}
+      footer a {
+        color: #8b45ff;
+        text-decoration: none;
+      }
 
-footer a:hover {
-  text-decoration: underline;
-}
+      footer a:hover {
+        text-decoration: underline;
+      }
 
-/* === RESPONSIVE === */
-@media (max-width: 768px) {
-  .back-button, .lang-switcher {
-    top: 1rem;
-  }
+      /* === RESPONSIVE === */
+      @media (max-width: 768px) {
+        .back-button,
+        .lang-switcher {
+          top: 1rem;
+        }
 
-  .back-button {
-    left: 1rem;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.85rem;
-  }
+        .back-button {
+          left: 1rem;
+          padding: 0.6rem 1.2rem;
+          font-size: 0.85rem;
+        }
 
-  .lang-switcher {
-    right: 1rem;
-  }
+        .lang-switcher {
+          right: 1rem;
+        }
 
-  .hero {
-    padding: 4rem 1.5rem 3rem;
-  }
+        .hero {
+          padding: 4rem 1.5rem 3rem;
+        }
 
-  .logo-container img {
-    max-width: 280px;
-  }
+        .logo-container img {
+          max-width: 280px;
+        }
 
-  .section {
-    padding: 4rem 1.5rem;
-  }
+        .section {
+          padding: 4rem 1.5rem;
+        }
 
-  .content-grid, .team-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-}
-</style>
-</head>
-<body>
-<div class="content">
-  <a href="/projects/" class="back-button" data-i18n="back">
-    Back to Projects</a>
+        .content-grid,
+        .team-grid {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <a href="/projects/" class="back-button" data-i18n="back">
+        Back to Projects</a
+      >
 
-  <!-- Language Switcher -->
-  <div class="lang-switcher">
-    <button class="lang-btn active" data-lang="en"><span>EN</span></button>
-    <button class="lang-btn" data-lang="pl"><span>PL</span></button>
-    <button class="lang-btn" data-lang="nl"><span>NL</span></button>
-  </div>
-
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-content">
-      <div class="hero-badge" data-i18n="hero.badge">
-        Game Jam Project</div>
-      <div class="logo-container">
-        <img src="../assets/images/projects-pawism/logoproject/Whisk_ccf973736ef31469945498bde4dc903fdr.jpeg"
-             alt="Paw-ism Logo" loading="lazy" decoding="async">
+      <!-- Language Switcher -->
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="en"><span>EN</span></button>
+        <button class="lang-btn" data-lang="pl"><span>PL</span></button>
+        <button class="lang-btn" data-lang="nl"><span>NL</span></button>
       </div>
-      <h1 class="hero-title" data-i18n="hero.title">Paw-ism</h1>
-      <p class="hero-subtitle" data-i18n="hero.subtitle">
-        Execute your plans as an ambitious cat while avoiding being caught by the cleaning lady.
-        A thrilling game jam project created in just 2 days for Unwrap Jam 2025.
-      </p>
 
-      <div class="cta-buttons">
-        <a href="https://va-vahit-sh.itch.io/paw-ism" class="btn btn-primary" target="_blank" rel="noopener">
-          <span data-i18n="hero.play">Play on itch.io</span>
-        </a>
-      </div>
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-content">
+          <div class="hero-badge" data-i18n="hero.badge">Game Jam Project</div>
+          <div class="logo-container">
+            <img
+              src="../assets/images/projects-pawism/logoproject/Whisk_ccf973736ef31469945498bde4dc903fdr.jpeg"
+              alt="Paw-ism Logo"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <h1 class="hero-title" data-i18n="hero.title">Paw-ism</h1>
+          <p class="hero-subtitle" data-i18n="hero.subtitle">
+            Execute your plans as an ambitious cat while avoiding being caught
+            by the cleaning lady. A thrilling game jam project created in just 2
+            days for Unwrap Jam 2025.
+          </p>
 
-      <div class="stats">
-        <div class="stat-card">
-          <span class="stat-value" data-i18n="stats.value1">2 Days</span>
-          <span class="stat-label" data-i18n="stats.label1">Development Time</span>
+          <div class="cta-buttons">
+            <a
+              href="https://va-vahit-sh.itch.io/paw-ism"
+              class="btn btn-primary"
+              target="_blank"
+              rel="noopener"
+            >
+              <span data-i18n="hero.play">Play on itch.io</span>
+            </a>
+          </div>
+
+          <div class="stats">
+            <div class="stat-card">
+              <span class="stat-value" data-i18n="stats.value1">2 Days</span>
+              <span class="stat-label" data-i18n="stats.label1"
+                >Development Time</span
+              >
+            </div>
+            <div class="stat-card">
+              <span class="stat-value" data-i18n="stats.value2">7</span>
+              <span class="stat-label" data-i18n="stats.label2"
+                >Team Members</span
+              >
+            </div>
+            <div class="stat-card">
+              <span class="stat-value" data-i18n="stats.value3">Thriller</span>
+              <span class="stat-label" data-i18n="stats.label3">Genre</span>
+            </div>
+          </div>
         </div>
-        <div class="stat-card">
-          <span class="stat-value" data-i18n="stats.value2">7</span>
-          <span class="stat-label" data-i18n="stats.label2">Team Members</span>
+      </section>
+
+      <!-- Story Section -->
+      <section class="section">
+        <div class="section-header">
+          <div class="section-badge" data-i18n="story.badge">The Concept</div>
+          <h2 class="section-title" data-i18n="story.title">
+            A Cat's Sinister Plan
+          </h2>
+          <p class="section-subtitle" data-i18n="story.subtitle">
+            Gather mice, navigate the roomba, and execute your plan before
+            you're caught.
+          </p>
         </div>
-        <div class="stat-card">
-          <span class="stat-value" data-i18n="stats.value3">Thriller</span>
-          <span class="stat-label" data-i18n="stats.label3">Genre</span>
+        <div class="content-grid">
+          <div class="content-card">
+            <h3 data-i18n="story.f1.title">Collect Mice</h3>
+            <p data-i18n="story.f1.desc">
+              Gather mice from the holes in the walls while staying alert to the
+              cleaning lady's movements.
+            </p>
+          </div>
+          <div class="content-card">
+            <h3 data-i18n="story.f2.title">Use the Roomba</h3>
+            <p data-i18n="story.f2.desc">
+              Jump on the roomba and use it as a tool or to move around more
+              swiftly through the environment.
+            </p>
+          </div>
+          <div class="content-card">
+            <h3 data-i18n="story.f3.title">Execute Your Plan</h3>
+            <p data-i18n="story.f3.desc">
+              Once everything aligns, there remains but only one thing to do...
+              Complete your sinister objective.
+            </p>
+          </div>
         </div>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <!-- Story Section -->
-  <section class="section">
-    <div class="section-header">
-      <div class="section-badge" data-i18n="story.badge">The Concept</div>
-      <h2 class="section-title" data-i18n="story.title">A Cat's Sinister Plan</h2>
-      <p class="section-subtitle" data-i18n="story.subtitle">
-        Gather mice, navigate the roomba, and execute your plan before you're caught.
-      </p>
-    </div>
-    <div class="content-grid">
-      <div class="content-card">
-        <h3 data-i18n="story.f1.title">Collect Mice</h3>
-        <p data-i18n="story.f1.desc">Gather mice from the holes in the walls while staying alert to the cleaning lady's movements.</p>
-      </div>
-      <div class="content-card">
-        <h3 data-i18n="story.f2.title">Use the Roomba</h3>
-        <p data-i18n="story.f2.desc">Jump on the roomba and use it as a tool or to move around more swiftly through the environment.</p>
-      </div>
-      <div class="content-card">
-        <h3 data-i18n="story.f3.title">Execute Your Plan</h3>
-        <p data-i18n="story.f3.desc">Once everything aligns, there remains but only one thing to do... Complete your sinister objective.</p>
-      </div>
-    </div>
-  </section>
+      <!-- Role Section -->
+      <section class="section" style="background: rgba(10, 5, 15, 0.3)">
+        <div class="section-header">
+          <div class="section-badge" data-i18n="role.badge">
+            My Contribution
+          </div>
+          <h2 class="section-title" data-i18n="role.title">Sound Design</h2>
+          <p class="section-subtitle" data-i18n="role.subtitle">
+            I was responsible for creating the complete audio landscape for this
+            tense thriller experience.
+          </p>
+        </div>
+        <div class="content-grid">
+          <div class="content-card">
+            <h3 data-i18n="role.f1.title">Ambient Atmosphere</h3>
+            <p data-i18n="role.f1.desc">
+              Created eerie ambient soundscapes that build tension and enhance
+              the thriller atmosphere throughout gameplay.
+            </p>
+          </div>
+          <div class="content-card">
+            <h3 data-i18n="role.f2.title">Interactive SFX</h3>
+            <p data-i18n="role.f2.desc">
+              Designed responsive sound effects for cat movements, mice
+              collection, roomba interactions, and detection states.
+            </p>
+          </div>
+          <div class="content-card">
+            <h3 data-i18n="role.f3.title">Audio Implementation</h3>
+            <p data-i18n="role.f3.desc">
+              Implemented dynamic audio systems in Unreal Engine to respond to
+              gameplay events and player actions.
+            </p>
+          </div>
+        </div>
+      </section>
 
-  <!-- Role Section -->
-  <section class="section" style="background: rgba(10, 5, 15, 0.3);">
-    <div class="section-header">
-      <div class="section-badge" data-i18n="role.badge">My Contribution</div>
-      <h2 class="section-title" data-i18n="role.title">Sound Design</h2>
-      <p class="section-subtitle" data-i18n="role.subtitle">
-        I was responsible for creating the complete audio landscape for this tense thriller experience.
-      </p>
-    </div>
-    <div class="content-grid">
-      <div class="content-card">
-        <h3 data-i18n="role.f1.title">Ambient Atmosphere</h3>
-        <p data-i18n="role.f1.desc">Created eerie ambient soundscapes that build tension and enhance the thriller atmosphere throughout gameplay.</p>
-      </div>
-      <div class="content-card">
-        <h3 data-i18n="role.f2.title">Interactive SFX</h3>
-        <p data-i18n="role.f2.desc">Designed responsive sound effects for cat movements, mice collection, roomba interactions, and detection states.</p>
-      </div>
-      <div class="content-card">
-        <h3 data-i18n="role.f3.title">Audio Implementation</h3>
-        <p data-i18n="role.f3.desc">Implemented dynamic audio systems in Unreal Engine to respond to gameplay events and player actions.</p>
-      </div>
-    </div>
-  </section>
+      <!-- Team Section -->
+      <section class="section">
+        <div class="section-header">
+          <div class="section-badge" data-i18n="team.badge">The Team</div>
+          <h2 class="section-title" data-i18n="team.title">
+            Collaborative Creation
+          </h2>
+          <p class="section-subtitle" data-i18n="team.subtitle">
+            A talented team of 7 developers, artists, and sound designers
+            brought Paw-ism to life in 48 hours.
+          </p>
+        </div>
+        <div class="team-grid">
+          <div class="team-member">
+            <div class="team-role" data-i18n="team.role1">Programmers</div>
+            <div class="team-name">Ioana Raileanu</div>
+            <div class="team-name">Dylan Burgisser</div>
+            <div class="team-name">Ádám Knapecz</div>
+          </div>
+          <div class="team-member">
+            <div class="team-role" data-i18n="team.role2">Artists</div>
+            <div class="team-name">Raluca Cocoș</div>
+            <div class="team-name">Vahit Saygin</div>
+            <div class="team-name">Borbála Andó</div>
+          </div>
+          <div class="team-member">
+            <div class="team-role" data-i18n="team.role3">Sound Design</div>
+            <div class="team-name">Igor Szuniewicz</div>
+          </div>
+        </div>
+      </section>
 
-  <!-- Team Section -->
-  <section class="section">
-    <div class="section-header">
-      <div class="section-badge" data-i18n="team.badge">The Team</div>
-      <h2 class="section-title" data-i18n="team.title">Collaborative Creation</h2>
-      <p class="section-subtitle" data-i18n="team.subtitle">
-        A talented team of 7 developers, artists, and sound designers brought Paw-ism to life in 48 hours.
-      </p>
+      <!-- Footer -->
+      <footer>
+        <div>
+          <p>
+            Created by
+            <a href="https://igorszuniewicz.com" target="_blank" rel="noopener"
+              >Igor Szuniewicz</a
+            >
+            and the Paw-ism Team |
+            <a
+              href="https://va-vahit-sh.itch.io/paw-ism"
+              target="_blank"
+              rel="noopener"
+              >Play on itch.io</a
+            >
+          </p>
+          <p style="margin-top: 0.5rem; font-size: 0.85rem">
+            © 2025 Unwrap Jam 2025. Made with Unreal Engine.
+          </p>
+        </div>
+      </footer>
     </div>
-    <div class="team-grid">
-      <div class="team-member">
-        <div class="team-role" data-i18n="team.role1">Programmers</div>
-        <div class="team-name">Ioana Raileanu</div>
-        <div class="team-name">Dylan Burgisser</div>
-        <div class="team-name">Ádám Knapecz</div>
-      </div>
-      <div class="team-member">
-        <div class="team-role" data-i18n="team.role2">Artists</div>
-        <div class="team-name">Raluca Cocoș</div>
-        <div class="team-name">Vahit Saygin</div>
-        <div class="team-name">Borbála Andó</div>
-      </div>
-      <div class="team-member">
-        <div class="team-role" data-i18n="team.role3">Sound Design</div>
-        <div class="team-name">Igor Szuniewicz</div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Footer -->
-  <footer>
-    <div>
-      <p>
-        Created by <a href="https://igorszuniewicz.com" target="_blank" rel="noopener">Igor Szuniewicz</a>
-        and the Paw-ism Team |
-        <a href="https://va-vahit-sh.itch.io/paw-ism" target="_blank" rel="noopener">Play on itch.io</a>
-      </p>
-      <p style="margin-top: 0.5rem; font-size: 0.85rem;">
-        © 2025 Unwrap Jam 2025. Made with Unreal Engine.
-      </p>
-    </div>
-  </footer>
-</div>
-
-<script src="../assets/js/translations.js"></script>
-</body>
+    <script type="module" src="../assets/js/translations.js"></script>
+  </body>
 </html>

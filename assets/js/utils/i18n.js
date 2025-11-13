@@ -15,13 +15,13 @@
  * @version 3.0
  */
 
-import storage from "./storage.js";
-import { IS_DEV } from "../config/constants.js";
+import storage from './storage.js';
+import { IS_DEV } from '../config/constants.js';
 
 class TranslationManager {
   constructor() {
     this.translations = {};
-    this.currentLang = storage.get("language", "en");
+    this.currentLang = storage.get('language', 'en');
     this.isInitialized = false;
     this.translationPath = null;
     this.loadingPromise = null; // Cache loading promise to prevent race conditions
@@ -34,7 +34,7 @@ class TranslationManager {
    * @returns {*} Translation value
    */
   getNestedTranslation(obj, path) {
-    return path.split(".").reduce((current, key) => current?.[key], obj);
+    return path.split('.').reduce((current, key) => current?.[key], obj);
   }
 
   /**
@@ -43,20 +43,20 @@ class TranslationManager {
    */
   detectTranslationFile() {
     const path = window.location.pathname;
-    const filename = path.split("/").pop();
+    const filename = path.split('/').pop();
 
     // Project-specific translations
     const projectMap = {
-      "amorak.html": "../locales/amorak.json",
-      "akantilado.html": "../locales/akantilado.json",
-      "ray-animation.html": "../locales/ray-animation.json",
-      "pawism.html": "../locales/pawism.json",
-      "not-today-darling.html": "../locales/not-today-darling.json",
-      "environments.html": "../locales/environments.json",
-      "audiolab.html": "../locales/audiolab.json",
-      "pause-and-deserve.html": "../locales/pause-and-deserve.json",
-      "shadow-frames.html": "../locales/shadow-frames.json",
-      "middleware-optimization.html": "../locales/middleware-optimization.json",
+      'amorak.html': '../locales/amorak.json',
+      'akantilado.html': '../locales/akantilado.json',
+      'ray-animation.html': '../locales/ray-animation.json',
+      'pawism.html': '../locales/pawism.json',
+      'not-today-darling.html': '../locales/not-today-darling.json',
+      'environments.html': '../locales/environments.json',
+      'audiolab.html': '../locales/audiolab.json',
+      'pause-and-deserve.html': '../locales/pause-and-deserve.json',
+      'shadow-frames.html': '../locales/shadow-frames.json',
+      'middleware-optimization.html': '../locales/middleware-optimization.json',
     };
 
     if (projectMap[filename]) {
@@ -65,22 +65,22 @@ class TranslationManager {
 
     // Main page translations
     const pageMap = {
-      "index.html": "locales/index.json",
-      "about.html": "locales/about.json",
-      "contact.html": "locales/contact.json",
-      "music.html": "locales/music.json",
-      "": "locales/index.json",
-      "/": "locales/index.json",
+      'index.html': 'locales/index.json',
+      'about.html': 'locales/about.json',
+      'contact.html': 'locales/contact.json',
+      'music.html': 'locales/music.json',
+      '': 'locales/index.json',
+      '/': 'locales/index.json',
     };
 
     // Projects index
-    if (path.includes("projects/")) {
-      if (filename === "index.html" || filename === "") {
-        return "../locales/projects.json";
+    if (path.includes('projects/')) {
+      if (filename === 'index.html' || filename === '') {
+        return '../locales/projects.json';
       }
     }
 
-    return pageMap[filename] || "locales/shared.json";
+    return pageMap[filename] || 'locales/shared.json';
   }
 
   /**
@@ -91,16 +91,16 @@ class TranslationManager {
     const langPack = this.translations[lang] || {};
 
     // Translate text content
-    document.querySelectorAll("[data-i18n]").forEach((el) => {
-      const key = el.getAttribute("data-i18n");
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const key = el.getAttribute('data-i18n');
       const translation = this.getNestedTranslation(langPack, key);
 
       if (translation) {
         // SECURITY: Only allow <br> tags from trusted translation files
         // All other HTML is escaped to prevent XSS
-        if (typeof translation === "string") {
+        if (typeof translation === 'string') {
           if (
-            (key.includes(".title") || translation.includes("<br>")) &&
+            (key.includes('.title') || translation.includes('<br>')) &&
             this.isAllowedHtml(translation)
           ) {
             // Only allow safe HTML tags from trusted translations
@@ -113,50 +113,50 @@ class TranslationManager {
     });
 
     // Translate aria-labels
-    document.querySelectorAll("[data-i18n-aria-label]").forEach((el) => {
-      const key = el.getAttribute("data-i18n-aria-label");
+    document.querySelectorAll('[data-i18n-aria-label]').forEach((el) => {
+      const key = el.getAttribute('data-i18n-aria-label');
       const translation = this.getNestedTranslation(langPack, key);
 
       if (translation) {
-        el.setAttribute("aria-label", translation);
+        el.setAttribute('aria-label', translation);
       }
     });
 
     // Translate placeholders
-    document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
-      const key = el.getAttribute("data-i18n-placeholder");
+    document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+      const key = el.getAttribute('data-i18n-placeholder');
       const translation = this.getNestedTranslation(langPack, key);
 
       if (translation) {
-        el.setAttribute("placeholder", translation);
+        el.setAttribute('placeholder', translation);
       }
     });
 
     // Update language button states
-    document.querySelectorAll(".lang-btn").forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.lang === lang);
+    document.querySelectorAll('.lang-btn').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
     });
 
     // Update HTML lang attribute
-    document.documentElement.setAttribute("lang", lang);
+    document.documentElement.setAttribute('lang', lang);
 
     // Handle tech tags (project pages)
-    document.querySelectorAll("[data-tech]").forEach((container) => {
-      const key = container.getAttribute("data-tech");
+    document.querySelectorAll('[data-tech]').forEach((container) => {
+      const key = container.getAttribute('data-tech');
       const techArray = this.getNestedTranslation(langPack, key);
 
       if (Array.isArray(techArray) && techArray.length > 0) {
         // Build DOM safely without innerHTML
-        container.innerHTML = ""; // Clear first
+        container.innerHTML = ''; // Clear first
         techArray.forEach((tech) => {
-          const span = document.createElement("span");
-          span.className = "project-tech-item";
+          const span = document.createElement('span');
+          span.className = 'project-tech-item';
           span.textContent = tech;
           container.appendChild(span);
         });
-        container.style.display = "flex";
+        container.style.display = 'flex';
       } else {
-        container.style.display = "none";
+        container.style.display = 'none';
       }
     });
   }
@@ -169,7 +169,7 @@ class TranslationManager {
   isAllowedHtml(html) {
     // Allow <br>, <span>, and common safe tags from trusted translation files
     // This is safe because translations come from our controlled JSON files
-    const allowedTags = ["br", "span", "strong", "em", "i", "b"];
+    const allowedTags = ['br', 'span', 'strong', 'em', 'i', 'b'];
     const tagPattern = /<\/?(\w+)[^>]*>/g;
     const matches = html.match(tagPattern);
 
@@ -190,14 +190,14 @@ class TranslationManager {
   sanitizeTranslationHtml(html) {
     // Allow only safe tags: br, span, strong, em, i, b
     // Remove any dangerous attributes (onclick, onerror, etc.)
-    const allowedTags = ["br", "span", "strong", "em", "i", "b"];
+    const allowedTags = ['br', 'span', 'strong', 'em', 'i', 'b'];
 
     // Parse and reconstruct only safe tags
-    const div = document.createElement("div");
+    const div = document.createElement('div');
     div.innerHTML = html;
 
     // Remove dangerous attributes
-    const allElements = div.querySelectorAll("*");
+    const allElements = div.querySelectorAll('*');
     allElements.forEach((el) => {
       const tagName = el.tagName.toLowerCase();
 
@@ -209,7 +209,7 @@ class TranslationManager {
 
       // Remove all attributes except 'class' for span
       Array.from(el.attributes).forEach((attr) => {
-        if (!(tagName === "span" && attr.name === "class")) {
+        if (!(tagName === 'span' && attr.name === 'class')) {
           el.removeAttribute(attr.name);
         }
       });
@@ -224,7 +224,7 @@ class TranslationManager {
    */
   setLanguage(lang) {
     this.currentLang = lang;
-    storage.set("language", lang);
+    storage.set('language', lang);
 
     if (Object.keys(this.translations).length > 0) {
       this.applyTranslations(lang);
@@ -233,24 +233,24 @@ class TranslationManager {
     // Update modal content if it exists and is open
     if (
       window.TrackInfoModal &&
-      typeof window.TrackInfoModal.updateLanguage === "function"
+      typeof window.TrackInfoModal.updateLanguage === 'function'
     ) {
       window.TrackInfoModal.updateLanguage();
     }
 
     // Refresh music list if present
-    if (typeof window.refreshMusicList === "function") {
+    if (typeof window.refreshMusicList === 'function') {
       window.refreshMusicList();
     }
 
     // Mark translations as ready
     requestAnimationFrame(() => {
-      document.documentElement.classList.add("translations-ready");
+      document.documentElement.classList.add('translations-ready');
 
       // Remove preload style after transition
-      if (!document.documentElement.classList.contains("smooth-nav-ready")) {
+      if (!document.documentElement.classList.contains('smooth-nav-ready')) {
         setTimeout(() => {
-          const preloadStyle = document.getElementById("preload-style");
+          const preloadStyle = document.getElementById('preload-style');
           if (preloadStyle) preloadStyle.remove();
         }, 150);
       }
@@ -258,7 +258,7 @@ class TranslationManager {
 
     // Emit language changed event
     window.dispatchEvent(
-      new CustomEvent("languageChanged", { detail: { language: lang } }),
+      new CustomEvent('languageChanged', { detail: { language: lang } }),
     );
   }
 
@@ -274,7 +274,7 @@ class TranslationManager {
     // RACE CONDITION FIX: Return cached promise if already loading same file
     if (this.loadingPromise && this.translationPath === requestedPath) {
       if (IS_DEV) {
-        console.log("⚡ Reusing cached translation load promise");
+        console.log('⚡ Reusing cached translation load promise');
       }
       return this.loadingPromise;
     }
@@ -294,23 +294,23 @@ class TranslationManager {
 
       // Try multiple base paths
       let response = null;
-      const basePaths = window.location.pathname.includes("projects/")
-        ? ["../", "./", "../../"]
-        : ["./", "../", "../../"];
+      const basePaths = window.location.pathname.includes('projects/')
+        ? ['../', './', '../../']
+        : ['./', '../', '../../'];
 
       for (const basePath of basePaths) {
         try {
-          const fullPath = this.translationPath.startsWith("locales/")
+          const fullPath = this.translationPath.startsWith('locales/')
             ? this.translationPath
             : basePath + this.translationPath;
 
           response = await fetch(fullPath, {
-            cache: "force-cache",
-            priority: "low",
+            cache: 'force-cache',
+            priority: 'low',
           });
 
           if (response.ok) break;
-        } catch (e) {
+        } catch (_e) {
           continue;
         }
       }
@@ -324,8 +324,8 @@ class TranslationManager {
       const translationData = await response.json();
 
       // Validate translation data structure
-      if (!translationData || typeof translationData !== "object") {
-        throw new Error("Invalid translation data format");
+      if (!translationData || typeof translationData !== 'object') {
+        throw new Error('Invalid translation data format');
       }
 
       this.translations = translationData;
@@ -336,14 +336,14 @@ class TranslationManager {
       this.loadingPromise = null;
     } catch (error) {
       if (IS_DEV) {
-        console.error("Failed to load translations:", error);
+        console.error('Failed to load translations:', error);
       }
 
       // Fallback: create minimal translation structure
       this.translations = {
-        en: { error: "Translation loading failed" },
-        pl: { error: "Błąd ładowania tłumaczeń" },
-        nl: { error: "Vertaling laden mislukt" },
+        en: { error: 'Translation loading failed' },
+        pl: { error: 'Błąd ładowania tłumaczeń' },
+        nl: { error: 'Vertaling laden mislukt' },
       };
 
       // Still mark as initialized to prevent infinite loading attempts
@@ -355,7 +355,7 @@ class TranslationManager {
       } catch (fallbackError) {
         if (IS_DEV) {
           console.error(
-            "Fallback translation application failed:",
+            'Fallback translation application failed:',
             fallbackError,
           );
         }
@@ -371,8 +371,8 @@ class TranslationManager {
    * Uses event delegation for dynamic buttons
    */
   bindLanguageButtons() {
-    document.addEventListener("click", (event) => {
-      const langBtn = event.target.closest(".lang-btn");
+    document.addEventListener('click', (event) => {
+      const langBtn = event.target.closest('.lang-btn');
       if (langBtn && langBtn.dataset.lang) {
         this.setLanguage(langBtn.dataset.lang);
       }
@@ -393,7 +393,7 @@ class TranslationManager {
    * @param {*} fallback - Fallback value if translation not found
    * @returns {*} Translation value
    */
-  translate(key, fallback = "") {
+  translate(key, fallback = '') {
     return (
       this.getNestedTranslation(this.translations[this.currentLang], key) ||
       fallback
@@ -408,7 +408,7 @@ class TranslationManager {
   async init(customPath = null) {
     if (this.isInitialized) {
       if (IS_DEV) {
-        console.warn("Translation manager already initialized");
+        console.warn('Translation manager already initialized');
       }
       return;
     }
@@ -428,8 +428,8 @@ const translationManager = new TranslationManager();
  */
 export async function initTranslations(customPath = null) {
   const ready = (fn) => {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", fn, { once: true });
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', fn, { once: true });
     } else {
       fn();
     }
@@ -472,12 +472,12 @@ export function getCurrentLanguage() {
  * @param {*} fallback - Fallback value
  * @returns {*}
  */
-export function translate(key, fallback = "") {
+export function translate(key, fallback = '') {
   return translationManager.translate(key, fallback);
 }
 
 // Expose functions globally for non-module pages and smooth navigation
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   window.setLanguage = setLanguage;
   window.applyTranslations = applyTranslations;
   window.getCurrentLanguage = getCurrentLanguage;

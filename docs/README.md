@@ -1,69 +1,37 @@
-# Documentation & Notes
+# Documentation
 
-This folder contains all project documentation, guides, and development notes.
+This directory contains project documentation organized by category.
 
-## 📁 Folder Structure
+## Structure
 
-```
-docs/
-├── README.md           # This file
-├── guides/            # Technical guides and how-tos
-│   └── BACKGROUND-FIX-GUIDE.md
-└── notes/             # Development notes and old versions
-    └── ray-animation-OLD.html
-```
+### `/analysis`
+Comprehensive project analysis reports:
+- `PROJECT_ANALYSIS_FIXES.md` - Initial project analysis with fixes
+- `ULTRA_DETAILED_ANALYSIS.md` - Ultra-detailed structural analysis (31 issues)
+- `COMPLETE_CONTENT_ANALYSIS_REPORT.md` - Complete content analysis
+- `CONTENT_AUDIT_DETAILED.md` - Detailed content audit
+- `CONTENT_CONSISTENCY_ANALYSIS.md` - Content consistency check
 
-## 📚 Available Guides
+### `/reports`
+Project status and test reports:
+- `RED_FLAGS_INDUSTRY_REVIEW.md` - Industry-standard review findings
+- `TEST-REPORT.md` - Test execution reports
+- `CLEANUP_SUMMARY.md` - Code cleanup summary
+- `translation-validation-report.md` - Translation validation results
 
-### Technical Guides (`guides/`)
+### `/implementation`
+Implementation guides and fix documentation:
+- `SHADOW_FRAMES_IMPLEMENTATION.md` - Shadow Frames feature implementation
+- `SHADOW_FRAMES_RED_FLAGS.md` - Shadow Frames issues and fixes
+- `LANGUAGE_FLICKER_FIX.md` - Language switching flicker fix
+- `ZERO_FLICKER_FIX_FINAL.md` - Final flicker elimination solution
+- `ENHANCEMENT_SUGGESTIONS.md` - Suggested project enhancements
+- `KONKRETNE_ZMIANY_DO_DODANIA.md` - Specific changes to implement (Polish)
 
-- **BACKGROUND-FIX-GUIDE.md** - How to fix background override issues in project pages
-  - Explains the CSS conflict caused by `assets/css/custom/patterns/interactive-visuals.css`
-  - Step-by-step solution for adding custom backgrounds
-  - Working example: `ray-animation.html`
+## Root Documentation
 
-## 📝 Development Notes (`notes/`)
-
-Contains archived versions and development snapshots:
-- Old HTML versions before refactoring
-- Experimental features
-- Backup copies
-
-## 🎯 Quick Links
-
-- [Main Site](../index.html)
-- [Projects](../projects/)
-- [Assets](../assets/)
-
-## 📋 Project Structure
-
-```
-igorszuniewicz/
-├── docs/              # 📚 Documentation (you are here)
-├── projects/          # 🎨 Project pages
-├── assets/            # 🖼️ Images, CSS, JS
-│   ├── css/
-│   ├── js/
-│   ├── images/
-│   └── icons/
-├── index.html         # 🏠 Homepage
-├── about.html         # 👤 About page
-├── music.html         # 🎵 Music page
-└── contact.html       # 📧 Contact page
-```
-
-## 🔧 Development Guidelines
-
-1. **Keep docs updated** - Document major changes
-2. **Archive old versions** - Move to `notes/` before major refactors
-3. **Write clear guides** - Technical fixes should be documented
-4. **Use proper naming** - Descriptive filenames with dates if needed
-
-## 📅 Last Updated
-
-**Date:** 2025-10-11  
-**Author:** Igor Szuniewicz
-
----
-
-Need help? Check the guides or review the notes folder for examples.
+The following documentation files remain in the project root:
+- `README.md` - Project overview and setup instructions
+- `CHANGELOG.md` - Version history and changes
+- `CONTRIBUTING.md` - Contribution guidelines
+- `LICENSE.txt` - Project license

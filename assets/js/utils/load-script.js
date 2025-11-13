@@ -21,7 +21,7 @@ export function loadScript(
   }
 
   const promise = new Promise((resolve, reject) => {
-    const script = document.createElement("script");
+    const script = document.createElement('script');
     script.src = src;
     script.async = async;
     script.defer = defer;

@@ -71,7 +71,7 @@
     try {
       const navigation = performance.getEntriesByType('navigation')[0];
       return navigation ? Math.round(navigation.loadEventEnd - navigation.navigationStart) : null;
-    } catch (e) {
+    } catch (_e) {
       return null;
     }
   }
@@ -95,14 +95,14 @@
           body: JSON.stringify(payload)
         }).catch(() => {}); // Fail silently
       }
-    } catch (e) {
+    } catch (_e) {
       // Store in localStorage as fallback for offline processing
       try {
         const stored = JSON.parse(localStorage.getItem('analytics_queue') || '[]');
         stored.push(payload);
         if (stored.length > 50) stored.shift(); // Keep only last 50 events
         localStorage.setItem('analytics_queue', JSON.stringify(stored));
-      } catch (storageError) {
+      } catch (_storageError) {
         // If localStorage is not available, fail silently
       }
     }
@@ -211,7 +211,7 @@
           });
           localStorage.removeItem('analytics_queue');
         }
-      } catch (e) {
+      } catch (_e) {
         // Fail silently
       }
     });

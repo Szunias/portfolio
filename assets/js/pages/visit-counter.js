@@ -13,13 +13,13 @@
   // - Read: Allow all (for visit counter display)
   // - Write: Rate-limited through visitor hash system (24h cooldown)
   const firebaseConfig = {
-    apiKey: "AIzaSyBA2enzFHX7aljA2RMQ46YZ093z9N4lbGM",
-    authDomain: "igorszuniewicz-9ddfc.firebaseapp.com",
-    databaseURL: "https://igorszuniewicz-9ddfc-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "igorszuniewicz-9ddfc",
-    storageBucket: "igorszuniewicz-9ddfc.firebasestorage.app",
-    messagingSenderId: "478087683913",
-    appId: "1:478087683913:web:737f0cca1837d4acf04498"
+    apiKey: 'AIzaSyBA2enzFHX7aljA2RMQ46YZ093z9N4lbGM',
+    authDomain: 'igorszuniewicz-9ddfc.firebaseapp.com',
+    databaseURL: 'https://igorszuniewicz-9ddfc-default-rtdb.europe-west1.firebasedatabase.app',
+    projectId: 'igorszuniewicz-9ddfc',
+    storageBucket: 'igorszuniewicz-9ddfc.firebasestorage.app',
+    messagingSenderId: '478087683913',
+    appId: '1:478087683913:web:737f0cca1837d4acf04498'
   };
 
   const BASE_COUNT = 2533; // Historical starting count
@@ -54,7 +54,7 @@
       db = firebase.database();
       firebaseInitialized = true;
       return true;
-    } catch (error) {
+    } catch (_error) {
       // Firebase initialization failed
       return false;
     }
@@ -128,7 +128,7 @@
 
       localStorage.setItem(FALLBACK_KEY, String(total));
       return total;
-    } catch (error) {
+    } catch (_error) {
       // Failed to read visit count
       const cached = localStorage.getItem(FALLBACK_KEY);
       return cached ? parseInt(cached, 10) : BASE_COUNT;
@@ -170,7 +170,7 @@
       localStorage.setItem(FALLBACK_KEY, String(total));
       return total;
 
-    } catch (error) {
+    } catch (_error) {
       // Failed to increment visit count
       const cached = localStorage.getItem(FALLBACK_KEY);
       return cached ? parseInt(cached, 10) : BASE_COUNT;
@@ -231,7 +231,7 @@
         }, 100);
       }, 2500);
 
-    } catch (error) {
+    } catch (_error) {
       // Visit counter error occurred
       // Ensure we still show something useful if everything fails
       const cached = localStorage.getItem(FALLBACK_KEY);

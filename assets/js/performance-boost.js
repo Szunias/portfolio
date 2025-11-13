@@ -136,6 +136,12 @@
     const loadIframe = (iframe) => {
       const src = iframe.getAttribute("data-src");
       if (!src) return;
+
+      // Add load event listener to fade in iframe smoothly
+      iframe.addEventListener("load", () => {
+        iframe.classList.add("loaded");
+      });
+
       iframe.src = src;
       iframe.removeAttribute("data-src");
       iframe.removeAttribute("data-lazy-iframe");

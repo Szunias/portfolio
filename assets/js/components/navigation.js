@@ -55,7 +55,7 @@ function loadNavigation() {
     return;
   }
 
-  document.body.insertAdjacentHTML("afterbegin", nav);
+  document.body.insertAdjacentHTML('afterbegin', nav);
   setupSkipLink();
 
   // Set active link based on current page
@@ -71,85 +71,85 @@ function loadNavigation() {
 // Set active class on current page link
 function setActiveLink() {
   const path = normalizePath(window.location.pathname);
-  const links = document.querySelectorAll(".nav-links a, .mobile-nav-links a");
+  const links = document.querySelectorAll('.nav-links a, .mobile-nav-links a');
 
   links.forEach((link) => {
-    const href = link.getAttribute("href");
-    if (!href || href.startsWith("http")) return;
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('http')) return;
 
     const targetPath = normalizePath(href);
-    const isProjectsLink = targetPath === "/projects";
+    const isProjectsLink = targetPath === '/projects';
 
     if (isProjectsLink) {
-      if (path === "/projects" || path.startsWith("/projects/")) {
-        link.classList.add("active");
+      if (path === '/projects' || path.startsWith('/projects/')) {
+        link.classList.add('active');
       }
       return;
     }
 
     if (targetPath === path) {
-      link.classList.add("active");
+      link.classList.add('active');
     }
   });
 }
 
 function normalizePath(value) {
-  if (!value) return "/";
+  if (!value) return '/';
   let pathname = value;
 
   try {
     pathname = new URL(value, window.location.origin).pathname;
-  } catch (error) {
+  } catch (_error) {
     // value was likely already a pathname – keep as-is
   }
 
-  pathname = pathname.replace(/index\.html$/i, "");
-  if (pathname.endsWith("/") && pathname !== "/") {
+  pathname = pathname.replace(/index\.html$/i, '');
+  if (pathname.endsWith('/') && pathname !== '/') {
     pathname = pathname.slice(0, -1);
   }
 
-  return pathname || "/";
+  return pathname || '/';
 }
 
 function setupSkipLink() {
   const targetId = ensureMainTargetId();
   if (!targetId) return;
 
-  if (document.querySelector(".skip-nav")) {
+  if (document.querySelector('.skip-nav')) {
     return; // Skip link already exists
   }
 
-  const skipLink = document.createElement("a");
+  const skipLink = document.createElement('a');
   skipLink.href = `#${targetId}`;
-  skipLink.className = "skip-link";
-  skipLink.textContent = "Skip to main content";
-  document.body.insertAdjacentElement("afterbegin", skipLink);
+  skipLink.className = 'skip-link';
+  skipLink.textContent = 'Skip to main content';
+  document.body.insertAdjacentElement('afterbegin', skipLink);
 }
 
 function ensureMainTargetId() {
-  const main = document.querySelector("main");
+  const main = document.querySelector('main');
   if (main) {
     if (!main.id) {
-      main.id = "main-content";
+      main.id = 'main-content';
     }
     return main.id;
   }
 
   const fallback =
     document.querySelector('[role="main"]') ||
-    document.getElementById("smooth-nav-container") ||
-    document.querySelector("section");
+    document.getElementById('smooth-nav-container') ||
+    document.querySelector('section');
 
   if (!fallback) {
     return null;
   }
 
   if (!fallback.id) {
-    fallback.id = "main-content";
+    fallback.id = 'main-content';
   }
 
-  if (!fallback.hasAttribute("tabindex")) {
-    fallback.setAttribute("tabindex", "-1");
+  if (!fallback.hasAttribute('tabindex')) {
+    fallback.setAttribute('tabindex', '-1');
   }
 
   return fallback.id;
@@ -162,31 +162,31 @@ function initMobileMenu() {
   window.__mobileMenuInitialized = true;
 
   const setup = () => {
-    const toggle = document.querySelector(".mobile-menu-toggle");
-    const menu = document.querySelector(".mobile-menu");
-    const overlay = document.querySelector(".mobile-menu-overlay");
+    const toggle = document.querySelector('.mobile-menu-toggle');
+    const menu = document.querySelector('.mobile-menu');
+    const overlay = document.querySelector('.mobile-menu-overlay');
 
     const closeMenu = () => {
-      toggle?.classList.remove("active");
-      menu?.classList.remove("active");
-      overlay?.classList.remove("active");
-      toggle?.setAttribute("aria-expanded", "false");
-      menu?.setAttribute("aria-hidden", "true");
+      toggle?.classList.remove('active');
+      menu?.classList.remove('active');
+      overlay?.classList.remove('active');
+      toggle?.setAttribute('aria-expanded', 'false');
+      menu?.setAttribute('aria-hidden', 'true');
     };
 
     const openMenu = () => {
-      toggle?.classList.add("active");
-      menu?.classList.add("active");
-      overlay?.classList.add("active");
-      toggle?.setAttribute("aria-expanded", "true");
-      menu?.setAttribute("aria-hidden", "false");
+      toggle?.classList.add('active');
+      menu?.classList.add('active');
+      overlay?.classList.add('active');
+      toggle?.setAttribute('aria-expanded', 'true');
+      menu?.setAttribute('aria-hidden', 'false');
     };
 
-    document.addEventListener("click", (event) => {
+    document.addEventListener('click', (event) => {
       const target = event.target;
 
       if (toggle && toggle.contains(target)) {
-        if (menu?.classList.contains("active")) {
+        if (menu?.classList.contains('active')) {
           closeMenu();
         } else {
           openMenu();
@@ -196,21 +196,21 @@ function initMobileMenu() {
 
       if (
         target === overlay ||
-        target?.closest(".mobile-menu a, .mobile-lang-switcher .lang-btn")
+        target?.closest('.mobile-menu a, .mobile-lang-switcher .lang-btn')
       ) {
         closeMenu();
       }
     });
 
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && menu?.classList.contains("active")) {
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && menu?.classList.contains('active')) {
         closeMenu();
       }
     });
   };
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", setup, { once: true });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setup, { once: true });
   } else {
     setup();
   }
@@ -218,7 +218,7 @@ function initMobileMenu() {
 
 // Add scrolled class to header
 function initScrollEffect() {
-  const header = document.getElementById("header");
+  const header = document.getElementById('header');
   if (!header) return;
 
   // Throttled scroll handler to improve performance
@@ -229,14 +229,14 @@ function initScrollEffect() {
     }
     scrollTimeout = setTimeout(() => {
       if (window.scrollY > 50) {
-        header.classList.add("scrolled");
+        header.classList.add('scrolled');
       } else {
-        header.classList.remove("scrolled");
+        header.classList.remove('scrolled');
       }
     }, 10);
   };
 
-  window.addEventListener("scroll", handleScroll, { passive: true });
+  window.addEventListener('scroll', handleScroll, { passive: true });
 
   // Store reference for cleanup
   window._scrollHandler = handleScroll;
@@ -246,13 +246,13 @@ function initScrollEffect() {
 function cleanupNavigation() {
   // Remove scroll event listener
   if (window._scrollHandler) {
-    window.removeEventListener("scroll", window._scrollHandler);
+    window.removeEventListener('scroll', window._scrollHandler);
     window._scrollHandler = null;
   }
 
   // Remove mobile menu event listeners
-  const toggle = document.querySelector(".mobile-menu-toggle");
-  const overlay = document.querySelector(".mobile-menu-overlay");
+  const toggle = document.querySelector('.mobile-menu-toggle');
+  const overlay = document.querySelector('.mobile-menu-overlay');
 
   if (toggle) {
     toggle.replaceWith(toggle.cloneNode(true)); // Remove all event listeners
@@ -263,14 +263,14 @@ function cleanupNavigation() {
 }
 
 // Add cleanup on page unload
-window.addEventListener("beforeunload", cleanupNavigation);
+window.addEventListener('beforeunload', cleanupNavigation);
 
 // Expose cleanup function globally
 window.cleanupNavigation = cleanupNavigation;
 
 // Auto-load - always wait for DOM to be ready
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
     setTimeout(loadNavigation, 0); // Small delay to ensure body exists
   });
 } else {
