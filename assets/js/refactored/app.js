@@ -58,6 +58,18 @@ class App extends EventEmitter {
   }
 
   /**
+   * Debug logging helper
+   * Only logs when debugMode is enabled
+   * @private
+   * @param {...any} args - Arguments to log
+   */
+  _log(...args) {
+    if (this.config.debugMode) {
+      console.log(...args);
+    }
+  }
+
+  /**
    * Initialize the application
    *
    * @param {Object} options - Configuration options
@@ -92,7 +104,7 @@ class App extends EventEmitter {
         ...options
       };
 
-      console.log('[App] Initializing application...');
+      this._log('[App] Initializing application...');
 
       // Initialize services in parallel
       await this._initializeServices();
@@ -116,7 +128,7 @@ class App extends EventEmitter {
         config: this.config
       });
 
-      console.log(`[App] Initialization complete in ${initTime}ms`);
+      this._log(`[App] Initialization complete in ${initTime}ms`);
 
       // Track initialization in analytics
       if (this.config.enableAnalytics) {
@@ -148,7 +160,7 @@ class App extends EventEmitter {
    * @returns {Promise<void>}
    */
   async _initializeServices() {
-    console.log('[App] Initializing services...');
+    this._log('[App] Initializing services...');
 
     // Initialize translation service
     await translationService.init();
@@ -191,7 +203,7 @@ class App extends EventEmitter {
       });
     });
 
-    console.log('[App] Services initialized');
+    this._log('[App] Services initialized');
   }
 
   /**
@@ -201,7 +213,7 @@ class App extends EventEmitter {
    * @returns {Promise<void>}
    */
   async _initializeComponents() {
-    console.log('[App] Initializing components...');
+    this._log('[App] Initializing components...');
 
     // Initialize Navigation component if header exists
     const headerElement = document.querySelector('.header');
@@ -225,7 +237,7 @@ class App extends EventEmitter {
       this.components.set('navigation', navigation);
     }
 
-    console.log('[App] Components initialized');
+    this._log('[App] Components initialized');
   }
 
   /**
@@ -297,7 +309,7 @@ class App extends EventEmitter {
                 domInteractive: Math.round(entry.domInteractive)
               };
 
-              console.log('[App] Performance metrics:', metrics);
+              this._log('[App] Performance metrics:', metrics);
 
               // Track in analytics
               if (this.config.enableAnalytics) {
@@ -318,7 +330,7 @@ class App extends EventEmitter {
           const lastEntry = entries[entries.length - 1];
           const lcp = Math.round(lastEntry.renderTime || lastEntry.loadTime);
 
-          console.log('[App] Largest Contentful Paint:', lcp, 'ms');
+          this._log('[App] Largest Contentful Paint:', lcp, 'ms');
 
           if (this.config.enableAnalytics) {
             analyticsService.trackPerformance('lcp', lcp, 'ms');
@@ -382,13 +394,13 @@ class App extends EventEmitter {
    * Cleanup and destroy app
    */
   destroy() {
-    console.log('[App] Destroying application...');
+    this._log('[App] Destroying application...');
 
     // Destroy all components
     this.components.forEach((component, name) => {
       if (typeof component.destroy === 'function') {
         component.destroy();
-        console.log(`[App] Destroyed component: ${name}`);
+        this._log(`[App] Destroyed component: ${name}`);
       }
     });
 
@@ -405,7 +417,7 @@ class App extends EventEmitter {
 
     this.isInitialized = false;
 
-    console.log('[App] Application destroyed');
+    this._log('[App] Application destroyed');
   }
 }
 
