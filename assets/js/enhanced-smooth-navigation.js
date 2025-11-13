@@ -216,11 +216,26 @@
     // Get main element
     const mainElement = doc.querySelector('main');
 
+    // Extract inline styles from head
+    const inlineStyles = Array.from(doc.querySelectorAll('head style')).map(style => style.textContent);
+
+    // Extract stylesheet links from head
+    const stylesheetLinks = Array.from(doc.querySelectorAll('head link[rel="stylesheet"]')).map(link => ({
+      href: link.getAttribute('href'),
+      media: link.getAttribute('media') || 'all'
+    }));
+
     return {
       title: doc.title || '',
       // Use null jeśli brak main, nie empty string (null !== '' dla warunków)
       main: mainElement ? mainElement.innerHTML : null,
       body: doc.body.innerHTML,
+
+      // Styles from head - CRITICAL for proper rendering!
+      styles: {
+        inline: inlineStyles,
+        links: stylesheetLinks
+      },
 
       // Metadata
       meta: {
@@ -395,6 +410,9 @@
     // Aktualizuj title
     document.title = pageData.title;
 
+    // CRITICAL: Load styles BEFORE updating content!
+    updateStyles(pageData.styles);
+
     // Aktualizuj meta tags
     updateMetaTags(pageData.meta);
 
@@ -440,6 +458,43 @@
 
     // Zaznacz aktywny link w nawigacji
     updateActiveNavLink(url);
+  }
+
+  function updateStyles(styles) {
+    if (!styles) return;
+
+    // Remove old page-specific styles (marked with data-page-style)
+    document.querySelectorAll('style[data-page-style], link[data-page-style]').forEach(el => {
+      el.remove();
+    });
+
+    // Add new inline styles
+    if (styles.inline && styles.inline.length > 0) {
+      styles.inline.forEach((styleContent, index) => {
+        const styleEl = document.createElement('style');
+        styleEl.setAttribute('data-page-style', 'true');
+        styleEl.textContent = styleContent;
+        document.head.appendChild(styleEl);
+        log(`Added inline style ${index + 1}/${styles.inline.length}`);
+      });
+    }
+
+    // Add new stylesheet links (only if not already loaded)
+    if (styles.links && styles.links.length > 0) {
+      styles.links.forEach(linkData => {
+        // Check if this stylesheet is already loaded (global styles)
+        const existingLink = document.querySelector(`link[rel="stylesheet"][href="${linkData.href}"]`);
+        if (!existingLink) {
+          const linkEl = document.createElement('link');
+          linkEl.rel = 'stylesheet';
+          linkEl.href = linkData.href;
+          linkEl.media = linkData.media;
+          linkEl.setAttribute('data-page-style', 'true');
+          document.head.appendChild(linkEl);
+          log(`Added stylesheet: ${linkData.href}`);
+        }
+      });
+    }
   }
 
   function updateMetaTags(meta) {
