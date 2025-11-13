@@ -1,1 +1,882 @@
-<!doctype html> <html lang="en"> <head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title> Wwise Unreal Engine Fixer - Developer Tool by Igor Szuniewicz </title> <meta name="description" content="Automated solution for fixing Wwise integration issues in Unreal Engine projects. Save hours of manual troubleshooting with one-click restoration." /> <meta name="robots" content="index, follow" /> <link rel="canonical" href="https://igorszuniewicz.com/projects/wwise-unreal-fixer.html" /> <meta name="keywords" content="Wwise, Unreal Engine, UE5, audio middleware, automation, game audio, developer tools" /> <meta name="author" content="Igor Szuniewicz" /> <!-- Open Graph --> <meta property="og:title" content="Wwise Unreal Engine Fixer - Developer Tool" /> <meta property="og:description" content="Automated solution for Wwise integration issues in UE projects." /> <meta property="og:type" content="website" /> <meta property="og:url" content="https://igorszuniewicz.com/projects/wwise-unreal-fixer.html" /> <!-- Favicon --> <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" /> <!-- Google Fonts --> <link rel="preconnect" href="https://fonts.googleapis.com" /> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /> <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet" /> <script type="module" src="../assets/js/preload-lang.js"></script> <style> * { margin: 0; padding: 0; box-sizing: border-box; } body { font-family: "Roboto Mono", monospace; background: #0a0e12; color: #e0e6ed; line-height: 1.6; overflow-x: hidden; position: relative; } body::before { content: ""; position: fixed; inset: 0; background: linear-gradient( 90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px ), linear-gradient( rgba(0, 255, 136, 0.03) 1px, transparent 1px ); background-size: 50px 50px; pointer-events: none; z-index: 0; } body::after { content: ""; position: fixed; inset: 0; background: radial-gradient( circle, rgba(0, 255, 136, 0.15) 1px, transparent 1px ); background-size: 50px 50px; pointer-events: none; z-index: 0; } @keyframes subtleFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-10%, -10%) scale(1.1); } } .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; } /* Back button */ .back-button { position: fixed; top: 2rem; left: 2rem; z-index: 1000; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 140, 0, 0.3); padding: 0.75rem 1.5rem; border-radius: 50px; color: #ff8c00; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; } .back-button:hover { background: rgba(255, 140, 0, 0.15); border-color: #ff8c00; transform: translateX(-3px); box-shadow: 0 6px 30px rgba(255, 140, 0, 0.3); } /* Hero Section */ .hero { padding: 8rem 0 6rem; text-align: center; position: relative; } .hero::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient( circle, rgba(255, 140, 0, 0.15) 0%, transparent 70% ); border-radius: 50%; pointer-events: none; z-index: 0; } .hero-content { position: relative; z-index: 1; } .hero-badge { display: inline-block; padding: 0.5rem 1.5rem; background: rgba(255, 140, 0, 0.1); border: 1px solid rgba(255, 140, 0, 0.3); border-radius: 50px; font-size: 0.85rem; font-weight: 600; color: #ff8c00; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2rem; } h1 { font-family: "JetBrains Mono", monospace; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; margin-bottom: 1.5rem; background: linear-gradient( 135deg, #ffffff 0%, #ffa500 50%, #ff8c00 100% ); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.2; text-shadow: 0 0 40px rgba(255, 140, 0, 0.3); animation: titleGlow 3s ease-in-out infinite; } @keyframes titleGlow { 0%, 100% { filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.3)); } 50% { filter: drop-shadow(0 0 30px rgba(255, 140, 0, 0.5)); } } .hero-subtitle { font-size: 1.35rem; color: #9ca3af; margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto; font-weight: 400; } /* CTA Buttons */ .cta-buttons { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4rem; } .btn { display: inline-flex; align-items: center; gap: 0.75rem; padding: 1.25rem 2.5rem; font-size: 1.1rem; font-weight: 600; text-decoration: none; border-radius: 50px; transition: all 0.3s ease; position: relative; overflow: hidden; } .btn-primary { background: linear-gradient(135deg, #ff8c00 0%, #ffa500 100%); color: #fff; box-shadow: 0 8px 30px rgba(255, 140, 0, 0.4); } .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(255, 140, 0, 0.6); } .btn-secondary { background: rgba(255, 255, 255, 0.05); color: #fff; border: 2px solid rgba(255, 255, 255, 0.1); } .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 140, 0, 0.3); transform: translateY(-3px); } .btn-icon { font-size: 1.3rem; } /* Stats */ .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; max-width: 900px; margin: 0 auto; } .stat-card { background: linear-gradient( 135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 140, 0, 0.02) 100% ); padding: 2rem; border-radius: 16px; border: 1px solid rgba(255, 140, 0, 0.2); text-align: center; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; } .stat-card::before { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient( 90deg, transparent, rgba(255, 140, 0, 0.1), transparent ); transition: left 0.5s ease; } .stat-card:hover::before { left: 100%; } .stat-card:hover { background: linear-gradient( 135deg, rgba(255, 140, 0, 0.08) 0%, rgba(255, 140, 0, 0.05) 100% ); border-color: rgba(255, 140, 0, 0.5); transform: translateY(-8px) scale(1.02); box-shadow: 0 15px 40px rgba(255, 140, 0, 0.3); } .stat-value { font-size: 2.5rem; font-weight: 800; color: #ff8c00; display: block; margin-bottom: 0.5rem; } .stat-label { font-size: 0.9rem; color: #9ca3af; font-weight: 500; } /* Content Section */ .content-section { padding: 4rem 0; } .section-header { text-align: center; margin-bottom: 4rem; } .section-badge { display: inline-block; padding: 0.4rem 1.2rem; background: rgba(255, 140, 0, 0.1); border-radius: 50px; font-size: 0.8rem; font-weight: 600; color: #ff8c00; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1rem; } h2 { font-family: "JetBrains Mono", monospace; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1rem; color: #fff; } .section-subtitle { font-size: 1.15rem; color: #9ca3af; max-width: 600px; margin: 0 auto; } /* Features Grid */ .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; } .feature-card { background: linear-gradient( 135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 140, 0, 0.01) 100% ); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.06); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; } .feature-card::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: linear-gradient( 90deg, transparent, #ff8c00, transparent ); transform: scaleX(0); transition: transform 0.4s ease; } .feature-card:hover::after { transform: scaleX(1); } .feature-card:hover { background: linear-gradient( 135deg, rgba(255, 140, 0, 0.08) 0%, rgba(255, 140, 0, 0.03) 100% ); border-color: rgba(255, 140, 0, 0.4); transform: translateY(-8px); box-shadow: 0 12px 35px rgba(255, 140, 0, 0.2); } .feature-icon { font-size: 2.5rem; margin-bottom: 1.5rem; display: block; } .feature-card h3 { font-size: 1.4rem; font-weight: 600; margin-bottom: 1rem; color: #fff; } .feature-card p { color: #9ca3af; line-height: 1.7; } /* Story Section */ .story-section { padding: 4rem 0; background: rgba(255, 140, 0, 0.03); border-top: 1px solid rgba(255, 140, 0, 0.1); border-bottom: 1px solid rgba(255, 140, 0, 0.1); } .story-content { max-width: 800px; margin: 0 auto; } .story-content p { font-size: 1.1rem; color: #c0c5cc; line-height: 1.8; margin-bottom: 1.5rem; } .story-content strong { color: #ff8c00; font-weight: 600; } /* Tech Stack */ .tech-section { padding: 4rem 0; } .tech-stack { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; max-width: 800px; margin: 0 auto; } .tech-badge { padding: 0.75rem 1.5rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 140, 0, 0.2); border-radius: 50px; font-weight: 500; color: #e0e6ed; font-size: 0.95rem; transition: all 0.3s ease; } .tech-badge:hover { background: rgba(255, 140, 0, 0.1); border-color: rgba(255, 140, 0, 0.4); transform: translateY(-2px); } /* Footer */ footer { padding: 3rem 0; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.06); } footer p { color: #6b7280; font-size: 0.9rem; } footer a { color: #ff8c00; text-decoration: none; } footer a:hover { text-decoration: underline; } /* Responsive */ @media (max-width: 768px) { .back-button { top: 1rem; left: 1rem; padding: 0.6rem 1.2rem; font-size: 0.85rem; } .hero { padding: 4rem 0 3rem; } h1 { font-size: 2.5rem; } .hero-subtitle { font-size: 1.1rem; } .cta-buttons { flex-direction: column; align-items: center; } .btn { width: 100%; max-width: 300px; justify-content: center; } .features-grid { grid-template-columns: 1fr; } } </style> <style> /* Language Switcher */ .lang-switcher { position: fixed !important; top: 2rem !important; right: 2rem !important; z-index: 1000 !important; display: flex !important; gap: 0.5rem; background: rgba(255, 255, 255, 0.08) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255, 140, 0, 0.5) !important; border-radius: 50px; padding: 0.5rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 140, 0, 0.15) !important; } .lang-btn { padding: 0.5rem 1rem; background: transparent; border: none; border-radius: 50px; color: #999 !important; cursor: pointer; font-weight: 500; font-size: 0.9rem; font-family: "Inter", sans-serif; transition: all 0.3s ease; display: flex !important; align-items: center; gap: 0.5rem; } .lang-btn:hover { color: #ff8c00 !important; background: rgba(255, 140, 0, 0.1); } .lang-btn.active { color: #ff8c00 !important; background: rgba(255, 140, 0, 0.15); font-weight: 600; } .lang-flag { width: 20px; height: 14px; border-radius: 2px; overflow: hidden; display: block; } @media (max-width: 768px) { .lang-switcher { top: 1rem !important; right: 1rem !important; padding: 0.4rem; } .lang-btn { padding: 0.4rem 0.8rem; font-size: 0.85rem; } } </style> </head> <body> <!-- Language Switcher --> <div class="lang-switcher"> <button class="lang-btn active" data-lang="en"> <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" > <rect width="60" height="30" fill="#012169" /> <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" /> <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4" /> <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" /> <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" /> </svg> <span>EN</span> </button> <button class="lang-btn" data-lang="pl"> <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 10" > <rect width="16" height="5" fill="#fff" /> <rect y="5" width="16" height="5" fill="#dc143c" /> </svg> <span>PL</span> </button> <button class="lang-btn" data-lang="nl"> <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 6" > <rect width="9" height="6" fill="#21468B" /> <rect width="9" height="4" fill="#fff" /> <rect width="9" height="2" fill="#AE1C28" /> </svg> <span>NL</span> </button> </div> <a href="/projects/" class="back-button" data-i18n="back" > Back to Projects</a > <!-- Hero Section --> <section class="hero"> <div class="container"> <div class="hero-content"> <div class="hero-badge" data-i18n="hero.badge"> // FREE TOOL </div> <h1 data-i18n="hero.title">Wwise UE Fixer</h1> <p class="hero-subtitle" data-i18n="hero.subtitle"> Fixes broken Wwise plugin references. Restores .uproject. Done. </p> <div class="cta-buttons"> <a href="https://github.com/Szunias/WwiseUnrealEngineFixer/releases/latest" class="btn btn-primary" target="_blank" rel="noopener" > <span data-i18n="hero.download">Download .exe</span> </a> <a href="https://github.com/Szunias/WwiseUnrealEngineFixer" class="btn btn-secondary" target="_blank" rel="noopener" > <span data-i18n="hero.github">GitHub</span> </a> </div> <div class="stats"> <div class="stat-card"> <span class="stat-value" data-i18n="stats.value1" >~2 hrs</span > <span class="stat-label" data-i18n="stats.label1" >saved debugging</span > </div> <div class="stat-card"> <span class="stat-value" data-i18n="stats.value2" >1 click</span > <span class="stat-label" data-i18n="stats.label2" >fixed</span > </div> <div class="stat-card"> <span class="stat-value" data-i18n="stats.value3" >100%</span > <span class="stat-label" data-i18n="stats.label3" >Automation Coverage</span > </div> </div> </div> </div> </section> <!-- Story Section --> <section class="story-section"> <div class="container"> <div class="section-header"> <div class="section-badge" data-i18n="problem.badge"> Background </div> <h2 data-i18n="problem.title">The Problem</h2> </div> <div class="story-content"> <p data-i18n="problem.p1"> During my work with Unreal Engine and Wwise audio middleware, I encountered a recurring issue: after certain project operations or version updates, <strong>Wwise plugin references would break</strong>, causing audio systems to fail and requiring manual intervention to restore functionality. </p> <p data-i18n="problem.p2"> The manual fix involved navigating through project files, editing configuration files, and carefully restoring plugin settings—a process that could take hours and was prone to human error. This was particularly challenging for students and junior developers learning the engine. </p> <p data-i18n="problem.p3"> To solve this workflow bottleneck, I <strong >developed the core automation logic as Windows batch scripts</strong >, designing the workflow and implementing the file manipulation logic myself. Once the functionality was proven and stable, I collaborated with <strong >AI development tools to refine and transform the batch scripts into a modern Python application</strong > with a polished GUI interface, better error handling, and cross-platform compatibility—demonstrating effective use of modern development workflows to enhance accessibility for the broader developer community. </p> </div> </div> </section> <!-- Development Process --> <section class="content-section"> <div class="container"> <div class="section-header"> <div class="section-badge" data-i18n="journey.badge"> Development Journey </div> <h2 data-i18n="journey.title"> From Concept to Application </h2> <p class="section-subtitle" data-i18n="journey.subtitle"> A two-phase approach combining manual scripting with AI-assisted refinement </p> </div> <div class="features-grid"> <div class="feature-card"> <span class="feature-icon"></span> <h3 data-i18n="journey.phase1.title"> Phase 1: Manual Development </h3> <p data-i18n="journey.phase1.desc"> I personally wrote the original Windows batch scripts, designing the automation workflow, implementing file system operations, and debugging the core functionality. This phase established the proven logic and workflow. </p> </div> <div class="feature-card"> <span class="feature-icon">🤖</span> <h3 data-i18n="journey.phase2.title"> Phase 2: AI-Assisted Refinement </h3> <p data-i18n="journey.phase2.desc"> Using AI tools, the batch script became a Python app with GUI, better error handling, and easier maintenance—AI helped speed up GUI development. </p> </div> <div class="feature-card"> <span class="feature-icon"></span> <h3 data-i18n="journey.phase3.title"> Best of Both Worlds </h3> <p data-i18n="journey.phase3.desc"> Manual work + AI tools. Core logic from hands-on development, polish from AI help. </p> </div> </div> </div> </section> <!-- Features Section --> <section class="content-section"> <div class="container"> <div class="section-header"> <div class="section-badge" data-i18n="features.badge"> Key Features </div> <h2 data-i18n="features.title">Powerful Automation</h2> <p class="section-subtitle" data-i18n="features.subtitle"> Everything you need to restore Wwise integration quickly and reliably </p> </div> <div class="features-grid"> <div class="feature-card"> <span class="feature-icon">🔍</span> <h3 data-i18n="features.f1.title">Smart Detection</h3> <p data-i18n="features.f1.desc"> Automatically identifies Wwise integration issues in your Unreal Engine project and determines the required fixes without manual inspection. </p> </div> <div class="feature-card"> <span class="feature-icon"></span> <h3 data-i18n="features.f2.title"> One-Click Restoration </h3> <p data-i18n="features.f2.desc"> Complete plugin reference restoration with a single command. No manual file editing, no complex configurations—just fast, reliable results. </p> </div> <div class="feature-card"> <span class="feature-icon"></span> <h3 data-i18n="features.f3.title">Safe Operations</h3> <p data-i18n="features.f3.desc"> Automatic backup creation before making changes ensures you can always revert if needed. Your project data remains protected throughout the process. </p> </div> <div class="feature-card"> <span class="feature-icon"></span> <h3 data-i18n="features.f4.title">Detailed Logging</h3> <p data-i18n="features.f4.desc"> Comprehensive operation logs document every step of the restoration process, making troubleshooting and verification straightforward. </p> </div> <div class="feature-card"> <span class="feature-icon"></span> <h3 data-i18n="features.f5.title">Precision Fixes</h3> <p data-i18n="features.f5.desc"> Targets specific configuration files and plugin references without affecting other project settings. Surgical precision for maximum reliability. </p> </div> <div class="feature-card"> <span class="feature-icon"></span> <h3 data-i18n="features.f6.title">Production Ready</h3> <p data-i18n="features.f6.desc"> Built from real-world workflow challenges, tested in production environments. Originally designed to help students and developers save time, now reliable enough for professional game development pipelines. </p> </div> </div> </div> </section> <!-- Tech Stack --> <section class="tech-section"> <div class="container"> <div class="section-header"> <div class="section-badge" data-i18n="tech.badge"> Technology </div> <h2 data-i18n="tech.title">Development Stack</h2> <p class="section-subtitle" style="margin-top: 1rem; font-size: 0.95rem" data-i18n="tech.subtitle" > Manual: Batch Scripting + Windows APIs | AI-Assisted: Python GUI + Error Handling </p> </div> <div class="tech-stack"> <div class="tech-badge">Windows Batch Scripts</div> <div class="tech-badge">Python (AI-Enhanced)</div> <div class="tech-badge">AI Development Tools</div> <div class="tech-badge">Windows API</div> <div class="tech-badge">File System Operations</div> <div class="tech-badge">Configuration Parsing</div> <div class="tech-badge">GUI Development (AI-Assisted)</div> <div class="tech-badge">Error Handling</div> </div> </div> </section> <!-- Download CTA --> <section class="story-section"> <div class="container"> <div class="section-header"> <h2 data-i18n="cta.title">Start Saving Time Today</h2> <p class="section-subtitle" data-i18n="cta.subtitle"> Download Wwise Unreal Engine Fixer and eliminate manual troubleshooting from your workflow. </p> </div> <div class="cta-buttons"> <a href="https://github.com/Szunias/WwiseUnrealEngineFixer/releases/latest" class="btn btn-primary" target="_blank" rel="noopener" > <span class="btn-icon"></span> <span data-i18n="cta.download" >Download Latest Release</span > </a> <a href="https://github.com/Szunias/WwiseUnrealEngineFixer" class="btn btn-secondary" target="_blank" rel="noopener" > <span class="btn-icon"></span> <span data-i18n="cta.source">View Source Code</span> </a> </div> </div> </section> <!-- Footer --> <footer> <div class="container"> <p> Created by <a href="https://igorszuniewicz.com" target="_blank" rel="noopener" >Igor Szuniewicz</a > | Open Source on <a href="https://github.com/Szunias/WwiseUnrealEngineFixer" target="_blank" rel="noopener" >GitHub</a > </p> <p style="margin-top: 0.5rem; font-size: 0.85rem"> © 2025 Igor Szuniewicz. Free for personal and commercial use. </p> </div> </footer> <script type="module" src="../assets/js/translations.js"></script> </body> </html> 
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wwise Unreal Engine Fixer - Developer Tool by Igor Szuniewicz</title>
+    <meta
+      name="description"
+      content="Automated solution for fixing Wwise integration issues in Unreal Engine projects. Save hours of manual troubleshooting with one-click restoration."
+    />
+    <meta name="robots" content="index, follow" />
+    <link
+      rel="canonical"
+      href="https://igorszuniewicz.com/projects/wwise-unreal-fixer.html"
+    />
+    <meta
+      name="keywords"
+      content="Wwise, Unreal Engine, UE5, audio middleware, automation, game audio, developer tools"
+    />
+    <meta name="author" content="Igor Szuniewicz" />
+    <!-- Open Graph -->
+    <meta
+      property="og:title"
+      content="Wwise Unreal Engine Fixer - Developer Tool"
+    />
+    <meta
+      property="og:description"
+      content="Automated solution for Wwise integration issues in UE projects."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://igorszuniewicz.com/projects/wwise-unreal-fixer.html"
+    />
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" src="../assets/js/preload-lang.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Roboto Mono", monospace;
+        background: #0a0e12;
+        color: #e0e6ed;
+        line-height: 1.6;
+        overflow-x: hidden;
+        position: relative;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+          linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
+        pointer-events: none;
+        z-index: 0;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+          circle,
+          rgba(0, 255, 136, 0.15) 1px,
+          transparent 1px
+        );
+        background-size: 50px 50px;
+        pointer-events: none;
+        z-index: 0;
+      }
+      @keyframes subtleFloat {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        50% {
+          transform: translate(-10%, -10%) scale(1.1);
+        }
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        position: relative;
+        z-index: 1;
+      } /* Back button */
+      .back-button {
+        position: fixed;
+        top: 2rem;
+        left: 2rem;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 140, 0, 0.3);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        color: #ff8c00;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .back-button:hover {
+        background: rgba(255, 140, 0, 0.15);
+        border-color: #ff8c00;
+        transform: translateX(-3px);
+        box-shadow: 0 6px 30px rgba(255, 140, 0, 0.3);
+      } /* Hero Section */
+      .hero {
+        padding: 8rem 0 6rem;
+        text-align: center;
+        position: relative;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 140, 0, 0.15) 0%,
+          transparent 70%
+        );
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .hero-content {
+        position: relative;
+        z-index: 1;
+      }
+      .hero-badge {
+        display: inline-block;
+        padding: 0.5rem 1.5rem;
+        background: rgba(255, 140, 0, 0.1);
+        border: 1px solid rgba(255, 140, 0, 0.3);
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #ff8c00;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 2rem;
+      }
+      h1 {
+        font-family: "JetBrains Mono", monospace;
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #ffa500 50%,
+          #ff8c00 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
+        text-shadow: 0 0 40px rgba(255, 140, 0, 0.3);
+        animation: titleGlow 3s ease-in-out infinite;
+      }
+      @keyframes titleGlow {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.3));
+        }
+        50% {
+          filter: drop-shadow(0 0 30px rgba(255, 140, 0, 0.5));
+        }
+      }
+      .hero-subtitle {
+        font-size: 1.35rem;
+        color: #9ca3af;
+        margin-bottom: 3rem;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        font-weight: 400;
+      } /* CTA Buttons */
+      .cta-buttons {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 4rem;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1.25rem 2.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #ff8c00 0%, #ffa500 100%);
+        color: #fff;
+        box-shadow: 0 8px 30px rgba(255, 140, 0, 0.4);
+      }
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 40px rgba(255, 140, 0, 0.6);
+      }
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+      }
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 140, 0, 0.3);
+        transform: translateY(-3px);
+      }
+      .btn-icon {
+        font-size: 1.3rem;
+      } /* Stats */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .stat-card {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.03) 0%,
+          rgba(255, 140, 0, 0.02) 100%
+        );
+        padding: 2rem;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 140, 0, 0.2);
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 140, 0, 0.1),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+      .stat-card:hover::before {
+        left: 100%;
+      }
+      .stat-card:hover {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 140, 0, 0.08) 0%,
+          rgba(255, 140, 0, 0.05) 100%
+        );
+        border-color: rgba(255, 140, 0, 0.5);
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 40px rgba(255, 140, 0, 0.3);
+      }
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #ff8c00;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      .stat-label {
+        font-size: 0.9rem;
+        color: #9ca3af;
+        font-weight: 500;
+      } /* Content Section */
+      .content-section {
+        padding: 4rem 0;
+      }
+      .section-header {
+        text-align: center;
+        margin-bottom: 4rem;
+      }
+      .section-badge {
+        display: inline-block;
+        padding: 0.4rem 1.2rem;
+        background: rgba(255, 140, 0, 0.1);
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #ff8c00;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+      }
+      h2 {
+        font-family: "JetBrains Mono", monospace;
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #fff;
+      }
+      .section-subtitle {
+        font-size: 1.15rem;
+        color: #9ca3af;
+        max-width: 600px;
+        margin: 0 auto;
+      } /* Features Grid */
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+      .feature-card {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.03) 0%,
+          rgba(255, 140, 0, 0.01) 100%
+        );
+        padding: 2.5rem;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+      .feature-card::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #ff8c00, transparent);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+      }
+      .feature-card:hover::after {
+        transform: scaleX(1);
+      }
+      .feature-card:hover {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 140, 0, 0.08) 0%,
+          rgba(255, 140, 0, 0.03) 100%
+        );
+        border-color: rgba(255, 140, 0, 0.4);
+        transform: translateY(-8px);
+        box-shadow: 0 12px 35px rgba(255, 140, 0, 0.2);
+      }
+      .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        display: block;
+      }
+      .feature-card h3 {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #fff;
+      }
+      .feature-card p {
+        color: #9ca3af;
+        line-height: 1.7;
+      } /* Story Section */
+      .story-section {
+        padding: 4rem 0;
+        background: rgba(255, 140, 0, 0.03);
+        border-top: 1px solid rgba(255, 140, 0, 0.1);
+        border-bottom: 1px solid rgba(255, 140, 0, 0.1);
+      }
+      .story-content {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .story-content p {
+        font-size: 1.1rem;
+        color: #c0c5cc;
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+      }
+      .story-content strong {
+        color: #ff8c00;
+        font-weight: 600;
+      } /* Tech Stack */
+      .tech-section {
+        padding: 4rem 0;
+      }
+      .tech-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .tech-badge {
+        padding: 0.75rem 1.5rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 140, 0, 0.2);
+        border-radius: 50px;
+        font-weight: 500;
+        color: #e0e6ed;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+      }
+      .tech-badge:hover {
+        background: rgba(255, 140, 0, 0.1);
+        border-color: rgba(255, 140, 0, 0.4);
+        transform: translateY(-2px);
+      } /* Footer */
+      footer {
+        padding: 3rem 0;
+        text-align: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      footer p {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+      footer a {
+        color: #ff8c00;
+        text-decoration: none;
+      }
+      footer a:hover {
+        text-decoration: underline;
+      } /* Responsive */
+      @media (max-width: 768px) {
+        .back-button {
+          top: 1rem;
+          left: 1rem;
+          padding: 0.6rem 1.2rem;
+          font-size: 0.85rem;
+        }
+        .hero {
+          padding: 4rem 0 3rem;
+        }
+        h1 {
+          font-size: 2.5rem;
+        }
+        .hero-subtitle {
+          font-size: 1.1rem;
+        }
+        .cta-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+        .btn {
+          width: 100%;
+          max-width: 300px;
+          justify-content: center;
+        }
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <style>
+      /* Language Switcher */
+      .lang-switcher {
+        position: fixed !important;
+        top: 2rem !important;
+        right: 2rem !important;
+        z-index: 1000 !important;
+        display: flex !important;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.08) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 140, 0, 0.5) !important;
+        border-radius: 50px;
+        padding: 0.5rem;
+        box-shadow:
+          0 4px 20px rgba(0, 0, 0, 0.3),
+          0 0 20px rgba(255, 140, 0, 0.15) !important;
+      }
+      .lang-btn {
+        padding: 0.5rem 1rem;
+        background: transparent;
+        border: none;
+        border-radius: 50px;
+        color: #999 !important;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 0.9rem;
+        font-family: "Inter", sans-serif;
+        transition: all 0.3s ease;
+        display: flex !important;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .lang-btn:hover {
+        color: #ff8c00 !important;
+        background: rgba(255, 140, 0, 0.1);
+      }
+      .lang-btn.active {
+        color: #ff8c00 !important;
+        background: rgba(255, 140, 0, 0.15);
+        font-weight: 600;
+      }
+      .lang-flag {
+        width: 20px;
+        height: 14px;
+        border-radius: 2px;
+        overflow: hidden;
+        display: block;
+      }
+      @media (max-width: 768px) {
+        .lang-switcher {
+          top: 1rem !important;
+          right: 1rem !important;
+          padding: 0.4rem;
+        }
+        .lang-btn {
+          padding: 0.4rem 0.8rem;
+          font-size: 0.85rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Language Switcher -->
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">
+        <svg
+          class="lang-flag"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 60 30"
+        >
+          <rect width="60" height="30" fill="#012169" />
+          <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" />
+          <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4" />
+          <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" />
+          <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" />
+        </svg>
+        <span>EN</span>
+      </button>
+      <button class="lang-btn" data-lang="pl">
+        <svg
+          class="lang-flag"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 16 10"
+        >
+          <rect width="16" height="5" fill="#fff" />
+          <rect y="5" width="16" height="5" fill="#dc143c" />
+        </svg>
+        <span>PL</span>
+      </button>
+      <button class="lang-btn" data-lang="nl">
+        <svg
+          class="lang-flag"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 9 6"
+        >
+          <rect width="9" height="6" fill="#21468B" />
+          <rect width="9" height="4" fill="#fff" />
+          <rect width="9" height="2" fill="#AE1C28" />
+        </svg>
+        <span>NL</span>
+      </button>
+    </div>
+    <a href="/projects/" class="back-button" data-i18n="back">
+      Back to Projects</a
+    >
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-badge" data-i18n="hero.badge">// FREE TOOL</div>
+          <h1 data-i18n="hero.title">Wwise UE Fixer</h1>
+          <p class="hero-subtitle" data-i18n="hero.subtitle">
+            Fixes broken Wwise plugin references. Restores .uproject. Done.
+          </p>
+          <div class="cta-buttons">
+            <a
+              href="https://github.com/Szunias/WwiseUnrealEngineFixer/releases/latest"
+              class="btn btn-primary"
+              target="_blank"
+              rel="noopener"
+            >
+              <span data-i18n="hero.download">Download .exe</span>
+            </a>
+            <a
+              href="https://github.com/Szunias/WwiseUnrealEngineFixer"
+              class="btn btn-secondary"
+              target="_blank"
+              rel="noopener"
+            >
+              <span data-i18n="hero.github">GitHub</span>
+            </a>
+          </div>
+          <div class="stats">
+            <div class="stat-card">
+              <span class="stat-value" data-i18n="stats.value1">~2 hrs</span>
+              <span class="stat-label" data-i18n="stats.label1"
+                >saved debugging</span
+              >
+            </div>
+            <div class="stat-card">
+              <span class="stat-value" data-i18n="stats.value2">1 click</span>
+              <span class="stat-label" data-i18n="stats.label2">fixed</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value" data-i18n="stats.value3">100%</span>
+              <span class="stat-label" data-i18n="stats.label3"
+                >Automation Coverage</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Story Section -->
+    <section class="story-section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-badge" data-i18n="problem.badge">Background</div>
+          <h2 data-i18n="problem.title">The Problem</h2>
+        </div>
+        <div class="story-content">
+          <p data-i18n="problem.p1">
+            During my work with Unreal Engine and Wwise audio middleware, I
+            encountered a recurring issue: after certain project operations or
+            version updates,
+            <strong>Wwise plugin references would break</strong>, causing audio
+            systems to fail and requiring manual intervention to restore
+            functionality.
+          </p>
+          <p data-i18n="problem.p2">
+            The manual fix involved navigating through project files, editing
+            configuration files, and carefully restoring plugin settings—a
+            process that could take hours and was prone to human error. This was
+            particularly challenging for students and junior developers learning
+            the engine.
+          </p>
+          <p data-i18n="problem.p3">
+            To solve this workflow bottleneck, I
+            <strong
+              >developed the core automation logic as Windows batch
+              scripts</strong
+            >, designing the workflow and implementing the file manipulation
+            logic myself. Once the functionality was proven and stable, I
+            collaborated with
+            <strong
+              >AI development tools to refine and transform the batch scripts
+              into a modern Python application</strong
+            >
+            with a polished GUI interface, better error handling, and
+            cross-platform compatibility—demonstrating effective use of modern
+            development workflows to enhance accessibility for the broader
+            developer community.
+          </p>
+        </div>
+      </div>
+    </section>
+    <!-- Development Process -->
+    <section class="content-section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-badge" data-i18n="journey.badge">
+            Development Journey
+          </div>
+          <h2 data-i18n="journey.title">From Concept to Application</h2>
+          <p class="section-subtitle" data-i18n="journey.subtitle">
+            A two-phase approach combining manual scripting with AI-assisted
+            refinement
+          </p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <span class="feature-icon"></span>
+            <h3 data-i18n="journey.phase1.title">
+              Phase 1: Manual Development
+            </h3>
+            <p data-i18n="journey.phase1.desc">
+              I personally wrote the original Windows batch scripts, designing
+              the automation workflow, implementing file system operations, and
+              debugging the core functionality. This phase established the
+              proven logic and workflow.
+            </p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🤖</span>
+            <h3 data-i18n="journey.phase2.title">
+              Phase 2: AI-Assisted Refinement
+            </h3>
+            <p data-i18n="journey.phase2.desc">
+              Using AI tools, the batch script became a Python app with GUI,
+              better error handling, and easier maintenance—AI helped speed up
+              GUI development.
+            </p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon"></span>
+            <h3 data-i18n="journey.phase3.title">Best of Both Worlds</h3>
+            <p data-i18n="journey.phase3.desc">
+              Manual work + AI tools. Core logic from hands-on development,
+              polish from AI help.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Features Section -->
+    <section class="content-section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-badge" data-i18n="features.badge">
+            Key Features
+          </div>
+          <h2 data-i18n="features.title">Powerful Automation</h2>
+          <p class="section-subtitle" data-i18n="features.subtitle">
+            Everything you need to restore Wwise integration quickly and
+            reliably
+          </p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <span class="feature-icon">🔍</span>
+            <h3 data-i18n="features.f1.title">Smart Detection</h3>
+            <p data-i18n="features.f1.desc">
+              Automatically identifies Wwise integration issues in your Unreal
+              Engine project and determines the required fixes without manual
+              inspection.
+            </p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon"></span>
+            <h3 data-i18n="features.f2.title">One-Click Restoration</h3>
+            <p data-i18n="features.f2.desc">
+              Complete plugin reference restoration with a single command. No
+              manual file editing, no complex configurations—just fast, reliable
+              results.
+            </p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon"></span>
+            <h3 data-i18n="features.f3.title">Safe Operations</h3>
+            <p data-i18n="features.f3.desc">
+              Automatic backup creation before making changes ensures you can
+              always revert if needed. Your project data remains protected
+              throughout the process.
+            </p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon"></span>
+            <h3 data-i18n="features.f4.title">Detailed Logging</h3>
+            <p data-i18n="features.f4.desc">
+              Comprehensive operation logs document every step of the
+              restoration process, making troubleshooting and verification
+              straightforward.
+            </p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon"></span>
+            <h3 data-i18n="features.f5.title">Precision Fixes</h3>
+            <p data-i18n="features.f5.desc">
+              Targets specific configuration files and plugin references without
+              affecting other project settings. Surgical precision for maximum
+              reliability.
+            </p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon"></span>
+            <h3 data-i18n="features.f6.title">Production Ready</h3>
+            <p data-i18n="features.f6.desc">
+              Built from real-world workflow challenges, tested in production
+              environments. Originally designed to help students and developers
+              save time, now reliable enough for professional game development
+              pipelines.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Tech Stack -->
+    <section class="tech-section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-badge" data-i18n="tech.badge">Technology</div>
+          <h2 data-i18n="tech.title">Development Stack</h2>
+          <p
+            class="section-subtitle"
+            style="margin-top: 1rem; font-size: 0.95rem"
+            data-i18n="tech.subtitle"
+          >
+            Manual: Batch Scripting + Windows APIs | AI-Assisted: Python GUI +
+            Error Handling
+          </p>
+        </div>
+        <div class="tech-stack">
+          <div class="tech-badge">Windows Batch Scripts</div>
+          <div class="tech-badge">Python (AI-Enhanced)</div>
+          <div class="tech-badge">AI Development Tools</div>
+          <div class="tech-badge">Windows API</div>
+          <div class="tech-badge">File System Operations</div>
+          <div class="tech-badge">Configuration Parsing</div>
+          <div class="tech-badge">GUI Development (AI-Assisted)</div>
+          <div class="tech-badge">Error Handling</div>
+        </div>
+      </div>
+    </section>
+    <!-- Download CTA -->
+    <section class="story-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 data-i18n="cta.title">Start Saving Time Today</h2>
+          <p class="section-subtitle" data-i18n="cta.subtitle">
+            Download Wwise Unreal Engine Fixer and eliminate manual
+            troubleshooting from your workflow.
+          </p>
+        </div>
+        <div class="cta-buttons">
+          <a
+            href="https://github.com/Szunias/WwiseUnrealEngineFixer/releases/latest"
+            class="btn btn-primary"
+            target="_blank"
+            rel="noopener"
+          >
+            <span class="btn-icon"></span>
+            <span data-i18n="cta.download">Download Latest Release</span>
+          </a>
+          <a
+            href="https://github.com/Szunias/WwiseUnrealEngineFixer"
+            class="btn btn-secondary"
+            target="_blank"
+            rel="noopener"
+          >
+            <span class="btn-icon"></span>
+            <span data-i18n="cta.source">View Source Code</span>
+          </a>
+        </div>
+      </div>
+    </section>
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <p>
+          Created by
+          <a href="https://igorszuniewicz.com" target="_blank" rel="noopener"
+            >Igor Szuniewicz</a
+          >
+          | Open Source on
+          <a
+            href="https://github.com/Szunias/WwiseUnrealEngineFixer"
+            target="_blank"
+            rel="noopener"
+            >GitHub</a
+          >
+        </p>
+        <p style="margin-top: 0.5rem; font-size: 0.85rem">
+          © 2025 Igor Szuniewicz. Free for personal and commercial use.
+        </p>
+      </div>
+    </footer>
+    <script type="module" src="../assets/js/translations.js"></script>
+  </body>
+</html>

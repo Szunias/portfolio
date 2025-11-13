@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { resolve } from 'path';
 
 export default defineConfig({
   root: '.',
@@ -12,8 +13,34 @@ export default defineConfig({
     sourcemap: false,
 
     rollupOptions: {
-      // Multi-page app configuration - Vite will auto-detect HTML files
-      // No need to manually specify all pages if using default structure
+      // Multi-page app configuration - explicit input for all HTML files
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        about: resolve(__dirname, 'about.html'),
+        contact: resolve(__dirname, 'contact.html'),
+        music: resolve(__dirname, 'music.html'),
+        '404': resolve(__dirname, '404.html'),
+        // Projects
+        'projects/index': resolve(__dirname, 'projects/index.html'),
+        'projects/akantilado': resolve(__dirname, 'projects/akantilado.html'),
+        'projects/amorak': resolve(__dirname, 'projects/amorak.html'),
+        'projects/audiolab': resolve(__dirname, 'projects/audiolab.html'),
+        'projects/audioq': resolve(__dirname, 'projects/audioq.html'),
+        'projects/environments': resolve(__dirname, 'projects/environments.html'),
+        'projects/middleware-optimization': resolve(__dirname, 'projects/middleware-optimization.html'),
+        'projects/middleware2': resolve(__dirname, 'projects/middleware2.html'),
+        'projects/musicforgames': resolve(__dirname, 'projects/musicforgames.html'),
+        'projects/not-today-darling': resolve(__dirname, 'projects/not-today-darling.html'),
+        'projects/pause-and-deserve': resolve(__dirname, 'projects/pause-and-deserve.html'),
+        'projects/pawism': resolve(__dirname, 'projects/pawism.html'),
+        'projects/ray-animation': resolve(__dirname, 'projects/ray-animation.html'),
+        'projects/richter': resolve(__dirname, 'projects/richter.html'),
+        'projects/shadow-frames': resolve(__dirname, 'projects/shadow-frames.html'),
+        'projects/unreal-engine-rebuilder': resolve(__dirname, 'projects/unreal-engine-rebuilder.html'),
+        'projects/wwise-unreal-fixer': resolve(__dirname, 'projects/wwise-unreal-fixer.html'),
+        // CV
+        'cv/igor-cv-dark': resolve(__dirname, 'cv/igor-cv-dark.html')
+      },
 
       output: {
         manualChunks: {

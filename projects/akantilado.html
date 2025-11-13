@@ -1,1 +1,2173 @@
-<!doctype html> <html lang="en" style="background: #0b1410"> <head> <style> /* CRITICAL: Load immediately before anything else */ html, body { background: #0b1410 !important; margin: 0; padding: 0; } /* Hide content until fully loaded */ .content { opacity: 0; transition: opacity 0.3s ease; } body.loaded .content { opacity: 1; } /* === JUNGLE ENTRANCE ANIMATION === */ .jungle-entrance { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient( 180deg, #0a0f0d 0%, #0b1410 50%, #0a0f0d 100% ); z-index: 99999; display: flex; align-items: center; justify-content: center; animation: jungleFadeOut 2s cubic-bezier(0.4, 0, 0.2, 1) forwards; pointer-events: none; overflow: hidden; } @keyframes jungleFadeOut { 0% { opacity: 1; } 75% { opacity: 1; } 99.9% { opacity: 0; visibility: hidden; } 100% { opacity: 0; visibility: hidden; display: none; } } /* Leaves falling */ .leaves-container { position: absolute; width: 100%; height: 100%; overflow: hidden; } .leaf { position: absolute; width: 30px; height: 35px; background: linear-gradient( 135deg, #2d5016 0%, #4a7c2e 50%, #2d5016 100% ); border-radius: 0 50% 50% 0; opacity: 0; animation: leafFall 2s ease-in-out forwards; transform-origin: center; } .leaf::before { content: ""; position: absolute; width: 2px; height: 20px; background: #1a3d0f; left: 0; top: 50%; transform: translateY(-50%); } @keyframes leafFall { 0% { top: -10%; opacity: 0; transform: rotate(0deg); } 10% { opacity: 0.8; } 50% { opacity: 0.9; } 100% { top: 110%; opacity: 0; transform: rotate(360deg); } } .leaf:nth-child(1) { left: 10%; animation-delay: 0.2s; animation-duration: 5s; } .leaf:nth-child(2) { left: 25%; animation-delay: 0.5s; animation-duration: 4.5s; width: 25px; } .leaf:nth-child(3) { left: 40%; animation-delay: 0.8s; animation-duration: 5.5s; } .leaf:nth-child(4) { left: 55%; animation-delay: 0.3s; animation-duration: 4.8s; } .leaf:nth-child(5) { left: 70%; animation-delay: 0.6s; animation-duration: 5.2s; width: 28px; } .leaf:nth-child(6) { left: 85%; animation-delay: 0.9s; animation-duration: 4.7s; } /* Birds silhouettes */ .birds-container { position: absolute; width: 100%; height: 100%; } .bird { position: absolute; width: 40px; height: 20px; top: 30%; animation: birdFly 5s ease-in-out forwards; opacity: 0; } .bird::before, .bird::after { content: ""; position: absolute; background: #2d4a1e; width: 20px; height: 3px; border-radius: 50%; top: 50%; } .bird::before { left: 0; transform: rotate(-30deg); } .bird::after { right: 0; transform: rotate(30deg); } @keyframes birdFly { 0% { left: -10%; opacity: 0; transform: translateY(0); } 10% { opacity: 0.7; } 50% { transform: translateY(-20px); } 90% { opacity: 0.6; } 100% { left: 110%; opacity: 0; transform: translateY(0); } } .bird:nth-child(1) { top: 25%; animation-delay: 0.8s; animation-duration: 6s; } .bird:nth-child(2) { top: 35%; animation-delay: 1.2s; animation-duration: 5.5s; } .bird:nth-child(3) { top: 20%; animation-delay: 1.5s; animation-duration: 6.5s; } /* Light rays through canopy */ .light-rays { position: absolute; width: 100%; height: 100%; background: linear-gradient( 135deg, transparent 0%, rgba(144, 238, 144, 0.03) 30%, transparent 50% ), linear-gradient( 225deg, transparent 20%, rgba(144, 238, 144, 0.04) 50%, transparent 70% ); animation: rayShift 8s ease-in-out infinite; opacity: 0; animation: rayFade 2s ease-in-out forwards; } @keyframes rayShift { 0%, 100% { transform: translateX(-10px); } 50% { transform: translateX(10px); } } @keyframes rayFade { 0% { opacity: 0; } 25% { opacity: 0.6; } 75% { opacity: 0.4; } 100% { opacity: 0; } } /* Akantilado title with jungle vibe */ .akantilado-title { position: relative; z-index: 10; font-family: "Space Grotesk", sans-serif; font-size: clamp(3rem, 10vw, 6rem); font-weight: 900; color: #90ee90; text-transform: uppercase; letter-spacing: 0.1em; text-shadow: 0 0 20px rgba(50, 205, 50, 0.6), 0 0 40px rgba(144, 238, 144, 0.4), 3px 3px 10px rgba(0, 0, 0, 0.9), 0 0 60px rgba(34, 139, 34, 0.3); animation: titleEmerge 2s ease-in-out; } @keyframes titleEmerge { 0% { opacity: 0; transform: scale(0.7) translateY(30px); filter: blur(8px); } 20% { opacity: 0; } 30% { opacity: 1; transform: scale(1.1) translateY(0); filter: blur(0); } 35% { transform: scale(0.98); } 40%, 80% { opacity: 1; transform: scale(1); } 95% { opacity: 0; transform: scale(1.05); filter: blur(4px); } 100% { opacity: 0; } } /* Fireflies/jungle lights */ .firefly { position: absolute; width: 6px; height: 6px; background: radial-gradient( circle, #ffd700 0%, rgba(255, 215, 0, 0.4) 50%, transparent 70% ); border-radius: 50%; box-shadow: 0 0 10px #ffd700, 0 0 20px rgba(255, 215, 0, 0.6); animation: fireflyFloat 4s ease-in-out infinite; opacity: 0; } @keyframes fireflyFloat { 0%, 100% { opacity: 0; transform: translate(0, 0); } 10% { opacity: 0.8; } 25% { transform: translate(20px, -30px); } 50% { opacity: 1; transform: translate(-15px, -50px); } 75% { transform: translate(30px, -40px); } 90% { opacity: 0.6; } } .firefly:nth-child(1) { left: 15%; top: 40%; animation-delay: 0.5s; animation-duration: 5s; } .firefly:nth-child(2) { left: 60%; top: 55%; animation-delay: 1s; animation-duration: 4.5s; } .firefly:nth-child(3) { left: 80%; top: 35%; animation-delay: 1.5s; animation-duration: 5.5s; } .firefly:nth-child(4) { left: 30%; top: 60%; animation-delay: 2s; animation-duration: 4.8s; } .firefly:nth-child(5) { left: 70%; top: 45%; animation-delay: 0.8s; animation-duration: 5.2s; } /* Vignette with green tint */ .jungle-vignette { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient( circle at center, transparent 0%, rgba(11, 20, 16, 0.7) 70%, #0a0f0d 100% ); animation: vignetteBreath 4s ease-in-out infinite; } @keyframes vignetteBreath { 0%, 100% { opacity: 0.6; } 50% { opacity: 0.9; } } /* Vines/Lianas */ .vines-container { position: absolute; width: 100%; height: 100%; overflow: hidden; } .vine { position: absolute; width: 8px; background: linear-gradient( to bottom, rgba(34, 80, 34, 0.8) 0%, rgba(50, 100, 50, 0.7) 30%, rgba(40, 90, 40, 0.6) 60%, rgba(30, 70, 30, 0.5) 100% ); border-radius: 4px; top: -20%; opacity: 0; animation: vineGrow 3s ease-out forwards; transform-origin: top center; } .vine::before, .vine::after { content: ""; position: absolute; background: rgba(60, 120, 60, 0.6); border-radius: 50%; } /* Vine leaves */ .vine::before { width: 15px; height: 20px; top: 30%; left: -12px; border-radius: 0 50% 50% 0; animation: vineLeafSway 3s ease-in-out infinite; } .vine::after { width: 15px; height: 20px; top: 60%; right: -12px; border-radius: 50% 0 0 50%; animation: vineLeafSway 3s ease-in-out infinite; animation-delay: 0.5s; } @keyframes vineGrow { 0% { height: 0; opacity: 0; } 20% { opacity: 0.8; } 100% { height: 120vh; opacity: 1; } } @keyframes vineLeafSway { 0%, 100% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(15deg) scale(1.1); } } /* Individual vine positioning and timing */ .vine:nth-child(1) { left: 5%; width: 10px; animation-delay: 0.2s; animation-duration: 2.8s; } .vine:nth-child(2) { left: 18%; width: 7px; animation-delay: 0.5s; animation-duration: 3.2s; } .vine:nth-child(3) { left: 35%; width: 9px; animation-delay: 0.3s; animation-duration: 3s; } .vine:nth-child(4) { right: 35%; width: 8px; animation-delay: 0.7s; animation-duration: 2.9s; } .vine:nth-child(5) { right: 18%; width: 11px; animation-delay: 0.4s; animation-duration: 3.1s; } .vine:nth-child(6) { right: 5%; width: 7px; animation-delay: 0.6s; animation-duration: 3.3s; } /* Vine tendrils (curly parts) */ .vine-tendril { position: absolute; width: 3px; height: 40px; background: transparent; border: 2px solid rgba(50, 100, 50, 0.5); border-radius: 50%; animation: tendrilCurl 2s ease-in-out infinite; } .vine:nth-child(1) .vine-tendril { top: 40%; left: -8px; } .vine:nth-child(2) .vine-tendril { top: 50%; right: -8px; animation-delay: 0.3s; } .vine:nth-child(3) .vine-tendril { top: 35%; left: -8px; animation-delay: 0.6s; } .vine:nth-child(4) .vine-tendril { top: 45%; right: -8px; animation-delay: 0.2s; } .vine:nth-child(5) .vine-tendril { top: 55%; left: -8px; animation-delay: 0.5s; } .vine:nth-child(6) .vine-tendril { top: 38%; right: -8px; animation-delay: 0.4s; } @keyframes tendrilCurl { 0%, 100% { transform: rotate(0deg); border-radius: 50% 50% 50% 0; } 50% { transform: rotate(180deg); border-radius: 0 50% 50% 50%; } } /* Ground vegetation */ .ground-plants { position: absolute; bottom: 0; width: 100%; height: 40%; display: flex; justify-content: space-around; align-items: flex-end; z-index: 2; } /* Ferns */ .fern { position: relative; width: 80px; height: 0; opacity: 0; animation: plantGrowUp 2.5s ease-out forwards; } @keyframes plantGrowUp { 0% { height: 0; opacity: 0; } 20% { opacity: 0.6; } 100% { height: 120px; opacity: 1; } } .fern-stem { position: absolute; bottom: 0; left: 50%; width: 4px; height: 100%; background: linear-gradient( to top, #2d5016 0%, #3a6b1f 50%, #4a7c2e 100% ); border-radius: 2px; transform: translateX(-50%); } /* Fern leaves */ .fern-leaf { position: absolute; left: 50%; width: 35px; height: 15px; background: linear-gradient( to right, transparent 0%, #3a6b1f 20%, #4a7c2e 80%, transparent 100% ); border-radius: 50%; transform-origin: left center; animation: fernSway 3s ease-in-out infinite; } .fern-leaf.left { transform: translateX(-100%) rotate(-45deg); } .fern-leaf.right { transform: rotate(45deg); background: linear-gradient( to left, transparent 0%, #3a6b1f 20%, #4a7c2e 80%, transparent 100% ); } .fern-leaf:nth-child(2) { bottom: 20%; } .fern-leaf:nth-child(3) { bottom: 40%; } .fern-leaf:nth-child(4) { bottom: 60%; } .fern-leaf:nth-child(5) { bottom: 80%; } @keyframes fernSway { 0%, 100% { transform: translateX(-100%) rotate(-45deg); } 50% { transform: translateX(-105%) rotate(-50deg); } } .fern-leaf.right { animation-name: fernSwayRight; } @keyframes fernSwayRight { 0%, 100% { transform: rotate(45deg); } 50% { transform: rotate(50deg); } } /* Bushes */ .bush { position: relative; width: 100px; height: 0; opacity: 0; animation: bushGrow 2.2s ease-out forwards; display: flex; align-items: flex-end; justify-content: center; } @keyframes bushGrow { 0% { height: 0; opacity: 0; transform: scale(0.5); } 30% { opacity: 0.7; } 100% { height: 80px; opacity: 1; transform: scale(1); } } .bush-cluster { position: absolute; bottom: 0; width: 40px; height: 40px; background: radial-gradient( ellipse at center, #2d5016 0%, #3a6b1f 60%, transparent 100% ); border-radius: 50% 50% 0 0; animation: bushRustle 4s ease-in-out infinite; } .bush-cluster:nth-child(1) { left: 10%; width: 45px; height: 45px; } .bush-cluster:nth-child(2) { left: 35%; width: 50px; height: 50px; animation-delay: 0.3s; } .bush-cluster:nth-child(3) { right: 35%; width: 42px; height: 42px; animation-delay: 0.6s; } .bush-cluster:nth-child(4) { right: 10%; width: 48px; height: 48px; animation-delay: 0.9s; } @keyframes bushRustle { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } } /* Grass blades */ .grass-container { position: absolute; bottom: 0; width: 100%; height: 50px; display: flex; justify-content: space-evenly; align-items: flex-end; } .grass-blade { width: 3px; height: 0; background: linear-gradient(to top, #2d5016 0%, #4a7c2e 100%); border-radius: 50% 50% 0 0; opacity: 0; animation: grassGrow 1.8s ease-out forwards; transform-origin: bottom center; } @keyframes grassGrow { 0% { height: 0; opacity: 0; } 30% { opacity: 0.8; } 100% { height: 35px; opacity: 1; } } .grass-blade:nth-child(odd) { animation: grassSway 2s ease-in-out infinite; } .grass-blade:nth-child(even) { animation: grassSwayAlt 2.5s ease-in-out infinite; } @keyframes grassSway { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-3deg); } 75% { transform: rotate(3deg); } } @keyframes grassSwayAlt { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(3deg); } 75% { transform: rotate(-3deg); } } /* Individual timing for ground plants */ .fern:nth-child(1) { animation-delay: 0.3s; } .fern:nth-child(2) { animation-delay: 0.6s; } .fern:nth-child(3) { animation-delay: 0.9s; } .fern:nth-child(4) { animation-delay: 1.2s; } .bush:nth-child(1) { animation-delay: 0.4s; } .bush:nth-child(2) { animation-delay: 0.7s; } .bush:nth-child(3) { animation-delay: 1s; } .grass-blade:nth-child(1) { animation-delay: 0.1s; } .grass-blade:nth-child(2) { animation-delay: 0.15s; } .grass-blade:nth-child(3) { animation-delay: 0.2s; } .grass-blade:nth-child(4) { animation-delay: 0.25s; } .grass-blade:nth-child(5) { animation-delay: 0.3s; } .grass-blade:nth-child(6) { animation-delay: 0.35s; } .grass-blade:nth-child(7) { animation-delay: 0.4s; } .grass-blade:nth-child(8) { animation-delay: 0.45s; } .grass-blade:nth-child(9) { animation-delay: 0.5s; } .grass-blade:nth-child(10) { animation-delay: 0.55s; } </style> <title>Akantilado: Sound Design</title> <meta charset="utf-8" /> <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" /> <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" /> <meta name="description" content="Akantilado: immersive sound design for 3D jungle animation featuring foley, ambience, and character audio. Professional audio storytelling by Igor Szuniewicz." /> <meta name="robots" content="index, follow" /> <link rel="canonical" href="https://igorszuniewicz.com/projects/akantilado.html" /> <!-- Google Fonts --> <link rel="preconnect" href="https://fonts.googleapis.com" /> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" /> <style> /* === RESET & BASE === */ * { margin: 0; padding: 0; box-sizing: border-box; } html, body { width: 100%; height: 100%; background: linear-gradient( 180deg, rgba(11, 20, 16, 0.85) 0%, rgba(15, 29, 20, 0.9) 60%, rgba(11, 20, 16, 0.95) 100% ), url("../assets/images/projects-akantilado/background/Jungle.jpg") center/cover no-repeat fixed; color: #f0fff0; font-family: "Poppins", sans-serif; overflow-x: hidden; scroll-behavior: smooth; } /* === CONTENT WRAPPER === */ .content { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 2rem; } /* === BACK BUTTON === */ .back-button { position: fixed; top: 2rem; left: 2rem; z-index: 100; display: inline-flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1.5rem; background: rgba(16, 28, 20, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(50, 205, 50, 0.4); border-radius: 50px; color: #90ee90; text-decoration: none; font-size: 0.9rem; font-weight: 500; letter-spacing: 0.02em; text-transform: uppercase; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); } .back-button:hover { background: rgba(30, 60, 20, 0.8); border-color: #ffd700; transform: translateX(-5px); box-shadow: 0 6px 30px rgba(255, 165, 0, 0.4); color: #ffd700; } .back-button::before { content: ""; font-size: 1.2rem; font-weight: bold; } /* === LANGUAGE SWITCHER === */ .lang-switcher { position: fixed !important; top: 2rem !important; right: 2rem !important; z-index: 1000 !important; display: flex !important; gap: 0.5rem; background: rgba(16, 28, 20, 0.7) !important; backdrop-filter: blur(10px); border: 1px solid rgba(50, 205, 50, 0.4) !important; border-radius: 50px; padding: 0.5rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 20px rgba(50, 205, 50, 0.2) !important; } .lang-btn { padding: 0.5rem 1rem; background: transparent; border: none; border-radius: 50px; color: #999 !important; cursor: pointer; font-weight: 500; font-size: 0.9rem; font-family: "Poppins", sans-serif; transition: all 0.3s ease; display: flex !important; align-items: center; gap: 0.5rem; } .lang-btn:hover { color: #90ee90 !important; background: rgba(50, 205, 50, 0.15); } .lang-btn.active { color: #90ee90 !important; background: rgba(50, 205, 50, 0.25); font-weight: 600; } .lang-flag { width: 20px; height: 14px; border-radius: 2px; overflow: hidden; display: block; } /* === HERO SECTION === */ .hero { text-align: center; padding: 8rem 0 4rem; margin-bottom: 3rem; position: relative; background: linear-gradient( 135deg, #0b1410 0%, #0f1d14 60%, #0b1410 100% ); border-radius: 20px; overflow: hidden; } .hero::before { content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient( circle at 25% 30%, rgba(180, 210, 180, 0.06) 0%, transparent 55% ), radial-gradient( circle at 75% 70%, rgba(100, 160, 120, 0.05) 0%, transparent 55% ), radial-gradient( circle at 50% 20%, rgba(200, 220, 200, 0.04) 0%, transparent 60% ); pointer-events: none; } .hero h1 { font-family: "Space Grotesk", "Inter", sans-serif; font-size: 4rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.02em; color: #f0fff0; position: relative; z-index: 1; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8); } .hero .tagline { font-size: 1.2rem; color: #ffd700; font-style: italic; margin-bottom: 2.5rem; position: relative; z-index: 1; } /* === METADATA BADGES === */ .meta-badges { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2.5rem; position: relative; z-index: 2; } .meta-badge { background: rgba(34, 139, 34, 0.15); border: 1px solid rgba(255, 165, 0, 0.3); padding: 1rem 1.5rem; border-radius: 12px; backdrop-filter: blur(10px); transition: all 0.3s ease; } .meta-badge:hover { background: rgba(255, 165, 0, 0.2); border-color: rgba(50, 205, 50, 0.5); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); } .meta-label { display: block; font-size: 0.85rem; color: #999; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 1px; } .meta-value { display: block; font-weight: 600; color: #90ee90; font-size: 1.1rem; } /* === VIDEO SECTION === */ .video-section { margin: 4rem 0; opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); } .video-section.visible { opacity: 1; transform: translateY(0); } .video-section h2 { font-family: "Space Grotesk", "Inter", sans-serif; font-size: 2.2rem; color: #90ee90; margin-bottom: 2rem; font-weight: 700; border-bottom: 2px solid rgba(255, 165, 0, 0.3); padding-bottom: 0.8rem; } .video-container { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7); border: 1px solid rgba(140, 200, 160, 0.3); transition: all 0.4s ease; background: #000; } .video-container:hover { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(50, 205, 50, 0.3); border-color: rgba(50, 205, 50, 0.6); transform: scale(1.01) translateY(-3px); } .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; } .video-description { margin-top: 1.5rem; font-style: italic; color: #999; text-align: center; font-size: 0.95rem; } /* === HERO IMAGE === */ .hero-image { margin: 4rem 0; text-align: center; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7); opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); } .hero-image.visible { opacity: 1; transform: translateY(0); } .hero-image img { width: 100%; height: auto; border-radius: 20px; transition: transform 0.4s ease; } .hero-image:hover img { transform: scale(1.02); } /* === PROJECT CONTEXT === */ .project-context { max-width: 900px; margin: 3rem auto; padding: 2rem; background: rgba(139, 69, 19, 0.05); border: 1px solid rgba(139, 69, 19, 0.2); border-radius: 16px; backdrop-filter: blur(10px); } .project-context h3 { font-family: "Cinzel", serif; font-size: 1.5rem; color: #cd853f; margin-bottom: 1.5rem; font-weight: 600; text-align: center; } .context-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; } .context-item { padding: 1rem; background: rgba(139, 69, 19, 0.05); border-radius: 8px; border-left: 3px solid #8b4513; } .context-label { font-size: 0.85rem; color: #cd853f; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; } .context-value { font-size: 1rem; color: #e0e6ed; line-height: 1.6; } .context-collaboration { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(139, 69, 19, 0.2); } .context-collaboration h4 { font-size: 1rem; color: #cd853f; font-weight: 600; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; } .context-collaboration p { color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; padding-left: 1.5rem; position: relative; } .context-collaboration p::before { content: "♪"; position: absolute; left: 0; color: #cd853f; font-weight: bold; font-size: 1.2rem; } /* === SECTION === */ section { margin: 5rem 0; padding: 2.5rem; background: linear-gradient( 135deg, rgba(16, 28, 20, 0.5) 0%, rgba(12, 22, 18, 0.4) 100% ); border-radius: 20px; border: 1px solid rgba(140, 200, 160, 0.18); backdrop-filter: blur(4px); opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); } section.visible { opacity: 1; transform: translateY(0); } section h2 { font-family: "Space Grotesk", "Inter", sans-serif; font-size: 2.2rem; color: #90ee90; margin-bottom: 2rem; font-weight: 700; letter-spacing: -0.02em; border-bottom: 2px solid rgba(255, 165, 0, 0.3); padding-bottom: 0.8rem; } section h3 { font-size: 1.6rem; color: #ffd700; margin-bottom: 1rem; font-weight: 600; } section p { color: rgba(240, 255, 240, 0.9); line-height: 1.7; font-size: 1.05rem; margin-bottom: 1.5rem; } /* === GRID === */ .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; } .grid-item { background: rgba(10, 40, 10, 0.4); padding: 2rem; border-radius: 15px; border: 1px solid rgba(50, 205, 50, 0.2); transition: all 0.4s ease; position: relative; overflow: hidden; } .grid-item::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #228b22, #ff8c00, #32cd32); transform: scaleX(0); transition: transform 0.3s ease; } .grid-item:hover::before { transform: scaleX(1); } .grid-item:hover { background: rgba(30, 60, 20, 0.5); border-color: rgba(255, 165, 0, 0.4); transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5); } .grid-item h4 { color: #ffd700; margin-bottom: 1rem; font-size: 1.3rem; font-weight: 700; } /* === GALLERY === */ .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; } .gallery-item { position: relative; border-radius: 15px; overflow: hidden; cursor: pointer; transition: all 0.4s ease; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); border: 1px solid rgba(140, 200, 160, 0.2); } .gallery-item:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(50, 205, 50, 0.3); border-color: rgba(50, 205, 50, 0.5); } .gallery-item img { width: 100%; height: 250px; object-fit: cover; transition: all 0.4s ease; filter: brightness(0.85) contrast(1.1); } .gallery-item:hover img { transform: scale(1.08); filter: brightness(0.95) contrast(1.15); } .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0, 0, 0, 0.95)); color: #ffd700; padding: 2rem 1.5rem 1.5rem; transform: translateY(100%); transition: transform 0.3s ease; } .gallery-item:hover .gallery-overlay { transform: translateY(0); } .gallery-overlay span { font-weight: 600; font-size: 1.1rem; } /* === BUTTON === */ .button-container { text-align: center; margin: 4rem 0; } .button { display: inline-block; padding: 1.2rem 3rem; background: linear-gradient(135deg, #228b22 0%, #ff8c00 100%); border: 2px solid transparent; border-radius: 50px; color: #f0fff0; text-decoration: none; font-weight: 600; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); } .button:hover { background: linear-gradient(135deg, #ff8c00 0%, #32cd32 100%); transform: translateY(-3px); box-shadow: 0 12px 35px rgba(255, 165, 0, 0.4); color: #fff; } /* === FOOTER === */ .footer { text-align: center; padding: 3rem 0; color: #666; font-size: 0.9rem; border-top: 1px solid rgba(140, 200, 160, 0.2); margin-top: 5rem; } /* === LIGHTBOX === */ .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 10000; display: none; align-items: center; justify-content: center; cursor: pointer; } .lightbox.active { display: flex; } .lightbox img { max-width: 90%; max-height: 90%; border-radius: 8px; box-shadow: 0 0 50px rgba(50, 205, 50, 0.5); } .lightbox-close { position: absolute; top: 2rem; right: 2rem; font-size: 3rem; color: #fff; cursor: pointer; z-index: 10001; } /* === RESPONSIVE === */ @media (max-width: 768px) { .content { padding: 1.5rem; } .back-button, .lang-switcher { top: 1rem; left: 1rem; right: 1rem; } .lang-switcher { right: 1rem; left: auto; gap: 0.4rem; padding: 0.4rem; } .lang-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; } .back-button { padding: 0.6rem 1.2rem; font-size: 0.8rem; gap: 0.6rem; } .hero { padding: 3rem 1rem 2rem; margin-bottom: 2rem; } .hero h1 { font-size: clamp(2rem, 8vw, 2.5rem); margin-bottom: 0.75rem; } .hero .tagline { font-size: 1rem; margin-bottom: 2rem; line-height: 1.5; } .meta-badges { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-top: 2rem; } .meta-badge { padding: 0.75rem 1rem; border-radius: 8px; } .meta-label { font-size: 0.75rem; margin-bottom: 0.3rem; } .meta-value { font-size: 0.95rem; } section { padding: 1.75rem 1.25rem; margin: 3rem 0; border-radius: 12px; } section h2 { font-size: clamp(1.5rem, 6vw, 1.8rem); margin-bottom: 1.5rem; padding-bottom: 0.6rem; } section h3 { font-size: 1.3rem; margin-bottom: 0.8rem; } section p { font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.25rem; } .video-section h2 { font-size: clamp(1.5rem, 6vw, 1.8rem); margin-bottom: 1.5rem; } .video-container { border-radius: 12px; } .video-description { font-size: 0.85rem; margin-top: 1.25rem; } .grid { grid-template-columns: 1fr; gap: 1.25rem; margin-top: 1.5rem; } .grid-item { padding: 1.5rem; border-radius: 10px; } .grid-item h4 { font-size: 1.1rem; margin-bottom: 0.8rem; } .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1.5rem; } .gallery-item img { height: 180px; } .button { padding: 1rem 2.5rem; font-size: 1rem; } } @media (max-width: 480px) { .content { padding: 1rem; } .back-button, .lang-switcher { top: 0.75rem; left: 0.75rem; right: 0.75rem; } .lang-switcher { right: 0.75rem; left: auto; gap: 0.3rem; padding: 0.3rem; } .lang-btn { padding: 0.3rem 0.6rem; font-size: 0.7rem; } .back-button { padding: 0.5rem 1rem; font-size: 0.75rem; gap: 0.5rem; } .hero { padding: 2.5rem 0.75rem 1.75rem; margin-bottom: 1.5rem; } .hero h1 { font-size: clamp(1.5rem, 8vw, 2rem); margin-bottom: 0.6rem; } .hero .tagline { font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.4; } .meta-badges { grid-template-columns: 1fr; gap: 0.6rem; margin-top: 1.5rem; } .meta-badge { padding: 0.6rem 0.8rem; border-radius: 6px; } .meta-label { font-size: 0.7rem; margin-bottom: 0.25rem; } .meta-value { font-size: 0.85rem; } section { padding: 1.5rem 1rem; margin: 2.5rem 0; border-radius: 10px; } section h2 { font-size: clamp(1.25rem, 6vw, 1.5rem); margin-bottom: 1.25rem; padding-bottom: 0.5rem; } section h3 { font-size: 1.1rem; margin-bottom: 0.6rem; } section p { font-size: 0.85rem; line-height: 1.5; margin-bottom: 1rem; } .video-section h2 { font-size: clamp(1.25rem, 6vw, 1.5rem); margin-bottom: 1.25rem; } .video-container { border-radius: 8px; } .video-description { font-size: 0.8rem; margin-top: 1rem; } .grid { gap: 1rem; margin-top: 1.25rem; } .grid-item { padding: 1.25rem; border-radius: 8px; } .grid-item h4 { font-size: 1rem; margin-bottom: 0.6rem; } .gallery-grid { grid-template-columns: 1fr; gap: 0.75rem; margin-top: 1.25rem; } .gallery-item img { height: 160px; } .button { padding: 0.8rem 2rem; font-size: 0.9rem; } } @media (max-width: 374px) { .content { padding: 0.75rem; } .back-button, .lang-switcher { top: 0.5rem; left: 0.5rem; right: 0.5rem; } .lang-switcher { right: 0.5rem; left: auto; gap: 0.25rem; padding: 0.25rem; } .lang-btn { padding: 0.25rem 0.5rem; font-size: 0.65rem; } .back-button { padding: 0.4rem 0.8rem; font-size: 0.7rem; gap: 0.4rem; } .hero { padding: 2rem 0.5rem 1.5rem; margin-bottom: 1.25rem; } .hero h1 { font-size: clamp(1.25rem, 8vw, 1.5rem); margin-bottom: 0.5rem; } .hero .tagline { font-size: 0.8rem; margin-bottom: 1.25rem; line-height: 1.3; } .meta-badges { gap: 0.5rem; margin-top: 1.25rem; } .meta-badge { padding: 0.5rem 0.7rem; border-radius: 5px; } .meta-label { font-size: 0.65rem; margin-bottom: 0.2rem; } .meta-value { font-size: 0.8rem; } section { padding: 1.25rem 0.8rem; margin: 2rem 0; border-radius: 8px; } section h2 { font-size: clamp(1rem, 6vw, 1.25rem); margin-bottom: 1rem; padding-bottom: 0.4rem; } section h3 { font-size: 1rem; margin-bottom: 0.5rem; } section p { font-size: 0.8rem; line-height: 1.4; margin-bottom: 0.8rem; } .video-section h2 { font-size: clamp(1rem, 6vw, 1.25rem); margin-bottom: 1rem; } .video-container { border-radius: 6px; } .video-description { font-size: 0.75rem; margin-top: 0.8rem; } .grid { gap: 0.8rem; margin-top: 1rem; } .grid-item { padding: 1rem; border-radius: 6px; } .grid-item h4 { font-size: 0.9rem; margin-bottom: 0.5rem; } .gallery-item img { height: 140px; } .button { padding: 0.7rem 1.75rem; font-size: 0.85rem; } } /* FIX: hero and first content section always visible */ .hero { opacity: 1 !important; transform: translateY(0) !important; } .video-section:first-of-type, section:first-of-type { opacity: 1 !important; transform: translateY(0) !important; } /* Hide audio players with placeholder audio */ .audio-player[data-audio*="placeholder.wav"] { display: none !important; } </style> </head> <body style="background: #0b1410; margin: 0; padding: 0"> <!-- Jungle Entrance Animation --> <div class="jungle-entrance"> <div class="jungle-vignette"></div> <div class="light-rays"></div> <div class="vines-container"> <div class="vine"> <div class="vine-tendril"></div> </div> <div class="vine"> <div class="vine-tendril"></div> </div> <div class="vine"> <div class="vine-tendril"></div> </div> <div class="vine"> <div class="vine-tendril"></div> </div> <div class="vine"> <div class="vine-tendril"></div> </div> <div class="vine"> <div class="vine-tendril"></div> </div> </div> <div class="leaves-container"> <div class="leaf"></div> <div class="leaf"></div> <div class="leaf"></div> <div class="leaf"></div> <div class="leaf"></div> <div class="leaf"></div> </div> <div class="birds-container"> <div class="bird"></div> <div class="bird"></div> <div class="bird"></div> </div> <div class="firefly"></div> <div class="firefly"></div> <div class="firefly"></div> <div class="firefly"></div> <div class="firefly"></div> <div class="ground-plants"> <div class="fern"> <div class="fern-stem"></div> <div class="fern-leaf left"></div> <div class="fern-leaf right"></div> <div class="fern-leaf left"></div> <div class="fern-leaf right"></div> <div class="fern-leaf left"></div> </div> <div class="bush"> <div class="bush-cluster"></div> <div class="bush-cluster"></div> <div class="bush-cluster"></div> <div class="bush-cluster"></div> </div> <div class="fern"> <div class="fern-stem"></div> <div class="fern-leaf left"></div> <div class="fern-leaf right"></div> <div class="fern-leaf left"></div> <div class="fern-leaf right"></div> <div class="fern-leaf left"></div> </div> <div class="bush"> <div class="bush-cluster"></div> <div class="bush-cluster"></div> <div class="bush-cluster"></div> <div class="bush-cluster"></div> </div> <div class="fern"> <div class="fern-stem"></div> <div class="fern-leaf left"></div> <div class="fern-leaf right"></div> <div class="fern-leaf left"></div> <div class="fern-leaf right"></div> <div class="fern-leaf left"></div> </div> </div> <div class="grass-container"> <div class="grass-blade"></div> <div class="grass-blade"></div> <div class="grass-blade"></div> <div class="grass-blade"></div> <div class="grass-blade"></div> <div class="grass-blade"></div> <div class="grass-blade"></div> <div class="grass-blade"></div> <div class="grass-blade"></div> <div class="grass-blade"></div> </div> <div class="akantilado-title">AKANTILADO</div> </div> <!-- Lightbox --> <div class="lightbox" id="lightbox"> <span class="lightbox-close" id="lightbox-close">&times;</span> <img id="lightbox-img" src="" alt="" loading="lazy" decoding="async" /> </div> <!-- Content --> <div class="content"> <!-- Language Switcher --> <div class="lang-switcher"> <button class="lang-btn active" data-lang="en"> <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" > <rect width="60" height="30" fill="#012169" /> <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" /> <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4" /> <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" /> <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" /> </svg> <span>EN</span> </button> <button class="lang-btn" data-lang="pl"> <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 10" > <rect width="16" height="5" fill="#fff" /> <rect y="5" width="16" height="5" fill="#dc143c" /> </svg> <span>PL</span> </button> <button class="lang-btn" data-lang="nl"> <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 6" > <rect width="9" height="6" fill="#21468B" /> <rect width="9" height="4" fill="#fff" /> <rect width="9" height="2" fill="#AE1C28" /> </svg> <span>NL</span> </button> </div> <!-- Back Button --> <a href="/projects/" class="back-button"> <span data-i18n="back">Back to Projects</span> </a> <!-- Hero --> <section class="hero"> <div class="meta-badges"> <div class="meta-badge"> <span class="meta-label" data-i18n="meta.role.label" >Role</span > <span class="meta-value" data-i18n="meta.role.value" >Sound Designer</span > </div> <div class="meta-badge"> <span class="meta-label" data-i18n="meta.setting.label" >Setting</span > <span class="meta-value" data-i18n="meta.setting.value" >Jungle Adventure</span > </div> <div class="meta-badge"> <span class="meta-label" data-i18n="meta.characters.label" >Characters</span > <span class="meta-value" data-i18n="meta.characters.value" >Two Cat Creatures</span > </div> <div class="meta-badge"> <span class="meta-label" data-i18n="meta.theme.label" >Theme</span > <span class="meta-value" data-i18n="meta.theme.value" >Love vs Greed</span > </div> </div> <h1 data-i18n="title">Akantilado: Sound Design</h1> <p class="tagline" data-i18n="tagline"> A heartwarming jungle adventure where love triumphs over greed through immersive audio storytelling. </p> </section> <!-- Project Context --> <section class="project-context"> <h3 data-i18n="context.title">Project Context</h3> <div class="context-grid"> <div class="context-item"> <div class="context-label" data-i18n="context.type_label" > Type </div> <div class="context-value" data-i18n="context.type_value" > Student Animation Project </div> </div> <div class="context-item"> <div class="context-label" data-i18n="context.institution_label" > Institution </div> <div class="context-value" data-i18n="context.institution_value" > Howest DAE </div> </div> <div class="context-item"> <div class="context-label" data-i18n="context.year_label" > Year </div> <div class="context-value" data-i18n="context.year_value" > 2024 </div> </div> <div class="context-item"> <div class="context-label" data-i18n="context.duration_label" > Duration </div> <div class="context-value" data-i18n="context.duration_value" > 4 months </div> </div> <div class="context-item"> <div class="context-label" data-i18n="context.role_label" > My Role </div> <div class="context-value" data-i18n="context.role_value" > Sound Designer </div> </div> </div> <div class="context-collaboration"> <h4 data-i18n="context.collaboration_title"> Collaboration </h4> <p data-i18n="context.collaboration_desc"> Worked with composer Noah Bots from Ghent Conservatory for the musical score, while handling all sound design, foley, and spatial audio mixing. </p> </div> </section> <!-- Video Context --> <div class="video-section"> <h2 data-i18n="showcase.title">Audio in Context</h2> <div class="video-container"> <iframe data-lazy-iframe data-src="https://www.youtube.com/embed/ALQy5r7B1Bw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen ></iframe> </div> <p class="video-description" data-i18n="showcase.desc"> Experience how sound design drives the emotional journey: playful jungle ambience evolves into tense suspense, culminating in heartfelt resolution. Every audio element supports character development and narrative transformation. </p> </div> <!-- Audio-Driven Narrative --> <section> <h2 data-i18n="overview.title">Audio-Driven Storytelling</h2> <p data-i18n="overview.desc"> Akantilado's jungle world is built through immersive soundscapes. From competitive chase sequences to moments of sacrifice, audio design guides the emotional transformation from greed to love, using layered foley, character vocalizations, and dynamic ambience. </p> </section> <!-- Jungle Ambience Design --> <section> <h2 data-i18n="philosophy.title">Jungle Audio Design</h2> <p data-i18n="philosophy.jungle.desc"> Rustling leaves, distant calls, flowing water, wind through trees. Layered natural recordings make the jungle feel alive and real. </p>  <div class="grid"> <div class="grid-item"> <h4 data-i18n="philosophy.jungle.layered_title"> Layered Natural Elements </h4> <p data-i18n="philosophy.jungle.layered_desc"> Rustling leaves, distant calls, flowing water. Creates the jungle atmosphere </p> </div> <div class="grid-item"> <h4 data-i18n="philosophy.jungle.spatial_title"> Dynamic Spatial Mixing </h4> <p data-i18n="philosophy.jungle.spatial_desc"> Soundscapes adapt to camera movement and action intensity </p> </div> <div class="grid-item"> <h4 data-i18n="philosophy.jungle.organic_title"> Organic Texture Palette </h4> <p data-i18n="philosophy.jungle.organic_desc"> Field recordings processed to keep that natural feel </p> </div> </div> </section> <!-- Character Vocalizations --> <section> <h2 data-i18n="philosophy.character.title"> Character Audio & Movement </h2> <p data-i18n="philosophy.character.desc"> Each cat has its own voice and movement sounds. Orange is determined, pink is graceful. Their voices evolve from competitive to caring. </p>  <div class="grid"> <div class="grid-item"> <h4 data-i18n="philosophy.character.personalities_title" > Distinct Personalities </h4> <p data-i18n="philosophy.character.personalities_desc"> Unique vocal signatures through pitch, timbre, expression </p> </div> <div class="grid-item"> <h4 data-i18n="philosophy.character.foley_title"> Movement Foley </h4> <p data-i18n="philosophy.character.foley_desc"> Paw steps, vegetation sounds, climbing. Tailored to each character </p> </div> <div class="grid-item"> <h4 data-i18n="philosophy.character.evolution_title"> Emotional Evolution </h4> <p data-i18n="philosophy.character.evolution_desc"> Vocalizations transform from competitive to caring </p> </div> </div> </section> <!-- Emotional Audio Journey --> <section> <h2 data-i18n="philosophy.emotional.title"> Emotional Audio Arc </h2> <p data-i18n="philosophy.emotional.desc"> Audio mirrors the emotional journey. Playful energy turns into tension, then resolves into something tender. Each phase uses soundscapes to guide you through the transformation. </p>  <div class="grid"> <div class="grid-item"> <h4 data-i18n="philosophy.emotional.chase_title"> Playful Chase Phase </h4> <p data-i18n="philosophy.emotional.chase_desc"> Upbeat rhythms, light foley, bright jungle sounds. Establishes the competition </p> </div> <div class="grid-item"> <h4 data-i18n="philosophy.emotional.tension_title"> Tension & Suspense </h4> <p data-i18n="philosophy.emotional.tension_desc"> Low rumbles, sparse ambience, wind effects. Builds the cliff edge crisis </p> </div> <div class="grid-item"> <h4 data-i18n="philosophy.emotional.resolution_title"> Heartfelt Resolution </h4> <p data-i18n="philosophy.emotional.resolution_desc"> Gentle musical sting, soft voices, peaceful ambience. Love wins </p> </div> </div> </section> <!-- Technical Audio Implementation --> <section> <h2 data-i18n="technical.title">Technical Sound Design</h2>  <div class="grid"> <div class="grid-item"> <h4 data-i18n="technical.foley.title"> Custom Foley Library </h4> <p data-i18n="technical.foley.desc"> Comprehensive foley for cat-like creature movements: paw steps on various jungle surfaces, climbing sounds, vegetation interaction. Each sound recorded and processed to match animated characters' unique physiology. </p> </div> <div class="grid-item"> <h4 data-i18n="technical.environmental.title"> Multi-Zone Ambience </h4> <p data-i18n="technical.environmental.desc"> Layered jungle zones - canopy, ground-level, distance perspectives. Mix dynamically shifts with camera movement and pacing, supporting narrative without overwhelming focus. </p> </div> <div class="grid-item"> <h4 data-i18n="technical.emotional.title"> Seamless Transitions </h4> <p data-i18n="technical.emotional.desc"> Sound palette transitions between playful chase, cliff-hanger tension, and emotional resolution. Golden orb's magical shimmer represents temptation and character goals throughout. </p> </div> </div> </section> <!-- Button --> <div class="button-container"> <a href="/projects/" class="button" data-i18n="button.projects" >All Projects</a > </div> <!-- Footer --> <footer class="footer"> <p>&copy; Igor Szuniewicz 2025. All rights reserved.</p> </footer> </div> <!-- Fixed Player --> <div class="fixed-player" id="fixedPlayer"> <div class="fixed-player-top"> <button class="fixed-player-btn" id="fixedPlayerBtn"> <div class="icon"></div> </button> <div class="fixed-player-info"> <div class="fixed-player-title" id="fixedPlayerTitle"> Audio Sample </div> <div class="fixed-player-subtitle">Akantilado</div> </div> </div> <div class="fixed-player-progress" id="fixedPlayerProgress"> <div class="fixed-player-progress-bar" id="fixedPlayerProgressBar" ></div> </div> <div class="fixed-player-time"> <span id="fixedPlayerCurrentTime">0:00</span> <span id="fixedPlayerDuration">0:00</span> </div> </div> <script type="module" src="../assets/js/pages/akantilado.js"></script> <script type="module" src="../assets/js/performance-boost.js" defer></script> </body> </html> 
+<!doctype html>
+<html lang="en" style="background: #0b1410">
+  <head>
+    <style>
+      /* CRITICAL: Load immediately before anything else */
+      html,
+      body {
+        background: #0b1410 !important;
+        margin: 0;
+        padding: 0;
+      } /* Hide content until fully loaded */
+      .content {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      body.loaded .content {
+        opacity: 1;
+      } /* === JUNGLE ENTRANCE ANIMATION === */
+      .jungle-entrance {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          180deg,
+          #0a0f0d 0%,
+          #0b1410 50%,
+          #0a0f0d 100%
+        );
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: jungleFadeOut 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      @keyframes jungleFadeOut {
+        0% {
+          opacity: 1;
+        }
+        75% {
+          opacity: 1;
+        }
+        99.9% {
+          opacity: 0;
+          visibility: hidden;
+        }
+        100% {
+          opacity: 0;
+          visibility: hidden;
+          display: none;
+        }
+      } /* Leaves falling */
+      .leaves-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      .leaf {
+        position: absolute;
+        width: 30px;
+        height: 35px;
+        background: linear-gradient(
+          135deg,
+          #2d5016 0%,
+          #4a7c2e 50%,
+          #2d5016 100%
+        );
+        border-radius: 0 50% 50% 0;
+        opacity: 0;
+        animation: leafFall 2s ease-in-out forwards;
+        transform-origin: center;
+      }
+      .leaf::before {
+        content: "";
+        position: absolute;
+        width: 2px;
+        height: 20px;
+        background: #1a3d0f;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      @keyframes leafFall {
+        0% {
+          top: -10%;
+          opacity: 0;
+          transform: rotate(0deg);
+        }
+        10% {
+          opacity: 0.8;
+        }
+        50% {
+          opacity: 0.9;
+        }
+        100% {
+          top: 110%;
+          opacity: 0;
+          transform: rotate(360deg);
+        }
+      }
+      .leaf:nth-child(1) {
+        left: 10%;
+        animation-delay: 0.2s;
+        animation-duration: 5s;
+      }
+      .leaf:nth-child(2) {
+        left: 25%;
+        animation-delay: 0.5s;
+        animation-duration: 4.5s;
+        width: 25px;
+      }
+      .leaf:nth-child(3) {
+        left: 40%;
+        animation-delay: 0.8s;
+        animation-duration: 5.5s;
+      }
+      .leaf:nth-child(4) {
+        left: 55%;
+        animation-delay: 0.3s;
+        animation-duration: 4.8s;
+      }
+      .leaf:nth-child(5) {
+        left: 70%;
+        animation-delay: 0.6s;
+        animation-duration: 5.2s;
+        width: 28px;
+      }
+      .leaf:nth-child(6) {
+        left: 85%;
+        animation-delay: 0.9s;
+        animation-duration: 4.7s;
+      } /* Birds silhouettes */
+      .birds-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      .bird {
+        position: absolute;
+        width: 40px;
+        height: 20px;
+        top: 30%;
+        animation: birdFly 5s ease-in-out forwards;
+        opacity: 0;
+      }
+      .bird::before,
+      .bird::after {
+        content: "";
+        position: absolute;
+        background: #2d4a1e;
+        width: 20px;
+        height: 3px;
+        border-radius: 50%;
+        top: 50%;
+      }
+      .bird::before {
+        left: 0;
+        transform: rotate(-30deg);
+      }
+      .bird::after {
+        right: 0;
+        transform: rotate(30deg);
+      }
+      @keyframes birdFly {
+        0% {
+          left: -10%;
+          opacity: 0;
+          transform: translateY(0);
+        }
+        10% {
+          opacity: 0.7;
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+        90% {
+          opacity: 0.6;
+        }
+        100% {
+          left: 110%;
+          opacity: 0;
+          transform: translateY(0);
+        }
+      }
+      .bird:nth-child(1) {
+        top: 25%;
+        animation-delay: 0.8s;
+        animation-duration: 6s;
+      }
+      .bird:nth-child(2) {
+        top: 35%;
+        animation-delay: 1.2s;
+        animation-duration: 5.5s;
+      }
+      .bird:nth-child(3) {
+        top: 20%;
+        animation-delay: 1.5s;
+        animation-duration: 6.5s;
+      } /* Light rays through canopy */
+      .light-rays {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background:
+          linear-gradient(
+            135deg,
+            transparent 0%,
+            rgba(144, 238, 144, 0.03) 30%,
+            transparent 50%
+          ),
+          linear-gradient(
+            225deg,
+            transparent 20%,
+            rgba(144, 238, 144, 0.04) 50%,
+            transparent 70%
+          );
+        animation: rayShift 8s ease-in-out infinite;
+        opacity: 0;
+        animation: rayFade 2s ease-in-out forwards;
+      }
+      @keyframes rayShift {
+        0%,
+        100% {
+          transform: translateX(-10px);
+        }
+        50% {
+          transform: translateX(10px);
+        }
+      }
+      @keyframes rayFade {
+        0% {
+          opacity: 0;
+        }
+        25% {
+          opacity: 0.6;
+        }
+        75% {
+          opacity: 0.4;
+        }
+        100% {
+          opacity: 0;
+        }
+      } /* Akantilado title with jungle vibe */
+      .akantilado-title {
+        position: relative;
+        z-index: 10;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(3rem, 10vw, 6rem);
+        font-weight: 900;
+        color: #90ee90;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        text-shadow:
+          0 0 20px rgba(50, 205, 50, 0.6),
+          0 0 40px rgba(144, 238, 144, 0.4),
+          3px 3px 10px rgba(0, 0, 0, 0.9),
+          0 0 60px rgba(34, 139, 34, 0.3);
+        animation: titleEmerge 2s ease-in-out;
+      }
+      @keyframes titleEmerge {
+        0% {
+          opacity: 0;
+          transform: scale(0.7) translateY(30px);
+          filter: blur(8px);
+        }
+        20% {
+          opacity: 0;
+        }
+        30% {
+          opacity: 1;
+          transform: scale(1.1) translateY(0);
+          filter: blur(0);
+        }
+        35% {
+          transform: scale(0.98);
+        }
+        40%,
+        80% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        95% {
+          opacity: 0;
+          transform: scale(1.05);
+          filter: blur(4px);
+        }
+        100% {
+          opacity: 0;
+        }
+      } /* Fireflies/jungle lights */
+      .firefly {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: radial-gradient(
+          circle,
+          #ffd700 0%,
+          rgba(255, 215, 0, 0.4) 50%,
+          transparent 70%
+        );
+        border-radius: 50%;
+        box-shadow:
+          0 0 10px #ffd700,
+          0 0 20px rgba(255, 215, 0, 0.6);
+        animation: fireflyFloat 4s ease-in-out infinite;
+        opacity: 0;
+      }
+      @keyframes fireflyFloat {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(0, 0);
+        }
+        10% {
+          opacity: 0.8;
+        }
+        25% {
+          transform: translate(20px, -30px);
+        }
+        50% {
+          opacity: 1;
+          transform: translate(-15px, -50px);
+        }
+        75% {
+          transform: translate(30px, -40px);
+        }
+        90% {
+          opacity: 0.6;
+        }
+      }
+      .firefly:nth-child(1) {
+        left: 15%;
+        top: 40%;
+        animation-delay: 0.5s;
+        animation-duration: 5s;
+      }
+      .firefly:nth-child(2) {
+        left: 60%;
+        top: 55%;
+        animation-delay: 1s;
+        animation-duration: 4.5s;
+      }
+      .firefly:nth-child(3) {
+        left: 80%;
+        top: 35%;
+        animation-delay: 1.5s;
+        animation-duration: 5.5s;
+      }
+      .firefly:nth-child(4) {
+        left: 30%;
+        top: 60%;
+        animation-delay: 2s;
+        animation-duration: 4.8s;
+      }
+      .firefly:nth-child(5) {
+        left: 70%;
+        top: 45%;
+        animation-delay: 0.8s;
+        animation-duration: 5.2s;
+      } /* Vignette with green tint */
+      .jungle-vignette {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+          circle at center,
+          transparent 0%,
+          rgba(11, 20, 16, 0.7) 70%,
+          #0a0f0d 100%
+        );
+        animation: vignetteBreath 4s ease-in-out infinite;
+      }
+      @keyframes vignetteBreath {
+        0%,
+        100% {
+          opacity: 0.6;
+        }
+        50% {
+          opacity: 0.9;
+        }
+      } /* Vines/Lianas */
+      .vines-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      .vine {
+        position: absolute;
+        width: 8px;
+        background: linear-gradient(
+          to bottom,
+          rgba(34, 80, 34, 0.8) 0%,
+          rgba(50, 100, 50, 0.7) 30%,
+          rgba(40, 90, 40, 0.6) 60%,
+          rgba(30, 70, 30, 0.5) 100%
+        );
+        border-radius: 4px;
+        top: -20%;
+        opacity: 0;
+        animation: vineGrow 3s ease-out forwards;
+        transform-origin: top center;
+      }
+      .vine::before,
+      .vine::after {
+        content: "";
+        position: absolute;
+        background: rgba(60, 120, 60, 0.6);
+        border-radius: 50%;
+      } /* Vine leaves */
+      .vine::before {
+        width: 15px;
+        height: 20px;
+        top: 30%;
+        left: -12px;
+        border-radius: 0 50% 50% 0;
+        animation: vineLeafSway 3s ease-in-out infinite;
+      }
+      .vine::after {
+        width: 15px;
+        height: 20px;
+        top: 60%;
+        right: -12px;
+        border-radius: 50% 0 0 50%;
+        animation: vineLeafSway 3s ease-in-out infinite;
+        animation-delay: 0.5s;
+      }
+      @keyframes vineGrow {
+        0% {
+          height: 0;
+          opacity: 0;
+        }
+        20% {
+          opacity: 0.8;
+        }
+        100% {
+          height: 120vh;
+          opacity: 1;
+        }
+      }
+      @keyframes vineLeafSway {
+        0%,
+        100% {
+          transform: rotate(0deg) scale(1);
+        }
+        50% {
+          transform: rotate(15deg) scale(1.1);
+        }
+      } /* Individual vine positioning and timing */
+      .vine:nth-child(1) {
+        left: 5%;
+        width: 10px;
+        animation-delay: 0.2s;
+        animation-duration: 2.8s;
+      }
+      .vine:nth-child(2) {
+        left: 18%;
+        width: 7px;
+        animation-delay: 0.5s;
+        animation-duration: 3.2s;
+      }
+      .vine:nth-child(3) {
+        left: 35%;
+        width: 9px;
+        animation-delay: 0.3s;
+        animation-duration: 3s;
+      }
+      .vine:nth-child(4) {
+        right: 35%;
+        width: 8px;
+        animation-delay: 0.7s;
+        animation-duration: 2.9s;
+      }
+      .vine:nth-child(5) {
+        right: 18%;
+        width: 11px;
+        animation-delay: 0.4s;
+        animation-duration: 3.1s;
+      }
+      .vine:nth-child(6) {
+        right: 5%;
+        width: 7px;
+        animation-delay: 0.6s;
+        animation-duration: 3.3s;
+      } /* Vine tendrils (curly parts) */
+      .vine-tendril {
+        position: absolute;
+        width: 3px;
+        height: 40px;
+        background: transparent;
+        border: 2px solid rgba(50, 100, 50, 0.5);
+        border-radius: 50%;
+        animation: tendrilCurl 2s ease-in-out infinite;
+      }
+      .vine:nth-child(1) .vine-tendril {
+        top: 40%;
+        left: -8px;
+      }
+      .vine:nth-child(2) .vine-tendril {
+        top: 50%;
+        right: -8px;
+        animation-delay: 0.3s;
+      }
+      .vine:nth-child(3) .vine-tendril {
+        top: 35%;
+        left: -8px;
+        animation-delay: 0.6s;
+      }
+      .vine:nth-child(4) .vine-tendril {
+        top: 45%;
+        right: -8px;
+        animation-delay: 0.2s;
+      }
+      .vine:nth-child(5) .vine-tendril {
+        top: 55%;
+        left: -8px;
+        animation-delay: 0.5s;
+      }
+      .vine:nth-child(6) .vine-tendril {
+        top: 38%;
+        right: -8px;
+        animation-delay: 0.4s;
+      }
+      @keyframes tendrilCurl {
+        0%,
+        100% {
+          transform: rotate(0deg);
+          border-radius: 50% 50% 50% 0;
+        }
+        50% {
+          transform: rotate(180deg);
+          border-radius: 0 50% 50% 50%;
+        }
+      } /* Ground vegetation */
+      .ground-plants {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 40%;
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-end;
+        z-index: 2;
+      } /* Ferns */
+      .fern {
+        position: relative;
+        width: 80px;
+        height: 0;
+        opacity: 0;
+        animation: plantGrowUp 2.5s ease-out forwards;
+      }
+      @keyframes plantGrowUp {
+        0% {
+          height: 0;
+          opacity: 0;
+        }
+        20% {
+          opacity: 0.6;
+        }
+        100% {
+          height: 120px;
+          opacity: 1;
+        }
+      }
+      .fern-stem {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(
+          to top,
+          #2d5016 0%,
+          #3a6b1f 50%,
+          #4a7c2e 100%
+        );
+        border-radius: 2px;
+        transform: translateX(-50%);
+      } /* Fern leaves */
+      .fern-leaf {
+        position: absolute;
+        left: 50%;
+        width: 35px;
+        height: 15px;
+        background: linear-gradient(
+          to right,
+          transparent 0%,
+          #3a6b1f 20%,
+          #4a7c2e 80%,
+          transparent 100%
+        );
+        border-radius: 50%;
+        transform-origin: left center;
+        animation: fernSway 3s ease-in-out infinite;
+      }
+      .fern-leaf.left {
+        transform: translateX(-100%) rotate(-45deg);
+      }
+      .fern-leaf.right {
+        transform: rotate(45deg);
+        background: linear-gradient(
+          to left,
+          transparent 0%,
+          #3a6b1f 20%,
+          #4a7c2e 80%,
+          transparent 100%
+        );
+      }
+      .fern-leaf:nth-child(2) {
+        bottom: 20%;
+      }
+      .fern-leaf:nth-child(3) {
+        bottom: 40%;
+      }
+      .fern-leaf:nth-child(4) {
+        bottom: 60%;
+      }
+      .fern-leaf:nth-child(5) {
+        bottom: 80%;
+      }
+      @keyframes fernSway {
+        0%,
+        100% {
+          transform: translateX(-100%) rotate(-45deg);
+        }
+        50% {
+          transform: translateX(-105%) rotate(-50deg);
+        }
+      }
+      .fern-leaf.right {
+        animation-name: fernSwayRight;
+      }
+      @keyframes fernSwayRight {
+        0%,
+        100% {
+          transform: rotate(45deg);
+        }
+        50% {
+          transform: rotate(50deg);
+        }
+      } /* Bushes */
+      .bush {
+        position: relative;
+        width: 100px;
+        height: 0;
+        opacity: 0;
+        animation: bushGrow 2.2s ease-out forwards;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+      }
+      @keyframes bushGrow {
+        0% {
+          height: 0;
+          opacity: 0;
+          transform: scale(0.5);
+        }
+        30% {
+          opacity: 0.7;
+        }
+        100% {
+          height: 80px;
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .bush-cluster {
+        position: absolute;
+        bottom: 0;
+        width: 40px;
+        height: 40px;
+        background: radial-gradient(
+          ellipse at center,
+          #2d5016 0%,
+          #3a6b1f 60%,
+          transparent 100%
+        );
+        border-radius: 50% 50% 0 0;
+        animation: bushRustle 4s ease-in-out infinite;
+      }
+      .bush-cluster:nth-child(1) {
+        left: 10%;
+        width: 45px;
+        height: 45px;
+      }
+      .bush-cluster:nth-child(2) {
+        left: 35%;
+        width: 50px;
+        height: 50px;
+        animation-delay: 0.3s;
+      }
+      .bush-cluster:nth-child(3) {
+        right: 35%;
+        width: 42px;
+        height: 42px;
+        animation-delay: 0.6s;
+      }
+      .bush-cluster:nth-child(4) {
+        right: 10%;
+        width: 48px;
+        height: 48px;
+        animation-delay: 0.9s;
+      }
+      @keyframes bushRustle {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      } /* Grass blades */
+      .grass-container {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 50px;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: flex-end;
+      }
+      .grass-blade {
+        width: 3px;
+        height: 0;
+        background: linear-gradient(to top, #2d5016 0%, #4a7c2e 100%);
+        border-radius: 50% 50% 0 0;
+        opacity: 0;
+        animation: grassGrow 1.8s ease-out forwards;
+        transform-origin: bottom center;
+      }
+      @keyframes grassGrow {
+        0% {
+          height: 0;
+          opacity: 0;
+        }
+        30% {
+          opacity: 0.8;
+        }
+        100% {
+          height: 35px;
+          opacity: 1;
+        }
+      }
+      .grass-blade:nth-child(odd) {
+        animation: grassSway 2s ease-in-out infinite;
+      }
+      .grass-blade:nth-child(even) {
+        animation: grassSwayAlt 2.5s ease-in-out infinite;
+      }
+      @keyframes grassSway {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(-3deg);
+        }
+        75% {
+          transform: rotate(3deg);
+        }
+      }
+      @keyframes grassSwayAlt {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(3deg);
+        }
+        75% {
+          transform: rotate(-3deg);
+        }
+      } /* Individual timing for ground plants */
+      .fern:nth-child(1) {
+        animation-delay: 0.3s;
+      }
+      .fern:nth-child(2) {
+        animation-delay: 0.6s;
+      }
+      .fern:nth-child(3) {
+        animation-delay: 0.9s;
+      }
+      .fern:nth-child(4) {
+        animation-delay: 1.2s;
+      }
+      .bush:nth-child(1) {
+        animation-delay: 0.4s;
+      }
+      .bush:nth-child(2) {
+        animation-delay: 0.7s;
+      }
+      .bush:nth-child(3) {
+        animation-delay: 1s;
+      }
+      .grass-blade:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .grass-blade:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+      .grass-blade:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+      .grass-blade:nth-child(4) {
+        animation-delay: 0.25s;
+      }
+      .grass-blade:nth-child(5) {
+        animation-delay: 0.3s;
+      }
+      .grass-blade:nth-child(6) {
+        animation-delay: 0.35s;
+      }
+      .grass-blade:nth-child(7) {
+        animation-delay: 0.4s;
+      }
+      .grass-blade:nth-child(8) {
+        animation-delay: 0.45s;
+      }
+      .grass-blade:nth-child(9) {
+        animation-delay: 0.5s;
+      }
+      .grass-blade:nth-child(10) {
+        animation-delay: 0.55s;
+      }
+    </style>
+    <title>Akantilado: Sound Design</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
+    <meta
+      name="description"
+      content="Akantilado: immersive sound design for 3D jungle animation featuring foley, ambience, and character audio. Professional audio storytelling by Igor Szuniewicz."
+    />
+    <meta name="robots" content="index, follow" />
+    <link
+      rel="canonical"
+      href="https://igorszuniewicz.com/projects/akantilado.html"
+    />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* === RESET & BASE === */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(11, 20, 16, 0.85) 0%,
+            rgba(15, 29, 20, 0.9) 60%,
+            rgba(11, 20, 16, 0.95) 100%
+          ),
+          url("../assets/images/projects-akantilado/background/Jungle.jpg")
+            center/cover no-repeat fixed;
+        color: #f0fff0;
+        font-family: "Poppins", sans-serif;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+      } /* === CONTENT WRAPPER === */
+      .content {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      } /* === BACK BUTTON === */
+      .back-button {
+        position: fixed;
+        top: 2rem;
+        left: 2rem;
+        z-index: 100;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.8rem 1.5rem;
+        background: rgba(16, 28, 20, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(50, 205, 50, 0.4);
+        border-radius: 50px;
+        color: #90ee90;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      }
+      .back-button:hover {
+        background: rgba(30, 60, 20, 0.8);
+        border-color: #ffd700;
+        transform: translateX(-5px);
+        box-shadow: 0 6px 30px rgba(255, 165, 0, 0.4);
+        color: #ffd700;
+      }
+      .back-button::before {
+        content: "";
+        font-size: 1.2rem;
+        font-weight: bold;
+      } /* === LANGUAGE SWITCHER === */
+      .lang-switcher {
+        position: fixed !important;
+        top: 2rem !important;
+        right: 2rem !important;
+        z-index: 1000 !important;
+        display: flex !important;
+        gap: 0.5rem;
+        background: rgba(16, 28, 20, 0.7) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(50, 205, 50, 0.4) !important;
+        border-radius: 50px;
+        padding: 0.5rem;
+        box-shadow:
+          0 4px 20px rgba(0, 0, 0, 0.5),
+          0 0 20px rgba(50, 205, 50, 0.2) !important;
+      }
+      .lang-btn {
+        padding: 0.5rem 1rem;
+        background: transparent;
+        border: none;
+        border-radius: 50px;
+        color: #999 !important;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 0.9rem;
+        font-family: "Poppins", sans-serif;
+        transition: all 0.3s ease;
+        display: flex !important;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .lang-btn:hover {
+        color: #90ee90 !important;
+        background: rgba(50, 205, 50, 0.15);
+      }
+      .lang-btn.active {
+        color: #90ee90 !important;
+        background: rgba(50, 205, 50, 0.25);
+        font-weight: 600;
+      }
+      .lang-flag {
+        width: 20px;
+        height: 14px;
+        border-radius: 2px;
+        overflow: hidden;
+        display: block;
+      } /* === HERO SECTION === */
+      .hero {
+        text-align: center;
+        padding: 8rem 0 4rem;
+        margin-bottom: 3rem;
+        position: relative;
+        background: linear-gradient(
+          135deg,
+          #0b1410 0%,
+          #0f1d14 60%,
+          #0b1410 100%
+        );
+        border-radius: 20px;
+        overflow: hidden;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+          radial-gradient(
+            circle at 25% 30%,
+            rgba(180, 210, 180, 0.06) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 75% 70%,
+            rgba(100, 160, 120, 0.05) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 50% 20%,
+            rgba(200, 220, 200, 0.04) 0%,
+            transparent 60%
+          );
+        pointer-events: none;
+      }
+      .hero h1 {
+        font-family: "Space Grotesk", "Inter", sans-serif;
+        font-size: 4rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        letter-spacing: -0.02em;
+        color: #f0fff0;
+        position: relative;
+        z-index: 1;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+      }
+      .hero .tagline {
+        font-size: 1.2rem;
+        color: #ffd700;
+        font-style: italic;
+        margin-bottom: 2.5rem;
+        position: relative;
+        z-index: 1;
+      } /* === METADATA BADGES === */
+      .meta-badges {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 2.5rem;
+        position: relative;
+        z-index: 2;
+      }
+      .meta-badge {
+        background: rgba(34, 139, 34, 0.15);
+        border: 1px solid rgba(255, 165, 0, 0.3);
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+      }
+      .meta-badge:hover {
+        background: rgba(255, 165, 0, 0.2);
+        border-color: rgba(50, 205, 50, 0.5);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+      .meta-label {
+        display: block;
+        font-size: 0.85rem;
+        color: #999;
+        margin-bottom: 0.4rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .meta-value {
+        display: block;
+        font-weight: 600;
+        color: #90ee90;
+        font-size: 1.1rem;
+      } /* === VIDEO SECTION === */
+      .video-section {
+        margin: 4rem 0;
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      .video-section.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .video-section h2 {
+        font-family: "Space Grotesk", "Inter", sans-serif;
+        font-size: 2.2rem;
+        color: #90ee90;
+        margin-bottom: 2rem;
+        font-weight: 700;
+        border-bottom: 2px solid rgba(255, 165, 0, 0.3);
+        padding-bottom: 0.8rem;
+      }
+      .video-container {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(140, 200, 160, 0.3);
+        transition: all 0.4s ease;
+        background: #000;
+      }
+      .video-container:hover {
+        box-shadow:
+          0 30px 80px rgba(0, 0, 0, 0.9),
+          0 0 50px rgba(50, 205, 50, 0.3);
+        border-color: rgba(50, 205, 50, 0.6);
+        transform: scale(1.01) translateY(-3px);
+      }
+      .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+      .video-description {
+        margin-top: 1.5rem;
+        font-style: italic;
+        color: #999;
+        text-align: center;
+        font-size: 0.95rem;
+      } /* === HERO IMAGE === */
+      .hero-image {
+        margin: 4rem 0;
+        text-align: center;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      .hero-image.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .hero-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 20px;
+        transition: transform 0.4s ease;
+      }
+      .hero-image:hover img {
+        transform: scale(1.02);
+      } /* === PROJECT CONTEXT === */
+      .project-context {
+        max-width: 900px;
+        margin: 3rem auto;
+        padding: 2rem;
+        background: rgba(139, 69, 19, 0.05);
+        border: 1px solid rgba(139, 69, 19, 0.2);
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+      }
+      .project-context h3 {
+        font-family: "Cinzel", serif;
+        font-size: 1.5rem;
+        color: #cd853f;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+      }
+      .context-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+      }
+      .context-item {
+        padding: 1rem;
+        background: rgba(139, 69, 19, 0.05);
+        border-radius: 8px;
+        border-left: 3px solid #8b4513;
+      }
+      .context-label {
+        font-size: 0.85rem;
+        color: #cd853f;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+      }
+      .context-value {
+        font-size: 1rem;
+        color: #e0e6ed;
+        line-height: 1.6;
+      }
+      .context-collaboration {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(139, 69, 19, 0.2);
+      }
+      .context-collaboration h4 {
+        font-size: 1rem;
+        color: #cd853f;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .context-collaboration p {
+        color: #cbd5e1;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        padding-left: 1.5rem;
+        position: relative;
+      }
+      .context-collaboration p::before {
+        content: "♪";
+        position: absolute;
+        left: 0;
+        color: #cd853f;
+        font-weight: bold;
+        font-size: 1.2rem;
+      } /* === SECTION === */
+      section {
+        margin: 5rem 0;
+        padding: 2.5rem;
+        background: linear-gradient(
+          135deg,
+          rgba(16, 28, 20, 0.5) 0%,
+          rgba(12, 22, 18, 0.4) 100%
+        );
+        border-radius: 20px;
+        border: 1px solid rgba(140, 200, 160, 0.18);
+        backdrop-filter: blur(4px);
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      section.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      section h2 {
+        font-family: "Space Grotesk", "Inter", sans-serif;
+        font-size: 2.2rem;
+        color: #90ee90;
+        margin-bottom: 2rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        border-bottom: 2px solid rgba(255, 165, 0, 0.3);
+        padding-bottom: 0.8rem;
+      }
+      section h3 {
+        font-size: 1.6rem;
+        color: #ffd700;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+      section p {
+        color: rgba(240, 255, 240, 0.9);
+        line-height: 1.7;
+        font-size: 1.05rem;
+        margin-bottom: 1.5rem;
+      } /* === GRID === */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+      .grid-item {
+        background: rgba(10, 40, 10, 0.4);
+        padding: 2rem;
+        border-radius: 15px;
+        border: 1px solid rgba(50, 205, 50, 0.2);
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .grid-item::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #228b22, #ff8c00, #32cd32);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+      .grid-item:hover::before {
+        transform: scaleX(1);
+      }
+      .grid-item:hover {
+        background: rgba(30, 60, 20, 0.5);
+        border-color: rgba(255, 165, 0, 0.4);
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+      }
+      .grid-item h4 {
+        color: #ffd700;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+        font-weight: 700;
+      } /* === GALLERY === */
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+      .gallery-item {
+        position: relative;
+        border-radius: 15px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(140, 200, 160, 0.2);
+      }
+      .gallery-item:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow:
+          0 20px 50px rgba(0, 0, 0, 0.8),
+          0 0 30px rgba(50, 205, 50, 0.3);
+        border-color: rgba(50, 205, 50, 0.5);
+      }
+      .gallery-item img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        transition: all 0.4s ease;
+        filter: brightness(0.85) contrast(1.1);
+      }
+      .gallery-item:hover img {
+        transform: scale(1.08);
+        filter: brightness(0.95) contrast(1.15);
+      }
+      .gallery-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.95));
+        color: #ffd700;
+        padding: 2rem 1.5rem 1.5rem;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+      }
+      .gallery-item:hover .gallery-overlay {
+        transform: translateY(0);
+      }
+      .gallery-overlay span {
+        font-weight: 600;
+        font-size: 1.1rem;
+      } /* === BUTTON === */
+      .button-container {
+        text-align: center;
+        margin: 4rem 0;
+      }
+      .button {
+        display: inline-block;
+        padding: 1.2rem 3rem;
+        background: linear-gradient(135deg, #228b22 0%, #ff8c00 100%);
+        border: 2px solid transparent;
+        border-radius: 50px;
+        color: #f0fff0;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      }
+      .button:hover {
+        background: linear-gradient(135deg, #ff8c00 0%, #32cd32 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(255, 165, 0, 0.4);
+        color: #fff;
+      } /* === FOOTER === */
+      .footer {
+        text-align: center;
+        padding: 3rem 0;
+        color: #666;
+        font-size: 0.9rem;
+        border-top: 1px solid rgba(140, 200, 160, 0.2);
+        margin-top: 5rem;
+      } /* === LIGHTBOX === */
+      .lightbox {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 10000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+      .lightbox.active {
+        display: flex;
+      }
+      .lightbox img {
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 8px;
+        box-shadow: 0 0 50px rgba(50, 205, 50, 0.5);
+      }
+      .lightbox-close {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        font-size: 3rem;
+        color: #fff;
+        cursor: pointer;
+        z-index: 10001;
+      } /* === RESPONSIVE === */
+      @media (max-width: 768px) {
+        .content {
+          padding: 1.5rem;
+        }
+        .back-button,
+        .lang-switcher {
+          top: 1rem;
+          left: 1rem;
+          right: 1rem;
+        }
+        .lang-switcher {
+          right: 1rem;
+          left: auto;
+          gap: 0.4rem;
+          padding: 0.4rem;
+        }
+        .lang-btn {
+          padding: 0.4rem 0.8rem;
+          font-size: 0.8rem;
+        }
+        .back-button {
+          padding: 0.6rem 1.2rem;
+          font-size: 0.8rem;
+          gap: 0.6rem;
+        }
+        .hero {
+          padding: 3rem 1rem 2rem;
+          margin-bottom: 2rem;
+        }
+        .hero h1 {
+          font-size: clamp(2rem, 8vw, 2.5rem);
+          margin-bottom: 0.75rem;
+        }
+        .hero .tagline {
+          font-size: 1rem;
+          margin-bottom: 2rem;
+          line-height: 1.5;
+        }
+        .meta-badges {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.75rem;
+          margin-top: 2rem;
+        }
+        .meta-badge {
+          padding: 0.75rem 1rem;
+          border-radius: 8px;
+        }
+        .meta-label {
+          font-size: 0.75rem;
+          margin-bottom: 0.3rem;
+        }
+        .meta-value {
+          font-size: 0.95rem;
+        }
+        section {
+          padding: 1.75rem 1.25rem;
+          margin: 3rem 0;
+          border-radius: 12px;
+        }
+        section h2 {
+          font-size: clamp(1.5rem, 6vw, 1.8rem);
+          margin-bottom: 1.5rem;
+          padding-bottom: 0.6rem;
+        }
+        section h3 {
+          font-size: 1.3rem;
+          margin-bottom: 0.8rem;
+        }
+        section p {
+          font-size: 0.95rem;
+          line-height: 1.6;
+          margin-bottom: 1.25rem;
+        }
+        .video-section h2 {
+          font-size: clamp(1.5rem, 6vw, 1.8rem);
+          margin-bottom: 1.5rem;
+        }
+        .video-container {
+          border-radius: 12px;
+        }
+        .video-description {
+          font-size: 0.85rem;
+          margin-top: 1.25rem;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+          gap: 1.25rem;
+          margin-top: 1.5rem;
+        }
+        .grid-item {
+          padding: 1.5rem;
+          border-radius: 10px;
+        }
+        .grid-item h4 {
+          font-size: 1.1rem;
+          margin-bottom: 0.8rem;
+        }
+        .gallery-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
+          margin-top: 1.5rem;
+        }
+        .gallery-item img {
+          height: 180px;
+        }
+        .button {
+          padding: 1rem 2.5rem;
+          font-size: 1rem;
+        }
+      }
+      @media (max-width: 480px) {
+        .content {
+          padding: 1rem;
+        }
+        .back-button,
+        .lang-switcher {
+          top: 0.75rem;
+          left: 0.75rem;
+          right: 0.75rem;
+        }
+        .lang-switcher {
+          right: 0.75rem;
+          left: auto;
+          gap: 0.3rem;
+          padding: 0.3rem;
+        }
+        .lang-btn {
+          padding: 0.3rem 0.6rem;
+          font-size: 0.7rem;
+        }
+        .back-button {
+          padding: 0.5rem 1rem;
+          font-size: 0.75rem;
+          gap: 0.5rem;
+        }
+        .hero {
+          padding: 2.5rem 0.75rem 1.75rem;
+          margin-bottom: 1.5rem;
+        }
+        .hero h1 {
+          font-size: clamp(1.5rem, 8vw, 2rem);
+          margin-bottom: 0.6rem;
+        }
+        .hero .tagline {
+          font-size: 0.9rem;
+          margin-bottom: 1.5rem;
+          line-height: 1.4;
+        }
+        .meta-badges {
+          grid-template-columns: 1fr;
+          gap: 0.6rem;
+          margin-top: 1.5rem;
+        }
+        .meta-badge {
+          padding: 0.6rem 0.8rem;
+          border-radius: 6px;
+        }
+        .meta-label {
+          font-size: 0.7rem;
+          margin-bottom: 0.25rem;
+        }
+        .meta-value {
+          font-size: 0.85rem;
+        }
+        section {
+          padding: 1.5rem 1rem;
+          margin: 2.5rem 0;
+          border-radius: 10px;
+        }
+        section h2 {
+          font-size: clamp(1.25rem, 6vw, 1.5rem);
+          margin-bottom: 1.25rem;
+          padding-bottom: 0.5rem;
+        }
+        section h3 {
+          font-size: 1.1rem;
+          margin-bottom: 0.6rem;
+        }
+        section p {
+          font-size: 0.85rem;
+          line-height: 1.5;
+          margin-bottom: 1rem;
+        }
+        .video-section h2 {
+          font-size: clamp(1.25rem, 6vw, 1.5rem);
+          margin-bottom: 1.25rem;
+        }
+        .video-container {
+          border-radius: 8px;
+        }
+        .video-description {
+          font-size: 0.8rem;
+          margin-top: 1rem;
+        }
+        .grid {
+          gap: 1rem;
+          margin-top: 1.25rem;
+        }
+        .grid-item {
+          padding: 1.25rem;
+          border-radius: 8px;
+        }
+        .grid-item h4 {
+          font-size: 1rem;
+          margin-bottom: 0.6rem;
+        }
+        .gallery-grid {
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+          margin-top: 1.25rem;
+        }
+        .gallery-item img {
+          height: 160px;
+        }
+        .button {
+          padding: 0.8rem 2rem;
+          font-size: 0.9rem;
+        }
+      }
+      @media (max-width: 374px) {
+        .content {
+          padding: 0.75rem;
+        }
+        .back-button,
+        .lang-switcher {
+          top: 0.5rem;
+          left: 0.5rem;
+          right: 0.5rem;
+        }
+        .lang-switcher {
+          right: 0.5rem;
+          left: auto;
+          gap: 0.25rem;
+          padding: 0.25rem;
+        }
+        .lang-btn {
+          padding: 0.25rem 0.5rem;
+          font-size: 0.65rem;
+        }
+        .back-button {
+          padding: 0.4rem 0.8rem;
+          font-size: 0.7rem;
+          gap: 0.4rem;
+        }
+        .hero {
+          padding: 2rem 0.5rem 1.5rem;
+          margin-bottom: 1.25rem;
+        }
+        .hero h1 {
+          font-size: clamp(1.25rem, 8vw, 1.5rem);
+          margin-bottom: 0.5rem;
+        }
+        .hero .tagline {
+          font-size: 0.8rem;
+          margin-bottom: 1.25rem;
+          line-height: 1.3;
+        }
+        .meta-badges {
+          gap: 0.5rem;
+          margin-top: 1.25rem;
+        }
+        .meta-badge {
+          padding: 0.5rem 0.7rem;
+          border-radius: 5px;
+        }
+        .meta-label {
+          font-size: 0.65rem;
+          margin-bottom: 0.2rem;
+        }
+        .meta-value {
+          font-size: 0.8rem;
+        }
+        section {
+          padding: 1.25rem 0.8rem;
+          margin: 2rem 0;
+          border-radius: 8px;
+        }
+        section h2 {
+          font-size: clamp(1rem, 6vw, 1.25rem);
+          margin-bottom: 1rem;
+          padding-bottom: 0.4rem;
+        }
+        section h3 {
+          font-size: 1rem;
+          margin-bottom: 0.5rem;
+        }
+        section p {
+          font-size: 0.8rem;
+          line-height: 1.4;
+          margin-bottom: 0.8rem;
+        }
+        .video-section h2 {
+          font-size: clamp(1rem, 6vw, 1.25rem);
+          margin-bottom: 1rem;
+        }
+        .video-container {
+          border-radius: 6px;
+        }
+        .video-description {
+          font-size: 0.75rem;
+          margin-top: 0.8rem;
+        }
+        .grid {
+          gap: 0.8rem;
+          margin-top: 1rem;
+        }
+        .grid-item {
+          padding: 1rem;
+          border-radius: 6px;
+        }
+        .grid-item h4 {
+          font-size: 0.9rem;
+          margin-bottom: 0.5rem;
+        }
+        .gallery-item img {
+          height: 140px;
+        }
+        .button {
+          padding: 0.7rem 1.75rem;
+          font-size: 0.85rem;
+        }
+      } /* FIX: hero and first content section always visible */
+      .hero {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+      }
+      .video-section:first-of-type,
+      section:first-of-type {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+      } /* Hide audio players with placeholder audio */
+      .audio-player[data-audio*="placeholder.wav"] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body style="background: #0b1410; margin: 0; padding: 0">
+    <!-- Jungle Entrance Animation -->
+    <div class="jungle-entrance">
+      <div class="jungle-vignette"></div>
+      <div class="light-rays"></div>
+      <div class="vines-container">
+        <div class="vine"><div class="vine-tendril"></div></div>
+        <div class="vine"><div class="vine-tendril"></div></div>
+        <div class="vine"><div class="vine-tendril"></div></div>
+        <div class="vine"><div class="vine-tendril"></div></div>
+        <div class="vine"><div class="vine-tendril"></div></div>
+        <div class="vine"><div class="vine-tendril"></div></div>
+      </div>
+      <div class="leaves-container">
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+      </div>
+      <div class="birds-container">
+        <div class="bird"></div>
+        <div class="bird"></div>
+        <div class="bird"></div>
+      </div>
+      <div class="firefly"></div>
+      <div class="firefly"></div>
+      <div class="firefly"></div>
+      <div class="firefly"></div>
+      <div class="firefly"></div>
+      <div class="ground-plants">
+        <div class="fern">
+          <div class="fern-stem"></div>
+          <div class="fern-leaf left"></div>
+          <div class="fern-leaf right"></div>
+          <div class="fern-leaf left"></div>
+          <div class="fern-leaf right"></div>
+          <div class="fern-leaf left"></div>
+        </div>
+        <div class="bush">
+          <div class="bush-cluster"></div>
+          <div class="bush-cluster"></div>
+          <div class="bush-cluster"></div>
+          <div class="bush-cluster"></div>
+        </div>
+        <div class="fern">
+          <div class="fern-stem"></div>
+          <div class="fern-leaf left"></div>
+          <div class="fern-leaf right"></div>
+          <div class="fern-leaf left"></div>
+          <div class="fern-leaf right"></div>
+          <div class="fern-leaf left"></div>
+        </div>
+        <div class="bush">
+          <div class="bush-cluster"></div>
+          <div class="bush-cluster"></div>
+          <div class="bush-cluster"></div>
+          <div class="bush-cluster"></div>
+        </div>
+        <div class="fern">
+          <div class="fern-stem"></div>
+          <div class="fern-leaf left"></div>
+          <div class="fern-leaf right"></div>
+          <div class="fern-leaf left"></div>
+          <div class="fern-leaf right"></div>
+          <div class="fern-leaf left"></div>
+        </div>
+      </div>
+      <div class="grass-container">
+        <div class="grass-blade"></div>
+        <div class="grass-blade"></div>
+        <div class="grass-blade"></div>
+        <div class="grass-blade"></div>
+        <div class="grass-blade"></div>
+        <div class="grass-blade"></div>
+        <div class="grass-blade"></div>
+        <div class="grass-blade"></div>
+        <div class="grass-blade"></div>
+        <div class="grass-blade"></div>
+      </div>
+      <div class="akantilado-title">AKANTILADO</div>
+    </div>
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+      <span class="lightbox-close" id="lightbox-close">&times;</span>
+      <img id="lightbox-img" src="" alt="" loading="lazy" decoding="async" />
+    </div>
+    <!-- Content -->
+    <div class="content">
+      <!-- Language Switcher -->
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="en">
+          <svg
+            class="lang-flag"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 60 30"
+          >
+            <rect width="60" height="30" fill="#012169" />
+            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" />
+            <path
+              d="M0,0 L60,30 M60,0 L0,30"
+              stroke="#C8102E"
+              stroke-width="4"
+            />
+            <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" />
+            <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" />
+          </svg>
+          <span>EN</span>
+        </button>
+        <button class="lang-btn" data-lang="pl">
+          <svg
+            class="lang-flag"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 10"
+          >
+            <rect width="16" height="5" fill="#fff" />
+            <rect y="5" width="16" height="5" fill="#dc143c" />
+          </svg>
+          <span>PL</span>
+        </button>
+        <button class="lang-btn" data-lang="nl">
+          <svg
+            class="lang-flag"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 9 6"
+          >
+            <rect width="9" height="6" fill="#21468B" />
+            <rect width="9" height="4" fill="#fff" />
+            <rect width="9" height="2" fill="#AE1C28" />
+          </svg>
+          <span>NL</span>
+        </button>
+      </div>
+      <!-- Back Button -->
+      <a href="/projects/" class="back-button">
+        <span data-i18n="back">Back to Projects</span>
+      </a>
+      <!-- Hero -->
+      <section class="hero">
+        <div class="meta-badges">
+          <div class="meta-badge">
+            <span class="meta-label" data-i18n="meta.role.label">Role</span>
+            <span class="meta-value" data-i18n="meta.role.value"
+              >Sound Designer</span
+            >
+          </div>
+          <div class="meta-badge">
+            <span class="meta-label" data-i18n="meta.setting.label"
+              >Setting</span
+            >
+            <span class="meta-value" data-i18n="meta.setting.value"
+              >Jungle Adventure</span
+            >
+          </div>
+          <div class="meta-badge">
+            <span class="meta-label" data-i18n="meta.characters.label"
+              >Characters</span
+            >
+            <span class="meta-value" data-i18n="meta.characters.value"
+              >Two Cat Creatures</span
+            >
+          </div>
+          <div class="meta-badge">
+            <span class="meta-label" data-i18n="meta.theme.label">Theme</span>
+            <span class="meta-value" data-i18n="meta.theme.value"
+              >Love vs Greed</span
+            >
+          </div>
+        </div>
+        <h1 data-i18n="title">Akantilado: Sound Design</h1>
+        <p class="tagline" data-i18n="tagline">
+          A heartwarming jungle adventure where love triumphs over greed through
+          immersive audio storytelling.
+        </p>
+      </section>
+      <!-- Project Context -->
+      <section class="project-context">
+        <h3 data-i18n="context.title">Project Context</h3>
+        <div class="context-grid">
+          <div class="context-item">
+            <div class="context-label" data-i18n="context.type_label">Type</div>
+            <div class="context-value" data-i18n="context.type_value">
+              Student Animation Project
+            </div>
+          </div>
+          <div class="context-item">
+            <div class="context-label" data-i18n="context.institution_label">
+              Institution
+            </div>
+            <div class="context-value" data-i18n="context.institution_value">
+              Howest DAE
+            </div>
+          </div>
+          <div class="context-item">
+            <div class="context-label" data-i18n="context.year_label">Year</div>
+            <div class="context-value" data-i18n="context.year_value">2024</div>
+          </div>
+          <div class="context-item">
+            <div class="context-label" data-i18n="context.duration_label">
+              Duration
+            </div>
+            <div class="context-value" data-i18n="context.duration_value">
+              4 months
+            </div>
+          </div>
+          <div class="context-item">
+            <div class="context-label" data-i18n="context.role_label">
+              My Role
+            </div>
+            <div class="context-value" data-i18n="context.role_value">
+              Sound Designer
+            </div>
+          </div>
+        </div>
+        <div class="context-collaboration">
+          <h4 data-i18n="context.collaboration_title">Collaboration</h4>
+          <p data-i18n="context.collaboration_desc">
+            Worked with composer Noah Bots from Ghent Conservatory for the
+            musical score, while handling all sound design, foley, and spatial
+            audio mixing.
+          </p>
+        </div>
+      </section>
+      <!-- Video Context -->
+      <div class="video-section">
+        <h2 data-i18n="showcase.title">Audio in Context</h2>
+        <div class="video-container">
+          <iframe
+            data-lazy-iframe
+            data-src="https://www.youtube.com/embed/ALQy5r7B1Bw"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <p class="video-description" data-i18n="showcase.desc">
+          Experience how sound design drives the emotional journey: playful
+          jungle ambience evolves into tense suspense, culminating in heartfelt
+          resolution. Every audio element supports character development and
+          narrative transformation.
+        </p>
+      </div>
+      <!-- Audio-Driven Narrative -->
+      <section>
+        <h2 data-i18n="overview.title">Audio-Driven Storytelling</h2>
+        <p data-i18n="overview.desc">
+          Akantilado's jungle world is built through immersive soundscapes. From
+          competitive chase sequences to moments of sacrifice, audio design
+          guides the emotional transformation from greed to love, using layered
+          foley, character vocalizations, and dynamic ambience.
+        </p>
+      </section>
+      <!-- Jungle Ambience Design -->
+      <section>
+        <h2 data-i18n="philosophy.title">Jungle Audio Design</h2>
+        <p data-i18n="philosophy.jungle.desc">
+          Rustling leaves, distant calls, flowing water, wind through trees.
+          Layered natural recordings make the jungle feel alive and real.
+        </p>
+        <div class="grid">
+          <div class="grid-item">
+            <h4 data-i18n="philosophy.jungle.layered_title">
+              Layered Natural Elements
+            </h4>
+            <p data-i18n="philosophy.jungle.layered_desc">
+              Rustling leaves, distant calls, flowing water. Creates the jungle
+              atmosphere
+            </p>
+          </div>
+          <div class="grid-item">
+            <h4 data-i18n="philosophy.jungle.spatial_title">
+              Dynamic Spatial Mixing
+            </h4>
+            <p data-i18n="philosophy.jungle.spatial_desc">
+              Soundscapes adapt to camera movement and action intensity
+            </p>
+          </div>
+          <div class="grid-item">
+            <h4 data-i18n="philosophy.jungle.organic_title">
+              Organic Texture Palette
+            </h4>
+            <p data-i18n="philosophy.jungle.organic_desc">
+              Field recordings processed to keep that natural feel
+            </p>
+          </div>
+        </div>
+      </section>
+      <!-- Character Vocalizations -->
+      <section>
+        <h2 data-i18n="philosophy.character.title">
+          Character Audio & Movement
+        </h2>
+        <p data-i18n="philosophy.character.desc">
+          Each cat has its own voice and movement sounds. Orange is determined,
+          pink is graceful. Their voices evolve from competitive to caring.
+        </p>
+        <div class="grid">
+          <div class="grid-item">
+            <h4 data-i18n="philosophy.character.personalities_title">
+              Distinct Personalities
+            </h4>
+            <p data-i18n="philosophy.character.personalities_desc">
+              Unique vocal signatures through pitch, timbre, expression
+            </p>
+          </div>
+          <div class="grid-item">
+            <h4 data-i18n="philosophy.character.foley_title">Movement Foley</h4>
+            <p data-i18n="philosophy.character.foley_desc">
+              Paw steps, vegetation sounds, climbing. Tailored to each character
+            </p>
+          </div>
+          <div class="grid-item">
+            <h4 data-i18n="philosophy.character.evolution_title">
+              Emotional Evolution
+            </h4>
+            <p data-i18n="philosophy.character.evolution_desc">
+              Vocalizations transform from competitive to caring
+            </p>
+          </div>
+        </div>
+      </section>
+      <!-- Emotional Audio Journey -->
+      <section>
+        <h2 data-i18n="philosophy.emotional.title">Emotional Audio Arc</h2>
+        <p data-i18n="philosophy.emotional.desc">
+          Audio mirrors the emotional journey. Playful energy turns into
+          tension, then resolves into something tender. Each phase uses
+          soundscapes to guide you through the transformation.
+        </p>
+        <div class="grid">
+          <div class="grid-item">
+            <h4 data-i18n="philosophy.emotional.chase_title">
+              Playful Chase Phase
+            </h4>
+            <p data-i18n="philosophy.emotional.chase_desc">
+              Upbeat rhythms, light foley, bright jungle sounds. Establishes the
+              competition
+            </p>
+          </div>
+          <div class="grid-item">
+            <h4 data-i18n="philosophy.emotional.tension_title">
+              Tension & Suspense
+            </h4>
+            <p data-i18n="philosophy.emotional.tension_desc">
+              Low rumbles, sparse ambience, wind effects. Builds the cliff edge
+              crisis
+            </p>
+          </div>
+          <div class="grid-item">
+            <h4 data-i18n="philosophy.emotional.resolution_title">
+              Heartfelt Resolution
+            </h4>
+            <p data-i18n="philosophy.emotional.resolution_desc">
+              Gentle musical sting, soft voices, peaceful ambience. Love wins
+            </p>
+          </div>
+        </div>
+      </section>
+      <!-- Technical Audio Implementation -->
+      <section>
+        <h2 data-i18n="technical.title">Technical Sound Design</h2>
+        <div class="grid">
+          <div class="grid-item">
+            <h4 data-i18n="technical.foley.title">Custom Foley Library</h4>
+            <p data-i18n="technical.foley.desc">
+              Comprehensive foley for cat-like creature movements: paw steps on
+              various jungle surfaces, climbing sounds, vegetation interaction.
+              Each sound recorded and processed to match animated characters'
+              unique physiology.
+            </p>
+          </div>
+          <div class="grid-item">
+            <h4 data-i18n="technical.environmental.title">
+              Multi-Zone Ambience
+            </h4>
+            <p data-i18n="technical.environmental.desc">
+              Layered jungle zones - canopy, ground-level, distance
+              perspectives. Mix dynamically shifts with camera movement and
+              pacing, supporting narrative without overwhelming focus.
+            </p>
+          </div>
+          <div class="grid-item">
+            <h4 data-i18n="technical.emotional.title">Seamless Transitions</h4>
+            <p data-i18n="technical.emotional.desc">
+              Sound palette transitions between playful chase, cliff-hanger
+              tension, and emotional resolution. Golden orb's magical shimmer
+              represents temptation and character goals throughout.
+            </p>
+          </div>
+        </div>
+      </section>
+      <!-- Button -->
+      <div class="button-container">
+        <a href="/projects/" class="button" data-i18n="button.projects"
+          >All Projects</a
+        >
+      </div>
+      <!-- Footer -->
+      <footer class="footer">
+        <p>&copy; Igor Szuniewicz 2025. All rights reserved.</p>
+      </footer>
+    </div>
+    <!-- Fixed Player -->
+    <div class="fixed-player" id="fixedPlayer">
+      <div class="fixed-player-top">
+        <button class="fixed-player-btn" id="fixedPlayerBtn">
+          <div class="icon"></div>
+        </button>
+        <div class="fixed-player-info">
+          <div class="fixed-player-title" id="fixedPlayerTitle">
+            Audio Sample
+          </div>
+          <div class="fixed-player-subtitle">Akantilado</div>
+        </div>
+      </div>
+      <div class="fixed-player-progress" id="fixedPlayerProgress">
+        <div
+          class="fixed-player-progress-bar"
+          id="fixedPlayerProgressBar"
+        ></div>
+      </div>
+      <div class="fixed-player-time">
+        <span id="fixedPlayerCurrentTime">0:00</span>
+        <span id="fixedPlayerDuration">0:00</span>
+      </div>
+    </div>
+    <script type="module" src="../assets/js/pages/akantilado.js"></script>
+    <script
+      type="module"
+      src="../assets/js/performance-boost.js"
+      defer
+    ></script>
+  </body>
+</html>
