@@ -6,19 +6,247 @@ Modern, modular JavaScript architecture for Igor Szuniewicz Portfolio.
 
 ```
 assets/js/refactored/
+├── app.js              # Main application entry point
 ├── core/               # Core utilities
 │   ├── EventEmitter.js    - Event system base class
 │   └── config.js          - Centralized configuration
 ├── utils/              # Helper utilities
-│   └── storage.js         - LocalStorage wrapper
-└── components/         # UI Components
-    ├── Navigation.js      - Header navigation
-    ├── Modal.js           - Modal dialogs
-    ├── Toast.js           - Toast notifications
-    └── AudioPlayer.js     - Full-featured audio player
+│   ├── storage.js         - LocalStorage wrapper
+│   ├── dom.js            - DOM manipulation utilities (40+ functions)
+│   └── helpers.js        - General utilities (60+ functions)
+├── components/         # UI Components
+│   ├── Navigation.js      - Header navigation
+│   ├── Modal.js           - Modal dialogs
+│   ├── Toast.js           - Toast notifications
+│   └── AudioPlayer.js     - Full-featured audio player
+└── services/           # Business logic services
+    ├── TranslationService.js - Internationalization (i18n)
+    └── AnalyticsService.js   - Google Analytics 4 integration
 ```
 
 ## 🚀 Quick Start
+
+### App Initialization
+
+The main app entry point initializes all services and components:
+
+```javascript
+import { app } from './app.js';
+
+// Initialize with configuration
+await app.init({
+  analyticsId: 'G-XXXXXXXXXX',
+  defaultLanguage: 'en',
+  enableAnalytics: true,
+  debugMode: false
+});
+
+// App is now ready!
+console.log('App initialized:', app.isReady());
+
+// Get services
+const translation = app.getService('translation');
+const analytics = app.getService('analytics');
+
+// Get components
+const navigation = app.getComponent('navigation');
+```
+
+**Auto-initialization:**
+Add attributes to `<html>` tag:
+```html
+<html data-auto-init data-analytics-id="G-XXXXXXXXXX">
+```
+
+### Translation Service
+
+```javascript
+import { translationService } from './services/TranslationService.js';
+
+// Initialize
+await translationService.init();
+
+// Change language
+await translationService.changeLanguage('pl');
+
+// Translate keys
+const text = translationService.translate('nav.home'); // "Home"
+const greeting = translationService.translate('greeting', { name: 'Igor' }); // "Hello, Igor!"
+
+// Get current language
+const lang = translationService.getCurrentLanguage(); // 'en'
+
+// Listen to events
+translationService.on('languageChanged', ({ language }) => {
+  console.log('Language changed to:', language);
+});
+```
+
+**HTML Integration:**
+```html
+<!-- Text content -->
+<p data-i18n="about.intro">Loading...</p>
+
+<!-- Placeholder -->
+<input data-i18n-placeholder="form.email" placeholder="Loading...">
+
+<!-- ARIA label -->
+<button data-i18n-aria-label="buttons.close" aria-label="Loading...">X</button>
+
+<!-- Title attribute -->
+<a data-i18n-title="links.github" title="Loading...">GitHub</a>
+```
+
+### Analytics Service
+
+```javascript
+import { analyticsService } from './services/AnalyticsService.js';
+
+// Initialize
+await analyticsService.init('G-XXXXXXXXXX', {
+  debug: false,
+  anonymizeIp: true
+});
+
+// Set consent
+analyticsService.setConsent(true);
+
+// Track events
+analyticsService.trackEvent('button_click', {
+  button_name: 'download',
+  button_location: 'hero'
+});
+
+// Track page views
+analyticsService.trackPageView('/about', 'About - Igor Szuniewicz');
+
+// Track audio playback
+analyticsService.trackAudioPlay('Sample Track', 'Igor Szuniewicz', 180);
+
+// Track project views
+analyticsService.trackProjectView('Akantilado', 'Game Audio');
+
+// Track downloads
+analyticsService.trackDownload('resume.pdf', 'PDF');
+
+// Track outbound links
+analyticsService.trackOutboundLink('https://github.com/user', 'GitHub');
+
+// Track form submissions
+analyticsService.trackFormSubmit('contact-form', 'contact');
+
+// Track errors
+analyticsService.trackError('Failed to load audio', 'AudioPlayer', false);
+
+// Track performance
+analyticsService.trackPerformance('page_load_time', 1250, 'ms');
+```
+
+### DOM Utilities
+
+```javascript
+import { $, $$, on, createElement, fadeIn, slideDown } from './utils/dom.js';
+
+// Element selection
+const header = $('.header');
+const buttons = $$('.btn');
+
+// Event handling with delegation
+on(document, 'click', '.btn', (e) => {
+  console.log('Button clicked:', e.target);
+});
+
+// Create elements
+const div = createElement('div', {
+  className: 'card',
+  id: 'card-1'
+}, [
+  createElement('h2', {}, ['Title']),
+  createElement('p', {}, ['Description'])
+]);
+
+// Animations
+await fadeIn('.modal', 300);
+await slideDown('.dropdown', 300);
+
+// Class manipulation
+addClass('.card', 'active');
+removeClass('.card', 'hidden');
+toggleClass('.menu', 'open');
+
+// Visibility
+show('.modal');
+hide('.modal');
+toggle('.dropdown');
+```
+
+### Helper Utilities
+
+```javascript
+import {
+  debounce,
+  throttle,
+  isValidEmail,
+  formatDate,
+  slugify,
+  deepClone
+} from './utils/helpers.js';
+
+// Function utilities
+const debouncedSearch = debounce((query) => {
+  console.log('Searching:', query);
+}, 300);
+
+const throttledScroll = throttle(() => {
+  console.log('Scroll position:', window.scrollY);
+}, 100);
+
+// Validators
+isValidEmail('user@example.com'); // true
+isValidURL('https://example.com'); // true
+isValidPhone('+1-234-567-8900'); // true
+
+const passwordResult = validatePassword('MyPass123!', {
+  minLength: 8,
+  requireUppercase: true,
+  requireNumber: true,
+  requireSpecial: true
+});
+// { valid: true, strength: 'medium', errors: [] }
+
+// String utilities
+capitalize('hello world'); // 'Hello world'
+titleCase('hello world'); // 'Hello World'
+camelCase('hello-world'); // 'helloWorld'
+kebabCase('helloWorld'); // 'hello-world'
+slugify('Hello World!'); // 'hello-world'
+truncate('Long text here', 10); // 'Long te...'
+
+// Number utilities
+clamp(15, 0, 10); // 10
+random(1, 10); // Random number between 1-10
+formatNumber(1234567); // '1,234,567'
+formatBytes(1048576); // '1 MB'
+percentage(25, 100); // 25
+
+// Date/Time utilities
+formatDate(new Date(), 'YYYY-MM-DD'); // '2025-11-13'
+formatDate(new Date(), 'DD/MM/YYYY HH:mm'); // '13/11/2025 14:30'
+timeAgo(new Date(Date.now() - 3600000)); // '1 hour ago'
+formatTime(90); // '1:30'
+formatTime(3665); // '1:01:05'
+
+// Array utilities
+shuffle([1, 2, 3, 4, 5]); // [3, 1, 5, 2, 4]
+unique([1, 2, 2, 3, 3]); // [1, 2, 3]
+chunk([1, 2, 3, 4, 5], 2); // [[1, 2], [3, 4], [5]]
+
+// Object utilities
+const clone = deepClone({ a: 1, b: { c: 2 } });
+const merged = deepMerge({ a: 1 }, { b: 2 }, { c: 3 });
+pick({ a: 1, b: 2, c: 3 }, ['a', 'c']); // { a: 1, c: 3 }
+omit({ a: 1, b: 2, c: 3 }, ['b']); // { a: 1, c: 3 }
+```
 
 ### Navigation Component
 
@@ -351,15 +579,27 @@ Both can coexist during migration!
 
 ## 📦 Bundle Size
 
-| Component | Size (minified) |
-|-----------|----------------|
+| Component/Service | Size (minified) |
+|-------------------|----------------|
+| **Core** | |
 | EventEmitter | ~1.5 KB |
+| Config | ~3 KB |
+| App | ~4 KB |
+| **Utilities** | |
 | Storage | ~2 KB |
+| DOM Utilities | ~8 KB |
+| Helper Utilities | ~10 KB |
+| **Components** | |
 | Navigation | ~6 KB |
 | Modal | ~5 KB |
 | Toast | ~6 KB |
 | AudioPlayer | ~12 KB |
-| **Total** | **~32 KB** |
+| **Services** | |
+| TranslationService | ~7 KB |
+| AnalyticsService | ~6 KB |
+| **Total** | **~70 KB** |
+
+*Note: These are estimates for minified code. With gzip compression, expect ~40-50% reduction.*
 
 ## 🤝 Contributing
 
