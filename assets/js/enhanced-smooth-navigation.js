@@ -344,19 +344,29 @@
     if (mainEl && pageData.main) {
       mainEl.innerHTML = pageData.main;
     } else {
-      // Fallback: zastąp cały body oprócz headera
-      const header = document.querySelector('header');
+      // Fallback: jeśli nie ma <main>, zastąp cały body ZACHOWUJĄC header
       const newBody = document.createElement('div');
       newBody.innerHTML = pageData.body;
 
-      // Zachowaj header
-      document.body.innerHTML = '';
-      if (header) document.body.appendChild(header);
-
-      // Dodaj nową zawartość
       const newMain = newBody.querySelector('main');
       if (newMain) {
-        document.body.appendChild(newMain);
+        // Jeśli nowa strona ma <main>, dodaj go do body
+        const oldMain = document.querySelector('main');
+        if (oldMain) {
+          oldMain.parentNode.replaceChild(newMain, oldMain);
+        } else {
+          // Nie ma starego <main>, dodaj nowy po headerze
+          const header = document.querySelector('header');
+          if (header && header.nextSibling) {
+            document.body.insertBefore(newMain, header.nextSibling);
+          } else {
+            document.body.appendChild(newMain);
+          }
+        }
+      } else {
+        // Brak <main> na nowej stronie - to nie powinno się zdarzyć
+        // Fallback do standardowej nawigacji
+        throw new Error('No <main> element found in new page');
       }
     }
 
@@ -445,10 +455,12 @@
   }
 
   function reinitializeTranslations() {
-    // Reinicjalizuj BulletproofI18n
-    if (window.BulletproofI18n && typeof window.BulletproofI18n.init === 'function') {
+    // Reinicjalizuj BulletproofI18n (singleton instance)
+    if (window.i18n && typeof window.i18n.init === 'function') {
       log('Reinitializing BulletproofI18n');
-      window.BulletproofI18n.init();
+      window.i18n.init().catch(err => {
+        log('BulletproofI18n reinit failed:', err);
+      });
     }
 
     // Fallback: stary system tłumaczeń
@@ -483,46 +495,20 @@
   }
 
   function reinitializeEventListeners() {
-    // Mobile menu (jeśli nawigacja została przeładowana)
+    // Mobile menu - używamy event delegation więc nie trzeba reinicjalizować
+    // Główny click handler (handleLinkClick) już obsługuje wszystkie kliknięcia
+
+    // Zamknij mobile menu po nawigacji
     const mobileToggle = document.querySelector('.mobile-menu-toggle');
     const mobileMenu = document.querySelector('.mobile-menu');
     const mobileOverlay = document.querySelector('.mobile-menu-overlay');
 
-    if (mobileToggle && mobileMenu) {
-      // Usuń stare listenery poprzez clonowanie
-      const newToggle = mobileToggle.cloneNode(true);
-      mobileToggle.parentNode?.replaceChild(newToggle, mobileToggle);
-
-      newToggle.addEventListener('click', (e) => {
-        e.preventDefault();
-        newToggle.classList.toggle('active');
-        mobileMenu.classList.toggle('active');
-        mobileOverlay?.classList.toggle('active');
-        document.body.classList.toggle('mobile-menu-open');
-      });
+    if (mobileMenu && mobileMenu.classList.contains('active')) {
+      mobileToggle?.classList.remove('active');
+      mobileMenu.classList.remove('active');
+      mobileOverlay?.classList.remove('active');
+      document.body.classList.remove('mobile-menu-open');
     }
-
-    if (mobileOverlay) {
-      const newOverlay = mobileOverlay.cloneNode(true);
-      mobileOverlay.parentNode?.replaceChild(newOverlay, mobileOverlay);
-
-      newOverlay.addEventListener('click', () => {
-        mobileToggle?.classList.remove('active');
-        mobileMenu?.classList.remove('active');
-        newOverlay.classList.remove('active');
-        document.body.classList.remove('mobile-menu-open');
-      });
-    }
-
-    // Zamknij mobile menu po kliknięciu w link
-    document.querySelectorAll('.mobile-nav-links a').forEach(link => {
-      link.addEventListener('click', () => {
-        mobileToggle?.classList.remove('active');
-        mobileMenu?.classList.remove('active');
-        mobileOverlay?.classList.remove('active');
-        document.body.classList.remove('mobile-menu-open');
-      });
-    });
   }
 
   // ============================================================================
