@@ -1,1109 +1,1262 @@
 <!doctype html>
 <html lang="en" style="background: #000">
-  <head>
+
+<head>
     <style>
-      /* CRITICAL: Load immediately before anything else */
-      html,
-      body {
-        background: linear-gradient(
-          180deg,
-          rgba(18, 6, 7, 0.75) 0%,
-          rgba(27, 9, 11, 0.8) 60%,
-          rgba(36, 9, 10, 0.85) 100%
-        );
-        margin: 0;
-        padding: 0; /* Optimized background loading */
-        background-image: linear-gradient(
-          180deg,
-          rgba(18, 6, 7, 0.75) 0%,
-          rgba(27, 9, 11, 0.8) 60%,
-          rgba(36, 9, 10, 0.85) 100%
-        );
-      } /* Optimized background image loading */
-      body.bg-loaded {
-        background-image:
-          linear-gradient(
-            180deg,
-            rgba(18, 6, 7, 0.75) 0%,
-            rgba(27, 9, 11, 0.8) 60%,
-            rgba(36, 9, 10, 0.85) 100%
-          ),
-          url("../assets/images/projects-pausedeserve/backgroun/bgpausedeserve.jpeg");
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-        background-repeat: no-repeat;
-        will-change: transform;
-      } /* Content visible immediately - no animation conflicts */
-      .content {
-        opacity: 1 !important;
-      } /* === SIMPLE HORROR ENTRANCE === */
-      .horror-entrance {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #000;
-        z-index: 99999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        animation: horrorFadeOut 2s ease-in-out forwards;
-        pointer-events: none;
-      }
-      @keyframes horrorFadeOut {
-        0% {
-          opacity: 1;
+        /* CRITICAL: Load immediately before anything else */
+        html,
+        body {
+            background: linear-gradient(180deg,
+                    rgba(18, 6, 7, 0.75) 0%,
+                    rgba(27, 9, 11, 0.8) 60%,
+                    rgba(36, 9, 10, 0.85) 100%);
+            margin: 0;
+            padding: 0;
+            /* Optimized background loading */
+            background-image: linear-gradient(180deg,
+                    rgba(18, 6, 7, 0.75) 0%,
+                    rgba(27, 9, 11, 0.8) 60%,
+                    rgba(36, 9, 10, 0.85) 100%);
         }
-        60% {
-          opacity: 1;
+
+        /* Optimized background image loading */
+        body.bg-loaded {
+            background-image:
+                linear-gradient(180deg,
+                    rgba(18, 6, 7, 0.75) 0%,
+                    rgba(27, 9, 11, 0.8) 60%,
+                    rgba(36, 9, 10, 0.85) 100%),
+                url("../assets/images/projects-pausedeserve/backgroun/bgpausedeserve.jpeg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            will-change: transform;
         }
-        100% {
-          opacity: 0;
-          visibility: hidden;
-          display: none;
+
+        /* Content visible immediately - no animation conflicts */
+        .content {
+            opacity: 1 !important;
         }
-      } /* Horror text simple fade */
-      .horror-text {
-        position: relative;
-        z-index: 2;
-        font-family: "Sora", sans-serif;
-        font-size: clamp(1.8rem, 6vw, 3.5rem);
-        font-weight: 900;
-        color: #fff;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        text-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
-        animation: horrorTextFade 2s ease-in-out;
-        padding: 0 1rem;
-        text-align: center;
-        max-width: 90%;
-      }
-      @keyframes horrorTextFade {
-        0% {
-          opacity: 0;
-          transform: scale(0.95);
+
+        /* === SIMPLE HORROR ENTRANCE === */
+        .horror-entrance {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: horrorFadeOut 2s ease-in-out forwards;
+            pointer-events: none;
         }
-        15% {
-          opacity: 1;
-          transform: scale(1);
+
+        @keyframes horrorFadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            60% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                visibility: hidden;
+                display: none;
+            }
         }
-        60% {
-          opacity: 1;
+
+        /* Horror text simple fade */
+        .horror-text {
+            position: relative;
+            z-index: 2;
+            font-family: "Sora", sans-serif;
+            font-size: clamp(1.8rem, 6vw, 3.5rem);
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+            animation: horrorTextFade 2s ease-in-out;
+            padding: 0 1rem;
+            text-align: center;
+            max-width: 90%;
         }
-        100% {
-          opacity: 0;
+
+        @keyframes horrorTextFade {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            15% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            60% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
         }
-      }
     </style>
     <title>Pause & Deserve: Solo Horror Game</title>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
-    <meta
-      name="description"
-      content="Pause & Deserve: solo horror game by Igor Szuniewicz"
-    />
+    <meta name="description" content="Pause & Deserve: solo horror game by Igor Szuniewicz" />
     <meta name="robots" content="index, follow" />
-    <link
-      rel="canonical"
-      href="https://igorszuniewicz.com/projects/pause-and-deserve.html"
-    />
+    <link rel="canonical" href="https://igorszuniewicz.com/projects/pause-and-deserve.html" />
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
-      /* === RESET & BASE === */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          180deg,
-          rgba(18, 6, 7, 0.75) 0%,
-          rgba(27, 9, 11, 0.8) 60%,
-          rgba(36, 9, 10, 0.85) 100%
-        );
-        color: #f0d0d0;
-        font-family: "Poppins", sans-serif;
-        overflow-x: hidden;
-        scroll-behavior: smooth; /* Performance optimizations */
-        transform: translateZ(0);
-        backface-visibility: hidden;
-        perspective: 1000px;
-      } /* Background image loaded state */
-      body.bg-loaded {
-        background-image:
-          linear-gradient(
-            180deg,
-            rgba(18, 6, 7, 0.75) 0%,
-            rgba(27, 9, 11, 0.8) 60%,
-            rgba(36, 9, 10, 0.85) 100%
-          ),
-          url("../assets/images/projects-pausedeserve/backgroun/bgpausedeserve.jpeg");
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-        background-repeat: no-repeat;
-      } /* === CONTENT WRAPPER === */
-      .content {
-        position: relative;
-        z-index: 1;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
-      } /* === BACK BUTTON === */
-      .back-button {
-        position: fixed;
-        top: 2rem;
-        left: 2rem;
-        z-index: 100;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.8rem;
-        padding: 0.8rem 1.5rem;
-        background: rgba(30, 10, 10, 0.7);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 110, 110, 0.4);
-        border-radius: 50px;
-        color: #ff7a7a;
-        text-decoration: none;
-        font-size: 0.9rem;
-        font-weight: 500;
-        letter-spacing: 0.02em;
-        text-transform: uppercase;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-      }
-      .back-button:hover {
-        background: rgba(50, 20, 20, 0.8);
-        border-color: #ff6e6e;
-        transform: translateX(-5px);
-        box-shadow: 0 6px 30px rgba(255, 110, 110, 0.4);
-        color: #ffaaaa;
-      }
-      .back-button::before {
-        content: "";
-        font-size: 1.2rem;
-        font-weight: bold;
-      } /* === LANGUAGE SWITCHER === */
-      .lang-switcher {
-        position: fixed !important;
-        top: 2rem !important;
-        right: 2rem !important;
-        z-index: 1000 !important;
-        display: flex !important;
-        gap: 0.5rem;
-        background: rgba(30, 10, 10, 0.7) !important;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 110, 110, 0.4) !important;
-        border-radius: 50px;
-        padding: 0.5rem;
-        box-shadow:
-          0 4px 20px rgba(0, 0, 0, 0.5),
-          0 0 20px rgba(255, 110, 110, 0.2) !important;
-      }
-      .lang-btn {
-        padding: 0.5rem 1rem;
-        background: transparent;
-        border: none;
-        border-radius: 50px;
-        color: #999 !important;
-        cursor: pointer;
-        font-weight: 500;
-        font-size: 0.9rem;
-        font-family: "Poppins", sans-serif;
-        transition: all 0.3s ease;
-        display: flex !important;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .lang-btn:hover {
-        color: #ff7a7a !important;
-        background: rgba(255, 110, 110, 0.15);
-      }
-      .lang-btn.active {
-        color: #ff7a7a !important;
-        background: rgba(255, 110, 110, 0.25);
-        font-weight: 600;
-      }
-      .lang-flag {
-        width: 20px;
-        height: 14px;
-        border-radius: 2px;
-        overflow: hidden;
-        display: block;
-      } /* === HERO SECTION === */
-      .hero {
-        text-align: center;
-        padding: 8rem 0 4rem;
-        margin-bottom: 3rem;
-        position: relative;
-        background: linear-gradient(
-          135deg,
-          rgba(18, 6, 7, 0.85) 0%,
-          rgba(27, 9, 11, 0.9) 60%,
-          rgba(18, 6, 7, 0.85) 100%
-        );
-        border-radius: 20px;
-        overflow: hidden;
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 80, 80, 0.2);
-        box-shadow:
-          0 20px 60px rgba(0, 0, 0, 0.8),
-          inset 0 0 100px rgba(0, 0, 0, 0.4);
-      }
-      .hero::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background:
-          radial-gradient(
-            circle at 25% 30%,
-            rgba(255, 90, 90, 0.06) 0%,
-            transparent 55%
-          ),
-          radial-gradient(
-            circle at 75% 70%,
-            rgba(180, 60, 60, 0.05) 0%,
-            transparent 55%
-          ),
-          radial-gradient(
-            circle at 50% 20%,
-            rgba(200, 80, 80, 0.04) 0%,
-            transparent 60%
-          );
-        pointer-events: none;
-      }
-      .hero h1 {
-        font-family: "Sora", "Inter", sans-serif;
-        font-size: 5rem;
-        font-weight: 900;
-        margin-bottom: 1rem;
-        letter-spacing: 0.1em;
-        color: #ffdddd;
-        position: relative;
-        z-index: 1;
-        text-shadow:
-          0 0 20px rgba(255, 50, 50, 0.8),
-          0 0 40px rgba(200, 0, 0, 0.6),
-          2px 2px 8px rgba(0, 0, 0, 0.9),
-          4px 4px 15px rgba(0, 0, 0, 0.7);
-        text-transform: uppercase;
-        animation: glowPulse 3s ease-in-out infinite;
-      }
-      @keyframes glowPulse {
-        0%,
-        100% {
-          text-shadow:
-            0 0 20px rgba(255, 50, 50, 0.8),
-            0 0 40px rgba(200, 0, 0, 0.6),
-            2px 2px 8px rgba(0, 0, 0, 0.9);
+        /* === RESET & BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        50% {
-          text-shadow:
-            0 0 30px rgba(255, 80, 80, 1),
-            0 0 60px rgba(255, 0, 0, 0.8),
-            2px 2px 8px rgba(0, 0, 0, 0.9),
-            4px 4px 20px rgba(0, 0, 0, 0.8);
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg,
+                    rgba(18, 6, 7, 0.75) 0%,
+                    rgba(27, 9, 11, 0.8) 60%,
+                    rgba(36, 9, 10, 0.85) 100%);
+            color: #f0d0d0;
+            font-family: "Poppins", sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            /* Performance optimizations */
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
         }
-      }
-      .hero .tagline {
-        font-size: 1.2rem;
-        color: #ff7a7a;
-        font-style: italic;
-        margin-bottom: 2.5rem;
-        position: relative;
-        z-index: 1;
-      }
-      .work-in-progress-badge {
-        display: inline-block;
-        background: linear-gradient(
-          135deg,
-          rgba(200, 0, 0, 0.9) 0%,
-          rgba(140, 0, 0, 0.85) 100%
-        );
-        color: white;
-        padding: 0.6em 1.4em;
-        border-radius: 25px;
-        font-size: 0.85em;
-        font-weight: 800;
-        margin-bottom: 1.5em;
-        border: 2px solid rgba(255, 80, 80, 0.5);
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        box-shadow:
-          0 4px 15px rgba(200, 0, 0, 0.6),
-          inset 0 0 20px rgba(255, 50, 50, 0.2);
-        animation: badgePulse 2s ease-in-out infinite;
-      }
-      @keyframes badgePulse {
-        0%,
-        100% {
-          box-shadow:
-            0 4px 15px rgba(200, 0, 0, 0.6),
-            inset 0 0 20px rgba(255, 50, 50, 0.2);
+
+        /* Background image loaded state */
+        body.bg-loaded {
+            background-image:
+                linear-gradient(180deg,
+                    rgba(18, 6, 7, 0.75) 0%,
+                    rgba(27, 9, 11, 0.8) 60%,
+                    rgba(36, 9, 10, 0.85) 100%),
+                url("../assets/images/projects-pausedeserve/backgroun/bgpausedeserve.jpeg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
         }
-        50% {
-          box-shadow:
-            0 6px 25px rgba(255, 0, 0, 0.8),
-            inset 0 0 30px rgba(255, 80, 80, 0.3);
+
+        /* === CONTENT WRAPPER === */
+        .content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
         }
-      } /* === VIDEO SECTION === */
-      .video-section {
-        margin: 4rem 0;
-        opacity: 0;
-        transform: translateY(50px);
-        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      }
-      .video-section.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      .video-section h2 {
-        font-family: "Sora", "Inter", sans-serif;
-        font-size: 2.5rem;
-        color: #ffaaaa;
-        margin-bottom: 2.5rem;
-        font-weight: 800;
-        letter-spacing: 0.05em;
-        border-bottom: 2px solid rgba(255, 80, 80, 0.4);
-        padding-bottom: 1rem;
-        text-transform: uppercase;
-        text-shadow:
-          0 0 10px rgba(255, 50, 50, 0.6),
-          2px 2px 4px rgba(0, 0, 0, 0.8);
-      }
-      .video-container {
-        position: relative;
-        padding-bottom: 56.25%;
-        height: 0;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow:
-          0 25px 70px rgba(0, 0, 0, 0.9),
-          0 0 0 1px rgba(255, 80, 80, 0.3),
-          inset 0 0 60px rgba(0, 0, 0, 0.5);
-        border: 2px solid rgba(255, 80, 80, 0.35);
-        transition: all 0.4s ease;
-        background: #000;
-      }
-      .video-container:hover {
-        box-shadow:
-          0 35px 90px rgba(0, 0, 0, 1),
-          0 0 60px rgba(255, 50, 50, 0.5),
-          0 0 0 1px rgba(255, 80, 80, 0.5),
-          inset 0 0 80px rgba(0, 0, 0, 0.6);
-        border-color: rgba(255, 80, 80, 0.6);
-        transform: scale(1.01) translateY(-5px);
-        will-change: transform, box-shadow;
-      }
-      .video-container iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-      } /* === HERO IMAGE === */
-      .hero-image {
-        margin: 4rem 0;
-        text-align: center;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
-        opacity: 0;
-        transform: translateY(50px);
-        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      }
-      .hero-image.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      .hero-image img {
-        width: 100%;
-        height: auto;
-        border-radius: 20px;
-        transition: transform 0.4s ease;
-        will-change: transform;
-      }
-      .hero-image:hover img {
-        transform: scale(1.02);
-      } /* === SECTION === */
-      section {
-        margin: 5rem 0;
-        padding: 3rem;
-        background: linear-gradient(
-          135deg,
-          rgba(20, 5, 8, 0.85) 0%,
-          rgba(35, 10, 15, 0.8) 100%
-        );
-        border-radius: 20px;
-        border: 1px solid rgba(255, 80, 80, 0.25);
-        backdrop-filter: blur(10px);
-        opacity: 0;
-        transform: translateY(50px);
-        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        box-shadow:
-          0 20px 60px rgba(0, 0, 0, 0.7),
-          inset 0 0 60px rgba(0, 0, 0, 0.3),
-          0 0 0 1px rgba(255, 50, 50, 0.1);
-      }
-      section.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      section h2 {
-        font-family: "Sora", "Inter", sans-serif;
-        font-size: 2.5rem;
-        color: #ffaaaa;
-        margin-bottom: 2.5rem;
-        font-weight: 800;
-        letter-spacing: 0.05em;
-        border-bottom: 2px solid rgba(255, 80, 80, 0.4);
-        padding-bottom: 1rem;
-        text-transform: uppercase;
-        text-shadow:
-          0 0 10px rgba(255, 50, 50, 0.6),
-          2px 2px 4px rgba(0, 0, 0, 0.8);
-        position: relative;
-      }
-      section h2::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: -2px;
-        width: 60px;
-        height: 4px;
-        background: linear-gradient(90deg, #ff4444 0%, transparent 100%);
-        border-radius: 2px;
-      }
-      section p {
-        color: rgba(240, 208, 208, 0.9);
-        line-height: 1.7;
-        font-size: 1.05rem;
-        margin-bottom: 1.5rem;
-      } /* === MECHANICS GRID === */
-      .mechanics-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        margin-top: 2rem;
-      }
-      .mechanic-card {
-        background: linear-gradient(
-          135deg,
-          rgba(10, 0, 3, 0.7) 0%,
-          rgba(20, 5, 8, 0.6) 100%
-        );
-        padding: 2.5rem;
-        border-radius: 15px;
-        border: 1px solid rgba(255, 80, 80, 0.25);
-        backdrop-filter: blur(5px);
-        transition: all 0.4s ease;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-      }
-      .mechanic-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, #ff4444, #cc3333, #991111);
-        transform: scaleX(0);
-        transition: transform 0.3s ease;
-      }
-      .mechanic-card:hover::before {
-        transform: scaleX(1);
-      }
-      .mechanic-card:hover {
-        background: linear-gradient(
-          135deg,
-          rgba(30, 5, 10, 0.85) 0%,
-          rgba(40, 10, 15, 0.75) 100%
-        );
-        border-color: rgba(255, 80, 80, 0.5);
-        transform: translateY(-8px) scale(1.02);
-        box-shadow:
-          0 20px 50px rgba(0, 0, 0, 0.8),
-          0 0 30px rgba(255, 50, 50, 0.3),
-          inset 0 0 40px rgba(255, 30, 30, 0.1);
-        will-change: transform, box-shadow;
-      }
-      .mechanic-card h4 {
-        color: #ffcccc;
-        margin-bottom: 1.2rem;
-        font-size: 1.4rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        text-shadow:
-          0 0 10px rgba(255, 80, 80, 0.5),
-          2px 2px 4px rgba(0, 0, 0, 0.7);
-      } /* === TECH STACK === */
-      .tech-stack {
-        display: flex;
-        gap: 2rem;
-        margin-top: 2rem;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-      .tech-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        background: linear-gradient(
-          135deg,
-          rgba(10, 0, 3, 0.6) 0%,
-          rgba(20, 5, 8, 0.5) 100%
-        );
-        padding: 2rem;
-        border-radius: 15px;
-        border: 1px solid rgba(255, 80, 80, 0.3);
-        backdrop-filter: blur(5px);
-        transition: all 0.3s ease;
-        min-width: 160px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-      }
-      .tech-item:hover {
-        transform: translateY(-8px) scale(1.05);
-        background: linear-gradient(
-          135deg,
-          rgba(25, 5, 8, 0.8) 0%,
-          rgba(35, 10, 13, 0.7) 100%
-        );
-        border-color: rgba(255, 80, 80, 0.6);
-        box-shadow:
-          0 15px 45px rgba(0, 0, 0, 0.8),
-          0 0 30px rgba(255, 50, 50, 0.3);
-        will-change: transform, box-shadow;
-      }
-      .tech-item img {
-        width: 45px;
-        height: 45px;
-        object-fit: contain;
-        margin-bottom: 1rem;
-        filter: brightness(0.9);
-        transition: filter 0.3s ease;
-      }
-      .tech-item:hover img {
-        filter: brightness(1.1);
-      }
-      .tech-item span {
-        color: #ff7a7a;
-        font-weight: 600;
-        font-size: 0.9rem;
-        letter-spacing: 0.05em;
-      } /* === GALLERY === */
-      .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-        margin-top: 2rem;
-      }
-      .gallery-item {
-        position: relative;
-        border-radius: 15px;
-        overflow: hidden;
-        cursor: pointer;
-        transition: all 0.4s ease;
-        box-shadow:
-          0 15px 40px rgba(0, 0, 0, 0.8),
-          0 0 0 1px rgba(255, 80, 80, 0.2);
-        border: 1px solid rgba(255, 80, 80, 0.3);
-        backdrop-filter: blur(2px);
-      }
-      .gallery-item:hover {
-        transform: translateY(-10px) scale(1.03);
-        box-shadow:
-          0 25px 60px rgba(0, 0, 0, 0.95),
-          0 0 40px rgba(255, 50, 50, 0.5),
-          0 0 0 2px rgba(255, 80, 80, 0.6),
-          inset 0 0 30px rgba(255, 30, 30, 0.1);
-        border-color: rgba(255, 80, 80, 0.7);
-      }
-      .gallery-item img {
-        width: 100%;
-        height: 250px;
-        object-fit: cover;
-        transition:
-          transform 0.4s ease,
-          filter 0.4s ease;
-        filter: brightness(0.85) contrast(1.1);
-        will-change: transform, filter;
-      }
-      .gallery-item:hover img {
-        transform: scale(1.08);
-        filter: brightness(0.95) contrast(1.15);
-      }
-      .gallery-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(transparent, rgba(0, 0, 0, 0.95));
-        color: #ff7a7a;
-        padding: 2rem 1.5rem 1.5rem;
-        transform: translateY(100%);
-        transition: transform 0.3s ease;
-      }
-      .gallery-item:hover .gallery-overlay {
-        transform: translateY(0);
-      }
-      .gallery-overlay span {
-        font-weight: 600;
-        font-size: 1.1rem;
-      } /* === BUTTON === */
-      .button-container {
-        text-align: center;
-        margin: 4rem 0;
-      }
-      .button {
-        display: inline-block;
-        padding: 1.2rem 3rem;
-        background: linear-gradient(135deg, #cc3333 0%, #991111 100%);
-        border: 2px solid transparent;
-        border-radius: 50px;
-        color: #f0d0d0;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 1.1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-      }
-      .button:hover {
-        background: linear-gradient(135deg, #ff4444 0%, #cc3333 100%);
-        transform: translateY(-3px);
-        box-shadow: 0 12px 35px rgba(255, 110, 110, 0.4);
-        color: #fff;
-      } /* === FOOTER === */
-      .footer {
-        text-align: center;
-        padding: 3rem 0;
-        color: #666;
-        font-size: 0.9rem;
-        border-top: 1px solid rgba(255, 110, 169, 0.2);
-        margin-top: 5rem;
-      } /* === LIGHTBOX === */
-      .lightbox {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.95);
-        z-index: 10000;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-      }
-      .lightbox.active {
-        display: flex;
-      }
-      .lightbox img {
-        max-width: 90%;
-        max-height: 90%;
-        border-radius: 8px;
-        box-shadow: 0 0 50px rgba(255, 110, 110, 0.5);
-      }
-      .lightbox-close {
-        position: absolute;
-        top: 2rem;
-        right: 2rem;
-        font-size: 3rem;
-        color: #fff;
-        cursor: pointer;
-        z-index: 10001;
-      } /* === RESPONSIVE === */
-      @media (max-width: 768px) {
-        .back-button,
+
+        /* === BACK BUTTON === */
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 100;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(30, 10, 10, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 110, 110, 0.4);
+            border-radius: 50px;
+            color: #ff7a7a;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .back-button:hover {
+            background: rgba(50, 20, 20, 0.8);
+            border-color: #ff6e6e;
+            transform: translateX(-5px);
+            box-shadow: 0 6px 30px rgba(255, 110, 110, 0.4);
+            color: #ffaaaa;
+        }
+
+        .back-button::before {
+            content: "";
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* === LANGUAGE SWITCHER === */
         .lang-switcher {
-          top: 1rem;
-          left: 1rem;
-          right: 1rem;
+            position: fixed !important;
+            top: 2rem !important;
+            right: 2rem !important;
+            z-index: 1000 !important;
+            display: flex !important;
+            gap: 0.5rem;
+            background: rgba(30, 10, 10, 0.7) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 110, 110, 0.4) !important;
+            border-radius: 50px;
+            padding: 0.5rem;
+            box-shadow:
+                0 4px 20px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(255, 110, 110, 0.2) !important;
         }
-        .lang-switcher {
-          right: 1rem;
-          left: auto;
+
+        .lang-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 50px;
+            color: #999 !important;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            font-family: "Poppins", sans-serif;
+            transition: all 0.3s ease;
+            display: flex !important;
+            align-items: center;
+            gap: 0.5rem;
         }
+
+        .lang-btn:hover {
+            color: #ff7a7a !important;
+            background: rgba(255, 110, 110, 0.15);
+        }
+
+        .lang-btn.active {
+            color: #ff7a7a !important;
+            background: rgba(255, 110, 110, 0.25);
+            font-weight: 600;
+        }
+
+        .lang-flag {
+            width: 20px;
+            height: 14px;
+            border-radius: 2px;
+            overflow: hidden;
+            display: block;
+        }
+
+        /* === HERO SECTION === */
         .hero {
-          padding: 4rem 1rem 3rem;
+            text-align: center;
+            padding: 8rem 0 4rem;
+            margin-bottom: 3rem;
+            position: relative;
+            background: linear-gradient(135deg,
+                    rgba(18, 6, 7, 0.85) 0%,
+                    rgba(27, 9, 11, 0.9) 60%,
+                    rgba(18, 6, 7, 0.85) 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 80, 80, 0.2);
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.8),
+                inset 0 0 100px rgba(0, 0, 0, 0.4);
         }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 25% 30%,
+                    rgba(255, 90, 90, 0.06) 0%,
+                    transparent 55%),
+                radial-gradient(circle at 75% 70%,
+                    rgba(180, 60, 60, 0.05) 0%,
+                    transparent 55%),
+                radial-gradient(circle at 50% 20%,
+                    rgba(200, 80, 80, 0.04) 0%,
+                    transparent 60%);
+            pointer-events: none;
+        }
+
         .hero h1 {
-          font-size: 2.5rem;
+            font-family: "Sora", "Inter", sans-serif;
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            letter-spacing: 0.1em;
+            color: #ffdddd;
+            position: relative;
+            z-index: 1;
+            text-shadow:
+                0 0 20px rgba(255, 50, 50, 0.8),
+                0 0 40px rgba(200, 0, 0, 0.6),
+                2px 2px 8px rgba(0, 0, 0, 0.9),
+                4px 4px 15px rgba(0, 0, 0, 0.7);
+            text-transform: uppercase;
+            animation: glowPulse 3s ease-in-out infinite;
         }
+
+        @keyframes glowPulse {
+
+            0%,
+            100% {
+                text-shadow:
+                    0 0 20px rgba(255, 50, 50, 0.8),
+                    0 0 40px rgba(200, 0, 0, 0.6),
+                    2px 2px 8px rgba(0, 0, 0, 0.9);
+            }
+
+            50% {
+                text-shadow:
+                    0 0 30px rgba(255, 80, 80, 1),
+                    0 0 60px rgba(255, 0, 0, 0.8),
+                    2px 2px 8px rgba(0, 0, 0, 0.9),
+                    4px 4px 20px rgba(0, 0, 0, 0.8);
+            }
+        }
+
+        .hero .tagline {
+            font-size: 1.2rem;
+            color: #ff7a7a;
+            font-style: italic;
+            margin-bottom: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .work-in-progress-badge {
+            display: inline-block;
+            background: linear-gradient(135deg,
+                    rgba(200, 0, 0, 0.9) 0%,
+                    rgba(140, 0, 0, 0.85) 100%);
+            color: white;
+            padding: 0.6em 1.4em;
+            border-radius: 25px;
+            font-size: 0.85em;
+            font-weight: 800;
+            margin-bottom: 1.5em;
+            border: 2px solid rgba(255, 80, 80, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            box-shadow:
+                0 4px 15px rgba(200, 0, 0, 0.6),
+                inset 0 0 20px rgba(255, 50, 50, 0.2);
+            animation: badgePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes badgePulse {
+
+            0%,
+            100% {
+                box-shadow:
+                    0 4px 15px rgba(200, 0, 0, 0.6),
+                    inset 0 0 20px rgba(255, 50, 50, 0.2);
+            }
+
+            50% {
+                box-shadow:
+                    0 6px 25px rgba(255, 0, 0, 0.8),
+                    inset 0 0 30px rgba(255, 80, 80, 0.3);
+            }
+        }
+
+        /* === VIDEO SECTION === */
+        .video-section {
+            margin: 4rem 0;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .video-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .video-section h2 {
+            font-family: "Sora", "Inter", sans-serif;
+            font-size: 2.5rem;
+            color: #ffaaaa;
+            margin-bottom: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid rgba(255, 80, 80, 0.4);
+            padding-bottom: 1rem;
+            text-transform: uppercase;
+            text-shadow:
+                0 0 10px rgba(255, 50, 50, 0.6),
+                2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow:
+                0 25px 70px rgba(0, 0, 0, 0.9),
+                0 0 0 1px rgba(255, 80, 80, 0.3),
+                inset 0 0 60px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 80, 80, 0.35);
+            transition: all 0.4s ease;
+            background: #000;
+        }
+
+        .video-container:hover {
+            box-shadow:
+                0 35px 90px rgba(0, 0, 0, 1),
+                0 0 60px rgba(255, 50, 50, 0.5),
+                0 0 0 1px rgba(255, 80, 80, 0.5),
+                inset 0 0 80px rgba(0, 0, 0, 0.6);
+            border-color: rgba(255, 80, 80, 0.6);
+            transform: scale(1.01) translateY(-5px);
+            will-change: transform, box-shadow;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* === HERO IMAGE === */
+        .hero-image {
+            margin: 4rem 0;
+            text-align: center;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .hero-image.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            transition: transform 0.4s ease;
+            will-change: transform;
+        }
+
+        .hero-image:hover img {
+            transform: scale(1.02);
+        }
+
+        /* === SECTION === */
         section {
-          padding: 2rem 1.5rem;
+            margin: 5rem 0;
+            padding: 3rem;
+            background: linear-gradient(135deg,
+                    rgba(20, 5, 8, 0.85) 0%,
+                    rgba(35, 10, 15, 0.8) 100%);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 80, 80, 0.25);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.7),
+                inset 0 0 60px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 50, 50, 0.1);
         }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         section h2 {
-          font-size: 1.8rem;
+            font-family: "Sora", "Inter", sans-serif;
+            font-size: 2.5rem;
+            color: #ffaaaa;
+            margin-bottom: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid rgba(255, 80, 80, 0.4);
+            padding-bottom: 1rem;
+            text-transform: uppercase;
+            text-shadow:
+                0 0 10px rgba(255, 50, 50, 0.6),
+                2px 2px 4px rgba(0, 0, 0, 0.8);
+            position: relative;
         }
+
+        section h2::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #ff4444 0%, transparent 100%);
+            border-radius: 2px;
+        }
+
+        section p {
+            color: rgba(240, 208, 208, 0.9);
+            line-height: 1.7;
+            font-size: 1.05rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* === MECHANICS GRID === */
         .mechanics-grid {
-          grid-template-columns: 1fr;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
         }
+
+        .mechanic-card {
+            background: linear-gradient(135deg,
+                    rgba(10, 0, 3, 0.7) 0%,
+                    rgba(20, 5, 8, 0.6) 100%);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 80, 80, 0.25);
+            backdrop-filter: blur(5px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .mechanic-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff4444, #cc3333, #991111);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .mechanic-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .mechanic-card:hover {
+            background: linear-gradient(135deg,
+                    rgba(30, 5, 10, 0.85) 0%,
+                    rgba(40, 10, 15, 0.75) 100%);
+            border-color: rgba(255, 80, 80, 0.5);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.8),
+                0 0 30px rgba(255, 50, 50, 0.3),
+                inset 0 0 40px rgba(255, 30, 30, 0.1);
+            will-change: transform, box-shadow;
+        }
+
+        .mechanic-card h4 {
+            color: #ffcccc;
+            margin-bottom: 1.2rem;
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            text-shadow:
+                0 0 10px rgba(255, 80, 80, 0.5),
+                2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        /* === TECH STACK === */
+        .tech-stack {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .tech-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg,
+                    rgba(10, 0, 3, 0.6) 0%,
+                    rgba(20, 5, 8, 0.5) 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 80, 80, 0.3);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            min-width: 160px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .tech-item:hover {
+            transform: translateY(-8px) scale(1.05);
+            background: linear-gradient(135deg,
+                    rgba(25, 5, 8, 0.8) 0%,
+                    rgba(35, 10, 13, 0.7) 100%);
+            border-color: rgba(255, 80, 80, 0.6);
+            box-shadow:
+                0 15px 45px rgba(0, 0, 0, 0.8),
+                0 0 30px rgba(255, 50, 50, 0.3);
+            will-change: transform, box-shadow;
+        }
+
+        .tech-item img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            margin-bottom: 1rem;
+            filter: brightness(0.9);
+            transition: filter 0.3s ease;
+        }
+
+        .tech-item:hover img {
+            filter: brightness(1.1);
+        }
+
+        .tech-item span {
+            color: #ff7a7a;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* === GALLERY === */
         .gallery-grid {
-          grid-template-columns: repeat(2, 1fr);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
-      }
-      @media (max-width: 480px) {
-        .hero h1 {
-          font-size: 2rem;
+
+        .gallery-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(255, 80, 80, 0.2);
+            border: 1px solid rgba(255, 80, 80, 0.3);
+            backdrop-filter: blur(2px);
         }
-        .gallery-grid {
-          grid-template-columns: 1fr;
+
+        .gallery-item:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.95),
+                0 0 40px rgba(255, 50, 50, 0.5),
+                0 0 0 2px rgba(255, 80, 80, 0.6),
+                inset 0 0 30px rgba(255, 30, 30, 0.1);
+            border-color: rgba(255, 80, 80, 0.7);
         }
+
         .gallery-item img {
-          height: 200px;
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition:
+                transform 0.4s ease,
+                filter 0.4s ease;
+            filter: brightness(0.85) contrast(1.1);
+            will-change: transform, filter;
         }
-      } /* FIX: All sections visible immediately - no scroll animation delays */
-      .hero,
-      .video-section,
-      section,
-      .hero-image {
-        opacity: 1 !important;
-        transform: translateY(0) !important;
-      } /* Hide audio players with placeholder audio */
-      .audio-player[data-audio*="placeholder.wav"] {
-        display: none !important;
-      } /* Performance optimizations */
-      * {
-        box-sizing: border-box;
-      } /* Optimize scrolling performance */
-      html {
-        scroll-behavior: smooth;
-      }
-      body {
-        overflow-x: hidden; /* Enable hardware acceleration */
-        transform: translateZ(0);
-        backface-visibility: hidden;
-        perspective: 1000px;
-      } /* Optimize animations */
-      .mechanic-card,
-      .gallery-item,
-      .tech-item,
-      .video-container {
-        transform: translateZ(0);
-        backface-visibility: hidden;
-      } /* Lazy loading placeholder */
-      img.lazy {
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-      img.lazy.loaded {
-        opacity: 1;
-      }
+
+        .gallery-item:hover img {
+            transform: scale(1.08);
+            filter: brightness(0.95) contrast(1.15);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.95));
+            color: #ff7a7a;
+            padding: 2rem 1.5rem 1.5rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        .gallery-overlay span {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* === BUTTON === */
+        .button-container {
+            text-align: center;
+            margin: 4rem 0;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 1.2rem 3rem;
+            background: linear-gradient(135deg, #cc3333 0%, #991111 100%);
+            border: 2px solid transparent;
+            border-radius: 50px;
+            color: #f0d0d0;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .button:hover {
+            background: linear-gradient(135deg, #ff4444 0%, #cc3333 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 110, 110, 0.4);
+            color: #fff;
+        }
+
+        /* === FOOTER === */
+        .footer {
+            text-align: center;
+            padding: 3rem 0;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 110, 169, 0.2);
+            margin-top: 5rem;
+        }
+
+        /* === LIGHTBOX === */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(255, 110, 110, 0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 3rem;
+            color: #fff;
+            cursor: pointer;
+            z-index: 10001;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+
+            .back-button,
+            .lang-switcher {
+                top: 1rem;
+                left: 1rem;
+                right: 1rem;
+            }
+
+            .lang-switcher {
+                right: 1rem;
+                left: auto;
+            }
+
+            .hero {
+                padding: 4rem 1rem 3rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            section {
+                padding: 2rem 1.5rem;
+            }
+
+            section h2 {
+                font-size: 1.8rem;
+            }
+
+            .mechanics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-item img {
+                height: 200px;
+            }
+        }
+
+        /* FIX: All sections visible immediately - no scroll animation delays */
+        .hero,
+        .video-section,
+        section,
+        .hero-image {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        /* Hide audio players with placeholder audio */
+        .audio-player[data-audio*="placeholder.wav"] {
+            display: none !important;
+        }
+
+        /* Performance optimizations */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Optimize scrolling performance */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            overflow-x: hidden;
+            /* Enable hardware acceleration */
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        /* Optimize animations */
+        .mechanic-card,
+        .gallery-item,
+        .tech-item,
+        .video-container {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+
+        /* Lazy loading placeholder */
+        img.lazy {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        img.lazy.loaded {
+            opacity: 1;
+        }
     </style>
-  </head>
-  <body style="margin: 0; padding: 0">
+</head>
+
+<body style="margin: 0; padding: 0">
     <!-- Simple Horror Entrance -->
     <div class="horror-entrance">
-      <div class="horror-text">Pause & Deserve</div>
+        <div class="horror-text">Pause & Deserve</div>
     </div>
     <!-- Lightbox -->
     <div class="lightbox" id="lightbox">
-      <span class="lightbox-close" id="lightbox-close">&times;</span>
-      <img id="lightbox-img" src="" alt="" loading="lazy" decoding="async" />
+        <span class="lightbox-close" id="lightbox-close">&times;</span>
+        <img id="lightbox-img" src="" alt="" loading="lazy" decoding="async" />
     </div>
     <!-- Content -->
     <div class="content">
-      <!-- Language Switcher -->
-      <div class="lang-switcher">
-        <button class="lang-btn active" data-lang="en">
-          <svg
-            class="lang-flag"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 60 30"
-          >
-            <rect width="60" height="30" fill="#012169" />
-            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" />
-            <path
-              d="M0,0 L60,30 M60,0 L0,30"
-              stroke="#C8102E"
-              stroke-width="4"
-            />
-            <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" />
-            <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" />
-          </svg>
-          <span>EN</span>
-        </button>
-        <button class="lang-btn" data-lang="pl">
-          <svg
-            class="lang-flag"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 10"
-          >
-            <rect width="16" height="5" fill="#fff" />
-            <rect y="5" width="16" height="5" fill="#dc143c" />
-          </svg>
-          <span>PL</span>
-        </button>
-        <button class="lang-btn" data-lang="nl">
-          <svg
-            class="lang-flag"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 9 6"
-          >
-            <rect width="9" height="6" fill="#21468B" />
-            <rect width="9" height="4" fill="#fff" />
-            <rect width="9" height="2" fill="#AE1C28" />
-          </svg>
-          <span>NL</span>
-        </button>
-      </div>
-      <!-- Back Button -->
-      <a href="/projects/" class="back-button">
-        <span data-i18n="back">Back to Projects</span>
-      </a>
-      <!-- Hero -->
-      <section class="hero">
-        <span class="work-in-progress-badge" data-i18n="wip_badge"
-          >Work in Progress</span
-        >
-        <h1 data-i18n="title">Pause & Deserve</h1>
-        <p class="tagline" data-i18n="tagline">
-          A psychological horror experience where every pause comes with a
-          price.
-        </p>
-      </section>
-      <!-- Video Context -->
-      <div class="video-section">
-        <h2 data-i18n="gameplay.title">Sound is Your Only Guide</h2>
-        <div class="video-container">
-          <iframe
-            data-lazy-iframe
-            data-src="https://www.youtube.com/embed/bBuhTHrN81k"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
+        <!-- Language Switcher -->
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="en">
+                <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30">
+                    <rect width="60" height="30" fill="#012169" />
+                    <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" />
+                    <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4" />
+                    <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" />
+                    <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" />
+                </svg>
+                <span>EN</span>
+            </button>
+            <button class="lang-btn" data-lang="pl">
+                <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 10">
+                    <rect width="16" height="5" fill="#fff" />
+                    <rect y="5" width="16" height="5" fill="#dc143c" />
+                </svg>
+                <span>PL</span>
+            </button>
+            <button class="lang-btn" data-lang="nl">
+                <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 6">
+                    <rect width="9" height="6" fill="#21468B" />
+                    <rect width="9" height="4" fill="#fff" />
+                    <rect width="9" height="2" fill="#AE1C28" />
+                </svg>
+                <span>NL</span>
+            </button>
         </div>
-        <p data-i18n="gameplay.desc">
-          Listen carefully - Death is getting closer. The world shifts when you
-          freeze time. Every footstep makes your heart race. That's the essence
-          of the game.
-        </p>
-      </div>
-      <!-- Audio Design Overview -->
-      <section>
-        <h2 data-i18n="overview.title">Creating Horror Through Sound</h2>
-        <p data-i18n="overview.desc">
-          What you can't see will haunt you. Death's footsteps grow louder as it
-          hunts you down. The environment groans and transforms when you pause.
-          Every sound is designed to keep you on the edge of your seat.
-        </p>
-      </section>
-      <!-- Horror Soundscapes -->
-      <section>
-        <h2 data-i18n="soundscape.title">Crafting Atmosphere</h2>
-        <p data-i18n="soundscape.desc">
-          Deep drones echo through the darkness, distant screams pierce the
-          silence, and your own footsteps betray your position. It creates an
-          oppressive feeling without drowning out the crucial sounds you need to
-          hear.
-        </p>
-        <div class="mechanics-grid">
-          <div class="mechanic-card">
-            <h4 data-i18n="soundscape.oppressive_title">Constant Unease</h4>
-            <p data-i18n="soundscape.oppressive_desc">
-              Low-frequency drones, distant cries, and unsettling textures that
-              never let you feel safe
+        <!-- Back Button -->
+        <a href="/projects/" class="back-button">
+            <span data-i18n="back">Back to Projects</span>
+        </a>
+        <!-- Hero -->
+        <section class="hero">
+            <span class="work-in-progress-badge" data-i18n="wip_badge">Work in Progress</span>
+            <h1 data-i18n="title">Pause & Deserve</h1>
+            <p class="tagline" data-i18n="tagline">
+                A psychological horror experience where every pause comes with a
+                price.
             </p>
-          </div>
-          <div class="mechanic-card">
-            <h4 data-i18n="soundscape.proximity_title">Death Approaches</h4>
-            <p data-i18n="soundscape.proximity_desc">
-              Audio intensity rises as Death gets closer. Your own heartbeat
-              pounds when danger is near
+        </section>
+        <!-- Video Context -->
+        <div class="video-section">
+            <h2 data-i18n="gameplay.title">Sound is Your Only Guide</h2>
+            <div class="video-container">
+                <iframe data-lazy-iframe data-src="https://www.youtube.com/embed/bBuhTHrN81k" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <p data-i18n="gameplay.desc">
+                Listen carefully - Death is getting closer. The world shifts when you
+                freeze time. Every footstep makes your heart race. That's the essence
+                of the game.
             </p>
-          </div>
-          <div class="mechanic-card">
-            <h4 data-i18n="soundscape.environmental_title">A Living World</h4>
-            <p data-i18n="soundscape.environmental_desc">
-              Walls shift, echoes change, spaces transform. Every environmental
-              change has its own sound
-            </p>
-          </div>
         </div>
-      </section>
-      <!-- Dynamic Audio System -->
-      <section>
-        <h2 data-i18n="audio_system.title">Reactive Audio System</h2>
-        <p data-i18n="audio_system.desc">
-          Every action triggers a sound response. Pause time and hear reality
-          warp. Death speeds up and the audio becomes frantic. Move through
-          different spaces and hear the acoustics change around you.
-        </p>
-        <div class="mechanics-grid">
-          <div class="mechanic-card">
-            <h4 data-i18n="audio_system.pause_title">
-              Time Manipulation Effects
-            </h4>
-            <p data-i18n="audio_system.pause_desc">
-              When you pause, time stretches and distorts. Pitch shifts
-              downward, reverb extends, creating an otherworldly experience
+        <!-- Audio Design Overview -->
+        <section>
+            <h2 data-i18n="overview.title">Creating Horror Through Sound</h2>
+            <p data-i18n="overview.desc">
+                What you can't see will haunt you. Death's footsteps grow louder as it
+                hunts you down. The environment groans and transforms when you pause.
+                Every sound is designed to keep you on the edge of your seat.
             </p>
-          </div>
-          <div class="mechanic-card">
-            <h4 data-i18n="audio_system.threat_title">Dynamic Intensity</h4>
-            <p data-i18n="audio_system.threat_desc">
-              Audio escalates with Death's proximity and speed. The closer and
-              faster it gets, the more chaotic the soundscape becomes
+        </section>
+        <!-- Horror Soundscapes -->
+        <section>
+            <h2 data-i18n="soundscape.title">Crafting Atmosphere</h2>
+            <p data-i18n="soundscape.desc">
+                Deep drones echo through the darkness, distant screams pierce the
+                silence, and your own footsteps betray your position. It creates an
+                oppressive feeling without drowning out the crucial sounds you need to
+                hear.
             </p>
-          </div>
-          <div class="mechanic-card">
-            <h4 data-i18n="audio_system.spatial_title">3D Audio Positioning</h4>
-            <p data-i18n="audio_system.spatial_desc">
-              Track Death's location through sound alone. Footsteps and
-              environmental cues tell you exactly where danger lurks
+            <div class="mechanics-grid">
+                <div class="mechanic-card">
+                    <h4 data-i18n="soundscape.oppressive_title">Constant Unease</h4>
+                    <p data-i18n="soundscape.oppressive_desc">
+                        Low-frequency drones, distant cries, and unsettling textures that
+                        never let you feel safe
+                    </p>
+                </div>
+                <div class="mechanic-card">
+                    <h4 data-i18n="soundscape.proximity_title">Death Approaches</h4>
+                    <p data-i18n="soundscape.proximity_desc">
+                        Audio intensity rises as Death gets closer. Your own heartbeat
+                        pounds when danger is near
+                    </p>
+                </div>
+                <div class="mechanic-card">
+                    <h4 data-i18n="soundscape.environmental_title">A Living World</h4>
+                    <p data-i18n="soundscape.environmental_desc">
+                        Walls shift, echoes change, spaces transform. Every environmental
+                        change has its own sound
+                    </p>
+                </div>
+            </div>
+        </section>
+        <!-- Dynamic Audio System -->
+        <section>
+            <h2 data-i18n="audio_system.title">Reactive Audio System</h2>
+            <p data-i18n="audio_system.desc">
+                Every action triggers a sound response. Pause time and hear reality
+                warp. Death speeds up and the audio becomes frantic. Move through
+                different spaces and hear the acoustics change around you.
             </p>
-          </div>
+            <div class="mechanics-grid">
+                <div class="mechanic-card">
+                    <h4 data-i18n="audio_system.pause_title">
+                        Time Manipulation Effects
+                    </h4>
+                    <p data-i18n="audio_system.pause_desc">
+                        When you pause, time stretches and distorts. Pitch shifts
+                        downward, reverb extends, creating an otherworldly experience
+                    </p>
+                </div>
+                <div class="mechanic-card">
+                    <h4 data-i18n="audio_system.threat_title">Dynamic Intensity</h4>
+                    <p data-i18n="audio_system.threat_desc">
+                        Audio escalates with Death's proximity and speed. The closer and
+                        faster it gets, the more chaotic the soundscape becomes
+                    </p>
+                </div>
+                <div class="mechanic-card">
+                    <h4 data-i18n="audio_system.spatial_title">3D Audio Positioning</h4>
+                    <p data-i18n="audio_system.spatial_desc">
+                        Track Death's location through sound alone. Footsteps and
+                        environmental cues tell you exactly where danger lurks
+                    </p>
+                </div>
+            </div>
+        </section>
+        <!-- Tension Building -->
+        <section>
+            <h2 data-i18n="tension.title">Psychological Warfare</h2>
+            <p data-i18n="tension.desc">
+                Sub-bass frequencies that you feel more than hear. Deceptive sounds
+                that make you question reality. Strategic silence that makes sudden
+                noises terrifying. Every element designed to mess with your mind.
+            </p>
+            <div class="mechanics-grid">
+                <div class="mechanic-card">
+                    <h4 data-i18n="tension.subbass_title">Physical Dread</h4>
+                    <p data-i18n="tension.subbass_desc">
+                        Ultra-low frequencies you barely notice but feel in your chest,
+                        creating unease you can't explain
+                    </p>
+                </div>
+                <div class="mechanic-card">
+                    <h4 data-i18n="tension.silence_title">The Sound of Fear</h4>
+                    <p data-i18n="tension.silence_desc">
+                        Quiet moments amplify sudden sounds, keeping you constantly on
+                        edge and never desensitized
+                    </p>
+                </div>
+                <div class="mechanic-card">
+                    <h4 data-i18n="tension.misdirection_title">Sensory Deception</h4>
+                    <p data-i18n="tension.misdirection_desc">
+                        False footsteps and misleading audio cues that make you question
+                        what's real and what's imagined
+                    </p>
+                </div>
+            </div>
+        </section>
+        <!-- Audio Tools -->
+        <section>
+            <h2 data-i18n="tech.title">Audio Technology</h2>
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <img data-src="../assets/images/projects-pausedeserve/wwise_logo_rgb-77Awrfoo.png" alt="Wwise" class="lazy" loading="lazy" decoding="async" />
+                    <span>Wwise Audio Middleware</span>
+                </div>
+                <div class="tech-item">
+                    <img data-src="../assets/images/projects-pausedeserve/Unreal_Engine-Logo.wine.png" alt="Unreal Engine" class="lazy" loading="lazy" decoding="async" />
+                    <span>Unreal Engine Integration</span>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 1.5rem; color: #aaa" data-i18n="tech.desc">
+                Powered by Wwise for real-time audio control. Every sound responds to
+                distance, speed, and player state. All mixed dynamically to create the
+                perfect horror experience.
+            </p>
+        </section>
+        <!-- Button -->
+        <div class="button-container">
+            <a href="/projects/" class="button" data-i18n="button.projects">All Projects</a>
         </div>
-      </section>
-      <!-- Tension Building -->
-      <section>
-        <h2 data-i18n="tension.title">Psychological Warfare</h2>
-        <p data-i18n="tension.desc">
-          Sub-bass frequencies that you feel more than hear. Deceptive sounds
-          that make you question reality. Strategic silence that makes sudden
-          noises terrifying. Every element designed to mess with your mind.
-        </p>
-        <div class="mechanics-grid">
-          <div class="mechanic-card">
-            <h4 data-i18n="tension.subbass_title">Physical Dread</h4>
-            <p data-i18n="tension.subbass_desc">
-              Ultra-low frequencies you barely notice but feel in your chest,
-              creating unease you can't explain
-            </p>
-          </div>
-          <div class="mechanic-card">
-            <h4 data-i18n="tension.silence_title">The Sound of Fear</h4>
-            <p data-i18n="tension.silence_desc">
-              Quiet moments amplify sudden sounds, keeping you constantly on
-              edge and never desensitized
-            </p>
-          </div>
-          <div class="mechanic-card">
-            <h4 data-i18n="tension.misdirection_title">Sensory Deception</h4>
-            <p data-i18n="tension.misdirection_desc">
-              False footsteps and misleading audio cues that make you question
-              what's real and what's imagined
-            </p>
-          </div>
-        </div>
-      </section>
-      <!-- Audio Tools -->
-      <section>
-        <h2 data-i18n="tech.title">Audio Technology</h2>
-        <div class="tech-stack">
-          <div class="tech-item">
-            <img
-              data-src="../assets/images/projects-pausedeserve/wwise_logo_rgb-77Awrfoo.png"
-              alt="Wwise"
-              class="lazy"
-              loading="lazy"
-              decoding="async"
-            />
-            <span>Wwise Audio Middleware</span>
-          </div>
-          <div class="tech-item">
-            <img
-              data-src="../assets/images/projects-pausedeserve/Unreal_Engine-Logo.wine.png"
-              alt="Unreal Engine"
-              class="lazy"
-              loading="lazy"
-              decoding="async"
-            />
-            <span>Unreal Engine Integration</span>
-          </div>
-        </div>
-        <p
-          style="text-align: center; margin-top: 1.5rem; color: #aaa"
-          data-i18n="tech.desc"
-        >
-          Powered by Wwise for real-time audio control. Every sound responds to
-          distance, speed, and player state. All mixed dynamically to create the
-          perfect horror experience.
-        </p>
-      </section>
-      <!-- Button -->
-      <div class="button-container">
-        <a href="/projects/" class="button" data-i18n="button.projects"
-          >All Projects</a
-        >
-      </div>
-      <!-- Footer -->
-      <footer class="footer">
-        <p>&copy; Igor Szuniewicz 2025. All rights reserved.</p>
-      </footer>
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; Igor Szuniewicz 2025. All rights reserved.</p>
+        </footer>
     </div>
     <!-- Fixed Player -->
     <div class="fixed-player" id="fixedPlayer">
-      <div class="fixed-player-top">
-        <button class="fixed-player-btn" id="fixedPlayerBtn">
-          <div class="icon"></div>
-        </button>
-        <div class="fixed-player-info">
-          <div class="fixed-player-title" id="fixedPlayerTitle">
-            Audio Sample
-          </div>
-          <div class="fixed-player-subtitle">Pause & Deserve</div>
+        <div class="fixed-player-top">
+            <button class="fixed-player-btn" id="fixedPlayerBtn">
+                <div class="icon"></div>
+            </button>
+            <div class="fixed-player-info">
+                <div class="fixed-player-title" id="fixedPlayerTitle">
+                    Audio Sample
+                </div>
+                <div class="fixed-player-subtitle">Pause & Deserve</div>
+            </div>
         </div>
-      </div>
-      <div class="fixed-player-progress" id="fixedPlayerProgress">
-        <div
-          class="fixed-player-progress-bar"
-          id="fixedPlayerProgressBar"
-        ></div>
-      </div>
-      <div class="fixed-player-time">
-        <span id="fixedPlayerCurrentTime">0:00</span>
-        <span id="fixedPlayerDuration">0:00</span>
-      </div>
+        <div class="fixed-player-progress" id="fixedPlayerProgress">
+            <div class="fixed-player-progress-bar" id="fixedPlayerProgressBar"></div>
+        </div>
+        <div class="fixed-player-time">
+            <span id="fixedPlayerCurrentTime">0:00</span>
+            <span id="fixedPlayerDuration">0:00</span>
+        </div>
     </div>
     <!-- Audio Player Component -->
     <script>
-      (function injectPlayerStyles() { const css = ` .audio-player{ --p:0deg; position:relative; width:220px; height:220px; margin:1rem auto; display:block; } .audio-player::before{ content:''; position:absolute; inset:0; border-radius:50%; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.06) 0 40%, transparent 41%), conic-gradient(#ef4444 var(--p), rgba(255,255,255,0.08) 0); box-shadow: inset 0 0 0 6px rgba(255,255,255,0.06), 0 10px 30px rgba(0,0,0,0.4); } .audio-player .inner{ position:absolute; inset:18px; border-radius:50%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.08); } .audio-player button{ width:96px; height:96px; border-radius:50%; border:none; cursor:pointer; color:#fff; background: linear-gradient(135deg,#dc2626,#ef4444); box-shadow: 0 8px 24px rgba(239, 68, 68,.35); transition: transform .2s ease, box-shadow .2s ease; position:relative; display:flex; align-items:center; justify-content:center; } .audio-player button:hover{ transform: scale(1.05); box-shadow:0 12px 32px rgba(239, 68, 68,.5); } .audio-player button .tri{ width:0; height:0; border-left:26px solid #fff; border-top:16px solid transparent; border-bottom:16px solid transparent; margin-left:3px; } .audio-player button.paused .tri{ border-left-color:transparent; border-top:0; border-bottom:0; width:20px; height:20px; position:relative; } .audio-player button.paused .tri::before,.audio-player button.paused .tri::after{ content:''; position:absolute; top:0; width:6px; height:24px; background:#fff; border-radius:2px; } .audio-player button.paused .tri::before{ left:-8px; } .audio-player button.paused .tri::after{ left:4px; } /* Fixed player styles */ .fixed-player { position: fixed; bottom: 2rem; right: 2rem; width: 320px; background: rgba(20, 8, 8, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 16px; padding: 1rem 1.25rem; box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(239, 68, 68,0.1); z-index: 999; opacity: 0; pointer-events: none; transform: translateY(20px); transition: all 0.3s ease; } .fixed-player.active { opacity: 1; pointer-events: all; transform: translateY(0); } .fixed-player-top { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; } .fixed-player-btn { width: 48px; height: 48px; border-radius: 50%; border: none; background: linear-gradient(135deg, #dc2626, #ef4444); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); flex-shrink: 0; } .fixed-player-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5); } .fixed-player-btn .icon { width: 0; height: 0; border-left: 14px solid white; border-top: 8px solid transparent; border-bottom: 8px solid transparent; margin-left: 3px; } .fixed-player-btn.playing .icon { border: none; width: 12px; height: 12px; position: relative; } .fixed-player-btn.playing .icon::before, .fixed-player-btn.playing .icon::after { content: ''; position: absolute; width: 4px; height: 16px; background: white; border-radius: 2px; } .fixed-player-btn.playing .icon::before { left: 0; } .fixed-player-btn.playing .icon::after { left: 8px; } .fixed-player-info { flex: 1; overflow: hidden; } .fixed-player-title { font-size: 0.9rem; font-weight: 600; color: #fff; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .fixed-player-subtitle { font-size: 0.75rem; color: #e88f8f; } .fixed-player-progress { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; overflow: hidden; margin-bottom: 0.5rem; cursor: pointer; } .fixed-player-progress-bar { height: 100%; background: linear-gradient(90deg, #dc2626, #ef4444); width: 0%; transition: width 0.1s linear; } .fixed-player-time { display: flex; justify-content: space-between; font-size: 0.7rem; color: #a26666; } `; const style = document.createElement("style"); style.textContent = css; document.head.appendChild(style); })(); (function () { let active = { audio: null, el: null }; const fixedPlayer = document.getElementById("fixedPlayer"); const fixedBtn = document.getElementById("fixedPlayerBtn"); const fixedTitle = document.getElementById("fixedPlayerTitle"); const fixedProgressBar = document.getElementById( "fixedPlayerProgressBar", ); const fixedProgress = document.getElementById( "fixedPlayerProgress", ); const fixedCurrentTime = document.getElementById( "fixedPlayerCurrentTime", ); const fixedDuration = document.getElementById( "fixedPlayerDuration", ); function formatTime(seconds) { const m = Math.floor(seconds / 60); const s = Math.floor(seconds % 60); return `${m}:${s.toString().padStart(2, "0")}`; } function stopActive() { if (active.audio) { try { active.audio.pause(); } catch {} } if (active.el) { active.el .querySelector("button") ?.classList.remove("paused"); active.el.style.setProperty("--p", "0deg"); } fixedPlayer.classList.remove("active"); fixedBtn.classList.remove("playing"); active = { audio: null, el: null }; } function bindPlayer(el) { const src = el.getAttribute("data-audio") || "../assets/audio/tracks/placeholder.wav"; const btn = document.createElement("button"); btn.setAttribute("aria-label", "Play sample"); const inner = document.createElement("div"); inner.className = "inner"; const tri = document.createElement("div"); tri.className = "tri"; btn.appendChild(tri); inner.appendChild(btn); el.appendChild(inner); let audio = new Audio(src); audio.preload = "metadata"; let raf = null; function loop() { if (!audio.duration) return (raf = requestAnimationFrame(loop)); const p = Math.min( 1, audio.currentTime / audio.duration, ); el.style.setProperty( "--p", `${(p * 360).toFixed(1)}deg`, ); fixedProgressBar.style.width = `${(p * 100).toFixed(1)}%`; fixedCurrentTime.textContent = formatTime( audio.currentTime, ); fixedDuration.textContent = formatTime(audio.duration); if (!audio.paused) raf = requestAnimationFrame(loop); } function play() { if (active.el && active.el !== el) stopActive(); active = { audio, el }; btn.classList.add("paused"); fixedPlayer.classList.add("active"); fixedBtn.classList.add("playing"); const sectionTitle = el.closest("section")?.querySelector("h2") ?.textContent || "Audio Sample"; fixedTitle.textContent = sectionTitle; audio .play() .then(() => { raf = requestAnimationFrame(loop); }) .catch(() => { stopActive(); }); } function pause() { audio.pause(); btn.classList.remove("paused"); cancelAnimationFrame(raf); raf = null; } btn.addEventListener("click", () => { if (audio.paused) play(); else pause(); }); audio.addEventListener("ended", () => { pause(); audio.currentTime = 0; el.style.setProperty("--p", "0deg"); fixedProgressBar.style.width = "0%"; }); audio.addEventListener("error", stopActive); } // Fixed player controls fixedBtn.addEventListener("click", () => { if (active.audio) { if (active.audio.paused) { active.audio.play(); fixedBtn.classList.add("playing"); active.el ?.querySelector("button") ?.classList.add("paused"); } else { active.audio.pause(); fixedBtn.classList.remove("playing"); active.el ?.querySelector("button") ?.classList.remove("paused"); } } }); fixedProgress.addEventListener("click", (e) => { if (active.audio) { const rect = fixedProgress.getBoundingClientRect(); const percent = (e.clientX - rect.left) / rect.width; active.audio.currentTime = active.audio.duration * percent; } }); document.addEventListener("DOMContentLoaded", () => { document .querySelectorAll(".audio-player") .forEach(bindPlayer); }); })();
+        (function injectPlayerStyles() {
+            const css = ` .audio-player{ --p:0deg; position:relative; width:220px; height:220px; margin:1rem auto; display:block; } .audio-player::before{ content:''; position:absolute; inset:0; border-radius:50%; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.06) 0 40%, transparent 41%), conic-gradient(#ef4444 var(--p), rgba(255,255,255,0.08) 0); box-shadow: inset 0 0 0 6px rgba(255,255,255,0.06), 0 10px 30px rgba(0,0,0,0.4); } .audio-player .inner{ position:absolute; inset:18px; border-radius:50%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.08); } .audio-player button{ width:96px; height:96px; border-radius:50%; border:none; cursor:pointer; color:#fff; background: linear-gradient(135deg,#dc2626,#ef4444); box-shadow: 0 8px 24px rgba(239, 68, 68,.35); transition: transform .2s ease, box-shadow .2s ease; position:relative; display:flex; align-items:center; justify-content:center; } .audio-player button:hover{ transform: scale(1.05); box-shadow:0 12px 32px rgba(239, 68, 68,.5); } .audio-player button .tri{ width:0; height:0; border-left:26px solid #fff; border-top:16px solid transparent; border-bottom:16px solid transparent; margin-left:3px; } .audio-player button.paused .tri{ border-left-color:transparent; border-top:0; border-bottom:0; width:20px; height:20px; position:relative; } .audio-player button.paused .tri::before,.audio-player button.paused .tri::after{ content:''; position:absolute; top:0; width:6px; height:24px; background:#fff; border-radius:2px; } .audio-player button.paused .tri::before{ left:-8px; } .audio-player button.paused .tri::after{ left:4px; } /* Fixed player styles */ .fixed-player { position: fixed; bottom: 2rem; right: 2rem; width: 320px; background: rgba(20, 8, 8, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 16px; padding: 1rem 1.25rem; box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(239, 68, 68,0.1); z-index: 999; opacity: 0; pointer-events: none; transform: translateY(20px); transition: all 0.3s ease; } .fixed-player.active { opacity: 1; pointer-events: all; transform: translateY(0); } .fixed-player-top { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; } .fixed-player-btn { width: 48px; height: 48px; border-radius: 50%; border: none; background: linear-gradient(135deg, #dc2626, #ef4444); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); flex-shrink: 0; } .fixed-player-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5); } .fixed-player-btn .icon { width: 0; height: 0; border-left: 14px solid white; border-top: 8px solid transparent; border-bottom: 8px solid transparent; margin-left: 3px; } .fixed-player-btn.playing .icon { border: none; width: 12px; height: 12px; position: relative; } .fixed-player-btn.playing .icon::before, .fixed-player-btn.playing .icon::after { content: ''; position: absolute; width: 4px; height: 16px; background: white; border-radius: 2px; } .fixed-player-btn.playing .icon::before { left: 0; } .fixed-player-btn.playing .icon::after { left: 8px; } .fixed-player-info { flex: 1; overflow: hidden; } .fixed-player-title { font-size: 0.9rem; font-weight: 600; color: #fff; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .fixed-player-subtitle { font-size: 0.75rem; color: #e88f8f; } .fixed-player-progress { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; overflow: hidden; margin-bottom: 0.5rem; cursor: pointer; } .fixed-player-progress-bar { height: 100%; background: linear-gradient(90deg, #dc2626, #ef4444); width: 0%; transition: width 0.1s linear; } .fixed-player-time { display: flex; justify-content: space-between; font-size: 0.7rem; color: #a26666; } `;
+            const style = document.createElement("style");
+            style.textContent = css;
+            document.head.appendChild(style);
+        })();
+        (function() {
+                let active = {
+                    audio: null,
+                    el: null
+                };
+                const fixedPlayer = document.getElementById("fixedPlayer");
+                const fixedBtn = document.getElementById("fixedPlayerBtn");
+                const fixedTitle = document.getElementById("fixedPlayerTitle");
+                const fixedProgressBar = document.getElementById("fixedPlayerProgressBar", );
+                const fixedProgress = document.getElementById("fixedPlayerProgress", );
+                const fixedCurrentTime = document.getElementById("fixedPlayerCurrentTime", );
+                const fixedDuration = document.getElementById("fixedPlayerDuration", );
+
+                function formatTime(seconds) {
+                    const m = Math.floor(seconds / 60);
+                    const s = Math.floor(seconds % 60);
+                    return `${m}:${s.toString().padStart(2, "0")}`;
+                }
+
+                function stopActive() {
+                    if (active.audio) {
+                        try {
+                            active.audio.pause();
+                        } catch {}
+                    }
+                    if (active.el) {
+                        active.el.querySelector("button")?.classList.remove("paused");
+                        active.el.style.setProperty("--p", "0deg");
+                    }
+                    fixedPlayer.classList.remove("active");
+                    fixedBtn.classList.remove("playing");
+                    active = {
+                        audio: null,
+                        el: null
+                    };
+                }
+
+                function bindPlayer(el) {
+                    const src = el.getAttribute("data-audio") || "../assets/audio/tracks/placeholder.wav";
+                    const btn = document.createElement("button");
+                    btn.setAttribute("aria-label", "Play sample");
+                    const inner = document.createElement("div");
+                    inner.className = "inner";
+                    const tri = document.createElement("div");
+                    tri.className = "tri";
+                    btn.appendChild(tri);
+                    inner.appendChild(btn);
+                    el.appendChild(inner);
+                    let audio = new Audio(src);
+                    audio.preload = "metadata";
+                    let raf = null;
+
+                    function loop() {
+                        if (!audio.duration) return (raf = requestAnimationFrame(loop));
+                        const p = Math.min(1, audio.currentTime / audio.duration, );
+                        el.style.setProperty("--p", `${(p * 360).toFixed(1)}deg`, );
+                        fixedProgressBar.style.width = `${(p * 100).toFixed(1)}%`;
+                        fixedCurrentTime.textContent = formatTime(audio.currentTime, );
+                        fixedDuration.textContent = formatTime(audio.duration);
+                        if (!audio.paused) raf = requestAnimationFrame(loop);
+                    }
+
+                    function play() {
+                        if (active.el && active.el !== el) stopActive();
+                        active = {
+                            audio,
+                            el
+                        };
+                        btn.classList.add("paused");
+                        fixedPlayer.classList.add("active");
+                        fixedBtn.classList.add("playing");
+                        const sectionTitle = el.closest("section")?.querySelector("h2")?.textContent || "Audio Sample";
+                        fixedTitle.textContent = sectionTitle;
+                        audio.play().then(() => {
+                            raf = requestAnimationFrame(loop);
+                        }).catch(() => {
+                            stopActive();
+                        });
+                    }
+
+                    function pause() {
+                        audio.pause();
+                        btn.classList.remove("paused");
+                        cancelAnimationFrame(raf);
+                        raf = null;
+                    }
+                    btn.addEventListener("click", () => {
+                        if (audio.paused) play();
+                        else pause();
+                    });
+                    audio.addEventListener("ended", () => {
+                        pause();
+                        audio.currentTime = 0;
+                        el.style.setProperty("--p", "0deg");
+                        fixedProgressBar.style.width = "0%";
+                    });
+                    audio.addEventListener("error", stopActive);
+                } // Fixed player controls fixedBtn.addEventListener("click", () => { if (active.audio) { if (active.audio.paused) { active.audio.play(); fixedBtn.classList.add("playing"); active.el ?.querySelector("button") ?.classList.add("paused"); } else { active.audio.pause(); fixedBtn.classList.remove("playing"); active.el ?.querySelector("button") ?.classList.remove("paused"); } } }); fixedProgress.addEventListener("click", (e) => { if (active.audio) { const rect = fixedProgress.getBoundingClientRect(); const percent = (e.clientX - rect.left) / rect.width; active.audio.currentTime = active.audio.duration * percent; } }); document.addEventListener("DOMContentLoaded", () => { document .querySelectorAll(".audio-player") .forEach(bindPlayer); }); })();
     </script>
     <!-- Translation Data -->
     <script>
-      let translations = {};
-      let currentLang = localStorage.getItem("language") || "en"; // Helper function to get nested translation value function getNestedTranslation(obj, path) { return path .split(".") .reduce((current, key) => current?.[key], obj); } function setLanguage(lang) { currentLang = lang; localStorage.setItem("language", lang); document.querySelectorAll("[data-i18n]").forEach((el) => { const key = el.getAttribute("data-i18n"); const translation = getNestedTranslation( translations[lang], key, ); if (translation) { el.innerHTML = translation; } }); document.querySelectorAll(".lang-btn").forEach((btn) => { btn.classList.toggle("active", btn.dataset.lang === lang); }); } // Load translations from JSON file async function loadTranslations() { try { const response = await fetch( "../locales/pause-and-deserve.json", ); translations = await response.json(); setLanguage(currentLang); } catch (error) { // Failed to load translations } } // Initialize language on load document.addEventListener("DOMContentLoaded", () => { loadTranslations(); document.querySelectorAll(".lang-btn").forEach((btn) => { btn.addEventListener("click", () => { setLanguage(btn.dataset.lang); }); }); });
+        let translations = {};
+        let currentLang = localStorage.getItem("language") || "en"; // Helper function to get nested translation value function getNestedTranslation(obj, path) { return path .split(".") .reduce((current, key) => current?.[key], obj); } function setLanguage(lang) { currentLang = lang; localStorage.setItem("language", lang); document.querySelectorAll("[data-i18n]").forEach((el) => { const key = el.getAttribute("data-i18n"); const translation = getNestedTranslation( translations[lang], key, ); if (translation) { el.innerHTML = translation; } }); document.querySelectorAll(".lang-btn").forEach((btn) => { btn.classList.toggle("active", btn.dataset.lang === lang); }); } // Load translations from JSON file async function loadTranslations() { try { const response = await fetch( "../locales/pause-and-deserve.json", ); translations = await response.json(); setLanguage(currentLang); } catch (error) { // Failed to load translations } } // Initialize language on load document.addEventListener("DOMContentLoaded", () => { loadTranslations(); document.querySelectorAll(".lang-btn").forEach((btn) => { btn.addEventListener("click", () => { setLanguage(btn.dataset.lang); }); }); });
     </script>
     <!-- Lightbox Script -->
     <script>
-      (function () { const lightbox = document.getElementById("lightbox"); const lightboxImg = document.getElementById("lightbox-img"); const lightboxClose = document.getElementById("lightbox-close"); function openLightbox(imgSrc) { lightboxImg.src = imgSrc; lightbox.classList.add("active"); } function closeLightbox() { lightbox.classList.remove("active"); lightboxImg.src = ""; } // Bind gallery items document.addEventListener("DOMContentLoaded", () => { document .querySelectorAll(".gallery-item") .forEach((item) => { item.addEventListener("click", () => { const img = item.querySelector("img"); if (img) { openLightbox(img.src); } }); }); // Close on click lightbox.addEventListener("click", closeLightbox); lightboxClose.addEventListener("click", closeLightbox); // Prevent close when clicking on image lightboxImg.addEventListener("click", (e) => { e.stopPropagation(); }); // Close on escape document.addEventListener("keydown", (e) => { if ( e.key === "Escape" && lightbox.classList.contains("active") ) { closeLightbox(); } }); }); })();
+        (function() {
+                const lightbox = document.getElementById("lightbox");
+                const lightboxImg = document.getElementById("lightbox-img");
+                const lightboxClose = document.getElementById("lightbox-close");
+
+                function openLightbox(imgSrc) {
+                    lightboxImg.src = imgSrc;
+                    lightbox.classList.add("active");
+                }
+
+                function closeLightbox() {
+                    lightbox.classList.remove("active");
+                    lightboxImg.src = "";
+                } // Bind gallery items document.addEventListener("DOMContentLoaded", () => { document .querySelectorAll(".gallery-item") .forEach((item) => { item.addEventListener("click", () => { const img = item.querySelector("img"); if (img) { openLightbox(img.src); } }); }); // Close on click lightbox.addEventListener("click", closeLightbox); lightboxClose.addEventListener("click", closeLightbox); // Prevent close when clicking on image lightboxImg.addEventListener("click", (e) => { e.stopPropagation(); }); // Close on escape document.addEventListener("keydown", (e) => { if ( e.key === "Escape" && lightbox.classList.contains("active") ) { closeLightbox(); } }); }); })();
     </script>
     <!-- Optimized Performance Script -->
     <script>
-      // Optimized background image loading function loadBackgroundImage() { const img = new Image(); img.src = "../assets/images/projects-pausedeserve/backgroun/bgpausedeserve.jpeg"; img.onload = () => { document.body.classList.add("bg-loaded"); }; } // Remove preload state // Disable smooth scroll initially to force immediate scroll to top document.documentElement.style.scrollBehavior = "auto"; document.body.style.scrollBehavior = "auto"; // Force scroll to top immediately if ("scrollRestoration" in history) { history.scrollRestoration = "manual"; } window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; window.addEventListener("load", () => { window.scrollTo(0, 0); document.body.classList.add("loaded"); loadBackgroundImage(); // Re-enable smooth scroll after intro setTimeout(() => { document.documentElement.style.scrollBehavior = "smooth"; document.body.style.scrollBehavior = "smooth"; }, 2500); }); // Lazy loading for images function setupLazyLoading() { const imageObserver = new IntersectionObserver( (entries) => { entries.forEach((entry) => { if (entry.isIntersecting) { const img = entry.target; if (img.dataset.src) { img.src = img.dataset.src; img.onload = () => { img.classList.add("loaded"); }; img.classList.remove("lazy"); imageObserver.unobserve(img); } } }); }, { rootMargin: "50px 0px", threshold: 0.01, }, ); document.querySelectorAll("img[data-src]").forEach((img) => { imageObserver.observe(img); }); } // Smooth scroll reveal with performance optimizations const observerOptions = { threshold: 0.15, rootMargin: "0px 0px -100px 0px", }; const observer = new IntersectionObserver((entries) => { entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add("visible"); // Stop observing once visible observer.unobserve(entry.target); } }); }, observerOptions); // Observe all sections document.addEventListener("DOMContentLoaded", () => { // Force scroll to top window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; // Show content immediately on DOM ready setTimeout(() => { document.body.classList.add("loaded"); }, 100); // Start background image loading loadBackgroundImage(); // Setup lazy loading setupLazyLoading(); const sections = document.querySelectorAll( "section, .video-section, .hero-image", ); sections.forEach((section) => observer.observe(section)); // Stagger animation for cards with reduced delay const cards = document.querySelectorAll( ".mechanic-card, .gallery-item, .tech-item", ); cards.forEach((card, index) => { card.style.transitionDelay = `${index * 0.05}s`; // Reduced from 0.08s }); });
+        // Optimized background image loading function loadBackgroundImage() { const img = new Image(); img.src = "../assets/images/projects-pausedeserve/backgroun/bgpausedeserve.jpeg"; img.onload = () => { document.body.classList.add("bg-loaded"); }; } // Remove preload state // Disable smooth scroll initially to force immediate scroll to top document.documentElement.style.scrollBehavior = "auto"; document.body.style.scrollBehavior = "auto"; // Force scroll to top immediately if ("scrollRestoration" in history) { history.scrollRestoration = "manual"; } window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; window.addEventListener("load", () => { window.scrollTo(0, 0); document.body.classList.add("loaded"); loadBackgroundImage(); // Re-enable smooth scroll after intro setTimeout(() => { document.documentElement.style.scrollBehavior = "smooth"; document.body.style.scrollBehavior = "smooth"; }, 2500); }); // Lazy loading for images function setupLazyLoading() { const imageObserver = new IntersectionObserver( (entries) => { entries.forEach((entry) => { if (entry.isIntersecting) { const img = entry.target; if (img.dataset.src) { img.src = img.dataset.src; img.onload = () => { img.classList.add("loaded"); }; img.classList.remove("lazy"); imageObserver.unobserve(img); } } }); }, { rootMargin: "50px 0px", threshold: 0.01, }, ); document.querySelectorAll("img[data-src]").forEach((img) => { imageObserver.observe(img); }); } // Smooth scroll reveal with performance optimizations const observerOptions = { threshold: 0.15, rootMargin: "0px 0px -100px 0px", }; const observer = new IntersectionObserver((entries) => { entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add("visible"); // Stop observing once visible observer.unobserve(entry.target); } }); }, observerOptions); // Observe all sections document.addEventListener("DOMContentLoaded", () => { // Force scroll to top window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; // Show content immediately on DOM ready setTimeout(() => { document.body.classList.add("loaded"); }, 100); // Start background image loading loadBackgroundImage(); // Setup lazy loading setupLazyLoading(); const sections = document.querySelectorAll( "section, .video-section, .hero-image", ); sections.forEach((section) => observer.observe(section)); // Stagger animation for cards with reduced delay const cards = document.querySelectorAll( ".mechanic-card, .gallery-item, .tech-item", ); cards.forEach((card, index) => { card.style.transitionDelay = `${index * 0.05}s`; // Reduced from 0.08s }); });
     </script>
-    <script
-      type="module"
-      src="../assets/js/performance-boost.js"
-      defer
-    ></script>
-  </body>
+    <script type="module" src="../assets/js/performance-boost.js" defer></script>
+</body>
+
 </html>

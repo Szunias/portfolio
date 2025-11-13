@@ -183,9 +183,9 @@
     registerServiceWorker: function() {
       navigator.serviceWorker.register('/sw.js', {
         scope: '/'
-      }).then(registration => {
+      }).then(_registration => {
         // ServiceWorker registered successfully
-      }).catch(error => {
+      }).catch(_error => {
         // ServiceWorker registration failed
       });
     },
@@ -217,7 +217,7 @@
             try {
               localStorage.setItem(cacheKey, content);
               this.injectCachedResource(url, content);
-            } catch (e) {
+            } catch (_e) {
               // Storage quota exceeded, fallback to normal loading
               // Storage quota exceeded, using normal loading
             }
@@ -316,7 +316,7 @@
         if ('LargestContentfulPaint' in window) {
           new PerformanceObserver(list => {
             const entries = list.getEntries();
-            const lcp = entries[entries.length - 1];
+            const _lcp = entries[entries.length - 1];
             // LCP measurement recorded
           }).observe({ entryTypes: ['largest-contentful-paint'] });
         }

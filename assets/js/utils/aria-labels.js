@@ -160,7 +160,7 @@ export function enhanceFilterTagsAccessibility() {
 export function enhancePlaylistAccessibility() {
   const playlistItems = document.querySelectorAll('.playlist-item');
 
-  playlistItems.forEach((item, index) => {
+  playlistItems.forEach((item, _index) => {
     const title = item.querySelector('.playlist-track-title')?.textContent.trim();
     const artist = item.querySelector('.playlist-track-artist')?.textContent.trim();
     const duration = item.querySelector('.playlist-duration')?.textContent.trim();

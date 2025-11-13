@@ -310,7 +310,7 @@ class TranslationManager {
           });
 
           if (response.ok) break;
-        } catch (e) {
+        } catch (_e) {
           continue;
         }
       }

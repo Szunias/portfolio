@@ -201,7 +201,7 @@ class StorageManager {
       keysToRemove.forEach(key => {
         try {
           localStorage.removeItem(key);
-        } catch (e) {
+        } catch (_e) {
           // Ignore errors during cleanup
         }
       });

@@ -71,7 +71,7 @@
     generateFontCSS: function() {
       let css = '';
 
-      Object.entries(this.fonts).forEach(([key, font]) => {
+      Object.entries(this.fonts).forEach(([_key, font]) => {
         font.weights.forEach(weight => {
           css += this.generateFontFace(font.family, weight, font.display);
         });
@@ -138,7 +138,7 @@
     },
 
     useNativeFontLoading: function() {
-      Object.entries(this.fonts).forEach(([key, font]) => {
+      Object.entries(this.fonts).forEach(([_key, font]) => {
         font.weights.forEach(weight => {
           const fontFace = new FontFace(
             font.family,
@@ -174,7 +174,7 @@
       // Fallback method using CSS and DOM observation
       const testString = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
-      Object.entries(this.fonts).forEach(([key, font]) => {
+      Object.entries(this.fonts).forEach(([_key, font]) => {
         font.weights.forEach(weight => {
           this.testFontLoading(font.family, weight, testString);
         });
@@ -241,7 +241,7 @@
       this.checkCriticalFontsLoaded();
     },
 
-    onFontFailed: function(family, weight, error) {
+    onFontFailed: function(_family, _weight, _error) {
       // Font failed to load
 
       // Ensure fallback fonts are applied

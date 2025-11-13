@@ -30,7 +30,7 @@
 
     const form = e.target;
     const formData = new FormData(form);
-    const statusEl = document.querySelector('.cf-status');
+    const _statusEl = document.querySelector('.cf-status');
     const submitBtn = document.getElementById('cf-send');
     const btnText = submitBtn.querySelector('.btn-text');
 
@@ -95,7 +95,7 @@
           throw new Error(result.message || 'Failed to send message');
         }
       })
-      .catch((error) => {
+      .catch((_error) => {
         // Web3Forms Error occurred
         showStatus(
           'An error occurred while sending. Please try again later.',
@@ -131,7 +131,7 @@
       }
 
       localStorage.setItem('contact_messages', JSON.stringify(messages));
-    } catch (e) {
+    } catch (_e) {
       // Could not save message locally
     }
   }
@@ -225,7 +225,7 @@
   window.getContactMessages = function () {
     try {
       return JSON.parse(localStorage.getItem('contact_messages') || '[]');
-    } catch (e) {
+    } catch (_e) {
       return [];
     }
   };

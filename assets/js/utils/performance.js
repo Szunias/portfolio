@@ -103,7 +103,7 @@
       }, this.prefetchDelay);
     },
 
-    handleMouseOut: function(e) {
+    handleMouseOut: function(_e) {
       // Cancel prefetch if user moves away quickly
       if (this.hoverTimeout) {
         clearTimeout(this.hoverTimeout);

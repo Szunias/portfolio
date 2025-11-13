@@ -1,1098 +1,1279 @@
 <!doctype html>
 <html lang="en" style="background: #000000">
-  <head>
+
+<head>
     <style>
-      /* CRITICAL: Load immediately before anything else */
-      html,
-      body {
-        background: #000000 !important;
-        margin: 0;
-        padding: 0;
-      } /* Hide content until fully loaded */
-      .content {
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-      body.loaded .content {
-        opacity: 1;
-      } /* === RAY ANIMATION SIMPLE ENTRANCE === */
-      .ray-entrance {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #000000;
-        z-index: 99999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        animation: rayFadeOut 1.5s ease-out forwards;
-        pointer-events: none;
-      }
-      @keyframes rayFadeOut {
-        0% {
-          opacity: 1;
+        /* CRITICAL: Load immediately before anything else */
+        html,
+        body {
+            background: #000000 !important;
+            margin: 0;
+            padding: 0;
         }
-        70% {
-          opacity: 1;
+
+        /* Hide content until fully loaded */
+        .content {
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        99.9% {
-          opacity: 0;
-          visibility: hidden;
-          display: flex;
+
+        body.loaded .content {
+            opacity: 1;
         }
-        100% {
-          opacity: 0;
-          visibility: hidden;
-          display: none;
+
+        /* === RAY ANIMATION SIMPLE ENTRANCE === */
+        .ray-entrance {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: rayFadeOut 1.5s ease-out forwards;
+            pointer-events: none;
         }
-      } /* Ray title simple fade */
-      .ray-title {
-        position: relative;
-        z-index: 10;
-        font-family: "Sora", sans-serif;
-        font-size: clamp(3rem, 10vw, 6rem);
-        font-weight: 900;
-        color: #ff8c00;
-        text-transform: uppercase;
-        letter-spacing: 0.15em;
-        text-shadow: 0 0 30px rgba(255, 140, 0, 0.6);
-        animation: titleFade 1.5s ease-out;
-      }
-      @keyframes titleFade {
-        0% {
-          opacity: 0;
-          transform: scale(0.95);
+
+        @keyframes rayFadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            70% {
+                opacity: 1;
+            }
+
+            99.9% {
+                opacity: 0;
+                visibility: hidden;
+                display: flex;
+            }
+
+            100% {
+                opacity: 0;
+                visibility: hidden;
+                display: none;
+            }
         }
-        30% {
-          opacity: 1;
-          transform: scale(1);
+
+        /* Ray title simple fade */
+        .ray-title {
+            position: relative;
+            z-index: 10;
+            font-family: "Sora", sans-serif;
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 900;
+            color: #ff8c00;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            text-shadow: 0 0 30px rgba(255, 140, 0, 0.6);
+            animation: titleFade 1.5s ease-out;
         }
-        70% {
-          opacity: 1;
+
+        @keyframes titleFade {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            30% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            70% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
         }
-        100% {
-          opacity: 0;
-        }
-      }
     </style>
     <title>Ray Animation: Music Composition</title>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
-    <meta
-      name="description"
-      content="Ray Animation: music composition by Igor Szuniewicz"
-    />
+    <meta name="description" content="Ray Animation: music composition by Igor Szuniewicz" />
     <meta name="robots" content="index, follow" />
-    <link
-      rel="canonical"
-      href="https://igorszuniewicz.com/projects/ray-animation.html"
-    />
+    <link rel="canonical" href="https://igorszuniewicz.com/projects/ray-animation.html" />
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
-      /* === RESET & BASE === */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        width: 100%;
-        height: 100%;
-        background: #000000;
-        color: #ffffff;
-        font-family: "Poppins", sans-serif;
-        overflow-x: hidden;
-        scroll-behavior: smooth;
-      } /* === BACKGROUND === */
-      .cave-background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        background: url("../assets/images/projects-ray/background/Black%20Coal.jpg")
-          repeat center;
-        background-size: 400px 400px;
-      }
-      .cave-background::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          180deg,
-          rgba(0, 0, 0, 0.85) 0%,
-          rgba(0, 0, 0, 0.9) 50%,
-          rgba(0, 0, 0, 0.95) 100%
-        );
-      }
-      .cave-background::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: transparent;
-        animation: none;
-      }
-      @keyframes bgPulse {
-        0%,
-        100% {
-          opacity: 0;
+        /* === RESET & BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        50% {
-          opacity: 0;
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            color: #ffffff;
+            font-family: "Poppins", sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
         }
-      } /* === CONTENT WRAPPER === */
-      .content {
-        position: relative;
-        z-index: 1;
-        max-width: 1300px;
-        margin: 0 auto;
-        padding: 2rem;
-      } /* === BACK BUTTON === */
-      .back-button {
-        position: fixed;
-        top: 2rem;
-        left: 2rem;
-        z-index: 100;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.8rem;
-        padding: 0.8rem 1.5rem;
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 140, 0, 0.3);
-        border-radius: 50px;
-        color: #ff8c00;
-        text-decoration: none;
-        font-size: 0.9rem;
-        font-weight: 500;
-        letter-spacing: 0.02em;
-        text-transform: uppercase;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-      }
-      .back-button:hover {
-        background: rgba(255, 140, 0, 0.15);
-        border-color: #ff8c00;
-        transform: translateX(-5px);
-        box-shadow: 0 6px 30px rgba(255, 140, 0, 0.3);
-        color: #ffa500;
-      }
-      .back-button::before {
-        content: "";
-        font-size: 1.2rem;
-        font-weight: bold;
-      } /* === LANGUAGE SWITCHER === */
-      .lang-switcher {
-        position: fixed !important;
-        top: 2rem !important;
-        right: 2rem !important;
-        z-index: 1000 !important;
-        display: flex !important;
-        gap: 0.5rem;
-        background: rgba(255, 255, 255, 0.08) !important;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 140, 0, 0.5) !important;
-        border-radius: 50px;
-        padding: 0.5rem;
-        box-shadow:
-          0 4px 20px rgba(0, 0, 0, 0.3),
-          0 0 20px rgba(255, 140, 0, 0.15) !important;
-      }
-      .lang-btn {
-        padding: 0.5rem 1rem;
-        background: transparent;
-        border: none;
-        border-radius: 50px;
-        color: #999 !important;
-        cursor: pointer;
-        font-weight: 500;
-        font-size: 0.9rem;
-        font-family: "Poppins", sans-serif;
-        transition: all 0.3s ease;
-        display: flex !important;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .lang-btn:hover {
-        color: #ff8c00 !important;
-        background: rgba(255, 140, 0, 0.1);
-      }
-      .lang-btn.active {
-        color: #ff8c00 !important;
-        background: rgba(255, 140, 0, 0.15);
-        font-weight: 600;
-      }
-      .lang-flag {
-        width: 20px;
-        height: 14px;
-        border-radius: 2px;
-        overflow: hidden;
-        display: block;
-      } /* === HERO SECTION === */
-      .hero {
-        text-align: center;
-        padding: 8rem 0 4rem;
-        margin-bottom: 4rem;
-        position: relative;
-      }
-      .hero::before {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 600px;
-        height: 600px;
-        background: transparent;
-        pointer-events: none;
-      }
-      .hero h1 {
-        font-family: "Sora", "Inter", sans-serif;
-        font-size: 5.5rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        letter-spacing: -0.02em;
-        text-transform: uppercase;
-        line-height: 1.1;
-        color: #ffffff;
-        position: relative;
-        z-index: 1;
-        background: linear-gradient(
-          135deg,
-          #ffffff 0%,
-          #e0e0e0 50%,
-          #b8b8b8 100%
-        );
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-shadow: none;
-      }
-      .hero .subtitle-small {
-        display: block;
-        font-size: 0.55em;
-        font-weight: 500;
-        color: #888;
-        margin-top: 0.8rem;
-        letter-spacing: 0.2em;
-        background: linear-gradient(135deg, #888 0%, #666 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-      .hero .subtitle {
-        font-family: "Inter", sans-serif;
-        font-size: 1.15rem;
-        color: #999;
-        margin-bottom: 2rem;
-        line-height: 1.7;
-        font-weight: 400;
-        max-width: 800px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .tags {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 2rem;
-      }
-      .tags span {
-        padding: 0.6rem 1.3rem;
-        background: rgba(255, 140, 0, 0.1);
-        border: 1px solid rgba(255, 140, 0, 0.3);
-        border-radius: 25px;
-        font-size: 0.9rem;
-        color: #ff8c00;
-        font-weight: 500;
-        transition: all 0.3s ease;
-      }
-      .tags span:hover {
-        background: rgba(255, 140, 0, 0.2);
-        border-color: #ffa500;
-        color: #ffa500;
-        transform: translateY(-3px);
-        box-shadow: 0 6px 25px rgba(255, 140, 0, 0.4);
-      } /* === CONTENT ROW === */
-      .row {
-        display: flex;
-        align-items: center;
-        gap: 4rem;
-        margin: 5rem 0;
-        opacity: 0;
-        transform: translateY(50px);
-        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      }
-      .row.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      .row.reverse {
-        flex-direction: row-reverse;
-      }
-      .row-visual {
-        flex: 1;
-      }
-      .row-visual img {
-        width: 100%;
-        border-radius: 12px;
-        box-shadow:
-          0 20px 60px rgba(0, 0, 0, 0.5),
-          0 0 30px rgba(210, 125, 45, 0.15);
-        border: 1px solid rgba(210, 125, 45, 0.2);
-        transition: all 0.4s ease;
-        filter: brightness(0.9) contrast(1.1);
-      }
-      .row-visual img:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow:
-          0 30px 80px rgba(0, 0, 0, 0.7),
-          0 0 50px rgba(255, 140, 0, 0.4);
-        border-color: rgba(255, 140, 0, 0.6);
-        filter: brightness(1) contrast(1.15);
-      }
-      .video-container {
-        position: relative;
-        padding-bottom: 56.25%;
-        height: 0;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow:
-          0 20px 60px rgba(0, 0, 0, 0.5),
-          0 0 30px rgba(255, 140, 0, 0.1);
-        border: 1px solid rgba(210, 125, 45, 0.3);
-        transition: all 0.4s ease;
-      }
-      .video-container:hover {
-        box-shadow:
-          0 30px 80px rgba(0, 0, 0, 0.7),
-          0 0 50px rgba(255, 140, 0, 0.3);
-        border-color: rgba(255, 140, 0, 0.6);
-        transform: translateY(-5px);
-      }
-      .video-container iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-      }
-      .row-text {
-        flex: 1;
-      }
-      .row-text h3 {
-        font-family: "Sora", "Inter", sans-serif;
-        font-size: 2.2rem;
-        color: #ffffff;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        border-left: 4px solid #ff8c00;
-        padding-left: 1rem;
-        position: relative;
-        letter-spacing: -0.02em;
-      }
-      .row-text h3::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: -8px;
-        width: 60px;
-        height: 3px;
-        background: linear-gradient(90deg, #ff8c00, transparent);
-        border-radius: 2px;
-      }
-      .row-text p {
-        color: #aaa;
-        line-height: 1.8;
-        font-size: 1rem;
-        margin-bottom: 1.5rem;
-      }
-      .row-text ul {
-        list-style: none;
-        padding: 0;
-        margin: 1.5rem 0;
-      }
-      .row-text li {
-        padding: 0.6rem 0 0.6rem 1.8rem;
-        position: relative;
-        color: #999;
-        font-size: 0.95rem;
-        line-height: 1.7;
-      }
-      .row-text li::before {
-        content: "▸";
-        position: absolute;
-        left: 0.2rem;
-        color: #ff8c00;
-        font-weight: bold;
-        font-size: 1.2rem;
-      } /* === STATS === */
-      .stats {
-        margin: 5rem 0;
-        text-align: center;
-        opacity: 0;
-        transform: translateY(50px);
-        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      }
-      .stats.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      .stats h3 {
-        font-family: "Sora", "Inter", sans-serif;
-        font-size: 2.5rem;
-        color: #ffffff;
-        margin-bottom: 3rem;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-      }
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 2rem;
-        max-width: 1000px;
-        margin: 0 auto;
-      }
-      .stat-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(210, 125, 45, 0.3);
-        border-radius: 12px;
-        padding: 2.5rem 1.5rem;
-        transition: all 0.3s ease;
-        backdrop-filter: blur(10px);
-        position: relative;
-        overflow: hidden;
-      }
-      .stat-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(255, 140, 0, 0.1),
-          transparent
-        );
-        transition: left 0.5s ease;
-      }
-      .stat-card:hover::before {
-        left: 100%;
-      }
-      .stat-card:hover {
-        border-color: #ff8c00;
-        transform: translateY(-8px) scale(1.02);
-        box-shadow:
-          0 15px 60px rgba(0, 0, 0, 0.7),
-          0 0 40px rgba(255, 140, 0, 0.4);
-        background: rgba(255, 255, 255, 0.05);
-      }
-      .stat-value {
-        font-family: "Sora", "Inter", sans-serif;
-        font-size: 3.2rem;
-        font-weight: 800;
-        color: #ff8c00;
-        display: block;
-        margin-bottom: 0.5rem;
-        letter-spacing: -0.03em;
-      }
-      .stat-label {
-        font-family: "DM Sans", sans-serif;
-        font-size: 0.85rem;
-        color: #888;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-weight: 500;
-      } /* === GALLERY === */
-      .gallery {
-        margin: 5rem 0;
-        opacity: 0;
-        transform: translateY(50px);
-        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      }
-      .gallery.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      .gallery h3 {
-        font-family: "Sora", "Inter", sans-serif;
-        font-size: 2.5rem;
-        color: #ffffff;
-        margin-bottom: 3rem;
-        text-align: center;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-      }
-      .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-      }
-      .gallery-item {
-        position: relative;
-        border-radius: 12px;
-        overflow: hidden;
-        cursor: pointer;
-        transition: all 0.4s ease;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-        border: 1px solid rgba(210, 125, 45, 0.2);
-      }
-      .gallery-item::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          135deg,
-          rgba(255, 140, 0, 0) 0%,
-          rgba(255, 140, 0, 0.15) 100%
-        );
-        opacity: 0;
-        transition: opacity 0.4s ease;
-        pointer-events: none;
-      }
-      .gallery-item:hover {
-        transform: translateY(-12px) scale(1.02);
-        box-shadow:
-          0 20px 60px rgba(0, 0, 0, 0.7),
-          0 0 40px rgba(255, 140, 0, 0.4);
-        border-color: rgba(255, 140, 0, 0.6);
-      }
-      .gallery-item:hover::after {
-        opacity: 1;
-      }
-      .gallery-item img {
-        width: 100%;
-        height: 250px;
-        object-fit: cover;
-        transition: all 0.4s ease;
-        filter: brightness(0.9) contrast(1.1);
-      }
-      .gallery-item:hover img {
-        transform: scale(1.1);
-        filter: brightness(1) contrast(1.2);
-      } /* === BUTTON === */
-      .button-container {
-        text-align: center;
-        margin: 4rem 0;
-      }
-      .button {
-        display: inline-block;
-        padding: 1rem 2.5rem;
-        background: rgba(255, 140, 0, 0.1);
-        border: 2px solid rgba(255, 140, 0, 0.3);
-        border-radius: 50px;
-        color: #ff8c00;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        transition: all 0.3s ease;
-      }
-      .button:hover {
-        background: rgba(255, 140, 0, 0.2);
-        border-color: #ff8c00;
-        color: #ffa500;
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(255, 140, 0, 0.4);
-      } /* === FOOTER === */
-      .footer {
-        text-align: center;
-        padding: 3rem 0;
-        color: #666;
-        font-size: 0.9rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-        margin-top: 5rem;
-      } /* === RESPONSIVE === */
-      @media (max-width: 768px) {
+
+        /* === BACKGROUND === */
+        .cave-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: url("../assets/images/projects-ray/background/Black%20Coal.jpg") repeat center;
+            background-size: 400px 400px;
+        }
+
+        .cave-background::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg,
+                    rgba(0, 0, 0, 0.85) 0%,
+                    rgba(0, 0, 0, 0.9) 50%,
+                    rgba(0, 0, 0, 0.95) 100%);
+        }
+
+        .cave-background::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            animation: none;
+        }
+
+        @keyframes bgPulse {
+
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* === CONTENT WRAPPER === */
         .content {
-          padding: 1.5rem;
+            position: relative;
+            z-index: 1;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem;
         }
-        .back-button,
-        .lang-switcher {
-          top: 1rem;
-          left: 1rem;
-          right: 1rem;
-        }
-        .lang-switcher {
-          right: 1rem;
-          left: auto;
-          gap: 0.4rem;
-          padding: 0.4rem;
-        }
-        .lang-btn {
-          padding: 0.4rem 0.8rem;
-          font-size: 0.8rem;
-        }
+
+        /* === BACK BUTTON === */
         .back-button {
-          padding: 0.6rem 1.2rem;
-          font-size: 0.8rem;
-          gap: 0.6rem;
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 100;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            border-radius: 50px;
+            color: #ff8c00;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
-        .hero {
-          padding: 3rem 0 1.5rem;
+
+        .back-button:hover {
+            background: rgba(255, 140, 0, 0.15);
+            border-color: #ff8c00;
+            transform: translateX(-5px);
+            box-shadow: 0 6px 30px rgba(255, 140, 0, 0.3);
+            color: #ffa500;
         }
-        .hero h1 {
-          font-size: clamp(2.5rem, 8vw, 3rem);
-          margin-bottom: 0.75rem;
+
+        .back-button::before {
+            content: "";
+            font-size: 1.2rem;
+            font-weight: bold;
         }
-        .hero .subtitle-small {
-          font-size: 0.5em;
-          margin-top: 0.6rem;
-          letter-spacing: 0.15em;
-        }
-        .hero .subtitle {
-          font-size: 1rem;
-          margin-bottom: 1.5rem;
-          line-height: 1.6;
-        }
-        .tags {
-          gap: 0.75rem;
-          margin-top: 1.5rem;
-        }
-        .tags span {
-          padding: 0.5rem 1.1rem;
-          font-size: 0.8rem;
-          border-radius: 20px;
-        }
-        .row,
-        .row.reverse {
-          flex-direction: column;
-          gap: 1.5rem;
-          margin: 2.5rem 0;
-        }
-        .row-text h3 {
-          font-size: clamp(1.5rem, 6vw, 1.8rem);
-          margin-bottom: 0.75rem;
-          padding-left: 0.75rem;
-        }
-        .row-text p {
-          font-size: 0.9rem;
-          line-height: 1.6;
-          margin-bottom: 1.25rem;
-        }
-        .row-text li {
-          padding: 0.5rem 0 0.5rem 1.5rem;
-          font-size: 0.85rem;
-          line-height: 1.6;
-        }
-        .audio-player {
-          width: 180px;
-          height: 180px;
-          margin: 1.25rem auto;
-        }
-        .audio-player .inner {
-          inset: 15px;
-        }
-        .audio-player button {
-          width: 80px;
-          height: 80px;
-        }
-        .audio-player button .tri {
-          border-left: 22px solid #0a0a0a;
-          border-top: 14px solid transparent;
-          border-bottom: 14px solid transparent;
-          margin-left: 2px;
-        }
-        .audio-player button.paused .tri::before,
-        .audio-player button.paused .tri::after {
-          width: 5px;
-          height: 20px;
-        }
-        .audio-player button.paused .tri::before {
-          left: -6px;
-        }
-        .audio-player button.paused .tri::after {
-          left: 3px;
-        }
-        .stats {
-          margin: 3rem 0;
-        }
-        .stats h3 {
-          font-size: clamp(1.75rem, 6vw, 2rem);
-          margin-bottom: 2rem;
-        }
-        .stats-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 1.25rem;
-        }
-        .stat-card {
-          padding: 1.75rem 1.25rem;
-          border-radius: 10px;
-        }
-        .stat-value {
-          font-size: 2.5rem;
-          margin-bottom: 0.4rem;
-        }
-        .stat-label {
-          font-size: 0.8rem;
-        }
-        .gallery {
-          margin: 3rem 0;
-        }
-        .gallery h3 {
-          font-size: clamp(1.75rem, 6vw, 2rem);
-          margin-bottom: 2rem;
-        }
-        .gallery-grid {
-          grid-template-columns: 1fr;
-          gap: 1.25rem;
-        }
-        .gallery-item img {
-          height: 200px;
-        }
-        .button-container {
-          margin: 3rem 0;
-        }
-        .button {
-          padding: 0.9rem 2rem;
-          font-size: 0.9rem;
-        }
-        .footer {
-          padding: 2rem 0;
-          margin-top: 3rem;
-          font-size: 0.85rem;
-        }
-      }
-      @media (max-width: 480px) {
-        .content {
-          padding: 1rem;
-        }
-        .back-button,
+
+        /* === LANGUAGE SWITCHER === */
         .lang-switcher {
-          top: 0.75rem;
-          left: 0.75rem;
-          right: 0.75rem;
+            position: fixed !important;
+            top: 2rem !important;
+            right: 2rem !important;
+            z-index: 1000 !important;
+            display: flex !important;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.08) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 140, 0, 0.5) !important;
+            border-radius: 50px;
+            padding: 0.5rem;
+            box-shadow:
+                0 4px 20px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(255, 140, 0, 0.15) !important;
         }
-        .lang-switcher {
-          right: 0.75rem;
-          left: auto;
-          gap: 0.3rem;
-          padding: 0.3rem;
-        }
+
         .lang-btn {
-          padding: 0.3rem 0.6rem;
-          font-size: 0.7rem;
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 50px;
+            color: #999 !important;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            font-family: "Poppins", sans-serif;
+            transition: all 0.3s ease;
+            display: flex !important;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .back-button {
-          padding: 0.5rem 1rem;
-          font-size: 0.75rem;
-          gap: 0.5rem;
+
+        .lang-btn:hover {
+            color: #ff8c00 !important;
+            background: rgba(255, 140, 0, 0.1);
         }
+
+        .lang-btn.active {
+            color: #ff8c00 !important;
+            background: rgba(255, 140, 0, 0.15);
+            font-weight: 600;
+        }
+
+        .lang-flag {
+            width: 20px;
+            height: 14px;
+            border-radius: 2px;
+            overflow: hidden;
+            display: block;
+        }
+
+        /* === HERO SECTION === */
         .hero {
-          padding: 2.5rem 0 1.25rem;
+            text-align: center;
+            padding: 8rem 0 4rem;
+            margin-bottom: 4rem;
+            position: relative;
         }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: transparent;
+            pointer-events: none;
+        }
+
         .hero h1 {
-          font-size: clamp(2rem, 8vw, 2.5rem);
-          margin-bottom: 0.6rem;
+            font-family: "Sora", "Inter", sans-serif;
+            font-size: 5.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            line-height: 1.1;
+            color: #ffffff;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg,
+                    #ffffff 0%,
+                    #e0e0e0 50%,
+                    #b8b8b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
         }
+
         .hero .subtitle-small {
-          font-size: 0.45em;
-          margin-top: 0.5rem;
-          letter-spacing: 0.1em;
+            display: block;
+            font-size: 0.55em;
+            font-weight: 500;
+            color: #888;
+            margin-top: 0.8rem;
+            letter-spacing: 0.2em;
+            background: linear-gradient(135deg, #888 0%, #666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
+
         .hero .subtitle {
-          font-size: 0.9rem;
-          margin-bottom: 1.25rem;
-          line-height: 1.5;
+            font-family: "Inter", sans-serif;
+            font-size: 1.15rem;
+            color: #999;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+            font-weight: 400;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
+
         .tags {
-          gap: 0.6rem;
-          margin-top: 1.25rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
         }
+
         .tags span {
-          padding: 0.4rem 0.9rem;
-          font-size: 0.75rem;
-          border-radius: 16px;
+            padding: 0.6rem 1.3rem;
+            background: rgba(255, 140, 0, 0.1);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            border-radius: 25px;
+            font-size: 0.9rem;
+            color: #ff8c00;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
-        .row,
+
+        .tags span:hover {
+            background: rgba(255, 140, 0, 0.2);
+            border-color: #ffa500;
+            color: #ffa500;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(255, 140, 0, 0.4);
+        }
+
+        /* === CONTENT ROW === */
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+            margin: 5rem 0;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .row.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .row.reverse {
-          gap: 1.25rem;
-          margin: 2rem 0;
+            flex-direction: row-reverse;
         }
+
+        .row-visual {
+            flex: 1;
+        }
+
+        .row-visual img {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(210, 125, 45, 0.15);
+            border: 1px solid rgba(210, 125, 45, 0.2);
+            transition: all 0.4s ease;
+            filter: brightness(0.9) contrast(1.1);
+        }
+
+        .row-visual img:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.7),
+                0 0 50px rgba(255, 140, 0, 0.4);
+            border-color: rgba(255, 140, 0, 0.6);
+            filter: brightness(1) contrast(1.15);
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(255, 140, 0, 0.1);
+            border: 1px solid rgba(210, 125, 45, 0.3);
+            transition: all 0.4s ease;
+        }
+
+        .video-container:hover {
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.7),
+                0 0 50px rgba(255, 140, 0, 0.3);
+            border-color: rgba(255, 140, 0, 0.6);
+            transform: translateY(-5px);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .row-text {
+            flex: 1;
+        }
+
         .row-text h3 {
-          font-size: clamp(1.25rem, 6vw, 1.5rem);
-          margin-bottom: 0.6rem;
-          padding-left: 0.6rem;
+            font-family: "Sora", "Inter", sans-serif;
+            font-size: 2.2rem;
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            border-left: 4px solid #ff8c00;
+            padding-left: 1rem;
+            position: relative;
+            letter-spacing: -0.02em;
         }
+
+        .row-text h3::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #ff8c00, transparent);
+            border-radius: 2px;
+        }
+
         .row-text p {
-          font-size: 0.85rem;
-          line-height: 1.5;
-          margin-bottom: 1rem;
+            color: #aaa;
+            line-height: 1.8;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
         }
+
+        .row-text ul {
+            list-style: none;
+            padding: 0;
+            margin: 1.5rem 0;
+        }
+
         .row-text li {
-          padding: 0.4rem 0 0.4rem 1.25rem;
-          font-size: 0.8rem;
-          line-height: 1.5;
+            padding: 0.6rem 0 0.6rem 1.8rem;
+            position: relative;
+            color: #999;
+            font-size: 0.95rem;
+            line-height: 1.7;
         }
-        .audio-player {
-          width: 160px;
-          height: 160px;
-          margin: 1rem auto;
+
+        .row-text li::before {
+            content: "▸";
+            position: absolute;
+            left: 0.2rem;
+            color: #ff8c00;
+            font-weight: bold;
+            font-size: 1.2rem;
         }
-        .audio-player .inner {
-          inset: 12px;
-        }
-        .audio-player button {
-          width: 70px;
-          height: 70px;
-        }
-        .audio-player button .tri {
-          border-left: 18px solid #0a0a0a;
-          border-top: 12px solid transparent;
-          border-bottom: 12px solid transparent;
-          margin-left: 2px;
-        }
-        .audio-player button.paused .tri::before,
-        .audio-player button.paused .tri::after {
-          width: 4px;
-          height: 18px;
-        }
-        .audio-player button.paused .tri::before {
-          left: -5px;
-        }
-        .audio-player button.paused .tri::after {
-          left: 2px;
-        }
+
+        /* === STATS === */
         .stats {
-          margin: 2.5rem 0;
+            margin: 5rem 0;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
+
+        .stats.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .stats h3 {
-          font-size: clamp(1.5rem, 6vw, 1.75rem);
-          margin-bottom: 1.5rem;
+            font-family: "Sora", "Inter", sans-serif;
+            font-size: 2.5rem;
+            color: #ffffff;
+            margin-bottom: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
+
         .stats-grid {
-          grid-template-columns: 1fr;
-          gap: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
         }
+
         .stat-card {
-          padding: 1.5rem 1rem;
-          border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(210, 125, 45, 0.3);
+            border-radius: 12px;
+            padding: 2.5rem 1.5rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
         }
+
+        .stat-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 140, 0, 0.1),
+                    transparent);
+            transition: left 0.5s ease;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            border-color: #ff8c00;
+            transform: translateY(-8px) scale(1.02);
+            box-shadow:
+                0 15px 60px rgba(0, 0, 0, 0.7),
+                0 0 40px rgba(255, 140, 0, 0.4);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
         .stat-value {
-          font-size: 2rem;
-          margin-bottom: 0.3rem;
+            font-family: "Sora", "Inter", sans-serif;
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: #ff8c00;
+            display: block;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.03em;
         }
+
         .stat-label {
-          font-size: 0.75rem;
+            font-family: "DM Sans", sans-serif;
+            font-size: 0.85rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 500;
         }
+
+        /* === GALLERY === */
         .gallery {
-          margin: 2.5rem 0;
+            margin: 5rem 0;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
+
+        .gallery.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .gallery h3 {
-          font-size: clamp(1.5rem, 6vw, 1.75rem);
-          margin-bottom: 1.5rem;
+            font-family: "Sora", "Inter", sans-serif;
+            font-size: 2.5rem;
+            color: #ffffff;
+            margin-bottom: 3rem;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
+
         .gallery-grid {
-          gap: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
         }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(210, 125, 45, 0.2);
+        }
+
+        .gallery-item::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg,
+                    rgba(255, 140, 0, 0) 0%,
+                    rgba(255, 140, 0, 0.15) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.7),
+                0 0 40px rgba(255, 140, 0, 0.4);
+            border-color: rgba(255, 140, 0, 0.6);
+        }
+
+        .gallery-item:hover::after {
+            opacity: 1;
+        }
+
         .gallery-item img {
-          height: 180px;
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: all 0.4s ease;
+            filter: brightness(0.9) contrast(1.1);
         }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+            filter: brightness(1) contrast(1.2);
+        }
+
+        /* === BUTTON === */
         .button-container {
-          margin: 2.5rem 0;
+            text-align: center;
+            margin: 4rem 0;
         }
+
         .button {
-          padding: 0.8rem 1.75rem;
-          font-size: 0.85rem;
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: rgba(255, 140, 0, 0.1);
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            border-radius: 50px;
+            color: #ff8c00;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
         }
+
+        .button:hover {
+            background: rgba(255, 140, 0, 0.2);
+            border-color: #ff8c00;
+            color: #ffa500;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.4);
+        }
+
+        /* === FOOTER === */
         .footer {
-          padding: 1.75rem 0;
-          margin-top: 2.5rem;
-          font-size: 0.8rem;
+            text-align: center;
+            padding: 3rem 0;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 5rem;
         }
-      }
-      @media (max-width: 374px) {
-        .content {
-          padding: 0.75rem;
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .content {
+                padding: 1.5rem;
+            }
+
+            .back-button,
+            .lang-switcher {
+                top: 1rem;
+                left: 1rem;
+                right: 1rem;
+            }
+
+            .lang-switcher {
+                right: 1rem;
+                left: auto;
+                gap: 0.4rem;
+                padding: 0.4rem;
+            }
+
+            .lang-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .back-button {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.8rem;
+                gap: 0.6rem;
+            }
+
+            .hero {
+                padding: 3rem 0 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: clamp(2.5rem, 8vw, 3rem);
+                margin-bottom: 0.75rem;
+            }
+
+            .hero .subtitle-small {
+                font-size: 0.5em;
+                margin-top: 0.6rem;
+                letter-spacing: 0.15em;
+            }
+
+            .hero .subtitle {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+                line-height: 1.6;
+            }
+
+            .tags {
+                gap: 0.75rem;
+                margin-top: 1.5rem;
+            }
+
+            .tags span {
+                padding: 0.5rem 1.1rem;
+                font-size: 0.8rem;
+                border-radius: 20px;
+            }
+
+            .row,
+            .row.reverse {
+                flex-direction: column;
+                gap: 1.5rem;
+                margin: 2.5rem 0;
+            }
+
+            .row-text h3 {
+                font-size: clamp(1.5rem, 6vw, 1.8rem);
+                margin-bottom: 0.75rem;
+                padding-left: 0.75rem;
+            }
+
+            .row-text p {
+                font-size: 0.9rem;
+                line-height: 1.6;
+                margin-bottom: 1.25rem;
+            }
+
+            .row-text li {
+                padding: 0.5rem 0 0.5rem 1.5rem;
+                font-size: 0.85rem;
+                line-height: 1.6;
+            }
+
+            .audio-player {
+                width: 180px;
+                height: 180px;
+                margin: 1.25rem auto;
+            }
+
+            .audio-player .inner {
+                inset: 15px;
+            }
+
+            .audio-player button {
+                width: 80px;
+                height: 80px;
+            }
+
+            .audio-player button .tri {
+                border-left: 22px solid #0a0a0a;
+                border-top: 14px solid transparent;
+                border-bottom: 14px solid transparent;
+                margin-left: 2px;
+            }
+
+            .audio-player button.paused .tri::before,
+            .audio-player button.paused .tri::after {
+                width: 5px;
+                height: 20px;
+            }
+
+            .audio-player button.paused .tri::before {
+                left: -6px;
+            }
+
+            .audio-player button.paused .tri::after {
+                left: 3px;
+            }
+
+            .stats {
+                margin: 3rem 0;
+            }
+
+            .stats h3 {
+                font-size: clamp(1.75rem, 6vw, 2rem);
+                margin-bottom: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.25rem;
+            }
+
+            .stat-card {
+                padding: 1.75rem 1.25rem;
+                border-radius: 10px;
+            }
+
+            .stat-value {
+                font-size: 2.5rem;
+                margin-bottom: 0.4rem;
+            }
+
+            .stat-label {
+                font-size: 0.8rem;
+            }
+
+            .gallery {
+                margin: 3rem 0;
+            }
+
+            .gallery h3 {
+                font-size: clamp(1.75rem, 6vw, 2rem);
+                margin-bottom: 2rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+
+            .gallery-item img {
+                height: 200px;
+            }
+
+            .button-container {
+                margin: 3rem 0;
+            }
+
+            .button {
+                padding: 0.9rem 2rem;
+                font-size: 0.9rem;
+            }
+
+            .footer {
+                padding: 2rem 0;
+                margin-top: 3rem;
+                font-size: 0.85rem;
+            }
         }
-        .back-button,
-        .lang-switcher {
-          top: 0.5rem;
-          left: 0.5rem;
-          right: 0.5rem;
+
+        @media (max-width: 480px) {
+            .content {
+                padding: 1rem;
+            }
+
+            .back-button,
+            .lang-switcher {
+                top: 0.75rem;
+                left: 0.75rem;
+                right: 0.75rem;
+            }
+
+            .lang-switcher {
+                right: 0.75rem;
+                left: auto;
+                gap: 0.3rem;
+                padding: 0.3rem;
+            }
+
+            .lang-btn {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.7rem;
+            }
+
+            .back-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
+                gap: 0.5rem;
+            }
+
+            .hero {
+                padding: 2.5rem 0 1.25rem;
+            }
+
+            .hero h1 {
+                font-size: clamp(2rem, 8vw, 2.5rem);
+                margin-bottom: 0.6rem;
+            }
+
+            .hero .subtitle-small {
+                font-size: 0.45em;
+                margin-top: 0.5rem;
+                letter-spacing: 0.1em;
+            }
+
+            .hero .subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 1.25rem;
+                line-height: 1.5;
+            }
+
+            .tags {
+                gap: 0.6rem;
+                margin-top: 1.25rem;
+            }
+
+            .tags span {
+                padding: 0.4rem 0.9rem;
+                font-size: 0.75rem;
+                border-radius: 16px;
+            }
+
+            .row,
+            .row.reverse {
+                gap: 1.25rem;
+                margin: 2rem 0;
+            }
+
+            .row-text h3 {
+                font-size: clamp(1.25rem, 6vw, 1.5rem);
+                margin-bottom: 0.6rem;
+                padding-left: 0.6rem;
+            }
+
+            .row-text p {
+                font-size: 0.85rem;
+                line-height: 1.5;
+                margin-bottom: 1rem;
+            }
+
+            .row-text li {
+                padding: 0.4rem 0 0.4rem 1.25rem;
+                font-size: 0.8rem;
+                line-height: 1.5;
+            }
+
+            .audio-player {
+                width: 160px;
+                height: 160px;
+                margin: 1rem auto;
+            }
+
+            .audio-player .inner {
+                inset: 12px;
+            }
+
+            .audio-player button {
+                width: 70px;
+                height: 70px;
+            }
+
+            .audio-player button .tri {
+                border-left: 18px solid #0a0a0a;
+                border-top: 12px solid transparent;
+                border-bottom: 12px solid transparent;
+                margin-left: 2px;
+            }
+
+            .audio-player button.paused .tri::before,
+            .audio-player button.paused .tri::after {
+                width: 4px;
+                height: 18px;
+            }
+
+            .audio-player button.paused .tri::before {
+                left: -5px;
+            }
+
+            .audio-player button.paused .tri::after {
+                left: 2px;
+            }
+
+            .stats {
+                margin: 2.5rem 0;
+            }
+
+            .stats h3 {
+                font-size: clamp(1.5rem, 6vw, 1.75rem);
+                margin-bottom: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1.5rem 1rem;
+                border-radius: 8px;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
+            }
+
+            .gallery {
+                margin: 2.5rem 0;
+            }
+
+            .gallery h3 {
+                font-size: clamp(1.5rem, 6vw, 1.75rem);
+                margin-bottom: 1.5rem;
+            }
+
+            .gallery-grid {
+                gap: 1rem;
+            }
+
+            .gallery-item img {
+                height: 180px;
+            }
+
+            .button-container {
+                margin: 2.5rem 0;
+            }
+
+            .button {
+                padding: 0.8rem 1.75rem;
+                font-size: 0.85rem;
+            }
+
+            .footer {
+                padding: 1.75rem 0;
+                margin-top: 2.5rem;
+                font-size: 0.8rem;
+            }
         }
-        .lang-switcher {
-          right: 0.5rem;
-          left: auto;
-          gap: 0.25rem;
-          padding: 0.25rem;
+
+        @media (max-width: 374px) {
+            .content {
+                padding: 0.75rem;
+            }
+
+            .back-button,
+            .lang-switcher {
+                top: 0.5rem;
+                left: 0.5rem;
+                right: 0.5rem;
+            }
+
+            .lang-switcher {
+                right: 0.5rem;
+                left: auto;
+                gap: 0.25rem;
+                padding: 0.25rem;
+            }
+
+            .lang-btn {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.65rem;
+            }
+
+            .back-button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.7rem;
+                gap: 0.4rem;
+            }
+
+            .hero {
+                padding: 2rem 0 1rem;
+            }
+
+            .hero h1 {
+                font-size: clamp(1.75rem, 8vw, 2rem);
+                margin-bottom: 0.5rem;
+            }
+
+            .hero .subtitle-small {
+                font-size: 0.4em;
+                margin-top: 0.4rem;
+                letter-spacing: 0.08em;
+            }
+
+            .hero .subtitle {
+                font-size: 0.8rem;
+                margin-bottom: 1rem;
+                line-height: 1.4;
+            }
+
+            .tags {
+                gap: 0.5rem;
+                margin-top: 1rem;
+            }
+
+            .tags span {
+                padding: 0.35rem 0.8rem;
+                font-size: 0.7rem;
+                border-radius: 14px;
+            }
+
+            .row,
+            .row.reverse {
+                gap: 1rem;
+                margin: 1.5rem 0;
+            }
+
+            .row-text h3 {
+                font-size: clamp(1.1rem, 6vw, 1.25rem);
+                margin-bottom: 0.5rem;
+                padding-left: 0.5rem;
+            }
+
+            .row-text p {
+                font-size: 0.8rem;
+                line-height: 1.4;
+                margin-bottom: 0.8rem;
+            }
+
+            .row-text li {
+                padding: 0.3rem 0 0.3rem 1rem;
+                font-size: 0.75rem;
+                line-height: 1.4;
+            }
+
+            .audio-player {
+                width: 140px;
+                height: 140px;
+                margin: 0.8rem auto;
+            }
+
+            .audio-player .inner {
+                inset: 10px;
+            }
+
+            .audio-player button {
+                width: 60px;
+                height: 60px;
+            }
+
+            .audio-player button .tri {
+                border-left: 16px solid #0a0a0a;
+                border-top: 10px solid transparent;
+                border-bottom: 10px solid transparent;
+                margin-left: 1px;
+            }
+
+            .audio-player button.paused .tri::before,
+            .audio-player button.paused .tri::after {
+                width: 3px;
+                height: 16px;
+            }
+
+            .audio-player button.paused .tri::before {
+                left: -4px;
+            }
+
+            .audio-player button.paused .tri::after {
+                left: 1px;
+            }
+
+            .stats {
+                margin: 2rem 0;
+            }
+
+            .stats h3 {
+                font-size: clamp(1.25rem, 6vw, 1.5rem);
+                margin-bottom: 1.25rem;
+            }
+
+            .stats-grid {
+                gap: 0.8rem;
+            }
+
+            .stat-card {
+                padding: 1.25rem 0.8rem;
+                border-radius: 6px;
+            }
+
+            .stat-value {
+                font-size: 1.75rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .stat-label {
+                font-size: 0.7rem;
+            }
+
+            .gallery {
+                margin: 2rem 0;
+            }
+
+            .gallery h3 {
+                font-size: clamp(1.25rem, 6vw, 1.5rem);
+                margin-bottom: 1.25rem;
+            }
+
+            .gallery-grid {
+                gap: 0.8rem;
+            }
+
+            .gallery-item img {
+                height: 160px;
+            }
+
+            .button-container {
+                margin: 2rem 0;
+            }
+
+            .button {
+                padding: 0.7rem 1.5rem;
+                font-size: 0.8rem;
+            }
+
+            .footer {
+                padding: 1.5rem 0;
+                margin-top: 2rem;
+                font-size: 0.75rem;
+            }
         }
-        .lang-btn {
-          padding: 0.25rem 0.5rem;
-          font-size: 0.65rem;
-        }
-        .back-button {
-          padding: 0.4rem 0.8rem;
-          font-size: 0.7rem;
-          gap: 0.4rem;
-        }
+
+        /* FIX: hero and first content section always visible */
         .hero {
-          padding: 2rem 0 1rem;
+            opacity: 1 !important;
+            transform: translateY(0) !important;
         }
-        .hero h1 {
-          font-size: clamp(1.75rem, 8vw, 2rem);
-          margin-bottom: 0.5rem;
+
+        .video-section:first-of-type,
+        section:first-of-type {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
         }
-        .hero .subtitle-small {
-          font-size: 0.4em;
-          margin-top: 0.4rem;
-          letter-spacing: 0.08em;
+
+        /* Hide audio players with placeholder audio */
+        .audio-player[data-audio*="placeholder.wav"] {
+            display: none !important;
         }
-        .hero .subtitle {
-          font-size: 0.8rem;
-          margin-bottom: 1rem;
-          line-height: 1.4;
-        }
-        .tags {
-          gap: 0.5rem;
-          margin-top: 1rem;
-        }
-        .tags span {
-          padding: 0.35rem 0.8rem;
-          font-size: 0.7rem;
-          border-radius: 14px;
-        }
-        .row,
-        .row.reverse {
-          gap: 1rem;
-          margin: 1.5rem 0;
-        }
-        .row-text h3 {
-          font-size: clamp(1.1rem, 6vw, 1.25rem);
-          margin-bottom: 0.5rem;
-          padding-left: 0.5rem;
-        }
-        .row-text p {
-          font-size: 0.8rem;
-          line-height: 1.4;
-          margin-bottom: 0.8rem;
-        }
-        .row-text li {
-          padding: 0.3rem 0 0.3rem 1rem;
-          font-size: 0.75rem;
-          line-height: 1.4;
-        }
-        .audio-player {
-          width: 140px;
-          height: 140px;
-          margin: 0.8rem auto;
-        }
-        .audio-player .inner {
-          inset: 10px;
-        }
-        .audio-player button {
-          width: 60px;
-          height: 60px;
-        }
-        .audio-player button .tri {
-          border-left: 16px solid #0a0a0a;
-          border-top: 10px solid transparent;
-          border-bottom: 10px solid transparent;
-          margin-left: 1px;
-        }
-        .audio-player button.paused .tri::before,
-        .audio-player button.paused .tri::after {
-          width: 3px;
-          height: 16px;
-        }
-        .audio-player button.paused .tri::before {
-          left: -4px;
-        }
-        .audio-player button.paused .tri::after {
-          left: 1px;
-        }
-        .stats {
-          margin: 2rem 0;
-        }
-        .stats h3 {
-          font-size: clamp(1.25rem, 6vw, 1.5rem);
-          margin-bottom: 1.25rem;
-        }
-        .stats-grid {
-          gap: 0.8rem;
-        }
-        .stat-card {
-          padding: 1.25rem 0.8rem;
-          border-radius: 6px;
-        }
-        .stat-value {
-          font-size: 1.75rem;
-          margin-bottom: 0.25rem;
-        }
-        .stat-label {
-          font-size: 0.7rem;
-        }
-        .gallery {
-          margin: 2rem 0;
-        }
-        .gallery h3 {
-          font-size: clamp(1.25rem, 6vw, 1.5rem);
-          margin-bottom: 1.25rem;
-        }
-        .gallery-grid {
-          gap: 0.8rem;
-        }
-        .gallery-item img {
-          height: 160px;
-        }
-        .button-container {
-          margin: 2rem 0;
-        }
-        .button {
-          padding: 0.7rem 1.5rem;
-          font-size: 0.8rem;
-        }
-        .footer {
-          padding: 1.5rem 0;
-          margin-top: 2rem;
-          font-size: 0.75rem;
-        }
-      } /* FIX: hero and first content section always visible */
-      .hero {
-        opacity: 1 !important;
-        transform: translateY(0) !important;
-      }
-      .video-section:first-of-type,
-      section:first-of-type {
-        opacity: 1 !important;
-        transform: translateY(0) !important;
-      } /* Hide audio players with placeholder audio */
-      .audio-player[data-audio*="placeholder.wav"] {
-        display: none !important;
-      }
     </style>
-  </head>
-  <body style="background: #000000; margin: 0; padding: 0">
+</head>
+
+<body style="background: #000000; margin: 0; padding: 0">
     <!-- Ray Animation Simple Entrance -->
-    <div class="ray-entrance"><div class="ray-title">RAY</div></div>
+    <div class="ray-entrance">
+        <div class="ray-title">RAY</div>
+    </div>
     <!-- Background -->
-    <div
-      class="cave-background"
-      style="
+    <div class="cave-background" style="
         position: fixed;
         top: 0;
         left: 0;
@@ -1102,283 +1283,206 @@
         background: url(&quot;../assets/images/projects-ray/background/Black%20Coal.jpg&quot;)
           repeat center;
         background-size: 400px 400px;
-      "
-    ></div>
+      "></div>
     <!-- Content -->
     <div class="content">
-      <!-- Language Switcher -->
-      <div class="lang-switcher">
-        <button class="lang-btn active" data-lang="en">
-          <svg
-            class="lang-flag"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 60 30"
-          >
-            <rect width="60" height="30" fill="#012169" />
-            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" />
-            <path
-              d="M0,0 L60,30 M60,0 L0,30"
-              stroke="#C8102E"
-              stroke-width="4"
-            />
-            <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" />
-            <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" />
-          </svg>
-          <span>EN</span>
-        </button>
-        <button class="lang-btn" data-lang="pl">
-          <svg
-            class="lang-flag"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 10"
-          >
-            <rect width="16" height="5" fill="#fff" />
-            <rect y="5" width="16" height="5" fill="#dc143c" />
-          </svg>
-          <span>PL</span>
-        </button>
-        <button class="lang-btn" data-lang="nl">
-          <svg
-            class="lang-flag"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 9 6"
-          >
-            <rect width="9" height="6" fill="#21468B" />
-            <rect width="9" height="4" fill="#fff" />
-            <rect width="9" height="2" fill="#AE1C28" />
-          </svg>
-          <span>NL</span>
-        </button>
-      </div>
-      <!-- Back Button -->
-      <a href="/projects/" class="back-button">
-        <span data-i18n="back">Back to Projects</span>
-      </a>
-      <!-- Hero -->
-      <section class="hero">
-        <h1>
-          RAY ANIMATION
-          <span class="subtitle-small" data-i18n="hero.subtitle"
-            >MUSIC COMPOSITION</span
-          >
-        </h1>
-        <p class="subtitle" data-i18n="hero.description">
-          Complete musical composition for 3D animation project.
-        </p>
-        <div class="tags">
-          <span data-i18n="tags.role">Replacement Composer</span>
-          <span data-i18n="tags.style">Disco-inspired</span>
-          <span data-i18n="tags.location">Ghent, Belgium</span>
-          <span data-i18n="tags.type">Animation Score</span>
+        <!-- Language Switcher -->
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="en">
+                <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30">
+                    <rect width="60" height="30" fill="#012169" />
+                    <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" />
+                    <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4" />
+                    <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" />
+                    <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" />
+                </svg>
+                <span>EN</span>
+            </button>
+            <button class="lang-btn" data-lang="pl">
+                <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 10">
+                    <rect width="16" height="5" fill="#fff" />
+                    <rect y="5" width="16" height="5" fill="#dc143c" />
+                </svg>
+                <span>PL</span>
+            </button>
+            <button class="lang-btn" data-lang="nl">
+                <svg class="lang-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 6">
+                    <rect width="9" height="6" fill="#21468B" />
+                    <rect width="9" height="4" fill="#fff" />
+                    <rect width="9" height="2" fill="#AE1C28" />
+                </svg>
+                <span>NL</span>
+            </button>
         </div>
-      </section>
-      <!-- Video Showcase -->
-      <div class="row">
-        <div class="row-visual">
-          <div class="video-container">
-            <iframe
-              data-lazy-iframe
-              data-src="https://www.youtube.com/embed/NhH4dNcfxZg?start=131"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-            ></iframe>
-          </div>
+        <!-- Back Button -->
+        <a href="/projects/" class="back-button">
+            <span data-i18n="back">Back to Projects</span>
+        </a>
+        <!-- Hero -->
+        <section class="hero">
+            <h1>
+                RAY ANIMATION
+                <span class="subtitle-small" data-i18n="hero.subtitle">MUSIC COMPOSITION</span>
+            </h1>
+            <p class="subtitle" data-i18n="hero.description">
+                Complete musical composition for 3D animation project.
+            </p>
+            <div class="tags">
+                <span data-i18n="tags.role">Replacement Composer</span>
+                <span data-i18n="tags.style">Disco-inspired</span>
+                <span data-i18n="tags.location">Ghent, Belgium</span>
+                <span data-i18n="tags.type">Animation Score</span>
+            </div>
+        </section>
+        <!-- Video Showcase -->
+        <div class="row">
+            <div class="row-visual">
+                <div class="video-container">
+                    <iframe data-lazy-iframe data-src="https://www.youtube.com/embed/NhH4dNcfxZg?start=131" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="row-text">
+                <h3 data-i18n="showcase.title">Project Showcase</h3>
+                <p data-i18n="showcase.description">
+                    When the original composer from Ghent couldn't deliver, I stepped in
+                    to create the entire soundtrack from scratch. The result is a funky
+                    disco-inspired score that brings the animation to life with catchy
+                    melodies and vibrant energy.
+                </p>
+                <ul>
+                    <li data-i18n="showcase.list1">
+                        Complete original score composition
+                    </li>
+                    <li data-i18n="showcase.list2">Disco-inspired musical themes</li>
+                    <li data-i18n="showcase.list3">
+                        Character-driven harmonic progression
+                    </li>
+                    <li data-i18n="showcase.list4">
+                        Professional mixing and mastering
+                    </li>
+                </ul>
+            </div>
         </div>
-        <div class="row-text">
-          <h3 data-i18n="showcase.title">Project Showcase</h3>
-          <p data-i18n="showcase.description">
-            When the original composer from Ghent couldn't deliver, I stepped in
-            to create the entire soundtrack from scratch. The result is a funky
-            disco-inspired score that brings the animation to life with catchy
-            melodies and vibrant energy.
-          </p>
-          <ul>
-            <li data-i18n="showcase.list1">
-              Complete original score composition
-            </li>
-            <li data-i18n="showcase.list2">Disco-inspired musical themes</li>
-            <li data-i18n="showcase.list3">
-              Character-driven harmonic progression
-            </li>
-            <li data-i18n="showcase.list4">
-              Professional mixing and mastering
-            </li>
-          </ul>
+        <!-- Stats -->
+        <section class="stats">
+            <h3 data-i18n="details.title">Project Details</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value">3:30</span>
+                    <span class="stat-label" data-i18n="details.duration">Duration</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">100%</span>
+                    <span class="stat-label" data-i18n="details.original">Original</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">Disco</span>
+                    <span class="stat-label" data-i18n="details.style">Style</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">2024</span>
+                    <span class="stat-label" data-i18n="details.year">Year</span>
+                </div>
+            </div>
+        </section>
+        <!-- Bass & Rhythm Section -->
+        <div class="row reverse">
+            <div class="row-visual">
+                <img src="../assets/images/projects-ray/raytitleinstones.png" alt="Ray Title Scene" loading="lazy" decoding="async" />
+            </div>
+            <div class="row-text">
+                <h3 data-i18n="bassRhythm.title">Bass & Rhythm Foundation</h3>
+                <p data-i18n="bassRhythm.description">
+                    Funky disco bass line with tight drums - the groove that drives the
+                    whole track. Classic slap bass sound with rhythm guitar creating
+                    that authentic 70s dance floor energy.
+                </p>
+            </div>
         </div>
-      </div>
-      <!-- Stats -->
-      <section class="stats">
-        <h3 data-i18n="details.title">Project Details</h3>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <span class="stat-value">3:30</span>
-            <span class="stat-label" data-i18n="details.duration"
-              >Duration</span
-            >
-          </div>
-          <div class="stat-card">
-            <span class="stat-value">100%</span>
-            <span class="stat-label" data-i18n="details.original"
-              >Original</span
-            >
-          </div>
-          <div class="stat-card">
-            <span class="stat-value">Disco</span>
-            <span class="stat-label" data-i18n="details.style">Style</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-value">2024</span>
-            <span class="stat-label" data-i18n="details.year">Year</span>
-          </div>
+        <!-- Synths & Strings -->
+        <div class="row">
+            <div class="row-visual">
+                <img src="../assets/images/projects-ray/raylightsincave.png" alt="Cave Lighting Scene" loading="lazy" decoding="async" />
+            </div>
+            <div class="row-text">
+                <h3 data-i18n="synthsStrings.title">Synths & String Layers</h3>
+                <p data-i18n="synthsStrings.description">
+                    Shimmering retro synths and lush string arrangements. These layers
+                    add the sparkle and emotional depth - from bright analog leads to
+                    warm orchestral sweeps that build throughout the piece.
+                </p>
+            </div>
         </div>
-      </section>
-      <!-- Bass & Rhythm Section -->
-      <div class="row reverse">
-        <div class="row-visual">
-          <img
-            src="../assets/images/projects-ray/raytitleinstones.png"
-            alt="Ray Title Scene"
-            loading="lazy"
-            decoding="async"
-          />
+        <!-- Final Mix -->
+        <div class="row reverse">
+            <div class="row-visual">
+                <img src="../assets/images/projects-ray/rayinlight.png" alt="Ray in Light" loading="lazy" decoding="async" />
+            </div>
+            <div class="row-text">
+                <h3 data-i18n="finalMix.title">Complete Mix</h3>
+                <p data-i18n="finalMix.description">
+                    The final stereo mix - all elements combined and mastered. Bass,
+                    drums, synths, strings and melodies working together to create that
+                    big, cinematic disco sound perfectly synced with the animation.
+                </p>
+            </div>
         </div>
-        <div class="row-text">
-          <h3 data-i18n="bassRhythm.title">Bass & Rhythm Foundation</h3>
-          <p data-i18n="bassRhythm.description">
-            Funky disco bass line with tight drums - the groove that drives the
-            whole track. Classic slap bass sound with rhythm guitar creating
-            that authentic 70s dance floor energy.
-          </p>
+        <!-- Gallery -->
+        <section class="gallery">
+            <h3 data-i18n="gallery.title">Visual Gallery</h3>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="../assets/images/projects-ray/raytitleinstones.png" alt="Ray Title in Stones" loading="lazy" decoding="async" />
+                </div>
+                <div class="gallery-item">
+                    <img src="../assets/images/projects-ray/rayaloneinthecave.png" alt="Ray Alone in Cave" loading="lazy" decoding="async" />
+                </div>
+                <div class="gallery-item">
+                    <img src="../assets/images/projects-ray/raylightsincave.png" alt="Ray Lights in Cave" loading="lazy" decoding="async" />
+                </div>
+                <div class="gallery-item">
+                    <img src="../assets/images/projects-ray/rayinlight.png" alt="Ray in Light" loading="lazy" decoding="async" />
+                </div>
+                <div class="gallery-item">
+                    <img src="../assets/images/projects-ray/raycredits.png" alt="Ray Credits" loading="lazy" decoding="async" />
+                </div>
+            </div>
+        </section>
+        <!-- Back Button -->
+        <div class="button-container">
+            <a href="/projects/" class="button" data-i18n="button.projects">All Projects</a>
         </div>
-      </div>
-      <!-- Synths & Strings -->
-      <div class="row">
-        <div class="row-visual">
-          <img
-            src="../assets/images/projects-ray/raylightsincave.png"
-            alt="Cave Lighting Scene"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <div class="row-text">
-          <h3 data-i18n="synthsStrings.title">Synths & String Layers</h3>
-          <p data-i18n="synthsStrings.description">
-            Shimmering retro synths and lush string arrangements. These layers
-            add the sparkle and emotional depth - from bright analog leads to
-            warm orchestral sweeps that build throughout the piece.
-          </p>
-        </div>
-      </div>
-      <!-- Final Mix -->
-      <div class="row reverse">
-        <div class="row-visual">
-          <img
-            src="../assets/images/projects-ray/rayinlight.png"
-            alt="Ray in Light"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <div class="row-text">
-          <h3 data-i18n="finalMix.title">Complete Mix</h3>
-          <p data-i18n="finalMix.description">
-            The final stereo mix - all elements combined and mastered. Bass,
-            drums, synths, strings and melodies working together to create that
-            big, cinematic disco sound perfectly synced with the animation.
-          </p>
-        </div>
-      </div>
-      <!-- Gallery -->
-      <section class="gallery">
-        <h3 data-i18n="gallery.title">Visual Gallery</h3>
-        <div class="gallery-grid">
-          <div class="gallery-item">
-            <img
-              src="../assets/images/projects-ray/raytitleinstones.png"
-              alt="Ray Title in Stones"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="../assets/images/projects-ray/rayaloneinthecave.png"
-              alt="Ray Alone in Cave"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="../assets/images/projects-ray/raylightsincave.png"
-              alt="Ray Lights in Cave"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="../assets/images/projects-ray/rayinlight.png"
-              alt="Ray in Light"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-          <div class="gallery-item">
-            <img
-              src="../assets/images/projects-ray/raycredits.png"
-              alt="Ray Credits"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-        </div>
-      </section>
-      <!-- Back Button -->
-      <div class="button-container">
-        <a href="/projects/" class="button" data-i18n="button.projects"
-          >All Projects</a
-        >
-      </div>
-      <!-- Footer -->
-      <footer class="footer">
-        <p>&copy; Igor Szuniewicz 2025. All rights reserved.</p>
-      </footer>
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; Igor Szuniewicz 2025. All rights reserved.</p>
+        </footer>
     </div>
     <!-- Translation Data -->
     <!-- Fixed Player -->
     <div class="fixed-player" id="fixedPlayer">
-      <div class="fixed-player-top">
-        <button class="fixed-player-btn" id="fixedPlayerBtn">
-          <div class="icon"></div>
-        </button>
-        <div class="fixed-player-info">
-          <div class="fixed-player-title" id="fixedPlayerTitle">
-            Audio Sample
-          </div>
-          <div class="fixed-player-subtitle">Ray Animation</div>
+        <div class="fixed-player-top">
+            <button class="fixed-player-btn" id="fixedPlayerBtn">
+                <div class="icon"></div>
+            </button>
+            <div class="fixed-player-info">
+                <div class="fixed-player-title" id="fixedPlayerTitle">
+                    Audio Sample
+                </div>
+                <div class="fixed-player-subtitle">Ray Animation</div>
+            </div>
         </div>
-      </div>
-      <div class="fixed-player-progress" id="fixedPlayerProgress">
-        <div
-          class="fixed-player-progress-bar"
-          id="fixedPlayerProgressBar"
-        ></div>
-      </div>
-      <div class="fixed-player-time">
-        <span id="fixedPlayerCurrentTime">0:00</span>
-        <span id="fixedPlayerDuration">0:00</span>
-      </div>
+        <div class="fixed-player-progress" id="fixedPlayerProgress">
+            <div class="fixed-player-progress-bar" id="fixedPlayerProgressBar"></div>
+        </div>
+        <div class="fixed-player-time">
+            <span id="fixedPlayerCurrentTime">0:00</span>
+            <span id="fixedPlayerDuration">0:00</span>
+        </div>
     </div>
     <!-- Audio Player Component -->
     <!-- Scroll Reveal Animation Script -->
     <script type="module" src="../assets/js/pages/ray-animation.js"></script>
-    <script
-      type="module"
-      src="../assets/js/performance-boost.js"
-      defer
-    ></script>
-  </body>
+    <script type="module" src="../assets/js/performance-boost.js" defer></script>
+</body>
+
 </html>

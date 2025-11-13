@@ -63,7 +63,7 @@
           });
 
           this.observers.lcp.observe({ entryTypes: ['largest-contentful-paint'] });
-        } catch (e) {
+        } catch (_e) {
           // LCP observer not supported
         }
 
@@ -84,7 +84,7 @@
           });
 
           this.observers.fid.observe({ entryTypes: ['first-input'] });
-        } catch (e) {
+        } catch (_e) {
           // FID observer not supported
         }
 
@@ -114,7 +114,7 @@
           });
 
           this.observers.cls.observe({ entryTypes: ['layout-shift'] });
-        } catch (e) {
+        } catch (_e) {
           // CLS observer not supported
         }
       }
@@ -191,7 +191,7 @@
           });
 
           this.observers.resource.observe({ entryTypes: ['resource'] });
-        } catch (e) {
+        } catch (_e) {
           // Resource observer not supported
         }
       }
@@ -217,7 +217,7 @@
           });
 
           this.observers.navigation.observe({ entryTypes: ['navigation'] });
-        } catch (e) {
+        } catch (_e) {
           // Navigation observer not supported
         }
       }
@@ -380,7 +380,7 @@
       }
     },
 
-    logMetric: function(name, value) {
+    logMetric: function(_name, _value) {
       if (this.config.enableConsoleLogging) {
         // Debug log removed
       }
@@ -475,7 +475,7 @@
     getStoredReports: function() {
       try {
         return JSON.parse(localStorage.getItem('performance_reports') || '[]');
-      } catch (e) {
+      } catch (_e) {
         return [];
       }
     },

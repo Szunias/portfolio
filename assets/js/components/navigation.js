@@ -99,7 +99,7 @@ function normalizePath(value) {
 
   try {
     pathname = new URL(value, window.location.origin).pathname;
-  } catch (error) {
+  } catch (_error) {
     // value was likely already a pathname – keep as-is
   }
 

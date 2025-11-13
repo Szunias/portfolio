@@ -254,7 +254,7 @@
 
   // Report metrics to analytics
   function reportMetrics() {
-    const report = {
+    const _report = {
       lcp: metrics.lcp,
       fid: metrics.fid,
       cls: metrics.cls,

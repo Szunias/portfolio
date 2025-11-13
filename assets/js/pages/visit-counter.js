@@ -54,7 +54,7 @@
       db = firebase.database();
       firebaseInitialized = true;
       return true;
-    } catch (error) {
+    } catch (_error) {
       // Firebase initialization failed
       return false;
     }
@@ -128,7 +128,7 @@
 
       localStorage.setItem(FALLBACK_KEY, String(total));
       return total;
-    } catch (error) {
+    } catch (_error) {
       // Failed to read visit count
       const cached = localStorage.getItem(FALLBACK_KEY);
       return cached ? parseInt(cached, 10) : BASE_COUNT;
@@ -170,7 +170,7 @@
       localStorage.setItem(FALLBACK_KEY, String(total));
       return total;
 
-    } catch (error) {
+    } catch (_error) {
       // Failed to increment visit count
       const cached = localStorage.getItem(FALLBACK_KEY);
       return cached ? parseInt(cached, 10) : BASE_COUNT;
@@ -231,7 +231,7 @@
         }, 100);
       }, 2500);
 
-    } catch (error) {
+    } catch (_error) {
       // Visit counter error occurred
       // Ensure we still show something useful if everything fails
       const cached = localStorage.getItem(FALLBACK_KEY);
