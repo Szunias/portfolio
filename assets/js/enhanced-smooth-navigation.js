@@ -68,7 +68,14 @@
     // Normalizuj URL (usuń trailing slash, zachowaj index.html)
     try {
       const urlObj = new URL(url, window.location.origin);
-      return urlObj.pathname;
+      let pathname = urlObj.pathname;
+
+      // Usuń trailing slash (oprócz root '/')
+      if (pathname.length > 1 && pathname.endsWith('/')) {
+        pathname = pathname.slice(0, -1);
+      }
+
+      return pathname;
     } catch {
       return url;
     }
@@ -102,7 +109,9 @@
     try {
       const url = new URL(href, window.location.origin);
       // Jeśli pathname taki sam jak current, ale jest hash - to anchor link
-      if (normalizeUrl(url.pathname) === currentPath && url.hash) {
+      // normalizeUrl() już usuwa trailing slash, więc normalizujemy url.pathname też
+      const normalizedPath = normalizeUrl(url.href);  // Normalize complete URL
+      if (normalizedPath === currentPath && url.hash) {
         return false;  // Pozwól przeglądarce obsłużyć scroll do anchora
       }
     } catch {
@@ -392,9 +401,9 @@
     // Aktualizuj main content
     const mainEl = document.querySelector('main');
 
-    // Happy path: mamy main element i nową zawartość
-    if (mainEl && pageData.main) {
-      mainEl.innerHTML = pageData.main;
+    // Happy path: mamy main element i nową zawartość (null = brak, "" = pusty ale OK)
+    if (mainEl && pageData.main !== null) {
+      mainEl.innerHTML = pageData.main;  // "" is valid (empty main)
     } else {
       // Fallback: jeśli brakuje main lub zawartości, spróbuj wyciągnąć z body
       log('Warning: Missing main element or content, using fallback');
