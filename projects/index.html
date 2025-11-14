@@ -1380,7 +1380,7 @@
     </main>
 
     <!-- Scripts -->
-    <script>
+    <script data-reinit>
       // Header scroll effect (unified across all pages) - fixed to prevent duplicates
       let headerScrollInitialized = false;
       let headerScrollHandler = null;
@@ -1492,17 +1492,39 @@
         });
       });
 
-      // Render tech tags after translations load
-      function renderTechTags() {
+      // Render tech tags after translations load (global function for AJAX persistence)
+      window.renderProjectTechTags = function () {
+        console.log('[Tech Tags] renderProjectTechTags called');
         const techContainers = document.querySelectorAll('[data-tech]');
+        console.log('[Tech Tags] Containers found:', techContainers.length);
         if (!techContainers.length) return;
 
+        // Clear any existing interval to prevent duplicates
+        if (window.techTagsCheckInterval) {
+          clearInterval(window.techTagsCheckInterval);
+          console.log('[Tech Tags] Cleared previous interval');
+        }
+
+        let attempts = 0;
+        const maxAttempts = 50; // 5 seconds max
+
         // Wait for translations to be available
-        const checkTranslations = setInterval(() => {
+        window.techTagsCheckInterval = setInterval(() => {
+          attempts++;
+          console.log('[Tech Tags] Checking translations, attempt', attempts);
+          console.log('[Tech Tags] window.i18n exists:', !!window.i18n);
+          console.log('[Tech Tags] window.i18n.lang:', window.i18n?.lang);
+          console.log('[Tech Tags] translations exist:', !!window.i18n?.translations);
+
           if (window.i18n && window.i18n.translations && window.i18n.lang) {
-            clearInterval(checkTranslations);
+            clearInterval(window.techTagsCheckInterval);
+            window.techTagsCheckInterval = null;
+            console.log('[Tech Tags] Translations ready! Rendering...');
+
             const currentLang = window.i18n.lang;
             const translations = window.i18n.translations[currentLang];
+            console.log('[Tech Tags] Current lang:', currentLang);
+            console.log('[Tech Tags] Translation keys:', Object.keys(translations || {}).length);
 
             techContainers.forEach((container) => {
               const key = container.getAttribute('data-tech');
@@ -1523,51 +1545,118 @@
                 // List of audio middleware to highlight
                 const audioMiddleware = ['Wwise', 'FMOD', 'MetaSounds'];
 
-                container.innerHTML = techArray
-                  .map((tech) => {
-                    const isProgrammingLang = programmingLanguages.some((lang) =>
-                      tech.includes(lang)
-                    );
-                    const isMiddleware = audioMiddleware.some((mw) => tech.includes(mw));
-                    let cssClass = 'project-tech-item';
-                    if (isProgrammingLang) {
-                      cssClass += ' tech-programming';
-                    } else if (isMiddleware) {
-                      cssClass += ' tech-middleware';
-                    }
-                    return `<span class="${cssClass}">${tech}</span>`;
-                  })
-                  .join('');
+                // Clear container first
+                container.innerHTML = '';
+
+                // Create tech tags using textContent to properly handle C++, C# etc.
+                techArray.forEach((tech) => {
+                  const isProgrammingLang = programmingLanguages.some((lang) =>
+                    tech.includes(lang)
+                  );
+                  const isMiddleware = audioMiddleware.some((mw) => tech.includes(mw));
+
+                  const span = document.createElement('span');
+                  span.className = 'project-tech-item';
+                  if (isProgrammingLang) {
+                    span.className += ' tech-programming';
+                  } else if (isMiddleware) {
+                    span.className += ' tech-middleware';
+                  }
+                  span.textContent = tech; // Use textContent to safely handle special chars
+                  container.appendChild(span);
+                });
+                console.log('[Tech Tags] ✓ Rendered', techArray.length, 'tags for', key);
               } else {
                 container.style.display = 'none';
+                console.log('[Tech Tags] No tech array for', key);
               }
             });
+            console.log('[Tech Tags] ✓ All containers processed');
+          } else if (attempts >= maxAttempts) {
+            clearInterval(window.techTagsCheckInterval);
+            window.techTagsCheckInterval = null;
+            console.error(
+              '[Tech Tags] ✗ Timeout waiting for translations after',
+              attempts,
+              'attempts'
+            );
           }
         }, 100);
-
-        // Timeout after 5 seconds
-        setTimeout(() => clearInterval(checkTranslations), 5000);
-      }
+      };
 
       function getNestedValue(obj, path) {
         return path.split('.').reduce((current, key) => current && current[key], obj);
       }
 
-      // Initialize tech tags rendering
-      function initTechTags() {
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', renderTechTags);
-        } else {
-          renderTechTags();
-        }
+      // Initialize tech tags rendering on first load
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', window.renderProjectTechTags);
+      } else {
+        window.renderProjectTechTags();
       }
 
-      initTechTags();
+      // Define named event handlers so we can remove/add them properly
+      if (!window.techTagsLanguageHandler) {
+        window.techTagsLanguageHandler = () => {
+          console.log('[Tech Tags] Language changed event');
+          setTimeout(window.renderProjectTechTags, 100);
+        };
+      }
 
-      // Also render when language changes
-      window.addEventListener('languageChanged', () => {
-        setTimeout(renderTechTags, 100);
-      });
+      if (!window.techTagsPageLoadHandler) {
+        window.techTagsPageLoadHandler = () => {
+          console.log('[Tech Tags] pageContentLoaded event fired');
+
+          // Cancel any previous check to avoid checking on wrong page
+          if (window.techTagsCheckTimeout) {
+            clearTimeout(window.techTagsCheckTimeout);
+            console.log('[Tech Tags] Cancelled previous check');
+          }
+
+          // Wait for DOM to be updated and check multiple times if needed
+          let attempts = 0;
+          const maxAttempts = 10;
+
+          const checkAndRender = () => {
+            attempts++;
+            const containers = document.querySelectorAll('[data-tech]');
+            console.log(
+              '[Tech Tags] Check attempt',
+              attempts,
+              '- containers found:',
+              containers.length
+            );
+
+            if (containers.length > 0) {
+              console.log('[Tech Tags] Tech containers exist, calling renderProjectTechTags');
+              window.techTagsCheckTimeout = null;
+
+              // Ensure the function exists (script might not have been re-executed)
+              if (typeof window.renderProjectTechTags === 'function') {
+                window.renderProjectTechTags();
+              } else {
+                console.error('[Tech Tags] renderProjectTechTags function not found!');
+              }
+            } else if (attempts < maxAttempts) {
+              console.log('[Tech Tags] No containers yet, will retry in 50ms...');
+              window.techTagsCheckTimeout = setTimeout(checkAndRender, 50);
+            } else {
+              console.log('[Tech Tags] Max attempts reached, no tech containers found');
+              window.techTagsCheckTimeout = null;
+            }
+          };
+
+          window.techTagsCheckTimeout = setTimeout(checkAndRender, 50);
+        };
+      }
+
+      // Remove old listeners and add fresh ones (prevents duplicates and ensures they work after page reload)
+      console.log('[Tech Tags] Setting up event listeners');
+      window.removeEventListener('languageChanged', window.techTagsLanguageHandler);
+      window.removeEventListener('pageContentLoaded', window.techTagsPageLoadHandler);
+      window.addEventListener('languageChanged', window.techTagsLanguageHandler);
+      window.addEventListener('pageContentLoaded', window.techTagsPageLoadHandler);
+      console.log('[Tech Tags] Event listeners ready');
     </script>
     <script type="module" src="../assets/js/utils/image-optimizer.js"></script>
     <script type="module" src="../assets/js/performance-boost.js"></script>

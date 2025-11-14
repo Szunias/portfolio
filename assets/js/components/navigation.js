@@ -15,7 +15,7 @@ function loadNavigation() {
             <li><a href="/music.html" data-i18n="nav_music">Music</a></li>
             <li><a href="/contact.html" data-i18n="nav_contact">Contact</a></li>
             <li class="lang-switcher">
-              <button class="lang-btn active" data-lang="en">EN</button>
+              <button class="lang-btn" data-lang="en">EN</button>
               <button class="lang-btn" data-lang="pl">PL</button>
               <button class="lang-btn" data-lang="nl">NL</button>
             </li>
@@ -42,7 +42,7 @@ function loadNavigation() {
         <li><a href="/contact.html" data-i18n="nav_contact">Contact</a></li>
       </ul>
       <div class="mobile-lang-switcher">
-        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="en">EN</button>
         <button class="lang-btn" data-lang="pl">PL</button>
         <button class="lang-btn" data-lang="nl">NL</button>
       </div>
@@ -61,11 +61,40 @@ function loadNavigation() {
   // Set active link based on current page
   setActiveLink();
 
+  // CRITICAL: Set active language button based on current language from localStorage
+  // This ensures language selection persists across page navigation
+  setActiveLanguageButton();
+
   // Initialize mobile menu - with small delay to ensure DOM is ready
   setTimeout(initMobileMenu, 10);
 
   // Initialize scroll effect
   initScrollEffect();
+}
+
+// Set active class on current language button
+function setActiveLanguageButton() {
+  try {
+    const savedLang = localStorage.getItem('language') || 'en';
+
+    // Update all language buttons (both desktop and mobile)
+    document.querySelectorAll('.lang-btn').forEach((btn) => {
+      if (btn.dataset.lang === savedLang) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  } catch (error) {
+    // localStorage might be disabled - default to 'en'
+    document.querySelectorAll('.lang-btn').forEach((btn) => {
+      if (btn.dataset.lang === 'en') {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
 }
 
 // Set active class on current page link

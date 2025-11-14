@@ -447,6 +447,11 @@
       })
     );
 
+    // Extract inline scripts from head that contain window.__I18N__ (critical translations)
+    const inlineHeadScripts = Array.from(doc.querySelectorAll('head script:not([src])'))
+      .filter((script) => script.textContent.includes('window.__I18N__'))
+      .map((script) => script.textContent);
+
     return {
       title: doc.title || '',
       // Use null jeśli brak main, nie empty string (null !== '' dla warunków)
@@ -469,7 +474,10 @@
       },
 
       // Scripts do wykonania
-      scripts: Array.from(doc.querySelectorAll('script[data-reinit]')).map((s) => s.textContent)
+      scripts: Array.from(doc.querySelectorAll('script[data-reinit]')).map((s) => s.textContent),
+
+      // Inline head scripts (e.g., window.__I18N__)
+      headScripts: inlineHeadScripts
     };
   }
 
@@ -1144,13 +1152,26 @@
     // 1. Animacje scroll-based
     reinitializeScrollAnimations();
 
-    // 2. Event listeners specyficzne dla strony
+    // 2. Execute head scripts FIRST (critical inline scripts like window.__I18N__)
+    if (pageData.headScripts && pageData.headScripts.length > 0) {
+      log('  → Executing head scripts (window.__I18N__, etc.)');
+      pageData.headScripts.forEach((script) => {
+        try {
+          eval(script);
+          log('    ✓ Head script executed');
+        } catch (error) {
+          log('    ✗ Head script execution failed:', error);
+        }
+      });
+    }
+
+    // 3. Event listeners specyficzne dla strony
     reinitializeEventListeners();
 
-    // 3. Page-specific scripts (music, projects, etc.)
+    // 4. Page-specific scripts (music, projects, etc.)
     reinitializePageSpecificScripts();
 
-    // 4. Wykonaj custom scripts
+    // 5. Wykonaj custom scripts
     if (pageData.scripts && pageData.scripts.length > 0) {
       pageData.scripts.forEach((script) => {
         try {
@@ -1161,7 +1182,7 @@
       });
     }
 
-    // 5. SECOND PASS: Delayed lazy loading for dynamically added elements
+    // 6. SECOND PASS: Delayed lazy loading for dynamically added elements
     //    Page-specific scripts may add images/videos with data-src
     //    This catches them after scripts have run
     setTimeout(() => {

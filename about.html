@@ -2,6 +2,8 @@
 <html lang="en" style="background: #000 !important">
   <head>
     <meta charset="utf-8" />
+    <!-- LOG EXTRACTOR - Automatic console log capture -->
+    <script src="assets/js/log-extractor.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
 
@@ -31,7 +33,12 @@
             contact: 'Contact'
           },
           footer: { projects: 'Projects', music: 'Music', about: 'About', contact: 'Contact' },
-          error: { loading: 'Loading...', failed: 'Failed to load content', retry: 'Retry' }
+          error: { loading: 'Loading...', failed: 'Failed to load content', retry: 'Retry' },
+          skillModal: {
+            connectedTech: 'Connected Technologies',
+            projectUsage: 'Project Usage',
+            noConnections: 'No direct cross-category connections'
+          }
         },
         pl: {
           nav: {
@@ -47,6 +54,11 @@
             loading: 'Ładowanie...',
             failed: 'Nie udało się załadować treści',
             retry: 'Spróbuj ponownie'
+          },
+          skillModal: {
+            connectedTech: 'Powiązane Technologie',
+            projectUsage: 'Użycie w Projektach',
+            noConnections: 'Brak bezpośrednich powiązań między kategoriami'
           }
         },
         nl: {
@@ -63,6 +75,11 @@
             loading: 'Laden...',
             failed: 'Inhoud kan niet worden geladen',
             retry: 'Opnieuw proberen'
+          },
+          skillModal: {
+            connectedTech: 'Verbonden Technologieën',
+            projectUsage: 'Projectgebruik',
+            noConnections: 'Geen directe verbindingen tussen categorieën'
           }
         }
       };
@@ -668,6 +685,7 @@
         margin-right: auto;
         position: relative;
         perspective: 1000px; /* Enable 3D transforms */
+        isolation: isolate; /* Create stacking context */
       }
 
       .hexagon {
@@ -680,6 +698,7 @@
         opacity: 0;
         transform: translateY(30px);
         animation: hexagonFadeIn 0.6s ease forwards;
+        z-index: 10; /* Ensure hexagons stay above SVG lines */
       }
 
       @keyframes hexagonFadeIn {
@@ -717,7 +736,7 @@
 
       .hexagon:hover {
         transform: scale(1.2) translateY(-8px) rotateX(5deg) rotateY(5deg);
-        z-index: 10;
+        z-index: 100;
       }
 
       .hexagon:hover .hexagon-inner {
@@ -866,6 +885,201 @@
       .hexagon:hover .hexagon-tooltip {
         opacity: 1;
         bottom: -60px;
+      }
+
+      /* === SKILL DETAIL MODAL === */
+      .skill-detail-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(8px);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+
+      .skill-detail-overlay.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .skill-detail-card {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+        border: 2px solid rgba(96, 165, 250, 0.3);
+        border-radius: 24px;
+        padding: 3rem;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+        transform: scale(0.9) translateY(20px);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+      }
+
+      .skill-detail-overlay.active .skill-detail-card {
+        transform: scale(1) translateY(0);
+      }
+
+      .skill-detail-close {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: rgba(96, 165, 250, 0.1);
+        border: 1px solid rgba(96, 165, 250, 0.3);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #60a5fa;
+        font-size: 1.5rem;
+      }
+
+      .skill-detail-close:hover {
+        background: rgba(96, 165, 250, 0.2);
+        transform: rotate(90deg);
+      }
+
+      .skill-detail-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(96, 165, 250, 0.2);
+      }
+
+      .skill-detail-icon {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+      }
+
+      .skill-detail-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #fff;
+        margin: 0;
+      }
+
+      .skill-detail-section {
+        margin-bottom: 2rem;
+      }
+
+      .skill-detail-section h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #60a5fa;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+      }
+
+      .skill-detail-connections {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .connection-tag {
+        padding: 0.5rem 1rem;
+        background: rgba(96, 165, 250, 0.1);
+        border: 1px solid rgba(96, 165, 250, 0.3);
+        border-radius: 20px;
+        color: #60a5fa;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .connection-tag:hover {
+        background: rgba(96, 165, 250, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .connection-tag.category-middleware {
+        border-color: rgba(59, 130, 246, 0.5);
+        color: #3b82f6;
+      }
+      .connection-tag.category-daw {
+        border-color: rgba(168, 85, 247, 0.5);
+        color: #a855f7;
+      }
+      .connection-tag.category-programming {
+        border-color: rgba(34, 197, 94, 0.5);
+        color: #22c55e;
+      }
+      .connection-tag.category-specialized {
+        border-color: rgba(251, 146, 60, 0.5);
+        color: #fb923c;
+      }
+
+      .skill-detail-projects {
+        list-style: none;
+      }
+
+      .skill-detail-projects li {
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(96, 165, 250, 0.1);
+        color: #cbd5e1;
+        line-height: 1.7;
+      }
+
+      .skill-detail-projects li:last-child {
+        border-bottom: none;
+      }
+
+      .skill-detail-projects li::before {
+        content: '▸';
+        color: #60a5fa;
+        margin-right: 0.75rem;
+        font-weight: bold;
+        float: left;
+        margin-top: 0.15rem;
+      }
+
+      .skill-detail-projects .project-name {
+        color: #60a5fa;
+        font-weight: 600;
+        display: inline;
+      }
+
+      .skill-detail-projects .project-desc {
+        color: #94a3b8;
+        display: inline;
+        margin-left: 0.4rem;
+      }
+
+      .skill-detail-projects .project-desc::before {
+        content: '—';
+        margin-right: 0.4rem;
+        color: #475569;
+      }
+
+      .skill-detail-projects a {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+        transition: all 0.2s ease;
+        margin-left: 1.5rem;
+      }
+
+      .skill-detail-projects a:hover .project-name {
+        color: #93c5fd;
+        text-decoration: underline;
       }
 
       /* === OLD SKILLS SHOWCASE === */
@@ -1538,9 +1752,9 @@
           <!-- Audio Middleware -->
           <div class="skills-category fade-in">
             <h3 class="skills-category-title">Audio Middleware & Engines</h3>
-            <div class="skills-hexagon-container">
+            <div class="skills-hexagon-container" data-category="middleware">
               <!-- Wwise -->
-              <div class="hexagon color-blue" data-skill="wwise">
+              <div class="hexagon color-blue" data-skill="wwise" data-category="middleware">
                 <div class="hexagon-inner">
                   <img src="honeyicons/wwiselogo.png" alt="Wwise" class="hexagon-icon" />
                   <span class="hexagon-name">Wwise</span>
@@ -1551,7 +1765,7 @@
               </div>
 
               <!-- FMOD -->
-              <div class="hexagon color-blue" data-skill="fmod">
+              <div class="hexagon color-blue" data-skill="fmod" data-category="middleware">
                 <div class="hexagon-inner">
                   <img src="honeyicons/fmodlogo.png" alt="FMOD" class="hexagon-icon" />
                   <span class="hexagon-name">FMOD</span>
@@ -1562,7 +1776,7 @@
               </div>
 
               <!-- Unreal Engine -->
-              <div class="hexagon color-blue" data-skill="unreal">
+              <div class="hexagon color-blue" data-skill="unreal" data-category="middleware">
                 <div class="hexagon-inner">
                   <img
                     src="honeyicons/Unreal_Engine-Logo.wine.png"
@@ -1582,9 +1796,9 @@
           <!-- DAW & Production -->
           <div class="skills-category fade-in">
             <h3 class="skills-category-title">DAW & Music Production</h3>
-            <div class="skills-hexagon-container">
+            <div class="skills-hexagon-container" data-category="daw">
               <!-- Reaper -->
-              <div class="hexagon color-purple" data-skill="reaper">
+              <div class="hexagon color-purple" data-skill="reaper" data-category="daw">
                 <div class="hexagon-inner">
                   <img src="honeyicons/REAPER_logo.png" alt="Reaper" class="hexagon-icon" />
                   <span class="hexagon-name">Reaper</span>
@@ -1595,7 +1809,7 @@
               </div>
 
               <!-- Ableton Live -->
-              <div class="hexagon color-purple" data-skill="ableton">
+              <div class="hexagon color-purple" data-skill="ableton" data-category="daw">
                 <div class="hexagon-inner">
                   <img src="honeyicons/abletonlogo.png" alt="Ableton" class="hexagon-icon" />
                   <span class="hexagon-name">Ableton</span>
@@ -1606,7 +1820,7 @@
               </div>
 
               <!-- FL Studio -->
-              <div class="hexagon color-purple" data-skill="flstudio">
+              <div class="hexagon color-purple" data-skill="flstudio" data-category="daw">
                 <div class="hexagon-inner">
                   <img src="honeyicons/flstudiologo.png" alt="FL Studio" class="hexagon-icon" />
                   <span class="hexagon-name">FL Studio</span>
@@ -1621,9 +1835,9 @@
           <!-- Programming -->
           <div class="skills-category fade-in">
             <h3 class="skills-category-title">Programming & Development</h3>
-            <div class="skills-hexagon-container">
+            <div class="skills-hexagon-container" data-category="programming">
               <!-- C++ -->
-              <div class="hexagon color-green" data-skill="cpp">
+              <div class="hexagon color-green" data-skill="cpp" data-category="programming">
                 <div class="hexagon-inner">
                   <img src="honeyicons/c++logo.png" alt="C++" class="hexagon-icon" />
 
@@ -1635,7 +1849,7 @@
               </div>
 
               <!-- C# -->
-              <div class="hexagon color-green" data-skill="csharp">
+              <div class="hexagon color-green" data-skill="csharp" data-category="programming">
                 <div class="hexagon-inner">
                   <img src="honeyicons/c%23%20logo.png" alt="C#" class="hexagon-icon" />
                   <span class="hexagon-name">C#</span>
@@ -1646,7 +1860,7 @@
               </div>
 
               <!-- Python -->
-              <div class="hexagon color-green" data-skill="python">
+              <div class="hexagon color-green" data-skill="python" data-category="programming">
                 <div class="hexagon-inner">
                   <img src="honeyicons/pythonlogo.png" alt="Python" class="hexagon-icon" />
 
@@ -1658,7 +1872,7 @@
               </div>
 
               <!-- Blueprints -->
-              <div class="hexagon color-green" data-skill="blueprints">
+              <div class="hexagon color-green" data-skill="blueprints" data-category="programming">
                 <div class="hexagon-inner">
                   <svg
                     class="hexagon-icon"
@@ -1679,7 +1893,7 @@
               </div>
 
               <!-- Git -->
-              <div class="hexagon color-green" data-skill="git">
+              <div class="hexagon color-green" data-skill="git" data-category="programming">
                 <div class="hexagon-inner">
                   <img src="honeyicons/github.png" alt="Git" class="hexagon-icon" />
 
@@ -1695,9 +1909,9 @@
           <!-- Specialized -->
           <div class="skills-category fade-in">
             <h3 class="skills-category-title">Specialized & Advanced</h3>
-            <div class="skills-hexagon-container">
+            <div class="skills-hexagon-container" data-category="specialized">
               <!-- JUCE -->
-              <div class="hexagon color-orange" data-skill="juce">
+              <div class="hexagon color-orange" data-skill="juce" data-category="specialized">
                 <div class="hexagon-inner">
                   <img src="honeyicons/JUCE_Logo.png" alt="JUCE" class="hexagon-icon" />
                   <span class="hexagon-name">JUCE</span>
@@ -1708,7 +1922,7 @@
               </div>
 
               <!-- TensorFlow -->
-              <div class="hexagon color-orange" data-skill="tensorflow">
+              <div class="hexagon color-orange" data-skill="tensorflow" data-category="specialized">
                 <div class="hexagon-inner">
                   <img src="honeyicons/tensorflowlogo.png" alt="TensorFlow" class="hexagon-icon" />
 
@@ -1720,7 +1934,7 @@
               </div>
 
               <!-- 3D Spatial Audio -->
-              <div class="hexagon color-orange" data-skill="spatial">
+              <div class="hexagon color-orange" data-skill="spatial" data-category="specialized">
                 <div class="hexagon-inner">
                   <img src="honeyicons/3DAudio.png" alt="3D Audio" class="hexagon-icon" />
                   <span class="hexagon-name">3D Audio</span>
@@ -1731,7 +1945,7 @@
               </div>
 
               <!-- DSP -->
-              <div class="hexagon color-orange" data-skill="dsp">
+              <div class="hexagon color-orange" data-skill="dsp" data-category="specialized">
                 <div class="hexagon-inner">
                   <img src="honeyicons/dsplogo.png" alt="DSP" class="hexagon-icon" />
                   <span class="hexagon-name">DSP</span>
@@ -1978,6 +2192,7 @@
       </section>
     </main>
 
+    <script src="skill-modal-system.js" defer></script>
     <script type="module" src="assets/js/enhanced-smooth-navigation.js" defer></script>
     <script type="module" src="assets/js/components/navigation.js" defer></script>
     <!-- Bulletproof i18n System - 5-layer fallback, never crashes -->
@@ -1990,6 +2205,173 @@
     </script>
 
     <script>
+      // Cross-category connections ONLY - no internal connections
+      const SKILL_CONNECTIONS = {
+        // Middleware -> Programming
+        wwise: ['cpp', 'blueprints'],
+        fmod: ['cpp', 'csharp'],
+        unreal: ['cpp', 'blueprints'],
+
+        // Programming -> Middleware & Specialized
+        cpp: ['wwise', 'fmod', 'unreal', 'juce', 'dsp'],
+        csharp: ['fmod'],
+        python: ['tensorflow'],
+        blueprints: ['wwise', 'unreal', 'spatial'],
+
+        // DAW -> Specialized
+        reaper: ['dsp', 'spatial'],
+        ableton: ['dsp'],
+        flstudio: ['dsp'],
+
+        // Specialized -> Programming & DAW
+        juce: ['cpp'],
+        dsp: ['cpp', 'reaper', 'ableton', 'flstudio'],
+        tensorflow: ['python'],
+        spatial: ['blueprints', 'reaper']
+      };
+
+      const SKILL_COLORS = {
+        wwise: '#3b82f6',
+        fmod: '#3b82f6',
+        unreal: '#3b82f6',
+        reaper: '#a855f7',
+        ableton: '#a855f7',
+        flstudio: '#a855f7',
+        cpp: '#22c55e',
+        csharp: '#22c55e',
+        python: '#22c55e',
+        blueprints: '#22c55e',
+        git: '#22c55e',
+        juce: '#fb923c',
+        tensorflow: '#fb923c',
+        spatial: '#fb923c',
+        dsp: '#fb923c'
+      };
+
+      function initSkillConnections() {
+        const skillsSection = document.querySelector('.content-section');
+        if (!skillsSection) return;
+
+        skillsSection.style.position = 'relative';
+
+        // Create particle container
+        const particleContainer = document.createElement('div');
+        particleContainer.classList.add('skill-particles-container');
+        skillsSection.insertBefore(particleContainer, skillsSection.firstChild);
+
+        const allHexagons = document.querySelectorAll('.hexagon[data-skill]');
+        const particlePool = new Map(); // Reusable particles
+
+        // Create particles for each connection
+        function createParticles(fromSkill, toSkill, color, count = 3) {
+          const particles = [];
+          for (let i = 0; i < count; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.color = color;
+            particle.style.animationDelay = `${i * 0.4}s`;
+            particleContainer.appendChild(particle);
+            particles.push(particle);
+          }
+          return particles;
+        }
+
+        // Animate particle along path
+        function animateParticle(particle, fromEl, toEl) {
+          const sectionRect = skillsSection.getBoundingClientRect();
+          const fromRect = fromEl.getBoundingClientRect();
+          const toRect = toEl.getBoundingClientRect();
+
+          const x1 = fromRect.left + fromRect.width / 2 - sectionRect.left;
+          const y1 = fromRect.top + fromRect.height / 2 - sectionRect.top;
+          const x2 = toRect.left + toRect.width / 2 - sectionRect.left;
+          const y2 = toRect.top + toRect.height / 2 - sectionRect.top;
+
+          // Create custom property animation
+          particle.style.setProperty('--x1', `${x1}px`);
+          particle.style.setProperty('--y1', `${y1}px`);
+          particle.style.setProperty('--x2', `${x2}px`);
+          particle.style.setProperty('--y2', `${y2}px`);
+
+          // Animate position using JS for smooth bezier path
+          const duration = 2000;
+          const startTime = performance.now();
+
+          function animate(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Ease in-out
+            const eased =
+              progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+            const x = x1 + (x2 - x1) * eased;
+            const y = y1 + (y2 - y1) * eased;
+
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+
+            if (progress < 1 && particle.classList.contains('active')) {
+              requestAnimationFrame(animate);
+            } else if (progress >= 1) {
+              requestAnimationFrame(() => animate(performance.now()));
+            }
+          }
+
+          requestAnimationFrame(animate);
+        }
+
+        // Hover handlers
+        allHexagons.forEach((hex) => {
+          const skill = hex.dataset.skill;
+          const category = hex.dataset.category;
+          const targets = SKILL_CONNECTIONS[skill] || [];
+
+          hex.addEventListener('mouseenter', () => {
+            // Dim all containers
+            document
+              .querySelectorAll('.skills-hexagon-container')
+              .forEach((c) => c.classList.add('dimmed'));
+
+            // Highlight active and connected
+            hex.classList.add('active');
+
+            targets.forEach((targetSkill) => {
+              const targetHex = document.querySelector(`[data-skill="${targetSkill}"]`);
+              if (targetHex && targetHex.dataset.category !== category) {
+                targetHex.classList.add('connected');
+
+                // Create particles
+                const connectionId = [skill, targetSkill].sort().join('-');
+                if (!particlePool.has(connectionId)) {
+                  const color = SKILL_COLORS[skill] || '#60a5fa';
+                  const particles = createParticles(skill, targetSkill, color, 3);
+                  particlePool.set(connectionId, particles);
+                }
+
+                const particles = particlePool.get(connectionId);
+                particles.forEach((p) => {
+                  p.classList.add('active');
+                  animateParticle(p, hex, targetHex);
+                });
+              }
+            });
+          });
+
+          hex.addEventListener('mouseleave', () => {
+            document
+              .querySelectorAll('.skills-hexagon-container')
+              .forEach((c) => c.classList.remove('dimmed'));
+            allHexagons.forEach((h) => h.classList.remove('active', 'connected'));
+
+            // Deactivate all particles
+            particlePool.forEach((particles) => {
+              particles.forEach((p) => p.classList.remove('active'));
+            });
+          });
+        });
+      }
+
       // Scroll reveal
       function initScrollReveal() {
         const observer = new IntersectionObserver(
@@ -2033,10 +2415,12 @@
         document.addEventListener('DOMContentLoaded', () => {
           initScrollReveal();
           initLazyImage();
+          initSkillConnections();
         });
       } else {
         initScrollReveal();
         initLazyImage();
+        initSkillConnections();
       }
     </script>
   </body>
