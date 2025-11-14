@@ -748,8 +748,7 @@
   function reinitializeScripts(pageData) {
     log('Reinitializing scripts');
 
-    // 0. CRITICAL: Universal lazy loading for ALL data-src elements
-    //    This must run FIRST before any other scripts
+    // 0. FIRST PASS: Early lazy loading for immediate data-src elements
     initializeUniversalLazyLoading();
 
     // 1. System tłumaczeń
@@ -774,6 +773,14 @@
         }
       });
     }
+
+    // 6. SECOND PASS: Delayed lazy loading for dynamically added elements
+    //    Page-specific scripts may add images/videos with data-src
+    //    This catches them after scripts have run
+    setTimeout(() => {
+      log('  → Running delayed lazy loading (second pass)');
+      initializeUniversalLazyLoading();
+    }, 500);
   }
 
   function initializeUniversalLazyLoading() {
