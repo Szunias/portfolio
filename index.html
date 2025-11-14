@@ -10,7 +10,17 @@
         <!-- ═══════════════════════════════════════════════════════════════════ CRITICAL INLINE RESOURCES - MUST LOAD FIRST These prevent visual flashing and ensure smooth initial render ═══════════════════════════════════════════════════════════════════ -->
         <!-- CRITICAL 1: Language Preload - Prevents language flicker -->
         <script>
-            /** * Sets correct language BEFORE any content renders * Execution time: <1ms | Size: ~200 bytes * MUST be synchronous (blocks rendering intentionally) */ (function () { "use strict"; const savedLang = localStorage.getItem("language") || "en"; document.documentElement.setAttribute("lang", savedLang); window.__preloadedLang = savedLang; // Cache for translation system })();
+            /**
+             * Sets correct language BEFORE any content renders
+             * Execution time: <1ms | Size: ~200 bytes
+             * MUST be synchronous (blocks rendering intentionally)
+             */
+            (function () {
+                "use strict";
+                const savedLang = localStorage.getItem("language") || "en";
+                document.documentElement.setAttribute("lang", savedLang);
+                window.__preloadedLang = savedLang;
+            })();
         </script>
         <!-- CRITICAL 1.5: Inline Critical Translations - Bulletproof i18n (0ms load) -->
         <script>
