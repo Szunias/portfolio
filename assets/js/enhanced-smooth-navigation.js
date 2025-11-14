@@ -497,47 +497,78 @@
     // Aktualizuj meta tags
     updateMetaTags(pageData.meta);
 
-    // Aktualizuj main content
-    const mainEl = document.querySelector('main');
-    log('  Main element found:', !!mainEl);
-    log('  New content length:', pageData.main?.length || 0);
-    log('  New content preview:', pageData.main?.substring(0, 100) || 'null');
+    // ========================================================================
+    // CRITICAL FIX: Replace ENTIRE body content (except header & infrastructure)
+    // Problem: tylko zamienialiśmy <main>, ale hero sections i inne elementy
+    // POZA <main> zostawały z poprzedniej strony!
+    // ========================================================================
 
-    // Happy path: mamy main element i nową zawartość (null = brak, "" = pusty ale OK)
-    if (mainEl && pageData.main !== null) {
-      const oldContentPreview = mainEl.innerHTML.substring(0, 100);
-      mainEl.innerHTML = pageData.main;  // "" is valid (empty main)
-      const newContentPreview = mainEl.innerHTML.substring(0, 100);
-      log('✓ Main content updated');
-      log('  Old content:', oldContentPreview);
-      log('  New content:', newContentPreview);
-    } else {
-      // Fallback: jeśli brakuje main lub zawartości, spróbuj wyciągnąć z body
-      log('Warning: Missing main element or content, using fallback');
+    log('  Replacing body content...');
 
-      const newBody = document.createElement('div');
-      newBody.innerHTML = pageData.body;
+    // Elementy które musimy ZACHOWAĆ (infrastructure)
+    const infrastructureSelectors = [
+      'header',                  // Navigation
+      '.bg-gradient',           // Background
+      '.bg-grid',
+      '.bg-orbs',
+      '.skip-link',
+      '.mobile-menu-overlay',   // Mobile menu
+      '.mobile-menu',
+      'script',                  // Scripts
+      'style'                    // Inline styles
+    ];
 
-      const newMain = newBody.querySelector('main');
-      if (!newMain) {
-        // Brak <main> na nowej stronie - to nie powinno się zdarzyć
-        // Fallback do standardowej nawigacji
-        throw new Error('No <main> element found in new page');
+    // Zbierz elementy do zachowania
+    const elementsToKeep = new Set();
+    infrastructureSelectors.forEach(selector => {
+      document.querySelectorAll(selector).forEach(el => elementsToKeep.add(el));
+    });
+
+    // Usuń wszystko OPRÓCZ infrastructure
+    const bodyChildren = Array.from(document.body.children);
+    log(`  Removing ${bodyChildren.length} body children (keeping ${elementsToKeep.size} infrastructure elements)`);
+
+    bodyChildren.forEach(child => {
+      if (!elementsToKeep.has(child)) {
+        child.remove();
       }
+    });
 
-      // Jeśli nowa strona ma <main>, zastąp stary lub dodaj nowy
-      if (mainEl) {
-        mainEl.parentNode.replaceChild(newMain, mainEl);
-      } else {
-        // Nie ma starego <main>, dodaj nowy po headerze
-        const header = document.querySelector('header');
-        if (header && header.nextSibling) {
-          document.body.insertBefore(newMain, header.nextSibling);
-        } else {
-          document.body.appendChild(newMain);
+    // Parse nową zawartość body
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = pageData.body;
+
+    // Znajdź header w starej zawartości (żeby wiedzieć gdzie wstawiać nowe elementy)
+    const existingHeader = document.querySelector('header');
+
+    // Wstaw nową zawartość (OPRÓCZ header i innych infrastructure)
+    const newElements = Array.from(tempDiv.children);
+    log(`  Adding ${newElements.length} new elements from fetched page`);
+
+    newElements.forEach(el => {
+      const tagName = el.tagName.toLowerCase();
+      const isInfrastructure = infrastructureSelectors.some(selector => {
+        if (selector.startsWith('.')) {
+          return el.classList.contains(selector.substring(1));
         }
+        return tagName === selector;
+      });
+
+      // Pomiń infrastructure (już mamy)
+      if (!isInfrastructure) {
+        // Wstaw PO headerze
+        if (existingHeader && existingHeader.nextSibling) {
+          document.body.insertBefore(el, existingHeader.nextSibling);
+        } else {
+          document.body.appendChild(el);
+        }
+        log(`    → Added <${tagName}> element`);
+      } else {
+        log(`    → Skipped <${tagName}> (infrastructure)`);
       }
-    }
+    });
+
+    log('✓ Body content replaced');
 
     // Scroll do góry
     window.scrollTo({ top: 0, behavior: 'instant' });
