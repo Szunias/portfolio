@@ -573,6 +573,10 @@
     const newElements = Array.from(tempDiv.children);
     log(`  Adding ${newElements.length} new elements from fetched page`);
 
+    // CRITICAL: Track last inserted element to maintain order
+    // Without this, elements get inserted in REVERSE order!
+    let lastInsertedElement = existingHeader;
+
     newElements.forEach(el => {
       const tagName = el.tagName.toLowerCase();
       const isInfrastructure = infrastructureSelectors.some(selector => {
@@ -612,12 +616,18 @@
 
       // Pomiń infrastructure (już mamy)
       if (!isInfrastructure) {
-        // Wstaw PO headerze
-        if (existingHeader && existingHeader.nextSibling) {
-          document.body.insertBefore(el, existingHeader.nextSibling);
+        // Wstaw AFTER last inserted element (to maintain order!)
+        if (lastInsertedElement && lastInsertedElement.nextSibling) {
+          document.body.insertBefore(el, lastInsertedElement.nextSibling);
+        } else if (lastInsertedElement) {
+          // No next sibling, append after parent
+          lastInsertedElement.parentNode.appendChild(el);
         } else {
+          // No reference, append to body
           document.body.appendChild(el);
         }
+
+        lastInsertedElement = el;  // Update reference for next element
         log(`    → Added <${tagName}> element`);
       } else {
         log(`    → Skipped <${tagName}> (infrastructure)`);
@@ -785,7 +795,10 @@
     // ========================================================================
     else if (currentPath === '/projects' || currentPath.startsWith('/projects/')) {
       log('  → Re-initializing projects page');
-      reinitializeProjectsPage();
+      // Give DOM time to settle before initializing
+      setTimeout(() => {
+        reinitializeProjectsPage();
+      }, 100);
     }
 
     // ========================================================================
@@ -809,6 +822,21 @@
     const grid = document.querySelector('.projects-grid');
     if (!grid) {
       log('    ✗ Projects grid not found');
+
+      // Try to load images anyway (maybe they're not in a grid)
+      log('    → Searching for images in entire document...');
+      const allImgs = Array.from(document.querySelectorAll('img[data-src]'));
+      log(`    → Found ${allImgs.length} images with data-src in document`);
+
+      allImgs.forEach((img, index) => {
+        if (img.dataset.src) {
+          const src = img.dataset.src;
+          img.src = src;
+          img.removeAttribute('data-src');
+          log(`      ✓ Image ${index + 1}: ${src}`);
+        }
+      });
+
       return;
     }
 
@@ -929,20 +957,23 @@
   }
 
   function reinitializeTranslations() {
-    // Reinicjalizuj BulletproofI18n (singleton instance)
-    if (window.i18n && typeof window.i18n.init === 'function') {
-      log('Reinitializing BulletproofI18n');
-      window.i18n.init().catch(err => {
-        log('BulletproofI18n reinit failed:', err);
-      });
-    }
+    // Give DOM time to settle before re-initializing translations
+    setTimeout(() => {
+      // Reinicjalizuj BulletproofI18n (singleton instance)
+      if (window.i18n && typeof window.i18n.init === 'function') {
+        log('Reinitializing BulletproofI18n');
+        window.i18n.init().catch(err => {
+          log('BulletproofI18n reinit failed:', err);
+        });
+      }
 
-    // Fallback: stary system tłumaczeń
-    else if (window.setLanguage && typeof window.setLanguage === 'function') {
-      const currentLang = localStorage.getItem('language') || 'en';
-      log('Reinitializing translations:', currentLang);
-      window.setLanguage(currentLang);
-    }
+      // Fallback: stary system tłumaczeń
+      else if (window.setLanguage && typeof window.setLanguage === 'function') {
+        const currentLang = localStorage.getItem('language') || 'en';
+        log('Reinitializing translations:', currentLang);
+        window.setLanguage(currentLang);
+      }
+    }, 50); // Small delay to let DOM settle
   }
 
   function reinitializeScrollAnimations() {
