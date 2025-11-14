@@ -684,7 +684,10 @@
     // 3. Event listeners specyficzne dla strony
     reinitializeEventListeners();
 
-    // 4. Wykonaj custom scripts
+    // 4. Page-specific scripts (music, projects, etc.)
+    reinitializePageSpecificScripts();
+
+    // 5. Wykonaj custom scripts
     if (pageData.scripts && pageData.scripts.length > 0) {
       pageData.scripts.forEach(script => {
         try {
@@ -694,6 +697,191 @@
         }
       });
     }
+  }
+
+  function reinitializePageSpecificScripts() {
+    // Wykryj która strona jest załadowana i wywołaj odpowiednie re-init funkcje
+    log('Reinitializing page-specific scripts for:', currentPath);
+
+    // ========================================================================
+    // MUSIC PAGE - Re-render playlist
+    // ========================================================================
+    if (currentPath === '/music.html' || currentPath === '/music') {
+      if (window.refreshMusicList && typeof window.refreshMusicList === 'function') {
+        log('  → Refreshing music list');
+        window.refreshMusicList();
+      } else {
+        log('  → Music page detected but refreshMusicList() not available - loading script');
+        // Dynamically load music.js if not loaded
+        loadPageScript('assets/js/pages/music.js');
+      }
+    }
+
+    // ========================================================================
+    // PROJECTS PAGE - Re-init lazy loading and search
+    // ========================================================================
+    else if (currentPath === '/projects' || currentPath.startsWith('/projects/')) {
+      log('  → Re-initializing projects page');
+      reinitializeProjectsPage();
+    }
+
+    // ========================================================================
+    // HOME PAGE - Re-init if needed
+    // ========================================================================
+    else if (currentPath === '/' || currentPath === '/index.html') {
+      log('  → Home page loaded');
+      // Home page scripts usually auto-initialize, but check if re-init needed
+    }
+
+    // ========================================================================
+    // OTHER PAGES - Generic re-init
+    // ========================================================================
+    else {
+      log('  → Generic page, no specific re-init needed');
+    }
+  }
+
+  function reinitializeProjectsPage() {
+    // Re-implement projects.js logic for smooth navigation
+    const list = document.getElementById('projects-list');
+    if (!list) {
+      log('    ✗ Projects list not found');
+      return;
+    }
+
+    const cards = Array.from(list.querySelectorAll('.project-card'));
+    const searchInput = document.getElementById('projects-search');
+    const countEl = document.getElementById('projects-count');
+
+    log(`    → Found ${cards.length} project cards`);
+
+    let activeQuery = '';
+
+    // Lazy-load ALL images immediately (since page just loaded via smooth nav)
+    const lazyImgs = Array.from(list.querySelectorAll('img[data-src]'));
+    log(`    → Loading ${lazyImgs.length} lazy images`);
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            const img = e.target;
+            if (img.dataset.src) {
+              img.src = img.dataset.src;
+              img.removeAttribute('data-src');
+              io.unobserve(img);
+            }
+          }
+        });
+      }, { rootMargin: '200px' });
+      lazyImgs.forEach(img => io.observe(img));
+    } else {
+      // Fallback: load all immediately
+      lazyImgs.forEach(img => {
+        if (img.dataset.src) {
+          img.src = img.dataset.src;
+          img.removeAttribute('data-src');
+        }
+      });
+    }
+
+    // Search function
+    function applySearch() {
+      const q = (activeQuery || '').trim().toLowerCase();
+      let visible = 0;
+
+      cards.forEach(card => {
+        const title = (card.getAttribute('data-title') || '').toLowerCase();
+        const type = (card.getAttribute('data-type') || '').toLowerCase();
+        const content = (card.textContent || '').toLowerCase();
+
+        const matches = !q || title.includes(q) || type.includes(q) || content.includes(q);
+
+        if (matches) {
+          card.classList.remove('hidden');
+          visible++;
+          // Lazy load image if visible
+          const img = card.querySelector('img[data-src]');
+          if (img && !img.src) {
+            img.src = img.getAttribute('data-src');
+            img.removeAttribute('data-src');
+          }
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      // Update count
+      if (countEl) {
+        if (visible === 0 && q) {
+          countEl.textContent = 'No matches';
+          countEl.style.color = '#ff6ea9';
+        } else if (q) {
+          countEl.textContent = `${visible} found`;
+          countEl.style.color = '#18bfef';
+        } else {
+          countEl.textContent = `${visible} projects`;
+          countEl.style.color = '#888';
+        }
+      }
+    }
+
+    // Bind search input
+    if (searchInput) {
+      let searchTimeout;
+      const handleInput = () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          activeQuery = searchInput.value || '';
+          applySearch();
+        }, 200);
+      };
+
+      const handleKeydown = (e) => {
+        if (e.key === 'Escape') {
+          searchInput.value = '';
+          activeQuery = '';
+          applySearch();
+          searchInput.blur();
+        }
+      };
+
+      // Remove old listeners (if any) and add new
+      searchInput.removeEventListener('input', handleInput);
+      searchInput.removeEventListener('keydown', handleKeydown);
+      searchInput.addEventListener('input', handleInput);
+      searchInput.addEventListener('keydown', handleKeydown);
+    }
+
+    // Initial render
+    applySearch();
+    log('    ✓ Projects page initialized');
+  }
+
+  function loadPageScript(src) {
+    // Dynamically load a page-specific script
+    return new Promise((resolve, reject) => {
+      // Check if already loaded
+      if (document.querySelector(`script[src="${src}"]`)) {
+        log(`  Script already loaded: ${src}`);
+        resolve();
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = src;
+      script.onload = () => {
+        log(`  ✓ Script loaded: ${src}`);
+        resolve();
+      };
+      script.onerror = () => {
+        log(`  ✗ Script load failed: ${src}`);
+        reject(new Error(`Failed to load script: ${src}`));
+      };
+
+      document.head.appendChild(script);
+    });
   }
 
   function reinitializeTranslations() {
