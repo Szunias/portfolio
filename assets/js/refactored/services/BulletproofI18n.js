@@ -397,14 +397,22 @@ class BulletproofI18n {
       this._log('[_getTranslationFile] Using pathOverride:', pathOverride);
     }
 
-    // Check for specific paths first
-    if (path.includes('/projects')) {
-      this._log('[_getTranslationFile] → Detected projects path, returning: projects.json');
-      return 'projects.json';
-    }
-
     const filename = path.split('/').pop();
     this._log('[_getTranslationFile] Extracted filename:', filename);
+
+    // Check if we're on a specific project page (e.g., /projects/pawism.html)
+    if (path.includes('/projects/') && filename && filename.endsWith('.html')) {
+      // Extract project name from filename (e.g., pawism.html -> pawism.json)
+      const projectName = filename.replace('.html', '.json');
+      this._log('[_getTranslationFile] → Detected project page, returning:', projectName);
+      return projectName;
+    }
+
+    // Check if we're on the projects directory page
+    if (path.includes('/projects') && (!filename || filename === '' || filename === 'index.html')) {
+      this._log('[_getTranslationFile] → Detected projects directory, returning: projects.json');
+      return 'projects.json';
+    }
 
     // Map HTML files to their JSON translation files
     const fileMap = {
