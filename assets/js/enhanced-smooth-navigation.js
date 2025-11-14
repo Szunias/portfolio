@@ -191,10 +191,17 @@
       }
     }
 
-    // CRITICAL FIX: Disable AJAX for contact page - FontAwesome icons break
+    // CRITICAL FIX: Disable AJAX for problematic pages
+    // Contact page - FontAwesome icons break
     if (targetPath === '/contact.html' || targetPath === '/contact') {
       log('  ✓✓✓ CONTACT PAGE - DISABLING AJAX (FontAwesome positioning issues)');
       return false; // Use full page reload for contact
+    }
+
+    // Home page - Vimeo iframe and navigation buttons break
+    if (targetPath === '/' || targetPath === '/index.html') {
+      log('  ✓✓✓ HOME PAGE - DISABLING AJAX (Vimeo iframe and controls issues)');
+      return false; // Use full page reload for home
     }
 
     // Ignoruj jeśli to ten sam URL (pathname bez hash)
@@ -1502,6 +1509,43 @@
       setTimeout(() => {
         reinitializeHomePage();
       }, 300);
+
+      // Fix Vimeo iframe white border issue after AJAX
+      setTimeout(() => {
+        log('  → Fixing Vimeo iframe styling');
+
+        const vimeoWrapper = document.querySelector('.vimeo-wrapper');
+        const vimeoIframe = document.querySelector('#vimeo-iframe');
+
+        if (vimeoWrapper) {
+          // Just adjust wrapper position to hide white line
+          vimeoWrapper.style.position = 'absolute';
+          vimeoWrapper.style.top = '0';
+          vimeoWrapper.style.left = '-2px'; // Shift left to hide white border
+          vimeoWrapper.style.width = 'calc(100% + 4px)'; // Compensate width
+          vimeoWrapper.style.height = '100%';
+          vimeoWrapper.style.borderRadius = '24px';
+          vimeoWrapper.style.overflow = 'hidden';
+        }
+
+        if (vimeoIframe) {
+          // Ensure iframe is properly positioned
+          vimeoIframe.style.position = 'absolute';
+          vimeoIframe.style.top = '0';
+          vimeoIframe.style.left = '0';
+          vimeoIframe.style.width = '100%';
+          vimeoIframe.style.height = '100%';
+          vimeoIframe.style.border = 'none';
+
+          // Make sure iframe has src loaded
+          if (!vimeoIframe.src && vimeoIframe.dataset.src) {
+            vimeoIframe.src = vimeoIframe.dataset.src;
+            log('    → Loaded iframe src from data-src');
+          }
+        }
+
+        log('    ✓ Vimeo iframe adjusted (shifted left 2px to hide white border)');
+      }, 800);
     }
 
     // ========================================================================
