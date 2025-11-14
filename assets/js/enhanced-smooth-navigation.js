@@ -64,10 +64,12 @@
     }
   }
 
-  function normalizeUrl(url) {
+  function normalizeUrl(url, baseUrl = window.location.href) {
     // Normalizuj URL (usuń trailing slash, konwertuj index.html do /)
     try {
-      const urlObj = new URL(url, window.location.origin);
+      // CRITICAL: Use baseUrl to resolve relative URLs correctly
+      // This ensures /projects/richter.html stays /projects/richter.html
+      const urlObj = new URL(url, baseUrl);
       let pathname = urlObj.pathname;
 
       // Usuń trailing slash (oprócz root '/')
@@ -395,6 +397,12 @@
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
     try {
+      // CRITICAL: Update currentPath BEFORE navigation
+      // This ensures reinitializePageSpecificScripts() uses correct path
+      const previousPath = currentPath;
+      currentPath = url;
+      log('✓ currentPath updated:', currentPath);
+
       // Sprawdź czy przeglądarka wspiera View Transition API
       if (document.startViewTransition) {
         await navigateWithViewTransition(url);
@@ -403,9 +411,8 @@
       }
 
       // Aktualizuj historię przeglądarki
-      if (url !== currentPath) {
+      if (url !== previousPath) {
         history.pushState({ path: url }, '', url);
-        currentPath = url;
       }
 
       log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
