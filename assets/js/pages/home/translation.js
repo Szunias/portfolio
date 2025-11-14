@@ -3,9 +3,19 @@
  * Uses unified translation utility
  */
 
-import { initTranslations } from "../../utils/i18n.js";
+import {
+  initTranslations,
+  setLanguage,
+  getCurrentLanguage
+} from "../../utils/i18n.js";
 
 export function initTranslation() {
-  // Unified translation system will auto-detect index.json
-  return initTranslations();
+  // Initialize translations asynchronously
+  initTranslations();
+
+  // Return utility functions immediately (they'll work once initialized)
+  return {
+    setLanguage,
+    getCurrentLanguage
+  };
 }

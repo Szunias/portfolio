@@ -1180,9 +1180,23 @@
 
   // Inicjalizuj gdy DOM gotowy
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', () => {
+      init();
+
+      // CRITICAL: Initialize lazy loading on initial page load
+      // This converts data-src → src for images/videos already in the DOM
+      log('━━━ INITIAL PAGE LOAD ━━━');
+      log('Running lazy loading for initial page content...');
+      initializeUniversalLazyLoading();
+    });
   } else {
     init();
+
+    // CRITICAL: Initialize lazy loading on initial page load
+    // This converts data-src → src for images/videos already in the DOM
+    log('━━━ INITIAL PAGE LOAD ━━━');
+    log('Running lazy loading for initial page content...');
+    initializeUniversalLazyLoading();
   }
 
   // Export dla debugowania
