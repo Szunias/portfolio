@@ -175,10 +175,12 @@
       'normalized targetPath': targetPath
     });
 
-    // CRITICAL: Disable AJAX navigation for individual project pages FIRST
-    // Projects have complex assets and scripts that don't work well with AJAX
-    // Check for any .html file in /projects/ directory (except index.html)
+    // CRITICAL: Disable AJAX navigation for problematic pages
+    // 1. Individual project pages - complex assets don't work well with AJAX
+    // 2. Contact page - FontAwesome icons positioning broken with AJAX
     // This MUST be checked BEFORE the same-path check
+
+    // Disable for individual project pages
     if (targetPath.includes('/projects/') && targetPath.endsWith('.html')) {
       // It's a file in /projects/ directory
       // Allow only /projects/index.html to use AJAX
@@ -187,6 +189,12 @@
         log('  ✓✓✓ Returning FALSE from shouldInterceptLink');
         return false; // Disable AJAX - use normal navigation
       }
+    }
+
+    // CRITICAL FIX: Disable AJAX for contact page - FontAwesome icons break
+    if (targetPath === '/contact.html' || targetPath === '/contact') {
+      log('  ✓✓✓ CONTACT PAGE - DISABLING AJAX (FontAwesome positioning issues)');
+      return false; // Use full page reload for contact
     }
 
     // Ignoruj jeśli to ten sam URL (pathname bez hash)
@@ -987,7 +995,8 @@
               // Force browser to recalculate icon styles
               // Small delay to ensure font files are also loaded
               setTimeout(() => {
-                document.querySelectorAll('.fa, .fab, .fas, .far, .fal').forEach((icon) => {
+                const icons = document.querySelectorAll('.fa, .fab, .fas, .far, .fal, .fa-brands');
+                icons.forEach((icon) => {
                   // Force recalculation by toggling font-family
                   icon.style.fontFamily = 'inherit';
                   icon.offsetHeight; // Trigger reflow
@@ -998,10 +1007,14 @@
                   icon.offsetHeight; // Trigger reflow
                   icon.style.display = '';
                 });
-                log(
-                  `FontAwesome icons refreshed: ${document.querySelectorAll('.fa, .fab, .fas, .far, .fal').length} icons`
-                );
-              }, 50);
+
+                // If FontAwesome API is available, use it
+                if (window.FontAwesome && window.FontAwesome.dom) {
+                  window.FontAwesome.dom.i2svg();
+                }
+
+                log(`FontAwesome icons refreshed: ${icons.length} icons`);
+              }, 100); // Slightly longer delay for better reliability
             });
           }
 
@@ -1330,9 +1343,121 @@
     log('Reinitializing page-specific scripts for:', currentPath);
 
     // ========================================================================
+    // CONTACT PAGE - Fix FontAwesome icons and FAQ
+    // ========================================================================
+    if (currentPath === '/contact.html' || currentPath === '/contact') {
+      log('  → Contact page detected, reinitializing scripts');
+
+      // 1. Fix FontAwesome icons - wait for font to fully load
+      setTimeout(() => {
+        log('  → Fixing FontAwesome icons positioning');
+
+        // Check if FontAwesome converted icons to SVG
+        const svgIcons = document.querySelectorAll('.social-icon svg');
+        if (svgIcons.length > 0) {
+          log('    FontAwesome converted ' + svgIcons.length + ' icons to SVG - fixing...');
+
+          svgIcons.forEach((svg) => {
+            // SVG icons need different positioning
+            svg.style.cssText =
+              'width: 1.2rem !important; height: 1.2rem !important; margin: 0 !important; padding: 0 !important;';
+          });
+        }
+
+        // Fix regular <i> icons
+        const iconElements = document.querySelectorAll('.social-icon i');
+        iconElements.forEach((icon) => {
+          // Remove any transform that shifts the icon
+          icon.style.cssText =
+            'font-size: 1.2rem !important; line-height: 1 !important; margin: 0 auto !important; padding: 0 !important; display: block !important;';
+        });
+
+        // Ensure containers are proper flexbox
+        const containers = document.querySelectorAll('.social-icon');
+        containers.forEach((container) => {
+          container.style.cssText =
+            'display: flex !important; align-items: center !important; justify-content: center !important; width: 40px !important; height: 40px !important;';
+        });
+
+        log('    ✓ Fixed ' + (svgIcons.length + iconElements.length) + ' icons');
+      }, 1000); // Wait longer for FontAwesome to fully initialize
+
+      // 2. Reinitialize FAQ accordion functionality
+      setTimeout(() => {
+        log('  → Reinitializing FAQ accordion');
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach((item, index) => {
+          const button = item.querySelector('.faq-question');
+          const answer = item.querySelector('.faq-answer');
+          if (!button || !answer) return;
+
+          // Set ARIA attributes
+          const answerId = `faq-answer-${index}`;
+          button.setAttribute('aria-controls', answerId);
+          button.setAttribute('aria-expanded', 'false');
+          answer.id = answerId;
+          answer.setAttribute('role', 'region');
+          answer.setAttribute('aria-hidden', 'true');
+
+          // Clone button to remove old event listeners
+          const newButton = button.cloneNode(true);
+          button.parentNode.replaceChild(newButton, button);
+
+          // Add fresh click listener
+          newButton.addEventListener('click', () => {
+            const isOpen = item.classList.toggle('open');
+            newButton.setAttribute('aria-expanded', String(isOpen));
+            answer.setAttribute('aria-hidden', String(!isOpen));
+          });
+        });
+
+        log('    ✓ FAQ reinitialized with ' + faqItems.length + ' items');
+      }, 600);
+
+      // 3. Reinitialize contact form
+      setTimeout(() => {
+        const form = document.getElementById('contact-form');
+        if (form) {
+          // Clone to remove old listeners
+          const newForm = form.cloneNode(true);
+          form.parentNode.replaceChild(newForm, form);
+
+          // Re-add submit handler
+          newForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = newForm.querySelector('button[type="submit"]');
+            const successMsg = document.getElementById('success-message');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+              await new Promise((resolve) => setTimeout(resolve, 1500));
+              btn.innerHTML = '<span>Message Sent!</span><i class="fas fa-check"></i>';
+              if (successMsg) successMsg.style.display = 'block';
+              newForm.reset();
+
+              setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Send Message</span><i class="fas fa-arrow-right"></i>';
+                if (successMsg) successMsg.style.display = 'none';
+              }, 5000);
+            } catch (error) {
+              btn.disabled = false;
+              btn.innerHTML = '<span>Send Message</span><i class="fas fa-arrow-right"></i>';
+            }
+          });
+
+          log('    ✓ Contact form reinitialized');
+        }
+      }, 700);
+    }
+
+    // ========================================================================
     // MUSIC PAGE - Re-render playlist
     // ========================================================================
-    if (currentPath === '/music.html' || currentPath === '/music') {
+    else if (currentPath === '/music.html' || currentPath === '/music') {
       log('  → Music page detected');
       log('    → Waiting for music.js to load and reinitializing');
 
