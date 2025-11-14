@@ -416,7 +416,10 @@ class BulletproofI18n {
     }
 
     // Check if we're on the projects directory page
-    if (path.includes('/projects') && (!filename || filename === '' || filename === 'index.html')) {
+    if (
+      (path === '/projects' || path === '/projects/' || path.endsWith('/projects/index.html')) &&
+      (!filename || filename === '' || filename === 'index.html' || filename === 'projects')
+    ) {
       this._log('[_getTranslationFile] → Detected projects directory, returning: projects.json');
       return 'projects.json';
     }
