@@ -153,7 +153,14 @@
     }
 
     // Ignoruj jeśli to ten sam URL (pathname bez hash)
-    const targetPath = normalizeUrl(href);
+    // CRITICAL: Resolve relative URLs first, then normalize
+    let absoluteUrl;
+    try {
+      absoluteUrl = new URL(href, window.location.href).href;
+    } catch {
+      absoluteUrl = href;
+    }
+    const targetPath = normalizeUrl(absoluteUrl);
     if (targetPath === currentPath) return false;
 
     return true;
@@ -174,8 +181,24 @@
     e.preventDefault();
     e.stopPropagation();
 
-    const targetPath = normalizeUrl(href);
-    log('Navigating to normalized path:', targetPath, 'from href:', href);
+    // CRITICAL: For relative URLs on directory pages (like /projects/),
+    // we need to resolve them against window.location.href BEFORE normalization.
+    // Otherwise audiolab.html on /projects becomes /audiolab.html instead of /projects/audiolab.html
+
+    // First, resolve the href to absolute URL
+    let absoluteUrl;
+    try {
+      absoluteUrl = new URL(href, window.location.href).href;
+      log('  Resolved href:', href, '→', absoluteUrl);
+    } catch (err) {
+      // If URL parsing fails, use href as-is
+      absoluteUrl = href;
+      log('  Failed to resolve href, using as-is:', href);
+    }
+
+    // Now normalize the absolute URL
+    const targetPath = normalizeUrl(absoluteUrl);
+    log('Navigating to normalized path:', targetPath);
     navigateToPage(targetPath);
   }
 
@@ -188,7 +211,14 @@
     const href = link.getAttribute('href');
     if (!shouldInterceptLink(link, href)) return;
 
-    const targetPath = normalizeUrl(href);
+    // CRITICAL: Resolve relative URLs before normalization
+    let absoluteUrl;
+    try {
+      absoluteUrl = new URL(href, window.location.href).href;
+    } catch {
+      absoluteUrl = href;
+    }
+    const targetPath = normalizeUrl(absoluteUrl);
 
     // Nie preloaduj jeśli już jest w cache, w kolejce, lub timeout już działa
     if (pageCache.has(targetPath) ||
