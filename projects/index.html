@@ -860,11 +860,11 @@
 
       /* === ANIMATIONS === */
       .fade-in {
-        /* CRITICAL FIX: Start visible to prevent flashbang on page load */
-        /* Cards will fade in via staggered animation delays instead */
-        opacity: 1;
-        transform: translateY(0);
-        animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+        /* CRITICAL FIX: Use CSS animations to prevent flashbang */
+        /* Start invisible, animate to visible immediately (no JS required) */
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
       }
 
       @keyframes fadeInUp {
@@ -884,14 +884,23 @@
       }
 
       /* Staggered animation for project cards - wave pattern */
+      /* First cards (1st, 4th, 7th...) appear immediately */
       .project-card.fade-in:nth-child(3n + 1) {
         animation-delay: 0s;
       }
+      /* Second cards (2nd, 5th, 8th...) appear after 80ms */
       .project-card.fade-in:nth-child(3n + 2) {
         animation-delay: 0.08s;
       }
+      /* Third cards (3rd, 6th, 9th...) appear after 160ms */
       .project-card.fade-in:nth-child(3n + 3) {
         animation-delay: 0.16s;
+      }
+
+      /* CRITICAL: Page header and other .fade-in elements without delays */
+      /* should appear instantly (0ms delay) to prevent empty page */
+      .page-header.fade-in {
+        animation-delay: 0ms;
       }
     </style>
 
