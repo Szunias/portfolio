@@ -1894,18 +1894,20 @@
       scrollAnimationObserver.observe(el);
     });
 
-    // For .fade-in elements, trigger CSS animation by adding a class
-    // This works better than IntersectionObserver for preventing flashbang
+    // For .fade-in elements on AJAX navigation, restart CSS animations
+    // CRITICAL: Don't interfere with animation! Just remove 'visible' class
+    // The CSS animation will replay automatically when DOM updates
     const fadeInElements = document.querySelectorAll('.fade-in');
     if (fadeInElements.length > 0) {
-      // Force animation restart by removing and re-adding animation
-      fadeInElements.forEach((el, index) => {
-        // Small delay to ensure DOM is ready
-        setTimeout(() => {
-          el.style.animation = 'none';
-          el.offsetHeight; // Trigger reflow
-          el.style.animation = '';
-        }, index * 10); // Stagger the animation restart
+      // Simply remove 'visible' class (if JS added it before)
+      // CSS animations are already defined and will replay on their own
+      fadeInElements.forEach((el) => {
+        // Remove visible class to allow CSS animation to replay
+        el.classList.remove('visible');
+
+        // CRITICAL: Don't touch el.style.animation!
+        // The CSS rules with animation-delay are already applied
+        // Touching them would break the staggered 3n+1, 3n+2, 3n+3 pattern
       });
     }
   }
