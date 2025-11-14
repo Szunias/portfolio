@@ -1,14 +1,7 @@
 import { initElements, elements, state } from './music/state.js';
 import { renderPlaylist, bindFilterTags } from './music/playlist.js';
-import {
-  preloadAllDurations,
-  bindDurationRequests,
-} from './music/durations.js';
-import {
-  bindPlayerEvents,
-  loadTrack,
-  cleanupPlayerEvents,
-} from './music/player-controls.js';
+import { preloadAllDurations, bindDurationRequests } from './music/durations.js';
+import { bindPlayerEvents, loadTrack, cleanupPlayerEvents } from './music/player-controls.js';
 import { initPageEffects } from './music/ui-effects.js';
 import { IS_DEV } from '../config/constants.js';
 
@@ -51,19 +44,34 @@ function initialiseFilters() {
 }
 
 function exposeRefreshHook() {
+  console.log('[Music] Exposing refreshMusicList hook');
   window.refreshMusicList = () => {
+    console.log('[Music] refreshMusicList() called');
+    console.log('[Music] state.tracks.length:', state.tracks?.length || 0);
+    console.log('[Music] elements.playlist:', elements.playlist);
+
     try {
-      renderPlaylistAndPrefetch();
-    } catch (error) {
-      if (IS_DEV) {
-        console.error('Failed to refresh music list', error);
+      if (!state.tracks || state.tracks.length === 0) {
+        console.warn('[Music] No tracks available to render');
+        return;
       }
+
+      renderPlaylistAndPrefetch();
+      console.log('[Music] Playlist refreshed successfully');
+    } catch (error) {
+      console.error('[Music] Failed to refresh music list', error);
     }
   };
+  console.log('[Music] window.refreshMusicList is now:', typeof window.refreshMusicList);
 }
 
 async function init() {
-  if (!initElements()) {
+  console.log('[Music] init() called');
+  const elementsReady = initElements();
+  console.log('[Music] Elements ready:', elementsReady);
+
+  if (!elementsReady) {
+    console.error('[Music] Failed to initialize - required elements not found');
     return;
   }
 
@@ -77,16 +85,31 @@ async function init() {
   initAriaLabels();
 
   try {
+    console.log('[Music] Fetching tracks...');
     state.tracks = await fetchTracks();
+    console.log('[Music] Tracks loaded:', state.tracks.length);
+
     renderPlaylistAndPrefetch();
+    console.log('[Music] Playlist rendered');
 
     if (state.tracks.length > 0) {
       loadTrack(0);
+      console.log('[Music] First track loaded');
+
       if (elements.playerBar) {
         elements.playerBar.classList.add('visible');
+        console.log('[Music] Player bar visible');
       }
     }
+
+    // CRITICAL: Reapply translations after rendering playlist
+    // This ensures all dynamically generated elements are translated
+    if (window.i18n && window.i18n._applyTranslations) {
+      console.log('[Music] Reapplying translations after init');
+      window.i18n._applyTranslations();
+    }
   } catch (error) {
+    console.error('[Music] Error during init:', error);
     showError(`Failed to load tracks. Error: ${error.message}`);
   }
 }
@@ -103,4 +126,22 @@ if (window.smoothNav) {
   });
 }
 
+// Initialize on first load
 init();
+
+// Export init function for AJAX navigation
+window.initMusicPage = init;
+
+// Listen for AJAX navigation
+window.addEventListener('pageContentLoaded', () => {
+  console.log('[Music] pageContentLoaded event received');
+  console.log('[Music] window.location.pathname:', window.location.pathname);
+  console.log('[Music] Includes "music"?', window.location.pathname.includes('music'));
+
+  if (window.location.pathname.includes('music')) {
+    console.log('[Music] Reinitializing after AJAX navigation');
+    init();
+  } else {
+    console.log('[Music] Not on music page, skipping init');
+  }
+});

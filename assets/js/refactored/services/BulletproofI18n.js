@@ -61,7 +61,7 @@ class BulletproofI18n {
      * Debug mode
      * @type {boolean}
      */
-    this.debugMode = false;
+    this.debugMode = true;
 
     /**
      * Inline critical translations
@@ -102,9 +102,10 @@ class BulletproofI18n {
   /**
    * Load translations for a language
    * @param {string} lang - Language code
+   * @param {string} pathOverride - Optional path to use instead of window.location.pathname
    * @returns {Promise<void>}
    */
-  async load(lang) {
+  async load(lang, pathOverride = null) {
     // Validate language
     if (!this.supportedLanguages.includes(lang)) {
       this._log(`[BulletproofI18n] Language "${lang}" not supported, using default`);
@@ -123,7 +124,7 @@ class BulletproofI18n {
     }
 
     // Create loading promise with timeout
-    const loadingPromise = this._loadWithTimeout(lang);
+    const loadingPromise = this._loadWithTimeout(lang, pathOverride);
     this.loadingPromises.set(lang, loadingPromise);
 
     try {
@@ -168,9 +169,11 @@ class BulletproofI18n {
 
       // Emit custom event
       this._safeExecute(() => {
-        window.dispatchEvent(new CustomEvent('languageChanged', {
-          detail: { language: lang, previousLanguage }
-        }));
+        window.dispatchEvent(
+          new CustomEvent('languageChanged', {
+            detail: { language: lang, previousLanguage }
+          })
+        );
       });
 
       this._log(`[BulletproofI18n] Language changed to: ${lang}`);
@@ -248,34 +251,42 @@ class BulletproofI18n {
    * Load translations with timeout protection
    * @private
    * @param {string} lang - Language code
+   * @param {string} pathOverride - Optional path to use instead of window.location.pathname
    * @returns {Promise<Object>}
    */
-  async _loadWithTimeout(lang) {
+  async _loadWithTimeout(lang, pathOverride = null) {
     // Create timeout promise
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => reject(new Error('Timeout')), this.timeout);
     });
 
     // Determine which JSON file to load based on current page
-    const jsonFile = this._getTranslationFile();
+    const jsonFile = this._getTranslationFile(pathOverride);
     const path = `/locales/${jsonFile}`;
+    this._log(`[_loadWithTimeout] Loading translations for lang="${lang}" from path="${path}"`);
 
     // Fetch with timeout
     try {
-      const response = await Promise.race([
-        fetch(path),
-        timeoutPromise
-      ]);
+      const response = await Promise.race([fetch(path), timeoutPromise]);
+      this._log('[_loadWithTimeout] Fetch response status:', response.status);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
+      this._log('[_loadWithTimeout] JSON parsed successfully, keys:', Object.keys(data));
+      this._log(
+        `[_loadWithTimeout] Language data for "${lang}":`,
+        data[lang] ? 'EXISTS' : 'MISSING'
+      );
 
       // Extract language-specific data
-      return data[lang] || {};
+      const result = data[lang] || {};
+      this._log('[_loadWithTimeout] Translation keys loaded:', Object.keys(result).length);
+      return result;
     } catch (error) {
+      this._log('[_loadWithTimeout] ERROR:', error.message);
       throw new Error(`Failed to load translations: ${error.message}`);
     }
   }
@@ -287,7 +298,7 @@ class BulletproofI18n {
   _applyTranslations() {
     this._safeExecute(() => {
       // Translate text content
-      document.querySelectorAll('[data-i18n]').forEach(element => {
+      document.querySelectorAll('[data-i18n]').forEach((element) => {
         this._safeExecute(() => {
           const key = element.getAttribute('data-i18n');
           const translation = this.t(key);
@@ -305,7 +316,7 @@ class BulletproofI18n {
       });
 
       // Translate placeholders
-      document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+      document.querySelectorAll('[data-i18n-placeholder]').forEach((element) => {
         this._safeExecute(() => {
           const key = element.getAttribute('data-i18n-placeholder');
           element.placeholder = this.t(key);
@@ -313,7 +324,7 @@ class BulletproofI18n {
       });
 
       // Translate ARIA labels
-      document.querySelectorAll('[data-i18n-aria-label]').forEach(element => {
+      document.querySelectorAll('[data-i18n-aria-label]').forEach((element) => {
         this._safeExecute(() => {
           const key = element.getAttribute('data-i18n-aria-label');
           element.setAttribute('aria-label', this.t(key));
@@ -321,7 +332,7 @@ class BulletproofI18n {
       });
 
       // Translate titles
-      document.querySelectorAll('[data-i18n-title]').forEach(element => {
+      document.querySelectorAll('[data-i18n-title]').forEach((element) => {
         this._safeExecute(() => {
           const key = element.getAttribute('data-i18n-title');
           element.setAttribute('title', this.t(key));
@@ -329,7 +340,7 @@ class BulletproofI18n {
       });
 
       // Update active state of language buttons
-      document.querySelectorAll('.lang-btn').forEach(button => {
+      document.querySelectorAll('.lang-btn').forEach((button) => {
         this._safeExecute(() => {
           button.classList.toggle('active', button.dataset.lang === this.lang);
         });
@@ -376,11 +387,24 @@ class BulletproofI18n {
   /**
    * Determine which translation file to load based on current page
    * @private
+   * @param {string} pathOverride - Optional path to use instead of window.location.pathname
    * @returns {string}
    */
-  _getTranslationFile() {
-    const path = window.location.pathname;
+  _getTranslationFile(pathOverride = null) {
+    const path = pathOverride || window.location.pathname;
+    this._log('[_getTranslationFile] Current pathname:', path);
+    if (pathOverride) {
+      this._log('[_getTranslationFile] Using pathOverride:', pathOverride);
+    }
+
+    // Check for specific paths first
+    if (path.includes('/projects')) {
+      this._log('[_getTranslationFile] → Detected projects path, returning: projects.json');
+      return 'projects.json';
+    }
+
     const filename = path.split('/').pop();
+    this._log('[_getTranslationFile] Extracted filename:', filename);
 
     // Map HTML files to their JSON translation files
     const fileMap = {
@@ -392,7 +416,9 @@ class BulletproofI18n {
       '/': 'index.json'
     };
 
-    return fileMap[filename] || 'index.json';
+    const result = fileMap[filename] || 'index.json';
+    this._log('[_getTranslationFile] → Returning:', result);
+    return result;
   }
 
   /**

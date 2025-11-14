@@ -2,46 +2,72 @@
 <html lang="en" style="background: #000">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <meta name="theme-color" content="#000000" />
     <!-- ═══════════════════════════════════════════════════════════════════ CRITICAL INLINE RESOURCES - MUST LOAD FIRST These prevent visual flashing and ensure smooth initial render ═══════════════════════════════════════════════════════════════════ -->
     <!-- CRITICAL 1: Language Preload - Prevents language flicker -->
     <script>
       (function () {
-        "use strict";
-        const savedLang = localStorage.getItem("language") || "en";
-        document.documentElement.setAttribute("lang", savedLang);
+        'use strict';
+        const savedLang = localStorage.getItem('language') || 'en';
+        document.documentElement.setAttribute('lang', savedLang);
         window.__preloadedLang = savedLang;
       })();
     </script>
-        <!-- CRITICAL 1.5: Inline Critical Translations - Bulletproof i18n (0ms load) -->
-        <script>
-            /**
-             * Critical translations inline for instant loading
-             * Ensures navigation/footer work immediately, even if JSON fails
-             * Size: ~2KB | Load time: 0ms (already in HTML)
-             */
-            window.__I18N__ = {
-                "en": {
-                    "nav": {"home": "Home", "work": "Work", "about": "About", "projects": "Projects", "music": "Music", "contact": "Contact"},
-                    "footer": {"projects": "Projects", "music": "Music", "about": "About", "contact": "Contact"},
-                    "error": {"loading": "Loading...", "failed": "Failed to load content", "retry": "Retry"}
-                },
-                "pl": {
-                    "nav": {"home": "Start", "work": "Portfolio", "about": "O mnie", "projects": "Projekty", "music": "Muzyka", "contact": "Kontakt"},
-                    "footer": {"projects": "Projekty", "music": "Muzyka", "about": "O mnie", "contact": "Kontakt"},
-                    "error": {"loading": "Ładowanie...", "failed": "Nie udało się załadować treści", "retry": "Spróbuj ponownie"}
-                },
-                "nl": {
-                    "nav": {"home": "Home", "work": "Portfolio", "about": "Over", "projects": "Projecten", "music": "Muziek", "contact": "Contact"},
-                    "footer": {"projects": "Projecten", "music": "Muziek", "about": "Over", "contact": "Contact"},
-                    "error": {"loading": "Laden...", "failed": "Inhoud kan niet worden geladen", "retry": "Opnieuw proberen"}
-                }
-            };
-        </script>
+    <!-- CRITICAL 1.5: Inline Critical Translations - Bulletproof i18n (0ms load) -->
+    <script>
+      /**
+       * Critical translations inline for instant loading
+       * Ensures navigation/footer work immediately, even if JSON fails
+       * Size: ~2KB | Load time: 0ms (already in HTML)
+       */
+      window.__I18N__ = {
+        en: {
+          nav: {
+            home: 'Home',
+            work: 'Work',
+            about: 'About',
+            projects: 'Projects',
+            music: 'Music',
+            contact: 'Contact'
+          },
+          footer: { projects: 'Projects', music: 'Music', about: 'About', contact: 'Contact' },
+          error: { loading: 'Loading...', failed: 'Failed to load content', retry: 'Retry' }
+        },
+        pl: {
+          nav: {
+            home: 'Start',
+            work: 'Portfolio',
+            about: 'O mnie',
+            projects: 'Projekty',
+            music: 'Muzyka',
+            contact: 'Kontakt'
+          },
+          footer: { projects: 'Projekty', music: 'Muzyka', about: 'O mnie', contact: 'Kontakt' },
+          error: {
+            loading: 'Ładowanie...',
+            failed: 'Nie udało się załadować treści',
+            retry: 'Spróbuj ponownie'
+          }
+        },
+        nl: {
+          nav: {
+            home: 'Home',
+            work: 'Portfolio',
+            about: 'Over',
+            projects: 'Projecten',
+            music: 'Muziek',
+            contact: 'Contact'
+          },
+          footer: { projects: 'Projecten', music: 'Muziek', about: 'Over', contact: 'Contact' },
+          error: {
+            loading: 'Laden...',
+            failed: 'Inhoud kan niet worden geladen',
+            retry: 'Opnieuw proberen'
+          }
+        }
+      };
+    </script>
 
     <!-- CRITICAL 2: Base styles - Prevents white flash -->
     <style id="critical-background-styles">
@@ -112,10 +138,7 @@
     <meta property="og:type" content="music.playlist" />
     <meta property="og:site_name" content="Igor Szuniewicz" />
     <meta property="og:url" content="https://igorszuniewicz.com/music.html" />
-    <meta
-      property="og:title"
-      content="Music: Igor Szuniewicz | Composer & Audio Designer"
-    />
+    <meta property="og:title" content="Music: Igor Szuniewicz | Composer & Audio Designer" />
     <meta
       property="og:description"
       content="Music by Igor Szuniewicz: Film scores, electronic, game audio. Adaptive music for games."
@@ -132,10 +155,7 @@
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://igorszuniewicz.com/music.html" />
-    <meta
-      name="twitter:title"
-      content="Music: Igor Szuniewicz | Composer & Audio Designer"
-    />
+    <meta name="twitter:title" content="Music: Igor Szuniewicz | Composer & Audio Designer" />
     <meta
       name="twitter:description"
       content="Music by Igor Szuniewicz: Film scores, electronic, game audio. Adaptive music for games."
@@ -152,7 +172,8 @@
     <link rel="dns-prefetch" href="//fonts.googleapis.com" />
     <link rel="dns-prefetch" href="//fonts.gstatic.com" />
     <link rel="preload" href="assets/css/main.css" as="style" />
-    <link rel="preload" href="assets/js/components/navigation.js" as="script" /><!-- Preload language to prevent flicker -->
+    <!-- Navigation.js is loaded with defer, so preload is not needed -->
+    <!-- Preload language to prevent flicker -->
     <script type="module" src="assets/js/preload-lang.js"></script>
     <!-- Smooth navigation - MUST load early to prevent white flash -->
     <!-- Navigation CSS -->
@@ -186,7 +207,7 @@
       }
       body {
         font-family:
-          "Poppins",
+          'Poppins',
           -apple-system,
           BlinkMacSystemFont,
           sans-serif;
@@ -235,7 +256,7 @@
         z-index: 1;
       }
       .bg-gradient::before {
-        content: "";
+        content: '';
         position: absolute;
         inset: 0;
         background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
@@ -254,11 +275,7 @@
         background-size: 100px 100px;
         z-index: -3;
         opacity: 0.4;
-        mask-image: radial-gradient(
-          ellipse at center,
-          black 0%,
-          transparent 90%
-        );
+        mask-image: radial-gradient(ellipse at center, black 0%, transparent 90%);
       }
       .bg-orbs {
         position: fixed;
@@ -268,25 +285,15 @@
         opacity: 0.12;
       }
       .bg-orbs::before {
-        content: "";
+        content: '';
         position: absolute;
         top: -50%;
         left: -50%;
         width: 200%;
         height: 200%;
         background:
-          linear-gradient(
-            90deg,
-            transparent 0%,
-            rgba(6, 182, 212, 0.1) 50%,
-            transparent 100%
-          ),
-          linear-gradient(
-            0deg,
-            transparent 0%,
-            rgba(59, 130, 246, 0.08) 50%,
-            transparent 100%
-          );
+          linear-gradient(90deg, transparent 0%, rgba(6, 182, 212, 0.1) 50%, transparent 100%),
+          linear-gradient(0deg, transparent 0%, rgba(59, 130, 246, 0.08) 50%, transparent 100%);
         animation: subtleRotate 60s linear infinite;
       }
       @keyframes subtleRotate {
@@ -313,7 +320,7 @@
         margin-bottom: 4rem;
       }
       .page-title {
-        font-family: "Sora", sans-serif;
+        font-family: 'Sora', sans-serif;
         font-size: clamp(3rem, 7vw, 5rem);
         font-weight: 900;
         color: #ffffff;
@@ -379,7 +386,7 @@
         flex: 1;
       }
       .player-title {
-        font-family: "Sora", sans-serif;
+        font-family: 'Sora', sans-serif;
         font-size: 0.95rem;
         font-weight: 600;
         color: #fff;
@@ -449,7 +456,7 @@
         font-size: 0.75rem;
         color: #9ca3af;
         font-variant-numeric: tabular-nums;
-        font-feature-settings: "tnum";
+        font-feature-settings: 'tnum';
         min-width: 40px;
         text-align: center;
       }
@@ -527,7 +534,7 @@
         border-radius: 6px;
         font-size: 0.75rem;
         font-variant-numeric: tabular-nums;
-        font-feature-settings: "tnum";
+        font-feature-settings: 'tnum';
         pointer-events: none;
         opacity: 0;
         transform: translateX(-50%) translateY(4px) translateZ(0);
@@ -540,7 +547,7 @@
         will-change: opacity, transform;
       }
       .player-progress-tooltip::after {
-        content: "";
+        content: '';
         position: absolute;
         top: 100%;
         left: 50%;
@@ -713,7 +720,7 @@
         gap: 1.5rem;
       }
       .playlist-title {
-        font-family: "Sora", sans-serif;
+        font-family: 'Sora', sans-serif;
         font-size: 2rem;
         font-weight: 700;
         color: #fff;
@@ -757,7 +764,7 @@
         position: relative;
       }
       .playlist-item::before {
-        content: "▶";
+        content: '▶';
         position: absolute;
         left: 1.5rem;
         top: 1.5rem;
@@ -779,10 +786,10 @@
         opacity: 1;
       }
       .playlist-item.active::before {
-        content: "▶";
+        content: '▶';
       }
       .playlist-item.playing::before {
-        content: "⏸";
+        content: '⏸';
       }
       .playlist-item:hover {
         background: rgba(15, 23, 42, 0.6);
@@ -815,12 +822,7 @@
         object-fit: cover;
       } /* Lazy loading for covers */
       .playlist-cover img.lazy-cover:not(.loaded) {
-        background: linear-gradient(
-          90deg,
-          #1e293b 0%,
-          #2d3748 50%,
-          #1e293b 100%
-        );
+        background: linear-gradient(90deg, #1e293b 0%, #2d3748 50%, #1e293b 100%);
         background-size: 200% 100%;
         animation: skeleton-loading 1.5s ease-in-out infinite;
       }
@@ -848,7 +850,7 @@
         gap: 0.5rem;
       }
       .playlist-track-title {
-        font-family: "Sora", sans-serif;
+        font-family: 'Sora', sans-serif;
         font-size: 1.1rem;
         font-weight: 600;
         color: #f3f4f6;
@@ -1068,13 +1070,7 @@
             "name": "Igor Szuniewicz Music Catalog",
             "description": "Music catalog by Igor Szuniewicz: Film scores, electronic music, game audio, and original compositions. Interactive music systems and adaptive soundtracks.",
             "creator": { "@id": "https://igorszuniewicz.com/#person" },
-            "genre": [
-              "Electronic",
-              "Film Score",
-              "Game Audio",
-              "Interactive Music",
-              "Ambient"
-            ],
+            "genre": ["Electronic", "Film Score", "Game Audio", "Interactive Music", "Ambient"],
             "breadcrumb": {
               "@type": "BreadcrumbList",
               "itemListElement": [
@@ -1130,59 +1126,23 @@
           <div class="page-header">
             <h1 class="page-title" data-i18n="page_title">Music Catalog</h1>
             <p class="page-description" data-i18n="page_description">
-              Original compositions spanning film scores, electronic music, and
-              experimental sound design.
+              Original compositions spanning film scores, electronic music, and experimental sound
+              design.
             </p>
           </div>
           <!-- Note: Floating player now appears at bottom-right corner -->
           <!-- Playlist -->
           <div class="playlist-header">
-            <h2 class="playlist-title" data-i18n="playlist_title">
-              All Tracks
-            </h2>
+            <h2 class="playlist-title" data-i18n="playlist_title">All Tracks</h2>
             <div class="filter-tags">
-              <div
-                class="filter-tag active"
-                data-filter="all"
-                data-i18n="filter_all"
-              >
-                All
-              </div>
-              <div
-                class="filter-tag"
-                data-filter="film"
-                data-i18n="filter_film"
-              >
-                Film
-              </div>
-              <div
-                class="filter-tag"
-                data-filter="electronic"
-                data-i18n="filter_electronic"
-              >
+              <div class="filter-tag active" data-filter="all" data-i18n="filter_all">All</div>
+              <div class="filter-tag" data-filter="film" data-i18n="filter_film">Film</div>
+              <div class="filter-tag" data-filter="electronic" data-i18n="filter_electronic">
                 Electronic
               </div>
-              <div
-                class="filter-tag"
-                data-filter="metal"
-                data-i18n="filter_metal"
-              >
-                Metal
-              </div>
-              <div
-                class="filter-tag"
-                data-filter="techno"
-                data-i18n="filter_techno"
-              >
-                Techno
-              </div>
-              <div
-                class="filter-tag"
-                data-filter="single"
-                data-i18n="filter_single"
-              >
-                Singles
-              </div>
+              <div class="filter-tag" data-filter="metal" data-i18n="filter_metal">Metal</div>
+              <div class="filter-tag" data-filter="techno" data-i18n="filter_techno">Techno</div>
+              <div class="filter-tag" data-filter="single" data-i18n="filter_single">Singles</div>
             </div>
           </div>
           <div class="playlist" id="playlist">
@@ -1215,27 +1175,11 @@
         <!-- Center: Controls & Progress -->
         <div class="player-center">
           <div class="player-controls">
-            <button
-              class="player-btn"
-              id="player-prev-btn"
-              aria-label="Previous track"
-            >
-              ⏮
-            </button>
-            <button
-              class="player-btn player-btn-play"
-              id="player-play-btn"
-              aria-label="Play/Pause"
-            >
+            <button class="player-btn" id="player-prev-btn" aria-label="Previous track">⏮</button>
+            <button class="player-btn player-btn-play" id="player-play-btn" aria-label="Play/Pause">
               ▶
             </button>
-            <button
-              class="player-btn"
-              id="player-next-btn"
-              aria-label="Next track"
-            >
-              ⏭
-            </button>
+            <button class="player-btn" id="player-next-btn" aria-label="Next track">⏭</button>
           </div>
           <div class="player-progress-container">
             <span class="player-time" id="player-current-time">0:00</span>
@@ -1243,13 +1187,8 @@
               <div class="player-progress-fill" id="player-progress-fill">
                 <div class="player-progress-handle"></div>
               </div>
-              <div
-                class="player-progress-hover"
-                id="player-progress-hover"
-              ></div>
-              <div class="player-progress-tooltip" id="player-progress-tooltip">
-                0:00
-              </div>
+              <div class="player-progress-hover" id="player-progress-hover"></div>
+              <div class="player-progress-tooltip" id="player-progress-tooltip">0:00</div>
             </div>
             <span class="player-time" id="player-total-time">0:00</span>
           </div>
@@ -1273,17 +1212,18 @@
     <audio id="audio-player" preload="metadata"></audio>
     <!-- Scripts -->
     <script type="module" src="assets/js/pages/music.js"></script>
+    <script type="module" src="assets/js/performance-boost.js"></script>
     <script type="module" src="assets/js/enhanced-smooth-navigation.js"></script>
     <script type="module" src="assets/js/components/navigation.js"></script>
     <script type="module" src="assets/js/components/custom-cursor.js"></script>
-            <!-- Bulletproof i18n System - 5-layer fallback, never crashes -->
-        <script type="module">
-            import i18n from '/assets/js/refactored/services/BulletproofI18n.js';
-            i18n.init().catch(error => {
-                console.error('i18n initialization failed:', error);
-                // Page still works with inline critical translations!
-            });
-        </script>
+    <!-- Bulletproof i18n System - 5-layer fallback, never crashes -->
+    <script type="module">
+      import i18n from '/assets/js/refactored/services/BulletproofI18n.js';
+      i18n.init().catch((error) => {
+        console.error('i18n initialization failed:', error);
+        // Page still works with inline critical translations!
+      });
+    </script>
     <!-- UX Enhancement Components -->
     <script type="module" src="assets/js/components/toast.js"></script>
     <script type="module" src="assets/js/components/back-to-top.js"></script>

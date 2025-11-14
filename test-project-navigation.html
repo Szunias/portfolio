@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Project Navigation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        h1 {
+            color: #4a9eff;
+        }
+        .test-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .test-link {
+            padding: 10px 20px;
+            background: #2a2a2a;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        .test-link:hover {
+            background: #3a3a3a;
+        }
+        .console-output {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #0a4f0a;
+            color: #0f0;
+        }
+        .status.error {
+            background: #4f0a0a;
+            color: #f00;
+        }
+    </style>
+</head>
+<body>
+    <h1>Project Navigation Test</h1>
+
+    <div class="status" id="status">
+        Testing AJAX navigation for project pages...
+    </div>
+
+    <h2>Test Links:</h2>
+    <div class="test-links">
+        <a href="/projects" class="test-link">Projects List (should use AJAX)</a>
+        <a href="/projects/shadow-frames.html" class="test-link">Shadow Frames Project (should NOT use AJAX)</a>
+        <a href="/projects/richter.html" class="test-link">Richter Project (should NOT use AJAX)</a>
+        <a href="/projects/amorak.html" class="test-link">Amorak Project (should NOT use AJAX)</a>
+        <a href="/music.html" class="test-link">Music Page (should use AJAX)</a>
+        <a href="/contact.html" class="test-link">Contact Page (should use AJAX)</a>
+    </div>
+
+    <h2>Console Output:</h2>
+    <div class="console-output" id="console"></div>
+
+    <script src="assets/js/enhanced-smooth-navigation.js"></script>
+    <script>
+        // Intercept console.log to display in our console div
+        const consoleDiv = document.getElementById('console');
+        const statusDiv = document.getElementById('status');
+        const originalLog = console.log;
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+
+            // Filter for SmoothNav logs
+            const logString = args.join(' ');
+            if (logString.includes('[SmoothNav]') || logString.includes('project')) {
+                const timestamp = new Date().toLocaleTimeString();
+                consoleDiv.textContent += `[${timestamp}] ${logString}\n`;
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+
+                // Check for project page detection
+                if (logString.includes('Individual project page detected')) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = 'SUCCESS: Project page correctly detected! AJAX navigation disabled.';
+                }
+            }
+        };
+
+        // Test the links
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Test page loaded. Click on the project links to test navigation.');
+            console.log('Project links should show "Individual project page detected" in console.');
+            console.log('Non-project links should use AJAX navigation.');
+        });
+
+        // Add click listeners to show what happens
+        document.querySelectorAll('.test-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                console.log(`\n=== CLICKED: ${href} ===`);
+
+                // Check if it's a project page
+                if (href.includes('/projects/') && href !== '/projects') {
+                    console.log('Expected: Should NOT use AJAX (normal browser navigation)');
+                } else {
+                    console.log('Expected: Should use AJAX navigation');
+                }
+            }, true); // Use capture phase to log before smooth nav handles it
+        });
+    </script>
+</body>
+</html>

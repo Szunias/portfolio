@@ -10,7 +10,7 @@
  * - Pełna integracja z systemem tłumaczeń
  */
 
-(function() {
+(function () {
   'use strict';
 
   // ============================================================================
@@ -23,36 +23,30 @@
     fadeInDuration: 200,
 
     // Preloading
-    preloadDelay: 50,        // Opóźnienie przed preloadem przy hover
-    preloadOnHover: true,    // Czy preloadować przy hover
+    preloadDelay: 50, // Opóźnienie przed preloadem przy hover
+    preloadOnHover: true, // Czy preloadować przy hover
 
     // Cache
-    cacheSize: 10,           // Maksymalna liczba stron w cache
-    cacheCritical: true,     // Czy cache'ować krytyczne strony przy starcie
+    cacheSize: 10, // Maksymalna liczba stron w cache
+    cacheCritical: true, // Czy cache'ować krytyczne strony przy starcie
 
     // Debug
-    debug: true             // Logi w konsoli
+    debug: true // Logi w konsoli
   };
 
   // Krytyczne strony do preloadu (już znormalizowane)
-  const CRITICAL_PAGES = [
-    '/',
-    '/about.html',
-    '/projects',
-    '/contact.html',
-    '/music.html'
-  ];
+  const CRITICAL_PAGES = ['/', '/about.html', '/projects', '/contact.html', '/music.html'];
 
   // ============================================================================
   // STATE
   // ============================================================================
 
   let isNavigating = false;
-  let currentPath = window.location.pathname;  // Will be normalized in init()
+  let currentPath = window.location.pathname; // Will be normalized in init()
   const pageCache = new Map();
   const preloadQueue = new Set();
-  const activePreloadTimeouts = new Map();  // Track active timeouts to prevent duplicates
-  let scrollAnimationObserver = null;  // Prevent memory leak
+  const activePreloadTimeouts = new Map(); // Track active timeouts to prevent duplicates
+  let scrollAnimationObserver = null; // Prevent memory leak
 
   // ============================================================================
   // UTILITIES
@@ -119,14 +113,14 @@
     // Ignoruj anchor links na tej samej stronie (/page.html#section)
     // Wyciągnij pathname i hash z href
     try {
-      const url = new URL(href, window.location.origin);
+      const url = new URL(href, window.location.href); // Use full href, not just origin!
       // Jeśli pathname taki sam jak current, ale jest hash - to anchor link
       // Używamy url.pathname (nie url.href!) bo to tylko pathname
       const normalizedPath = normalizeUrl(url.pathname);
       log('  Checking anchor:', normalizedPath, '===', currentPath, '&& hash:', url.hash);
       if (normalizedPath === currentPath && url.hash) {
         log('  → Anchor link on same page, allowing browser scroll');
-        return false;  // Pozwól przeglądarce obsłużyć scroll do anchora
+        return false; // Pozwól przeglądarce obsłużyć scroll do anchora
       }
     } catch {
       // Jeśli URL parsing nie udał się, kontynuuj normalnie
@@ -152,53 +146,154 @@
       return false;
     }
 
-    // Ignoruj jeśli to ten sam URL (pathname bez hash)
     // CRITICAL: Resolve relative URLs first, then normalize
+    // IMPORTANT: Use currentPath, not window.location.href for base URL
     let absoluteUrl;
+    let baseUrl = null;
     try {
-      absoluteUrl = new URL(href, window.location.href).href;
+      // If we're on /projects page and href is relative (like "shadow-frames.html")
+      // it should resolve to /projects/shadow-frames.html
+      // Build base URL from currentPath (which is kept up-to-date during AJAX nav)
+      let basePath = currentPath;
+      if (!basePath.includes('.') && !basePath.endsWith('/')) {
+        basePath = basePath + '/';
+      }
+      baseUrl = new URL(basePath, window.location.origin).href;
+      absoluteUrl = new URL(href, baseUrl).href;
     } catch {
       absoluteUrl = href;
+      baseUrl = window.location.href; // fallback
     }
     const targetPath = normalizeUrl(absoluteUrl);
+
+    log('  → URL resolution:', {
+      'original href': href,
+      currentPath: currentPath,
+      baseUrl: baseUrl,
+      'window.location.href': window.location.href,
+      'resolved absoluteUrl': absoluteUrl,
+      'normalized targetPath': targetPath
+    });
+
+    // CRITICAL: Disable AJAX navigation for individual project pages FIRST
+    // Projects have complex assets and scripts that don't work well with AJAX
+    // Check for any .html file in /projects/ directory (except index.html)
+    // This MUST be checked BEFORE the same-path check
+    if (targetPath.includes('/projects/') && targetPath.endsWith('.html')) {
+      // It's a file in /projects/ directory
+      // Allow only /projects/index.html to use AJAX
+      if (!targetPath.endsWith('/index.html')) {
+        log('  ✓✓✓ PROJECT PAGE DETECTED - DISABLING AJAX for:', targetPath);
+        log('  ✓✓✓ Returning FALSE from shouldInterceptLink');
+        return false; // Disable AJAX - use normal navigation
+      }
+    }
+
+    // Ignoruj jeśli to ten sam URL (pathname bez hash)
     if (targetPath === currentPath) return false;
 
     return true;
   }
 
   function handleLinkClick(e) {
+    log('[handleLinkClick] Event received, target:', e.target.tagName, e.target.className);
+
     const link = e.target.closest('a');
-    if (!link) return;
-
-    const href = link.getAttribute('href');
-    log('Link clicked:', href);
-
-    if (!shouldInterceptLink(link, href)) {
-      log('Link not intercepted:', href);
+    if (!link) {
+      log('[handleLinkClick] No link found via closest()');
       return;
     }
 
+    const href = link.getAttribute('href');
+    log('Link clicked:', href);
+    log('  Link element:', link);
+    log('  e.target:', e.target);
+    log('  window.location.pathname:', window.location.pathname);
+    log('  window.location.href:', window.location.href);
+    log('  currentPath:', currentPath);
+
+    // CRITICAL: Check if this is a project page link BEFORE calling shouldInterceptLink
+    // This provides better debugging info
+    if (href && (href.includes('projects/') || href.includes('.html'))) {
+      log('  Potential project link detected, will check in shouldInterceptLink');
+    }
+
+    if (!shouldInterceptLink(link, href)) {
+      log('Link not intercepted - using normal browser navigation for:', href);
+
+      // CRITICAL FIX: For relative project links, we need to set the correct full path
+      // When on /projects page and clicking "amorak.html", browser needs "/projects/amorak.html"
+      // Check both currentPath (for AJAX nav) and window.location.pathname (for initial load)
+      const isOnProjectsPage =
+        currentPath === '/projects' ||
+        currentPath === '/projects/' ||
+        window.location.pathname === '/projects' ||
+        window.location.pathname === '/projects/';
+
+      if (isOnProjectsPage && href && !href.startsWith('/') && !href.startsWith('http')) {
+        // It's a relative link from /projects page - fix the path
+        e.preventDefault(); // We need to prevent default to set correct URL
+        const correctUrl = '/projects/' + href;
+        log('  → Fixing relative project URL:', href, '→', correctUrl);
+        window.location.href = correctUrl;
+        return;
+      }
+
+      // For other cases, let browser handle normally
+      return;
+    }
+
+    // Only prevent default if we're going to handle it with AJAX
     e.preventDefault();
     e.stopPropagation();
 
     // CRITICAL: For relative URLs on directory pages (like /projects/),
-    // we need to resolve them against window.location.href BEFORE normalization.
-    // Otherwise audiolab.html on /projects becomes /audiolab.html instead of /projects/audiolab.html
+    // we need to resolve them correctly BEFORE normalization.
+    // PROBLEM: link.href uses window.location.href which may be outdated after AJAX nav
+    // SOLUTION: Use currentPath to construct the correct base URL
 
     // First, resolve the href to absolute URL
     let absoluteUrl;
     try {
-      absoluteUrl = new URL(href, window.location.href).href;
-      log('  Resolved href:', href, '→', absoluteUrl);
+      // If href is already absolute URL, use it
+      if (href.startsWith('http://') || href.startsWith('https://')) {
+        absoluteUrl = href;
+      } else {
+        // CRITICAL: Construct base URL from currentPath instead of window.location
+        // This ensures relative URLs are resolved correctly after AJAX navigation
+        // IMPORTANT: For directory paths, add trailing slash so relative URLs resolve correctly
+        let basePath = currentPath;
+        if (!basePath.includes('.') && !basePath.endsWith('/')) {
+          basePath = basePath + '/';
+        }
+        const baseUrl = new URL(basePath, window.location.origin).href;
+        log('  Resolving relative URL with base:', baseUrl);
+        absoluteUrl = new URL(href, baseUrl).href;
+      }
+      log('  Click - Resolved href:', href, '→', absoluteUrl);
     } catch (err) {
       // If URL parsing fails, use href as-is
       absoluteUrl = href;
-      log('  Failed to resolve href, using as-is:', href);
+      log('  Failed to resolve href, using as-is:', href, err);
     }
 
     // Now normalize the absolute URL
     const targetPath = normalizeUrl(absoluteUrl);
-    log('Navigating to normalized path:', targetPath);
+
+    // DOUBLE CHECK: If this is a project page, it should have been caught by shouldInterceptLink
+    // This is a safety check in case something went wrong
+    if (
+      targetPath.includes('/projects/') &&
+      targetPath.endsWith('.html') &&
+      !targetPath.endsWith('/index.html')
+    ) {
+      log('  WARNING: Project page slipped through! Force-disabling AJAX for:', targetPath);
+      // Remove event prevention and let browser handle it normally
+      window.location.href = href;
+      return;
+    }
+
+    log('Navigating with AJAX to normalized path:', targetPath);
     navigateToPage(targetPath);
   }
 
@@ -209,28 +304,51 @@
     if (!link) return;
 
     const href = link.getAttribute('href');
+
+    // Don't even check shouldInterceptLink for project pages - just skip
+    if (href && href.includes('.html') && !href.includes('index.html')) {
+      // Likely a project page, skip preloading
+      return;
+    }
+
     if (!shouldInterceptLink(link, href)) return;
 
     // CRITICAL: Resolve relative URLs before normalization
+    // Use currentPath as base URL to handle post-AJAX navigation correctly
     let absoluteUrl;
     try {
-      absoluteUrl = new URL(href, window.location.href).href;
+      // If href is already absolute URL, use it
+      if (href.startsWith('http://') || href.startsWith('https://')) {
+        absoluteUrl = href;
+      } else {
+        // Construct base URL from currentPath instead of window.location
+        // Add trailing slash for directory paths
+        let basePath = currentPath;
+        if (!basePath.includes('.') && !basePath.endsWith('/')) {
+          basePath = basePath + '/';
+        }
+        const baseUrl = new URL(basePath, window.location.origin).href;
+        absoluteUrl = new URL(href, baseUrl).href;
+      }
+      log('  Hover - Resolved href:', href, '→', absoluteUrl);
     } catch {
       absoluteUrl = href;
     }
     const targetPath = normalizeUrl(absoluteUrl);
 
     // Nie preloaduj jeśli już jest w cache, w kolejce, lub timeout już działa
-    if (pageCache.has(targetPath) ||
-        preloadQueue.has(targetPath) ||
-        activePreloadTimeouts.has(targetPath)) {
+    if (
+      pageCache.has(targetPath) ||
+      preloadQueue.has(targetPath) ||
+      activePreloadTimeouts.has(targetPath)
+    ) {
       return;
     }
 
     // Dodaj do queue i ustaw timeout
     preloadQueue.add(targetPath);
     const timeoutId = setTimeout(() => {
-      activePreloadTimeouts.delete(targetPath);  // Usuń timeout po wykonaniu
+      activePreloadTimeouts.delete(targetPath); // Usuń timeout po wykonaniu
       preloadPage(targetPath);
     }, CONFIG.preloadDelay);
 
@@ -302,13 +420,17 @@
     const mainElement = doc.querySelector('main');
 
     // Extract inline styles from head
-    const inlineStyles = Array.from(doc.querySelectorAll('head style')).map(style => style.textContent);
+    const inlineStyles = Array.from(doc.querySelectorAll('head style')).map(
+      (style) => style.textContent
+    );
 
     // Extract stylesheet links from head
-    const stylesheetLinks = Array.from(doc.querySelectorAll('head link[rel="stylesheet"]')).map(link => ({
-      href: link.getAttribute('href'),
-      media: link.getAttribute('media') || 'all'
-    }));
+    const stylesheetLinks = Array.from(doc.querySelectorAll('head link[rel="stylesheet"]')).map(
+      (link) => ({
+        href: link.getAttribute('href'),
+        media: link.getAttribute('media') || 'all'
+      })
+    );
 
     return {
       title: doc.title || '',
@@ -332,7 +454,7 @@
       },
 
       // Scripts do wykonania
-      scripts: Array.from(doc.querySelectorAll('script[data-reinit]')).map(s => s.textContent)
+      scripts: Array.from(doc.querySelectorAll('script[data-reinit]')).map((s) => s.textContent)
     };
   }
 
@@ -397,7 +519,7 @@
     preloadQueue.clear();
 
     // Cancel all pending preload timeouts
-    activePreloadTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+    activePreloadTimeouts.forEach((timeoutId) => clearTimeout(timeoutId));
     activePreloadTimeouts.clear();
 
     // Disconnect scroll animation observer
@@ -450,7 +572,6 @@
       log('  Current path:', currentPath);
       log('  Current title:', document.title);
       log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-
     } catch (error) {
       log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       log('✗ NAVIGATION FAILED:', error);
@@ -489,7 +610,7 @@
     mainEl.style.transition = `opacity ${CONFIG.fadeOutDuration}ms ease-out`;
     mainEl.style.opacity = '0';
 
-    await new Promise(resolve => setTimeout(resolve, CONFIG.fadeOutDuration));
+    await new Promise((resolve) => setTimeout(resolve, CONFIG.fadeOutDuration));
 
     // Załaduj i zastąp zawartość
     const pageData = await loadPage(url);
@@ -509,7 +630,7 @@
       mainEl.style.opacity = '1';
     });
 
-    await new Promise(resolve => setTimeout(resolve, CONFIG.fadeInDuration));
+    await new Promise((resolve) => setTimeout(resolve, CONFIG.fadeInDuration));
 
     // Usuń inline styles
     mainEl.style.transition = '';
@@ -544,19 +665,19 @@
 
     // Elementy które musimy ZACHOWAĆ (infrastructure)
     const infrastructureSelectors = [
-      'header',                  // Navigation
-      '.bg-gradient',           // Background
+      'header', // Navigation
+      '.bg-gradient', // Background
       '.bg-grid',
       '.bg-orbs',
       '.skip-link',
-      '.mobile-menu-overlay',   // Mobile menu
+      '.mobile-menu-overlay', // Mobile menu
       '.mobile-menu'
     ];
 
     // Zbierz elementy do zachowania
     const elementsToKeep = new Set();
-    infrastructureSelectors.forEach(selector => {
-      document.querySelectorAll(selector).forEach(el => elementsToKeep.add(el));
+    infrastructureSelectors.forEach((selector) => {
+      document.querySelectorAll(selector).forEach((el) => elementsToKeep.add(el));
     });
 
     // CRITICAL: Keep CORE scripts (infrastructure), remove page-specific
@@ -571,9 +692,9 @@
     ];
 
     // Keep core scripts, mark page-specific scripts for removal
-    document.querySelectorAll('script[src]').forEach(script => {
+    document.querySelectorAll('script[src]').forEach((script) => {
       const src = script.getAttribute('src') || '';
-      const isCore = coreScriptPaths.some(corePath => src.includes(corePath));
+      const isCore = coreScriptPaths.some((corePath) => src.includes(corePath));
 
       if (isCore) {
         elementsToKeep.add(script);
@@ -585,15 +706,17 @@
     });
 
     // Keep inline styles (they're managed separately by updateStyles)
-    document.querySelectorAll('style').forEach(style => {
+    document.querySelectorAll('style').forEach((style) => {
       elementsToKeep.add(style);
     });
 
     // Usuń wszystko OPRÓCZ infrastructure
     const bodyChildren = Array.from(document.body.children);
-    log(`  Removing ${bodyChildren.length} body children (keeping ${elementsToKeep.size} infrastructure elements)`);
+    log(
+      `  Removing ${bodyChildren.length} body children (keeping ${elementsToKeep.size} infrastructure elements)`
+    );
 
-    bodyChildren.forEach(child => {
+    bodyChildren.forEach((child) => {
       if (!elementsToKeep.has(child)) {
         child.remove();
       }
@@ -614,9 +737,9 @@
     // Without this, elements get inserted in REVERSE order!
     let lastInsertedElement = existingHeader;
 
-    newElements.forEach(el => {
+    newElements.forEach((el) => {
       const tagName = el.tagName.toLowerCase();
-      const isInfrastructure = infrastructureSelectors.some(selector => {
+      const isInfrastructure = infrastructureSelectors.some((selector) => {
         if (selector.startsWith('.')) {
           return el.classList.contains(selector.substring(1));
         }
@@ -626,7 +749,7 @@
       // Special handling for scripts
       if (tagName === 'script') {
         const src = el.getAttribute('src') || '';
-        const isCore = coreScriptPaths.some(corePath => src.includes(corePath));
+        const isCore = coreScriptPaths.some((corePath) => src.includes(corePath));
 
         if (!isCore && src) {
           // This is a page-specific script - add it!
@@ -638,7 +761,7 @@
           newScript.src = el.src;
 
           // Copy other attributes
-          Array.from(el.attributes).forEach(attr => {
+          Array.from(el.attributes).forEach((attr) => {
             if (attr.name !== 'src' && attr.name !== 'type') {
               newScript.setAttribute(attr.name, attr.value);
             }
@@ -664,7 +787,7 @@
           document.body.appendChild(el);
         }
 
-        lastInsertedElement = el;  // Update reference for next element
+        lastInsertedElement = el; // Update reference for next element
         log(`    → Added <${tagName}> element`);
       } else {
         log(`    → Skipped <${tagName}> (infrastructure)`);
@@ -676,8 +799,143 @@
     // Scroll do góry
     window.scrollTo({ top: 0, behavior: 'instant' });
 
-    // Reinicjalizuj skrypty
-    reinitializeScripts(pageData);
+    // CRITICAL: Force immediate script reinitialization
+    // This must happen IMMEDIATELY after content swap
+    setTimeout(() => {
+      log('━━━ FORCE REINITIALIZING ALL SCRIPTS AND LAZY LOADING ━━━');
+
+      // 1. FIRST PASS: Aggressive image loading
+      log('  → Pass 1: Loading all images');
+      const images = document.querySelectorAll('img');
+      images.forEach((img) => {
+        // If has data-src, use it
+        if (img.dataset.src && img.dataset.src !== img.src) {
+          const srcValue = img.dataset.src;
+          img.src = srcValue;
+          img.removeAttribute('data-src');
+          log(`    • Image loaded: ${srcValue.substring(srcValue.lastIndexOf('/') + 1)}`);
+        }
+        // Force eager loading
+        img.loading = 'eager';
+        // Remove lazy classes to force visibility
+        img.classList.add('loaded');
+      });
+
+      // 2. SECOND PASS: Aggressive video loading
+      log('  → Pass 2: Loading all videos');
+      const videos = document.querySelectorAll('video');
+      videos.forEach((video) => {
+        // Set all required attributes for autoplay
+        if (video.hasAttribute('data-autoplay') || video.hasAttribute('autoplay')) {
+          video.setAttribute('autoplay', '');
+          video.setAttribute('muted', '');
+          video.setAttribute('playsinline', '');
+          video.setAttribute('loop', '');
+          video.removeAttribute('data-autoplay');
+        }
+
+        // Load sources
+        const sources = video.querySelectorAll('source');
+        let sourcesLoaded = 0;
+        sources.forEach((source) => {
+          if (source.dataset.src && !source.src) {
+            source.src = source.dataset.src;
+            source.removeAttribute('data-src');
+            sourcesLoaded++;
+          }
+        });
+
+        // Reload video if sources were loaded
+        if (sourcesLoaded > 0) {
+          video.load();
+          video.classList.add('loaded');
+          log(`    • Video loaded with ${sourcesLoaded} sources`);
+
+          // Try to play if in viewport
+          const rect = video.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0 && video.hasAttribute('autoplay')) {
+            video.play().catch(() => {
+              // Autoplay blocked - that's ok
+            });
+          }
+        }
+      });
+
+      // 3. THIRD PASS: Aggressive iframe loading
+      log('  → Pass 3: Loading all iframes');
+      const iframes = document.querySelectorAll('iframe');
+      iframes.forEach((iframe) => {
+        if (iframe.dataset.src && !iframe.src) {
+          iframe.src = iframe.dataset.src;
+          iframe.removeAttribute('data-src');
+          iframe.classList.add('loaded');
+          log(`    • Iframe loaded: ${iframe.src.substring(0, 50)}...`);
+        }
+      });
+
+      // 4. Force re-run performance boost (this will catch any remaining lazy elements)
+      if (typeof window.runOptimizations === 'function') {
+        log('  → Running performance optimizations');
+        window.runOptimizations();
+      }
+
+      // 5. Then run normal reinitialization
+      log('  → Reinitializing scripts');
+      reinitializeScripts(pageData);
+
+      // 6. CRITICAL: Reinitialize translations IMMEDIATELY (before event dispatch)
+      // Pass currentPath because window.location.pathname hasn't been updated yet
+      log('  → Reinitializing translations (immediate) for path:', currentPath);
+      reinitializeTranslations(currentPath);
+
+      // 7. Dispatch event for any other scripts
+      window.dispatchEvent(new Event('pageContentLoaded'));
+      log('  → Dispatched pageContentLoaded event');
+
+      // 8. FINAL PASS: Clean up any remaining data-src attributes (300ms delay)
+      setTimeout(() => {
+        log('  → Final cleanup pass');
+
+        // Fix any remaining images
+        document.querySelectorAll('img[data-src]').forEach((img) => {
+          const srcValue = img.dataset.src;
+          img.src = srcValue;
+          img.removeAttribute('data-src');
+          img.classList.add('loaded');
+          log(`    • Cleaned up image: ${srcValue.substring(srcValue.lastIndexOf('/') + 1)}`);
+        });
+
+        // Fix any remaining videos
+        document.querySelectorAll('video source[data-src]').forEach((source) => {
+          source.src = source.dataset.src;
+          source.removeAttribute('data-src');
+          const video = source.closest('video');
+          if (video) {
+            video.load();
+            video.classList.add('loaded');
+          }
+        });
+
+        // Fix any remaining iframes
+        document.querySelectorAll('iframe[data-src]').forEach((iframe) => {
+          iframe.src = iframe.dataset.src;
+          iframe.removeAttribute('data-src');
+          iframe.classList.add('loaded');
+        });
+
+        // Run performance-boost optimizations AGAIN (catches dynamically added elements)
+        if (window.optimizeImages) window.optimizeImages();
+        if (window.optimizeVideoLoading) window.optimizeVideoLoading();
+        if (window.optimizeIframeLoading) window.optimizeIframeLoading();
+
+        // Force i18n to apply translations
+        if (window.i18n && window.i18n._applyTranslations) {
+          window.i18n._applyTranslations();
+        }
+
+        log('━━━ ALL REINITIALIZATION COMPLETE ━━━');
+      }, 300);
+    }, 10); // Very short delay to ensure DOM is ready
 
     // Zaznacz aktywny link w nawigacji
     updateActiveNavLink(url);
@@ -692,7 +950,7 @@
     if (!styles) return;
 
     // Remove old page-specific styles (marked with data-page-style)
-    document.querySelectorAll('style[data-page-style], link[data-page-style]').forEach(el => {
+    document.querySelectorAll('style[data-page-style], link[data-page-style]').forEach((el) => {
       el.remove();
     });
 
@@ -709,17 +967,67 @@
 
     // Add new stylesheet links (only if not already loaded)
     if (styles.links && styles.links.length > 0) {
-      styles.links.forEach(linkData => {
+      styles.links.forEach((linkData) => {
         // Check if this stylesheet is already loaded (global styles)
-        const existingLink = document.querySelector(`link[rel="stylesheet"][href="${linkData.href}"]`);
+        const existingLink = document.querySelector(
+          `link[rel="stylesheet"][href="${linkData.href}"]`
+        );
         if (!existingLink) {
           const linkEl = document.createElement('link');
           linkEl.rel = 'stylesheet';
           linkEl.href = linkData.href;
           linkEl.media = linkData.media;
           linkEl.setAttribute('data-page-style', 'true');
+
+          // CRITICAL: For FontAwesome and icon fonts, ensure they load properly
+          // by triggering a reflow after load
+          if (linkData.href.includes('font-awesome') || linkData.href.includes('fontawesome')) {
+            linkEl.addEventListener('load', () => {
+              log(`FontAwesome loaded, triggering icon reflow`);
+              // Force browser to recalculate icon styles
+              // Small delay to ensure font files are also loaded
+              setTimeout(() => {
+                document.querySelectorAll('.fa, .fab, .fas, .far, .fal').forEach((icon) => {
+                  // Force recalculation by toggling font-family
+                  icon.style.fontFamily = 'inherit';
+                  icon.offsetHeight; // Trigger reflow
+                  icon.style.fontFamily = '';
+
+                  // Also force display recalc
+                  icon.style.display = 'none';
+                  icon.offsetHeight; // Trigger reflow
+                  icon.style.display = '';
+                });
+                log(
+                  `FontAwesome icons refreshed: ${document.querySelectorAll('.fa, .fab, .fas, .far, .fal').length} icons`
+                );
+              }, 50);
+            });
+          }
+
           document.head.appendChild(linkEl);
           log(`Added stylesheet: ${linkData.href}`);
+        } else {
+          // Stylesheet already exists - force reflow of icons anyway
+          if (linkData.href.includes('font-awesome') || linkData.href.includes('fontawesome')) {
+            log(`FontAwesome already loaded, forcing icon reflow`);
+            setTimeout(() => {
+              document.querySelectorAll('.fa, .fab, .fas, .far, .fal').forEach((icon) => {
+                // Force recalculation by toggling font-family
+                icon.style.fontFamily = 'inherit';
+                icon.offsetHeight; // Trigger reflow
+                icon.style.fontFamily = '';
+
+                // Also force display recalc
+                icon.style.display = 'none';
+                icon.offsetHeight; // Trigger reflow
+                icon.style.display = '';
+              });
+              log(
+                `FontAwesome icons refreshed (existing CSS): ${document.querySelectorAll('.fa, .fab, .fas, .far, .fal').length} icons`
+              );
+            }, 150);
+          }
         }
       });
     }
@@ -757,13 +1065,13 @@
 
   function updateActiveNavLink(url) {
     // Usuń active ze wszystkich linków
-    document.querySelectorAll('.nav-links a, .mobile-nav-links a').forEach(link => {
+    document.querySelectorAll('.nav-links a, .mobile-nav-links a').forEach((link) => {
       link.classList.remove('active');
     });
 
     // Dodaj active do odpowiedniego linka
     const normalizedUrl = normalizeUrl(url);
-    document.querySelectorAll('.nav-links a, .mobile-nav-links a').forEach(link => {
+    document.querySelectorAll('.nav-links a, .mobile-nav-links a').forEach((link) => {
       const linkUrl = normalizeUrl(link.getAttribute('href'));
       if (linkUrl === normalizedUrl) {
         link.classList.add('active');
@@ -781,21 +1089,50 @@
     // 0. FIRST PASS: Early lazy loading for immediate data-src elements
     initializeUniversalLazyLoading();
 
-    // 1. System tłumaczeń
-    reinitializeTranslations();
+    // CRITICAL: Force immediate re-run of all optimizations
+    // This ensures ALL images, videos, and iframes are processed
+    setTimeout(() => {
+      log('  → Force re-running all performance optimizations');
 
-    // 2. Animacje scroll-based
+      // Re-initialize performance-boost.js optimizations for new content
+      if (typeof window.optimizeImages === 'function') {
+        window.optimizeImages();
+        log('    ✓ Images optimization triggered');
+      }
+      if (typeof window.optimizeVideoLoading === 'function') {
+        window.optimizeVideoLoading();
+        log('    ✓ Video optimization triggered');
+      }
+      if (typeof window.optimizeIframeLoading === 'function') {
+        window.optimizeIframeLoading();
+        log('    ✓ Iframe optimization triggered');
+      }
+
+      // Also dispatch event to notify performance-boost.js that content has changed
+      window.dispatchEvent(new CustomEvent('contentUpdated'));
+
+      // SECOND PASS: Run optimizations again after a small delay
+      // to catch any dynamically added content
+      setTimeout(() => {
+        log('  → Second pass optimization (catching late content)');
+        if (typeof window.optimizeImages === 'function') {
+          window.optimizeImages();
+        }
+      }, 500);
+    }, 100); // Small delay to ensure DOM is fully updated
+
+    // 1. Animacje scroll-based
     reinitializeScrollAnimations();
 
-    // 3. Event listeners specyficzne dla strony
+    // 2. Event listeners specyficzne dla strony
     reinitializeEventListeners();
 
-    // 4. Page-specific scripts (music, projects, etc.)
+    // 3. Page-specific scripts (music, projects, etc.)
     reinitializePageSpecificScripts();
 
-    // 5. Wykonaj custom scripts
+    // 4. Wykonaj custom scripts
     if (pageData.scripts && pageData.scripts.length > 0) {
-      pageData.scripts.forEach(script => {
+      pageData.scripts.forEach((script) => {
         try {
           eval(script);
         } catch (error) {
@@ -804,7 +1141,7 @@
       });
     }
 
-    // 6. SECOND PASS: Delayed lazy loading for dynamically added elements
+    // 5. SECOND PASS: Delayed lazy loading for dynamically added elements
     //    Page-specific scripts may add images/videos with data-src
     //    This catches them after scripts have run
     setTimeout(() => {
@@ -822,14 +1159,63 @@
 
     allImages.forEach((img, index) => {
       if (img.dataset.src) {
-        img.src = img.dataset.src;
+        const srcValue = img.dataset.src;
+        img.src = srcValue;
         img.removeAttribute('data-src');
+
+        // Mark as loaded when image loads
+        img.addEventListener(
+          'load',
+          () => {
+            img.classList.add('loaded');
+          },
+          { once: true }
+        );
+
+        // Also mark as loaded immediately if image is already cached
+        if (img.complete) {
+          img.classList.add('loaded');
+        }
+
         log(`    ✓ Image ${index + 1}: ${img.src.substring(img.src.lastIndexOf('/') + 1)}`);
       }
     });
 
+    // ALSO handle images with lazy-img or lazy-cover class (even without data-src)
+    const lazyImages = Array.from(document.querySelectorAll('img.lazy-img, img.lazy-cover'));
+    log(`    Found ${lazyImages.length} images with lazy classes`);
+
+    lazyImages.forEach((img) => {
+      // If has data-src, convert it
+      if (img.dataset.src && !img.src) {
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+      }
+
+      // Ensure loading attribute is set
+      if (!img.hasAttribute('loading')) {
+        img.setAttribute('loading', 'eager');
+      }
+
+      // Mark as loaded when loads
+      img.addEventListener(
+        'load',
+        () => {
+          img.classList.add('loaded');
+        },
+        { once: true }
+      );
+
+      // Also mark as loaded immediately if already cached
+      if (img.complete && img.naturalWidth > 0) {
+        img.classList.add('loaded');
+      }
+    });
+
     // VIDEOS: Convert ALL data-autoplay and data-src in sources
-    const allVideos = Array.from(document.querySelectorAll('video[data-autoplay], video source[data-src]'));
+    const allVideos = Array.from(
+      document.querySelectorAll('video[data-autoplay], video source[data-src]')
+    );
     const videoElements = Array.from(document.querySelectorAll('video'));
     log(`    Found ${videoElements.length} video elements`);
 
@@ -839,13 +1225,16 @@
       // Set autoplay if data-autoplay present
       if (video.hasAttribute('data-autoplay')) {
         video.setAttribute('autoplay', '');
+        video.setAttribute('muted', '');
+        video.setAttribute('playsinline', '');
+        video.setAttribute('loop', '');
         video.removeAttribute('data-autoplay');
         modified = true;
       }
 
       // Convert source data-src to src
       const sources = video.querySelectorAll('source[data-src]');
-      sources.forEach(source => {
+      sources.forEach((source) => {
         if (source.dataset.src) {
           source.src = source.dataset.src;
           source.removeAttribute('data-src');
@@ -856,6 +1245,7 @@
       // Reload video if sources were modified
       if (modified && sources.length > 0) {
         video.load();
+        video.classList.add('loaded');
         log(`    ✓ Video ${index + 1}: loaded with ${sources.length} sources`);
 
         // Try to play if in viewport
@@ -868,6 +1258,44 @@
       }
     });
 
+    // ALSO handle videos with data-lazy-video attribute
+    const lazyVideos = Array.from(document.querySelectorAll('video[data-lazy-video]'));
+    log(`    Found ${lazyVideos.length} videos with data-lazy-video`);
+
+    lazyVideos.forEach((video) => {
+      const sources = video.querySelectorAll('source[data-src]');
+      if (sources.length > 0) {
+        sources.forEach((source) => {
+          if (source.dataset.src && !source.src) {
+            source.src = source.dataset.src;
+            source.removeAttribute('data-src');
+          }
+        });
+
+        if (video.hasAttribute('data-autoplay')) {
+          video.setAttribute('autoplay', '');
+          video.setAttribute('muted', '');
+          video.setAttribute('playsinline', '');
+          video.setAttribute('loop', '');
+          video.removeAttribute('data-autoplay');
+        }
+
+        video.load();
+        video.classList.add('loaded');
+        video.removeAttribute('data-lazy-video');
+
+        // Try to play if autoplay and in viewport
+        if (video.hasAttribute('autoplay')) {
+          const rect = video.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0) {
+            video.play().catch(() => {
+              // Autoplay blocked - that's ok
+            });
+          }
+        }
+      }
+    });
+
     // IFRAMES: Convert ALL data-src → src (for Vimeo, YouTube, etc.)
     const allIframes = Array.from(document.querySelectorAll('iframe[data-src]'));
     log(`    Found ${allIframes.length} iframes with data-src`);
@@ -876,7 +1304,21 @@
       if (iframe.dataset.src) {
         iframe.src = iframe.dataset.src;
         iframe.removeAttribute('data-src');
+        iframe.classList.add('loaded');
         log(`    ✓ Iframe ${index + 1}: ${iframe.src.substring(0, 50)}...`);
+      }
+    });
+
+    // ALSO handle iframes with data-lazy-iframe attribute
+    const lazyIframes = Array.from(document.querySelectorAll('iframe[data-lazy-iframe]'));
+    log(`    Found ${lazyIframes.length} iframes with data-lazy-iframe`);
+
+    lazyIframes.forEach((iframe) => {
+      if (iframe.dataset.src && !iframe.src) {
+        iframe.src = iframe.dataset.src;
+        iframe.removeAttribute('data-src');
+        iframe.removeAttribute('data-lazy-iframe');
+        iframe.classList.add('loaded');
       }
     });
 
@@ -892,20 +1334,25 @@
     // ========================================================================
     if (currentPath === '/music.html' || currentPath === '/music') {
       log('  → Music page detected');
-      log('    → music.js will auto-initialize (loaded via <script> tag in body)');
+      log('    → Waiting for music.js to load and reinitializing');
 
-      // Music.js is now automatically loaded because we add page-specific
-      // scripts from the fetched HTML. It will run its init() function
-      // and populate the playlist.
-
-      // If for some reason the script already ran before this function,
-      // we can also call the refresh hook:
+      // CRITICAL: ES6 modules don't re-execute when added to DOM if already loaded
+      // We must manually call the init function after the script loads
       setTimeout(() => {
-        if (window.refreshMusicList && typeof window.refreshMusicList === 'function') {
-          log('    → Calling window.refreshMusicList() as backup');
+        log('    → Checking for window.initMusicPage...');
+
+        if (window.initMusicPage && typeof window.initMusicPage === 'function') {
+          log('    → Calling window.initMusicPage()');
+          window.initMusicPage();
+        } else if (window.refreshMusicList && typeof window.refreshMusicList === 'function') {
+          log('    → Calling window.refreshMusicList() as fallback');
           window.refreshMusicList();
+        } else {
+          log('    ✗ No music initialization function found!');
+          log('    ✗ window.initMusicPage:', typeof window.initMusicPage);
+          log('    ✗ window.refreshMusicList:', typeof window.refreshMusicList);
         }
-      }, 300); // Delay to let music.js init first
+      }, 500); // Longer delay to ensure module is fully loaded
     }
 
     // ========================================================================
@@ -920,11 +1367,16 @@
     }
 
     // ========================================================================
-    // HOME PAGE - Re-init if needed
+    // HOME PAGE - Re-init counters and animations
     // ========================================================================
     else if (currentPath === '/' || currentPath === '/index.html') {
       log('  → Home page loaded');
-      // Home page scripts usually auto-initialize, but check if re-init needed
+      log('    → Reinitializing home page features');
+
+      // Give DOM time to settle before initializing
+      setTimeout(() => {
+        reinitializeHomePage();
+      }, 300);
     }
 
     // ========================================================================
@@ -936,116 +1388,198 @@
   }
 
   function reinitializeProjectsPage() {
+    log('━━━ Reinitializing Projects Page ━━━');
+
     // Re-implement projects.js logic for smooth navigation
     const grid = document.querySelector('.projects-grid');
-    if (!grid) {
-      log('    ✗ Projects grid not found');
 
-      // Try to load images anyway (maybe they're not in a grid)
-      log('    → Searching for images in entire document...');
-      const allImgs = Array.from(document.querySelectorAll('img[data-src]'));
-      log(`    → Found ${allImgs.length} images with data-src in document`);
+    // CRITICAL: Load ALL images and videos in the document, not just in grid
+    // This ensures everything loads even if we don't find the grid
+    log('  → Step 1: Loading ALL images in document (aggressive mode)');
+    const allImages = Array.from(document.querySelectorAll('img'));
+    allImages.forEach((img, index) => {
+      // If has data-src, convert it
+      if (img.dataset.src && img.dataset.src !== img.src) {
+        const srcValue = img.dataset.src;
+        img.src = srcValue;
+        img.removeAttribute('data-src');
+        img.classList.add('loaded');
+        log(`    ✓ Image ${index + 1}: ${srcValue.substring(srcValue.lastIndexOf('/') + 1)}`);
+      }
+      // Force eager loading
+      if (!img.hasAttribute('loading')) {
+        img.setAttribute('loading', 'eager');
+      }
+      // Ensure loaded class is added when image loads
+      if (!img.classList.contains('loaded')) {
+        img.addEventListener(
+          'load',
+          () => {
+            img.classList.add('loaded');
+          },
+          { once: true }
+        );
+        // If already loaded, add class immediately
+        if (img.complete && img.naturalWidth > 0) {
+          img.classList.add('loaded');
+        }
+      }
+    });
 
-      allImgs.forEach((img, index) => {
-        if (img.dataset.src) {
-          const src = img.dataset.src;
-          img.src = src;
-          img.removeAttribute('data-src');
-          log(`      ✓ Image ${index + 1}: ${src}`);
+    log('  → Step 2: Loading ALL videos in document (aggressive mode)');
+    const allVideos = Array.from(document.querySelectorAll('video'));
+    allVideos.forEach((video, index) => {
+      // Set all required attributes for autoplay
+      if (video.hasAttribute('data-autoplay') || video.hasAttribute('autoplay')) {
+        video.setAttribute('autoplay', '');
+        video.setAttribute('muted', '');
+        video.setAttribute('playsinline', '');
+        video.setAttribute('loop', '');
+        video.removeAttribute('data-autoplay');
+        video.removeAttribute('data-lazy-video');
+      }
+
+      // Load video sources
+      const sources = video.querySelectorAll('source');
+      let sourcesLoaded = 0;
+      sources.forEach((source) => {
+        if (source.dataset.src && !source.src) {
+          source.src = source.dataset.src;
+          source.removeAttribute('data-src');
+          sourcesLoaded++;
         }
       });
 
+      // Reload video if sources were loaded
+      if (sourcesLoaded > 0) {
+        video.load();
+        video.classList.add('loaded');
+        log(`    ✓ Video ${index + 1}: loaded with ${sourcesLoaded} sources`);
+
+        // Try to play if in viewport
+        const rect = video.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0 && video.hasAttribute('autoplay')) {
+          video.play().catch(() => {
+            // Autoplay blocked - that's ok
+          });
+        }
+      }
+    });
+
+    if (!grid) {
+      log('  ⚠ Projects grid not found, but all images/videos have been loaded');
       return;
     }
 
     const cards = Array.from(grid.querySelectorAll('.project-card'));
-    log(`    → Found ${cards.length} project cards`);
-
-    // ========================================================================
-    // CRITICAL: Initialize videos with data-autoplay and data-src
-    // ========================================================================
-    const lazyVideos = Array.from(grid.querySelectorAll('video[data-autoplay]'));
-    log(`    → Initializing ${lazyVideos.length} lazy videos`);
-
-    lazyVideos.forEach((video, index) => {
-      log(`      → Video ${index + 1}:`);
-
-      // Convert data-autoplay → autoplay
-      if (video.hasAttribute('data-autoplay')) {
-        video.setAttribute('autoplay', '');
-        video.removeAttribute('data-autoplay');
-        log(`        ✓ Set autoplay attribute`);
-      }
-
-      // Load video sources (data-src → src in <source> tags)
-      const sources = video.querySelectorAll('source[data-src]');
-      log(`        Found ${sources.length} sources with data-src`);
-
-      sources.forEach((source, srcIndex) => {
-        if (source.dataset.src) {
-          const oldSrc = source.dataset.src;
-          source.src = source.dataset.src;
-          source.removeAttribute('data-src');
-          log(`        ✓ Source ${srcIndex + 1}: ${oldSrc}`);
-        }
-      });
-
-      // Reload video to apply new sources
-      if (sources.length > 0) {
-        video.load();
-        log(`        ✓ Called video.load()`);
-
-        // Start playing if autoplay and in viewport
-        const rect = video.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-          video.play().catch(err => {
-            log(`        ⚠ Autoplay blocked: ${err.message}`);
-          });
-          log(`        ✓ Started playing (in viewport)`);
-        } else {
-          log(`        → Not in viewport, will play when scrolled to`);
-        }
-      }
-    });
-
-    // Also load regular lazy images (if any)
-    const lazyImgs = Array.from(grid.querySelectorAll('img[data-src]'));
-    log(`    → Loading ${lazyImgs.length} lazy images`);
-
-    lazyImgs.forEach((img, index) => {
-      if (img.dataset.src) {
-        const src = img.dataset.src;
-        img.src = src;
-        img.removeAttribute('data-src');
-        log(`      ✓ Image ${index + 1}: ${src}`);
-      }
-    });
+    log(`  → Found ${cards.length} project cards in grid`);
 
     // Setup IntersectionObserver for videos (play when in view)
-    if ('IntersectionObserver' in window) {
-      const videoObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          const video = entry.target;
-          if (entry.isIntersecting) {
-            // Play video when in viewport
-            if (video.paused && video.hasAttribute('autoplay')) {
-              video.play().catch(() => {
-                // Autoplay blocked - that's ok
-              });
+    if ('IntersectionObserver' in window && allVideos.length > 0) {
+      const videoObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const video = entry.target;
+            if (entry.isIntersecting) {
+              // Play video when in viewport
+              if (video.paused && video.hasAttribute('autoplay')) {
+                video.play().catch(() => {
+                  // Autoplay blocked - that's ok
+                });
+              }
+            } else {
+              // Pause video when out of viewport (performance)
+              if (!video.paused) {
+                video.pause();
+              }
             }
-          } else {
-            // Pause video when out of viewport (performance)
-            if (!video.paused) {
-              video.pause();
-            }
-          }
-        });
-      }, { rootMargin: '200px' });
+          });
+        },
+        { rootMargin: '200px' }
+      );
 
-      lazyVideos.forEach(video => videoObserver.observe(video));
+      allVideos.forEach((video) => {
+        if (video.hasAttribute('autoplay')) {
+          videoObserver.observe(video);
+        }
+      });
     }
 
-    log('    ✓ Projects page initialized');
+    log('━━━ Projects page initialization complete ━━━');
+  }
+
+  function reinitializeHomePage() {
+    log('━━━ Reinitializing Home Page ━━━');
+
+    // Re-initialize animated counters (stats section)
+    log('  → Step 1: Reinitializing stat counters');
+    const statNumbers = document.querySelectorAll('.stat-number[data-count]');
+    log(`    Found ${statNumbers.length} stat counters`);
+
+    if (statNumbers.length > 0 && 'IntersectionObserver' in window) {
+      // Remove 'counted' class so they can animate again
+      statNumbers.forEach((el) => {
+        el.classList.remove('counted');
+        // Reset to 0
+        el.textContent = '0';
+      });
+
+      // Create IntersectionObserver for counters
+      const counterObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting || entry.target.classList.contains('counted')) return;
+
+            entry.target.classList.add('counted');
+
+            // Animate counter
+            const element = entry.target;
+            const target = Number.parseInt(element.getAttribute('data-count'), 10);
+            if (!Number.isFinite(target)) return;
+
+            const prefix = element.getAttribute('data-prefix') || '';
+            const suffix = element.getAttribute('data-suffix') || '';
+            const duration = 2000;
+            const steps = 60;
+            const increment = target / steps;
+
+            let current = 0;
+            const timer = setInterval(() => {
+              current += increment;
+              if (current >= target) {
+                current = target;
+                clearInterval(timer);
+              }
+              element.textContent = `${prefix}${Math.floor(current)}${suffix}`;
+            }, duration / steps);
+
+            log(`    ✓ Counter animated: ${target}${suffix}`);
+          });
+        },
+        { threshold: 0.5 }
+      );
+
+      // Observe all stat numbers
+      statNumbers.forEach((el) => counterObserver.observe(el));
+      log(`    ✓ Observing ${statNumbers.length} counters`);
+    }
+
+    // Re-initialize other home page features if needed
+    log('  → Step 2: Checking for other home page features');
+
+    // Vimeo iframe fallback
+    const vimeoIframe = document.querySelector('iframe[src*="vimeo.com"]');
+    if (vimeoIframe) {
+      log('    ✓ Vimeo iframe found');
+    }
+
+    // Timeline navigation
+    const timeline = document.querySelector('.timeline');
+    if (timeline) {
+      log('    ✓ Timeline found');
+    }
+
+    log('━━━ Home page initialization complete ━━━');
   }
 
   function loadPageScript(src) {
@@ -1074,38 +1608,86 @@
     });
   }
 
-  function reinitializeTranslations() {
-    // Give DOM time to settle before re-initializing translations
-    // Increased delay to ensure all elements are in DOM
-    setTimeout(() => {
-      const currentLang = localStorage.getItem('language') || 'en';
-      log('Reinitializing translations:', currentLang);
+  function reinitializeTranslations(pathOverride) {
+    const currentLang = localStorage.getItem('language') || 'en';
+    // Use pathOverride if provided, otherwise use window.location.pathname
+    const targetPath = pathOverride || window.location.pathname;
 
-      // Reinicjalizuj BulletproofI18n (singleton instance)
-      if (window.i18n && typeof window.i18n.init === 'function') {
-        log('  → Using BulletproofI18n system');
+    log('━━━ Reinitializing translations ━━━');
+    log('  Current language:', currentLang);
+    log('  Target path:', targetPath);
+    log('  window.location.pathname:', window.location.pathname);
+    log('  pathOverride:', pathOverride);
 
-        // Force re-scan of DOM elements
-        window.i18n.init().then(() => {
-          log('  ✓ BulletproofI18n initialized');
+    // Reinicjalizuj BulletproofI18n (singleton instance)
+    if (window.i18n && typeof window.i18n.load === 'function') {
+      log('  → Using BulletproofI18n system');
+      log('  → i18n object:', window.i18n);
+      log('  → i18n.translations:', window.i18n.translations);
 
-          // Also manually trigger translation update
-          if (typeof window.i18n.updatePageTranslations === 'function') {
-            window.i18n.updatePageTranslations();
+      // CRITICAL: Clear ALL cached translations to force reload for new page
+      // Clear the entire translations object, not just current language
+      if (window.i18n.translations) {
+        const cachedLangs = Object.keys(window.i18n.translations);
+        log('  → Clearing all cached translations. Cached languages:', cachedLangs);
+        window.i18n.translations = {};
+      }
+
+      // Also clear loading promises cache
+      if (window.i18n.loadingPromises) {
+        log('  → Clearing loading promises cache');
+        window.i18n.loadingPromises.clear();
+      }
+
+      // CRITICAL: Pass targetPath directly to i18n.load() using the new pathOverride parameter
+      // This allows BulletproofI18n to load the correct translation file even though
+      // window.location.pathname hasn't been updated by history.pushState yet
+      log('  → Calling window.i18n.load(' + currentLang + ', ' + targetPath + ')');
+
+      // Force reload translations for current language (will fetch new file based on path)
+      window.i18n
+        .load(currentLang, targetPath)
+        .then(() => {
+          log('  ✓ Translations loaded for:', currentLang);
+          log(
+            '  ✓ Translation keys available:',
+            window.i18n.translations[currentLang]
+              ? Object.keys(window.i18n.translations[currentLang]).length
+              : 0
+          );
+
+          // Apply translations to DOM
+          if (
+            window.i18n._applyTranslations &&
+            typeof window.i18n._applyTranslations === 'function'
+          ) {
+            log('  → Calling _applyTranslations()');
+            window.i18n._applyTranslations();
+            log('  ✓ Translations applied to DOM');
+          } else {
+            log('  ✗ _applyTranslations not found!');
           }
-        }).catch(err => {
-          log('  ✗ BulletproofI18n reinit failed:', err);
+        })
+        .catch((err) => {
+          log('  ✗ Translation reload failed:', err);
+          // Fallback: just apply whatever translations we have
+          if (window.i18n._applyTranslations) {
+            window.i18n._applyTranslations();
+          }
         });
-      }
+    }
 
-      // Fallback: stary system tłumaczeń
-      else if (window.setLanguage && typeof window.setLanguage === 'function') {
-        log('  → Using legacy translation system');
-        window.setLanguage(currentLang);
-      } else {
-        log('  ⚠ No translation system found');
-      }
-    }, 200); // Longer delay to let DOM fully settle
+    // Fallback: stary system tłumaczeń
+    else if (window.setLanguage && typeof window.setLanguage === 'function') {
+      log('  → Using legacy translation system');
+      window.setLanguage(currentLang);
+    } else {
+      log('  ⚠ No translation system found');
+      log('  ⚠ window.i18n:', window.i18n);
+      log('  ⚠ window.setLanguage:', window.setLanguage);
+    }
+
+    log('━━━ Translation reinitialization triggered ━━━');
   }
 
   function reinitializeScrollAnimations() {
@@ -1121,19 +1703,22 @@
     }
 
     // Utwórz nowy observer
-    scrollAnimationObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    });
+    scrollAnimationObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      }
+    );
 
     // Obserwuj wszystkie elementy
-    fadeElements.forEach(el => {
+    fadeElements.forEach((el) => {
       el.classList.remove('visible');
       scrollAnimationObserver.observe(el);
     });
@@ -1177,7 +1762,8 @@
   // ============================================================================
 
   function init() {
-    log('Initializing Enhanced Smooth Navigation');
+    log('Smooth Navigation - Using full page reloads with fade transitions');
+    log('This is a temporary fix until AJAX navigation is properly fixed');
 
     // CRITICAL: Clear cache on init to force fresh fetches with new code
     // This ensures we're not using old cached pages without infrastructure preservation
@@ -1205,7 +1791,7 @@
     // Preload krytycznych stron
     if (CONFIG.cacheCritical) {
       setTimeout(() => {
-        CRITICAL_PAGES.forEach(page => {
+        CRITICAL_PAGES.forEach((page) => {
           if (normalizeUrl(page) !== currentPath) {
             preloadPage(normalizeUrl(page));
           }

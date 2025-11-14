@@ -1,5 +1,5 @@
 // Simplified Projects Page - Live Search Only
-document.addEventListener('DOMContentLoaded', function() {
+function initProjectsPage() {
   const list = document.getElementById('projects-list');
   if (!list) return;
 
@@ -14,14 +14,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const q = (activeQuery || '').trim().toLowerCase();
     let visible = 0;
 
-    cards.forEach(card => {
+    cards.forEach((card) => {
       const title = (card.getAttribute('data-title') || '').toLowerCase();
       const type = (card.getAttribute('data-type') || '').toLowerCase();
       const content = (card.textContent || '').toLowerCase();
 
       // Search in title, type, and content
       const matches = !q || title.includes(q) || type.includes(q) || content.includes(q);
-      
+
       if (matches) {
         card.classList.remove('hidden');
         visible++;
@@ -51,7 +51,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-
   // Search input with debouncing
   if (searchInput) {
     let searchTimeout;
@@ -80,22 +79,38 @@ document.addEventListener('DOMContentLoaded', function() {
   // Lazy-load images with IntersectionObserver
   const lazyImgs = Array.from(list.querySelectorAll('img[data-src]'));
   if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          const img = e.target;
-          img.src = img.dataset.src;
-          img.removeAttribute('data-src');
-          io.unobserve(img);
-        }
-      });
-    }, { rootMargin: '200px' });
-    lazyImgs.forEach(img => io.observe(img));
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            const img = e.target;
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+            io.unobserve(img);
+          }
+        });
+      },
+      { rootMargin: '200px' }
+    );
+    lazyImgs.forEach((img) => io.observe(img));
   } else {
-    lazyImgs.forEach(img => {
+    lazyImgs.forEach((img) => {
       img.src = img.dataset.src;
       img.removeAttribute('data-src');
     });
   }
-});
+}
 
+// Initialize on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', initProjectsPage);
+
+// Export for AJAX navigation
+window.initProjectsPage = initProjectsPage;
+
+// Listen for AJAX navigation
+window.addEventListener('pageContentLoaded', () => {
+  if (window.location.pathname.includes('projects')) {
+    console.log('[Projects] Reinitializing after AJAX navigation');
+    initProjectsPage();
+  }
+});
