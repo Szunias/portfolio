@@ -513,15 +513,43 @@
       '.bg-orbs',
       '.skip-link',
       '.mobile-menu-overlay',   // Mobile menu
-      '.mobile-menu',
-      'script',                  // Scripts
-      'style'                    // Inline styles
+      '.mobile-menu'
     ];
 
     // Zbierz elementy do zachowania
     const elementsToKeep = new Set();
     infrastructureSelectors.forEach(selector => {
       document.querySelectorAll(selector).forEach(el => elementsToKeep.add(el));
+    });
+
+    // CRITICAL: Keep CORE scripts (infrastructure), remove page-specific
+    const coreScriptPaths = [
+      'enhanced-smooth-navigation.js',
+      'components/navigation.js',
+      'components/custom-cursor.js',
+      'components/toast.js',
+      'components/back-to-top.js',
+      'translations.js',
+      'preload-lang.js'
+    ];
+
+    // Keep core scripts, mark page-specific scripts for removal
+    document.querySelectorAll('script[src]').forEach(script => {
+      const src = script.getAttribute('src') || '';
+      const isCore = coreScriptPaths.some(corePath => src.includes(corePath));
+
+      if (isCore) {
+        elementsToKeep.add(script);
+        log(`    → Keeping core script: ${src}`);
+      } else if (src) {
+        log(`    → Will remove page-specific script: ${src}`);
+        // Don't add to elementsToKeep - will be removed
+      }
+    });
+
+    // Keep inline styles (they're managed separately by updateStyles)
+    document.querySelectorAll('style').forEach(style => {
+      elementsToKeep.add(style);
     });
 
     // Usuń wszystko OPRÓCZ infrastructure
@@ -553,6 +581,34 @@
         }
         return tagName === selector;
       });
+
+      // Special handling for scripts
+      if (tagName === 'script') {
+        const src = el.getAttribute('src') || '';
+        const isCore = coreScriptPaths.some(corePath => src.includes(corePath));
+
+        if (!isCore && src) {
+          // This is a page-specific script - add it!
+          log(`    → Adding page-specific script: ${src}`);
+
+          // Create new script element (copying doesn't work, must create fresh)
+          const newScript = document.createElement('script');
+          newScript.type = el.type || 'module';
+          newScript.src = el.src;
+
+          // Copy other attributes
+          Array.from(el.attributes).forEach(attr => {
+            if (attr.name !== 'src' && attr.name !== 'type') {
+              newScript.setAttribute(attr.name, attr.value);
+            }
+          });
+
+          document.body.appendChild(newScript);
+        } else {
+          log(`    → Skipped core script: ${src}`);
+        }
+        return;
+      }
 
       // Pomiń infrastructure (już mamy)
       if (!isInfrastructure) {
@@ -707,14 +763,21 @@
     // MUSIC PAGE - Re-render playlist
     // ========================================================================
     if (currentPath === '/music.html' || currentPath === '/music') {
-      if (window.refreshMusicList && typeof window.refreshMusicList === 'function') {
-        log('  → Refreshing music list');
-        window.refreshMusicList();
-      } else {
-        log('  → Music page detected but refreshMusicList() not available - loading script');
-        // Dynamically load music.js if not loaded
-        loadPageScript('assets/js/pages/music.js');
-      }
+      log('  → Music page detected');
+      log('    → music.js will auto-initialize (loaded via <script> tag in body)');
+
+      // Music.js is now automatically loaded because we add page-specific
+      // scripts from the fetched HTML. It will run its init() function
+      // and populate the playlist.
+
+      // If for some reason the script already ran before this function,
+      // we can also call the refresh hook:
+      setTimeout(() => {
+        if (window.refreshMusicList && typeof window.refreshMusicList === 'function') {
+          log('    → Calling window.refreshMusicList() as backup');
+          window.refreshMusicList();
+        }
+      }, 100); // Small delay to let music.js init first
     }
 
     // ========================================================================
@@ -743,118 +806,85 @@
 
   function reinitializeProjectsPage() {
     // Re-implement projects.js logic for smooth navigation
-    const list = document.getElementById('projects-list');
-    if (!list) {
-      log('    ✗ Projects list not found');
+    const grid = document.querySelector('.projects-grid');
+    if (!grid) {
+      log('    ✗ Projects grid not found');
       return;
     }
 
-    const cards = Array.from(list.querySelectorAll('.project-card'));
-    const searchInput = document.getElementById('projects-search');
-    const countEl = document.getElementById('projects-count');
-
+    const cards = Array.from(grid.querySelectorAll('.project-card'));
     log(`    → Found ${cards.length} project cards`);
 
-    let activeQuery = '';
+    // ========================================================================
+    // CRITICAL: Initialize videos with data-autoplay and data-src
+    // ========================================================================
+    const lazyVideos = Array.from(grid.querySelectorAll('video[data-autoplay]'));
+    log(`    → Initializing ${lazyVideos.length} lazy videos`);
 
-    // Lazy-load ALL images immediately (since page just loaded via smooth nav)
-    const lazyImgs = Array.from(list.querySelectorAll('img[data-src]'));
+    lazyVideos.forEach(video => {
+      // Convert data-autoplay → autoplay
+      if (video.hasAttribute('data-autoplay')) {
+        video.setAttribute('autoplay', '');
+        video.removeAttribute('data-autoplay');
+      }
+
+      // Load video sources (data-src → src in <source> tags)
+      const sources = video.querySelectorAll('source[data-src]');
+      sources.forEach(source => {
+        if (source.dataset.src) {
+          source.src = source.dataset.src;
+          source.removeAttribute('data-src');
+        }
+      });
+
+      // Reload video to apply new sources
+      if (sources.length > 0) {
+        video.load();
+        // Start playing if autoplay and in viewport
+        const rect = video.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          video.play().catch(() => {
+            // Autoplay failed (browser policy) - that's ok
+          });
+        }
+      }
+    });
+
+    // Also load regular lazy images (if any)
+    const lazyImgs = Array.from(grid.querySelectorAll('img[data-src]'));
     log(`    → Loading ${lazyImgs.length} lazy images`);
 
+    lazyImgs.forEach(img => {
+      if (img.dataset.src) {
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+      }
+    });
+
+    // Setup IntersectionObserver for videos (play when in view)
     if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-          if (e.isIntersecting) {
-            const img = e.target;
-            if (img.dataset.src) {
-              img.src = img.dataset.src;
-              img.removeAttribute('data-src');
-              io.unobserve(img);
+      const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const video = entry.target;
+          if (entry.isIntersecting) {
+            // Play video when in viewport
+            if (video.paused && video.hasAttribute('autoplay')) {
+              video.play().catch(() => {
+                // Autoplay blocked - that's ok
+              });
+            }
+          } else {
+            // Pause video when out of viewport (performance)
+            if (!video.paused) {
+              video.pause();
             }
           }
         });
       }, { rootMargin: '200px' });
-      lazyImgs.forEach(img => io.observe(img));
-    } else {
-      // Fallback: load all immediately
-      lazyImgs.forEach(img => {
-        if (img.dataset.src) {
-          img.src = img.dataset.src;
-          img.removeAttribute('data-src');
-        }
-      });
+
+      lazyVideos.forEach(video => videoObserver.observe(video));
     }
 
-    // Search function
-    function applySearch() {
-      const q = (activeQuery || '').trim().toLowerCase();
-      let visible = 0;
-
-      cards.forEach(card => {
-        const title = (card.getAttribute('data-title') || '').toLowerCase();
-        const type = (card.getAttribute('data-type') || '').toLowerCase();
-        const content = (card.textContent || '').toLowerCase();
-
-        const matches = !q || title.includes(q) || type.includes(q) || content.includes(q);
-
-        if (matches) {
-          card.classList.remove('hidden');
-          visible++;
-          // Lazy load image if visible
-          const img = card.querySelector('img[data-src]');
-          if (img && !img.src) {
-            img.src = img.getAttribute('data-src');
-            img.removeAttribute('data-src');
-          }
-        } else {
-          card.classList.add('hidden');
-        }
-      });
-
-      // Update count
-      if (countEl) {
-        if (visible === 0 && q) {
-          countEl.textContent = 'No matches';
-          countEl.style.color = '#ff6ea9';
-        } else if (q) {
-          countEl.textContent = `${visible} found`;
-          countEl.style.color = '#18bfef';
-        } else {
-          countEl.textContent = `${visible} projects`;
-          countEl.style.color = '#888';
-        }
-      }
-    }
-
-    // Bind search input
-    if (searchInput) {
-      let searchTimeout;
-      const handleInput = () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          activeQuery = searchInput.value || '';
-          applySearch();
-        }, 200);
-      };
-
-      const handleKeydown = (e) => {
-        if (e.key === 'Escape') {
-          searchInput.value = '';
-          activeQuery = '';
-          applySearch();
-          searchInput.blur();
-        }
-      };
-
-      // Remove old listeners (if any) and add new
-      searchInput.removeEventListener('input', handleInput);
-      searchInput.removeEventListener('keydown', handleKeydown);
-      searchInput.addEventListener('input', handleInput);
-      searchInput.addEventListener('keydown', handleKeydown);
-    }
-
-    // Initial render
-    applySearch();
     log('    ✓ Projects page initialized');
   }
 
@@ -971,6 +1001,11 @@
 
   function init() {
     log('Initializing Enhanced Smooth Navigation');
+
+    // CRITICAL: Clear cache on init to force fresh fetches with new code
+    // This ensures we're not using old cached pages without infrastructure preservation
+    pageCache.clear();
+    log('Cache cleared on init');
 
     // Normalize currentPath
     currentPath = normalizeUrl(currentPath);
