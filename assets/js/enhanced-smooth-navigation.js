@@ -211,20 +211,55 @@
   // ============================================================================
 
   async function fetchPage(url) {
-    log('Fetching page:', url);
+    log('━━━ fetchPage START ━━━');
+    log('  Requested URL:', url);
 
-    const response = await fetch(url, {
+    // Konwertuj znormalizowany path na właściwy file path dla fetch
+    let fetchUrl = url;
+
+    // Root path
+    if (url === '/') {
+      fetchUrl = '/index.html';
+      log('  → Root path, using:', fetchUrl);
+    }
+    // Path bez rozszerzenia = katalog, dodaj index.html
+    else if (!url.includes('.')) {
+      fetchUrl = url + '/index.html';
+      log('  → Directory path (no extension), using:', fetchUrl);
+    }
+    // Path z trailing slash
+    else if (url.endsWith('/')) {
+      fetchUrl = url + 'index.html';
+      log('  → Trailing slash, using:', fetchUrl);
+    }
+    // Path z rozszerzeniem - użyj jak jest
+    else {
+      log('  → File path, using as-is:', fetchUrl);
+    }
+
+    const response = await fetch(fetchUrl, {
       headers: {
         'X-Requested-With': 'XMLHttpRequest'
       }
     });
+
+    log('  Response status:', response.status);
+    log('  Response URL:', response.url);
+    log('  Was redirected:', fetchUrl !== new URL(response.url).pathname);
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
     const html = await response.text();
-    return parsePage(html);
+    log('  HTML length:', html.length);
+    log('  HTML preview:', html.substring(0, 200).replace(/\s+/g, ' '));
+
+    const pageData = parsePage(html);
+    log('  Parsed title:', pageData.title);
+    log('━━━ fetchPage END ━━━');
+
+    return pageData;
   }
 
   function parsePage(html) {
@@ -720,6 +755,7 @@
 
     // Normalize currentPath
     currentPath = normalizeUrl(currentPath);
+    log('Current path (normalized):', currentPath);
 
     // Event listeners
     document.addEventListener('click', handleLinkClick, true);
@@ -728,6 +764,30 @@
 
     // Zapisz aktualną stronę do historii
     history.replaceState({ path: currentPath }, '', currentPath);
+
+    // Cache OBECNĄ stronę (już załadowaną) - to zapobiega re-fetch przy powrocie
+    const currentPageData = {
+      title: document.title,
+      main: document.querySelector('main')?.innerHTML || null,
+      body: document.body.innerHTML,
+      styles: {
+        inline: Array.from(document.querySelectorAll('head style:not([data-page-style])')).map(s => s.textContent),
+        links: Array.from(document.querySelectorAll('head link[rel="stylesheet"]:not([data-page-style])')).map(l => ({
+          href: l.getAttribute('href'),
+          media: l.getAttribute('media') || 'all'
+        }))
+      },
+      meta: {
+        description: document.querySelector('meta[name="description"]')?.content || '',
+        keywords: document.querySelector('meta[name="keywords"]')?.content || '',
+        ogTitle: document.querySelector('meta[property="og:title"]')?.content || '',
+        ogDescription: document.querySelector('meta[property="og:description"]')?.content || '',
+        ogImage: document.querySelector('meta[property="og:image"]')?.content || ''
+      },
+      scripts: []
+    };
+    addToCache(currentPath, currentPageData);
+    log('✓ Cached current page:', currentPath);
 
     // Preload krytycznych stron
     if (CONFIG.cacheCritical) {
