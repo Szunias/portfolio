@@ -838,6 +838,18 @@
       }
     });
 
+    // IFRAMES: Convert ALL data-src → src (for Vimeo, YouTube, etc.)
+    const allIframes = Array.from(document.querySelectorAll('iframe[data-src]'));
+    log(`    Found ${allIframes.length} iframes with data-src`);
+
+    allIframes.forEach((iframe, index) => {
+      if (iframe.dataset.src) {
+        iframe.src = iframe.dataset.src;
+        iframe.removeAttribute('data-src');
+        log(`    ✓ Iframe ${index + 1}: ${iframe.src.substring(0, 50)}...`);
+      }
+    });
+
     log('  ✓ Universal lazy loading complete');
   }
 
