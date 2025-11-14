@@ -821,31 +821,43 @@
     const lazyVideos = Array.from(grid.querySelectorAll('video[data-autoplay]'));
     log(`    → Initializing ${lazyVideos.length} lazy videos`);
 
-    lazyVideos.forEach(video => {
+    lazyVideos.forEach((video, index) => {
+      log(`      → Video ${index + 1}:`);
+
       // Convert data-autoplay → autoplay
       if (video.hasAttribute('data-autoplay')) {
         video.setAttribute('autoplay', '');
         video.removeAttribute('data-autoplay');
+        log(`        ✓ Set autoplay attribute`);
       }
 
       // Load video sources (data-src → src in <source> tags)
       const sources = video.querySelectorAll('source[data-src]');
-      sources.forEach(source => {
+      log(`        Found ${sources.length} sources with data-src`);
+
+      sources.forEach((source, srcIndex) => {
         if (source.dataset.src) {
+          const oldSrc = source.dataset.src;
           source.src = source.dataset.src;
           source.removeAttribute('data-src');
+          log(`        ✓ Source ${srcIndex + 1}: ${oldSrc}`);
         }
       });
 
       // Reload video to apply new sources
       if (sources.length > 0) {
         video.load();
+        log(`        ✓ Called video.load()`);
+
         // Start playing if autoplay and in viewport
         const rect = video.getBoundingClientRect();
         if (rect.top < window.innerHeight && rect.bottom > 0) {
-          video.play().catch(() => {
-            // Autoplay failed (browser policy) - that's ok
+          video.play().catch(err => {
+            log(`        ⚠ Autoplay blocked: ${err.message}`);
           });
+          log(`        ✓ Started playing (in viewport)`);
+        } else {
+          log(`        → Not in viewport, will play when scrolled to`);
         }
       }
     });
@@ -854,10 +866,12 @@
     const lazyImgs = Array.from(grid.querySelectorAll('img[data-src]'));
     log(`    → Loading ${lazyImgs.length} lazy images`);
 
-    lazyImgs.forEach(img => {
+    lazyImgs.forEach((img, index) => {
       if (img.dataset.src) {
-        img.src = img.dataset.src;
+        const src = img.dataset.src;
+        img.src = src;
         img.removeAttribute('data-src');
+        log(`      ✓ Image ${index + 1}: ${src}`);
       }
     });
 
@@ -1019,29 +1033,11 @@
     // Zapisz aktualną stronę do historii
     history.replaceState({ path: currentPath }, '', currentPath);
 
-    // Cache OBECNĄ stronę (już załadowaną) - to zapobiega re-fetch przy powrocie
-    const currentPageData = {
-      title: document.title,
-      main: document.querySelector('main')?.innerHTML || null,
-      body: document.body.innerHTML,
-      styles: {
-        inline: Array.from(document.querySelectorAll('head style:not([data-page-style])')).map(s => s.textContent),
-        links: Array.from(document.querySelectorAll('head link[rel="stylesheet"]:not([data-page-style])')).map(l => ({
-          href: l.getAttribute('href'),
-          media: l.getAttribute('media') || 'all'
-        }))
-      },
-      meta: {
-        description: document.querySelector('meta[name="description"]')?.content || '',
-        keywords: document.querySelector('meta[name="keywords"]')?.content || '',
-        ogTitle: document.querySelector('meta[property="og:title"]')?.content || '',
-        ogDescription: document.querySelector('meta[property="og:description"]')?.content || '',
-        ogImage: document.querySelector('meta[property="og:image"]')?.content || ''
-      },
-      scripts: []
-    };
-    addToCache(currentPath, currentPageData);
-    log('✓ Cached current page:', currentPath);
+    // DON'T cache current page at init - it may have mixed content from navigation.js
+    // Instead, we'll fetch it fresh when navigating back to it
+    // This prevents caching polluted body.innerHTML with infrastructure elements
+
+    log('✓ Not caching current page at init (will fetch fresh when needed)');
 
     // Preload krytycznych stron
     if (CONFIG.cacheCritical) {
