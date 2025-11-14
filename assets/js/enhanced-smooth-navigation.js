@@ -1860,8 +1860,10 @@
   }
 
   function reinitializeScrollAnimations() {
-    // Intersection Observer dla .fade-in elementów
-    const fadeElements = document.querySelectorAll('.fade-in, .animate-on-scroll');
+    // CRITICAL FIX: Don't use IntersectionObserver for .fade-in elements
+    // They now use CSS animations with staggered delays to prevent flashbang
+    // Only observe .animate-on-scroll elements (not .fade-in)
+    const fadeElements = document.querySelectorAll('.animate-on-scroll:not(.fade-in)');
 
     if (fadeElements.length === 0) return;
 
@@ -1871,7 +1873,7 @@
       scrollAnimationObserver = null;
     }
 
-    // Utwórz nowy observer
+    // Utwórz nowy observer (only for .animate-on-scroll elements)
     scrollAnimationObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -1886,11 +1888,26 @@
       }
     );
 
-    // Obserwuj wszystkie elementy
+    // Obserwuj tylko elementy .animate-on-scroll (NIE .fade-in!)
     fadeElements.forEach((el) => {
       el.classList.remove('visible');
       scrollAnimationObserver.observe(el);
     });
+
+    // For .fade-in elements, trigger CSS animation by adding a class
+    // This works better than IntersectionObserver for preventing flashbang
+    const fadeInElements = document.querySelectorAll('.fade-in');
+    if (fadeInElements.length > 0) {
+      // Force animation restart by removing and re-adding animation
+      fadeInElements.forEach((el, index) => {
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+          el.style.animation = 'none';
+          el.offsetHeight; // Trigger reflow
+          el.style.animation = '';
+        }, index * 10); // Stagger the animation restart
+      });
+    }
   }
 
   function reinitializeEventListeners() {

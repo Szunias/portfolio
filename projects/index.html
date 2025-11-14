@@ -860,11 +860,22 @@
 
       /* === ANIMATIONS === */
       .fade-in {
-        opacity: 0;
-        transform: translateY(20px);
-        transition:
-          opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-          transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        /* CRITICAL FIX: Start visible to prevent flashbang on page load */
+        /* Cards will fade in via staggered animation delays instead */
+        opacity: 1;
+        transform: translateY(0);
+        animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .fade-in.visible {
@@ -874,13 +885,13 @@
 
       /* Staggered animation for project cards - wave pattern */
       .project-card.fade-in:nth-child(3n + 1) {
-        transition-delay: 0s;
+        animation-delay: 0s;
       }
       .project-card.fade-in:nth-child(3n + 2) {
-        transition-delay: 0.08s;
+        animation-delay: 0.08s;
       }
       .project-card.fade-in:nth-child(3n + 3) {
-        transition-delay: 0.16s;
+        animation-delay: 0.16s;
       }
     </style>
 
@@ -1748,10 +1759,15 @@
         });
       });
 
-      // Scroll reveal animations - CRITICAL FOR FADE-IN EFFECTS
+      // Scroll reveal animations - DISABLED to prevent flashbang
+      // Cards now use CSS animations with staggered delays instead of IntersectionObserver
+      // This prevents the flash of invisible content on page load
+
+      // Keep the code structure but don't observe fade-in elements
+      // They will animate automatically via CSS keyframes on page load
       const observerOptions = {
-        threshold: 0.05, // Lower threshold = reveals earlier
-        rootMargin: "0px 0px 400px 0px", // Positive bottom margin = reveals 400px before entering viewport
+        threshold: 0.05,
+        rootMargin: "0px 0px 400px 0px",
       };
 
       const observer = new IntersectionObserver((entries) => {
@@ -1762,9 +1778,10 @@
         });
       }, observerOptions);
 
-      document.querySelectorAll(".fade-in").forEach((el) => {
-        observer.observe(el);
-      });
+      // DISABLED: Don't observe .fade-in elements - they animate via CSS now
+      // document.querySelectorAll(".fade-in").forEach((el) => {
+      //   observer.observe(el);
+      // });
 
       // Smooth scroll
       document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
