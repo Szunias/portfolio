@@ -145,6 +145,13 @@ class BulletproofI18n {
       // Use critical inline translations as fallback
       this.translations[lang] = this.critical[lang] || {};
       this.lang = lang;
+
+      // CRITICAL FIX: Save to localStorage even when loading fails
+      // This ensures language preference is preserved across page navigations
+      this._safeExecute(() => {
+        localStorage.setItem('language', lang);
+        document.documentElement.setAttribute('lang', lang);
+      });
     } finally {
       this.loadingPromises.delete(lang);
     }
