@@ -741,6 +741,10 @@
   function reinitializeScripts(pageData) {
     log('Reinitializing scripts');
 
+    // 0. CRITICAL: Universal lazy loading for ALL data-src elements
+    //    This must run FIRST before any other scripts
+    initializeUniversalLazyLoading();
+
     // 1. System tłumaczeń
     reinitializeTranslations();
 
@@ -765,6 +769,64 @@
     }
   }
 
+  function initializeUniversalLazyLoading() {
+    log('  → Initializing universal lazy loading');
+
+    // IMAGES: Convert ALL data-src → src
+    const allImages = Array.from(document.querySelectorAll('img[data-src]'));
+    log(`    Found ${allImages.length} images with data-src`);
+
+    allImages.forEach((img, index) => {
+      if (img.dataset.src) {
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+        log(`    ✓ Image ${index + 1}: ${img.src.substring(img.src.lastIndexOf('/') + 1)}`);
+      }
+    });
+
+    // VIDEOS: Convert ALL data-autoplay and data-src in sources
+    const allVideos = Array.from(document.querySelectorAll('video[data-autoplay], video source[data-src]'));
+    const videoElements = Array.from(document.querySelectorAll('video'));
+    log(`    Found ${videoElements.length} video elements`);
+
+    videoElements.forEach((video, index) => {
+      let modified = false;
+
+      // Set autoplay if data-autoplay present
+      if (video.hasAttribute('data-autoplay')) {
+        video.setAttribute('autoplay', '');
+        video.removeAttribute('data-autoplay');
+        modified = true;
+      }
+
+      // Convert source data-src to src
+      const sources = video.querySelectorAll('source[data-src]');
+      sources.forEach(source => {
+        if (source.dataset.src) {
+          source.src = source.dataset.src;
+          source.removeAttribute('data-src');
+          modified = true;
+        }
+      });
+
+      // Reload video if sources were modified
+      if (modified && sources.length > 0) {
+        video.load();
+        log(`    ✓ Video ${index + 1}: loaded with ${sources.length} sources`);
+
+        // Try to play if in viewport
+        const rect = video.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0 && video.hasAttribute('autoplay')) {
+          video.play().catch(() => {
+            // Autoplay blocked - that's ok
+          });
+        }
+      }
+    });
+
+    log('  ✓ Universal lazy loading complete');
+  }
+
   function reinitializePageSpecificScripts() {
     // Wykryj która strona jest załadowana i wywołaj odpowiednie re-init funkcje
     log('Reinitializing page-specific scripts for:', currentPath);
@@ -787,7 +849,7 @@
           log('    → Calling window.refreshMusicList() as backup');
           window.refreshMusicList();
         }
-      }, 100); // Small delay to let music.js init first
+      }, 300); // Delay to let music.js init first
     }
 
     // ========================================================================
@@ -798,7 +860,7 @@
       // Give DOM time to settle before initializing
       setTimeout(() => {
         reinitializeProjectsPage();
-      }, 100);
+      }, 300);
     }
 
     // ========================================================================
@@ -958,22 +1020,36 @@
 
   function reinitializeTranslations() {
     // Give DOM time to settle before re-initializing translations
+    // Increased delay to ensure all elements are in DOM
     setTimeout(() => {
+      const currentLang = localStorage.getItem('language') || 'en';
+      log('Reinitializing translations:', currentLang);
+
       // Reinicjalizuj BulletproofI18n (singleton instance)
       if (window.i18n && typeof window.i18n.init === 'function') {
-        log('Reinitializing BulletproofI18n');
-        window.i18n.init().catch(err => {
-          log('BulletproofI18n reinit failed:', err);
+        log('  → Using BulletproofI18n system');
+
+        // Force re-scan of DOM elements
+        window.i18n.init().then(() => {
+          log('  ✓ BulletproofI18n initialized');
+
+          // Also manually trigger translation update
+          if (typeof window.i18n.updatePageTranslations === 'function') {
+            window.i18n.updatePageTranslations();
+          }
+        }).catch(err => {
+          log('  ✗ BulletproofI18n reinit failed:', err);
         });
       }
 
       // Fallback: stary system tłumaczeń
       else if (window.setLanguage && typeof window.setLanguage === 'function') {
-        const currentLang = localStorage.getItem('language') || 'en';
-        log('Reinitializing translations:', currentLang);
+        log('  → Using legacy translation system');
         window.setLanguage(currentLang);
+      } else {
+        log('  ⚠ No translation system found');
       }
-    }, 50); // Small delay to let DOM settle
+    }, 200); // Longer delay to let DOM fully settle
   }
 
   function reinitializeScrollAnimations() {
