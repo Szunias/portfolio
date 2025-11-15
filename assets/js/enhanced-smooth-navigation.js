@@ -17,6 +17,9 @@
   // KONFIGURACJA
   // ============================================================================
 
+  // Mobile detection
+  const IS_MOBILE = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
   const CONFIG = {
     // Czas trwania animacji (ms)
     fadeOutDuration: 150,
@@ -626,6 +629,19 @@
     }
 
     isNavigating = true;
+
+    // Close mobile menu immediately to prevent UI blocking
+    const mobileMenu = document.querySelector('.mobile-menu');
+    const mobileOverlay = document.querySelector('.mobile-menu-overlay');
+    const mobileToggle = document.querySelector('.mobile-menu-toggle');
+    if (mobileMenu?.classList.contains('active')) {
+      mobileMenu.classList.remove('active');
+      mobileOverlay?.classList.remove('active');
+      mobileToggle?.classList.remove('active');
+      mobileToggle?.setAttribute('aria-expanded', 'false');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+    }
+
     showLoadingIndicator(); // Show loading spinner
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     log('▶ NAVIGATION START');
@@ -641,7 +657,8 @@
       log('✓ currentPath updated:', currentPath);
 
       // Sprawdź czy przeglądarka wspiera View Transition API
-      if (document.startViewTransition) {
+      // Disable on mobile for better performance
+      if (document.startViewTransition && !IS_MOBILE) {
         await navigateWithViewTransition(url);
       } else {
         await navigateWithFallback(url);
@@ -887,6 +904,9 @@
 
     // CRITICAL: Force immediate script reinitialization
     // OPTIMIZED FOR MOBILE - Single pass, no excessive delays
+    // Mobile gets 0ms delay for instant response
+    const reinitDelay = IS_MOBILE ? 0 : 10;
+
     setTimeout(() => {
       log('━━━ REINITIALIZING SCRIPTS (OPTIMIZED) ━━━');
 
@@ -907,7 +927,7 @@
       log('  → Dispatched pageContentLoaded event');
 
       log('━━━ REINITIALIZATION COMPLETE ━━━');
-    }, 10); // Minimal delay to ensure DOM is ready
+    }, reinitDelay);
 
     // Zaznacz aktywny link w nawigacji
     updateActiveNavLink(url);
@@ -1700,26 +1720,16 @@
       log('  → i18n object:', window.i18n);
       log('  → i18n.translations:', window.i18n.translations);
 
-      // CRITICAL: Clear ALL cached translations to force reload for new page
-      // Clear the entire translations object, not just current language
-      if (window.i18n.translations) {
-        const cachedLangs = Object.keys(window.i18n.translations);
-        log('  → Clearing all cached translations. Cached languages:', cachedLangs);
-        window.i18n.translations = {};
+      // CRITICAL: Clear ONLY current language cache to force reload for new page
+      // Different pages have different JSON files (index.json, about.json, etc.)
+      if (window.i18n.translations && window.i18n.translations[currentLang]) {
+        log('  → Clearing cache for current language:', currentLang);
+        delete window.i18n.translations[currentLang];
       }
 
-      // Also clear loading promises cache
-      if (window.i18n.loadingPromises) {
-        log('  → Clearing loading promises cache');
-        window.i18n.loadingPromises.clear();
-      }
-
-      // CRITICAL: Pass targetPath directly to i18n.load() using the new pathOverride parameter
-      // This allows BulletproofI18n to load the correct translation file even though
-      // window.location.pathname hasn't been updated by history.pushState yet
       log('  → Calling window.i18n.load(' + currentLang + ', ' + targetPath + ')');
 
-      // Force reload translations for current language (will fetch new file based on path)
+      // Load translations for current language and path
       window.i18n
         .load(currentLang, targetPath)
         .then(() => {
