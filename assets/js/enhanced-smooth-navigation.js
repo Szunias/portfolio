@@ -33,8 +33,11 @@
     cacheSize: 10, // Maksymalna liczba stron w cache
     cacheCritical: true, // Czy cache'ować krytyczne strony przy starcie
 
-    // Debug
-    debug: true // Logi w konsoli
+    // Debug - CRITICAL FIX #5: Auto-detect (only enable on localhost)
+    debug:
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname.includes('.local')
   };
 
   // Krytyczne strony do preloadu (już znormalizowane)
@@ -50,6 +53,10 @@
   const preloadQueue = new Set();
   const activePreloadTimeouts = new Map(); // Track active timeouts to prevent duplicates
   let scrollAnimationObserver = null; // Prevent memory leak
+
+  // CRITICAL FIX #2: Central registry for all observers and listeners
+  const activeObservers = new Set(); // Track all active IntersectionObservers
+  const activeEventListeners = []; // Track all addEventListener calls for cleanup
 
   // ============================================================================
   // UTILITIES
@@ -271,6 +278,16 @@
 
     if (!shouldInterceptLink(link, href)) {
       log('Link not intercepted - using normal browser navigation for:', href);
+
+      // CRITICAL FIX #1: Force reload when clicking same-page links (especially index)
+      // Modern browsers don't reload by default when href === current location
+      const targetPath = normalizeUrl(href, window.location.href);
+      if (targetPath === currentPath) {
+        e.preventDefault();
+        log('  → Same page click detected (' + targetPath + ') - forcing reload');
+        window.location.reload();
+        return;
+      }
 
       // CRITICAL FIX: For relative project links, we need to set the correct full path
       // When on /projects page and clicking "amorak.html", browser needs "/projects/amorak.html"
@@ -590,6 +607,28 @@
     log('Cache cleared');
   }
 
+  // CRITICAL FIX #2: Cleanup function to prevent memory leaks
+  function cleanupObserversAndListeners() {
+    log('🧹 Cleaning up observers and listeners to prevent memory leaks');
+
+    // Disconnect all tracked IntersectionObservers
+    let disconnectedCount = 0;
+    activeObservers.forEach((observer) => {
+      try {
+        observer.disconnect();
+        disconnectedCount++;
+      } catch (error) {
+        log('  ⚠️ Error disconnecting observer:', error);
+      }
+    });
+    activeObservers.clear();
+    log(`  ✓ Disconnected ${disconnectedCount} observers`);
+
+    // Note: Event listeners on document/window are kept (handleLinkClick, handlePopState)
+    // because they need to persist across navigations. They use event delegation
+    // so they don't accumulate with each navigation.
+  }
+
   // ============================================================================
   // LOADING INDICATOR
   // ============================================================================
@@ -662,6 +701,9 @@
     }
 
     isNavigating = true;
+
+    // CRITICAL FIX #2: Cleanup observers and listeners BEFORE navigation
+    cleanupObserversAndListeners();
 
     // Close mobile menu immediately to prevent UI blocking
     const mobileMenu = document.querySelector('.mobile-menu');
@@ -1690,6 +1732,9 @@
         { rootMargin: '200px' }
       );
 
+      // CRITICAL FIX #2: Track observer for cleanup
+      activeObservers.add(videoObserver);
+
       allVideos.forEach((video) => {
         if (video.hasAttribute('autoplay')) {
           videoObserver.observe(video);
@@ -1750,6 +1795,9 @@
         },
         { threshold: 0.5 }
       );
+
+      // CRITICAL FIX #2: Track observer for cleanup
+      activeObservers.add(counterObserver);
 
       // Observe all stat numbers
       statNumbers.forEach((el) => counterObserver.observe(el));
@@ -1863,6 +1911,7 @@
     // Disconnect poprzedni observer aby uniknąć memory leak
     if (scrollAnimationObserver) {
       scrollAnimationObserver.disconnect();
+      activeObservers.delete(scrollAnimationObserver); // CRITICAL FIX #2: Untrack
       scrollAnimationObserver = null;
     }
 
@@ -1880,6 +1929,9 @@
         rootMargin: '0px 0px -50px 0px'
       }
     );
+
+    // CRITICAL FIX #2: Track observer for cleanup
+    activeObservers.add(scrollAnimationObserver);
 
     // Obserwuj wszystkie elementy
     fadeElements.forEach((el) => {

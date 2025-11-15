@@ -75,6 +75,12 @@ class BulletproofI18n {
      */
     this.critical = window.__I18N__ || {};
 
+    /**
+     * CRITICAL FIX #3: AbortController for cancelling in-flight requests
+     * @type {AbortController|null}
+     */
+    this.abortController = null;
+
     // Bind methods
     this._handleStorageChange = this._handleStorageChange.bind(this);
   }
@@ -189,6 +195,15 @@ class BulletproofI18n {
       return;
     }
 
+    // CRITICAL FIX #3: Cancel previous language loading request
+    if (this.abortController) {
+      this._log(`[BulletproofI18n] Aborting previous language request`);
+      this.abortController.abort();
+    }
+
+    // Create new AbortController for this request
+    this.abortController = new AbortController();
+
     const previousLanguage = this.lang;
 
     try {
@@ -206,6 +221,11 @@ class BulletproofI18n {
 
       this._log(`[BulletproofI18n] Language changed to: ${lang}`);
     } catch (error) {
+      // CRITICAL FIX #3: Ignore AbortError (it's expected when cancelling)
+      if (error.name === 'AbortError') {
+        this._log(`[BulletproofI18n] Language request aborted (newer request in progress)`);
+        return;
+      }
       console.error('[BulletproofI18n] Failed to change language:', error);
     }
   }
@@ -294,9 +314,14 @@ class BulletproofI18n {
     const path = `/locales/${jsonFile}`;
     this._log(`[_loadWithTimeout] Loading translations for lang="${lang}" from path="${path}"`);
 
-    // Fetch with timeout
+    // Fetch with timeout and abort signal
     try {
-      const response = await Promise.race([fetch(path), timeoutPromise]);
+      // CRITICAL FIX #3: Pass AbortController signal to fetch
+      const fetchOptions = this.abortController
+        ? { signal: this.abortController.signal }
+        : {};
+
+      const response = await Promise.race([fetch(path, fetchOptions), timeoutPromise]);
       this._log('[_loadWithTimeout] Fetch response status:', response.status);
 
       if (!response.ok) {

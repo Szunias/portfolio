@@ -32,8 +32,17 @@
             const shouldAutoplay = video.hasAttribute('data-autoplay');
 
             if (entry.isIntersecting) {
+              // CRITICAL FIX #4: Skip if already loaded by another system
+              if (video.dataset.lazyLoaded === 'true') {
+                videoObserver.unobserve(video);
+                return;
+              }
+
               // Load video sources if not already loaded
               if (!video.classList.contains('loaded')) {
+                // CRITICAL FIX #4: Mark as loading
+                video.dataset.lazyLoaded = 'true';
+
                 const sources = video.querySelectorAll('source[data-src]');
 
                 // Check if sources exist before processing
@@ -254,9 +263,19 @@
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               const img = entry.target;
+
+              // CRITICAL FIX #4: Skip if already loaded by another system
+              if (img.dataset.lazyLoaded === 'true') {
+                imageObserver.unobserve(img);
+                return;
+              }
+
               const src = img.getAttribute('data-src');
 
               if (src && !img.classList.contains('loaded')) {
+                // CRITICAL FIX #4: Mark as loading
+                img.dataset.lazyLoaded = 'true';
+
                 img.src = src;
                 img.removeAttribute('data-src');
 

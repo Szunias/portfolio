@@ -95,6 +95,11 @@
     },
 
     loadImage: function (img) {
+      // CRITICAL FIX #4: Skip if already loaded by another system
+      if (img.dataset.lazyLoaded === 'true') {
+        return;
+      }
+
       const dataSrc = img.getAttribute('data-src');
       const dataSrcset = img.getAttribute('data-srcset');
 
@@ -103,6 +108,9 @@
       }
 
       if (dataSrc) {
+        // CRITICAL FIX #4: Mark as loading to prevent duplicate loads
+        img.dataset.lazyLoaded = 'true';
+
         // Check if we should use WebP version
         const optimizedSrc = this.getOptimizedImageSrc(dataSrc, img);
 
