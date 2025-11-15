@@ -7,26 +7,26 @@ const SKILL_DATA = {
     name: 'Wwise',
     category: 'middleware',
     icon: 'honeyicons/wwiselogo.png',
-    connections: ['cpp', 'blueprints', 'ableton'],
+    connections: ['cpp', 'blueprints'],
     projects: [
       {
         name: 'Shadow Frames',
-        desc: 'RTPC systems, spatial audio, surface detection',
+        descKey: 'modal_shadow_frames',
         url: 'projects/shadow-frames.html'
       },
       {
         name: 'Pause & Deserve',
-        desc: 'Real-time audio control and gameplay integration',
+        descKey: 'modal_pause_deserve',
         url: 'projects/pause-and-deserve.html'
       },
       {
         name: 'Music for Games',
-        desc: 'Adaptive music with vertical layering and RTPC',
+        descKey: 'modal_music_games',
         url: 'projects/musicforgames.html'
       },
       {
         name: 'Middleware Optimization',
-        desc: 'Three school projects learning Wwise',
+        descKey: 'modal_middleware_opt',
         url: 'projects/middleware-optimization.html'
       }
     ]
@@ -39,7 +39,7 @@ const SKILL_DATA = {
     projects: [
       {
         name: 'Previous Experience',
-        desc: 'FMOD integration in past projects (not published)',
+        descKey: 'modal_fmod_exp',
         url: null
       }
     ]
@@ -48,21 +48,21 @@ const SKILL_DATA = {
     name: 'Unreal Engine',
     category: 'middleware',
     icon: 'honeyicons/Unreal_Engine-Logo.wine.png',
-    connections: ['cpp', 'blueprints', 'wwise'],
+    connections: ['cpp', 'blueprints'],
     projects: [
       {
         name: 'Shadow Frames',
-        desc: 'UE5.5 - Full audio system architecture with Wwise',
+        descKey: 'modal_shadow_frames',
         url: 'projects/shadow-frames.html'
       },
       {
         name: 'Not Today Darling',
-        desc: 'UE5 - MetaSounds procedural audio systems',
+        descKey: 'modal_not_today',
         url: 'projects/not-today-darling.html'
       },
       {
         name: 'Pause & Deserve',
-        desc: 'Wwise integration and gameplay audio',
+        descKey: 'modal_pause_deserve',
         url: 'projects/pause-and-deserve.html'
       }
     ]
@@ -75,7 +75,7 @@ const SKILL_DATA = {
     projects: [
       {
         name: 'AudioLab',
-        desc: 'ML beatbox classification game with Unity integration',
+        descKey: 'modal_unity_audiolab',
         url: 'projects/audiolab.html'
       }
     ]
@@ -90,29 +90,29 @@ const SKILL_DATA = {
     projects: [
       {
         name: 'Not Today Darling',
-        desc: 'Sound processing and mixing',
+        descKey: 'modal_reaper_ntd',
         url: 'projects/not-today-darling.html'
       },
       {
         name: 'Ray Animation',
-        desc: 'Sound design for animation',
+        descKey: 'modal_reaper_ray',
         url: 'projects/ray-animation.html'
       },
-      { name: 'All Projects', desc: 'Primary DAW for editing and post-production', url: null }
+      { name: 'All Projects', descKey: 'modal_reaper_all', url: null }
     ]
   },
   ableton: {
     name: 'Ableton Live',
     category: 'daw',
     icon: 'honeyicons/abletonlogo.png',
-    connections: ['dsp', 'wwise'],
+    connections: ['dsp'],
     projects: [
       {
         name: 'Music for Games',
-        desc: 'Music composition and production for Wwise implementation',
+        descKey: 'modal_ableton_music',
         url: 'projects/musicforgames.html'
       },
-      { name: 'Sound Design', desc: 'Experimental synthesis and processing', url: null }
+      { name: 'Sound Design', descKey: 'modal_ableton_sound', url: null }
     ]
   },
   flstudio: {
@@ -120,7 +120,7 @@ const SKILL_DATA = {
     category: 'daw',
     icon: 'honeyicons/flstudiologo.png',
     connections: ['dsp'],
-    projects: [{ name: 'Music Composition', desc: 'Beat production and melodic work', url: null }]
+    projects: [{ name: 'Music Composition', descKey: 'modal_fl_music', url: null }]
   },
   logicpro: {
     name: 'Logic Pro',
@@ -130,7 +130,7 @@ const SKILL_DATA = {
     projects: [
       {
         name: 'Amorak',
-        desc: 'Post-production and mixing',
+        descKey: 'modal_logic_amorak',
         url: 'projects/amorak.html'
       }
     ]
@@ -143,17 +143,17 @@ const SKILL_DATA = {
     projects: [
       {
         name: 'Ray Animation',
-        desc: 'Music production for animation',
+        descKey: 'modal_studio_ray',
         url: 'projects/ray-animation.html'
       },
       {
         name: 'Amorak',
-        desc: 'Music production and composition',
+        descKey: 'modal_studio_amorak',
         url: 'projects/amorak.html'
       },
       {
         name: 'Akantilado',
-        desc: 'Music production',
+        descKey: 'modal_studio_akantilado',
         url: 'projects/akantilado.html'
       }
     ]
@@ -163,63 +163,63 @@ const SKILL_DATA = {
     category: 'daw',
     icon: 'honeyicons/Cubaselogo.png',
     connections: ['dsp'],
-    projects: [{ name: 'Music Composition', desc: 'MIDI sequencing and arrangement', url: null }]
+    projects: [{ name: 'Music Composition', descKey: 'modal_cubase_music', url: null }]
   },
 
   // Programming
   cpp: {
     name: 'C++',
     category: 'programming',
-    icon: 'honeyicons/c++logo.png',
-    connections: ['wwise', 'unreal', 'juce', 'dsp'],
+    icon: 'honeyicons/cpplogo.png',
+    connections: ['wwise', 'fmod', 'unreal', 'juce', 'dsp'],
     projects: [
       {
         name: 'Shadow Frames',
-        desc: 'Audio system architecture in UE5.5',
+        descKey: 'modal_cpp_shadow',
         url: 'projects/shadow-frames.html'
       },
       {
         name: 'Not Today Darling',
-        desc: 'MetaSounds and audio systems in UE5',
+        descKey: 'modal_cpp_ntd',
         url: 'projects/not-today-darling.html'
       },
-      { name: 'Custom Audio Plugins', desc: 'JUCE-based VST/AU development', url: null }
+      { name: 'Custom Audio Plugins', descKey: 'modal_cpp_plugins', url: null }
     ]
   },
   csharp: {
     name: 'C#',
     category: 'programming',
-    icon: 'honeyicons/c# logo.png',
-    connections: ['python'],
+    icon: 'honeyicons/csharplogo.png',
+    connections: ['fmod', 'unity'],
     projects: [
       {
         name: 'AudioLab',
-        desc: 'Unity beatbox rhythm game with ML integration',
+        descKey: 'modal_csharp_audiolab',
         url: 'projects/audiolab.html'
       },
-      { name: 'Unity Tools', desc: 'Custom editor extensions', url: null }
+      { name: 'Unity Tools', descKey: 'modal_csharp_tools', url: null }
     ]
   },
   python: {
     name: 'Python',
     category: 'programming',
     icon: 'honeyicons/pythonlogo.png',
-    connections: ['csharp'],
+    connections: ['tensorflow'],
     projects: [
       {
         name: 'AudioLab',
-        desc: 'ML beatbox classification with scikit-learn & LibROSA',
+        descKey: 'modal_python_audiolab',
         url: 'projects/audiolab.html'
       },
-      { name: 'AudioQ', desc: 'AI-driven audio quality assessment', url: 'projects/audioq.html' },
+      { name: 'AudioQ', descKey: 'modal_python_audioq', url: 'projects/audioq.html' },
       {
         name: 'Wwise Unreal Fixer',
-        desc: 'Automation tool for fixing Wwise integration',
+        descKey: 'modal_wwise_fixer',
         url: 'projects/wwise-unreal-fixer.html'
       },
       {
         name: 'Unreal Engine Rebuilder',
-        desc: 'Project management automation',
+        descKey: 'modal_ue_rebuilder',
         url: 'projects/unreal-engine-rebuilder.html'
       }
     ]
@@ -232,12 +232,12 @@ const SKILL_DATA = {
     projects: [
       {
         name: 'Shadow Frames',
-        desc: 'Audio triggers and gameplay systems',
+        descKey: 'modal_blueprints_shadow',
         url: 'projects/shadow-frames.html'
       },
       {
         name: 'Pause & Deserve',
-        desc: 'Wwise integration and interactive audio',
+        descKey: 'modal_blueprints_pause',
         url: 'projects/pause-and-deserve.html'
       }
     ]
@@ -250,7 +250,7 @@ const SKILL_DATA = {
     projects: [
       {
         name: 'All Projects',
-        desc: 'Version control and collaboration',
+        descKey: 'modal_git_all',
         url: 'https://github.com/Szunias'
       }
     ]
@@ -263,7 +263,7 @@ const SKILL_DATA = {
     projects: [
       {
         name: 'Large-Scale Projects',
-        desc: 'Version control for team collaborations and large game projects',
+        descKey: 'modal_perforce_projects',
         url: null
       }
     ]
@@ -275,14 +275,14 @@ const SKILL_DATA = {
     category: 'specialized',
     icon: 'honeyicons/JUCE_Logo.png',
     connections: ['cpp'],
-    projects: [{ name: 'Audio Plugin Development', desc: 'VST/AU/AAX plugins', url: null }]
+    projects: [{ name: 'Audio Plugin Development', descKey: 'modal_juce_plugins', url: null }]
   },
   dsp: {
     name: 'DSP',
     category: 'specialized',
     icon: 'honeyicons/dsplogo.png',
-    connections: ['cpp', 'reaper', 'ableton', 'flstudio'],
-    projects: [{ name: 'Real-time Processing', desc: 'Audio effects and algorithms', url: null }]
+    connections: ['cpp', 'reaper', 'ableton', 'flstudio', 'logicpro', 'studioone', 'cubase', 'puredata'],
+    projects: [{ name: 'Real-time Processing', descKey: 'modal_dsp_processing', url: null }]
   },
   tensorflow: {
     name: 'TensorFlow',
@@ -291,13 +291,13 @@ const SKILL_DATA = {
     connections: ['python'],
     projects: [
       {
-        name: 'Beatbox Classification',
-        desc: 'Bachelor thesis - CNN audio recognition',
+        name: 'Beatbox Classification Experiments',
+        descKey: 'modal_tensorflow_beatbox',
         url: null
       },
       {
-        name: 'Note: AudioLab uses scikit-learn',
-        desc: 'Not TensorFlow',
+        name: 'AudioLab (uses scikit-learn)',
+        descKey: 'modal_tensorflow_note',
         url: 'projects/audiolab.html'
       }
     ]
@@ -306,11 +306,11 @@ const SKILL_DATA = {
     name: '3D Spatial Audio',
     category: 'specialized',
     icon: 'honeyicons/3DAudio.png',
-    connections: ['blueprints', 'reaper', 'wwise'],
+    connections: ['blueprints', 'reaper'],
     projects: [
       {
         name: 'Shadow Frames',
-        desc: 'Spatial audio systems in Wwise',
+        descKey: 'modal_spatial_shadow',
         url: 'projects/shadow-frames.html'
       }
     ]
@@ -323,7 +323,7 @@ const SKILL_DATA = {
     projects: [
       {
         name: 'Audio Synthesis',
-        desc: 'Visual programming for real-time audio synthesis and processing',
+        descKey: 'modal_puredata_synthesis',
         url: null
       }
     ]
@@ -337,9 +337,21 @@ const CATEGORY_COLORS = {
   specialized: '#fb923c'
 };
 
-// Get translation helper
+// Get translation helper - checks both inline and loaded translations
 function getTranslation(key) {
   const lang = localStorage.getItem('language') || 'en';
+
+  // Try loaded translations first (from BulletproofI18n)
+  if (window.i18n && window.i18n.translations && window.i18n.translations[lang]) {
+    const keys = key.split('.');
+    let value = window.i18n.translations[lang];
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    if (value && value !== key) return value;
+  }
+
+  // Fallback to inline critical translations
   const keys = key.split('.');
   let value = window.__I18N__?.[lang];
   for (const k of keys) {
@@ -399,6 +411,9 @@ function initSkillModal() {
       const skill = SKILL_DATA[skillId];
       if (!skill) return;
 
+      // Store current skill ID for language change updates
+      overlay.dataset.currentSkill = skillId;
+
       // Set content
       titleEl.textContent = skill.name;
       if (skill.icon) {
@@ -429,13 +444,14 @@ function initSkillModal() {
         connectionsEl.innerHTML = `<p style="color: #9ca3af;">${noConnectionsMsg}</p>`;
       }
 
-      // Projects
+      // Projects - use translation keys for descriptions
       projectsEl.innerHTML = skill.projects
         .map((p) => {
+          const desc = p.descKey ? getTranslation(p.descKey) : (p.desc || '');
           if (p.url) {
-            return `<li><a href="${p.url}"><span class="project-name">${p.name}</span><span class="project-desc">${p.desc}</span></a></li>`;
+            return `<li><a href="${p.url}"><span class="project-name">${p.name}</span><span class="project-desc">${desc}</span></a></li>`;
           } else {
-            return `<li><span class="project-name">${p.name}</span><span class="project-desc">${p.desc}</span></li>`;
+            return `<li><span class="project-name">${p.name}</span><span class="project-desc">${desc}</span></li>`;
           }
         })
         .join('');
@@ -448,6 +464,7 @@ function initSkillModal() {
     // Close modal function
     window.closeSkillModal = function () {
       overlay.classList.remove('active');
+      overlay.dataset.currentSkill = ''; // Clear current skill
       document.body.style.overflow = '';
     };
 
@@ -470,11 +487,30 @@ function initSkillModal() {
         header.textContent = getTranslation(`skillModal.${section}`);
       });
 
-      // If modal is open, update the "no connections" message if visible
+      // If modal is open, refresh all translatable content
       if (overlay.classList.contains('active')) {
+        // Update "no connections" message if visible
         const noConnectionsP = connectionsEl.querySelector('p');
         if (noConnectionsP) {
           noConnectionsP.textContent = getTranslation('skillModal.noConnections');
+        }
+
+        // Re-render project descriptions with new language
+        const currentSkillId = overlay.dataset.currentSkill;
+        if (currentSkillId) {
+          const skill = SKILL_DATA[currentSkillId];
+          if (skill) {
+            projectsEl.innerHTML = skill.projects
+              .map((p) => {
+                const desc = p.descKey ? getTranslation(p.descKey) : (p.desc || '');
+                if (p.url) {
+                  return `<li><a href="${p.url}"><span class="project-name">${p.name}</span><span class="project-desc">${desc}</span></a></li>`;
+                } else {
+                  return `<li><span class="project-name">${p.name}</span><span class="project-desc">${desc}</span></li>`;
+                }
+              })
+              .join('');
+          }
         }
       }
     });
