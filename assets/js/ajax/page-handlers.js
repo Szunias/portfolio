@@ -314,7 +314,34 @@ export class PageHandlers {
     }
 
     this.log('━━━ Projects page initialization complete ━━━');
-    this.log('  ℹ️  Tech tags will be rendered by translation system after load');
+
+    // CRITICAL FIX: Ensure tech tags render after all translations and media load
+    // Tech tags need translation data to be fully loaded and applied to DOM
+    setTimeout(() => {
+      this.log('  → Re-applying translations to ensure tech tags render');
+
+      if (window.i18n && window.i18n._applyTranslations) {
+        window.i18n._applyTranslations();
+
+        // Verify tech tags rendered
+        setTimeout(() => {
+          const techContainers = document.querySelectorAll('[data-tech]');
+          const visibleTags = Array.from(techContainers).filter(el => el.children.length > 0);
+          this.log(`  ✓ Tech tags rendered: ${visibleTags.length}/${techContainers.length} visible`);
+
+          if (visibleTags.length === 0 && techContainers.length > 0) {
+            this.log('  ⚠️  Tech tags still not visible, trying one more time...');
+            window.i18n._applyTranslations();
+          }
+        }, 200);
+      }
+
+      // Also call legacy renderProjectTechTags if available
+      if (typeof window.renderProjectTechTags === 'function') {
+        this.log('  → Calling renderProjectTechTags() to ensure rendering');
+        window.renderProjectTechTags();
+      }
+    }, 600);
   }
 
   /**
