@@ -1,5 +1,5 @@
 import { initElements, elements, state } from './music/state.js';
-import { renderPlaylist, bindFilterTags } from './music/playlist.js';
+import { renderPlaylist, bindFilterTags, cleanupFilterTags, cleanupCoverObserver } from './music/playlist.js';
 import { preloadAllDurations, bindDurationRequests } from './music/durations.js';
 import { bindPlayerEvents, loadTrack, cleanupPlayerEvents } from './music/player-controls.js';
 import { initPageEffects } from './music/ui-effects.js';
@@ -118,15 +118,53 @@ async function init() {
   }
 }
 
-// Cleanup on page unload to prevent memory leaks
-window.addEventListener('beforeunload', () => {
+// CRITICAL FIX: Global cleanup function for music page
+function cleanupMusicPage() {
+  console.log('[Music] cleanupMusicPage() called');
+
+  // 1. Cleanup player events (audio, buttons, progress bar, etc.)
   cleanupPlayerEvents();
-});
+
+  // 2. Cleanup filter tags
+  cleanupFilterTags();
+
+  // 3. Cleanup cover observer
+  cleanupCoverObserver();
+
+  // 4. Disconnect scroll reveal observers tracked in ui-effects.js
+  if (window.__musicPageObservers) {
+    window.__musicPageObservers.forEach((observer) => {
+      observer.disconnect();
+    });
+    window.__musicPageObservers = [];
+  }
+
+  // 5. Pause and reset audio if playing
+  if (elements?.audio) {
+    if (!elements.audio.paused) {
+      elements.audio.pause();
+    }
+    elements.audio.src = '';
+  }
+
+  // 6. Hide player bar
+  if (elements?.playerBar) {
+    elements.playerBar.classList.remove('visible');
+  }
+
+  console.log('[Music] cleanupMusicPage() completed');
+}
+
+// Expose cleanup function globally for enhanced-smooth-navigation
+window.__cleanupMusicPage = cleanupMusicPage;
+
+// Cleanup on page unload to prevent memory leaks
+window.addEventListener('beforeunload', cleanupMusicPage);
 
 // Cleanup for smooth navigation (if implemented)
 if (window.smoothNav) {
   window.smoothNav.onNavigateAway?.(() => {
-    cleanupPlayerEvents();
+    cleanupMusicPage();
   });
 }
 
@@ -158,20 +196,16 @@ window.addEventListener('pageContentLoaded', () => {
 
   if (window.location.pathname.includes('music')) {
     console.log('[Music] Reinitializing after AJAX navigation');
-    // CRITICAL: Cleanup old event listeners before reinit to prevent duplicates
-    cleanupPlayerEvents();
+    // CRITICAL FIX: Cleanup ALL music page resources before reinit to prevent duplicates
+    cleanupMusicPage();
     isInitialized = false; // Reset flag to allow reinit
     initOnce();
   } else {
-    console.log('[Music] Left music page - cleaning up player events');
-    // CRITICAL: Cleanup when navigating AWAY from music page
+    console.log('[Music] Left music page - cleaning up all resources');
+    // CRITICAL FIX: Cleanup when navigating AWAY from music page
     try {
-      cleanupPlayerEvents();
+      cleanupMusicPage();
       isInitialized = false; // Reset flag
-      // Pause audio if playing
-      if (elements?.audio && !elements.audio.paused) {
-        elements.audio.pause();
-      }
     } catch (error) {
       console.warn('[Music] Cleanup error:', error);
     }

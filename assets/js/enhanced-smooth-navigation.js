@@ -636,6 +636,12 @@
       window.__cleanupContactPage();
     }
 
+    // CRITICAL FIX: Cleanup music page specific resources (observers, audio, player events)
+    if (typeof window.__cleanupMusicPage === 'function') {
+      log('  🧹 Running music page cleanup (observers, audio, player)');
+      window.__cleanupMusicPage();
+    }
+
     // Note: Event listeners on document/window are kept (handleLinkClick, handlePopState)
     // because they need to persist across navigations. They use event delegation
     // so they don't accumulate with each navigation.

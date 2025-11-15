@@ -672,6 +672,12 @@ export function cleanupPlayerEvents() {
   document.removeEventListener("touchmove", handleProgressBarTouchMove);
   document.removeEventListener("touchend", handleProgressBarTouchEnd);
 
+  // CRITICAL FIX: Cancel any pending requestAnimationFrame for hover updates
+  if (state.hoverUpdateFrame) {
+    cancelAnimationFrame(state.hoverUpdateFrame);
+    state.hoverUpdateFrame = null;
+  }
+
   console.log('[player-controls] cleanupPlayerEvents() completed');
 }
 

@@ -171,15 +171,41 @@ export function updateDurationDisplay(index, durationSeconds) {
   }
 }
 
+// CRITICAL FIX: Store filter tag handlers for cleanup
+const filterTagHandlers = new WeakMap();
+
 export function bindFilterTags(onFilterChange) {
   elements.filterTags.forEach((tag) => {
-    tag.addEventListener("click", () => {
+    const handler = () => {
       elements.filterTags.forEach((t) => t.classList.remove("active"));
       tag.classList.add("active");
       state.currentFilter = tag.dataset.filter || "all";
       if (typeof onFilterChange === "function") {
         onFilterChange();
       }
-    });
+    };
+
+    // Store handler for cleanup
+    filterTagHandlers.set(tag, handler);
+    tag.addEventListener("click", handler);
   });
+}
+
+// CRITICAL FIX: Cleanup function for filter tags
+export function cleanupFilterTags() {
+  elements.filterTags.forEach((tag) => {
+    const handler = filterTagHandlers.get(tag);
+    if (handler) {
+      tag.removeEventListener("click", handler);
+      filterTagHandlers.delete(tag);
+    }
+  });
+}
+
+// CRITICAL FIX: Cleanup function for global cover observer
+export function cleanupCoverObserver() {
+  if (state.globalCoverObserver) {
+    state.globalCoverObserver.disconnect();
+    state.globalCoverObserver = null;
+  }
 }

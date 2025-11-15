@@ -1,26 +1,9 @@
-let headerScrollInitialized = false;
-let headerScrollHandler = null;
+// CRITICAL FIX: Track observers for cleanup
+window.__musicPageObservers = window.__musicPageObservers || [];
 
-function initHeaderScrollEffect() {
-  const header = document.getElementById('header');
-  if (!header || headerScrollInitialized) return;
-
-  if (headerScrollHandler) {
-    window.removeEventListener('scroll', headerScrollHandler);
-  }
-
-  headerScrollHandler = () => {
-    if (window.scrollY > 50) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
-    }
-  };
-
-  window.addEventListener('scroll', headerScrollHandler, { passive: true });
-  headerScrollInitialized = true;
-  headerScrollHandler();
-}
+// CRITICAL FIX: Removed duplicate header scroll effect
+// This functionality is already handled by navigation.js initScrollEffect()
+// Keeping it here caused duplicate event listeners on every AJAX navigation
 
 function initScrollReveal() {
   const observerOptions = {
@@ -34,31 +17,24 @@ function initScrollReveal() {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
+        // CRITICAL FIX: Unobserve after adding class to prevent unnecessary checks
+        observer.unobserve(entry.target);
       }
     });
   }, observerOptions);
 
+  // CRITICAL FIX: Track observer for cleanup
+  window.__musicPageObservers.push(observer);
+
   document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
 }
 
-function initSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener('click', (event) => {
-      const href = anchor.getAttribute('href');
-      if (!href || href === '#') return;
-      event.preventDefault();
-      const target = document.querySelector(href);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-  });
-}
+// CRITICAL FIX: Removed smooth scroll functionality
+// This is handled globally by enhanced-smooth-navigation.js
+// Duplicate implementations caused memory leaks from accumulated event listeners
 
 export function initPageEffects() {
-  initHeaderScrollEffect();
-  document.addEventListener('DOMContentLoaded', initHeaderScrollEffect);
-  window.addEventListener('load', initHeaderScrollEffect);
+  // CRITICAL FIX: Only call initScrollReveal once, removed multiple DOMContentLoaded/load listeners
+  // The function is already called during page init, no need for duplicate event listeners
   initScrollReveal();
-  initSmoothScroll();
 }
