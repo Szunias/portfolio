@@ -216,6 +216,39 @@
   function handleLinkClick(e) {
     log('[handleLinkClick] Event received, target:', e.target.tagName, e.target.className);
 
+    // CRITICAL: Handle skill hexagon clicks DIRECTLY (delegation)
+    const hexagon = e.target.closest('.hexagon[data-skill]');
+    if (hexagon) {
+      log('[handleLinkClick] Skill hexagon detected, opening modal');
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+
+      const skillId = hexagon.dataset.skill;
+      if (!skillId) {
+        log('[handleLinkClick] ERROR: No skillId found');
+        return;
+      }
+
+      // Wait for openSkillModal to be available (skill-modal-system.js might still be loading)
+      if (window.openSkillModal) {
+        log('[handleLinkClick] Calling openSkillModal(' + skillId + ')');
+        window.openSkillModal(skillId);
+      } else {
+        log('[handleLinkClick] openSkillModal not ready, waiting...');
+        // Retry after a short delay
+        setTimeout(() => {
+          if (window.openSkillModal) {
+            log('[handleLinkClick] Delayed call to openSkillModal(' + skillId + ')');
+            window.openSkillModal(skillId);
+          } else {
+            log('[handleLinkClick] ERROR: openSkillModal still not found after delay');
+          }
+        }, 100);
+      }
+      return;
+    }
+
     const link = e.target.closest('a');
     if (!link) {
       log('[handleLinkClick] No link found via closest()');
@@ -774,7 +807,9 @@
       '.bg-orbs',
       '.skip-link',
       '.mobile-menu-overlay', // Mobile menu
-      '.mobile-menu'
+      '.mobile-menu',
+      '.skill-detail-overlay', // Skill modal overlay - must persist across AJAX navigation
+      '#log-extractor-btn' // Log extractor button
     ];
 
     // Zbierz elementy do zachowania
@@ -791,7 +826,9 @@
       'components/toast.js',
       'components/back-to-top.js',
       'translations.js',
-      'preload-lang.js'
+      'preload-lang.js',
+      'skill-modal-system.js', // CRITICAL: Keep skill modal system across navigations
+      'log-extractor.js' // CRITICAL: Keep log extractor across navigations
     ];
 
     // Keep core scripts, mark page-specific scripts for removal
@@ -920,13 +957,19 @@
 
       // Reinitialize translations
       log('  → Reinitializing translations for path:', currentPath);
-      reinitializeTranslations(currentPath);
 
-      // Dispatch event
-      window.dispatchEvent(new Event('pageContentLoaded'));
-      log('  → Dispatched pageContentLoaded event');
-
-      log('━━━ REINITIALIZATION COMPLETE ━━━');
+      // Wait for translations to load before dispatching pageContentLoaded
+      reinitializeTranslations(currentPath).then(() => {
+        // Dispatch event AFTER translations are ready
+        window.dispatchEvent(new Event('pageContentLoaded'));
+        log('  → Dispatched pageContentLoaded event');
+        log('━━━ REINITIALIZATION COMPLETE ━━━');
+      }).catch((err) => {
+        log('  ✗ Translation reinit failed, dispatching event anyway:', err);
+        window.dispatchEvent(new Event('pageContentLoaded'));
+        log('  → Dispatched pageContentLoaded event');
+        log('━━━ REINITIALIZATION COMPLETE (with errors) ━━━');
+      });
     }, reinitDelay);
 
     // Zaznacz aktywny link w nawigacji
@@ -1725,12 +1768,16 @@
       if (window.i18n.translations && window.i18n.translations[currentLang]) {
         log('  → Clearing cache for current language:', currentLang);
         delete window.i18n.translations[currentLang];
+        // Also clear the loadedFiles tracking to force reload
+        if (window.i18n.loadedFiles) {
+          delete window.i18n.loadedFiles[currentLang];
+        }
       }
 
       log('  → Calling window.i18n.load(' + currentLang + ', ' + targetPath + ')');
 
       // Load translations for current language and path
-      window.i18n
+      return window.i18n
         .load(currentLang, targetPath)
         .then(() => {
           log('  ✓ Translations loaded for:', currentLang);
@@ -1766,13 +1813,13 @@
     else if (window.setLanguage && typeof window.setLanguage === 'function') {
       log('  → Using legacy translation system');
       window.setLanguage(currentLang);
+      return Promise.resolve();
     } else {
       log('  ⚠ No translation system found');
       log('  ⚠ window.i18n:', window.i18n);
       log('  ⚠ window.setLanguage:', window.setLanguage);
+      return Promise.resolve();
     }
-
-    log('━━━ Translation reinitialization triggered ━━━');
   }
 
   function reinitializeScrollAnimations() {
@@ -1910,6 +1957,39 @@
     log('━━━ INITIAL PAGE LOAD ━━━');
     log('Running lazy loading for initial page content...');
     initializeUniversalLazyLoading();
+  }
+
+  // ============================================================================
+  // GLOBAL LANGUAGE CHANGE HANDLER
+  // ============================================================================
+  // This ensures all pages update translations in real-time when language changes
+  if (!window.__smoothNavLanguageListenerSetup) {
+    window.__smoothNavLanguageListenerSetup = true;
+
+    window.addEventListener('languageChanged', (e) => {
+      const newLang = e.detail?.language;
+      log(`[SmoothNav] Language changed to: ${newLang}`);
+
+      // Apply translations to current page immediately
+      if (window.i18n && window.i18n._applyTranslations) {
+        log('[SmoothNav] Calling _applyTranslations() for language change');
+        // Use setTimeout to ensure localStorage is updated first
+        setTimeout(() => {
+          window.i18n._applyTranslations();
+          log('[SmoothNav] Translations reapplied after language change');
+        }, 10);
+      }
+
+      // Special handling for music page
+      if (window.location.pathname.includes('music') && window.refreshMusicList) {
+        log('[SmoothNav] Refreshing music playlist for new language');
+        setTimeout(() => {
+          window.refreshMusicList();
+        }, 50);
+      }
+    });
+
+    log('[SmoothNav] Global language change listener set up');
   }
 
   // Export dla debugowania

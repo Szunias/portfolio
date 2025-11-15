@@ -338,8 +338,9 @@ const CATEGORY_COLORS = {
 };
 
 // Get translation helper - checks both inline and loaded translations
-function getTranslation(key) {
-  const lang = localStorage.getItem('language') || 'en';
+// Can optionally accept language parameter (used during language change events)
+function getTranslation(key, forceLang = null) {
+  const lang = forceLang || localStorage.getItem('language') || 'en';
 
   // Try loaded translations first (from BulletproofI18n)
   if (window.i18n && window.i18n.translations && window.i18n.translations[lang]) {
@@ -348,7 +349,10 @@ function getTranslation(key) {
     for (const k of keys) {
       value = value?.[k];
     }
-    if (value && value !== key) return value;
+    if (value && value !== key) {
+      console.log(`[Skill Modal] getTranslation("${key}") [${lang}${forceLang ? ' FORCED' : ''}] from i18n: "${value}"`);
+      return value;
+    }
   }
 
   // Fallback to inline critical translations
@@ -357,7 +361,8 @@ function getTranslation(key) {
   for (const k of keys) {
     value = value?.[k];
   }
-  return value || key;
+  const result = value || key;
+  return result;
 }
 
 // Initialize skill modal system
@@ -392,7 +397,8 @@ function initSkillModal() {
   // Always update section headers with translations (even if overlay exists)
   overlay.querySelectorAll('.modal-section-header').forEach((header) => {
     const section = header.dataset.section;
-    header.textContent = getTranslation(`skillModal.${section}`);
+    const translation = getTranslation(`skillModal.${section}`);
+    header.textContent = translation;
   });
 
   const card = overlay.querySelector('.skill-detail-card');
@@ -402,73 +408,72 @@ function initSkillModal() {
   const connectionsEl = overlay.querySelector('.skill-detail-connections');
   const projectsEl = overlay.querySelector('.skill-detail-projects');
 
-  // Store reference to prevent duplicate event listeners
+  // CRITICAL: ALWAYS set window.openSkillModal, even after AJAX navigation
+  // This function needs to be available globally at all times
+  window.openSkillModal = function (skillId) {
+    const skill = SKILL_DATA[skillId];
+    if (!skill) return;
+
+    // Store current skill ID for language change updates
+    overlay.dataset.currentSkill = skillId;
+
+    // Set content
+    titleEl.textContent = skill.name;
+    if (skill.icon) {
+      iconEl.src = skill.icon;
+      iconEl.style.display = 'block';
+    } else {
+      iconEl.style.display = 'none';
+    }
+
+    // Connections
+    connectionsEl.innerHTML = '';
+    skill.connections.forEach((connId) => {
+      const connSkill = SKILL_DATA[connId];
+      if (connSkill) {
+        const tag = document.createElement('div');
+        tag.className = `connection-tag category-${connSkill.category}`;
+        tag.textContent = connSkill.name;
+        tag.onclick = () => {
+          overlay.classList.remove('active');
+          setTimeout(() => window.openSkillModal(connId), 300);
+        };
+        connectionsEl.appendChild(tag);
+      }
+    });
+
+    if (skill.connections.length === 0) {
+      const noConnectionsMsg = getTranslation('skillModal.noConnections');
+      connectionsEl.innerHTML = `<p style="color: #9ca3af;">${noConnectionsMsg}</p>`;
+    }
+
+    // Projects - use translation keys for descriptions
+    projectsEl.innerHTML = skill.projects
+      .map((p) => {
+        const desc = p.descKey ? getTranslation(p.descKey) : (p.desc || '');
+        if (p.url) {
+          return `<li><a href="${p.url}"><span class="project-name">${p.name}</span><span class="project-desc">${desc}</span></a></li>`;
+        } else {
+          return `<li><span class="project-name">${p.name}</span><span class="project-desc">${desc}</span></li>`;
+        }
+      })
+      .join('');
+
+    // Show modal
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  // Close modal function
+  window.closeSkillModal = function () {
+    overlay.classList.remove('active');
+    overlay.dataset.currentSkill = ''; // Clear current skill
+    document.body.style.overflow = '';
+  };
+
+  // Event listeners (attach only once)
   if (!overlay.dataset.initialized) {
     overlay.dataset.initialized = 'true';
-
-    // Open modal function (stored globally for reuse)
-    window.openSkillModal = function (skillId) {
-      const skill = SKILL_DATA[skillId];
-      if (!skill) return;
-
-      // Store current skill ID for language change updates
-      overlay.dataset.currentSkill = skillId;
-
-      // Set content
-      titleEl.textContent = skill.name;
-      if (skill.icon) {
-        iconEl.src = skill.icon;
-        iconEl.style.display = 'block';
-      } else {
-        iconEl.style.display = 'none';
-      }
-
-      // Connections
-      connectionsEl.innerHTML = '';
-      skill.connections.forEach((connId) => {
-        const connSkill = SKILL_DATA[connId];
-        if (connSkill) {
-          const tag = document.createElement('div');
-          tag.className = `connection-tag category-${connSkill.category}`;
-          tag.textContent = connSkill.name;
-          tag.onclick = () => {
-            overlay.classList.remove('active');
-            setTimeout(() => window.openSkillModal(connId), 300);
-          };
-          connectionsEl.appendChild(tag);
-        }
-      });
-
-      if (skill.connections.length === 0) {
-        const noConnectionsMsg = getTranslation('skillModal.noConnections');
-        connectionsEl.innerHTML = `<p style="color: #9ca3af;">${noConnectionsMsg}</p>`;
-      }
-
-      // Projects - use translation keys for descriptions
-      projectsEl.innerHTML = skill.projects
-        .map((p) => {
-          const desc = p.descKey ? getTranslation(p.descKey) : (p.desc || '');
-          if (p.url) {
-            return `<li><a href="${p.url}"><span class="project-name">${p.name}</span><span class="project-desc">${desc}</span></a></li>`;
-          } else {
-            return `<li><span class="project-name">${p.name}</span><span class="project-desc">${desc}</span></li>`;
-          }
-        })
-        .join('');
-
-      // Show modal
-      overlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    };
-
-    // Close modal function
-    window.closeSkillModal = function () {
-      overlay.classList.remove('active');
-      overlay.dataset.currentSkill = ''; // Clear current skill
-      document.body.style.overflow = '';
-    };
-
-    // Event listeners (only attach once)
     closeBtn.onclick = window.closeSkillModal;
     overlay.onclick = (e) => {
       if (e.target === overlay) window.closeSkillModal();
@@ -481,10 +486,15 @@ function initSkillModal() {
     });
 
     // Update translations when language changes
-    window.addEventListener('languageChanged', () => {
+    window.addEventListener('languageChanged', (e) => {
+      const newLang = e.detail?.language || localStorage.getItem('language') || 'en';
+
+      // CRITICAL: Pass the new language explicitly to getTranslation
+      // because localStorage might not be updated yet
       overlay.querySelectorAll('.modal-section-header').forEach((header) => {
         const section = header.dataset.section;
-        header.textContent = getTranslation(`skillModal.${section}`);
+        const translation = getTranslation(`skillModal.${section}`, newLang);
+        header.textContent = translation;
       });
 
       // If modal is open, refresh all translatable content
@@ -492,7 +502,7 @@ function initSkillModal() {
         // Update "no connections" message if visible
         const noConnectionsP = connectionsEl.querySelector('p');
         if (noConnectionsP) {
-          noConnectionsP.textContent = getTranslation('skillModal.noConnections');
+          noConnectionsP.textContent = getTranslation('skillModal.noConnections', newLang);
         }
 
         // Re-render project descriptions with new language
@@ -502,7 +512,7 @@ function initSkillModal() {
           if (skill) {
             projectsEl.innerHTML = skill.projects
               .map((p) => {
-                const desc = p.descKey ? getTranslation(p.descKey) : (p.desc || '');
+                const desc = p.descKey ? getTranslation(p.descKey, newLang) : (p.desc || '');
                 if (p.url) {
                   return `<li><a href="${p.url}"><span class="project-name">${p.name}</span><span class="project-desc">${desc}</span></a></li>`;
                 } else {
@@ -516,20 +526,14 @@ function initSkillModal() {
     });
   }
 
-  // Attach/reattach click handlers to hexagons (these need to be refreshed after AJAX load)
-  document.querySelectorAll('.hexagon[data-skill]').forEach((hex) => {
-    hex.style.cursor = 'pointer';
-    // Remove old listener if exists
-    hex.replaceWith(hex.cloneNode(true));
-  });
+  // NOTE: Skill hexagon click handling is now done by smooth-navigation.js
+  // This is because smooth navigation's listener is registered first (in capture phase)
+  // and we need it to handle hexagons directly to ensure proper event flow.
+  // The openSkillModal function is still defined here and called by smooth navigation.
 
-  // Re-query after cloning and add fresh listeners
+  // Set cursor style for all hexagons (safe to do on every init)
   document.querySelectorAll('.hexagon[data-skill]').forEach((hex) => {
     hex.style.cursor = 'pointer';
-    hex.addEventListener('click', () => {
-      const skillId = hex.dataset.skill;
-      window.openSkillModal(skillId);
-    });
   });
 }
 

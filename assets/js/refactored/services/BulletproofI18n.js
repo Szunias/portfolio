@@ -40,6 +40,12 @@ class BulletproofI18n {
     this.loadingPromises = new Map();
 
     /**
+     * Track which JSON file is loaded for each language
+     * @type {Object<string, string>}
+     */
+    this.loadedFiles = {};
+
+    /**
      * Supported languages
      * @type {string[]}
      */
@@ -112,15 +118,24 @@ class BulletproofI18n {
       lang = this.defaultLanguage;
     }
 
+    // Determine which JSON file we need for the current page
+    const requiredFile = this._getTranslationFile(pathOverride);
+
     // Return cached loading promise if already loading
     if (this.loadingPromises.has(lang)) {
       return this.loadingPromises.get(lang);
     }
 
-    // Already loaded
-    if (this.translations[lang]) {
+    // Check if we already have translations for this language AND this specific file
+    if (this.translations[lang] && this.loadedFiles[lang] === requiredFile) {
       this.lang = lang;
+      this._log(`[BulletproofI18n] Using cached translations for ${lang} (${requiredFile})`);
       return Promise.resolve();
+    }
+
+    // If we have translations but for a DIFFERENT file, we need to reload
+    if (this.translations[lang] && this.loadedFiles[lang] !== requiredFile) {
+      this._log(`[BulletproofI18n] Page changed, reloading ${lang}: ${this.loadedFiles[lang]} → ${requiredFile}`);
     }
 
     // Create loading promise with timeout
@@ -130,6 +145,7 @@ class BulletproofI18n {
     try {
       const translations = await loadingPromise;
       this.translations[lang] = translations;
+      this.loadedFiles[lang] = requiredFile;
       this.lang = lang;
 
       // Save to localStorage
@@ -138,12 +154,13 @@ class BulletproofI18n {
         document.documentElement.setAttribute('lang', lang);
       });
 
-      this._log(`[BulletproofI18n] Loaded language: ${lang}`);
+      this._log(`[BulletproofI18n] Loaded language: ${lang} (${requiredFile})`);
     } catch (error) {
       console.warn(`[BulletproofI18n] Failed to load "${lang}":`, error);
 
       // Use critical inline translations as fallback
       this.translations[lang] = this.critical[lang] || {};
+      this.loadedFiles[lang] = requiredFile;
       this.lang = lang;
 
       // CRITICAL FIX: Save to localStorage even when loading fails
@@ -310,14 +327,17 @@ class BulletproofI18n {
           const key = element.getAttribute('data-i18n');
           const translation = this.t(key);
 
-          // Only update if different from current content
-          if (element.textContent !== translation) {
-            // Check if key allows HTML (e.g., titles with <br>)
-            if (key.includes('.title') && translation.includes('<br>')) {
-              element.innerHTML = translation;
-            } else {
-              element.textContent = translation;
-            }
+          // CRITICAL FIX: ALWAYS update during language changes
+          // The old logic (currentText !== translation) fails when:
+          // 1. User changes EN→PL (updates) then PL→EN (doesn't update because comparing same text)
+          // 2. This is because comparison happens AFTER previous translation was applied
+          // Solution: Always set translation, browser will optimize if it's the same
+
+          // Check if key allows HTML (e.g., titles with <br>)
+          if (key.includes('.title') && translation.includes('<br>')) {
+            element.innerHTML = translation;
+          } else {
+            element.textContent = translation;
           }
         });
       });
