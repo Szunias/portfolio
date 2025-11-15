@@ -121,9 +121,13 @@ class BulletproofI18n {
     // Determine which JSON file we need for the current page
     const requiredFile = this._getTranslationFile(pathOverride);
 
-    // Return cached loading promise if already loading
-    if (this.loadingPromises.has(lang)) {
-      return this.loadingPromises.get(lang);
+    // Create unique key for this language+file combination
+    const cacheKey = `${lang}:${requiredFile}`;
+
+    // Return cached loading promise if already loading this exact combination
+    if (this.loadingPromises.has(cacheKey)) {
+      this._log(`[BulletproofI18n] Already loading ${cacheKey}, returning existing promise`);
+      return this.loadingPromises.get(cacheKey);
     }
 
     // Check if we already have translations for this language AND this specific file
@@ -140,7 +144,7 @@ class BulletproofI18n {
 
     // Create loading promise with timeout
     const loadingPromise = this._loadWithTimeout(lang, pathOverride);
-    this.loadingPromises.set(lang, loadingPromise);
+    this.loadingPromises.set(cacheKey, loadingPromise);
 
     try {
       const translations = await loadingPromise;
@@ -170,7 +174,7 @@ class BulletproofI18n {
         document.documentElement.setAttribute('lang', lang);
       });
     } finally {
-      this.loadingPromises.delete(lang);
+      this.loadingPromises.delete(cacheKey);
     }
   }
 
@@ -264,6 +268,7 @@ class BulletproofI18n {
   destroy() {
     window.removeEventListener('storage', this._handleStorageChange);
     this.translations = {};
+    this.loadedFiles = {};
     this.loadingPromises.clear();
   }
 

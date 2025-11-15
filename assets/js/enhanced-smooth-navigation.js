@@ -1457,6 +1457,34 @@
     }
 
     // ========================================================================
+    // ABOUT PAGE - Ensure skill modal system is loaded
+    // ========================================================================
+    else if (currentPath === '/about.html' || currentPath === '/about') {
+      log('  → About page detected, checking skill modal system');
+
+      // Ensure window.openSkillModal is available
+      // This is critical when user navigates to /about from pages that don't have skill-modal-system.js
+      if (!window.openSkillModal) {
+        log('    → window.openSkillModal not found, loading skill-modal-system.js dynamically');
+
+        // Dynamically load skill-modal-system.js
+        const script = document.createElement('script');
+        script.src = '/skill-modal-system.js';
+        script.defer = true;
+        script.onload = () => {
+          log('    ✓ skill-modal-system.js loaded successfully');
+          log('    ✓ window.openSkillModal:', typeof window.openSkillModal);
+        };
+        script.onerror = () => {
+          log('    ✗ Failed to load skill-modal-system.js');
+        };
+        document.head.appendChild(script);
+      } else {
+        log('    ✓ window.openSkillModal already available');
+      }
+    }
+
+    // ========================================================================
     // MUSIC PAGE - Re-render playlist
     // ========================================================================
     else if (currentPath === '/music.html' || currentPath === '/music') {
@@ -1763,16 +1791,9 @@
       log('  → i18n object:', window.i18n);
       log('  → i18n.translations:', window.i18n.translations);
 
-      // CRITICAL: Clear ONLY current language cache to force reload for new page
-      // Different pages have different JSON files (index.json, about.json, etc.)
-      if (window.i18n.translations && window.i18n.translations[currentLang]) {
-        log('  → Clearing cache for current language:', currentLang);
-        delete window.i18n.translations[currentLang];
-        // Also clear the loadedFiles tracking to force reload
-        if (window.i18n.loadedFiles) {
-          delete window.i18n.loadedFiles[currentLang];
-        }
-      }
+      // NOTE: We don't clear cache here - load() method has intelligent caching
+      // that checks if the required file matches the loaded file per language.
+      // This prevents unnecessary reloads when navigating to the same page.
 
       log('  → Calling window.i18n.load(' + currentLang + ', ' + targetPath + ')');
 
