@@ -1,3 +1,6 @@
+// CRITICAL FIX: Track observers for cleanup
+window.__indexPageObservers = window.__indexPageObservers || [];
+
 function animateCounter(element) {
   const target = Number.parseInt(element.getAttribute('data-count'), 10);
   if (!Number.isFinite(target)) return;
@@ -28,10 +31,15 @@ export function initCounters() {
         if (!entry.isIntersecting || entry.target.classList.contains('counted')) return;
         entry.target.classList.add('counted');
         animateCounter(entry.target);
+        // CRITICAL FIX: Unobserve after animation starts to prevent unnecessary checks
+        observer.unobserve(entry.target);
       });
     },
     { threshold: 0.5 }
   );
+
+  // CRITICAL FIX: Track observer for cleanup
+  window.__indexPageObservers.push(observer);
 
   document.querySelectorAll('.stat-number[data-count]').forEach((el) => observer.observe(el));
 }

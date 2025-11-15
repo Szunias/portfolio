@@ -38,4 +38,14 @@ export function initCursorGlow() {
   } else {
     window.addEventListener('load', startAnimation, { once: true });
   }
+
+  // CRITICAL FIX: Expose cleanup function to stop infinite rAF loop
+  return function cleanup() {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    document.removeEventListener('mousemove', onMouseMove);
+    document.body.classList.remove('cursor-active');
+  };
 }

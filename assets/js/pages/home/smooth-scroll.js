@@ -1,24 +1,8 @@
-export function initSmoothScroll() {
-  const setup = () => {
-    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-      anchor.addEventListener(
-        'click',
-        (event) => {
-          const href = anchor.getAttribute('href');
-          if (!href || href === '#') return;
-          const target = document.querySelector(href);
-          if (!target) return;
-          event.preventDefault();
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        },
-        { passive: false }
-      );
-    });
-  };
+// CRITICAL FIX: Removed duplicate smooth scroll functionality
+// This is handled globally by enhanced-smooth-navigation.js
+// Duplicate implementations caused memory leaks from accumulated event listeners
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setup, { once: true });
-  } else {
-    setup();
-  }
+export function initSmoothScroll() {
+  // Function intentionally left empty - enhanced-smooth-navigation.js handles this globally
+  // This file is kept to avoid breaking imports in home.js
 }

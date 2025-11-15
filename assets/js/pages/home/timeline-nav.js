@@ -167,18 +167,22 @@ export function initTimelineNav() {
     }
   }
 
-  // Prev/Next button handlers
-  prevProjectBtn.addEventListener("click", () => {
+  // CRITICAL FIX: Store event handlers for cleanup
+  const prevClickHandler = () => {
     if (currentProjectIndex > 0) {
       goToProject(currentProjectIndex - 1);
     }
-  });
+  };
 
-  nextProjectBtn.addEventListener("click", () => {
+  const nextClickHandler = () => {
     if (currentProjectIndex < projects.length - 1) {
       goToProject(currentProjectIndex + 1);
     }
-  });
+  };
+
+  // Prev/Next button handlers
+  prevProjectBtn.addEventListener("click", prevClickHandler);
+  nextProjectBtn.addEventListener("click", nextClickHandler);
 
   // Initialize display
   updateProjectDisplay();
@@ -192,4 +196,22 @@ export function initTimelineNav() {
         console.error("Unable to initialize Vimeo player", error);
       }
     });
+
+  // CRITICAL FIX: Expose cleanup function to remove event listeners
+  return function cleanup() {
+    if (prevProjectBtn) {
+      prevProjectBtn.removeEventListener("click", prevClickHandler);
+    }
+    if (nextProjectBtn) {
+      nextProjectBtn.removeEventListener("click", nextClickHandler);
+    }
+    // CRITICAL FIX: Remove Vimeo player event listener
+    if (player) {
+      try {
+        player.off("timeupdate");
+      } catch (error) {
+        // Player may already be destroyed
+      }
+    }
+  };
 }

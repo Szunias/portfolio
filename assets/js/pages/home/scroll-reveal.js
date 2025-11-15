@@ -1,3 +1,6 @@
+// CRITICAL FIX: Track observers for cleanup
+window.__indexPageObservers = window.__indexPageObservers || [];
+
 export function initScrollReveal() {
   const setup = () => {
     const observerOptions = {
@@ -13,6 +16,9 @@ export function initScrollReveal() {
         }
       });
     }, observerOptions);
+
+    // CRITICAL FIX: Track observer for cleanup
+    window.__indexPageObservers.push(observer);
 
     document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
   };
