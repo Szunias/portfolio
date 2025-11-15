@@ -142,9 +142,31 @@ export class ScriptReinitializer {
             this.log('  → Calling _applyTranslations()');
             window.i18n._applyTranslations();
             this.log('  ✓ Translations applied to DOM');
+
+            // CRITICAL FIX: For projects page, verify tech tags are rendered
+            if (targetPath === '/projects' || targetPath.startsWith('/projects/')) {
+              // Small delay to ensure DOM is ready
+              setTimeout(() => {
+                const techContainers = document.querySelectorAll('[data-tech]');
+                const visibleTags = Array.from(techContainers).filter(el => el.children.length > 0);
+                this.log(`  → Projects tech tags: ${visibleTags.length}/${techContainers.length} rendered`);
+
+                // If tech tags not rendered, try again
+                if (visibleTags.length === 0 && techContainers.length > 0) {
+                  this.log('  ⚠️  Tech tags not rendered, retrying...');
+                  window.i18n._applyTranslations();
+
+                  // Verify again
+                  setTimeout(() => {
+                    const recheckVisible = Array.from(document.querySelectorAll('[data-tech]')).filter(el => el.children.length > 0);
+                    this.log(`  → Retry result: ${recheckVisible.length} tech tags now visible`);
+                  }, 100);
+                }
+              }, 100);
+            }
           }
 
-          // CRITICAL: Render tech badges after translations load
+          // CRITICAL: Render tech badges after translations load (legacy - may not exist)
           if (typeof window.renderProjectTechTags === 'function') {
             this.log('  → Calling renderProjectTechTags() after translations loaded');
             window.renderProjectTechTags();

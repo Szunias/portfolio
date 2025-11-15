@@ -314,6 +314,7 @@ export class PageHandlers {
     }
 
     this.log('━━━ Projects page initialization complete ━━━');
+    this.log('  ℹ️  Tech tags will be rendered by translation system after load');
   }
 
   /**
