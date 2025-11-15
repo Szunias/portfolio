@@ -43,6 +43,30 @@ function initialiseFilters() {
   });
 }
 
+// Setup GLOBAL language change listener (only once)
+if (!window.__musicLanguageListenerSetup) {
+  window.__musicLanguageListenerSetup = true;
+
+  window.addEventListener('languageChanged', (event) => {
+    console.log('[Music Global] Language changed event received');
+    console.log('[Music Global] Current path:', window.location.pathname);
+    console.log('[Music Global] Event detail:', event.detail);
+
+    // Only update playlist if we're on music page AND tracks are loaded
+    if (window.location.pathname.includes('music')) {
+      console.log('[Music Global] On music page, will update playlist');
+      // Use setTimeout to ensure localStorage is updated
+      setTimeout(() => {
+        if (window.refreshMusicList && typeof window.refreshMusicList === 'function') {
+          console.log('[Music Global] Calling refreshMusicList()');
+          window.refreshMusicList();
+        }
+      }, 50);
+    }
+  });
+  console.log('[Music] Global language change listener set up');
+}
+
 function exposeRefreshHook() {
   console.log('[Music] Exposing refreshMusicList hook');
   window.refreshMusicList = () => {

@@ -73,19 +73,24 @@ function loadNavigation() {
 }
 
 // Set active class on current language button
-function setActiveLanguageButton() {
+function setActiveLanguageButton(languageOverride = null) {
   try {
-    const savedLang = localStorage.getItem('language') || 'en';
+    // Use override if provided (from event), otherwise read from localStorage
+    const savedLang = languageOverride || localStorage.getItem('language') || 'en';
+    console.log('[Navigation] setActiveLanguageButton() - language:', savedLang, languageOverride ? '(from event)' : '(from localStorage)');
+    console.log('[Navigation] Current path:', window.location.pathname);
 
     // Update all language buttons (both desktop and mobile)
     document.querySelectorAll('.lang-btn').forEach((btn) => {
       if (btn.dataset.lang === savedLang) {
         btn.classList.add('active');
+        console.log('[Navigation] Set active:', btn.dataset.lang);
       } else {
         btn.classList.remove('active');
       }
     });
   } catch (error) {
+    console.error('[Navigation] localStorage error:', error);
     // localStorage might be disabled - default to 'en'
     document.querySelectorAll('.lang-btn').forEach((btn) => {
       if (btn.dataset.lang === 'en') {
@@ -300,7 +305,8 @@ window.cleanupNavigation = cleanupNavigation;
 // Listen for language changes from BulletproofI18n (global listener, added once)
 window.addEventListener('languageChanged', (event) => {
   // Update language button active state when language changes
-  setActiveLanguageButton();
+  // CRITICAL: Use event.detail.language to avoid race condition with localStorage
+  setActiveLanguageButton(event.detail?.language);
 });
 
 // Auto-load - always wait for DOM to be ready

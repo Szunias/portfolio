@@ -1,4 +1,5 @@
-import { initTranslation } from './home/translation.js';
+// DISABLED: Using BulletproofI18n instead (loaded globally)
+// import { initTranslation } from './home/translation.js';
 import { initVimeoFallback } from './home/vimeo.js';
 import { initTimestamps } from './home/timestamps.js';
 import { initTimelineNav } from './home/timeline-nav.js';
@@ -12,7 +13,9 @@ import { initLanguagePrompt } from './home/language-prompt.js';
 // Mobile menu is initialized globally by navigation.js - no need to import here
 import { initCvDropdown } from './home/cv-dropdown.js';
 
-const { setLanguage, getCurrentLanguage } = initTranslation();
+// Use BulletproofI18n instead of old translation system
+const setLanguage = (lang) => window.i18n?.setLanguage(lang);
+const getCurrentLanguage = () => window.i18n?.getLanguage() || 'en';
 
 initVimeoFallback();
 initTimestamps();
