@@ -175,7 +175,7 @@
 
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://igorszuniewicz.com/#person","name":"Igor Szuniewicz","url":"https://igorszuniewicz.com","image":{"@type":"ImageObject","url":"https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg","width":1280,"height":720},"sameAs":["https://github.com/Szunias","https://www.linkedin.com/in/igor-szuniewicz-a6877a2a3","https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6","https://igorszuniewicz.itch.io"],"jobTitle":["Audio Designer","Composer","Audio Engineer","Software Developer"],"description":"Audio designer for games. I build interactive music systems in Wwise/FMOD, design sound for animation, and write audio tools in C++/Python.","email":"igorszuniewiczwork@gmail.com","knowsAbout":["Game Audio","Interactive Music","Sound Design","Wwise","FMOD","Unreal Engine","Unity"]}]}</script>
 
-    <script src="skill-modal-system.js" defer></script>
+    <script src="assets/js/skill-modal-system.js" defer></script>
   </head>
 
   <body>
@@ -680,35 +680,8 @@
     </script>
 
     <script>
-      // Cross-category connections ONLY - no internal connections
-      const SKILL_CONNECTIONS = {
-        // Middleware -> Programming
-        wwise: ['cpp', 'blueprints'],
-        fmod: ['cpp', 'csharp'],
-        unreal: ['cpp', 'blueprints'],
-        unity: ['csharp'],
-
-        // Programming -> Middleware & Specialized
-        cpp: ['wwise', 'fmod', 'unreal', 'juce', 'dsp'],
-        csharp: ['fmod', 'unity'],
-        python: ['tensorflow'],
-        blueprints: ['wwise', 'unreal', 'spatial'],
-
-        // DAW -> Specialized
-        reaper: ['dsp', 'spatial'],
-        ableton: ['dsp'],
-        flstudio: ['dsp'],
-        logicpro: ['dsp'],
-        studioone: ['dsp'],
-        cubase: ['dsp'],
-
-        // Specialized -> Programming & DAW
-        juce: ['cpp'],
-        dsp: ['cpp', 'reaper', 'ableton', 'flstudio', 'logicpro', 'studioone', 'cubase', 'puredata'],
-        tensorflow: ['python'],
-        spatial: ['blueprints', 'reaper'],
-        puredata: ['dsp']
-      };
+      // CRITICAL FIX: SKILL_CONNECTIONS removed - using SKILL_DATA from skill-modal-system.js instead
+      // This prevents data duplication and ensures consistency
 
       const SKILL_COLORS = {
         wwise: '#3b82f6',
@@ -734,6 +707,9 @@
         puredata: '#fb923c'
       };
 
+      // CRITICAL FIX: Track animation frames for cleanup
+      const activeAnimationFrames = new Set();
+
       function initSkillConnections() {
         const skillsSection = document.querySelector('.content-section');
         if (!skillsSection) return;
@@ -747,6 +723,11 @@
 
         const allHexagons = document.querySelectorAll('.hexagon[data-skill]');
         const particlePool = new Map(); // Reusable particles
+
+        // CRITICAL FIX: Store reference for cleanup
+        window.__aboutPageCleanup = window.__aboutPageCleanup || {};
+        window.__aboutPageCleanup.particleContainer = particleContainer;
+        window.__aboutPageCleanup.particlePool = particlePool;
 
         // Create particles for each connection
         function createParticles(fromSkill, toSkill, color, count = 3) {
@@ -782,6 +763,7 @@
           // Animate position using JS for smooth bezier path
           const duration = 2000;
           const startTime = performance.now();
+          let animationId = null; // CRITICAL FIX: Track frame ID
 
           function animate(currentTime) {
             const elapsed = currentTime - startTime;
@@ -797,21 +779,30 @@
             particle.style.left = `${x}px`;
             particle.style.top = `${y}px`;
 
+            // CRITICAL FIX: Stop infinite loop! Loop back ONLY if active
             if (progress < 1 && particle.classList.contains('active')) {
-              requestAnimationFrame(animate);
-            } else if (progress >= 1) {
-              requestAnimationFrame(() => animate(performance.now()));
+              animationId = requestAnimationFrame(animate);
+              activeAnimationFrames.add(animationId);
+            } else if (progress >= 1 && particle.classList.contains('active')) {
+              // CRITICAL FIX: Loop back to start instead of infinite recursion
+              animationId = requestAnimationFrame(() => animate(performance.now()));
+              activeAnimationFrames.add(animationId);
+            } else {
+              // CRITICAL FIX: Animation stopped, remove from tracking
+              if (animationId) activeAnimationFrames.delete(animationId);
             }
           }
 
-          requestAnimationFrame(animate);
+          animationId = requestAnimationFrame(animate);
+          activeAnimationFrames.add(animationId);
         }
 
         // Hover handlers
         allHexagons.forEach((hex) => {
           const skill = hex.dataset.skill;
           const category = hex.dataset.category;
-          const targets = SKILL_CONNECTIONS[skill] || [];
+          // CRITICAL FIX: Use SKILL_DATA from skill-modal-system.js (no duplication)
+          const targets = (window.SKILL_DATA && window.SKILL_DATA[skill]?.connections) || [];
 
           hex.addEventListener('mouseenter', () => {
             // Dim all containers
@@ -858,7 +849,7 @@
         });
       }
 
-      // Scroll reveal
+      // Scroll reveal - CRITICAL FIX: Track observer for cleanup
       function initScrollReveal() {
         const observer = new IntersectionObserver(
           (entries) => {
@@ -872,30 +863,99 @@
           { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
         );
 
+        // CRITICAL FIX: Track observer for cleanup
+        window.__aboutPageObservers.push(observer);
+
         document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
       }
 
-      // Lazy load avatar
+      // Lazy load avatar - CRITICAL FIX: Use existing lazy loading system
       function initLazyImage() {
         const lazyImg = document.querySelector('img.lazy-img[data-src]');
         if (!lazyImg) return;
+
+        // CRITICAL FIX: Skip if already loaded by another system
+        if (lazyImg.dataset.lazyLoaded === 'true') {
+          return;
+        }
 
         if ('IntersectionObserver' in window) {
           const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
               if (entry.isIntersecting) {
                 const img = entry.target;
+
+                // CRITICAL FIX: Skip if already loaded
+                if (img.dataset.lazyLoaded === 'true') {
+                  observer.unobserve(img);
+                  return;
+                }
+
+                // CRITICAL FIX: Mark as loading
+                img.dataset.lazyLoaded = 'true';
+
                 img.src = img.getAttribute('data-src');
                 img.removeAttribute('data-src');
                 observer.unobserve(img);
               }
             });
           });
+
+          // CRITICAL FIX: Track observer for cleanup
+          window.__aboutPageObservers.push(observer);
+
           observer.observe(lazyImg);
         } else {
+          // CRITICAL FIX: Mark as loading even in fallback
+          lazyImg.dataset.lazyLoaded = 'true';
           lazyImg.src = lazyImg.getAttribute('data-src');
         }
       }
+
+      // CRITICAL FIX: Cleanup function to prevent memory leaks
+      function cleanupAboutPage() {
+        // 1. Cancel all active animation frames
+        activeAnimationFrames.forEach((frameId) => {
+          cancelAnimationFrame(frameId);
+        });
+        activeAnimationFrames.clear();
+
+        // 2. Clear particle pool and remove particles from DOM
+        if (window.__aboutPageCleanup) {
+          const { particleContainer, particlePool } = window.__aboutPageCleanup;
+
+          if (particlePool) {
+            particlePool.forEach((particles) => {
+              particles.forEach((p) => {
+                p.classList.remove('active');
+                p.remove(); // Remove from DOM
+              });
+            });
+            particlePool.clear();
+          }
+
+          if (particleContainer) {
+            particleContainer.remove();
+          }
+        }
+
+        // 3. Disconnect scroll reveal observer
+        if (window.__aboutPageObservers) {
+          window.__aboutPageObservers.forEach((observer) => {
+            observer.disconnect();
+          });
+          window.__aboutPageObservers = [];
+        }
+      }
+
+      // Expose cleanup function globally
+      window.__cleanupAboutPage = cleanupAboutPage;
+
+      // CRITICAL FIX: Run cleanup before AJAX navigation
+      window.addEventListener('beforeunload', cleanupAboutPage);
+
+      // Track observers for cleanup
+      window.__aboutPageObservers = window.__aboutPageObservers || [];
 
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {

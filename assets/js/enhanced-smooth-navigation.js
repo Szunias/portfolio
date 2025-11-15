@@ -624,6 +624,12 @@
     activeObservers.clear();
     log(`  ✓ Disconnected ${disconnectedCount} observers`);
 
+    // CRITICAL FIX: Cleanup about page specific resources (rAF, particles, etc)
+    if (typeof window.__cleanupAboutPage === 'function') {
+      log('  🧹 Running about page cleanup (rAF, particles)');
+      window.__cleanupAboutPage();
+    }
+
     // Note: Event listeners on document/window are kept (handleLinkClick, handlePopState)
     // because they need to persist across navigations. They use event delegation
     // so they don't accumulate with each navigation.

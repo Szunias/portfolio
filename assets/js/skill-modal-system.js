@@ -1,6 +1,7 @@
 // Skill Modal System - Click to view details
 // Data based on ACTUAL project tech tags
 
+// CRITICAL FIX: Export SKILL_DATA globally to avoid duplication
 const SKILL_DATA = {
   // Middleware
   wwise: {
@@ -350,7 +351,7 @@ function getTranslation(key, forceLang = null) {
       value = value?.[k];
     }
     if (value && value !== key) {
-      console.log(`[Skill Modal] getTranslation("${key}") [${lang}${forceLang ? ' FORCED' : ''}] from i18n: "${value}"`);
+      // CRITICAL FIX: Removed console.log from production
       return value;
     }
   }
@@ -551,3 +552,7 @@ window.addEventListener('pageContentLoaded', () => {
     initSkillModal();
   }
 });
+
+// CRITICAL FIX: Expose SKILL_DATA globally to prevent duplication
+// Used by about page particle animation system
+window.SKILL_DATA = SKILL_DATA;
