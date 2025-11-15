@@ -556,3 +556,7 @@ window.addEventListener('pageContentLoaded', () => {
 // CRITICAL FIX: Expose SKILL_DATA globally to prevent duplication
 // Used by about page particle animation system
 window.SKILL_DATA = SKILL_DATA;
+
+// CRITICAL FIX: Expose initSkillModal globally for AJAX reinitialization
+// Used by page-handlers.js to reinitialize after AJAX navigation
+window.initSkillModal = initSkillModal;

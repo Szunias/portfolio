@@ -162,7 +162,7 @@ export class PageHandlers {
       this.log('    → window.openSkillModal not found, loading skill-modal-system.js dynamically');
 
       const script = document.createElement('script');
-      script.src = '/skill-modal-system.js';
+      script.src = '/assets/js/skill-modal-system.js';
       script.defer = true;
       script.onload = () => {
         this.log('    ✓ skill-modal-system.js loaded successfully');
@@ -173,6 +173,15 @@ export class PageHandlers {
       document.head.appendChild(script);
     } else {
       this.log('    ✓ window.openSkillModal already available');
+
+      // CRITICAL FIX: Reinitialize skill modal system after AJAX navigation
+      // This ensures cursor styles and event handlers are properly set up
+      if (typeof window.initSkillModal === 'function') {
+        this.log('    → Calling initSkillModal() to reinitialize system');
+        setTimeout(() => {
+          window.initSkillModal();
+        }, 100);
+      }
     }
   }
 
