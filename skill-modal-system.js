@@ -67,6 +67,19 @@ const SKILL_DATA = {
       }
     ]
   },
+  unity: {
+    name: 'Unity',
+    category: 'middleware',
+    icon: 'honeyicons/Unitylogo.png',
+    connections: ['csharp'],
+    projects: [
+      {
+        name: 'AudioLab',
+        desc: 'ML beatbox classification game with Unity integration',
+        url: 'projects/audiolab.html'
+      }
+    ]
+  },
 
   // DAW
   reaper: {
@@ -108,6 +121,49 @@ const SKILL_DATA = {
     icon: 'honeyicons/flstudiologo.png',
     connections: ['dsp'],
     projects: [{ name: 'Music Composition', desc: 'Beat production and melodic work', url: null }]
+  },
+  logicpro: {
+    name: 'Logic Pro',
+    category: 'daw',
+    icon: 'honeyicons/logicproicon.png',
+    connections: ['dsp'],
+    projects: [
+      {
+        name: 'Amorak',
+        desc: 'Post-production and mixing',
+        url: 'projects/amorak.html'
+      }
+    ]
+  },
+  studioone: {
+    name: 'Studio One',
+    category: 'daw',
+    icon: 'honeyicons/studiooneicon.png',
+    connections: ['dsp'],
+    projects: [
+      {
+        name: 'Ray Animation',
+        desc: 'Music production for animation',
+        url: 'projects/ray-animation.html'
+      },
+      {
+        name: 'Amorak',
+        desc: 'Music production and composition',
+        url: 'projects/amorak.html'
+      },
+      {
+        name: 'Akantilado',
+        desc: 'Music production',
+        url: 'projects/akantilado.html'
+      }
+    ]
+  },
+  cubase: {
+    name: 'Cubase',
+    category: 'daw',
+    icon: 'honeyicons/Cubaselogo.png',
+    connections: ['dsp'],
+    projects: [{ name: 'Music Composition', desc: 'MIDI sequencing and arrangement', url: null }]
   },
 
   // Programming
@@ -199,6 +255,19 @@ const SKILL_DATA = {
       }
     ]
   },
+  perforce: {
+    name: 'Perforce',
+    category: 'programming',
+    icon: 'honeyicons/Perforcelogo.png',
+    connections: [],
+    projects: [
+      {
+        name: 'Large-Scale Projects',
+        desc: 'Version control for team collaborations and large game projects',
+        url: null
+      }
+    ]
+  },
 
   // Specialized
   juce: {
@@ -243,6 +312,19 @@ const SKILL_DATA = {
         name: 'Shadow Frames',
         desc: 'Spatial audio systems in Wwise',
         url: 'projects/shadow-frames.html'
+      }
+    ]
+  },
+  puredata: {
+    name: 'Pure Data',
+    category: 'specialized',
+    icon: 'honeyicons/puredatalogo.png',
+    connections: ['dsp'],
+    projects: [
+      {
+        name: 'Audio Synthesis',
+        desc: 'Visual programming for real-time audio synthesis and processing',
+        url: null
       }
     ]
   }
