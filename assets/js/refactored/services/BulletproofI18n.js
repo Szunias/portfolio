@@ -78,11 +78,16 @@ class BulletproofI18n {
    * @returns {Promise<void>}
    */
   async init() {
+    console.log('%c[LANG-DEBUG] ======== BulletproofI18n.init() START ========', 'background: #3F51B5; color: white; padding: 2px 5px; border-radius: 3px;');
+    console.log('%c[LANG-DEBUG] Initial this.lang:', 'color: #3F51B5;', this.lang);
+
     try {
       // Load translations for current language
+      console.log('%c[LANG-DEBUG] Calling load() for language:', 'color: #3F51B5;', this.lang);
       await this.load(this.lang);
 
       // Apply translations to DOM
+      console.log('%c[LANG-DEBUG] Calling _applyTranslations()...', 'color: #3F51B5;');
       this._applyTranslations();
 
       // Listen for storage changes (language change in other tabs)
@@ -91,8 +96,11 @@ class BulletproofI18n {
       // Listen for language change events
       this._setupLanguageSwitchers();
 
+      console.log('%c[LANG-DEBUG] ✓ BulletproofI18n initialized successfully', 'color: #4CAF50; font-weight: bold;');
+      console.log('%c[LANG-DEBUG] ======== BulletproofI18n.init() END ========', 'background: #3F51B5; color: white; padding: 2px 5px; border-radius: 3px;');
       this._log('[BulletproofI18n] Initialized successfully');
     } catch (error) {
+      console.error('%c[LANG-DEBUG] ✗ Initialization failed:', 'color: #f44336; font-weight: bold;', error);
       console.error('[BulletproofI18n] Initialization failed:', error);
       // Continue anyway - fallback to HTML content
       this._applyTranslations();
@@ -163,19 +171,29 @@ class BulletproofI18n {
    * @returns {Promise<void>}
    */
   async setLanguage(lang) {
+    console.log('%c[LANG-DEBUG] ========================================', 'color: #FF5722; font-weight: bold;');
+    console.log('%c[LANG-DEBUG] setLanguage() called with:', 'background: #FF5722; color: white; padding: 2px 5px; border-radius: 3px;', lang);
+    console.log('%c[LANG-DEBUG] Current this.lang:', 'color: #FF5722;', this.lang);
+
     if (lang === this.lang) {
+      console.log('%c[LANG-DEBUG] Already using language:', 'color: #FF9800;', lang, '(skipping)');
       this._log(`[BulletproofI18n] Already using language: ${lang}`);
       return;
     }
 
     const previousLanguage = this.lang;
+    console.log('%c[LANG-DEBUG] Changing language from', 'color: #FF5722;', previousLanguage, '→', lang);
 
     try {
+      console.log('%c[LANG-DEBUG] Calling load()...', 'color: #FF5722;');
       await this.load(lang);
+
+      console.log('%c[LANG-DEBUG] Calling _applyTranslations()...', 'color: #FF5722;');
       this._applyTranslations();
 
       // Emit custom event
       this._safeExecute(() => {
+        console.log('%c[LANG-DEBUG] Dispatching languageChanged event', 'color: #FF5722;');
         window.dispatchEvent(
           new CustomEvent('languageChanged', {
             detail: { language: lang, previousLanguage }
@@ -183,8 +201,11 @@ class BulletproofI18n {
         );
       });
 
+      console.log('%c[LANG-DEBUG] ✓ Language changed successfully to:', 'color: #4CAF50; font-weight: bold;', lang);
+      console.log('%c[LANG-DEBUG] ========================================', 'color: #FF5722; font-weight: bold;');
       this._log(`[BulletproofI18n] Language changed to: ${lang}`);
     } catch (error) {
+      console.error('%c[LANG-DEBUG] ✗ Failed to change language:', 'color: #f44336; font-weight: bold;', error);
       console.error('[BulletproofI18n] Failed to change language:', error);
     }
   }
@@ -347,9 +368,23 @@ class BulletproofI18n {
       });
 
       // Update active state of language buttons
-      document.querySelectorAll('.lang-btn').forEach((button) => {
+      // CRITICAL: Always read from localStorage to ensure consistency
+      console.log('%c[LANG-DEBUG] BulletproofI18n._applyTranslations() updating buttons', 'background: #9C27B0; color: white; padding: 2px 5px; border-radius: 3px;');
+      console.log('%c[LANG-DEBUG] this.lang:', 'color: #9C27B0; font-weight: bold;', this.lang);
+
+      const currentLang = this._safeExecute(() => localStorage.getItem('language')) || this.lang;
+      console.log('%c[LANG-DEBUG] localStorage.getItem("language"):', 'color: #9C27B0; font-weight: bold;', this._safeExecute(() => localStorage.getItem('language')));
+      console.log('%c[LANG-DEBUG] Effective currentLang:', 'color: #9C27B0; font-weight: bold;', currentLang);
+
+      const buttons = document.querySelectorAll('.lang-btn');
+      console.log('%c[LANG-DEBUG] Found', 'color: #FF9800;', buttons.length, 'buttons in BulletproofI18n');
+
+      buttons.forEach((button, index) => {
         this._safeExecute(() => {
-          button.classList.toggle('active', button.dataset.lang === this.lang);
+          const btnLang = button.dataset.lang;
+          const shouldBeActive = btnLang === currentLang;
+          button.classList.toggle('active', shouldBeActive);
+          console.log(`%c[LANG-DEBUG] Button #${index} [${btnLang}] → ${shouldBeActive ? 'ACTIVE ✓' : 'inactive'}`, shouldBeActive ? 'color: #9C27B0; font-weight: bold;' : 'color: #999;');
         });
       });
 
@@ -364,30 +399,40 @@ class BulletproofI18n {
    * @returns {string}
    */
   _getInitialLanguage() {
+    console.log('%c[LANG-DEBUG] _getInitialLanguage() called', 'background: #00BCD4; color: white; padding: 2px 5px; border-radius: 3px;');
+
     try {
       // 1. Check for preloaded language (from inline script)
       if (window.__preloadedLang) {
+        console.log('%c[LANG-DEBUG] Source: window.__preloadedLang =', 'color: #00BCD4;', window.__preloadedLang);
         return window.__preloadedLang;
       }
 
       // 2. Check localStorage
       const saved = localStorage.getItem('language');
+      console.log('%c[LANG-DEBUG] localStorage.getItem("language") =', 'color: #00BCD4;', saved);
+
       if (saved && this.supportedLanguages.includes(saved)) {
+        console.log('%c[LANG-DEBUG] Source: localStorage (valid) =', 'color: #00BCD4; font-weight: bold;', saved);
         return saved;
       }
 
       // 3. Detect from browser
       const browserLang = navigator.language || navigator.userLanguage;
       const langCode = browserLang.split('-')[0]; // 'en-US' -> 'en'
+      console.log('%c[LANG-DEBUG] Browser language:', 'color: #00BCD4;', browserLang, '→', langCode);
 
       if (this.supportedLanguages.includes(langCode)) {
+        console.log('%c[LANG-DEBUG] Source: browser language =', 'color: #00BCD4;', langCode);
         return langCode;
       }
     } catch (error) {
+      console.error('%c[LANG-DEBUG] Error in _getInitialLanguage:', 'color: #f44336;', error);
       // localStorage might be disabled
     }
 
     // 4. Fallback to default
+    console.log('%c[LANG-DEBUG] Source: fallback to default =', 'color: #00BCD4;', this.defaultLanguage);
     return this.defaultLanguage;
   }
 

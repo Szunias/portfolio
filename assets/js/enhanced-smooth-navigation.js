@@ -555,6 +555,67 @@
   }
 
   // ============================================================================
+  // LOADING INDICATOR
+  // ============================================================================
+
+  function showLoadingIndicator() {
+    // Check if already exists
+    if (document.getElementById('smooth-nav-loader')) return;
+
+    const loader = document.createElement('div');
+    loader.id = 'smooth-nav-loader';
+    loader.innerHTML = `
+      <div class="loader-spinner"></div>
+    `;
+    loader.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(4px);
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    `;
+
+    const spinnerStyle = document.createElement('style');
+    spinnerStyle.textContent = `
+      .loader-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(spinnerStyle);
+
+    document.body.appendChild(loader);
+
+    // Trigger fade in
+    requestAnimationFrame(() => {
+      loader.style.opacity = '1';
+    });
+  }
+
+  function hideLoadingIndicator() {
+    const loader = document.getElementById('smooth-nav-loader');
+    if (loader) {
+      loader.style.opacity = '0';
+      setTimeout(() => loader.remove(), 200);
+    }
+  }
+
+  // ============================================================================
   // PAGE NAVIGATION
   // ============================================================================
 
@@ -565,6 +626,7 @@
     }
 
     isNavigating = true;
+    showLoadingIndicator(); // Show loading spinner
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     log('▶ NAVIGATION START');
     log('  From:', currentPath);
@@ -602,6 +664,7 @@
       // Fallback do standardowej nawigacji
       window.location.href = url;
     } finally {
+      hideLoadingIndicator(); // Hide loading spinner
       isNavigating = false;
     }
   }
@@ -823,142 +886,28 @@
     window.scrollTo({ top: 0, behavior: 'instant' });
 
     // CRITICAL: Force immediate script reinitialization
-    // This must happen IMMEDIATELY after content swap
+    // OPTIMIZED FOR MOBILE - Single pass, no excessive delays
     setTimeout(() => {
-      log('━━━ FORCE REINITIALIZING ALL SCRIPTS AND LAZY LOADING ━━━');
+      log('━━━ REINITIALIZING SCRIPTS (OPTIMIZED) ━━━');
 
-      // 1. FIRST PASS: Aggressive image loading
-      log('  → Pass 1: Loading all images');
-      const images = document.querySelectorAll('img');
-      images.forEach((img) => {
-        // If has data-src, use it
-        if (img.dataset.src && img.dataset.src !== img.src) {
-          const srcValue = img.dataset.src;
-          img.src = srcValue;
-          img.removeAttribute('data-src');
-          log(`    • Image loaded: ${srcValue.substring(srcValue.lastIndexOf('/') + 1)}`);
-        }
-        // Force eager loading
-        img.loading = 'eager';
-        // Remove lazy classes to force visibility
-        img.classList.add('loaded');
-      });
+      // Load all media elements (fast mode - no detailed logging)
+      log('  → Loading all media (single optimized pass)');
+      loadAllMediaElements(false);
 
-      // 2. SECOND PASS: Aggressive video loading
-      log('  → Pass 2: Loading all videos');
-      const videos = document.querySelectorAll('video');
-      videos.forEach((video) => {
-        // Set all required attributes for autoplay
-        if (video.hasAttribute('data-autoplay') || video.hasAttribute('autoplay')) {
-          video.setAttribute('autoplay', '');
-          video.setAttribute('muted', '');
-          video.setAttribute('playsinline', '');
-          video.setAttribute('loop', '');
-          video.removeAttribute('data-autoplay');
-        }
-
-        // Load sources
-        const sources = video.querySelectorAll('source');
-        let sourcesLoaded = 0;
-        sources.forEach((source) => {
-          if (source.dataset.src && !source.src) {
-            source.src = source.dataset.src;
-            source.removeAttribute('data-src');
-            sourcesLoaded++;
-          }
-        });
-
-        // Reload video if sources were loaded
-        if (sourcesLoaded > 0) {
-          video.load();
-          video.classList.add('loaded');
-          log(`    • Video loaded with ${sourcesLoaded} sources`);
-
-          // Try to play if in viewport
-          const rect = video.getBoundingClientRect();
-          if (rect.top < window.innerHeight && rect.bottom > 0 && video.hasAttribute('autoplay')) {
-            video.play().catch(() => {
-              // Autoplay blocked - that's ok
-            });
-          }
-        }
-      });
-
-      // 3. THIRD PASS: Aggressive iframe loading
-      log('  → Pass 3: Loading all iframes');
-      const iframes = document.querySelectorAll('iframe');
-      iframes.forEach((iframe) => {
-        if (iframe.dataset.src && !iframe.src) {
-          iframe.src = iframe.dataset.src;
-          iframe.removeAttribute('data-src');
-          iframe.classList.add('loaded');
-          log(`    • Iframe loaded: ${iframe.src.substring(0, 50)}...`);
-        }
-      });
-
-      // 4. Force re-run performance boost (this will catch any remaining lazy elements)
-      if (typeof window.runOptimizations === 'function') {
-        log('  → Running performance optimizations');
-        window.runOptimizations();
-      }
-
-      // 5. Then run normal reinitialization
+      // Run page-specific scripts
       log('  → Reinitializing scripts');
       reinitializeScripts(pageData);
 
-      // 6. CRITICAL: Reinitialize translations IMMEDIATELY (before event dispatch)
-      // Pass currentPath because window.location.pathname hasn't been updated yet
-      log('  → Reinitializing translations (immediate) for path:', currentPath);
+      // Reinitialize translations
+      log('  → Reinitializing translations for path:', currentPath);
       reinitializeTranslations(currentPath);
 
-      // 7. Dispatch event for any other scripts
+      // Dispatch event
       window.dispatchEvent(new Event('pageContentLoaded'));
       log('  → Dispatched pageContentLoaded event');
 
-      // 8. FINAL PASS: Clean up any remaining data-src attributes (300ms delay)
-      setTimeout(() => {
-        log('  → Final cleanup pass');
-
-        // Fix any remaining images
-        document.querySelectorAll('img[data-src]').forEach((img) => {
-          const srcValue = img.dataset.src;
-          img.src = srcValue;
-          img.removeAttribute('data-src');
-          img.classList.add('loaded');
-          log(`    • Cleaned up image: ${srcValue.substring(srcValue.lastIndexOf('/') + 1)}`);
-        });
-
-        // Fix any remaining videos
-        document.querySelectorAll('video source[data-src]').forEach((source) => {
-          source.src = source.dataset.src;
-          source.removeAttribute('data-src');
-          const video = source.closest('video');
-          if (video) {
-            video.load();
-            video.classList.add('loaded');
-          }
-        });
-
-        // Fix any remaining iframes
-        document.querySelectorAll('iframe[data-src]').forEach((iframe) => {
-          iframe.src = iframe.dataset.src;
-          iframe.removeAttribute('data-src');
-          iframe.classList.add('loaded');
-        });
-
-        // Run performance-boost optimizations AGAIN (catches dynamically added elements)
-        if (window.optimizeImages) window.optimizeImages();
-        if (window.optimizeVideoLoading) window.optimizeVideoLoading();
-        if (window.optimizeIframeLoading) window.optimizeIframeLoading();
-
-        // Force i18n to apply translations
-        if (window.i18n && window.i18n._applyTranslations) {
-          window.i18n._applyTranslations();
-        }
-
-        log('━━━ ALL REINITIALIZATION COMPLETE ━━━');
-      }, 300);
-    }, 10); // Very short delay to ensure DOM is ready
+      log('━━━ REINITIALIZATION COMPLETE ━━━');
+    }, 10); // Minimal delay to ensure DOM is ready
 
     // Zaznacz aktywny link w nawigacji
     updateActiveNavLink(url);
@@ -1108,46 +1057,103 @@
   }
 
   // ============================================================================
+  // MEDIA LOADING UTILITIES
+  // ============================================================================
+
+  /**
+   * Load all media elements (images, videos, iframes) from data-src attributes
+   * @param {boolean} detailed - If true, adds event listeners and detailed logging
+   */
+  function loadAllMediaElements(detailed = false) {
+    const prefix = detailed ? '    ' : '  ';
+
+    // IMAGES
+    const images = document.querySelectorAll('img[data-src]');
+    if (images.length > 0 && detailed) {
+      log(`${prefix}Found ${images.length} images with data-src`);
+    }
+
+    images.forEach((img) => {
+      if (img.dataset.src) {
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+        img.loading = 'eager';
+        img.classList.add('loaded');
+
+        // Add load event listener for detailed mode
+        if (detailed && !img.complete) {
+          img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
+        }
+      }
+    });
+
+    // VIDEOS
+    const videos = document.querySelectorAll('video');
+    if (videos.length > 0 && detailed) {
+      log(`${prefix}Found ${videos.length} video elements`);
+    }
+
+    videos.forEach((video) => {
+      let modified = false;
+
+      // Set autoplay attributes
+      if (video.hasAttribute('data-autoplay') || video.hasAttribute('autoplay')) {
+        video.setAttribute('autoplay', '');
+        video.setAttribute('muted', '');
+        video.setAttribute('playsinline', '');
+        video.setAttribute('loop', '');
+        video.removeAttribute('data-autoplay');
+        modified = true;
+      }
+
+      // Load sources
+      const sources = video.querySelectorAll('source[data-src]');
+      sources.forEach((source) => {
+        if (source.dataset.src) {
+          source.src = source.dataset.src;
+          source.removeAttribute('data-src');
+          modified = true;
+        }
+      });
+
+      // Reload and play if modified
+      if (modified && sources.length > 0) {
+        video.load();
+        video.classList.add('loaded');
+
+        // Try to play if in viewport
+        if (video.hasAttribute('autoplay')) {
+          const rect = video.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0) {
+            video.play().catch(() => {
+              // Autoplay blocked - that's ok
+            });
+          }
+        }
+      }
+    });
+
+    // IFRAMES
+    const iframes = document.querySelectorAll('iframe[data-src]');
+    if (iframes.length > 0 && detailed) {
+      log(`${prefix}Found ${iframes.length} iframes with data-src`);
+    }
+
+    iframes.forEach((iframe) => {
+      if (iframe.dataset.src) {
+        iframe.src = iframe.dataset.src;
+        iframe.removeAttribute('data-src');
+        iframe.classList.add('loaded');
+      }
+    });
+  }
+
+  // ============================================================================
   // SCRIPT REINITIALIZATION
   // ============================================================================
 
   function reinitializeScripts(pageData) {
-    log('Reinitializing scripts');
-
-    // 0. FIRST PASS: Early lazy loading for immediate data-src elements
-    initializeUniversalLazyLoading();
-
-    // CRITICAL: Force immediate re-run of all optimizations
-    // This ensures ALL images, videos, and iframes are processed
-    setTimeout(() => {
-      log('  → Force re-running all performance optimizations');
-
-      // Re-initialize performance-boost.js optimizations for new content
-      if (typeof window.optimizeImages === 'function') {
-        window.optimizeImages();
-        log('    ✓ Images optimization triggered');
-      }
-      if (typeof window.optimizeVideoLoading === 'function') {
-        window.optimizeVideoLoading();
-        log('    ✓ Video optimization triggered');
-      }
-      if (typeof window.optimizeIframeLoading === 'function') {
-        window.optimizeIframeLoading();
-        log('    ✓ Iframe optimization triggered');
-      }
-
-      // Also dispatch event to notify performance-boost.js that content has changed
-      window.dispatchEvent(new CustomEvent('contentUpdated'));
-
-      // SECOND PASS: Run optimizations again after a small delay
-      // to catch any dynamically added content
-      setTimeout(() => {
-        log('  → Second pass optimization (catching late content)');
-        if (typeof window.optimizeImages === 'function') {
-          window.optimizeImages();
-        }
-      }, 500);
-    }, 100); // Small delay to ensure DOM is fully updated
+    log('Reinitializing scripts (optimized)');
 
     // 1. Animacje scroll-based
     reinitializeScrollAnimations();
@@ -1182,186 +1188,91 @@
       });
     }
 
-    // 6. SECOND PASS: Delayed lazy loading for dynamically added elements
-    //    Page-specific scripts may add images/videos with data-src
-    //    This catches them after scripts have run
-    setTimeout(() => {
-      log('  → Running delayed lazy loading (second pass)');
-      initializeUniversalLazyLoading();
-    }, 500);
+    // 6. Notify performance-boost.js that content has changed
+    if (typeof window.optimizeImages === 'function') {
+      window.optimizeImages();
+    }
+    window.dispatchEvent(new CustomEvent('contentUpdated'));
   }
 
   function initializeUniversalLazyLoading() {
     log('  → Initializing universal lazy loading');
 
-    // IMAGES: Convert ALL data-src → src
-    const allImages = Array.from(document.querySelectorAll('img[data-src]'));
-    log(`    Found ${allImages.length} images with data-src`);
+    // Use the unified media loading function with detailed logging
+    loadAllMediaElements(true);
 
-    allImages.forEach((img, index) => {
-      if (img.dataset.src) {
-        const srcValue = img.dataset.src;
-        img.src = srcValue;
-        img.removeAttribute('data-src');
+    // ADDITIONAL: Handle images with lazy-img or lazy-cover class
+    const lazyImages = document.querySelectorAll('img.lazy-img, img.lazy-cover');
+    if (lazyImages.length > 0) {
+      log(`    Found ${lazyImages.length} images with lazy classes`);
 
-        // Mark as loaded when image loads
-        img.addEventListener(
-          'load',
-          () => {
-            img.classList.add('loaded');
-          },
-          { once: true }
-        );
-
-        // Also mark as loaded immediately if image is already cached
-        if (img.complete) {
-          img.classList.add('loaded');
+      lazyImages.forEach((img) => {
+        // If has data-src, convert it (already handled by loadAllMediaElements)
+        if (img.dataset.src && !img.src) {
+          img.src = img.dataset.src;
+          img.removeAttribute('data-src');
         }
 
-        log(`    ✓ Image ${index + 1}: ${img.src.substring(img.src.lastIndexOf('/') + 1)}`);
-      }
-    });
+        // Ensure loading attribute is set
+        if (!img.hasAttribute('loading')) {
+          img.setAttribute('loading', 'eager');
+        }
 
-    // ALSO handle images with lazy-img or lazy-cover class (even without data-src)
-    const lazyImages = Array.from(document.querySelectorAll('img.lazy-img, img.lazy-cover'));
-    log(`    Found ${lazyImages.length} images with lazy classes`);
-
-    lazyImages.forEach((img) => {
-      // If has data-src, convert it
-      if (img.dataset.src && !img.src) {
-        img.src = img.dataset.src;
-        img.removeAttribute('data-src');
-      }
-
-      // Ensure loading attribute is set
-      if (!img.hasAttribute('loading')) {
-        img.setAttribute('loading', 'eager');
-      }
-
-      // Mark as loaded when loads
-      img.addEventListener(
-        'load',
-        () => {
+        // Mark as loaded when loads
+        if (!img.complete) {
+          img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
+        } else if (img.naturalWidth > 0) {
           img.classList.add('loaded');
-        },
-        { once: true }
-      );
-
-      // Also mark as loaded immediately if already cached
-      if (img.complete && img.naturalWidth > 0) {
-        img.classList.add('loaded');
-      }
-    });
-
-    // VIDEOS: Convert ALL data-autoplay and data-src in sources
-    const allVideos = Array.from(
-      document.querySelectorAll('video[data-autoplay], video source[data-src]')
-    );
-    const videoElements = Array.from(document.querySelectorAll('video'));
-    log(`    Found ${videoElements.length} video elements`);
-
-    videoElements.forEach((video, index) => {
-      let modified = false;
-
-      // Set autoplay if data-autoplay present
-      if (video.hasAttribute('data-autoplay')) {
-        video.setAttribute('autoplay', '');
-        video.setAttribute('muted', '');
-        video.setAttribute('playsinline', '');
-        video.setAttribute('loop', '');
-        video.removeAttribute('data-autoplay');
-        modified = true;
-      }
-
-      // Convert source data-src to src
-      const sources = video.querySelectorAll('source[data-src]');
-      sources.forEach((source) => {
-        if (source.dataset.src) {
-          source.src = source.dataset.src;
-          source.removeAttribute('data-src');
-          modified = true;
         }
       });
+    }
 
-      // Reload video if sources were modified
-      if (modified && sources.length > 0) {
-        video.load();
-        video.classList.add('loaded');
-        log(`    ✓ Video ${index + 1}: loaded with ${sources.length} sources`);
+    // ADDITIONAL: Handle videos with data-lazy-video attribute
+    const lazyVideos = document.querySelectorAll('video[data-lazy-video]');
+    if (lazyVideos.length > 0) {
+      log(`    Found ${lazyVideos.length} videos with data-lazy-video`);
 
-        // Try to play if in viewport
-        const rect = video.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0 && video.hasAttribute('autoplay')) {
-          video.play().catch(() => {
-            // Autoplay blocked - that's ok
+      lazyVideos.forEach((video) => {
+        const sources = video.querySelectorAll('source[data-src]');
+        if (sources.length > 0) {
+          sources.forEach((source) => {
+            if (source.dataset.src && !source.src) {
+              source.src = source.dataset.src;
+              source.removeAttribute('data-src');
+            }
           });
-        }
-      }
-    });
 
-    // ALSO handle videos with data-lazy-video attribute
-    const lazyVideos = Array.from(document.querySelectorAll('video[data-lazy-video]'));
-    log(`    Found ${lazyVideos.length} videos with data-lazy-video`);
+          video.load();
+          video.classList.add('loaded');
+          video.removeAttribute('data-lazy-video');
 
-    lazyVideos.forEach((video) => {
-      const sources = video.querySelectorAll('source[data-src]');
-      if (sources.length > 0) {
-        sources.forEach((source) => {
-          if (source.dataset.src && !source.src) {
-            source.src = source.dataset.src;
-            source.removeAttribute('data-src');
-          }
-        });
-
-        if (video.hasAttribute('data-autoplay')) {
-          video.setAttribute('autoplay', '');
-          video.setAttribute('muted', '');
-          video.setAttribute('playsinline', '');
-          video.setAttribute('loop', '');
-          video.removeAttribute('data-autoplay');
-        }
-
-        video.load();
-        video.classList.add('loaded');
-        video.removeAttribute('data-lazy-video');
-
-        // Try to play if autoplay and in viewport
-        if (video.hasAttribute('autoplay')) {
-          const rect = video.getBoundingClientRect();
-          if (rect.top < window.innerHeight && rect.bottom > 0) {
-            video.play().catch(() => {
-              // Autoplay blocked - that's ok
-            });
+          // Try to play if autoplay and in viewport
+          if (video.hasAttribute('autoplay')) {
+            const rect = video.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+              video.play().catch(() => {
+                // Autoplay blocked - that's ok
+              });
+            }
           }
         }
-      }
-    });
+      });
+    }
 
-    // IFRAMES: Convert ALL data-src → src (for Vimeo, YouTube, etc.)
-    const allIframes = Array.from(document.querySelectorAll('iframe[data-src]'));
-    log(`    Found ${allIframes.length} iframes with data-src`);
+    // ADDITIONAL: Handle iframes with data-lazy-iframe attribute
+    const lazyIframes = document.querySelectorAll('iframe[data-lazy-iframe]');
+    if (lazyIframes.length > 0) {
+      log(`    Found ${lazyIframes.length} iframes with data-lazy-iframe`);
 
-    allIframes.forEach((iframe, index) => {
-      if (iframe.dataset.src) {
-        iframe.src = iframe.dataset.src;
-        iframe.removeAttribute('data-src');
-        iframe.classList.add('loaded');
-        log(`    ✓ Iframe ${index + 1}: ${iframe.src.substring(0, 50)}...`);
-      }
-    });
-
-    // ALSO handle iframes with data-lazy-iframe attribute
-    const lazyIframes = Array.from(document.querySelectorAll('iframe[data-lazy-iframe]'));
-    log(`    Found ${lazyIframes.length} iframes with data-lazy-iframe`);
-
-    lazyIframes.forEach((iframe) => {
-      if (iframe.dataset.src && !iframe.src) {
-        iframe.src = iframe.dataset.src;
-        iframe.removeAttribute('data-src');
-        iframe.removeAttribute('data-lazy-iframe');
-        iframe.classList.add('loaded');
-      }
-    });
+      lazyIframes.forEach((iframe) => {
+        if (iframe.dataset.src && !iframe.src) {
+          iframe.src = iframe.dataset.src;
+          iframe.removeAttribute('data-src');
+          iframe.removeAttribute('data-lazy-iframe');
+          iframe.classList.add('loaded');
+        }
+      });
+    }
 
     log('  ✓ Universal lazy loading complete');
   }
@@ -1770,32 +1681,6 @@
     }
 
     log('━━━ Home page initialization complete ━━━');
-  }
-
-  function loadPageScript(src) {
-    // Dynamically load a page-specific script
-    return new Promise((resolve, reject) => {
-      // Check if already loaded
-      if (document.querySelector(`script[src="${src}"]`)) {
-        log(`  Script already loaded: ${src}`);
-        resolve();
-        return;
-      }
-
-      const script = document.createElement('script');
-      script.type = 'module';
-      script.src = src;
-      script.onload = () => {
-        log(`  ✓ Script loaded: ${src}`);
-        resolve();
-      };
-      script.onerror = () => {
-        log(`  ✗ Script load failed: ${src}`);
-        reject(new Error(`Failed to load script: ${src}`));
-      };
-
-      document.head.appendChild(script);
-    });
   }
 
   function reinitializeTranslations(pathOverride) {

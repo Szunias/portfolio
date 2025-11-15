@@ -2,6 +2,9 @@
 // Usage: Include this script in your HTML and call loadNavigation()
 
 function loadNavigation() {
+  console.log('%c[LANG-DEBUG] ======== navigation.js loadNavigation() ========', 'background: #607D8B; color: white; padding: 2px 5px; border-radius: 3px;');
+  console.log('%c[LANG-DEBUG] Current localStorage.getItem("language"):', 'color: #607D8B;', localStorage.getItem('language'));
+
   const nav = `
     <!-- Header -->
     <header class="header" id="header">
@@ -74,18 +77,31 @@ function loadNavigation() {
 
 // Set active class on current language button
 function setActiveLanguageButton() {
+  console.log('%c[LANG-DEBUG] setActiveLanguageButton() called', 'background: #4CAF50; color: white; padding: 2px 5px; border-radius: 3px;');
+
   try {
     const savedLang = localStorage.getItem('language') || 'en';
+    console.log('%c[LANG-DEBUG] localStorage.getItem("language"):', 'color: #2196F3; font-weight: bold;', savedLang);
+    console.log('%c[LANG-DEBUG] Effective language (savedLang):', 'color: #2196F3; font-weight: bold;', savedLang);
 
     // Update all language buttons (both desktop and mobile)
-    document.querySelectorAll('.lang-btn').forEach((btn) => {
-      if (btn.dataset.lang === savedLang) {
+    const buttons = document.querySelectorAll('.lang-btn');
+    console.log('%c[LANG-DEBUG] Found', 'color: #FF9800;', buttons.length, 'language buttons');
+
+    buttons.forEach((btn, index) => {
+      const btnLang = btn.dataset.lang;
+      const isActive = btnLang === savedLang;
+
+      if (isActive) {
         btn.classList.add('active');
+        console.log(`%c[LANG-DEBUG] Button #${index} [${btnLang}] → ACTIVE ✓`, 'color: #4CAF50; font-weight: bold;');
       } else {
         btn.classList.remove('active');
+        console.log(`%c[LANG-DEBUG] Button #${index} [${btnLang}] → inactive`, 'color: #999;');
       }
     });
   } catch (error) {
+    console.error('%c[LANG-DEBUG] ERROR:', 'color: #f44336; font-weight: bold;', error);
     // localStorage might be disabled - default to 'en'
     document.querySelectorAll('.lang-btn').forEach((btn) => {
       if (btn.dataset.lang === 'en') {
@@ -296,6 +312,14 @@ window.addEventListener('beforeunload', cleanupNavigation);
 
 // Expose cleanup function globally
 window.cleanupNavigation = cleanupNavigation;
+
+// Listen for language changes from BulletproofI18n (global listener, added once)
+window.addEventListener('languageChanged', (event) => {
+  console.log('%c[LANG-DEBUG] languageChanged event received!', 'background: #E91E63; color: white; padding: 2px 5px; border-radius: 3px;');
+  console.log('%c[LANG-DEBUG] Event detail:', 'color: #E91E63;', event.detail);
+  // Update language button active state when language changes
+  setActiveLanguageButton();
+});
 
 // Auto-load - always wait for DOM to be ready
 if (document.readyState === 'loading') {
