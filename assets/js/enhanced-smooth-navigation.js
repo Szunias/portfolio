@@ -1820,12 +1820,23 @@
           } else {
             log('  ✗ _applyTranslations not found!');
           }
+
+          // CRITICAL FIX: Render tech badges immediately after translations load (projects page)
+          if (typeof window.renderProjectTechTags === 'function') {
+            log('  → Calling renderProjectTechTags() after translations loaded');
+            window.renderProjectTechTags();
+          }
         })
         .catch((err) => {
           log('  ✗ Translation reload failed:', err);
           // Fallback: just apply whatever translations we have
           if (window.i18n._applyTranslations) {
             window.i18n._applyTranslations();
+          }
+          // Still try to render tech badges even if translation load failed
+          if (typeof window.renderProjectTechTags === 'function') {
+            log('  → Calling renderProjectTechTags() (fallback after error)');
+            window.renderProjectTechTags();
           }
         });
     }
