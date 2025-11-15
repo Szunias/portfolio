@@ -126,11 +126,25 @@ if (window.smoothNav) {
   });
 }
 
-// Initialize on first load
-init();
+// Flag to prevent double initialization
+let isInitialized = false;
 
-// Export init function for AJAX navigation
-window.initMusicPage = init;
+// Wrapper function to prevent double init
+async function initOnce() {
+  if (isInitialized) {
+    console.log('[Music] Already initialized, skipping duplicate init');
+    return;
+  }
+
+  isInitialized = true;
+  await init();
+}
+
+// Initialize on first load
+initOnce();
+
+// Export init function for AJAX navigation (wrapped to prevent duplicates)
+window.initMusicPage = initOnce;
 
 // Listen for AJAX navigation
 window.addEventListener('pageContentLoaded', () => {
@@ -140,8 +154,22 @@ window.addEventListener('pageContentLoaded', () => {
 
   if (window.location.pathname.includes('music')) {
     console.log('[Music] Reinitializing after AJAX navigation');
-    init();
+    // CRITICAL: Cleanup old event listeners before reinit to prevent duplicates
+    cleanupPlayerEvents();
+    isInitialized = false; // Reset flag to allow reinit
+    initOnce();
   } else {
-    console.log('[Music] Not on music page, skipping init');
+    console.log('[Music] Left music page - cleaning up player events');
+    // CRITICAL: Cleanup when navigating AWAY from music page
+    try {
+      cleanupPlayerEvents();
+      isInitialized = false; // Reset flag
+      // Pause audio if playing
+      if (elements?.audio && !elements.audio.paused) {
+        elements.audio.pause();
+      }
+    } catch (error) {
+      console.warn('[Music] Cleanup error:', error);
+    }
   }
 });

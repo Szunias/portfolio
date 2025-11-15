@@ -446,6 +446,12 @@ function handlePlaylistActivation(target) {
   play();
 }
 
+// Store event handler references for cleanup
+let playlistClickHandler = null;
+let playlistKeydownHandler = null;
+let volumeSliderInputHandler = null;
+let volumeIconClickHandler = null;
+
 export function bindPlayerEvents() {
   if (!elements.audio) return;
 
@@ -533,7 +539,7 @@ export function bindPlayerEvents() {
   }
 
   if (elements.volumeSlider) {
-    elements.volumeSlider.addEventListener("input", (event) => {
+    volumeSliderInputHandler = (event) => {
       const input = event.target;
       if (!(input instanceof HTMLInputElement)) return;
       const volume = Number.parseFloat(input.value) / 100;
@@ -543,11 +549,12 @@ export function bindPlayerEvents() {
       if (volume > 0) {
         state.previousVolume = volume;
       }
-    });
+    };
+    elements.volumeSlider.addEventListener("input", volumeSliderInputHandler);
   }
 
   if (elements.volumeIcon && elements.volumeSlider) {
-    elements.volumeIcon.addEventListener("click", () => {
+    volumeIconClickHandler = () => {
       if (elements.audio.volume > 0) {
         state.previousVolume = elements.audio.volume;
         elements.audio.volume = 0;
@@ -564,19 +571,22 @@ export function bindPlayerEvents() {
         );
         updateVolumeIcon(state.previousVolume);
       }
-    });
+    };
+    elements.volumeIcon.addEventListener("click", volumeIconClickHandler);
   }
 
   if (elements.playlist) {
-    elements.playlist.addEventListener("click", (event) => {
+    playlistClickHandler = (event) => {
       handlePlaylistActivation(event.target);
-    });
+    };
+    elements.playlist.addEventListener("click", playlistClickHandler);
 
-    elements.playlist.addEventListener("keydown", (event) => {
+    playlistKeydownHandler = (event) => {
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
       handlePlaylistActivation(event.target);
-    });
+    };
+    elements.playlist.addEventListener("keydown", playlistKeydownHandler);
   }
 
   // Global keyboard shortcuts for music player
@@ -588,8 +598,55 @@ export function bindPlayerEvents() {
  * Call this when navigating away from the music page or before re-initializing
  */
 export function cleanupPlayerEvents() {
+  console.log('[player-controls] cleanupPlayerEvents() called');
+
   // Remove global keyboard shortcut listener
   document.removeEventListener("keydown", handleKeyboardShortcuts);
+
+  // Remove button listeners
+  if (elements.playBtn) {
+    elements.playBtn.removeEventListener("click", togglePlay);
+  }
+  if (elements.nextBtn) {
+    elements.nextBtn.removeEventListener("click", nextTrack);
+  }
+  if (elements.prevBtn) {
+    elements.prevBtn.removeEventListener("click", prevTrack);
+  }
+
+  // Remove volume control listeners
+  if (elements.volumeIcon && volumeIconClickHandler) {
+    elements.volumeIcon.removeEventListener("click", volumeIconClickHandler);
+    volumeIconClickHandler = null;
+  }
+  if (elements.volumeSlider && volumeSliderInputHandler) {
+    elements.volumeSlider.removeEventListener("input", volumeSliderInputHandler);
+    volumeSliderInputHandler = null;
+  }
+
+  // Remove progress bar listeners
+  if (elements.progressBar) {
+    elements.progressBar.removeEventListener("mousedown", handleProgressBarMouseDown);
+    elements.progressBar.removeEventListener("click", handleProgressBarClick);
+    elements.progressBar.removeEventListener("mousemove", handleProgressBarMouseMove);
+    elements.progressBar.removeEventListener("mouseenter", handleProgressBarMouseEnter);
+    elements.progressBar.removeEventListener("mouseleave", handleProgressBarMouseLeave);
+    elements.progressBar.removeEventListener("touchstart", handleProgressBarTouchStart);
+    elements.progressBar.removeEventListener("touchmove", handleProgressBarTouchMove);
+    elements.progressBar.removeEventListener("touchend", handleProgressBarTouchEnd);
+  }
+
+  // Remove playlist listeners
+  if (elements.playlist) {
+    if (playlistClickHandler) {
+      elements.playlist.removeEventListener("click", playlistClickHandler);
+      playlistClickHandler = null;
+    }
+    if (playlistKeydownHandler) {
+      elements.playlist.removeEventListener("keydown", playlistKeydownHandler);
+      playlistKeydownHandler = null;
+    }
+  }
 
   // Remove audio element listeners
   if (elements.audio) {
@@ -614,6 +671,8 @@ export function cleanupPlayerEvents() {
   document.removeEventListener("mouseup", handleProgressBarMouseUp);
   document.removeEventListener("touchmove", handleProgressBarTouchMove);
   document.removeEventListener("touchend", handleProgressBarTouchEnd);
+
+  console.log('[player-controls] cleanupPlayerEvents() completed');
 }
 
 // Keyboard shortcuts handler
