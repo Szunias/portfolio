@@ -1239,42 +1239,33 @@
 
   <!-- Scripts -->
   <script>
-    // Header scroll effect (unified across all pages) - fixed to prevent duplicates
-    let headerScrollInitialized = false;
-    let headerScrollHandler = null;
+    // CRITICAL FIX: Track observers for cleanup
+    window.__contactPageObservers = window.__contactPageObservers || [];
 
-    function initHeaderScrollEffect() {
-      const header = document.getElementById('header');
-      if (!header || headerScrollInitialized) return;
+    // CRITICAL FIX: Removed duplicate header scroll effect
+    // This functionality is already handled by navigation.js initScrollEffect()
+    // Keeping it here caused duplicate event listeners on every AJAX navigation
 
-      // Remove any existing scroll listeners to avoid duplicates
-      if (headerScrollHandler) {
-        window.removeEventListener('scroll', headerScrollHandler);
+    // CRITICAL FIX: Cleanup function to prevent memory leaks
+    function cleanupContactPage() {
+      // 1. Disconnect all IntersectionObservers
+      if (window.__contactPageObservers) {
+        window.__contactPageObservers.forEach((observer) => {
+          observer.disconnect();
+        });
+        window.__contactPageObservers = [];
       }
 
-      headerScrollHandler = function handleHeaderScroll() {
-        if (window.scrollY > 50) {
-          header.classList.add('scrolled');
-        } else {
-          header.classList.remove('scrolled');
-        }
-      };
-
-      // Add the scroll listener only once
-      window.addEventListener('scroll', headerScrollHandler, { passive: true });
-      headerScrollInitialized = true;
-
-      // Call once immediately to set correct initial state
-      headerScrollHandler();
+      // Note: Event listeners attached to elements are automatically
+      // garbage collected when those elements are removed from DOM
+      // during AJAX navigation. No manual cleanup needed.
     }
 
-    // Initialize only once when DOM is ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initHeaderScrollEffect, { once: true });
-    } else {
-      // DOM already loaded
-      initHeaderScrollEffect();
-    }
+    // Expose cleanup function globally for enhanced-smooth-navigation
+    window.__cleanupContactPage = cleanupContactPage;
+
+    // Run cleanup before page unload
+    window.addEventListener('beforeunload', cleanupContactPage);
 
     // Form submission
     document.getElementById('contact-form').addEventListener('submit', async function(e) {
@@ -1314,7 +1305,7 @@
       }
     });
 
-    // Scroll reveal animations - CRITICAL FOR FADE-IN EFFECTS
+    // CRITICAL FIX: Scroll reveal animations with proper cleanup
     const observerOptions = {
       threshold: 0.05,
       rootMargin: '0px 0px 100px 0px'
@@ -1324,9 +1315,14 @@
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
+          // CRITICAL FIX: Unobserve after adding class to prevent unnecessary checks
+          observer.unobserve(entry.target);
         }
       });
     }, observerOptions);
+
+    // CRITICAL FIX: Track observer for cleanup
+    window.__contactPageObservers.push(observer);
 
     document.querySelectorAll('.fade-in').forEach(el => {
       observer.observe(el);
@@ -1346,6 +1342,7 @@
       });
     });
 
+    // FAQ toggle functionality
     const faqItems = document.querySelectorAll('.faq-item');
     faqItems.forEach((item, index) => {
       const button = item.querySelector('.faq-question');

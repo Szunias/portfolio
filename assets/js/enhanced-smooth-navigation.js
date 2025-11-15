@@ -630,6 +630,12 @@
       window.__cleanupAboutPage();
     }
 
+    // CRITICAL FIX: Cleanup contact page specific resources (observers)
+    if (typeof window.__cleanupContactPage === 'function') {
+      log('  🧹 Running contact page cleanup (observers)');
+      window.__cleanupContactPage();
+    }
+
     // Note: Event listeners on document/window are kept (handleLinkClick, handlePopState)
     // because they need to persist across navigations. They use event delegation
     // so they don't accumulate with each navigation.
