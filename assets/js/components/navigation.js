@@ -2,24 +2,33 @@
 // Usage: Include this script in your HTML and call loadNavigation()
 
 function loadNavigation() {
+  // CRITICAL FIX: Mark navigation as translation-ready immediately
+  // Navigation translations are already inlined in window.__I18N__
+  // This prevents visibility flicker and layout shifts on nav links
+  if (window.__I18N__ && !document.documentElement.classList.contains('translations-ready')) {
+    document.documentElement.classList.add('translations-ready');
+  }
+
   const nav = `
     <!-- Header -->
     <header class="header" id="header">
       <div class="container">
         <nav class="nav">
           <a href="/" class="logo">Igor Szuniewicz</a>
-          <ul class="nav-links">
-            <li><a href="/" data-i18n="nav_home">Home</a></li>
-            <li><a href="/about.html" data-i18n="nav_about">About</a></li>
-            <li><a href="/projects/" data-i18n="nav_projects">Projects</a></li>
-            <li><a href="/music.html" data-i18n="nav_music">Music</a></li>
-            <li><a href="/contact.html" data-i18n="nav_contact">Contact</a></li>
-            <li class="lang-switcher">
+          <div class="nav-menu">
+            <ul class="nav-links">
+              <li><a href="/" data-i18n="nav_home">Home</a></li>
+              <li><a href="/about.html" data-i18n="nav_about">About</a></li>
+              <li><a href="/projects/" data-i18n="nav_projects">Projects</a></li>
+              <li><a href="/music.html" data-i18n="nav_music">Music</a></li>
+              <li><a href="/contact.html" data-i18n="nav_contact">Contact</a></li>
+            </ul>
+            <div class="lang-switcher">
               <button class="lang-btn" data-lang="en">EN</button>
               <button class="lang-btn" data-lang="pl">PL</button>
               <button class="lang-btn" data-lang="nl">NL</button>
-            </li>
-          </ul>
+            </div>
+          </div>
           <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu">
             <span></span>
             <span></span>

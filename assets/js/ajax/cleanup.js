@@ -57,22 +57,37 @@ export class CleanupManager {
     this.activeObservers.clear();
     this.log(`  ✓ Disconnected ${disconnectedCount} observers`);
 
-    // 2. Cleanup about page specific resources (rAF, particles)
-    if (typeof window.__cleanupAboutPage === 'function') {
-      this.log('  🧹 Running about page cleanup (rAF, particles)');
-      window.__cleanupAboutPage();
-    }
+    // 2. Cleanup using shared cleanup-manager (handles all pages automatically)
+    if (typeof window.cleanupCurrentPage === 'function') {
+      this.log('  🧹 Running shared cleanup manager');
+      window.cleanupCurrentPage();
+    } else {
+      // Fallback to manual page-specific cleanup
+      this.log('  🧹 Using fallback cleanup (no shared cleanup-manager)');
 
-    // 3. Cleanup contact page specific resources (observers)
-    if (typeof window.__cleanupContactPage === 'function') {
-      this.log('  🧹 Running contact page cleanup (observers)');
-      window.__cleanupContactPage();
-    }
+      // Index page
+      if (typeof window.__cleanupIndexPage === 'function') {
+        this.log('    → Running index page cleanup');
+        window.__cleanupIndexPage();
+      }
 
-    // 4. Cleanup music page specific resources (observers, audio, player)
-    if (typeof window.__cleanupMusicPage === 'function') {
-      this.log('  🧹 Running music page cleanup (observers, audio, player)');
-      window.__cleanupMusicPage();
+      // About page specific resources (rAF, particles)
+      if (typeof window.__cleanupAboutPage === 'function') {
+        this.log('    → Running about page cleanup (rAF, particles)');
+        window.__cleanupAboutPage();
+      }
+
+      // Contact page specific resources (observers)
+      if (typeof window.__cleanupContactPage === 'function') {
+        this.log('    → Running contact page cleanup (observers)');
+        window.__cleanupContactPage();
+      }
+
+      // Music page specific resources (observers, audio, player)
+      if (typeof window.__cleanupMusicPage === 'function') {
+        this.log('    → Running music page cleanup (observers, audio, player)');
+        window.__cleanupMusicPage();
+      }
     }
 
     // Reset scroll animation observer reference

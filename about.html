@@ -179,9 +179,16 @@
   </head>
 
   <body>
+    <a href="#main" class="skip-link">Skip to main content</a>
     <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-orbs">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
 
-    <main>
+    <main id="main">
 
       <section class="hero">
         <div class="hero-content">
@@ -679,6 +686,13 @@
       });
     </script>
 
+    <!-- Shared modules for all pages -->
+    <script src="assets/js/components/shared/scroll-reveal.js"></script>
+    <script src="assets/js/components/shared/smooth-scroll.js"></script>
+    <script src="assets/js/components/shared/lazy-images.js"></script>
+    <script src="assets/js/components/shared/cleanup-manager.js"></script>
+    <script src="assets/js/components/footer.js"></script>
+
     <script>
       // CRITICAL FIX: SKILL_CONNECTIONS removed - using SKILL_DATA from skill-modal-system.js instead
       // This prevents data duplication and ensures consistency
@@ -849,68 +863,8 @@
         });
       }
 
-      // Scroll reveal - CRITICAL FIX: Track observer for cleanup
-      function initScrollReveal() {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-              }
-            });
-          },
-          { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-        );
-
-        // CRITICAL FIX: Track observer for cleanup
-        window.__aboutPageObservers.push(observer);
-
-        document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
-      }
-
-      // Lazy load avatar - CRITICAL FIX: Use existing lazy loading system
-      function initLazyImage() {
-        const lazyImg = document.querySelector('img.lazy-img[data-src]');
-        if (!lazyImg) return;
-
-        // CRITICAL FIX: Skip if already loaded by another system
-        if (lazyImg.dataset.lazyLoaded === 'true') {
-          return;
-        }
-
-        if ('IntersectionObserver' in window) {
-          const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                const img = entry.target;
-
-                // CRITICAL FIX: Skip if already loaded
-                if (img.dataset.lazyLoaded === 'true') {
-                  observer.unobserve(img);
-                  return;
-                }
-
-                // CRITICAL FIX: Mark as loading
-                img.dataset.lazyLoaded = 'true';
-
-                img.src = img.getAttribute('data-src');
-                img.removeAttribute('data-src');
-                observer.unobserve(img);
-              }
-            });
-          });
-
-          // CRITICAL FIX: Track observer for cleanup
-          window.__aboutPageObservers.push(observer);
-
-          observer.observe(lazyImg);
-        } else {
-          // CRITICAL FIX: Mark as loading even in fallback
-          lazyImg.dataset.lazyLoaded = 'true';
-          lazyImg.src = lazyImg.getAttribute('data-src');
-        }
-      }
+      // REMOVED: initScrollReveal() - now handled by shared/scroll-reveal.js
+      // REMOVED: initLazyImage() - now handled by shared/lazy-images.js
 
       // CRITICAL FIX: Cleanup function to prevent memory leaks
       function cleanupAboutPage() {
@@ -957,15 +911,12 @@
       // Track observers for cleanup
       window.__aboutPageObservers = window.__aboutPageObservers || [];
 
+      // REMOVED: initScrollReveal() and initLazyImage() - now handled by shared modules
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-          initScrollReveal();
-          initLazyImage();
           initSkillConnections();
         });
       } else {
-        initScrollReveal();
-        initLazyImage();
         initSkillConnections();
       }
     </script>

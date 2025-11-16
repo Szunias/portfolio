@@ -1009,10 +1009,7 @@
   </script>
 </head>
 <body>
-  <!-- Skip to main content for keyboard users -->
   <a href="#main" class="skip-link">Skip to main content</a>
-
-  <!-- Background -->
   <div class="bg-gradient"></div>
   <div class="bg-grid"></div>
   <div class="bg-orbs">
@@ -1021,9 +1018,6 @@
     <div class="orb orb-3"></div>
   </div>
 
-  <!-- Navigation loaded by navigation.js -->
-
-  <!-- Page Content -->
   <main id="main">
     <div class="page-content">
     <div class="container">
@@ -1305,42 +1299,9 @@
       }
     });
 
-    // CRITICAL FIX: Scroll reveal animations with proper cleanup
-    const observerOptions = {
-      threshold: 0.05,
-      rootMargin: '0px 0px 100px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          // CRITICAL FIX: Unobserve after adding class to prevent unnecessary checks
-          observer.unobserve(entry.target);
-        }
-      });
-    }, observerOptions);
-
-    // CRITICAL FIX: Track observer for cleanup
-    window.__contactPageObservers.push(observer);
-
-    document.querySelectorAll('.fade-in').forEach(el => {
-      observer.observe(el);
-    });
-
-    // Smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
-        if (!href || href === '#') return;
-
-        e.preventDefault();
-        const target = document.querySelector(href);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    });
+    // REMOVED: Scroll reveal and smooth scroll - now handled by shared modules
+    // - shared/scroll-reveal.js handles fade-in animations
+    // - shared/smooth-scroll.js handles anchor link scrolling
 
     // FAQ toggle functionality
     const faqItems = document.querySelectorAll('.faq-item');
@@ -1399,13 +1360,21 @@
   <script type="module" src="assets/js/enhanced-smooth-navigation.js" defer></script>
   <script type="module" src="assets/js/components/navigation.js" defer></script>
   <script type="module" src="assets/js/components/custom-cursor.js" defer></script>
-          <!-- Bulletproof i18n System - 5-layer fallback, never crashes -->
-        <script type="module">
-            import i18n from '/assets/js/refactored/services/BulletproofI18n.js';
-            i18n.init().catch(error => {
-                console.error('i18n initialization failed:', error);
-                // Page still works with inline critical translations!
-            });
-        </script>
+
+  <!-- Shared modules for all pages -->
+  <script src="assets/js/components/shared/scroll-reveal.js"></script>
+  <script src="assets/js/components/shared/smooth-scroll.js"></script>
+  <script src="assets/js/components/shared/lazy-images.js"></script>
+  <script src="assets/js/components/shared/cleanup-manager.js"></script>
+  <script src="assets/js/components/footer.js"></script>
+
+  <!-- Bulletproof i18n System - 5-layer fallback, never crashes -->
+  <script type="module">
+    import i18n from '/assets/js/refactored/services/BulletproofI18n.js';
+    i18n.init().catch(error => {
+      console.error('i18n initialization failed:', error);
+      // Page still works with inline critical translations!
+    });
+  </script>
 </body>
 </html>

@@ -55,36 +55,57 @@ export class ScriptReinitializer {
 
   /**
    * Reinitialize scroll-based animations
+   * Now uses shared modules for consistency
    */
   reinitializeScrollAnimations() {
-    // Intersection Observer dla .fade-in elementów
-    const fadeElements = document.querySelectorAll('.fade-in, .animate-on-scroll');
+    // Use shared scroll-reveal module if available
+    if (typeof window.initScrollReveal === 'function') {
+      this.log('  → Using shared scroll-reveal module');
+      window.initScrollReveal();
+    } else {
+      // Fallback to old implementation
+      this.log('  → Using fallback scroll reveal');
+      const fadeElements = document.querySelectorAll('.fade-in, .animate-on-scroll');
+      if (fadeElements.length === 0) return;
 
-    if (fadeElements.length === 0) return;
+      const scrollAnimationObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        }
+      );
 
-    // Utwórz nowy observer
-    const scrollAnimationObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
-        });
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-      }
-    );
+      this.cleanupManager.setScrollAnimationObserver(scrollAnimationObserver);
+      fadeElements.forEach((el) => {
+        el.classList.remove('visible');
+        scrollAnimationObserver.observe(el);
+      });
+    }
 
-    // Track observer for cleanup
-    this.cleanupManager.setScrollAnimationObserver(scrollAnimationObserver);
+    // Reinitialize smooth scroll for anchor links
+    if (typeof window.initSmoothScroll === 'function') {
+      this.log('  → Using shared smooth-scroll module');
+      window.initSmoothScroll();
+    }
 
-    // Obserwuj wszystkie elementy
-    fadeElements.forEach((el) => {
-      el.classList.remove('visible');
-      scrollAnimationObserver.observe(el);
-    });
+    // Reinitialize lazy images
+    if (typeof window.initLazyImages === 'function') {
+      this.log('  → Using shared lazy-images module');
+      window.initLazyImages();
+    }
+
+    // Reinitialize footer
+    if (typeof window.initFooter === 'function') {
+      this.log('  → Using shared footer module');
+      window.initFooter();
+    }
   }
 
   /**
@@ -108,6 +129,19 @@ export class ScriptReinitializer {
   }
 
   /**
+   * Check if current page has translations outside navigation
+   * Navigation translations are already inlined and loaded
+   * @returns {boolean} True if page has content requiring translation
+   */
+  hasPageSpecificTranslations() {
+    // Check for [data-i18n] elements in main content areas (not navigation/header)
+    const pageTranslations = document.querySelectorAll(
+      'main [data-i18n], .hero [data-i18n], footer [data-i18n], #work [data-i18n], #about [data-i18n]'
+    );
+    return pageTranslations.length > 0;
+  }
+
+  /**
    * Reinitialize translations system
    */
   reinitializeTranslations(pathOverride) {
@@ -122,7 +156,30 @@ export class ScriptReinitializer {
     if (window.i18n && typeof window.i18n.load === 'function') {
       this.log('  → Using BulletproofI18n system');
 
-      // Load translations for current language and path
+      // PERFORMANCE OPTIMIZATION: Check if page needs specific translations
+      // Navigation translations are already inlined in window.__I18N__ and loaded
+      const needsPageTranslations = this.hasPageSpecificTranslations();
+
+      if (!needsPageTranslations) {
+        this.log('  ⚡ PERFORMANCE: Only navigation translations needed (skipping JSON load)');
+        this.log('  → Reapplying existing translations from window.__I18N__');
+
+        // Just reapply existing translations without loading JSON
+        if (window.i18n._applyTranslations && typeof window.i18n._applyTranslations === 'function') {
+          window.i18n._applyTranslations();
+          this.log('  ✓ Translations applied (instant, no network request)');
+        }
+
+        // Still call tech tags renderer if it exists
+        if (typeof window.renderProjectTechTags === 'function') {
+          window.renderProjectTechTags();
+        }
+
+        return Promise.resolve();
+      }
+
+      // Page has specific content that needs translation - load JSON
+      this.log('  → Page has specific content, loading translations JSON');
       return window.i18n
         .load(currentLang, targetPath)
         .then(() => {

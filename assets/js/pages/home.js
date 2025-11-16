@@ -4,9 +4,9 @@ import { initVimeoFallback } from './home/vimeo.js';
 import { initTimestamps } from './home/timestamps.js';
 import { initTimelineNav } from './home/timeline-nav.js';
 import { initHeaderScroll } from './home/header-scroll.js';
-import { initScrollReveal } from './home/scroll-reveal.js';
+// REMOVED: initScrollReveal - now handled by shared/scroll-reveal.js
 import { initCounters } from './home/counter.js';
-import { initSmoothScroll } from './home/smooth-scroll.js';
+// REMOVED: initSmoothScroll - now handled by shared/smooth-scroll.js
 import { initCursorGlow } from './home/cursor-glow.js';
 import { initProjectCardHover } from './home/project-hover.js';
 import { initLanguagePrompt } from './home/language-prompt.js';
@@ -28,9 +28,9 @@ const timelineNavCleanup = initTimelineNav();
 if (timelineNavCleanup) cleanupFunctions.push(timelineNavCleanup);
 
 initHeaderScroll(); // Now empty - navigation.js handles it
-initScrollReveal();
+// REMOVED: initScrollReveal() - now handled by shared/scroll-reveal.js
 initCounters();
-initSmoothScroll(); // Now empty - enhanced-smooth-navigation handles it
+// REMOVED: initSmoothScroll() - now handled by shared/smooth-scroll.js
 
 // CRITICAL FIX: Store cleanup function from cursor-glow
 const cursorGlowCleanup = initCursorGlow();
