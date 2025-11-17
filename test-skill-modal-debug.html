@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Skill Modal Debug Test</title>
+  <script>
+    // Simulate the translation setup
+    window.__I18N__ = {
+      en: {
+        skillModal_connectedTech: 'Connected Technologies',
+        skillModal_projectUsage: 'Project Usage',
+        skillModal_noConnections: 'No direct cross-category connections'
+      }
+    };
+
+    window.i18n = {
+      translations: {
+        en: {
+          skillModal_connectedTech: 'Connected Technologies (from JSON)',
+          skillModal_projectUsage: 'Project Usage (from JSON)',
+          skillModal_noConnections: 'No direct cross-category connections (from JSON)'
+        }
+      }
+    };
+  </script>
+</head>
+<body>
+  <h1>Skill Modal Translation Debug Test</h1>
+
+  <div id="results"></div>
+
+  <script src="assets/js/skill-modal-system.js"></script>
+
+  <script>
+    const results = document.getElementById('results');
+
+    // Test the getTranslation function
+    console.log('Testing getTranslation function...');
+
+    const tests = [
+      { key: 'skillModal_connectedTech', expected: 'Connected Technologies (from JSON)' },
+      { key: 'skillModal_projectUsage', expected: 'Project Usage (from JSON)' },
+      { key: 'skillModal_noConnections', expected: 'No direct cross-category connections (from JSON)' }
+    ];
+
+    let html = '<h2>Test Results:</h2><ul>';
+
+    tests.forEach(test => {
+      const result = getTranslation(test.key);
+      const status = result === test.expected ? '✅ PASS' : '❌ FAIL';
+      html += `<li>${status} - Key: "${test.key}"<br>Expected: "${test.expected}"<br>Got: "${result}"</li>`;
+      console.log(`${status} - ${test.key}: ${result}`);
+    });
+
+    html += '</ul>';
+
+    // Check what's actually in window.i18n.translations
+    html += '<h2>window.i18n.translations.en:</h2><pre>' +
+            JSON.stringify(window.i18n.translations.en, null, 2) + '</pre>';
+
+    // Check what's in window.__I18N__
+    html += '<h2>window.__I18N__.en:</h2><pre>' +
+            JSON.stringify(window.__I18N__.en, null, 2) + '</pre>';
+
+    results.innerHTML = html;
+  </script>
+</body>
+</html>
