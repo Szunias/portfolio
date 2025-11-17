@@ -617,27 +617,18 @@ export class NavigationCore {
       elementsToKeep.add(style);
     });
 
-    // Remove everything except infrastructure
-    const bodyChildren = Array.from(document.body.children);
-    this.log(
-      `  Removing ${bodyChildren.length} body children (keeping ${elementsToKeep.size} infrastructure elements)`
-    );
-
-    bodyChildren.forEach((child) => {
-      if (!elementsToKeep.has(child)) {
-        child.remove();
-      }
-    });
-
-    // Parse new body content
+    // Parse new body content FIRST (before removing anything)
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = pageData.body;
 
     const existingHeader = document.querySelector('header');
     const newElements = Array.from(tempDiv.children);
-    this.log(`  Adding ${newElements.length} new elements from fetched page`);
 
-    let lastInsertedElement = existingHeader;
+    // Prepare all new elements and scripts in a document fragment for atomic insertion
+    const fragment = document.createDocumentFragment();
+    const scriptsToAdd = [];
+
+    this.log(`  Preparing ${newElements.length} new elements from fetched page`);
 
     newElements.forEach((el) => {
       const tagName = el.tagName.toLowerCase();
@@ -654,7 +645,7 @@ export class NavigationCore {
         const isCore = coreScriptPaths.some((corePath) => src.includes(corePath));
 
         if (!isCore && src) {
-          this.log(`    → Adding page-specific script: ${src}`);
+          this.log(`    → Preparing page-specific script: ${src}`);
 
           const newScript = document.createElement('script');
           newScript.type = el.type || 'module';
@@ -666,26 +657,44 @@ export class NavigationCore {
             }
           });
 
-          document.body.appendChild(newScript);
+          scriptsToAdd.push(newScript);
         }
         return;
       }
 
-      // Skip infrastructure
+      // Skip infrastructure, add content to fragment
       if (!isInfrastructure) {
-        if (lastInsertedElement && lastInsertedElement.nextSibling) {
-          document.body.insertBefore(el, lastInsertedElement.nextSibling);
-        } else if (lastInsertedElement) {
-          lastInsertedElement.parentNode.appendChild(el);
-        } else {
-          document.body.appendChild(el);
-        }
-
-        lastInsertedElement = el;
-        this.log(`    → Added <${tagName}> element`);
+        fragment.appendChild(el);
+        this.log(`    → Prepared <${tagName}> element`);
       } else {
         this.log(`    → Skipped <${tagName}> (infrastructure)`);
       }
+    });
+
+    // NOW remove old content and immediately insert new content (atomic swap)
+    const bodyChildren = Array.from(document.body.children);
+    this.log(
+      `  Swapping content: removing ${bodyChildren.length} body children (keeping ${elementsToKeep.size} infrastructure elements)`
+    );
+
+    bodyChildren.forEach((child) => {
+      if (!elementsToKeep.has(child)) {
+        child.remove();
+      }
+    });
+
+    // Immediately insert all new content after header
+    if (existingHeader && existingHeader.nextSibling) {
+      document.body.insertBefore(fragment, existingHeader.nextSibling);
+    } else if (existingHeader) {
+      existingHeader.parentNode.appendChild(fragment);
+    } else {
+      document.body.appendChild(fragment);
+    }
+
+    // Add scripts last
+    scriptsToAdd.forEach((script) => {
+      document.body.appendChild(script);
     });
 
     this.log('✓ Body content replaced');
