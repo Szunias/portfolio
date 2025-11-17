@@ -342,18 +342,15 @@ const CATEGORY_COLORS = {
 // Can optionally accept language parameter (used during language change events)
 function getTranslation(key, forceLang = null) {
   const lang = forceLang || localStorage.getItem('language') || 'en';
-  console.log(`[getTranslation] Looking up key="${key}", lang="${lang}"`);
 
   // Try loaded translations first (from BulletproofI18n)
   if (window.i18n && window.i18n.translations && window.i18n.translations[lang]) {
     const keys = key.split('.');
     let value = window.i18n.translations[lang];
-    console.log(`[getTranslation] Trying window.i18n.translations[${lang}]`, value ? 'exists' : 'missing');
     for (const k of keys) {
       value = value?.[k];
     }
     if (value && value !== key) {
-      console.log(`[getTranslation] ✓ Found in window.i18n.translations: "${value}"`);
       return value;
     }
   }
@@ -361,12 +358,10 @@ function getTranslation(key, forceLang = null) {
   // Fallback to inline critical translations
   const keys = key.split('.');
   let value = window.__I18N__?.[lang];
-  console.log(`[getTranslation] Trying window.__I18N__[${lang}]`, value ? 'exists' : 'missing');
   for (const k of keys) {
     value = value?.[k];
   }
   const result = value || key;
-  console.log(`[getTranslation] ${value ? '✓ Found' : '✗ Not found'} in window.__I18N__, returning: "${result}"`);
   return result;
 }
 
@@ -402,11 +397,7 @@ function initSkillModal() {
   // Always update section headers with translations (even if overlay exists)
   overlay.querySelectorAll('.modal-section-header').forEach((header) => {
     const section = header.dataset.section;
-    const key = `skillModal_${section}`;
-    const translation = getTranslation(key);
-    console.log(`[SkillModal] Translating header: section="${section}", key="${key}", translation="${translation}"`);
-    console.log(`[SkillModal] window.i18n.translations available:`, !!window.i18n?.translations);
-    console.log(`[SkillModal] window.__I18N__ available:`, !!window.__I18N__);
+    const translation = getTranslation(`skillModal_${section}`);
     header.textContent = translation;
   });
 
