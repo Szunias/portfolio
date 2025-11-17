@@ -527,137 +527,226 @@ window.__preloadedLang=savedLang;
         }
       }
 
-      /* Language Switcher - Circular Floating Menu */
+      /* Language Switcher - Orbital mini flags */
       .lang-switcher {
         position: fixed;
-        top: 2rem;
-        right: 2rem;
+        top: 1.5rem;
+        right: 1.5rem;
+        width: 180px;
+        height: 180px;
         z-index: 1000;
-        width: 70px;
-        height: 70px;
       }
 
-      /* Main circular button */
+      .lang-switcher-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
       .lang-main-btn {
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(250, 250, 250, 0.95));
+        left: 50%;
+        top: 50%;
+        width: 90px;
+        height: 90px;
+        transform: translate(-50%, -50%);
+        border-radius: 28px;
+        background: radial-gradient(circle at top, rgba(255, 255, 255, 0.98), rgba(227, 232, 239, 0.9));
+        border: 1px solid rgba(15, 23, 42, 0.12);
         backdrop-filter: blur(20px) saturate(180%);
-        border: 2px solid rgba(26, 26, 26, 0.1);
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.12),
-          0 2px 8px rgba(0, 0, 0, 0.08),
-          inset 0 1px 0 rgba(255, 255, 255, 0.8);
+          0 20px 45px rgba(15, 23, 42, 0.18),
+          0 8px 20px rgba(15, 23, 42, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.85);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 10;
+        transition:
+          transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+          box-shadow 0.45s ease;
+        z-index: 2;
       }
 
-      .lang-main-btn:hover {
-        transform: scale(1.05);
+      .lang-main-btn::after {
+        content: '';
+        position: absolute;
+        inset: -16px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(99, 102, 241, 0.12), transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+      }
+
+      .lang-switcher-inner:hover .lang-main-btn,
+      .lang-switcher-inner:focus-within .lang-main-btn,
+      .lang-switcher-inner.open .lang-main-btn {
+        transform: translate(-50%, calc(-50% - 3px));
         box-shadow:
-          0 12px 40px rgba(0, 0, 0, 0.15),
-          0 4px 12px rgba(0, 0, 0, 0.1),
-          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+          0 28px 60px rgba(15, 23, 42, 0.22),
+          0 12px 30px rgba(15, 23, 42, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      }
+
+      .lang-switcher-inner:hover .lang-main-btn::after,
+      .lang-switcher-inner:focus-within .lang-main-btn::after,
+      .lang-switcher-inner.open .lang-main-btn::after {
+        opacity: 1;
+      }
+
+      .lang-main-btn .lang-flag,
+      .lang-btn .lang-flag {
+        width: 38px;
+        height: 26px;
+        border-radius: 6px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: rgba(15, 23, 42, 0.02);
       }
 
       .lang-main-btn .lang-flag {
-        width: 36px;
-        height: 26px;
-        border-radius: 4px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.22);
       }
 
-      /* Language option buttons - Triangle layout */
-      .lang-btn {
+      .lang-flag.flag-en {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'%3E%3Crect width='60' height='30' fill='%23012169'/%3E%3Cpath d='M0,0 L60,30 M60,0 L0,30' stroke='%23fff' stroke-width='6'/%3E%3Cpath d='M0,0 L60,30 M60,0 L0,30' stroke='%23C8102E' stroke-width='4'/%3E%3Cpath d='M30,0 v30 M0,15 h60' stroke='%23fff' stroke-width='10'/%3E%3Cpath d='M30,0 v30 M0,15 h60' stroke='%23C8102E' stroke-width='6'/%3E%3C/svg%3E");
+      }
+
+      .lang-flag.flag-pl {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3Crect width='16' height='5' fill='%23fff'/%3E%3Crect y='5' width='16' height='5' fill='%23dc143c'/%3E%3C/svg%3E");
+      }
+
+      .lang-flag.flag-nl {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 6'%3E%3Crect width='9' height='6' fill='%2321468B'/%3E%3Crect width='9' height='4' fill='%23fff'/%3E%3Crect width='9' height='2' fill='%23AE1C28'/%3E%3C/svg%3E");
+      }
+
+      .lang-main-btn .lang-label {
         position: absolute;
-        width: 56px;
-        height: 56px;
+        bottom: 8px;
+        right: 12px;
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        color: #475569;
+      }
+
+      .lang-orbit {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 150px;
+        height: 150px;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+      }
+
+      .lang-orbit::before,
+      .lang-orbit::after {
+        content: '';
+        position: absolute;
+        inset: 0;
         border-radius: 50%;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(250, 250, 250, 0.95));
-        backdrop-filter: blur(20px) saturate(180%);
-        border: 2px solid rgba(26, 26, 26, 0.1);
+        border: 1px dashed rgba(148, 163, 184, 0.35);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .lang-orbit::after {
+        inset: 12px;
+        border-style: solid;
+        border-color: rgba(148, 163, 184, 0.2);
+      }
+
+      .lang-switcher-inner:hover .lang-orbit::before,
+      .lang-switcher-inner:hover .lang-orbit::after,
+      .lang-switcher-inner:focus-within .lang-orbit::before,
+      .lang-switcher-inner:focus-within .lang-orbit::after,
+      .lang-switcher-inner.open .lang-orbit::before,
+      .lang-switcher-inner.open .lang-orbit::after {
+        opacity: 1;
+      }
+
+      .lang-btn {
+        --angle: 0deg;
+        --radius: 72px;
+        --delay: 0s;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        background: rgba(255, 255, 255, 0.98);
         box-shadow:
-          0 6px 24px rgba(0, 0, 0, 0.1),
-          0 2px 6px rgba(0, 0, 0, 0.06);
-        cursor: pointer;
+          0 15px 30px rgba(15, 23, 42, 0.18),
+          0 6px 15px rgba(15, 23, 42, 0.12);
         display: flex;
         align-items: center;
         justify-content: center;
         opacity: 0;
-        visibility: hidden;
-        transform: scale(0.3);
-        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        z-index: 5;
+        pointer-events: none;
+        transform:
+          translate(-50%, -50%)
+          rotate(var(--angle))
+          translateY(10px)
+          rotate(calc(var(--angle) * -1))
+          scale(0.45);
+        transition:
+          transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+          opacity 0.3s ease,
+          border-color 0.3s ease,
+          box-shadow 0.3s ease;
+        transition-delay: var(--delay);
       }
 
-      /* Triangle positions - EN top, PL bottom-left, NL bottom-right */
-      .lang-btn[data-lang="en"] {
-        top: -80px;
-        right: 7px;
-        transition-delay: 0.05s;
-      }
-
-      .lang-btn[data-lang="pl"] {
-        top: 25px;
-        right: -60px;
-        transition-delay: 0.1s;
-      }
-
-      .lang-btn[data-lang="nl"] {
-        top: 25px;
-        right: 74px;
-        transition-delay: 0.15s;
-      }
-
-      /* Show buttons on hover */
-      .lang-switcher:hover .lang-btn {
-        opacity: 1;
-        visibility: visible;
-        transform: scale(1);
-      }
-
-      .lang-btn:hover {
-        transform: scale(1.1);
-        border-color: rgba(26, 26, 26, 0.2);
-        box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.15),
-          0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .lang-btn.active {
-        background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
-        border-color: #1a1a1a;
-        box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.25),
-          0 4px 8px rgba(0, 0, 0, 0.15),
-          inset 0 1px 0 rgba(255, 255, 255, 0.15);
-      }
-
-      .lang-flag {
-        border-radius: 3px;
-        overflow: hidden;
-        display: block;
-        transition: all 0.3s ease;
+      .lang-btn .lang-btn-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .lang-btn .lang-flag {
         width: 30px;
-        height: 22px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        height: 20px;
+        border-radius: 4px;
+        overflow: hidden;
+        box-shadow: 0 6px 15px rgba(15, 23, 42, 0.25);
       }
 
-      .lang-btn.active .lang-flag {
+      .lang-switcher-inner:hover .lang-btn,
+      .lang-switcher-inner:focus-within .lang-btn,
+      .lang-switcher-inner.open .lang-btn {
+        opacity: 1;
+        pointer-events: auto;
+        transform:
+          translate(-50%, -50%)
+          rotate(var(--angle))
+          translateY(calc(var(--radius) * -1))
+          rotate(calc(var(--angle) * -1))
+          scale(1);
+      }
+
+      .lang-btn:hover,
+      .lang-btn:focus-visible {
+        border-color: rgba(37, 99, 235, 0.4);
         box-shadow:
-          0 2px 8px rgba(255, 255, 255, 0.3),
-          0 1px 3px rgba(0, 0, 0, 0.3);
+          0 18px 35px rgba(37, 99, 235, 0.25),
+          0 8px 20px rgba(15, 23, 42, 0.18);
+      }
+
+      .lang-btn.active {
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(255, 255, 255, 0.96));
+        border-color: rgba(37, 99, 235, 0.4);
       }
 
       /* Responsive adjustments */
@@ -675,45 +764,41 @@ window.__preloadedLang=savedLang;
         }
 
         .lang-switcher {
+          width: 150px;
+          height: 150px;
           top: 1rem;
           right: 1rem;
-          width: 60px;
-          height: 60px;
         }
 
         .lang-main-btn {
-          width: 60px;
-          height: 60px;
+          width: 68px;
+          height: 68px;
+          border-radius: 20px;
+        }
+
+        .lang-main-btn .lang-label {
+          font-size: 0.55rem;
         }
 
         .lang-main-btn .lang-flag {
-          width: 30px;
-          height: 22px;
+          width: 28px;
+          height: 20px;
+        }
+
+        .lang-orbit {
+          width: 120px;
+          height: 120px;
         }
 
         .lang-btn {
-          width: 50px;
-          height: 50px;
-        }
-
-        .lang-btn[data-lang="en"] {
-          top: -70px;
-          right: 5px;
-        }
-
-        .lang-btn[data-lang="pl"] {
-          top: 20px;
-          right: -50px;
-        }
-
-        .lang-btn[data-lang="nl"] {
-          top: 20px;
-          right: 65px;
+          --radius: 58px;
+          width: 48px;
+          height: 48px;
         }
 
         .lang-btn .lang-flag {
-          width: 26px;
-          height: 19px;
+          width: 22px;
+          height: 16px;
         }
       }
     </style>
@@ -721,66 +806,62 @@ window.__preloadedLang=savedLang;
   <body>
     <div class="content">
       <!-- Language Switcher -->
-      <div class="lang-switcher">
-        <!-- Main circular button showing current language -->
-        <div class="lang-main-btn" id="langMainBtn">
-          <svg
-            class="lang-flag"
-            id="mainFlag"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 60 30"
+      <div class="lang-switcher" role="group" aria-label="Language switcher">
+        <div class="lang-switcher-inner">
+          <button
+            type="button"
+            class="lang-main-btn"
+            id="langMainBtn"
+            aria-label="Change language"
+            aria-haspopup="true"
+            aria-expanded="false"
           >
-            <rect width="60" height="30" fill="#012169" />
-            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" />
-            <path
-              d="M0,0 L60,30 M60,0 L0,30"
-              stroke="#C8102E"
-              stroke-width="4"
-            />
-            <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" />
-            <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" />
-          </svg>
-        </div>
+            <div class="lang-flag flag-en" id="mainFlag" aria-hidden="true"></div>
+            <span class="lang-label" id="mainLangLabel">EN</span>
+          </button>
 
-        <!-- Language options in triangle layout -->
-        <button class="lang-btn" data-lang="en">
-          <svg
-            class="lang-flag"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 60 30"
-          >
-            <rect width="60" height="30" fill="#012169" />
-            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" />
-            <path
-              d="M0,0 L60,30 M60,0 L0,30"
-              stroke="#C8102E"
-              stroke-width="4"
-            />
-            <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" />
-            <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" />
-          </svg>
-        </button>
-        <button class="lang-btn" data-lang="pl">
-          <svg
-            class="lang-flag"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 10"
-          >
-            <rect width="16" height="5" fill="#fff" />
-            <rect y="5" width="16" height="5" fill="#dc143c" />
-          </svg>
-        </button>
-        <button class="lang-btn" data-lang="nl">
-          <svg
-            class="lang-flag"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 9 6"
-          >
-            <rect width="9" height="6" fill="#21468B" />
-            <rect width="9" height="4" fill="#fff" />
-            <rect width="9" height="2" fill="#AE1C28" />
-          </svg>
-        </button>
+          <div class="lang-orbit">
+            <button
+              type="button"
+              class="lang-btn"
+              data-lang="en"
+              data-label="EN"
+              data-flag="flag-en"
+              aria-label="Switch to English"
+              style="--angle: -90deg; --delay: 0.05s;"
+            >
+              <span class="lang-btn-inner">
+                <span class="lang-flag flag-en" aria-hidden="true"></span>
+              </span>
+            </button>
+            <button
+              type="button"
+              class="lang-btn"
+              data-lang="pl"
+              data-label="PL"
+              data-flag="flag-pl"
+              aria-label="Switch to Polish"
+              style="--angle: 30deg; --delay: 0.1s;"
+            >
+              <span class="lang-btn-inner">
+                <span class="lang-flag flag-pl" aria-hidden="true"></span>
+              </span>
+            </button>
+            <button
+              type="button"
+              class="lang-btn"
+              data-lang="nl"
+              data-label="NL"
+              data-flag="flag-nl"
+              aria-label="Switch to Dutch"
+              style="--angle: 150deg; --delay: 0.15s;"
+            >
+              <span class="lang-btn-inner">
+                <span class="lang-flag flag-nl" aria-hidden="true"></span>
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Hero Section with Parallax Effect -->
@@ -1278,18 +1359,23 @@ window.__preloadedLang=savedLang;
         return path.split(".").reduce((current, key) => current?.[key], obj);
       }
 
+      const FLAG_CLASSES = ['flag-en', 'flag-pl', 'flag-nl'];
+
       function updateMainFlag(lang) {
         // Find the button with the selected language
         const selectedBtn = document.querySelector(`.lang-btn[data-lang="${lang}"]`);
         const mainFlag = document.getElementById('mainFlag');
+        const mainLabel = document.getElementById('mainLangLabel');
 
-        if (selectedBtn && mainFlag) {
-          // Clone the flag SVG from the selected button
-          const flagSvg = selectedBtn.querySelector('.lang-flag');
-          if (flagSvg) {
-            mainFlag.innerHTML = flagSvg.innerHTML;
-            mainFlag.setAttribute('viewBox', flagSvg.getAttribute('viewBox'));
-          }
+        if (mainFlag) {
+          const flagClass = selectedBtn?.getAttribute('data-flag') || 'flag-en';
+          FLAG_CLASSES.forEach((cls) => mainFlag.classList.remove(cls));
+          mainFlag.classList.add(flagClass);
+        }
+
+        if (mainLabel) {
+          const label = selectedBtn?.getAttribute('data-label') || lang?.toUpperCase();
+          mainLabel.textContent = label || 'EN';
         }
       }
 
@@ -1326,9 +1412,33 @@ window.__preloadedLang=savedLang;
       document.addEventListener("DOMContentLoaded", () => {
         loadTranslations();
 
+        const switcherInner = document.querySelector('.lang-switcher-inner');
+        const mainBtn = document.getElementById('langMainBtn');
+
+        if (mainBtn && switcherInner) {
+          mainBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const willOpen = !switcherInner.classList.contains('open');
+            switcherInner.classList.toggle('open', willOpen);
+            mainBtn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+          });
+
+          document.addEventListener('click', (event) => {
+            if (!switcherInner.contains(event.target)) {
+              switcherInner.classList.remove('open');
+              mainBtn.setAttribute('aria-expanded', 'false');
+            }
+          });
+        }
+
         document.querySelectorAll(".lang-btn").forEach((btn) => {
           btn.addEventListener("click", () => {
             setLanguage(btn.dataset.lang);
+            if (switcherInner && mainBtn) {
+              switcherInner.classList.remove('open');
+              mainBtn.setAttribute('aria-expanded', 'false');
+            }
           });
         });
       });
