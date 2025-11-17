@@ -599,34 +599,17 @@ window.__preloadedLang=savedLang;
         font-weight: 500;
       }
 
-      .flow-arrow {
-        position: absolute;
-        top: 50%;
-        left: 0;
-        right: 0;
-        height: 2px;
-        z-index: 1;
-        pointer-events: none;
-      }
-
-      .flow-arrow svg {
-        width: 100%;
-        height: 120px;
-        position: absolute;
-        top: -60px;
-      }
-
       .flow-line {
-        stroke: #4f46e5;
-        stroke-width: 3;
-        fill: none;
-        stroke-dasharray: 1000;
-        stroke-dashoffset: 1000;
-        transition: stroke-dashoffset 0.6s ease;
+        width: 80px;
+        height: 4px;
+        opacity: 0;
+        transition: opacity 0.4s ease;
       }
 
-      .flow-arrow-marker {
-        fill: #4f46e5;
+      .flow-line line {
+        transition: stroke-dashoffset 0.6s ease;
+        stroke-dasharray: 100;
+        stroke-dashoffset: 100;
       }
 
       @media (max-width: 768px) {
@@ -636,16 +619,17 @@ window.__preloadedLang=savedLang;
 
         .flow-container {
           flex-direction: column;
-          gap: 3rem;
+          gap: 1rem;
         }
 
         .flow-node {
           width: 100%;
         }
 
-        .flow-arrow svg {
-          height: 80px;
-          top: -40px;
+        .flow-line {
+          width: 4px;
+          height: 60px;
+          transform: rotate(90deg);
         }
       }
 
@@ -1019,7 +1003,7 @@ window.__preloadedLang=savedLang;
       <!-- Transition "well...." -->
       <div class="well-transition" id="wellTransition">
         <div class="well-transition-content">
-          <span class="well-text">well</span><span class="well-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>
+          <span class="well-text">well</span><span class="well-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>
         </div>
       </div>
 
@@ -1062,29 +1046,18 @@ window.__preloadedLang=savedLang;
                 <div class="flow-node-subtitle">Game Engine</div>
               </div>
 
-              <div class="flow-arrow">
-                <svg viewBox="0 0 300 120" preserveAspectRatio="none">
-                  <defs>
-                    <marker id="arrowForward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-                      <path d="M0,0 L0,6 L9,3 z" class="flow-arrow-marker" />
-                    </marker>
-                    <marker id="arrowBackward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
-                      <path d="M9,0 L9,6 L0,3 z" class="flow-arrow-marker" />
-                    </marker>
-                  </defs>
-                  <!-- Forward path: Unity → Python → ElevenLabs -->
-                  <path d="M 10 40 L 145 40" class="flow-line forward" marker-end="url(#arrowForward)" />
-                  <path d="M 155 40 L 290 40" class="flow-line forward" marker-end="url(#arrowForward)" style="animation-delay: 1.5s !important;" />
-                  <!-- Backward path: ElevenLabs → Python → Unity -->
-                  <path d="M 290 80 L 155 80" class="flow-line backward" marker-end="url(#arrowBackward)" />
-                  <path d="M 145 80 L 10 80" class="flow-line backward" marker-end="url(#arrowBackward)" style="animation-delay: 3.5s !important;" />
-                </svg>
-              </div>
+              <svg class="flow-line" data-line="1" viewBox="0 0 100 4">
+                <line x1="0" y1="2" x2="100" y2="2" stroke="#4f46e5" stroke-width="2" />
+              </svg>
 
               <div class="flow-node">
                 <div class="flow-node-title">Python</div>
                 <div class="flow-node-subtitle">WebSocket Server</div>
               </div>
+
+              <svg class="flow-line" data-line="2" viewBox="0 0 100 4">
+                <line x1="0" y1="2" x2="100" y2="2" stroke="#4f46e5" stroke-width="2" />
+              </svg>
 
               <div class="flow-node">
                 <div class="flow-node-title">ElevenLabs</div>
@@ -1690,7 +1663,7 @@ window.__preloadedLang=savedLang;
           // Animate dots based on scroll progress
           const dots = wellTransition.querySelectorAll('.dot');
           dots.forEach((dot, index) => {
-            const dotThreshold = 0.3 + (index * 0.15); // 0.3, 0.45, 0.6, 0.75
+            const dotThreshold = 0.3 + (index * 0.2); // 0.3, 0.5, 0.7
             if (wellProgress > dotThreshold) {
               dot.style.opacity = 1;
               dot.style.transform = 'translateY(0)';
@@ -1715,7 +1688,7 @@ window.__preloadedLang=savedLang;
           // Animate nodes
           const nodes = architectureFlow.querySelectorAll('.flow-node');
           nodes.forEach((node, index) => {
-            const nodeThreshold = 0.2 + (index * 0.1);
+            const nodeThreshold = 0.2 + (index * 0.15);
             if (flowProgress > nodeThreshold) {
               node.style.opacity = 1;
               node.style.transform = 'translateY(0)';
@@ -1726,26 +1699,21 @@ window.__preloadedLang=savedLang;
           });
 
           // Animate lines
-          const forwardLines = architectureFlow.querySelectorAll('.flow-line.forward');
-          const backwardLines = architectureFlow.querySelectorAll('.flow-line.backward');
+          const lines = architectureFlow.querySelectorAll('.flow-line');
+          lines.forEach((line, index) => {
+            const lineThreshold = 0.35 + (index * 0.25); // 0.35, 0.6
+            const lineElement = line.querySelector('line');
 
-          // Forward lines: Unity → Python → ElevenLabs
-          forwardLines.forEach((line, index) => {
-            const lineThreshold = 0.4 + (index * 0.15);
             if (flowProgress > lineThreshold) {
-              line.style.strokeDashoffset = '0';
+              line.style.opacity = 1;
+              if (lineElement) {
+                lineElement.style.strokeDashoffset = '0';
+              }
             } else {
-              line.style.strokeDashoffset = '1000';
-            }
-          });
-
-          // Backward lines: ElevenLabs → Python → Unity
-          backwardLines.forEach((line, index) => {
-            const lineThreshold = 0.7 + (index * 0.15);
-            if (flowProgress > lineThreshold) {
-              line.style.strokeDashoffset = '0';
-            } else {
-              line.style.strokeDashoffset = '1000';
+              line.style.opacity = 0;
+              if (lineElement) {
+                lineElement.style.strokeDashoffset = '100';
+              }
             }
           });
         }
