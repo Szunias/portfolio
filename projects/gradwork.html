@@ -530,6 +530,42 @@ window.__preloadedLang=savedLang;
         font-style: italic;
       }
 
+      .well-dots .dot {
+        opacity: 0;
+        display: inline-block;
+      }
+
+      .well-transition.visible .well-dots .dot {
+        animation: fadeInDot 0.5s ease forwards;
+      }
+
+      .well-transition.visible .well-dots .dot:nth-child(1) {
+        animation-delay: 0.3s;
+      }
+
+      .well-transition.visible .well-dots .dot:nth-child(2) {
+        animation-delay: 0.6s;
+      }
+
+      .well-transition.visible .well-dots .dot:nth-child(3) {
+        animation-delay: 0.9s;
+      }
+
+      .well-transition.visible .well-dots .dot:nth-child(4) {
+        animation-delay: 1.2s;
+      }
+
+      @keyframes fadeInDot {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
       @media (max-width: 768px) {
         .well-transition {
           min-height: 150vh;
@@ -910,7 +946,7 @@ window.__preloadedLang=savedLang;
       <!-- Transition "well...." -->
       <div class="well-transition" id="wellTransition">
         <div class="well-transition-content">
-          <span class="well-text">well</span><span class="well-dots"></span>
+          <span class="well-text">well</span><span class="well-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>
         </div>
       </div>
 
@@ -1547,50 +1583,6 @@ window.__preloadedLang=savedLang;
         updateParallax();
       });
 
-      // "Well...." dots animation based on scroll
-      function animateWellDots() {
-        const wellTransition = document.getElementById('wellTransition');
-        if (!wellTransition) return;
-
-        const wellDots = wellTransition.querySelector('.well-dots');
-        if (!wellDots) return;
-
-        const rect = wellTransition.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-
-        // Calculate how much of the element is visible (0 to 1)
-        const visiblePercent = Math.max(0, Math.min(1,
-          (windowHeight - rect.top) / (windowHeight + rect.height)
-        ));
-
-        // Add dots progressively based on scroll
-        // 0-0.3: no dots
-        // 0.3-0.5: .
-        // 0.5-0.7: ..
-        // 0.7-0.9: ...
-        // 0.9-1.0: ....
-        let dotCount = 0;
-        if (visiblePercent > 0.3) dotCount = 1;
-        if (visiblePercent > 0.5) dotCount = 2;
-        if (visiblePercent > 0.7) dotCount = 3;
-        if (visiblePercent > 0.9) dotCount = 4;
-
-        wellDots.textContent = '.'.repeat(dotCount);
-      }
-
-      // Add well dots animation to scroll handler
-      let wellTicking = false;
-      function requestWellTick() {
-        if (!wellTicking) {
-          window.requestAnimationFrame(() => {
-            animateWellDots();
-            wellTicking = false;
-          });
-          wellTicking = true;
-        }
-      }
-
-      window.addEventListener('scroll', requestWellTick, { passive: true });
     </script>
 
     <!-- Main site scripts -->
