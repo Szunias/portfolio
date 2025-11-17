@@ -398,7 +398,7 @@ function initSkillModal() {
   // Always update section headers with translations (even if overlay exists)
   overlay.querySelectorAll('.modal-section-header').forEach((header) => {
     const section = header.dataset.section;
-    const translation = getTranslation(`skillModal.${section}`);
+    const translation = getTranslation(`skillModal_${section}`);
     header.textContent = translation;
   });
 
@@ -444,7 +444,7 @@ function initSkillModal() {
     });
 
     if (skill.connections.length === 0) {
-      const noConnectionsMsg = getTranslation('skillModal.noConnections');
+      const noConnectionsMsg = getTranslation('skillModal_noConnections');
       connectionsEl.innerHTML = `<p style="color: #9ca3af;">${noConnectionsMsg}</p>`;
     }
 
@@ -494,7 +494,7 @@ function initSkillModal() {
       // because localStorage might not be updated yet
       overlay.querySelectorAll('.modal-section-header').forEach((header) => {
         const section = header.dataset.section;
-        const translation = getTranslation(`skillModal.${section}`, newLang);
+        const translation = getTranslation(`skillModal_${section}`, newLang);
         header.textContent = translation;
       });
 
@@ -503,7 +503,7 @@ function initSkillModal() {
         // Update "no connections" message if visible
         const noConnectionsP = connectionsEl.querySelector('p');
         if (noConnectionsP) {
-          noConnectionsP.textContent = getTranslation('skillModal.noConnections', newLang);
+          noConnectionsP.textContent = getTranslation('skillModal_noConnections', newLang);
         }
 
         // Re-render project descriptions with new language
