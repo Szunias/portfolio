@@ -551,7 +551,7 @@ export class NavigationCore {
   /**
    * Update page content in DOM
    */
-  updatePageContent(pageData, url) {
+  async updatePageContent(pageData, url) {
     this.log('━━━ updatePageContent START ━━━');
     this.log('  URL:', url);
     this.log('  Page title:', pageData.title);
@@ -560,9 +560,9 @@ export class NavigationCore {
     document.title = pageData.title;
     this.log('✓ Title updated to:', pageData.title);
 
-    // Load styles BEFORE updating content
-    this.updateStyles(pageData.styles);
-    this.log('✓ Styles updated');
+    // Load styles BEFORE updating content and WAIT for them to load
+    await this.updateStyles(pageData.styles);
+    this.log('✓ Styles updated and loaded');
 
     // Update meta tags
     this.updateMetaTags(pageData.meta);
@@ -742,7 +742,7 @@ export class NavigationCore {
   /**
    * Update styles in head
    */
-  updateStyles(styles) {
+  async updateStyles(styles) {
     if (!styles) return;
 
     // Remove old page-specific styles
@@ -761,8 +761,10 @@ export class NavigationCore {
       });
     }
 
-    // Add new stylesheet links
+    // Add new stylesheet links and WAIT for them to load
     if (styles.links && styles.links.length > 0) {
+      const loadPromises = [];
+
       styles.links.forEach((linkData) => {
         const existingLink = document.querySelector(
           `link[rel="stylesheet"][href="${linkData.href}"]`
@@ -774,34 +776,61 @@ export class NavigationCore {
           linkEl.media = linkData.media;
           linkEl.setAttribute('data-page-style', 'true');
 
-          // FontAwesome reflow handling
-          if (linkData.href.includes('font-awesome') || linkData.href.includes('fontawesome')) {
+          // Create a promise that resolves when the stylesheet loads
+          const loadPromise = new Promise((resolve, reject) => {
             linkEl.addEventListener('load', () => {
-              this.log(`FontAwesome loaded, triggering icon reflow`);
-              setTimeout(() => {
-                const icons = document.querySelectorAll('.fa, .fab, .fas, .far, .fal, .fa-brands');
-                icons.forEach((icon) => {
-                  icon.style.fontFamily = 'inherit';
-                  icon.offsetHeight;
-                  icon.style.fontFamily = '';
-                  icon.style.display = 'none';
-                  icon.offsetHeight;
-                  icon.style.display = '';
-                });
+              this.log(`✓ Stylesheet loaded: ${linkData.href}`);
 
-                if (window.FontAwesome && window.FontAwesome.dom) {
-                  window.FontAwesome.dom.i2svg();
-                }
+              // FontAwesome reflow handling
+              if (linkData.href.includes('font-awesome') || linkData.href.includes('fontawesome')) {
+                this.log(`FontAwesome loaded, triggering icon reflow`);
+                setTimeout(() => {
+                  const icons = document.querySelectorAll('.fa, .fab, .fas, .far, .fal, .fa-brands');
+                  icons.forEach((icon) => {
+                    icon.style.fontFamily = 'inherit';
+                    icon.offsetHeight;
+                    icon.style.fontFamily = '';
+                    icon.style.display = 'none';
+                    icon.offsetHeight;
+                    icon.style.display = '';
+                  });
 
-                this.log(`FontAwesome icons refreshed: ${icons.length} icons`);
-              }, 100);
+                  if (window.FontAwesome && window.FontAwesome.dom) {
+                    window.FontAwesome.dom.i2svg();
+                  }
+
+                  this.log(`FontAwesome icons refreshed: ${icons.length} icons`);
+                }, 100);
+              }
+
+              resolve();
             });
-          }
+
+            linkEl.addEventListener('error', () => {
+              this.log(`⚠ Stylesheet failed to load: ${linkData.href}`);
+              resolve(); // Resolve anyway to not block navigation
+            });
+
+            // Timeout fallback - don't wait forever
+            setTimeout(() => {
+              this.log(`⚠ Stylesheet load timeout: ${linkData.href}`);
+              resolve();
+            }, 3000);
+          });
+
+          loadPromises.push(loadPromise);
 
           document.head.appendChild(linkEl);
-          this.log(`Added stylesheet: ${linkData.href}`);
+          this.log(`Added stylesheet (waiting for load): ${linkData.href}`);
         }
       });
+
+      // Wait for all stylesheets to load
+      if (loadPromises.length > 0) {
+        this.log(`Waiting for ${loadPromises.length} stylesheet(s) to load...`);
+        await Promise.all(loadPromises);
+        this.log(`✓ All stylesheets loaded`);
+      }
     }
   }
 
