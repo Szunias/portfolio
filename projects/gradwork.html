@@ -511,13 +511,9 @@ window.__preloadedLang=savedLang;
         font-weight: 300;
         color: #1a1a1a;
         opacity: 0;
-        transition: opacity 0.6s ease;
+        transition: opacity 0.4s ease;
         padding: 2rem;
         text-align: center;
-      }
-
-      .well-transition.visible .well-transition-content {
-        opacity: 1;
       }
 
       .well-text {
@@ -533,37 +529,8 @@ window.__preloadedLang=savedLang;
       .well-dots .dot {
         opacity: 0;
         display: inline-block;
-      }
-
-      .well-transition.visible .well-dots .dot {
-        animation: fadeInDot 0.5s ease forwards;
-      }
-
-      .well-transition.visible .well-dots .dot:nth-child(1) {
-        animation-delay: 0.3s;
-      }
-
-      .well-transition.visible .well-dots .dot:nth-child(2) {
-        animation-delay: 0.6s;
-      }
-
-      .well-transition.visible .well-dots .dot:nth-child(3) {
-        animation-delay: 0.9s;
-      }
-
-      .well-transition.visible .well-dots .dot:nth-child(4) {
-        animation-delay: 1.2s;
-      }
-
-      @keyframes fadeInDot {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        transform: translateY(10px);
       }
 
       @media (max-width: 768px) {
@@ -614,26 +581,9 @@ window.__preloadedLang=savedLang;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         opacity: 0;
         transform: translateY(20px);
-        transition: all 0.6s ease;
+        transition: all 0.4s ease;
         position: relative;
         z-index: 2;
-      }
-
-      .architecture-flow.visible .flow-node {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      .architecture-flow.visible .flow-node:nth-child(1) {
-        transition-delay: 0.1s;
-      }
-
-      .architecture-flow.visible .flow-node:nth-child(2) {
-        transition-delay: 0.3s;
-      }
-
-      .architecture-flow.visible .flow-node:nth-child(3) {
-        transition-delay: 0.5s;
       }
 
       .flow-node-title {
@@ -672,22 +622,7 @@ window.__preloadedLang=savedLang;
         fill: none;
         stroke-dasharray: 1000;
         stroke-dashoffset: 1000;
-      }
-
-      .architecture-flow.visible .flow-line.forward {
-        animation: drawLine 2s ease forwards;
-        animation-delay: 0.8s;
-      }
-
-      .architecture-flow.visible .flow-line.backward {
-        animation: drawLine 2s ease forwards;
-        animation-delay: 2.8s;
-      }
-
-      @keyframes drawLine {
-        to {
-          stroke-dashoffset: 0;
-        }
+        transition: stroke-dashoffset 0.6s ease;
       }
 
       .flow-arrow-marker {
@@ -1730,42 +1665,126 @@ window.__preloadedLang=savedLang;
 
       window.addEventListener('scroll', requestTick, { passive: true });
 
-      // Intersection Observer for sections
-      const observerOptions = {
-        threshold: 0.15,
-        rootMargin: '0px 0px -100px 0px'
-      };
+      // Scroll-based animations
+      function updateScrollAnimations() {
+        const windowHeight = window.innerHeight;
+        const scrollY = window.pageYOffset;
 
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
-        });
-      }, observerOptions);
-
-      // Observe all sections
-      document.addEventListener('DOMContentLoaded', () => {
-        const sections = document.querySelectorAll('.section');
-        sections.forEach(section => observer.observe(section));
-
-        // Observe "well...." transition
+        // Well transition dots animation
         const wellTransition = document.getElementById('wellTransition');
         if (wellTransition) {
-          observer.observe(wellTransition);
+          const wellRect = wellTransition.getBoundingClientRect();
+          const wellTop = scrollY + wellRect.top;
+          const wellHeight = wellRect.height;
+
+          // Calculate progress (0 to 1) based on scroll position
+          const wellProgress = Math.max(0, Math.min(1,
+            (scrollY + windowHeight - wellTop) / (windowHeight + wellHeight * 0.5)
+          ));
+
+          const wellContent = wellTransition.querySelector('.well-transition-content');
+          if (wellContent) {
+            wellContent.style.opacity = wellProgress > 0.2 ? 1 : 0;
+          }
+
+          // Animate dots based on scroll progress
+          const dots = wellTransition.querySelectorAll('.dot');
+          dots.forEach((dot, index) => {
+            const dotThreshold = 0.3 + (index * 0.15); // 0.3, 0.45, 0.6, 0.75
+            if (wellProgress > dotThreshold) {
+              dot.style.opacity = 1;
+              dot.style.transform = 'translateY(0)';
+            } else {
+              dot.style.opacity = 0;
+              dot.style.transform = 'translateY(10px)';
+            }
+          });
         }
 
-        // Observe architecture flow animation
+        // Architecture flow animation
         const architectureFlow = document.getElementById('architectureFlow');
         if (architectureFlow) {
-          observer.observe(architectureFlow);
+          const flowRect = architectureFlow.getBoundingClientRect();
+          const flowTop = scrollY + flowRect.top;
+          const flowHeight = flowRect.height;
+
+          const flowProgress = Math.max(0, Math.min(1,
+            (scrollY + windowHeight - flowTop) / (windowHeight + flowHeight * 0.5)
+          ));
+
+          // Animate nodes
+          const nodes = architectureFlow.querySelectorAll('.flow-node');
+          nodes.forEach((node, index) => {
+            const nodeThreshold = 0.2 + (index * 0.1);
+            if (flowProgress > nodeThreshold) {
+              node.style.opacity = 1;
+              node.style.transform = 'translateY(0)';
+            } else {
+              node.style.opacity = 0;
+              node.style.transform = 'translateY(20px)';
+            }
+          });
+
+          // Animate lines
+          const forwardLines = architectureFlow.querySelectorAll('.flow-line.forward');
+          const backwardLines = architectureFlow.querySelectorAll('.flow-line.backward');
+
+          // Forward lines: Unity → Python → ElevenLabs
+          forwardLines.forEach((line, index) => {
+            const lineThreshold = 0.4 + (index * 0.15);
+            if (flowProgress > lineThreshold) {
+              line.style.strokeDashoffset = '0';
+            } else {
+              line.style.strokeDashoffset = '1000';
+            }
+          });
+
+          // Backward lines: ElevenLabs → Python → Unity
+          backwardLines.forEach((line, index) => {
+            const lineThreshold = 0.7 + (index * 0.15);
+            if (flowProgress > lineThreshold) {
+              line.style.strokeDashoffset = '0';
+            } else {
+              line.style.strokeDashoffset = '1000';
+            }
+          });
         }
 
-        // Mark as loaded
-        document.body.classList.add('loaded');
+        // Regular sections
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => {
+          const rect = section.getBoundingClientRect();
+          const sectionTop = scrollY + rect.top;
+          const sectionProgress = Math.max(0, Math.min(1,
+            (scrollY + windowHeight - sectionTop) / (windowHeight * 0.8)
+          ));
 
-        // Initial parallax update
+          if (sectionProgress > 0.15) {
+            section.classList.add('visible');
+          } else {
+            section.classList.remove('visible');
+          }
+        });
+      }
+
+      // Add to parallax update
+      function updateParallaxAndAnimations() {
         updateParallax();
+        updateScrollAnimations();
+        ticking = false;
+      }
+
+      function requestTick() {
+        if (!ticking) {
+          window.requestAnimationFrame(updateParallaxAndAnimations);
+          ticking = true;
+        }
+      }
+
+      // Initialize on load
+      document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('loaded');
+        updateScrollAnimations();
       });
 
     </script>
