@@ -576,6 +576,144 @@ window.__preloadedLang=savedLang;
         }
       }
 
+      /* Architecture Flow Animation */
+      .architecture-flow {
+        position: relative;
+        min-height: 120vh;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
+        background: #f8f9fa;
+      }
+
+      .architecture-flow-content {
+        position: sticky;
+        top: 50vh;
+        transform: translateY(-50%);
+        width: 100%;
+        max-width: 900px;
+        padding: 2rem;
+      }
+
+      .flow-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        gap: 2rem;
+      }
+
+      .flow-node {
+        flex: 1;
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.6s ease;
+        position: relative;
+        z-index: 2;
+      }
+
+      .architecture-flow.visible .flow-node {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .architecture-flow.visible .flow-node:nth-child(1) {
+        transition-delay: 0.1s;
+      }
+
+      .architecture-flow.visible .flow-node:nth-child(2) {
+        transition-delay: 0.3s;
+      }
+
+      .architecture-flow.visible .flow-node:nth-child(3) {
+        transition-delay: 0.5s;
+      }
+
+      .flow-node-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 0.5rem;
+      }
+
+      .flow-node-subtitle {
+        font-size: 0.875rem;
+        color: #666;
+        font-weight: 500;
+      }
+
+      .flow-arrow {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .flow-arrow svg {
+        width: 100%;
+        height: 120px;
+        position: absolute;
+        top: -60px;
+      }
+
+      .flow-line {
+        stroke: #4f46e5;
+        stroke-width: 3;
+        fill: none;
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+      }
+
+      .architecture-flow.visible .flow-line.forward {
+        animation: drawLine 2s ease forwards;
+        animation-delay: 0.8s;
+      }
+
+      .architecture-flow.visible .flow-line.backward {
+        animation: drawLine 2s ease forwards;
+        animation-delay: 2.8s;
+      }
+
+      @keyframes drawLine {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      .flow-arrow-marker {
+        fill: #4f46e5;
+      }
+
+      @media (max-width: 768px) {
+        .architecture-flow {
+          min-height: 150vh;
+        }
+
+        .flow-container {
+          flex-direction: column;
+          gap: 3rem;
+        }
+
+        .flow-node {
+          width: 100%;
+        }
+
+        .flow-arrow svg {
+          height: 80px;
+          top: -40px;
+        }
+      }
+
       /* Language Switcher - Orbital mini flags */
       .lang-switcher {
         position: fixed;
@@ -979,6 +1117,47 @@ window.__preloadedLang=savedLang;
             </p>
           </div>
         </section>
+
+        <!-- Architecture Flow Animation -->
+        <div class="architecture-flow" id="architectureFlow">
+          <div class="architecture-flow-content">
+            <div class="flow-container">
+              <div class="flow-node">
+                <div class="flow-node-title">Unity (C#)</div>
+                <div class="flow-node-subtitle">Game Engine</div>
+              </div>
+
+              <div class="flow-arrow">
+                <svg viewBox="0 0 300 120" preserveAspectRatio="none">
+                  <defs>
+                    <marker id="arrowForward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                      <path d="M0,0 L0,6 L9,3 z" class="flow-arrow-marker" />
+                    </marker>
+                    <marker id="arrowBackward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+                      <path d="M9,0 L9,6 L0,3 z" class="flow-arrow-marker" />
+                    </marker>
+                  </defs>
+                  <!-- Forward path: Unity → Python → ElevenLabs -->
+                  <path d="M 10 40 L 145 40" class="flow-line forward" marker-end="url(#arrowForward)" />
+                  <path d="M 155 40 L 290 40" class="flow-line forward" marker-end="url(#arrowForward)" style="animation-delay: 1.5s !important;" />
+                  <!-- Backward path: ElevenLabs → Python → Unity -->
+                  <path d="M 290 80 L 155 80" class="flow-line backward" marker-end="url(#arrowBackward)" />
+                  <path d="M 145 80 L 10 80" class="flow-line backward" marker-end="url(#arrowBackward)" style="animation-delay: 3.5s !important;" />
+                </svg>
+              </div>
+
+              <div class="flow-node">
+                <div class="flow-node-title">Python</div>
+                <div class="flow-node-subtitle">WebSocket Server</div>
+              </div>
+
+              <div class="flow-node">
+                <div class="flow-node-title">ElevenLabs</div>
+                <div class="flow-node-subtitle">AI Audio API</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- Section 2: The Journey -->
         <section class="section" data-section="2">
@@ -1574,6 +1753,12 @@ window.__preloadedLang=savedLang;
         const wellTransition = document.getElementById('wellTransition');
         if (wellTransition) {
           observer.observe(wellTransition);
+        }
+
+        // Observe architecture flow animation
+        const architectureFlow = document.getElementById('architectureFlow');
+        if (architectureFlow) {
+          observer.observe(architectureFlow);
         }
 
         // Mark as loaded
