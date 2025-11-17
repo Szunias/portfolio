@@ -553,6 +553,28 @@ window.__preloadedLang=savedLang;
         margin: 0;
         padding: 0;
         background: #f8f9fa;
+        overflow: hidden;
+      }
+
+      .neural-network {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0.6;
+      }
+
+      .neural-line {
+        stroke: url(#lineGradient);
+        stroke-width: 1.5;
+        fill: none;
+        opacity: 0;
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+        transition: opacity 0.4s ease, stroke-dashoffset 0.6s ease;
       }
 
       .architecture-flow-content {
@@ -1040,6 +1062,46 @@ window.__preloadedLang=savedLang;
 
         <!-- Architecture Flow Animation -->
         <div class="architecture-flow" id="architectureFlow">
+          <!-- Neural Network Background -->
+          <svg class="neural-network" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:0" />
+                <stop offset="50%" style="stop-color:#4f46e5;stop-opacity:0.3" />
+                <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:0" />
+              </linearGradient>
+            </defs>
+
+            <!-- Horizontal lines -->
+            <path class="neural-line" d="M 100 200 L 1100 200" data-delay="0" />
+            <path class="neural-line" d="M 50 300 L 1150 300" data-delay="0.1" />
+            <path class="neural-line" d="M 150 400 L 1050 400" data-delay="0.05" />
+            <path class="neural-line" d="M 100 500 L 1100 500" data-delay="0.15" />
+            <path class="neural-line" d="M 75 600 L 1125 600" data-delay="0.08" />
+
+            <!-- Vertical lines -->
+            <path class="neural-line" d="M 300 100 L 300 700" data-delay="0.2" />
+            <path class="neural-line" d="M 600 50 L 600 750" data-delay="0.12" />
+            <path class="neural-line" d="M 900 100 L 900 700" data-delay="0.18" />
+
+            <!-- Diagonal lines (connecting neurons) -->
+            <path class="neural-line" d="M 200 250 L 400 350" data-delay="0.25" />
+            <path class="neural-line" d="M 400 250 L 600 450" data-delay="0.3" />
+            <path class="neural-line" d="M 600 250 L 800 350" data-delay="0.22" />
+            <path class="neural-line" d="M 800 250 L 1000 450" data-delay="0.28" />
+
+            <path class="neural-line" d="M 200 450 L 400 550" data-delay="0.35" />
+            <path class="neural-line" d="M 400 450 L 600 350" data-delay="0.32" />
+            <path class="neural-line" d="M 600 550 L 800 450" data-delay="0.38" />
+            <path class="neural-line" d="M 800 550 L 1000 350" data-delay="0.4" />
+
+            <!-- More complex paths -->
+            <path class="neural-line" d="M 150 150 Q 300 250 450 150" data-delay="0.45" />
+            <path class="neural-line" d="M 750 650 Q 600 550 450 650" data-delay="0.42" />
+            <path class="neural-line" d="M 950 200 Q 800 400 950 600" data-delay="0.48" />
+            <path class="neural-line" d="M 250 200 Q 400 400 250 600" data-delay="0.5" />
+          </svg>
+
           <div class="architecture-flow-content">
             <div class="flow-container">
               <div class="flow-node">
@@ -1715,6 +1777,32 @@ window.__preloadedLang=savedLang;
               if (lineElement) {
                 lineElement.style.strokeDashoffset = '100';
               }
+            }
+          });
+
+          // Animate neural network lines based on proximity to center
+          const neuralLines = architectureFlow.querySelectorAll('.neural-line');
+
+          // Calculate distance from center of section (0 at center, 1 at edges)
+          // flowProgress goes from 0 to 1 as we scroll through the section
+          const centerDistance = Math.abs(flowProgress - 0.5) * 2; // 0 at center, 1 at edges
+          const centerProximity = 1 - centerDistance; // 1 at center, 0 at edges
+
+          // Only show lines when we're reasonably close to center
+          const showThreshold = 0.3; // Start showing at 30% proximity
+
+          neuralLines.forEach((line, index) => {
+            const delay = parseFloat(line.getAttribute('data-delay')) || 0;
+            const lineThreshold = showThreshold + (delay * 0.5);
+
+            if (centerProximity > lineThreshold) {
+              // Fade in based on how close we are to center
+              const fadeAmount = (centerProximity - lineThreshold) / (1 - lineThreshold);
+              line.style.opacity = fadeAmount * 0.4; // Max opacity 0.4 for subtle effect
+              line.style.strokeDashoffset = (1 - fadeAmount) * 1000;
+            } else {
+              line.style.opacity = 0;
+              line.style.strokeDashoffset = 1000;
             }
           });
         }
