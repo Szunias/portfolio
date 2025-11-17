@@ -488,6 +488,45 @@ window.__preloadedLang=savedLang;
         transform: translateY(-2px);
       }
 
+      /* "Well...." Transition */
+      .well-transition {
+        min-height: 40vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Inter', sans-serif;
+        font-size: 5rem;
+        font-weight: 300;
+        color: #1a1a1a;
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+        margin: 0;
+        padding: 2rem;
+      }
+
+      .well-transition.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .well-text {
+        font-style: italic;
+      }
+
+      .well-dots {
+        display: inline-block;
+        min-width: 2em;
+        font-style: italic;
+      }
+
+      @media (max-width: 768px) {
+        .well-transition {
+          font-size: 3rem;
+          min-height: 30vh;
+        }
+      }
+
       /* Language Switcher - Circular Floating Menu */
       .lang-switcher {
         position: fixed;
@@ -767,6 +806,11 @@ window.__preloadedLang=savedLang;
           </svg>
         </div>
       </section>
+
+      <!-- Transition "well...." -->
+      <div class="well-transition" id="wellTransition">
+        <span class="well-text">well</span><span class="well-dots"></span>
+      </div>
 
       <!-- Main Content -->
       <main class="main-content">
@@ -1359,12 +1403,63 @@ window.__preloadedLang=savedLang;
         const sections = document.querySelectorAll('.section');
         sections.forEach(section => observer.observe(section));
 
+        // Observe "well...." transition
+        const wellTransition = document.getElementById('wellTransition');
+        if (wellTransition) {
+          observer.observe(wellTransition);
+        }
+
         // Mark as loaded
         document.body.classList.add('loaded');
 
         // Initial parallax update
         updateParallax();
       });
+
+      // "Well...." dots animation based on scroll
+      function animateWellDots() {
+        const wellTransition = document.getElementById('wellTransition');
+        if (!wellTransition) return;
+
+        const wellDots = wellTransition.querySelector('.well-dots');
+        if (!wellDots) return;
+
+        const rect = wellTransition.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+
+        // Calculate how much of the element is visible (0 to 1)
+        const visiblePercent = Math.max(0, Math.min(1,
+          (windowHeight - rect.top) / (windowHeight + rect.height)
+        ));
+
+        // Add dots progressively based on scroll
+        // 0-0.3: no dots
+        // 0.3-0.5: .
+        // 0.5-0.7: ..
+        // 0.7-0.9: ...
+        // 0.9-1.0: ....
+        let dotCount = 0;
+        if (visiblePercent > 0.3) dotCount = 1;
+        if (visiblePercent > 0.5) dotCount = 2;
+        if (visiblePercent > 0.7) dotCount = 3;
+        if (visiblePercent > 0.9) dotCount = 4;
+
+        wellDots.textContent = '.'.repeat(dotCount);
+      }
+
+      // Add well dots animation to scroll handler
+      let wellTicking = false;
+      function requestWellTick() {
+        if (!wellTicking) {
+          window.requestAnimationFrame(() => {
+            animateWellDots();
+            wellTicking = false;
+          });
+          wellTicking = true;
+        }
+      }
+
+      window.addEventListener('scroll', requestWellTick, { passive: true });
     </script>
 
     <!-- Main site scripts -->
