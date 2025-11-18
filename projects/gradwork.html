@@ -591,6 +591,24 @@ window.__preloadedLang=savedLang;
         z-index: 2;
         margin: 0;
         will-change: transform, opacity;
+        transition: box-shadow 0.6s ease, border 0.6s ease;
+        border: 1px solid transparent;
+      }
+
+      /* Subtelny efekt podczas łączenia */
+      .flow-node.connecting {
+        box-shadow:
+          0 4px 20px rgba(0, 0, 0, 0.08),
+          0 0 20px rgba(79, 70, 229, 0.25);
+        border: 1px solid rgba(79, 70, 229, 0.3);
+      }
+
+      /* Bardzo subtelny efekt po połączeniu */
+      .flow-node.connected {
+        box-shadow:
+          0 4px 20px rgba(0, 0, 0, 0.08),
+          0 0 10px rgba(79, 70, 229, 0.1);
+        border: 1px solid rgba(79, 70, 229, 0.15);
       }
 
       .flow-node-title {
@@ -619,6 +637,7 @@ window.__preloadedLang=savedLang;
         stroke-dashoffset: 120;
         will-change: stroke-dashoffset;
       }
+
 
       @media (max-width: 768px) {
         .architecture-flow {
@@ -1721,37 +1740,52 @@ window.__preloadedLang=savedLang;
           const nodes = architectureFlow.querySelectorAll('.flow-node');
           const lines = architectureFlow.querySelectorAll('.flow-line');
 
-          // Phase 1 (0-0.15): Unity slides in from top (QUICK)
-          if (flowProgress <= 0.15) {
-            const phase1Progress = flowProgress / 0.15;
+          // Phase 1 (0-0.25): Unity slides in from top
+          if (flowProgress <= 0.25) {
+            const phase1Progress = flowProgress / 0.25;
 
-            // Unity animates in
+            // Unity animates in with STRONG connecting effect
             if (nodes[0]) {
               nodes[0].style.opacity = Math.min(1, phase1Progress * 2);
               const unityY = -200 * (1 - phase1Progress);
               nodes[0].style.transform = `translateY(${unityY}px)`;
+              // Add MOCNY effect when visible
+              if (phase1Progress > 0.5) {
+                nodes[0].classList.add('connecting');
+                nodes[0].classList.remove('connected');
+              } else {
+                nodes[0].classList.remove('connecting', 'connected');
+              }
             }
 
             // Others hidden
             if (nodes[1]) {
               nodes[1].style.opacity = 0;
               nodes[1].style.transform = 'translateY(100px)';
+              nodes[1].classList.remove('connecting', 'connected');
             }
             if (nodes[2]) {
               nodes[2].style.opacity = 0;
               nodes[2].style.transform = 'translateY(200px)';
+              nodes[2].classList.remove('connecting', 'connected');
             }
-            if (lines[0]) lines[0].style.opacity = 0;
-            if (lines[1]) lines[1].style.opacity = 0;
+            if (lines[0]) {
+              lines[0].style.opacity = 0;
+            }
+            if (lines[1]) {
+              lines[1].style.opacity = 0;
+            }
           }
-          // Phase 2 (0.15-0.35): Line 1 draws, Python connects (QUICK)
-          else if (flowProgress <= 0.35) {
-            const phase2Progress = (flowProgress - 0.15) / 0.2;
+          // Phase 2 (0.25-0.5): Line 1 draws, Python connects
+          else if (flowProgress <= 0.5) {
+            const phase2Progress = (flowProgress - 0.25) / 0.25;
 
-            // Unity stays in place
+            // Unity stays in place, SŁABY efekt (już połączony)
             if (nodes[0]) {
               nodes[0].style.opacity = 1;
               nodes[0].style.transform = 'translateY(0)';
+              nodes[0].classList.remove('connecting');
+              nodes[0].classList.add('connected');
             }
 
             // Line 1 draws down
@@ -1764,32 +1798,48 @@ window.__preloadedLang=savedLang;
               }
             }
 
-            // Python slides in from below
+            // Python slides in with MOCNY connecting effect
             if (nodes[1]) {
               nodes[1].style.opacity = Math.min(1, phase2Progress * 1.5);
               const pythonY = 100 * (1 - phase2Progress);
               nodes[1].style.transform = `translateY(${pythonY}px)`;
+              // MOCNY efekt when connecting
+              if (phase2Progress > 0.3) {
+                nodes[1].classList.add('connecting');
+                nodes[1].classList.remove('connected');
+              } else {
+                nodes[1].classList.remove('connecting', 'connected');
+              }
             }
 
             // ElevenLabs hidden
             if (nodes[2]) {
               nodes[2].style.opacity = 0;
               nodes[2].style.transform = 'translateY(100px)';
+              nodes[2].classList.remove('connecting', 'connected');
             }
-            if (lines[1]) lines[1].style.opacity = 0;
+            if (lines[1]) {
+              lines[1].style.opacity = 0;
+            }
           }
-          // Phase 3 (0.35-0.5): Line 2 draws, ElevenLabs connects (QUICK)
-          else if (flowProgress <= 0.5) {
-            const phase3Progress = (flowProgress - 0.35) / 0.15;
+          // Phase 3 (0.5-0.75): Line 2 draws, ElevenLabs connects
+          else if (flowProgress <= 0.75) {
+            const phase3Progress = (flowProgress - 0.5) / 0.25;
 
-            // Unity and Python stay
+            // Unity SŁABY efekt (już połączony)
             if (nodes[0]) {
               nodes[0].style.opacity = 1;
               nodes[0].style.transform = 'translateY(0)';
+              nodes[0].classList.remove('connecting');
+              nodes[0].classList.add('connected');
             }
+
+            // Python becomes SŁABY connected
             if (nodes[1]) {
               nodes[1].style.opacity = 1;
               nodes[1].style.transform = 'translateY(0)';
+              nodes[1].classList.remove('connecting');
+              nodes[1].classList.add('connected');
             }
 
             // Line 1 fully drawn
@@ -1811,27 +1861,40 @@ window.__preloadedLang=savedLang;
               }
             }
 
-            // ElevenLabs slides in from below
+            // ElevenLabs slides in with MOCNY connecting effect
             if (nodes[2]) {
               nodes[2].style.opacity = Math.min(1, phase3Progress * 1.5);
               const elevenY = 100 * (1 - phase3Progress);
               nodes[2].style.transform = `translateY(${elevenY}px)`;
+              // MOCNY efekt when connecting
+              if (phase3Progress > 0.3) {
+                nodes[2].classList.add('connecting');
+                nodes[2].classList.remove('connected');
+              } else {
+                nodes[2].classList.remove('connecting', 'connected');
+              }
             }
           }
           // Phase 4 (0.5-1): ALL 3 STAY FULLY VISIBLE - LONG TIME TO VIEW
           else {
-            // Everything fully visible and connected
+            // Everything fully visible with SŁABY connected effect
             if (nodes[0]) {
               nodes[0].style.opacity = 1;
               nodes[0].style.transform = 'translateY(0)';
+              nodes[0].classList.remove('connecting');
+              nodes[0].classList.add('connected');
             }
             if (nodes[1]) {
               nodes[1].style.opacity = 1;
               nodes[1].style.transform = 'translateY(0)';
+              nodes[1].classList.remove('connecting');
+              nodes[1].classList.add('connected');
             }
             if (nodes[2]) {
               nodes[2].style.opacity = 1;
               nodes[2].style.transform = 'translateY(0)';
+              nodes[2].classList.remove('connecting');
+              nodes[2].classList.add('connected');
             }
 
             // Both lines fully drawn
