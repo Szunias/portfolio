@@ -562,7 +562,7 @@ window.__preloadedLang=savedLang;
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 0;
+        z-index: -1;
         pointer-events: none;
         opacity: 0.75;
       }
@@ -1799,10 +1799,10 @@ window.__preloadedLang=savedLang;
           // Animate neural network lines with extended visibility range
           const neuralLines = architectureFlow.querySelectorAll('.neural-line');
 
-          // Extended animation range - start earlier, end later
+          // Extended animation range - start much earlier, end much later
           // flowProgress goes from 0 to 1 as we scroll through the section
-          const startThreshold = 0.1;  // Start animation even earlier
-          const endThreshold = 0.9;    // Keep animation visible even longer
+          const startThreshold = 0.05;  // Start animation very early
+          const endThreshold = 0.95;    // Keep animation visible almost until end
 
           // Calculate if we're in the animation range
           const inRange = flowProgress >= startThreshold && flowProgress <= endThreshold;
@@ -1814,7 +1814,7 @@ window.__preloadedLang=savedLang;
 
           neuralLines.forEach((line, index) => {
             const delay = parseFloat(line.getAttribute('data-delay')) || 0;
-            const lineDelay = delay * 0.05; // Even faster sequential appearance
+            const lineDelay = delay * 0.04; // Very fast sequential appearance
 
             // Each line appears progressively with delay
             const lineProgress = Math.max(0, Math.min(1,
@@ -1822,9 +1822,9 @@ window.__preloadedLang=savedLang;
             ));
 
             if (inRange && lineProgress > 0) {
-              // Smooth fade in/out - faster in, slower out
-              const fadeIn = Math.min(lineProgress * 6, 1); // Much faster fade in
-              const fadeOut = Math.min((1 - animationProgress) * 1.2, 1); // Much slower fade out
+              // Smooth fade in/out - very fast in, very slow out
+              const fadeIn = Math.min(lineProgress * 8, 1); // Very fast fade in
+              const fadeOut = Math.min((1 - animationProgress) * 0.8, 1); // Very slow fade out
               const finalOpacity = Math.min(fadeIn, fadeOut) * 0.85; // Higher max opacity
 
               line.style.opacity = finalOpacity;
