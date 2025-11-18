@@ -546,63 +546,51 @@ window.__preloadedLang=savedLang;
       /* Architecture Flow Animation */
       .architecture-flow {
         position: relative;
-        min-height: 180vh;
+        min-height: 350vh;
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         justify-content: center;
         margin: 0;
         padding: 0;
-        background: #f8f9fa;
+        background: #ffffff;
         overflow: hidden;
       }
 
-      .binary-rain {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.6s ease-in-out;
-      }
-
-      .binary-rain.active {
-        opacity: 1;
-      }
-
       .architecture-flow-content {
-        position: absolute;
+        position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         width: 100%;
-        max-width: 900px;
+        max-width: 600px;
         padding: 2rem;
-        z-index: 2;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
       }
 
       .flow-container {
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+        justify-content: center;
         align-items: center;
         position: relative;
-        gap: 2rem;
+        gap: 0;
+        min-height: 100vh;
       }
 
       .flow-node {
-        flex: 1;
+        width: 100%;
         background: #ffffff;
         border-radius: 12px;
-        padding: 2rem 1.5rem;
+        padding: 2.5rem 2rem;
         text-align: center;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.4s ease;
         position: relative;
         z-index: 2;
+        margin: 0;
+        will-change: transform, opacity;
       }
 
       .flow-node-title {
@@ -619,36 +607,47 @@ window.__preloadedLang=savedLang;
       }
 
       .flow-line {
-        width: 80px;
-        height: 4px;
+        width: 4px;
+        height: 120px;
         opacity: 0;
-        transition: opacity 0.4s ease;
+        margin: 0.5rem 0;
+        will-change: opacity, height;
       }
 
       .flow-line line {
-        transition: stroke-dashoffset 0.6s ease;
-        stroke-dasharray: 100;
-        stroke-dashoffset: 100;
+        stroke-dasharray: 120;
+        stroke-dashoffset: 120;
+        will-change: stroke-dashoffset;
       }
 
       @media (max-width: 768px) {
         .architecture-flow {
-          min-height: 200vh;
+          min-height: 400vh;
+        }
+
+        .architecture-flow-content {
+          max-width: 100%;
+          padding: 1rem;
         }
 
         .flow-container {
-          flex-direction: column;
-          gap: 1rem;
+          gap: 0;
         }
 
         .flow-node {
           width: 100%;
+          padding: 2rem 1.5rem;
+          margin: 0;
         }
 
         .flow-line {
-          width: 4px;
-          height: 60px;
-          transform: rotate(90deg);
+          height: 100px;
+          margin: 0.25rem 0;
+        }
+
+        .flow-line line {
+          stroke-dasharray: 100;
+          stroke-dashoffset: 100;
         }
       }
 
@@ -1058,9 +1057,6 @@ window.__preloadedLang=savedLang;
 
         <!-- Architecture Flow Animation -->
         <div class="architecture-flow" id="architectureFlow">
-          <!-- Binary Rain Background -->
-          <canvas class="binary-rain" id="binaryRain"></canvas>
-
           <div class="architecture-flow-content">
             <div class="flow-container">
               <div class="flow-node">
@@ -1068,8 +1064,8 @@ window.__preloadedLang=savedLang;
                 <div class="flow-node-subtitle">Game Engine</div>
               </div>
 
-              <svg class="flow-line" data-line="1" viewBox="0 0 100 4">
-                <line x1="0" y1="2" x2="100" y2="2" stroke="#4f46e5" stroke-width="2" />
+              <svg class="flow-line" data-line="1" viewBox="0 0 4 120">
+                <line x1="2" y1="0" x2="2" y2="120" stroke="#4f46e5" stroke-width="2" />
               </svg>
 
               <div class="flow-node">
@@ -1077,8 +1073,8 @@ window.__preloadedLang=savedLang;
                 <div class="flow-node-subtitle">WebSocket Server</div>
               </div>
 
-              <svg class="flow-line" data-line="2" viewBox="0 0 100 4">
-                <line x1="0" y1="2" x2="100" y2="2" stroke="#4f46e5" stroke-width="2" />
+              <svg class="flow-line" data-line="2" viewBox="0 0 4 120">
+                <line x1="2" y1="0" x2="2" y2="120" stroke="#4f46e5" stroke-width="2" />
               </svg>
 
               <div class="flow-node">
@@ -1697,56 +1693,162 @@ window.__preloadedLang=savedLang;
           });
         }
 
-        // Architecture flow animation
+        // Architecture flow animation - LEGO brick stacking
         const architectureFlow = document.getElementById('architectureFlow');
         if (architectureFlow) {
           const flowRect = architectureFlow.getBoundingClientRect();
           const flowTop = scrollY + flowRect.top;
           const flowHeight = flowRect.height;
+          const flowBottom = flowTop + flowHeight;
 
-          const flowProgress = Math.max(0, Math.min(1,
-            (scrollY + windowHeight - flowTop) / (windowHeight + flowHeight * 0.5)
-          ));
+          // Calculate scroll progress through the section (0 to 1)
+          const rawProgress = (scrollY + windowHeight * 0.5 - flowTop) / flowHeight;
 
-          // Animate nodes
+          // Animation ends at 90% of section, rest is white space
+          const animationEndPoint = 0.9;
+          const flowProgress = Math.max(0, Math.min(1, rawProgress / animationEndPoint));
+
+          // Hide content after animation completes
+          const flowContent = architectureFlow.querySelector('.architecture-flow-content');
+          const isInSection = scrollY >= flowTop - windowHeight && scrollY <= flowBottom;
+          const animationComplete = rawProgress > animationEndPoint;
+
+          if (flowContent) {
+            flowContent.style.opacity = (isInSection && !animationComplete) ? '1' : '0';
+            flowContent.style.pointerEvents = 'none';
+          }
+
           const nodes = architectureFlow.querySelectorAll('.flow-node');
-          nodes.forEach((node, index) => {
-            const nodeThreshold = 0.2 + (index * 0.15);
-            if (flowProgress > nodeThreshold) {
-              node.style.opacity = 1;
-              node.style.transform = 'translateY(0)';
-            } else {
-              node.style.opacity = 0;
-              node.style.transform = 'translateY(20px)';
-            }
-          });
-
-          // Animate lines
           const lines = architectureFlow.querySelectorAll('.flow-line');
-          lines.forEach((line, index) => {
-            const lineThreshold = 0.35 + (index * 0.25); // 0.35, 0.6
-            const lineElement = line.querySelector('line');
 
-            if (flowProgress > lineThreshold) {
-              line.style.opacity = 1;
-              if (lineElement) {
-                lineElement.style.strokeDashoffset = '0';
-              }
-            } else {
-              line.style.opacity = 0;
-              if (lineElement) {
-                lineElement.style.strokeDashoffset = '100';
+          // Phase 1 (0-0.15): Unity slides in from top (QUICK)
+          if (flowProgress <= 0.15) {
+            const phase1Progress = flowProgress / 0.15;
+
+            // Unity animates in
+            if (nodes[0]) {
+              nodes[0].style.opacity = Math.min(1, phase1Progress * 2);
+              const unityY = -200 * (1 - phase1Progress);
+              nodes[0].style.transform = `translateY(${unityY}px)`;
+            }
+
+            // Others hidden
+            if (nodes[1]) {
+              nodes[1].style.opacity = 0;
+              nodes[1].style.transform = 'translateY(100px)';
+            }
+            if (nodes[2]) {
+              nodes[2].style.opacity = 0;
+              nodes[2].style.transform = 'translateY(200px)';
+            }
+            if (lines[0]) lines[0].style.opacity = 0;
+            if (lines[1]) lines[1].style.opacity = 0;
+          }
+          // Phase 2 (0.15-0.35): Line 1 draws, Python connects (QUICK)
+          else if (flowProgress <= 0.35) {
+            const phase2Progress = (flowProgress - 0.15) / 0.2;
+
+            // Unity stays in place
+            if (nodes[0]) {
+              nodes[0].style.opacity = 1;
+              nodes[0].style.transform = 'translateY(0)';
+            }
+
+            // Line 1 draws down
+            if (lines[0]) {
+              const line1Element = lines[0].querySelector('line');
+              lines[0].style.opacity = Math.min(1, phase2Progress * 2);
+              if (line1Element) {
+                const offset = 120 * (1 - phase2Progress);
+                line1Element.style.strokeDashoffset = offset.toString();
               }
             }
-          });
 
-          // Animate binary rain based on scroll
-          const binaryRain = architectureFlow.querySelector('.binary-rain');
+            // Python slides in from below
+            if (nodes[1]) {
+              nodes[1].style.opacity = Math.min(1, phase2Progress * 1.5);
+              const pythonY = 100 * (1 - phase2Progress);
+              nodes[1].style.transform = `translateY(${pythonY}px)`;
+            }
 
-          if (binaryRain && flowProgress > 0.1 && flowProgress < 0.9) {
-            binaryRain.classList.add('active');
-          } else if (binaryRain) {
-            binaryRain.classList.remove('active');
+            // ElevenLabs hidden
+            if (nodes[2]) {
+              nodes[2].style.opacity = 0;
+              nodes[2].style.transform = 'translateY(100px)';
+            }
+            if (lines[1]) lines[1].style.opacity = 0;
+          }
+          // Phase 3 (0.35-0.5): Line 2 draws, ElevenLabs connects (QUICK)
+          else if (flowProgress <= 0.5) {
+            const phase3Progress = (flowProgress - 0.35) / 0.15;
+
+            // Unity and Python stay
+            if (nodes[0]) {
+              nodes[0].style.opacity = 1;
+              nodes[0].style.transform = 'translateY(0)';
+            }
+            if (nodes[1]) {
+              nodes[1].style.opacity = 1;
+              nodes[1].style.transform = 'translateY(0)';
+            }
+
+            // Line 1 fully drawn
+            if (lines[0]) {
+              const line1Element = lines[0].querySelector('line');
+              lines[0].style.opacity = 1;
+              if (line1Element) {
+                line1Element.style.strokeDashoffset = '0';
+              }
+            }
+
+            // Line 2 draws down
+            if (lines[1]) {
+              const line2Element = lines[1].querySelector('line');
+              lines[1].style.opacity = Math.min(1, phase3Progress * 2);
+              if (line2Element) {
+                const offset = 120 * (1 - phase3Progress);
+                line2Element.style.strokeDashoffset = offset.toString();
+              }
+            }
+
+            // ElevenLabs slides in from below
+            if (nodes[2]) {
+              nodes[2].style.opacity = Math.min(1, phase3Progress * 1.5);
+              const elevenY = 100 * (1 - phase3Progress);
+              nodes[2].style.transform = `translateY(${elevenY}px)`;
+            }
+          }
+          // Phase 4 (0.5-1): ALL 3 STAY FULLY VISIBLE - LONG TIME TO VIEW
+          else {
+            // Everything fully visible and connected
+            if (nodes[0]) {
+              nodes[0].style.opacity = 1;
+              nodes[0].style.transform = 'translateY(0)';
+            }
+            if (nodes[1]) {
+              nodes[1].style.opacity = 1;
+              nodes[1].style.transform = 'translateY(0)';
+            }
+            if (nodes[2]) {
+              nodes[2].style.opacity = 1;
+              nodes[2].style.transform = 'translateY(0)';
+            }
+
+            // Both lines fully drawn
+            if (lines[0]) {
+              const line1Element = lines[0].querySelector('line');
+              lines[0].style.opacity = 1;
+              if (line1Element) {
+                line1Element.style.strokeDashoffset = '0';
+              }
+            }
+            if (lines[1]) {
+              const line2Element = lines[1].querySelector('line');
+              lines[1].style.opacity = 1;
+              if (line2Element) {
+                line2Element.style.strokeDashoffset = '0';
+              }
+            }
           }
         }
 
@@ -1787,99 +1889,6 @@ window.__preloadedLang=savedLang;
         updateScrollAnimations();
       });
 
-    </script>
-
-    <!-- Binary Rain Animation -->
-    <script>
-      (function() {
-        const canvas = document.getElementById('binaryRain');
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d');
-
-        // Set canvas size
-        function resizeCanvas() {
-          const container = canvas.parentElement;
-          canvas.width = container.offsetWidth;
-          canvas.height = container.offsetHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        // Binary rain settings
-        const fontSize = 16;
-        const columns = Math.floor(canvas.width / fontSize);
-        const drops = [];
-
-        // Initialize drops
-        for (let i = 0; i < columns; i++) {
-          drops[i] = Math.random() * -100;
-        }
-
-        // Draw binary rain
-        function draw() {
-          // Semi-transparent background for trail effect
-          ctx.fillStyle = 'rgba(248, 249, 250, 0.08)';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-          // Set text style
-          ctx.fillStyle = '#10b981';
-          ctx.font = fontSize + 'px monospace';
-
-          // Draw drops
-          for (let i = 0; i < drops.length; i++) {
-            // Random binary digit
-            const text = Math.random() > 0.5 ? '1' : '0';
-
-            // Draw the character
-            const x = i * fontSize;
-            const y = drops[i] * fontSize;
-
-            // Fade effect based on position
-            const opacity = Math.min(1, Math.max(0, 1 - (y / canvas.height)));
-            ctx.globalAlpha = opacity * 0.4;
-
-            ctx.fillText(text, x, y);
-
-            // Reset drop to top randomly
-            if (y > canvas.height && Math.random() > 0.95) {
-              drops[i] = 0;
-            }
-
-            // Increment Y coordinate
-            drops[i] += 0.5;
-          }
-
-          ctx.globalAlpha = 1;
-        }
-
-        // Animation loop
-        let animationId;
-        let lastTime = 0;
-        const fps = 24; // Limit to 24fps for smoother, less intensive animation
-        const interval = 1000 / fps;
-
-        function animate(currentTime) {
-          animationId = requestAnimationFrame(animate);
-
-          const deltaTime = currentTime - lastTime;
-
-          if (deltaTime > interval) {
-            lastTime = currentTime - (deltaTime % interval);
-            draw();
-          }
-        }
-
-        // Start animation
-        animate(0);
-
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-          if (animationId) {
-            cancelAnimationFrame(animationId);
-          }
-        });
-      })();
     </script>
 
     <!-- Main site scripts -->
