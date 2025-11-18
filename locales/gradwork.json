@@ -61,7 +61,7 @@
     "section3": {
       "number": "3",
       "title": "Testing AI Models",
-      "intro": "This is where the real fun began. I tested multiple AI models to find something that could generate better quality audio.",
+      "intro": "So if procedural generation wasn't the answer, what about AI? Could machine learning models deliver both quality and speed? This question led me down a rabbit hole of testing different AI audio generators. What would I discover?",
       "audioldm_title": "AudioLDM - First Attempt",
       "audioldm_latency": "10-12s",
       "audioldm_quality": "5/10",
@@ -69,12 +69,12 @@
       "stat_latency": "Latency (CPU)",
       "stat_quality": "Quality",
       "stat_slow": "Too Slow",
-      "audioldm_note": "Yes, you read that right. TWELVE SECONDS for one sound. That's 240 times slower than the 50ms target. Plus the sounds sounded... weird.",
+      "audioldm_note": "Twelve seconds. For a single sound effect. How could this work in a game where actions need instant audio feedback? The answer was simple: it couldn't. But maybe there was something better out there?",
       "musicgen_title": "MusicGen - Better, But Still Not It",
       "musicgen_latency": "3-5s",
       "musicgen_quality": "7/10",
       "musicgen_slow": "60x",
-      "musicgen_note": "MusicGen was 3-4 times faster than AudioLDM and the sounds were definitely better. The problem? 3-5 seconds is still 60-100 times too slow, and it sounded more like music than actual sound effects.",
+      "musicgen_note": "Progress! MusicGen was faster and sounded better. But here's the catch: it was designed for music, not sound effects. The results felt... musical. And 3-5 seconds? Still nowhere near real-time. Was I looking in the wrong direction?",
       "comparison_title": "The Big Comparison",
       "table_model": "Model",
       "table_speed": "Speed",
@@ -104,9 +104,9 @@
     },
     "section4": {
       "number": "4",
-      "title": "Current Approach: Cache Strategy",
-      "intro": "During testing, I noticed something interesting. When I played the same sound for the second time, it played INSTANTLY - in about 0.03ms. Why? Because it was stored in cache.",
-      "hypothesis": "And then it hit me: what if we generate all sounds BEFORE the game, during the loading screen, and then play them from cache?",
+      "title": "A Different Approach: What If We're Asking the Wrong Question?",
+      "intro": "Here's where things got interesting. During my tests, something caught my attention: replaying a cached sound took 0.03ms. Instant. The second time around, there was no generation delay at all. This sparked a question...",
+      "hypothesis": "What if the problem isn't making AI faster? What if we're thinking about this backwards? Instead of generating during gameplay, what if we generate everything before the game even starts?",
       "solution_title": "The Solution Architecture (Testing)",
       "loading_phase": "Loading Screen Phase (30-60 seconds, one-time):",
       "loading_items": [
@@ -132,8 +132,8 @@
     },
     "section5": {
       "number": "5",
-      "title": "ElevenLabs Integration - Testing Phase",
-      "intro": "This is where things got interesting. I integrated ElevenLabs API for sound generation, and the sounds were REALISTIC. Not musical, not synthetic - actual sound effects. A footstep sounds like a footstep. A gunshot sounds like a gunshot.",
+      "title": "Finding the Right Tool: Does Professional Quality Exist?",
+      "intro": "But wait - if I'm pre-generating sounds anyway, speed becomes less critical. Quality moves to the forefront. So what happens when you use a tool actually designed for professional sound effects? Enter ElevenLabs. And suddenly, everything changed.",
       "why_title": "Why ElevenLabs?",
       "why_items": [
         "Professional Quality: 9/10 rating - sounds are actually realistic",
@@ -142,14 +142,14 @@
         "Affordable: ~$0.02 per sound generation"
       ],
       "variant_title": "Automatic Variant Rotation",
-      "variant_intro": "One clever feature I added was automatic rotation through different variants. Each sound type has 4 different prompts that cycle automatically:",
+      "variant_intro": "But here's a question: if you generate the same footstep sound 100 times, won't it feel repetitive? That's where variant rotation comes in. What if each keypress cycled through different surfaces automatically?",
       "code_example": "self.prompts = {\n    'footstep': [\n        \"single footstep on concrete floor, hard boot impact\",\n        \"footstep on wooden floor, creaky boards, natural\",\n        \"footstep on gravel, small rocks crunching, outdoor\",\n        \"heavy footstep on metal surface, industrial\"\n    ]\n}",
-      "variant_result": "Result: Every time you press F for a footstep, you get a different surface: concrete → wood → gravel → metal → concrete... This adds natural variety without any extra work!"
+      "variant_result": "The result? Natural variety. Concrete → wood → gravel → metal → back to concrete. Four unique sounds, rotating automatically. No repetition, no manual work. Just... works."
     },
     "section6": {
       "number": "6",
-      "title": "Current Results & Testing",
-      "intro": "Let's check the numbers from initial testing:",
+      "title": "So... Does It Actually Work?",
+      "intro": "Theory is one thing. But what about practice? What happens when you actually test this approach? Here's what the numbers are showing so far:",
       "table_metric": "Metric",
       "table_target": "Target",
       "table_achieved": "Initial Results",
@@ -171,21 +171,21 @@
       "realism_achieved": "Realistic!",
       "realism_status": "✓ Exceeded",
       "testing_status": "Research in Progress",
-      "testing_note": "Initial tests are promising! The cache-based approach seems viable. Further validation needed for production-scale implementation and edge cases."
+      "testing_note": "Promising, right? But here's the thing: these are initial tests. Small scale. What happens when you scale up to hundreds of sounds? What about edge cases? These are the questions I'm exploring now."
     },
     "section7": {
       "number": "7",
-      "title": "Current Learnings",
-      "learning1_title": "1. AI isn't (yet) fast enough for real-time",
-      "learning1": "The fastest AI model I tested was 60 times too slow for real-time gameplay. Even with GPU acceleration (which I didn't have), it would still be about 10x too slow. Maybe in a few years with better hardware and more efficient models it'll be different, but today it's not ready.",
-      "learning2_title": "2. But there might be a workaround",
-      "learning2": "Pre-generating during loading or on first request seems promising. Players might accept a brief wait for high quality. The cache system turned a 4-second wait into 0.04ms playback - an 80,000x speedup! Still validating this approach.",
-      "learning3_title": "3. Not all AI models are equal",
-      "learning3": "Each model has its strengths and weaknesses. The right tool for the job matters enormously. Choosing the correct model can make the difference between \"sounds weird\" and \"sounds professional.\"",
-      "learning4_title": "4. Cache is incredibly powerful",
-      "learning4": "The difference between 3000ms and 0.04ms is the magic of caching. Simple but super effective - an 80,000x speedup! Once a sound is generated, it can be replayed instantly thousands of times at zero cost.",
-      "learning5_title": "5. Quality matters more than speed (sometimes)",
-      "learning5": "A 4-second wait for a realistic sound might be better than an instant synthetic one. Players notice quality, and with caching, they only wait once. Testing continues to validate this hypothesis."
+      "title": "What Have I Learned So Far?",
+      "learning1_title": "1. Real-time AI audio? Not yet.",
+      "learning1": "Every AI model I tested was too slow. 60x, 100x, even 240x slower than needed. Could better hardware help? Maybe. But even with a GPU, we're still looking at 10x too slow. The technology simply isn't there yet for true real-time generation.",
+      "learning2_title": "2. But maybe that's the wrong goal?",
+      "learning2": "What if \"real-time\" doesn't mean generating during gameplay? What if it means the player experiences zero latency, regardless of when generation happens? Pre-generation plus caching gives us that. Is it cheating? Or is it just... smart engineering?",
+      "learning3_title": "3. Tool selection matters more than you think",
+      "learning3": "AudioLDM for music? Slow and weird. MusicGen for sound effects? Musical, not realistic. ElevenLabs for SFX? Perfect. The lesson? It's not just about AI - it's about the RIGHT AI for your specific use case.",
+      "learning4_title": "4. Sometimes the simple solution is the best solution",
+      "learning4": "80,000x speedup from caching. That's not cutting-edge AI research. It's basic computer science. But it works. Sometimes the breakthrough isn't new technology - it's using existing technology differently.",
+      "learning5_title": "5. What do players actually care about?",
+      "learning5": "Is it generation speed? Or is it the experience? A 30-second loading screen for professional audio might beat instant synthetic sounds. Players remember quality. They forgive loading times. Are we optimizing for the right thing?"
     },
     "section8": {
       "number": "8",
@@ -277,7 +277,7 @@
     "section3": {
       "number": "3",
       "title": "Testowanie modeli AI",
-      "intro": "Tutaj zaczęła się prawdziwa zabawa. Testowałem różne modele AI żeby znaleźć coś, co mogłoby generować lepszej jakości audio.",
+      "intro": "Więc jeśli generacja proceduralna nie była odpowiedzią, co z AI? Czy modele uczenia maszynowego mogą dostarczyć zarówno jakość jak i szybkość? To pytanie zaprowadziło mnie w króliczą norę testowania różnych generatorów audio AI. Co odkryję?",
       "audioldm_title": "AudioLDM - Pierwsza próba",
       "audioldm_latency": "10-12s",
       "audioldm_quality": "5/10",
@@ -285,12 +285,12 @@
       "stat_latency": "Opóźnienie (CPU)",
       "stat_quality": "Jakość",
       "stat_slow": "Za wolne",
-      "audioldm_note": "Tak, dobrze czytasz. DWANAŚCIE SEKUND na jeden dźwięk. To 240 razy wolniej niż cel 50ms. Plus dźwięki brzmiały... dziwnie.",
+      "audioldm_note": "Dwanaście sekund. Na jeden efekt dźwiękowy. Jak to miałoby działać w grze gdzie akcje potrzebują natychmiastowego audio feedbacku? Odpowiedź była prosta: nie mogło. Ale może tam gdzieś było coś lepszego?",
       "musicgen_title": "MusicGen - Lepiej, ale wciąż nie to",
       "musicgen_latency": "3-5s",
       "musicgen_quality": "7/10",
       "musicgen_slow": "60x",
-      "musicgen_note": "MusicGen był 3-4 razy szybszy od AudioLDM i dźwięki były zdecydowanie lepsze. Problem? 3-5 sekund to wciąż 60-100 razy za wolno, i brzmiało bardziej jak muzyka niż prawdziwe efekty dźwiękowe.",
+      "musicgen_note": "Postęp! MusicGen był szybszy i brzmiał lepiej. Ale jest haczyk: był zaprojektowany do muzyki, nie efektów dźwiękowych. Rezultaty wydawały się... muzyczne. A 3-5 sekund? Wciąż daleko od czasu rzeczywistego. Czy patrzę w złym kierunku?",
       "comparison_title": "Wielkie porównanie",
       "table_model": "Model",
       "table_speed": "Szybkość",
@@ -320,9 +320,9 @@
     },
     "section4": {
       "number": "4",
-      "title": "Obecne podejście: Strategia cache",
-      "intro": "Podczas testów zauważyłem coś ciekawego. Kiedy odtwarzałem ten sam dźwięk drugi raz, odtwarzał się NATYCHMIAST - w około 0.03ms. Czemu? Bo był zapisany w cache.",
-      "hypothesis": "I wtedy mnie olśniło: co jeśli wygenerujemy wszystkie dźwięki PRZED grą, podczas ekranu ładowania, a potem odtwarzamy z cache?",
+      "title": "Inne podejście: A co jeśli zadajemy złe pytanie?",
+      "intro": "Tutaj sprawy stały się ciekawe. Podczas moich testów coś zwróciło moją uwagę: odtworzenie cache'owanego dźwięku zajęło 0.03ms. Natychmiastowo. Za drugim razem nie było żadnego opóźnienia generacji. To wywołało pytanie...",
+      "hypothesis": "Co jeśli problemem nie jest przyspieszanie AI? Co jeśli myślimy o tym od tyłu? Zamiast generować podczas rozgrywki, co jeśli wygenerujemy wszystko zanim gra się w ogóle zacznie?",
       "solution_title": "Architektura rozwiązania (testowanie)",
       "loading_phase": "Faza ekranu ładowania (30-60 sekund, jednorazowo):",
       "loading_items": [
@@ -348,8 +348,8 @@
     },
     "section5": {
       "number": "5",
-      "title": "Integracja ElevenLabs - Faza testów",
-      "intro": "Tutaj sprawy stały się ciekawe. Zintegrowałem ElevenLabs API do generowania dźwięku, i dźwięki były REALISTYCZNE. Nie muzyczne, nie syntetyczne - prawdziwe efekty dźwiękowe. Krok brzmi jak krok. Strzał brzmi jak strzał.",
+      "title": "Znalezienie właściwego narzędzia: Czy profesjonalna jakość istnieje?",
+      "intro": "Ale czekaj - jeśli i tak wstępnie generuję dźwięki, szybkość staje się mniej krytyczna. Jakość wychodzi na pierwszy plan. Więc co się dzieje gdy używasz narzędzia faktycznie zaprojektowanego do profesjonalnych efektów dźwiękowych? Wchodzi ElevenLabs. I nagle wszystko się zmieniło.",
       "why_title": "Dlaczego ElevenLabs?",
       "why_items": [
         "Profesjonalna jakość: Ocena 9/10 - dźwięki są naprawdę realistyczne",
@@ -358,14 +358,14 @@
         "Przystępny: ~$0.02 za generowanie dźwięku"
       ],
       "variant_title": "Automatyczna rotacja wariantów",
-      "variant_intro": "Jedna sprytna funkcja którą dodałem to automatyczna rotacja przez różne warianty. Każdy typ dźwięku ma 4 różne prompty które cyklują automatycznie:",
+      "variant_intro": "Ale oto pytanie: jeśli wygenerujesz ten sam dźwięk kroku 100 razy, czy nie będzie się to wydawać powtarzalne? Tu wchodzi rotacja wariantów. Co jeśli każde naciśnięcie klawisza cyklowałoby automatycznie przez różne powierzchnie?",
       "code_example": "self.prompts = {\n    'footstep': [\n        \"pojedynczy krok na betonowej podłodze, twardy uderzenie buta\",\n        \"krok na drewnianej podłodze, skrzypiące deski, naturalny\",\n        \"krok na żwirze, chrzęszczące małe kamyczki, na zewnątrz\",\n        \"ciężki krok na metalowej powierzchni, industrialny\"\n    ]\n}",
-      "variant_result": "Rezultat: Za każdym razem kiedy wciskasz F dla kroku, dostajesz inną powierzchnię: beton → drewno → żwir → metal → beton... To dodaje naturalnej różnorodności bez dodatkowej pracy!"
+      "variant_result": "Rezultat? Naturalna różnorodność. Beton → drewno → żwir → metal → z powrotem do betonu. Cztery unikalne dźwięki, rotujące automatycznie. Bez powtórzeń, bez ręcznej pracy. Po prostu... działa."
     },
     "section6": {
       "number": "6",
-      "title": "Obecne wyniki i testowanie",
-      "intro": "Sprawdźmy liczby z początkowych testów:",
+      "title": "Więc... Czy to faktycznie działa?",
+      "intro": "Teoria to jedno. Ale co z praktyką? Co się dzieje gdy faktycznie testujesz to podejście? Oto co pokazują liczby jak dotąd:",
       "table_metric": "Metryka",
       "table_target": "Cel",
       "table_achieved": "Początkowe wyniki",
@@ -387,21 +387,21 @@
       "realism_achieved": "Realistyczny!",
       "realism_status": "✓ Przekroczony",
       "testing_status": "Badania w toku",
-      "testing_note": "Początkowe testy są obiecujące! Podejście oparte na cache wydaje się być wykonalne. Potrzebna dalsza walidacja dla implementacji na skalę produkcyjną i przypadków brzegowych."
+      "testing_note": "Obiecujące, prawda? Ale jest haczyk: to są początkowe testy. Mała skala. Co się dzieje gdy skalujesz do setek dźwięków? A co z przypadkami brzegowymi? To są pytania które teraz eksploruję."
     },
     "section7": {
       "number": "7",
-      "title": "Obecne wnioski",
-      "learning1_title": "1. AI nie jest (jeszcze) wystarczająco szybkie do czasu rzeczywistego",
-      "learning1": "Najszybszy model AI który testowałem był 60 razy za wolny do rozgrywki w czasie rzeczywistym. Nawet z akceleracją GPU (której nie miałem), wciąż byłby około 10x za wolny. Może za kilka lat z lepszym sprzętem i bardziej wydajnymi modelami będzie inaczej, ale dziś nie jest gotowy.",
-      "learning2_title": "2. Ale może być obejście",
-      "learning2": "Wstępne generowanie podczas ładowania lub przy pierwszym żądaniu wydaje się obiecujące. Gracze mogą zaakceptować krótkie oczekiwanie na wysoką jakość. System cache zamienił 4-sekundowe oczekiwanie na odtwarzanie 0.04ms - 80,000x przyspieszenie! Wciąż waliduje to podejście.",
-      "learning3_title": "3. Nie wszystkie modele AI są równe",
-      "learning3": "Każdy model ma swoje mocne i słabe strony. Właściwe narzędzie do zadania ma ogromne znaczenie. Wybór właściwego modelu może zrobić różnicę między \"brzmi dziwnie\" a \"brzmi profesjonalnie.\"",
-      "learning4_title": "4. Cache jest niesamowicie potężny",
-      "learning4": "Różnica między 3000ms a 0.04ms to magia cachowania. Proste ale super efektywne - 80,000x przyspieszenie! Raz wygenerowany dźwięk może być odtwarzany natychmiast tysiące razy bez kosztu.",
-      "learning5_title": "5. Jakość ma większe znaczenie niż szybkość (czasami)",
-      "learning5": "4-sekundowe oczekiwanie na realistyczny dźwięk może być lepsze niż natychmiastowy syntetyczny. Gracze zauważają jakość, a z cachowaniem czekają tylko raz. Testy trwają żeby zwalidować tę hipotezę."
+      "title": "Czego się dotąd nauczyłem?",
+      "learning1_title": "1. AI audio w czasie rzeczywistym? Jeszcze nie.",
+      "learning1": "Każdy model AI który testowałem był za wolny. 60x, 100x, nawet 240x wolniej niż potrzeba. Czy lepszy sprzęt by pomógł? Może. Ale nawet z GPU wciąż patrzymy na 10x za wolno. Technologia po prostu jeszcze nie jest gotowa na prawdziwą generację w czasie rzeczywistym.",
+      "learning2_title": "2. Ale może to zły cel?",
+      "learning2": "Co jeśli \"czas rzeczywisty\" nie oznacza generowania podczas rozgrywki? Co jeśli oznacza to że gracz doświadcza zerowego opóźnienia, niezależnie od tego kiedy generacja ma miejsce? Wstępna generacja plus cachowanie daje nam to. Czy to oszustwo? Czy to po prostu... sprytna inżynieria?",
+      "learning3_title": "3. Wybór narzędzia ma większe znaczenie niż myślisz",
+      "learning3": "AudioLDM do muzyki? Wolne i dziwne. MusicGen do efektów dźwiękowych? Muzyczne, nierealistyczne. ElevenLabs do SFX? Perfekcyjne. Lekcja? To nie tylko o AI - to o WŁAŚCIWYM AI do twojego konkretnego przypadku użycia.",
+      "learning4_title": "4. Czasami proste rozwiązanie jest najlepszym rozwiązaniem",
+      "learning4": "80,000x przyspieszenie z cachowania. To nie jest zaawansowane badanie AI. To podstawy informatyki. Ale działa. Czasami przełom to nie nowa technologia - to używanie istniejącej technologii inaczej.",
+      "learning5_title": "5. Na czym graczom faktycznie zależy?",
+      "learning5": "Czy na szybkości generacji? Czy na doświadczeniu? 30-sekundowy ekran ładowania za profesjonalne audio może pokonać natychmiastowe syntetyczne dźwięki. Gracze pamiętają jakość. Wybaczają czasy ładowania. Czy optymalizujemy właściwą rzecz?"
     },
     "section8": {
       "number": "8",
@@ -493,7 +493,7 @@
     "section3": {
       "number": "3",
       "title": "AI-modellen testen",
-      "intro": "Dit is waar het echte plezier begon. Ik testte meerdere AI-modellen om iets te vinden dat betere kwaliteit audio kon genereren.",
+      "intro": "Dus als procedurele generatie niet het antwoord was, hoe zit het dan met AI? Zouden machine learning modellen zowel kwaliteit als snelheid kunnen leveren? Deze vraag leidde me een konijnenhol in van het testen van verschillende AI audio generators. Wat zou ik ontdekken?",
       "audioldm_title": "AudioLDM - Eerste poging",
       "audioldm_latency": "10-12s",
       "audioldm_quality": "5/10",
@@ -501,12 +501,12 @@
       "stat_latency": "Latentie (CPU)",
       "stat_quality": "Kwaliteit",
       "stat_slow": "Te traag",
-      "audioldm_note": "Ja, je leest het goed. TWAALF SECONDEN voor één geluid. Dat is 240 keer trager dan het doel van 50ms. Plus de geluiden klonken... vreemd.",
+      "audioldm_note": "Twaalf seconden. Voor één geluidseffect. Hoe zou dit kunnen werken in een game waar acties directe audio feedback nodig hebben? Het antwoord was simpel: dat kon niet. Maar misschien was er iets beters daarbuiten?",
       "musicgen_title": "MusicGen - Beter, maar nog niet goed",
       "musicgen_latency": "3-5s",
       "musicgen_quality": "7/10",
       "musicgen_slow": "60x",
-      "musicgen_note": "MusicGen was 3-4 keer sneller dan AudioLDM en de geluiden waren zeker beter. Het probleem? 3-5 seconden is nog steeds 60-100 keer te traag, en het klonk meer als muziek dan echte geluidseffecten.",
+      "musicgen_note": "Vooruitgang! MusicGen was sneller en klonk beter. Maar hier is de vangst: het was ontworpen voor muziek, niet voor geluidseffecten. De resultaten voelden... muzikaal. En 3-5 seconden? Nog steeds nergens in de buurt van real-time. Keek ik in de verkeerde richting?",
       "comparison_title": "De grote vergelijking",
       "table_model": "Model",
       "table_speed": "Snelheid",
@@ -536,9 +536,9 @@
     },
     "section4": {
       "number": "4",
-      "title": "Huidige aanpak: Cache strategie",
-      "intro": "Tijdens het testen merkte ik iets interessants op. Toen ik hetzelfde geluid voor de tweede keer afspeelde, speelde het DIRECT af - in ongeveer 0.03ms. Waarom? Omdat het opgeslagen was in cache.",
-      "hypothesis": "En toen realiseerde ik me: wat als we alle geluiden VOOR het spel genereren, tijdens het laadscherm, en ze dan afspelen vanuit cache?",
+      "title": "Een andere benadering: Wat als we de verkeerde vraag stellen?",
+      "intro": "Hier werden dingen interessant. Tijdens mijn tests viel me iets op: het afspelen van een gecached geluid nam 0.03ms. Direct. De tweede keer was er helemaal geen generatievertraging. Dit wekte een vraag op...",
+      "hypothesis": "Wat als het probleem niet is om AI sneller te maken? Wat als we hier achterstevoren over nadenken? In plaats van tijdens gameplay genereren, wat als we alles genereren voordat het spel überhaupt begint?",
       "solution_title": "De oplossingsarchitectuur (testen)",
       "loading_phase": "Laadscherm fase (30-60 seconden, eenmalig):",
       "loading_items": [
@@ -564,8 +564,8 @@
     },
     "section5": {
       "number": "5",
-      "title": "ElevenLabs integratie - Testfase",
-      "intro": "Dit is waar dingen interessant werden. Ik integreerde ElevenLabs API voor geluidsgeneratie, en de geluiden waren REALISTISCH. Niet muzikaal, niet synthetisch - echte geluidseffecten. Een voetstap klinkt als een voetstap. Een schot klinkt als een schot.",
+      "title": "De juiste tool vinden: Bestaat professionele kwaliteit?",
+      "intro": "Maar wacht - als ik toch vooraf geluiden genereer, wordt snelheid minder kritisch. Kwaliteit komt op de voorgrond. Dus wat gebeurt er als je een tool gebruikt die echt ontworpen is voor professionele geluidseffecten? Enter ElevenLabs. En plotseling veranderde alles.",
       "why_title": "Waarom ElevenLabs?",
       "why_items": [
         "Professionele kwaliteit: 9/10 beoordeling - geluiden zijn echt realistisch",
@@ -574,14 +574,14 @@
         "Betaalbaar: ~$0.02 per geluidsgeneratie"
       ],
       "variant_title": "Automatische variant rotatie",
-      "variant_intro": "Een slimme functie die ik toevoegde was automatische rotatie door verschillende varianten. Elk geluidstype heeft 4 verschillende prompts die automatisch wisselen:",
+      "variant_intro": "Maar hier is een vraag: als je hetzelfde voetstap geluid 100 keer genereert, zal het dan niet repetitief aanvoelen? Daar komt variant rotatie om de hoek kijken. Wat als elke toetsaanslag automatisch door verschillende oppervlakken cyclet?",
       "code_example": "self.prompts = {\n    'footstep': [\n        \"enkele voetstap op betonnen vloer, harde laarzenimpact\",\n        \"voetstap op houten vloer, krakende planken, natuurlijk\",\n        \"voetstap op grind, kleine kiezels krakend, buiten\",\n        \"zware voetstap op metalen oppervlak, industrieel\"\n    ]\n}",
-      "variant_result": "Resultaat: Elke keer dat je op F drukt voor een voetstap, krijg je een ander oppervlak: beton → hout → grind → metaal → beton... Dit voegt natuurlijke variatie toe zonder extra werk!"
+      "variant_result": "Het resultaat? Natuurlijke variatie. Beton → hout → grind → metaal → terug naar beton. Vier unieke geluiden, automatisch roterend. Geen herhaling, geen handmatig werk. Het... werkt gewoon."
     },
     "section6": {
       "number": "6",
-      "title": "Huidige resultaten & testen",
-      "intro": "Laten we de cijfers bekijken van de initiële tests:",
+      "title": "Dus... Werkt het daadwerkelijk?",
+      "intro": "Theorie is één ding. Maar hoe zit het met de praktijk? Wat gebeurt er als je deze benadering daadwerkelijk test? Dit is wat de cijfers tot nu toe laten zien:",
       "table_metric": "Metriek",
       "table_target": "Doel",
       "table_achieved": "Initiële resultaten",
@@ -603,21 +603,21 @@
       "realism_achieved": "Realistisch!",
       "realism_status": "✓ Overtroffen",
       "testing_status": "Onderzoek lopend",
-      "testing_note": "Initiële tests zijn veelbelovend! De cache-gebaseerde aanpak lijkt haalbaar. Verdere validatie nodig voor productie-schaal implementatie en randgevallen."
+      "testing_note": "Veelbelovend, toch? Maar hier is het punt: dit zijn initiële tests. Kleine schaal. Wat gebeurt er als je opschaalt naar honderden geluiden? Hoe zit het met randgevallen? Dit zijn de vragen die ik nu aan het verkennen ben."
     },
     "section7": {
       "number": "7",
-      "title": "Huidige lessen",
-      "learning1_title": "1. AI is (nog) niet snel genoeg voor real-time",
-      "learning1": "Het snelste AI-model dat ik testte was 60 keer te traag voor real-time gameplay. Zelfs met GPU-versnelling (die ik niet had), zou het nog steeds ongeveer 10x te traag zijn. Misschien over een paar jaar met betere hardware en efficiëntere modellen zal het anders zijn, maar vandaag is het niet klaar.",
-      "learning2_title": "2. Maar er kan een oplossing zijn",
-      "learning2": "Vooraf genereren tijdens laden of bij eerste verzoek lijkt veelbelovend. Spelers accepteren misschien een korte wachttijd voor hoge kwaliteit. Het cache-systeem veranderde een wachttijd van 4 seconden in 0.04ms afspelen - een 80,000x versnelling! Deze aanpak wordt nog gevalideerd.",
-      "learning3_title": "3. Niet alle AI-modellen zijn gelijk",
-      "learning3": "Elk model heeft zijn sterke en zwakke punten. Het juiste gereedschap voor de klus doet er enorm toe. Het kiezen van het juiste model kan het verschil maken tussen \"klinkt vreemd\" en \"klinkt professioneel.\"",
-      "learning4_title": "4. Cache is ongelooflijk krachtig",
-      "learning4": "Het verschil tussen 3000ms en 0.04ms is de magie van caching. Simpel maar super effectief - een 80,000x versnelling! Eenmaal een geluid gegenereerd, kan het onmiddellijk duizenden keren worden herhaald tegen nul kosten.",
-      "learning5_title": "5. Kwaliteit is belangrijker dan snelheid (soms)",
-      "learning5": "Een wachttijd van 4 seconden voor een realistisch geluid is misschien beter dan een onmiddellijk synthetisch geluid. Spelers merken kwaliteit op, en met caching wachten ze maar één keer. Testen gaan door om deze hypothese te valideren."
+      "title": "Wat heb ik tot nu toe geleerd?",
+      "learning1_title": "1. Real-time AI audio? Nog niet.",
+      "learning1": "Elk AI-model dat ik testte was te traag. 60x, 100x, zelfs 240x trager dan nodig. Zou betere hardware helpen? Misschien. Maar zelfs met een GPU kijken we nog steeds naar 10x te traag. De technologie is er gewoon nog niet voor echte real-time generatie.",
+      "learning2_title": "2. Maar misschien is dat het verkeerde doel?",
+      "learning2": "Wat als \"real-time\" niet betekent genereren tijdens gameplay? Wat als het betekent dat de speler nul latentie ervaart, ongeacht wanneer generatie plaatsvindt? Pre-generatie plus caching geeft ons dat. Is het vals spelen? Of is het gewoon... slimme engineering?",
+      "learning3_title": "3. Toolselectie doet er meer toe dan je denkt",
+      "learning3": "AudioLDM voor muziek? Traag en vreemd. MusicGen voor geluidseffecten? Muzikaal, niet realistisch. ElevenLabs voor SFX? Perfect. De les? Het gaat niet alleen om AI - het gaat om de JUISTE AI voor jouw specifieke use case.",
+      "learning4_title": "4. Soms is de simpele oplossing de beste oplossing",
+      "learning4": "80,000x versnelling door caching. Dat is geen geavanceerd AI-onderzoek. Het is basis informatica. Maar het werkt. Soms is de doorbraak geen nieuwe technologie - het is het anders gebruiken van bestaande technologie.",
+      "learning5_title": "5. Waar geven spelers eigenlijk om?",
+      "learning5": "Is het generatiesnelheid? Of is het de ervaring? Een 30 seconden laadscherm voor professionele audio kan onmiddellijke synthetische geluiden verslaan. Spelers onthouden kwaliteit. Ze vergeven laadtijden. Optimaliseren we voor het juiste ding?"
     },
     "section8": {
       "number": "8",
