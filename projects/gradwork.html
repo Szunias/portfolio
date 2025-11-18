@@ -546,7 +546,7 @@ window.__preloadedLang=savedLang;
       /* Architecture Flow Animation */
       .architecture-flow {
         position: relative;
-        min-height: 350vh;
+        min-height: 600vh;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -609,6 +609,43 @@ window.__preloadedLang=savedLang;
           0 4px 20px rgba(0, 0, 0, 0.08),
           0 0 10px rgba(79, 70, 229, 0.1);
         border: 1px solid rgba(79, 70, 229, 0.15);
+      }
+
+      /* Zielony efekt sukcesu */
+      .flow-node.success {
+        box-shadow:
+          0 4px 20px rgba(0, 0, 0, 0.08),
+          0 0 20px rgba(16, 185, 129, 0.3);
+        border: 2px solid rgba(16, 185, 129, 0.6);
+      }
+
+      /* SUCCESS message - battery fill effect */
+      .flow-success-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 5rem;
+        font-weight: 900;
+        text-align: center;
+        letter-spacing: 0.15em;
+        z-index: 10;
+        opacity: 0;
+
+        /* Black outline */
+        -webkit-text-stroke: 3px #000000;
+        text-stroke: 3px #000000;
+
+        /* Green fill with gradient */
+        background: linear-gradient(to right, #10b981 0%, #10b981 50%, transparent 50%, transparent 100%);
+        background-size: 200% 100%;
+        background-position: 100% 0;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+        will-change: background-position, opacity;
+        transition: opacity 0.3s ease;
       }
 
       .flow-node-title {
@@ -1100,6 +1137,9 @@ window.__preloadedLang=savedLang;
                 <div class="flow-node-title">ElevenLabs</div>
                 <div class="flow-node-subtitle">AI Audio API</div>
               </div>
+
+              <!-- SUCCESS message -->
+              <div class="flow-success-message" id="flowSuccessMessage">SUCCESS</div>
             </div>
           </div>
         </div>
@@ -1107,7 +1147,7 @@ window.__preloadedLang=savedLang;
         <!-- Section 2: The Journey -->
         <section class="section" data-section="2">
           <div class="section-number" data-i18n="section2.number">2</div>
-          <h2 class="section-title" data-i18n="section2.title">The Journey: How It All Started</h2>
+          <h2 class="section-title" data-i18n="section2.title">Making Unity and Python Talk</h2>
           <div class="section-content">
             <h3 data-i18n="section2.phase1">Phase 1: First Attempts</h3>
             <p data-i18n="section2.intro">
@@ -1723,8 +1763,8 @@ window.__preloadedLang=savedLang;
           // Calculate scroll progress through the section (0 to 1)
           const rawProgress = (scrollY + windowHeight * 0.5 - flowTop) / flowHeight;
 
-          // Animation ends at 90% of section, rest is white space
-          const animationEndPoint = 0.9;
+          // Animation ends at 100% of section
+          const animationEndPoint = 1.0;
           const flowProgress = Math.max(0, Math.min(1, rawProgress / animationEndPoint));
 
           // Hide content after animation completes
@@ -1875,27 +1915,10 @@ window.__preloadedLang=savedLang;
               }
             }
           }
-          // Phase 4 (0.5-1): ALL 3 STAY FULLY VISIBLE - LONG TIME TO VIEW
+          // Phase 4 (0.75-1): SUCCESS FINALE
           else {
-            // Everything fully visible with SŁABY connected effect
-            if (nodes[0]) {
-              nodes[0].style.opacity = 1;
-              nodes[0].style.transform = 'translateY(0)';
-              nodes[0].classList.remove('connecting');
-              nodes[0].classList.add('connected');
-            }
-            if (nodes[1]) {
-              nodes[1].style.opacity = 1;
-              nodes[1].style.transform = 'translateY(0)';
-              nodes[1].classList.remove('connecting');
-              nodes[1].classList.add('connected');
-            }
-            if (nodes[2]) {
-              nodes[2].style.opacity = 1;
-              nodes[2].style.transform = 'translateY(0)';
-              nodes[2].classList.remove('connecting');
-              nodes[2].classList.add('connected');
-            }
+            // Calculate progress within Phase 4
+            const phase4Progress = (flowProgress - 0.75) / 0.25;
 
             // Both lines fully drawn
             if (lines[0]) {
@@ -1910,6 +1933,81 @@ window.__preloadedLang=savedLang;
               lines[1].style.opacity = 1;
               if (line2Element) {
                 line2Element.style.strokeDashoffset = '0';
+              }
+            }
+
+            const successMessage = architectureFlow.querySelector('#flowSuccessMessage');
+
+            // Sub-phase 1 (0.75-0.78): Green borders briefly
+            if (phase4Progress < 0.12) {
+              // All nodes visible with green borders
+              nodes.forEach(node => {
+                node.style.opacity = 1;
+                node.style.transform = 'translateY(0)';
+                node.classList.remove('connecting', 'connected');
+                node.classList.add('success');
+              });
+
+              // Lines visible
+              if (lines[0]) lines[0].style.opacity = 1;
+              if (lines[1]) lines[1].style.opacity = 1;
+
+              // SUCCESS hidden
+              if (successMessage) {
+                successMessage.style.opacity = 0;
+                successMessage.style.backgroundPosition = '100% 0';
+              }
+            }
+            // Sub-phase 2 (0.78-0.82): Boxes fade out
+            else if (phase4Progress < 0.28) {
+              const fadeProgress = (phase4Progress - 0.12) / 0.16;
+              const fadeOpacity = 1 - fadeProgress;
+
+              // Nodes fade out
+              nodes.forEach(node => {
+                node.style.opacity = fadeOpacity;
+                node.style.transform = 'translateY(0)';
+              });
+
+              // Lines fade out
+              if (lines[0]) lines[0].style.opacity = fadeOpacity;
+              if (lines[1]) lines[1].style.opacity = fadeOpacity;
+
+              // SUCCESS still hidden
+              if (successMessage) {
+                successMessage.style.opacity = 0;
+                successMessage.style.backgroundPosition = '100% 0';
+              }
+            }
+            // Sub-phase 3 (0.82-1.0): SUCCESS appears and fills from left, then stays
+            else {
+              const successProgress = (phase4Progress - 0.28) / 0.72;
+
+              // Nodes completely hidden
+              nodes.forEach(node => {
+                node.style.opacity = 0;
+              });
+
+              // Lines completely hidden
+              if (lines[0]) lines[0].style.opacity = 0;
+              if (lines[1]) lines[1].style.opacity = 0;
+
+              // SUCCESS battery fill animation from left
+              if (successMessage) {
+                // Fade in faster
+                const opacity = Math.min(1, successProgress * 3);
+                successMessage.style.opacity = opacity;
+
+                // Fill from left - completes at 50% of sub-phase, then stays full
+                if (successProgress < 0.5) {
+                  // Filling phase (0-50%)
+                  const fillProgress = successProgress / 0.5;
+                  const bgPosition = 100 - (fillProgress * 100);
+                  successMessage.style.backgroundPosition = `${bgPosition}% 0`;
+                } else {
+                  // Full and stays (50-100%)
+                  successMessage.style.backgroundPosition = '0% 0';
+                }
               }
             }
           }
