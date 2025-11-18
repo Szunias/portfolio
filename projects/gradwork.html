@@ -592,31 +592,37 @@ window.__preloadedLang=savedLang;
         margin: 0;
         will-change: transform, opacity;
         transition: box-shadow 0.6s ease, border 0.6s ease;
-        border: 1px solid transparent;
+        border: 2px solid #e5e7eb;
+        overflow: hidden;
       }
 
-      /* Subtelny efekt podczas łączenia */
-      .flow-node.connecting {
-        box-shadow:
-          0 4px 20px rgba(0, 0, 0, 0.08),
-          0 0 20px rgba(79, 70, 229, 0.25);
-        border: 1px solid rgba(79, 70, 229, 0.3);
+      /* Green fill effect - liquid fills from TOP (gravity!) */
+      .flow-node::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 0%;
+        background: linear-gradient(to bottom, rgba(52, 211, 153, 0.2), rgba(16, 185, 129, 0.15));
+        transition: height 1s ease;
+        z-index: -1;
+        border-radius: 10px;
       }
 
-      /* Bardzo subtelny efekt po połączeniu */
-      .flow-node.connected {
-        box-shadow:
-          0 4px 20px rgba(0, 0, 0, 0.08),
-          0 0 10px rgba(79, 70, 229, 0.1);
-        border: 1px solid rgba(79, 70, 229, 0.15);
+      .flow-node.filling::before {
+        height: 100%;
       }
 
-      /* Zielony efekt sukcesu */
-      .flow-node.success {
-        box-shadow:
-          0 4px 20px rgba(0, 0, 0, 0.08),
-          0 0 20px rgba(16, 185, 129, 0.3);
-        border: 2px solid rgba(16, 185, 129, 0.6);
+      .flow-node.filled::before {
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(52, 211, 153, 0.25), rgba(16, 185, 129, 0.2));
+      }
+
+      .flow-node.filling,
+      .flow-node.filled {
+        border-color: #10b981;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 0 15px rgba(16, 185, 129, 0.3);
       }
 
       /* SUCCESS message - battery fill effect */
@@ -666,13 +672,62 @@ window.__preloadedLang=savedLang;
         height: 120px;
         opacity: 0;
         margin: 0.5rem 0;
-        will-change: opacity, height;
+        will-change: opacity;
+        position: relative;
+        transition: opacity 0.5s ease;
       }
 
       .flow-line line {
-        stroke-dasharray: 120;
-        stroke-dashoffset: 120;
-        will-change: stroke-dashoffset;
+        stroke: #e5e7eb;
+        stroke-width: 4;
+        transition: stroke 1s ease;
+      }
+
+      .flow-line.filling,
+      .flow-line.filled {
+        opacity: 1;
+      }
+
+      .flow-line.filling line,
+      .flow-line.filled line {
+        stroke: #10b981;
+        filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.6));
+      }
+
+      /* Liquid drop animation */
+      .flow-line::after {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 10px;
+        height: 10px;
+        background: radial-gradient(circle, #10b981, #34d399);
+        border-radius: 50%;
+        opacity: 0;
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+        pointer-events: none;
+      }
+
+      .flow-line.filling::after {
+        animation: liquidDrop 1.5s ease-in-out forwards;
+      }
+
+      @keyframes liquidDrop {
+        0% {
+          top: -10px;
+          opacity: 1;
+          transform: translateX(-50%) scale(1);
+        }
+        50% {
+          transform: translateX(-50%) scale(1.2);
+        }
+        100% {
+          top: 130px;
+          opacity: 0;
+          transform: translateX(-50%) scale(0.8);
+        }
       }
 
 
@@ -1635,11 +1690,11 @@ window.__preloadedLang=savedLang;
       </footer>
 
       <!-- Autoscroll Button -->
-      <button id="autoscrollBtn" class="autoscroll-btn" aria-label="Watch animation automatically">
+      <button id="autoscrollBtn" class="autoscroll-btn" aria-label="Auto play animation">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polygon points="5 3 19 12 5 21 5 3"/>
         </svg>
-        <span>Watch</span>
+        <span data-i18n="autoscroll.button">Auto Play</span>
       </button>
     </div>
 
@@ -1875,232 +1930,210 @@ window.__preloadedLang=savedLang;
           const nodes = architectureFlow.querySelectorAll('.flow-node');
           const lines = architectureFlow.querySelectorAll('.flow-line');
 
-          // Phase 1 (0-0.25): Unity slides in from top
-          if (flowProgress <= 0.25) {
-            const phase1Progress = flowProgress / 0.25;
+          // NEW ENERGY FLOW ANIMATION - Battery charging effect
+          // Phase 1 (0-0.2): Unity slides in + fills green
+          if (flowProgress <= 0.2) {
+            const phase1Progress = flowProgress / 0.2;
 
-            // Unity animates in with STRONG connecting effect
+            // Unity slides in (0-50%) then fills green (50-100%)
             if (nodes[0]) {
-              nodes[0].style.opacity = Math.min(1, phase1Progress * 2);
-              const unityY = -200 * (1 - phase1Progress);
-              nodes[0].style.transform = `translateY(${unityY}px)`;
-              // Add MOCNY effect when visible
-              if (phase1Progress > 0.5) {
-                nodes[0].classList.add('connecting');
-                nodes[0].classList.remove('connected');
+              if (phase1Progress <= 0.5) {
+                // Slide in
+                const slideProgress = phase1Progress / 0.5;
+                nodes[0].style.opacity = Math.min(1, slideProgress * 2);
+                const unityY = -200 * (1 - slideProgress);
+                nodes[0].style.transform = `translateY(${unityY}px)`;
+                nodes[0].classList.remove('filling', 'filled');
               } else {
-                nodes[0].classList.remove('connecting', 'connected');
+                // Fill green
+                nodes[0].style.opacity = 1;
+                nodes[0].style.transform = 'translateY(0)';
+                nodes[0].classList.add('filling');
+                if (phase1Progress > 0.95) {
+                  nodes[0].classList.remove('filling');
+                  nodes[0].classList.add('filled');
+                }
               }
             }
 
             // Others hidden
             if (nodes[1]) {
               nodes[1].style.opacity = 0;
-              nodes[1].style.transform = 'translateY(100px)';
-              nodes[1].classList.remove('connecting', 'connected');
+              nodes[1].classList.remove('filling', 'filled');
             }
             if (nodes[2]) {
               nodes[2].style.opacity = 0;
-              nodes[2].style.transform = 'translateY(200px)';
-              nodes[2].classList.remove('connecting', 'connected');
+              nodes[2].classList.remove('filling', 'filled');
             }
             if (lines[0]) {
               lines[0].style.opacity = 0;
+              lines[0].classList.remove('filling', 'filled');
             }
             if (lines[1]) {
               lines[1].style.opacity = 0;
+              lines[1].classList.remove('filling', 'filled');
             }
           }
-          // Phase 2 (0.25-0.5): Line 1 draws, Python connects
-          else if (flowProgress <= 0.5) {
-            const phase2Progress = (flowProgress - 0.25) / 0.25;
+          // Phase 2 (0.2-0.4): Line 1 liquid flow + Python fills
+          else if (flowProgress <= 0.4) {
+            const phase2Progress = (flowProgress - 0.2) / 0.2;
 
-            // Unity stays in place, SŁABY efekt (już połączony)
+            // Unity stays filled
             if (nodes[0]) {
               nodes[0].style.opacity = 1;
               nodes[0].style.transform = 'translateY(0)';
-              nodes[0].classList.remove('connecting');
-              nodes[0].classList.add('connected');
+              nodes[0].classList.remove('filling');
+              nodes[0].classList.add('filled');
             }
 
-            // Line 1 draws down
-            if (lines[0]) {
-              const line1Element = lines[0].querySelector('line');
-              lines[0].style.opacity = Math.min(1, phase2Progress * 2);
-              if (line1Element) {
-                const offset = 120 * (1 - phase2Progress);
-                line1Element.style.strokeDashoffset = offset.toString();
+            // Line 1 liquid flow (0-50%) then Python fills (50-100%)
+            if (phase2Progress <= 0.5) {
+              // Liquid drops through line
+              if (lines[0]) {
+                lines[0].style.opacity = 1;
+                lines[0].classList.add('filling');
               }
-            }
-
-            // Python slides in with MOCNY connecting effect
-            if (nodes[1]) {
-              nodes[1].style.opacity = Math.min(1, phase2Progress * 1.5);
-              const pythonY = 100 * (1 - phase2Progress);
-              nodes[1].style.transform = `translateY(${pythonY}px)`;
-              // MOCNY efekt when connecting
-              if (phase2Progress > 0.3) {
-                nodes[1].classList.add('connecting');
-                nodes[1].classList.remove('connected');
-              } else {
-                nodes[1].classList.remove('connecting', 'connected');
+              // Python visible but not filling yet
+              if (nodes[1]) {
+                nodes[1].style.opacity = 1;
+                nodes[1].classList.remove('filling', 'filled');
+              }
+            } else {
+              // Line filled, Python fills green
+              if (lines[0]) {
+                lines[0].classList.remove('filling');
+                lines[0].classList.add('filled');
+              }
+              if (nodes[1]) {
+                nodes[1].style.opacity = 1;
+                nodes[1].classList.add('filling');
+                if (phase2Progress > 0.95) {
+                  nodes[1].classList.remove('filling');
+                  nodes[1].classList.add('filled');
+                }
               }
             }
 
             // ElevenLabs hidden
             if (nodes[2]) {
               nodes[2].style.opacity = 0;
-              nodes[2].style.transform = 'translateY(100px)';
-              nodes[2].classList.remove('connecting', 'connected');
+              nodes[2].classList.remove('filling', 'filled');
             }
             if (lines[1]) {
               lines[1].style.opacity = 0;
+              lines[1].classList.remove('filling', 'filled');
             }
           }
-          // Phase 3 (0.5-0.75): Line 2 draws, ElevenLabs connects
-          else if (flowProgress <= 0.75) {
-            const phase3Progress = (flowProgress - 0.5) / 0.25;
+          // Phase 3 (0.4-0.6): Line 2 liquid flow + ElevenLabs fills
+          else if (flowProgress <= 0.6) {
+            const phase3Progress = (flowProgress - 0.4) / 0.2;
 
-            // Unity SŁABY efekt (już połączony)
+            // Unity and Python stay filled
             if (nodes[0]) {
               nodes[0].style.opacity = 1;
-              nodes[0].style.transform = 'translateY(0)';
-              nodes[0].classList.remove('connecting');
-              nodes[0].classList.add('connected');
+              nodes[0].classList.add('filled');
             }
-
-            // Python becomes SŁABY connected
             if (nodes[1]) {
               nodes[1].style.opacity = 1;
-              nodes[1].style.transform = 'translateY(0)';
-              nodes[1].classList.remove('connecting');
-              nodes[1].classList.add('connected');
+              nodes[1].classList.add('filled');
             }
-
-            // Line 1 fully drawn
             if (lines[0]) {
-              const line1Element = lines[0].querySelector('line');
               lines[0].style.opacity = 1;
-              if (line1Element) {
-                line1Element.style.strokeDashoffset = '0';
-              }
+              lines[0].classList.add('filled');
             }
 
-            // Line 2 draws down
-            if (lines[1]) {
-              const line2Element = lines[1].querySelector('line');
-              lines[1].style.opacity = Math.min(1, phase3Progress * 2);
-              if (line2Element) {
-                const offset = 120 * (1 - phase3Progress);
-                line2Element.style.strokeDashoffset = offset.toString();
+            // Line 2 liquid flow (0-50%) then ElevenLabs fills (50-100%)
+            if (phase3Progress <= 0.5) {
+              // Liquid drops through line
+              if (lines[1]) {
+                lines[1].style.opacity = 1;
+                lines[1].classList.add('filling');
               }
-            }
-
-            // ElevenLabs slides in with MOCNY connecting effect
-            if (nodes[2]) {
-              nodes[2].style.opacity = Math.min(1, phase3Progress * 1.5);
-              const elevenY = 100 * (1 - phase3Progress);
-              nodes[2].style.transform = `translateY(${elevenY}px)`;
-              // MOCNY efekt when connecting
-              if (phase3Progress > 0.3) {
-                nodes[2].classList.add('connecting');
-                nodes[2].classList.remove('connected');
-              } else {
-                nodes[2].classList.remove('connecting', 'connected');
+              // ElevenLabs visible but not filling yet
+              if (nodes[2]) {
+                nodes[2].style.opacity = 1;
+                nodes[2].classList.remove('filling', 'filled');
+              }
+            } else {
+              // Line filled, ElevenLabs fills green
+              if (lines[1]) {
+                lines[1].classList.remove('filling');
+                lines[1].classList.add('filled');
+              }
+              if (nodes[2]) {
+                nodes[2].style.opacity = 1;
+                nodes[2].classList.add('filling');
+                if (phase3Progress > 0.95) {
+                  nodes[2].classList.remove('filling');
+                  nodes[2].classList.add('filled');
+                }
               }
             }
           }
-          // Phase 4 (0.75-1): SUCCESS FINALE
+          // Phase 4 (0.6-1): All filled + SUCCESS battery fill
           else {
             // Calculate progress within Phase 4
-            const phase4Progress = (flowProgress - 0.75) / 0.25;
+            const phase4Progress = (flowProgress - 0.6) / 0.4;
 
-            // Both lines fully drawn
+            // All boxes and lines stay filled
+            if (nodes[0]) {
+              nodes[0].style.opacity = 1;
+              nodes[0].classList.add('filled');
+            }
+            if (nodes[1]) {
+              nodes[1].style.opacity = 1;
+              nodes[1].classList.add('filled');
+            }
+            if (nodes[2]) {
+              nodes[2].style.opacity = 1;
+              nodes[2].classList.add('filled');
+            }
             if (lines[0]) {
-              const line1Element = lines[0].querySelector('line');
               lines[0].style.opacity = 1;
-              if (line1Element) {
-                line1Element.style.strokeDashoffset = '0';
-              }
+              lines[0].classList.add('filled');
             }
             if (lines[1]) {
-              const line2Element = lines[1].querySelector('line');
               lines[1].style.opacity = 1;
-              if (line2Element) {
-                line2Element.style.strokeDashoffset = '0';
-              }
+              lines[1].classList.add('filled');
             }
 
             const successMessage = architectureFlow.querySelector('#flowSuccessMessage');
 
-            // Sub-phase 1 (0.75-0.78): Green borders briefly
-            if (phase4Progress < 0.12) {
-              // All nodes visible with green borders
+            // Boxes fade out (0-25%), SUCCESS fills (25-75%), SUCCESS stays (75-100%)
+            if (phase4Progress < 0.25) {
+              // Boxes fade out
+              const fadeProgress = phase4Progress / 0.25;
+              const fadeOpacity = 1 - fadeProgress;
               nodes.forEach(node => {
-                node.style.opacity = 1;
-                node.style.transform = 'translateY(0)';
-                node.classList.remove('connecting', 'connected');
-                node.classList.add('success');
+                node.style.opacity = fadeOpacity;
               });
-
-              // Lines visible
-              if (lines[0]) lines[0].style.opacity = 1;
-              if (lines[1]) lines[1].style.opacity = 1;
+              if (lines[0]) lines[0].style.opacity = fadeOpacity;
+              if (lines[1]) lines[1].style.opacity = fadeOpacity;
 
               // SUCCESS hidden
               if (successMessage) {
                 successMessage.style.opacity = 0;
                 successMessage.style.backgroundPosition = '100% 0';
               }
-            }
-            // Sub-phase 2 (0.78-0.82): Boxes fade out
-            else if (phase4Progress < 0.28) {
-              const fadeProgress = (phase4Progress - 0.12) / 0.16;
-              const fadeOpacity = 1 - fadeProgress;
-
-              // Nodes fade out
-              nodes.forEach(node => {
-                node.style.opacity = fadeOpacity;
-                node.style.transform = 'translateY(0)';
-              });
-
-              // Lines fade out
-              if (lines[0]) lines[0].style.opacity = fadeOpacity;
-              if (lines[1]) lines[1].style.opacity = fadeOpacity;
-
-              // SUCCESS still hidden
-              if (successMessage) {
-                successMessage.style.opacity = 0;
-                successMessage.style.backgroundPosition = '100% 0';
-              }
-            }
-            // Sub-phase 3 (0.82-1.0): SUCCESS appears and fills from left, then stays
-            else {
-              const successProgress = (phase4Progress - 0.28) / 0.72;
-
-              // Nodes completely hidden
+            } else {
+              // Boxes completely hidden
               nodes.forEach(node => {
                 node.style.opacity = 0;
               });
-
-              // Lines completely hidden
               if (lines[0]) lines[0].style.opacity = 0;
               if (lines[1]) lines[1].style.opacity = 0;
 
-              // SUCCESS battery fill animation from left
+              // SUCCESS battery fill animation
               if (successMessage) {
-                // Fade in faster
-                const opacity = Math.min(1, successProgress * 3);
-                successMessage.style.opacity = opacity;
-
-                // Fill from left - completes at 50% of sub-phase, then stays full
-                if (successProgress < 0.5) {
-                  // Filling phase (0-50%)
-                  const fillProgress = successProgress / 0.5;
+                if (phase4Progress < 0.75) {
+                  // Filling phase (25-75%)
+                  const fillProgress = (phase4Progress - 0.25) / 0.5;
+                  successMessage.style.opacity = 1;
                   const bgPosition = 100 - (fillProgress * 100);
                   successMessage.style.backgroundPosition = `${bgPosition}% 0`;
                 } else {
-                  // Full and stays (50-100%)
+                  // Full and stays (75-100%)
+                  successMessage.style.opacity = 1;
                   successMessage.style.backgroundPosition = '0% 0';
                 }
               }
@@ -2173,13 +2206,13 @@ window.__preloadedLang=savedLang;
         // Return target for closest upcoming section
         if (beforeWell) {
           return {
-            label: 'Watch Well Animation',
+            label: 'Auto Play',
             target: wellBottom,
             duration: 5000 // 5 seconds
           };
         } else if (betweenSections) {
           return {
-            label: 'Watch Architecture',
+            label: 'Auto Play',
             target: flowBottom,
             duration: 10000 // 10 seconds
           };
