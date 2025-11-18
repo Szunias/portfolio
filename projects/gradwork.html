@@ -707,6 +707,70 @@ window.__preloadedLang=savedLang;
         }
       }
 
+      /* Autoscroll Button */
+      .autoscroll-btn {
+        position: fixed;
+        right: 2rem;
+        bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        background: #ffffff;
+        border: 2px solid #10b981;
+        border-radius: 50px;
+        box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        cursor: pointer;
+        z-index: 900;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #10b981;
+      }
+
+      .autoscroll-btn.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .autoscroll-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 30px rgba(16, 185, 129, 0.4);
+        background: #f0fdf4;
+        border-color: #059669;
+      }
+
+      .autoscroll-btn:active {
+        transform: translateY(0);
+      }
+
+      .autoscroll-btn svg {
+        width: 18px;
+        height: 18px;
+        color: #10b981;
+        transition: transform 0.3s ease;
+      }
+
+      .autoscroll-btn:hover svg {
+        transform: translateX(2px);
+      }
+
+      @media (max-width: 768px) {
+        .autoscroll-btn {
+          padding: 0.6rem 1rem;
+          font-size: 0.75rem;
+          right: 1rem;
+          bottom: 1rem;
+        }
+
+        .autoscroll-btn svg {
+          width: 16px;
+          height: 16px;
+        }
+      }
+
       /* Language Switcher - Orbital mini flags */
       .lang-switcher {
         position: fixed;
@@ -1569,6 +1633,14 @@ window.__preloadedLang=savedLang;
           Graduate Research Project • Ongoing • 2025 • Igor Szuniewicz
         </p>
       </footer>
+
+      <!-- Autoscroll Button -->
+      <button id="autoscrollBtn" class="autoscroll-btn" aria-label="Watch animation automatically">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        <span>Watch</span>
+      </button>
     </div>
 
     <!-- Translation Script -->
@@ -1671,6 +1743,7 @@ window.__preloadedLang=savedLang;
       // Parallax scroll effect
       let lastScrollY = 0;
       let ticking = false;
+      let isAutoScrolling = false;
 
       function updateParallax() {
         const scrolled = window.pageYOffset;
@@ -1715,6 +1788,28 @@ window.__preloadedLang=savedLang;
       }
 
       window.addEventListener('scroll', requestTick, { passive: true });
+
+      // Interrupt autoscroll on manual user interaction
+      window.addEventListener('wheel', () => {
+        if (isAutoScrolling) {
+          console.log('Autoscroll interrupted by wheel');
+          isAutoScrolling = false;
+        }
+      }, { passive: true });
+      window.addEventListener('touchstart', () => {
+        if (isAutoScrolling) {
+          console.log('Autoscroll interrupted by touch');
+          isAutoScrolling = false;
+        }
+      }, { passive: true });
+      window.addEventListener('keydown', (e) => {
+        if (['ArrowUp', 'ArrowDown', 'Space', 'PageUp', 'PageDown', 'Home', 'End'].includes(e.code)) {
+          if (isAutoScrolling) {
+            console.log('Autoscroll interrupted by key:', e.code);
+            isAutoScrolling = false;
+          }
+        }
+      });
 
       // Scroll-based animations
       function updateScrollAnimations() {
@@ -2028,6 +2123,125 @@ window.__preloadedLang=savedLang;
             section.classList.remove('visible');
           }
         });
+
+        // Smart autoscroll button logic - shows before each section
+        const autoscrollBtn = document.getElementById('autoscrollBtn');
+        if (autoscrollBtn && !isAutoScrolling) {
+          const target = determineAutoscrollTarget();
+
+          if (target) {
+            // Update button text
+            const buttonText = autoscrollBtn.querySelector('span');
+            if (buttonText) buttonText.textContent = target.label;
+
+            // Store target info in dataset
+            autoscrollBtn.dataset.targetY = target.target;
+            autoscrollBtn.dataset.duration = target.duration;
+
+            // Show button
+            autoscrollBtn.classList.add('visible');
+          } else {
+            // Hide button (during animation or after all animations)
+            autoscrollBtn.classList.remove('visible');
+          }
+        }
+      }
+
+      // Determine which section to autoscroll based on current position
+      function determineAutoscrollTarget() {
+        const scrollY = window.scrollY;
+        const windowHeight = window.innerHeight;
+
+        const wellTransition = document.getElementById('wellTransition');
+        const architectureFlow = document.getElementById('architectureFlow');
+
+        if (!wellTransition || !architectureFlow) return null;
+
+        // Get section positions
+        const wellRect = wellTransition.getBoundingClientRect();
+        const wellTop = scrollY + wellRect.top;
+        const wellBottom = scrollY + wellRect.bottom;
+
+        const flowRect = architectureFlow.getBoundingClientRect();
+        const flowTop = scrollY + flowRect.top;
+        const flowBottom = scrollY + flowRect.bottom;
+
+        // Trigger zones (show button BEFORE section)
+        const beforeWell = scrollY < wellTop - (windowHeight * 0.3);
+        const betweenSections = scrollY >= wellBottom && scrollY < flowTop - (windowHeight * 0.3);
+
+        // Return target for closest upcoming section
+        if (beforeWell) {
+          return {
+            label: 'Watch Well Animation',
+            target: wellBottom,
+            duration: 5000 // 5 seconds
+          };
+        } else if (betweenSections) {
+          return {
+            label: 'Watch Architecture',
+            target: flowBottom,
+            duration: 10000 // 10 seconds
+          };
+        }
+
+        return null; // Hide button (during animation or after)
+      }
+
+      // Smooth autoscroll function with full control over duration
+      function smoothScrollTo(targetY, duration) {
+        isAutoScrolling = true;
+        const startY = window.scrollY;
+        const distance = targetY - startY;
+        const startTime = performance.now();
+
+        // CRITICAL: Disable CSS scroll-behavior during autoscroll
+        const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+        document.documentElement.style.scrollBehavior = 'auto';
+
+        console.log('Starting autoscroll from', startY, 'to', targetY, 'duration', duration);
+
+        function scrollStep(currentTime) {
+          // Check if user interrupted
+          if (!isAutoScrolling) {
+            console.log('Autoscroll interrupted');
+            // Restore scroll behavior
+            document.documentElement.style.scrollBehavior = originalScrollBehavior;
+            return;
+          }
+
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+
+          // Easing function (easeInOutQuad) for smooth motion
+          const easeProgress = progress < 0.5
+            ? 2 * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+          // Calculate current scroll position
+          const currentScrollY = startY + distance * easeProgress;
+
+          // Update scroll position
+          window.scrollTo(0, currentScrollY);
+
+          // CRITICAL: Directly call animation updates bypassing event system
+          updateParallax();
+          updateScrollAnimations();
+
+          if (progress < 1) {
+            requestAnimationFrame(scrollStep);
+          } else {
+            // Animation complete
+            console.log('Autoscroll complete at', window.scrollY);
+            isAutoScrolling = false;
+            updateParallax();
+            updateScrollAnimations();
+            // Restore scroll behavior
+            document.documentElement.style.scrollBehavior = originalScrollBehavior;
+          }
+        }
+
+        requestAnimationFrame(scrollStep);
       }
 
       // Add to parallax update
@@ -2048,6 +2262,23 @@ window.__preloadedLang=savedLang;
       document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('loaded');
         updateScrollAnimations();
+
+        // Autoscroll button click handler
+        const autoscrollBtn = document.getElementById('autoscrollBtn');
+        if (autoscrollBtn) {
+          autoscrollBtn.addEventListener('click', () => {
+            const targetY = parseInt(autoscrollBtn.dataset.targetY);
+            const duration = parseInt(autoscrollBtn.dataset.duration);
+
+            if (targetY && duration) {
+              // Scroll to target with appropriate duration
+              smoothScrollTo(targetY, duration);
+
+              // Hide button immediately
+              autoscrollBtn.classList.remove('visible');
+            }
+          });
+        }
       });
 
     </script>
