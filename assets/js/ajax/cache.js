@@ -10,6 +10,26 @@ export class CacheManager {
     this.pageCache = new Map();
     this.preloadQueue = new Set();
     this.activePreloadTimeouts = new Map();
+
+    // Cache versioning - auto-invalidate when content changes
+    this.CACHE_VERSION = '2024-01-19-sound-design'; // Update when HTML structure changes
+    this.checkCacheVersion();
+  }
+
+  /**
+   * Check if cache version matches - clear if outdated
+   */
+  checkCacheVersion() {
+    const storedVersion = localStorage.getItem('ajaxCacheVersion');
+    if (storedVersion !== this.CACHE_VERSION) {
+      this.log('Cache version mismatch - clearing old cache');
+      this.log('  Old version:', storedVersion);
+      this.log('  New version:', this.CACHE_VERSION);
+      this.clear();
+      localStorage.setItem('ajaxCacheVersion', this.CACHE_VERSION);
+    } else {
+      this.log('Cache version OK:', this.CACHE_VERSION);
+    }
   }
 
   /**
