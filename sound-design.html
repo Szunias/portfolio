@@ -66,6 +66,48 @@ window.__preloadedLang=savedLang;
 
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
 
+    <!-- Inline critical translations for instant loading -->
+    <script>
+      window.__I18N__ = {
+        en: {
+          nav_home: 'Home',
+          nav_work: 'Work',
+          nav_about: 'About',
+          nav_projects: 'Projects',
+          nav_music: 'Music',
+          nav_contact: 'Contact',
+          footer_projects: 'Projects',
+          footer_music: 'Music',
+          footer_about: 'About',
+          footer_contact: 'Contact'
+        },
+        pl: {
+          nav_home: 'Start',
+          nav_work: 'Portfolio',
+          nav_about: 'O mnie',
+          nav_projects: 'Projekty',
+          nav_music: 'Muzyka',
+          nav_contact: 'Kontakt',
+          footer_projects: 'Projekty',
+          footer_music: 'Muzyka',
+          footer_about: 'O mnie',
+          footer_contact: 'Kontakt'
+        },
+        nl: {
+          nav_home: 'Home',
+          nav_work: 'Portfolio',
+          nav_about: 'Over',
+          nav_projects: 'Projecten',
+          nav_music: 'Muziek',
+          nav_contact: 'Contact',
+          footer_projects: 'Projecten',
+          footer_music: 'Muziek',
+          footer_about: 'Over',
+          footer_contact: 'Contact'
+        }
+      };
+    </script>
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -546,6 +588,8 @@ window.__preloadedLang=savedLang;
     </style>
   </head>
   <body>
+    <!-- Navigation will be injected by navigation.js -->
+
     <div class="content">
       <!-- Language Switcher -->
       <div class="lang-switcher" role="group" aria-label="Language switcher">
@@ -719,16 +763,11 @@ window.__preloadedLang=savedLang;
         </section>
       </main>
 
-      <!-- Footer -->
-      <footer class="project-footer">
-        <a href="index.html" class="back-link" data-i18n="footer.back_link">← Back to Home</a>
-        <p style="margin-top: 2rem; color: #666; font-size: 0.875rem;" data-i18n="footer.copyright">
-          © 2025 • Igor Szuniewicz
-        </p>
-      </footer>
+      <!-- Footer will be injected by footer.js -->
     </div>
 
-    <!-- Translation Script -->
+    <!-- Legacy translation script removed - now using BulletproofI18n system -->
+    <!--
     <script>
       let translations = {};
       let currentLang = localStorage.getItem("language") || "en";
@@ -851,12 +890,25 @@ window.__preloadedLang=savedLang;
         updateScrollAnimations();
       });
     </script>
+    -->
 
-    <!-- Main site scripts -->
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/js/browser.min.js"></script>
-    <script src="assets/js/breakpoints.min.js"></script>
-    <script src="assets/js/util.js"></script>
-    <script src="assets/js/main.js"></script>
+    <!-- Modern navigation and AJAX system -->
+    <script type="module" src="assets/js/enhanced-smooth-navigation.js" defer></script>
+    <script type="module" src="assets/js/components/navigation.js" defer></script>
+
+    <!-- i18n translation system -->
+    <script type="module">
+      import i18n from '/assets/js/refactored/services/BulletproofI18n.js';
+      i18n.init().catch((error) => {
+        console.error('i18n initialization failed:', error);
+      });
+    </script>
+
+    <!-- Shared components -->
+    <script src="assets/js/components/shared/scroll-reveal.js"></script>
+    <script src="assets/js/components/shared/smooth-scroll.js"></script>
+    <script src="assets/js/components/shared/lazy-images.js"></script>
+    <script src="assets/js/components/shared/cleanup-manager.js"></script>
+    <script src="assets/js/components/footer.js"></script>
   </body>
 </html>
