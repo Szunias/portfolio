@@ -12,7 +12,7 @@ export class CacheManager {
     this.activePreloadTimeouts = new Map();
 
     // Cache versioning - auto-invalidate when content changes
-    this.CACHE_VERSION = '2024-01-19-sound-design'; // Update when HTML structure changes
+    this.CACHE_VERSION = '2024-01-19-v2-sound-design-fix'; // Update when HTML structure changes
     this.checkCacheVersion();
   }
 
