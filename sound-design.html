@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en" style="background: #000">
+  <head>
+    <meta charset="utf-8" />
+    <!-- LOG EXTRACTOR - Automatic console log capture -->
+    <script src="assets/js/log-extractor.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#000000" />
+
+    <!-- CRITICAL 1: Language Preload - Prevents language flicker -->
+    <script>
+      (function () {
+        'use strict';
+        const savedLang = localStorage.getItem('language') || 'en';
+        document.documentElement.setAttribute('lang', savedLang);
+        window.__preloadedLang = savedLang;
+      })();
+    </script>
+
+    <!-- CRITICAL 1.5: Inline Critical Translations -->
+    <script>
+      window.__I18N__ = {
+        en: {
+          nav_home: 'Home',
+          nav_work: 'Work',
+          nav_about: 'About',
+          nav_projects: 'Projects',
+          nav_music: 'Music',
+          nav_contact: 'Contact',
+          footer_projects: 'Projects',
+          footer_music: 'Music',
+          footer_about: 'About',
+          footer_contact: 'Contact',
+          error_loading: 'Loading...',
+          error_failed: 'Failed to load content',
+          error_retry: 'Retry'
+        },
+        pl: {
+          nav_home: 'Start',
+          nav_work: 'Portfolio',
+          nav_about: 'O mnie',
+          nav_projects: 'Projekty',
+          nav_music: 'Muzyka',
+          nav_contact: 'Kontakt',
+          footer_projects: 'Projekty',
+          footer_music: 'Muzyka',
+          footer_about: 'O mnie',
+          footer_contact: 'Kontakt',
+          error_loading: 'Ładowanie...',
+          error_failed: 'Nie udało się załadować treści',
+          error_retry: 'Spróbuj ponownie'
+        },
+        nl: {
+          nav_home: 'Home',
+          nav_work: 'Portfolio',
+          nav_about: 'Over',
+          nav_projects: 'Projecten',
+          nav_music: 'Muziek',
+          nav_contact: 'Contact',
+          footer_projects: 'Projecten',
+          footer_music: 'Muziek',
+          footer_about: 'Over',
+          footer_contact: 'Contact',
+          error_loading: 'Laden...',
+          error_failed: 'Inhoud kan niet worden geladen',
+          error_retry: 'Opnieuw proberen'
+        }
+      };
+    </script>
+
+    <!-- CRITICAL 2: Base styles - Prevents white flash -->
+    <style id="critical-background-styles">
+      html {
+        color-scheme: dark;
+        min-height: 100vh;
+        background:
+          radial-gradient(
+            circle at 20% 20%,
+            rgba(59, 130, 246, 0.4) 0%,
+            rgba(59, 130, 246, 0.1) 40%,
+            transparent 70%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(139, 92, 246, 0.35) 0%,
+            rgba(139, 92, 246, 0.08) 40%,
+            transparent 70%
+          ),
+          radial-gradient(
+            circle at 50% 50%,
+            rgba(236, 72, 153, 0.25) 0%,
+            rgba(236, 72, 153, 0.05) 50%,
+            transparent 80%
+          ),
+          #000 !important;
+        background-attachment: fixed !important;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background: transparent !important;
+        min-height: 100vh;
+      }
+      html:not(.translations-ready) [data-i18n],
+      html:not(.translations-ready) [data-i18n-placeholder],
+      html:not(.translations-ready) [data-i18n-aria-label] {
+        visibility: hidden !important;
+      }
+      html.translations-ready [data-i18n],
+      html.translations-ready [data-i18n-placeholder],
+      html.translations-ready [data-i18n-aria-label] {
+        visibility: visible;
+        animation: fadeInContent 0.2s ease-in;
+      }
+      @keyframes fadeInContent {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
+
+    <title>Sound Design Work | Igor Szuniewicz | Audio Designer</title>
+    <meta
+      name="description"
+      content="Sound design work by Igor Szuniewicz: Professional audio for games, animation, and interactive media. Foley, ambience, and immersive soundscapes."
+    />
+    <meta
+      name="keywords"
+      content="sound design, game audio, foley, audio post-production, Igor Szuniewicz, audio designer"
+    />
+    <meta name="author" content="Igor Szuniewicz" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://igorszuniewicz.com/sound-design.html" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Igor Szuniewicz" />
+    <meta property="og:url" content="https://igorszuniewicz.com/sound-design.html" />
+    <meta property="og:title" content="Sound Design Work | Igor Szuniewicz" />
+    <meta
+      property="og:description"
+      content="Professional sound design for games and animation. Foley, ambience, and immersive audio."
+    />
+    <meta
+      property="og:image"
+      content="https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg"
+    />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://igorszuniewicz.com/sound-design.html" />
+    <meta name="twitter:title" content="Sound Design Work | Igor Szuniewicz" />
+
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
+
+    <!-- Resource Hints for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+    <link rel="preload" href="assets/css/main.css" as="style" />
+
+    <!-- Navigation CSS -->
+    <link rel="stylesheet" href="assets/css/global/navigation.css" />
+    <!-- View Transition API - Smooth page transitions -->
+    <link rel="stylesheet" href="assets/css/view-transitions.css" />
+    <!-- Global Focus Styles for Accessibility -->
+    <link rel="stylesheet" href="assets/css/global/focus-styles.css" />
+    <!-- Component Styles -->
+    <link rel="stylesheet" href="assets/css/components/toast.css" />
+    <link rel="stylesheet" href="assets/css/components/back-to-top.css" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Sora:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* === RESET === */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        font-size: 15px;
+      }
+      body {
+        font-family:
+          'Poppins',
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: transparent;
+        color: #e0e6ed;
+        line-height: 1.6;
+        overflow-x: hidden;
+        font-weight: 400;
+      }
+
+      /* === PREMIUM PROFESSIONAL BACKGROUND === */
+      .bg-gradient {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 0 !important;
+        pointer-events: none !important;
+        background:
+          radial-gradient(
+            circle at 20% 20%,
+            rgba(59, 130, 246, 0.2) 0%,
+            rgba(59, 130, 246, 0.05) 40%,
+            transparent 70%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(139, 92, 246, 0.18) 0%,
+            rgba(139, 92, 246, 0.04) 40%,
+            transparent 70%
+          ),
+          radial-gradient(
+            circle at 50% 50%,
+            rgba(236, 72, 153, 0.13) 0%,
+            rgba(236, 72, 153, 0.03) 50%,
+            transparent 80%
+          ),
+          #000 !important;
+      }
+
+      .header {
+        position: fixed !important;
+        z-index: 1010 !important;
+      }
+
+      section,
+      main {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* === CONTAINER === */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* === PAGE CONTENT === */
+      .page-content {
+        padding: 10rem 0 6rem;
+        min-height: 100vh;
+      }
+
+      .page-header {
+        text-align: center;
+        margin-bottom: 4rem;
+      }
+
+      .page-title {
+        font-family: 'Sora', sans-serif;
+        font-size: clamp(3rem, 7vw, 5rem);
+        font-weight: 900;
+        color: #ffffff;
+        margin-bottom: 1rem;
+        letter-spacing: -0.03em;
+      }
+
+      .page-description {
+        font-size: 1.25rem;
+        color: #9ca3af;
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.7;
+      }
+
+      /* === VIDEO GRID === */
+      .video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 3rem;
+        margin-top: 4rem;
+      }
+
+      .video-card {
+        background: rgba(15, 23, 42, 0.4);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+
+      .video-card:hover {
+        background: rgba(15, 23, 42, 0.6);
+        border-color: rgba(6, 182, 212, 0.3);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1);
+      }
+
+      .video-wrapper {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+        border-radius: 12px;
+        background: #000;
+      }
+
+      .video-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+
+      .video-info {
+        margin-top: 1.5rem;
+      }
+
+      .video-title {
+        font-family: 'Sora', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0.75rem;
+      }
+
+      .video-description {
+        font-size: 0.95rem;
+        color: #9ca3af;
+        line-height: 1.6;
+      }
+
+      .video-badge {
+        display: inline-block;
+        padding: 0.4rem 0.9rem;
+        background: rgba(6, 182, 212, 0.15);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        border-radius: 20px;
+        font-size: 0.8rem;
+        color: #06b6d4;
+        font-weight: 500;
+        margin-top: 1rem;
+      }
+
+      /* === RESPONSIVE === */
+      @media (max-width: 768px) {
+        .container {
+          padding: 0 1.25rem;
+        }
+
+        .page-content {
+          padding: 8rem 0 3rem;
+        }
+
+        .page-title {
+          font-size: clamp(2rem, 8vw, 2.75rem);
+        }
+
+        .page-description {
+          font-size: 1rem;
+        }
+
+        .video-grid {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+
+        .video-title {
+          font-size: 1.25rem;
+        }
+
+        .video-description {
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 0 0.875rem;
+        }
+
+        .page-content {
+          padding: 7rem 0 2.5rem;
+        }
+
+        .video-grid {
+          gap: 1.5rem;
+        }
+
+        .video-card {
+          padding: 1rem;
+          border-radius: 16px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <a href="#main" class="skip-link">Skip to main content</a>
+    <div class="bg-gradient"></div>
+
+    <main id="main">
+      <div class="page-content">
+        <div class="container">
+          <div class="page-header">
+            <h1 class="page-title">Sound Design Work</h1>
+            <p class="page-description">
+              Professional sound design for games and animation. From atmospheric soundscapes to detailed foley work,
+              these projects showcase my approach to creating immersive audio experiences.
+            </p>
+          </div>
+
+          <div class="video-grid">
+            <!-- Video 1 -->
+            <div class="video-card">
+              <div class="video-wrapper">
+                <iframe
+                  src="https://www.youtube.com/embed/YOUR_VIDEO_ID_1"
+                  title="Sound Design Project 1"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                  loading="lazy"
+                ></iframe>
+              </div>
+              <div class="video-info">
+                <h2 class="video-title">Project Title 1</h2>
+                <p class="video-description">
+                  Description of your first sound design project. Explain the creative process,
+                  tools used, and key audio elements that make this project stand out.
+                </p>
+                <span class="video-badge">Game Audio</span>
+              </div>
+            </div>
+
+            <!-- Video 2 -->
+            <div class="video-card">
+              <div class="video-wrapper">
+                <iframe
+                  src="https://www.youtube.com/embed/YOUR_VIDEO_ID_2"
+                  title="Sound Design Project 2"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                  loading="lazy"
+                ></iframe>
+              </div>
+              <div class="video-info">
+                <h2 class="video-title">Project Title 2</h2>
+                <p class="video-description">
+                  Description of your second sound design project. Highlight unique challenges
+                  and how your audio work enhanced the overall experience.
+                </p>
+                <span class="video-badge">Animation</span>
+              </div>
+            </div>
+
+            <!-- Video 3 -->
+            <div class="video-card">
+              <div class="video-wrapper">
+                <iframe
+                  src="https://www.youtube.com/embed/YOUR_VIDEO_ID_3"
+                  title="Sound Design Project 3"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                  loading="lazy"
+                ></iframe>
+              </div>
+              <div class="video-info">
+                <h2 class="video-title">Project Title 3</h2>
+                <p class="video-description">
+                  Description of your third sound design project. Detail your creative decisions
+                  and the technical aspects of the sound design workflow.
+                </p>
+                <span class="video-badge">Foley</span>
+              </div>
+            </div>
+
+            <!-- Video 4 -->
+            <div class="video-card">
+              <div class="video-wrapper">
+                <iframe
+                  src="https://www.youtube.com/embed/YOUR_VIDEO_ID_4"
+                  title="Sound Design Project 4"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                  loading="lazy"
+                ></iframe>
+              </div>
+              <div class="video-info">
+                <h2 class="video-title">Project Title 4</h2>
+                <p class="video-description">
+                  Description of your fourth sound design project. Share insights into your
+                  approach and what makes this audio work special.
+                </p>
+                <span class="video-badge">Soundscape</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Scripts -->
+    <script type="module" src="assets/js/performance-boost.js"></script>
+    <script type="module" src="assets/js/enhanced-smooth-navigation.js"></script>
+    <script type="module" src="assets/js/components/navigation.js"></script>
+    <script type="module" src="assets/js/components/custom-cursor.js"></script>
+
+    <!-- Bulletproof i18n System -->
+    <script type="module">
+      import i18n from '/assets/js/refactored/services/BulletproofI18n.js';
+      i18n.init().catch((error) => {
+        console.error('i18n initialization failed:', error);
+      });
+    </script>
+
+    <!-- Shared modules for all pages -->
+    <script src="assets/js/components/shared/scroll-reveal.js"></script>
+    <script src="assets/js/components/shared/smooth-scroll.js"></script>
+    <script src="assets/js/components/shared/lazy-images.js"></script>
+    <script src="assets/js/components/shared/cleanup-manager.js"></script>
+    <script src="assets/js/components/footer.js"></script>
+
+    <!-- UX Enhancement Components -->
+    <script type="module" src="assets/js/components/toast.js"></script>
+    <script type="module" src="assets/js/components/back-to-top.js"></script>
+  </body>
+</html>
