@@ -142,6 +142,12 @@ export class NavigationCore {
       return false;
     }
 
+    // Sound Design page - CSS path issues with AJAX navigation
+    if (targetPath === '/sound-design.html' || targetPath === '/sound-design') {
+      this.log('  ✓✓✓ SOUND DESIGN PAGE - DISABLING AJAX (CSS path resolution issues)');
+      return false;
+    }
+
     // Home page - Vimeo iframe issues
     if (targetPath === '/' || targetPath === '/index.html') {
       this.log('  ✓✓✓ HOME PAGE - DISABLING AJAX (Vimeo iframe and controls issues)');
