@@ -423,14 +423,44 @@
     .ide-container {
       display: grid;
       grid-template-columns: 1.6fr 1fr;
-      background: var(--panel);
+      background: rgba(10, 10, 10, 0.95);
       border: 1px solid var(--border);
       border-top: none;
       border-radius: 0 0 12px 12px;
       overflow: hidden;
-      height: 650px;
+      height: 700px;
       box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(20px);
+      position: relative;
+    }
+
+    /* Status Bar */
+    .ide-status-bar {
+      grid-column: 1 / -1;
+      background: #0f0f0f;
+      border-top: 1px solid var(--border);
+      padding: 4px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #666;
+      z-index: 10;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
     }
 
     /* IDE Left: Code */
@@ -439,11 +469,19 @@
       border-right: 1px solid var(--border);
       overflow-y: auto;
       padding: 0;
-      scrollbar-width: none;
+      scrollbar-width: thin;
+      scrollbar-color: #333 transparent;
+      display: flex;
+      flex-direction: column;
     }
 
     .ide-code::-webkit-scrollbar {
-      display: none;
+      width: 8px;
+    }
+
+    .ide-code::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 4px;
     }
 
     .code-toolbar {
@@ -475,15 +513,27 @@
     }
 
     .code-content {
-      padding: 30px;
-    }
-
-    .code-block {
+      padding: 20px 0;
+      display: flex;
       font-family: var(--font-mono);
       font-size: 14px;
-      line-height: 1.7;
-      white-space: pre;
+      line-height: 1.8;
       color: #d4d4d4;
+    }
+
+    .line-numbers {
+      padding: 0 16px;
+      text-align: right;
+      color: #444;
+      user-select: none;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      margin-right: 16px;
+      min-width: 50px;
+    }
+
+    .code-lines {
+      flex: 1;
+      padding-right: 20px;
     }
 
     /* Syntax Highlighting Colors (VS Code Dark+) */
@@ -526,128 +576,137 @@
     }
 
     /* Interactive Lines */
+    /* Interactive Lines */
+    .line-wrapper {
+      display: flex;
+      position: relative;
+    }
+
     .line {
       display: block;
-      padding: 4px 15px;
-      margin: 0 -15px;
+      width: 100%;
+      padding: 0 8px;
       border-radius: 4px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      border-left: 3px solid transparent;
+      transition: all 0.1s ease;
       position: relative;
     }
 
     .line:hover {
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .line.active {
-      background: rgba(59, 130, 246, 0.1);
-      border-left-color: var(--accent);
+      background: rgba(59, 130, 246, 0.15);
+      box-shadow: inset 2px 0 0 var(--accent);
     }
 
-    .line.active::after {
-      content: 'INSPECTING';
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 0.6rem;
-      color: var(--accent);
-      font-weight: 700;
-      letter-spacing: 1px;
-      opacity: 0.7;
+    .line.locked {
+      background: rgba(59, 130, 246, 0.25);
+      box-shadow: inset 2px 0 0 var(--accent);
     }
 
     /* IDE Right: Inspector */
     .ide-inspector {
-      padding: 50px;
+      padding: 40px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      position: relative;
       background: #0a0a0a;
       background-image:
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 20px 20px;
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 30px 30px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .insp-empty {
-      text-align: center;
-      color: var(--text-dim);
-      opacity: 0.5;
-      display: none;
+    .ide-inspector::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent 60%);
+      pointer-events: none;
     }
 
-    .insp-content {
-      animation: fadeIn 0.4s ease;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .insp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
     }
 
     .insp-label {
       color: var(--accent);
       font-family: var(--font-mono);
-      font-size: 0.75rem;
-      margin-bottom: 20px;
-      display: inline-block;
+      font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 2px;
       font-weight: 700;
-      padding: 4px 8px;
-      background: rgba(59, 130, 246, 0.1);
-      border-radius: 4px;
-      border: 1px solid rgba(59, 130, 246, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .insp-label::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      border-radius: 50%;
+    }
+
+    .insp-id {
+      font-family: var(--font-mono);
+      color: #444;
+      font-size: 0.8rem;
+    }
+
+    .insp-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: opacity 0.2s ease;
     }
 
     .insp-title {
       font-family: var(--font-display);
-      font-size: 2rem;
+      font-size: 1.8rem;
       line-height: 1.1;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       color: white;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 24px;
     }
 
     .insp-text {
-      color: #d4d4d8;
-      font-size: 1.05rem;
-      line-height: 1.8;
-      margin-bottom: 32px;
+      color: #a1a1aa;
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 30px;
     }
 
     .insp-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
+      margin-top: auto;
     }
 
     .insp-tag {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 8px 14px;
-      border-radius: 100px;
-      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.7rem;
       font-family: var(--font-mono);
       color: var(--text-dim);
       border: 1px solid var(--border);
-      transition: 0.2s;
-    }
-
-    .insp-tag:hover {
-      border-color: var(--text-dim);
-      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     /* === AUDIO CARDS === */
@@ -849,17 +908,38 @@
         <div class="code-toolbar">
           <span class="file-name">C++ SOURCE VIEW</span>
         </div>
-        <div class="code-block">
-          <div id="code-content" class="code-content"></div>
+        <div class="code-content">
+          <div class="line-numbers" id="line-numbers">
+            <!-- Injected via JS -->
+          </div>
+          <div class="code-lines" id="code-lines">
+            <!-- Injected via JS -->
+          </div>
         </div>
       </div>
 
       <div class="ide-inspector">
+        <div class="insp-header">
+          <span class="insp-label">LOGIC ANALYSIS</span>
+          <span class="insp-id" id="insp-id">ID: NULL</span>
+        </div>
+
         <div id="insp-content" class="insp-content">
-          <span class="insp-label" id="insp-label">LOGIC ANALYSIS</span>
-          <h3 class="insp-title" id="insp-title">...</h3>
-          <p class="insp-text" id="insp-desc">...</p>
-          <div id="insp-tags"></div>
+          <h3 class="insp-title" id="insp-title">System Ready</h3>
+          <p class="insp-text" id="insp-desc">Select a highlighted line of code to inspect the underlying logic and
+            implementation details.</p>
+          <div id="insp-tags" class="insp-tags"></div>
+        </div>
+      </div>
+
+      <div class="ide-status-bar">
+        <div class="status-item">
+          <div class="status-dot"></div>
+          <span>LIVE CONNECTION</span>
+        </div>
+        <div class="status-item">
+          <span>UTF-8</span>
+          <span>C++20</span>
         </div>
       </div>
     </div>
@@ -923,91 +1003,94 @@
     // === 1. DATA: REAL C++ LOGIC (WITH COLOR CLASSES) ===
     const codeFiles = {
       rtpc: {
-        code: `
-<span class="t">void</span> <span class="c">UEnemyPresenceComponent</span>::<span class="f">TickComponent</span>(<span class="t">float</span> DeltaTime...)
-{
-    <span class="com">// 1. Logic: Find closest enemy & calculate distance</span>
-    <span class="f">UpdateClosestEnemy</span>();
-
-    <span class="com">// 2. Math: Normalize distance to 0.0 - 100.0 range</span>
-    <div class="line active" onclick="inspect('math', this)"><span class="t">float</span> NormDist = (Distance - MinDist) / (MaxDist - MinDist);
-    <span class="t">float</span> Proximity = <span class="f">FMath</span>::<span class="f">Clamp</span>((1.f - NormDist) * 100.f, 0.f, 100.f);</div>
-
-    <span class="com">// 3. Audio: Update Wwise RTPC in real-time</span>
-    <div class="line" onclick="inspect('rtpc', this)"><span class="c">UAkGameplayStatics</span>::<span class="f">SetRTPCValue</span>(
-        RTPC_EnemyProximity,
-        Proximity,
-        0, <span class="com">// Interpolation (handled by Wwise)</span>
-        GetOwner()
-    );</div>
-
-    <span class="com">// 4. Debug: Visual confirmation</span>
-    <span class="k">if</span> (bShowDebug) <span class="f">DrawDebugLine</span>(..., <span class="c">FColor</span>::Red);
-}`,
+        file: "EnemyPresence.cpp",
+        lines: [
+          { content: '<span class="t">void</span> <span class="c">UEnemyPresenceComponent</span>::<span class="f">TickComponent</span>(<span class="t">float</span> DeltaTime...)', id: null },
+          { content: '{', id: null },
+          { content: '    <span class="com">// 1. Logic: Find closest enemy & calculate distance</span>', id: null },
+          { content: '    <span class="f">UpdateClosestEnemy</span>();', id: null },
+          { content: '', id: null },
+          { content: '    <span class="com">// 2. Math: Normalize distance to 0.0 - 100.0 range</span>', id: null },
+          { content: '    <span class="t">float</span> NormDist = (Distance - MinDist) / (MaxDist - MinDist);', id: 'math' },
+          { content: '    <span class="t">float</span> Proximity = <span class="f">FMath</span>::<span class="f">Clamp</span>((1.f - NormDist) * 100.f, 0.f, 100.f);', id: 'math' },
+          { content: '', id: null },
+          { content: '    <span class="com">// 3. Audio: Update Wwise RTPC in real-time</span>', id: null },
+          { content: '    <span class="c">UAkGameplayStatics</span>::<span class="f">SetRTPCValue</span>(', id: 'rtpc' },
+          { content: '        RTPC_EnemyProximity,', id: 'rtpc' },
+          { content: '        Proximity,', id: 'rtpc' },
+          { content: '        0, <span class="com">// Interpolation (handled by Wwise)</span>', id: 'rtpc' },
+          { content: '        GetOwner()', id: 'rtpc' },
+          { content: '    );', id: 'rtpc' },
+          { content: '', id: null },
+          { content: '    <span class="com">// 4. Debug: Visual confirmation</span>', id: null },
+          { content: '    <span class="k">if</span> (bShowDebug) <span class="f">DrawDebugLine</span>(..., <span class="c">FColor</span>::Red);', id: null },
+          { content: '}', id: null }
+        ],
         details: {
           math: { tags: ['Math', 'Normalization'], key: 'math' },
           rtpc: { tags: ['Real-Time', 'Dynamic Mixing'], key: 'rtpc' }
-        },
-        defaultKey: 'math'
+        }
       },
       spatial: {
-        code: `
-<span class="t">void</span> <span class="c">UAnomalyAudioManager</span>::<span class="f">InitializeAudioSource</span>(<span class="c">AActor</span>* Owner)
-{
-    <span class="com">// 1. Get Config Settings for this specific Anomaly</span>
-    <span class="k">const</span> <span class="c">FAnomalyAudioSettings</span>* Settings = Config-><span class="f">GetSettings</span>(Anomaly);
-
-    <span class="com">// 2. Advanced Spatial Audio: Find specific mesh bone</span>
-    <div class="line active" onclick="inspect('bone', this)"><span class="k">if</span> (Settings->SpecialMeshName != NAME_None)
-    {
-        <span class="com">// Dynamically find the component (e.g., "Jukebox_Speaker")</span>
-        <span class="c">USceneComponent</span>* Target = <span class="f">FindComponentByName</span>(Owner, Settings->SpecialMeshName);
-
-        <span class="k">if</span> (Target) {
-            <span class="comment">// Attach Wwise Component exactly to the sound source</span>
-            AkComponent-><span class="f">AttachToComponent</span>(Target, <span class="c">FAttachmentTransformRules</span>::KeepRelativeTransform);
-        }
-    }</div>
-
-    <span class="com">// 3. Post Spawn Event</span>
-    <div class="line" onclick="inspect('spawn', this)"><span class="c">UAkGameplayStatics</span>::<span class="f">PostEvent</span>(
-        Config->m_GlobalSpawnEvent,
-        AkComponent
-    );</div>
-}`,
+        file: "AnomalyAudio.cpp",
+        lines: [
+          { content: '<span class="t">void</span> <span class="c">UAnomalyAudioManager</span>::<span class="f">InitializeAudioSource</span>(<span class="c">AActor</span>* Owner)', id: null },
+          { content: '{', id: null },
+          { content: '    <span class="com">// 1. Get Config Settings for this specific Anomaly</span>', id: null },
+          { content: '    <span class="k">const</span> <span class="c">FAnomalyAudioSettings</span>* Settings = Config-><span class="f">GetSettings</span>(Anomaly);', id: null },
+          { content: '', id: null },
+          { content: '    <span class="com">// 2. Advanced Spatial Audio: Find specific mesh bone</span>', id: null },
+          { content: '    <span class="k">if</span> (Settings->SpecialMeshName != NAME_None)', id: 'bone' },
+          { content: '    {', id: 'bone' },
+          { content: '        <span class="com">// Dynamically find the component (e.g., "Jukebox_Speaker")</span>', id: 'bone' },
+          { content: '        <span class="c">USceneComponent</span>* Target = <span class="f">FindComponentByName</span>(Owner, Settings->SpecialMeshName);', id: 'bone' },
+          { content: '', id: 'bone' },
+          { content: '        <span class="k">if</span> (Target) {', id: 'bone' },
+          { content: '            <span class="comment">// Attach Wwise Component exactly to the sound source</span>', id: 'bone' },
+          { content: '            AkComponent-><span class="f">AttachToComponent</span>(Target, <span class="c">FAttachmentTransformRules</span>::KeepRelativeTransform);', id: 'bone' },
+          { content: '        }', id: 'bone' },
+          { content: '    }', id: 'bone' },
+          { content: '', id: null },
+          { content: '    <span class="com">// 3. Post Spawn Event</span>', id: null },
+          { content: '    <span class="c">UAkGameplayStatics</span>::<span class="f">PostEvent</span>(', id: 'spawn' },
+          { content: '        Config->m_GlobalSpawnEvent,', id: 'spawn' },
+          { content: '        AkComponent', id: 'spawn' },
+          { content: '    );', id: 'spawn' },
+          { content: '}', id: null }
+        ],
         details: {
           bone: { tags: ['Spatial Audio', 'Immersion'], key: 'bone' },
           spawn: { tags: ['Wwise API', 'One-Shot'], key: 'spawn' }
-        },
-        defaultKey: 'bone'
+        }
       },
       physics: {
-        code: `
-<span class="c">FName</span> <span class="c">UFootstepComponent</span>::<span class="f">DetectSurface</span>()
-{
-    <span class="com">// 1. Setup Raycast downwards</span>
-    <span class="c">FHitResult</span> Hit;
-    <span class="c">FVector</span> Start = Location;
-    <span class="c">FVector</span> End = Start - <span class="c">FVector</span>(0, 0, 100);
-
-    <span class="com">// 2. Physics Query</span>
-    <div class="line active" onclick="inspect('trace', this)"><span class="t">bool</span> bHit = World-><span class="f">LineTraceSingleByChannel</span>(
-        Hit, Start, End, ECC_WorldStatic, Params
-    );</div>
-
-    <span class="com">// 3. Map Physical Material to Wwise Switch</span>
-    <div class="line" onclick="inspect('mapping', this)"><span class="k">if</span> (bHit && Hit.PhysMaterial.IsValid())
-    {
-        <span class="k">return</span> <span class="f">GetSwitchFromPhysMat</span>(Hit.PhysMaterial);
-    }</div>
-
-    <span class="k">return</span> <span class="s">"Concrete"</span>; <span class="com">// Fallback</span>
-}`,
+        file: "Footsteps.cpp",
+        lines: [
+          { content: '<span class="c">FName</span> <span class="c">UFootstepComponent</span>::<span class="f">DetectSurface</span>()', id: null },
+          { content: '{', id: null },
+          { content: '    <span class="com">// 1. Setup Raycast downwards</span>', id: null },
+          { content: '    <span class="c">FHitResult</span> Hit;', id: null },
+          { content: '    <span class="c">FVector</span> Start = Location;', id: null },
+          { content: '    <span class="c">FVector</span> End = Start - <span class="c">FVector</span>(0, 0, 100);', id: null },
+          { content: '', id: null },
+          { content: '    <span class="com">// 2. Physics Query</span>', id: null },
+          { content: '    <span class="t">bool</span> bHit = World-><span class="f">LineTraceSingleByChannel</span>(', id: 'trace' },
+          { content: '        Hit, Start, End, ECC_WorldStatic, Params', id: 'trace' },
+          { content: '    );', id: 'trace' },
+          { content: '', id: null },
+          { content: '    <span class="com">// 3. Map Physical Material to Wwise Switch</span>', id: null },
+          { content: '    <span class="k">if</span> (bHit && Hit.PhysMaterial.IsValid())', id: 'mapping' },
+          { content: '    {', id: 'mapping' },
+          { content: '        <span class="k">return</span> <span class="f">GetSwitchFromPhysMat</span>(Hit.PhysMaterial);', id: 'mapping' },
+          { content: '    }', id: 'mapping' },
+          { content: '', id: null },
+          { content: '    <span class="k">return</span> <span class="s">"Concrete"</span>; <span class="com">// Fallback</span>', id: null },
+          { content: '}', id: null }
+        ],
         details: {
           trace: { tags: ['Physics', 'Raycast'], key: 'trace' },
           mapping: { tags: ['Enums', 'Switch Container'], key: 'mapping' }
-        },
-        defaultKey: 'trace'
+        }
       }
     };
 
@@ -1019,7 +1102,6 @@
         'hero.desc':
           "Psychological horror set in a 1960s Irish pub.<br>Audio is not just atmospheric—it's the primary detection mechanic.",
         'code.title': 'Engine Architecture',
-        'code.instruction': 'SELECT A HIGHLIGHTED LINE<br>TO INSPECT THE LOGIC',
         'visuals.title': 'Blueprints & Wwise',
         'video.label': 'Gameplay Preview',
         'video.subtitle': 'Sprint 5 — Week of Production',
@@ -1029,6 +1111,10 @@
         'bp.card1_desc': 'Blueprint logic binding to C++ delegates.',
         'bp.card2_title': 'Switch Hierarchy',
         'bp.card2_desc': 'Handling surface types dynamically.',
+
+        // Inspector Defaults
+        'insp.ready_title': 'System Ready',
+        'insp.ready_desc': 'Select a highlighted line of code to inspect the underlying logic and implementation details.',
 
         // Code Details
         bone_title: 'Dynamic Spatial Attachment',
@@ -1056,7 +1142,6 @@
         'hero.desc':
           'Psychologiczny horror w irlandzkim pubie lat 60.<br>Dźwięk to nie tylko klimat — to główny mechanizm detekcji.',
         'code.title': 'Architektura Silnika',
-        'code.instruction': 'WYBIERZ PODŚWIETLONĄ LINIĘ<br>ABY ZANALIZOWAĆ LOGIKĘ',
         'visuals.title': 'Blueprints i Wwise',
         'video.label': 'Podgląd Rozgrywki',
         'video.subtitle': 'Sprint 5 — Tydzień Produkcji',
@@ -1066,6 +1151,10 @@
         'bp.card1_desc': 'Logika Blueprint podpięta pod delegaty C++.',
         'bp.card2_title': 'Hierarchia Switchy',
         'bp.card2_desc': 'Dynamiczna obsługa typów powierzchni.',
+
+        // Inspector Defaults
+        'insp.ready_title': 'System Gotowy',
+        'insp.ready_desc': 'Wybierz podświetloną linię kodu, aby przeanalizować logikę i szczegóły implementacji.',
 
         bone_title: 'Dynamiczne Podpięcie 3D',
         bone_desc:
@@ -1092,7 +1181,6 @@
         'hero.desc':
           'Psychologische horror in een Ierse pub uit de jaren 60.<br>Geluid is niet alleen sfeer - het is het primaire detectiemechanisme.',
         'code.title': 'Engine Architectuur',
-        'code.instruction': 'SELECTEER EEN GEMARKEERDE REGEL<br>OM LOGICA TE ANALYSEREN',
         'visuals.title': 'Blueprints & Wwise',
         'video.label': 'Gameplay Voorbeeld',
         'video.subtitle': 'Sprint 5 — Week van Productie',
@@ -1102,6 +1190,10 @@
         'bp.card1_desc': 'Blueprint logica gekoppeld aan C++ delegates.',
         'bp.card2_title': 'Switch Hiërarchie',
         'bp.card2_desc': 'Dynamische verwerking van oppervlaktetypes.',
+
+        // Inspector Defaults
+        'insp.ready_title': 'Systeem Gereed',
+        'insp.ready_desc': 'Selecteer een gemarkeerde regel code om de onderliggende logica en implementatiedetails te inspecteren.',
 
         bone_title: 'Dynamische 3D Bevestiging',
         bone_desc:
@@ -1126,6 +1218,8 @@
     let currentLang = 'en';
     let currentContext = 'rtpc';
     let activeDetailKey = null;
+    let isLocked = false;
+    let lockedElement = null;
 
     function setLang(lang) {
       currentLang = lang;
@@ -1137,31 +1231,73 @@
         b.classList.toggle('active', b.innerText.toLowerCase() === lang);
       });
 
-      // Refresh Inspector if active
-      if (activeDetailKey) updateInspector(activeDetailKey);
+      // Refresh Inspector
+      if (isLocked && activeDetailKey) {
+        updateInspector(activeDetailKey);
+      } else {
+        resetInspector();
+      }
     }
 
     function loadCode(key, btn) {
       currentContext = key;
+      isLocked = false;
+      lockedElement = null;
+      activeDetailKey = null;
 
       // 1. Update Tabs
       document.querySelectorAll('.lab-tab').forEach((b) => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
 
-      // 2. Inject Code
-      const editor = document.getElementById('code-content');
-      editor.style.opacity = 0;
-      setTimeout(() => {
-        editor.innerHTML = codeFiles[key].code;
-        editor.style.opacity = 1;
+      // 2. Clear Containers
+      const lineNumbers = document.getElementById('line-numbers');
+      const codeLines = document.getElementById('code-lines');
+      lineNumbers.innerHTML = '';
+      codeLines.innerHTML = '';
 
-        // 3. Auto-select default
-        const defaultKey = codeFiles[key].defaultKey;
-        inspect(
-          defaultKey,
-          document.querySelector('.line.active') || document.querySelector('.line')
-        );
-      }, 100);
+      // 3. Generate Code
+      const fileData = codeFiles[key];
+
+      fileData.lines.forEach((line, index) => {
+        // Line Number
+        const num = document.createElement('div');
+        num.innerText = index + 1;
+        num.style.lineHeight = '1.8'; // Match CSS
+        lineNumbers.appendChild(num);
+
+        // Code Line
+        const lineWrapper = document.createElement('div');
+        lineWrapper.className = 'line-wrapper';
+
+        const codeEl = document.createElement('div');
+        codeEl.className = 'line';
+        codeEl.innerHTML = line.content || '&nbsp;'; // Handle empty lines
+
+        if (line.id) {
+          codeEl.style.cursor = 'pointer';
+
+          // Interaction Events
+          codeEl.addEventListener('mouseenter', () => {
+            if (!isLocked) inspect(line.id, codeEl);
+          });
+
+          codeEl.addEventListener('mouseleave', () => {
+            if (!isLocked) resetInspector();
+          });
+
+          codeEl.addEventListener('click', () => {
+            toggleLock(line.id, codeEl);
+          });
+        } else {
+          codeEl.style.cursor = 'default';
+        }
+
+        lineWrapper.appendChild(codeEl);
+        codeLines.appendChild(lineWrapper);
+      });
+
+      // 4. Reset Inspector
+      resetInspector();
     }
 
     function inspect(key, element) {
@@ -1173,12 +1309,36 @@
 
       // Update Inspector
       updateInspector(key);
+    }
 
-      // Anim Re-trigger
-      const content = document.getElementById('insp-content');
-      content.style.animation = 'none';
-      content.offsetHeight;
-      content.style.animation = 'slideUp 0.3s ease-out';
+    function toggleLock(key, element) {
+      if (isLocked && lockedElement === element) {
+        // Unlock
+        isLocked = false;
+        lockedElement = null;
+        element.classList.remove('locked');
+        // Keep inspection active but unlocked
+      } else {
+        // Lock new
+        document.querySelectorAll('.line').forEach((l) => l.classList.remove('locked'));
+        isLocked = true;
+        lockedElement = element;
+        element.classList.add('locked');
+        inspect(key, element);
+      }
+    }
+
+    function resetInspector() {
+      activeDetailKey = null;
+      document.querySelectorAll('.line').forEach((l) => l.classList.remove('active'));
+
+      const title = dict[currentLang]['insp.ready_title'];
+      const desc = dict[currentLang]['insp.ready_desc'];
+
+      document.getElementById('insp-title').innerText = title;
+      document.getElementById('insp-desc').innerText = desc;
+      document.getElementById('insp-id').innerText = 'ID: NULL';
+      document.getElementById('insp-tags').innerHTML = '';
     }
 
     function updateInspector(key) {
@@ -1188,6 +1348,7 @@
 
       document.getElementById('insp-title').innerText = title;
       document.getElementById('insp-desc').innerText = desc;
+      document.getElementById('insp-id').innerText = 'ID: ' + data.key.toUpperCase();
 
       const tagsContainer = document.getElementById('insp-tags');
       tagsContainer.innerHTML = '';
