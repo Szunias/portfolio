@@ -787,6 +787,74 @@
         }
       }
 
+      /* Nightmare Scroll Transition */
+      .nightmare-scroll {
+        position: relative;
+        min-height: 150vh;
+        background: #ffffff;
+        color: #1a1a1a;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        z-index: 20;
+      }
+
+      /* The expanding darkness circle */
+      .nightmare-scroll::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 10vmax; /* Responsive base size */
+        height: 10vmax;
+        background: #050505;
+        border-radius: 50%;
+        /* Start hidden (scale 0), controlled by JS */
+        transform: translate(-50%, -50%) scale(var(--nightmare-scale, 0));
+        opacity: 1;
+        will-change: transform;
+        z-index: 1;
+        pointer-events: none;
+      }
+      
+      .nightmare-content {
+        position: sticky;
+        top: 50vh;
+        transform: translateY(-50%);
+        text-align: center;
+        width: 100%;
+        will-change: transform;
+        padding: 0 1rem;
+        z-index: 2; /* Keep text above the circle */
+      }
+
+      .nightmare-timer {
+        font-family: 'Courier New', monospace;
+        /* Reduced max font size from 12rem to 8rem */
+        font-size: clamp(3rem, 12vw, 8rem);
+        font-weight: 900;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+        opacity: 0.2;
+        transition: color 0.2s ease, text-shadow 0.2s ease;
+        white-space: nowrap;
+      }
+
+      /* Red vignette only at the very end */
+      .nightmare-scroll.active-nightmare::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        box-shadow: inset 0 0 150px rgba(220, 38, 38, 0.4);
+        z-index: 3;
+        pointer-events: none;
+        opacity: 0;
+        animation: fadeInVignette 0.5s forwards;
+      }
+
+      @keyframes fadeInVignette { to { opacity: 1; } }
+
       /* Autoscroll Button */
       .autoscroll-btn {
         position: fixed;
@@ -1337,159 +1405,62 @@
           </div>
         </section>
 
+        <!-- Nightmare Scroll Animation -->
+        <div class="nightmare-scroll" id="nightmareScroll">
+          <div class="nightmare-content">
+            <div class="nightmare-timer">00 ms</div>
+            <div class="nightmare-label">TARGET: 16ms</div>
+          </div>
+        </div>
+
         <section class="section" data-section="3">
           <div class="section-number" data-i18n="section3.number">3</div>
-          <h2 class="section-title" data-i18n="section3.title">Testing AI Models</h2>
+          <h2 class="section-title" data-i18n="section3.title">The 12-Second Nightmare</h2>
           <div class="section-content">
             <p data-i18n="section3.intro">
-              This is where the real fun began. I tested multiple AI models to find something
-              that could generate better quality audio.
+              I expected latency. I didn't expect <em>this</em>.
             </p>
-
-            <h3 data-i18n="section3.audioldm_title">AudioLDM - First Attempt</h3>
-
-            <div class="stats-grid">
-              <div class="stat-card">
-                <span class="stat-value" data-i18n="section3.audioldm_latency">10-12s</span>
-                <span class="stat-label" data-i18n="section3.stat_latency">Latency (CPU)</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-value" data-i18n="section3.audioldm_quality">5/10</span>
-                <span class="stat-label" data-i18n="section3.stat_quality">Quality</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-value" data-i18n="section3.audioldm_slow">240x</span>
-                <span class="stat-label" data-i18n="section3.stat_slow">Too Slow</span>
-              </div>
+            
+            <div class="highlight-box" style="background: #fff0f0; border-left-color: #dc3545;">
+              <p style="font-size: 1.5rem; font-weight: 700; color: #dc3545; margin: 0;" data-i18n="section3.failure_stat">
+                12.000 ms
+              </p>
+              <p style="margin: 0.5rem 0 0 0; color: #666;" data-i18n="section3.failure_context">
+                Time to generate one footstep with AudioLDM.
+              </p>
             </div>
 
-            <p data-i18n="section3.audioldm_note">
-              Yes, you read that right. TWELVE SECONDS for one sound.
-              That's 240 times slower than the 50ms target. Plus the sounds sounded... weird.
+            <p data-i18n="section3.narrative">
+              In a game running at 60 FPS, a footstep needs to happen in 16 milliseconds. 
+              My first attempt was <strong>750 times too slow</strong>. 
+              Even the faster MusicGen model took 4 seconds.
+              In the world of game development, 4 seconds is an eternity. It was a complete failure.
             </p>
-
-            <h3 data-i18n="section3.musicgen_title">MusicGen - Better, But Still Not It</h3>
-
-            <div class="stats-grid">
-              <div class="stat-card">
-                <span class="stat-value" data-i18n="section3.musicgen_latency">3-5s</span>
-                <span class="stat-label" data-i18n="section3.stat_latency">Latency (CPU)</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-value" data-i18n="section3.musicgen_quality">7/10</span>
-                <span class="stat-label" data-i18n="section3.stat_quality">Quality</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-value" data-i18n="section3.musicgen_slow">60x</span>
-                <span class="stat-label" data-i18n="section3.stat_slow">Too Slow</span>
-              </div>
-            </div>
-
-            <p data-i18n="section3.musicgen_note">
-              MusicGen was 3-4 times faster than AudioLDM and the sounds were definitely better.
-              The problem? 3-5 seconds is still 60-100 times too slow, and it sounded more like
-              music than actual sound effects.
-            </p>
-
-            <h3 data-i18n="section3.comparison_title">The Big Comparison</h3>
-
-            <table class="comparison-table">
-              <thead>
-                <tr>
-                  <th data-i18n="section3.table_model">Model</th>
-                  <th data-i18n="section3.table_speed">Speed</th>
-                  <th data-i18n="section3.table_quality">Quality</th>
-                  <th data-i18n="section3.table_realism">Realism</th>
-                  <th data-i18n="section3.table_verdict">Verdict</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td data-i18n="section3.procedural">Procedural</td>
-                  <td data-i18n="section3.procedural_speed">~1ms ⚡</td>
-                  <td data-i18n="section3.procedural_quality">3/10</td>
-                  <td data-i18n="section3.procedural_realism">Low</td>
-                  <td data-i18n="section3.procedural_verdict">Fast but ugly</td>
-                </tr>
-                <tr>
-                  <td data-i18n="section3.audioldm">AudioLDM</td>
-                  <td data-i18n="section3.audioldm_speed">~12s 🐌</td>
-                  <td data-i18n="section3.audioldm_quality">5/10</td>
-                  <td data-i18n="section3.audioldm_realism">Weak</td>
-                  <td data-i18n="section3.audioldm_verdict">Slow and weak</td>
-                </tr>
-                <tr>
-                  <td data-i18n="section3.musicgen">MusicGen</td>
-                  <td data-i18n="section3.musicgen_speed">3-5s</td>
-                  <td data-i18n="section3.musicgen_quality">7/10</td>
-                  <td data-i18n="section3.musicgen_realism">Good</td>
-                  <td data-i18n="section3.musicgen_verdict">Best, but too slow</td>
-                </tr>
-                <tr class="highlight">
-                  <td><strong data-i18n="section3.elevenlabs">ElevenLabs</strong></td>
-                  <td><strong data-i18n="section3.elevenlabs_speed">4-5s</strong></td>
-                  <td><strong data-i18n="section3.elevenlabs_quality">9/10 ⭐</strong></td>
-                  <td><strong data-i18n="section3.elevenlabs_realism">Realistic!</strong></td>
-                  <td><strong data-i18n="section3.elevenlabs_verdict">Professional SFX ⭐</strong></td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </section>
 
         <section class="section" data-section="4">
           <div class="section-number" data-i18n="section4.number">4</div>
-          <h2 class="section-title" data-i18n="section4.title">Current Approach: Cache Strategy</h2>
+          <h2 class="section-title" data-i18n="section4.title">The 0.03ms Anomaly</h2>
           <div class="section-content">
             <p data-i18n="section4.intro">
-              During testing, I noticed something interesting. When I played the same sound
-              for the second time, it played INSTANTLY - in about 0.03ms.
-              Why? Because it was stored in cache.
-            </p>
-            <p style="font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 2rem 0;" data-i18n="section4.hypothesis">
-              And then it hit me: what if we generate all sounds BEFORE the game, during
-              the loading screen, and then play them from cache?
+              I was ready to scrap the project. But then, during a frustration-filled debug session, I noticed something weird in the logs.
             </p>
 
-            <h3 data-i18n="section4.solution_title">The Solution Architecture (Testing)</h3>
+            <div class="code-snippet">
+[LOG] Gen_Request_01: 4102ms
+[LOG] Gen_Request_02: 4098ms
+[LOG] Gen_Request_01: 0.03ms  &lt;-- ???
+</div>
+
+            <p data-i18n="section4.epiphany">
+              The second time I requested the <em>same</em> sound, it didn't generate it. It pulled it from memory.
+              It was instant. Faster than any hard drive reading a WAV file.
+            </p>
 
             <div class="highlight-box">
-              <p><strong data-i18n="section4.loading_phase">Loading Screen Phase (30-60 seconds, one-time):</strong></p>
-              <ul>
-                <li>Game shows loading screen with progress bar</li>
-                <li>System pre-generates all needed sounds using AI (4-5s each)</li>
-                <li>Each generated sound is automatically stored in cache</li>
-                <li>User sees "Generating Audio... 15/20" with estimated time</li>
-              </ul>
-            </div>
-
-            <div class="highlight-box" style="margin-top: 2rem;">
-              <p><strong data-i18n="section4.gameplay_phase">Gameplay Phase (instant playback, &lt;1ms):</strong></p>
-              <ul>
-                <li>Player presses F key (footstep action)</li>
-                <li>System checks cache - sound already exists!</li>
-                <li>Sound plays instantly from memory (~0.04ms)</li>
-                <li>Player experiences AI-quality audio with ZERO perceived latency</li>
-              </ul>
-            </div>
-
-            <div class="status-box">
-              <div class="stats-grid">
-                <div>
-                  <span class="stat-value" style="color: #cc9900;" data-i18n="section4.loading_time">30-60s</span>
-                  <span class="stat-label" data-i18n="section4.loading_label">Loading Screen (one-time)</span>
-                </div>
-                <div>
-                  <span class="stat-value" style="color: #00aa55;" data-i18n="section4.gameplay_time">&lt;1ms</span>
-                  <span class="stat-label" data-i18n="section4.gameplay_label">Gameplay (instant)</span>
-                </div>
-                <div>
-                  <span class="stat-value" style="color: #0077cc;" data-i18n="section4.quality_value">9/10</span>
-                  <span class="stat-label" data-i18n="section4.quality_label">AI Quality</span>
-                </div>
-              </div>
-              <p style="margin-top: 2rem; font-size: 1.125rem; font-weight: 600;" data-i18n="section4.testing_note">
-                This approach is showing promise! Testing continues to validate if this works at scale.
+              <p style="font-size: 1.25rem; font-weight: 600; margin: 0;" data-i18n="section4.question">
+                "We don't need to be fast. We just need to be early."
               </p>
             </div>
           </div>
@@ -1497,197 +1468,80 @@
 
         <section class="section" data-section="5">
           <div class="section-number" data-i18n="section5.number">5</div>
-          <h2 class="section-title" data-i18n="section5.title">ElevenLabs Integration - Testing Phase</h2>
+          <h2 class="section-title" data-i18n="section5.title">Cheating Time</h2>
           <div class="section-content">
             <p data-i18n="section5.intro">
-              This is where things got interesting. I integrated ElevenLabs API for sound generation,
-              and the sounds were REALISTIC. Not musical, not synthetic - actual sound effects.
-              A footstep sounds like a footstep. A gunshot sounds like a gunshot.
+              If we can't generate sound in real-time, we have to generate it <em>before</em> it happens.
+              This shifted the entire architecture from "Reaction" to "Prediction".
             </p>
 
-            <h3 data-i18n="section5.why_title">Why ElevenLabs?</h3>
-            <ul>
-              <li><strong>Professional Quality:</strong> 9/10 rating - sounds are actually realistic</li>
-              <li><strong>Specialized for SFX:</strong> Unlike MusicGen, it's designed for sound effects</li>
-              <li><strong>Flexible:</strong> Can be used for offline OR real-time generation</li>
-              <li><strong>Affordable:</strong> ~$0.02 per sound generation</li>
-            </ul>
+            <div class="stats-grid">
+              <div class="stat-card" style="border: 2px solid #10b981; background: #f0fdf4;">
+                <span class="stat-value" style="color: #059669;" data-i18n="section5.solution_stat">Loading...</span>
+                <span class="stat-label" data-i18n="section5.solution_label">The Trick</span>
+              </div>
+            </div>
 
-            <h3 data-i18n="section5.variant_title">Automatic Variant Rotation</h3>
-            <p data-i18n="section5.variant_intro">
-              One clever feature I added was automatic rotation through different variants.
-              Each sound type has 4 different prompts that cycle automatically:
-            </p>
-
-            <div class="code-snippet" data-i18n="section5.code_example">self.prompts = {
-    'footstep': [
-        "single footstep on concrete floor, hard boot impact",
-        "footstep on wooden floor, creaky boards, natural",
-        "footstep on gravel, small rocks crunching, outdoor",
-        "heavy footstep on metal surface, industrial"
-    ]
-}</div>
-
-            <p data-i18n="section5.variant_result">
-              <strong>Result:</strong> Every time you press F for a footstep, you get a different surface:
-              concrete → wood → gravel → metal → concrete... This adds natural variety without any extra work!
+            <p data-i18n="section5.explanation">
+              I built a system that uses the loading screen—a place where players expect to wait—to "hallucinate" the audio for the level ahead.
+              By the time the player spawns, the AI has already done the heavy lifting.
+              The result? <strong>Zero latency. High-fidelity AI audio.</strong>
             </p>
           </div>
         </section>
 
         <section class="section" data-section="6">
           <div class="section-number" data-i18n="section6.number">6</div>
-          <h2 class="section-title" data-i18n="section6.title">Current Results & Testing</h2>
+          <h2 class="section-title" data-i18n="section6.title">The New Problem: Memory vs. Chaos</h2>
           <div class="section-content">
-            <p data-i18n="section6.intro">Let's check the numbers from initial testing:</p>
+            <p data-i18n="section6.intro">
+              So we solved the speed limit by "cheating" with the loading screen. 
+              But this victory created a new, more dangerous enemy: <strong>RAM Usage</strong>.
+            </p>
 
-            <table class="comparison-table" style="margin-top: 2rem;">
-              <thead>
-                <tr>
-                  <th data-i18n="section6.table_metric">Metric</th>
-                  <th data-i18n="section6.table_target">Target</th>
-                  <th data-i18n="section6.table_achieved">Initial Results</th>
-                  <th data-i18n="section6.table_status">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td data-i18n="section6.latency_metric">In-game latency</td>
-                  <td data-i18n="section6.latency_target">&lt;50ms</td>
-                  <td data-i18n="section6.latency_achieved"><strong>0.04ms</strong></td>
-                  <td data-i18n="section6.latency_status">🎉 1250x better!</td>
-                </tr>
-                <tr>
-                  <td data-i18n="section6.quality_metric">Sound quality</td>
-                  <td data-i18n="section6.quality_target">&gt;6/10</td>
-                  <td data-i18n="section6.quality_achieved"><strong>9/10</strong></td>
-                  <td data-i18n="section6.quality_status">⭐ Professional</td>
-                </tr>
-                <tr>
-                  <td data-i18n="section6.memory_metric">Memory usage</td>
-                  <td data-i18n="section6.memory_target">&lt;100MB</td>
-                  <td data-i18n="section6.memory_achieved"><strong>~25MB</strong></td>
-                  <td data-i18n="section6.memory_status">✓ Efficient</td>
-                </tr>
-                <tr>
-                  <td data-i18n="section6.realism_metric">Realism</td>
-                  <td data-i18n="section6.realism_target">Good</td>
-                  <td data-i18n="section6.realism_achieved"><strong>Realistic!</strong></td>
-                  <td data-i18n="section6.realism_status">✓ Exceeded</td>
-                </tr>
-              </tbody>
-            </table>
-
-            <div class="status-box">
-              <p style="font-size: 1.25rem; font-weight: 600; margin: 0; color: #996600;" data-i18n="section6.testing_status">
-                Research in Progress
-              </p>
-              <p style="margin: 1rem 0 0 0; color: #666;" data-i18n="section6.testing_note">
-                Initial tests are promising! The cache-based approach seems viable. Further validation needed
-                for production-scale implementation and edge cases.
+            <div class="highlight-box" style="background: #fff8e1; border-left-color: #f59e0b;">
+              <p style="font-size: 1.1rem; margin: 0; color: #b45309;" data-i18n="section6.problem">
+                If we pre-generate <em>every</em> possible sound for an open-world game, we would need terabytes of RAM. 
+                We traded CPU time for Memory, and now we're running out of space.
               </p>
             </div>
+
+            <p data-i18n="section6.current_work">
+              This is where my research is <strong>right now</strong>. 
+              I am moving away from "Pre-generate Everything" to something smarter: 
+              <strong>Predictive Buffering</strong>.
+            </p>
           </div>
         </section>
 
         <section class="section" data-section="7">
           <div class="section-number" data-i18n="section7.number">7</div>
-          <h2 class="section-title" data-i18n="section7.title">Current Learnings</h2>
+          <h2 class="section-title" data-i18n="section7.title">Active Experiments</h2>
           <div class="section-content">
-            <h3 data-i18n="section7.learning1_title">
-              1. AI isn't (yet) fast enough for real-time
-            </h3>
-            <p data-i18n="section7.learning1">
-              The fastest AI model I tested was 60 times too slow for real-time gameplay.
-              Even with GPU acceleration (which I didn't have), it would still be about 10x too slow.
-              Maybe in a few years with better hardware and more efficient models it'll be different,
-              but today it's not ready.
+            <p data-i18n="section7.intro">
+              I am currently running three parallel experiments to solve the memory crisis:
             </p>
 
-            <h3 data-i18n="section7.learning2_title">
-              2. But there might be a workaround
-            </h3>
-            <p data-i18n="section7.learning2">
-              Pre-generating during loading or on first request seems promising.
-              Players might accept a brief wait for high quality. The cache system turned a 4-second
-              wait into 0.04ms playback - an 80,000x speedup! Still validating this approach.
-            </p>
-
-            <h3 data-i18n="section7.learning3_title">
-              3. Not all AI models are equal
-            </h3>
-            <p data-i18n="section7.learning3">
-              Each model has its strengths and weaknesses. The right tool for the job matters enormously.
-              Choosing the correct model can make the difference between "sounds weird" and "sounds professional."
-            </p>
-
-            <h3 data-i18n="section7.learning4_title">
-              4. Cache is incredibly powerful
-            </h3>
-            <p data-i18n="section7.learning4">
-              The difference between 3000ms and 0.04ms is the magic of caching.
-              Simple but super effective - an 80,000x speedup! Once a sound is generated,
-              it can be replayed instantly thousands of times at zero cost.
-            </p>
-
-            <h3 data-i18n="section7.learning5_title">
-              5. Quality matters more than speed (sometimes)
-            </h3>
-            <p data-i18n="section7.learning5">
-              A 4-second wait for a realistic sound might be better than an instant synthetic one.
-              Players notice quality, and with caching, they only wait once. Testing continues to validate this hypothesis.
-            </p>
-          </div>
-        </section>
-
-        <section class="section" data-section="8">
-          <div class="section-number" data-i18n="section8.number">8</div>
-          <h2 class="section-title" data-i18n="section8.title">Current Status & Next Steps</h2>
-          <div class="section-content">
-            <h3 data-i18n="section8.question_title">The Research Question</h3>
-            <p style="font-size: 1.25rem; font-style: italic; color: #666;" data-i18n="section8.question">
-              Can AI generate game audio in real-time?
-            </p>
-
-            <h3 style="margin-top: 3rem;" data-i18n="section8.current_answer_title">Current Working Answer</h3>
-            <p style="font-size: 1.125rem;" data-i18n="section8.current_answer">
-              <strong>Not directly</strong> (it's 60-100x too slow), <strong>BUT</strong> the cache-based
-              workaround shows promise: generate on first request, cache the result, and replay instantly.
-              Combined with ElevenLabs for realistic quality, initial tests suggest professional-grade AI audio
-              in games might be viable.
-            </p>
-
-            <div class="status-box">
-              <p style="font-size: 2rem; font-weight: 800; margin: 0 0 1rem 0; color: #996600;" data-i18n="section8.status_title">
-                Project Status
-              </p>
-              <p style="font-size: 1.25rem; margin: 0; color: #666;">
-                <span data-i18n="section8.status_research">✓ Research in Progress</span><br>
-                <span data-i18n="section8.status_goals">✓ Initial goals looking promising</span><br>
-                <span data-i18n="section8.status_production">⏳ Validating approach</span><br>
-                <span data-i18n="section8.status_achievement">💡 Early findings show potential</span>
-              </p>
+            <div class="stats-grid">
+              <div class="stat-card" style="border: 1px solid #e5e7eb;">
+                <span class="stat-value" style="font-size: 1.5rem;" data-i18n="section7.exp1_title">Smart Cleanup</span>
+                <span class="stat-label" style="margin-top: 0.5rem;" data-i18n="section7.exp1_desc">Deleting sounds immediately after they are played to free up RAM.</span>
+              </div>
+              <div class="stat-card" style="border: 1px solid #e5e7eb;">
+                <span class="stat-value" style="font-size: 1.5rem;" data-i18n="section7.exp2_title">The 10s Window</span>
+                <span class="stat-label" style="margin-top: 0.5rem;" data-i18n="section7.exp2_desc">AI that guesses what you will do in the next 10 seconds and generates ONLY that.</span>
+              </div>
             </div>
 
-            <p style="font-size: 1.125rem; margin-top: 3rem; font-style: italic; color: #666;" data-i18n="section8.conclusion">
-              This research is exploring whether AI can't generate audio in real-time yet, but clever engineering
-              might bridge the gap. The combination of caching, pre-generation, and high-quality AI models
-              like ElevenLabs suggests we might achieve both: professional audio quality with instant playback.
-            </p>
-
-            <p style="font-size: 1.125rem; font-weight: 600; margin-top: 2rem; color: #1a1a1a;" data-i18n="section8.future_thought">
-              The future of game audio might not be about making AI faster - it might be about making
-              our systems smarter about when and how we generate audio.
-            </p>
-
-            <h3 style="margin-top: 3rem;" data-i18n="section8.next_steps_title">Next Steps</h3>
-            <ul>
-              <li>Test with larger sound libraries (100+ sounds)</li>
-              <li>Validate memory usage at scale</li>
-              <li>Test predictive pre-generation based on gameplay</li>
-              <li>Explore hybrid fallback systems</li>
-              <li>Production-scale validation</li>
-            </ul>
+            <div class="status-box" style="margin-top: 3rem;">
+              <p style="font-size: 1.5rem; font-weight: 700; margin: 0 0 0.5rem 0; color: #1a1a1a;" data-i18n="section7.status_title">
+                Research Status: ACTIVE
+              </p>
+              <p style="margin: 0; color: #666;" data-i18n="section7.status_desc">
+                The "0.03ms Cache" works, but making it scalable is the new frontier. 
+                I am currently coding the prediction algorithm in Python.
+              </p>
+            </div>
           </div>
         </section>
       </main>
@@ -1814,7 +1668,8 @@
       const visibleElements = {
         hero: false,
         well: false,
-        flow: false
+        flow: false,
+        nightmare: false
       };
 
       // Intersection Observer for optimization (toggling calculation flags)
@@ -1824,6 +1679,7 @@
           if (id === 'hero') visibleElements.hero = entry.isIntersecting;
           if (id === 'wellTransition') visibleElements.well = entry.isIntersecting;
           if (id === 'architectureFlow') visibleElements.flow = entry.isIntersecting;
+          if (id === 'nightmareScroll') visibleElements.nightmare = entry.isIntersecting;
         });
       }, { threshold: 0 }); // Detects even 1px intersection
 
@@ -2036,6 +1892,112 @@
           }
         }
 
+        // 3. Nightmare Scroll Animation (FIXED)
+        if (visibleElements.nightmare) {
+          const container = document.getElementById('nightmareScroll');
+          if (container) {
+            const rect = container.getBoundingClientRect();
+            // rect.top is distance from viewport top.
+            // When rect.top is windowHeight, progress is 0.
+            // When rect.bottom is 0, progress is 1.
+            // We want animation to happen while the sticky content is pinned.
+            
+            const sectionHeight = rect.height;
+            // How much we have scrolled PAST the start of the section
+            const scrollPastStart = windowHeight - rect.top;
+            
+            // We want progress 0% when section starts hitting middle/top
+            // and 100% when we are near the end.
+            // Let's map [0 to sectionHeight] to [0 to 1]
+            
+            // Adjust these to control when animation starts/ends relative to scroll
+            let rawProgress = (scrollPastStart - (windowHeight * 0.5)) / (sectionHeight - windowHeight);
+            
+            const progress = Math.max(0, Math.min(1, rawProgress));
+            
+            const timerText = container.querySelector('.nightmare-timer');
+            const labelText = container.querySelector('.nightmare-label');
+            
+            let ms = 0;
+            // Logarithmic/Exponential time scaling
+            if (progress < 0.15) {
+                ms = (progress / 0.15) * 16; // 0-16ms (Linear start)
+            } else if (progress < 0.4) {
+                // 16ms to 100ms
+                const p = (progress - 0.15) / 0.25;
+                ms = 16 + (p * 84);
+            } else {
+                // Exponential to 12000
+                const p = (progress - 0.4) / 0.6;
+                ms = 100 + (p * p * p * 11900);
+            }
+            
+            if (timerText) {
+                timerText.textContent = `${Math.floor(ms)} ms`;
+                
+                // Visual logic
+                timerText.style.opacity = 0.2 + (progress * 0.8);
+                // Reduced scale growth: max 1.2 instead of 1.5
+                const scale = 1 + (progress * 0.2);
+                
+                if (ms < 16) {
+                    timerText.style.color = '#333333'; // Dark Grey (Technical)
+                    timerText.style.textShadow = 'none';
+                    timerText.style.transform = `scale(${scale})`;
+                    container.style.setProperty('--nightmare-scale', 0); // Hide circle
+                    container.classList.remove('active-nightmare');
+                    if(labelText) { 
+                        labelText.textContent = "TARGET: 16ms"; 
+                        labelText.style.opacity = 1; 
+                        labelText.style.color = '#666666'; 
+                    }
+                } else if (ms < 100) {
+                    timerText.style.color = '#991b1b'; // Dark Red (Anxiety)
+                    timerText.style.textShadow = 'none';
+                    timerText.style.transform = `scale(${scale})`;
+                    container.style.setProperty('--nightmare-scale', 0); // Hide circle
+                    container.classList.remove('active-nightmare');
+                    if(labelText) { 
+                        labelText.textContent = "WARNING: LAG DETECTED"; 
+                        labelText.style.color = '#991b1b'; 
+                    }
+                } else {
+                    // HORROR PHASE (>100ms)
+                    timerText.style.color = '#ff0000'; // Bright Red (Panic)
+                    
+                    // Calculate circle expansion
+                    // Reduced max scale to 6 (doesn't fill screen)
+                    const horrorProgress = Math.max(0, (progress - 0.4) / 0.6);
+                    const circleScale = horrorProgress * horrorProgress * 6; 
+                    
+                    container.style.setProperty('--nightmare-scale', circleScale);
+                    
+                    if (ms > 5000) {
+                        container.classList.add('active-nightmare'); // Adds subtle vignette
+                        if(labelText) { 
+                            labelText.textContent = "SYSTEM FAILURE"; 
+                            labelText.style.color = '#ff0000'; 
+                        }
+                        // Glitch shake
+                        const shakeX = (Math.random() - 0.5) * 15 * progress;
+                        const shakeY = (Math.random() - 0.5) * 8 * progress;
+                        timerText.style.transform = `scale(${scale}) translate(${shakeX}px, ${shakeY}px)`;
+                        // Glitchy glow
+                        timerText.style.textShadow = `2px 0 #fff, -2px 0 #000`;
+                    } else {
+                        container.classList.remove('active-nightmare');
+                         if(labelText) { 
+                            labelText.textContent = "UNPLAYABLE"; 
+                            labelText.style.color = '#ff0000'; 
+                        }
+                        timerText.style.transform = `scale(${scale})`;
+                        timerText.style.textShadow = 'none';
+                    }
+                }
+            }
+          }
+        }
+
         // Smart autoscroll button logic
         const autoscrollBtn = document.getElementById('autoscrollBtn');
         if (autoscrollBtn && !isAutoScrolling) {
@@ -2137,9 +2099,12 @@
         const hero = document.getElementById('hero');
         const well = document.getElementById('wellTransition');
         const flow = document.getElementById('architectureFlow');
+        const nightmare = document.getElementById('nightmareScroll'); // NEW
+
         if(hero) visibilityObserver.observe(hero);
         if(well) visibilityObserver.observe(well);
         if(flow) visibilityObserver.observe(flow);
+        if(nightmare) visibilityObserver.observe(nightmare); // NEW
 
         document.querySelectorAll('.section').forEach(section => {
            sectionObserver.observe(section);
