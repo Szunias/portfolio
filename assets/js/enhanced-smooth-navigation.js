@@ -1,14 +1,6 @@
 /**
  * Enhanced Smooth Navigation System
  * Main entry point - uses modular architecture
- *
- * Eliminuje "flashing" przy przejściach między stronami poprzez:
- * - AJAX navigation bez przeładowania strony
- * - View Transition API dla nowoczesnych przeglądarek
- * - Zachowanie nawigacji i headera (bez re-render)
- * - Preloading stron przy hover
- * - Cache dla instant navigation
- * - Pełna integracja z systemem tłumaczeń
  */
 
 import { CacheManager } from './ajax/cache.js';
@@ -17,140 +9,147 @@ import { MediaLoader } from './ajax/media-loader.js';
 import { ScriptReinitializer } from './ajax/script-reinit.js';
 import { PageHandlers } from './ajax/page-handlers.js';
 import { NavigationCore } from './ajax/core.js';
+import { NavigationComponent } from './components/navigation.js'; // <--- DODAJ TĘ LINIJKĘ
 
-(function () {
-  'use strict';
+// ============================================================================
+// CONFIGURATION
+// ============================================================================
 
-  // ============================================================================
-  // CONFIGURATION
-  // ============================================================================
+// Domyślna konfiguracja
+const DEFAULT_CONFIG = {
+  // Animation durations (ms)
+  fadeOutDuration: 150,
+  fadeInDuration: 200,
 
-  const CONFIG = {
-    // Animation durations (ms)
-    fadeOutDuration: 150,
-    fadeInDuration: 200,
+  // Preloading
+  preloadDelay: 50,
+  preloadOnHover: true,
 
-    // Preloading
-    preloadDelay: 50,
-    preloadOnHover: true,
+  // Cache
+  cacheSize: 10,
+  cacheCritical: true,
 
-    // Cache
-    cacheSize: 10,
-    cacheCritical: true,
+  // Debug - auto-detect localhost
+  debug: (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname === '[::1]' ||
+    window.location.hostname.includes('.local')
+  )
+};
 
-    // Debug - auto-detect localhost
-    debug:
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1' ||
-      window.location.hostname.includes('.local')
-  };
+// Połączenie domyślnej konfiguracji z ewentualną konfiguracją użytkownika (window.smoothNavOptions)
+const USER_CONFIG = window.smoothNavOptions || {};
+const CONFIG = { ...DEFAULT_CONFIG, ...USER_CONFIG };
 
-  // ============================================================================
-  // LOGGING
-  // ============================================================================
+// ============================================================================
+// LOGGING
+// ============================================================================
 
-  function log(...args) {
-    if (CONFIG.debug) {
-      console.log('[SmoothNav]', ...args);
-    }
+function log(...args) {
+  if (CONFIG.debug) {
+    console.log('[SmoothNav]', ...args);
   }
+}
 
-  // ============================================================================
-  // INITIALIZE MODULES
-  // ============================================================================
+// ============================================================================
+// INITIALIZATION LOGIC
+// ============================================================================
 
-  log('Initializing Enhanced Smooth Navigation (Modular)');
+let navigationCore;
+let cacheManager;
+let cleanupManager;
+let mediaLoader;
+let scriptReinitializer;
+let pageHandlers;
 
-  // Create module instances
-  const cacheManager = new CacheManager(CONFIG, log);
-  const cleanupManager = new CleanupManager(log);
-  const mediaLoader = new MediaLoader(log);
-  const scriptReinitializer = new ScriptReinitializer(log, cleanupManager, mediaLoader);
-  const pageHandlers = new PageHandlers(log, cleanupManager);
-  const navigationCore = new NavigationCore(
-    CONFIG,
-    log,
-    cacheManager,
-    cleanupManager,
-    scriptReinitializer,
-    mediaLoader,
-    pageHandlers
-  );
-
-  // ============================================================================
-  // INITIALIZATION
-  // ============================================================================
-
-  function init() {
+function init() {
+  try {
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     log('Enhanced Smooth Navigation - Modular Architecture');
-    log('Version: 2.0.0');
+    log('Version: 2.0.1');
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-    // Initialize core navigation
+    log('Initializing Navigation UI...');           // <--- Opcjonalny log
+    const navComponent = new NavigationComponent(); // <--- WKLEJ TO
+    navComponent.init();
+    
+    // 1. Initialize Modules
+    log('Initializing modules...');
+    cacheManager = new CacheManager(CONFIG, log);
+    cleanupManager = new CleanupManager(log);
+    mediaLoader = new MediaLoader(log);
+    scriptReinitializer = new ScriptReinitializer(log, cleanupManager, mediaLoader);
+    pageHandlers = new PageHandlers(log, cleanupManager);
+    
+    navigationCore = new NavigationCore(
+      CONFIG,
+      log,
+      cacheManager,
+      cleanupManager,
+      scriptReinitializer,
+      mediaLoader,
+      pageHandlers
+    );
+
+    // 2. Initialize Core
     navigationCore.init();
 
-    // Initialize lazy loading on initial page load
+    // 3. Lazy Loading (Initial Page)
     log('━━━ INITIAL PAGE LOAD ━━━');
-    log('Running lazy loading for initial page content...');
     mediaLoader.initializeUniversalLazyLoading();
 
+    // 4. Setup Public API
+    exposePublicApi();
+    
     log('━━━ INITIALIZATION COMPLETE ━━━');
+
+  } catch (error) {
+    console.error('[SmoothNav] Critical Initialization Error:', error);
+    // Fallback: upewnij się, że standardowa nawigacja działa, jeśli skrypt padnie
+    document.documentElement.classList.remove('is-loading', 'is-transitioning');
   }
+}
 
-  // ============================================================================
-  // START
-  // ============================================================================
+// ============================================================================
+// GLOBAL EVENT LISTENERS
+// ============================================================================
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+function setupGlobalListeners() {
+  // Language Change Handler
+  // Używamy Named Function, aby uniknąć duplikatów przy hot-reload/reinit
+  const handleLanguageChange = (e) => {
+    const newLang = e.detail?.language;
+    log(`Language changed to: ${newLang}`);
 
-  // ============================================================================
-  // GLOBAL LANGUAGE CHANGE HANDLER
-  // ============================================================================
+    if (window.i18n && window.i18n._applyTranslations) {
+      setTimeout(() => window.i18n._applyTranslations(), 10);
+    }
 
-  if (!window.__smoothNavLanguageListenerSetup) {
-    window.__smoothNavLanguageListenerSetup = true;
+    if (window.location.pathname.includes('music') && window.refreshMusicList) {
+      setTimeout(() => window.refreshMusicList(), 50);
+    }
+  };
 
-    window.addEventListener('languageChanged', (e) => {
-      const newLang = e.detail?.language;
-      log(`Language changed to: ${newLang}`);
+  // Zabezpieczenie przed wielokrotnym podpięciem
+  window.removeEventListener('languageChanged', handleLanguageChange);
+  window.addEventListener('languageChanged', handleLanguageChange);
+  
+  log('Global language listeners attached');
+}
 
-      // Apply translations immediately
-      if (window.i18n && window.i18n._applyTranslations) {
-        log('Calling _applyTranslations() for language change');
-        setTimeout(() => {
-          window.i18n._applyTranslations();
-          log('Translations reapplied after language change');
-        }, 10);
-      }
+// ============================================================================
+// PUBLIC API
+// ============================================================================
 
-      // Special handling for music page
-      if (window.location.pathname.includes('music') && window.refreshMusicList) {
-        log('Refreshing music playlist for new language');
-        setTimeout(() => {
-          window.refreshMusicList();
-        }, 50);
-      }
-    });
-
-    log('Global language change listener set up');
-  }
-
-  // ============================================================================
-  // EXPORT PUBLIC API
-  // ============================================================================
-
+function exposePublicApi() {
   window.smoothNav = {
-    navigate: (url) => navigationCore.navigateToPage(url),
-    preload: (url) => cacheManager.schedulePreload(url, (u) => navigationCore.loadPage(u)),
-    clearCache: () => cacheManager.clear(),
+    navigate: (url) => navigationCore?.navigateToPage(url),
+    preload: (url) => cacheManager?.schedulePreload(url, (u) => navigationCore?.loadPage(u)),
+    clearCache: () => cacheManager?.clear(),
     cache: cacheManager,
     config: CONFIG,
-
+    
     // Module access for debugging
     modules: {
       cache: cacheManager,
@@ -161,6 +160,18 @@ import { NavigationCore } from './ajax/core.js';
       core: navigationCore
     }
   };
+}
 
-  log('Enhanced Smooth Navigation loaded (Modular v2.0.0)');
-})();
+// ============================================================================
+// STARTUP
+// ============================================================================
+
+// Uruchamiamy listenery globalne od razu
+setupGlobalListeners();
+
+// Inicjalizacja systemu
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}

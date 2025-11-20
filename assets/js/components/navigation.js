@@ -1,329 +1,187 @@
-// Navigation Component - centralized header for all pages
-// Usage: Include this script in your HTML and call loadNavigation()
+/**
+ * Komponent Nawigacji (navigation.js)
+ * Odpowiada za wyświetlanie menu i obsługę wersji mobilnej.
+ */
 
-function loadNavigation() {
-  // CRITICAL FIX: Mark navigation as translation-ready immediately
-  // Navigation translations are already inlined in window.__I18N__
-  // This prevents visibility flicker and layout shifts on nav links
-  if (window.__I18N__ && !document.documentElement.classList.contains('translations-ready')) {
-    document.documentElement.classList.add('translations-ready');
+export class NavigationComponent {
+  constructor() {
+    this.header = null;
+    this.mobileMenu = null;
+    this.toggleBtn = null;
+    this.overlay = null;
+    this.scrollTicking = false;
+    
+    // Wiązanie metod (żeby 'this' zawsze wskazywało na ten obiekt)
+    this.handleScroll = this.handleScroll.bind(this);
+    this.handleMobileMenuClick = this.handleMobileMenuClick.bind(this);
+    this.handleKeydown = this.handleKeydown.bind(this);
+    this.handleLanguageChange = this.handleLanguageChange.bind(this);
   }
 
-  const nav = `
-    <!-- Header -->
-    <header class="header" id="header">
-      <div class="container">
-        <nav class="nav">
-          <a href="/" class="logo">Igor Szuniewicz</a>
-          <div class="nav-menu">
-            <ul class="nav-links">
-              <li><a href="/" data-i18n="nav_home">Home</a></li>
-              <li><a href="/about.html" data-i18n="nav_about">About</a></li>
-              <li><a href="/projects/" data-i18n="nav_projects">Projects</a></li>
-              <li><a href="/music.html" data-i18n="nav_music">Music</a></li>
-              <li><a href="/contact.html" data-i18n="nav_contact">Contact</a></li>
-            </ul>
-            <div class="lang-switcher">
-              <button class="lang-btn" data-lang="en">EN</button>
-              <button class="lang-btn" data-lang="pl">PL</button>
-              <button class="lang-btn" data-lang="nl">NL</button>
+  // Główna funkcja startowa
+  init() {
+    // 1. Jeśli nie ma nagłówka w HTML, stwórz go
+    if (!document.getElementById('header')) {
+      this.render();
+    }
+
+    // 2. Znajdź elementy w DOM
+    this.header = document.getElementById('header');
+    this.mobileMenu = document.getElementById('mobile-menu');
+    this.toggleBtn = document.querySelector('.mobile-menu-toggle');
+    this.overlay = document.querySelector('.mobile-menu-overlay');
+
+    // 3. Uruchom logikę
+    this.setupSkipLink();
+    this.setActiveLink();
+    this.setActiveLanguageButton();
+    this.setupEventListeners();
+    this.handleScroll(); // Sprawdź scroll na starcie
+
+    // 4. Naprawa migania tłumaczeń
+    if (window.__I18N__ && !document.documentElement.classList.contains('translations-ready')) {
+      document.documentElement.classList.add('translations-ready');
+    }
+    
+    console.log('[Navigation] Menu załadowane pomyślnie');
+  }
+
+  // Szablon HTML menu
+  getTemplate() {
+    return `
+      <header class="header" id="header">
+        <div class="container">
+          <nav class="nav">
+            <a href="/" class="logo">Igor Szuniewicz</a>
+            <div class="nav-menu">
+              <ul class="nav-links">
+                <li><a href="/" data-i18n="nav_home">Home</a></li>
+                <li><a href="/about.html" data-i18n="nav_about">About</a></li>
+                <li><a href="/projects/" data-i18n="nav_projects">Projects</a></li>
+                <li><a href="/music.html" data-i18n="nav_music">Music</a></li>
+                <li><a href="/contact.html" data-i18n="nav_contact">Contact</a></li>
+              </ul>
+              <div class="lang-switcher">
+                <button class="lang-btn" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="pl">PL</button>
+                <button class="lang-btn" data-lang="nl">NL</button>
+              </div>
             </div>
-          </div>
-          <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu">
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-        </nav>
+            <button class="mobile-menu-toggle" aria-label="Menu" aria-expanded="false">
+              <span></span><span></span><span></span>
+            </button>
+          </nav>
+        </div>
+      </header>
+      <div class="mobile-menu-overlay"></div>
+      <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+        <ul class="mobile-nav-links">
+          <li><a href="/" data-i18n="nav_home">Home</a></li>
+          <li><a href="/about.html" data-i18n="nav_about">About</a></li>
+          <li><a href="/projects/" data-i18n="nav_projects">Projects</a></li>
+          <li><a href="/music.html" data-i18n="nav_music">Music</a></li>
+          <li><a href="/contact.html" data-i18n="nav_contact">Contact</a></li>
+        </ul>
+        <div class="mobile-lang-switcher">
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="pl">PL</button>
+          <button class="lang-btn" data-lang="nl">NL</button>
+        </div>
       </div>
-    </header>
-
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay"></div>
-
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
-      <ul class="mobile-nav-links">
-        <li><a href="/" data-i18n="nav_home">Home</a></li>
-        <li><a href="/about.html" data-i18n="nav_about">About</a></li>
-        <li><a href="/projects/" data-i18n="nav_projects">Projects</a></li>
-        <li><a href="/music.html" data-i18n="nav_music">Music</a></li>
-        <li><a href="/contact.html" data-i18n="nav_contact">Contact</a></li>
-      </ul>
-      <div class="mobile-lang-switcher">
-        <button class="lang-btn" data-lang="en">EN</button>
-        <button class="lang-btn" data-lang="pl">PL</button>
-        <button class="lang-btn" data-lang="nl">NL</button>
-      </div>
-    </div>
-  `;
-
-  // Insert navigation at the beginning of body
-  if (!document.body) {
-    // Navigation cannot load - document.body is null
-    return;
+    `;
   }
 
-  document.body.insertAdjacentHTML('afterbegin', nav);
-  setupSkipLink();
-
-  // Set active link based on current page
-  setActiveLink();
-
-  // CRITICAL: Set active language button based on current language from localStorage
-  // This ensures language selection persists across page navigation
-  setActiveLanguageButton();
-
-  // Initialize mobile menu - with small delay to ensure DOM is ready
-  setTimeout(initMobileMenu, 10);
-
-  // Initialize scroll effect
-  initScrollEffect();
-}
-
-// Set active class on current language button
-function setActiveLanguageButton(languageOverride = null) {
-  try {
-    // Use override if provided (from event), otherwise read from localStorage
-    const savedLang = languageOverride || localStorage.getItem('language') || 'en';
-    console.log('[Navigation] setActiveLanguageButton() - language:', savedLang, languageOverride ? '(from event)' : '(from localStorage)');
-    console.log('[Navigation] Current path:', window.location.pathname);
-
-    // Update all language buttons (both desktop and mobile)
-    document.querySelectorAll('.lang-btn').forEach((btn) => {
-      if (btn.dataset.lang === savedLang) {
-        btn.classList.add('active');
-        console.log('[Navigation] Set active:', btn.dataset.lang);
-      } else {
-        btn.classList.remove('active');
-      }
-    });
-  } catch (error) {
-    console.error('[Navigation] localStorage error:', error);
-    // localStorage might be disabled - default to 'en'
-    document.querySelectorAll('.lang-btn').forEach((btn) => {
-      if (btn.dataset.lang === 'en') {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    });
+  render() {
+    if (!document.body) return;
+    document.body.insertAdjacentHTML('afterbegin', this.getTemplate());
   }
-}
 
-// Set active class on current page link
-function setActiveLink() {
-  const path = normalizePath(window.location.pathname);
-  const links = document.querySelectorAll('.nav-links a, .mobile-nav-links a');
+  setupEventListeners() {
+    window.addEventListener('scroll', this.handleScroll, { passive: true });
+    document.addEventListener('click', this.handleMobileMenuClick);
+    document.addEventListener('keydown', this.handleKeydown);
+    window.addEventListener('languageChanged', this.handleLanguageChange);
+  }
 
-  links.forEach((link) => {
-    const href = link.getAttribute('href');
-    if (!href || href.startsWith('http')) return;
+  handleScroll() {
+    if (!this.scrollTicking) {
+      window.requestAnimationFrame(() => {
+        if (this.header) {
+          this.header.classList.toggle('scrolled', window.scrollY > 50);
+        }
+        this.scrollTicking = false;
+      });
+      this.scrollTicking = true;
+    }
+  }
 
-    const targetPath = normalizePath(href);
-    const isProjectsLink = targetPath === '/projects';
-
-    if (isProjectsLink) {
-      if (path === '/projects' || path.startsWith('/projects/')) {
-        link.classList.add('active');
-      }
+  handleMobileMenuClick(event) {
+    const target = event.target;
+    // Kliknięcie w burger menu
+    if (this.toggleBtn && (this.toggleBtn === target || this.toggleBtn.contains(target))) {
+      this.toggleMenu();
       return;
     }
-
-    if (targetPath === path) {
-      link.classList.add('active');
+    // Kliknięcie w tło lub link zamyka menu
+    if (target === this.overlay || target.closest('.mobile-menu a') || target.closest('.mobile-lang-switcher .lang-btn')) {
+      if (this.mobileMenu?.classList.contains('active')) this.closeMenu();
     }
-  });
-}
-
-function normalizePath(value) {
-  if (!value) return '/';
-  let pathname = value;
-
-  try {
-    pathname = new URL(value, window.location.origin).pathname;
-  } catch (_error) {
-    // value was likely already a pathname – keep as-is
   }
 
-  pathname = pathname.replace(/index\.html$/i, '');
-  if (pathname.endsWith('/') && pathname !== '/') {
-    pathname = pathname.slice(0, -1);
+  handleKeydown(event) {
+    if (event.key === 'Escape' && this.mobileMenu?.classList.contains('active')) this.closeMenu();
   }
 
-  return pathname || '/';
-}
-
-function setupSkipLink() {
-  const targetId = ensureMainTargetId();
-  if (!targetId) return;
-
-  if (document.querySelector('.skip-nav')) {
-    return; // Skip link already exists
+  toggleMenu() {
+    const isActive = this.mobileMenu.classList.contains('active');
+    isActive ? this.closeMenu() : this.openMenu();
   }
 
-  const skipLink = document.createElement('a');
-  skipLink.href = `#${targetId}`;
-  skipLink.className = 'skip-link';
-  skipLink.textContent = 'Skip to main content';
-  document.body.insertAdjacentElement('afterbegin', skipLink);
-}
-
-function ensureMainTargetId() {
-  const main = document.querySelector('main');
-  if (main) {
-    if (!main.id) {
-      main.id = 'main-content';
-    }
-    return main.id;
+  openMenu() {
+    this.toggleBtn?.classList.add('active');
+    this.mobileMenu?.classList.add('active');
+    this.overlay?.classList.add('active');
   }
 
-  const fallback =
-    document.querySelector('[role="main"]') ||
-    document.getElementById('smooth-nav-container') ||
-    document.querySelector('section');
-
-  if (!fallback) {
-    return null;
+  closeMenu() {
+    this.toggleBtn?.classList.remove('active');
+    this.mobileMenu?.classList.remove('active');
+    this.overlay?.classList.remove('active');
   }
 
-  if (!fallback.id) {
-    fallback.id = 'main-content';
+  handleLanguageChange(event) {
+    this.setActiveLanguageButton(event.detail?.language);
   }
 
-  if (!fallback.hasAttribute('tabindex')) {
-    fallback.setAttribute('tabindex', '-1');
+  setActiveLanguageButton(langOverride = null) {
+    const currentLang = langOverride || localStorage.getItem('language') || 'en';
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    });
   }
 
-  return fallback.id;
-}
-
-// Initialize mobile menu toggle
-function initMobileMenu() {
-  // Prevent double initialization
-  if (window.__mobileMenuInitialized) return;
-  window.__mobileMenuInitialized = true;
-
-  const setup = () => {
-    const toggle = document.querySelector('.mobile-menu-toggle');
-    const menu = document.querySelector('.mobile-menu');
-    const overlay = document.querySelector('.mobile-menu-overlay');
-
-    const closeMenu = () => {
-      toggle?.classList.remove('active');
-      menu?.classList.remove('active');
-      overlay?.classList.remove('active');
-      toggle?.setAttribute('aria-expanded', 'false');
-      menu?.setAttribute('aria-hidden', 'true');
-    };
-
-    const openMenu = () => {
-      toggle?.classList.add('active');
-      menu?.classList.add('active');
-      overlay?.classList.add('active');
-      toggle?.setAttribute('aria-expanded', 'true');
-      menu?.setAttribute('aria-hidden', 'false');
-    };
-
-    document.addEventListener('click', (event) => {
-      const target = event.target;
-
-      if (toggle && toggle.contains(target)) {
-        if (menu?.classList.contains('active')) {
-          closeMenu();
+  setActiveLink() {
+    const path = window.location.pathname.replace(/\/$/, "") || "/";
+    document.querySelectorAll('.nav-links a, .mobile-nav-links a').forEach(link => {
+        const linkPath = new URL(link.href).pathname.replace(/\/$/, "") || "/";
+        if (path.includes('projects') && linkPath.includes('projects')) {
+            link.classList.add('active');
         } else {
-          openMenu();
+            link.classList.toggle('active', linkPath === path);
         }
-        return;
-      }
-
-      if (
-        target === overlay ||
-        target?.closest('.mobile-menu a, .mobile-lang-switcher .lang-btn')
-      ) {
-        closeMenu();
-      }
     });
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && menu?.classList.contains('active')) {
-        closeMenu();
-      }
-    });
-  };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setup, { once: true });
-  } else {
-    setup();
   }
-}
 
-// Add scrolled class to header
-function initScrollEffect() {
-  const header = document.getElementById('header');
-  if (!header) return;
-
-  // Throttled scroll handler to improve performance
-  let scrollTimeout;
-  const handleScroll = () => {
-    if (scrollTimeout) {
-      clearTimeout(scrollTimeout);
+  setupSkipLink() {
+    if (document.querySelector('.skip-nav')) return;
+    const main = document.querySelector('main') || document.querySelector('section');
+    if (main) {
+        if (!main.id) main.id = 'main-content';
+        const skipLink = document.createElement('a');
+        skipLink.href = `#${main.id}`;
+        skipLink.className = 'skip-link visually-hidden';
+        skipLink.textContent = 'Skip to main content';
+        document.body.prepend(skipLink);
     }
-    scrollTimeout = setTimeout(() => {
-      if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
-    }, 10);
-  };
-
-  window.addEventListener('scroll', handleScroll, { passive: true });
-
-  // Store reference for cleanup
-  window._scrollHandler = handleScroll;
-}
-
-// Cleanup function to prevent memory leaks
-function cleanupNavigation() {
-  // Remove scroll event listener
-  if (window._scrollHandler) {
-    window.removeEventListener('scroll', window._scrollHandler);
-    window._scrollHandler = null;
   }
-
-  // Remove mobile menu event listeners
-  const toggle = document.querySelector('.mobile-menu-toggle');
-  const overlay = document.querySelector('.mobile-menu-overlay');
-
-  if (toggle) {
-    toggle.replaceWith(toggle.cloneNode(true)); // Remove all event listeners
-  }
-  if (overlay) {
-    overlay.replaceWith(overlay.cloneNode(true)); // Remove all event listeners
-  }
-}
-
-// Add cleanup on page unload
-window.addEventListener('beforeunload', cleanupNavigation);
-
-// Expose cleanup function globally
-window.cleanupNavigation = cleanupNavigation;
-
-// Listen for language changes from BulletproofI18n (global listener, added once)
-window.addEventListener('languageChanged', (event) => {
-  // Update language button active state when language changes
-  // CRITICAL: Use event.detail.language to avoid race condition with localStorage
-  setActiveLanguageButton(event.detail?.language);
-});
-
-// Auto-load - always wait for DOM to be ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(loadNavigation, 0); // Small delay to ensure body exists
-  });
-} else {
-  // DOM already loaded
-  setTimeout(loadNavigation, 0);
 }
