@@ -1,1412 +1,557 @@
-<!DOCTYPE html>
-<html lang="en" style="background: #000">
-<head>
-  <meta charset="utf-8" />
-    <!-- LOG EXTRACTOR - Automatic console log capture -->
-    <script src="assets/js/log-extractor.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-  <meta name="theme-color" content="#000000" />
-
-  <!-- ═══════════════════════════════════════════════════════════════════
-       CRITICAL INLINE RESOURCES - MUST LOAD FIRST
-       These prevent visual flashing and ensure smooth initial render
-  ═══════════════════════════════════════════════════════════════════ -->
-
-  <!-- CRITICAL 1: Language Preload - Prevents language flicker -->
-  <script>
-    (function() {
-      'use strict';
-      const savedLang = localStorage.getItem('language') || 'en';
-      document.documentElement.setAttribute('lang', savedLang);
-      window.__preloadedLang = savedLang;
-    })();
-  </script>
-        <!-- CRITICAL 1.5: Inline Critical Translations - Bulletproof i18n (0ms load) -->
-        <script>
-            /**
-             * Critical translations inline for instant loading
-             * Ensures navigation/footer work immediately, even if JSON fails
-             * Size: ~2KB | Load time: 0ms (already in HTML)
-             */
-            window.__I18N__ = {
-                "en": {
-                    "nav_home": "Home",
-                    "nav_work": "Work",
-                    "nav_about": "About",
-                    "nav_projects": "Projects",
-                    "nav_music": "Music",
-                    "nav_contact": "Contact",
-                    "footer_projects": "Projects",
-                    "footer_music": "Music",
-                    "footer_about": "About",
-                    "footer_contact": "Contact",
-                    "error_loading": "Loading...",
-                    "error_failed": "Failed to load content",
-                    "error_retry": "Retry"
-                },
-                "pl": {
-                    "nav_home": "Start",
-                    "nav_work": "Portfolio",
-                    "nav_about": "O mnie",
-                    "nav_projects": "Projekty",
-                    "nav_music": "Muzyka",
-                    "nav_contact": "Kontakt",
-                    "footer_projects": "Projekty",
-                    "footer_music": "Muzyka",
-                    "footer_about": "O mnie",
-                    "footer_contact": "Kontakt",
-                    "error_loading": "Ładowanie...",
-                    "error_failed": "Nie udało się załadować treści",
-                    "error_retry": "Spróbuj ponownie"
-                },
-                "nl": {
-                    "nav_home": "Home",
-                    "nav_work": "Portfolio",
-                    "nav_about": "Over",
-                    "nav_projects": "Projecten",
-                    "nav_music": "Muziek",
-                    "nav_contact": "Contact",
-                    "footer_projects": "Projecten",
-                    "footer_music": "Muziek",
-                    "footer_about": "Over",
-                    "footer_contact": "Contact",
-                    "error_loading": "Laden...",
-                    "error_failed": "Inhoud kan niet worden geladen",
-                    "error_retry": "Opnieuw proberen"
-                }
-            };
-        </script>
-
-
-  <!-- CRITICAL 2: Base styles - Prevents white flash -->
-  <style data-page-style="true">
-    html{color-scheme:dark;background:#000!important}
-    body{margin:0;padding:0}
-    html:not(.translations-ready) [data-i18n],html:not(.translations-ready) [data-i18n-placeholder],html:not(.translations-ready) [data-i18n-aria-label]{visibility:hidden!important}
-    html.translations-ready [data-i18n],html.translations-ready [data-i18n-placeholder],html.translations-ready [data-i18n-aria-label]{visibility:visible;animation:fadeInContent .2s ease-in}
-    @keyframes fadeInContent{from{opacity:0}to{opacity:1}}
-  </style>
-  <title>Contact: Igor Szuniewicz | Audio Designer & Composer</title>
-  <meta name="description" content="Contact Igor Szuniewicz for game audio composition, Wwise/FMOD implementation, interactive music design, sound design, and audio production tools. Available worldwide." />
-  <meta name="keywords" content="contact Igor Szuniewicz, audio designer contact, game audio services, interactive music, sound design, audio development, Belgium, freelance audio" />
-  <meta name="author" content="Igor Szuniewicz" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://igorszuniewicz.com/contact.html" />
-
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Igor Szuniewicz" />
-  <meta property="og:url" content="https://igorszuniewicz.com/contact.html" />
-  <meta property="og:title" content="Contact Igor Szuniewicz: Audio Designer & Composer" />
-  <meta property="og:description" content="Game audio work: Wwise/FMOD, interactive music, sound design, audio tools. Available worldwide." />
-  <meta property="og:image" content="https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg" />
-  <meta property="og:image:width" content="1280" />
-  <meta property="og:image:height" content="720" />
-  <meta property="og:locale" content="en_US" />
-  <meta property="og:locale:alternate" content="pl_PL" />
-  <meta property="og:locale:alternate" content="nl_NL" />
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="https://igorszuniewicz.com/contact.html" />
-  <meta name="twitter:title" content="Contact Igor Szuniewicz: Audio Designer & Composer" />
-  <meta name="twitter:description" content="Game audio work: Wwise/FMOD, interactive music, sound design, audio tools. Available worldwide." />
-  <meta name="twitter:image" content="https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg" />
-
-  <!-- Google Search Console Verification - Already verified -->
-
-  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
-
-  <!-- Resource Hints for Performance -->
-  <link rel="dns-prefetch" href="//fonts.googleapis.com">
-  <link rel="dns-prefetch" href="//fonts.gstatic.com">
-  <link rel="preload" href="assets/css/main.css" as="style">
-  <!-- Navigation.js is loaded with defer, so preload is not needed -->
-  <!-- Preload language to prevent flicker -->
-  <script type="module" src="assets/js/preload-lang.js"></script>
-
-  <!-- Smooth navigation - MUST load early to prevent white flash -->
-
-
-  <!-- Google Fonts - Optimized -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
-
-  <!-- Font Awesome for Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <!-- Navigation Styles -->
-  <link rel="stylesheet" href="assets/css/global/navigation.css">
-  <!-- View Transition API - Smooth page transitions -->
-  <link rel="stylesheet" href="assets/css/view-transitions.css">
-  <!-- Footer component styles -->
-  <link rel="stylesheet" href="assets/css/components/footer.css">
-
-  <style data-page-style="true">
-    /* === RESET === */
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      font-size: 15px;
-    }
-
-    body {
-      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #000000;
-      color: #e0e6ed;
-      line-height: 1.6;
-      overflow-x: hidden;
-      font-weight: 400;
-    }
-
-    /* === PREMIUM PROFESSIONAL BACKGROUND === */
-    .bg-gradient {
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      z-index: 0 !important;
-      pointer-events: none !important;
-      background:
-        radial-gradient(circle at 22% 18%, rgba(34, 211, 238, 0.1) 0%, rgba(34, 211, 238, 0.025) 42%, transparent 70%),
-        radial-gradient(circle at 78% 82%, rgba(52, 211, 153, 0.08) 0%, rgba(52, 211, 153, 0.02) 45%, transparent 72%),
-        radial-gradient(circle at 50% 50%, rgba(148, 163, 255, 0.045) 0%, rgba(148, 163, 255, 0.012) 55%, transparent 80%),
-        linear-gradient(170deg, #010308 0%, #040811 52%, #08121b 100%) !important;
-    }
-
-    .header {
-      position: fixed !important;
-      z-index: 1010 !important;
-    }
-
-    section, main {
-      position: relative;
-      z-index: 1;
-    }
-
-    .bg-gradient::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
-      opacity: 0.5;
-      mix-blend-mode: overlay;
-    }
-
-    .bg-grid {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image:
-        linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
-      background-size: 100px 100px;
-      z-index: -3;
-      opacity: 0.4;
-      mask-image: radial-gradient(ellipse at center, black 0%, transparent 90%);
-    }
-
-    .bg-orbs {
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      overflow: hidden;
-      opacity: 0.12;
-    }
-
-    .bg-orbs::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background:
-        linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.1) 50%, transparent 100%),
-        linear-gradient(0deg, transparent 0%, rgba(6, 182, 212, 0.08) 50%, transparent 100%);
-      animation: subtleRotate 60s linear infinite;
-    }
-
-    @keyframes subtleRotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    /* === CONTAINER === */
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 2rem;
-      position: relative;
-      z-index: 1;
-    }
-
-
-    /* === PAGE CONTENT === */
-    .page-content {
-      padding: 10rem 0 4rem;
-      min-height: 100vh;
-    }
-
-    .page-header {
-      text-align: center;
-      margin-bottom: 4rem;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      border-radius: 20px;
-      color: #38bdf8;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.9; }
-    }
-
-    .page-title {
-      font-family: 'Sora', sans-serif;
-      font-size: clamp(3rem, 7vw, 5rem);
-      font-weight: 900;
-      background: linear-gradient(135deg, #ffffff 0%, #38bdf8 50%, #a78bfa 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 1rem;
-      letter-spacing: -0.03em;
-    }
-
-    .page-description {
-      font-size: 1.25rem;
-      color: #cbd5e1;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    /* === CONTACT GRID === */
-    .contact-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      margin-bottom: 3rem;
-    }
-
-    /* === CONTACT FORM === */
-    .contact-form-section {
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(20px);
-      border-radius: 30px;
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      padding: 2.5rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .section-icon {
-      width: 50px;
-      height: 50px;
-      background: linear-gradient(135deg, #38bdf8, #a78bfa);
-      border-radius: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      color: #fff;
-    }
-
-    .section-header h3 {
-      font-family: 'Sora', sans-serif;
-      font-size: 1.8rem;
-      color: #fff;
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #fff;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-      font-size: 0.95rem;
-    }
-
-    .form-group label i {
-      color: #38bdf8;
-    }
-
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 1rem 1.25rem;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      color: #fff;
-      font-size: 1rem;
-      font-family: 'Inter', sans-serif;
-      transition: all 0.3s ease;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: rgba(56, 189, 248, 0.5);
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 150px;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    .submit-btn {
-      width: 100%;
-      padding: 1.25rem;
-      background: linear-gradient(135deg, #38bdf8, #a78bfa);
-      border: none;
-      border-radius: 50px;
-      color: #fff;
-      font-size: 1.1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 10px 30px rgba(56, 189, 248, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .submit-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 40px rgba(56, 189, 248, 0.6);
-    }
-
-    .success-message {
-      display: none;
-      padding: 1.5rem;
-      background: rgba(16, 185, 129, 0.2);
-      border: 1px solid rgba(16, 185, 129, 0.5);
-      border-radius: 15px;
-      color: #10b981;
-      text-align: center;
-      margin-top: 1.5rem;
-    }
-
-    /* === CONTACT INFO === */
-    .contact-info-section {
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(20px);
-      border-radius: 30px;
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      padding: 2.5rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      margin-bottom: 2rem;
-    }
-
-    .info-item {
-      display: flex;
-      gap: 1rem;
-      padding: 1.5rem;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 15px;
-      margin-bottom: 1rem;
-      transition: all 0.3s ease;
-    }
-
-    .info-item:hover {
-      background: rgba(255, 255, 255, 0.05);
-      transform: translateX(5px);
-    }
-
-    .info-icon {
-      width: 40px;
-      height: 40px;
-      background: rgba(56, 189, 248, 0.2);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #38bdf8;
-      flex-shrink: 0;
-    }
-
-    .info-content {
-      flex: 1;
-    }
-
-    .info-label {
-      font-size: 0.85rem;
-      color: #9ca3af;
-      margin-bottom: 0.25rem;
-    }
-
-    .info-value {
-      color: #fff;
-      font-weight: 600;
-      font-size: 1.05rem;
-    }
-
-    .info-value a {
-      color: #38bdf8;
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-
-    .info-value a:hover {
-      color: #7dd3fc;
-    }
-
-    /* === SOCIAL LINKS === */
-    .social-links-section {
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(20px);
-      border-radius: 30px;
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      padding: 2.5rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    }
-
-    .social-link {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.5rem;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 15px;
-      margin-bottom: 1rem;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      border: 1px solid transparent;
-    }
-
-    .social-link:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(56, 189, 248, 0.3);
-      transform: translateX(5px);
-    }
-
-    .social-icon {
-      width: 40px;
-      height: 40px;
-      background: rgba(56, 189, 248, 0.2);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      flex-shrink: 0;
-    }
-
-    .social-link.github .social-icon { background: rgba(240, 246, 252, 0.1); color: #fff; }
-    .social-link.linkedin .social-icon { background: rgba(10, 102, 194, 0.2); color: #0a66c2; }
-    .social-link.spotify .social-icon { background: rgba(30, 215, 96, 0.2); color: #1ed760; }
-    .social-link.itch .social-icon { background: rgba(250, 92, 92, 0.2); color: #fa5c5c; }
-
-    .social-content {
-      flex: 1;
-    }
-
-    .social-label {
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 0.25rem;
-    }
-
-    .social-handle {
-      font-size: 0.9rem;
-      color: #9ca3af;
-    }
-
-    .social-arrow {
-      color: #38bdf8;
-      opacity: 0;
-      transform: translateX(-10px);
-      transition: all 0.3s ease;
-    }
-
-    .social-link:hover .social-arrow {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    /* === RESPONSIVE === */
-    @media (max-width: 968px) {
-      .contact-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        padding: 0 1.25rem;
+<!doctype html>
+<html lang="en" style="background: #000 !important">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#000000" />
+
+    <title>Contact: Igor Szuniewicz | Audio Designer & Composer</title>
+    <meta name="description" content="Contact Igor Szuniewicz for game audio composition, Wwise/FMOD implementation, interactive music design, sound design, and audio production tools. Available worldwide." />
+    <meta name="keywords" content="contact Igor Szuniewicz, audio designer contact, game audio services, interactive music, sound design, audio development, Belgium, freelance audio" />
+    <meta name="author" content="Igor Szuniewicz" />
+    <meta name="robots" content="index, follow" />
+    
+    <link rel="canonical" href="https://igorszuniewicz.com/contact.html" />
+    <link rel="alternate" hreflang="en" href="https://igorszuniewicz.com/contact.html" />
+    <link rel="alternate" hreflang="pl" href="https://igorszuniewicz.com/contact.html" />
+    <link rel="alternate" hreflang="nl" href="https://igorszuniewicz.com/contact.html" />
+    <link rel="alternate" hreflang="x-default" href="https://igorszuniewicz.com/contact.html" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Igor Szuniewicz" />
+    <meta property="og:url" content="https://igorszuniewicz.com/contact.html" />
+    <meta property="og:title" content="Contact Igor Szuniewicz: Audio Designer & Composer" />
+    <meta property="og:description" content="Game audio work: Wwise/FMOD, interactive music, sound design, audio tools. Available worldwide." />
+    <meta property="og:image" content="https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg" />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="720" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://igorszuniewicz.com/contact.html" />
+    <meta name="twitter:title" content="Contact Igor Szuniewicz: Audio Designer & Composer" />
+    <meta name="twitter:description" content="Game audio work: Wwise/FMOD, interactive music, sound design, audio tools. Available worldwide." />
+    <meta name="twitter:image" content="https://igorszuniewicz.com/assets/images/projects/maxresdefault.jpg" />
+
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <link rel="preload" href="assets/css/main.css" as="style" />
+    <script type="module" src="assets/js/preload-lang.js"></script>
+
+    <link id="google-fonts" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    </noscript>
+    <script>
+      (function() {
+        var fontLink = document.getElementById('google-fonts');
+        if (fontLink) {
+          var setMedia = function() { fontLink.media = 'all'; };
+          if ('requestIdleCallback' in window) { requestIdleCallback(setMedia); }
+          else { setTimeout(setMedia, 0); }
+        }
+      })();
+    </script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <link rel="stylesheet" href="assets/css/global/navigation.css" />
+    <link rel="stylesheet" href="assets/css/view-transitions.css" />
+    <link rel="stylesheet" href="assets/css/components/footer.css" />
+
+    <style data-page-style="true">
+      /* === RESET === */
+      *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+      html { scroll-behavior: smooth; font-size: 15px; }
+      body {
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #000000;
+        color: #e0e6ed;
+        line-height: 1.6;
+        overflow-x: hidden;
+        font-weight: 400;
       }
 
-      .page-content {
-        padding: 8rem 0 3rem;
+      /* === CONTAINER === */
+      .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+
+      /* === PAGE CONTENT === */
+      .page-content { padding: 10rem 0 4rem; min-height: 100vh; }
+      .page-header { text-align: center; margin-bottom: 4rem; }
+      
+      .badge {
+        display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;
+        background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3);
+        border-radius: 20px; color: #38bdf8; font-size: 0.85rem; font-weight: 600;
+        margin-bottom: 1.5rem; animation: pulse 2s ease-in-out infinite;
       }
+      @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.9; } }
 
       .page-title {
-        font-size: clamp(2rem, 8vw, 2.75rem);
+        font-family: 'Sora', sans-serif; font-size: clamp(3rem, 7vw, 5rem); font-weight: 900;
+        background: linear-gradient(135deg, #ffffff 0%, #38bdf8 50%, #a78bfa 100%);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        margin-bottom: 1rem; letter-spacing: -0.03em;
       }
+      .page-description { font-size: 1.25rem; color: #cbd5e1; max-width: 600px; margin: 0 auto; }
 
-      .page-description {
-        font-size: 1rem;
+      /* === CONTACT GRID === */
+      .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem; }
+
+      /* === SECTIONS === */
+      .contact-form-section, .contact-info-section, .social-links-section {
+        background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px);
+        border-radius: 30px; border: 1px solid rgba(56, 189, 248, 0.2);
+        padding: 2.5rem; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
       }
+      .social-links-section { margin-top: 2rem; } /* Spacing for mobile stack */
 
-      .contact-grid {
-        gap: 1.25rem;
-        margin-bottom: 2rem;
-      }
-
-      .contact-form-section,
-      .contact-info-section {
-        padding: 1.75rem;
-        border-radius: 24px;
-      }
-
-      .section-header {
-        margin-bottom: 1.5rem;
-      }
-
+      .section-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
       .section-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 1.1rem;
+        width: 50px; height: 50px; background: linear-gradient(135deg, #38bdf8, #a78bfa);
+        border-radius: 15px; display: flex; align-items: center; justify-content: center;
+        font-size: 1.5rem; color: #fff;
       }
+      .section-header h3 { font-family: 'Sora', sans-serif; font-size: 1.8rem; color: #fff; }
 
-      .section-title {
-        font-size: 1.4rem;
+      /* === FORM === */
+      .form-group { margin-bottom: 1.5rem; }
+      .form-group label { display: flex; align-items: center; gap: 0.5rem; color: #fff; font-weight: 600; margin-bottom: 0.75rem; font-size: 0.95rem; }
+      .form-group label i { color: #38bdf8; }
+      .form-group input, .form-group textarea {
+        width: 100%; padding: 1rem 1.25rem; background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; color: #fff;
+        font-size: 1rem; font-family: 'Inter', sans-serif; transition: all 0.3s ease;
       }
-
-      .form-group {
-        margin-bottom: 1.25rem;
+      .form-group input:focus, .form-group textarea:focus {
+        outline: none; border-color: rgba(56, 189, 248, 0.5); background: rgba(255, 255, 255, 0.08);
       }
-
-      .form-label {
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-      }
-
-      .form-input,
-      .form-textarea {
-        padding: 0.85rem 1rem;
-        font-size: 0.9rem;
-      }
-
+      .form-group textarea { resize: vertical; min-height: 150px; }
+      
       .submit-btn {
-        padding: 1rem;
-        font-size: 1rem;
+        width: 100%; padding: 1.25rem; background: linear-gradient(135deg, #38bdf8, #a78bfa);
+        border: none; border-radius: 50px; color: #fff; font-size: 1.1rem; font-weight: 700;
+        cursor: pointer; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(56, 189, 248, 0.4);
+        display: flex; align-items: center; justify-content: center; gap: 0.5rem;
       }
+      .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(56, 189, 248, 0.6); }
+      .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+      
+      .success-message {
+        display: none; padding: 1.5rem; background: rgba(16, 185, 129, 0.2);
+        border: 1px solid rgba(16, 185, 129, 0.5); border-radius: 15px; color: #10b981;
+        text-align: center; margin-top: 1.5rem;
+      }
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 
+      /* === INFO ITEMS === */
       .info-item {
-        padding: 1.25rem;
-        margin-bottom: 0.75rem;
+        display: flex; gap: 1rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.03);
+        border-radius: 15px; margin-bottom: 1rem; transition: all 0.3s ease;
       }
-
+      .info-item:hover { background: rgba(255, 255, 255, 0.05); transform: translateX(5px); }
       .info-icon {
-        width: 35px;
-        height: 35px;
-        font-size: 1rem;
+        width: 40px; height: 40px; background: rgba(56, 189, 248, 0.2);
+        border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #38bdf8; flex-shrink: 0;
       }
+      .info-content { flex: 1; }
+      .info-label { font-size: 0.85rem; color: #9ca3af; margin-bottom: 0.25rem; }
+      .info-value { color: #fff; font-weight: 600; font-size: 1.05rem; }
+      .info-value a { color: #38bdf8; text-decoration: none; transition: color 0.3s ease; }
+      .info-value a:hover { color: #7dd3fc; }
 
-      .info-label {
-        font-size: 0.8rem;
-      }
-
-      .info-value {
-        font-size: 0.95rem;
-      }
-
+      /* === SOCIAL === */
       .social-link {
-        padding: 1rem;
-        margin-bottom: 0.75rem;
+        display: flex; align-items: center; gap: 1rem; padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.03); border-radius: 15px; margin-bottom: 1rem;
+        text-decoration: none; transition: all 0.3s ease; border: 1px solid transparent;
       }
-
+      .social-link:hover {
+        background: rgba(255, 255, 255, 0.05); border-color: rgba(56, 189, 248, 0.3); transform: translateX(5px);
+      }
       .social-icon {
-        width: 35px;
-        height: 35px;
-        font-size: 1rem;
+        width: 40px; height: 40px; background: rgba(56, 189, 248, 0.2); border-radius: 10px;
+        display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;
       }
+      .social-link.github .social-icon { background: rgba(240, 246, 252, 0.1); color: #fff; }
+      .social-link.linkedin .social-icon { background: rgba(10, 102, 194, 0.2); color: #0a66c2; }
+      .social-link.spotify .social-icon { background: rgba(30, 215, 96, 0.2); color: #1ed760; }
+      .social-link.itch .social-icon { background: rgba(250, 92, 92, 0.2); color: #fa5c5c; }
+      
+      .social-content { flex: 1; }
+      .social-label { font-weight: 600; color: #fff; margin-bottom: 0.25rem; }
+      .social-handle { font-size: 0.9rem; color: #9ca3af; }
+      .social-arrow { color: #38bdf8; opacity: 0; transform: translateX(-10px); transition: all 0.3s ease; }
+      .social-link:hover .social-arrow { opacity: 1; transform: translateX(0); }
 
-      .social-label {
-        font-size: 0.9rem;
+      /* === FAQ === */
+      .faq-section {
+        margin-top: 4rem; background: rgba(15, 23, 42, 0.45); border: 1px solid rgba(96, 165, 250, 0.18);
+        border-radius: 20px; padding: 2.5rem; box-shadow: 0 30px 50px rgba(2, 12, 27, 0.35);
       }
-
-      .social-handle {
-        font-size: 0.8rem;
+      .faq-title { font-family: 'Sora', sans-serif; font-size: clamp(1.75rem, 2.8vw, 2.35rem); margin-bottom: 1.5rem; letter-spacing: -0.02em; }
+      .faq-subtitle { color: #a3b5d1; margin-bottom: 2rem; max-width: 520px; }
+      .faq-item + .faq-item { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(148, 163, 255, 0.16); }
+      
+      .faq-question {
+        width: 100%; background: none; color: #f1f5ff; font-size: 1.05rem; font-weight: 600; border: none;
+        text-align: left; padding: 0; display: flex; align-items: center; justify-content: space-between;
+        gap: 1rem; cursor: pointer;
       }
-    }
-
-    @media (max-width: 480px) {
-      .container {
-        padding: 0 0.875rem;
+      .faq-question .faq-icon {
+        flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: rgba(96, 165, 250, 0.18);
+        display: grid; place-items: center; font-size: 0.85rem; color: #60a5fa; transition: transform 0.25s ease;
       }
+      .faq-item.open .faq-question .faq-icon { transform: rotate(45deg); }
+      .faq-answer { margin-top: 0.6rem; color: #c5d3eb; line-height: 1.75; display: none; }
+      .faq-item.open .faq-answer { display: block; animation: fadeIn 0.3s ease; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-      .page-content {
-        padding: 7rem 0 2.5rem;
+      /* Responsive */
+      @media (max-width: 968px) { .contact-grid { grid-template-columns: 1fr; } }
+      @media (max-width: 768px) {
+        .page-content { padding: 8rem 0 3rem; }
+        .contact-form-section, .contact-info-section, .social-links-section, .faq-section { padding: 1.5rem; }
       }
+    </style>
 
-      .page-title {
-        font-size: clamp(1.5rem, 8vw, 2rem);
-        margin-bottom: 0.75rem;
-      }
+    <script src="assets/js/log-extractor.js" defer></script>
 
-      .page-description {
-        font-size: 0.9rem;
-      }
-
-      .contact-grid {
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-      }
-
-      .contact-form-section,
-      .contact-info-section {
-        padding: 1.5rem;
-        border-radius: 20px;
-      }
-
-      .section-header {
-        margin-bottom: 1.25rem;
-        gap: 0.75rem;
-      }
-
-      .section-icon {
-        width: 35px;
-        height: 35px;
-        font-size: 1rem;
-      }
-
-      .section-title {
-        font-size: 1.25rem;
-      }
-
-      .form-group {
-        margin-bottom: 1rem;
-      }
-
-      .form-label {
-        font-size: 0.85rem;
-        margin-bottom: 0.4rem;
-      }
-
-      .form-input,
-      .form-textarea {
-        padding: 0.75rem 0.875rem;
-        font-size: 0.85rem;
-        border-radius: 12px;
-      }
-
-      .submit-btn {
-        padding: 0.875rem;
-        font-size: 0.9rem;
-        border-radius: 40px;
-      }
-
-      .info-item {
-        padding: 1rem;
-        margin-bottom: 0.6rem;
-        border-radius: 12px;
-      }
-
-      .info-icon {
-        width: 30px;
-        height: 30px;
-        font-size: 0.9rem;
-        border-radius: 8px;
-      }
-
-      .info-label {
-        font-size: 0.75rem;
-      }
-
-      .info-value {
-        font-size: 0.9rem;
-      }
-
-      .social-link {
-        padding: 0.875rem;
-        margin-bottom: 0.6rem;
-        border-radius: 12px;
-      }
-
-      .social-icon {
-        width: 30px;
-        height: 30px;
-        font-size: 0.9rem;
-        border-radius: 8px;
-      }
-
-      .social-label {
-        font-size: 0.85rem;
-      }
-
-      .social-handle {
-        font-size: 0.75rem;
-      }
-    }
-
-    /* === VERY SMALL MOBILE (320px-374px) === */
-    @media (max-width: 374px) {
-      .container {
-        padding: 0 0.75rem;
-      }
-
-      .page-content {
-        padding: 6rem 0 2rem;
-      }
-
-      .page-title {
-        font-size: clamp(1.25rem, 8vw, 1.5rem);
-        margin-bottom: 0.6rem;
-      }
-
-      .page-description {
-        font-size: 0.85rem;
-      }
-
-      .contact-grid {
-        gap: 0.75rem;
-        margin-bottom: 1.25rem;
-      }
-
-      .contact-form-section,
-      .contact-info-section {
-        padding: 1.25rem;
-        border-radius: 16px;
-      }
-
-      .section-header {
-        margin-bottom: 1rem;
-        gap: 0.6rem;
-      }
-
-      .section-icon {
-        width: 30px;
-        height: 30px;
-        font-size: 0.9rem;
-      }
-
-      .section-title {
-        font-size: 1.1rem;
-      }
-
-      .form-group {
-        margin-bottom: 0.875rem;
-      }
-
-      .form-label {
-        font-size: 0.8rem;
-        margin-bottom: 0.35rem;
-      }
-
-      .form-input,
-      .form-textarea {
-        padding: 0.65rem 0.75rem;
-        font-size: 0.8rem;
-        border-radius: 10px;
-      }
-
-      .submit-btn {
-        padding: 0.75rem;
-        font-size: 0.85rem;
-        border-radius: 35px;
-      }
-
-      .info-item {
-        padding: 0.875rem;
-        margin-bottom: 0.5rem;
-        border-radius: 10px;
-      }
-
-      .info-icon {
-        width: 28px;
-        height: 28px;
-        font-size: 0.85rem;
-        border-radius: 6px;
-      }
-
-      .info-label {
-        font-size: 0.7rem;
-      }
-
-      .info-value {
-        font-size: 0.85rem;
-      }
-
-      .social-link {
-        padding: 0.75rem;
-        margin-bottom: 0.5rem;
-        border-radius: 10px;
-      }
-
-      .social-icon {
-        width: 28px;
-        height: 28px;
-        font-size: 0.85rem;
-        border-radius: 6px;
-      }
-
-      .social-label {
-        font-size: 0.8rem;
-      }
-
-    .social-handle {
-      font-size: 0.7rem;
-    }
-  }
-
-  .faq-section {
-    margin-top: 4rem;
-    background: rgba(15, 23, 42, 0.45);
-    border: 1px solid rgba(96, 165, 250, 0.18);
-    border-radius: 20px;
-    padding: 2.5rem;
-    box-shadow: 0 30px 50px rgba(2, 12, 27, 0.35);
-  }
-
-  .faq-title {
-    font-family: 'Sora', sans-serif;
-    font-size: clamp(1.75rem, 2.8vw, 2.35rem);
-    margin-bottom: 1.5rem;
-    letter-spacing: -0.02em;
-  }
-
-  .faq-subtitle {
-    color: #a3b5d1;
-    margin-bottom: 2rem;
-    max-width: 520px;
-  }
-
-  .faq-item + .faq-item {
-    margin-top: 1.25rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid rgba(148, 163, 255, 0.16);
-  }
-
-  .faq-question {
-    width: 100%;
-    background: none;
-    color: #f1f5ff;
-    font-size: 1.05rem;
-    font-weight: 600;
-    border: none;
-    text-align: left;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    cursor: pointer;
-  }
-
-  .faq-question .faq-icon {
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: rgba(96, 165, 250, 0.18);
-    display: grid;
-    place-items: center;
-    font-size: 0.85rem;
-    color: #60a5fa;
-    transition: transform 0.25s ease;
-  }
-
-  .faq-item.open .faq-question .faq-icon {
-    transform: rotate(45deg);
-  }
-
-  .faq-answer {
-    margin-top: 0.6rem;
-    color: #c5d3eb;
-    line-height: 1.75;
-    display: none;
-  }
-
-  .faq-item.open .faq-answer {
-    display: block;
-  }
-
-  @media (max-width: 768px) {
-    .faq-section {
-      padding: 1.75rem;
-      margin-top: 3rem;
-    }
-
-    .faq-question {
-      font-size: 1rem;
-      gap: 0.75rem;
-    }
-  }
-  </style>
-
-  <!-- Structured Data (JSON-LD) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "ContactPage",
-        "@id": "https://igorszuniewicz.com/contact.html#contactpage",
-        "url": "https://igorszuniewicz.com/contact.html",
-        "name": "Contact Igor Szuniewicz",
-        "description": "Contact Igor Szuniewicz for collaborations in interactive audio, sound design, and audio development. Professional game audio services, interactive music systems, and DSP solutions.",
-        "mainEntity": {
-          "@id": "https://igorszuniewicz.com/#person"
+    <script>
+      window.__I18N__ = {
+        en: {
+          nav_home: 'Home', nav_work: 'Work', nav_about: 'About', nav_projects: 'Projects',
+          nav_music: 'Music', nav_contact: 'Contact', footer_projects: 'Projects',
+          footer_music: 'Music', footer_about: 'About', footer_contact: 'Contact',
+          error_loading: 'Loading...', error_failed: 'Failed to load content', error_retry: 'Retry',
+          contact_badge: 'Available for Projects', contact_title: "Let's Create Together",
+          contact_subtitle: 'I typically respond within 24–48 hours. Available for game audio internship (Jan-Jun 2026).',
+          contact_form_title: 'Send a Message', contact_form_name: 'Your Name', contact_form_name_placeholder: 'John Doe',
+          contact_form_email: 'Email Address', contact_form_email_placeholder: 'john@example.com',
+          contact_form_subject: 'Subject', contact_form_subject_placeholder: 'Project Inquiry',
+          contact_form_message: 'Your Message', contact_form_message_placeholder: 'Tell me about your project...',
+          contact_form_submit: 'Send Message', contact_info_title: 'Direct Contact', contact_info_email: 'Email',
+          contact_info_location: 'Location', contact_info_location_value: 'Kortrijk, Belgium',
+          contact_info_response: 'Response Time', contact_info_response_value: '24–48 hours',
+          contact_info_docs: 'Handoff bundle', contact_value_docs: 'Every delivery ships with a sound bible, short tech notes and an implementation checklist.',
+          contact_info_stack: 'Tools I fit into', contact_value_stack: 'Wwise, FMOD, Unreal, Unity, Perforce, GitHub, HacknPlan.',
+          contact_social_title: 'Connect Online', contact_faq_title: 'Frequently Asked Questions',
+          contact_faq_subtitle: 'Quick answers to what clients usually ask before we start.',
+          contact_faq_q1: 'What happens right after you say hi?', contact_faq_a1: 'I hop on a quick call, we lock goals and references, then I mock up an interactive pass.',
+          contact_faq_q2: 'How do we keep feedback painless?', contact_faq_a2: 'Notes live in HacknPlan or Jira, I push tagged mixes/builds.',
+          contact_faq_q3: 'Can you plug into our existing tools?', contact_faq_a3: 'Yes—Unreal, Unity, Wwise, FMOD, Perforce, GitHub, HacknPlan.'
         },
-        "breadcrumb": {
-          "@type": "BreadcrumbList",
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Home",
-              "item": "https://igorszuniewicz.com/"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Contact",
-              "item": "https://igorszuniewicz.com/contact.html"
-            }
-          ]
+        pl: {
+          nav_home: 'Start', nav_work: 'Portfolio', nav_about: 'O mnie', nav_projects: 'Projekty',
+          nav_music: 'Muzyka', nav_contact: 'Kontakt', footer_projects: 'Projekty',
+          footer_music: 'Muzyka', footer_about: 'O mnie', footer_contact: 'Kontakt',
+          error_loading: 'Ładowanie...', error_failed: 'Nie udało się załadować treści', error_retry: 'Spróbuj ponownie',
+          contact_badge: 'Dostępny do współpracy', contact_title: "Stwórzmy coś razem",
+          contact_subtitle: 'Zazwyczaj odpowiadam w ciągu 24–48 godzin. Dostępny na staż (Sty-Cze 2026).',
+          contact_form_title: 'Wyślij wiadomość', contact_form_name: 'Imię i nazwisko', contact_form_name_placeholder: 'Jan Kowalski',
+          contact_form_email: 'Adres Email', contact_form_email_placeholder: 'jan@example.com',
+          contact_form_subject: 'Temat', contact_form_subject_placeholder: 'Zapytanie o projekt',
+          contact_form_message: 'Wiadomość', contact_form_message_placeholder: 'Opisz swój projekt...',
+          contact_form_submit: 'Wyślij wiadomość', contact_info_title: 'Kontakt Bezpośredni', contact_info_email: 'Email',
+          contact_info_location: 'Lokalizacja', contact_info_location_value: 'Kortrijk, Belgia',
+          contact_info_response: 'Czas reakcji', contact_info_response_value: '24–48 godzin',
+          contact_info_docs: 'Dokumentacja', contact_value_docs: 'Dostarczam sound bible, notatki techniczne i listę implementacyjną.',
+          contact_info_stack: 'Narzędzia', contact_value_stack: 'Wwise, FMOD, Unreal, Unity, Perforce, GitHub, HacknPlan.',
+          contact_social_title: 'Social Media', contact_faq_title: 'Częste Pytania',
+          contact_faq_subtitle: 'Szybkie odpowiedzi na pytania przed rozpoczęciem współpracy.',
+          contact_faq_q1: 'Co dzieje się po nawiązaniu kontaktu?', contact_faq_a1: 'Umawiamy się na rozmowę, ustalamy cele, a potem przygotowuję interaktywne demo.',
+          contact_faq_q2: 'Jak wygląda feedback?', contact_faq_a2: 'Używamy HacknPlan lub Jira, wysyłam otagowane buildy.',
+          contact_faq_q3: 'Czy pracujesz na naszych narzędziach?', contact_faq_a3: 'Tak—Unreal, Unity, Wwise, FMOD, Perforce, GitHub.'
+        },
+        nl: {
+          nav_home: 'Home', nav_work: 'Portfolio', nav_about: 'Over', nav_projects: 'Projecten',
+          nav_music: 'Muziek', nav_contact: 'Contact', footer_projects: 'Projecten',
+          footer_music: 'Muziek', footer_about: 'Over', footer_contact: 'Contact',
+          error_loading: 'Laden...', error_failed: 'Inhoud kan niet worden geladen', error_retry: 'Opnieuw proberen',
+          contact_badge: 'Beschikbaar voor projecten', contact_title: "Laten we samenwerken",
+          contact_subtitle: 'Ik reageer meestal binnen 24-48 uur. Beschikbaar voor stage (jan-jun 2026).',
+          contact_form_title: 'Stuur een bericht', contact_form_name: 'Naam', contact_form_name_placeholder: 'John Doe',
+          contact_form_email: 'E-mailadres', contact_form_email_placeholder: 'john@example.com',
+          contact_form_subject: 'Onderwerp', contact_form_subject_placeholder: 'Projectaanvraag',
+          contact_form_message: 'Uw bericht', contact_form_message_placeholder: 'Vertel me over uw project...',
+          contact_form_submit: 'Bericht versturen', contact_info_title: 'Direct contact', contact_info_email: 'E-mail',
+          contact_info_location: 'Locatie', contact_info_location_value: 'Kortrijk, België',
+          contact_info_response: 'Reactietijd', contact_info_response_value: '24–48 uur',
+          contact_info_docs: 'Documentatie', contact_value_docs: 'Elke levering bevat een sound bible, technische notities en een implementatiechecklist.',
+          contact_info_stack: 'Tools', contact_value_stack: 'Wwise, FMOD, Unreal, Unity, Perforce, GitHub, HacknPlan.',
+          contact_social_title: 'Online verbinden', contact_faq_title: 'Veelgestelde vragen',
+          contact_faq_subtitle: 'Snelle antwoorden voordat we beginnen.',
+          contact_faq_q1: 'Wat gebeurt er na contact?', contact_faq_a1: 'We bellen kort, stellen doelen vast, en ik maak een interactieve demo.',
+          contact_faq_q2: 'Hoe werkt feedback?', contact_faq_a2: 'Notities in HacknPlan of Jira, ik stuur getagde builds.',
+          contact_faq_q3: 'Werk je met onze tools?', contact_faq_a3: 'Ja—Unreal, Unity, Wwise, FMOD, Perforce, GitHub.'
         }
-      },
-      {
-        "@type": "Person",
-        "@id": "https://igorszuniewicz.com/#person",
-        "name": "Igor Szuniewicz",
-        "url": "https://igorszuniewicz.com",
-        "email": "igorszuniewiczwork@gmail.com",
-        "sameAs": [
-          "https://github.com/Szunias",
-          "https://www.linkedin.com/in/igor-szuniewicz-a6877a2a3",
-          "https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6",
-          "https://igorszuniewicz.itch.io"
-        ],
-        "jobTitle": ["Audio Designer", "Composer", "Audio Engineer"],
-        "address": {
-          "@type": "PostalAddress",
-          "addressCountry": "BE",
-          "addressLocality": "Kortrijk",
-          "addressRegion": "Belgium"
-        }
-      }
-    ]
-  }
-  </script>
-</head>
-<body>
-  <a href="#main" class="skip-link">Skip to main content</a>
-  <div class="bg-gradient"></div>
-  <div class="bg-grid"></div>
-  <div class="bg-orbs">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-  </div>
+      };
+    </script>
 
-  <main id="main">
-    <div class="page-content">
-    <div class="container">
-      <div class="page-header">
-        <div class="badge">
-          <i class="fas fa-paper-plane"></i>
-          <span data-i18n="contact_badge">Available for Projects</span>
-        </div>
-        <h1 class="page-title" data-i18n="contact_title">Let's Create Together</h1>
-        <p class="page-description" data-i18n="contact_subtitle">
-          I typically respond within 24–48 hours. Available for game audio internship (Jan-Jun 2026, 3-6 months). Let's discuss your project.
-        </p>
-      </div>
+    <noscript>
+      <style>
+        html:not(.translations-ready) [data-i18n],
+        html:not(.translations-ready) [data-i18n-placeholder] { visibility: visible !important; }
+      </style>
+    </noscript>
+    <script>
+      setTimeout(function() {
+        document.documentElement.classList.add('translations-ready');
+      }, 3000);
+    </script>
 
-      <div class="contact-grid">
-        <!-- Contact Form -->
-        <div class="contact-form-section">
-          <div class="section-header">
-            <div class="section-icon">
-              <i class="fas fa-envelope"></i>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"ContactPage","@id":"https://igorszuniewicz.com/contact.html#contactpage","name":"Contact Igor Szuniewicz","description":"Contact for game audio services.","mainEntity":{"@id":"https://igorszuniewicz.com/#person"}},{"@type":"Person","@id":"https://igorszuniewicz.com/#person","name":"Igor Szuniewicz","email":"igorszuniewiczwork@gmail.com","jobTitle":["Audio Designer","Composer"]}]}</script>
+  </head>
+
+  <body>
+    <a href="#main" class="skip-link">Skip to main content</a>
+    
+    <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-orbs">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+
+    <main id="main">
+      <div class="page-content">
+        <div class="container">
+          
+          <div class="page-header fade-in">
+            <div class="badge">
+              <i class="fas fa-paper-plane"></i>
+              <span data-i18n="contact_badge">Available for Projects</span>
             </div>
-            <h3 data-i18n="contact_form_title">Send a Message</h3>
+            <h1 class="page-title" data-i18n="contact_title">Let's Create Together</h1>
+            <p class="page-description" data-i18n="contact_subtitle">
+              I typically respond within 24–48 hours. Available for game audio internship (Jan-Jun 2026, 3-6 months). Let's discuss your project.
+            </p>
           </div>
-          <form id="contact-form">
-            <!-- Web3Forms API key - designed for public form submissions with rate limiting -->
-            <input type="hidden" name="access_key" value="63daf122-621e-405f-ac46-d4537bfba2a4">
-            <div class="form-group">
-              <label for="name">
-                <i class="fas fa-user" aria-hidden="true"></i>
-                <span data-i18n="contact_form_name">Your Name</span>
-              </label>
-              <input type="text" name="name" id="name" data-i18n-placeholder="contact_form_name_placeholder" placeholder="John Doe" required aria-describedby="name-help">
-              <div id="name-help" class="sr-only" data-i18n="contact_form_name_help">Enter your full name</div>
-            </div>
-            <div class="form-group">
-              <label for="email">
-                <i class="fas fa-at" aria-hidden="true"></i>
-                <span data-i18n="contact_form_email">Email Address</span>
-              </label>
-              <input type="email" name="email" id="email" data-i18n-placeholder="contact_form_email_placeholder" placeholder="john@example.com" required aria-describedby="email-help">
-              <div id="email-help" class="sr-only" data-i18n="contact_form_email_help">Enter a valid email address</div>
-            </div>
-            <div class="form-group">
-              <label for="subject">
-                <i class="fas fa-tag" aria-hidden="true"></i>
-                <span data-i18n="contact_form_subject">Subject</span>
-              </label>
-              <input type="text" name="subject" id="subject" data-i18n-placeholder="contact_form_subject_placeholder" placeholder="Project Inquiry" aria-describedby="subject-help">
-              <div id="subject-help" class="sr-only" data-i18n="contact_form_subject_help">Brief description of your inquiry</div>
-            </div>
-            <div class="form-group">
-              <label for="message">
-                <i class="fas fa-comment-dots" aria-hidden="true"></i>
-                <span data-i18n="contact_form_message">Your Message</span>
-              </label>
-              <textarea name="message" id="message" data-i18n-placeholder="contact_form_message_placeholder" placeholder="Tell me about your project..." required aria-describedby="message-help"></textarea>
-              <div id="message-help" class="sr-only" data-i18n="contact_form_message_help">Describe your project or inquiry in detail</div>
-            </div>
-            <button type="submit" class="submit-btn" id="submit-btn" aria-describedby="submit-help">
-              <span data-i18n="contact_form_submit">Send Message</span>
-              <i class="fas fa-arrow-right" aria-hidden="true"></i>
-            </button>
-            <div id="submit-help" class="sr-only">Click to send your message</div>
-            <div class="success-message" id="success-message">
-              ✓ Message sent successfully! I will get back to you soon.
-            </div>
-          </form>
-        </div>
 
-        <!-- Sidebar -->
-        <div>
-          <!-- Contact Info -->
-          <div class="contact-info-section">
-            <div class="section-header">
-              <div class="section-icon">
-                <i class="fas fa-address-card"></i>
+          <div class="contact-grid fade-in">
+            <div class="contact-form-section">
+              <div class="section-header">
+                <div class="section-icon"><i class="fas fa-envelope"></i></div>
+                <h3 data-i18n="contact_form_title">Send a Message</h3>
               </div>
-              <h3 data-i18n="contact_info_title">Direct Contact</h3>
+              <form id="contact-form">
+                <input type="hidden" name="access_key" value="63daf122-621e-405f-ac46-d4537bfba2a4">
+                
+                <div class="form-group">
+                  <label for="name"><i class="fas fa-user" aria-hidden="true"></i><span data-i18n="contact_form_name">Your Name</span></label>
+                  <input type="text" name="name" id="name" data-i18n-placeholder="contact_form_name_placeholder" placeholder="John Doe" required>
+                </div>
+                
+                <div class="form-group">
+                  <label for="email"><i class="fas fa-at" aria-hidden="true"></i><span data-i18n="contact_form_email">Email Address</span></label>
+                  <input type="email" name="email" id="email" data-i18n-placeholder="contact_form_email_placeholder" placeholder="john@example.com" required>
+                </div>
+                
+                <div class="form-group">
+                  <label for="subject"><i class="fas fa-tag" aria-hidden="true"></i><span data-i18n="contact_form_subject">Subject</span></label>
+                  <input type="text" name="subject" id="subject" data-i18n-placeholder="contact_form_subject_placeholder" placeholder="Project Inquiry">
+                </div>
+                
+                <div class="form-group">
+                  <label for="message"><i class="fas fa-comment-dots" aria-hidden="true"></i><span data-i18n="contact_form_message">Your Message</span></label>
+                  <textarea name="message" id="message" data-i18n-placeholder="contact_form_message_placeholder" placeholder="Tell me about your project..." required></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submit-btn">
+                  <span data-i18n="contact_form_submit">Send Message</span>
+                  <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                </button>
+                
+                <div class="success-message" id="success-message">
+                  ✓ Message sent successfully! I will get back to you soon.
+                </div>
+              </form>
             </div>
-            <div class="info-item">
-              <div class="info-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="info-content">
-                <div class="info-label" data-i18n="contact_info_email">Email</div>
-                <div class="info-value">
-                  <a href="mailto:igorszuniewiczwork@gmail.com">igorszuniewiczwork@gmail.com</a>
+
+            <div>
+              <div class="contact-info-section">
+                <div class="section-header">
+                  <div class="section-icon"><i class="fas fa-address-card"></i></div>
+                  <h3 data-i18n="contact_info_title">Direct Contact</h3>
+                </div>
+                <div class="info-item">
+                  <div class="info-icon"><i class="fas fa-envelope"></i></div>
+                  <div class="info-content">
+                    <div class="info-label" data-i18n="contact_info_email">Email</div>
+                    <div class="info-value"><a href="mailto:igorszuniewiczwork@gmail.com">igorszuniewiczwork@gmail.com</a></div>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                  <div class="info-content">
+                    <div class="info-label" data-i18n="contact_info_location">Location</div>
+                    <div class="info-value" data-i18n="contact_info_location_value">Kortrijk, Belgium</div>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <div class="info-icon"><i class="fas fa-clock"></i></div>
+                  <div class="info-content">
+                    <div class="info-label" data-i18n="contact_info_response">Response Time</div>
+                    <div class="info-value" data-i18n="contact_info_response_value">24–48 hours</div>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <div class="info-icon"><i class="fas fa-file-alt"></i></div>
+                  <div class="info-content">
+                    <div class="info-label" data-i18n="contact_info_docs">Handoff bundle</div>
+                    <div class="info-value" data-i18n="contact_value_docs">Sound bible, tech notes, checklists.</div>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <div class="info-icon"><i class="fas fa-toolbox"></i></div>
+                  <div class="info-content">
+                    <div class="info-label" data-i18n="contact_info_stack">Tools</div>
+                    <div class="info-value" data-i18n="contact_value_stack">Wwise, FMOD, Unreal, Unity, Perforce, Git.</div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="info-item">
-              <div class="info-icon">
-                <i class="fas fa-map-marker-alt"></i>
-              </div>
-              <div class="info-content">
-                <div class="info-label" data-i18n="contact_info_location">Location</div>
-                <div class="info-value" data-i18n="contact_info_location_value">Kortrijk, Belgium</div>
-              </div>
-            </div>
-            <div class="info-item">
-              <div class="info-icon">
-                <i class="fas fa-clock"></i>
-              </div>
-              <div class="info-content">
-                <div class="info-label" data-i18n="contact_info_response">Response Time</div>
-                <div class="info-value" data-i18n="contact_info_response_value">24–48 hours</div>
-              </div>
-            </div>
-            <div class="info-item">
-              <div class="info-icon">
-                <i class="fas fa-file-alt"></i>
-              </div>
-              <div class="info-content">
-                <div class="info-label" data-i18n="contact_info_docs">Handoff bundle</div>
-                <div class="info-value" data-i18n="contact_value_docs">Every delivery ships with a sound bible, short tech notes and an implementation checklist.</div>
-              </div>
-            </div>
-            <div class="info-item">
-              <div class="info-icon">
-                <i class="fas fa-toolbox"></i>
-              </div>
-              <div class="info-content">
-                <div class="info-label" data-i18n="contact_info_stack">Tools I fit into</div>
-                <div class="info-value" data-i18n="contact_value_stack">Wwise, FMOD, Unreal, Unity, Perforce, GitHub, HacknPlan — whatever keeps your team moving.</div>
+
+              <div class="social-links-section">
+                <div class="section-header">
+                  <div class="section-icon"><i class="fas fa-share-alt"></i></div>
+                  <h3 data-i18n="contact_social_title">Connect Online</h3>
+                </div>
+                <a href="https://github.com/Szunias" target="_blank" rel="noopener noreferrer" class="social-link github">
+                  <div class="social-icon"><i class="fab fa-github"></i></div>
+                  <div class="social-content">
+                    <div class="social-label" data-i18n="contact_social_github">GitHub</div>
+                    <div class="social-handle">@Szunias</div>
+                  </div>
+                  <i class="fas fa-arrow-right social-arrow"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/igor-szuniewicz-a6877a2a3" target="_blank" rel="noopener noreferrer" class="social-link linkedin">
+                  <div class="social-icon"><i class="fab fa-linkedin"></i></div>
+                  <div class="social-content">
+                    <div class="social-label" data-i18n="contact_social_linkedin">LinkedIn</div>
+                    <div class="social-handle">Igor Szuniewicz</div>
+                  </div>
+                  <i class="fas fa-arrow-right social-arrow"></i>
+                </a>
+                <a href="https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6" target="_blank" rel="noopener noreferrer" class="social-link spotify">
+                  <div class="social-icon"><i class="fab fa-spotify"></i></div>
+                  <div class="social-content">
+                    <div class="social-label" data-i18n="contact_social_spotify">Spotify</div>
+                    <div class="social-handle">Music Portfolio</div>
+                  </div>
+                  <i class="fas fa-arrow-right social-arrow"></i>
+                </a>
+                <a href="https://igorszuniewicz.itch.io" target="_blank" rel="noopener noreferrer" class="social-link itch">
+                  <div class="social-icon"><i class="fab fa-itch-io"></i></div>
+                  <div class="social-content">
+                    <div class="social-label" data-i18n="contact_social_itch">Itch.io</div>
+                    <div class="social-handle">Game Projects</div>
+                  </div>
+                  <i class="fas fa-arrow-right social-arrow"></i>
+                </a>
               </div>
             </div>
           </div>
 
-          <!-- Social Links -->
-          <div class="social-links-section">
-            <div class="section-header">
-              <div class="section-icon">
-                <i class="fas fa-share-alt"></i>
-              </div>
-              <h3 data-i18n="contact_social_title">Connect Online</h3>
+          <section class="faq-section fade-in" id="contact-faq">
+            <h2 class="faq-title" data-i18n="contact_faq_title">Frequently Asked Questions</h2>
+            <p class="faq-subtitle" data-i18n="contact_faq_subtitle">Quick answers to what clients usually ask before we start.</p>
+
+            <div class="faq-item">
+              <button type="button" class="faq-question">
+                <span data-i18n="contact_faq_q1">What happens right after you say hi?</span>
+                <span class="faq-icon" aria-hidden="true">+</span>
+              </button>
+              <p class="faq-answer" data-i18n="contact_faq_a1">I hop on a quick call, we lock goals and references, then I mock up an interactive pass in Wwise/FMOD.</p>
             </div>
-            <a href="https://github.com/Szunias" target="_blank" rel="noopener noreferrer" class="social-link github">
-              <div class="social-icon">
-                <i class="fab fa-github"></i>
-              </div>
-              <div class="social-content">
-                <div class="social-label" data-i18n="contact_social_github">GitHub</div>
-                <div class="social-handle" data-i18n="contact_social_github_handle">@Szunias</div>
-              </div>
-              <i class="fas fa-arrow-right social-arrow"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/igor-szuniewicz-a6877a2a3" target="_blank" rel="noopener noreferrer" class="social-link linkedin">
-              <div class="social-icon">
-                <i class="fab fa-linkedin"></i>
-              </div>
-              <div class="social-content">
-                <div class="social-label" data-i18n="contact_social_linkedin">LinkedIn</div>
-                <div class="social-handle" data-i18n="contact_social_linkedin_handle">Igor Szuniewicz</div>
-              </div>
-              <i class="fas fa-arrow-right social-arrow"></i>
-            </a>
-            <a href="https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6" target="_blank" rel="noopener noreferrer" class="social-link spotify">
-              <div class="social-icon">
-                <i class="fab fa-spotify"></i>
-              </div>
-              <div class="social-content">
-                <div class="social-label" data-i18n="contact_social_spotify">Spotify</div>
-                <div class="social-handle" data-i18n="contact_social_spotify_handle">Music Portfolio</div>
-              </div>
-              <i class="fas fa-arrow-right social-arrow"></i>
-            </a>
-            <a href="https://igorszuniewicz.itch.io" target="_blank" rel="noopener noreferrer" class="social-link itch">
-              <div class="social-icon">
-                <i class="fab fa-itch-io"></i>
-              </div>
-              <div class="social-content">
-                <div class="social-label" data-i18n="contact_social_itch">Itch.io</div>
-                <div class="social-handle" data-i18n="contact_social_itch_handle">Game Projects</div>
-              </div>
-              <i class="fas fa-arrow-right social-arrow"></i>
-            </a>
-          </div>
+
+            <div class="faq-item">
+              <button type="button" class="faq-question">
+                <span data-i18n="contact_faq_q2">How do we keep feedback painless?</span>
+                <span class="faq-icon" aria-hidden="true">+</span>
+              </button>
+              <p class="faq-answer" data-i18n="contact_faq_a2">Notes live in HacknPlan or Jira, I push tagged mixes/builds.</p>
+            </div>
+
+            <div class="faq-item">
+              <button type="button" class="faq-question">
+                <span data-i18n="contact_faq_q3">Can you plug into our existing tools?</span>
+                <span class="faq-icon" aria-hidden="true">+</span>
+              </button>
+              <p class="faq-answer" data-i18n="contact_faq_a3">Yes—Unreal, Unity, Wwise, FMOD, Perforce, GitHub, HacknPlan, and quick C++/C# helpers.</p>
+            </div>
+          </section>
         </div>
       </div>
-      </div>
+    </main>
 
-      <section class="faq-section" id="contact-faq">
-        <h2 class="faq-title" data-i18n="contact_faq_title">Frequently Asked Questions</h2>
-        <p class="faq-subtitle" data-i18n="contact_faq_subtitle">Quick answers to what clients usually ask before we start.</p>
+    <script>
+      // Form Handler
+      document.getElementById('contact-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submit-btn');
+        const successMsg = document.getElementById('success-message');
+        const originalBtnContent = btn.innerHTML;
 
-        <div class="faq-item">
-          <button type="button" class="faq-question">
-            <span data-i18n="contact_faq_q1">What happens right after you say hi?</span>
-            <span class="faq-icon" aria-hidden="true">+</span>
-          </button>
-          <p class="faq-answer" data-i18n="contact_faq_a1">I hop on a quick call, we lock goals and references, then I mock up an interactive pass in Wwise/FMOD and send a build so you can react immediately.</p>
-        </div>
+        btn.disabled = true;
+        btn.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
 
-        <div class="faq-item">
-          <button type="button" class="faq-question">
-            <span data-i18n="contact_faq_q2">How do we keep feedback painless?</span>
-            <span class="faq-icon" aria-hidden="true">+</span>
-          </button>
-          <p class="faq-answer" data-i18n="contact_faq_a2">Notes live in HacknPlan or Jira, I push tagged mixes/builds, and I am always up for a quick call if anything feels fuzzy.</p>
-        </div>
+        try {
+          const formData = new FormData(this);
+          const response = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
 
-        <div class="faq-item">
-          <button type="button" class="faq-question">
-            <span data-i18n="contact_faq_q3">Can you plug into our existing tools?</span>
-            <span class="faq-icon" aria-hidden="true">+</span>
-          </button>
-          <p class="faq-answer" data-i18n="contact_faq_a3">Yes—Unreal, Unity, Wwise, FMOD, Perforce, GitHub, HacknPlan, and quick C++/C# helpers if the pipeline needs them.</p>
-        </div>
-      </section>
-    </div>
-    </div>
-  </main>
-
-  <!-- Scripts -->
-  <script>
-    // CRITICAL FIX: Track observers for cleanup
-    window.__contactPageObservers = window.__contactPageObservers || [];
-
-    // CRITICAL FIX: Removed duplicate header scroll effect
-    // This functionality is already handled by navigation.js initScrollEffect()
-    // Keeping it here caused duplicate event listeners on every AJAX navigation
-
-    // CRITICAL FIX: Cleanup function to prevent memory leaks
-    function cleanupContactPage() {
-      // 1. Disconnect all IntersectionObservers
-      if (window.__contactPageObservers) {
-        window.__contactPageObservers.forEach((observer) => {
-          observer.disconnect();
-        });
-        window.__contactPageObservers = [];
-      }
-
-      // Note: Event listeners attached to elements are automatically
-      // garbage collected when those elements are removed from DOM
-      // during AJAX navigation. No manual cleanup needed.
-    }
-
-    // Expose cleanup function globally for enhanced-smooth-navigation
-    window.__cleanupContactPage = cleanupContactPage;
-
-    // Run cleanup before page unload
-    window.addEventListener('beforeunload', cleanupContactPage);
-
-    // Form submission
-    document.getElementById('contact-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
-
-      const btn = document.getElementById('submit-btn');
-      const successMsg = document.getElementById('success-message');
-
-      btn.disabled = true;
-      btn.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
-
-      const formData = new FormData(this);
-
-      try {
-        const response = await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (response.ok) {
-          successMsg.style.display = 'block';
-          this.reset();
-          btn.innerHTML = '<span>Sent!</span><i class="fas fa-check"></i>';
-
-          setTimeout(() => {
-            btn.disabled = false;
-            btn.innerHTML = '<span>Send Message</span><i class="fas fa-arrow-right"></i>';
-            successMsg.style.display = 'none';
-          }, 5000);
-        } else {
-          throw new Error('Failed');
+          if (response.ok) {
+            successMsg.style.display = 'block';
+            this.reset();
+            btn.innerHTML = '<span>Sent!</span><i class="fas fa-check"></i>';
+            setTimeout(() => {
+              btn.disabled = false;
+              btn.innerHTML = originalBtnContent;
+              successMsg.style.display = 'none';
+            }, 5000);
+          } else { throw new Error('Failed'); }
+        } catch (error) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>Error. Try again.</span><i class="fas fa-exclamation-circle"></i>';
+          setTimeout(() => btn.innerHTML = originalBtnContent, 3000);
         }
-      } catch (error) {
-        // Failed to send message
-        btn.disabled = false;
-        btn.innerHTML = '<span>Send Message</span><i class="fas fa-arrow-right"></i>';
-      }
-    });
-
-    // REMOVED: Scroll reveal and smooth scroll - now handled by shared modules
-    // - shared/scroll-reveal.js handles fade-in animations
-    // - shared/smooth-scroll.js handles anchor link scrolling
-
-    // FAQ toggle functionality
-    const faqItems = document.querySelectorAll('.faq-item');
-    faqItems.forEach((item, index) => {
-      const button = item.querySelector('.faq-question');
-      const answer = item.querySelector('.faq-answer');
-      if (!button || !answer) return;
-
-      const answerId = `faq-answer-${index}`;
-      button.setAttribute('aria-controls', answerId);
-      button.setAttribute('aria-expanded', 'false');
-      answer.id = answerId;
-      answer.setAttribute('role', 'region');
-      answer.setAttribute('aria-hidden', 'true');
-
-      button.addEventListener('click', () => {
-        const isOpen = item.classList.toggle('open');
-        button.setAttribute('aria-expanded', String(isOpen));
-        answer.setAttribute('aria-hidden', String(!isOpen));
       });
-    });
-  </script>
-  <script type="application/ld+json" data-schema="faq">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "What happens right after you say hi?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "I hop on a quick call, we lock goals and references, then I mock up an interactive pass in Wwise/FMOD and send a build so you can react immediately."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How do we keep feedback painless?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Notes live in HacknPlan or Jira, I push tagged mixes/builds, and I am always up for a quick call if anything feels fuzzy."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can you plug into our existing tools?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes—Unreal, Unity, Wwise, FMOD, Perforce, GitHub, HacknPlan, and quick C++/C# helpers if the pipeline needs them."
-        }
-      }
-    ]
-  }
-  </script>
-  <script type="module" src="assets/js/performance-boost.js" defer></script>
-  <script type="module" src="assets/js/enhanced-smooth-navigation.js" defer></script>
-  <script type="module" src="assets/js/components/navigation.js" defer></script>
-  <script type="module" src="assets/js/components/custom-cursor.js" defer></script>
 
-  <!-- Shared modules for all pages -->
-  <script src="assets/js/components/shared/scroll-reveal.js"></script>
-  <script src="assets/js/components/shared/smooth-scroll.js"></script>
-  <script src="assets/js/components/shared/lazy-images.js"></script>
-  <script src="assets/js/components/shared/cleanup-manager.js"></script>
-  <script src="assets/js/components/footer.js"></script>
+      // FAQ Logic
+      document.querySelectorAll('.faq-question').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const item = btn.parentElement;
+          const isOpen = item.classList.toggle('open');
+          btn.setAttribute('aria-expanded', isOpen);
+        });
+      });
+      
+      // Cleanup
+      window.addEventListener('beforeunload', () => {
+        // Simple cleanup hooks if needed
+      });
+    </script>
 
-  <!-- Bulletproof i18n System - 5-layer fallback, never crashes -->
-  <script type="module">
-    import i18n from '/assets/js/refactored/services/BulletproofI18n.js';
-    i18n.init().catch(error => {
-      console.error('i18n initialization failed:', error);
-      // Page still works with inline critical translations!
-    });
-  </script>
-</body>
+    <script type="module" src="assets/js/performance-boost.js"></script>
+    <script type="module" src="assets/js/enhanced-smooth-navigation.js"></script>
+    <script type="module" src="assets/js/components/navigation.js"></script>
+    
+    <script src="assets/js/components/shared/scroll-reveal.js" defer></script>
+    <script src="assets/js/components/shared/smooth-scroll.js" defer></script>
+    <script src="assets/js/components/shared/lazy-images.js" defer></script>
+    <script src="assets/js/components/shared/cleanup-manager.js" defer></script>
+    <script src="assets/js/components/footer.js" defer></script>
+
+    <script type="module">
+      import i18n from '/assets/js/refactored/services/BulletproofI18n.js';
+      i18n.init().then(() => {
+        document.documentElement.classList.add('translations-ready');
+      }).catch((e) => {
+        console.error('i18n failed', e);
+        document.documentElement.classList.add('translations-ready');
+      });
+    </script>
+  </body>
 </html>
