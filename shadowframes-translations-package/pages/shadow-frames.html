@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow Frames | Audio Architecture</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* === VARIABLES & RESET === */
+        :root {
+            --bg: #050505;
+            --panel: #0f0f11;
+            --border: #27272a;
+            --accent: #3b82f6; /* Blue */
+            --accent-glow: rgba(59, 130, 246, 0.15);
+            --secondary: #a855f7; /* Purple */
+            --text: #e4e4e7;
+            --text-dim: #71717a;
+            --code-bg: #1e1e1e;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* === LAYOUT UTILS === */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .flex { display: flex; }
+        .grid { display: grid; }
+        .hidden { display: none !important; }
+        
+        /* === HEADER === */
+        header {
+            padding: 100px 0 60px;
+            text-align: center;
+            background: radial-gradient(circle at 50% 0%, #1a1a2e 0%, var(--bg) 70%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            line-height: 1;
+            background: linear-gradient(to bottom right, #fff, #888);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: var(--accent-glow);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            border-radius: 50px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .back-nav {
+            position: absolute;
+            top: 20px; left: 20px;
+        }
+        .back-nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .back-nav a:hover { color: var(--text); }
+
+        /* === TABS NAVIGATION === */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: -30px;
+            margin-bottom: 40px;
+        }
+
+        .tab-btn {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover { border-color: var(--accent); color: var(--text); }
+        .tab-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* === INTERACTIVE CODE SECTION (THE CORE) === */
+        .code-lab {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 0;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            min-height: 600px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        /* Left Side: Code Editor */
+        .editor-pane {
+            background: var(--code-bg);
+            padding: 0;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+        }
+
+        .editor-header {
+            padding: 10px 20px;
+            background: #252526;
+            color: #ccc;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #333;
+            display: flex;
+            gap: 15px;
+        }
+
+        .file-tab {
+            opacity: 0.6;
+            cursor: pointer;
+        }
+        .file-tab.active {
+            opacity: 1;
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .code-content {
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            white-space: pre;
+            color: #d4d4d4;
+        }
+
+        /* Syntax Highlighting Simulation */
+        .c-keyword { color: #c586c0; } /* Pink */
+        .c-type { color: #4ec9b0; } /* Teal */
+        .c-func { color: #dcdcaa; } /* Yellow */
+        .c-string { color: #ce9178; } /* Orange */
+        .c-comment { color: #6a9955; } /* Green */
+
+        /* Interactive Lines */
+        .interactive-line {
+            display: block;
+            margin: 0 -20px;
+            padding: 2px 20px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: background 0.15s;
+        }
+
+        .interactive-line:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .interactive-line.selected {
+            background: rgba(59, 130, 246, 0.15);
+            border-left-color: var(--accent);
+        }
+
+        /* Right Side: Inspector */
+        .inspector-pane {
+            padding: 30px;
+            background: var(--panel);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .inspector-content {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        .inspector-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .inspector-label {
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .inspector-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .inspector-desc {
+            color: var(--text-dim);
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .inspector-tags {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.05);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-dim);
+        }
+
+        /* === AUDIO PLAYER === */
+        .audio-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 40px 0;
+        }
+
+        .audio-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+        .audio-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+
+        .play-btn {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .code-lab { grid-template-columns: 1fr; min-height: auto; }
+            .editor-pane { height: 300px; border-right: none; border-bottom: 1px solid var(--border); }
+            .inspector-pane { padding: 20px; min-height: 250px; }
+            h1 { font-size: 2.5rem; }
+        }
+
+        /* === ANIMATION === */
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 999;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(59, 130, 246, 0.03) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1;
+            background-size: 100% 4px;
+            position: fixed;
+            bottom: 100%;
+            animation: scanline 10s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanline {
+            0% { bottom: 100%; }
+            100% { bottom: -100px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scanline"></div>
+
+    <div class="back-nav">
+        <a href="../index.html">← Back to Projects</a>
+    </div>
+
+    <header>
+        <div class="container">
+            <span class="role-badge">Lead Audio Designer</span>
+            <h1>SHADOW FRAMES</h1>
+            <p style="color: var(--text-dim); max-width: 600px; margin: 0 auto;">
+                Psychological horror set in a 1960s Irish pub. <br>
+                Audio is not just atmospheric—it's the primary detection mechanic.
+            </p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showSection('code')">System Architecture</button>
+            <button class="tab-btn" onclick="showSection('audio')">Audio Samples</button>
+            <button class="tab-btn" onclick="showSection('stats')">Project Stats</button>
+        </div>
+    </div>
+
+    <main class="container" id="section-code">
+        <div class="code-lab">
+            <div class="editor-pane">
+                <div class="editor-header">
+                    <span class="file-tab active" onclick="loadCode('footsteps')">FootstepSystem.cpp</span>
+                    <span class="file-tab" onclick="loadCode('delegates')">PlayerAudio.h</span>
+                    <span class="file-tab" onclick="loadCode('rtpc')">TensionManager.cpp</span>
+                </div>
+                <div class="code-content" id="code-display">
+                    </div>
+            </div>
+
+            <div class="inspector-pane">
+                <div id="inspector-default" class="empty-state">
+                    <svg style="width: 48px; height: 48px; margin-bottom: 1rem; color: #333;" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                    </svg>
+                    <p>CLICK A HIGHLIGHTED LINE OF CODE<br>TO SEE LOGIC DETAILS</p>
+                </div>
+                <div id="inspector-details" class="inspector-content hidden">
+                    <span class="inspector-label" id="detail-label">LOGIC BLOCK</span>
+                    <h3 class="inspector-title" id="detail-title">Title</h3>
+                    <p class="inspector-desc" id="detail-desc">Description goes here.</p>
+                    <div class="inspector-tags" id="detail-tags">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main class="container hidden" id="section-audio">
+        <div class="audio-showcase">
+            <div class="audio-card">
+                <button class="play-btn" onclick="playAudio(this, '../assets/audio/samples/Shadow_Frame_Menu_Vibe_but_Louder.wav')">▶</button>
+                <h3>Menu Ambience</h3>
+                <p style="color: #666; font-size: 0.9rem;">Early prototype. Looped drone with vinyl crackle.</p>
+                <audio id="audio-player"></audio>
+            </div>
+             <div class="audio-card">
+                <button class="play-btn" onclick="playAudio(this, '../assets/images/projects-shadowframes/PaletteSoundscapeUpdate.mp3')">▶</button>
+                <h3>Main Bar Palette</h3>
+                <p style="color: #666; font-size: 0.9rem;">Spatialized glass clinks and wood creaks.</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 30px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px;">
+            <h3 style="color: var(--accent)">3-Stage Anomaly Detection</h3>
+            <p style="margin-top: 10px; color: #ccc;">
+                1. <strong>Alert:</strong> Short static burst (0.5s).<br>
+                2. <strong>Hint:</strong> Directional loop (1-2s).<br>
+                3. <strong>Presence:</strong> Intense close-range hum.
+            </p>
+        </div>
+    </main>
+
+    <main class="container hidden" id="section-stats">
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+            <div style="background: var(--panel); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
+                <div style="font-size: 3rem; font-weight: 800; color: var(--accent);">90+</div>
+                <div style="color: var(--text-dim);">C++ Files</div>
+            </div>
+            <div style="background: var(--panel); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
+                <div style="font-size: 3rem; font-weight: 800; color: var(--secondary);">122</div>
+                <div style="color: var(--text-dim);">Audio Assets</div>
+            </div>
+            <div style="background: var(--panel); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
+                <div style="font-size: 3rem; font-weight: 800; color: #06b6d4;">5%</div>
+                <div style="color: var(--text-dim);">CPU Usage</div>
+            </div>
+        </div>
+        <div style="margin-top: 40px; text-align: center;">
+            <a href="../assets/images/projects-shadowframes/Sound_Grp22_ShadowFrames.pdf" download style="display: inline-block; padding: 15px 30px; background: var(--accent); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                Download Full Documentation (PDF)
+            </a>
+        </div>
+    </main>
+
+    <script>
+        // === DATA: CODE SNIPPETS ===
+        const codeData = {
+            'footsteps': {
+                code: `
+<span class="c-type">FName</span> <span class="c-func">UFootstepComponent::DetectSurfaceType</span>() <span class="c-keyword">const</span>
+{
+    <div class="interactive-line" onclick="showDetail('safety')"><span class="c-keyword">const</span> <span class="c-type">AActor</span>* Owner = GetOwner();
+    <span class="c-keyword">if</span> (!Owner) <span class="c-keyword">return</span> <span class="c-type">FName</span>(<span class="c-string">"Concrete"</span>);</div>
+
+    <div class="interactive-line" onclick="showDetail('trace')"><span class="c-type">FHitResult</span> Hit;
+    <span class="c-keyword">const</span> <span class="c-type">FVector</span> Start = Owner->GetActorLocation();
+    <span class="c-keyword">const</span> <span class="c-type">FVector</span> End = Start - <span class="c-type">FVector</span>(0.f, 0.f, TraceDistance);</div>
+
+    <span class="c-type">FCollisionQueryParams</span> Params;
+    Params.AddIgnoredActor(Owner);
+
+    <div class="interactive-line" onclick="showDetail('mapping')"><span class="c-type">bool</span> bHit = World->LineTraceSingleByChannel(Hit, Start, End, ECC_WorldStatic, Params);
+    
+    <span class="c-keyword">if</span> (bHit && Hit.PhysMaterial.IsValid())
+    {
+        <span class="c-keyword">return</span> MapSurfaceToWwiseSwitch(Hit.PhysMaterial->SurfaceType);
+    }</div>
+
+    <span class="c-keyword">return</span> <span class="c-type">FName</span>(<span class="c-string">"Concrete"</span>);
+}`,
+                details: {
+                    'safety': { title: "Null Safety Check", desc: "Crucial for stability. We validate the Owner exists before attempting any physics operations to prevent engine crashes.", tags: ["C++", "Safety"] },
+                    'trace': { title: "Raycast Setup", desc: "We calculate a vector pointing downwards from the player's feet. The length is configurable via 'TraceDistance'.", tags: ["Physics", "Vector Math"] },
+                    'mapping': { title: "Physical Material Mapping", desc: "If the ray hits a surface, we retrieve its Unreal Physical Material and translate it to a Wwise Switch string (e.g., 'Wood', 'Tile').", tags: ["Wwise Integration", "Enums"] }
+                }
+            },
+            'delegates': {
+                code: `
+<span class="c-comment">// PlayerCharacter.h</span>
+
+<div class="interactive-line" onclick="showDetail('macro')"><span class="c-keyword">DECLARE_DYNAMIC_MULTICAST_DELEGATE</span>(FOnCameraShutterDelegate);</div>
+
+<span class="c-keyword">UCLASS</span>()
+<span class="c-keyword">class</span> <span class="c-type">APlayerCharacter</span> : <span class="c-keyword">public</span> <span class="c-type">ACharacter</span>
+{
+<span class="c-keyword">public</span>:
+    <div class="interactive-line" onclick="showDetail('property')"><span class="c-keyword">UPROPERTY</span>(BlueprintAssignable, Category = <span class="c-string">"Audio"</span>)
+    <span class="c-type">FOnCameraShutterDelegate</span> OnCameraShutter;</div>
+
+    <span class="c-keyword">void</span> TakePhoto();
+};`,
+                details: {
+                    'macro': { title: "Multicast Delegate", desc: "Defines a custom Event Dispatcher type. 'Multicast' means multiple systems (Audio, UI, Gameplay) can listen to this single event simultaneously.", tags: ["Architecture", "Decoupling"] },
+                    'property': { title: "Blueprint Exposure", desc: "Exposes the event to the Blueprint Editor. This allows the Audio Designer to bind Wwise events to C++ logic without modifying C++ code.", tags: ["Blueprint", "Reflection"] }
+                }
+            },
+            'rtpc': {
+                code: `
+<span class="c-keyword">void</span> <span class="c-func">UPhotoboardWidget::UpdateAmbientRTPC</span>()
+{
+    <div class="interactive-line" onclick="showDetail('find')"><span class="c-type">AActor</span>* TargetActor = nullptr;
+    <span class="c-comment">// Find actor by tag "AmbientProgressive"</span>
+    FindAudioActor(TargetActor);</div>
+
+    <div class="interactive-line" onclick="showDetail('set')"><span class="c-type">UAkGameplayStatics</span>::SetRTPCValue(
+        PhotosOnBoardRTPC,
+        ImportantPhotosAlreadyPlaced,
+        0, 
+        TargetActor
+    );</div>
+}`,
+                details: {
+                    'find': { title: "Actor Location", desc: "Locates the specific AkAmbientSound actor in the scene that handles the background room tone.", tags: ["GameplayTags", "Search"] },
+                    'set': { title: "RTPC Update", desc: "Updates the Real-Time Parameter Control in Wwise. Value 0-5 (photos collected) creates a smooth crossfade between tension layers.", tags: ["Wwise", "Dynamic Audio"] }
+                }
+            }
+        };
+
+        let currentContext = 'footsteps';
+
+        // === FUNCTIONS ===
+        
+        function showSection(id) {
+            // Hide all main sections
+            document.querySelectorAll('main').forEach(el => el.classList.add('hidden'));
+            // Show target
+            document.getElementById('section-' + id).classList.remove('hidden');
+            
+            // Update tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function loadCode(key) {
+            currentContext = key;
+            const data = codeData[key];
+            
+            // Update tabs
+            document.querySelectorAll('.file-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Inject Code
+            document.getElementById('code-display').innerHTML = data.code;
+            
+            // Reset Inspector
+            document.getElementById('inspector-default').classList.remove('hidden');
+            document.getElementById('inspector-details').classList.remove('visible');
+            document.getElementById('inspector-details').classList.add('hidden');
+        }
+
+        function showDetail(detailKey) {
+            // UI Highlighting
+            document.querySelectorAll('.interactive-line').forEach(l => l.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+
+            // Get Data
+            const data = codeData[currentContext].details[detailKey];
+            
+            // Populate Inspector
+            document.getElementById('inspector-default').classList.add('hidden');
+            const detailsPane = document.getElementById('inspector-details');
+            
+            detailsPane.classList.remove('hidden');
+            // Small timeout for animation
+            setTimeout(() => detailsPane.classList.add('visible'), 10);
+
+            document.getElementById('detail-label').innerText = "LOGIC EXPLANATION";
+            document.getElementById('detail-title').innerText = data.title;
+            document.getElementById('detail-desc').innerText = data.desc;
+            
+            // Tags
+            const tagsContainer = document.getElementById('detail-tags');
+            tagsContainer.innerHTML = '';
+            data.tags.forEach(tag => {
+                const span = document.createElement('span');
+                span.className = 'tag';
+                span.innerText = tag;
+                tagsContainer.appendChild(span);
+            });
+        }
+
+        // Audio Player Logic
+        const player = document.getElementById('audio-player');
+        let currentBtn = null;
+
+        function playAudio(btn, src) {
+            if (currentBtn && currentBtn !== btn) {
+                currentBtn.innerText = "▶"; // Reset old button
+                player.pause();
+            }
+
+            if (player.paused || player.getAttribute('src') !== src) {
+                player.src = src;
+                player.play();
+                btn.innerText = "⏸";
+                currentBtn = btn;
+            } else {
+                player.pause();
+                btn.innerText = "▶";
+            }
+        }
+
+        // Init
+        loadCode('footsteps');
+        // Set first tab active manually since loadCode needs event
+        document.querySelector('.file-tab').classList.add('active');
+    </script>
+</body>
+</html>
