@@ -800,22 +800,23 @@
         z-index: 20;
       }
 
-      /* The expanding darkness circle */
+      /* The expanding overheat aura */
       .nightmare-scroll::before {
         content: '';
         position: absolute;
         top: 50%;
         left: 50%;
-        width: 10vmax; /* Responsive base size */
-        height: 10vmax;
-        background: #050505;
+        width: 15vmax;
+        height: 15vmax;
+        /* Red radial gradient: Overheating core effect */
+        background: radial-gradient(circle, rgba(239, 68, 68, 0.6) 0%, rgba(185, 28, 28, 0.2) 50%, rgba(255, 255, 255, 0) 70%);
         border-radius: 50%;
-        /* Start hidden (scale 0), controlled by JS */
         transform: translate(-50%, -50%) scale(var(--nightmare-scale, 0));
-        opacity: 1;
-        will-change: transform;
+        opacity: var(--aura-opacity, 0); /* Controlled by JS */
+        will-change: transform, opacity;
         z-index: 1;
         pointer-events: none;
+        mix-blend-mode: multiply;
       }
       
       .nightmare-content {
@@ -1963,32 +1964,38 @@
                     }
                 } else {
                     // HORROR PHASE (>100ms)
-                    timerText.style.color = '#ff0000'; // Bright Red (Panic)
+                    timerText.style.color = '#dc2626'; // Red (600)
                     
                     // Calculate circle expansion
-                    // Reduced max scale to 6 (doesn't fill screen)
                     const horrorProgress = Math.max(0, (progress - 0.4) / 0.6);
-                    const circleScale = horrorProgress * horrorProgress * 6; 
+                    const circleScale = horrorProgress * horrorProgress * 8; 
                     
                     container.style.setProperty('--nightmare-scale', circleScale);
                     
+                    // Fade in the aura
+                    const aura = container.querySelector('.nightmare-scroll::before'); // Note: can't select pseudo directly in JS, 
+                    // so we control opacity via a CSS variable on container
+                    const auraOpacity = Math.min(1, horrorProgress * 2);
+                    container.style.setProperty('--aura-opacity', auraOpacity);
+                    
                     if (ms > 5000) {
-                        container.classList.add('active-nightmare'); // Adds subtle vignette
+                        // Unstable flickering in critical phase
+                        const flicker = 0.8 + (Math.random() * 0.2);
+                        container.style.setProperty('--aura-opacity', auraOpacity * flicker);
+                        
                         if(labelText) { 
                             labelText.textContent = "SYSTEM FAILURE"; 
-                            labelText.style.color = '#ff0000'; 
+                            labelText.style.color = '#dc2626'; 
                         }
                         // Glitch shake
                         const shakeX = (Math.random() - 0.5) * 15 * progress;
                         const shakeY = (Math.random() - 0.5) * 8 * progress;
                         timerText.style.transform = `scale(${scale}) translate(${shakeX}px, ${shakeY}px)`;
-                        // Glitchy glow
                         timerText.style.textShadow = `2px 0 #fff, -2px 0 #000`;
                     } else {
-                        container.classList.remove('active-nightmare');
                          if(labelText) { 
                             labelText.textContent = "UNPLAYABLE"; 
-                            labelText.style.color = '#ff0000'; 
+                            labelText.style.color = '#dc2626'; 
                         }
                         timerText.style.transform = `scale(${scale})`;
                         timerText.style.textShadow = 'none';
