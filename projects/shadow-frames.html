@@ -807,6 +807,174 @@
     }
 
 
+    /* === TIMELINE === */
+    .timeline-wrapper {
+      margin-bottom: 40px;
+      padding: 0 20px;
+    }
+
+    .timeline-container {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(10, 10, 10, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    }
+
+    .timeline-phase {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+
+    .phase-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      padding-left: 4px;
+    }
+
+    .phase-track {
+      display: flex;
+      gap: 4px;
+      height: 8px;
+    }
+
+    .track-segment {
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .track-segment.done {
+      background: #3b82f6;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    }
+
+    .track-segment.active {
+      background: #fbbf24;
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+      animation: pulse-active 2s infinite;
+    }
+
+    .track-segment.pending {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Specific Widths based on duration */
+    .w-proto {
+      width: 60px;
+    }
+
+    .w-sprint {
+      width: 40px;
+    }
+
+    .w-polish {
+      width: 60px;
+    }
+
+    /* Active Indicator */
+    .active-marker {
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fbbf24;
+      color: black;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      animation: slideDown 0.5s ease forwards 0.5s;
+    }
+
+    .active-marker::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 4px solid #fbbf24;
+    }
+
+    @keyframes pulse-active {
+      0% {
+        opacity: 1;
+        box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+      }
+
+      50% {
+        opacity: 0.7;
+        box-shadow: 0 0 5px rgba(251, 191, 36, 0.2);
+      }
+
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .timeline-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+      }
+
+      .phase-track {
+        width: 100%;
+      }
+
+      .track-segment {
+        flex: 1;
+      }
+
+      .w-proto,
+      .w-sprint,
+      .w-polish {
+        width: auto;
+      }
+    }
+
     /* === RESPONSIVE === */
     @media (max-width: 900px) {
       .ide-container {
@@ -884,6 +1052,44 @@
         Sprint 5 — Week of Production
       </p>
     </div>
+    <div class="timeline-wrapper">
+      <div class="timeline-container">
+        <!-- Phase 1: Prototype -->
+        <div class="timeline-phase">
+          <span class="phase-label" data-i18n="time.proto">Prototype</span>
+          <div class="phase-track">
+            <div class="track-segment done w-proto" title="Week 1"></div>
+            <div class="track-segment done w-proto" title="Week 2"></div>
+          </div>
+        </div>
+
+        <!-- Phase 2: Production -->
+        <div class="timeline-phase" style="flex: 1">
+          <span class="phase-label" data-i18n="time.prod">Production</span>
+          <div class="phase-track" style="width: 100%">
+            <div class="track-segment done w-sprint" title="Sprint 1"></div>
+            <div class="track-segment done w-sprint" title="Sprint 2"></div>
+            <div class="track-segment done w-sprint" title="Sprint 3"></div>
+
+            <!-- Active Sprint -->
+            <div class="track-segment active w-sprint" title="Sprint 4">
+              <div class="active-marker" data-i18n="time.sprint4">SPRINT 4</div>
+            </div>
+
+            <div class="track-segment pending w-sprint" title="Sprint 5"></div>
+          </div>
+        </div>
+
+        <!-- Phase 3: Polish -->
+        <div class="timeline-phase">
+          <span class="phase-label" data-i18n="time.polish">Polish</span>
+          <div class="phase-track">
+            <div class="track-segment pending w-polish" title="Week 1"></div>
+            <div class="track-segment pending w-polish" title="Week 2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="video-showcase">
       <div class="video-container" id="video-container">
         <div class="video-preview" id="video-preview" style="background-image: url('../imageforvideshadowframes.png')">
@@ -905,7 +1111,7 @@
     <div class="ide-container">
       <div class="ide-code">
         <div class="code-toolbar">
-          <span class="file-name">C++ SOURCE VIEW</span>
+          <span class="file-name" data-i18n="ide.source">C++ SOURCE VIEW</span>
         </div>
         <div class="code-content">
           <div class="line-numbers" id="line-numbers">
@@ -919,7 +1125,7 @@
 
       <div class="ide-inspector">
         <div class="insp-header">
-          <span class="insp-label">LOGIC ANALYSIS</span>
+          <span class="insp-label" data-i18n="ide.logic">LOGIC ANALYSIS</span>
           <span class="insp-id" id="insp-id">ID: NULL</span>
         </div>
 
@@ -934,7 +1140,7 @@
       <div class="ide-status-bar">
         <div class="status-item">
           <div class="status-dot"></div>
-          <span>LIVE CONNECTION</span>
+          <span data-i18n="ide.status">LIVE CONNECTION</span>
         </div>
         <div class="status-item">
           <span>UTF-8</span>
@@ -976,8 +1182,8 @@
           ▶
         </button>
         <div>
-          <h4 style="margin-bottom: 5px">Menu Ambience</h4>
-          <p style="color: var(--text-dim); font-size: 0.9rem">
+          <h4 style="margin-bottom: 5px" data-i18n="audio.card1_title">Menu Ambience</h4>
+          <p style="color: var(--text-dim); font-size: 0.9rem" data-i18n="audio.card1_desc">
             Looping drone with vinyl crackle.
           </p>
         </div>
@@ -988,8 +1194,8 @@
           ▶
         </button>
         <div>
-          <h4 style="margin-bottom: 5px">Main Bar Palette</h4>
-          <p style="color: var(--text-dim); font-size: 0.9rem">
+          <h4 style="margin-bottom: 5px" data-i18n="audio.card2_title">Main Bar Palette</h4>
+          <p style="color: var(--text-dim); font-size: 0.9rem" data-i18n="audio.card2_desc">
             Spatialized glass clinks & wood creaks.
           </p>
         </div>
@@ -1115,6 +1321,23 @@
         'insp.ready_title': 'System Ready',
         'insp.ready_desc': 'Select a highlighted line of code to inspect the underlying logic and implementation details.',
 
+        // Timeline
+        'time.proto': 'Prototype',
+        'time.prod': 'Production',
+        'time.polish': 'Polish',
+        'time.sprint4': 'SPRINT 4',
+
+        // IDE UI
+        'ide.source': 'C++ SOURCE VIEW',
+        'ide.logic': 'LOGIC ANALYSIS',
+        'ide.status': 'LIVE CONNECTION',
+
+        // Audio Cards
+        'audio.card1_title': 'Menu Ambience',
+        'audio.card1_desc': 'Looping drone with vinyl crackle.',
+        'audio.card2_title': 'Main Bar Palette',
+        'audio.card2_desc': 'Spatialized glass clinks & wood creaks.',
+
         // Code Details
         bone_title: 'Dynamic Spatial Attachment',
         bone_desc:
@@ -1155,6 +1378,23 @@
         'insp.ready_title': 'System Gotowy',
         'insp.ready_desc': 'Wybierz podświetloną linię kodu, aby przeanalizować logikę i szczegóły implementacji.',
 
+        // Timeline
+        'time.proto': 'Prototyp',
+        'time.prod': 'Produkcja',
+        'time.polish': 'Szlify',
+        'time.sprint4': 'SPRINT 4',
+
+        // IDE UI
+        'ide.source': 'WIDOK ŹRÓDŁA C++',
+        'ide.logic': 'ANALIZA LOGIKI',
+        'ide.status': 'POŁĄCZENIE AKTYWNE',
+
+        // Audio Cards
+        'audio.card1_title': 'Ambiencja Menu',
+        'audio.card1_desc': 'Zapętlony dron z trzaskami winyla.',
+        'audio.card2_title': 'Paleta Baru',
+        'audio.card2_desc': 'Przestrzenne dźwięki szkła i drewna.',
+
         bone_title: 'Dynamiczne Podpięcie 3D',
         bone_desc:
           "Nie odtwarzamy dźwięku po prostu na aktorze. Znajdujemy konkretny komponent mesha (np. 'Głośnik') i podpinamy do niego emiter Wwise dla precyzji.",
@@ -1193,6 +1433,23 @@
         // Inspector Defaults
         'insp.ready_title': 'Systeem Gereed',
         'insp.ready_desc': 'Selecteer een gemarkeerde regel code om de onderliggende logica en implementatiedetails te inspecteren.',
+
+        // Timeline
+        'time.proto': 'Prototype',
+        'time.prod': 'Productie',
+        'time.polish': 'Afwerking',
+        'time.sprint4': 'SPRINT 4',
+
+        // IDE UI
+        'ide.source': 'C++ BRONWEERGAVE',
+        'ide.logic': 'LOGISCHE ANALYSE',
+        'ide.status': 'LIVE VERBINDING',
+
+        // Audio Cards
+        'audio.card1_title': 'Menu Sfeer',
+        'audio.card1_desc': 'Loopende drone met vinyl gekraak.',
+        'audio.card2_title': 'Hoofd Bar Palet',
+        'audio.card2_desc': 'Ruimtelijke glas en hout geluiden.',
 
         bone_title: 'Dynamische 3D Bevestiging',
         bone_desc:
