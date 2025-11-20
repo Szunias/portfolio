@@ -2,13 +2,17 @@
 <html lang="en" style="background: #ffffff">
   <head>
     <script>
-/** Language preload - prevents lang flicker */
-(function(){
-"use strict";
-const savedLang=localStorage.getItem("language")||"en";
-document.documentElement.setAttribute("lang",savedLang);
-window.__preloadedLang=savedLang;
-})();
+      /** Language preload - prevents lang flicker */
+      (function(){
+        "use strict";
+        try {
+          const savedLang = localStorage.getItem("language") || "en";
+          document.documentElement.setAttribute("lang", savedLang);
+          window.__preloadedLang = savedLang;
+        } catch (e) {
+          console.warn("LocalStorage access denied");
+        }
+      })();
     </script>
     <style>
       html {
@@ -16,11 +20,32 @@ window.__preloadedLang=savedLang;
       }
 
       body {
-        background: #ffffff !important;
+        background: #ffffff;
         margin: 0;
         padding: 0;
         overflow-x: hidden;
       }
+      
+      /* Accessibility: Reduced Motion */
+      @media (prefers-reduced-motion: reduce) {
+        *, ::before, ::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+        
+        .hero-subtitle, .section, .content {
+          opacity: 1 !important;
+          transform: none !important;
+          transition: none !important;
+        }
+        
+        .cloud {
+          display: none; /* Hide moving distractions */
+        }
+      }
+
       .content {
         opacity: 0;
         transition: opacity 0.3s ease;
@@ -52,7 +77,6 @@ window.__preloadedLang=savedLang;
       href="https://igorszuniewicz.com/projects/gradwork.html"
     />
 
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="Igor Szuniewicz" />
     <meta
@@ -68,7 +92,6 @@ window.__preloadedLang=savedLang;
       content="Graduate research exploring AI-generated audio in real-time gaming. Testing AudioLDM, MusicGen, and ElevenLabs for game sound effects."
     />
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:url"
@@ -85,7 +108,6 @@ window.__preloadedLang=savedLang;
 
     <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -115,6 +137,7 @@ window.__preloadedLang=savedLang;
         justify-content: center;
         overflow: hidden;
         background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+        will-change: transform; 
       }
 
       .clouds-container {
@@ -132,7 +155,7 @@ window.__preloadedLang=savedLang;
         background: rgba(255, 255, 255, 0.9);
         border-radius: 100px;
         opacity: 0.8;
-        transition: transform 0.5s ease-out;
+        will-change: transform;
       }
 
       .cloud-1 {
@@ -223,7 +246,7 @@ window.__preloadedLang=savedLang;
         letter-spacing: -0.03em;
         color: #1a1a1a;
         margin: 0;
-        transition: all 0.5s ease-out;
+        will-change: transform, opacity;
       }
 
       .hero-subtitle {
@@ -233,7 +256,7 @@ window.__preloadedLang=savedLang;
         margin-top: 1.5rem;
         opacity: 0;
         transform: translateY(20px);
-        transition: all 0.8s ease-out 0.3s;
+        transition: opacity 0.8s ease-out 0.3s, transform 0.8s ease-out 0.3s;
       }
 
       body.loaded .hero-subtitle {
@@ -283,7 +306,8 @@ window.__preloadedLang=savedLang;
         margin: 0 auto;
         opacity: 0;
         transform: translateY(50px);
-        transition: all 0.8s ease-out;
+        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        will-change: opacity, transform;
       }
 
       .section.visible {
@@ -1111,7 +1135,6 @@ window.__preloadedLang=savedLang;
   </head>
   <body>
     <div class="content">
-      <!-- Language Switcher -->
       <div class="lang-switcher" role="group" aria-label="Language switcher">
         <div class="lang-switcher-inner">
           <button
@@ -1170,7 +1193,6 @@ window.__preloadedLang=savedLang;
         </div>
       </div>
 
-      <!-- Hero Section with Parallax Effect -->
       <section class="hero-section" id="hero">
         <div class="clouds-container">
           <div class="cloud cloud-1"></div>
@@ -1194,16 +1216,13 @@ window.__preloadedLang=savedLang;
         </div>
       </section>
 
-      <!-- Transition "well...." -->
       <div class="well-transition" id="wellTransition">
         <div class="well-transition-content">
           <span class="well-text" data-i18n="transition.well">well</span><span class="well-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>
         </div>
       </div>
 
-      <!-- Main Content -->
       <main class="main-content">
-        <!-- Section 1: What's This About -->
         <section class="section" data-section="1">
           <div class="section-number" data-i18n="section1.number">1</div>
           <h2 class="section-title" data-i18n="section1.title">What's This Project About?</h2>
@@ -1231,7 +1250,6 @@ window.__preloadedLang=savedLang;
           </div>
         </section>
 
-        <!-- Architecture Flow Animation -->
         <div class="architecture-flow" id="architectureFlow">
           <div class="architecture-flow-content">
             <div class="flow-container">
@@ -1258,13 +1276,11 @@ window.__preloadedLang=savedLang;
                 <div class="flow-node-subtitle">AI Audio API</div>
               </div>
 
-              <!-- SUCCESS message -->
               <div class="flow-success-message" id="flowSuccessMessage">SUCCESS</div>
             </div>
           </div>
         </div>
 
-        <!-- Section 2: The Journey -->
         <section class="section" data-section="2">
           <div class="section-number" data-i18n="section2.number">2</div>
           <h2 class="section-title" data-i18n="section2.title">Making Unity and Python Talk</h2>
@@ -1321,7 +1337,6 @@ window.__preloadedLang=savedLang;
           </div>
         </section>
 
-        <!-- Section 3: Testing AI Models -->
         <section class="section" data-section="3">
           <div class="section-number" data-i18n="section3.number">3</div>
           <h2 class="section-title" data-i18n="section3.title">Testing AI Models</h2>
@@ -1422,7 +1437,6 @@ window.__preloadedLang=savedLang;
           </div>
         </section>
 
-        <!-- Section 4: Current Approach -->
         <section class="section" data-section="4">
           <div class="section-number" data-i18n="section4.number">4</div>
           <h2 class="section-title" data-i18n="section4.title">Current Approach: Cache Strategy</h2>
@@ -1481,7 +1495,6 @@ window.__preloadedLang=savedLang;
           </div>
         </section>
 
-        <!-- Section 5: ElevenLabs Integration -->
         <section class="section" data-section="5">
           <div class="section-number" data-i18n="section5.number">5</div>
           <h2 class="section-title" data-i18n="section5.title">ElevenLabs Integration - Testing Phase</h2>
@@ -1522,7 +1535,6 @@ window.__preloadedLang=savedLang;
           </div>
         </section>
 
-        <!-- Section 6: Current Results -->
         <section class="section" data-section="6">
           <div class="section-number" data-i18n="section6.number">6</div>
           <h2 class="section-title" data-i18n="section6.title">Current Results & Testing</h2>
@@ -1578,7 +1590,6 @@ window.__preloadedLang=savedLang;
           </div>
         </section>
 
-        <!-- Section 7: Learnings -->
         <section class="section" data-section="7">
           <div class="section-number" data-i18n="section7.number">7</div>
           <h2 class="section-title" data-i18n="section7.title">Current Learnings</h2>
@@ -1629,7 +1640,6 @@ window.__preloadedLang=savedLang;
           </div>
         </section>
 
-        <!-- Section 8: Status & Next Steps -->
         <section class="section" data-section="8">
           <div class="section-number" data-i18n="section8.number">8</div>
           <h2 class="section-title" data-i18n="section8.title">Current Status & Next Steps</h2>
@@ -1682,7 +1692,6 @@ window.__preloadedLang=savedLang;
         </section>
       </main>
 
-      <!-- Footer -->
       <footer class="project-footer">
         <a href="../index.html" class="back-link" data-i18n="footer.back_link">← Back to Projects</a>
         <p style="margin-top: 2rem; color: #666; font-size: 0.875rem;" data-i18n="footer.status">
@@ -1690,7 +1699,6 @@ window.__preloadedLang=savedLang;
         </p>
       </footer>
 
-      <!-- Autoscroll Button -->
       <button id="autoscrollBtn" class="autoscroll-btn" aria-label="Auto play animation">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polygon points="5 3 19 12 5 21 5 3"/>
@@ -1699,7 +1707,6 @@ window.__preloadedLang=savedLang;
       </button>
     </div>
 
-    <!-- Translation Script -->
     <script>
       let translations = {};
       let currentLang = localStorage.getItem("language") || "en";
@@ -1711,7 +1718,6 @@ window.__preloadedLang=savedLang;
       const FLAG_CLASSES = ['flag-en', 'flag-pl', 'flag-nl'];
 
       function updateMainFlag(lang) {
-        // Find the button with the selected language
         const selectedBtn = document.querySelector(`.lang-btn[data-lang="${lang}"]`);
         const mainFlag = document.getElementById('mainFlag');
         const mainLabel = document.getElementById('mainLangLabel');
@@ -1737,6 +1743,8 @@ window.__preloadedLang=savedLang;
           const key = el.getAttribute("data-i18n");
           const translation = getNestedTranslation(translations[lang], key);
           if (translation) {
+             // NOTE: Using innerHTML allows for bold tags in JSON. 
+             // Ensure JSON source is trusted to prevent XSS.
             el.innerHTML = translation;
           }
         });
@@ -1745,13 +1753,13 @@ window.__preloadedLang=savedLang;
           btn.classList.toggle("active", btn.dataset.lang === lang);
         });
 
-        // Update the main flag
         updateMainFlag(lang);
       }
 
       async function loadTranslations() {
         try {
           const response = await fetch("../locales/gradwork.json");
+          if (!response.ok) throw new Error('Translation file not found');
           translations = await response.json();
           setLanguage(currentLang);
         } catch (error) {
@@ -1794,14 +1802,48 @@ window.__preloadedLang=savedLang;
       });
     </script>
 
-    <!-- Scroll Animation Script -->
     <script>
-      // Parallax scroll effect
+      // Accessibility Check
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
       let lastScrollY = 0;
       let ticking = false;
       let isAutoScrolling = false;
+      
+      // Optimization: Track element visibility to avoid useless calculations
+      const visibleElements = {
+        hero: false,
+        well: false,
+        flow: false
+      };
+
+      // Intersection Observer for optimization (toggling calculation flags)
+      const visibilityObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const id = entry.target.id;
+          if (id === 'hero') visibleElements.hero = entry.isIntersecting;
+          if (id === 'wellTransition') visibleElements.well = entry.isIntersecting;
+          if (id === 'architectureFlow') visibleElements.flow = entry.isIntersecting;
+        });
+      }, { threshold: 0 }); // Detects even 1px intersection
+
+      // Section reveal observer (replaces the scroll loop check)
+      const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            // Optional: stop observing once visible if you don't want it to fade out again
+            // sectionObserver.unobserve(entry.target);
+          } else {
+            // Remove else block if you want them to stay visible once revealed
+            entry.target.classList.remove('visible');
+          }
+        });
+      }, { threshold: 0.15, rootMargin: "0px 0px -10% 0px" });
 
       function updateParallax() {
+        if (prefersReducedMotion || !visibleElements.hero) return;
+
         const scrolled = window.pageYOffset;
         const heroSection = document.getElementById('hero');
 
@@ -1814,7 +1856,7 @@ window.__preloadedLang=savedLang;
           if (heroTitle && scrollPercent < 1) {
             const translateX = scrollPercent * 30;
             const opacity = 1 - (scrollPercent * 1.5);
-            heroTitle.style.transform = `translateX(${translateX}vw)`;
+            heroTitle.style.transform = `translate3d(${translateX}vw, 0, 0)`; // Hardware acceleration
             heroTitle.style.opacity = Math.max(0, opacity);
           }
 
@@ -1823,462 +1865,257 @@ window.__preloadedLang=savedLang;
           const cloud2 = document.querySelector('.cloud-2');
 
           if (cloud1 && scrollPercent < 1) {
-            cloud1.style.transform = `translateX(${-scrollPercent * 300}px)`;
+            cloud1.style.transform = `translate3d(${-scrollPercent * 300}px, 0, 0)`;
             cloud1.style.opacity = 1 - scrollPercent;
           }
 
           if (cloud2 && scrollPercent < 1) {
-            cloud2.style.transform = `translateX(${scrollPercent * 300}px)`;
+            cloud2.style.transform = `translate3d(${scrollPercent * 300}px, 0, 0)`;
             cloud2.style.opacity = 1 - scrollPercent;
           }
         }
-
-        ticking = false;
       }
 
-      function requestTick() {
-        if (!ticking) {
-          window.requestAnimationFrame(updateParallax);
-          ticking = true;
-        }
-      }
-
-      window.addEventListener('scroll', requestTick, { passive: true });
-
-      // Interrupt autoscroll on manual user interaction
-      window.addEventListener('wheel', () => {
-        if (isAutoScrolling) {
-          console.log('Autoscroll interrupted by wheel');
-          isAutoScrolling = false;
-        }
-      }, { passive: true });
-      window.addEventListener('touchstart', () => {
-        if (isAutoScrolling) {
-          console.log('Autoscroll interrupted by touch');
-          isAutoScrolling = false;
-        }
-      }, { passive: true });
-      window.addEventListener('keydown', (e) => {
-        if (['ArrowUp', 'ArrowDown', 'Space', 'PageUp', 'PageDown', 'Home', 'End'].includes(e.code)) {
-          if (isAutoScrolling) {
-            console.log('Autoscroll interrupted by key:', e.code);
-            isAutoScrolling = false;
-          }
-        }
-      });
-
-      // Scroll-based animations
       function updateScrollAnimations() {
+        if (prefersReducedMotion) return;
+        
         const windowHeight = window.innerHeight;
         const scrollY = window.pageYOffset;
 
-        // Well transition dots animation
-        const wellTransition = document.getElementById('wellTransition');
-        if (wellTransition) {
-          const wellRect = wellTransition.getBoundingClientRect();
-          const wellTop = scrollY + wellRect.top;
-          const wellHeight = wellRect.height;
+        // 1. Well transition dots animation (Only if visible)
+        if (visibleElements.well) {
+          const wellTransition = document.getElementById('wellTransition');
+          if (wellTransition) {
+            const wellRect = wellTransition.getBoundingClientRect();
+            const wellTop = scrollY + wellRect.top;
+            const wellHeight = wellRect.height;
 
-          // Calculate progress (0 to 1) based on scroll position
-          const wellProgress = Math.max(0, Math.min(1,
-            (scrollY + windowHeight - wellTop) / (windowHeight + wellHeight * 0.5)
-          ));
+            const wellProgress = Math.max(0, Math.min(1,
+              (scrollY + windowHeight - wellTop) / (windowHeight + wellHeight * 0.5)
+            ));
 
-          const wellContent = wellTransition.querySelector('.well-transition-content');
-          if (wellContent) {
-            wellContent.style.opacity = wellProgress > 0.2 ? 1 : 0;
-          }
-
-          // Animate dots based on scroll progress
-          const dots = wellTransition.querySelectorAll('.dot');
-          dots.forEach((dot, index) => {
-            const dotThreshold = 0.3 + (index * 0.2); // 0.3, 0.5, 0.7
-            if (wellProgress > dotThreshold) {
-              dot.style.opacity = 1;
-              dot.style.transform = 'translateY(0)';
-            } else {
-              dot.style.opacity = 0;
-              dot.style.transform = 'translateY(10px)';
+            const wellContent = wellTransition.querySelector('.well-transition-content');
+            if (wellContent) {
+              wellContent.style.opacity = wellProgress > 0.2 ? 1 : 0;
             }
-          });
+
+            const dots = wellTransition.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+              const dotThreshold = 0.3 + (index * 0.2);
+              if (wellProgress > dotThreshold) {
+                dot.style.opacity = 1;
+                dot.style.transform = 'translateY(0)';
+              } else {
+                dot.style.opacity = 0;
+                dot.style.transform = 'translateY(10px)';
+              }
+            });
+          }
         }
 
-        // Architecture flow animation - LEGO brick stacking
-        const architectureFlow = document.getElementById('architectureFlow');
-        if (architectureFlow) {
-          const flowRect = architectureFlow.getBoundingClientRect();
-          const flowTop = scrollY + flowRect.top;
-          const flowHeight = flowRect.height;
-          const flowBottom = flowTop + flowHeight;
+        // 2. Architecture flow animation (Only if visible)
+        if (visibleElements.flow) {
+          const architectureFlow = document.getElementById('architectureFlow');
+          if (architectureFlow) {
+            const flowRect = architectureFlow.getBoundingClientRect();
+            const flowTop = scrollY + flowRect.top;
+            const flowHeight = flowRect.height;
+            // Calculate scroll progress through the section (0 to 1)
+            const rawProgress = (scrollY + windowHeight * 0.5 - flowTop) / flowHeight;
+            const animationEndPoint = 1.0;
+            const flowProgress = Math.max(0, Math.min(1, rawProgress / animationEndPoint));
 
-          // Calculate scroll progress through the section (0 to 1)
-          const rawProgress = (scrollY + windowHeight * 0.5 - flowTop) / flowHeight;
+            // Hide/Show content wrapper
+            const flowContent = architectureFlow.querySelector('.architecture-flow-content');
+            const animationComplete = rawProgress > animationEndPoint;
 
-          // Animation ends at 100% of section
-          const animationEndPoint = 1.0;
-          const flowProgress = Math.max(0, Math.min(1, rawProgress / animationEndPoint));
-
-          // Hide content after animation completes
-          const flowContent = architectureFlow.querySelector('.architecture-flow-content');
-          const isInSection = scrollY >= flowTop - windowHeight && scrollY <= flowBottom;
-          const animationComplete = rawProgress > animationEndPoint;
-
-          if (flowContent) {
-            flowContent.style.opacity = (isInSection && !animationComplete) ? '1' : '0';
-            flowContent.style.pointerEvents = 'none';
-          }
-
-          const nodes = architectureFlow.querySelectorAll('.flow-node');
-          const lines = architectureFlow.querySelectorAll('.flow-line');
-
-          // NEW ENERGY FLOW ANIMATION - Battery charging effect
-          // Phase 1 (0-0.2): Unity slides in + fills green
-          if (flowProgress <= 0.2) {
-            const phase1Progress = flowProgress / 0.2;
-
-            // Unity slides in (0-50%) then fills green (50-100%)
-            if (nodes[0]) {
-              if (phase1Progress <= 0.5) {
-                // Slide in
-                const slideProgress = phase1Progress / 0.5;
-                nodes[0].style.opacity = Math.min(1, slideProgress * 2);
-                const unityY = -200 * (1 - slideProgress);
-                nodes[0].style.transform = `translateY(${unityY}px)`;
-                nodes[0].classList.remove('filling', 'filled');
-              } else {
-                // Fill green
-                nodes[0].style.opacity = 1;
-                nodes[0].style.transform = 'translateY(0)';
-                nodes[0].classList.add('filling');
-                if (phase1Progress > 0.95) {
-                  nodes[0].classList.remove('filling');
-                  nodes[0].classList.add('filled');
-                }
-              }
+            if (flowContent) {
+              flowContent.style.opacity = (!animationComplete && flowProgress > 0) ? '1' : '0';
+              flowContent.style.pointerEvents = 'none';
             }
 
-            // Others hidden
-            if (nodes[1]) {
-              nodes[1].style.opacity = 0;
-              nodes[1].classList.remove('filling', 'filled');
-            }
-            if (nodes[2]) {
-              nodes[2].style.opacity = 0;
-              nodes[2].classList.remove('filling', 'filled');
-            }
-            if (lines[0]) {
-              lines[0].style.opacity = 0;
-              lines[0].classList.remove('filling', 'filled');
-            }
-            if (lines[1]) {
-              lines[1].style.opacity = 0;
-              lines[1].classList.remove('filling', 'filled');
-            }
-          }
-          // Phase 2 (0.2-0.4): Line 1 liquid flow + Python fills
-          else if (flowProgress <= 0.4) {
-            const phase2Progress = (flowProgress - 0.2) / 0.2;
-
-            // Unity stays filled
-            if (nodes[0]) {
-              nodes[0].style.opacity = 1;
-              nodes[0].style.transform = 'translateY(0)';
-              nodes[0].classList.remove('filling');
-              nodes[0].classList.add('filled');
-            }
-
-            // Line 1 liquid flow (0-50%) then Python fills (50-100%)
-            if (phase2Progress <= 0.5) {
-              // Liquid drops through line
-              if (lines[0]) {
-                lines[0].style.opacity = 1;
-                lines[0].classList.add('filling');
-              }
-              // Python visible but not filling yet
-              if (nodes[1]) {
-                nodes[1].style.opacity = 1;
-                nodes[1].classList.remove('filling', 'filled');
-              }
-            } else {
-              // Line filled, Python fills green
-              if (lines[0]) {
-                lines[0].classList.remove('filling');
-                lines[0].classList.add('filled');
-              }
-              if (nodes[1]) {
-                nodes[1].style.opacity = 1;
-                nodes[1].classList.add('filling');
-                if (phase2Progress > 0.95) {
-                  nodes[1].classList.remove('filling');
-                  nodes[1].classList.add('filled');
-                }
-              }
-            }
-
-            // ElevenLabs hidden
-            if (nodes[2]) {
-              nodes[2].style.opacity = 0;
-              nodes[2].classList.remove('filling', 'filled');
-            }
-            if (lines[1]) {
-              lines[1].style.opacity = 0;
-              lines[1].classList.remove('filling', 'filled');
-            }
-          }
-          // Phase 3 (0.4-0.6): Line 2 liquid flow + ElevenLabs fills
-          else if (flowProgress <= 0.6) {
-            const phase3Progress = (flowProgress - 0.4) / 0.2;
-
-            // Unity and Python stay filled
-            if (nodes[0]) {
-              nodes[0].style.opacity = 1;
-              nodes[0].classList.add('filled');
-            }
-            if (nodes[1]) {
-              nodes[1].style.opacity = 1;
-              nodes[1].classList.add('filled');
-            }
-            if (lines[0]) {
-              lines[0].style.opacity = 1;
-              lines[0].classList.add('filled');
-            }
-
-            // Line 2 liquid flow (0-50%) then ElevenLabs fills (50-100%)
-            if (phase3Progress <= 0.5) {
-              // Liquid drops through line
-              if (lines[1]) {
-                lines[1].style.opacity = 1;
-                lines[1].classList.add('filling');
-              }
-              // ElevenLabs visible but not filling yet
-              if (nodes[2]) {
-                nodes[2].style.opacity = 1;
-                nodes[2].classList.remove('filling', 'filled');
-              }
-            } else {
-              // Line filled, ElevenLabs fills green
-              if (lines[1]) {
-                lines[1].classList.remove('filling');
-                lines[1].classList.add('filled');
-              }
-              if (nodes[2]) {
-                nodes[2].style.opacity = 1;
-                nodes[2].classList.add('filling');
-                if (phase3Progress > 0.95) {
-                  nodes[2].classList.remove('filling');
-                  nodes[2].classList.add('filled');
-                }
-              }
-            }
-          }
-          // Phase 4 (0.6-1): All filled + SUCCESS battery fill
-          else {
-            // Calculate progress within Phase 4
-            const phase4Progress = (flowProgress - 0.6) / 0.4;
-
-            // All boxes and lines stay filled
-            if (nodes[0]) {
-              nodes[0].style.opacity = 1;
-              nodes[0].classList.add('filled');
-            }
-            if (nodes[1]) {
-              nodes[1].style.opacity = 1;
-              nodes[1].classList.add('filled');
-            }
-            if (nodes[2]) {
-              nodes[2].style.opacity = 1;
-              nodes[2].classList.add('filled');
-            }
-            if (lines[0]) {
-              lines[0].style.opacity = 1;
-              lines[0].classList.add('filled');
-            }
-            if (lines[1]) {
-              lines[1].style.opacity = 1;
-              lines[1].classList.add('filled');
-            }
-
+            const nodes = architectureFlow.querySelectorAll('.flow-node');
+            const lines = architectureFlow.querySelectorAll('.flow-line');
             const successMessage = architectureFlow.querySelector('#flowSuccessMessage');
 
-            // Boxes fade out (0-25%), SUCCESS fills (25-75%), SUCCESS stays (75-100%)
-            if (phase4Progress < 0.25) {
-              // Boxes fade out
-              const fadeProgress = phase4Progress / 0.25;
-              const fadeOpacity = 1 - fadeProgress;
-              nodes.forEach(node => {
-                node.style.opacity = fadeOpacity;
-              });
-              if (lines[0]) lines[0].style.opacity = fadeOpacity;
-              if (lines[1]) lines[1].style.opacity = fadeOpacity;
+            // Constants for Phases
+            const P1_END = 0.2;
+            const P2_END = 0.4;
+            const P3_END = 0.6;
 
-              // SUCCESS hidden
-              if (successMessage) {
-                successMessage.style.opacity = 0;
-                successMessage.style.backgroundPosition = '100% 0';
-              }
-            } else {
-              // Boxes completely hidden
-              nodes.forEach(node => {
-                node.style.opacity = 0;
-              });
-              if (lines[0]) lines[0].style.opacity = 0;
-              if (lines[1]) lines[1].style.opacity = 0;
+            // Helper to reset elements if scrolling back up
+            const resetElement = (el) => {
+                if(el) { el.style.opacity = 0; el.classList.remove('filling', 'filled'); }
+            };
+            const fillElement = (el) => {
+                if(el) { el.style.opacity = 1; el.classList.add('filled'); el.classList.remove('filling'); }
+            };
 
-              // SUCCESS battery fill animation
-              if (successMessage) {
-                if (phase4Progress < 0.75) {
-                  // Filling phase (25-75%)
-                  const fillProgress = (phase4Progress - 0.25) / 0.5;
-                  successMessage.style.opacity = 1;
-                  const bgPosition = 100 - (fillProgress * 100);
-                  successMessage.style.backgroundPosition = `${bgPosition}% 0`;
+            // --- PHASE 1: Unity ---
+            if (flowProgress <= P1_END) {
+              const localProgress = flowProgress / P1_END;
+              if (nodes[0]) {
+                if (localProgress <= 0.5) {
+                  const slideProgress = localProgress / 0.5;
+                  nodes[0].style.opacity = Math.min(1, slideProgress * 2);
+                  nodes[0].style.transform = `translateY(${-200 * (1 - slideProgress)}px)`;
+                  nodes[0].classList.remove('filling', 'filled');
                 } else {
-                  // Full and stays (75-100%)
-                  successMessage.style.opacity = 1;
-                  successMessage.style.backgroundPosition = '0% 0';
+                  nodes[0].style.opacity = 1;
+                  nodes[0].style.transform = 'translateY(0)';
+                  nodes[0].classList.add('filling');
+                  if (localProgress > 0.95) { nodes[0].classList.remove('filling'); nodes[0].classList.add('filled'); }
+                }
+              }
+              // Reset others
+              resetElement(nodes[1]); resetElement(nodes[2]); 
+              resetElement(lines[0]); resetElement(lines[1]);
+
+            // --- PHASE 2: Python ---
+            } else if (flowProgress <= P2_END) {
+              const localProgress = (flowProgress - P1_END) / (P2_END - P1_END);
+              fillElement(nodes[0]); // Previous kept filled
+
+              if (localProgress <= 0.5) {
+                if (lines[0]) { lines[0].style.opacity = 1; lines[0].classList.add('filling'); }
+                if (nodes[1]) { nodes[1].style.opacity = 1; nodes[1].classList.remove('filling', 'filled'); }
+              } else {
+                if (lines[0]) { lines[0].classList.remove('filling'); lines[0].classList.add('filled'); }
+                if (nodes[1]) { 
+                    nodes[1].style.opacity = 1; 
+                    nodes[1].classList.add('filling'); 
+                    if(localProgress > 0.95) { nodes[1].classList.remove('filling'); nodes[1].classList.add('filled'); }
+                }
+              }
+              resetElement(nodes[2]); resetElement(lines[1]);
+
+            // --- PHASE 3: ElevenLabs ---
+            } else if (flowProgress <= P3_END) {
+              const localProgress = (flowProgress - P2_END) / (P3_END - P2_END);
+              fillElement(nodes[0]); fillElement(nodes[1]); fillElement(lines[0]);
+
+              if (localProgress <= 0.5) {
+                if (lines[1]) { lines[1].style.opacity = 1; lines[1].classList.add('filling'); }
+                if (nodes[2]) { nodes[2].style.opacity = 1; nodes[2].classList.remove('filling', 'filled'); }
+              } else {
+                if (lines[1]) { lines[1].classList.remove('filling'); lines[1].classList.add('filled'); }
+                if (nodes[2]) { 
+                    nodes[2].style.opacity = 1; 
+                    nodes[2].classList.add('filling'); 
+                    if(localProgress > 0.95) { nodes[2].classList.remove('filling'); nodes[2].classList.add('filled'); }
+                }
+              }
+
+            // --- PHASE 4: Success ---
+            } else {
+              const localProgress = (flowProgress - P3_END) / (1.0 - P3_END);
+              fillElement(nodes[0]); fillElement(nodes[1]); fillElement(nodes[2]);
+              fillElement(lines[0]); fillElement(lines[1]);
+
+              if (localProgress < 0.25) {
+                const fadeOpacity = 1 - (localProgress / 0.25);
+                nodes.forEach(n => n.style.opacity = fadeOpacity);
+                lines.forEach(l => l.style.opacity = fadeOpacity);
+                if(successMessage) successMessage.style.opacity = 0;
+              } else {
+                nodes.forEach(n => n.style.opacity = 0);
+                lines.forEach(l => l.style.opacity = 0);
+                
+                if (successMessage) {
+                   if (localProgress < 0.75) {
+                      const fillP = (localProgress - 0.25) / 0.5;
+                      successMessage.style.opacity = 1;
+                      successMessage.style.backgroundPosition = `${100 - (fillP * 100)}% 0`;
+                   } else {
+                      successMessage.style.opacity = 1;
+                      successMessage.style.backgroundPosition = '0% 0';
+                   }
                 }
               }
             }
           }
         }
 
-        // Regular sections
-        const sections = document.querySelectorAll('.section');
-        sections.forEach(section => {
-          const rect = section.getBoundingClientRect();
-          const sectionTop = scrollY + rect.top;
-          const sectionProgress = Math.max(0, Math.min(1,
-            (scrollY + windowHeight - sectionTop) / (windowHeight * 0.8)
-          ));
-
-          if (sectionProgress > 0.15) {
-            section.classList.add('visible');
-          } else {
-            section.classList.remove('visible');
-          }
-        });
-
-        // Smart autoscroll button logic - shows before each section
+        // Smart autoscroll button logic
         const autoscrollBtn = document.getElementById('autoscrollBtn');
         if (autoscrollBtn && !isAutoScrolling) {
-          const target = determineAutoscrollTarget();
-
+          const target = determineAutoscrollTarget(scrollY, windowHeight);
           if (target) {
-            // Update button text
-            const buttonText = autoscrollBtn.querySelector('span');
-            if (buttonText) buttonText.textContent = target.label;
-
-            // Store target info in dataset
+            const textSpan = autoscrollBtn.querySelector('span');
+            if (textSpan) textSpan.textContent = target.label;
             autoscrollBtn.dataset.targetY = target.target;
             autoscrollBtn.dataset.duration = target.duration;
-
-            // Show button
             autoscrollBtn.classList.add('visible');
           } else {
-            // Hide button (during animation or after all animations)
             autoscrollBtn.classList.remove('visible');
           }
         }
       }
 
-      // Determine which section to autoscroll based on current position
-      function determineAutoscrollTarget() {
-        const scrollY = window.scrollY;
-        const windowHeight = window.innerHeight;
-
+      function determineAutoscrollTarget(scrollY, windowHeight) {
         const wellTransition = document.getElementById('wellTransition');
         const architectureFlow = document.getElementById('architectureFlow');
 
         if (!wellTransition || !architectureFlow) return null;
 
-        // Get section positions
+        // Get cached visibility to avoid rect calc if far away, 
+        // BUT for autoscroll we need positions to calculate targets.
+        // Optimization: Only calc rects if we are roughly in the zone
+        // For simplicity and robustness here, we calc rects but throttle via scroll events
+        
         const wellRect = wellTransition.getBoundingClientRect();
         const wellTop = scrollY + wellRect.top;
         const wellBottom = scrollY + wellRect.bottom;
-
+        
         const flowRect = architectureFlow.getBoundingClientRect();
         const flowTop = scrollY + flowRect.top;
         const flowBottom = scrollY + flowRect.bottom;
 
-        // Trigger zones (show button BEFORE section)
         const beforeWell = scrollY < wellTop - (windowHeight * 0.3);
         const betweenSections = scrollY >= wellBottom && scrollY < flowTop - (windowHeight * 0.3);
 
-        // Return target for closest upcoming section
         if (beforeWell) {
-          return {
-            label: 'Auto Play',
-            target: wellBottom,
-            duration: 5000 // 5 seconds
-          };
+          return { label: 'Auto Play', target: wellBottom, duration: 5000 };
         } else if (betweenSections) {
-          return {
-            label: 'Auto Play',
-            target: flowBottom,
-            duration: 10000 // 10 seconds
-          };
+          return { label: 'Auto Play', target: flowBottom, duration: 10000 };
         }
-
-        return null; // Hide button (during animation or after)
+        return null;
       }
 
-      // Smooth autoscroll function with full control over duration
       function smoothScrollTo(targetY, duration) {
         isAutoScrolling = true;
         const startY = window.scrollY;
         const distance = targetY - startY;
         const startTime = performance.now();
-
-        // CRITICAL: Disable CSS scroll-behavior during autoscroll
         const originalScrollBehavior = document.documentElement.style.scrollBehavior;
         document.documentElement.style.scrollBehavior = 'auto';
 
-        console.log('Starting autoscroll from', startY, 'to', targetY, 'duration', duration);
-
         function scrollStep(currentTime) {
-          // Check if user interrupted
           if (!isAutoScrolling) {
-            console.log('Autoscroll interrupted');
-            // Restore scroll behavior
             document.documentElement.style.scrollBehavior = originalScrollBehavior;
             return;
           }
 
           const elapsed = currentTime - startTime;
           const progress = Math.min(elapsed / duration, 1);
+          
+          // easeInOutQuad
+          const easeProgress = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
 
-          // Easing function (easeInOutQuad) for smooth motion
-          const easeProgress = progress < 0.5
-            ? 2 * progress * progress
-            : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-
-          // Calculate current scroll position
-          const currentScrollY = startY + distance * easeProgress;
-
-          // Update scroll position
-          window.scrollTo(0, currentScrollY);
-
-          // CRITICAL: Directly call animation updates bypassing event system
-          updateParallax();
-          updateScrollAnimations();
+          window.scrollTo(0, startY + distance * easeProgress);
+          updateParallaxAndAnimations();
 
           if (progress < 1) {
             requestAnimationFrame(scrollStep);
           } else {
-            // Animation complete
-            console.log('Autoscroll complete at', window.scrollY);
             isAutoScrolling = false;
-            updateParallax();
-            updateScrollAnimations();
-            // Restore scroll behavior
+            updateParallaxAndAnimations();
             document.documentElement.style.scrollBehavior = originalScrollBehavior;
           }
         }
-
         requestAnimationFrame(scrollStep);
       }
 
-      // Add to parallax update
       function updateParallaxAndAnimations() {
         updateParallax();
         updateScrollAnimations();
@@ -2292,32 +2129,44 @@ window.__preloadedLang=savedLang;
         }
       }
 
-      // Initialize on load
+      // Initialize
       document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('loaded');
+        
+        // Init Observers
+        const hero = document.getElementById('hero');
+        const well = document.getElementById('wellTransition');
+        const flow = document.getElementById('architectureFlow');
+        if(hero) visibilityObserver.observe(hero);
+        if(well) visibilityObserver.observe(well);
+        if(flow) visibilityObserver.observe(flow);
+
+        document.querySelectorAll('.section').forEach(section => {
+           sectionObserver.observe(section);
+        });
+
+        window.addEventListener('scroll', requestTick, { passive: true });
         updateScrollAnimations();
 
-        // Autoscroll button click handler
+        // User interaction stops autoscroll
+        ['wheel', 'touchstart', 'keydown'].forEach(evt => 
+            window.addEventListener(evt, () => { if(isAutoScrolling) isAutoScrolling = false; }, { passive: true })
+        );
+
         const autoscrollBtn = document.getElementById('autoscrollBtn');
         if (autoscrollBtn) {
           autoscrollBtn.addEventListener('click', () => {
             const targetY = parseInt(autoscrollBtn.dataset.targetY);
             const duration = parseInt(autoscrollBtn.dataset.duration);
-
             if (targetY && duration) {
-              // Scroll to target with appropriate duration
               smoothScrollTo(targetY, duration);
-
-              // Hide button immediately
               autoscrollBtn.classList.remove('visible');
             }
           });
         }
       });
-
     </script>
 
-    <!-- Main site scripts -->
     <script src="../assets/js/jquery.min.js"></script>
     <script src="../assets/js/browser.min.js"></script>
     <script src="../assets/js/breakpoints.min.js"></script>
