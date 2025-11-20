@@ -1,729 +1,929 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shadow Frames | Audio Architecture Showcase</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shadow Frames | Audio Architecture Showcase</title>
 
-    <style>
-      /* === CORE THEME === */
-      :root {
-        --bg: #050505;
-        --panel: #0a0a0a;
-        --border: #27272a;
-        --accent: #3b82f6; /* Blue for Tech */
-        --accent-glow: rgba(59, 130, 246, 0.1);
-        --secondary: #a855f7; /* Purple for Wwise */
-        --text: #e4e4e7;
-        --text-dim: #71717a;
-        --code-bg: #0d0d0d;
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* === CORE THEME === */
+    :root {
+      --bg: #030303;
+      --panel: rgba(20, 20, 20, 0.6);
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.4);
+      --secondary: #a855f7;
+      --text: #f4f4f5;
+      --text-dim: #a1a1aa;
+      --code-bg: #09090b;
+      --font-main: 'Inter', sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-main);
+      overflow-x: hidden;
+      line-height: 1.6;
+      background-image:
+        radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+      min-height: 100vh;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
       }
 
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
+    }
 
-      body {
-        background-color: var(--bg);
-        color: var(--text);
-        font-family: 'Inter', sans-serif;
-        overflow-x: hidden;
-        line-height: 1.6;
-      }
+    section {
+      animation: fadeInUp 0.8s ease-out forwards;
+      opacity: 0;
+      /* Start hidden */
+    }
 
-      .container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 20px;
-      }
-      .hidden {
-        display: none !important;
-      }
+    section:nth-child(1) {
+      animation-delay: 0.1s;
+    }
 
-      /* === BACKGROUND FX === */
-      .scanlines {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 9999;
-        background: linear-gradient(
-          to bottom,
+    section:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    section:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    section:nth-child(4) {
+      animation-delay: 0.4s;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* === BACKGROUND FX === */
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      background: linear-gradient(to bottom,
           rgba(255, 255, 255, 0),
           rgba(255, 255, 255, 0) 50%,
           rgba(0, 0, 0, 0.1) 50%,
-          rgba(0, 0, 0, 0.1)
-        );
-        background-size: 100% 4px;
-        opacity: 0.15;
+          rgba(0, 0, 0, 0.1));
+      background-size: 100% 4px;
+      opacity: 0.1;
+      mix-blend-mode: overlay;
+    }
+
+    .noise-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    /* === NAV === */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      background: rgba(3, 3, 3, 0.8);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .back-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      color: var(--text);
+      transform: translateX(-4px);
+    }
+
+    .lang-switch {
+      display: flex;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      transition: all 0.2s ease;
+    }
+
+    .lang-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .lang-btn.active {
+      background: var(--code-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* === HERO SECTION === */
+    .hero {
+      padding: 220px 0 100px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px;
+      height: 400px;
+      background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.1), transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+      filter: blur(60px);
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(4rem, 8vw, 7rem);
+      line-height: 0.9;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 30px;
+      background: linear-gradient(to bottom, #ffffff, #94a3b8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 80px rgba(59, 130, 246, 0.2);
+    }
+
+    .badge {
+      background: rgba(59, 130, 246, 0.1);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      padding: 8px 20px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+      display: inline-block;
+      font-weight: 600;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.1);
+      backdrop-filter: blur(8px);
+    }
+
+    /* === VIDEO SECTION === */
+    .video-showcase {
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto 100px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      box-shadow:
+        0 20px 50px -10px rgba(0, 0, 0, 0.8),
+        0 0 100px -20px rgba(59, 130, 246, 0.15);
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .video-showcase:hover {
+      transform: translateY(-5px);
+      box-shadow:
+        0 30px 60px -10px rgba(0, 0, 0, 0.9),
+        0 0 120px -20px rgba(59, 130, 246, 0.25);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      /* 16:9 */
+      height: 0;
+      background: #050505;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* YouTube Lazy Load Preview */
+    .video-preview {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .video-preview::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.6) 100%);
+      transition: background 0.3s ease;
+    }
+
+    .video-preview:hover {
+      transform: scale(1.02);
+    }
+
+    .video-play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90px;
+      height: 90px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .video-preview:hover .video-play-btn {
+      transform: translate(-50%, -50%) scale(1.15);
+      background: rgba(59, 130, 246, 0.9);
+      border-color: transparent;
+      box-shadow: 0 0 50px rgba(59, 130, 246, 0.5);
+    }
+
+    .video-play-btn::after {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 26px solid white;
+      border-top: 16px solid transparent;
+      border-bottom: 16px solid transparent;
+      margin-left: 6px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+
+    /* === INTERACTIVE CODE LAB (IDE STYLE) === */
+    .lab-wrapper {
+      margin-bottom: 120px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      border-left: none;
+      padding-left: 0;
+      text-align: center;
+      background: linear-gradient(to right, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+
+    .lab-header {
+      display: flex;
+      justify-content: flex-start;
+      gap: 1px;
+      margin-bottom: 0;
+      background: #1e1e1e;
+      border-radius: 12px 12px 0 0;
+      overflow: hidden;
+      padding: 8px 8px 0;
+      border: 1px solid var(--border);
+      border-bottom: none;
+    }
+
+    .lab-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      padding: 10px 20px;
+      border-radius: 6px 6px 0 0;
+      cursor: pointer;
+      transition: 0.2s;
+      font-family: var(--font-main);
+      font-size: 0.85rem;
+      font-weight: 500;
+      position: relative;
+      opacity: 0.7;
+    }
+
+    .lab-tab:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      opacity: 1;
+    }
+
+    .lab-tab.active {
+      color: var(--text);
+      background: var(--code-bg);
+      opacity: 1;
+    }
+
+    .lab-tab.active::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 2px 2px 0 0;
+    }
+
+    .ide-container {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      overflow: hidden;
+      height: 650px;
+      box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+    }
+
+    /* IDE Left: Code */
+    .ide-code {
+      background: var(--code-bg);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 0;
+      scrollbar-width: none;
+    }
+
+    .ide-code::-webkit-scrollbar {
+      display: none;
+    }
+
+    .code-toolbar {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #666;
+      display: flex;
+      gap: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      align-items: center;
+    }
+
+    .code-toolbar::before {
+      content: '';
+      display: flex;
+      gap: 6px;
+      width: 40px;
+      height: 10px;
+      background-image:
+        radial-gradient(circle, #ff5f56 4px, transparent 5px),
+        radial-gradient(circle at 16px, #ffbd2e 4px, transparent 5px),
+        radial-gradient(circle at 32px, #27c93f 4px, transparent 5px);
+      background-repeat: no-repeat;
+      margin-right: auto;
+    }
+
+    .code-content {
+      padding: 30px;
+    }
+
+    .code-block {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1.7;
+      white-space: pre;
+      color: #d4d4d4;
+    }
+
+    /* Syntax Highlighting Colors (VS Code Dark+) */
+    .k {
+      color: #c586c0;
+      font-weight: bold;
+    }
+
+    .t {
+      color: #4ec9b0;
+    }
+
+    .f {
+      color: #dcdcaa;
+    }
+
+    .c {
+      color: #4ec9b0;
+    }
+
+    .s {
+      color: #ce9178;
+    }
+
+    .com {
+      color: #6a9955;
+      font-style: italic;
+    }
+
+    .m {
+      color: #b5cea8;
+    }
+
+    .v {
+      color: #9cdcfe;
+    }
+
+    .op {
+      color: #d4d4d4;
+    }
+
+    /* Interactive Lines */
+    .line {
+      display: block;
+      padding: 4px 15px;
+      margin: 0 -15px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-left: 3px solid transparent;
+      position: relative;
+    }
+
+    .line:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .line.active {
+      background: rgba(59, 130, 246, 0.1);
+      border-left-color: var(--accent);
+    }
+
+    .line.active::after {
+      content: 'INSPECTING';
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.6rem;
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 1px;
+      opacity: 0.7;
+    }
+
+    /* IDE Right: Inspector */
+    .ide-inspector {
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      background: #0a0a0a;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .insp-empty {
+      text-align: center;
+      color: var(--text-dim);
+      opacity: 0.5;
+      display: none;
+    }
+
+    .insp-content {
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
       }
 
-      /* === NAV === */
-      nav {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 100;
-        background: rgba(5, 5, 5, 0.9);
-        backdrop-filter: blur(10px);
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .insp-label {
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      margin-bottom: 20px;
+      display: inline-block;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+      padding: 4px 8px;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 4px;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .insp-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      color: white;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+    }
+
+    .insp-text {
+      color: #d4d4d8;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+
+    .insp-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .insp-tag {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 14px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      transition: 0.2s;
+    }
+
+    .insp-tag:hover {
+      border-color: var(--text-dim);
+      color: var(--text);
+    }
+
+    /* === AUDIO CARDS === */
+    .audio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .audio-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      padding: 30px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .audio-card:hover {
+      border-color: var(--accent);
+      background: rgba(59, 130, 246, 0.05);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .play-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .play-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px var(--accent-glow);
+      background: #60a5fa;
+    }
+
+    .play-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* === VISUALS === */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 32px;
+    }
+
+    .gallery-item {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-8px);
+      border-color: var(--accent);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+    }
+
+    .gallery-img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      border-bottom: 1px solid var(--border);
+      transition: transform 0.5s ease;
+    }
+
+    .gallery-item:hover .gallery-img {
+      transform: scale(1.05);
+    }
+
+    .gallery-caption {
+      padding: 24px;
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      background: rgba(10, 10, 10, 0.8);
+      backdrop-filter: blur(10px);
+      position: relative;
+      z-index: 2;
+    }
+
+
+    /* === RESPONSIVE === */
+    @media (max-width: 900px) {
+      .ide-container {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .ide-code {
+        height: 400px;
+        border-right: none;
         border-bottom: 1px solid var(--border);
-        padding: 15px 0;
-      }
-      .nav-inner {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
       }
 
-      .back-link {
-        color: var(--text-dim);
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .back-link:hover {
-        color: var(--accent);
-      }
-
-      .lang-switch {
-        display: flex;
-        gap: 5px;
-        background: #111;
-        padding: 4px;
-        border-radius: 6px;
-        border: 1px solid var(--border);
-      }
-      .lang-btn {
-        background: transparent;
-        border: none;
-        color: var(--text-dim);
-        padding: 4px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.8rem;
-      }
-      .lang-btn.active {
-        background: var(--accent);
-        color: white;
-      }
-
-      /* === HERO SECTION === */
-      .hero {
-        /* POPRAWKA: Zwiększony padding z góry, żeby napis był niżej */
-        padding: 180px 0 60px;
-        text-align: center;
-        background: radial-gradient(circle at 50% 0%, #1a1a2e 0%, var(--bg) 70%);
+      .ide-inspector {
+        min-height: 300px;
       }
 
       .hero-title {
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 5rem;
-        line-height: 0.9;
-        font-weight: 700;
-        letter-spacing: -2px;
-        position: relative;
-        z-index: 2;
-        text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
-        margin-bottom: 20px;
+        font-size: 3rem;
       }
 
-      .badge {
-        background: var(--accent-glow);
-        color: var(--accent);
-        border: 1px solid var(--accent);
-        padding: 5px 15px;
-        border-radius: 50px;
-        font-size: 0.8rem;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        margin-bottom: 25px;
-        display: inline-block;
-      }
-
-      /* === VIDEO SECTION (POPRAWIONE: MNIEJSZE) === */
       .video-showcase {
-        /* DUŻY PLAYER - PEŁNA SZEROKOŚĆ */
-        width: 100%;
         max-width: 100%;
-        margin: 0 auto 80px;
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        overflow: hidden;
-        background: #000;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-        position: relative;
       }
-      .video-container {
-        position: relative;
-        padding-bottom: 56.25%; /* 16:9 */
-        height: 0;
-        background: #000;
-      }
-      .video-container iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-      }
+    }
+  </style>
+</head>
 
-      /* YouTube Lazy Load Preview */
-      .video-preview {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        cursor: pointer;
-        background-size: cover;
-        background-position: center;
-        transition: opacity 0.3s ease;
-      }
-      .video-preview::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.3);
-        transition: background 0.3s ease;
-      }
-      .video-preview:hover::after {
-        background: rgba(0, 0, 0, 0.5);
-      }
-      .video-play-btn {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 80px;
-        height: 80px;
-        background: rgba(59, 130, 246, 0.9);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-        transition: all 0.3s ease;
-        border: 3px solid rgba(255, 255, 255, 0.8);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      }
-      .video-preview:hover .video-play-btn {
-        transform: translate(-50%, -50%) scale(1.1);
-        background: rgba(59, 130, 246, 1);
-        box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
-      }
-      .video-play-btn::after {
-        content: '';
-        width: 0;
-        height: 0;
-        border-left: 24px solid white;
-        border-top: 14px solid transparent;
-        border-bottom: 14px solid transparent;
-        margin-left: 4px;
-      }
+<body>
+  <div class="scanlines"></div>
+  <div class="noise-overlay"></div>
 
-      /* === INTERACTIVE CODE LAB (IDE STYLE) === */
-      .lab-wrapper {
-        margin-bottom: 80px;
-      }
-      .section-title {
-        font-family: 'Space Grotesk';
-        font-size: 2rem;
-        margin-bottom: 30px;
-        border-left: 4px solid var(--accent);
-        padding-left: 20px;
-      }
-
-      .lab-header {
-        display: flex;
-        justify-content: flex-start;
-        gap: 2px;
-        margin-bottom: 0;
-        border-bottom: 1px solid var(--border);
-      }
-      .lab-tab {
-        background: #111;
-        border: 1px solid var(--border);
-        border-bottom: none;
-        color: var(--text-dim);
-        padding: 12px 24px;
-        border-radius: 8px 8px 0 0;
-        cursor: pointer;
-        transition: 0.2s;
-        font-family: 'JetBrains Mono', sans-serif;
-        font-size: 0.85rem;
-        margin-right: 5px;
-      }
-      .lab-tab:hover {
-        background: #1a1a1a;
-        color: white;
-      }
-      .lab-tab.active {
-        border-color: var(--accent);
-        border-bottom: 1px solid var(--code-bg);
-        color: white;
-        background: var(--code-bg);
-      }
-
-      .ide-container {
-        display: grid;
-        grid-template-columns: 1.5fr 1fr;
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-top: none;
-        border-radius: 0 0 12px 12px;
-        overflow: hidden;
-        height: 600px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-      }
-
-      /* IDE Left: Code */
-      .ide-code {
-        background: var(--code-bg);
-        border-right: 1px solid var(--border);
-        overflow-y: auto;
-        padding: 0;
-        /* POPRAWKA: Ukrywanie scrollbara */
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none; /* IE and Edge */
-      }
-      .ide-code::-webkit-scrollbar {
-        display: none; /* Chrome/Safari */
-      }
-
-      .code-toolbar {
-        background: #111;
-        padding: 10px 20px;
-        border-bottom: 1px solid var(--border);
-        font-family: 'JetBrains Mono';
-        font-size: 0.75rem;
-        color: #666;
-        display: flex;
-        gap: 20px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-
-      .code-content {
-        padding: 30px;
-      }
-      .code-block {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 14px;
-        line-height: 1.7;
-        white-space: pre;
-        color: #d4d4d4;
-      }
-
-      /* POPRAWKA: Syntax Highlighting Colors (VS Code Style) */
-      .k {
-        color: #c586c0;
-        font-weight: bold;
-      } /* Keyword (pink) */
-      .t {
-        color: #4ec9b0;
-      } /* Type (teal) */
-      .f {
-        color: #dcdcaa;
-      } /* Function (yellow) */
-      .c {
-        color: #4ec9b0;
-      } /* Class (teal) */
-      .s {
-        color: #ce9178;
-      } /* String (orange) */
-      .com {
-        color: #6a9955;
-        font-style: italic;
-      } /* Comment (green) */
-      .m {
-        color: #b5cea8;
-      } /* Number/Macro */
-      .v {
-        color: #9cdcfe;
-      } /* Variable (light blue) */
-      .op {
-        color: #d4d4d4;
-      } /* Operator */
-
-      /* Interactive Lines */
-      .line {
-        display: block;
-        padding: 2px 15px;
-        margin: 0 -15px;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: 0.15s;
-        border-left: 3px solid transparent;
-      }
-      .line:hover {
-        background: rgba(255, 255, 255, 0.05);
-      }
-      .line.active {
-        background: rgba(59, 130, 246, 0.15);
-        border-left-color: var(--accent);
-      }
-
-      /* IDE Right: Inspector */
-      .ide-inspector {
-        padding: 40px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        position: relative;
-        background: #0a0a0a;
-      }
-
-      .insp-empty {
-        text-align: center;
-        color: var(--text-dim);
-        opacity: 0.5;
-        display: none; /* Hidden by default since we load content immediately */
-      }
-      .insp-content {
-        animation: fadeIn 0.3s ease;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .insp-label {
-        color: var(--accent);
-        font-family: 'JetBrains Mono';
-        font-size: 0.8rem;
-        margin-bottom: 15px;
-        display: block;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        font-weight: 700;
-      }
-      .insp-title {
-        font-family: 'Space Grotesk';
-        font-size: 1.8rem;
-        line-height: 1.2;
-        margin-bottom: 20px;
-        color: white;
-        border-bottom: 1px solid var(--border);
-        padding-bottom: 20px;
-      }
-      .insp-text {
-        color: #d4d4d8;
-        font-size: 1rem;
-        line-height: 1.7;
-        margin-bottom: 30px;
-      }
-      .insp-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .insp-tag {
-        background: #1a1a1a;
-        padding: 6px 12px;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        font-family: 'JetBrains Mono';
-        color: var(--text-dim);
-        border: 1px solid var(--border);
-      }
-
-      /* === AUDIO CARDS === */
-      .audio-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-      }
-      .audio-card {
-        background: var(--panel);
-        border: 1px solid var(--border);
-        padding: 25px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        transition: 0.2s;
-      }
-      .audio-card:hover {
-        border-color: var(--accent);
-        transform: translateY(-2px);
-      }
-
-      .play-btn {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: var(--accent);
-        border: none;
-        color: white;
-        font-size: 1.2rem;
-        cursor: pointer;
-        flex-shrink: 0;
-        transition: 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .play-btn:hover {
-        transform: scale(1.1);
-        box-shadow: 0 0 20px var(--accent-glow);
-      }
-
-      /* === VISUALS === */
-      .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        gap: 30px;
-      }
-      .gallery-item {
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        overflow: hidden;
-        transition: 0.3s;
-        cursor: pointer;
-      }
-      .gallery-item:hover {
-        transform: translateY(-5px);
-        border-color: var(--accent);
-      }
-      .gallery-img {
-        width: 100%;
-        height: 250px;
-        object-fit: cover;
-        border-bottom: 1px solid var(--border);
-      }
-      .gallery-caption {
-        padding: 20px;
-        font-size: 0.9rem;
-        color: var(--text-dim);
-      }
-
-      /* === RESPONSIVE === */
-      @media (max-width: 900px) {
-        .ide-container {
-          grid-template-columns: 1fr;
-          height: auto;
-        }
-        .ide-code {
-          height: 400px;
-          border-right: none;
-          border-bottom: 1px solid var(--border);
-        }
-        .ide-inspector {
-          min-height: 300px;
-        }
-        .hero-title {
-          font-size: 3rem;
-        }
-        .video-showcase {
-          max-width: 100%;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="scanlines"></div>
-
-    <nav>
-      <div class="container nav-inner">
-        <a href="../index.html" class="back-link">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-          <span data-i18n="nav.back">Back to Projects</span>
-        </a>
-        <div class="lang-switch">
-          <button class="lang-btn active" onclick="setLang('en')">EN</button>
-          <button class="lang-btn" onclick="setLang('pl')">PL</button>
-          <button class="lang-btn" onclick="setLang('nl')">NL</button>
-        </div>
+  <nav>
+    <div class="container nav-inner">
+      <a href="../index.html" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span data-i18n="nav.back">Back to Projects</span>
+      </a>
+      <div class="lang-switch">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('pl')">PL</button>
+        <button class="lang-btn" onclick="setLang('nl')">NL</button>
       </div>
-    </nav>
+    </div>
+  </nav>
 
-    <header class="container hero">
-      <span class="badge" data-i18n="hero.role">Lead Audio Designer</span>
-      <h1 class="hero-title">SHADOW FRAMES</h1>
-      <p data-i18n="hero.desc" style="color: #ccc">
-        Psychological horror set in a 1960s Irish pub. <br />
-        Audio is not just atmospheric—it's the primary detection mechanic.
-      </p>
-    </header>
+  <header class="container hero">
+    <span class="badge" data-i18n="hero.role">Lead Audio Designer</span>
+    <h1 class="hero-title">SHADOW FRAMES</h1>
+    <p data-i18n="hero.desc" style="color: #ccc">
+      Psychological horror set in a 1960s Irish pub. <br />
+      Audio is not just atmospheric—it's the primary detection mechanic.
+    </p>
+  </header>
 
-    <section class="container" style="margin-bottom: 100px">
-      <div style="text-align: center; margin-bottom: 30px">
-        <h2
-          style="
+  <section class="container" style="margin-bottom: 100px">
+    <div style="text-align: center; margin-bottom: 30px">
+      <h2 style="
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.5rem;
             color: var(--accent);
             letter-spacing: 2px;
             text-transform: uppercase;
             margin-bottom: 10px;
-          "
-          data-i18n="video.label"
-        >
-          Gameplay Preview
-        </h2>
-        <p
-          style="
+          " data-i18n="video.label">
+        Gameplay Preview
+      </h2>
+      <p style="
             color: var(--text-dim);
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.9rem;
-          "
-          data-i18n="video.subtitle"
-        >
-          Sprint 5 — Week of Production
-        </p>
-      </div>
-      <div class="video-showcase">
-        <div class="video-container" id="video-container">
-          <div
-            class="video-preview"
-            id="video-preview"
-            style="background-image: url('../imageforvideshadowframes.png')"
-          >
-            <div class="video-play-btn"></div>
-          </div>
+          " data-i18n="video.subtitle">
+        Sprint 5 — Week of Production
+      </p>
+    </div>
+    <div class="video-showcase">
+      <div class="video-container" id="video-container">
+        <div class="video-preview" id="video-preview" style="background-image: url('../imageforvideshadowframes.png')">
+          <div class="video-play-btn"></div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="container lab-wrapper">
-      <h2 class="section-title" data-i18n="code.title">Engine Architecture</h2>
+  <section class="container lab-wrapper">
+    <h2 class="section-title" data-i18n="code.title">Engine Architecture</h2>
 
-      <div class="lab-header">
-        <button class="lab-tab active" onclick="loadCode('rtpc', this)">EnemyPresence.cpp</button>
-        <button class="lab-tab" onclick="loadCode('spatial', this)">AnomalyAudio.cpp</button>
-        <button class="lab-tab" onclick="loadCode('physics', this)">Footsteps.cpp</button>
-      </div>
+    <div class="lab-header">
+      <button class="lab-tab active" onclick="loadCode('rtpc', this)">EnemyPresence.cpp</button>
+      <button class="lab-tab" onclick="loadCode('spatial', this)">AnomalyAudio.cpp</button>
+      <button class="lab-tab" onclick="loadCode('physics', this)">Footsteps.cpp</button>
+    </div>
 
-      <div class="ide-container">
-        <div class="ide-code">
-          <div class="code-toolbar">
-            <span class="file-name">C++ SOURCE VIEW</span>
-          </div>
-          <div class="code-block">
-            <div id="code-content" class="code-content"></div>
-          </div>
+    <div class="ide-container">
+      <div class="ide-code">
+        <div class="code-toolbar">
+          <span class="file-name">C++ SOURCE VIEW</span>
         </div>
-
-        <div class="ide-inspector">
-          <div id="insp-content" class="insp-content">
-            <span class="insp-label" id="insp-label">LOGIC ANALYSIS</span>
-            <h3 class="insp-title" id="insp-title">...</h3>
-            <p class="insp-text" id="insp-desc">...</p>
-            <div id="insp-tags"></div>
-          </div>
+        <div class="code-block">
+          <div id="code-content" class="code-content"></div>
         </div>
       </div>
-    </section>
 
-    <section class="container media-section">
-      <h2 class="section-title" data-i18n="visuals.title">Blueprints & Wwise</h2>
-      <div class="gallery-grid">
-        <div class="gallery-item">
-          <img
-            src="../assets/images/projects-shadowframes/BP_PlayerOneshotAudioManager.png"
-            class="gallery-img"
-            alt="Blueprint"
-          />
-          <div class="gallery-caption">
-            <strong
-              style="color: white; display: block; margin-bottom: 5px"
-              data-i18n="bp.card1_title"
-              >Decoupled Audio Manager</strong
-            >
-            <span data-i18n="bp.card1_desc">Blueprint logic that binds to C++ delegates.</span>
-          </div>
-        </div>
-        <div class="gallery-item">
-          <img
-            src="../assets/images/projects-shadowframes/SwitchContainer.png"
-            class="gallery-img"
-            alt="Wwise"
-          />
-          <div class="gallery-caption">
-            <strong
-              style="color: white; display: block; margin-bottom: 5px"
-              data-i18n="bp.card2_title"
-              >Switch Hierarchy</strong
-            >
-            <span data-i18n="bp.card2_desc">Managing footstep surfaces dynamically.</span>
-          </div>
+      <div class="ide-inspector">
+        <div id="insp-content" class="insp-content">
+          <span class="insp-label" id="insp-label">LOGIC ANALYSIS</span>
+          <h3 class="insp-title" id="insp-title">...</h3>
+          <p class="insp-text" id="insp-desc">...</p>
+          <div id="insp-tags"></div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="container media-section" style="margin-bottom: 100px">
-      <h2 class="section-title" data-i18n="audio.title">Audio Implementation</h2>
-      <div class="audio-grid">
-        <div class="audio-card">
-          <button
-            class="play-btn"
-            onclick="toggleAudio(this, '../assets/audio/samples/Shadow_Frame_Menu_Vibe_but_Louder.wav')"
-          >
-            ▶
-          </button>
-          <div>
-            <h4 style="margin-bottom: 5px">Menu Ambience</h4>
-            <p style="color: var(--text-dim); font-size: 0.9rem">
-              Looping drone with vinyl crackle.
-            </p>
-          </div>
-        </div>
-        <div class="audio-card">
-          <button
-            class="play-btn"
-            onclick="toggleAudio(this, '../assets/images/projects-shadowframes/PaletteSoundscapeUpdate.mp3')"
-          >
-            ▶
-          </button>
-          <div>
-            <h4 style="margin-bottom: 5px">Main Bar Palette</h4>
-            <p style="color: var(--text-dim); font-size: 0.9rem">
-              Spatialized glass clinks & wood creaks.
-            </p>
-          </div>
+  <section class="container media-section">
+    <h2 class="section-title" data-i18n="visuals.title">Blueprints & Wwise</h2>
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <img src="../assets/images/projects-shadowframes/BP_PlayerOneshotAudioManager.png" class="gallery-img"
+          alt="Blueprint" />
+        <div class="gallery-caption">
+          <strong style="color: white; display: block; margin-bottom: 5px" data-i18n="bp.card1_title">Decoupled Audio
+            Manager</strong>
+          <span data-i18n="bp.card1_desc">Blueprint logic that binds to C++ delegates.</span>
         </div>
       </div>
-      <audio id="global-player"></audio>
-    </section>
+      <div class="gallery-item">
+        <img src="../assets/images/projects-shadowframes/SwitchContainer.png" class="gallery-img" alt="Wwise" />
+        <div class="gallery-caption">
+          <strong style="color: white; display: block; margin-bottom: 5px" data-i18n="bp.card2_title">Switch
+            Hierarchy</strong>
+          <span data-i18n="bp.card2_desc">Managing footstep surfaces dynamically.</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <script>
-      // === 1. DATA: REAL C++ LOGIC (WITH COLOR CLASSES) ===
-      const codeFiles = {
-        rtpc: {
-          code: `
+  <section class="container media-section" style="margin-bottom: 100px">
+    <h2 class="section-title" data-i18n="audio.title">Audio Implementation</h2>
+    <div class="audio-grid">
+      <div class="audio-card">
+        <button class="play-btn"
+          onclick="toggleAudio(this, '../assets/audio/samples/Shadow_Frame_Menu_Vibe_but_Louder.wav')">
+          ▶
+        </button>
+        <div>
+          <h4 style="margin-bottom: 5px">Menu Ambience</h4>
+          <p style="color: var(--text-dim); font-size: 0.9rem">
+            Looping drone with vinyl crackle.
+          </p>
+        </div>
+      </div>
+      <div class="audio-card">
+        <button class="play-btn"
+          onclick="toggleAudio(this, '../assets/images/projects-shadowframes/PaletteSoundscapeUpdate.mp3')">
+          ▶
+        </button>
+        <div>
+          <h4 style="margin-bottom: 5px">Main Bar Palette</h4>
+          <p style="color: var(--text-dim); font-size: 0.9rem">
+            Spatialized glass clinks & wood creaks.
+          </p>
+        </div>
+      </div>
+    </div>
+    <audio id="global-player"></audio>
+  </section>
+
+  <script>
+    // === 1. DATA: REAL C++ LOGIC (WITH COLOR CLASSES) ===
+    const codeFiles = {
+      rtpc: {
+        code: `
 <span class="t">void</span> <span class="c">UEnemyPresenceComponent</span>::<span class="f">TickComponent</span>(<span class="t">float</span> DeltaTime...)
 {
     <span class="com">// 1. Logic: Find closest enemy & calculate distance</span>
@@ -744,14 +944,14 @@
     <span class="com">// 4. Debug: Visual confirmation</span>
     <span class="k">if</span> (bShowDebug) <span class="f">DrawDebugLine</span>(..., <span class="c">FColor</span>::Red);
 }`,
-          details: {
-            math: { tags: ['Math', 'Normalization'], key: 'math' },
-            rtpc: { tags: ['Real-Time', 'Dynamic Mixing'], key: 'rtpc' }
-          },
-          defaultKey: 'math'
+        details: {
+          math: { tags: ['Math', 'Normalization'], key: 'math' },
+          rtpc: { tags: ['Real-Time', 'Dynamic Mixing'], key: 'rtpc' }
         },
-        spatial: {
-          code: `
+        defaultKey: 'math'
+      },
+      spatial: {
+        code: `
 <span class="t">void</span> <span class="c">UAnomalyAudioManager</span>::<span class="f">InitializeAudioSource</span>(<span class="c">AActor</span>* Owner)
 {
     <span class="com">// 1. Get Config Settings for this specific Anomaly</span>
@@ -775,14 +975,14 @@
         AkComponent
     );</div>
 }`,
-          details: {
-            bone: { tags: ['Spatial Audio', 'Immersion'], key: 'bone' },
-            spawn: { tags: ['Wwise API', 'One-Shot'], key: 'spawn' }
-          },
-          defaultKey: 'bone'
+        details: {
+          bone: { tags: ['Spatial Audio', 'Immersion'], key: 'bone' },
+          spawn: { tags: ['Wwise API', 'One-Shot'], key: 'spawn' }
         },
-        physics: {
-          code: `
+        defaultKey: 'bone'
+      },
+      physics: {
+        code: `
 <span class="c">FName</span> <span class="c">UFootstepComponent</span>::<span class="f">DetectSurface</span>()
 {
     <span class="com">// 1. Setup Raycast downwards</span>
@@ -803,246 +1003,247 @@
 
     <span class="k">return</span> <span class="s">"Concrete"</span>; <span class="com">// Fallback</span>
 }`,
-          details: {
-            trace: { tags: ['Physics', 'Raycast'], key: 'trace' },
-            mapping: { tags: ['Enums', 'Switch Container'], key: 'mapping' }
-          },
-          defaultKey: 'trace'
-        }
-      };
-
-      // === 2. TRANSLATIONS DATABASE ===
-      const dict = {
-        en: {
-          'nav.back': 'Back to Projects',
-          'hero.role': 'Lead Audio Designer',
-          'hero.desc':
-            "Psychological horror set in a 1960s Irish pub.<br>Audio is not just atmospheric—it's the primary detection mechanic.",
-          'code.title': 'Engine Architecture',
-          'code.instruction': 'SELECT A HIGHLIGHTED LINE<br>TO INSPECT THE LOGIC',
-          'visuals.title': 'Blueprints & Wwise',
-          'video.label': 'Gameplay Preview',
-          'video.subtitle': 'Sprint 5 — Week of Production',
-          'video.title': 'Gameplay Demo (Sprint 3)',
-          'audio.title': 'Audio Implementation',
-          'bp.card1_title': 'Decoupled Manager',
-          'bp.card1_desc': 'Blueprint logic binding to C++ delegates.',
-          'bp.card2_title': 'Switch Hierarchy',
-          'bp.card2_desc': 'Handling surface types dynamically.',
-
-          // Code Details
-          bone_title: 'Dynamic Spatial Attachment',
-          bone_desc:
-            "We don't just play sound at the actor's location. We dynamically find the specific mesh component (e.g., 'Jukebox_Speaker') and attach the Wwise emitter to it for precise 3D positioning.",
-          spawn_title: 'Spawn Event',
-          spawn_desc:
-            'Triggers the global anomaly spawn stinger. This is a One-Shot event that bypasses environment reverb for clarity.',
-          math_title: 'Distance Normalization',
-          math_desc:
-            'We convert the raw distance (cm) into a percentage (0-100). This normalized value allows us to use consistent RTPC curves in Wwise regardless of map size.',
-          rtpc_title: 'Real-Time Parameter Control',
-          rtpc_desc:
-            "Updates the Wwise game parameter every tick. This drives the volume and intensity of the 'Dread' layers seamlessly.",
-          trace_title: 'Physics Raycast',
-          trace_desc:
-            "Shoots an invisible line downwards from the player's feet to detect what physical object they are standing on.",
-          mapping_title: 'Material Mapping',
-          mapping_desc:
-            "Translates the Unreal Engine Physical Material (Asset) into a string that matches a Wwise Switch Group (e.g., 'Wood_Old')."
+        details: {
+          trace: { tags: ['Physics', 'Raycast'], key: 'trace' },
+          mapping: { tags: ['Enums', 'Switch Container'], key: 'mapping' }
         },
-        pl: {
-          'nav.back': 'Wróć do Projektów',
-          'hero.role': 'Główny Projektant Dźwięku',
-          'hero.desc':
-            'Psychologiczny horror w irlandzkim pubie lat 60.<br>Dźwięk to nie tylko klimat — to główny mechanizm detekcji.',
-          'code.title': 'Architektura Silnika',
-          'code.instruction': 'WYBIERZ PODŚWIETLONĄ LINIĘ<br>ABY ZANALIZOWAĆ LOGIKĘ',
-          'visuals.title': 'Blueprints i Wwise',
-          'video.label': 'Podgląd Rozgrywki',
-          'video.subtitle': 'Sprint 5 — Tydzień Produkcji',
-          'video.title': 'Demo Gameplayu (Sprint 3)',
-          'audio.title': 'Implementacja Audio',
-          'bp.card1_title': 'Odkodowany Manager',
-          'bp.card1_desc': 'Logika Blueprint podpięta pod delegaty C++.',
-          'bp.card2_title': 'Hierarchia Switchy',
-          'bp.card2_desc': 'Dynamiczna obsługa typów powierzchni.',
+        defaultKey: 'trace'
+      }
+    };
 
-          bone_title: 'Dynamiczne Podpięcie 3D',
-          bone_desc:
-            "Nie odtwarzamy dźwięku po prostu na aktorze. Znajdujemy konkretny komponent mesha (np. 'Głośnik') i podpinamy do niego emiter Wwise dla precyzji.",
-          spawn_title: 'Event Spawnu',
-          spawn_desc:
-            'Uruchamia stinger pojawienia się anomalii. To event One-Shot, który omija pogłos otoczenia dla czystości sygnału.',
-          math_title: 'Normalizacja Dystansu',
-          math_desc:
-            'Konwertujemy surowy dystans (cm) na procenty (0-100). Ta znormalizowana wartość pozwala używać spójnych krzywych RTPC w Wwise.',
-          rtpc_title: 'Kontrola Parametrów (RTPC)',
-          rtpc_desc:
-            "Aktualizuje parametr gry w Wwise w każdej klatce. Steruje to głośnością i intensywnością warstw 'Grozy' w sposób płynny.",
-          trace_title: 'Raycast Fizyczny',
-          trace_desc:
-            'Wystrzeliwuje niewidzialną linię w dół od stóp gracza, aby wykryć, na jakim obiekcie fizycznym stoi.',
-          mapping_title: 'Mapowanie Materiału',
-          mapping_desc:
-            "Tłumaczy Physical Material z Unreal Engine na ciąg znaków pasujący do Grupy Switch w Wwise (np. 'Wood_Old')."
-        },
-        nl: {
-          'nav.back': 'Terug naar Projecten',
-          'hero.role': 'Hoofd Audio Ontwerper',
-          'hero.desc':
-            'Psychologische horror in een Ierse pub uit de jaren 60.<br>Geluid is niet alleen sfeer - het is het primaire detectiemechanisme.',
-          'code.title': 'Engine Architectuur',
-          'code.instruction': 'SELECTEER EEN GEMARKEERDE REGEL<br>OM LOGICA TE ANALYSEREN',
-          'visuals.title': 'Blueprints & Wwise',
-          'video.label': 'Gameplay Voorbeeld',
-          'video.subtitle': 'Sprint 5 — Week van Productie',
-          'video.title': 'Gameplay Demo (Sprint 3)',
-          'audio.title': 'Audio Implementatie',
-          'bp.card1_title': 'Ontkoppelde Manager',
-          'bp.card1_desc': 'Blueprint logica gekoppeld aan C++ delegates.',
-          'bp.card2_title': 'Switch Hiërarchie',
-          'bp.card2_desc': 'Dynamische verwerking van oppervlaktetypes.',
+    // === 2. TRANSLATIONS DATABASE ===
+    const dict = {
+      en: {
+        'nav.back': 'Back to Projects',
+        'hero.role': 'Lead Audio Designer',
+        'hero.desc':
+          "Psychological horror set in a 1960s Irish pub.<br>Audio is not just atmospheric—it's the primary detection mechanic.",
+        'code.title': 'Engine Architecture',
+        'code.instruction': 'SELECT A HIGHLIGHTED LINE<br>TO INSPECT THE LOGIC',
+        'visuals.title': 'Blueprints & Wwise',
+        'video.label': 'Gameplay Preview',
+        'video.subtitle': 'Sprint 5 — Week of Production',
+        'video.title': 'Gameplay Demo (Sprint 3)',
+        'audio.title': 'Audio Implementation',
+        'bp.card1_title': 'Decoupled Manager',
+        'bp.card1_desc': 'Blueprint logic binding to C++ delegates.',
+        'bp.card2_title': 'Switch Hierarchy',
+        'bp.card2_desc': 'Handling surface types dynamically.',
 
-          bone_title: 'Dynamische 3D Bevestiging',
-          bone_desc:
-            'We spelen geluid niet zomaar af op de actor. We vinden de specifieke mesh component en bevestigen de Wwise emitter voor precisie.',
-          spawn_title: 'Spawn Event',
-          spawn_desc: 'Activeert de anomalie stinger. Dit is een One-Shot event.',
-          math_title: 'Afstand Normalisatie',
-          math_desc:
-            'We converteren de ruwe afstand (cm) naar een percentage (0-100) voor consistent RTPC gebruik.',
-          rtpc_title: 'Real-Time Parameter Control',
-          rtpc_desc:
-            "Werkt de Wwise spelparameter elke frame bij. Dit stuurt de intensiteit van de 'Dread' lagen aan.",
-          trace_title: 'Fysieke Raycast',
-          trace_desc:
-            'Schiet een onzichtbare lijn naar beneden om het fysieke materiaal onder de speler te detecteren.',
-          mapping_title: 'Materiaal Mapping',
-          mapping_desc: 'Vertaalt het Unreal Engine Fysiek Materiaal naar een Wwise Switch Groep.'
-        }
-      };
+        // Code Details
+        bone_title: 'Dynamic Spatial Attachment',
+        bone_desc:
+          "We don't just play sound at the actor's location. We dynamically find the specific mesh component (e.g., 'Jukebox_Speaker') and attach the Wwise emitter to it for precise 3D positioning.",
+        spawn_title: 'Spawn Event',
+        spawn_desc:
+          'Triggers the global anomaly spawn stinger. This is a One-Shot event that bypasses environment reverb for clarity.',
+        math_title: 'Distance Normalization',
+        math_desc:
+          'We convert the raw distance (cm) into a percentage (0-100). This normalized value allows us to use consistent RTPC curves in Wwise regardless of map size.',
+        rtpc_title: 'Real-Time Parameter Control',
+        rtpc_desc:
+          "Updates the Wwise game parameter every tick. This drives the volume and intensity of the 'Dread' layers seamlessly.",
+        trace_title: 'Physics Raycast',
+        trace_desc:
+          "Shoots an invisible line downwards from the player's feet to detect what physical object they are standing on.",
+        mapping_title: 'Material Mapping',
+        mapping_desc:
+          "Translates the Unreal Engine Physical Material (Asset) into a string that matches a Wwise Switch Group (e.g., 'Wood_Old')."
+      },
+      pl: {
+        'nav.back': 'Wróć do Projektów',
+        'hero.role': 'Główny Projektant Dźwięku',
+        'hero.desc':
+          'Psychologiczny horror w irlandzkim pubie lat 60.<br>Dźwięk to nie tylko klimat — to główny mechanizm detekcji.',
+        'code.title': 'Architektura Silnika',
+        'code.instruction': 'WYBIERZ PODŚWIETLONĄ LINIĘ<br>ABY ZANALIZOWAĆ LOGIKĘ',
+        'visuals.title': 'Blueprints i Wwise',
+        'video.label': 'Podgląd Rozgrywki',
+        'video.subtitle': 'Sprint 5 — Tydzień Produkcji',
+        'video.title': 'Demo Gameplayu (Sprint 3)',
+        'audio.title': 'Implementacja Audio',
+        'bp.card1_title': 'Odkodowany Manager',
+        'bp.card1_desc': 'Logika Blueprint podpięta pod delegaty C++.',
+        'bp.card2_title': 'Hierarchia Switchy',
+        'bp.card2_desc': 'Dynamiczna obsługa typów powierzchni.',
 
-      // === 3. APP LOGIC ===
-      let currentLang = 'en';
-      let currentContext = 'rtpc';
-      let activeDetailKey = null;
+        bone_title: 'Dynamiczne Podpięcie 3D',
+        bone_desc:
+          "Nie odtwarzamy dźwięku po prostu na aktorze. Znajdujemy konkretny komponent mesha (np. 'Głośnik') i podpinamy do niego emiter Wwise dla precyzji.",
+        spawn_title: 'Event Spawnu',
+        spawn_desc:
+          'Uruchamia stinger pojawienia się anomalii. To event One-Shot, który omija pogłos otoczenia dla czystości sygnału.',
+        math_title: 'Normalizacja Dystansu',
+        math_desc:
+          'Konwertujemy surowy dystans (cm) na procenty (0-100). Ta znormalizowana wartość pozwala używać spójnych krzywych RTPC w Wwise.',
+        rtpc_title: 'Kontrola Parametrów (RTPC)',
+        rtpc_desc:
+          "Aktualizuje parametr gry w Wwise w każdej klatce. Steruje to głośnością i intensywnością warstw 'Grozy' w sposób płynny.",
+        trace_title: 'Raycast Fizyczny',
+        trace_desc:
+          'Wystrzeliwuje niewidzialną linię w dół od stóp gracza, aby wykryć, na jakim obiekcie fizycznym stoi.',
+        mapping_title: 'Mapowanie Materiału',
+        mapping_desc:
+          "Tłumaczy Physical Material z Unreal Engine na ciąg znaków pasujący do Grupy Switch w Wwise (np. 'Wood_Old')."
+      },
+      nl: {
+        'nav.back': 'Terug naar Projecten',
+        'hero.role': 'Hoofd Audio Ontwerper',
+        'hero.desc':
+          'Psychologische horror in een Ierse pub uit de jaren 60.<br>Geluid is niet alleen sfeer - het is het primaire detectiemechanisme.',
+        'code.title': 'Engine Architectuur',
+        'code.instruction': 'SELECTEER EEN GEMARKEERDE REGEL<br>OM LOGICA TE ANALYSEREN',
+        'visuals.title': 'Blueprints & Wwise',
+        'video.label': 'Gameplay Voorbeeld',
+        'video.subtitle': 'Sprint 5 — Week van Productie',
+        'video.title': 'Gameplay Demo (Sprint 3)',
+        'audio.title': 'Audio Implementatie',
+        'bp.card1_title': 'Ontkoppelde Manager',
+        'bp.card1_desc': 'Blueprint logica gekoppeld aan C++ delegates.',
+        'bp.card2_title': 'Switch Hiërarchie',
+        'bp.card2_desc': 'Dynamische verwerking van oppervlaktetypes.',
 
-      function setLang(lang) {
-        currentLang = lang;
-        document.querySelectorAll('[data-i18n]').forEach((el) => {
-          const key = el.getAttribute('data-i18n');
-          if (dict[lang][key]) el.innerHTML = dict[lang][key];
-        });
-        document.querySelectorAll('.lang-btn').forEach((b) => {
-          b.classList.toggle('active', b.innerText.toLowerCase() === lang);
-        });
+        bone_title: 'Dynamische 3D Bevestiging',
+        bone_desc:
+          'We spelen geluid niet zomaar af op de actor. We vinden de specifieke mesh component en bevestigen de Wwise emitter voor precisie.',
+        spawn_title: 'Spawn Event',
+        spawn_desc: 'Activeert de anomalie stinger. Dit is een One-Shot event.',
+        math_title: 'Afstand Normalisatie',
+        math_desc:
+          'We converteren de ruwe afstand (cm) naar een percentage (0-100) voor consistent RTPC gebruik.',
+        rtpc_title: 'Real-Time Parameter Control',
+        rtpc_desc:
+          "Werkt de Wwise spelparameter elke frame bij. Dit stuurt de intensiteit van de 'Dread' lagen aan.",
+        trace_title: 'Fysieke Raycast',
+        trace_desc:
+          'Schiet een onzichtbare lijn naar beneden om het fysieke materiaal onder de speler te detecteren.',
+        mapping_title: 'Materiaal Mapping',
+        mapping_desc: 'Vertaalt het Unreal Engine Fysiek Materiaal naar een Wwise Switch Groep.'
+      }
+    };
 
-        // Refresh Inspector if active
-        if (activeDetailKey) updateInspector(activeDetailKey);
+    // === 3. APP LOGIC ===
+    let currentLang = 'en';
+    let currentContext = 'rtpc';
+    let activeDetailKey = null;
+
+    function setLang(lang) {
+      currentLang = lang;
+      document.querySelectorAll('[data-i18n]').forEach((el) => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[lang][key]) el.innerHTML = dict[lang][key];
+      });
+      document.querySelectorAll('.lang-btn').forEach((b) => {
+        b.classList.toggle('active', b.innerText.toLowerCase() === lang);
+      });
+
+      // Refresh Inspector if active
+      if (activeDetailKey) updateInspector(activeDetailKey);
+    }
+
+    function loadCode(key, btn) {
+      currentContext = key;
+
+      // 1. Update Tabs
+      document.querySelectorAll('.lab-tab').forEach((b) => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      // 2. Inject Code
+      const editor = document.getElementById('code-content');
+      editor.style.opacity = 0;
+      setTimeout(() => {
+        editor.innerHTML = codeFiles[key].code;
+        editor.style.opacity = 1;
+
+        // 3. Auto-select default
+        const defaultKey = codeFiles[key].defaultKey;
+        inspect(
+          defaultKey,
+          document.querySelector('.line.active') || document.querySelector('.line')
+        );
+      }, 100);
+    }
+
+    function inspect(key, element) {
+      activeDetailKey = key;
+
+      // Highlight Line
+      document.querySelectorAll('.line').forEach((l) => l.classList.remove('active'));
+      if (element) element.classList.add('active');
+
+      // Update Inspector
+      updateInspector(key);
+
+      // Anim Re-trigger
+      const content = document.getElementById('insp-content');
+      content.style.animation = 'none';
+      content.offsetHeight;
+      content.style.animation = 'slideUp 0.3s ease-out';
+    }
+
+    function updateInspector(key) {
+      const data = codeFiles[currentContext].details[key];
+      const title = dict[currentLang][key + '_title'];
+      const desc = dict[currentLang][key + '_desc'];
+
+      document.getElementById('insp-title').innerText = title;
+      document.getElementById('insp-desc').innerText = desc;
+
+      const tagsContainer = document.getElementById('insp-tags');
+      tagsContainer.innerHTML = '';
+      data.tags.forEach((tag) => {
+        tagsContainer.innerHTML += `<span class="insp-tag">${tag}</span>`;
+      });
+    }
+
+    // Audio Player Logic
+    const player = document.getElementById('global-player');
+    let currentBtn = null;
+
+    function toggleAudio(btn, src) {
+      if (currentBtn && currentBtn !== btn) {
+        currentBtn.innerText = '▶';
+        player.pause();
       }
 
-      function loadCode(key, btn) {
-        currentContext = key;
-
-        // 1. Update Tabs
-        document.querySelectorAll('.lab-tab').forEach((b) => b.classList.remove('active'));
-        if (btn) btn.classList.add('active');
-
-        // 2. Inject Code
-        const editor = document.getElementById('code-content');
-        editor.style.opacity = 0;
-        setTimeout(() => {
-          editor.innerHTML = codeFiles[key].code;
-          editor.style.opacity = 1;
-
-          // 3. Auto-select default
-          const defaultKey = codeFiles[key].defaultKey;
-          inspect(
-            defaultKey,
-            document.querySelector('.line.active') || document.querySelector('.line')
-          );
-        }, 100);
+      if (player.paused || player.getAttribute('src') !== src) {
+        player.src = src;
+        player.play();
+        btn.innerText = '⏸';
+        currentBtn = btn;
+      } else {
+        player.pause();
+        btn.innerText = '▶';
       }
+    }
 
-      function inspect(key, element) {
-        activeDetailKey = key;
+    // INIT
+    loadCode('rtpc', document.querySelector('.lab-tab.active'));
 
-        // Highlight Line
-        document.querySelectorAll('.line').forEach((l) => l.classList.remove('active'));
-        if (element) element.classList.add('active');
+    // YouTube Lazy Load
+    const videoPreview = document.getElementById('video-preview');
+    const videoContainer = document.getElementById('video-container');
 
-        // Update Inspector
-        updateInspector(key);
+    if (videoPreview) {
+      videoPreview.addEventListener('click', function () {
+        const iframe = document.createElement('iframe');
+        iframe.setAttribute(
+          'src',
+          'https://www.youtube.com/embed/RoB4O4JjPAw?autoplay=1&rel=0&modestbranding=1&controls=1'
+        );
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute(
+          'allow',
+          'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+        );
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('title', 'Shadow Frames Gameplay Preview - Sprint 5');
 
-        // Anim Re-trigger
-        const content = document.getElementById('insp-content');
-        content.style.animation = 'none';
-        content.offsetHeight;
-        content.style.animation = 'slideUp 0.3s ease-out';
-      }
+        videoContainer.innerHTML = '';
+        videoContainer.appendChild(iframe);
+      });
+    }
+  </script>
+</body>
 
-      function updateInspector(key) {
-        const data = codeFiles[currentContext].details[key];
-        const title = dict[currentLang][key + '_title'];
-        const desc = dict[currentLang][key + '_desc'];
-
-        document.getElementById('insp-title').innerText = title;
-        document.getElementById('insp-desc').innerText = desc;
-
-        const tagsContainer = document.getElementById('insp-tags');
-        tagsContainer.innerHTML = '';
-        data.tags.forEach((tag) => {
-          tagsContainer.innerHTML += `<span class="insp-tag">${tag}</span>`;
-        });
-      }
-
-      // Audio Player Logic
-      const player = document.getElementById('global-player');
-      let currentBtn = null;
-
-      function toggleAudio(btn, src) {
-        if (currentBtn && currentBtn !== btn) {
-          currentBtn.innerText = '▶';
-          player.pause();
-        }
-
-        if (player.paused || player.getAttribute('src') !== src) {
-          player.src = src;
-          player.play();
-          btn.innerText = '⏸';
-          currentBtn = btn;
-        } else {
-          player.pause();
-          btn.innerText = '▶';
-        }
-      }
-
-      // INIT
-      loadCode('rtpc', document.querySelector('.lab-tab.active'));
-
-      // YouTube Lazy Load
-      const videoPreview = document.getElementById('video-preview');
-      const videoContainer = document.getElementById('video-container');
-
-      if (videoPreview) {
-        videoPreview.addEventListener('click', function () {
-          const iframe = document.createElement('iframe');
-          iframe.setAttribute(
-            'src',
-            'https://www.youtube.com/embed/RoB4O4JjPAw?autoplay=1&rel=0&modestbranding=1&controls=1'
-          );
-          iframe.setAttribute('frameborder', '0');
-          iframe.setAttribute(
-            'allow',
-            'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-          );
-          iframe.setAttribute('allowfullscreen', '');
-          iframe.setAttribute('title', 'Shadow Frames Gameplay Preview - Sprint 5');
-
-          videoContainer.innerHTML = '';
-          videoContainer.appendChild(iframe);
-        });
-      }
-    </script>
-  </body>
 </html>
