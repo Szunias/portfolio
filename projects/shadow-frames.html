@@ -47,7 +47,19 @@
       background-image:
         radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+      background-size: 120% 120%;
+      animation: breathe 15s ease-in-out infinite alternate;
       min-height: 100vh;
+    }
+
+    @keyframes breathe {
+      0% {
+        background-position: 0% 0%;
+      }
+
+      100% {
+        background-position: 100% 100%;
+      }
     }
 
     @keyframes fadeInUp {
@@ -227,6 +239,89 @@
       background-clip: text;
       -webkit-text-fill-color: transparent;
       text-shadow: 0 0 80px rgba(59, 130, 246, 0.2);
+    }
+
+    .hero-title::before,
+    .hero-title::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      overflow: hidden;
+      clip-path: inset(0 0 0 0);
+    }
+
+    .hero-title::before {
+      left: -2px;
+      text-shadow: 2px 0 #ff00c1;
+      animation: glitch-anim-1 2s infinite linear alternate-reverse;
+      -webkit-text-fill-color: #fff;
+      z-index: -1;
+      opacity: 0.5;
+    }
+
+    .hero-title::after {
+      left: 2px;
+      text-shadow: -2px 0 #00fff9;
+      animation: glitch-anim-2 3s infinite linear alternate-reverse;
+      -webkit-text-fill-color: #fff;
+      z-index: -2;
+      opacity: 0.5;
+    }
+
+    @keyframes glitch-anim-1 {
+      0% {
+        clip-path: inset(20% 0 80% 0);
+      }
+
+      20% {
+        clip-path: inset(60% 0 10% 0);
+      }
+
+      40% {
+        clip-path: inset(40% 0 50% 0);
+      }
+
+      60% {
+        clip-path: inset(80% 0 5% 0);
+      }
+
+      80% {
+        clip-path: inset(10% 0 60% 0);
+      }
+
+      100% {
+        clip-path: inset(30% 0 30% 0);
+      }
+    }
+
+    @keyframes glitch-anim-2 {
+      0% {
+        clip-path: inset(10% 0 60% 0);
+      }
+
+      20% {
+        clip-path: inset(30% 0 20% 0);
+      }
+
+      40% {
+        clip-path: inset(70% 0 10% 0);
+      }
+
+      60% {
+        clip-path: inset(50% 0 40% 0);
+      }
+
+      80% {
+        clip-path: inset(20% 0 50% 0);
+      }
+
+      100% {
+        clip-path: inset(60% 0 30% 0);
+      }
     }
 
     .badge {
@@ -730,13 +825,72 @@
     .audio-card:hover {
       border-color: var(--accent);
       background: rgba(59, 130, 246, 0.05);
-      transform: translateY(-4px);
+      transform: translateY(-2px);
       box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
     }
 
+    .audio-visualizer {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 24px;
+      margin-left: auto;
+      padding-right: 10px;
+    }
+
+    .bar {
+      width: 3px;
+      background: var(--accent);
+      height: 4px;
+      border-radius: 2px;
+      transition: height 0.2s ease;
+      opacity: 0.3;
+    }
+
+    .audio-card.playing .bar {
+      opacity: 1;
+      animation: equalize 0.5s infinite ease-in-out alternate;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .audio-card.playing .bar:nth-child(1) {
+      animation-delay: 0.0s;
+      animation-duration: 0.4s;
+    }
+
+    .audio-card.playing .bar:nth-child(2) {
+      animation-delay: 0.2s;
+      animation-duration: 0.5s;
+    }
+
+    .audio-card.playing .bar:nth-child(3) {
+      animation-delay: 0.4s;
+      animation-duration: 0.3s;
+    }
+
+    .audio-card.playing .bar:nth-child(4) {
+      animation-delay: 0.1s;
+      animation-duration: 0.6s;
+    }
+
+    .audio-card.playing .bar:nth-child(5) {
+      animation-delay: 0.3s;
+      animation-duration: 0.4s;
+    }
+
+    @keyframes equalize {
+      0% {
+        height: 20%;
+      }
+
+      100% {
+        height: 100%;
+      }
+    }
+
     .play-btn {
-      width: 56px;
-      height: 56px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       background: var(--accent);
       border: none;
@@ -1058,6 +1212,54 @@
       color: var(--text-dim);
       font-size: 0.9rem;
     }
+
+    /* === CUSTOM CURSOR === */
+    .cursor-dot,
+    .cursor-outline {
+      position: fixed;
+      top: 0;
+      left: 0;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      z-index: 9999;
+      pointer-events: none;
+      display: none;
+      /* Hidden on touch devices by default */
+    }
+
+    @media (pointer: fine) {
+
+      .cursor-dot,
+      .cursor-outline {
+        display: block;
+      }
+
+      body {
+        cursor: none;
+        /* Hide default cursor */
+      }
+    }
+
+    .cursor-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+    }
+
+    .cursor-outline {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--accent);
+      transition: width 0.2s, height 0.2s, background-color 0.2s;
+    }
+
+    /* Hover State */
+    body.hovering .cursor-outline {
+      width: 60px;
+      height: 60px;
+      background: rgba(59, 130, 246, 0.1);
+      border-color: transparent;
+    }
   </style>
 </head>
 
@@ -1083,7 +1285,7 @@
 
   <header class="container hero">
     <span class="badge" data-i18n="hero.role">Lead Audio Designer</span>
-    <h1 class="hero-title">SHADOW FRAMES</h1>
+    <h1 class="hero-title" data-text="SHADOW FRAMES">SHADOW FRAMES</h1>
     <p data-i18n="hero.desc" class="text-desc">
       Psychological horror set in a 1960s Irish pub. <br />
       Audio is not just atmospheric—it's the primary detection mechanic.
@@ -1235,6 +1437,13 @@
             Looping drone with vinyl crackle.
           </p>
         </div>
+        <div class="audio-visualizer">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
       </div>
       <div class="audio-card">
         <button class="play-btn" aria-label="Play Main Bar Palette"
@@ -1247,10 +1456,20 @@
             Spatialized glass clinks & wood creaks.
           </p>
         </div>
+        <div class="audio-visualizer">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
       </div>
     </div>
     <audio id="global-player"></audio>
   </section>
+
+  <div class="cursor-dot"></div>
+  <div class="cursor-outline"></div>
 
   <script>
     // === 1. DATA: REAL C++ LOGIC (WITH COLOR CLASSES) ===
@@ -1733,6 +1952,9 @@
       function toggleAudio(btn, src) {
         if (!player) return;
 
+        // Reset all cards
+        document.querySelectorAll('.audio-card').forEach(c => c.classList.remove('playing'));
+
         if (currentBtn && currentBtn !== btn) {
           currentBtn.innerText = '▶';
           player.pause();
@@ -1743,6 +1965,10 @@
           player.play();
           btn.innerText = '⏸';
           currentBtn = btn;
+
+          // Add playing class to parent card
+          const card = btn.closest('.audio-card');
+          if (card) card.classList.add('playing');
         } else {
           player.pause();
           btn.innerText = '▶';
@@ -1778,6 +2004,42 @@
       const firstTab = document.querySelector('.lab-tab');
       if (firstTab) {
         loadCode('rtpc', firstTab);
+      }
+
+      // --- Custom Cursor ---
+      const cursorDot = document.querySelector('.cursor-dot');
+      const cursorOutline = document.querySelector('.cursor-outline');
+
+      if (cursorDot && cursorOutline) {
+        window.addEventListener('mousemove', (e) => {
+          const posX = e.clientX;
+          const posY = e.clientY;
+
+          cursorDot.style.left = `${posX}px`;
+          cursorDot.style.top = `${posY}px`;
+
+          cursorOutline.animate({
+            left: `${posX}px`,
+            top: `${posY}px`
+          }, { duration: 500, fill: "forwards" });
+        });
+
+        // Re-attach listeners for dynamic elements (lines) is handled by event delegation or re-attaching?
+        // The lines are created dynamically in loadCode. I need to add hover listeners there too or use delegation.
+        // For now, let's just target static elements and body.
+        // Actually, lines have .line class. I can use event delegation on body for .line
+
+        document.body.addEventListener('mouseover', (e) => {
+          if (e.target.matches('a, button, .line, .video-preview, .lang-btn, .lab-tab')) {
+            document.body.classList.add('hovering');
+          }
+        });
+
+        document.body.addEventListener('mouseout', (e) => {
+          if (e.target.matches('a, button, .line, .video-preview, .lang-btn, .lab-tab')) {
+            document.body.classList.remove('hovering');
+          }
+        });
       }
     });
   </script>
