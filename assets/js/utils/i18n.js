@@ -136,8 +136,11 @@ class TranslationManager {
     });
 
     // Update language button states
-    document.querySelectorAll('.lang-btn').forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.lang === lang);
+    const langButtons = document.querySelectorAll('.lang-btn, .lang-option, [data-lang-switcher-btn]');
+    langButtons.forEach((btn) => {
+      if (btn.dataset.lang) {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      }
     });
 
     // Update HTML lang attribute
@@ -379,9 +382,13 @@ class TranslationManager {
   bindLanguageButtons() {
     console.log('[i18n.bindLanguageButtons] Binding click handler to document');
     document.addEventListener('click', (event) => {
-      const langBtn = event.target.closest('.lang-btn');
+      const langBtn = event.target.closest('.lang-btn, .lang-option, [data-lang-switcher-btn]');
       if (langBtn && langBtn.dataset.lang) {
         console.log('[i18n.bindLanguageButtons] Language button clicked:', langBtn.dataset.lang);
+        // Prevent default if it's a link or button to stop jumps/reloads
+        if (event.target.tagName === 'A' || event.target.closest('a')) {
+           event.preventDefault();
+        }
         this.setLanguage(langBtn.dataset.lang);
       }
     });

@@ -399,7 +399,7 @@ class BulletproofI18n {
       // Update active state of language buttons
       // CRITICAL: Always read from localStorage to ensure consistency
       const currentLang = this._safeExecute(() => localStorage.getItem('language')) || this.lang;
-      document.querySelectorAll('.lang-btn').forEach((button) => {
+      document.querySelectorAll('.lang-btn, .lang-option').forEach((button) => {
         this._safeExecute(() => {
           button.classList.toggle('active', button.dataset.lang === currentLang);
         });
@@ -548,8 +548,13 @@ class BulletproofI18n {
     // Use event delegation for dynamically added buttons
     document.addEventListener('click', (event) => {
       this._safeExecute(() => {
-        const button = event.target.closest('.lang-btn');
+        // Update selector to include .lang-option
+        const button = event.target.closest('.lang-btn, .lang-option');
         if (button && button.dataset.lang) {
+          // Prevent default if it's a button or link to stop jumps
+          if (event.target.tagName === 'A' || event.target.closest('a')) {
+             event.preventDefault();
+          }
           this.setLanguage(button.dataset.lang);
         }
       });
