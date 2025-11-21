@@ -1235,13 +1235,14 @@
       width: 8px;
       height: 8px;
       background: var(--accent);
+      transition: opacity 0.2s ease;
     }
 
     .cursor-outline {
       width: 40px;
       height: 40px;
       border: 1px solid var(--accent);
-      transition: width 0.2s, height 0.2s, background-color 0.2s;
+      transition: width 0.2s, height 0.2s, background-color 0.2s, opacity 0.2s ease;
     }
 
     /* Hover State */
@@ -1250,6 +1251,17 @@
       height: 60px;
       background: rgba(255, 255, 255, 0.1);
       border-color: transparent;
+    }
+
+    /* Hide custom cursor over video to prevent iframe freezing/lag */
+    body.video-hover .cursor-dot,
+    body.video-hover .cursor-outline {
+      opacity: 0;
+    }
+
+    /* Restore system cursor for video interaction */
+    .video-showcase, .video-container, iframe, .video-preview {
+      cursor: auto !important;
     }
   </style>
 </head>
@@ -2043,8 +2055,15 @@
       // --- Custom Cursor ---
       const cursorDot = document.querySelector('.cursor-dot');
       const cursorOutline = document.querySelector('.cursor-outline');
+      const videoShowcase = document.querySelector('.video-showcase');
 
       if (cursorDot && cursorOutline) {
+        // Hide cursor over video
+        if (videoShowcase) {
+          videoShowcase.addEventListener('mouseenter', () => document.body.classList.add('video-hover'));
+          videoShowcase.addEventListener('mouseleave', () => document.body.classList.remove('video-hover'));
+        }
+
         window.addEventListener('mousemove', (e) => {
           const posX = e.clientX;
           const posY = e.clientY;
