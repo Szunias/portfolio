@@ -530,30 +530,39 @@
                 observer.observe(el);
             });
 
-            // 3. Language Switcher Logic (Simple Implementation)
+            // 3. Language Switcher Logic
             const langBtns = document.querySelectorAll('.lang-option');
             
             function setLang(lang) {
-                // Update active button
+                // Update UI state
                 langBtns.forEach(btn => {
                     btn.classList.toggle('active', btn.dataset.lang === lang);
                 });
-                
-                // Save preference
-                localStorage.setItem('language', lang);
-                document.documentElement.setAttribute('lang', lang);
 
-                // Trigger translation event (handled by the imported module)
-                window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lang } }));
+                // Use global translation system if available
+                if (window.setLanguage) {
+                    window.setLanguage(lang);
+                } else {
+                    // Fallback if i18n isn't loaded yet
+                    console.warn('i18n not ready, saving pref');
+                    localStorage.setItem('language', lang);
+                    document.documentElement.setAttribute('lang', lang);
+                }
             }
 
             langBtns.forEach(btn => {
-                btn.addEventListener('click', () => setLang(btn.dataset.lang));
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setLang(btn.dataset.lang);
+                });
             });
 
-            // Init lang
-            const savedLang = localStorage.getItem('language') || 'en';
-            setLang(savedLang);
+            // Sync UI with current state on load
+            const currentLang = localStorage.getItem('language') || 'en';
+            langBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === currentLang);
+            });
         });
     </script>
 </body>
