@@ -371,9 +371,9 @@ export class NavigationCore {
     const mainElement = doc.querySelector('main');
 
     // Extract inline styles from head
-    const inlineStyles = Array.from(doc.querySelectorAll('head style')).map(
-      (style) => style.textContent
-    );
+    const inlineStyles = Array.from(doc.querySelectorAll('head style'))
+      .filter((style) => !style.closest('noscript'))
+      .map((style) => style.textContent);
 
     // Extract stylesheet links from head
     const stylesheetLinks = Array.from(doc.querySelectorAll('head link[rel="stylesheet"]')).map(
