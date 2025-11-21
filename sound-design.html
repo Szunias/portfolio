@@ -272,148 +272,80 @@ window.__preloadedLang=savedLang;
         background: #000;
       }
 
-      .video-wrapper iframe {
+      .video-wrapper video {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        border: none;
+        object-fit: cover;
       }
 
-      /* Video placeholder animations */
-      .video-placeholder {
-        position: relative;
-        overflow: hidden;
+      /* Custom Video Player Styles */
+      .video-poster-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        transition: opacity 0.4s ease, visibility 0.4s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #0f172a; /* Fallback bg */
         cursor: pointer;
-        transition: all 0.4s ease;
       }
 
-      .video-placeholder::before {
+      .video-poster-wrapper.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .video-poster-wrapper::before {
         content: '';
         position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: linear-gradient(
-          45deg,
-          transparent 30%,
-          rgba(255, 255, 255, 0.03) 50%,
-          transparent 70%
-        );
-        transform: rotate(45deg);
-        transition: all 0.6s ease;
-        opacity: 0;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.3); /* Darken poster */
+        transition: background 0.3s ease;
       }
 
-      .video-placeholder:hover::before {
-        opacity: 1;
-        animation: shimmer 2s infinite;
+      .video-poster-wrapper:hover::before {
+        background: rgba(0, 0, 0, 0.4);
       }
 
-      @keyframes shimmer {
-        0% {
-          transform: translateX(-100%) translateY(-100%) rotate(45deg);
-        }
-        100% {
-          transform: translateX(100%) translateY(100%) rotate(45deg);
-        }
-      }
-
-      .video-placeholder:hover {
-        background: linear-gradient(135deg, #1e2a3e 0%, #1a2845 100%) !important;
-      }
-
-      .placeholder-content {
+      .custom-play-btn {
         position: relative;
-        z-index: 1;
-      }
-
-      .play-icon-wrapper {
-        display: inline-block;
-        position: relative;
-        margin-bottom: 1.5rem;
-      }
-
-      .play-icon {
         width: 80px;
         height: 80px;
-        opacity: 0.6;
-        transition: all 0.4s ease;
-        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-      }
-
-      .video-placeholder:hover .play-icon {
-        opacity: 1;
-        transform: scale(1.1);
-        animation: pulse 1.5s ease-in-out infinite;
-      }
-
-      @keyframes pulse {
-        0%, 100% {
-          opacity: 1;
-          transform: scale(1.1);
-        }
-        50% {
-          opacity: 0.7;
-          transform: scale(1.15);
-        }
-      }
-
-      .play-icon-ring {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 100px;
-        height: 100px;
-        border: 2px solid rgba(255, 255, 255, 0.2);
         border-radius: 50%;
-        transform: translate(-50%, -50%);
-        opacity: 0;
-        transition: all 0.4s ease;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        z-index: 2;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
       }
 
-      .video-placeholder:hover .play-icon-ring {
-        opacity: 1;
-        animation: ripple 1.5s ease-out infinite;
+      .custom-play-btn svg {
+        width: 36px;
+        height: 36px;
+        fill: white;
+        transform: translateX(2px);
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
       }
 
-      @keyframes ripple {
-        0% {
-          width: 100px;
-          height: 100px;
-          opacity: 1;
-        }
-        100% {
-          width: 140px;
-          height: 140px;
-          opacity: 0;
-        }
-      }
-
-      .placeholder-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin: 0 0 0.5rem 0;
-        opacity: 0.9;
-        transition: opacity 0.3s ease;
-      }
-
-      .video-placeholder:hover .placeholder-title {
-        opacity: 1;
-      }
-
-      .placeholder-subtitle {
-        font-size: 0.9rem;
-        opacity: 0.6;
-        margin: 0;
-        font-weight: 400;
-        transition: opacity 0.3s ease;
-      }
-
-      .video-placeholder:hover .placeholder-subtitle {
-        opacity: 0.8;
+      .video-poster-wrapper:hover .custom-play-btn {
+        transform: scale(1.15);
+        background: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       }
 
       .video-info {
@@ -809,97 +741,90 @@ window.__preloadedLang=savedLang;
           <h2 class="section-title" data-i18n="section1.title">Featured Work</h2>
 
           <div class="video-grid">
-            <!-- Video 1 -->
-            <div class="video-card">
-              <div class="video-wrapper video-placeholder" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); display: flex; align-items: center; justify-content: center;">
-                <div class="placeholder-content" style="text-align: center; color: #fff;">
-                  <div class="play-icon-wrapper">
-                    <div class="play-icon-ring"></div>
-                    <svg class="play-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
+            <!-- Video 1: God of War -->
+            <div class="video-card custom-video-player">
+              <div class="video-wrapper">
+                <div class="video-poster-wrapper" style="background-image: url('assets/images/godofwarkrotos.jpg');">
+                  <div class="custom-play-btn">
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                   </div>
-                  <p class="placeholder-title">Video Coming Today</p>
-                  <p class="placeholder-subtitle">Check back later • 11/19/2025</p>
                 </div>
+                <video playsinline preload="metadata">
+                  <source src="assets/videos/krotosvideo.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
               </div>
               <div class="video-info">
                 <h3 class="video-title" data-i18n="section1.video1.title">God of War: Combat Scene Redesign</h3>
                 <p class="video-description" data-i18n="section1.video1.description">
-                  Complete sound redesign of an epic combat sequence from God of War. Focused on cinematic impact, weapon impacts, creature vocalizations, and environmental atmospheres using advanced layering and spatial audio techniques.
+                  A redesign of the God of War combat scene using my own field recordings and foley.
                 </p>
                 <span class="video-badge" data-i18n="section1.video1.badge">Game Audio</span>
               </div>
             </div>
 
-            <!-- Video 2 -->
-            <div class="video-card">
-              <div class="video-wrapper video-placeholder" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); display: flex; align-items: center; justify-content: center;">
-                <div class="placeholder-content" style="text-align: center; color: #fff;">
-                  <div class="play-icon-wrapper">
-                    <div class="play-icon-ring"></div>
-                    <svg class="play-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
+            <!-- Video 2: Baldur's Gate -->
+            <div class="video-card custom-video-player">
+              <div class="video-wrapper">
+                <div class="video-poster-wrapper" style="background-image: url('assets/images/baldurspreview.png');">
+                  <div class="custom-play-btn">
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                   </div>
-                  <p class="placeholder-title">Video Coming Today</p>
-                  <p class="placeholder-subtitle">Check back later • 11/19/2025</p>
                 </div>
+                <video playsinline preload="metadata">
+                  <source src="assets/videos/baldursremake.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
               </div>
               <div class="video-info">
                 <h3 class="video-title" data-i18n="section1.video2.title">Baldur's Gate: Spell Effects Remake</h3>
                 <p class="video-description" data-i18n="section1.video2.description">
-                  Modern remake of iconic spell sound effects from Baldur's Gate. Reimagined classic magic sounds with contemporary production techniques while maintaining the fantasy aesthetic and nostalgic feel.
+                  A remake of spell sound effects from Baldur's Gate, reimagining the classics.
                 </p>
                 <span class="video-badge" data-i18n="section1.video2.badge">Fantasy Audio</span>
               </div>
             </div>
 
-            <!-- Video 3 -->
-            <div class="video-card">
-              <div class="video-wrapper video-placeholder" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); display: flex; align-items: center; justify-content: center;">
-                <div class="placeholder-content" style="text-align: center; color: #fff;">
-                  <div class="play-icon-wrapper">
-                    <div class="play-icon-ring"></div>
-                    <svg class="play-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
+            <!-- Video 3: Weapon Sound Design -->
+            <div class="video-card custom-video-player">
+              <div class="video-wrapper">
+                 <!-- No specific poster found, using fallback background -->
+                <div class="video-poster-wrapper" style="background: linear-gradient(135deg, #1e293b, #0f172a);">
+                  <div class="custom-play-btn">
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                   </div>
-                  <p class="placeholder-title">Video Coming Today</p>
-                  <p class="placeholder-subtitle">Check back later • 11/19/2025</p>
                 </div>
+                <video playsinline preload="metadata">
+                  <source src="assets/videos/Szuniewicz_Igor_DAW1_ExamAssignment%20_Video.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
               </div>
               <div class="video-info">
                 <h3 class="video-title" data-i18n="section1.video3.title">Weapon Sound Design: Realistic vs. Sci-Fi</h3>
                 <p class="video-description" data-i18n="section1.video3.description">
-                  Dual weapon audio showcase: P2000 pistol with photorealistic gunshot recordings and foley, contrasted with a futuristic sci-fi energy weapon featuring synthesized elements and experimental processing.
+                  Two weapons, two worlds: a P2000 pistol with realistic recordings and foley vs. a futuristic energy weapon built from synths and experimental processing.
                 </p>
                 <span class="video-badge" data-i18n="section1.video3.badge">Weapon Audio</span>
               </div>
             </div>
 
-            <!-- Video 4 -->
-            <div class="video-card">
-              <div class="video-wrapper video-placeholder" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); display: flex; align-items: center; justify-content: center;">
-                <div class="placeholder-content" style="text-align: center; color: #fff;">
-                  <div class="play-icon-wrapper">
-                    <div class="play-icon-ring"></div>
-                    <svg class="play-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
+            <!-- Video 4: Fracture Horizon -->
+            <div class="video-card custom-video-player">
+              <div class="video-wrapper">
+                <div class="video-poster-wrapper" style="background-image: url('assets/images/frafturedhorizon.png');">
+                  <div class="custom-play-btn">
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                   </div>
-                  <p class="placeholder-title">Video Coming Today</p>
-                  <p class="placeholder-subtitle">Check back later • 11/19/2025</p>
                 </div>
+                <video playsinline preload="metadata">
+                  <source src="assets/videos/fracturedhorzion.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
               </div>
               <div class="video-info">
                 <h3 class="video-title" data-i18n="section1.video4.title">Fracture Horizon: Linear Sound Design</h3>
                 <p class="video-description" data-i18n="section1.video4.description">
-                  Complete linear sound design for an original sci-fi game project 'Fracture Horizon'. Comprehensive audio implementation including ambient design, UI sounds, and narrative-driven audio storytelling.
+                  My very first experience with sound design. A linear redesign for the sci-fi project 'Fractured Horizon'.
                 </p>
                 <span class="video-badge" data-i18n="section1.video4.badge">Game Audio</span>
               </div>
@@ -1027,6 +952,30 @@ window.__preloadedLang=savedLang;
               switcherInner.classList.remove('open');
               mainBtn.setAttribute('aria-expanded', 'false');
             }
+          });
+        });
+        
+        // Custom Video Player Logic
+        document.querySelectorAll('.custom-video-player').forEach(player => {
+          const wrapper = player.querySelector('.video-wrapper');
+          const video = player.querySelector('video');
+          const posterWrapper = player.querySelector('.video-poster-wrapper');
+          
+          if (!video || !posterWrapper) return;
+
+          const playVideo = () => {
+            posterWrapper.classList.add('hidden');
+            video.play();
+            video.controls = true;
+          };
+
+          posterWrapper.addEventListener('click', playVideo);
+          
+          // Optional: show poster again if video ends
+          video.addEventListener('ended', () => {
+            posterWrapper.classList.remove('hidden');
+            video.controls = false;
+            // video.load(); // Uncomment to reset video to start
           });
         });
       });
