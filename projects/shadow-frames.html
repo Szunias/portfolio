@@ -1269,7 +1269,7 @@
 
   <nav>
     <div class="container nav-inner">
-      <a href="../index.html" class="back-link">
+      <a href="index.html" class="back-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
@@ -1290,6 +1290,22 @@
       Psychological horror set in a 1960s Irish pub. <br />
       Audio is not just atmospheric—it's the primary detection mechanic.
     </p>
+    
+    <!-- Multi-Institutional Collaboration Info -->
+    <div style="margin-top: 3rem; padding: 1.5rem; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid var(--border); display: inline-block; text-align: left;">
+      <h3 style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); text-transform: uppercase; margin-bottom: 1rem; letter-spacing: 1px;" data-i18n="sections.org_title">Multi-Institutional Collaboration</h3>
+      <ul style="list-style: none; color: var(--text-dim); font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem;">
+        <li style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: var(--secondary);">•</span> <span data-i18n="sections.ritcs_desc">RITCS: Narrative Design & Story</span>
+        </li>
+        <li style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: var(--secondary);">•</span> <span data-i18n="sections.kask_desc">KASK Conservatory: Music Composition</span>
+        </li>
+        <li style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: var(--secondary);">•</span> <span data-i18n="sections.howest_desc">Howest DAE: Game Development & Audio Implementation</span>
+        </li>
+      </ul>
+    </div>
   </header>
 
   <section class="container mb-100">
@@ -1584,6 +1600,12 @@
         'bp.card2_title': 'Switch Hierarchy',
         'bp.card2_desc': 'Handling surface types dynamically.',
 
+        // Sections keys for collaboration info
+        'sections.org_title': 'Multi-Institutional Collaboration',
+        'sections.ritcs_desc': 'RITCS: Narrative Design & Story',
+        'sections.kask_desc': 'KASK Conservatory: Music Composition',
+        'sections.howest_desc': 'Howest DAE: Game Development & Audio Implementation',
+
         // Inspector Defaults
         'insp.ready_title': 'System Ready',
         'insp.ready_desc': 'Select a highlighted line of code to inspect the underlying logic and implementation details.',
@@ -1641,6 +1663,12 @@
         'bp.card2_title': 'Hierarchia Switchy',
         'bp.card2_desc': 'Dynamiczna obsługa typów powierzchni.',
 
+        // Sections keys for collaboration info
+        'sections.org_title': 'Współpraca Międzyinstytucjonalna',
+        'sections.ritcs_desc': 'RITCS: Narrative Design & Historia',
+        'sections.kask_desc': 'KASK: Kompozycja Muzyczna',
+        'sections.howest_desc': 'Howest DAE: Game Development & Audio',
+
         // Inspector Defaults
         'insp.ready_title': 'System Gotowy',
         'insp.ready_desc': 'Wybierz podświetloną linię kodu, aby przeanalizować logikę i szczegóły implementacji.',
@@ -1696,6 +1724,12 @@
         'bp.card1_desc': 'Blueprint logica gekoppeld aan C++ delegates.',
         'bp.card2_title': 'Switch Hiërarchie',
         'bp.card2_desc': 'Dynamische verwerking van oppervlaktetypes.',
+
+        // Sections keys for collaboration info
+        'sections.org_title': 'Multi-institutionele Samenwerking',
+        'sections.ritcs_desc': 'RITCS: Narrative Design & Verhaal',
+        'sections.kask_desc': 'KASK: Muziekcompositie',
+        'sections.howest_desc': 'Howest DAE: Game Development & Audio',
 
         // Inspector Defaults
         'insp.ready_title': 'Systeem Gereed',
@@ -1777,22 +1811,7 @@
       const labTabs = document.querySelectorAll('.lab-tab');
       labTabs.forEach(tab => {
         tab.addEventListener('click', function () {
-          // Extract key from onclick attribute or data attribute (refactor to data attribute preferred but maintaining compatibility)
-          // For now, we'll parse the existing onclick logic or better, rely on a data attribute we should have added.
-          // Since we didn't add data attributes to tabs in HTML yet, let's use the text content or index mapping.
-          // Actually, let's use the text to determine key for now or add data attributes in a future step.
-          // WAIT: The HTML still has onclick="loadCode(...)". I need to remove that to fully refactor.
-          // For this step, I will keep the global functions but wrap them or attach listeners if I removed onclicks.
-          // Since I haven't removed onclicks from HTML yet (I only did for audio buttons in previous step?), 
-          // I should probably keep the functions global OR update HTML to remove onclicks.
-          // The plan said "Remove inline onclick attributes".
-
-          // Let's implement the logic here and assume I'll remove onclicks in the next step or now.
-          // I'll use the text content to map to keys for now to avoid breaking if I don't update HTML immediately.
-          // EnemyPresence.cpp -> rtpc
-          // AnomalyAudio.cpp -> spatial
-          // Footsteps.cpp -> physics
-
+          // Extract key from text mapping
           let key = 'rtpc';
           if (this.innerText.includes('Anomaly')) key = 'spatial';
           if (this.innerText.includes('Footsteps')) key = 'physics';
@@ -2023,11 +2042,6 @@
             top: `${posY}px`
           }, { duration: 500, fill: "forwards" });
         });
-
-        // Re-attach listeners for dynamic elements (lines) is handled by event delegation or re-attaching?
-        // The lines are created dynamically in loadCode. I need to add hover listeners there too or use delegation.
-        // For now, let's just target static elements and body.
-        // Actually, lines have .line class. I can use event delegation on body for .line
 
         document.body.addEventListener('mouseover', (e) => {
           if (e.target.matches('a, button, .line, .video-preview, .lang-btn, .lab-tab')) {
