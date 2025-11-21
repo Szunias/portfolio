@@ -961,112 +961,127 @@
     }
 
 
-    /* === TIMELINE === */
+    /* === UPDATED TIMELINE (MODERNIZED) === */
     .timeline-wrapper {
       margin-bottom: 40px;
       padding: 0 20px;
     }
 
-    .timeline-container {
+    .timeline-modern {
       display: flex;
       align-items: center;
-      gap: 4px;
-      background: rgba(10, 10, 10, 0.6);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      backdrop-filter: blur(12px);
+      justify-content: space-between;
       position: relative;
-      overflow: hidden;
+      padding: 40px 20px 20px;
+      background: rgba(20, 20, 20, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
     }
 
-    .timeline-container::before {
+    /* Connecting Line (Background) */
+    .timeline-modern::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      top: 60px; /* Vertically align with dots */
+      left: 60px;
+      right: 60px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 0;
     }
 
-    .timeline-phase {
+    .t-step {
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      position: relative;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      text-align: center;
     }
 
-    .phase-label {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      letter-spacing: 1px;
-      padding-left: 4px;
-    }
-
-    .phase-track {
-      display: flex;
-      gap: 4px;
-      height: 8px;
-    }
-
-    .track-segment {
-      height: 100%;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 2px;
-      position: relative;
+    .t-dot {
+      width: 12px;
+      height: 12px;
+      background: #1a1a1a;
+      border: 2px solid var(--text-dim);
+      border-radius: 50%;
       transition: all 0.3s ease;
+      position: relative;
+      margin-top: 14px; /* Space for top labels */
     }
 
-    .track-segment.done {
-      background: #3b82f6;
-      box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    /* Done State */
+    .t-step.done .t-dot {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
     }
 
-    .track-segment.active {
-      background: #fbbf24;
-      box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
-      animation: pulse-active 2s infinite;
+    /* Active State */
+    .t-step.active .t-dot {
+      background: #fbbf24; /* Amber */
+      border-color: #fbbf24;
+      width: 16px;
+      height: 16px;
+      margin-top: 12px; /* Adjust for size diff */
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
     }
 
-    .track-segment.pending {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    /* Specific Widths based on duration */
-    .w-proto {
-      width: 60px;
-    }
-
-    .w-sprint {
-      width: 40px;
-    }
-
-    .w-polish {
-      width: 60px;
-    }
-
-    /* Active Indicator */
-    .active-marker {
+    .t-pulse {
       position: absolute;
-      top: -24px;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid #fbbf24;
+      animation: pulse-ring 2s infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% { width: 100%; height: 100%; opacity: 1; }
+      100% { width: 300%; height: 300%; opacity: 0; }
+    }
+
+    /* Labels */
+    .t-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
+
+    .t-step.active .t-title {
+      color: #fbbf24;
+      font-weight: bold;
+    }
+
+    .t-step.done .t-title {
+      color: var(--text);
+    }
+
+    /* Badge (Current) */
+    .t-badge {
+      position: absolute;
+      top: -25px;
       background: #fbbf24;
       color: black;
       font-family: var(--font-mono);
-      font-size: 0.6rem;
+      font-size: 0.65rem;
       font-weight: 700;
-      padding: 2px 6px;
+      padding: 2px 8px;
       border-radius: 4px;
       white-space: nowrap;
-      opacity: 0;
-      animation: slideDown 0.5s ease forwards 0.5s;
+      animation: slideDown 0.5s ease forwards;
     }
 
-    .active-marker::after {
+    .t-badge::after {
       content: '';
       position: absolute;
       bottom: -4px;
@@ -1077,55 +1092,47 @@
       border-top: 4px solid #fbbf24;
     }
 
-    @keyframes pulse-active {
-      0% {
-        opacity: 1;
-        box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
-      }
-
-      50% {
-        opacity: 0.7;
-        box-shadow: 0 0 5px rgba(251, 191, 36, 0.2);
-      }
-
-      100% {
-        opacity: 1;
-        box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
-      }
-    }
-
     @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translate(-50%, -10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translate(-50%, 0);
-      }
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Responsive */
     @media (max-width: 768px) {
-      .timeline-container {
+      .timeline-modern {
         flex-direction: column;
-        align-items: stretch;
-        gap: 16px;
+        align-items: flex-start;
+        gap: 20px;
+        padding-left: 40px;
       }
-
-      .phase-track {
+      .timeline-modern::before {
+        width: 2px;
+        height: auto;
+        top: 40px;
+        bottom: 40px;
+        left: 46px; /* Align with dots */
+        right: auto;
+      }
+      .t-step {
+        flex-direction: row;
         width: 100%;
+        text-align: left;
       }
-
-      .track-segment {
-        flex: 1;
+      .t-dot {
+        margin-top: 0;
       }
-
-      .w-proto,
-      .w-sprint,
-      .w-polish {
-        width: auto;
+      .t-step.active .t-dot {
+        margin-top: 0;
+      }
+      .t-badge {
+        top: auto;
+        left: auto;
+        right: 0;
+        position: relative;
+        margin-left: auto;
+      }
+      .t-badge::after {
+        display: none; /* Hide arrow on mobile layout */
       }
     }
 
@@ -1317,44 +1324,59 @@
         Sprint 5 — Week of Production
       </p>
     </div>
+    
+    <!-- REPLACED TIMELINE WITH MODERN SINGLE TRACK DESIGN -->
     <div class="timeline-wrapper">
-      <div class="timeline-container">
-        <!-- Phase 1: Prototype -->
-        <div class="timeline-phase">
-          <span class="phase-label" data-i18n="time.proto">Prototype</span>
-          <div class="phase-track">
-            <div class="track-segment done w-proto" title="Week 1"></div>
-            <div class="track-segment done w-proto" title="Week 2"></div>
+      <div class="timeline-modern">
+        
+        <!-- Step 1: Prototype -->
+        <div class="t-step done">
+          <span class="t-title" data-i18n="time.proto">Prototype</span>
+          <div class="t-dot"></div>
+        </div>
+
+        <!-- Step 2: Sprint 1 -->
+        <div class="t-step done">
+          <span class="t-title">Sprint 1</span>
+          <div class="t-dot"></div>
+        </div>
+
+        <!-- Step 3: Sprint 2 -->
+        <div class="t-step done">
+          <span class="t-title">Sprint 2</span>
+          <div class="t-dot"></div>
+        </div>
+
+        <!-- Step 4: Sprint 3 -->
+        <div class="t-step done">
+          <span class="t-title">Sprint 3</span>
+          <div class="t-dot"></div>
+        </div>
+
+        <!-- Step 5: Sprint 4 (ACTIVE) -->
+        <div class="t-step active">
+          <span class="t-badge" data-i18n="sections.current">CURRENT</span>
+          <span class="t-title">Sprint 4</span>
+          <div class="t-dot">
+             <div class="t-pulse"></div>
           </div>
         </div>
 
-        <!-- Phase 2: Production -->
-        <div class="timeline-phase" style="flex: 1">
-          <span class="phase-label" data-i18n="time.prod">Production</span>
-          <div class="phase-track" style="width: 100%">
-            <div class="track-segment done w-sprint" title="Sprint 1"></div>
-            <div class="track-segment done w-sprint" title="Sprint 2"></div>
-            <div class="track-segment done w-sprint" title="Sprint 3"></div>
-
-            <!-- Active Sprint -->
-            <div class="track-segment active w-sprint" title="Sprint 4">
-              <div class="active-marker" data-i18n="time.sprint4">SPRINT 4</div>
-            </div>
-
-            <div class="track-segment pending w-sprint" title="Sprint 5"></div>
-          </div>
+        <!-- Step 6: Sprint 5 -->
+        <div class="t-step pending">
+          <span class="t-title">Sprint 5</span>
+          <div class="t-dot"></div>
         </div>
 
-        <!-- Phase 3: Polish -->
-        <div class="timeline-phase">
-          <span class="phase-label" data-i18n="time.polish">Polish</span>
-          <div class="phase-track">
-            <div class="track-segment pending w-polish" title="Week 1"></div>
-            <div class="track-segment pending w-polish" title="Week 2"></div>
-          </div>
+        <!-- Step 7: Polish -->
+        <div class="t-step pending">
+          <span class="t-title" data-i18n="time.polish">Polish</span>
+          <div class="t-dot"></div>
         </div>
+
       </div>
     </div>
+
     <div class="video-showcase">
       <div class="video-container" id="video-container">
         <div class="video-preview" id="video-preview" style="background-image: url('../imageforvideshadowframes.png')">
@@ -1605,6 +1627,7 @@
         'sections.ritcs_desc': 'RITCS: Narrative Design & Story',
         'sections.kask_desc': 'KASK Conservatory: Music Composition',
         'sections.howest_desc': 'Howest DAE: Game Development & Audio Implementation',
+        'sections.current': 'CURRENT',
 
         // Inspector Defaults
         'insp.ready_title': 'System Ready',
@@ -1668,6 +1691,7 @@
         'sections.ritcs_desc': 'RITCS: Narrative Design & Historia',
         'sections.kask_desc': 'KASK: Kompozycja Muzyczna',
         'sections.howest_desc': 'Howest DAE: Game Development & Audio',
+        'sections.current': 'AKTUALNIE',
 
         // Inspector Defaults
         'insp.ready_title': 'System Gotowy',
@@ -1730,6 +1754,7 @@
         'sections.ritcs_desc': 'RITCS: Narrative Design & Verhaal',
         'sections.kask_desc': 'KASK: Muziekcompositie',
         'sections.howest_desc': 'Howest DAE: Game Development & Audio',
+        'sections.current': 'HUIDIG',
 
         // Inspector Defaults
         'insp.ready_title': 'Systeem Gereed',
