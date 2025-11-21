@@ -2,7 +2,7 @@
   "en": {
     "back": "Back to Projects",
     "title": "Pause & Deserve",
-    "tagline": "A horror game where you're hunted by something you can hear but rarely see. I built it solo to learn game development—and to scare people with sound.",
+    "tagline": "Solo psychological horror game: time-freeze mechanics vs. adaptive AI audio.",
     "meta": {
       "year": {
         "label": "Year",
@@ -10,93 +10,89 @@
       },
       "role": {
         "label": "Role",
-        "value": "Solo Developer — Gameplay Programming + Audio Design"
+        "value": "Solo Dev (Code + Audio)"
       },
       "tech": {
-        "label": "Tech Stack",
-        "value": "Unreal Engine 5, Blueprints, MetaSounds"
+        "label": "Stack",
+        "value": "UE5, Blueprints, MetaSounds"
       }
     },
     "gameplay": {
-      "title": "How It Started",
-      "desc": "This began as a simple school assignment—make a small game in Unreal Engine. I wanted to try something different: a horror game where sound is your main enemy. You're being chased through a dark forest by something you can hear approaching, but you have one ability: freeze time. The catch? Every time you use it, your enemy gets faster. It's a constant trade-off between survival now and making things harder later."
-    },
-    "overview": {
-      "title": "Making Horror Through Audio",
-      "desc": "I wanted players to feel hunted by sound alone. Using 3D audio positioning, you can track where the enemy is by its footsteps—even when it's behind you or hidden in the trees. I layered ambient sounds (wind, distant echoes, occasional rustles) to keep you on edge, and every action you take has distinct audio feedback. The pause mechanic plays a countdown beep that gets your heart racing as time runs out."
+      "title": "Core Concept",
+      "desc": "A horror game built on a single trade-off: freeze time to escape danger, but make the enemy faster permanently. It's a risk-reward loop where safety now equals difficulty later. Built solo in 8 weeks using Unreal Engine 5."
     },
     "soundscape": {
-      "title": "Building the Gameplay",
-      "desc": "I built everything in Blueprints since I was still learning programming. The game is straightforward: explore a forest, find a key, unlock a door, survive a chase. But the core mechanic—freezing time to escape danger—creates interesting decisions. Use it too early and you're safe now but in trouble later. Wait too long and you might not get another chance.",
-      "oppressive_title": "The Time Freeze Mechanic",
-      "oppressive_desc": "When you press pause, the enemy stops for a few seconds while you hear an ominous countdown. But there's a price: each time you use it, the enemy's speed increases (from walking pace to a full sprint). I wanted players to feel the weight of that decision—temporary safety versus long-term consequences.",
-      "proximity_title": "Audio That Tracks You",
-      "proximity_desc": "The enemy's footsteps are spatialized in 3D, so you can hear exactly where it's coming from. As it gets closer, the audio becomes more intense. Your own footsteps also make noise, which adds to the tension—you're not silent either. All of this is synced with animations so the sounds feel grounded and believable.",
-      "environmental_title": "Keeping You Guessing",
-      "environmental_desc": "I added random environmental sounds (like bushes rustling when you walk near them) to keep you paranoid. These trigger occasionally but unpredictably, so you're never quite sure if it's just the wind or if something is actually there. It's a simple trick, but it works."
+      "title": "Audio as Gameplay",
+      "desc": "Sound isn't just atmosphere here—it's the primary survival tool. The enemy is invisible in the dense forest, tracked only by 3D spatialized footsteps. Silence is dangerous; noise is information.",
+      "oppressive_title": "The Cost of Silence",
+      "oppressive_desc": "Freezing time stops the enemy but triggers an ominous, rising Shepard tone countdown. The release is sudden and loud.",
+      "proximity_title": "Spatial Tracking",
+      "proximity_desc": "Enemy position is tracked via 3D audio. Distance attenuates volume and low-pass filtering, simulating occlusion through the trees.",
+      "environmental_title": "Paranoia",
+      "environmental_desc": "Randomized ambient emitters (twigs snapping, leaves rustling) trigger around the player to create false positives and tension."
     },
     "audio_system": {
-      "title": "How I Built the Audio",
-      "desc": "I sourced sounds from libraries (Soundly and Envato Elements) and processed them—adjusting pitch, layering multiple takes, adding reverb to fit the forest setting. I kept it practical: no complex middleware, just Unreal's built-in audio tools. The goal was functional audio that enhanced the horror without overcomplicating the project.",
-      "pause_title": "Making Sounds Respond",
-      "pause_desc": "Footsteps are tied to animations, so every step the player or enemy takes triggers a sound at the right moment. Ambient sounds loop continuously with occasional one-shot effects mixed in. UI sounds (like the countdown beep during pause) have the highest priority so they never get drowned out. Everything responds to distance—sounds naturally fade as you move away.",
-      "threat_title": "Keeping It Running Smoothly",
-      "threat_desc": "I set priorities for which sounds matter most (UI first, then footsteps, then ambience) so if too many sounds play at once, the less important ones drop out instead of the crucial ones. This kept performance stable even on older hardware without sacrificing the key audio cues that make the game work.",
-      "spatial_title": "3D Audio Positioning",
-      "spatial_desc": "Using Unreal's built-in 3D audio, sounds come from specific directions and fade naturally with distance. The enemy's footsteps are attached to its position, so they update in real-time as it moves around you. You can close your eyes and still track where it is—that was the goal."
+      "title": "Technical Implementation",
+      "desc": "No complex middleware was used. I relied on Unreal's native audio engine and MetaSounds to build a responsive, optimized system. The focus was on clarity and immediate feedback.",
+      "pause_title": "Reactive Mix",
+      "pause_desc": "The mix ducks aggressively when freezing time, focusing entirely on the countdown UI sounds. Unpausing brings the world back with a sharp transient impact.",
+      "threat_title": "Adaptive Intensity",
+      "threat_desc": "Music intensity (layers and tempo) is directly mapped to the enemy's current speed multiplier and distance from the player.",
+      "spatial_title": "Binaural Positioning",
+      "spatial_desc": "Utilized UE5's built-in HRTF settings to ensure players could pinpoint the enemy's direction using standard stereo headphones."
     },
     "tension": {
-      "title": "What I Learned",
-      "desc": "This was my first real game project, so I kept the scope manageable. I focused on gameplay programming and making the core loop feel good, rather than chasing advanced audio tech I didn't understand yet. The audio stayed functional—it supported the experience without overengineering things I couldn't realistically finish in 8 weeks.",
-      "subbass_title": "What Worked",
-      "subbass_desc": "The 3D audio worked great right out of the box—no complicated setup needed. Syncing footsteps with animations was straightforward and felt natural. The random environmental sounds added tension without requiring complex systems. And the pause mechanic's risk/reward dynamic made players think twice before using it, which created the exact tension I wanted.",
-      "silence_title": "What I'd Do Differently",
-      "silence_desc": "If I revisited this, I'd add audio occlusion so the enemy sounds muffled when behind walls (right now it's always clear). I'd implement reverb zones so the forest sounds different from indoor spaces. I'd also add footstep variation based on different surfaces (dirt, wood, leaves) instead of using the same sound everywhere. More polish on the details.",
-      "misdirection_title": "Main Takeaway",
-      "misdirection_desc": "I learned that doing a few things well is better than doing many things poorly. My focus was on gameplay programming—building the player systems, AI, and core mechanics in Blueprints. The audio supported that goal without becoming a bottleneck. Simple, functional, and effective beats overengineered and unfinished."
+      "title": "Development Insights",
+      "desc": "This project taught me the value of scope. By limiting mechanics to movement and one ability (Time Freeze), I could polish the audio-visual feedback loop to a high standard.",
+      "subbass_title": "Effective Audio",
+      "subbass_desc": "Simple, high-quality samples worked better than complex synthesis. Good foley and reliable spatialization carried the experience.",
+      "silence_title": "Future Improvements",
+      "silence_desc": "I would implement proper audio occlusion (diffraction) around geometry and distinct reverb zones for indoors/outdoors.",
+      "misdirection_title": "Key Takeaway",
+      "misdirection_desc": "Audio-driven gameplay requires trust. If the player can't rely on what they hear to survive, the horror evaporates."
     },
     "mechanics": {
       "chase": {
-        "title": "The AI Hunt",
-        "desc": "The enemy patrols the forest randomly until it sees you, then switches to chase mode. It uses pathfinding to navigate around obstacles and gets faster each time you freeze time. I kept the AI simple but effective—it doesn't need complex behavior to be terrifying when you can hear it getting closer."
+        "title": "AI Behavior",
+        "desc": "Simple nav-mesh based AI that patrols until line-of-sight is established, then pursues. Speed scales with player's ability usage."
       },
       "pause": {
-        "title": "Freezing Time (With Consequences)",
-        "desc": "Press the pause button and the enemy stops for a few seconds—but you hear a countdown beep warning you when time is about to resume. The trade-off: each use makes the enemy 20% faster (1.0x → 1.2x → 1.5x → 2.0x max). This forces you to think strategically about when to use it."
+        "title": "Time Mechanic",
+        "desc": "Pausing halts AI movement for 5s. Penalty: AI speed multiplier increases by +0.2x permanently per use. Max cap: 2.5x."
       },
       "world": {
         "title": "Level Design",
-        "desc": "The game follows a linear path: start in a dark forest, find a cabin, grab a key, unlock a door, experience a jumpscare at the fireplace, then survive the final chase back through the forest. Each interaction (picking up keys, reading notes, unlocking doors) was built as a simple Blueprint system to keep things manageable."
+        "desc": "Linear progression: Forest entry -> Cabin (Key) -> Forest Escape. Audio cues guide the player towards objectives subtly."
       },
       "score": {
-        "title": "Gameplay Loop",
-        "desc": "The core loop is explore → collect key → survive the chase. If you die, you respawn at a checkpoint. I spent a lot of time playtesting to get the pacing right: how long before players find the key, how intense the chase feels, and when the difficulty should spike from using the pause mechanic too much."
+        "title": "Game Loop",
+        "desc": "Explore -> Locate Objective -> Survive Chase -> Escape. Checkpoints reset AI speed to keep the difficulty fair on retry."
       }
     },
     "design": {
-      "title": "How I Built It",
-      "desc": "Solo project over 8 weeks. Started as a school assignment but I expanded it after some early positive feedback. I focused on learning Blueprint scripting for gameplay systems and kept the audio practical rather than overcomplicated. My priority was getting a working game loop first, then polishing it. I used placeholder assets for the first 6 weeks, then replaced everything with final audio and visuals in the last 2 weeks."
+      "title": "Production",
+      "desc": "8-week timeline. Weeks 1-6: Greyboxing and Blueprint logic. Weeks 7-8: Audio implementation, lighting, and polish. Used placeholder assets until systems were stable."
     },
     "tech": {
-      "title": "Technical Details",
-      "desc": "Built in Unreal Engine 5.1. About 90% Blueprints, 10% C++ (just for optimizing some distance calculations). Audio handled through MetaSounds with built-in 3D positioning. Sound assets came from Soundly and Envato Elements, processed and exported as WAV files. Total project size was around 450MB—mostly geometry and textures, with audio making up about a quarter of that."
+      "title": "Under the Hood",
+      "desc": "Unreal Engine 5.1. Logic: 100% Blueprints. Audio: MetaSounds & Sound Cues. Version Control: Git/GitHub. Assets: Sourced and processed from libraries."
     },
     "gallery": {
-      "title": "Screenshots",
-      "death": "Death Approaches",
-      "bushes": "The Forest",
-      "corridor": "Dark Corridors",
-      "key": "Interactive Objects"
+      "title": "Visuals",
+      "death": "Enemy Encounter",
+      "bushes": "Forest Environment",
+      "corridor": "Cabin Interior",
+      "key": "Objective"
     },
-    "wip_badge": "Work in Progress",
+    "wip_badge": "Prototype",
     "button": {
       "projects": "All Projects"
     }
   },
   "pl": {
-    "back": "Powrót do projektów",
+    "back": "Powrót",
     "title": "Pause & Deserve",
-    "tagline": "Gra horroru, w której jesteś polowany przez coś, co słyszysz, ale rzadko widzisz. Stworzyłem ją solo, żeby nauczyć się tworzenia gier—i straszyć ludzi dźwiękiem.",
+    "tagline": "Solowy horror psychologiczny: mechanika czasu kontra adaptacyjne audio AI.",
     "meta": {
       "year": {
         "label": "Rok",
@@ -104,93 +100,89 @@
       },
       "role": {
         "label": "Rola",
-        "value": "Solo Developer — Programowanie Rozgrywki + Audio Design"
+        "value": "Solo Dev (Kod + Audio)"
       },
       "tech": {
-        "label": "Technologie",
-        "value": "Unreal Engine 5, Blueprints, MetaSounds"
+        "label": "Tech",
+        "value": "UE5, Blueprints, MetaSounds"
       }
     },
     "gameplay": {
-      "title": "Jak to się zaczęło",
-      "desc": "Zaczęło się jako proste zadanie szkolne—stwórz małą grę w Unreal Engine. Chciałem spróbować czegoś innego: horroru, gdzie dźwięk jest głównym wrogiem. Jesteś ścigany przez ciemny las przez coś, co słyszysz jak się zbliża, ale masz jedną umiejętność: zatrzymanie czasu. Problem? Za każdym razem gdy jej użyjesz, wróg przyspiesza. To ciągłe wybieranie między przetrwaniem teraz a utrudnieniem sobie później."
-    },
-    "overview": {
-      "title": "Tworzenie horroru przez dźwięk",
-      "desc": "Chciałem, żeby gracze czuli się ścigani wyłącznie przez dźwięk. Używając pozycjonowania audio 3D, możesz śledzić gdzie jest wróg po jego krokach—nawet gdy jest za tobą lub ukryty w drzewach. Warstwowałem dźwięki otoczenia (wiatr, odległe echa, sporadyczne szmery), żeby trzymać cię w napięciu, a każda twoja akcja ma wyraźny feedback audio. Mechanika pauzy odtwarza odliczanie, które przyspiesza bicie serca, gdy czas się kończy."
+      "title": "Główny Koncept",
+      "desc": "Horror oparty na jednej zasadzie: zatrzymaj czas, by uciec, ale wróg na zawsze przyspieszy. Ryzyko vs nagroda. Bezpieczeństwo teraz = trudność później. Zbudowane solo w 8 tygodni na UE5."
     },
     "soundscape": {
-      "title": "Budowanie rozgrywki",
-      "desc": "Wszystko zbudowałem w Blueprintach, bo wciąż uczyłem się programowania. Gra jest prosta: eksploruj las, znajdź klucz, odblokuj drzwi, przeżyj pościg. Ale kluczowa mechanika—zamrażanie czasu, żeby uciec od niebezpieczeństwa—tworzy interesujące decyzje. Użyj jej za wcześnie i jesteś bezpieczny teraz, ale w tarapatach później. Poczekaj za długo i możesz nie dostać drugiej szansy.",
-      "oppressive_title": "Mechanika zamrażania czasu",
-      "oppressive_desc": "Gdy naciskasz pauzę, wróg zatrzymuje się na kilka sekund, podczas gdy słyszysz złowieszcze odliczanie. Ale jest cena: za każdym razem gdy jej użyjesz, prędkość wroga rośnie (od zwykłego chodu do pełnego sprintu). Chciałem, żeby gracze czuli wagę tej decyzji—tymczasowe bezpieczeństwo kontra długoterminowe konsekwencje.",
-      "proximity_title": "Audio, które cię śledzi",
-      "proximity_desc": "Kroki wroga są w przestrzeni 3D, więc słyszysz dokładnie skąd się zbliża. Im bliżej, tym audio staje się bardziej intensywne. Twoje własne kroki też robią hałas, co dodaje napięcia—ty też nie jesteś cichy. Wszystko to zsynchronizowane z animacjami, więc dźwięki wydają się realistyczne i wiarygodne.",
-      "environmental_title": "Trzymanie cię w niepewności",
-      "environmental_desc": "Dodałem losowe dźwięki otoczenia (jak szelest krzaków, gdy przechodzisz obok), żeby trzymać cię w paranoi. Odpalają się sporadycznie ale nieprzewidywalnie, więc nigdy nie jesteś pewien, czy to tylko wiatr, czy coś rzeczywiście tam jest. To prosty trik, ale działa."
+      "title": "Audio jako Gameplay",
+      "desc": "Dźwięk to nie tło—to główne narzędzie przetrwania. Wróg jest niewidoczny w gęstym lesie, zdradzają go tylko kroki w 3D. Cisza jest groźna, hałas to informacja.",
+      "oppressive_title": "Cena Ciszy",
+      "oppressive_desc": "Zatrzymanie czasu pauzuje wroga, ale odpala złowrogie odliczanie (Shepard tone). Powrót do gry to głośny, nagły impakt.",
+      "proximity_title": "Śledzenie Przestrzenne",
+      "proximity_desc": "Pozycja wroga jest śledzona przez audio 3D. Głośność i filtr dolnoprzepustowy (LPF) symulują tłumienie przez drzewa.",
+      "environmental_title": "Paranoja",
+      "environmental_desc": "Losowe emitery dźwięku (pękanie gałęzi, szum liści) odpalają się wokół gracza, tworząc fałszywe alarmy i napięcie."
     },
     "audio_system": {
-      "title": "Jak zbudowałem audio",
-      "desc": "Dźwięki pobrałem z bibliotek (Soundly i Envato Elements) i przetworzyłem—dostrajając wysokość, warstwując wiele ujęć, dodając pogłos pasujący do leśnej scenerii. Trzymałem to praktycznie: bez skomplikowanego middleware, tylko wbudowane narzędzia audio Unreala. Celem było funkcjonalne audio, które wzmacnia horror bez nadmiernej komplikacji projektu.",
-      "pause_title": "Reagujące dźwięki",
-      "pause_desc": "Kroki są powiązane z animacjami, więc każdy krok gracza lub wroga wywołuje dźwięk we właściwym momencie. Dźwięki otoczenia zapętlają się ciągle z okazjonalnymi jednorazowymi efektami. Dźwięki interfejsu (jak odliczanie przy pauzie) mają najwyższy priorytet, więc nigdy nie są zagłuszane. Wszystko reaguje na odległość—dźwięki naturalnie zanikają w miarę oddalania się.",
-      "threat_title": "Utrzymywanie płynności",
-      "threat_desc": "Ustawiłem priorytety dla dźwięków, które są najważniejsze (interfejs najpierw, potem kroki, potem otoczenie), więc jeśli odtwarza się zbyt wiele dźwięków naraz, mniej ważne znikają zamiast kluczowych. To utrzymało stabilną wydajność nawet na starszym sprzęcie bez poświęcania kluczowych sygnałów audio, które sprawiają, że gra działa.",
-      "spatial_title": "Pozycjonowanie audio 3D",
-      "spatial_desc": "Używając wbudowanego audio 3D Unreala, dźwięki dochodzą z konkretnych kierunków i naturalnie zanikają z odległością. Kroki wroga są przypisane do jego pozycji, więc aktualizują się w czasie rzeczywistym, gdy się porusza wokół ciebie. Możesz zamknąć oczy i wciąż śledzić gdzie jest—to był cel."
+      "title": "Implementacja",
+      "desc": "Bez skomplikowanego middleware. Oparłem się na natywnym silniku audio Unreala i MetaSounds, by zbudować responsywny system. Priorytetem była czytelność i natychmiastowy feedback.",
+      "pause_title": "Reaktywny Mix",
+      "pause_desc": "Mix wycisza otoczenie podczas pauzy, skupiając się na dźwiękach UI. Odpauzowanie przywraca świat z ostrym atakiem.",
+      "threat_title": "Adaptacyjna Intensywność",
+      "threat_desc": "Intensywność muzyki (warstwy i tempo) jest bezpośrednio zmapowana do mnożnika prędkości wroga i jego odległości.",
+      "spatial_title": "Pozycjonowanie Binauralne",
+      "spatial_desc": "Wykorzystałem wbudowane HRTF w UE5, aby gracze mogli precyzyjnie namierzyć wroga na zwykłych słuchawkach stereo."
     },
     "tension": {
-      "title": "Czego się nauczyłem",
-      "desc": "To był mój pierwszy prawdziwy projekt gry, więc trzymałem zakres w rozsądnych ramach. Skupiłem się na programowaniu rozgrywki i sprawieniu, żeby główna pętla działała dobrze, zamiast gonić za zaawansowaną technologią audio, której jeszcze nie rozumiałem. Audio pozostało funkcjonalne—wspierało doświadczenie bez nadmiernej komplikacji rzeczy, których realistycznie nie mogłem ukończyć w 8 tygodni.",
-      "subbass_title": "Co zadziałało",
-      "subbass_desc": "Audio 3D działało świetnie od razu—nie potrzebowało skomplikowanej konfiguracji. Synchronizacja kroków z animacjami była prosta i wydawała się naturalna. Losowe dźwięki otoczenia dodały napięcia bez wymagania złożonych systemów. A mechanika pauzy z jej ryzykiem/nagrodą sprawiła, że gracze dwa razy myśleli przed użyciem, co stworzyło dokładnie to napięcie, którego chciałem.",
-      "silence_title": "Co bym zmienił",
-      "silence_desc": "Gdybym do tego wrócił, dodałbym okluzję audio, żeby wróg brzmiał przytłumiony za ścianami (teraz jest zawsze wyraźny). Zaimplementowałbym strefy pogłosu, żeby las brzmiał inaczej niż pomieszczenia. Dodałbym też wariacje kroków w zależności od powierzchni (ziemia, drewno, liście) zamiast używać tego samego dźwięku wszędzie. Więcej dopracowania detali.",
-      "misdirection_title": "Główna lekcja",
-      "misdirection_desc": "Nauczyłem się, że robienie kilku rzeczy dobrze jest lepsze niż robienie wielu rzeczy źle. Mój priorytet był na programowaniu rozgrywki—budowaniu systemów gracza, AI i mechanik w Blueprintach. Audio wspierało ten cel bez stawania się wąskim gardłem. Proste, funkcjonalne i skuteczne pokonuje przerosty inżynieryjne i nieukończone."
+      "title": "Wnioski z produkcji",
+      "desc": "Ten projekt nauczył mnie zarządzania zakresem. Ograniczając mechaniki do ruchu i jednej zdolności, mogłem dopracować pętlę audio-wizualną do wysokiego poziomu.",
+      "subbass_title": "Efektywne Audio",
+      "subbass_desc": "Proste, wysokiej jakości sample zadziałały lepiej niż skomplikowana synteza. Dobry foley i solidna przestrzenność poniosły rozgrywkę.",
+      "silence_title": "Do poprawy",
+      "silence_desc": "Dodałbym pełną okluzję audio (dyfrakcję) wokół geometrii oraz oddzielne strefy pogłosu (reverb zones) dla wnętrz i lasu.",
+      "misdirection_title": "Kluczowa lekcja",
+      "misdirection_desc": "Gameplay oparty na audio wymaga zaufania. Jeśli gracz nie może polegać na słuchu by przeżyć, horror znika."
     },
     "mechanics": {
       "chase": {
-        "title": "Polowanie AI",
-        "desc": "Wróg patroluje las losowo, dopóki cię nie zobaczy, wtedy przełącza się w tryb pościgu. Używa pathfindingu do nawigacji wokół przeszkód i przyspiesza za każdym razem gdy zamrażasz czas. Trzymałem AI proste, ale skuteczne—nie potrzebuje złożonego zachowania, żeby być przerażające, gdy słyszysz jak się zbliża."
+        "title": "Zachowanie AI",
+        "desc": "Proste AI oparte na nav-mesh. Patroluje do momentu wykrycia, potem ściga. Prędkość skaluje się z użyciem zdolności gracza."
       },
       "pause": {
-        "title": "Zamrażanie czasu (z konsekwencjami)",
-        "desc": "Naciśnij przycisk pauzy a wróg zatrzyma się na kilka sekund—ale słyszysz odliczanie ostrzegające cię, gdy czas zaraz wróci. Kompromis: każde użycie sprawia, że wróg jest 20% szybszy (1.0x → 1.2x → 1.5x → 2.0x max). To zmusza cię do strategicznego myślenia o tym, kiedy jej użyć."
+        "title": "Mechanika Czasu",
+        "desc": "Pauza zatrzymuje AI na 5s. Kara: mnożnik prędkości AI rośnie o +0.2x na stałe przy każdym użyciu. Max: 2.5x."
       },
       "world": {
-        "title": "Projekt poziomów",
-        "desc": "Gra podąża liniową ścieżką: start w ciemnym lesie, znajdź chatkę, chwyć klucz, odblokuj drzwi, przeżyj jumpscare przy kominku, potem przetrwaj finałowy pościg przez las. Każda interakcja (podnoszenie kluczy, czytanie notatek, odblokowywanie drzwi) została zbudowana jako prosty system Blueprint, żeby było łatwo zarządzać."
+        "title": "Level Design",
+        "desc": "Liniowy progres: Las -> Chatka (Klucz) -> Ucieczka przez Las. Wskazówki audio subtelnie kierują gracza do celu."
       },
       "score": {
-        "title": "Pętla rozgrywki",
-        "desc": "Główna pętla to eksploruj → zbierz klucz → przetrwaj pościg. Jeśli zginiesz, odradzasz się na checkpoincie. Spędziłem dużo czasu na playtestingu, żeby dobrze dobrać tempo: jak długo zanim gracze znajdą klucz, jak intensywny jest pościg i kiedy trudność powinna wzrosnąć z powodu zbyt dużego używania mechaniki pauzy."
+        "title": "Pętla Gry",
+        "desc": "Eksploracja -> Cel -> Ucieczka. Checkpointy resetują prędkość AI, aby poziom trudności był sprawiedliwy przy powtórkach."
       }
     },
     "design": {
-      "title": "Jak to budowałem",
-      "desc": "Solowy projekt przez 8 tygodni. Zaczął jako zadanie szkolne, ale rozszerzyłem go po wczesnych pozytywnych opiniach. Skupiłem się na nauce skryptowania w Blueprintach dla systemów rozgrywki i trzymałem audio praktyczne zamiast nadmiernie skomplikowane. Moim priorytetem było najpierw uzyskanie działającej pętli gry, potem dopracowanie. Używałem placeholder assetów przez pierwsze 6 tygodni, potem wymieniłem wszystko na finalne audio i wizualia w ostatnie 2 tygodnie."
+      "title": "Produkcja",
+      "desc": "8 tygodni. Tygodnie 1-6: Greyboxing i logika Blueprint. Tygodnie 7-8: Implementacja audio, oświetlenie i polish. Assety tymczasowe do momentu stabilności systemów."
     },
     "tech": {
-      "title": "Szczegóły techniczne",
-      "desc": "Zbudowane w Unreal Engine 5.1. Około 90% Blueprints, 10% C++ (tylko do optymalizacji niektórych obliczeń odległości). Audio obsługiwane przez MetaSounds z wbudowanym pozycjonowaniem 3D. Assety dźwiękowe z Soundly i Envato Elements, przetworzone i wyeksportowane jako pliki WAV. Całkowity rozmiar projektu to około 450MB—głównie geometria i tekstury, z audio stanowiącym około ćwierci tego."
+      "title": "Technikalia",
+      "desc": "Unreal Engine 5.1. Logika: 100% Blueprints. Audio: MetaSounds & Sound Cues. Kontrola wersji: Git. Assety: Biblioteki + processing."
     },
     "gallery": {
-      "title": "Zrzuty ekranu",
-      "death": "Śmierć się zbliża",
+      "title": "Wizualia",
+      "death": "Spotkanie z Wrogiem",
       "bushes": "Las",
-      "corridor": "Ciemne korytarze",
-      "key": "Interaktywne obiekty"
+      "corridor": "Wnętrze Chatki",
+      "key": "Cel"
     },
-    "wip_badge": "W toku",
+    "wip_badge": "Prototyp",
     "button": {
-      "projects": "Wszystkie projekty"
+      "projects": "Wszystkie Projekty"
     }
   },
   "nl": {
-    "back": "Terug naar projecten",
+    "back": "Terug",
     "title": "Pause & Deserve",
-    "tagline": "Een horrorgame waarin je opgejaagd wordt door iets dat je hoort maar zelden ziet. Ik bouwde het solo om game development te leren—en om mensen bang te maken met geluid.",
+    "tagline": "Solo psychologische horrorgame: tijdbevriezingsmechanica vs. adaptieve AI audio.",
     "meta": {
       "year": {
         "label": "Jaar",
@@ -198,85 +190,81 @@
       },
       "role": {
         "label": "Rol",
-        "value": "Solo Developer — Gameplay Programmering + Audio Design"
+        "value": "Solo Dev (Code + Audio)"
       },
       "tech": {
-        "label": "Technologie",
-        "value": "Unreal Engine 5, Blueprints, MetaSounds"
+        "label": "Tech",
+        "value": "UE5, Blueprints, MetaSounds"
       }
     },
     "gameplay": {
-      "title": "Hoe het begon",
-      "desc": "Dit begon als een eenvoudige schoolopdracht—maak een kleine game in Unreal Engine. Ik wilde iets anders proberen: een horrorgame waar geluid je voornaamste vijand is. Je wordt achtervolgd door een donker bos door iets dat je hoort naderen, maar je hebt één vaardigheid: de tijd bevriezen. Het addertje onder het gras? Elke keer dat je het gebruikt, wordt je vijand sneller. Het is een constante afweging tussen nu overleven en het later moeilijker maken."
-    },
-    "overview": {
-      "title": "Horror maken door audio",
-      "desc": "Ik wilde dat spelers zich opgejaagd voelen door geluid alleen. Met 3D audio positionering kun je volgen waar de vijand is aan zijn voetstappen—zelfs als het achter je is of verstopt tussen de bomen. Ik heb omgevingsgeluiden gelaagd (wind, verre echo's, af en toe geritsel) om je op scherp te houden, en elke actie die je neemt heeft duidelijke audio feedback. De pauze mechanica speelt een aftelling af die je hart sneller doet kloppen als de tijd opraakt."
+      "title": "Kernconcept",
+      "desc": "Een horrorgame gebaseerd op één afweging: bevries de tijd om te ontsnappen, maar maak de vijand permanent sneller. Risico vs beloning. Nu veilig = later moeilijk. Solo gebouwd in 8 weken in UE5."
     },
     "soundscape": {
-      "title": "De gameplay bouwen",
-      "desc": "Ik bouwde alles in Blueprints omdat ik nog aan het leren was programmeren. De game is eenvoudig: verken een bos, vind een sleutel, ontgrendel een deur, overleef een achtervolging. Maar de kernmechanica—tijd bevriezen om aan gevaar te ontsnappen—creëert interessante beslissingen. Gebruik het te vroeg en je bent nu veilig maar later in de problemen. Wacht te lang en je krijgt misschien geen tweede kans.",
-      "oppressive_title": "De tijdbevriezingsmechanica",
-      "oppressive_desc": "Als je op pauze drukt, stopt de vijand een paar seconden terwijl je een onheilspellende aftelling hoort. Maar er is een prijs: elke keer dat je het gebruikt, neemt de snelheid van de vijand toe (van wandeltempo tot een volle sprint). Ik wilde dat spelers het gewicht van die beslissing voelen—tijdelijke veiligheid versus langetermijngevolgen.",
-      "proximity_title": "Audio die je volgt",
-      "proximity_desc": "De voetstappen van de vijand zijn ruimtelijk in 3D, dus je hoort precies waar het vandaan komt. Naarmate het dichterbij komt, wordt de audio intenser. Je eigen voetstappen maken ook geluid, wat spanning toevoegt—jij bent ook niet stil. Dit alles is gesynchroniseerd met animaties zodat de geluiden gegrond en geloofwaardig aanvoelen.",
-      "environmental_title": "Je laten raden",
-      "environmental_desc": "Ik heb willekeurige omgevingsgeluiden toegevoegd (zoals struiken die ritselen als je er dichtbij loopt) om je paranoïde te houden. Deze triggeren af en toe maar onvoorspelbaar, dus je weet nooit zeker of het gewoon de wind is of dat er echt iets is. Het is een simpele truc, maar het werkt."
+      "title": "Audio als Gameplay",
+      "desc": "Geluid is hier geen achtergrond—het is je belangrijkste overlevingstool. De vijand is onzichtbaar in het bos, alleen te volgen via 3D voetstappen. Stilte is gevaarlijk; geluid is informatie.",
+      "oppressive_title": "De Prijs van Stilte",
+      "oppressive_desc": "Tijd bevriezen stopt de vijand maar start een dreigende countdown. Het hervatten is plotseling en luid.",
+      "proximity_title": "Ruimtelijke Tracking",
+      "proximity_desc": "Vijandpositie wordt gevolgd via 3D audio. Volume en low-pass filtering simuleren demping door bomen.",
+      "environmental_title": "Paranoia",
+      "environmental_desc": "Willekeurige omgevingsgeluiden (krakende takken, ritselende bladeren) triggeren rond de speler voor valse alarmen en spanning."
     },
     "audio_system": {
-      "title": "Hoe ik de audio bouwde",
-      "desc": "Ik haalde geluiden uit bibliotheken (Soundly en Envato Elements) en verwerkte ze—toonhoogte aanpassen, meerdere takes lagen, reverb toevoegen passend bij de bosomgeving. Ik hield het praktisch: geen complexe middleware, alleen Unreal's ingebouwde audiotools. Het doel was functionele audio die de horror versterkte zonder het project te compliceren.",
-      "pause_title": "Geluiden laten reageren",
-      "pause_desc": "Voetstappen zijn gekoppeld aan animaties, dus elke stap die de speler of vijand zet triggert een geluid op het juiste moment. Omgevingsgeluiden loopen continu met af en toe one-shot effecten erdoorheen. UI-geluiden (zoals het aftellen tijdens pauze) hebben de hoogste prioriteit dus die worden nooit overstemd. Alles reageert op afstand—geluiden vervagen natuurlijk als je wegbeweegt.",
-      "threat_title": "Het soepel houden",
-      "threat_desc": "Ik stelde prioriteiten in voor welke geluiden het belangrijkst zijn (UI eerst, dan voetstappen, dan ambience) dus als er te veel geluiden tegelijk spelen, vallen de minder belangrijke weg in plaats van de cruciale. Dit hield de prestaties stabiel, zelfs op oudere hardware, zonder de belangrijkste audio cues op te offeren die de game laten werken.",
-      "spatial_title": "3D audio positionering",
-      "spatial_desc": "Met Unreal's ingebouwde 3D audio komen geluiden uit specifieke richtingen en vervagen natuurlijk met afstand. De voetstappen van de vijand zijn gekoppeld aan zijn positie, dus ze updaten in real-time terwijl het om je heen beweegt. Je kunt je ogen sluiten en nog steeds volgen waar het is—dat was het doel."
+      "title": "Implementatie",
+      "desc": "Geen complexe middleware. Ik gebruikte Unreal's native audio engine en MetaSounds voor een responsief systeem. Focus lag op duidelijkheid en directe feedback.",
+      "pause_title": "Reactieve Mix",
+      "pause_desc": "De mix dempt de omgeving tijdens pauze en focust op UI-geluiden. Ontpauzeren brengt de wereld terug met een harde impact.",
+      "threat_title": "Adaptieve Intensiteit",
+      "threat_desc": "Muziekintensiteit (lagen en tempo) is direct gekoppeld aan de snelheidsvermenigvuldiger van de vijand en afstand tot de speler.",
+      "spatial_title": "Binaurale Positionering",
+      "spatial_desc": "Gebruikgemaakt van UE5's ingebouwde HRTF zodat spelers de richting van de vijand precies kunnen bepalen met standaard koptelefoons."
     },
     "tension": {
-      "title": "Wat ik leerde",
-      "desc": "Dit was mijn eerste echte game project, dus ik hield de scope beheersbaar. Ik richtte me op gameplay programmering en het goed laten aanvoelen van de kernloop, in plaats van geavanceerde audiotechnologie na te jagen die ik nog niet begreep. De audio bleef functioneel—het ondersteunde de ervaring zonder dingen te overengineeren die ik realistisch niet kon afmaken in 8 weken.",
-      "subbass_title": "Wat werkte",
-      "subbass_desc": "De 3D audio werkte geweldig direct uit de doos—geen ingewikkelde setup nodig. Voetstappen synchroniseren met animaties was eenvoudig en voelde natuurlijk aan. De willekeurige omgevingsgeluiden voegden spanning toe zonder complexe systemen te vereisen. En de risico/beloning dynamiek van de pauze mechanica zorgde ervoor dat spelers twee keer nadachten voordat ze het gebruikten, wat precies de spanning creëerde die ik wilde.",
-      "silence_title": "Wat ik anders zou doen",
-      "silence_desc": "Als ik hier op terug zou komen, zou ik audio occlusie toevoegen zodat de vijand gedempt klinkt achter muren (nu is het altijd helder). Ik zou reverb zones implementeren zodat het bos anders klinkt dan binnenruimtes. Ik zou ook voetstatvariatie toevoegen op basis van verschillende oppervlakken (aarde, hout, bladeren) in plaats van overal hetzelfde geluid te gebruiken. Meer polish op de details.",
-      "misdirection_title": "Belangrijkste les",
-      "misdirection_desc": "Ik leerde dat een paar dingen goed doen beter is dan veel dingen slecht doen. Mijn focus lag op gameplay programmering—de speler systemen, AI en kernmechanica's bouwen in Blueprints. De audio ondersteunde dat doel zonder een knelpunt te worden. Simpel, functioneel en effectief verslaat over-engineered en onafgemaakt."
+      "title": "Inzichten",
+      "desc": "Dit project leerde me de waarde van scope. Door mechanica te beperken tot beweging en één vaardigheid, kon ik de audio-visuele feedback tot een hoog niveau polijsten.",
+      "subbass_title": "Effectieve Audio",
+      "subbass_desc": "Simpele, hoge kwaliteit samples werkten beter dan complexe synthese. Goede foley en betrouwbare ruimtelijkheid droegen de ervaring.",
+      "silence_title": "Toekomstige Verbeteringen",
+      "silence_desc": "Ik zou echte audio occlusie toevoegen rond geometrie en aparte reverb zones voor binnen/buiten.",
+      "misdirection_title": "Belangrijkste Les",
+      "misdirection_desc": "Audio-gedreven gameplay vereist vertrouwen. Als de speler niet op zijn gehoor kan vertrouwen om te overleven, verdwijnt de horror."
     },
     "mechanics": {
       "chase": {
-        "title": "De AI jacht",
-        "desc": "De vijand patrouilleert willekeurig door het bos totdat het je ziet, dan schakelt het over naar achtervolgingsmodus. Het gebruikt pathfinding om rond obstakels te navigeren en wordt sneller elke keer dat je de tijd bevriest. Ik hield de AI simpel maar effectief—het heeft geen complex gedrag nodig om angstaanjagend te zijn als je het dichterbij hoort komen."
+        "title": "AI Gedrag",
+        "desc": "Simpele nav-mesh AI die patrouilleert tot zichtcontact, dan achtervolgt. Snelheid schaalt met gebruik van vaardigheden."
       },
       "pause": {
-        "title": "Tijd bevriezen (met consequenties)",
-        "desc": "Druk op de pauzeknop en de vijand stopt een paar seconden—maar je hoort een aftelling die je waarschuwt wanneer de tijd bijna hervat. De afweging: elk gebruik maakt de vijand 20% sneller (1.0x → 1.2x → 1.5x → 2.0x max). Dit dwingt je om strategisch na te denken over wanneer je het gebruikt."
+        "title": "Tijd Mechanica",
+        "desc": "Pauzeren stopt AI voor 5s. Straf: AI snelheid +0.2x permanent per gebruik. Max: 2.5x."
       },
       "world": {
-        "title": "Level design",
-        "desc": "De game volgt een lineair pad: start in een donker bos, vind een hut, pak een sleutel, ontgrendel een deur, ervaar een jumpscare bij de haard, en overleef dan de finale achtervolging terug door het bos. Elke interactie (sleutels oppakken, briefjes lezen, deuren ontgrendelen) werd gebouwd als een simpel Blueprint systeem om het beheersbaar te houden."
+        "title": "Level Design",
+        "desc": "Lineair verloop: Bos -> Hut (Sleutel) -> Ontsnapping. Audio cues leiden de speler subtiel naar doelen."
       },
       "score": {
-        "title": "Gameplay loop",
-        "desc": "De kernloop is verken → verzamel sleutel → overleef de achtervolging. Als je sterft, respawn je bij een checkpoint. Ik besteedde veel tijd aan playtesting om de pacing goed te krijgen: hoe lang voordat spelers de sleutel vinden, hoe intens de achtervolging aanvoelt, en wanneer de moeilijkheidsgraad moet stijgen door te veel gebruik van de pauze mechanica."
+        "title": "Game Loop",
+        "desc": "Verken -> Vind Doel -> Overleef Achtervolging. Checkpoints resetten AI snelheid om de moeilijkheidsgraad eerlijk te houden."
       }
     },
     "design": {
-      "title": "Hoe ik het bouwde",
-      "desc": "Solo project over 8 weken. Begon als een schoolopdracht maar ik breidde het uit na wat vroege positieve feedback. Ik richtte me op het leren van Blueprint scripting voor gameplay systemen en hield de audio praktisch in plaats van overcomplicated. Mijn prioriteit was eerst een werkende game loop krijgen, dan polish. Ik gebruikte placeholder assets voor de eerste 6 weken, en verving toen alles met finale audio en visuals in de laatste 2 weken."
+      "title": "Productie",
+      "desc": "8 weken. Week 1-6: Greyboxing en Blueprint logica. Week 7-8: Audio implementatie, belichting en polish. Tijdelijke assets gebruikt tot systemen stabiel waren."
     },
     "tech": {
-      "title": "Technische details",
-      "desc": "Gebouwd in Unreal Engine 5.1. Ongeveer 90% Blueprints, 10% C++ (alleen voor het optimaliseren van wat afstandsberekeningen). Audio afgehandeld via MetaSounds met ingebouwde 3D positionering. Geluid assets kwamen van Soundly en Envato Elements, verwerkt en geëxporteerd als WAV bestanden. Totale projectgrootte was ongeveer 450MB—voornamelijk geometrie en texturen, met audio goed voor ongeveer een kwart daarvan."
+      "title": "Onder de motorkap",
+      "desc": "Unreal Engine 5.1. Logica: 100% Blueprints. Audio: MetaSounds. Versiebeheer: Git. Assets: Bibliotheken + processing."
     },
     "gallery": {
-      "title": "Screenshots",
-      "death": "De Dood nadert",
-      "bushes": "Het Bos",
-      "corridor": "Donkere Gangen",
-      "key": "Interactieve Objecten"
+      "title": "Beelden",
+      "death": "Vijand Ontmoeting",
+      "bushes": "Bos",
+      "corridor": "Hut Interieur",
+      "key": "Doelwit"
     },
-    "wip_badge": "In ontwikkeling",
+    "wip_badge": "Prototype",
     "button": {
       "projects": "Alle Projecten"
     }
