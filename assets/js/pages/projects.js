@@ -1,11 +1,22 @@
 // Simplified Projects Page - Live Search Only
-function initProjectsPage() {
+function initProjectsPage(retryCount = 0) {
   const list = document.getElementById('projects-list');
-  if (!list) return;
+  
+  // Retry mechanism for AJAX race conditions
+  if (!list) {
+    if (retryCount < 2) {
+      const delay = retryCount === 0 ? 50 : 150;
+      console.log(`[Projects] List not found, retrying in ${delay}ms (attempt ${retryCount + 1})`);
+      setTimeout(() => initProjectsPage(retryCount + 1), delay);
+    }
+    return;
+  }
 
   const cards = Array.from(list.querySelectorAll('.project-card'));
   const searchInput = document.getElementById('projects-search');
   const countEl = document.getElementById('projects-count');
+
+  console.log(`[Projects] Initializing list with ${cards.length} items`);
 
   let activeQuery = '';
 
@@ -54,21 +65,25 @@ function initProjectsPage() {
   // Search input with debouncing
   if (searchInput) {
     let searchTimeout;
-    searchInput.addEventListener('input', () => {
+    // Remove old listeners to prevent duplicates if function runs twice
+    const newSearchInput = searchInput.cloneNode(true);
+    searchInput.parentNode.replaceChild(newSearchInput, searchInput);
+    
+    newSearchInput.addEventListener('input', () => {
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => {
-        activeQuery = searchInput.value || '';
+        activeQuery = newSearchInput.value || '';
         applySearch();
       }, 200);
     });
 
     // Clear search on Escape key
-    searchInput.addEventListener('keydown', (e) => {
+    newSearchInput.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        searchInput.value = '';
+        newSearchInput.value = '';
         activeQuery = '';
         applySearch();
-        searchInput.blur();
+        newSearchInput.blur();
       }
     });
   }
@@ -102,7 +117,7 @@ function initProjectsPage() {
 }
 
 // Initialize on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', initProjectsPage);
+document.addEventListener('DOMContentLoaded', () => initProjectsPage());
 
 // Export for AJAX navigation
 window.initProjectsPage = initProjectsPage;

@@ -733,52 +733,61 @@
 
     <script data-reinit="true">
       (function () {
-        // FILTER LOGIC
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const projectCards = document.querySelectorAll('.project-card');
-        const filterStatus = document.getElementById('filter-status');
+        const initProjectsScript = (retryCount = 0) => {
+          const filterBtns = document.querySelectorAll('.filter-btn');
+          const projectCards = document.querySelectorAll('.project-card');
+          
+          // Retry logic if DOM is not ready yet (AJAX race condition fix)
+          if (projectCards.length === 0 && retryCount < 5) {
+            console.log(`[Projects] No cards found, retrying initialization... (${retryCount + 1}/5)`);
+            setTimeout(() => initProjectsScript(retryCount + 1), 50);
+            return;
+          }
 
-        function applyFilter(filter) {
-          filterBtns.forEach((b) => b.classList.toggle('active', b.dataset.filter === filter));
+          const filterStatus = document.getElementById('filter-status');
 
-          let visibleCount = 0;
-          projectCards.forEach((card) => {
-            const category = card.dataset.category;
-            const match = filter === 'all' || category.includes(filter);
+          function applyFilter(filter) {
+            filterBtns.forEach((b) => b.classList.toggle('active', b.dataset.filter === filter));
 
-            if (match) {
-              visibleCount++;
-              card.style.display = 'block';
-              setTimeout(() => (card.style.opacity = '1'), 10); // Transition
-              card.classList.remove('filter-hidden');
-            } else {
-              card.classList.add('filter-hidden');
-              card.style.opacity = '0';
-              setTimeout(() => {
-                if (card.classList.contains('filter-hidden')) card.style.display = 'none';
-              }, 300);
-            }
-          });
+            let visibleCount = 0;
+            projectCards.forEach((card) => {
+              const category = card.dataset.category;
+              const match = filter === 'all' || category.includes(filter);
 
-          if (filterStatus) filterStatus.textContent = `Showing ${visibleCount} projects`;
+              if (match) {
+                visibleCount++;
+                card.style.display = 'block';
+                setTimeout(() => (card.style.opacity = '1'), 10); // Transition
+                card.classList.remove('filter-hidden');
+              } else {
+                card.classList.add('filter-hidden');
+                card.style.opacity = '0';
+                setTimeout(() => {
+                  if (card.classList.contains('filter-hidden')) card.style.display = 'none';
+                }, 300);
+              }
+            });
 
-          // Update URL clean
-          const url = new URL(window.location);
-          filter === 'all'
-            ? url.searchParams.delete('filter')
-            : url.searchParams.set('filter', filter);
-          window.history.replaceState({}, '', url);
-        }
+            if (filterStatus) filterStatus.textContent = `Showing ${visibleCount} projects`;
 
-        // Init Filter
-        const initialFilter = new URLSearchParams(window.location.search).get('filter') || 'all';
-        applyFilter(initialFilter);
+            // Update URL clean
+            const url = new URL(window.location);
+            filter === 'all'
+              ? url.searchParams.delete('filter')
+              : url.searchParams.set('filter', filter);
+            window.history.replaceState({}, '', url);
+          }
 
-        filterBtns.forEach((btn) =>
-          btn.addEventListener('click', () => applyFilter(btn.dataset.filter))
-        );
+          // Init Filter
+          const initialFilter = new URLSearchParams(window.location.search).get('filter') || 'all';
+          applyFilter(initialFilter);
 
-        // TECH TAGS RENDERING
+          filterBtns.forEach((btn) =>
+            btn.addEventListener('click', () => applyFilter(btn.dataset.filter))
+          );
+        };
+
+        // TECH TAGS RENDERING - Define globally
         window.renderProjectTechTags = async function () {
           const techContainers = document.querySelectorAll('[data-tech]');
           if (!techContainers.length) return;
@@ -829,7 +838,10 @@
           });
         };
 
-        // Event Listeners
+        // Start initialization
+        initProjectsScript();
+
+        // Event Listeners for tech tags
         const langHandler = () => setTimeout(window.renderProjectTechTags, 50);
         window.addEventListener('languageChanged', langHandler);
 
