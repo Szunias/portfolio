@@ -555,6 +555,12 @@
       };
 
       const activeAnimationFrames = new Set();
+      let isLayoutReady = false;
+
+      // Wait for full load to ensure layout stability
+      window.addEventListener('load', () => {
+        isLayoutReady = true;
+      });
 
       function initSkillConnections() {
         const skillsSection = document.querySelector('.content-section');
@@ -562,7 +568,7 @@
 
         skillsSection.style.position = 'relative';
 
-        // Cleanup existing if any (unlikely on fresh load but good practice)
+        // Cleanup existing if any
         if (window.__aboutPageCleanup && window.__aboutPageCleanup.particleContainer) {
            window.__aboutPageCleanup.particleContainer.remove();
         }
@@ -587,15 +593,21 @@
             const particle = document.createElement('div');
             particle.classList.add('particle');
             particle.style.color = color;
-            particle.style.animationDelay = `${i * 0.4}s`;
+            particle.style.opacity = '0'; // Start invisible
             particleContainer.appendChild(particle);
-            particles.push(particle);
+            particles.push({ el: particle, delay: i * 400 });
           }
           return particles;
         }
 
-        // Helper: Animate
-        function animateParticle(particle, fromEl, toEl) {
+        // Helper: Animate Single Particle
+        function animateParticle(particleObj, fromEl, toEl) {
+          const particle = particleObj.el;
+          if (!particle.classList.contains('active')) return;
+
+          // Recalculate positions on every frame start to handle window resize/scroll/transforms
+          // But for performance, we might want to do this less often. 
+          // However, for accuracy during hover transitions, we need it.
           const sectionRect = skillsSection.getBoundingClientRect();
           const fromRect = fromEl.getBoundingClientRect();
           const toRect = toEl.getBoundingClientRect();
@@ -609,31 +621,41 @@
           particle.style.setProperty('--y1', `${y1}px`);
           particle.style.setProperty('--x2', `${x2}px`);
           particle.style.setProperty('--y2', `${y2}px`);
+          
+          // Ensure visible
+          particle.style.opacity = '1';
 
-          const duration = 2000;
-          const startTime = performance.now();
+          const duration = 2000; // ms
+          let startTime = null;
 
-          function animate(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-
-            const x = x1 + (x2 - x1) * eased;
-            const y = y1 + (y2 - y1) * eased;
-
-            particle.style.left = `${x}px`;
-            particle.style.top = `${y}px`;
-
-            if (progress < 1 && particle.classList.contains('active')) {
-              const id = requestAnimationFrame(animate);
-              activeAnimationFrames.add(id);
-            } else if (progress >= 1 && particle.classList.contains('active')) {
-              // Loop
-              const id = requestAnimationFrame(() => animateParticle(particle, fromEl, toEl));
-              activeAnimationFrames.add(id);
+          function loop(timestamp) {
+            if (!particle.classList.contains('active')) {
+              particle.style.opacity = '0';
+              return; 
             }
+            
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            
+            // Apply delay logic within the loop to keep it simple
+            const effectiveElapsed = elapsed - particleObj.delay;
+            
+            if (effectiveElapsed > 0) {
+                const progress = (effectiveElapsed % duration) / duration;
+                const eased = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+                const x = x1 + (x2 - x1) * eased;
+                const y = y1 + (y2 - y1) * eased;
+
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+            }
+
+            const id = requestAnimationFrame(loop);
+            activeAnimationFrames.add(id);
           }
-          const id = requestAnimationFrame(animate);
+          
+          const id = requestAnimationFrame(loop);
           activeAnimationFrames.add(id);
         }
 
@@ -641,46 +663,60 @@
         allHexagons.forEach((hex) => {
           const skill = hex.dataset.skill;
           const category = hex.dataset.category;
-          // Safe access to SKILL_DATA
-          const targets = (window.SKILL_DATA && window.SKILL_DATA[skill]?.connections) || [];
+          
+          let hoverTimeout;
 
           hex.addEventListener('mouseenter', () => {
-            document.querySelectorAll('.skills-hexagon-container').forEach((c) => c.classList.add('dimmed'));
-            hex.classList.add('active');
+            // Debounce: wait 50ms to ensure intention and layout stability
+            hoverTimeout = setTimeout(() => {
+                if (!isLayoutReady && document.readyState !== 'complete') return; // Skip if page heavily loading
 
-            targets.forEach((targetSkill) => {
-              const targetHex = document.querySelector(`[data-skill="${targetSkill}"]`);
-              if (targetHex && targetHex.dataset.category !== category) {
-                targetHex.classList.add('connected');
+                // Check if SKILL_DATA is ready
+                if (!window.SKILL_DATA) return;
 
-                const connectionId = [skill, targetSkill].sort().join('-');
-                if (!particlePool.has(connectionId)) {
-                  const color = SKILL_COLORS[skill] || '#60a5fa';
-                  const particles = createParticles(skill, targetSkill, color, 3);
-                  particlePool.set(connectionId, particles);
-                }
+                const targets = (window.SKILL_DATA[skill]?.connections) || [];
 
-                const particles = particlePool.get(connectionId);
-                particles.forEach((p) => {
-                  p.classList.add('active');
-                  animateParticle(p, hex, targetHex);
+                document.querySelectorAll('.skills-hexagon-container').forEach((c) => c.classList.add('dimmed'));
+                hex.classList.add('active');
+
+                targets.forEach((targetSkill) => {
+                  const targetHex = document.querySelector(`[data-skill="${targetSkill}"]`);
+                  if (targetHex && targetHex.dataset.category !== category) {
+                    targetHex.classList.add('connected');
+
+                    const connectionId = [skill, targetSkill].sort().join('-');
+                    if (!particlePool.has(connectionId)) {
+                      const color = SKILL_COLORS[skill] || '#60a5fa';
+                      const particles = createParticles(skill, targetSkill, color, 3);
+                      particlePool.set(connectionId, particles);
+                    }
+
+                    const particles = particlePool.get(connectionId);
+                    particles.forEach((p) => {
+                      p.el.classList.add('active');
+                      animateParticle(p, hex, targetHex);
+                    });
+                  }
                 });
-              }
-            });
+            }, 50);
           });
 
           hex.addEventListener('mouseleave', () => {
+            clearTimeout(hoverTimeout); // Cancel pending hover
+
             document.querySelectorAll('.skills-hexagon-container').forEach((c) => c.classList.remove('dimmed'));
             allHexagons.forEach((h) => h.classList.remove('active', 'connected'));
             
-            // Stop particles
+            // Deactivate all particles
             particlePool.forEach((particles) => {
-              particles.forEach((p) => p.classList.remove('active'));
+              particles.forEach((p) => {
+                  p.el.classList.remove('active');
+                  p.el.style.opacity = '0'; // Hide immediately
+              });
             });
             
-            // Clear frames immediately to save CPU
-            activeAnimationFrames.forEach(id => cancelAnimationFrame(id));
-            activeAnimationFrames.clear();
+            // We don't aggressively clear frames here to allow graceful exit, 
+            // but the loop checks for .active class and will exit naturally.
           });
         });
       }
@@ -694,7 +730,7 @@
           const { particleContainer, particlePool } = window.__aboutPageCleanup;
           if (particlePool) {
             particlePool.forEach((particles) => {
-              particles.forEach((p) => p.remove());
+              particles.forEach((p) => p.el.remove());
             });
             particlePool.clear();
           }
