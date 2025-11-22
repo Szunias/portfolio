@@ -28,6 +28,7 @@ const ProjectDetails = safeLazy(() => import('./pages/ProjectDetails'));
 const About = safeLazy(() => import('./pages/About'));
 const Contact = safeLazy(() => import('./pages/Contact'));
 const Gradwork = safeLazy(() => import('./pages/Gradwork'));
+const Transientica = safeLazy(() => import('./pages/Transientica'));
 const Music = safeLazy(() => import('./pages/Music'));
 const NotFound = safeLazy(() => import('./pages/NotFound'));
 
@@ -44,6 +45,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/projects/gradwork" element={<Gradwork />} />
+            <Route path="/projects/transientica_audiolab" element={<Transientica />} />
             <Route path="/projects/:id" element={<ProjectDetails />} />
             <Route path="/music" element={<Music />} />
             <Route path="/about" element={<About />} />

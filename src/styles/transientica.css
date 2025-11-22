@@ -1,0 +1,475 @@
+/* Core Variables & Reset */
+.transientica-page {
+    --bg: #030304;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --accent: #38bdf8;
+    /* Cyan */
+    --accent-glow: rgba(56, 189, 248, 0.5);
+    --secondary: #818cf8;
+    /* Indigo */
+    --panel: rgba(15, 23, 42, 0.6);
+    --border: rgba(255, 255, 255, 0.08);
+    --font-main: 'Poppins', sans-serif;
+    --font-display: 'Sora', sans-serif;
+
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+.transientica-page *,
+.transientica-page *::before,
+.transientica-page *::after {
+    box-sizing: border-box;
+}
+
+/* Animated Background */
+.transientica-page .bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(129, 140, 248, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.transientica-page .grid-lines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Layout */
+.transientica-page .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.transientica-page section {
+    padding: 4rem 0;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.transientica-page section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Hero */
+.transientica-page .hero {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding-top: 8rem;
+}
+
+.transientica-page .hero-badge {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 100px;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+}
+
+.transientica-page .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+
+.transientica-page .hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    color: var(--text-dim);
+    max-width: 650px;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+}
+
+/* Visualizer */
+.transientica-page .visualizer-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 6px;
+    height: 60px;
+    margin-bottom: 3rem;
+}
+
+.transientica-page .v-bar {
+    width: 8px;
+    background: var(--accent);
+    border-radius: 4px;
+    height: 20%;
+    animation: transientica-bounce 1.2s infinite ease-in-out;
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.transientica-page .v-bar:nth-child(odd) {
+    background: var(--secondary);
+}
+
+@keyframes transientica-bounce {
+
+    0%,
+    100% {
+        height: 20%;
+    }
+
+    50% {
+        height: 100%;
+    }
+}
+
+/* Cards */
+.transientica-page .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.transientica-page .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.transientica-page .card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent);
+}
+
+.transientica-page .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--secondary));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.transientica-page .card:hover::before {
+    opacity: 1;
+}
+
+.transientica-page .card-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(56, 189, 248, 0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    color: var(--accent);
+}
+
+.transientica-page .card-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.transientica-page .card h3 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: #fff;
+}
+
+.transientica-page .card p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* Video */
+.transientica-page .video-wrapper {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    background: #000;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.transientica-page .video-wrapper::after {
+    content: '';
+    display: block;
+    padding-bottom: 56.25%;
+}
+
+.transientica-page .video-wrapper iframe,
+.transientica-page .video-wrapper video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.transientica-page .video-wrapper.interactive-video {
+    cursor: pointer;
+}
+
+.transientica-page .play-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    z-index: 10;
+    gap: 1rem;
+}
+
+.transientica-page .video-wrapper:hover .play-overlay {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.transientica-page .play-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.transientica-page .video-wrapper:hover .play-circle {
+    transform: scale(1.1);
+    background: rgba(56, 189, 248, 0.9);
+    border-color: transparent;
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
+}
+
+.transientica-page .play-triangle {
+    width: 0;
+    height: 0;
+    border-left: 20px solid #fff;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    margin-left: 4px;
+}
+
+.transientica-page .video-wrapper:hover .play-triangle {
+    border-left-color: #000;
+}
+
+.transientica-page .play-text {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.transientica-page .video-wrapper:hover .play-text {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.transientica-page .interactive-video.active .play-overlay {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.transientica-page .interactive-video.active video {
+    opacity: 1 !important;
+}
+
+/* Tech Pills */
+.transientica-page .tech-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.transientica-page .tech-pill {
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+.transientica-page .tech-pill:hover {
+    border-color: var(--accent);
+    background: rgba(56, 189, 248, 0.1);
+    transform: translateY(-3px);
+}
+
+/* Stats */
+.transientica-page .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin: 3rem 0;
+    text-align: center;
+}
+
+.transientica-page .stat-item h4 {
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.25rem;
+    background: linear-gradient(135deg, #fff, var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.transientica-page .stat-item p {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+}
+
+/* Footer CTA */
+.transientica-page .cta-box {
+    text-align: center;
+    padding: 6rem 0;
+}
+
+.transientica-page .cta-btn {
+    display: inline-block;
+    padding: 1rem 3rem;
+    background: var(--accent);
+    color: #0f172a;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 100px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 30px var(--accent-glow);
+}
+
+.transientica-page .cta-btn:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 40px var(--accent-glow);
+    background: #fff;
+}
+
+/* Back Link */
+.transientica-page .back-link-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1.5rem 2rem;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.transientica-page .back-link {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    backdrop-filter: blur(12px);
+    color: var(--text-dim);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.transientica-page .back-link:hover {
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .transientica-page .hero-title {
+        font-size: 3rem;
+    }
+
+    .transientica-page .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .transientica-page .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .transientica-page .back-link-container {
+        padding: 1rem;
+    }
+
+    .transientica-page .tech-deep-dive-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
