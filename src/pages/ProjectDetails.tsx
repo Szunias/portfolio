@@ -6,7 +6,6 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import CodeViewer from '../components/CodeViewer';
 import SEO from '../components/SEO';
-import type { ContentBlock } from '../types';
 
 // --- Components ---
 
