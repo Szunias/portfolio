@@ -43,7 +43,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             )
         ) : (
             <div className="w-full h-full bg-neutral-900 flex items-center justify-center">
-                <span className="text-white/20 font-mono text-sm">NO PREVIEW</span>
+                <span className="text-white/20 font-mono text-sm">{t('card.no_preview', 'NO PREVIEW')}</span>
             </div>
         )}
         
@@ -76,7 +76,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             {/* Tech Stack (Visible on Hover) */}
             <div className="flex flex-wrap gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100 h-0 group-hover:h-auto overflow-hidden">
                 {(project.technologies || []).slice(0, 3).map((tech, i) => (
-                    <span key={i} className="text-[10px] font-mono text-accent">#{tech}</span>
+                    <span key={i} className="text-[10px] font-mono text-accent">#{t(`tags.${tech}`, tech)}</span>
                 ))}
             </div>
         </div>
