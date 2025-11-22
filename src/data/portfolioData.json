@@ -367,7 +367,7 @@
           "assets/images/projects-shadowframes/nicedae.jpg"
         ]
       },
-      "full_description": "A psychological horror game set in a 1960s Irish pub. Audio is not just atmospheric—it's the primary detection mechanic.\n\nDeveloped in collaboration with RITCS (Narrative) and KASK Conservatory (Music). My role focused on the entire audio pipeline: from recording foley to implementing complex Wwise systems in Unreal Engine C++.",
+      "full_description": "project_shadowframes_full_desc",
       "technologies": [
         "Unreal Engine 5",
         "Wwise",
@@ -380,19 +380,41 @@
           "title": "Real-Time Parameter Control (C++)",
           "language": "cpp",
           "description": "Updates the Wwise RTPC for enemy proximity every tick. Normalized distance ensures consistent audio behavior regardless of map scale.",
-          "code": "void UEnemyPresenceComponent::TickComponent(float DeltaTime...)\n{\n    // 1. Logic: Find closest enemy & calculate distance\n    UpdateClosestEnemy();\n\n    // 2. Math: Normalize distance to 0.0 - 100.0 range\n    float NormDist = (Distance - MinDist) / (MaxDist - MinDist);\n    float Proximity = FMath::Clamp((1.f - NormDist) * 100.f, 0.f, 100.f);\n\n    // 3. Audio: Update Wwise RTPC in real-time\n    UAkGameplayStatics::SetRTPCValue(\n        RTPC_EnemyProximity,\n        Proximity,\n        0, // Interpolation (handled by Wwise)\n        GetOwner()\n    );\n}"
+          "code": "void UEnemyPresenceComponent::TickComponent(float DeltaTime...)\n{\n    // 1. Logic: Find closest enemy & calculate distance\n    UpdateClosestEnemy();\n\n    // 2. Math: Normalize distance to 0.0 - 100.0 range\n    float NormDist = (Distance - MinDist) / (MaxDist - MinDist);\n    float Proximity = FMath::Clamp((1.f - NormDist) * 100.f, 0.f, 100.f);\n\n    // 3. Audio: Update Wwise RTPC in real-time\n    UAkGameplayStatics::SetRTPCValue(\n        RTPC_EnemyProximity,\n        Proximity,\n        0, // Interpolation (handled by Wwise)\n        GetOwner()\n    );\n\n    // 4. Debug: Visual confirmation\n    if (bShowDebug) DrawDebugLine(..., FColor::Red);\n}"
         },
         {
-          "title": "Physical Surface Detection",
+          "title": "Dynamic Spatial Attachment (C++)",
+          "language": "cpp",
+          "description": "Dynamically finds specific mesh components (bones) to attach Wwise emitters for precise 3D positioning.",
+          "code": "void UAnomalyAudioManager::InitializeAudioSource(AActor* Owner)\n{\n    const FAnomalyAudioSettings* Settings = Config->GetSettings(Anomaly);\n\n    // Advanced Spatial Audio: Find specific mesh bone\n    if (Settings->SpecialMeshName != NAME_None)\n    {\n        USceneComponent* Target = FindComponentByName(Owner, Settings->SpecialMeshName);\n        if (Target) {\n            AkComponent->AttachToComponent(Target, FAttachmentTransformRules::KeepRelativeTransform);\n        }\n    }\n\n    UAkGameplayStatics::PostEvent(\n        Config->m_GlobalSpawnEvent,\n        AkComponent\n    );\n}"
+        },
+        {
+          "title": "Physical Surface Detection (C++)",
           "language": "cpp",
           "description": "Raycasts downwards to detect the physical material and map it to a Wwise Switch Group for correct footstep sounds.",
-          "code": "FName UFootstepComponent::DetectSurface()\n{\n    FHitResult Hit;\n    FVector Start = Location;\n    FVector End = Start - FVector(0, 0, 100);\n\n    bool bHit = World->LineTraceSingleByChannel(\n        Hit, Start, End, ECC_WorldStatic, Params\n    );\n\n    if (bHit && Hit.PhysMaterial.IsValid())\n    {\n        return GetSwitchFromPhysMat(Hit.PhysMaterial);\n    }\n\n    return \"Concrete\"; // Fallback\n}"
+          "code": "FName UFootstepComponent::DetectSurface()\n{\n    FHitResult Hit;\n    FVector Start = Location;\n    FVector End = Start - FVector(0, 0, 100);\n\n    // Physics Query\n    bool bHit = World->LineTraceSingleByChannel(\n        Hit, Start, End, ECC_WorldStatic, Params\n    );\n\n    // Map Physical Material to Wwise Switch\n    if (bHit && Hit.PhysMaterial.IsValid())\n    {\n        return GetSwitchFromPhysMat(Hit.PhysMaterial);\n    }\n\n    return \"Concrete\"; // Fallback\n}"
         }
       ],
       "links": {
         "video": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         "documentation": "assets/docs/Sound_Grp22_ShadowFrames.pdf"
-      }
+      },
+      "content_blocks": [
+        {
+          "type": "stats_grid",
+          "items": [
+            { "label": "Role", "value": "Lead Audio Designer" },
+            { "label": "Team", "value": "Multi-Institutional" },
+            { "label": "Engine", "value": "UE5 + Wwise" },
+            { "label": "Status", "value": "In Production" }
+          ]
+        },
+        {
+          "type": "text",
+          "title": "project_shadowframes_collab_title",
+          "content": "project_shadowframes_collab_desc"
+        }
+      ]
     },
     {
       "id": "gradwork",
