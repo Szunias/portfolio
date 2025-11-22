@@ -154,6 +154,9 @@ const Hero = () => {
         </motion.div>
 
       </div>
+
+      {/* Bottom Fade to Black (Seamless Transition) */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none"></div>
     </section>
   );
 };
