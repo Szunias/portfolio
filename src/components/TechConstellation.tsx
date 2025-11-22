@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TECH_CONNECTIONS } from '../constants/techConnections';
 import { TECH_CATEGORIES, TECH_ICON_MAP } from '../constants/techData';
+import { useTranslation } from 'react-i18next';
 
 interface NodePosition {
   id: string;
@@ -14,6 +15,7 @@ interface TechConstellationProps {
 }
 
 const TechConstellation = ({ onSelect }: TechConstellationProps) => {
+  const { t } = useTranslation();
   const [hoveredTech, setHoveredTech] = useState<string | null>(null);
   const [nodePositions, setNodePositions] = useState<NodePosition[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -100,7 +102,7 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
         {TECH_CATEGORIES.map((cat, catIdx) => (
           <div key={catIdx} className="bg-white/5 p-6 rounded-3xl border border-white/10 backdrop-blur-md shadow-xl">
             <h3 className="text-xs font-mono text-accent uppercase tracking-[0.2em] mb-6 pb-2 border-b border-white/5 text-center">
-              {cat.title}
+              {t(`tech_cat.${cat.title}`, cat.title)}
             </h3>
             <div className="flex flex-wrap gap-4 justify-center">
               {cat.items.map((tech) => {
