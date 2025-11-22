@@ -1,19 +1,39 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, ComponentType } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import ScrollToTop from './components/ScrollToTop';
 import PageLoader from './components/ui/PageLoader';
 
-// Lazy load pages for better performance
-const Home = lazy(() => import('./pages/Home'));
-const Projects = lazy(() => import('./pages/Projects'));
-const ProjectDetails = lazy(() => import('./pages/ProjectDetails'));
-const About = lazy(() => import('./pages/About'));
-const Contact = lazy(() => import('./pages/Contact'));
-const Music = lazy(() => import('./pages/Music'));
-const NotFound = lazy(() => import('./pages/NotFound'));
+// Helper to handle chunk load errors (auto-reload once)
+const safeLazy = (importFunc: () => Promise<{ default: ComponentType<any> }>) => {
+  return lazy(() => {
+    return importFunc().catch(error => {
+      console.error("Chunk load failed", error);
+      // Check if we already tried to reload to avoid infinite loops
+      const hasReloaded = sessionStorage.getItem('chunk_reload');
+      if (!hasReloaded) {
+        sessionStorage.setItem('chunk_reload', 'true');
+        window.location.reload();
+        return new Promise(() => {}); // Never resolve, page reloads
+      }
+      throw error; // If already reloaded, let the error boundary catch it
+    });
+  });
+};
+
+// Lazy load pages with safety
+const Home = safeLazy(() => import('./pages/Home'));
+const Projects = safeLazy(() => import('./pages/Projects'));
+const ProjectDetails = safeLazy(() => import('./pages/ProjectDetails'));
+const About = safeLazy(() => import('./pages/About'));
+const Contact = safeLazy(() => import('./pages/Contact'));
+const Music = safeLazy(() => import('./pages/Music'));
+const NotFound = safeLazy(() => import('./pages/NotFound'));
 
 function App() {
+  // Clear reload flag on successful load
+  sessionStorage.removeItem('chunk_reload');
+
   return (
     <Router>
       <ScrollToTop />
