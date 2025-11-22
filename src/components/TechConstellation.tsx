@@ -61,46 +61,10 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
   return (
     <div className="relative py-10" ref={containerRef}>
       
-      {/* SVG Layer for Lines */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible">
-        <defs>
-          <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(56, 189, 248, 0.1)" />
-            <stop offset="50%" stopColor="rgba(56, 189, 248, 0.8)" />
-            <stop offset="100%" stopColor="rgba(56, 189, 248, 0.1)" />
-          </linearGradient>
-        </defs>
-        <AnimatePresence>
-          {hoveredTech && nodePositions.length > 0 && activeConnections.map(targetId => {
-            const start = nodePositions.find(n => n.id === hoveredTech);
-            const end = nodePositions.find(n => n.id === targetId);
-            
-            if (!start || !end) return null;
-
-            return (
-              <motion.line
-                key={`${hoveredTech}-${targetId}`}
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 0.6 }}
-                exit={{ opacity: 0 }}
-                x1={start.x}
-                y1={start.y}
-                x2={end.x}
-                y2={end.y}
-                stroke="url(#line-gradient)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                className="drop-shadow-[0_0_4px_rgba(56,189,248,0.5)]"
-              />
-            );
-          })}
-        </AnimatePresence>
-      </svg>
-
       {/* Grid of Tech Nodes */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 relative z-10">
         {TECH_CATEGORIES.map((cat, catIdx) => (
-          <div key={catIdx} className="bg-white/5 p-6 rounded-3xl border border-white/10 backdrop-blur-md shadow-xl">
+          <div key={catIdx} className="bg-white/5 p-6 rounded-3xl border border-white/10 backdrop-blur-md shadow-xl relative z-20">
             <h3 className="text-xs font-mono text-accent uppercase tracking-[0.2em] mb-6 pb-2 border-b border-white/5 text-center">
               {t(`tech_cat.${cat.title}`, cat.title)}
             </h3>
@@ -121,8 +85,8 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                       w-28 h-28 flex flex-col items-center justify-center 
                       rounded-2xl border transition-all duration-500 cursor-pointer relative group overflow-hidden
                       ${(isHovered || isConnected)
-                        ? 'bg-[#0a0a0a] border-accent shadow-[0_0_30px_rgba(56,189,248,0.3)] z-20 scale-105' 
-                        : 'bg-gradient-to-br from-white/5 to-transparent border-white/5 hover:border-white/20'
+                        ? 'bg-[#0a0a0a] border-accent shadow-[0_0_30px_rgba(56,189,248,0.3)] z-30 scale-105' 
+                        : 'bg-gradient-to-br from-white/5 to-transparent border-white/5 hover:border-white/20 z-20'
                       }
                       ${isDimmed ? 'opacity-20 blur-[2px]' : 'opacity-100'}
                     `}
@@ -163,6 +127,55 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
           </div>
         ))}
       </div>
+
+      {/* SVG Layer for Lines (Placed AFTER grid to be on top) */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none z-50 overflow-visible mix-blend-screen">
+        <defs>
+          <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#38bdf8" stopOpacity="0" />
+            <stop offset="50%" stopColor="#38bdf8" stopOpacity="1" />
+            <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
+          </linearGradient>
+          <filter id="glow-line">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <AnimatePresence>
+          {hoveredTech && nodePositions.length > 0 && activeConnections.map(targetId => {
+            const start = nodePositions.find(n => n.id === hoveredTech);
+            const end = nodePositions.find(n => n.id === targetId);
+            
+            if (!start || !end) return null;
+
+            return (
+              <motion.line
+                key={`${hoveredTech}-${targetId}`}
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 1, strokeDashoffset: -20 }}
+                exit={{ opacity: 0 }}
+                transition={{ 
+                    pathLength: { duration: 0.3, ease: "easeOut" },
+                    strokeDashoffset: { duration: 0.5, repeat: Infinity, ease: "linear" }
+                }}
+                x1={start.x}
+                y1={start.y}
+                x2={end.x}
+                y2={end.y}
+                stroke="url(#line-gradient)"
+                strokeWidth="3"
+                strokeDasharray="4 6"
+                strokeLinecap="round"
+                filter="url(#glow-line)"
+              />
+            );
+          })}
+        </AnimatePresence>
+      </svg>
+
     </div>
   );
 };
