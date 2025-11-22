@@ -24,7 +24,15 @@ const About = () => {
         if (category.tools) {
             Object.entries(category.tools).forEach(([key, value]: [string, TechTool]) => {
                 if (name.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(name.toLowerCase())) {
-                    desc = value.rich_descriptions?.[currentLang] || value.description || value.desc || "";
+                    // Try translation key first (tech_wwise_desc), then rich description
+                    const transKey = `tech_${key.toLowerCase().replace(' ', '')}_desc`;
+                    const translated = t(transKey, '');
+                    
+                    if (translated && translated !== transKey) {
+                        desc = translated;
+                    } else {
+                        desc = value.rich_descriptions?.[currentLang] || value.description || value.desc || "";
+                    }
                 }
             });
         }
