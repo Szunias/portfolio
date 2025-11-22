@@ -22,20 +22,17 @@ const ProjectGrid = ({ projects }: ProjectGridProps) => {
   return (
     <motion.div 
       layout
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[350px] lg:auto-rows-[400px]"
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
     >
       {projects.map((project, index) => {
-        // Bento logic: First 2 projects or every 4th one can be large/wide
-        const isLarge = index === 0 || index === 3 || (index > 6 && index % 5 === 0);
-        
         return (
           <motion.div
             layout
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: index * 0.05 }}
             key={project.id}
-            className={`group relative rounded-3xl overflow-hidden bg-neutral-900 border border-white/5 hover:border-white/20 transition-colors ${isLarge ? 'md:col-span-2' : 'col-span-1'}`}
+            className="group relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 hover:border-accent/50 transition-colors shadow-lg"
           >
             <Link to={project.externalLink || `/projects/${project.id}`} className="block w-full h-full">
               
@@ -44,7 +41,7 @@ const ProjectGrid = ({ projects }: ProjectGridProps) => {
                 {project.media?.thumbnail?.endsWith('.mp4') ? (
                   <video
                     src={`/${project.media.thumbnail}`}
-                    className="w-full h-full object-cover opacity-70 group-hover:opacity-50 transition-opacity"
+                    className="w-full h-full object-cover"
                     autoPlay
                     loop
                     muted
@@ -54,35 +51,35 @@ const ProjectGrid = ({ projects }: ProjectGridProps) => {
                   <img 
                     src={`/${project.media?.thumbnail}`} 
                     alt={project.title}
-                    className="w-full h-full object-cover opacity-70 group-hover:opacity-50 transition-opacity"
+                    className="w-full h-full object-cover"
                   />
                 )}
               </div>
 
               {/* Content Overlay (Gradient) */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
 
               {/* Text Content */}
-              <div className="absolute inset-0 p-8 flex flex-col justify-between">
+              <div className="absolute inset-0 p-6 flex flex-col justify-between">
                 
                 {/* Top Right Arrow */}
                 <div className="flex justify-between items-start">
-                  <span className="px-3 py-1 bg-white/10 backdrop-blur text-xs font-bold uppercase tracking-wider text-white rounded-full border border-white/5">
+                  <span className="px-3 py-1 bg-black/50 backdrop-blur text-[10px] font-bold uppercase tracking-wider text-white rounded-full border border-white/10">
                     {project.category}
                   </span>
-                  <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                    <ArrowUpRight size={20} />
+                  <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center transform translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                    <ArrowUpRight size={16} />
                   </div>
                 </div>
 
                 {/* Bottom Info */}
                 <div>
-                  <h3 className="text-3xl font-display font-bold text-white mb-2 leading-tight">
+                  <h3 className="text-2xl font-display font-bold text-white mb-2 leading-tight drop-shadow-md">
                     {t(`project_${project.id}_title`, project.title)}
                   </h3>
-                  <div className="flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75">
+                  <div className="flex flex-wrap gap-2 mt-2 h-6 overflow-hidden">
                     {project.technologies?.slice(0, 3).map(tech => (
-                      <span key={tech} className="text-[10px] font-mono text-accent">
+                      <span key={tech} className="text-[10px] font-mono text-accent/90">
                         #{t(`tags.${tech}`, tech)}
                       </span>
                     ))}

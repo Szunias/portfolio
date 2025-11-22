@@ -16,6 +16,49 @@ const Hero = () => {
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-accent/10 blur-[120px] rounded-full pointer-events-none opacity-50"></div>
+        
+        {/* Floating Tech Logos */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* Wwise - Top Right */}
+            <motion.img 
+                initial={{ opacity: 0, rotate: -10 }}
+                animate={{ opacity: 0.08, rotate: 0, y: [0, -20, 0] }}
+                transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+                src="/assets/images/tech-bg/wwise.png" 
+                className="absolute top-[10%] right-[5%] w-64 md:w-96 filter grayscale brightness-200 blur-[2px]"
+            />
+            
+            {/* FMOD - Bottom Left */}
+            <motion.img 
+                initial={{ opacity: 0, rotate: 5 }}
+                animate={{ opacity: 0.05, rotate: 0, y: [0, 30, 0] }}
+                transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                src="/assets/images/tech-bg/fmod.jpg" 
+                className="absolute bottom-[20%] left-[-5%] w-80 md:w-[500px] opacity-10 mix-blend-screen blur-[1px]"
+            />
+
+            {/* Unreal - Top Left Center */}
+            <motion.img 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.06, scale: [1, 1.1, 1] }}
+                transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+                src="/assets/images/tech-bg/unreal.png" 
+                className="absolute top-[15%] left-[20%] w-40 md:w-64 filter invert blur-[1px]"
+            />
+
+            {/* Unity - Bottom Right Center (With white glow/bg for visibility) */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.08, y: [0, -15, 0] }}
+                transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute bottom-[30%] right-[25%] w-32 md:w-48 aspect-square bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm"
+            >
+                <img 
+                    src="/assets/images/tech-bg/unity.png" 
+                    className="w-[70%] opacity-80"
+                />
+            </motion.div>
+        </div>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
