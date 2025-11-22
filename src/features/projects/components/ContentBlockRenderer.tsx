@@ -6,16 +6,19 @@ interface ContentBlockRendererProps {
   blocks?: ContentBlock[];
 }
 
-const StatsGridBlock = ({ items }: { items: { label: string; value: string }[] }) => (
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-12 border-y border-white/10 py-8">
-    {items.map((item, idx) => (
-      <div key={idx} className="text-center">
-        <div className="text-2xl md:text-3xl font-display font-bold text-white mb-1">{item.value}</div>
-        <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{item.label}</div>
-      </div>
-    ))}
-  </div>
-);
+const StatsGridBlock = ({ items }: { items: { label: string; value: string }[] }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-12 border-y border-white/10 py-8">
+      {items.map((item, idx) => (
+        <div key={idx} className="text-center">
+          <div className="text-2xl md:text-3xl font-display font-bold text-white mb-1">{t(item.value, item.value)}</div>
+          <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{t(item.label, item.label)}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const SplitContentBlock = ({ block }: { block: ContentBlock }) => {
   const { t } = useTranslation();
