@@ -116,7 +116,7 @@ const Projects = () => {
                       <div className="flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75">
                         {project.technologies?.slice(0, 3).map(tech => (
                           <span key={tech} className="text-[10px] font-mono text-accent">
-                            #{tech}
+                            #{t(`tags.${tech}`, tech)}
                           </span>
                         ))}
                       </div>

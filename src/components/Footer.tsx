@@ -15,8 +15,7 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold text-white mb-4">Igor Szuniewicz</h3>
             <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
-              {personal_info.title}. <br />
-              {personal_info.role}.
+              {t('hero.label', 'Audio Designer & Developer')}
             </p>
           </div>
 

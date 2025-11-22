@@ -216,7 +216,7 @@ const ProjectDetails = () => {
                         <div className="flex flex-wrap gap-2">
                             {project.tags.map(tag => (
                                 <span key={tag} className="text-xs text-slate-400 hover:text-white transition-colors cursor-default">
-                                    #{tag}
+                                    #{t(`tags.${tag}`, tag)}
                                 </span>
                             ))}
                         </div>
