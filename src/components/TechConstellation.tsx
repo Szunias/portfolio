@@ -139,20 +139,20 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                       <img 
                         src={iconPath} 
                         alt={tech} 
-                        className={`w-10 h-10 object-contain mb-3 transition-all duration-500 relative z-10
-                            ${(isHovered || isConnected) ? 'filter-none drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]' : 'grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100'}
+                        className={`w-12 h-12 object-contain mb-3 transition-all duration-500 relative z-10 filter-none drop-shadow-[0_0_5px_rgba(0,0,0,0.5)]
+                            ${(isHovered || isConnected) ? 'scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]' : ''}
                         `}
                       />
                     ) : (
-                      <div className={`w-10 h-10 rounded-full bg-white/10 mb-3 flex items-center justify-center transition-all duration-500
+                      <div className={`w-12 h-12 rounded-full bg-white/10 mb-3 flex items-center justify-center transition-all duration-500
                           ${(isHovered || isConnected) ? 'bg-accent text-black' : 'text-slate-500'}
                       `}>
-                          <span className="text-xs font-bold">?</span>
+                          <span className="text-sm font-bold">?</span>
                       </div>
                     )}
                     
-                    <span className={`text-[10px] font-mono text-center uppercase tracking-wider transition-colors relative z-10
-                        ${(isHovered || isConnected) ? 'text-accent font-bold' : 'text-slate-400 group-hover:text-slate-200'}
+                    <span className={`text-xs font-bold uppercase tracking-wider transition-colors relative z-10 px-2 text-center
+                        ${(isHovered || isConnected) ? 'text-accent' : 'text-slate-300'}
                     `}>
                       {tech}
                     </span>

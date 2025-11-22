@@ -68,11 +68,13 @@ const About = () => {
                 </div>
                 <div className="px-6 py-3 bg-secondary/50 backdrop-blur border border-white/5 rounded-full flex items-center gap-3 text-sm text-slate-300">
                     <Zap size={16} className="text-accent" />
-                    {personal_info.availability.status}
+                    {personal_info.availability.status.includes('internship') 
+                        ? t('status_looking_internship', 'Looking for Internship') 
+                        : personal_info.availability.status}
                 </div>
                 <div className="px-6 py-3 bg-secondary/50 backdrop-blur border border-white/5 rounded-full flex items-center gap-3 text-sm text-slate-300">
                     <Briefcase size={16} className="text-accent" />
-                    Open to Relocation
+                    {t('about_open_relocation', 'Open to Relocation')}
                 </div>
             </div>
 
