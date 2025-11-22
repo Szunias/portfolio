@@ -7,7 +7,7 @@ const Hero = () => {
   const { t } = useTranslation();
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 200]);
-  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
+  const opacity = useTransform(scrollY, [0, 800], [1, 0]); // Slower fade out
 
   return (
     <section className="relative min-h-screen flex items-center px-6 lg:px-12 overflow-hidden bg-[#050505] pt-20">
@@ -51,15 +51,15 @@ const Hero = () => {
 
           {/* Technical Sub-headline */}
           <p className="text-lg text-slate-400 mb-10 max-w-xl leading-relaxed font-light border-l border-accent/30 pl-6">
-            {t('hero.description_tech', 'Bridging the void between artistic vision and engine logic. Specializing in Wwise implementation, C++ DSP, and adaptive audio systems for Unreal Engine 5.')}
+            {t('hero.description_tech', 'Bridging the void between artistic vision and engine logic. Specializing in Wwise & FMOD implementation, C++ DSP, and adaptive audio systems.')}
           </p>
           
           {/* Tech Stack Mini-Grid */}
           <div className="grid grid-cols-3 gap-4 mb-12 max-w-md">
             {[
               { label: 'Middleware', val: 'Wwise / FMOD', icon: Layers },
-              { label: 'Engine', val: 'Unreal C++', icon: Cpu },
-              { label: 'Scripting', val: 'Python / Lua', icon: Terminal },
+              { label: 'Engine', val: 'Unreal / Unity', icon: Cpu },
+              { label: 'Scripting', val: 'C++ / Python', icon: Terminal },
             ].map((item, i) => (
               <div key={i} className="group">
                 <div className="flex items-center gap-2 text-slate-500 mb-1">
