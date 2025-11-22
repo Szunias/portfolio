@@ -632,6 +632,18 @@
           "language": "cpp",
           "description": "Main audio callback handling safe parameter reading and DSP chain.",
           "code": "void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)\n{\n    if (dangerousVolumeDetected) {\n        buffer.clear();\n        return;\n    }\n\n    float gainValue = *apvts.getRawParameterValue(\"GAIN\");\n    float tempoValue = *apvts.getRawParameterValue(\"TEMPO\");\n\n    // Resampling based on tempo\n    double ratio = (double)tempoValue / 120.0;\n    audioFilePlayer.setResamplingRatio(ratio);\n\n    // Fill buffer from file\n    juce::AudioSourceChannelInfo info(buffer);\n    audioFilePlayer.getNextAudioBlock(info);\n\n    // Apply DSP chain\n    juce::dsp::AudioBlock<float> dspBlock(buffer);\n    juce::dsp::ProcessContextReplacing<float> ctx(dspBlock);\n    compressor.process(ctx);\n\n    buffer.applyGain(gainValue);\n}"
+        },
+        {
+          "title": "DSP Setup (prepareToPlay)",
+          "language": "cpp",
+          "description": "Initializes DSP modules with correct sample rate and block size.",
+          "code": "void prepareToPlay(double sampleRate, int samplesPerBlock)\n{\n    juce::dsp::ProcessSpec spec;\n    spec.sampleRate = sampleRate;\n    spec.maximumBlockSize = (juce::uint32)samplesPerBlock;\n    spec.numChannels = 2;\n\n    lpf.setType(juce::dsp::StateVariableTPTFilterType::lowpass);\n    hpf.setType(juce::dsp::StateVariableTPTFilterType::highpass);\n    lpf.prepare(spec);\n    hpf.prepare(spec);\n    \n    compressor.prepare(spec);\n    compressor.reset();\n}"
+        },
+        {
+          "title": "Audio Playback System",
+          "language": "cpp",
+          "description": "Handles file loading and resampling for tempo control.",
+          "code": "void loadFile(juce::File file)\n{\n    auto* reader = formatManager.createReaderFor(file);\n    if (reader != nullptr) {\n        auto* source = new juce::AudioFormatReaderSource(reader, true);\n        resamplingSource.setSource(source, 0, nullptr, reader->sampleRate);\n        resamplingSource.setResamplingRatio(1.0);\n        transportSource.setSource(&resamplingSource, 0, nullptr, reader->sampleRate);\n    }\n}\n\nvoid setResamplingRatio(double ratio) {\n    resamplingSource.setResamplingRatio(ratio);\n}"
         }
       ],
     },
