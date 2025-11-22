@@ -20,10 +20,27 @@ export const useProjectFilter = (projects: Project[]) => {
   // Helper to translate category names
   const getCategoryLabel = (cat: string) => {
     if (cat === 'All') return t('projects_filter_all', 'All');
-    if (cat === 'Game Audio') return t('projects_filter_game', cat);
-    if (cat === 'Sound Design') return t('projects_filter_sound', cat);
-    if (cat === 'Music') return t('projects_filter_music', cat);
-    if (cat === 'Development') return t('projects_filter_tools', cat);
+    
+    // Map specific categories to translation keys
+    const keyMap: { [key: string]: string } = {
+      'Game Audio': 'projects_filter_game',
+      'Sound Design': 'projects_filter_sound',
+      'Music': 'projects_filter_music',
+      'Dev Tool': 'projects_filter_tools',
+      'In Progress': 'projects_filter_inprogress',
+      'Research': 'projects_filter_research',
+      'ML Audio': 'projects_filter_ml',
+      'VST Plugin': 'projects_filter_vst',
+      'Middleware': 'projects_filter_middleware',
+      'Horror Game': 'projects_filter_horror',
+      'Animation': 'projects_filter_animation',
+      'Film Score': 'projects_filter_filmscore'
+    };
+
+    if (keyMap[cat]) {
+        return t(keyMap[cat], cat);
+    }
+    
     return cat;
   };
 

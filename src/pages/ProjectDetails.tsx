@@ -147,7 +147,7 @@ const ProjectDetails = () => {
                 <div className="space-y-6">
                     <h3 className="text-2xl font-bold text-white flex items-center gap-3">
                         <Code size={24} className="text-accent" />
-                        Technical Implementation
+                        {t('details.tech', 'Technical Implementation')}
                     </h3>
                     <CodeViewer snippets={project.code_snippets} />
                 </div>
@@ -171,7 +171,9 @@ const ProjectDetails = () => {
                 
                 {/* Actions Card */}
                 <div className="p-6 rounded-2xl bg-[#0f0f0f] border border-white/10 shadow-xl">
-                    <h3 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-6">Project Access</h3>
+                    <h3 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-6">
+                        {t('details.access', 'Project Access')}
+                    </h3>
                     <div className="space-y-3">
                         {links.demo && (
                             <a href={links.demo} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-4 bg-accent text-black font-bold rounded-lg hover:bg-white transition-colors">
@@ -194,7 +196,7 @@ const ProjectDetails = () => {
                 {/* Tech Stack */}
                 <div>
                     <h3 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <Layers size={14} /> Technologies
+                        <Layers size={14} /> {t('details.technologies', 'Technologies')}
                     </h3>
                     <div className="flex flex-wrap gap-2">
                         {project.technologies?.map(tech => (
@@ -209,7 +211,7 @@ const ProjectDetails = () => {
                 {project.tags && (
                     <div>
                         <h3 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                            <Tag size={14} /> Classification
+                            <Tag size={14} /> {t('details.classification', 'Classification')}
                         </h3>
                         <div className="flex flex-wrap gap-2">
                             {project.tags.map(tag => (
