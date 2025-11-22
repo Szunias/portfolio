@@ -1,12 +1,12 @@
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { usePortfolioData } from '../hooks/usePortfolioData';
-import { ArrowLeft, Github, ExternalLink, PlayCircle, Calendar, Tag, Layers, Code, Cpu } from 'lucide-react';
+import { ArrowLeft, Github, ExternalLink, PlayCircle, Tag, Layers, Code, Cpu } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import CodeViewer from '../components/CodeViewer';
 import SEO from '../components/SEO';
-import { ContentBlock } from '../types';
+import type { ContentBlock } from '../types';
 
 // --- Components ---
 
@@ -24,7 +24,6 @@ const StatsBar = ({ items }: { items: { label: string; value: string }[] }) => (
 const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { featured_projects, additional_projects } = usePortfolioData();
-  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const project = [...featured_projects, ...additional_projects].find(p => p.id === id);
