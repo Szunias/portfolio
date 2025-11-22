@@ -1,8 +1,4 @@
-import { useTranslation } from 'react-i18next';
-
 const PageLoader = () => {
-  const { t } = useTranslation();
-  
   return (
     <div className="flex items-center justify-center min-h-[50vh] w-full">
       <div className="flex flex-col items-center gap-4">
@@ -12,11 +8,13 @@ const PageLoader = () => {
           <div className="w-1.5 bg-accent h-5 animate-[music-bar_0.5s_ease-in-out_infinite_0.2s] rounded-full"></div>
         </div>
         <span className="text-xs font-mono text-dim uppercase tracking-widest">
-          {t('common.loading', 'Loading...')}
+          Loading...
         </span>
       </div>
     </div>
   );
 };
+
+export default PageLoader;
 
 export default PageLoader;
