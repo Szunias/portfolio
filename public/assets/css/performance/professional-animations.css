@@ -1,0 +1,544 @@
+/* ====================================
+   PROFESSIONAL ANIMATIONS & ENHANCEMENTS
+   ==================================== */
+
+/* Smooth scroll behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ====================================
+   ADVANCED PARALLAX EFFECTS
+   ==================================== */
+.parallax-layer {
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Background elements parallax */
+.bg-orbs .orb {
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ====================================
+   ENHANCED HOVER EFFECTS
+   ==================================== */
+
+/* Project cards enhanced hover */
+.project-card {
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(24, 191, 239, 0.1), transparent);
+    transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.project-card:hover::before {
+    left: 100%;
+}
+
+.project-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow:
+        0 20px 60px rgba(24, 191, 239, 0.25),
+        0 0 80px rgba(24, 191, 239, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.project-card .image {
+    overflow: hidden;
+    position: relative;
+}
+
+.project-card .image img {
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-card:hover .image img {
+    transform: scale(1.1) rotate(1deg);
+}
+
+/* ====================================
+   ADVANCED SCROLL ANIMATIONS
+   ==================================== */
+
+/* Fade in from bottom with blur */
+@keyframes fadeInUpBlur {
+    from {
+        opacity: 0;
+        transform: translateY(60px);
+        filter: blur(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+/* Fade in from left with slide */
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Fade in from right with slide */
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Scale in animation */
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Reveal animation enhanced */
+[data-reveal] {
+    opacity: 0;
+    animation: fadeInUpBlur 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: calc(var(--reveal-delay, 0s));
+}
+
+[data-reveal].revealed {
+    opacity: 1;
+}
+
+/* ====================================
+   PARTICLE EFFECTS
+   ==================================== */
+
+.particle-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: radial-gradient(circle, rgba(24, 191, 239, 0.8) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: floatParticle 20s infinite;
+    opacity: 0;
+}
+
+@keyframes floatParticle {
+    0% {
+        transform: translateY(100vh) translateX(0) scale(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-10vh) translateX(var(--particle-x, 0px)) scale(1);
+        opacity: 0;
+    }
+}
+
+/* ====================================
+   ENHANCED SLIDER ANIMATIONS
+   ==================================== */
+
+.slider .slide {
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                filter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slider .slide:not(.active) {
+    transform: scale(0.95);
+    filter: blur(5px);
+}
+
+.slider .slide.active {
+    transform: scale(1);
+    filter: blur(0);
+}
+
+/* Slider navigation enhanced */
+.slider-nav {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.slider-nav::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(24, 191, 239, 0.3) 0%, transparent 70%);
+    border-radius: 12px;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+}
+
+.slider-nav:hover::after {
+    transform: translate(-50%, -50%) scale(1.5);
+}
+
+/* ====================================
+   METRICS SECTION ENHANCEMENTS
+   ==================================== */
+
+.metric-card {
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(135deg, rgba(24, 191, 239, 0.05) 0%, rgba(154, 108, 255, 0.05) 100%);
+    border: 1px solid rgba(24, 191, 239, 0.1);
+    overflow: hidden;
+}
+
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(24, 191, 239, 0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+}
+
+.metric-card:hover::before {
+    opacity: 1;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+}
+
+.metric-card:hover {
+    transform: translateY(-8px);
+    box-shadow:
+        0 20px 50px rgba(24, 191, 239, 0.2),
+        0 0 60px rgba(24, 191, 239, 0.1);
+    border-color: rgba(24, 191, 239, 0.3);
+}
+
+.metric-value {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.metric-card:hover .metric-value {
+    transform: scale(1.1);
+    color: #18bfef;
+    text-shadow: 0 0 30px rgba(24, 191, 239, 0.5);
+}
+
+/* ====================================
+   INTRO PILLS ANIMATION
+   ==================================== */
+
+.intro-pills span {
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.intro-pills span::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.intro-pills span:hover::before {
+    left: 100%;
+}
+
+.intro-pills span:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow:
+        0 10px 30px rgba(24, 191, 239, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* ====================================
+   SMOOTH BUTTON ANIMATIONS
+   ==================================== */
+
+.button {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.button:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 15px 40px rgba(24, 191, 239, 0.4),
+        0 0 60px rgba(24, 191, 239, 0.2);
+}
+
+/* ====================================
+   COMPETENCIES BAR ANIMATION
+   ==================================== */
+
+.comp-fill {
+    position: relative;
+    overflow: hidden;
+}
+
+.comp-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: slideShine 2s infinite;
+}
+
+@keyframes slideShine {
+    0% {
+        left: -100%;
+    }
+    50%, 100% {
+        left: 100%;
+    }
+}
+
+/* ====================================
+   TIMELINE ENHANCEMENTS
+   ==================================== */
+
+.timeline-item {
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -30px;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: linear-gradient(180deg,
+        rgba(24, 191, 239, 0) 0%,
+        rgba(24, 191, 239, 0.5) 50%,
+        rgba(24, 191, 239, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.timeline-item:hover::before {
+    opacity: 1;
+}
+
+.timeline-item:hover {
+    transform: translateX(8px);
+}
+
+.timeline-marker {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.timeline-item:hover .timeline-marker {
+    transform: scale(1.3);
+    box-shadow: 0 0 20px rgba(24, 191, 239, 0.6);
+}
+
+/* ====================================
+   TEXT GRADIENT ANIMATIONS
+   ==================================== */
+
+.gradient-text {
+    background: linear-gradient(90deg, #18bfef, #9a6cff, #18bfef);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 3s linear infinite;
+}
+
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% center;
+    }
+    100% {
+        background-position: 200% center;
+    }
+}
+
+/* ====================================
+   FLOATING ANIMATION
+   ==================================== */
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.float-animation {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* ====================================
+   PULSE GLOW EFFECT
+   ==================================== */
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(24, 191, 239, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(24, 191, 239, 0.6);
+    }
+}
+
+.pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* ====================================
+   PERFORMANCE OPTIMIZATIONS
+   ==================================== */
+
+/* Hardware acceleration for smooth animations - OPTIMIZED */
+.project-card,
+.metric-card,
+.slider-nav,
+.button,
+.intro-pills span,
+.timeline-item {
+    /* REMOVED will-change for performance - only use on :hover */
+    backface-visibility: hidden;
+    transform: translateZ(0); /* GPU acceleration without will-change */
+}
+
+/* Add will-change ONLY on hover for better performance */
+.project-card:hover,
+.metric-card:hover,
+.slider-nav:hover,
+.button:hover,
+.intro-pills span:hover {
+    will-change: transform;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ====================================
+   RESPONSIVE ADJUSTMENTS
+   ==================================== */
+
+@media (max-width: 768px) {
+    .project-card:hover {
+        transform: translateY(-6px) scale(1.01);
+    }
+
+    .metric-card:hover {
+        transform: translateY(-4px);
+    }
+
+    /* Disable complex animations on mobile for performance */
+    .particle-container {
+        display: none;
+    }
+}
+
+/* PERFORMANCE: Disable heavy background animations */
+.bg-orbs .orb {
+    animation: none !important;
+}
+
+.bg-waves .wave-path {
+    animation: none !important;
+}
+
+.bg-eq {
+    display: none !important;
+}
+
+.particle-container {
+    display: none !important;
+}
+

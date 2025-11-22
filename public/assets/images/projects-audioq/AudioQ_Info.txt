@@ -1,0 +1,177 @@
+========================================================
+           Szunio LLC AudioQ - README
+========================================================
+
+Contents:
+  1. Introduction
+  2. Features & Overview
+  3. Controllable Parameters (AudioProcessorValueTreeState)
+  4. GUI and Layout
+  5. Drag & Drop for Audio Files
+  6. Random and Granular Modes
+  7. Tremolo Mechanism (Custom DSP)
+  8. Filters, Compressor & Other DSP Modules
+  9. Volume Safety (Peak Protection)
+  10. Plugin State Preservation
+  11. Optimization & Testing
+  12. Contact / Final Notes
+
+--------------------------------------------------------
+1. INTRODUCTION
+--------------------------------------------------------
+Szunio LLC AudioQ is an audio plugin created with the JUCE 
+framework. It lets you load and manipulate audio files 
+in real time, offering various controllable parameters 
+(gain, tempo, filters, etc.). 
+
+It can act as a mini-sampler and also apply effects such as:
+ - Low-/High-Pass Filtering,
+ - Compression,
+ - Granular (short random loop segments),
+ - Random mode (longer random loops),
+ - Tremolo (handwritten DSP).
+
+--------------------------------------------------------
+2. FEATURES & OVERVIEW
+--------------------------------------------------------
+ * Ability to load WAV/AIFF/MP3 files (depending on 
+   JUCE build) via drag & drop or programmatically (loadFile).
+ * Playback managed by AudioTransportSource with resampling 
+   (a “tempo” slider effectively changes playback speed).
+ * Looping mode and user-defined looping regions 
+   (on the offline waveform).
+ * Random / Granular modes: automatically choose and play 
+   random regions with crossfade.
+ * LPF & HPF (using JUCE dsp::StateVariableTPTFilter).
+ * Compressor (dsp::Compressor) with threshold, ratio, attack, 
+   and release parameters.
+ * Tremolo: a custom amplitude modulation LFO implemented 
+   manually (simple DSP).
+ * Volume safety: if peaks exceed 0.99, playback is halted 
+   until the user confirms “Continue.”
+ * Full state management of parameters via 
+   AudioProcessorValueTreeState.
+
+--------------------------------------------------------
+3. CONTROLLABLE PARAMETERS (APVTS)
+--------------------------------------------------------
+The plugin uses AudioProcessorValueTreeState (APVTS), 
+so all parameters can be automated in the host:
+ - GAIN (0.0f .. 3.1623f) ~ up to +10 dB
+ - TEMPO (20..300 BPM) – changes playback speed
+ - LPF (Cutoff: 20..20000 Hz)
+ - HPF (Cutoff: 20..20000 Hz)
+ - COMPTHRESH (Threshold: -60..0 dB)
+ - COMPRATIO  (1..20)
+ - COMPATTACK (Attack: 1..200 ms)
+ - COMPRELEASE(Release: 5..1000 ms)
+ - GRAIN_SIZE (0.05..0.5 s)
+ - GRAIN_DENSITY (0.1..1.0 – used internally for granular loop logic)
+ - TREM_RATE  (0.1..10 Hz)
+ - TREM_DEPTH (0..1)
+
+--------------------------------------------------------
+4. GUI AND LAYOUT
+--------------------------------------------------------
+Main GUI elements:
+ * Rotary sliders (Gain, Tempo, LPF, HPF, compressor, 
+   granular, tremolo, etc.).
+ * Buttons:
+     - Play/Stop,
+     - Loop,
+     - Random Mode,
+     - Granular Mode,
+     - Tremolo On/Off,
+     - Continue (in case the volume safety alert is triggered).
+ * Two waveform displays:
+     (1) ColorizedOfflineWaveComponent (shows the loaded audio 
+         file waveform, allows region selection).
+     (2) CustomDynamicWaveComponent (shows the real-time waveform 
+         of the currently playing audio).
+ * DragDropOfflineWave – an area where you can drop an audio file 
+   (it highlights when a file is dragged over).
+
+--------------------------------------------------------
+5. DRAG & DROP FOR AUDIO FILES
+--------------------------------------------------------
+ * The plugin supports drag & drop of a single audio file 
+   onto a designated component.
+ * When dropped, player.loadFile(...) is called to load 
+   the file into transport, and loadFileToBuffer(...) 
+   for offline waveform display.
+ * The offline wave gets updated, and Random/Granular mode 
+   buttons become visible.
+
+--------------------------------------------------------
+6. RANDOM AND GRANULAR MODES
+--------------------------------------------------------
+ * Random Mode – loops random segments of 0.1 to 3 seconds, 
+   automatically cycling with crossfades.
+ * Granular Mode – similar, but loops *very* short segments 
+   (0.05 to 0.2 seconds).
+ * Enabling either mode disables the other. The region 
+   selection is performed by generateRandomRegion().
+
+--------------------------------------------------------
+7. TREMOLO MECHANISM (CUSTOM DSP)
+--------------------------------------------------------
+ * In processBlock(), we manually compute an LFO phase: 
+   phaseInc = 2*pi*(tremRate / sampleRate).
+ * Each sample is multiplied by 
+   (1 - depth) + depth * [0.5 + 0.5*sin(phase)].
+ * The phase increments every sample. 
+ * This is straightforward but is custom code, not relying 
+   on a JUCE dsp module.
+
+--------------------------------------------------------
+8. FILTERS, COMPRESSOR & OTHER DSP MODULES
+--------------------------------------------------------
+ * LPF/HPF:
+   - Based on dsp::StateVariableTPTFilter (lowpass/highpass).
+   - In processBlock(), we set the cutoff frequency from APVTS 
+     and run lpf.process(ctx)/hpf.process(ctx).
+ * Compressor (dsp::Compressor):
+   - In processBlock(), threshold, ratio, attack, release 
+     come from APVTS and are applied to compressor.set(...).
+   - Then compressor.process(ctx) is called.
+
+--------------------------------------------------------
+9. VOLUME SAFETY (PEAK PROTECTION)
+--------------------------------------------------------
+ * In processBlock(), we check the peak amplitude across all 
+   channels. If it exceeds 0.99f, dangerousVolumeDetected = true.
+ * If detected, the plugin silences audio until the user 
+   clicks “Continue” in the UI.
+
+--------------------------------------------------------
+10. PLUGIN STATE PRESERVATION
+--------------------------------------------------------
+ * In NewProjectAudioProcessor, getStateInformation() 
+   and setStateInformation() use:
+     apvts.state.writeToStream(...) 
+     and apvts.replaceState(...).
+ * As a result, every slider/button managed by APVTS 
+   retains its value when reopening the project in a host.
+
+--------------------------------------------------------
+11. OPTIMIZATION & TESTING
+--------------------------------------------------------
+ * The plugin uses ScopedNoDenormals in processBlock to avoid 
+   denormal float issues.
+ * Filter and Compressor are from JUCE dsp, which is efficient, 
+   while the tremolo is a simple per-sample multiply.
+ * We recommend running pluginVal (JUCE's validation tool) 
+   to confirm stability and format compliance.
+ * CriticalSections (locks) are used for safe wave data 
+   access (avoid race conditions on the buffers).
+
+--------------------------------------------------------
+12. CONTACT / FINAL NOTES
+--------------------------------------------------------
+ * Author: Igor Szuniewicz
+ * This project was created for educational/demo purposes. 
+   It can be extended with features like ADSR envelopes, 
+   side-chaining, advanced granular overlap, etc.
+
+
+========================================================

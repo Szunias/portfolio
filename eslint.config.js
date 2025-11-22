@@ -1,82 +1,30 @@
-export default [
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config(
+  { ignores: ['dist', 'public', 'postcss.config.js', 'tailwind.config.js', 'vite.config.ts'] },
   {
-    files: ['**/*.js'],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      globals: {
-        window: 'readonly',
-        document: 'readonly',
-        navigator: 'readonly',
-        console: 'readonly',
-        localStorage: 'readonly',
-        sessionStorage: 'readonly',
-        fetch: 'readonly',
-        URL: 'readonly',
-        URLSearchParams: 'readonly',
-        FormData: 'readonly',
-        IntersectionObserver: 'readonly',
-        ResizeObserver: 'readonly',
-        MutationObserver: 'readonly',
-        requestAnimationFrame: 'readonly',
-        cancelAnimationFrame: 'readonly',
-        setTimeout: 'readonly',
-        clearTimeout: 'readonly',
-        setInterval: 'readonly',
-        clearInterval: 'readonly',
-        Event: 'readonly',
-        CustomEvent: 'readonly',
-        HTMLElement: 'readonly',
-        NodeList: 'readonly',
-        Element: 'readonly',
-        MouseEvent: 'readonly',
-        KeyboardEvent: 'readonly',
-        Audio: 'readonly',
-        Image: 'readonly',
-        location: 'readonly',
-        history: 'readonly',
-        alert: 'readonly',
-        confirm: 'readonly',
-        prompt: 'readonly',
-        gtag: 'readonly',
-        dataLayer: 'readonly',
-        Intl: 'readonly',
-        performance: 'readonly',
-        PerformanceObserver: 'readonly',
-        firebase: 'readonly',
-        screen: 'readonly',
-        Blob: 'readonly',
-        CSS: 'readonly',
-        FontFace: 'readonly',
-        requestIdleCallback: 'readonly',
-        cancelIdleCallback: 'readonly'
-      }
+      ecmaVersion: 2020,
+      globals: globals.browser,
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
     },
     rules: {
-      'no-unused-vars': ['warn', {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-        caughtErrorsIgnorePattern: '^_'
-      }],
-      'no-console': 'off',
-      'no-undef': 'error',
-      'semi': ['error', 'always'],
-      'quotes': ['warn', 'single', { avoidEscape: true }],
-      'prefer-const': 'warn',
-      'no-var': 'warn',
-      'eqeqeq': ['warn', 'always'],
-      'curly': ['warn', 'multi-line'],
-      'brace-style': ['warn', '1tbs', { allowSingleLine: true }]
-    }
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    },
   },
-  {
-    ignores: [
-      'node_modules/**',
-      'dist/**',
-      'scripts/**',
-      '**/*.min.js',
-      'convert_to_webp.py',
-      'validate_translations.py'
-    ]
-  }
-];
+);

@@ -1,0 +1,133 @@
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Menu, X, Github, Linkedin } from 'lucide-react';
+import { usePortfolioData } from '../hooks/usePortfolioData';
+import LanguageSwitcher from './LanguageSwitcher';
+
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const { t } = useTranslation();
+  const location = useLocation();
+  const { personal_info } = usePortfolioData();
+
+  // Precision scroll detection
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navLinks = [
+    { name: t('nav_home', 'Home'), path: '/' },
+    { name: t('nav_projects', 'Projects'), path: '/projects' },
+    { name: t('nav_music', 'Music'), path: '/music' },
+    { name: t('nav_about', 'About'), path: '/about' },
+    { name: t('nav_contact', 'Contact'), path: '/contact' },
+  ];
+
+  return (
+    <nav 
+      className={`
+        fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b
+        ${scrolled 
+          ? 'bg-primary/90 backdrop-blur-md border-white/5 py-4' 
+          : 'bg-primary/60 backdrop-blur-sm border-transparent py-6'
+        }
+      `}
+    >
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="flex justify-between items-center">
+          
+          {/* Logo - Sora Font, Professional */}
+          <Link to="/" className="group flex flex-col">
+            <span className="font-display font-bold text-xl text-white tracking-tight group-hover:text-accent transition-colors">
+              IGOR SZUNIEWICZ
+            </span>
+            <span className="text-[10px] text-dim uppercase tracking-[0.2em] font-mono group-hover:text-white transition-colors">
+              {t('nav.role_label', 'Audio Designer')}
+            </span>
+          </Link>
+
+          {/* Desktop Navigation - Clean, spaced out */}
+          <div className="hidden md:flex items-center gap-8">
+            <div className="flex items-center gap-8 mr-8">
+              {navLinks.map((link) => {
+                const isActive = location.pathname === link.path;
+                return (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={`
+                      text-sm font-medium transition-all duration-200 relative py-1
+                      ${isActive ? 'text-white' : 'text-dim hover:text-white'}
+                    `}
+                  >
+                    {link.name}
+                    {/* Active Indicator Underline */}
+                    {isActive && (
+                      <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-accent rounded-full shadow-[0_0_8px_#38bdf8]"></span>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+
+            <div className="h-6 w-px bg-white/10 mr-4"></div>
+
+            {/* Socials - Subtle */}
+            <div className="flex items-center gap-4 mr-4">
+              <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" className="text-dim hover:text-white transition-colors">
+                <Github size={18} />
+              </a>
+              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer" className="text-dim hover:text-white transition-colors">
+                <Linkedin size={18} />
+              </a>
+            </div>
+
+            {/* Language Switcher */}
+            <LanguageSwitcher />
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center gap-4">
+             <LanguageSwitcher />
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-white focus:outline-none p-2"
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown - Full screen overlay style */}
+      <div className={`
+        md:hidden fixed inset-0 bg-primary z-40 transition-transform duration-300 pt-24 px-6
+        ${isOpen ? 'translate-x-0' : 'translate-x-full'}
+      `}>
+        <div className="flex flex-col gap-6">
+          {navLinks.map((link) => (
+            <Link
+              key={link.path}
+              to={link.path}
+              onClick={() => setIsOpen(false)}
+              className={`
+                text-2xl font-display font-bold
+                ${location.pathname === link.path ? 'text-accent' : 'text-dim hover:text-white'}
+              `}
+            >
+              {link.name}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;

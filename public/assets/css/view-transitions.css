@@ -1,0 +1,231 @@
+/**
+ * View Transition API - Smooth Page Transitions
+ *
+ * Provides native smooth transitions for browsers that support View Transition API
+ * (Chrome 111+, Edge 111+, Opera 97+)
+ *
+ * Fallback to CSS transitions for other browsers handled by enhanced-smooth-navigation.js
+ */
+
+/* ============================================================================
+   BASIC VIEW TRANSITIONS
+   ============================================================================ */
+
+/**
+ * Root transition - applies to the entire page
+ * Using fade with slight scale for a subtle, professional effect
+ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.25s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::view-transition-old(root) {
+  animation-name: fade-out;
+}
+
+::view-transition-new(root) {
+  animation-name: fade-in;
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-to-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+}
+
+@keyframes scale-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scale-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+/* ============================================================================
+   CUSTOM TRANSITIONS FOR SPECIFIC ELEMENTS
+   ============================================================================ */
+
+/**
+ * Main content transition
+ * Slightly longer duration for main content
+ */
+::view-transition-old(main),
+::view-transition-new(main) {
+  animation-duration: 0.3s;
+}
+
+/**
+ * Header stays in place - no transition
+ * This prevents the navigation from flickering
+ */
+header {
+  view-transition-name: header;
+}
+
+::view-transition-old(header),
+::view-transition-new(header) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/**
+ * Footer - quick fade
+ */
+footer {
+  view-transition-name: footer;
+}
+
+::view-transition-old(footer),
+::view-transition-new(footer) {
+  animation-duration: 0.2s;
+}
+
+/* ============================================================================
+   PROJECT CARDS - Special scale transition
+   ============================================================================ */
+
+.project-card {
+  view-transition-name: auto;
+}
+
+::view-transition-old(.project-card),
+::view-transition-new(.project-card) {
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+::view-transition-old(.project-card) {
+  animation-name: scale-fade-out;
+}
+
+::view-transition-new(.project-card) {
+  animation-name: scale-fade-in;
+}
+
+/* ============================================================================
+   REDUCED MOTION
+   ============================================================================ */
+
+/**
+ * Respect user's motion preferences
+ * Disable all transitions if user prefers reduced motion
+ */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-old(main),
+  ::view-transition-new(main),
+  ::view-transition-old(footer),
+  ::view-transition-new(footer),
+  ::view-transition-old(.project-card),
+  ::view-transition-new(.project-card) {
+    animation: none !important;
+  }
+
+  /* Instant transitions for reduced motion */
+  ::view-transition-group(*) {
+    animation-duration: 0.01s !important;
+  }
+}
+
+/* ============================================================================
+   FALLBACK FOR BROWSERS WITHOUT VIEW TRANSITION API
+   ============================================================================ */
+
+/**
+ * These styles are handled by enhanced-smooth-navigation.js
+ * No additional CSS needed as the script handles fallback animations
+ */
+
+/* ============================================================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================================================ */
+
+/**
+ * Use GPU acceleration for smoother animations
+ */
+::view-transition-old(root),
+::view-transition-new(root),
+::view-transition-old(main),
+::view-transition-new(main) {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  will-change: opacity, transform;
+}
+
+/**
+ * Prevent layout shifts during transitions
+ */
+::view-transition-image-pair(root) {
+  isolation: isolate;
+}
+
+/* ============================================================================
+   DEBUG HELPERS (commented out by default)
+   ============================================================================ */
+
+/*
+  Uncomment to visualize view transitions during development
+
+::view-transition-old(root) {
+  outline: 2px solid red;
+}
+
+::view-transition-new(root) {
+  outline: 2px solid green;
+}
+*/
