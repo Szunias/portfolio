@@ -156,7 +156,7 @@ const Hero = () => {
       </div>
 
       {/* Bottom Fade to Black (Seamless Transition) */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent pointer-events-none z-20"></div>
     </section>
   );
 };

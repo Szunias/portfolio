@@ -596,10 +596,22 @@
         {
           "title": "Tremolo DSP (C++)",
           "language": "cpp",
-          "description": "Per-sample amplitude modulation using sine wave LFO.",
-          "code": "for (int sample = 0; sample < numSamples; ++sample)\n{\n    float lfoVal = 0.5f + 0.5f * std::sin(tremoloPhase);\n    float amplitude = (1.0f - tremDepth) + (tremDepth * lfoVal);\n\n    for (int ch = 0; ch < numChannels; ++ch)\n    {\n        float* writePtr = buffer.getWritePointer(ch);\n        writePtr[sample] *= amplitude;\n    }\n\n    tremoloPhase += phaseInc;\n    if (tremoloPhase > juce::MathConstants<float>::twoPi)\n        tremoloPhase -= juce::MathConstants<float>::twoPi;\n}"
+          "description": "Per-sample amplitude modulation using sine wave LFO with phase wrapping.",
+          "code": "if (tremoloOn && tremDepth > 0.0f)\n{\n    float phaseInc = (float)(2.0 * juce::MathConstants<double>::pi * tremRate / currentSR);\n\n    for (int sample = 0; sample < numSamples; ++sample)\n    {\n        float lfoVal = 0.5f + 0.5f * std::sin(tremoloPhase);\n        float amplitude = (1.0f - tremDepth) + (tremDepth * lfoVal);\n\n        for (int ch = 0; ch < numChannels; ++ch)\n        {\n            float* writePtr = buffer.getWritePointer(ch);\n            writePtr[sample] *= amplitude;\n        }\n\n        tremoloPhase += phaseInc;\n        if (tremoloPhase > juce::MathConstants<float>::twoPi)\n            tremoloPhase -= juce::MathConstants<float>::twoPi;\n    }\n}"
+        },
+        {
+          "title": "Parameter Layout (JUCE)",
+          "language": "cpp",
+          "description": "APVTS setup for DAW automation support.",
+          "code": "juce::AudioProcessorValueTreeState::ParameterLayout createParameters()\n{\n    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;\n\n    params.push_back(std::make_unique<juce::AudioParameterFloat>(\n        \"GAIN\", \"Gain\", 0.0f, 3.1623f, 1.0f\n    ));\n\n    params.push_back(std::make_unique<juce::AudioParameterFloat>(\n        \"TEMPO\", \"Tempo (BPM)\", 20.0f, 300.0f, 120.0f\n    ));\n\n    return { params.begin(), params.end() };\n}"
+        },
+        {
+          "title": "Process Block (Real-time)",
+          "language": "cpp",
+          "description": "Main audio callback handling safe parameter reading and DSP chain.",
+          "code": "void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)\n{\n    if (dangerousVolumeDetected) {\n        buffer.clear();\n        return;\n    }\n\n    float gainValue = *apvts.getRawParameterValue(\"GAIN\");\n    float tempoValue = *apvts.getRawParameterValue(\"TEMPO\");\n\n    // Resampling based on tempo\n    double ratio = (double)tempoValue / 120.0;\n    audioFilePlayer.setResamplingRatio(ratio);\n\n    // Fill buffer from file\n    juce::AudioSourceChannelInfo info(buffer);\n    audioFilePlayer.getNextAudioBlock(info);\n\n    // Apply DSP chain\n    juce::dsp::AudioBlock<float> dspBlock(buffer);\n    juce::dsp::ProcessContextReplacing<float> ctx(dspBlock);\n    compressor.process(ctx);\n\n    buffer.applyGain(gainValue);\n}"
         }
-      ]
+      ],
     },
     {
       "id": "middleware_optimization",
