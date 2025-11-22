@@ -13,8 +13,12 @@ const About = () => {
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
 
   const getTechDescription = (name: string) => {
+    if (!i18n.language) return ""; // Safety check
+    
     let desc = "";
     const currentLang = i18n.language.split('-')[0];
+
+    if (!technical_skills_matrix) return ""; // Safety check
 
     Object.values(technical_skills_matrix).forEach((category: TechCategory) => {
         if (category.tools) {
