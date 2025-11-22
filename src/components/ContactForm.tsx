@@ -114,7 +114,7 @@ const ContactForm = () => {
           {status === 'success' && (
             <>
               <CheckCircle size={18} />
-              Sent!
+              {t('contact.sent', 'Sent!')}
             </>
           )}
         </button>
