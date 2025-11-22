@@ -1,111 +1,159 @@
-import { motion } from 'framer-motion';
-import { Download, ChevronDown, ArrowRight, Sparkles } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Download, ArrowRight, Terminal, Cpu, Layers } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import AudioWave from './AudioWave';
 import { Link } from 'react-router-dom';
 
 const Hero = () => {
   const { t } = useTranslation();
-
-  const scrollToContent = () => {
-    const showreel = document.getElementById('showreel-section');
-    if (showreel) {
-        showreel.scrollIntoView({ behavior: 'smooth' });
-    } else {
-        window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
-    }
-  };
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 500], [0, 200]);
+  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-6 lg:px-12 overflow-hidden pt-20">
+    <section className="relative min-h-screen flex items-center px-6 lg:px-12 overflow-hidden bg-[#050505] pt-20">
       
-      {/* Background Elements */}
-      <div className="absolute inset-0 z-0 bg-[#0a0a0a]">
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-        
-        {/* Radial Spotlights */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/5 rounded-full blur-[120px] pointer-events-none"></div>
-        <div className="absolute right-0 top-0 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none"></div>
-        
-        <AudioWave />
+      {/* Background: Technical Grid & Noise */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-[url('/assets/noise.png')] opacity-[0.03] mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-accent/10 blur-[120px] rounded-full pointer-events-none opacity-50"></div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto w-full flex flex-col items-center text-center">
+      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
         
-        {/* Main Content */}
+        {/* Left: Content */}
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="max-w-4xl"
+          style={{ y, opacity }}
+          className="lg:col-span-7 flex flex-col justify-center"
         >
-          {/* Badge */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8"
-          >
-            <Sparkles size={12} className="text-accent" />
-            <span className="text-[10px] md:text-xs font-mono uppercase tracking-[0.2em] text-slate-300">
-              {t('hero.badge', 'Technical Audio Design')}
+          {/* Status Line */}
+          <div className="flex items-center gap-3 mb-8">
+            <div className="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded text-[10px] font-mono text-accent uppercase tracking-widest">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+              </span>
+              {t('hero.status', 'System Active')}
+            </div>
+            <div className="h-px w-12 bg-white/10"></div>
+            <span className="text-xs font-mono text-slate-500 uppercase tracking-wider">
+              Igorszuniewicz.com <span className="text-white/20 mx-2">//</span> v2.5
             </span>
-          </motion.div>
+          </div>
 
-          {/* Headline */}
-          <h1 className="font-display font-bold text-6xl md:text-8xl lg:text-9xl tracking-tighter leading-[0.9] text-white mb-8">
-            {t('hero.headline_1_prefix', 'Designing')} <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">{t('hero.headline_1_suffix', 'Sound.')}</span> <br />
-            {t('hero.headline_2_prefix', 'Programming')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-purple-400 to-accent animate-gradient-x">
-              {t('hero.headline_2_suffix', 'Experience.')}
+          {/* Brutalist Headline */}
+          <h1 className="font-display font-bold text-6xl sm:text-7xl lg:text-8xl leading-[0.9] text-white mb-8 tracking-tighter">
+            {t('hero.headline_main', 'TECHNICAL')} <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-400 to-slate-600">
+              {t('hero.headline_sub', 'AUDIO DESIGN')}
             </span>
           </h1>
 
-          {/* Sub-headline */}
-          <p className="text-lg md:text-xl text-slate-400 mb-12 max-w-2xl mx-auto leading-relaxed font-light">
-            {t('hero.description', "Technical Sound Designer bridging the void between artistic vision and game engine logic. Specializing in Wwise, FMOD, and C++ Audio Systems.")}
+          {/* Technical Sub-headline */}
+          <p className="text-lg text-slate-400 mb-10 max-w-xl leading-relaxed font-light border-l border-accent/30 pl-6">
+            {t('hero.description_tech', 'Bridging the void between artistic vision and engine logic. Specializing in Wwise implementation, C++ DSP, and adaptive audio systems for Unreal Engine 5.')}
           </p>
           
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center w-full">
+          {/* Tech Stack Mini-Grid */}
+          <div className="grid grid-cols-3 gap-4 mb-12 max-w-md">
+            {[
+              { label: 'Middleware', val: 'Wwise / FMOD', icon: Layers },
+              { label: 'Engine', val: 'Unreal C++', icon: Cpu },
+              { label: 'Scripting', val: 'Python / Lua', icon: Terminal },
+            ].map((item, i) => (
+              <div key={i} className="group">
+                <div className="flex items-center gap-2 text-slate-500 mb-1">
+                  <item.icon size={12} />
+                  <span className="text-[10px] font-mono uppercase tracking-wider">{item.label}</span>
+                </div>
+                <div className="text-sm font-bold text-slate-200 group-hover:text-accent transition-colors">
+                  {item.val}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA Buttons - Modern Sharp */}
+          <div className="flex flex-col sm:flex-row gap-5">
             <Link 
               to="/projects"
-              className="group relative px-8 py-4 bg-white text-black font-bold rounded-full overflow-hidden flex items-center justify-center min-w-[200px]"
+              className="group relative px-8 py-4 bg-white text-black font-bold text-sm uppercase tracking-wider flex items-center justify-center overflow-hidden transition-all hover:bg-accent"
             >
-              <div className="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
-              <span className="relative z-10 group-hover:text-white transition-colors flex items-center">
-                {t('hero.view_work', 'View Selected Work')}
-                <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+              <span className="relative z-10 flex items-center">
+                {t('hero.view_work', 'Explore Projects')}
+                <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
               </span>
             </Link>
             
             <a 
               href="/cv/Igor_Szuniewicz_CV.pdf" 
               target="_blank"
-              className="group px-8 py-4 text-slate-300 hover:text-white font-medium transition-all flex items-center justify-center border-b border-transparent hover:border-accent"
+              className="px-8 py-4 bg-transparent border border-white/20 text-white font-medium text-sm uppercase tracking-wider flex items-center justify-center hover:bg-white/5 transition-all"
             >
-              <Download size={18} className="mr-2" />
-              {t('hero.download_cv', 'Download CV')}
+              <Download size={16} className="mr-2" />
+              CV / Resumé
             </a>
           </div>
         </motion.div>
 
+        {/* Right: Abstract Tech Visualization */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1 }}
+          className="hidden lg:block lg:col-span-5 relative"
+        >
+          {/* Abstract Card Container */}
+          <div className="relative w-full aspect-square max-w-[500px] mx-auto">
+            
+            {/* Rotating Rings (Abstract Speaker/Radar) */}
+            <div className="absolute inset-0 border border-white/5 rounded-full animate-[spin_10s_linear_infinite]"></div>
+            <div className="absolute inset-[10%] border border-white/5 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
+            <div className="absolute inset-[20%] border border-dashed border-accent/20 rounded-full animate-[spin_20s_linear_infinite]"></div>
+            
+            {/* Central "Core" */}
+            <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-32 h-32 bg-gradient-to-br from-slate-800 to-black rounded-2xl border border-white/10 flex items-center justify-center shadow-2xl shadow-accent/10 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-accent/10 blur-xl group-hover:bg-accent/20 transition-all"></div>
+                    <Cpu size={48} className="text-white/80 relative z-10" />
+                </div>
+            </div>
+
+            {/* Floating Data Points */}
+            <motion.div 
+                animate={{ y: [0, -10, 0] }} 
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-[20%] right-[10%] bg-[#0f0f0f] border border-white/10 p-4 rounded-lg shadow-xl backdrop-blur-md"
+            >
+                <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-[10px] font-mono text-slate-400">RTPC_Intensity</span>
+                </div>
+                <div className="h-1 w-32 bg-slate-800 rounded-full overflow-hidden">
+                    <motion.div 
+                        animate={{ width: ["0%", "80%", "40%", "90%"] }}
+                        transition={{ duration: 3, repeat: Infinity }}
+                        className="h-full bg-green-500"
+                    />
+                </div>
+            </motion.div>
+
+            <motion.div 
+                animate={{ y: [0, 15, 0] }} 
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute bottom-[20%] left-[0%] bg-[#0f0f0f] border border-white/10 p-4 rounded-lg shadow-xl backdrop-blur-md"
+            >
+                <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-accent rounded-full"></div>
+                    <span className="text-[10px] font-mono text-slate-400">Wwise_Event_Fire</span>
+                </div>
+                <div className="font-mono text-xs text-accent">PostEvent(ID, Actor)</div>
+            </motion.div>
+
+          </div>
+        </motion.div>
+
       </div>
-
-      {/* Scroll Indicator */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer group z-10"
-        onClick={scrollToContent}
-      >
-        <span className="text-[10px] font-mono tracking-[0.3em] text-slate-600 uppercase group-hover:text-accent transition-colors">
-            {t('hero.scroll', 'Scroll')}
-        </span>
-        <ChevronDown size={24} className="text-slate-600 group-hover:text-accent transition-colors animate-bounce" />
-      </motion.div>
-
     </section>
   );
 };
