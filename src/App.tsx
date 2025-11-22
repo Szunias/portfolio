@@ -14,7 +14,7 @@ const safeLazy = (importFunc: () => Promise<{ default: ComponentType<any> }>) =>
       if (!hasReloaded) {
         sessionStorage.setItem('chunk_reload', 'true');
         window.location.reload();
-        return new Promise(() => {}); // Never resolve, page reloads
+        return new Promise(() => { }); // Never resolve, page reloads
       }
       throw error; // If already reloaded, let the error boundary catch it
     });
@@ -27,6 +27,7 @@ const Projects = safeLazy(() => import('./pages/Projects'));
 const ProjectDetails = safeLazy(() => import('./pages/ProjectDetails'));
 const About = safeLazy(() => import('./pages/About'));
 const Contact = safeLazy(() => import('./pages/Contact'));
+const Gradwork = safeLazy(() => import('./pages/Gradwork'));
 const Music = safeLazy(() => import('./pages/Music'));
 const NotFound = safeLazy(() => import('./pages/NotFound'));
 
@@ -42,6 +43,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/projects" element={<Projects />} />
+            <Route path="/projects/gradwork" element={<Gradwork />} />
             <Route path="/projects/:id" element={<ProjectDetails />} />
             <Route path="/music" element={<Music />} />
             <Route path="/about" element={<About />} />

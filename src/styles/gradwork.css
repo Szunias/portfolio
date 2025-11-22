@@ -1,0 +1,799 @@
+/* Clean White Modern Design */
+.gradwork-page {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1a1a1a;
+  line-height: 1.8;
+  background: #ffffff;
+}
+
+/* Hero Section with Parallax */
+.gradwork-page .hero-section {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+  will-change: transform; 
+}
+
+.gradwork-page .clouds-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.gradwork-page .cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 100px;
+  opacity: 0.8;
+  will-change: transform;
+}
+
+.gradwork-page .cloud-1 {
+  width: 300px;
+  height: 100px;
+  top: 20%;
+  left: -150px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+}
+
+.gradwork-page .cloud-1::before,
+.gradwork-page .cloud-1::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 100px;
+}
+
+.gradwork-page .cloud-1::before {
+  width: 100px;
+  height: 100px;
+  top: -50px;
+  left: 50px;
+}
+
+.gradwork-page .cloud-1::after {
+  width: 120px;
+  height: 120px;
+  top: -60px;
+  right: 50px;
+}
+
+.gradwork-page .cloud-2 {
+  width: 350px;
+  height: 120px;
+  top: 60%;
+  right: -175px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+}
+
+.gradwork-page .cloud-2::before,
+.gradwork-page .cloud-2::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 100px;
+}
+
+.gradwork-page .cloud-2::before {
+  width: 120px;
+  height: 120px;
+  top: -60px;
+  left: 60px;
+}
+
+.gradwork-page .cloud-2::after {
+  width: 140px;
+  height: 140px;
+  top: -70px;
+  right: 60px;
+}
+
+.gradwork-page .hero-title-container {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 2rem;
+  max-width: 1200px;
+}
+
+.gradwork-page .hero-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 200, 0, 0.15);
+  color: #996600;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 20px;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.gradwork-page .hero-title {
+  font-size: clamp(2.5rem, 8vw, 6rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #1a1a1a;
+  margin: 0;
+  will-change: transform, opacity;
+}
+
+.gradwork-page .hero-subtitle {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-weight: 400;
+  color: #666;
+  margin-top: 1.5rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease-out 0.3s, transform 0.8s ease-out 0.3s;
+}
+
+.gradwork-page.loaded .hero-subtitle {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scroll indicator */
+.gradwork-page .scroll-indicator {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  40% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+  60% {
+    transform: translateX(-50%) translateY(-5px);
+  }
+}
+
+.gradwork-page .scroll-indicator svg {
+  width: 30px;
+  height: 30px;
+  stroke: #666;
+}
+
+/* Main Content */
+.gradwork-page .main-content {
+  position: relative;
+  background: #ffffff;
+  z-index: 10;
+}
+
+/* Section styling */
+.gradwork-page .section {
+  padding: 8rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  will-change: opacity, transform;
+}
+
+.gradwork-page .section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.gradwork-page .section-number {
+  font-size: clamp(8rem, 20vw, 15rem);
+  font-weight: 900;
+  color: #f0f0f0;
+  line-height: 1;
+  margin: 0 0 -4rem 0;
+  letter-spacing: -0.05em;
+  user-select: none;
+}
+
+.gradwork-page .section-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 2rem 0;
+  line-height: 1.2;
+}
+
+.gradwork-page .section-content {
+  font-size: 1.125rem;
+  color: #444;
+  line-height: 1.8;
+}
+
+.gradwork-page .section-content p {
+  margin: 1.5rem 0;
+}
+
+.gradwork-page .section-content strong {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.gradwork-page .section-content h3 {
+  font-size: 1.5rem;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.gradwork-page .section-content h4 {
+  font-size: 1.25rem;
+  margin-top: 2rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.gradwork-page .section-content ul {
+  font-size: 1.125rem;
+  line-height: 2;
+  margin: 1.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.gradwork-page .section-content ul li {
+  margin: 0.75rem 0;
+}
+
+/* Highlight box */
+.gradwork-page .highlight-box {
+  background: #f8f9fa;
+  border-left: 4px solid #1a1a1a;
+  padding: 2rem;
+  margin: 3rem 0;
+  border-radius: 8px;
+}
+
+.gradwork-page .highlight-box p {
+  margin: 0.5rem 0;
+}
+
+.gradwork-page .highlight-box ul {
+  margin-top: 1rem;
+  padding-left: 1.5rem;
+}
+
+.gradwork-page .highlight-box ul li {
+  margin: 0.5rem 0;
+}
+
+/* Status box */
+.gradwork-page .status-box {
+  background: rgba(255, 200, 0, 0.1);
+  border-left: 4px solid #cc9900;
+  padding: 2rem;
+  margin: 3rem 0;
+  border-radius: 8px;
+}
+
+.gradwork-page .status-box p {
+  margin: 0.5rem 0;
+}
+
+.gradwork-page .status-box ul {
+  margin-top: 1rem;
+  padding-left: 1.5rem;
+}
+
+/* Stats grid */
+.gradwork-page .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.gradwork-page .stat-card {
+  text-align: center;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.gradwork-page .stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.gradwork-page .stat-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.gradwork-page .stat-label {
+  font-size: 0.875rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+/* Code blocks */
+.gradwork-page .code-snippet {
+  background: #1a1a1a;
+  color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+  font-size: 0.875rem;
+  overflow-x: auto;
+  margin: 2rem 0;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+/* Comparison table */
+.gradwork-page .comparison-table {
+  width: 100%;
+  margin: 3rem 0;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.gradwork-page .comparison-table th,
+.gradwork-page .comparison-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.gradwork-page .comparison-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.gradwork-page .comparison-table tr:hover {
+  background: #f8f9fa;
+}
+
+.gradwork-page .comparison-table tr.highlight {
+  background: #f0f9ff;
+}
+
+/* Footer navigation */
+.gradwork-page .project-footer {
+  background: #f8f9fa;
+  padding: 4rem 2rem;
+  text-align: center;
+  margin-top: 6rem;
+}
+
+.gradwork-page .back-link {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: #1a1a1a;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: transform 0.3s ease;
+}
+
+.gradwork-page .back-link:hover {
+  transform: translateY(-2px);
+}
+
+/* "Well...." Transition */
+.gradwork-page .well-transition {
+  position: relative;
+  min-height: 150vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+.gradwork-page .well-transition-content {
+  position: sticky;
+  top: 50vh;
+  transform: translateY(-50%);
+  font-family: 'Inter', sans-serif;
+  font-size: 5rem;
+  font-weight: 300;
+  color: #1a1a1a;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  padding: 2rem;
+  text-align: center;
+}
+
+.gradwork-page .well-text {
+  font-style: italic;
+}
+
+.gradwork-page .well-dots {
+  display: inline-block;
+  min-width: 2em;
+  font-style: italic;
+}
+
+.gradwork-page .well-dots .dot {
+  opacity: 0;
+  display: inline-block;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(10px);
+}
+
+@media (max-width: 768px) {
+  .gradwork-page .well-transition {
+    min-height: 150vh;
+  }
+
+  .gradwork-page .well-transition-content {
+    font-size: 3rem;
+  }
+}
+
+/* Architecture Flow Animation */
+.gradwork-page .architecture-flow {
+  position: relative;
+  min-height: 600vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.gradwork-page .architecture-flow-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 600px;
+  padding: 2rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gradwork-page .flow-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  gap: 0;
+  min-height: 100vh;
+}
+
+.gradwork-page .flow-node {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  will-change: transform, opacity;
+  transition: box-shadow 0.6s ease, border 0.6s ease;
+  border: 2px solid #e5e7eb;
+  overflow: hidden;
+}
+
+/* Green fill effect - liquid fills from TOP (gravity!) */
+.gradwork-page .flow-node::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(to bottom, rgba(52, 211, 153, 0.2), rgba(16, 185, 129, 0.15));
+  transition: height 1s ease;
+  z-index: -1;
+  border-radius: 10px;
+}
+
+.gradwork-page .flow-node.filling::before {
+  height: 100%;
+}
+
+.gradwork-page .flow-node.filled::before {
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(52, 211, 153, 0.25), rgba(16, 185, 129, 0.2));
+}
+
+.gradwork-page .flow-node.filling,
+.gradwork-page .flow-node.filled {
+  border-color: #10b981;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+/* SUCCESS message - battery fill effect */
+.gradwork-page .flow-success-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5rem;
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: 0.15em;
+  z-index: 10;
+  opacity: 0;
+
+  /* Black outline */
+  -webkit-text-stroke: 3px #000000;
+  text-stroke: 3px #000000;
+
+  /* Green fill with gradient */
+  background: linear-gradient(to right, #10b981 0%, #10b981 50%, transparent 50%, transparent 100%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  will-change: background-position, opacity;
+  transition: opacity 0.3s ease;
+}
+
+.gradwork-page .flow-node-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+}
+
+.gradwork-page .flow-node-subtitle {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.gradwork-page .flow-line {
+  width: 4px;
+  height: 120px;
+  opacity: 0;
+  margin: 0.5rem 0;
+  will-change: opacity;
+  position: relative;
+  transition: opacity 0.5s ease;
+}
+
+.gradwork-page .flow-line line {
+  stroke: #e5e7eb;
+  stroke-width: 4;
+  transition: stroke 1s ease;
+}
+
+.gradwork-page .flow-line.filling,
+.gradwork-page .flow-line.filled {
+  opacity: 1;
+}
+
+.gradwork-page .flow-line.filling line,
+.gradwork-page .flow-line.filled line {
+  stroke: #10b981;
+  filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.6));
+}
+
+/* Liquid drop animation */
+.gradwork-page .flow-line::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle, #10b981, #34d399);
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+  pointer-events: none;
+}
+
+.gradwork-page .flow-line.filling::after {
+  animation: liquidDrop 1.5s ease-in-out forwards;
+}
+
+@keyframes liquidDrop {
+  0% {
+    top: -10px;
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) scale(1.2);
+  }
+  100% {
+    top: 130px;
+    opacity: 0;
+    transform: translateX(-50%) scale(0.8);
+  }
+}
+
+
+@media (max-width: 768px) {
+  .gradwork-page .architecture-flow {
+    min-height: 400vh;
+  }
+
+  .gradwork-page .architecture-flow-content {
+    max-width: 100%;
+    padding: 1rem;
+  }
+
+  .gradwork-page .flow-container {
+    gap: 0;
+  }
+
+  .gradwork-page .flow-node {
+    width: 100%;
+    padding: 2rem 1.5rem;
+    margin: 0;
+  }
+
+  .gradwork-page .flow-line {
+    height: 100px;
+    margin: 0.25rem 0;
+  }
+
+  .gradwork-page .flow-line line {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+}
+
+/* Nightmare Scroll Transition */
+.gradwork-page .nightmare-scroll {
+  position: relative;
+  min-height: 150vh;
+  background: #ffffff;
+  color: #1a1a1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  z-index: 20;
+}
+
+/* The expanding overheat aura */
+.gradwork-page .nightmare-scroll::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 15vmax;
+  height: 15vmax;
+  /* Red radial gradient: Overheating core effect */
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.6) 0%, rgba(185, 28, 28, 0.2) 50%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(var(--nightmare-scale, 0));
+  opacity: var(--aura-opacity, 0); /* Controlled by JS */
+  will-change: transform, opacity;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.gradwork-page .nightmare-content {
+  position: sticky;
+  top: 50vh;
+  transform: translateY(-50%);
+  text-align: center;
+  width: 100%;
+  will-change: transform;
+  padding: 0 1rem;
+  z-index: 2; /* Keep text above the circle */
+}
+
+.gradwork-page .nightmare-timer {
+  font-family: 'Courier New', monospace;
+  /* Reduced max font size from 12rem to 8rem */
+  font-size: clamp(3rem, 12vw, 8rem);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  opacity: 0.2;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+/* Red vignette only at the very end */
+.gradwork-page .nightmare-scroll.active-nightmare::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 150px rgba(220, 38, 38, 0.4);
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  animation: fadeInVignette 0.5s forwards;
+}
+
+@keyframes fadeInVignette { to { opacity: 1; } }
+
+/* Autoscroll Button */
+.gradwork-page .autoscroll-btn {
+  position: fixed;
+  right: 2rem;
+  bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: #ffffff;
+  border: 2px solid #10b981;
+  border-radius: 50px;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+  cursor: pointer;
+  z-index: 900;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #10b981;
+}
+
+.gradwork-page .autoscroll-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.gradwork-page .autoscroll-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(16, 185, 129, 0.4);
+  background: #f0fdf4;
+  border-color: #059669;
+}
+
+.gradwork-page .autoscroll-btn:active {
+  transform: translateY(0);
+}
+
+.gradwork-page .autoscroll-btn svg {
+  width: 18px;
+  height: 18px;
+  color: #10b981;
+  transition: transform 0.3s ease;
+}
+
+.gradwork-page .autoscroll-btn:hover svg {
+  transform: translateX(2px);
+}
+
+@media (max-width: 768px) {
+  .gradwork-page .autoscroll-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.75rem;
+    right: 1rem;
+    bottom: 1rem;
+  }
+
+  .gradwork-page .autoscroll-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}
