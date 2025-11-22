@@ -1,19 +1,21 @@
 import { useState, useRef } from 'react';
 import Player from '@vimeo/player';
 import { Play } from 'lucide-react';
-
-const timestamps = [
-  { time: 0, label: 'Start', color: 'bg-white' },
-  { time: 10, label: 'Shadow Frames', color: 'bg-accent' }, // Przykładowe czasy, dostosuj
-  { time: 35, label: 'Amorak', color: 'bg-purple-500' },
-  { time: 58, label: 'Not Today', color: 'bg-green-500' },
-  { time: 85, label: 'Transientica', color: 'bg-blue-500' }
-];
+import { useTranslation } from 'react-i18next';
 
 const Showreel = () => {
+  const { t } = useTranslation();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [player, setPlayer] = useState<Player | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const timestamps = [
+    { time: 0, label: t('hero.showreel_start', 'Start'), color: 'bg-white' },
+    { time: 10, label: 'Shadow Frames', color: 'bg-accent' },
+    { time: 35, label: 'Amorak', color: 'bg-purple-500' },
+    { time: 58, label: 'Not Today', color: 'bg-green-500' },
+    { time: 85, label: 'Transientica', color: 'bg-blue-500' }
+  ];
 
   // Initialize Vimeo Player
   const handleLoad = () => {

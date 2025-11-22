@@ -57,9 +57,9 @@ const Hero = () => {
           {/* Tech Stack Mini-Grid */}
           <div className="grid grid-cols-3 gap-4 mb-12 max-w-md">
             {[
-              { label: 'Middleware', val: 'Wwise / FMOD', icon: Layers },
-              { label: 'Engine', val: 'Unreal / Unity', icon: Cpu },
-              { label: 'Scripting', val: 'C++ / Python', icon: Terminal },
+              { label: t('tech_cat.Audio Middleware', 'Middleware'), val: 'Wwise / FMOD', icon: Layers },
+              { label: t('tech_cat.Game Engines', 'Engine'), val: 'Unreal / Unity', icon: Cpu },
+              { label: t('tech_cat.Programming', 'Scripting'), val: 'C++ / Python', icon: Terminal },
             ].map((item, i) => (
               <div key={i} className="group">
                 <div className="flex items-center gap-2 text-slate-500 mb-1">
