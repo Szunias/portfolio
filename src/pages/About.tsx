@@ -111,9 +111,9 @@ const About = () => {
         <div className="relative border-l-2 border-white/5 ml-3 space-y-16 pb-4">
             {/* Timeline Items */}
             {[
-                { title: t('timeline_dae_title', 'Howest DAE'), role: 'Game Development', date: 'Present', color: 'bg-accent' },
-                { title: t('timeline_hs_title', 'High School'), role: 'Maths & Physics', date: 'Graduated', color: 'bg-slate-700' },
-                { title: t('timeline_piano_title', 'Music School'), role: 'Classical Piano', date: 'Graduated', color: 'bg-slate-700' }
+                { title: t('timeline_dae_title', 'Howest DAE'), role: t('timeline.role_game_dev', 'Game Development'), date: t('timeline.present', 'Present'), color: 'bg-accent' },
+                { title: t('timeline_hs_title', 'High School'), role: t('timeline.role_math_phys', 'Maths & Physics'), date: t('timeline.graduated', 'Graduated'), color: 'bg-slate-700' },
+                { title: t('timeline_piano_title', 'Music School'), role: t('timeline.role_piano', 'Classical Piano'), date: t('timeline.graduated', 'Graduated'), color: 'bg-slate-700' }
             ].map((item, i) => (
                 <div key={i} className="relative pl-12 group">
                     <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-4 border-[#050505] ${item.color} shadow-lg group-hover:scale-125 transition-transform`}></div>

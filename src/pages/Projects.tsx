@@ -158,7 +158,7 @@ const Projects = () => {
                 </motion.div>
               ) : (
                 <div className="flex items-center justify-center h-full text-slate-700 font-mono uppercase tracking-widest">
-                  Select a project
+                  {t('projects.select_prompt', 'Select a project to preview')}
                 </div>
               )}
             </AnimatePresence>
