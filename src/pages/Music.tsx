@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Sparkles } from 'lucide-react';
 import TrackCard from '../components/features/music/TrackRow';
+import { Track } from '../types';
 
 const Music = () => {
   const { playlist, playTrack, currentTrack, isPlaying, togglePlay } = useAudio();
@@ -10,7 +11,7 @@ const Music = () => {
 
   const displayTrack = currentTrack || playlist[0];
 
-  const getDesc = (track: any) => {
+  const getDesc = (track: Track) => {
     const lang = i18n.language.split('-')[0];
     return track?.desc?.[lang] || track?.desc?.['en'] || '';
   };

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -257,7 +257,19 @@ const MiddlewareOptimization = () => {
     );
 };
 
-const ProjectCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, poster, caption, paragraphs }: any) => {
+interface ProjectCardProps {
+    title: string;
+    badges: string[];
+    time: string;
+    videoTitle: string;
+    videoSrc?: string;
+    vimeoSrc?: string;
+    poster?: string;
+    caption: string;
+    paragraphs: string[];
+}
+
+const ProjectCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, poster, caption, paragraphs }: ProjectCardProps) => {
     return (
         <motion.article 
             initial={{ opacity: 0, y: 50 }}
@@ -336,7 +348,13 @@ const ProjectCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, post
     );
 };
 
-const SkillCard = ({ icon, title, desc }: any) => {
+interface SkillCardProps {
+    icon: ReactNode;
+    title: string;
+    desc: string;
+}
+
+const SkillCard = ({ icon, title, desc }: SkillCardProps) => {
     return (
         <motion.div 
             initial={{ opacity: 0, y: 20 }}

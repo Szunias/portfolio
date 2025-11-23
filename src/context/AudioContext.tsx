@@ -48,7 +48,7 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
   // Initialize audio element
   useEffect(() => {
     audioRef.current = new Audio();
-    audioRef.current.volume = volume;
+    // Volume is set by the volume effect
 
     const audio = audioRef.current;
 
@@ -107,7 +107,7 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
       .then(res => res.json())
       .then(data => {
         setPlaylist(data);
-        if (data.length > 0 && !currentTrack) {
+        if (data.length > 0 && !currentTrackRef.current) {
             setCurrentTrack(data[0]);
         }
       })
@@ -210,6 +210,7 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAudio = () => {
   const context = useContext(AudioContext);
   if (context === undefined) {

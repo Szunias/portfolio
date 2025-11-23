@@ -17,7 +17,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
   const titleKey = `project_${project.id}_title`;
   const descKey = `project_${project.id}_short_desc`;
 
-  const CardContent = () => (
+  const cardContent = (
     <>
       {/* Background Media */}
       <div className="absolute inset-0 w-full h-full">
@@ -96,11 +96,11 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
     >
       {project.externalLink ? (
         <a href={project.externalLink} className="block w-full h-full">
-            <CardContent />
+            {cardContent}
         </a>
       ) : (
         <Link to={`/projects/${project.id}`} className="block w-full h-full">
-            <CardContent />
+            {cardContent}
         </Link>
       )}
     </motion.div>

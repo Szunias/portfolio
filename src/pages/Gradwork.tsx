@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useInView } from 'framer-motion';
 import { ArrowLeft, Database, Server, Cpu, Zap, Clock, Brain, Layers } from 'lucide-react';
@@ -192,7 +192,13 @@ const Gradwork = () => {
     );
 };
 
-const Section = ({ number, title, children }: any) => {
+interface SectionProps {
+    number: string;
+    title: string;
+    children: ReactNode;
+}
+
+const Section = ({ number, title, children }: SectionProps) => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -216,7 +222,13 @@ const Section = ({ number, title, children }: any) => {
     );
 };
 
-const ArchitectureCard = ({ icon, title, subtitle }: any) => (
+interface ArchitectureCardProps {
+    icon: ReactNode;
+    title: string;
+    subtitle: string;
+}
+
+const ArchitectureCard = ({ icon, title, subtitle }: ArchitectureCardProps) => (
     <div className="bg-[#111] p-6 rounded-xl border border-white/10 flex flex-col items-center text-center hover:border-emerald-500/30 transition-colors group">
         <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-slate-300 mb-4 group-hover:text-emerald-400 group-hover:bg-emerald-500/10 transition-all">
             {icon}

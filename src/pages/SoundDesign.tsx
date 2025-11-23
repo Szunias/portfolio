@@ -165,7 +165,15 @@ const SoundDesign = () => {
     );
 };
 
-const VideoCard = ({ title, desc, badge, videoSrc, poster }: any) => {
+interface VideoCardProps {
+    title: string;
+    desc: string;
+    badge: string;
+    videoSrc: string;
+    poster: string;
+}
+
+const VideoCard = ({ title, desc, badge, videoSrc, poster }: VideoCardProps) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
 

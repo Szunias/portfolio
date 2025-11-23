@@ -22,7 +22,8 @@ const AudioPlayer = () => {
             setVisualizerData(newData);
         }, 100);
     } else {
-        setVisualizerData(new Array(20).fill(5));
+        const timeout = setTimeout(() => setVisualizerData(new Array(20).fill(5)), 0);
+        return () => clearTimeout(timeout);
     }
     return () => clearInterval(interval);
   }, [isPlaying]);

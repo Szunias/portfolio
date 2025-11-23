@@ -5,7 +5,7 @@ import ScrollToTop from './components/layout/ScrollToTop';
 import PageLoader from './components/ui/PageLoader';
 
 // Helper to handle chunk load errors (auto-reload once)
-const safeLazy = (importFunc: () => Promise<{ default: ComponentType<any> }>) => {
+const safeLazy = (importFunc: () => Promise<{ default: ComponentType<unknown> }>) => {
   return lazy(() => {
     return importFunc().catch(error => {
       console.error("Chunk load failed", error);
