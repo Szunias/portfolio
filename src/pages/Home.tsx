@@ -25,6 +25,8 @@ const Home = () => {
       
       <div id="showreel-section" className="relative z-40 -mt-32">
         <Showreel />
+        {/* Seam/Transition Fix: Ensure bottom of this section blends perfectly into the next */}
+        <div className="absolute inset-x-0 bottom-0 h-96 bg-gradient-to-b from-transparent to-primary -z-10 pointer-events-none" />
       </div>
 
       {/* Featured Projects Section */}
