@@ -48,7 +48,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
         )}
         
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 transition-all duration-500 group-hover:opacity-100 group-hover:via-black/80 group-hover:to-black/60 group-hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]" />
       </div>
 
       {/* Content Overlay */}
@@ -74,9 +74,11 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             </p>
             
             {/* Tech Stack (Visible on Hover) */}
-            <div className="flex flex-wrap gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100 h-0 group-hover:h-auto overflow-hidden">
-                {(project.technologies || []).slice(0, 3).map((tech: string, i: number) => (
-                    <span key={i} className="text-[10px] font-mono text-accent">#{t(`tags.${tech}`, tech as any) as string}</span>
+            <div className="flex flex-wrap gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 max-h-0 group-hover:max-h-32 overflow-hidden">
+                {((project.tags && project.tags.length > 0 ? project.tags : project.technologies) || []).slice(0, 6).map((tech: string, i: number) => (
+                    <span key={i} className="px-2.5 py-1 bg-black/60 backdrop-blur-md border border-white/20 rounded-md text-[11px] font-medium text-white shadow-sm hover:bg-white/10 transition-colors">
+                        {tech}
+                    </span>
                 ))}
             </div>
         </div>
@@ -90,7 +92,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, delay: index < 6 ? index * 0.1 : 0 }}
-      className="group relative w-full aspect-[4/3] md:aspect-[16/10] rounded-2xl overflow-hidden bg-neutral-900 cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-accent/10 transition-all duration-500 border border-white/5 hover:border-white/10"
+      className="group relative w-full aspect-[4/3] md:aspect-[16/10] rounded-2xl overflow-hidden bg-neutral-900 cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-accent/20 transition-all duration-500 border border-white/5 hover:border-white/10"
     >
       {project.externalLink ? (
         <a href={project.externalLink} className="block w-full h-full">
