@@ -10,7 +10,7 @@ const Hero = () => {
   const opacity = useTransform(scrollY, [0, 1200], [1, 0.3]); // Much slower fade out and keeps some visibility
 
   return (
-    <section className="relative min-h-screen flex items-center px-6 lg:px-12 overflow-hidden bg-[#050505] pt-20 pb-40">
+    <section className="relative min-h-screen flex items-center px-6 lg:px-12 overflow-hidden bg-[#050505] pt-20 pb-80">
       
       {/* Background: Technical Grid & Noise */}
       <div className="absolute inset-0 z-0">
@@ -198,7 +198,7 @@ const Hero = () => {
       </div>
 
       {/* Bottom Fade to Black (Seamless Transition) */}
-      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#050505] via-[#050505] to-transparent pointer-events-none z-0"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-[#050505] via-[#050505] to-transparent pointer-events-none z-0"></div>
     </section>
   );
 };

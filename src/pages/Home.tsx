@@ -23,7 +23,7 @@ const Home = () => {
       <SEO /> {/* Default home metadata */}
       <Hero />
       
-      <div id="showreel-section" className="relative z-40 mt-24">
+      <div id="showreel-section" className="relative z-40 -mt-32">
         <Showreel />
       </div>
 
