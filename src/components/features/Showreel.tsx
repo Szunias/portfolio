@@ -66,17 +66,24 @@ const Showreel = () => {
       </div>
 
       {/* Timestamps Bar */}
-      <div className="flex flex-wrap justify-center gap-3 mt-6">
+      <div className="flex flex-wrap justify-center gap-4 mt-8">
         {timestamps.map((ts) => (
           <button
             key={ts.label}
             onClick={() => jumpTo(ts.time)}
-            className="flex items-center gap-2 px-4 py-2 bg-secondary border border-white/10 rounded-full hover:border-accent hover:text-white transition-all group"
+            className="group relative flex items-center gap-3 px-5 py-3 bg-[#0a0a0a] border border-white/10 rounded-xl hover:border-accent/50 hover:bg-white/5 hover:shadow-[0_0_15px_rgba(56,189,248,0.1)] transition-all duration-300"
           >
-            <span className={`w-2 h-2 rounded-full ${ts.color} group-hover:animate-pulse`}></span>
-            <span className="text-xs font-mono uppercase tracking-wider text-slate-400 group-hover:text-white">
-                {ts.label}
-            </span>
+            {/* Colored Indicator Dot */}
+            <span className={`w-2 h-2 rounded-full ${ts.color} opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all duration-300`}></span>
+            
+            <div className="flex flex-col items-start text-left">
+                <span className="text-xs font-mono uppercase tracking-widest text-slate-400 group-hover:text-white transition-colors">
+                    {ts.label}
+                </span>
+                <span className="text-[10px] text-slate-600 font-mono group-hover:text-accent transition-colors">
+                    {new Date(ts.time * 1000).toISOString().substr(14, 5)}
+                </span>
+            </div>
           </button>
         ))}
       </div>

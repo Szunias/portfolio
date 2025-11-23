@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Menu, X, Github, Linkedin } from 'lucide-react';
-import { usePortfolioData } from '../hooks/usePortfolioData';
+import { usePortfolioData } from '../../hooks/usePortfolioData';
 import LanguageSwitcher from './LanguageSwitcher';
 
 const Navbar = () => {

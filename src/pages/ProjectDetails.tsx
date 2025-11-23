@@ -3,11 +3,11 @@ import { usePortfolioData } from '../hooks/usePortfolioData';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Code } from 'lucide-react';
-import SEO from '../components/SEO';
-import ProjectHero from '../features/projects/components/ProjectHero';
-import ProjectSidebar from '../features/projects/components/ProjectSidebar';
-import ContentBlockRenderer from '../features/projects/components/ContentBlockRenderer';
-import CodeViewer from '../components/CodeViewer';
+import SEO from '../components/layout/SEO';
+import ProjectHero from '../components/features/projects/ProjectHero';
+import ProjectSidebar from '../components/features/projects/ProjectSidebar';
+import ContentBlockRenderer from '../components/features/projects/ContentBlockRenderer';
+import CodeViewer from '../components/features/CodeViewer';
 
 const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();

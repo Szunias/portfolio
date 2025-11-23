@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, MapPin, Linkedin, Github, Copy, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
-import ContactForm from '../components/ContactForm';
+import ContactForm from '../components/features/ContactForm';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 
 const Contact = () => {

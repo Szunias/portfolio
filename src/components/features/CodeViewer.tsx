@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CodeSnippet } from '../types';
+import { CodeSnippet } from '../../types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, FileCode } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

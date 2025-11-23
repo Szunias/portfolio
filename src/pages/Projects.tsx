@@ -1,9 +1,9 @@
 import { usePortfolioData } from '../hooks/usePortfolioData';
 import { useTranslation } from 'react-i18next';
 import { useProjectFilter } from '../hooks/useProjectFilter';
-import SEO from '../components/SEO';
-import ProjectGrid from '../features/projects/components/ProjectGrid';
-import ProjectFilters from '../features/projects/components/ProjectFilters';
+import SEO from '../components/layout/SEO';
+import ProjectGrid from '../components/features/projects/ProjectGrid';
+import ProjectFilters from '../components/features/projects/ProjectFilters';
 
 const Projects = () => {
   const { featured_projects, additional_projects } = usePortfolioData();

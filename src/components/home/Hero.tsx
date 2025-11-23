@@ -6,11 +6,11 @@ import { Link } from 'react-router-dom';
 const Hero = () => {
   const { t } = useTranslation();
   const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 500], [0, 200]);
-  const opacity = useTransform(scrollY, [0, 800], [1, 0]); // Slower fade out
+  const y = useTransform(scrollY, [0, 500], [0, 100]);
+  const opacity = useTransform(scrollY, [0, 1200], [1, 0.3]); // Much slower fade out and keeps some visibility
 
   return (
-    <section className="relative min-h-screen flex items-center px-6 lg:px-12 overflow-hidden bg-[#050505] pt-20">
+    <section className="relative min-h-screen flex items-center px-6 lg:px-12 overflow-hidden bg-[#050505] pt-20 pb-40">
       
       {/* Background: Technical Grid & Noise */}
       <div className="absolute inset-0 z-0">
@@ -198,7 +198,7 @@ const Hero = () => {
       </div>
 
       {/* Bottom Fade to Black (Seamless Transition) */}
-      <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-[#050505] via-[#050505] to-transparent pointer-events-none z-0"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#050505] via-[#050505] to-transparent pointer-events-none z-0"></div>
     </section>
   );
 };

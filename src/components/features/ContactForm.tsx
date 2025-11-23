@@ -1,7 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Send, CheckCircle } from 'lucide-react';
-import { usePortfolioData } from '../hooks/usePortfolioData';
+import { usePortfolioData } from '../../hooks/usePortfolioData';
 
 const ContactForm = () => {
   const { t } = useTranslation();

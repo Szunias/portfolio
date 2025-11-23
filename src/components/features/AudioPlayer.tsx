@@ -1,6 +1,6 @@
-import { useAudio } from '../context/AudioContext';
+import { useAudio } from '../../context/AudioContext';
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Maximize2, X } from 'lucide-react';
-import { formatTime } from '../utils';
+import { formatTime } from '../../utils';
 import { useState, useEffect } from 'react';
 
 const AudioPlayer = () => {

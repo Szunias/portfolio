@@ -1,8 +1,8 @@
-import Hero from '../components/Hero';
-import ProjectCard from '../components/ProjectCard';
-import Skills from '../components/Skills';
-import Showreel from '../components/Showreel';
-import SEO from '../components/SEO';
+import Hero from '../components/home/Hero';
+import ProjectCard from '../components/features/ProjectCard';
+import Skills from '../components/home/Skills';
+import Showreel from '../components/features/Showreel';
+import SEO from '../components/layout/SEO';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight } from 'lucide-react';
@@ -23,7 +23,7 @@ const Home = () => {
       <SEO /> {/* Default home metadata */}
       <Hero />
       
-      <div id="showreel-section" className="relative z-40 -mt-32">
+      <div id="showreel-section" className="relative z-40 mt-24">
         <Showreel />
       </div>
 

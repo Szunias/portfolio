@@ -1,4 +1,4 @@
-import { usePortfolioData } from '../hooks/usePortfolioData';
+import { usePortfolioData } from '../../hooks/usePortfolioData';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 

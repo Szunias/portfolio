@@ -1,7 +1,7 @@
 import { Suspense, lazy, ComponentType } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout';
-import ScrollToTop from './components/ScrollToTop';
+import Layout from './components/layout/Layout';
+import ScrollToTop from './components/layout/ScrollToTop';
 import PageLoader from './components/ui/PageLoader';
 
 // Helper to handle chunk load errors (auto-reload once)

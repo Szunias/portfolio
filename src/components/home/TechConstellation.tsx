@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TECH_CONNECTIONS } from '../constants/techConnections';
-import { TECH_CATEGORIES, TECH_ICON_MAP } from '../constants/techData';
+import { TECH_CONNECTIONS } from '../../constants/techConnections';
+import { TECH_CATEGORIES, TECH_ICON_MAP } from '../../constants/techData';
 import { useTranslation } from 'react-i18next';
 
 interface NodePosition {

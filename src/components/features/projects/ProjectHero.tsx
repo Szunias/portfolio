@@ -2,7 +2,7 @@ import { ArrowLeft, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import TechReveal from '../../../components/TechReveal';
+import TechReveal from '../../home/TechReveal';
 import { Project } from '../../../types';
 
 interface ProjectHeroProps {

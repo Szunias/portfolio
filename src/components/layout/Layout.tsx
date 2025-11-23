@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import AudioPlayer from './AudioPlayer';
+import AudioPlayer from '../features/AudioPlayer';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { useBackgroundGradient } from '../hooks/useBackgroundGradient';
+import { useBackgroundGradient } from '../../hooks/useBackgroundGradient';
 
 interface LayoutProps {
   children: ReactNode;

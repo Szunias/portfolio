@@ -1,8 +1,8 @@
-import { Project } from '../types';
+import { Project } from '../../types';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import ImageWithLoader from './ImageWithLoader';
+import ImageWithLoader from '../ui/ImageWithLoader';
 import { ArrowUpRight } from 'lucide-react';
 
 interface ProjectCardProps {
@@ -75,8 +75,8 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             
             {/* Tech Stack (Visible on Hover) */}
             <div className="flex flex-wrap gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100 h-0 group-hover:h-auto overflow-hidden">
-                {(project.technologies || []).slice(0, 3).map((tech, i) => (
-                    <span key={i} className="text-[10px] font-mono text-accent">#{t(`tags.${tech}`, tech)}</span>
+                {(project.technologies || []).slice(0, 3).map((tech: string, i: number) => (
+                    <span key={i} className="text-[10px] font-mono text-accent">#{t(`tags.${tech}`, tech as any) as string}</span>
                 ))}
             </div>
         </div>

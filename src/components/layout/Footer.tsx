@@ -1,5 +1,5 @@
 import { Github, Linkedin, Mail, Music } from 'lucide-react';
-import { usePortfolioData } from '../hooks/usePortfolioData';
+import { usePortfolioData } from '../../hooks/usePortfolioData';
 import { useTranslation } from 'react-i18next';
 
 const Footer = () => {

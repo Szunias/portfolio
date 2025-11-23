@@ -3,9 +3,9 @@ import { usePortfolioData } from '../hooks/usePortfolioData';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Zap, BookOpen, Cpu, Briefcase } from 'lucide-react';
 import Modal from '../components/ui/Modal';
-import SEO from '../components/SEO';
+import SEO from '../components/layout/SEO';
+import TechConstellation from '../components/home/TechConstellation';
 import { TechCategory, TechTool } from '../types';
-import TechConstellation from '../components/TechConstellation';
 
 const About = () => {
   const { personal_info, professional_summary, technical_skills_matrix } = usePortfolioData();
