@@ -1,0 +1,687 @@
+{
+  "project_info": {
+    "project_name": "CreationKit_FPS_WwiseProject",
+    "wwise_version": "2024.1.2.8726",
+    "unity_integration": "Wwise Unity Integration with full C# API",
+    "description": "FPS game set inside human body with zone-based audio, dynamic waterfall system, and multi-platform support"
+  },
+  
+  "platforms": {
+    "supported_platforms": [
+      {
+        "name": "Windows",
+        "guid": "{4A639905-97A2-4821-B597-A364AFC61FE9}",
+        "base_platform": "Windows",
+        "soundbank_path": "GeneratedSoundBanks/Windows",
+        "optimization": "Full quality audio, all effects enabled"
+      },
+      {
+        "name": "Mac",
+        "guid": "{3FE752F9-0260-4A94-9D16-47AD66D5A286}",
+        "base_platform": "Mac",
+        "soundbank_path": "GeneratedSoundBanks/Mac",
+        "optimization": "Full quality audio, all effects enabled"
+      },
+      {
+        "name": "Android",
+        "guid": "{9333EE04-122F-43F2-918D-BB3A6656A711}",
+        "base_platform": "Android",
+        "soundbank_path": "GeneratedSoundBanks/Android",
+        "optimization": "Standard mobile quality"
+      },
+      {
+        "name": "Android_Low",
+        "guid": "{75FB46FA-EBB4-4826-B863-4A192E29800D}",
+        "base_platform": "Android",
+        "soundbank_path": "GeneratedSoundBanks/Android_Low",
+        "optimization": "Low-end mobile devices with optimized file sizes and reduced effects"
+      }
+    ],
+    "optimization_strategy": "Multi-platform configuration with dedicated Android_Low profile for budget devices. Same audio structure across all platforms but with quality adjustments per platform."
+  },
+
+  "audio_architecture": {
+    "bus_structure": [
+      {
+        "name": "Master Audio Bus",
+        "id": 3803692087,
+        "path": "Master Audio Bus",
+        "children": [
+          {"name": "SFX_Bus", "id": 213475909, "purpose": "All sound effects"},
+          {"name": "VO_Bus", "id": 1191351487, "purpose": "Voice overs and thoughts"},
+          {"name": "Ambiences_Bus", "id": 2473471491, "purpose": "Ambient loops per zone"},
+          {"name": "Music_Bus", "id": 2680856269, "purpose": "Interactive music"}
+        ]
+      }
+    ],
+    
+    "auxiliary_buses": [
+      {
+        "name": "AUX_Brain_Reverb",
+        "id": 4060615867,
+        "effect": "Wwise RoomVerb - Hall_Medium_Dark",
+        "purpose": "Spacious reverb for Brain zone"
+      },
+      {
+        "name": "AUX_Mouth_Reverb",
+        "id": 2748837344,
+        "effect": "Wwise RoomVerb - Hall_Small",
+        "purpose": "Smaller reverb for Mouth zone"
+      },
+      {
+        "name": "AUX_Stomach_Reverb",
+        "id": 2640880298,
+        "effect": "Wwise RoomVerb - Hall_Large_Dark",
+        "purpose": "Large dark reverb for Stomach zone"
+      },
+      {
+        "name": "AUX_InHead_Reverb",
+        "id": 1761052422,
+        "effect": "Wwise RoomVerb - Inside_My_Head",
+        "purpose": "Internal head space reverb"
+      },
+      {
+        "name": "AUX_InHead_Delay",
+        "id": 1141954523,
+        "effect": "Wwise Delay - Echoes_Linear",
+        "purpose": "Echo effects for internal spaces"
+      },
+      {
+        "name": "AUX_Headphones_Effect",
+        "id": 4035617679,
+        "effect": "Custom headphone spatialization",
+        "purpose": "Music playback in Brain zone"
+      }
+    ],
+    
+    "optimization_note": "Auxiliary buses with effects are identical across all platforms including Android_Low, ensuring consistent spatial experience"
+  },
+
+  "soundbank_organization": {
+    "description": "Zone-based loading system for memory optimization",
+    "banks": [
+      {
+        "name": "BNK_Init",
+        "id": 3608528841,
+        "load_time": "At startup",
+        "contains": ["States", "Switches", "Bus structure", "Effect plugins"],
+        "memory_footprint": "Minimal - only metadata"
+      },
+      {
+        "name": "BNK_General",
+        "id": 1893168529,
+        "load_time": "At startup",
+        "contains": [
+          "Weapon sounds (Fire, Reload)",
+          "Player sounds (Footstep, Death, Pain)",
+          "Enemy sounds (Alert, Death, Hit, Sneeze)",
+          "Projectile sounds (SnotLoop, SnotHit)",
+          "Waterfall event and all waterfall assets",
+          "Material switch group",
+          "DistanceToWaterfall RTPC"
+        ],
+        "assets": {
+          "total_events": 12,
+          "rtpc_count": 1,
+          "switch_groups": 1,
+          "largest_asset": "Main_Mid (Waterfall) - 6,298,333 bytes"
+        }
+      },
+      {
+        "name": "BNK_BrainZone",
+        "id": 1993757851,
+        "load_time": "When entering Brain zone",
+        "contains": ["Play_AMB_Brain event", "Layered ambient system", "Intermittent brain sounds"],
+        "memory_footprint": "~670 KB (Base_Layer 408KB + intermittent SFX + silence generators)",
+        "optimization": "Uses Wwise Silence plugin to reduce memory for gaps"
+      },
+      {
+        "name": "BNK_MouthZone",
+        "id": 1992869046,
+        "load_time": "When entering Mouth zone",
+        "contains": ["Play_AMB_Mouth event", "Gulp sounds (Short/Long)", "Mouth ambient layers"],
+        "memory_footprint": "~384 KB (Base_Layer 178KB + gulp variations + silence)",
+        "optimization": "Compact gulp sounds with silence generators"
+      },
+      {
+        "name": "BNK_StomachZone",
+        "id": 4158497616,
+        "load_time": "When entering Stomach zone",
+        "contains": ["Play_AMB_Stomach event", "Gas pipe burst variations (7 files)", "Stomach layers"],
+        "memory_footprint": "~2.8 MB (Base_Layer 1.2MB + Low_Layer 929KB + 7 gas bursts + SFX)",
+        "optimization": "Heaviest zone bank due to complex layered ambience"
+      },
+      {
+        "name": "BNK_Music",
+        "id": 625801572,
+        "load_time": "When needed in Brain zone",
+        "contains": ["Play_MUS_Brain_Headphones event", "Interactive music segment", "Random VO thoughts"],
+        "streaming": "Brain_Song_Track (549878279.wem) is STREAMED from disk",
+        "memory_footprint": "~220 KB in-memory (4 songgreat variations + silence), music track streamed",
+        "optimization": "Streaming reduces memory by not loading full music track"
+      }
+    ],
+    "loading_strategy": "Init + General stay loaded. Zone banks (Brain/Mouth/Stomach/Music) load/unload dynamically via WwiseStateBridge trigger system"
+  },
+
+  "state_system": {
+    "description": "Game state management for zone-based audio transitions",
+    "state_group": {
+      "name": "GameStage",
+      "id": 3839992303,
+      "states": [
+        {"name": "None", "id": 748895195, "description": "Default/menu state"},
+        {"name": "Brain", "id": 136808247, "description": "Player in Brain zone"},
+        {"name": "Mouth", "id": 1009394770, "description": "Player in Mouth zone"},
+        {"name": "Stomach", "id": 1434060888, "description": "Player in Stomach zone"}
+      ]
+    },
+    "implementation": {
+      "unity_script": "WwiseStateBridge.cs",
+      "method": "ApplyWwiseZoneState(string wwiseGroup, string wwiseStateForZone)",
+      "code_snippet": "AkSoundEngine.SetState(wwiseGroup, wwiseStateForZone);",
+      "trigger_method": "Called via Unity Events from zone trigger colliders",
+      "usage": "Each zone trigger calls WwiseStateBridge to change GameStage state, which triggers soundbank loading and ambient transitions in Wwise"
+    }
+  },
+
+  "switch_system": {
+    "description": "Surface material system for footstep variation",
+    "switch_group": {
+      "name": "Material",
+      "id": 3865314626,
+      "switches": [
+        {"name": "Gut", "id": 915214419, "description": "Soft organic stomach/intestine surfaces"},
+        {"name": "Thongue", "id": 3537635111, "description": "Wet tongue surface in mouth"},
+        {"name": "Skull", "id": 4159160880, "description": "Hard bone surface in brain area"}
+      ]
+    },
+    "implementation": {
+      "surface_identification": {
+        "script": "SurfaceIdentifier.cs",
+        "code": "[SerializeField] private AK.Wwise.Switch _wwiseMaterial;\npublic AK.Wwise.Switch WwiseMaterial => _wwiseMaterial;",
+        "purpose": "Each surface GameObject has this component with assigned material switch"
+      },
+      "footstep_system": {
+        "script": "Controller.cs",
+        "detection_method": "Raycast downward when player moves threshold distance (2f units)",
+        "code_snippet": "if (_distanceMovedSinceLastStep > StepTreshold && m_Grounded) {\n    CastForSurface();\n    Footstep.Post(gameObject);\n}",
+        "surface_switch": "if (hit.collider.TryGetComponent<SurfaceIdentifier>(out var id)) {\n    id.WwiseMaterial.SetValue(this.gameObject);\n}",
+        "result": "Before posting footstep event, raycast identifies surface and sets Material switch, so Wwise plays correct footstep variation"
+      }
+    }
+  },
+
+  "rtpc_system": {
+    "description": "Real-time parameter control for dynamic audio",
+    "parameters": [
+      {
+        "name": "DistanceToWaterfall",
+        "id": 1568721359,
+        "type": "Distance-based RTPC",
+        "range": "0 to infinity (distance in Unity units)",
+        "purpose": "Controls waterfall volume and filtering based on player distance",
+        "implementation": {
+          "script": "WaterfallDistanceRTPC.cs",
+          "update_frequency": "Every frame in Update()",
+          "code": "float distance = Vector3.Distance(playerListener.position, transform.position);\nAkSoundEngine.SetRTPCValue(rtpcName, distance, gameObject);",
+          "wwise_behavior": "In Wwise, waterfall blend container uses this RTPC to crossfade between Close/Mid/Far layers:\n- Close layer (Splashes_Close 130KB): loud when distance < 10\n- Mid layer (Main_Mid 6.3MB): active at medium distances\n- Far layer (Rumbling_Far 3.6MB): distant rumble when far away\nTotal waterfall assets: ~10MB for layered distance-based mixing"
+        },
+        "optimization": "Continuous distance updates keep audio responsive without manual triggers. RTPC crossfading in Wwise is CPU-efficient"
+      }
+    ]
+  },
+
+  "weapon_audio": {
+    "description": "Simple event-based weapon sounds",
+    "implementation": {
+      "script": "Weapon.cs",
+      "events": [
+        {
+          "name": "FireEvent",
+          "wwise_event": "WeaponFire",
+          "id": 476134665,
+          "trigger": "On Fire() method call",
+          "code": "FireEvent.Post(gameObject);"
+        },
+        {
+          "name": "ReloadEvent",
+          "wwise_event": "WeaponReload",
+          "id": 3273587666,
+          "trigger": "On Reload() method call",
+          "code": "ReloadEvent.Post(gameObject);"
+        }
+      ],
+      "asset_sizes": {
+        "WeaponFire": "Not specified in BNK_General.txt",
+        "Reload": "51,676 bytes"
+      }
+    }
+  },
+
+  "enemy_audio": {
+    "description": "Enemy AI-driven audio system",
+    "implementation": {
+      "script": "TargetBrain.cs and Target.cs",
+      "events": [
+        {
+          "name": "EnemyAlert",
+          "id": 3608677771,
+          "trigger": "When player detected or shot heard in AudibleBounds",
+          "code": "_alert.Post(gameObject);",
+          "attenuation": "Max 30 units",
+          "purpose": "Alert nearby enemies to player presence"
+        },
+        {
+          "name": "EnemySneeze",
+          "id": 1723749205,
+          "trigger": "When enemy enters sneeze behavior state",
+          "code": "_sneeze.Post(gameObject);",
+          "purpose": "Audio cue before projectile launch"
+        },
+        {
+          "name": "EnemyHit",
+          "id": 391172934,
+          "trigger": "When enemy takes damage",
+          "code": "hit.Post(gameObject);",
+          "script_location": "Target.cs Got() method"
+        },
+        {
+          "name": "EnemyDeath",
+          "id": 3249137159,
+          "trigger": "When enemy health reaches 0",
+          "code": "death.Post(eventContainer);",
+          "note": "Posted on temporary GameObject at death position (persists after enemy destroyed)"
+        }
+      ],
+      "audible_bounds_system": {
+        "script": "AudibleBounds.cs",
+        "description": "Volume-based AI audio awareness - when player fires weapon inside bounds, all enemies in that volume are alerted",
+        "message_system": "Uses MessageSystem to broadcast ShotFiredMessage",
+        "optimization": "Reduces per-frame distance checks by using trigger volumes"
+      }
+    }
+  },
+
+  "projectile_audio": {
+    "description": "Looping projectile sound with proper cleanup",
+    "implementation": {
+      "script": "SneezeProjectile.cs",
+      "events": [
+        {
+          "name": "SnotLoop",
+          "id": 857412281,
+          "trigger": "On Start() when projectile spawns",
+          "code": "_loopID = _loop.Post(gameObject);",
+          "type": "Looping event",
+          "asset_size": "200,808 bytes"
+        },
+        {
+          "name": "SnotHit",
+          "id": 401090622,
+          "trigger": "On collision with player or surface",
+          "code": "_hit.Post(eventContainer);",
+          "note": "Posted on temporary GameObject at impact position"
+        }
+      ],
+      "optimization": {
+        "loop_management": "Stores loop playback ID (_loopID) and explicitly stops it on OnDestroy()",
+        "code": "AkSoundEngine.StopPlayingID(_loopID);",
+        "importance": "Prevents orphaned audio loops when projectile is destroyed, critical for memory and CPU"
+      }
+    }
+  },
+
+  "player_audio": {
+    "description": "Player-centric feedback sounds",
+    "events": [
+      {
+        "name": "PlayerFootstep",
+        "id": 3542290436,
+        "trigger": "Every 2 units of movement when grounded",
+        "switch_dependency": "Material switch for surface type",
+        "implementation": "See switch_system section"
+      },
+      {
+        "name": "PlayerDeath",
+        "id": 1656947812,
+        "trigger": "When player dies",
+        "asset_size": "21,964 bytes"
+      },
+      {
+        "name": "PlayerPain",
+        "id": 2031273350,
+        "trigger": "When player takes damage"
+      }
+    ]
+  },
+
+  "ambient_system": {
+    "description": "Layered ambient soundscapes per zone with randomization",
+    "architecture": "Each zone uses Wwise Blend Container with multiple layers playing simultaneously",
+    "zones": [
+      {
+        "zone": "Brain",
+        "event": "Play_AMB_Brain (ID: 1458041811)",
+        "layers": [
+          {
+            "name": "Base_Layer",
+            "size": "407,910 bytes",
+            "behavior": "Continuous loop providing foundational brain ambience"
+          },
+          {
+            "name": "Intermittent_Layer",
+            "type": "Random container",
+            "assets": ["SFX1_01 (183KB)", "SFX1_02 (79KB)"],
+            "silence": "Wwise Silence plugin with 1.5s, 2s variations",
+            "behavior": "Randomly triggers brain sounds with silence gaps for realism"
+          }
+        ],
+        "reverb": "AUX_Brain_Reverb (Hall_Medium_Dark)",
+        "total_memory": "~670 KB"
+      },
+      {
+        "zone": "Mouth",
+        "event": "Play_AMB_Mouth (ID: 36873350)",
+        "layers": [
+          {
+            "name": "Base_Layer",
+            "size": "177,723 bytes",
+            "behavior": "Wet organic mouth ambience loop"
+          },
+          {
+            "name": "Intermittent_Layer",
+            "type": "Random container",
+            "assets": ["ShortGulp (20KB)", "ShortGulp2 (18KB)", "LongGulp (168KB)"],
+            "silence": "1.5s, 2s, 3s variations",
+            "behavior": "Random gulp sounds with varied silence gaps"
+          }
+        ],
+        "reverb": "AUX_Mouth_Reverb (Hall_Small)",
+        "total_memory": "~384 KB"
+      },
+      {
+        "zone": "Stomach",
+        "event": "Play_AMB_Stomach (ID: 2180203124)",
+        "layers": [
+          {
+            "name": "Base_Layer",
+            "size": "1,203,027 bytes",
+            "behavior": "Deep stomach rumble and ambience"
+          },
+          {
+            "name": "Low_Layer",
+            "size": "928,848 bytes",
+            "behavior": "Low frequency sub-layer for depth"
+          },
+          {
+            "name": "Intermittent_Layer",
+            "type": "Random container",
+            "assets": [
+              "Gas Pipe Burst Breaking 01-07 (7 variations, 67-135 KB each)",
+              "SFX1 (53KB)",
+              "SFX1_01 (72KB)"
+            ],
+            "behavior": "Random gas bursts and stomach sounds without explicit silence (natural gaps in assets)"
+          }
+        ],
+        "reverb": "AUX_Stomach_Reverb (Hall_Large_Dark)",
+        "total_memory": "~2.8 MB (largest zone)",
+        "note": "Most complex ambient system with 3 simultaneous layers"
+      }
+    ],
+    "optimization": {
+      "silence_plugin": "Wwise Silence plugin used instead of silent audio files saves ~80% memory for gaps",
+      "layering": "Multiple layers create rich soundscape without expensive DSP processing",
+      "randomization": "Built-in Wwise random containers eliminate scripting complexity"
+    }
+  },
+
+  "music_system": {
+    "description": "Interactive music in Brain zone simulating headphones",
+    "event": "Play_MUS_Brain_Headphones (ID: 1892797076)",
+    "architecture": {
+      "type": "Music Playlist Container with streamed music track",
+      "streaming_asset": "Brain_Song_Track (549878279.wem) - STREAMED from disk",
+      "vo_layer": {
+        "type": "Random container with VO thoughts",
+        "assets": ["songgreat1 (59KB)", "songgreat2 (46KB)", "songgreat3 (61KB)", "songgreat4 (54KB)"],
+        "silence": "1.5s, 2s, 3s variations",
+        "behavior": "Random internal thoughts play over music"
+      }
+    },
+    "routing": "Music_Bus → AUX_Headphones_Effect for spatial effect",
+    "optimization": {
+      "streaming": "Music track streamed reduces memory footprint from potentially >10MB to just stream buffer",
+      "vo_layering": "VO thoughts loaded in memory (<220KB total) play over streamed music"
+    },
+    "trigger": "Loaded with BNK_Music when entering Brain zone"
+  },
+
+  "random_area_system": {
+    "description": "Spatial randomization for ambient one-shots",
+    "implementation": {
+      "script": "RandomAreaWwise.cs",
+      "purpose": "Spawns audio events at random positions within defined 3D volume",
+      "parameters": [
+        "areaCenter: Vector3 - center of spawn volume",
+        "areaSize: Vector3 - dimensions of volume",
+        "eventName: string - Wwise event to trigger",
+        "minInterval/maxInterval: float - random time range between spawns"
+      ],
+      "code_flow": "1. Timer counts down random interval\n2. Calculate random position in volume\n3. Create temporary GameObject at position\n4. Register with Wwise and post event\n5. Destroy temp object after 10 seconds",
+      "code_snippet": "Vector3 pos = areaCenter + new Vector3(\n    Random.Range(-areaSize.x * 0.5f, areaSize.x * 0.5f),\n    Random.Range(-areaSize.y * 0.5f, areaSize.y * 0.5f),\n    Random.Range(-areaSize.z * 0.5f, areaSize.z * 0.5f)\n);\nGameObject temp = new GameObject(\"TempWwise\");\ntemp.transform.position = pos;\nvar ak = temp.AddComponent<AkGameObj>();\nAkSoundEngine.RegisterGameObj(temp);\nAkSoundEngine.PostEvent(eventName, temp);\nDestroy(temp, 10f);",
+      "use_cases": [
+        "Random drips in Mouth zone",
+        "Random burbles in Stomach zone",
+        "Spatial ambience variation"
+      ],
+      "optimization": "Temporary GameObjects cleaned up automatically, prevents memory leaks from positioned one-shots"
+    }
+  },
+
+  "optimization_techniques": {
+    "memory_management": [
+      {
+        "technique": "Zone-based Soundbank Loading",
+        "description": "Only BNK_Init and BNK_General stay loaded. Zone banks (Brain/Mouth/Stomach) load on demand via State changes",
+        "memory_saved": "Saves ~3.8MB by not keeping all zone banks loaded simultaneously",
+        "implementation": "Wwise State system triggers automatic bank loading"
+      },
+      {
+        "technique": "Streaming Audio",
+        "description": "Music track streamed from disk instead of loaded in memory",
+        "memory_saved": "~10MB+ for music track",
+        "trade_off": "Small CPU cost for streaming, acceptable for single music track"
+      },
+      {
+        "technique": "Wwise Silence Plugin",
+        "description": "Uses Silence source plugin instead of silent WAV files in random containers",
+        "memory_saved": "~80% reduction for silence gaps (no audio data stored)",
+        "usage": "All zone ambient random containers use this"
+      },
+      {
+        "technique": "Explicit Loop Stopping",
+        "description": "SneezeProjectile stores playback ID and explicitly stops loop on destroy",
+        "code": "uint _loopID = _loop.Post(gameObject);\n// Later:\nAkSoundEngine.StopPlayingID(_loopID);",
+        "prevents": "Orphaned audio loops consuming CPU and voices"
+      },
+      {
+        "technique": "Temporary Event GameObjects",
+        "description": "Death sounds posted on temporary GameObjects that auto-destroy after 10s",
+        "code": "GameObject eventContainer = new GameObject(\"Wwise_Event\");\neventContainer.transform.position = transform.position;\ndeath.Post(eventContainer);\nDestroy(eventContainer, 10f); // implicit in usage",
+        "purpose": "Allows sounds to finish playing after source object destroyed",
+        "note": "Marked as 'dirty solution' in comments - could use Wwise's AkAudioListener for better cleanup"
+      },
+      {
+        "technique": "AudibleBounds Trigger Volumes",
+        "description": "Volume-based enemy awareness instead of per-frame distance checks",
+        "cpu_saved": "Eliminates O(n) distance calculations per enemy per frame",
+        "implementation": "Unity trigger colliders + MessageSystem broadcast"
+      }
+    ],
+    
+    "platform_optimization": [
+      {
+        "platform": "Android_Low",
+        "optimizations": [
+          "Dedicated low-quality soundbank generation",
+          "Likely uses higher compression ratios (Vorbis quality settings)",
+          "Same structure as standard Android to maintain gameplay parity",
+          "Targets budget devices with limited RAM"
+        ],
+        "note": "Quality settings configured in Wwise platform settings, not visible in Unity scripts"
+      },
+      {
+        "platform": "All platforms",
+        "shared_optimization": "Identical bus/effect structure ensures consistent behavior across Windows/Mac/Android/Android_Low"
+      }
+    ],
+    
+    "performance_characteristics": {
+      "voice_count_estimate": "Low - mostly ambient loops (3-4 voices) + occasional one-shots (footsteps, weapons, enemies)",
+      "cpu_usage": "Light - leverages Wwise's built-in systems (RTPC, random containers, states) instead of heavy scripting",
+      "memory_footprint_runtime": "~10-15MB audio depending on zone (General 10MB + active zone 1-3MB)",
+      "disk_footprint": "~40-60MB per platform (soundbanks + streamed music)",
+      "scalability": "Excellent - zone system naturally scales, can add more zones without loading all banks"
+    }
+  },
+
+  "key_scripts_summary": {
+    "WaterfallDistanceRTPC.cs": {
+      "purpose": "Dynamically controls waterfall mix based on player distance",
+      "update_frequency": "Every frame",
+      "wwise_integration": "AkSoundEngine.SetRTPCValue()"
+    },
+    "WwiseStateBridge.cs": {
+      "purpose": "Bridges Unity trigger events to Wwise state changes",
+      "method": "ApplyWwiseZoneState(string wwiseGroup, string wwiseStateForZone)",
+      "triggers": "Soundbank loading and zone ambient transitions"
+    },
+    "SurfaceIdentifier.cs": {
+      "purpose": "Tags surfaces with Wwise material switches",
+      "data": "Exposes AK.Wwise.Switch for footstep system"
+    },
+    "RandomAreaWwise.cs": {
+      "purpose": "Spawns positioned audio events at random locations in 3D volume",
+      "use_case": "Environmental one-shots and spatial variation"
+    },
+    "Controller.cs": {
+      "audio_role": "Posts footstep events with surface detection and material switch",
+      "optimization": "Distance-based triggering (every 2 units moved)"
+    },
+    "Weapon.cs": {
+      "audio_role": "Simple event posting for Fire and Reload",
+      "pattern": "Direct AK.Wwise.Event.Post(gameObject)"
+    },
+    "SneezeProjectile.cs": {
+      "audio_role": "Manages looping projectile sound with cleanup",
+      "critical_code": "Stores _loopID and calls StopPlayingID on destroy"
+    },
+    "Target.cs": {
+      "audio_role": "Posts hit and death events for enemies",
+      "pattern": "Death uses temporary GameObject for positioned audio"
+    },
+    "TargetBrain.cs": {
+      "audio_role": "Posts alert and sneeze events tied to AI behavior",
+      "integration": "AI state changes directly trigger audio"
+    },
+    "AudibleBounds.cs": {
+      "audio_role": "No direct Wwise calls - alerts enemies which then trigger their own audio",
+      "pattern": "Volume-based AI awareness with MessageSystem"
+    }
+  },
+
+  "waterfall_system_detailed": {
+    "description": "Complex distance-based waterfall mixing using RTPC",
+    "event": "Play_Stomach_Waterfall (ID: 1658473210)",
+    "rtpc": "DistanceToWaterfall (ID: 1568721359)",
+    "architecture": {
+      "container_type": "Blend Container with RTPC-driven crossfading",
+      "layers": [
+        {
+          "name": "Splashes_Close",
+          "size": "130,544 bytes",
+          "behavior": "Loud when player within ~10 units",
+          "frequency": "High frequency splashing details"
+        },
+        {
+          "name": "Main_Mid",
+          "size": "6,298,333 bytes",
+          "behavior": "Primary waterfall sound at medium distances",
+          "frequency": "Full spectrum waterfall",
+          "note": "Largest single asset in project"
+        },
+        {
+          "name": "Rumbling_Far",
+          "size": "3,585,728 bytes",
+          "behavior": "Distant rumble when far from waterfall",
+          "frequency": "Low frequency rumble with filtered highs"
+        }
+      ],
+      "total_asset_size": "~10 MB for complete waterfall system"
+    },
+    "implementation_flow": [
+      "1. WaterfallDistanceRTPC.cs calculates distance every frame",
+      "2. Posts distance value to Wwise via SetRTPCValue()",
+      "3. Wwise blend container crossfades between Close/Mid/Far based on RTPC value",
+      "4. Smooth transitions create realistic distance-based mixing"
+    ],
+    "wwise_configuration": "In Wwise, blend container uses DistanceToWaterfall RTPC with crossfade points at specific distance thresholds (likely 0-10 = Close, 10-50 = Mid, 50+ = Far)",
+    "optimization": "Real-time RTPC updates are CPU-efficient. Crossfading done in Wwise audio thread. Large file sizes justified by being core Stomach zone feature.",
+    "artistic_intent": "Creates convincing waterfall that responds naturally to player movement - close = splashy detail, far = distant rumble"
+  },
+
+  "technical_highlights": {
+    "strengths": [
+      "Clean separation: BNK_Init/General for global sounds, per-zone banks for ambiences",
+      "Smart use of Wwise features: States for zone switching, Switches for footsteps, RTPC for waterfall",
+      "Explicit cleanup: Loop IDs stored and stopped to prevent orphaned audio",
+      "Platform scalability: Android_Low profile for budget devices",
+      "Memory-conscious: Streaming music, Silence plugin, zone-based loading",
+      "CPU-friendly: Wwise handles randomization/crossfading, minimal scripting overhead",
+      "Spatial design: AudibleBounds volumes reduce per-frame calculations"
+    ],
+    "areas_marked_for_improvement": [
+      "Death audio uses temporary GameObjects (commented as 'dirty solution')",
+      "Could integrate PoolSystem for audio GameObjects instead of creating/destroying",
+      "Some scripts like GroundTargetMover.cs are empty stubs"
+    ]
+  },
+
+  "code_examples": {
+    "rtpc_update": {
+      "file": "WaterfallDistanceRTPC.cs",
+      "code": "void Update()\n{\n    float distance = Vector3.Distance(playerListener.position, transform.position);\n    AkSoundEngine.SetRTPCValue(rtpcName, distance, gameObject);\n}"
+    },
+    "state_change": {
+      "file": "WwiseStateBridge.cs",
+      "code": "public void ApplyWwiseZoneState(string wwiseGroup, string wwiseStateForZone)\n{\n    Debug.Log($\"[WwiseStateBridge] Called ApplyWwiseZoneState. Group: '{wwiseGroup}', State: '{wwiseStateForZone}'\");\n    if (!string.IsNullOrEmpty(wwiseGroup) && !string.IsNullOrEmpty(wwiseStateForZone))\n    {\n        AkSoundEngine.SetState(wwiseGroup, wwiseStateForZone);\n    }\n}"
+    },
+    "footstep_surface": {
+      "file": "Controller.cs",
+      "code": "if (_distanceMovedSinceLastStep > StepTreshold && m_Grounded)\n{\n    CastForSurface();\n    Footstep.Post(gameObject);\n    _distanceMovedSinceLastStep %= StepTreshold;\n}\n\nvoid CastForSurface()\n{\n    if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, m_CharacterController.height, GroundLayerMask))\n    {\n        if (hit.collider.TryGetComponent<SurfaceIdentifier>(out var id))\n        {\n            id.WwiseMaterial.SetValue(this.gameObject);\n        }\n    }\n}"
+    },
+    "loop_cleanup": {
+      "file": "SneezeProjectile.cs",
+      "code": "private uint _loopID;\n\nvoid Start()\n{\n    _loopID = _loop.Post(gameObject);\n}\n\nvoid OnDestroy()\n{\n    AkSoundEngine.StopPlayingID(_loopID);\n}"
+    },
+    "random_positioning": {
+      "file": "RandomAreaWwise.cs",
+      "code": "void Update()\n{\n    timer -= Time.deltaTime;\n    if (timer <= 0f)\n    {\n        Vector3 pos = areaCenter + new Vector3(\n            Random.Range(-areaSize.x * 0.5f, areaSize.x * 0.5f),\n            Random.Range(-areaSize.y * 0.5f, areaSize.y * 0.5f),\n            Random.Range(-areaSize.z * 0.5f, areaSize.z * 0.5f)\n        );\n        GameObject temp = new GameObject(\"TempWwise\");\n        temp.transform.position = pos;\n        var ak = temp.AddComponent<AkGameObj>();\n        AkSoundEngine.RegisterGameObj(temp);\n        AkSoundEngine.PostEvent(eventName, temp);\n        Destroy(temp, 10f);\n        timer = Random.Range(minInterval, maxInterval);\n    }\n}"
+    },
+    "enemy_alert": {
+      "file": "TargetBrain.cs",
+      "code": "public void Alert()\n{\n    // ... animator logic ...\n    _alert.Post(gameObject);\n}"
+    }
+  },
+
+  "conclusion": {
+    "summary": "Sophisticated multi-platform Wwise implementation with zone-based loading, dynamic waterfall RTPC system, layered ambient design, and careful optimization for mobile. Uses Wwise's built-in features (States, Switches, RTPCs, Silence plugin, streaming) to minimize scripting complexity while maintaining rich audio experience.",
+    "platform_support": "Windows, Mac, Android, Android_Low (4 platforms)",
+    "total_events": "19 events across gameplay categories",
+    "total_soundbanks": "6 banks (Init, General, 3 zones, Music)",
+    "memory_footprint": "~10-15MB active audio depending on zone",
+    "key_innovation": "Distance-based waterfall RTPC creates dynamic spatial audio, zone-based State system enables memory-efficient ambient streaming"
+  }
+}

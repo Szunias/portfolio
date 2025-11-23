@@ -1,294 +1,358 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import '../styles/middleware-optimization.css';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ArrowLeft, ChevronDown, Cpu, Zap, Layers, Code, Database, Music } from 'lucide-react';
 
 const MiddlewareOptimization = () => {
     const { t } = useTranslation('middlewareOptimization');
-    const [isLoaded, setIsLoaded] = useState(false);
+    const containerRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end end"]
+    });
 
-    // Refs for elements
-    const heroRef = useRef<HTMLElement>(null);
-    const sectionRef = useRef<HTMLElement>(null);
+    const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+    const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
-    useEffect(() => {
-        // Simulate body.loaded
-        const timer = setTimeout(() => setIsLoaded(true), 100);
-        return () => clearTimeout(timer);
-    }, []);
+    const fadeInUp = {
+        hidden: { opacity: 0, y: 30 },
+        visible: { 
+            opacity: 1, 
+            y: 0,
+            transition: { duration: 0.6, ease: "easeOut" }
+        }
+    };
 
-    useEffect(() => {
-        // Section reveal animations
-        const sectionObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                } else {
-                    entry.target.classList.remove('visible');
-                }
-            });
-        }, { threshold: 0.15, rootMargin: "0px 0px -10% 0px" });
-
-        document.querySelectorAll('.project-card, .skill-card').forEach(section => {
-            sectionObserver.observe(section);
-        });
-
-        return () => {
-            sectionObserver.disconnect();
-        };
-    }, []);
-
-    useEffect(() => {
-        let ticking = false;
-
-        const updateScrollAnimations = () => {
-            if (!heroRef.current) return;
-
-            const scrolled = window.scrollY;
-            const heroSection = heroRef.current;
-            const heroHeight = heroSection.offsetHeight;
-            const scrollPercent = scrolled / heroHeight;
-
-            const heroTitle = document.getElementById('heroTitle');
-            if (heroTitle && scrollPercent < 1) {
-                const opacity = 1 - (scrollPercent * 1.5);
-                heroTitle.style.opacity = Math.max(0, opacity).toString();
+    const staggerContainer = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
             }
-        };
-
-        const loop = () => {
-            updateScrollAnimations();
-            if (!ticking) {
-                requestAnimationFrame(() => {
-                    updateScrollAnimations();
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        };
-
-        window.addEventListener('scroll', loop, { passive: true });
-        loop();
-
-        return () => window.removeEventListener('scroll', loop);
-    }, []);
+        }
+    };
 
     return (
-        <div className={`middleware-optimization-page ${isLoaded ? 'loaded' : ''}`}>
+        <div ref={containerRef} className="min-h-screen bg-white text-slate-900 font-sans selection:bg-purple-100 selection:text-purple-900">
             {/* Hero Section */}
-            <section className="hero-section" id="hero" ref={heroRef}>
-                <div className="hero-title-container">
-                    <span className="hero-badge">{t('hero.tag')}</span>
-                    <h1 className="hero-title" id="heroTitle">
+            <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 to-white px-4 py-20">
+                <motion.div 
+                    style={{ opacity, scale }}
+                    className="relative z-10 max-w-5xl w-full text-center"
+                >
+                    <motion.div 
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-50 text-purple-600 text-sm font-bold uppercase tracking-wider mb-8 border border-purple-100"
+                    >
+                        <Zap size={16} />
+                        {t('hero.tag')}
+                    </motion.div>
+
+                    <motion.h1 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3, duration: 0.8 }}
+                        className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-slate-900 mb-6 leading-tight"
+                    >
                         {t('hero.title')}
-                    </h1>
-                    <p className="hero-subtitle">
+                    </motion.h1>
+
+                    <motion.p 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.5, duration: 0.8 }}
+                        className="text-lg md:text-2xl text-slate-500 max-w-3xl mx-auto mb-12 font-light leading-relaxed"
+                    >
                         {t('hero.lead')}
-                    </p>
+                    </motion.p>
 
                     {/* Wwise Logo */}
-                    <div className="wwise-logo-container">
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.6 }}
+                        className="bg-white p-8 rounded-3xl shadow-2xl shadow-purple-100/50 inline-block mb-12 hover:shadow-purple-200/50 transition-shadow duration-300"
+                    >
                         <img
                             src="/assets/images/projects-pausedeserve/wwise_logo_rgb-77Awrfoo.png"
                             alt="Wwise Logo"
-                            className="wwise-logo"
+                            className="w-48 md:w-64 h-auto"
+                            loading="lazy"
                         />
-                    </div>
+                    </motion.div>
 
                     {/* Context Note */}
-                    <div className="context-note">
-                        <p>{t('hero.context')}</p>
-                    </div>
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.7 }}
+                        className="max-w-2xl mx-auto bg-sky-50 border-l-4 border-sky-400 p-6 rounded-r-xl text-left mb-12"
+                    >
+                        <p className="text-sky-900 text-sm md:text-base leading-relaxed">
+                            {t('hero.context')}
+                        </p>
+                    </motion.div>
 
                     {/* Quick Stats */}
-                    <div className="quick-stats">
-                        <div className="stat-item">
-                            <span className="stat-number">{t('hero.stat1_num')}</span>
-                            <span className="stat-text">{t('hero.stat1_text')}</span>
-                        </div>
-                        <div className="stat-item">
-                            <span className="stat-number">{t('hero.stat2_num')}</span>
-                            <span className="stat-text">{t('hero.stat2_text')}</span>
-                        </div>
-                        <div className="stat-item">
-                            <span className="stat-number">{t('hero.stat3_num')}</span>
-                            <span className="stat-text">{t('hero.stat3_text')}</span>
-                        </div>
-                    </div>
-                </div>
+                    <motion.div 
+                        variants={staggerContainer}
+                        initial="hidden"
+                        animate="visible"
+                        className="flex flex-wrap justify-center gap-6 md:gap-10"
+                    >
+                        {[
+                            { num: t('hero.stat1_num'), text: t('hero.stat1_text') },
+                            { num: t('hero.stat2_num'), text: t('hero.stat2_text') },
+                            { num: t('hero.stat3_num'), text: t('hero.stat3_text') }
+                        ].map((stat, index) => (
+                            <motion.div 
+                                key={index}
+                                variants={fadeInUp}
+                                className="flex items-baseline gap-3 px-6 py-4 bg-white rounded-2xl border border-slate-100 shadow-lg shadow-slate-100/50 hover:-translate-y-1 transition-transform duration-300"
+                            >
+                                <span className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-purple-500">
+                                    {stat.num}
+                                </span>
+                                <span className="text-slate-500 font-medium text-sm uppercase tracking-wide">
+                                    {stat.text}
+                                </span>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                </motion.div>
 
-                <div className="scroll-indicator">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                    </svg>
-                </div>
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.5, duration: 1 }}
+                    className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-slate-300"
+                >
+                    <ChevronDown size={32} />
+                </motion.div>
             </section>
 
             {/* Main Content */}
-            <main className="main-content">
+            <main className="relative z-20 bg-white">
                 {/* Section Header */}
-                <section className="section-header" ref={sectionRef}>
-                    <h2 className="section-title">{t('section.title')}</h2>
-                    <p className="section-subtitle">{t('section.subtitle')}</p>
+                <section className="max-w-4xl mx-auto px-6 py-24 text-center">
+                    <motion.h2 
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        variants={fadeInUp}
+                        className="text-4xl md:text-5xl font-bold text-slate-900 mb-6"
+                    >
+                        {t('section.title')}
+                    </motion.h2>
+                    <motion.p 
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        variants={fadeInUp}
+                        className="text-xl text-slate-500 leading-relaxed"
+                    >
+                        {t('section.subtitle')}
+                    </motion.p>
                 </section>
 
-                {/* Project 1: Boney Boogaloo */}
-                <article className="project-card">
-                    <div className="project-header">
-                        <h3 className="project-title">{t('boney.title')}</h3>
-                        <div className="project-meta">
-                            <span className="meta-badge">{t('boney.badge1')}</span>
-                            <span className="meta-badge">{t('boney.badge2')}</span>
-                            <span className="meta-badge time">{t('boney.badge3')}</span>
-                        </div>
-                    </div>
+                <div className="max-w-6xl mx-auto px-6 pb-32 space-y-32">
+                    {/* Project 1: Boney Boogaloo */}
+                    <ProjectCard 
+                        title={t('boney.title')}
+                        badges={[t('boney.badge1'), t('boney.badge2')]}
+                        time={t('boney.badge3')}
+                        videoTitle={t('boney.video_title')}
+                        videoSrc="/wwiseprojectsinfo/videos/boneyboogaloo/optboo.mp4"
+                        poster="/wwiseprojectsinfo/images/BoneyBoogaloo.png"
+                        caption={t('boney.video_caption')}
+                        paragraphs={[t('boney.p1'), t('boney.p2'), t('boney.p3'), t('boney.p4')]}
+                    />
 
-                    {/* Video Section */}
-                    <div className="video-section">
-                        <h4 className="video-title">{t('boney.video_title')}</h4>
-                        <video
-                            controls
-                            preload="metadata"
-                            poster="/wwiseprojectsinfo/images/BoneyBoogaloo.png"
-                        >
-                            <source
-                                src="/wwiseprojectsinfo/videos/boneyboogaloo/optboo.mp4"
-                                type="video/mp4"
-                            />
-                            Your browser does not support the video tag.
-                        </video>
-                        <p className="video-caption">{t('boney.video_caption')}</p>
-                    </div>
+                    {/* Project 2: Ellen */}
+                    <ProjectCard 
+                        title={t('ellen.title')}
+                        badges={[t('ellen.badge1'), t('ellen.badge2')]}
+                        time={t('ellen.badge3')}
+                        videoTitle={t('ellen.video_title')}
+                        vimeoSrc="https://player.vimeo.com/video/1135151616?badge=0&autopause=0&player_id=0&app_id=58479"
+                        caption={t('ellen.video_caption')}
+                        paragraphs={[t('ellen.p1'), t('ellen.p2'), t('ellen.p3'), t('ellen.p4')]}
+                    />
 
-                    <div className="project-story">
-                        <p>{t('boney.p1')}</p>
-                        <p>{t('boney.p2')}</p>
-                        <p>{t('boney.p3')}</p>
-                        <p>{t('boney.p4')}</p>
-                    </div>
-                </article>
-
-                {/* Project 2: Ellen */}
-                <article className="project-card">
-                    <div className="project-header">
-                        <h3 className="project-title">{t('ellen.title')}</h3>
-                        <div className="project-meta">
-                            <span className="meta-badge">{t('ellen.badge1')}</span>
-                            <span className="meta-badge">{t('ellen.badge2')}</span>
-                            <span className="meta-badge time">{t('ellen.badge3')}</span>
-                        </div>
-                    </div>
-
-                    {/* Video Section */}
-                    <div className="video-section">
-                        <h4 className="video-title">{t('ellen.video_title')}</h4>
-                        <div className="vimeo-wrapper">
-                            <iframe
-                                src="https://player.vimeo.com/video/1135151616?badge=0&autopause=0&player_id=0&app_id=58479"
-                                frameBorder="0"
-                                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-                                title="Ellen - Wwise Integration"
-                            />
-                        </div>
-                        <p className="video-caption">{t('ellen.video_caption')}</p>
-                    </div>
-
-                    <div className="project-story">
-                        <p>{t('ellen.p1')}</p>
-                        <p>{t('ellen.p2')}</p>
-                        <p>{t('ellen.p3')}</p>
-                        <p>{t('ellen.p4')}</p>
-                    </div>
-                </article>
-
-                {/* Project 3: Stomach Aches */}
-                <article className="project-card">
-                    <div className="project-header">
-                        <h3 className="project-title">{t('stomach.title')}</h3>
-                        <div className="project-meta">
-                            <span className="meta-badge">{t('stomach.badge1')}</span>
-                            <span className="meta-badge">{t('stomach.badge2')}</span>
-                            <span className="meta-badge time">{t('stomach.badge3')}</span>
-                        </div>
-                    </div>
-
-                    {/* Video Section */}
-                    <div className="video-section">
-                        <h4 className="video-title">{t('stomach.video_title')}</h4>
-                        <video
-                            controls
-                            preload="metadata"
-                            poster="/wwiseprojectsinfo/images/StomachAches.png"
-                        >
-                            <source
-                                src="/wwiseprojectsinfo/videos/stomachaches/optstomachaches.mp4"
-                                type="video/mp4"
-                            />
-                            Your browser does not support the video tag.
-                        </video>
-                        <p className="video-caption">{t('stomach.video_caption')}</p>
-                    </div>
-
-                    <div className="project-story">
-                        <p>{t('stomach.p1')}</p>
-                        <p>{t('stomach.p2')}</p>
-                        <p>{t('stomach.p3')}</p>
-                        <p>{t('stomach.p4')}</p>
-                    </div>
-                </article>
+                    {/* Project 3: Stomach Aches */}
+                    <ProjectCard 
+                        title={t('stomach.title')}
+                        badges={[t('stomach.badge1'), t('stomach.badge2')]}
+                        time={t('stomach.badge3')}
+                        videoTitle={t('stomach.video_title')}
+                        videoSrc="/wwiseprojectsinfo/videos/stomachaches/optstomachaches.mp4"
+                        poster="/wwiseprojectsinfo/images/StomachAches.png"
+                        caption={t('stomach.video_caption')}
+                        paragraphs={[t('stomach.p1'), t('stomach.p2'), t('stomach.p3'), t('stomach.p4')]}
+                    />
+                </div>
 
                 {/* Skills Section */}
-                <section className="skills-section">
-                    <h2 className="section-title">{t('learned.title')}</h2>
-                    <p className="section-subtitle">{t('learned.subtitle')}</p>
-
-                    <div className="skills-grid">
-                        <div className="skill-card">
-                            <h3 className="skill-name">{t('learned.skill1_name')}</h3>
-                            <p className="skill-desc">{t('learned.skill1_desc')}</p>
+                <section className="bg-slate-50 py-32 px-6">
+                    <div className="max-w-6xl mx-auto">
+                        <div className="text-center mb-20">
+                            <h2 className="text-4xl font-bold text-slate-900 mb-4">{t('learned.title')}</h2>
+                            <p className="text-slate-500 text-lg">{t('learned.subtitle')}</p>
                         </div>
 
-                        <div className="skill-card">
-                            <h3 className="skill-name">{t('learned.skill2_name')}</h3>
-                            <p className="skill-desc">{t('learned.skill2_desc')}</p>
-                        </div>
-
-                        <div className="skill-card">
-                            <h3 className="skill-name">{t('learned.skill3_name')}</h3>
-                            <p className="skill-desc">{t('learned.skill3_desc')}</p>
-                        </div>
-
-                        <div className="skill-card">
-                            <h3 className="skill-name">{t('learned.skill4_name')}</h3>
-                            <p className="skill-desc">{t('learned.skill4_desc')}</p>
-                        </div>
-
-                        <div className="skill-card">
-                            <h3 className="skill-name">{t('learned.skill5_name')}</h3>
-                            <p className="skill-desc">{t('learned.skill5_desc')}</p>
-                        </div>
-
-                        <div className="skill-card">
-                            <h3 className="skill-name">{t('learned.skill6_name')}</h3>
-                            <p className="skill-desc">{t('learned.skill6_desc')}</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <SkillCard 
+                                icon={<Cpu className="text-purple-500" />}
+                                title={t('learned.skill1_name')}
+                                desc={t('learned.skill1_desc')}
+                            />
+                            <SkillCard 
+                                icon={<Layers className="text-sky-500" />}
+                                title={t('learned.skill2_name')}
+                                desc={t('learned.skill2_desc')}
+                            />
+                            <SkillCard 
+                                icon={<Code className="text-pink-500" />}
+                                title={t('learned.skill3_name')}
+                                desc={t('learned.skill3_desc')}
+                            />
+                            <SkillCard 
+                                icon={<Database className="text-amber-500" />}
+                                title={t('learned.skill4_name')}
+                                desc={t('learned.skill4_desc')}
+                            />
+                            <SkillCard 
+                                icon={<Music className="text-indigo-500" />}
+                                title={t('learned.skill5_name')}
+                                desc={t('learned.skill5_desc')}
+                            />
+                            <SkillCard 
+                                icon={<Zap className="text-emerald-500" />}
+                                title={t('learned.skill6_name')}
+                                desc={t('learned.skill6_desc')}
+                            />
                         </div>
                     </div>
                 </section>
             </main>
 
             {/* Footer */}
-            <footer className="project-footer">
-                <Link to="/projects" className="back-link">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                    </svg>
+            <footer className="bg-white py-20 text-center border-t border-slate-100">
+                <Link 
+                    to="/projects" 
+                    className="inline-flex items-center gap-2 px-8 py-4 bg-white text-slate-900 font-semibold rounded-full border border-slate-200 shadow-lg shadow-slate-100 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group"
+                >
+                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
                     {t('back')}
                 </Link>
-                <p className="footer-status">
+                <p className="mt-8 text-slate-400 text-sm">
                     {t('footer')}
                 </p>
             </footer>
         </div>
+    );
+};
+
+const ProjectCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, poster, caption, paragraphs }: any) => {
+    return (
+        <motion.article 
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+            className="bg-slate-50 rounded-3xl p-8 md:p-12 shadow-sm hover:shadow-md transition-shadow duration-300"
+        >
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+                <h3 className="text-3xl md:text-4xl font-bold text-slate-900">{title}</h3>
+                <div className="flex flex-wrap gap-3">
+                    {badges.map((badge: string, i: number) => (
+                        <span key={i} className="px-4 py-1.5 bg-sky-100 text-sky-700 text-sm font-semibold rounded-lg border border-sky-200">
+                            {badge}
+                        </span>
+                    ))}
+                    <span className="px-4 py-1.5 bg-orange-100 text-orange-700 text-sm font-semibold rounded-lg border border-orange-200">
+                        {time}
+                    </span>
+                </div>
+            </div>
+
+            <div className="bg-white rounded-2xl overflow-hidden shadow-lg shadow-slate-200/50 mb-10 border border-slate-100">
+                <div className="p-6 border-b border-slate-100">
+                    <h4 className="font-bold text-lg text-slate-800 flex items-center gap-2">
+                        <svg 
+                            width="18" 
+                            height="18" 
+                            viewBox="0 0 24 24" 
+                            fill="currentColor" 
+                            stroke="currentColor" 
+                            strokeWidth="2" 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                            className="text-purple-500"
+                        >
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        {videoTitle}
+                    </h4>
+                </div>
+                <div className="relative bg-black aspect-video">
+                    {vimeoSrc ? (
+                        <iframe
+                            src={vimeoSrc}
+                            className="absolute top-0 left-0 w-full h-full"
+                            frameBorder="0"
+                            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                            title={title}
+                        />
+                    ) : (
+                        <video
+                            controls
+                            preload="metadata"
+                            poster={poster}
+                            className="w-full h-full object-cover"
+                        >
+                            <source src={videoSrc} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    )}
+                </div>
+                <p className="p-6 text-slate-500 text-sm bg-slate-50/50">
+                    {caption}
+                </p>
+            </div>
+
+            <div className="space-y-6">
+                {paragraphs.map((p: string, i: number) => (
+                    <p key={i} className="text-lg text-slate-600 leading-relaxed pl-6 border-l-4 border-purple-200">
+                        {p}
+                    </p>
+                ))}
+            </div>
+        </motion.article>
+    );
+};
+
+const SkillCard = ({ icon, title, desc }: any) => {
+    return (
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            whileHover={{ y: -5 }}
+            className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:shadow-purple-100/50 transition-all duration-300"
+        >
+            <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center mb-6">
+                {icon}
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-3">{title}</h3>
+            <p className="text-slate-500 leading-relaxed">
+                {desc}
+            </p>
+        </motion.div>
     );
 };
 
