@@ -72,14 +72,21 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
        playTrackRef.current(nextTrack);
     };
 
+    const handleError = (e: Event) => {
+        console.error("Audio Error:", audio.error, e);
+        setIsPlaying(false);
+    };
+
     audio.addEventListener('timeupdate', updateProgress);
     audio.addEventListener('ended', handleEnded);
     audio.addEventListener('loadedmetadata', updateProgress);
+    audio.addEventListener('error', handleError);
 
     return () => {
       audio.removeEventListener('timeupdate', updateProgress);
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('loadedmetadata', updateProgress);
+      audio.removeEventListener('error', handleError);
       audio.pause();
     };
   }, []); // Empty dependency array - init once!
@@ -125,10 +132,12 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
     if (audioRef.current && currentTrack) {
       if (isPlaying) {
         audioRef.current.pause();
+        setIsPlaying(false);
       } else {
-        audioRef.current.play().catch(e => console.error("Playback failed", e));
+        audioRef.current.play()
+          .then(() => setIsPlaying(true))
+          .catch(e => console.error("Playback failed", e));
       }
-      setIsPlaying(prev => !prev);
     }
   }, [currentTrack, isPlaying]);
 
@@ -146,10 +155,21 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
       }
       const src = track.sources[0]?.url;
       if (src) {
-        audioRef.current.src = src.startsWith('http') || src.startsWith('/') ? src : `/${src}`;
-        audioRef.current.play().catch(e => console.error("Playback failed", e));
+        const formattedSrc = src.startsWith('http') || src.startsWith('/') ? src : `/${src}`;
+        // Encode the URL to handle spaces and special characters
+        audioRef.current.src = encodeURI(formattedSrc);
+        audioRef.current.load();
+        
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => setIsPlaying(true))
+            .catch(e => {
+              console.error("Playback failed", e);
+              setIsPlaying(false);
+            });
+        }
         setCurrentTrack(track);
-        setIsPlaying(true);
       }
     }
   }, [currentTrack, togglePlay]);

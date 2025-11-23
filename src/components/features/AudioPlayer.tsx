@@ -35,7 +35,7 @@ const AudioPlayer = () => {
     <div className="fixed bottom-0 left-0 right-0 bg-primary/90 backdrop-blur-xl border-t border-white/10 z-50 h-20 flex items-center px-4 sm:px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
       {/* Progress Bar (Top Line) */}
       <div 
-        className="absolute top-0 left-0 right-0 h-1 bg-white/5 cursor-pointer group"
+        className="absolute top-0 left-0 right-0 h-1.5 hover:h-4 bg-white/5 cursor-pointer group transition-all duration-300 ease-out z-50"
         onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
             const percent = (e.clientX - rect.left) / rect.width;
@@ -43,10 +43,13 @@ const AudioPlayer = () => {
         }}
       >
         <div 
-            className="h-full bg-accent relative group-hover:bg-white transition-colors"
+            className="h-full relative bg-gradient-to-r from-sky-700 via-sky-500 to-accent shadow-[0_0_15px_rgba(56,189,248,0.5)] group-hover:shadow-[0_0_25px_rgba(56,189,248,0.8)] transition-all duration-300 rounded-r-full"
             style={{ width: `${progress}%` }}
         >
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-[0_0_10px_rgba(255,255,255,0.5)]"></div>
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 group-hover:w-4 group-hover:h-4 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)] transition-all duration-200 flex items-center justify-center">
+                <div className="w-1.5 h-1.5 bg-accent rounded-full"></div>
+            </div>
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
         </div>
       </div>
 
@@ -122,7 +125,7 @@ const AudioPlayer = () => {
                 >
                     {volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
                 </Button>
-                <div className="w-20 h-1 bg-slate-800 rounded-full overflow-hidden relative cursor-pointer group/vol"
+                <div className="w-24 h-1.5 hover:h-3 bg-slate-800 rounded-full overflow-hidden relative cursor-pointer group/vol transition-all duration-300"
                      onClick={(e) => {
                         const rect = e.currentTarget.getBoundingClientRect();
                         const vol = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
@@ -131,7 +134,7 @@ const AudioPlayer = () => {
                      }}
                 >
                     <div 
-                        className="h-full bg-slate-500 group-hover/vol:bg-accent transition-colors" 
+                        className="h-full bg-gradient-to-r from-sky-600 to-accent shadow-[0_0_10px_rgba(56,189,248,0.4)] group-hover:bg-accent transition-all duration-100" 
                         style={{ width: `${volume * 100}%` }}
                     ></div>
                 </div>
