@@ -65,7 +65,7 @@ const About = () => {
                 <div className="absolute inset-0 bg-accent blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 rounded-full"></div>
                 <div className="relative w-48 h-48 rounded-full p-1 bg-gradient-to-b from-white/20 to-transparent backdrop-blur-sm">
                     <img 
-                        src="/assets/images/cvsmile.jpg" 
+                        src="/assets/cv-image/cvsmile.jpg" 
                         alt="Profile" 
                         className="w-full h-full object-cover rounded-full border-4 border-primary"
                     />
