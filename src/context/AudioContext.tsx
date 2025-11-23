@@ -110,7 +110,18 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
       .then(data => {
         setPlaylist(data);
         if (data.length > 0 && !currentTrackRef.current) {
-            setCurrentTrack(data[0]);
+            const firstTrack = data[0];
+            setCurrentTrack(firstTrack);
+            
+            // Preload the first track so togglePlay works immediately
+            if (audioRef.current && firstTrack.sources && firstTrack.sources.length > 0) {
+                const src = firstTrack.sources[0].url;
+                if (src) {
+                    const formattedSrc = src.startsWith('http') || src.startsWith('/') ? src : `/${src}`;
+                    audioRef.current.src = encodeURI(formattedSrc);
+                    audioRef.current.load();
+                }
+            }
         }
       })
       .catch(err => console.error("Failed to load tracks:", err));
