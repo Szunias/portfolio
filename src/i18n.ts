@@ -32,7 +32,7 @@ i18n
     },
 
     // Standard default namespace
-    ns: ['translation', 'soundDesign'],
+    ns: ['translation', 'soundDesign', 'middlewareOptimization'],
     defaultNS: 'translation',
   });
 
