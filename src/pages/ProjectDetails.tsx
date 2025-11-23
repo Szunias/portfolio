@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +20,7 @@ const ProjectDetails = () => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  if (!project) return null; // Or 404 redirect
+  if (!project) return <Navigate to="/404" replace />;
 
   const media = project.media || {};
   
@@ -31,7 +31,7 @@ const ProjectDetails = () => {
   const description = t(fullDescKey, project.full_description || t(shortDescKey, project.short_description));
 
   return (
-    <div className="min-h-screen bg-[#050505] pb-32">
+    <div className="min-h-screen bg-primary pb-32">
       <SEO 
         title={t(titleKey, project.title)} 
         description={t(shortDescKey, project.short_description)}
@@ -70,11 +70,23 @@ const ProjectDetails = () => {
             {/* Gallery */}
             {media.images && media.images.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {media.images.map((img, i) => (
-                        <div key={i} className="rounded-lg overflow-hidden border border-white/5 hover:border-white/20 transition-colors">
-                            <img src={`/${img}`} alt="" className="w-full h-auto object-cover" />
-                        </div>
-                    ))}
+                    {media.images.map((img, i) => {
+                        const isVideo = img.endsWith('.mp4') || img.endsWith('.webm');
+                        return (
+                            <div key={i} className="rounded-lg overflow-hidden border border-white/5 hover:border-white/20 transition-colors">
+                                {isVideo ? (
+                                    <video 
+                                        src={`/${img}`} 
+                                        className="w-full h-auto object-cover" 
+                                        controls 
+                                        preload="metadata"
+                                    />
+                                ) : (
+                                    <img src={`/${img}`} alt="" className="w-full h-auto object-cover" />
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             )}
         </div>

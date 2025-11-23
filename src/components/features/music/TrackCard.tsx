@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Play, BarChart3 } from 'lucide-react';
 import { Track } from '../../../types';
+import { cn } from '../../../utils';
 
 interface TrackCardProps {
   track: Track;
@@ -22,25 +23,33 @@ const TrackCard = memo(({ track, index, isCurrent, isPlaying, onPlay }: TrackCar
         transition={{ delay: index * 0.05 }}
         onClick={() => onPlay(track)}
         className="group relative flex flex-col gap-3 cursor-pointer"
+        role="button"
+        aria-label={`Play ${track.title} by ${track.artist}`}
     >
         {/* Cover Art */}
-        <div className={`
-            relative aspect-square rounded-2xl overflow-hidden border border-white/5 shadow-lg transition-all duration-500
-            ${isCurrent ? 'ring-2 ring-accent/50 scale-[1.02]' : 'hover:scale-[1.02] hover:border-white/20'}
-        `}>
+        <div className={cn(
+            "relative aspect-square rounded-2xl overflow-hidden border border-white/5 shadow-lg transition-all duration-500",
+            isCurrent ? 'ring-2 ring-accent/50 scale-[1.02]' : 'hover:scale-[1.02] hover:border-white/20'
+        )}>
             <img 
                 src={`/${track.cover}`} 
                 alt={track.title} 
-                className={`w-full h-full object-cover transition-transform duration-700 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}
+                className={cn(
+                    "w-full h-full object-cover transition-transform duration-700",
+                    isActive ? 'scale-110' : 'group-hover:scale-110'
+                )}
                 loading="lazy"
             />
             
             {/* Hover / Active Overlay */}
-            <div className={`
-                absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-300
-                ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}
-            `}>
-                <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-xl transform group-hover:scale-110 transition-transform">
+            <div className={cn(
+                "absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-300",
+                isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+            )}>
+                <div className={cn(
+                    "w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-xl transform transition-transform",
+                    "group-hover:scale-110"
+                )}>
                     {isActive ? <BarChart3 size={20} className="animate-pulse" /> : <Play size={20} fill="currentColor" className="ml-1" />}
                 </div>
             </div>
@@ -49,7 +58,10 @@ const TrackCard = memo(({ track, index, isCurrent, isPlaying, onPlay }: TrackCar
         {/* Info */}
         <div>
             <div className="flex items-start justify-between gap-2">
-                <h4 className={`font-bold text-sm truncate transition-colors ${isCurrent ? 'text-accent' : 'text-white group-hover:text-white'}`}>
+                <h4 className={cn(
+                    "font-bold text-sm truncate transition-colors",
+                    isCurrent ? 'text-accent' : 'text-white group-hover:text-white'
+                )}>
                     {track.title}
                 </h4>
             </div>

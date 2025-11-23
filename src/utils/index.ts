@@ -20,3 +20,10 @@ export const getSafeLanguage = (langCode: string): 'en' | 'pl' | 'nl' => {
   }
   return 'en';
 };
+
+/**
+ * Utility to merge class names conditionally
+ */
+export const cn = (...classes: (string | undefined | null | false)[]) => {
+  return classes.filter(Boolean).join(' ');
+};

@@ -85,7 +85,7 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                       w-28 h-28 flex flex-col items-center justify-center 
                       rounded-2xl border transition-all duration-500 cursor-pointer relative group overflow-hidden
                       ${(isHovered || isConnected)
-                        ? 'bg-[#0a0a0a] border-accent shadow-[0_0_30px_rgba(56,189,248,0.3)] z-30 scale-105' 
+                        ? 'bg-secondary border-accent shadow-[0_0_30px_rgba(56,189,248,0.3)] z-30 scale-105' 
                         : 'bg-gradient-to-br from-white/5 to-transparent border-white/5 hover:border-white/20 z-20'
                       }
                       ${isDimmed ? 'opacity-20 blur-[2px]' : 'opacity-100'}

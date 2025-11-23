@@ -37,7 +37,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                 ) : (
                     <div className="w-full h-full bg-neutral-900" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-transparent" />
             </div>
 
             {/* Hero Content */}

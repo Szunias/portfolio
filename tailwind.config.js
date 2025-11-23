@@ -9,9 +9,16 @@ export default {
       colors: {
         primary: "#050505", // Deeper black like old site
         secondary: "#0a0a0a", // Slightly lighter for cards
+        tertiary: "#0f0f0f", // Even lighter
         accent: "#38bdf8", // Sky blue
         gold: "#c9a961", // From Amorak/Shadow Frames
         dim: "#a1a1aa", // Dim text
+        success: "#22c55e", // Green-500
+        canvas: {
+          DEFAULT: "#0d1117", // GitHub Dark dim
+          header: "#161b22", // GitHub Dark header
+          border: "#30363d", // GitHub Dark border
+        }
       },
       fontFamily: {
         sans: ['Poppins', 'sans-serif'],

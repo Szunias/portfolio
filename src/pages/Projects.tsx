@@ -13,7 +13,7 @@ const Projects = () => {
   const { filter, setFilter, categories, filteredProjects, getCategoryLabel } = useProjectFilter(allProjects);
 
   return (
-    <div className="min-h-screen bg-[#050505] pt-32 pb-20 px-6 lg:px-12">
+    <div className="min-h-screen bg-primary pt-32 pb-20 px-6 lg:px-12">
       <SEO 
         title={t('nav.projects', 'Projects')}
         description={t('projects.description', 'A collection of my work in game audio, implementation, and tool development.')}

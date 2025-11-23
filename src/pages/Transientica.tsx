@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Play, Activity, Cpu, Layers, Zap } from 'lucide-react';
@@ -8,21 +8,24 @@ import SEO from '../components/layout/SEO';
 const Transientica = () => {
     const { t } = useTranslation();
     const [activeVideo, setActiveVideo] = useState<string | null>(null);
+    const mainVideoRef = useRef<HTMLVideoElement>(null);
+    const techVideoRef = useRef<HTMLVideoElement>(null);
 
     const handleVideoClick = (videoId: string) => {
         setActiveVideo(videoId);
-        const videoElement = document.getElementById(videoId) as HTMLVideoElement;
-        if (videoElement) {
-            videoElement.muted = false;
-            videoElement.controls = true;
-            videoElement.loop = false;
-            videoElement.currentTime = 0;
-            videoElement.play();
+        const videoRef = videoId === 'main-video' ? mainVideoRef : techVideoRef;
+        
+        if (videoRef.current) {
+            videoRef.current.muted = false;
+            videoRef.current.controls = true;
+            videoRef.current.loop = false;
+            videoRef.current.currentTime = 0;
+            videoRef.current.play().catch(e => console.error("Play failed", e));
         }
     };
 
     return (
-        <div className="min-h-screen bg-[#050505] text-slate-300 font-sans selection:bg-purple-500/30">
+        <div className="min-h-screen bg-primary text-slate-300 font-sans selection:bg-purple-500/30">
             <SEO title="Transientica | AudioLab" description="Real-time ML Audio Classification System" />
             
             {/* Background Elements */}
@@ -111,6 +114,7 @@ const Transientica = () => {
                         onClick={() => handleVideoClick('main-video')}
                     >
                         <video
+                            ref={mainVideoRef}
                             id="main-video"
                             autoPlay
                             loop
@@ -210,6 +214,7 @@ const Transientica = () => {
                             onClick={() => handleVideoClick('tech-video')}
                         >
                             <video
+                                ref={techVideoRef}
                                 id="tech-video"
                                 autoPlay
                                 loop

@@ -2,6 +2,7 @@ import { useAudio } from '../../context/AudioContext';
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Maximize2, X } from 'lucide-react';
 import { formatTime } from '../../utils';
 import { useState, useEffect } from 'react';
+import { Button } from '../ui/Button';
 
 const AudioPlayer = () => {
   const { 
@@ -81,26 +82,29 @@ const AudioPlayer = () => {
 
         {/* Center: Controls */}
         <div className="flex items-center gap-4 sm:gap-6">
-            <button onClick={prevTrack} className="text-slate-400 hover:text-white transition-colors">
+            <Button onClick={prevTrack} variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-transparent" aria-label="Previous Track">
                 <SkipBack size={20} />
-            </button>
+            </Button>
             
-            <button 
+            <Button 
                 onClick={togglePlay}
-                className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all"
+                variant="primary"
+                size="icon"
+                className="w-10 h-10 rounded-full hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] p-0"
+                aria-label={isPlaying ? "Pause" : "Play"}
             >
                 {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-0.5" />}
-            </button>
+            </Button>
 
-            <button onClick={nextTrack} className="text-slate-400 hover:text-white transition-colors">
+            <Button onClick={nextTrack} variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-transparent" aria-label="Next Track">
                 <SkipForward size={20} />
-            </button>
+            </Button>
         </div>
 
         {/* Right: Volume & Close */}
         <div className="flex items-center justify-end gap-4 flex-1">
             <div className="hidden sm:flex items-center gap-2 group">
-                <button 
+                <Button 
                     onClick={() => {
                         if (isMuted) {
                             setVolume(prevVolume);
@@ -111,10 +115,13 @@ const AudioPlayer = () => {
                             setIsMuted(true);
                         }
                     }}
-                    className="text-slate-400 group-hover:text-white transition-colors"
+                    variant="ghost"
+                    size="icon"
+                    className="text-slate-400 group-hover:text-white hover:bg-transparent"
+                    aria-label={isMuted ? "Unmute" : "Mute"}
                 >
                     {volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
-                </button>
+                </Button>
                 <div className="w-20 h-1 bg-slate-800 rounded-full overflow-hidden relative cursor-pointer group/vol"
                      onClick={(e) => {
                         const rect = e.currentTarget.getBoundingClientRect();
@@ -131,13 +138,16 @@ const AudioPlayer = () => {
             </div>
 
             {/* Close Button */}
-            <button 
+            <Button 
                 onClick={closePlayer}
-                className="p-2 text-slate-500 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-all ml-4"
+                variant="ghost"
+                size="icon"
+                className="text-slate-500 hover:text-red-500 hover:bg-red-500/10 ml-4"
                 title="Close Player"
+                aria-label="Close Player"
             >
                 <X size={20} />
-            </button>
+            </Button>
         </div>
 
       </div>

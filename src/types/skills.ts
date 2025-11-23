@@ -8,7 +8,7 @@ export interface CoreSkills {
 }
 
 export interface TechTool {
-  level: string;
+  level?: string;
   description?: string;
   desc?: string;
   rich_descriptions?: { [key: string]: string };

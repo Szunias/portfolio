@@ -2,6 +2,7 @@ import { useState, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Send, CheckCircle } from 'lucide-react';
 import { usePortfolioData } from '../../hooks/usePortfolioData';
+import { Button } from '../ui/Button';
 
 const ContactForm = () => {
   const { t } = useTranslation();
@@ -91,15 +92,13 @@ const ContactForm = () => {
           ></textarea>
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={status === 'sending' || status === 'success'}
+          variant={status === 'success' ? 'primary' : 'primary'} // Simplified for now, or add 'success' variant later
           className={`
-            w-full flex items-center justify-center gap-2 py-3 rounded-lg font-bold transition-all
-            ${status === 'success' 
-              ? 'bg-green-500 text-white' 
-              : 'bg-accent text-primary hover:bg-white'
-            }
+            w-full py-3 gap-2
+            ${status === 'success' ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-accent text-primary hover:bg-white'}
           `}
         >
           {status === 'idle' && (
@@ -117,7 +116,7 @@ const ContactForm = () => {
               {t('contact.sent', 'Sent!')}
             </>
           )}
-        </button>
+        </Button>
       </form>
     </div>
   );

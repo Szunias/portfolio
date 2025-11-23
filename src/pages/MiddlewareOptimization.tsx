@@ -161,7 +161,7 @@ const MiddlewareOptimization = () => {
 
                 <div className="max-w-6xl mx-auto px-6 pb-32 space-y-32">
                     {/* Project 1: Boney Boogaloo */}
-                    <ProjectCard 
+                    <CaseStudyCard 
                         title={t('boney.title')}
                         badges={[t('boney.badge1'), t('boney.badge2')]}
                         time={t('boney.badge3')}
@@ -173,7 +173,7 @@ const MiddlewareOptimization = () => {
                     />
 
                     {/* Project 2: Ellen */}
-                    <ProjectCard 
+                    <CaseStudyCard 
                         title={t('ellen.title')}
                         badges={[t('ellen.badge1'), t('ellen.badge2')]}
                         time={t('ellen.badge3')}
@@ -184,7 +184,7 @@ const MiddlewareOptimization = () => {
                     />
 
                     {/* Project 3: Stomach Aches */}
-                    <ProjectCard 
+                    <CaseStudyCard 
                         title={t('stomach.title')}
                         badges={[t('stomach.badge1'), t('stomach.badge2')]}
                         time={t('stomach.badge3')}
@@ -257,7 +257,7 @@ const MiddlewareOptimization = () => {
     );
 };
 
-interface ProjectCardProps {
+interface CaseStudyCardProps {
     title: string;
     badges: string[];
     time: string;
@@ -269,7 +269,7 @@ interface ProjectCardProps {
     paragraphs: string[];
 }
 
-const ProjectCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, poster, caption, paragraphs }: ProjectCardProps) => {
+const CaseStudyCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, poster, caption, paragraphs }: CaseStudyCardProps) => {
     return (
         <motion.article 
             initial={{ opacity: 0, y: 50 }}

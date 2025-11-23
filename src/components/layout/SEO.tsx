@@ -14,7 +14,7 @@ const SEO = ({
   title, 
   description, 
   type = 'website',
-  image = '/assets/cv-image/cvsmile.jpg', // Domyślny obrazek udostępniania (Twoje zdjęcie lub logo)
+  image = '/assets/cv/pieknyportret.png', // Corrected path to main portrait
   url
 }: SEOProps) => {
   const { i18n } = useTranslation();

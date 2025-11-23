@@ -5,40 +5,48 @@ import { MapPin, Zap, BookOpen, Cpu, Briefcase } from 'lucide-react';
 import Modal from '../components/ui/Modal';
 import SEO from '../components/layout/SEO';
 import TechConstellation from '../components/home/TechConstellation';
-import { TechCategory, TechTool } from '../types';
+import { TechCategory } from '../types';
 
 const About = () => {
   const { personal_info, professional_summary, technical_skills_matrix } = usePortfolioData();
   const { t, i18n } = useTranslation();
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
 
-  const getTechDescription = (name: string) => {
-    if (!i18n.language) return ""; // Safety check
+  const getTechDescription = (name: string): string => {
+    if (!name || !technical_skills_matrix) return "";
     
-    let desc = "";
-    const currentLang = i18n.language.split('-')[0];
+    const searchName = name.toLowerCase();
+    const currentLang = (i18n.language || 'en').split('-')[0];
 
-    if (!technical_skills_matrix) return ""; // Safety check
+    // Search through the matrix
+    for (const category of Object.values(technical_skills_matrix) as TechCategory[]) {
+        if (!category.tools) continue;
+        
+        for (const [key, value] of Object.entries(category.tools)) {
+            if (searchName.includes(key.toLowerCase()) || key.toLowerCase().includes(searchName)) {
+                // Priority 1: Translation Key
+                const transKey = `tech_${key.toLowerCase().replace(/\s+/g, '')}_desc`;
+                const translated = t(transKey, { defaultValue: '' });
+                
+                if (translated) return translated;
 
-    Object.values(technical_skills_matrix).forEach((category: TechCategory) => {
-        if (category.tools) {
-            Object.entries(category.tools).forEach(([key, value]: [string, TechTool]) => {
-                if (name.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(name.toLowerCase())) {
-                    // Try translation key first (tech_wwise_desc), then rich description
-                    const transKey = `tech_${key.toLowerCase().replace(' ', '')}_desc`;
-                    const translated = t(transKey, '');
-                    
-                    if (translated && translated !== transKey) {
-                        desc = translated;
-                    } else {
-                        desc = value.rich_descriptions?.[currentLang] || value.description || value.desc || "";
-                    }
-                }
-            });
+                // Priority 2: JSON Data (Rich Description)
+                if (value.rich_descriptions?.[currentLang]) return value.rich_descriptions[currentLang];
+
+                // Priority 3: JSON Data (Fallback Description)
+                return value.description || value.desc || "";
+            }
         }
-    });
-    return desc || t('tech_desc_default', 'Professional proficiency and production experience.');
+    }
+    
+    return t('tech_desc_default', 'Professional proficiency and production experience.');
   };
+
+  const timelineItems = [
+    { title: t('timeline_dae_title', 'Howest DAE'), role: t('timeline.role_game_dev', 'Game Development'), date: t('timeline.present', 'Present'), color: 'bg-accent' },
+    { title: t('timeline_hs_title', 'High School'), role: t('timeline.role_math_phys', 'Maths & Physics'), date: t('timeline.graduated', 'Graduated'), color: 'bg-slate-700' },
+    { title: t('timeline_piano_title', 'Music School'), role: t('timeline.role_piano', 'Classical Piano'), date: t('timeline.graduated', 'Graduated'), color: 'bg-slate-700' }
+  ];
 
   return (
     <div className="min-h-screen bg-primary">
@@ -57,12 +65,12 @@ const About = () => {
                 <div className="absolute inset-0 bg-accent blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 rounded-full"></div>
                 <div className="relative w-48 h-48 rounded-full p-1 bg-gradient-to-b from-white/20 to-transparent backdrop-blur-sm">
                     <img 
-                        src="/assets/cv-image/cvsmile.jpg" 
+                        src="/assets/images/cvsmile.jpg" 
                         alt="Profile" 
-                        className="w-full h-full object-cover rounded-full border-4 border-[#050505]"
+                        className="w-full h-full object-cover rounded-full border-4 border-primary"
                     />
                 </div>
-                <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-4 border-[#050505] rounded-full" title="Available"></div>
+                <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-4 border-primary rounded-full" title="Available"></div>
             </div>
 
             <h1 className="text-5xl md:text-6xl font-display font-bold text-white mb-4 tracking-tight">
@@ -103,7 +111,7 @@ const About = () => {
                 <Cpu className="text-accent" size={32} />
                 {t('skills.title', 'Technical Arsenal')}
             </h2>
-            <p className="text-slate-500">Interactive tech graph. Hover to see connections.</p>
+            <p className="text-slate-500">{t('about.tech_graph_hint', 'Interactive tech graph. Hover to see connections.')}</p>
         </div>
 
         <TechConstellation onSelect={setSelectedTech} />
@@ -118,13 +126,9 @@ const About = () => {
         
         <div className="relative border-l-2 border-white/5 ml-3 space-y-16 pb-4">
             {/* Timeline Items */}
-            {[
-                { title: t('timeline_dae_title', 'Howest DAE'), role: t('timeline.role_game_dev', 'Game Development'), date: t('timeline.present', 'Present'), color: 'bg-accent' },
-                { title: t('timeline_hs_title', 'High School'), role: t('timeline.role_math_phys', 'Maths & Physics'), date: t('timeline.graduated', 'Graduated'), color: 'bg-slate-700' },
-                { title: t('timeline_piano_title', 'Music School'), role: t('timeline.role_piano', 'Classical Piano'), date: t('timeline.graduated', 'Graduated'), color: 'bg-slate-700' }
-            ].map((item, i) => (
+            {timelineItems.map((item, i) => (
                 <div key={i} className="relative pl-12 group">
-                    <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-4 border-[#050505] ${item.color} shadow-lg group-hover:scale-125 transition-transform`}></div>
+                    <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-4 border-primary ${item.color} shadow-lg group-hover:scale-125 transition-transform`}></div>
                     <span className="text-xs font-mono text-slate-500 mb-1 block uppercase tracking-widest">{item.date}</span>
                     <h3 className="text-2xl font-bold text-white mb-1 group-hover:text-accent transition-colors">{item.title}</h3>
                     <p className="text-slate-400 text-lg">{item.role}</p>

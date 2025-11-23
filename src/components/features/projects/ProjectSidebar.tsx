@@ -14,7 +14,7 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
     <div className="sticky top-32 space-y-8">
         
         {/* Actions Card */}
-        <div className="p-6 rounded-2xl bg-[#0f0f0f] border border-white/10 shadow-xl">
+        <div className="p-6 rounded-2xl bg-tertiary border border-white/10 shadow-xl">
             <h3 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-6">
                 {t('details.access', 'Project Access')}
             </h3>

@@ -36,6 +36,7 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
   // Refs for state accessed inside event listeners to avoid stale closures
   const playlistRef = useRef<Track[]>([]);
   const currentTrackRef = useRef<Track | null>(null);
+  const playTrackRef = useRef<(track: Track) => void>(() => {});
 
   useEffect(() => {
     playlistRef.current = playlist;
@@ -67,19 +68,8 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
        const nextIndex = (currentIndex + 1) % playlistRef.current.length;
        const nextTrack = playlistRef.current[nextIndex];
        
-       // We can't call playTrack directly here easily without circular dependency, 
-       // so we implement basic play logic directly or use a ref for playTrack too.
-       // Easier: just emit a custom event or trigger state update.
-       // Let's call the internal logic.
-       if (audioRef.current) {
-          const src = nextTrack.sources[0]?.url;
-          if (src) {
-            audioRef.current.src = src.startsWith('http') || src.startsWith('/') ? src : `/${src}`;
-            audioRef.current.play().catch(e => console.error("Playback failed", e));
-            setCurrentTrack(nextTrack);
-            setIsPlaying(true);
-          }
-       }
+       // Use the ref to call playTrack, breaking the dependency cycle
+       playTrackRef.current(nextTrack);
     };
 
     audio.addEventListener('timeupdate', updateProgress);
@@ -94,6 +84,11 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []); // Empty dependency array - init once!
 
+  
+  // Assign internal helper to ref so we can call it from useCallback without dependency issues if needed,
+  // but here we can just duplicate or hoist. 
+  // Actually, let's keep it simple. Accessing audioRef directly in playTrack is fine.
+  
   // Update volume when state changes
   useEffect(() => {
     if (audioRef.current) {
@@ -145,6 +140,10 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (audioRef.current) {
+      if (!track.sources || track.sources.length === 0) {
+        console.warn(`Track ${track.title} has no sources.`);
+        return;
+      }
       const src = track.sources[0]?.url;
       if (src) {
         audioRef.current.src = src.startsWith('http') || src.startsWith('/') ? src : `/${src}`;
@@ -154,6 +153,12 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
       }
     }
   }, [currentTrack, togglePlay]);
+
+  // Keep ref in sync
+  useEffect(() => {
+    playTrackRef.current = playTrack;
+  }, [playTrack]);
+
 
   const nextTrack = useCallback(() => {
     if (!currentTrack || playlist.length === 0) return;

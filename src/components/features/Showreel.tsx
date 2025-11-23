@@ -66,14 +66,15 @@ const Showreel = () => {
         
         {/* Custom Play Overlay (Hidden when playing) */}
         {!isPlaying && (
-          <div 
-            className="absolute inset-0 flex items-center justify-center bg-black/50 group-hover:bg-black/40 transition-colors cursor-pointer"
+          <button 
+            className="absolute inset-0 w-full h-full flex items-center justify-center bg-black/50 group-hover:bg-black/40 transition-colors cursor-pointer border-none p-0 appearance-none focus:outline-none focus:ring-2 focus:ring-accent/50"
             onClick={() => player?.play()}
+            aria-label={t('showreel.play', 'Play Showreel')}
           >
             <div className="w-20 h-20 flex items-center justify-center bg-white/10 backdrop-blur-md rounded-full border border-white/20 group-hover:scale-110 transition-transform">
                <Play size={32} className="text-white ml-1" fill="currentColor" />
             </div>
-          </div>
+          </button>
         )}
       </div>
 
@@ -83,7 +84,7 @@ const Showreel = () => {
           <motion.button
             key={ts.label}
             onClick={() => jumpTo(ts.time)}
-            className={`relative group overflow-hidden rounded-lg border ${activeChapter === ts.time ? 'border-accent bg-accent/5' : 'border-white/10 bg-[#0a0a0a] hover:border-white/30 hover:bg-white/5'} p-4 transition-all duration-300`}
+            className={`relative group overflow-hidden rounded-lg border ${activeChapter === ts.time ? 'border-accent bg-accent/5' : 'border-white/10 bg-secondary hover:border-white/30 hover:bg-white/5'} p-4 transition-all duration-300`}
             whileHover={{ y: -2 }}
             whileTap={{ scale: 0.98 }}
           >

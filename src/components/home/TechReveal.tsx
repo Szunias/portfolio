@@ -25,7 +25,7 @@ const TechReveal = ({ text, className }: TechRevealProps) => {
               if (index < iterations) {
                 return text[index];
               }
-              return letters[Math.floor(Math.random() * 26)];
+              return letters[Math.floor(Math.random() * letters.length)];
             })
             .join("")
         );

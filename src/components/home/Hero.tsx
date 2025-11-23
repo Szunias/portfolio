@@ -10,7 +10,7 @@ const Hero = () => {
   const opacity = useTransform(scrollY, [0, 1200], [1, 0.3]); // Much slower fade out and keeps some visibility
 
   return (
-    <section className="relative min-h-screen flex items-center px-6 lg:px-12 overflow-hidden bg-[#050505] pt-20 pb-80">
+    <section className="relative min-h-screen flex items-center px-6 lg:px-12 overflow-hidden bg-primary pt-20 pb-80">
       
       {/* Background: Technical Grid & Noise */}
       <div className="absolute inset-0 z-0">
@@ -79,7 +79,7 @@ const Hero = () => {
             </div>
             <div className="h-px w-12 bg-white/10"></div>
             <span className="text-xs font-mono text-slate-500 uppercase tracking-wider">
-              Igorszuniewicz.com <span className="text-white/20 mx-2">//</span> v2.5
+              {t('hero.version_label', 'Portfolio')} <span className="text-white/20 mx-2">//</span> v2.5
             </span>
           </div>
 
@@ -165,7 +165,7 @@ const Hero = () => {
             <motion.div 
                 animate={{ y: [0, -10, 0] }} 
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-[20%] right-[10%] bg-[#0f0f0f] border border-white/10 p-4 rounded-lg shadow-xl backdrop-blur-md"
+                className="absolute top-[20%] right-[10%] bg-tertiary border border-white/10 p-4 rounded-lg shadow-xl backdrop-blur-md"
             >
                 <div className="flex items-center gap-2 mb-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -183,7 +183,7 @@ const Hero = () => {
             <motion.div 
                 animate={{ y: [0, 15, 0] }} 
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute bottom-[20%] left-[0%] bg-[#0f0f0f] border border-white/10 p-4 rounded-lg shadow-xl backdrop-blur-md"
+                className="absolute bottom-[20%] left-[0%] bg-tertiary border border-white/10 p-4 rounded-lg shadow-xl backdrop-blur-md"
             >
                 <div className="flex items-center gap-2 mb-2">
                     <div className="w-2 h-2 bg-accent rounded-full"></div>
@@ -198,7 +198,7 @@ const Hero = () => {
       </div>
 
       {/* Bottom Fade to Black (Seamless Transition) */}
-      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-[#050505] via-[#050505] to-transparent pointer-events-none z-0"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-primary via-primary to-transparent pointer-events-none z-0"></div>
     </section>
   );
 };

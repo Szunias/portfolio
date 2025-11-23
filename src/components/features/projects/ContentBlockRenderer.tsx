@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { Cpu } from 'lucide-react';
 import { ContentBlock } from '../../../types';
+import MediaRenderer from '../../ui/MediaRenderer';
+import { cn } from '../../../utils';
 
 interface ContentBlockRendererProps {
   blocks?: ContentBlock[];
@@ -22,11 +24,10 @@ const StatsGridBlock = ({ items }: { items: { label: string; value: string }[] }
 
 const SplitContentBlock = ({ block }: { block: ContentBlock }) => {
   const { t } = useTranslation();
-  const isVideo = block.media?.endsWith('.mp4') || block.media?.endsWith('.webm');
   
   return (
-    <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center my-16 ${block.reverseLayout ? 'lg:grid-flow-dense' : ''}`}>
-      <div className={`${block.reverseLayout ? 'lg:col-start-2' : ''}`}>
+    <div className={cn("grid grid-cols-1 lg:grid-cols-2 gap-12 items-center my-16", block.reverseLayout && "lg:grid-flow-dense")}>
+      <div className={cn(block.reverseLayout && "lg:col-start-2")}>
         {block.title && <h3 className="text-2xl font-bold text-white mb-6">{t(block.title, block.title)}</h3>}
         {block.content && (
             <div 
@@ -36,21 +37,16 @@ const SplitContentBlock = ({ block }: { block: ContentBlock }) => {
         )}
       </div>
       
-      <div className={`${block.reverseLayout ? 'lg:col-start-1' : ''}`}>
+      <div className={cn(block.reverseLayout && "lg:col-start-1")}>
         <div className="rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-black aspect-video">
-          {isVideo ? (
-            <video 
-                src={`/${block.media}`} 
-                className="w-full h-full object-cover" 
-                autoPlay 
-                loop 
-                muted 
-                playsInline 
-                controls 
-            />
-          ) : (
-            <img src={`/${block.media}`} alt={block.title || ''} className="w-full h-full object-cover" />
-          )}
+           {block.media && (
+               <MediaRenderer 
+                  src={block.media} 
+                  alt={block.title} 
+                  controls={true}
+                  className="w-full h-full object-cover"
+               />
+           )}
         </div>
         {block.mediaCaption && <p className="text-xs text-center text-slate-500 mt-2 font-mono">{block.mediaCaption}</p>}
       </div>
@@ -71,17 +67,17 @@ const GenericBlock = ({ block }: { block: ContentBlock }) => {
             )}
             {block.media && (
                 <div className="rounded-xl overflow-hidden border border-white/10 bg-black aspect-video shadow-2xl mt-6">
-                    {block.media.endsWith('.mp4') ? (
-                        <video src={`/${block.media}`} className="w-full h-full object-cover" autoPlay loop muted playsInline controls />
-                    ) : (
-                        <img src={`/${block.media}`} alt={block.title || ''} className="w-full h-full object-cover" />
-                    )}
+                    <MediaRenderer 
+                        src={block.media} 
+                        alt={block.title} 
+                        controls={true}
+                        className="w-full h-full object-cover"
+                    />
                 </div>
             )}
         </div>
     );
 }
-
 
 const ContentBlockRenderer = ({ blocks }: ContentBlockRendererProps) => {
   if (!blocks) return null;
@@ -96,7 +92,6 @@ const ContentBlockRenderer = ({ blocks }: ContentBlockRendererProps) => {
                 return <SplitContentBlock key={idx} block={block} />;
             case 'text':
             default:
-                // For generic or text blocks, use the enhanced generic renderer
                 return <GenericBlock key={idx} block={block} />;
         }
       })}

@@ -22,4 +22,9 @@ const copy404 = () => {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), copy404()],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+    },
+  },
 })

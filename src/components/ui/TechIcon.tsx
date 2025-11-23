@@ -14,10 +14,9 @@ const TechIcon = ({ name, onClick }: TechIconProps) => {
 
   return (
     <motion.div 
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={onClick}
-        className="flex flex-col items-center gap-2 p-4 bg-[#0a0a0a] border border-white/5 rounded-lg hover:border-accent/50 hover:bg-white/5 transition-all cursor-pointer group relative"
+      className="flex flex-col items-center gap-2 p-4 bg-secondary border border-white/5 rounded-lg hover:border-accent/50 hover:bg-white/5 transition-all cursor-pointer group relative"
+      title={name}
+      onClick={onClick}
     >
       <img src={iconPath} alt={name} className="w-12 h-12 object-contain opacity-80 group-hover:opacity-100 transition-opacity" />
       <span className="text-xs font-mono text-slate-400 text-center group-hover:text-white mt-2">{name}</span>

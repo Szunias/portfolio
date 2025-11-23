@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
+import { Button } from './Button';
 
 interface ModalProps {
   isOpen: boolean;
@@ -10,6 +11,21 @@ interface ModalProps {
 }
 
 const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
+  // Handle Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, onClose]);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -19,22 +35,28 @@ const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
             onClick={onClose}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={title ? "modal-title" : undefined}
         >
             <motion.div 
                 initial={{ scale: 0.9, y: 20 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.9, y: 20 }}
-                className="bg-[#0a0a0a] border border-accent/20 p-8 rounded-2xl max-w-md w-full shadow-[0_0_50px_rgba(56,189,248,0.1)] relative"
+                className="bg-secondary border border-accent/20 p-8 rounded-2xl max-w-md w-full shadow-[0_0_50px_rgba(56,189,248,0.1)] relative"
                 onClick={(e) => e.stopPropagation()}
             >
-                <button 
+                <Button 
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-4 right-4 text-slate-500 hover:text-white"
+                    aria-label="Close modal"
                 >
                     <X size={24} />
-                </button>
+                </Button>
                 
-                {title && <h3 className="text-2xl font-bold text-white mb-2">{title}</h3>}
+                {title && <h3 id="modal-title" className="text-2xl font-bold text-white mb-2">{title}</h3>}
                 {children}
             </motion.div>
         </motion.div>

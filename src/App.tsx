@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import ScrollToTop from './components/layout/ScrollToTop';
 import PageLoader from './components/ui/PageLoader';
+import { ROUTES } from './constants/routes';
 
 // Helper to handle chunk load errors (auto-reload once)
 const safeLazy = (importFunc: () => Promise<{ default: ComponentType<unknown> }>) => {
@@ -44,16 +45,16 @@ function App() {
       <Layout>
         <Suspense fallback={<PageLoader />}>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/projects/gradwork" element={<Gradwork />} />
-            <Route path="/projects/transientica_audiolab" element={<Transientica />} />
-            <Route path="/projects/sound-design" element={<SoundDesign />} />
-            <Route path="/projects/middleware-optimization" element={<MiddlewareOptimization />} />
-            <Route path="/projects/:id" element={<ProjectDetails />} />
-            <Route path="/music" element={<Music />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
+            <Route path={ROUTES.HOME} element={<Home />} />
+            <Route path={ROUTES.PROJECTS} element={<Projects />} />
+            <Route path={ROUTES.GRADWORK} element={<Gradwork />} />
+            <Route path={ROUTES.TRANSIENTICA} element={<Transientica />} />
+            <Route path={ROUTES.SOUND_DESIGN} element={<SoundDesign />} />
+            <Route path={ROUTES.MIDDLEWARE_OPTIMIZATION} element={<MiddlewareOptimization />} />
+            <Route path={ROUTES.PROJECT_DETAILS} element={<ProjectDetails />} />
+            <Route path={ROUTES.MUSIC} element={<Music />} />
+            <Route path={ROUTES.ABOUT} element={<About />} />
+            <Route path={ROUTES.CONTACT} element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

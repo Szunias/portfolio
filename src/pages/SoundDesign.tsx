@@ -17,13 +17,13 @@ const SoundDesign = () => {
     const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
     return (
-        <div ref={containerRef} className="min-h-screen bg-[#0a0a0a] text-slate-300 font-sans selection:bg-orange-500/30">
+        <div ref={containerRef} className="min-h-screen bg-secondary text-slate-300 font-sans selection:bg-orange-500/30">
             <SEO title="Sound Design | Igor Szuniewicz" description="Sound Redesigns and Implementation Showcases" />
 
             {/* Hero Section */}
             <section className="relative min-h-[80vh] flex flex-col items-center justify-center overflow-hidden px-4 py-20">
                 {/* Background Gradient */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-orange-900/20 via-[#0a0a0a] to-[#0a0a0a] z-0"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-orange-900/20 via-secondary to-secondary z-0"></div>
                 
                 <motion.div 
                     style={{ opacity, scale }}
@@ -149,7 +149,7 @@ const SoundDesign = () => {
             </main>
 
             {/* Footer */}
-            <footer className="py-20 text-center border-t border-white/5 bg-[#050505]">
+            <footer className="py-20 text-center border-t border-white/5 bg-primary">
                 <Link 
                     to="/projects" 
                     className="inline-flex items-center gap-2 px-8 py-4 bg-white/5 text-white font-semibold rounded-full border border-white/10 hover:bg-white/10 hover:scale-105 transition-all duration-300 group"

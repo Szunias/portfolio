@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { ArrowUpRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Project } from '../../../types';
+import ProjectCard from '../ProjectCard';
 
 interface ProjectGridProps {
   projects: Project[];
@@ -26,69 +25,7 @@ const ProjectGrid = ({ projects }: ProjectGridProps) => {
     >
       {projects.map((project, index) => {
         return (
-          <motion.div
-            layout
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: index * 0.05 }}
-            key={project.id}
-            className="group relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 hover:border-accent/50 transition-all duration-500 shadow-lg hover:shadow-2xl hover:shadow-accent/20"
-          >
-            <Link to={project.externalLink || `/projects/${project.id}`} className="block w-full h-full">
-              
-              {/* Background Image/Video */}
-              <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
-                {project.media?.thumbnail?.endsWith('.mp4') ? (
-                  <video
-                    src={`/${project.media.thumbnail}`}
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                  />
-                ) : (
-                  <img 
-                    src={`/${project.media?.thumbnail}`} 
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                  />
-                )}
-              </div>
-
-              {/* Content Overlay (Gradient) */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-60 group-hover:opacity-100 transition-all duration-500 group-hover:via-black/80 group-hover:to-black/60 group-hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]" />
-
-              {/* Text Content */}
-              <div className="absolute inset-0 p-6 flex flex-col justify-between">
-                
-                {/* Top Right Arrow */}
-                <div className="flex justify-between items-start">
-                  <span className="px-3 py-1 bg-black/50 backdrop-blur text-[10px] font-bold uppercase tracking-wider text-white rounded-full border border-white/10">
-                    {project.category}
-                  </span>
-                  <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center transform translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                    <ArrowUpRight size={16} />
-                  </div>
-                </div>
-
-                {/* Bottom Info */}
-                <div>
-                  <h3 className="text-2xl font-display font-bold text-white mb-2 leading-tight drop-shadow-md">
-                    {t(`project_${project.id}_title`, project.title)}
-                  </h3>
-                  <div className="flex flex-wrap gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 max-h-0 group-hover:max-h-32 overflow-hidden">
-                    {((project.tags && project.tags.length > 0 ? project.tags : project.technologies) || []).slice(0, 6).map((tech, i) => (
-                      <span key={i} className="px-2.5 py-1 bg-black/60 backdrop-blur-md border border-white/20 rounded-md text-[11px] font-medium text-white shadow-sm hover:bg-white/10 transition-colors">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-            </Link>
-          </motion.div>
+          <ProjectCard key={project.id} project={project} index={index} />
         );
       })}
     </motion.div>

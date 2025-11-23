@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Menu, X, Github, Linkedin } from 'lucide-react';
 import { usePortfolioData } from '../../hooks/usePortfolioData';
 import LanguageSwitcher from './LanguageSwitcher';
+import { ROUTES } from '../../constants/routes';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,11 +23,11 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: t('nav_home', 'Home'), path: '/' },
-    { name: t('nav_projects', 'Projects'), path: '/projects' },
-    { name: t('nav_music', 'Music'), path: '/music' },
-    { name: t('nav_about', 'About'), path: '/about' },
-    { name: t('nav_contact', 'Contact'), path: '/contact' },
+    { name: t('nav_home', 'Home'), path: ROUTES.HOME },
+    { name: t('nav_projects', 'Projects'), path: ROUTES.PROJECTS },
+    { name: t('nav_music', 'Music'), path: ROUTES.MUSIC },
+    { name: t('nav_about', 'About'), path: ROUTES.ABOUT },
+    { name: t('nav_contact', 'Contact'), path: ROUTES.CONTACT },
   ];
 
   return (
@@ -38,12 +39,14 @@ const Navbar = () => {
           : 'bg-primary/60 backdrop-blur-sm border-transparent py-6'
         }
       `}
+      role="navigation"
+      aria-label="Main Navigation"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex justify-between items-center">
           
           {/* Logo - Sora Font, Professional */}
-          <Link to="/" className="group flex flex-col">
+          <Link to={ROUTES.HOME} className="group flex flex-col" aria-label="Home">
             <span className="font-display font-bold text-xl text-white tracking-tight group-hover:text-accent transition-colors">
               IGOR SZUNIEWICZ
             </span>
@@ -65,25 +68,38 @@ const Navbar = () => {
                       text-sm font-medium transition-all duration-200 relative py-1
                       ${isActive ? 'text-white' : 'text-dim hover:text-white'}
                     `}
+                    aria-current={isActive ? 'page' : undefined}
                   >
                     {link.name}
                     {/* Active Indicator Underline */}
                     {isActive && (
-                      <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-accent rounded-full shadow-[0_0_8px_#38bdf8]"></span>
+                      <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-accent rounded-full shadow-[0_0_8px_theme(colors.accent)]"></span>
                     )}
                   </Link>
                 );
               })}
             </div>
 
-            <div className="h-6 w-px bg-white/10 mr-4"></div>
+            <div className="h-6 w-px bg-white/10 mr-4" aria-hidden="true"></div>
 
             {/* Socials - Subtle */}
             <div className="flex items-center gap-4 mr-4">
-              <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" className="text-dim hover:text-white transition-colors">
+              <a 
+                href={personal_info.social_media.github} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-dim hover:text-white transition-colors"
+                aria-label="GitHub Profile"
+              >
                 <Github size={18} />
               </a>
-              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer" className="text-dim hover:text-white transition-colors">
+              <a 
+                href={personal_info.social_media.linkedin} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-dim hover:text-white transition-colors"
+                aria-label="LinkedIn Profile"
+              >
                 <Linkedin size={18} />
               </a>
             </div>
@@ -97,7 +113,10 @@ const Navbar = () => {
              <LanguageSwitcher />
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-white focus:outline-none p-2"
+              className="text-white focus:outline-none p-2 focus:ring-2 focus:ring-accent rounded-md"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -106,10 +125,13 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu Dropdown - Full screen overlay style */}
-      <div className={`
-        md:hidden fixed inset-0 bg-primary z-40 transition-transform duration-300 pt-24 px-6
-        ${isOpen ? 'translate-x-0' : 'translate-x-full'}
-      `}>
+      <div 
+        id="mobile-menu"
+        className={`
+          md:hidden fixed inset-0 bg-primary z-40 transition-transform duration-300 pt-24 px-6
+          ${isOpen ? 'translate-x-0' : 'translate-x-full'}
+        `}
+      >
         <div className="flex flex-col gap-6">
           {navLinks.map((link) => (
             <Link
@@ -120,6 +142,7 @@ const Navbar = () => {
                 text-2xl font-display font-bold
                 ${location.pathname === link.path ? 'text-accent' : 'text-dim hover:text-white'}
               `}
+              aria-current={location.pathname === link.path ? 'page' : undefined}
             >
               {link.name}
             </Link>
