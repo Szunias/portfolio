@@ -48,12 +48,22 @@ const TrackCard = memo(({ track, index, isCurrent, isPlaying, onPlay }: TrackCar
 
         {/* Info */}
         <div>
-            <h4 className={`font-bold text-sm truncate transition-colors ${isCurrent ? 'text-accent' : 'text-white group-hover:text-white'}`}>
-                {track.title}
-            </h4>
+            <div className="flex items-start justify-between gap-2">
+                <h4 className={`font-bold text-sm truncate transition-colors ${isCurrent ? 'text-accent' : 'text-white group-hover:text-white'}`}>
+                    {track.title}
+                </h4>
+            </div>
+            
             <div className="flex items-center justify-between mt-1">
                 <span className="text-xs text-slate-500 truncate">{track.artist}</span>
-                {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>}
+                <div className="flex items-center gap-2">
+                    {track.year && (
+                        <span className="text-[10px] font-mono text-slate-600 border border-white/10 px-1.5 py-px rounded bg-white/5 group-hover:border-white/20 group-hover:text-slate-400 transition-colors">
+                            {track.year}
+                        </span>
+                    )}
+                    {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>}
+                </div>
             </div>
         </div>
     </motion.div>

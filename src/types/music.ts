@@ -7,4 +7,6 @@ export interface Track {
   desc: { [key: string]: string };
   tags: string[];
   length: number;
+  year?: number;
+  date?: string;
 }
