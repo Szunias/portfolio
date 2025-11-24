@@ -13,8 +13,8 @@ const StatsGridBlock = ({ items }: { items: { label: string; value: string }[] }
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-12 border-y border-white/10 py-8">
       {items.map((item, idx) => (
-        <div key={idx} className="text-center">
-          <div className="text-2xl md:text-3xl font-display font-bold text-white mb-1">{t(item.value, item.value)}</div>
+        <div key={idx} className="text-center px-2">
+          <div className="text-2xl md:text-3xl font-display font-bold text-white mb-1 break-words hyphens-auto">{t(item.value, item.value)}</div>
           <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{t(item.label, item.label)}</div>
         </div>
       ))}

@@ -1,4 +1,4 @@
-import { Github, ExternalLink, PlayCircle, Tag, Layers } from 'lucide-react';
+import { Github, ExternalLink, PlayCircle, Tag, Layers, Users, Monitor, Gamepad2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Project } from '../../../types';
 
@@ -18,6 +18,35 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
             <h3 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-6">
                 {t('details.access', 'Project Access')}
             </h3>
+            
+            {/* Project Meta Stats */}
+            <div className="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-white/5">
+                {project.team_size && (
+                    <div className="col-span-1">
+                        <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
+                            <Users size={10} /> Team
+                        </div>
+                        <div className="text-white font-bold">{project.team_size} Members</div>
+                    </div>
+                )}
+                {project.engine && (
+                    <div className="col-span-1">
+                        <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
+                            <Gamepad2 size={10} /> Engine
+                        </div>
+                        <div className="text-white font-bold">{project.engine}</div>
+                    </div>
+                )}
+                {project.platforms && (
+                    <div className="col-span-2">
+                        <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
+                            <Monitor size={10} /> Platforms
+                        </div>
+                        <div className="text-white text-sm">{project.platforms.join(', ')}</div>
+                    </div>
+                )}
+            </div>
+
             <div className="space-y-3">
                 {links.demo && (
                     <a href={links.demo} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-4 bg-accent text-black font-bold rounded-lg hover:bg-white transition-colors">

@@ -8,6 +8,8 @@ import ProjectHero from '../components/features/projects/ProjectHero';
 import ProjectSidebar from '../components/features/projects/ProjectSidebar';
 import ContentBlockRenderer from '../components/features/projects/ContentBlockRenderer';
 import CodeViewer from '../components/features/CodeViewer';
+import ChallengesBlock from '../components/features/projects/ChallengesBlock';
+import ProjectRichDetails from '../components/features/projects/ProjectRichDetails';
 
 const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -55,6 +57,14 @@ const ProjectDetails = () => {
 
             {/* Dynamic Content Blocks */}
             <ContentBlockRenderer blocks={project.content_blocks} />
+
+            {/* Challenges & Solutions */}
+            {project.challenges_solved && (
+                <ChallengesBlock challenges={project.challenges_solved} />
+            )}
+
+            {/* Rich Details (Responsibilities, Metrics, etc.) */}
+            <ProjectRichDetails project={project} />
 
             {/* Code Snippets */}
             {project.code_snippets && (

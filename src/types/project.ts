@@ -41,6 +41,23 @@ export interface Project {
     audio?: string; // Path to audio file if applicable
   };
   code_snippets?: CodeSnippet[];
+  challenges_solved?: {
+    challenge: string;
+    problem: string;
+    solution: string;
+  }[];
+  responsibilities?: string[];
+  technical_stack?: Record<string, string>;
+  performance_metrics?: Record<string, string>;
+  technical_achievements?: Record<string, string>;
+  audio_systems?: Record<string, string>;
+  team_size?: number;
+  engine?: string;
+  platforms?: string[];
+  collaboration?: string;
+  key_scenes?: string[];
+  audio_design?: Record<string, string>;
+  technical_work?: Record<string, string>;
   externalLink?: string;
   featured: boolean;
 }

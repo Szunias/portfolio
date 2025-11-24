@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useRef, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { Track } from '../types';
+import tracksData from '../data/tracks.json';
 
 interface AudioContextType {
   currentTrack: Track | null;
@@ -23,8 +24,8 @@ interface AudioContextType {
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
 export const AudioProvider = ({ children }: { children: ReactNode }) => {
-  const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
-  const [playlist, setPlaylist] = useState<Track[]>([]);
+  const [currentTrack, setCurrentTrack] = useState<Track | null>(tracksData.length > 0 ? (tracksData[0] as Track) : null);
+  const [playlist, setPlaylist] = useState<Track[]>(tracksData as Track[]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -105,27 +106,20 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
 
   // Load Tracks on Mount
   useEffect(() => {
-    fetch('/assets/audio/tracks.json')
-      .then(res => res.json())
-      .then(data => {
-        setPlaylist(data);
-        if (data.length > 0 && !currentTrackRef.current) {
-            const firstTrack = data[0];
-            setCurrentTrack(firstTrack);
-            
-            // Preload the first track so togglePlay works immediately
-            if (audioRef.current && firstTrack.sources && firstTrack.sources.length > 0) {
-                const src = firstTrack.sources[0].url;
-                if (src) {
-                    const formattedSrc = src.startsWith('http') || src.startsWith('/') ? src : `/${src}`;
-                    audioRef.current.src = encodeURI(formattedSrc);
-                    audioRef.current.load();
-                }
+    if (playlist.length > 0 && currentTrack) {
+        const firstTrack = playlist[0];
+        // Preload the first track so togglePlay works immediately
+        if (audioRef.current && firstTrack.sources && firstTrack.sources.length > 0) {
+            const src = firstTrack.sources[0].url;
+            if (src) {
+                const formattedSrc = src.startsWith('http') || src.startsWith('/') ? src : `/${src}`;
+                audioRef.current.src = encodeURI(formattedSrc);
+                audioRef.current.load();
             }
         }
-      })
-      .catch(err => console.error("Failed to load tracks:", err));
-  }, []);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playlist]);
 
   const setVolume = useCallback((vol: number) => {
     setVolumeState(vol);
