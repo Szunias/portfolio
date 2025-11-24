@@ -23,6 +23,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
     const shortDescKey = `project_${project.id}_short_desc`;
 
     const videoId = media.video ? getYoutubeId(media.video) : null;
+    const isLocalVideo = media.video && !videoId && (media.video.endsWith('.mp4') || media.video.endsWith('.webm'));
 
     return (
         <div className="relative min-h-[80vh] w-full overflow-hidden flex flex-col">
@@ -80,6 +81,16 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                                 className="w-full h-full"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen
+                            />
+                        </div>
+                    )}
+                    {isLocalVideo && (
+                        <div className="w-full max-w-4xl aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-black/50 backdrop-blur-sm">
+                            <video
+                                src={`/${media.video}`}
+                                className="w-full h-full object-cover"
+                                controls
+                                preload="metadata"
                             />
                         </div>
                     )}
