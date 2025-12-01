@@ -1,239 +1,190 @@
-import { useRef, ReactNode } from 'react';
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useInView } from 'framer-motion';
-import { ArrowLeft, Database, Server, Cpu, Zap, Clock, Brain, Layers } from 'lucide-react';
+import { motion, useInView } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
 import SEO from '../components/layout/SEO';
 import { useTranslation } from 'react-i18next';
 
 const Gradwork = () => {
-    const { t } = useTranslation('gradwork'); // Expecting a gradwork.json namespace
-    const containerRef = useRef(null);
-    useScroll({
-        target: containerRef,
-        offset: ["start start", "end end"]
-    });
+    const { t } = useTranslation('gradwork');
 
     return (
-        <div ref={containerRef} className="min-h-screen bg-secondary text-slate-300 font-sans selection:bg-emerald-500/30">
-            <SEO 
-                title={t('seo.title', 'AI Audio Research | Igor Szuniewicz')} 
-                description={t('seo.description', 'Graduate Research: Real-time AI Audio in Games')} 
+        <div className="min-h-screen bg-primary text-slate-300">
+            <SEO
+                title="AI Audio Research | Igor Szuniewicz"
+                description="Graduate Research: Real-time AI Audio in Games"
             />
 
-            {/* Hero Section */}
-            <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 py-20">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-900/20 via-secondary to-secondary z-0"></div>
-                
-                <motion.div  
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="relative z-10 max-w-5xl w-full text-center"
-                >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-400 text-sm font-bold uppercase tracking-wider mb-8 border border-emerald-500/20">
-                        <Brain size={16} />
-                        {t('hero.badge', 'Graduate Research')}
-                    </div>
-
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-white mb-8 leading-tight">
-                        {t('hero.title_part1', 'Is AI Audio in')} <br/>
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
-                            {t('hero.title_highlight', 'Real-Time')}
-                        </span> 
-                        {t('hero.title_part2', ' Possible?')}
+            {/* Hero */}
+            <section className="min-h-[70vh] flex flex-col items-center justify-center px-6 py-20 border-b border-white/5">
+                <div className="max-w-4xl text-center">
+                    <span className="text-xs uppercase tracking-[0.3em] text-accent mb-6 block">
+                        {t('hero.badge')}
+                    </span>
+                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                        {t('hero.title')}
                     </h1>
-
-                    <p className="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto font-light leading-relaxed">
-                        {t('hero.lead', 'A deep dive into the latency, architecture, and "cheats" required to bring Generative AI audio into game engines.')}
+                    <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+                        {t('hero.subtitle')}
                     </p>
-                </motion.div>
-
-                <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1, duration: 1 }}
-                    className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-500 animate-bounce"
-                >
-                    <ArrowLeft className="-rotate-90" size={24} />
-                </motion.div>
+                </div>
             </section>
 
-            {/* Main Content */}
-            <main className="relative z-20 max-w-4xl mx-auto px-6 pb-32 space-y-32">
-                
-                {/* Section 1: The Question */}
-                <Section number="01" title={t('sections.01.title', 'The Premise')}>
-                    <p className="text-lg leading-relaxed text-slate-300 mb-6">
-                        {t('sections.01.p1', 'You might be wondering why anyone would even try to generate sounds with AI in games. Imagine a world where instead of storing thousands of pre-recorded WAV files, the game creates them on the fly. Infinite variations. Zero storage cost.')}
-                    </p>
-                    <div className="bg-white/5 border-l-4 border-emerald-500 p-6 rounded-r-lg my-8">
-                        <p className="text-xl font-semibold text-white italic">
-                            "{t('sections.01.quote', 'Is AI fast enough that players wouldn\'t even notice the delay between an action and its sound?')}"
-                        </p>
-                    </div>
-                    <p className="text-lg leading-relaxed text-slate-300">
-                        <strong className="text-emerald-400">{t('sections.01.spoiler_label', 'Spoiler Alert:')}</strong> {t('sections.01.spoiler_text', 'No. It\'s too slow. But I found a way to make it work anyway.')}
-                    </p>
+            {/* Content */}
+            <main className="max-w-3xl mx-auto px-6 py-20 space-y-24">
+
+                <Section num="1" title={t('section1.title')}>
+                    <p className="mb-6">{t('section1.intro')}</p>
+                    <p className="mb-6">{t('section1.testing')}</p>
+                    <blockquote className="border-l-2 border-accent pl-6 py-2 my-8 text-white text-xl italic">
+                        "{t('section1.question')}"
+                    </blockquote>
+                    <p className="text-accent font-medium mb-2">{t('section1.current_findings')}</p>
+                    <p>{t('section1.findings')}</p>
                 </Section>
 
-                {/* Section 2: Architecture */}
-                <Section number="02" title={t('sections.02.title', 'The Architecture')}>
-                    <p className="text-lg leading-relaxed text-slate-300 mb-12">
-                        {t('sections.02.p1', 'Connecting a game engine to a generative AI model requires a bridge. I built a WebSocket communication layer between Unity (C#) and a Python server running the inference.')}
-                    </p>
+                <Section num="2" title={t('section2.title')}>
+                    <p className="mb-6">{t('section2.intro')}</p>
+                    <div className="bg-black/30 border border-white/10 rounded-lg p-6 font-mono text-sm mb-6">
+                        {t('section2.architecture_flow')}
+                    </div>
+                    <p className="mb-4">{t('section2.results_intro')}</p>
+                    <div className="overflow-x-auto mb-6">
+                        <table className="w-full text-left text-sm">
+                            <thead className="border-b border-white/10">
+                                <tr>
+                                    <th className="py-2 pr-4">{t('section2.table_sound')}</th>
+                                    <th className="py-2 pr-4">{t('section2.table_latency')}</th>
+                                    <th className="py-2">{t('section2.table_verdict')}</th>
+                                </tr>
+                            </thead>
+                            <tbody className="text-slate-400">
+                                <tr className="border-b border-white/5">
+                                    <td className="py-2 pr-4">{t('section2.footstep')}</td>
+                                    <td className="py-2 pr-4 font-mono">45ms</td>
+                                    <td className="py-2 text-emerald-400">{t('section2.excellent')}</td>
+                                </tr>
+                                <tr className="border-b border-white/5">
+                                    <td className="py-2 pr-4">{t('section2.gunshot')}</td>
+                                    <td className="py-2 pr-4 font-mono">52ms</td>
+                                    <td className="py-2 text-emerald-400">{t('section2.excellent')}</td>
+                                </tr>
+                                <tr>
+                                    <td className="py-2 pr-4">{t('section2.impact')}</td>
+                                    <td className="py-2 pr-4 font-mono">38ms</td>
+                                    <td className="py-2 text-emerald-400">{t('section2.excellent')}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p className="text-slate-500 text-sm">{t('section2.results_note')}</p>
+                </Section>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-                        <ArchitectureCard icon={<Cpu />} title="Unity (C#)" subtitle={t('sections.02.card1', 'Game Client')} />
-                        <div className="hidden md:flex items-center justify-center text-slate-600">
-                            <ArrowLeft className="rotate-180" size={32} />
+                <Section num="3" title={t('section3.title')}>
+                    <p className="mb-8" dangerouslySetInnerHTML={{ __html: t('section3.intro') }} />
+                    <div className="bg-red-950/30 border border-red-500/20 rounded-lg p-8 text-center mb-8">
+                        <div className="text-6xl md:text-7xl font-bold text-red-500 font-mono mb-2">
+                            {t('section3.failure_stat')}
                         </div>
-                        <ArchitectureCard icon={<Server />} title="Python" subtitle={t('sections.02.card2', 'WebSocket Server')} />
-                        <div className="hidden md:flex items-center justify-center text-slate-600">
-                            <ArrowLeft className="rotate-180" size={32} />
-                        </div>
-                        <ArchitectureCard icon={<Database />} title="ElevenLabs" subtitle={t('sections.02.card3', 'Inference API')} />
+                        <div className="text-red-400/70 text-sm">{t('section3.failure_context')}</div>
                     </div>
+                    <p>{t('section3.narrative')}</p>
                 </Section>
 
-                {/* Section 3: The Nightmare */}
-                <Section number="03" title={t('sections.03.title', 'The 12-Second Nightmare')}>
-                    <div className="bg-red-900/10 border border-red-500/20 rounded-2xl p-8 md:p-12 text-center mb-12">
-                        <Clock className="w-16 h-16 text-red-500 mx-auto mb-6" />
-                        <h3 className="text-6xl md:text-8xl font-black text-red-500 mb-4 tabular-nums tracking-tighter">
-                            12,000<span className="text-4xl">ms</span>
-                        </h3>
-                        <p className="text-red-400 text-lg font-mono">{t('sections.03.stat_label', 'Latency for one footstep')}</p>
-                    </div>
-                    <p className="text-lg leading-relaxed text-slate-300">
-                        {t('sections.03.p1', 'In a 60 FPS game, a sound needs to play within 16ms. My first attempt with AudioLDM took 12 seconds. That\'s 750x too slow. Even faster models like MusicGen took 4 seconds. In game dev terms, that\'s an eternity.')}
-                    </p>
-                </Section>
-
-                {/* Section 4: The Anomaly */}
-                <Section number="04" title={t('sections.04.title', 'The 0.03ms Anomaly')}>
-                    <p className="text-lg leading-relaxed text-slate-300 mb-8">
-                        {t('sections.04.p1', 'I was ready to quit. Then I saw something in the logs during a debug session.')}
-                    </p>
-                    <div className="bg-black rounded-lg p-6 font-mono text-sm md:text-base border border-white/10 shadow-2xl mb-8">
+                <Section num="4" title={t('section4.title')}>
+                    <p className="mb-6">{t('section4.intro')}</p>
+                    <div className="bg-black/50 border border-white/10 rounded-lg p-4 font-mono text-sm mb-6 space-y-1">
                         <div className="text-slate-500">[LOG] Gen_Request_01: 4102ms</div>
                         <div className="text-slate-500">[LOG] Gen_Request_02: 4098ms</div>
-                        <div className="text-emerald-400 font-bold">[LOG] Gen_Request_01: 0.03ms  &lt;-- ???</div>
+                        <div className="text-emerald-400">[LOG] Gen_Request_01: 0.03ms  &lt;-- ???</div>
                     </div>
-                    <p className="text-lg leading-relaxed text-slate-300">
-                        {t('sections.04.p2', 'The second time I requested the same sound, it was instant. It pulled from memory. This led to the realization:')} <strong className="text-white">{t('sections.04.quote', 'We don\'t need to be fast. We just need to be early.')}</strong>
-                    </p>
+                    <p className="mb-6">{t('section4.epiphany')}</p>
+                    <blockquote className="border-l-2 border-accent pl-6 py-2 text-white text-xl font-medium">
+                        "{t('section4.question')}"
+                    </blockquote>
                 </Section>
 
-                {/* Section 5: The Solution */}
-                <Section number="05" title={t('sections.05.title', 'Cheating Time')}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                        <div className="bg-white/5 p-8 rounded-2xl border border-white/10">
-                            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                                <Zap className="text-yellow-400" />
-                                {t('sections.05.card1_title', 'Prediction')}
-                            </h3>
-                            <p className="text-slate-400">
-                                {t('sections.05.card1_text', 'Instead of reacting to player actions, we predict them. Use loading screens and quiet moments to "hallucinate" the audio for the next level.')}
-                            </p>
-                        </div>
-                        <div className="bg-white/5 p-8 rounded-2xl border border-white/10">
-                            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                                <Layers className="text-blue-400" />
-                                {t('sections.05.card2_title', 'Buffering')}
-                            </h3>
-                            <p className="text-slate-400">
-                                {t('sections.05.card2_text', 'Pre-generate assets into a RAM buffer. When the player pulls the trigger, the sound is already there, waiting.')}
-                            </p>
-                        </div>
+                <Section num="5" title={t('section5.title')}>
+                    <p className="mb-6" dangerouslySetInnerHTML={{ __html: t('section5.intro') }} />
+                    <div className="bg-emerald-950/30 border border-emerald-500/20 rounded-lg p-8 text-center mb-8">
+                        <div className="text-4xl font-bold text-emerald-400 mb-2">{t('section5.solution_stat')}</div>
+                        <div className="text-emerald-400/70 text-sm uppercase tracking-wider">{t('section5.solution_label')}</div>
                     </div>
+                    <p>{t('section5.explanation')}</p>
                 </Section>
 
-                {/* Section 6: Current Status */}
-                <Section number="06" title={t('sections.06.title', 'Research Status')}>
-                    <div className="bg-emerald-900/10 border border-emerald-500/20 rounded-2xl p-8">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
-                            <h3 className="text-xl font-bold text-emerald-400 uppercase tracking-wider">{t('sections.06.status_badge', 'Active Research')}</h3>
+                <Section num="6" title={t('section6.title')}>
+                    <p className="mb-6" dangerouslySetInnerHTML={{ __html: t('section6.intro') }} />
+                    <p className="mb-6" dangerouslySetInnerHTML={{ __html: t('section6.problem') }} />
+                    <p dangerouslySetInnerHTML={{ __html: t('section6.current_work') }} />
+                </Section>
+
+                <Section num="7" title={t('section7.title')}>
+                    <p className="mb-8">{t('section7.intro')}</p>
+                    <div className="space-y-4 mb-8">
+                        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                            <h4 className="font-medium text-white mb-1">{t('section7.exp1_title')}</h4>
+                            <p className="text-sm text-slate-400">{t('section7.exp1_desc')}</p>
                         </div>
-                        <p className="text-slate-300 mb-6">
-                            {t('sections.06.p1', 'The "0.03ms Cache" works, but scaling it is the challenge. I am currently developing a Predictive Buffering algorithm in Python that manages a 10-second "sliding window" of future audio events to balance RAM usage.')}
-                        </p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="bg-black/20 p-4 rounded border border-emerald-500/10">
-                                <div className="text-2xl font-bold text-white mb-1">Smart Cleanup</div>
-                                <div className="text-xs text-emerald-500/60 uppercase">{t('sections.06.stat1', 'Memory Management')}</div>
-                            </div>
-                            <div className="bg-black/20 p-4 rounded border border-emerald-500/10">
-                                <div className="text-2xl font-bold text-white mb-1">10s Window</div>
-                                <div className="text-xs text-emerald-500/60 uppercase">{t('sections.06.stat2', 'Prediction Horizon')}</div>
-                            </div>
+                        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                            <h4 className="font-medium text-white mb-1">{t('section7.exp2_title')}</h4>
+                            <p className="text-sm text-slate-400">{t('section7.exp2_desc')}</p>
                         </div>
+                    </div>
+                    <div className="bg-emerald-950/30 border border-emerald-500/20 rounded-lg p-6">
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                            <span className="text-emerald-400 font-medium text-sm uppercase tracking-wider">
+                                {t('section7.status_title')}
+                            </span>
+                        </div>
+                        <p className="text-slate-300">{t('section7.status_desc')}</p>
                     </div>
                 </Section>
 
             </main>
 
             {/* Footer */}
-            <footer className="py-20 text-center border-t border-white/5 bg-primary">
-                <Link 
-                    to="/projects" 
-                    className="inline-flex items-center gap-2 px-8 py-4 bg-white/5 text-white font-semibold rounded-full border border-white/10 hover:bg-white/10 hover:scale-105 transition-all duration-300 group"
+            <footer className="py-16 text-center border-t border-white/5">
+                <Link
+                    to="/projects"
+                    className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
                 >
-                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                    {t('footer.back', 'Back to Projects')}
+                    <ArrowLeft size={18} />
+                    {t('back')}
                 </Link>
-                <p className="mt-8 text-slate-500 text-sm">
-                    {t('footer.credits', 'Graduate Research Project • Ongoing • 2025 • Igor Szuniewicz')}
-                </p>
+                <p className="mt-6 text-slate-600 text-sm">{t('footer.status')}</p>
             </footer>
         </div>
     );
 };
 
 interface SectionProps {
-    number: string;
+    num: string;
     title: string;
-    children: ReactNode;
+    children: React.ReactNode;
 }
 
-const Section = ({ number, title, children }: SectionProps) => {
+const Section = ({ num, title, children }: SectionProps) => {
     const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const isInView = useInView(ref, { once: true, margin: "-50px" });
 
     return (
-        <motion.section 
+        <motion.section
             ref={ref}
-            initial={{ opacity: 0, y: 50 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-            transition={{ duration: 0.8 }}
-            className="relative"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
         >
-            <div className="absolute -left-12 top-0 text-8xl font-black text-white/5 select-none hidden lg:block">
-                {number}
+            <div className="flex items-baseline gap-4 mb-6">
+                <span className="text-accent font-mono text-sm">{num}.</span>
+                <h2 className="text-2xl md:text-3xl font-bold text-white">{title}</h2>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-8 flex items-center gap-4">
-                <span className="text-emerald-500 text-lg font-mono lg:hidden">{number}.</span>
-                {title}
-            </h2>
-            {children}
+            <div className="text-slate-300 leading-relaxed">
+                {children}
+            </div>
         </motion.section>
     );
 };
-
-interface ArchitectureCardProps {
-    icon: ReactNode;
-    title: string;
-    subtitle: string;
-}
-
-const ArchitectureCard = ({ icon, title, subtitle }: ArchitectureCardProps) => (
-    <div className="bg-[#111] p-6 rounded-xl border border-white/10 flex flex-col items-center text-center hover:border-emerald-500/30 transition-colors group">
-        <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-slate-300 mb-4 group-hover:text-emerald-400 group-hover:bg-emerald-500/10 transition-all">
-            {icon}
-        </div>
-        <h4 className="text-lg font-bold text-white mb-1">{title}</h4>
-        <p className="text-xs text-slate-500 uppercase tracking-wider">{subtitle}</p>
-    </div>
-);
 
 export default Gradwork;

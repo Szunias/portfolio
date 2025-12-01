@@ -1,0 +1,69 @@
+{
+  "back": "Terug naar projecten",
+  "hero": {
+    "badge": "Lopend onderzoek",
+    "title": "Is AI Audio in Real-Time mogelijk in games?",
+    "subtitle": "Een afstudeeronderzoek door AI audio generatie"
+  },
+  "section1": {
+    "title": "Waar gaat dit project over?",
+    "intro": "Je vraagt je misschien af waarom iemand zelfs zou proberen geluiden te genereren met AI in games. Nou, het is eigenlijk een behoorlijk coole vraag - wat als games in plaats van honderden vooraf opgenomen geluidseffecten, ze ter plekke konden maken? Klinkt als science fiction, toch?",
+    "testing": "Dus de afgelopen weken heb ik precies dat getest. De hoofdvraag was:",
+    "question": "Is AI snel genoeg zodat spelers de vertraging tussen een actie en het geluid niet eens zouden merken?",
+    "current_findings": "Huidige bevindingen:",
+    "findings": "Het directe antwoord tot nu toe: AI is te traag voor directe afspelen. MAAR - ik verken een oplossing om AI-kwaliteit in games te gebruiken. Hoe? Blijf lezen."
+  },
+  "section2": {
+    "title": "Unity en Python aan het praten krijgen",
+    "intro": "In het begin moest ik de basis uitzoeken - Unity verbinden met Python via WebSocket. Klinkt ingewikkeld, maar in de praktijk zegt Unity gewoon \"hé Python, geef me een schot geluid\", en Python genereert het en stuurt het terug.",
+    "architecture_flow": "Unity (C#) ⟷ WebSocket ⟷ Python Server",
+    "results_intro": "Eerste tests met een eenvoudige procedurele generator zagen er veelbelovend uit:",
+    "table_sound": "Geluid type",
+    "table_latency": "Latentie",
+    "table_verdict": "Oordeel",
+    "footstep": "Voetstap",
+    "gunshot": "Schot",
+    "impact": "Impact",
+    "excellent": "Uitstekend",
+    "results_note": "Klinkt geweldig! Alles onder 60ms is praktisch onmerkbaar voor spelers. Het enige probleem was dat deze geluiden, nou... synthetisch klonken. Zoals iets uit de jaren 90. Ik had iets beters nodig."
+  },
+  "section3": {
+    "title": "De Nachtmerrie van 12 Seconden",
+    "intro": "Ik verwachtte vertraging. Maar <em>dit</em> niet.",
+    "failure_stat": "12.000 ms",
+    "failure_context": "Tijd om één voetstap te genereren met AudioLDM.",
+    "narrative": "In een spel dat draait op 60 FPS, moet een voetstap in 16 milliseconden gebeuren. Mijn eerste poging was 750 keer te traag. Zelfs het snellere MusicGen-model had 4 seconden nodig. In de wereld van game-ontwikkeling is 4 seconden een eeuwigheid. Het was een totale mislukking."
+  },
+  "section4": {
+    "title": "De 0.03ms Anomalie",
+    "intro": "Ik stond op het punt het project te schrappen. Maar toen, tijdens een frustrerende debug-sessie, merkte ik iets vreemds op in de logs.",
+    "epiphany": "De tweede keer dat ik hetzelfde geluid aanvroeg, werd het niet gegenereerd. Het kwam uit het geheugen. Het was direct. Sneller dan een harde schijf die een WAV-bestand leest.",
+    "question": "We hoeven niet snel te zijn. We moeten er gewoon eerder zijn."
+  },
+  "section5": {
+    "title": "Tijd Bedriegen",
+    "intro": "Als we geen geluid in real-time kunnen genereren, moeten we het genereren <em>voordat</em> het gebeurt. Dit veranderde de hele architectuur van 'Reactie' naar 'Voorspelling'.",
+    "solution_stat": "Laden...",
+    "solution_label": "De Truc",
+    "explanation": "Ik bouwde een systeem dat het laadscherm gebruikt - een plek waar spelers verwachten te wachten - om de audio voor het level vooruit te 'hallucineren'. Tegen de tijd dat de speler spawnt, heeft de AI het zware werk al gedaan. Het resultaat? Nul latentie. High-fidelity AI audio."
+  },
+  "section6": {
+    "title": "Het Nieuwe Probleem: Geheugen vs. Chaos",
+    "intro": "Dus we losten de snelheidslimiet op door te 'valsspelen' met het laadscherm. Maar deze overwinning creëerde een nieuwe, gevaarlijkere vijand: <strong>RAM Gebruik</strong>.",
+    "problem": "Als we <em>elk</em> mogelijk geluid vooraf genereren voor een open-wereld spel, zouden we terabytes aan RAM nodig hebben. We ruilden CPU-tijd in voor Geheugen, en nu raken we zonder ruimte.",
+    "current_work": "Dit is waar mijn onderzoek <strong>op dit moment</strong> is. Ik stap af van 'Alles Vooraf Genereren' naar iets slimmers: <strong>Voorspellend Bufferen</strong>."
+  },
+  "section7": {
+    "title": "Actieve Experimenten",
+    "intro": "Ik voer momenteel drie parallelle experimenten uit om de geheugencrisis op te lossen:",
+    "exp1_title": "Slimme Opruiming",
+    "exp1_desc": "Geluiden direct verwijderen nadat ze zijn afgespeeld om RAM vrij te maken.",
+    "exp2_title": "Het 10s Venster",
+    "exp2_desc": "AI die raadt wat je de komende 10 seconden gaat doen en ALLEEN dat genereert.",
+    "status_title": "Onderzoeksstatus: ACTIEF",
+    "status_desc": "De '0.03ms Cache' werkt, maar het schaalbaar maken is de nieuwe grens. Ik codeer momenteel het voorspellingsalgoritme in Python."
+  },
+  "footer": {
+    "status": "Afstudeeronderzoeksproject • Lopend • 2025 • Igor Szuniewicz"
+  }
+}

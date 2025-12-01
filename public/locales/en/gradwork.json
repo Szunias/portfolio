@@ -1,0 +1,69 @@
+{
+  "back": "Back to Projects",
+  "hero": {
+    "badge": "Ongoing Research",
+    "title": "Is AI Audio in Real-Time Possible in Games?",
+    "subtitle": "A Graduate Research Journey Through AI Audio Generation"
+  },
+  "section1": {
+    "title": "What's This Project About?",
+    "intro": "You might be wondering why anyone would even try to generate sounds with AI in games. Well, it's actually a pretty cool question - what if instead of having hundreds of pre-recorded sound effects, games could create them on the fly? Sounds like science fiction, right?",
+    "testing": "So for the past few weeks, I've been testing exactly that. The main question was:",
+    "question": "Is AI fast enough that players wouldn't even notice the delay between an action and its sound?",
+    "current_findings": "Current Findings:",
+    "findings": "The direct answer so far: AI is too slow for instant playback. BUT - I'm exploring a workaround to use AI quality in games. How? Keep reading."
+  },
+  "section2": {
+    "title": "Making Unity and Python Talk",
+    "intro": "At first, I had to figure out the basics - connecting Unity with Python through WebSocket. Sounds complicated, but in practice Unity just says \"hey Python, give me a gunshot sound\", and Python generates it and sends it back.",
+    "architecture_flow": "Unity (C#) ⟷ WebSocket ⟷ Python Server",
+    "results_intro": "First tests with a simple procedural generator looked promising:",
+    "table_sound": "Sound Type",
+    "table_latency": "Latency",
+    "table_verdict": "Verdict",
+    "footstep": "Footstep",
+    "gunshot": "Gunshot",
+    "impact": "Impact",
+    "excellent": "Excellent",
+    "results_note": "Sounds great! Everything under 60ms is practically unnoticeable to players. The only problem was that these sounds, well... sounded synthetic. Like something from a 90s game. I needed something better."
+  },
+  "section3": {
+    "title": "The 12-Second Nightmare",
+    "intro": "I expected latency. I didn't expect <em>this</em>.",
+    "failure_stat": "12.000 ms",
+    "failure_context": "Time to generate one footstep with AudioLDM.",
+    "narrative": "In a game running at 60 FPS, a footstep needs to happen in 16 milliseconds. My first attempt was 750 times too slow. Even the faster MusicGen model took 4 seconds. In the world of game development, 4 seconds is an eternity. It was a complete failure."
+  },
+  "section4": {
+    "title": "The 0.03ms Anomaly",
+    "intro": "I was ready to scrap the project. But then, during a frustration-filled debug session, I noticed something weird in the logs.",
+    "epiphany": "The second time I requested the same sound, it didn't generate it. It pulled it from memory. It was instant. Faster than any hard drive reading a WAV file.",
+    "question": "We don't need to be fast. We just need to be early."
+  },
+  "section5": {
+    "title": "Cheating Time",
+    "intro": "If we can't generate sound in real-time, we have to generate it <em>before</em> it happens. This shifted the entire architecture from 'Reaction' to 'Prediction'.",
+    "solution_stat": "Loading...",
+    "solution_label": "The Trick",
+    "explanation": "I built a system that uses the loading screen—a place where players expect to wait—to 'hallucinate' the audio for the level ahead. By the time the player spawns, the AI has already done the heavy lifting. The result? Zero latency. High-fidelity AI audio."
+  },
+  "section6": {
+    "title": "The New Problem: Memory vs. Chaos",
+    "intro": "So we solved the speed limit by 'cheating' with the loading screen. But this victory created a new, more dangerous enemy: <strong>RAM Usage</strong>.",
+    "problem": "If we pre-generate <em>every</em> possible sound for an open-world game, we would need terabytes of RAM. We traded CPU time for Memory, and now we're running out of space.",
+    "current_work": "This is where my research is <strong>right now</strong>. I am moving away from 'Pre-generate Everything' to something smarter: <strong>Predictive Buffering</strong>."
+  },
+  "section7": {
+    "title": "Active Experiments",
+    "intro": "I am currently running three parallel experiments to solve the memory crisis:",
+    "exp1_title": "Smart Cleanup",
+    "exp1_desc": "Deleting sounds immediately after they are played to free up RAM.",
+    "exp2_title": "The 10s Window",
+    "exp2_desc": "AI that guesses what you will do in the next 10 seconds and generates ONLY that.",
+    "status_title": "Research Status: ACTIVE",
+    "status_desc": "The '0.03ms Cache' works, but making it scalable is the new frontier. I am currently coding the prediction algorithm in Python."
+  },
+  "footer": {
+    "status": "Graduate Research Project • Ongoing • 2025 • Igor Szuniewicz"
+  }
+}
