@@ -3,6 +3,30 @@ import { ArrowRight, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
+const AudioAura = () => {
+  return (
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] pointer-events-none z-0 opacity-40 flex items-center justify-center">
+      
+      {/* Outer Ring */}
+      <motion.div 
+        animate={{ rotate: 360 }}
+        transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
+        className="absolute inset-0 border-[1px] border-white/10 rounded-full"
+      />
+
+      {/* Inner Ring */}
+      <motion.div 
+        animate={{ rotate: -360 }}
+        transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
+        className="absolute inset-[25%] border-[1px] border-white/5 rounded-full"
+      />
+      
+      {/* Core Glow */}
+      <div className="absolute inset-[40%] bg-accent/5 rounded-full blur-3xl"></div>
+    </div>
+  );
+};
+
 const Hero = () => {
   const { t } = useTranslation();
 
@@ -25,12 +49,17 @@ const Hero = () => {
       {/* Content - Z-Index 10 to sit above watermark */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 flex flex-col items-center text-center mt-[-5vh]">
         
+        {/* Audio Aura - Behind Typography */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0">
+            <AudioAura />
+        </div>
+
         {/* Main Typography */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-10"
+          className="mb-10 relative z-10"
         >
           <h1 className="font-display font-bold text-[5rem] sm:text-[6rem] md:text-[8rem] leading-[0.9] tracking-tighter text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.1)]">
             AUDIO <br className="hidden sm:block" /> 
@@ -93,8 +122,8 @@ const Hero = () => {
         </div>
       </motion.div>
 
-      {/* Bottom Gradient Mask */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none z-10"></div>
+      {/* Bottom Gradient Mask - Seamless Transition */}
+      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-[#050505] via-[#050505] via-10% to-transparent pointer-events-none z-20"></div>
     </section>
   );
 };
