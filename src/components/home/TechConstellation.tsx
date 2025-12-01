@@ -6,133 +6,162 @@ interface TechConstellationProps {
   onSelect: (tech: string) => void;
 }
 
-// Category Configuration
 const TECH_CARDS = [
   {
     id: 'code',
     title: 'PROGRAMMING',
     subtitle: 'Core Logic',
     icon: Code2,
-    color: 'from-red-500/20 to-red-900/5',
-    accent: 'text-red-500',
-    border: 'group-hover:border-red-500/50',
-    items: ['C++', 'C#', 'Python', 'Blueprints', 'JUCE', 'React']
+    accentColor: '#ef4444',
+    items: ['C++', 'C#', 'Python', 'Blueprints', 'JUCE', 'Pure Data'],
+    gridClass: 'md:col-span-2 md:row-span-2'
   },
   {
     id: 'middleware',
     title: 'AUDIO TECH',
     subtitle: 'Interactive Systems',
     icon: Music,
-    color: 'from-blue-500/20 to-blue-900/5',
-    accent: 'text-blue-400',
-    border: 'group-hover:border-blue-400/50',
-    items: ['Wwise', 'FMOD', 'MetaSounds', '3D Audio', 'Spatializer']
+    accentColor: '#3b82f6',
+    items: ['Wwise', 'FMOD', 'MetaSounds', '3D Audio'],
+    gridClass: 'md:col-span-2'
   },
   {
     id: 'engine',
     title: 'GAME ENGINES',
     subtitle: 'Environment',
     icon: Cpu,
-    color: 'from-purple-500/20 to-purple-900/5',
-    accent: 'text-purple-500',
-    border: 'group-hover:border-purple-500/50',
-    items: ['Unreal Engine 5', 'Unity', 'Godot', 'CryEngine']
+    accentColor: '#a855f7',
+    items: ['Unreal Engine 5', 'Unity'],
+    gridClass: 'md:col-span-2'
   },
   {
     id: 'tools',
     title: 'PRODUCTION',
     subtitle: 'DAW & Pipeline',
     icon: Wrench,
-    color: 'from-yellow-500/20 to-yellow-900/5',
-    accent: 'text-yellow-500',
-    border: 'group-hover:border-yellow-500/50',
-    items: ['Reaper', 'GitHub', 'Perforce', 'iZotope RX', 'Logic Pro']
+    accentColor: '#eab308',
+    items: ['Reaper', 'Logic Pro', 'iZotope RX', 'GitHub', 'Perforce'],
+    gridClass: 'md:col-span-2'
   }
 ];
 
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.08,
-            delayChildren: 0.1
-        }
-    }
-};
-
-const itemVariants = {
-    hidden: { opacity: 0, y: 20, rotateX: -90 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        rotateX: 0,
-        transition: { type: "spring", stiffness: 100, damping: 12 }
-    }
-};
-
 const TechConstellation = ({ onSelect }: TechConstellationProps) => {
   return (
-    <div className="w-full py-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto px-4">
-        {TECH_CARDS.map((card, i) => (
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {TECH_CARDS.map((card, cardIndex) => {
+        const Icon = card.icon;
+
+        return (
           <motion.div
             key={card.id}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className={`
-                group relative h-[420px] rounded-2xl border border-white/5 bg-[#0a0a0a] overflow-hidden cursor-default
-                transition-all duration-500 hover:shadow-2xl hover:-translate-y-2
-                ${card.border}
-            `}
+            transition={{ delay: cardIndex * 0.1, duration: 0.5 }}
+            className={`${card.gridClass} group`}
           >
-            {/* Background Gradient */}
-            <div className={`absolute inset-0 bg-gradient-to-b ${card.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-            
-            {/* Default State: Big Icon & Title */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 transition-all duration-500 group-hover:opacity-0 group-hover:scale-90">
-                <div className={`p-6 rounded-full bg-white/5 mb-6 ${card.accent}`}>
-                    <card.icon size={64} strokeWidth={1} />
+            <div
+              className="relative h-full min-h-[240px] rounded-2xl border border-white/10 overflow-hidden transition-all duration-300 hover:border-white/20"
+              style={{
+                background: `linear-gradient(135deg, ${card.accentColor}08 0%, transparent 60%)`
+              }}
+            >
+              {/* Glow effect on hover */}
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{
+                  background: `radial-gradient(circle at 50% 0%, ${card.accentColor}15, transparent 70%)`
+                }}
+              />
+
+              <div className="relative z-10 h-full p-6 flex flex-col">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-4">
+                    <div
+                      className="p-3 rounded-xl transition-all duration-300 group-hover:scale-110"
+                      style={{
+                        background: `linear-gradient(135deg, ${card.accentColor}25, ${card.accentColor}10)`,
+                      }}
+                    >
+                      <Icon
+                        size={24}
+                        style={{ color: card.accentColor }}
+                        className="transition-all duration-300"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-display font-bold text-white tracking-wide">
+                        {card.title}
+                      </h3>
+                      <p className="text-[10px] text-slate-500 font-mono uppercase tracking-[0.15em]">
+                        {card.subtitle}
+                      </p>
+                    </div>
+                  </div>
+
+                  <span
+                    className="px-2 py-1 rounded-full text-[10px] font-mono"
+                    style={{
+                      backgroundColor: `${card.accentColor}20`,
+                      color: card.accentColor
+                    }}
+                  >
+                    {card.items.length}
+                  </span>
                 </div>
-                <h3 className="text-xl font-display font-bold text-white text-center tracking-wide uppercase">{card.title}</h3>
-                <p className="text-xs text-slate-500 font-mono uppercase tracking-widest mt-2">{card.subtitle}</p>
+
+                {/* Skills Grid */}
+                <div className="flex-1 flex flex-wrap content-start gap-2">
+                  {card.items.map((tech) => {
+                    const iconKey = Object.keys(TECH_ICON_MAP).find(k => tech.includes(k));
+                    const iconPath = iconKey ? `/assets/icons/tech/${TECH_ICON_MAP[iconKey]}` : null;
+
+                    return (
+                      <button
+                        key={tech}
+                        onClick={() => onSelect(tech)}
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-white/10 hover:-translate-y-0.5 transition-all duration-200"
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = `${card.accentColor}50`;
+                          e.currentTarget.style.boxShadow = `0 4px 20px ${card.accentColor}20`;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+                          e.currentTarget.style.boxShadow = 'none';
+                        }}
+                      >
+                        {iconPath && (
+                          <img
+                            src={iconPath}
+                            alt=""
+                            className="w-5 h-5 object-contain"
+                          />
+                        )}
+                        <span className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+                          {tech}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Bottom accent */}
+                <div className="mt-4 pt-4 border-t border-white/5">
+                  <div
+                    className="h-1 rounded-full transition-all duration-500 group-hover:w-full"
+                    style={{
+                      width: '25%',
+                      background: `linear-gradient(90deg, ${card.accentColor}, transparent)`,
+                      opacity: 0.5
+                    }}
+                  />
+                </div>
+              </div>
             </div>
-
-            {/* Hover State: List of Skills (Snail Animation) */}
-            <div className="absolute inset-0 flex flex-col justify-center p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <h4 className={`text-lg font-bold mb-6 ${card.accent} text-center uppercase tracking-widest border-b border-white/10 pb-2`}>{card.title}</h4>
-                
-                <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    whileHover="visible"
-                    className="flex flex-wrap justify-center gap-3"
-                >
-                    {card.items.map(tech => {
-                        // Find specific icon if exists
-                        const iconKey = Object.keys(TECH_ICON_MAP).find(k => tech.includes(k));
-                        const iconPath = iconKey ? `/assets/icons/tech/${TECH_ICON_MAP[iconKey]}` : null;
-
-                        return (
-                            <motion.button
-                                key={tech}
-                                variants={itemVariants}
-                                onClick={(e) => { e.stopPropagation(); onSelect(tech); }}
-                                className="flex items-center gap-2 px-3 py-2 bg-black/60 border border-white/10 rounded hover:bg-white/10 hover:border-white/30 transition-colors backdrop-blur-sm"
-                            >
-                                {iconPath && <img src={iconPath} alt="" className="w-4 h-4 object-contain" />}
-                                <span className="text-sm font-medium text-slate-200">{tech}</span>
-                            </motion.button>
-                        );
-                    })}
-                </motion.div>
-            </div>
-
           </motion.div>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 };

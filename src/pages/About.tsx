@@ -6,32 +6,42 @@ import { motion } from 'framer-motion';
 import Modal from '../components/ui/Modal';
 import SEO from '../components/layout/SEO';
 import TechConstellation from '../components/home/TechConstellation';
-import { TechCategory } from '../types';
 
 const About = () => {
-  const { personal_info, professional_summary, technical_skills_matrix } = usePortfolioData();
-  const { t, i18n } = useTranslation();
+  const { personal_info, professional_summary } = usePortfolioData();
+  const { t } = useTranslation();
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
 
   const getTechDescription = (name: string): string => {
-    if (!name || !technical_skills_matrix) return "";
-    
-    const searchName = name.toLowerCase();
-    const currentLang = (i18n.language || 'en').split('-')[0];
+    if (!name) return "";
 
-    for (const category of Object.values(technical_skills_matrix) as TechCategory[]) {
-        if (!category.tools) continue;
-        
-        for (const [key, value] of Object.entries(category.tools)) {
-            if (searchName.includes(key.toLowerCase()) || key.toLowerCase().includes(searchName)) {
-                const transKey = `tech_${key.toLowerCase().replace(/\s+/g, '')}_desc`;
-                const translated = t(transKey, { defaultValue: '' });
-                if (translated) return translated;
-                if (value.rich_descriptions?.[currentLang]) return value.rich_descriptions[currentLang];
-                return value.description || value.desc || "";
-            }
-        }
+    // Direct mapping of tech names to translation keys
+    const techKeyMap: Record<string, string> = {
+      'Wwise': 'tech_wwise_desc',
+      'FMOD': 'tech_fmod_desc',
+      'MetaSounds': 'tech_metasounds_desc',
+      '3D Audio': 'tech_3daudio_desc',
+      'Unreal Engine 5': 'tech_unreal_desc',
+      'Unity': 'tech_unity_desc',
+      'C++': 'tech_cpp_desc',
+      'C#': 'tech_csharp_desc',
+      'Python': 'tech_python_desc',
+      'Blueprints': 'tech_blueprints_desc',
+      'JUCE': 'tech_juce_desc',
+      'Pure Data': 'tech_puredata_desc',
+      'Reaper': 'tech_reaper_desc',
+      'Logic Pro': 'tech_logic_desc',
+      'iZotope RX': 'tech_izotoperx_desc',
+      'GitHub': 'tech_github_desc',
+      'Perforce': 'tech_perforce_desc',
+    };
+
+    const translationKey = techKeyMap[name];
+    if (translationKey) {
+      const translated = t(translationKey, { defaultValue: '' });
+      if (translated && translated !== translationKey) return translated;
     }
+
     return t('tech_desc_default', 'Professional proficiency and production experience.');
   };
 
@@ -153,18 +163,13 @@ const About = () => {
             </motion.div>
         </div>
 
-        {/* SYSTEM ARCHITECTURE (Tech Constellation) */}
+        {/* Technical Skills */}
         <div className="mb-32">
             <div className="flex items-end justify-between mb-12 border-b border-white/10 pb-4">
-                <div>
-                    <h2 className="text-2xl font-display font-bold text-white flex items-center gap-3">
-                        <Cpu className="text-accent" size={24} />
-                        {t('skills.title', 'SYSTEM ARCHITECTURE')}
-                    </h2>
-                </div>
-                <div className="hidden md:block text-xs font-mono text-slate-600 uppercase tracking-widest">
-                    // Interactive Graph
-                </div>
+                <h2 className="text-2xl font-display font-bold text-white flex items-center gap-3">
+                    <Cpu className="text-accent" size={24} />
+                    {t('skills.title', 'Technical Skills')}
+                </h2>
             </div>
             <div className="bg-white/[0.02] border border-white/5 rounded-xl p-4 md:p-8">
                  <TechConstellation onSelect={setSelectedTech} />
