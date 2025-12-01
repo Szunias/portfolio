@@ -2,7 +2,7 @@ import { useParams, Navigate } from 'react-router-dom';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Code, Images } from 'lucide-react';
+import { Images } from 'lucide-react';
 import SEO from '../components/layout/SEO';
 import ProjectHero from '../components/features/projects/ProjectHero';
 import ProjectSidebar from '../components/features/projects/ProjectSidebar';
@@ -77,13 +77,7 @@ const ProjectDetails = () => {
 
             {/* Code Snippets */}
             {project.code_snippets && (
-                <div className="space-y-6">
-                    <h3 className="text-2xl font-bold text-white flex items-center gap-3">
-                        <Code size={24} className="text-accent" />
-                        {t('details.tech', 'Technical Implementation')}
-                    </h3>
-                    <CodeViewer snippets={project.code_snippets} />
-                </div>
+                <CodeViewer snippets={project.code_snippets} />
             )}
 
             {/* Gallery */}
