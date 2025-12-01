@@ -5,24 +5,11 @@ import { Link } from 'react-router-dom';
 
 const AudioAura = () => {
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] pointer-events-none z-0 opacity-40 flex items-center justify-center">
-      
-      {/* Outer Ring */}
-      <motion.div 
-        animate={{ rotate: 360 }}
-        transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
-        className="absolute inset-0 border-[1px] border-white/10 rounded-full"
-      />
-
-      {/* Inner Ring */}
-      <motion.div 
-        animate={{ rotate: -360 }}
-        transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
-        className="absolute inset-[25%] border-[1px] border-white/5 rounded-full"
-      />
-      
-      {/* Core Glow */}
-      <div className="absolute inset-[40%] bg-accent/5 rounded-full blur-3xl"></div>
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none z-0">
+      {/* Outer soft glow */}
+      <div className="absolute inset-0 bg-accent/5 rounded-full blur-[100px]" />
+      {/* Core glow */}
+      <div className="absolute inset-[30%] bg-accent/8 rounded-full blur-[80px]" />
     </div>
   );
 };
@@ -31,8 +18,11 @@ const Hero = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-[#020202]">
-      
+    <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
+
+      {/* Black to transparent gradient - smooth transition to Layout gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#020202] via-[#020202]/60 to-transparent pointer-events-none" />
+
       {/* Ambient Background - "Northern Lights" feel */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[80vw] h-[50vh] bg-accent/10 blur-[150px] rounded-full opacity-40 mix-blend-screen" />
@@ -122,8 +112,6 @@ const Hero = () => {
         </div>
       </motion.div>
 
-      {/* Bottom Gradient Mask - Seamless Transition */}
-      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-[#050505] via-[#050505] via-10% to-transparent pointer-events-none z-20"></div>
     </section>
   );
 };
