@@ -177,9 +177,16 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                                 onMouseEnter={() => setHoveredTech(tech)}
                                 onMouseLeave={() => setHoveredTech(null)}
                                 onClick={() => onSelect(tech)}
+                                animate={{
+                                    scale: isActiveChain ? 1.15 : 1,
+                                    borderColor: isActiveChain ? col.color : 'rgba(255,255,255,0.05)',
+                                    boxShadow: isActiveChain ? `0 0 30px ${col.color}40` : 'none',
+                                    backgroundColor: isActiveChain ? '#1a1a1a' : '#151515',
+                                }}
+                                transition={{ duration: 0.3 }}
                                 className={`
-                                    relative group cursor-pointer rounded-lg overflow-hidden border transition-all duration-300 w-full
-                                    ${isActiveChain ? 'border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.1)] scale-105 z-30' : 'border-white/5 bg-[#151515] hover:border-white/20 z-10'}
+                                    relative group cursor-pointer rounded-lg overflow-hidden border w-full
+                                    ${isActiveChain ? 'z-50' : 'hover:border-white/20 z-10'}
                                     ${hoveredTech && !isActiveChain ? 'opacity-20 blur-[1px]' : 'opacity-100'}
                                 `}
                              >
@@ -193,14 +200,23 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                                      ) : (
                                          <div className="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-[10px] font-mono text-slate-500">?</div>
                                      )}
-                                     <span className={`text-sm font-bold tracking-wide transition-colors ${isActiveChain ? 'text-white' : 'text-slate-400'}`}>
+                                     <span 
+                                        className="text-sm font-bold tracking-wide transition-colors"
+                                        style={{ color: isActiveChain ? '#fff' : '#94a3b8' }}
+                                     >
                                          {tech}
                                      </span>
                                  </div>
 
                                  {/* Ports */}
-                                 <div className={`absolute top-1/2 -left-1.5 -translate-y-1/2 w-3 h-3 rounded-full border border-black transition-colors ${isActiveChain ? 'bg-white' : 'bg-[#333]'}`}></div>
-                                 <div className={`absolute top-1/2 -right-1.5 -translate-y-1/2 w-3 h-3 rounded-full border border-black transition-colors ${isActiveChain ? 'bg-white' : 'bg-[#333]'}`}></div>
+                                 <div 
+                                    className="absolute top-1/2 -left-1.5 -translate-y-1/2 w-3 h-3 rounded-full border border-black transition-colors"
+                                    style={{ backgroundColor: isActiveChain ? col.color : '#333' }}
+                                 ></div>
+                                 <div 
+                                    className="absolute top-1/2 -right-1.5 -translate-y-1/2 w-3 h-3 rounded-full border border-black transition-colors"
+                                    style={{ backgroundColor: isActiveChain ? col.color : '#333' }}
+                                 ></div>
                              </motion.div>
                          )
                     })}
