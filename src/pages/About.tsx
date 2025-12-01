@@ -55,20 +55,20 @@ const About = () => {
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-20">
+      <main className="relative z-10 max-w-5xl mx-auto px-6 pt-32 pb-20">
         
         {/* HERO GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-24 items-start">
             
             {/* LEFT: Image Column */}
             <motion.div 
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8 }}
-                className="lg:col-span-5 flex justify-center lg:justify-start"
+                className="lg:col-span-4 flex justify-center"
             >
                 {/* HARD CONSTRAINT CONTAINER */}
-                <div style={{ width: '180px', height: '240px' }} className="relative flex-shrink-0 mx-auto lg:mx-0 opacity-90 hover:opacity-100 transition-opacity">
+                <div style={{ width: '220px', height: '290px' }} className="relative flex-shrink-0 opacity-90 hover:opacity-100 transition-opacity">
                     {/* Tech Borders */}
                     <div className="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-accent/50"></div>
                     <div className="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-accent/50"></div>

@@ -265,6 +265,9 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                   (wire.target === hoveredTech && TECH_CONNECTIONS[wire.source].includes(hoveredTech))
               );
               
+              // Hide if not part of active chain, or if nothing is hovered (clean look)
+              if (!isActive) return null;
+
               const sourceCol = PIPELINE_COLUMNS.find(c => c.items.includes(wire.source));
               const color = sourceCol ? sourceCol.color : '#fff';
 
@@ -274,7 +277,7 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                     start={wire.sourceNode}
                     end={wire.targetNode}
                     color={color}
-                    isActive={!!isActive}
+                    isActive={true}
                   />
               );
           })}
