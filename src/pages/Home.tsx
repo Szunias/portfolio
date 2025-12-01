@@ -23,7 +23,7 @@ const Home = () => {
       <SEO /> {/* Default home metadata */}
       <Hero />
       
-      <div id="showreel-section" className="relative z-40 -mt-48">
+      <div id="showreel-section" className="relative z-40 -mt-12">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050505]/50 to-[#050505] -z-10 pointer-events-none h-full w-full blur-3xl" />
         <Showreel />
         {/* Seam/Transition Fix: Ensure bottom of this section blends perfectly into the next */}
