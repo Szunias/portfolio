@@ -1,5 +1,4 @@
 import { Project } from '../../types';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ImageWithLoader from '../ui/ImageWithLoader';
@@ -100,12 +99,9 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
   );
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, delay: index < 6 ? index * 0.1 : 0 }}
-      className="group relative w-full bg-[#0a0a0a] border border-white/5 hover:border-accent/30 rounded-lg overflow-hidden hover:shadow-[0_0_30px_-10px_rgba(56,189,248,0.15)] transition-all duration-500"
+    <div
+      className="group relative w-full bg-[#0a0a0a] border border-white/5 hover:border-accent/30 rounded-lg overflow-hidden hover:shadow-[0_0_30px_-10px_rgba(56,189,248,0.15)] transition-all duration-500 animate-fade-in-up"
+      style={{ animationDelay: `${index < 6 ? index * 100 : 0}ms` }}
     >
       {project.externalLink ? (
         <a href={project.externalLink} className="block h-full">
@@ -116,7 +112,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             {cardContent}
         </Link>
       )}
-    </motion.div>
+    </div>
   );
 };
 

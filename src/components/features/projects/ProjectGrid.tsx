@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Project } from '../../../types';
 import ProjectCard from '../ProjectCard';
@@ -19,16 +18,14 @@ const ProjectGrid = ({ projects }: ProjectGridProps) => {
   }
 
   return (
-    <motion.div 
-      layout
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
     >
       {projects.map((project, index) => {
         return (
           <ProjectCard key={project.id} project={project} index={index} />
         );
       })}
-    </motion.div>
+    </div>
   );
 };
 

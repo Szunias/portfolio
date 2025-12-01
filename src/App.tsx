@@ -2,7 +2,6 @@ import { Suspense, lazy, ComponentType } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import ScrollToTop from './components/layout/ScrollToTop';
-import PageLoader from './components/ui/PageLoader';
 import { ROUTES } from './constants/routes';
 
 // Helper to handle chunk load errors (auto-reload once)
@@ -43,7 +42,7 @@ function App() {
     <Router>
       <ScrollToTop />
       <Layout>
-        <Suspense fallback={<PageLoader />}>
+        <Suspense fallback={null}>
           <Routes>
             <Route path={ROUTES.HOME} element={<Home />} />
             <Route path={ROUTES.PROJECTS} element={<Projects />} />
