@@ -68,7 +68,7 @@ const About = () => {
                 className="lg:col-span-5 flex justify-center lg:justify-start"
             >
                 {/* HARD CONSTRAINT CONTAINER */}
-                <div style={{ width: '240px', height: '320px' }} className="relative flex-shrink-0 mx-auto lg:mx-0">
+                <div style={{ width: '180px', height: '240px' }} className="relative flex-shrink-0 mx-auto lg:mx-0 opacity-90 hover:opacity-100 transition-opacity">
                     {/* Tech Borders */}
                     <div className="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-accent/50"></div>
                     <div className="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-accent/50"></div>
