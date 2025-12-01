@@ -1,66 +1,69 @@
 import { useTranslation } from 'react-i18next';
-
-type WeekStatus = 'completed' | 'current' | 'upcoming';
-
-interface Week {
-  week: number;
-  status: WeekStatus;
-}
-
-const weeks: Week[] = [
-  { week: 1, status: 'completed' },
-  { week: 2, status: 'completed' },
-  { week: 3, status: 'completed' },
-  { week: 4, status: 'completed' },
-  { week: 5, status: 'completed' },
-  { week: 6, status: 'completed' },
-  { week: 7, status: 'completed' },
-  { week: 8, status: 'current' },
-  { week: 9, status: 'upcoming' },
-];
-
-const phases = [
-  { label: 'timeline.prototype', start: 1, end: 2 },
-  { label: 'timeline.production', start: 3, end: 7 },
-  { label: 'timeline.polish', start: 8, end: 9 },
-];
+import { useState } from 'react';
 
 const ProductionTimeline = () => {
   const { t } = useTranslation();
-  const currentWeek = weeks.find(w => w.status === 'current')?.week || 0;
+  const [hoveredWeek, setHoveredWeek] = useState<number | null>(null);
+  const currentWeek = 8;
+  const totalWeeks = 9;
+
+  const phases = [
+    { name: t('timeline.prototype', 'Prototype'), weeks: [1, 2], color: 'bg-slate-600' },
+    { name: t('timeline.production', 'Production'), weeks: [3, 4, 5, 6, 7], color: 'bg-slate-500' },
+    { name: t('timeline.polish', 'Polish'), weeks: [8, 9], color: 'bg-accent' },
+  ];
+
+  const getPhaseForWeek = (week: number) => phases.find(p => p.weeks.includes(week))?.name || '';
 
   return (
-    <div className="space-y-4">
-      {/* Current status */}
-      <div className="flex items-baseline gap-3">
-        <span className="text-3xl font-bold text-white">Week {currentWeek}</span>
-        <span className="text-slate-500">of {weeks.length}</span>
-        <span className="text-accent text-sm font-medium ml-auto">
-          {t('timeline.polish', 'Polish')}
+    <div className="space-y-3">
+      {/* Week indicator */}
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          {Array.from({ length: totalWeeks }, (_, i) => i + 1).map((week) => (
+            <div
+              key={week}
+              className="relative group"
+              onMouseEnter={() => setHoveredWeek(week)}
+              onMouseLeave={() => setHoveredWeek(null)}
+            >
+              <div
+                className={`
+                  w-3 h-3 rounded-full transition-all cursor-pointer
+                  hover:scale-125
+                  ${week < currentWeek ? 'bg-white/40 hover:bg-white/60' : ''}
+                  ${week === currentWeek ? 'bg-accent w-4 h-4 ring-2 ring-accent/30' : ''}
+                  ${week > currentWeek ? 'bg-slate-700 hover:bg-slate-600' : ''}
+                `}
+              />
+              {/* Tooltip */}
+              {hoveredWeek === week && (
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-800 rounded text-xs whitespace-nowrap z-10 border border-white/10">
+                  <span className="text-white font-medium">W{week}</span>
+                  <span className="text-slate-400 ml-1">{getPhaseForWeek(week)}</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <span className="text-sm text-slate-400 ml-2">
+          <span className="text-white font-semibold">{currentWeek}</span>/{totalWeeks}
         </span>
       </div>
 
-      {/* Progress bar */}
-      <div className="relative h-2 bg-slate-800 rounded-full overflow-hidden">
-        <div
-          className="absolute inset-y-0 left-0 bg-accent rounded-full"
-          style={{ width: `${((currentWeek - 0.5) / weeks.length) * 100}%` }}
-        />
-      </div>
-
-      {/* Phase markers */}
-      <div className="flex text-xs text-slate-500">
-        {phases.map((phase, i) => (
-          <div
-            key={i}
-            className="text-center"
-            style={{ flex: phase.end - phase.start + 1 }}
-          >
-            <span className={currentWeek >= phase.start && currentWeek <= phase.end ? 'text-accent' : ''}>
-              {t(phase.label)}
-            </span>
-          </div>
-        ))}
+      {/* Phase labels */}
+      <div className="flex gap-4 text-xs">
+        {phases.map((phase, i) => {
+          const isActive = phase.weeks.includes(currentWeek);
+          return (
+            <div key={i} className="flex items-center gap-1.5">
+              <div className={`w-2 h-2 rounded-sm ${phase.color}`} />
+              <span className={isActive ? 'text-white font-medium' : 'text-slate-500'}>
+                {phase.name}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

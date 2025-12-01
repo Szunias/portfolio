@@ -254,9 +254,19 @@
   "project_nottoday_block1_content": "<p><strong>ROLA:</strong> Samodzielny projektant dźwięku w 6-osobowym zespole. Odpowiadałem za wszystko: pozyskiwanie dźwięków (Soundly), przetwarzanie i miksowanie (REAPER), budowanie systemów proceduralnych (MetaSounds) oraz implementację architektury C++.</p><p><strong>WYNIK:</strong> Wydane na itch.io w maju 2025. Buildy na Windows i Linux wspierają 2-4 graczy lokalnie.</p>",
   "project_nottoday_block2_title": "Implementacja MetaSounds",
   "project_nottoday_block2_content": "<p>Zbudowane w całości na MetaSounds dla audio proceduralnego. Parametry sterują modulacją w czasie rzeczywistym, a miksowanie oparte na priorytetach utrzymuje chaos pod kontrolą.</p><ul><li>Prędkość mapuje mnożnik wysokości tonu (0.8x-1.3x)</li><li>Enum powierzchni wybiera próbki z crossfadem</li><li>Siła kolizji steruje głośnością uderzenia</li></ul>",
-  "project_shadowframes_full_desc": "Psychologiczny horror osadzony w irlandzkim pubie lat 60. Dźwięk to nie tylko klimat — to główny mechanizm detekcji.\n\nStworzony we współpracy z RITCS (Narracja) i KASK (Muzyka). Moja rola obejmowała pełny pipeline audio: od nagrywania foley po implementację złożonych systemów Wwise w Unreal Engine C++.",
-  "project_shadowframes_collab_title": "Współpraca Międzyinstytucjonalna",
-  "project_shadowframes_collab_desc": "• RITCS: Narrative Design & Historia\n• KASK: Kompozycja Muzyczna\n• Howest DAE: Game Development & Audio",
+  "project_shadow_frames_full_desc": "Horror w irlandzkim pubie z lat 60. Dźwięk to główna mechanika - słyszysz anomalie zanim je zobaczysz.",
+  "project_shadow_frames_collab_title": "Zespół",
+  "project_shadow_frames_collab_desc": "• RITCS: Narracja\n• KASK: Muzyka\n• Howest DAE: Kod i Audio",
+  "sf.block.enemy_title": "Enemy Presence Config",
+  "sf.block.enemy_desc": "DataAsset z referencjami Wwise: eventy Dread Layers, Breathing loop, RTPC proximity i stress. Progi histerezy (5/2) zapobiegają migotaniu. Designerzy edytują tu, bez kodu.",
+  "sf.block.mixer_title": "Struktura Busów",
+  "sf.block.mixer_desc": "Master dzieli się na Ambient, Dialogue, Environment, Music, Player, SFX, Distortion. Aux reverby na rozmiary pomieszczeń. Czyste routowanie.",
+  "sf.block.anomaly_title": "Switch Container Anomalii",
+  "sf.block.anomaly_desc": "ANMLY_Spawn używa switcha AnomalyType. Calendar, Clock, Coffee, CryingBottle, Fan - każda mapuje na swój dźwięk. Attenuation 812m max. Jeden event, wiele wyników.",
+  "sf.block.dialogue_title": "Voice Lines per Anomalia",
+  "sf.block.dialogue_desc": "KeiranVoicelinesSwitch - 10 anomalii, każda z unikalnymi kwestiami. Switch StoryAnomaly wybiera zestaw. Volume/Pitch/LPF regulowane per linia.",
+  "details.technical_dive": "Szczegóły Techniczne",
+  "details.technical_dive_hint": "Detale implementacji dla programistów",
   "project_amorak_full_desc": "Zobacz jak sound design buduje atmosferę horroru. Każdy warkot bestii, warstwa otoczenia i detal przestrzenny został stworzony, aby budować immersyjne napięcie, które skaluje się dynamicznie wraz z obrazem.\n\nKluczowe elementy:\n• Sygnatury dźwiękowe bestii\n• Warstwy atmosfery otoczenia\n• Dynamiczny miks przestrzenny\n• Skalowanie intensywności oparte na bliskości",
   "project_amorak_block1_title": "Design Audio Bestii",
   "project_amorak_block1_content": "Każde stworzenie ma unikalną tożsamość dźwiękową zbudowaną z organicznych tekstur, przetworzonych odgłosów zwierząt i syntezowanych sub-częstotliwości. Obecność bestii jest odczuwalna poprzez niskie dudnienia, które nasilają się wraz z bliskością.",
@@ -412,6 +422,48 @@
     "polish": "Polish"
   },
   "ann": {
+    "config": {
+      "dataasset": {
+        "label": "Wzorzec DataAsset",
+        "desc": "Czysty kontener danych - zero logiki, tylko właściwości edytora. Designerzy tworzą instancje, przypisują eventy Wwise i dostosowują wartości. Bez rekompilacji C++."
+      },
+      "wwise": {
+        "label": "Referencja Wwise",
+        "desc": "TObjectPtr do assetu Wwise. Eventy, RTPC, switche - wszystko przypisane w edytorze. Zero hardcodowanych stringów. Zmiana audio = zamiana referencji."
+      },
+      "hysteresis": {
+        "label": "Wartości Histerezy",
+        "desc": "Progi Start/Stop zapobiegają migotaniu audio. Designerzy dostosowują je per-enemy bez zmian w kodzie. Meta tagi dodają walidację edytora."
+      }
+    },
+    "poly": {
+      "reflection": {
+        "label": "Refleksja Runtime",
+        "desc": "GetClass() zwraca faktyczny typ runtime. Dla BP_GhostAnomaly dziedziczącego z ABaseAnomaly, zwraca klasę BP_GhostAnomaly."
+      },
+      "hierarchy": {
+        "label": "Przechodzenie Hierarchii",
+        "desc": "Idzie w górę hierarchii klas aż znajdzie ustawienia. BP_GhostAnomaly → AGhostAnomaly → ABaseAnomaly. Pierwszy match wygrywa."
+      },
+      "tmap": {
+        "label": "Lookup TMap",
+        "desc": "TMap<TSubclassOf<ABaseAnomaly>, FAnomalyAudioSettings> - designerzy mapują klasy anomalii do switchów audio w edytorze. Nowa anomalia = nowy wiersz w DataAsset."
+      }
+    },
+    "dialogue": {
+      "struct": {
+        "label": "Wiersz DataTable",
+        "desc": "FTableRowBase umożliwia integrację z DataTable. Każdy wiersz = jeden wpis dialogu ze switchem Wwise + czasem trwania. Przyjazny dla CSV."
+      },
+      "datatable": {
+        "label": "Metadane Audio",
+        "desc": "DataTable przechowuje konfigurację audio - który switch Wwise, jak długo wyświetlać napisy. Oddzielone od tekstu dla czystszej lokalizacji."
+      },
+      "stringtable": {
+        "label": "Zlokalizowany Tekst",
+        "desc": "StringTable dla tekstu dialogów - natywny system lokalizacji Unreala. Ten sam klucz AnomalyID w obu tabelach. Zespół tekstowy edytuje StringTable, audio - DataTable."
+      }
+    },
     "enemy": {
       "proximity": {
         "label": "Callback Bliskości",
@@ -522,6 +574,60 @@
       "post": {
         "label": "Event Post",
         "desc": "PostAkEvent uruchamia Event Wwise na tym konkretnym aktorze. Pozycjonowany 3D, respektuje ustawienia okluzji/tłumienia skonfigurowane w Wwise."
+      }
+    },
+    "foot": {
+      "timer": {
+        "label": "Inteligentny Timer",
+        "desc": "Uruchamia timer kroków tylko gdy postać się porusza. Zapobiega fantomowym krokom przy staniu. Timer powtarza się w skonfigurowanym interwale."
+      },
+      "cleanup": {
+        "label": "Czyszczenie Timera",
+        "desc": "Natychmiast czyści timer gdy ruch się kończy. Żadnych zalegających kroków po zatrzymaniu. Czyste zarządzanie stanem."
+      },
+      "physmat": {
+        "label": "Physical Material",
+        "desc": "Krytyczna flaga: bReturnPhysicalMaterial musi być true. Bez tego PhysMaterial zawsze będzie null - częsta pułapka w audio Unreal."
+      },
+      "trace": {
+        "label": "Line Trace",
+        "desc": "Strzela promień w dół aby wykryć powierzchnię. Używa kanału Visibility. Zwraca typ powierzchni dla wyboru Switch Wwise."
+      }
+    },
+    "prox": {
+      "hysteresis": {
+        "label": "Przerwa Histerezy",
+        "desc": "Próg startu wyższy niż stopu. Wróg na 25% włącza audio, ale musi spaść do 15% żeby wyłączyć. Zapobiega szybkiemu migotaniu on/off."
+      },
+      "postevent": {
+        "label": "Wwise PostEvent",
+        "desc": "UAkGameplayStatics::PostEvent uruchamia audio na tym aktorze. Pozycjonowane 3D, respektuje krzywe tłumienia ustawione w projekcie Wwise."
+      },
+      "stopthresh": {
+        "label": "Próg Stopu",
+        "desc": "Niższy próg dla zatrzymania audio. Tworzy pasmo histerezy wygładzające przejścia. Brak zacinania gdy wróg oscyluje na granicy."
+      },
+      "rtpc": {
+        "label": "Aktualizacja RTPC",
+        "desc": "Real-Time Parameter Control. Wysyła wartość bliskości do Wwise ciągle. Kontroluje głośność, filtr, pitch - płynna modulacja, bez skoków."
+      }
+    },
+    "cache": {
+      "interval": {
+        "label": "Odświeżanie Cache",
+        "desc": "Odświeża listę wrogów co N sekund, nie co klatkę. GetAllActorsOfClass jest kosztowne - cache zapobiega spadkom wydajności."
+      },
+      "normalize": {
+        "label": "Normalizacja Dystansu",
+        "desc": "Konwertuje surowy dystans na zakres 0-100%. Odwrócone: bliższy wróg = wyższa wartość. Systemy audio pracują na znormalizowanych wartościach."
+      },
+      "threshold": {
+        "label": "Próg Zmiany",
+        "desc": "Broadcastuje tylko gdy bliskość zmieni się znacząco. Zapobiega spamowaniu systemu audio mikro-ruchami. Typowo próg 1-5%."
+      },
+      "broadcast": {
+        "label": "Broadcast Eventu",
+        "desc": "Multicast delegate powiadamia wszystkich słuchaczy. Audio manager, UI, systemy gameplay - wszystkie subskrybują. Rozprzężona architektura."
       }
     }
   },

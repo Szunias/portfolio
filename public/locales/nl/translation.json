@@ -227,9 +227,19 @@
   "project_nottoday_block1_content": "<p><strong>ROL:</strong> Solo audio designer in een team van 6 studenten. Ik deed alles: geluiden zoeken (Soundly), verwerken en mixen (REAPER), procedurele systemen bouwen (MetaSounds) en de C++ architectuur implementeren.</p><p><strong>RESULTAAT:</strong> Uitgebracht op itch.io in mei 2025. Windows en Linux builds ondersteunen 2-4 spelers lokaal.</p>",
   "project_nottoday_block2_title": "MetaSounds Implementatie",
   "project_nottoday_block2_content": "<p>Volledig gebouwd op MetaSounds voor procedurele audio. Parameters sturen realtime modulatie aan, en mixing op basis van prioriteit houdt de chaos onder controle.</p><ul><li>Snelheid bepaalt pitch multiplier (0.8x-1.3x)</li><li>Oppervlakte-enum selecteert crossfaded samples</li><li>Botsingskracht bepaalt impactvolume</li></ul>",
-  "project_shadowframes_full_desc": "Psychologische horror in een Ierse pub uit de jaren 60. Geluid is niet alleen sfeer - het is het primaire detectiemechanisme.\n\nOntwikkeld in samenwerking met RITCS (Verhaal) en KASK (Muziek). Mijn rol omvatte de volledige audio pipeline: van foley-opnames tot Wwise-implementatie in Unreal Engine C++.",
-  "project_shadowframes_collab_title": "Multi-institutionele Samenwerking",
-  "project_shadowframes_collab_desc": "• RITCS: Narrative Design & Verhaal\n• KASK: Muziekcompositie\n• Howest DAE: Game Development & Audio",
+  "project_shadow_frames_full_desc": "Horror in een Ierse pub uit de jaren 60. Geluid is de hoofdmechaniek - je hoort anomalieën voordat je ze ziet.",
+  "project_shadow_frames_collab_title": "Team",
+  "project_shadow_frames_collab_desc": "• RITCS: Narratief\n• KASK: Muziek\n• Howest DAE: Code & Audio",
+  "sf.block.enemy_title": "Enemy Presence Config",
+  "sf.block.enemy_desc": "DataAsset met Wwise referenties: Dread Layers events, Breathing loop, RTPCs voor proximity en stress. Hysteresis drempels (5/2) voorkomen flikkeren. Designers tweaken hier, geen code.",
+  "sf.block.mixer_title": "Bus Structuur",
+  "sf.block.mixer_desc": "Master bus splitst in Ambient, Dialogue, Environment, Music, Player, SFX, Distortion. Reverb aux bussen voor kamergroottes. Schone routing.",
+  "sf.block.anomaly_title": "Anomalie Switch Container",
+  "sf.block.anomaly_desc": "ANMLY_Spawn event gebruikt AnomalyType switch. Calendar, Clock, Coffee, CryingBottle, Fan - elk mapt naar eigen geluid. Attenuation curve 812m max. Eén event, veel uitkomsten.",
+  "sf.block.dialogue_title": "Voice Lines per Anomalie",
+  "sf.block.dialogue_desc": "KeiranVoicelinesSwitch - 10 anomalieën, elk met unieke lijnen. StoryAnomaly switch selecteert set. Volume/Pitch/LPF aanpasbaar per lijn.",
+  "details.technical_dive": "Technische Verdieping",
+  "details.technical_dive_hint": "Implementatiedetails voor programmeurs",
   "project_amorak_full_desc": "Creature sound design. 15+ vocal variations, procedural footsteps, environmental audio that reacts to creature proximity. Built in Reaper.",
   "stats": {
     "latency": "Latentie",
@@ -373,6 +383,48 @@
     "polish": "Polish"
   },
   "ann": {
+    "config": {
+      "dataasset": {
+        "label": "DataAsset Patroon",
+        "desc": "Pure data container - geen logica, alleen editor-exposed properties. Designers maken instances, wijzen Wwise events toe en tweaken waarden. Geen C++ hercompilatie nodig."
+      },
+      "wwise": {
+        "label": "Wwise Referentie",
+        "desc": "TObjectPtr naar Wwise asset. Audio events, RTPCs, switches - alles toegewezen in editor. Nul hardcoded strings. Verander audio door asset referenties te wisselen."
+      },
+      "hysteresis": {
+        "label": "Hysteresis Waarden",
+        "desc": "Start/Stop drempels voorkomen audio flikkering. Designers tunen deze per-enemy zonder codewijzigingen. Meta tags voegen editor validatie toe."
+      }
+    },
+    "poly": {
+      "reflection": {
+        "label": "Runtime Reflectie",
+        "desc": "GetClass() retourneert actuele runtime type. Voor BP_GhostAnomaly die erft van ABaseAnomaly, retourneert dit BP_GhostAnomaly klasse."
+      },
+      "hierarchy": {
+        "label": "Hiërarchie Walk",
+        "desc": "Loopt omhoog in class hiërarchie tot settings gevonden. BP_GhostAnomaly → AGhostAnomaly → ABaseAnomaly. Eerste match wint - meest specifieke heeft prioriteit."
+      },
+      "tmap": {
+        "label": "TMap Lookup",
+        "desc": "TMap<TSubclassOf<ABaseAnomaly>, FAnomalyAudioSettings> - designers mappen anomaly classes naar audio switches in editor. Nieuwe anomaly = nieuwe rij in DataAsset."
+      }
+    },
+    "dialogue": {
+      "struct": {
+        "label": "DataTable Rij",
+        "desc": "FTableRowBase maakt DataTable integratie mogelijk. Elke rij = één dialoog entry met Wwise switch + duur. CSV import/export vriendelijk."
+      },
+      "datatable": {
+        "label": "Audio Metadata",
+        "desc": "DataTable houdt audio config - welke Wwise switch, hoe lang ondertitel te tonen. Gescheiden van tekst voor schonere lokalisatie."
+      },
+      "stringtable": {
+        "label": "Gelokaliseerde Tekst",
+        "desc": "StringTable voor dialoog tekst - Unreal's native lokalisatie systeem. Zelfde AnomalyID key in beide tabellen. Tekst team bewerkt StringTable, audio team bewerkt DataTable."
+      }
+    },
     "enemy": {
       "proximity": {
         "label": "Proximity Callback",
@@ -483,6 +535,60 @@
       "post": {
         "label": "Event Post",
         "desc": "PostAkEvent triggert het Wwise Event op deze specifieke actor. 3D gepositioneerd, respecteert occlusie/attenuatie-instellingen geconfigureerd in Wwise."
+      }
+    },
+    "foot": {
+      "timer": {
+        "label": "Slimme Timer",
+        "desc": "Start voetstaptimer alleen bij daadwerkelijke beweging. Voorkomt fantoomvoetstappen bij stilstaan. Timer herhaalt automatisch op geconfigureerd interval."
+      },
+      "cleanup": {
+        "label": "Timer Opruimen",
+        "desc": "Wist timer onmiddellijk wanneer beweging stopt. Geen achtergebleven voetstappen na stoppen. Schoon state management."
+      },
+      "physmat": {
+        "label": "Physical Material",
+        "desc": "Kritieke vlag: bReturnPhysicalMaterial moet true zijn. Anders is PhysMaterial altijd null - veelvoorkomende Unreal audio valkuil."
+      },
+      "trace": {
+        "label": "Line Trace",
+        "desc": "Schiet straal naar beneden om vloeroppervlak te detecteren. Gebruikt Visibility kanaal. Retourneert oppervlaktype voor Wwise Switch selectie."
+      }
+    },
+    "prox": {
+      "hysteresis": {
+        "label": "Hysteresis Kloof",
+        "desc": "Startdrempel hoger dan stopdrempel. Vijand op 25% triggert audio, maar moet naar 15% dalen om te stoppen. Voorkomt snel aan/uit flikkeren."
+      },
+      "postevent": {
+        "label": "Wwise PostEvent",
+        "desc": "UAkGameplayStatics::PostEvent triggert audio op deze actor. 3D gepositioneerd, respecteert attenuatiecurves ingesteld in Wwise project."
+      },
+      "stopthresh": {
+        "label": "Stop Drempel",
+        "desc": "Lagere drempel voor stoppen audio. Creëert hysteresisband die overgangen vloeiend maakt. Geen audio stotteren bij grenswaarde."
+      },
+      "rtpc": {
+        "label": "RTPC Update",
+        "desc": "Real-Time Parameter Control. Stuurt nabijheidswaarde continu naar Wwise. Regelt volume, filter, pitch - vloeiende modulatie, geen stappen."
+      }
+    },
+    "cache": {
+      "interval": {
+        "label": "Cache Verversing",
+        "desc": "Vernieuwt vijandenlijst elke N seconden, niet elk frame. GetAllActorsOfClass is duur - caching voorkomt prestatieproblemen."
+      },
+      "normalize": {
+        "label": "Afstand Normaliseren",
+        "desc": "Converteert ruwe afstand naar 0-100% bereik. Omgekeerd: dichtere vijand = hogere waarde. Audiosystemen werken met genormaliseerde waarden."
+      },
+      "threshold": {
+        "label": "Wijzigingsdrempel",
+        "desc": "Broadcast alleen bij significante nabijheidsverandering. Voorkomt audiosysteem spam door microbewegingen. Typisch 1-5% drempel."
+      },
+      "broadcast": {
+        "label": "Event Broadcast",
+        "desc": "Multicast delegate informeert alle luisteraars. Audio manager, UI, gameplay systemen abonneren allemaal. Ontkoppelde architectuur."
       }
     }
   },

@@ -227,9 +227,19 @@
   "project_nottoday_block1_content": "<p><strong>ROLE:</strong> Solo audio on a 6-person team. I handled everything: sourcing sounds (Soundly), processing and mixing (REAPER), building procedural systems (MetaSounds), and implementing the C++ architecture.</p><p><strong>RESULT:</strong> Released on itch.io in May 2025. Windows and Linux builds support 2-4 players locally.</p>",
   "project_nottoday_block2_title": "MetaSounds Implementation",
   "project_nottoday_block2_content": "<p>Built entirely on MetaSounds for procedural audio. Parameters drive real-time modulation, and priority-based mixing keeps the chaos under control.</p><ul><li>Speed maps to pitch multiplier (0.8x-1.3x)</li><li>Surface enum selects crossfaded samples</li><li>Collision force drives impact volume</li></ul>",
-  "project_shadowframes_full_desc": "A psychological horror game set in a 1960s Irish pub. Audio is not just atmospheric—it's the primary detection mechanic.\n\nDeveloped in collaboration with RITCS (Narrative) and KASK Conservatory (Music). My role focused on the entire audio pipeline: from recording foley to implementing complex Wwise systems in Unreal Engine C++.",
-  "project_shadowframes_collab_title": "Multi-Institutional Collaboration",
-  "project_shadowframes_collab_desc": "• RITCS: Narrative Design & Story\n• KASK Conservatory: Music Composition\n• Howest DAE: Game Development & Audio Implementation",
+  "project_shadow_frames_full_desc": "Horror in a 1960s Irish pub. Sound is the main detection mechanic - you hear anomalies before you see them.",
+  "project_shadow_frames_collab_title": "Team",
+  "project_shadow_frames_collab_desc": "• RITCS: Narrative\n• KASK: Music\n• Howest DAE: Code & Audio",
+  "sf.block.enemy_title": "Enemy Presence Config",
+  "sf.block.enemy_desc": "DataAsset with all Wwise references: Dread Layers events, Breathing loop, RTPCs for proximity and stress. Hysteresis thresholds (5/2) prevent audio flicker. Designers tweak values here, no code needed.",
+  "sf.block.mixer_title": "Bus Structure",
+  "sf.block.mixer_desc": "Master bus splits into Ambient, Dialogue, Environment, Music, Player, SFX, Distortion. Reverb aux buses for room sizes. Clean routing for mixing.",
+  "sf.block.anomaly_title": "Anomaly Switch Container",
+  "sf.block.anomaly_desc": "ANMLY_Spawn event uses AnomalyType switch. Calendar, Clock, Coffee, CryingBottle, Fan - each maps to its sound. Attenuation curve at 812m max. One event, many outcomes.",
+  "sf.block.dialogue_title": "Voice Lines per Anomaly",
+  "sf.block.dialogue_desc": "KeiranVoicelinesSwitch - 10 anomalies, each with unique lines. StoryAnomaly switch selects which set plays. Voice Volume/Pitch/LPF tweakable per line.",
+  "details.technical_dive": "Technical Deep Dive",
+  "details.technical_dive_hint": "Implementation details for programmers",
   "project_amorak_full_desc": "Watch how sound design builds the horror atmosphere. Every creature growl, environmental layer, and spatial detail was crafted to create immersive tension that scales dynamically with the visuals.\n\nKey Elements:\n• Creature sound signatures\n• Environmental atmosphere layers\n• Dynamic spatial audio mixing\n• Proximity-based intensity scaling",
   "project_amorak_block1_title": "Creature Audio Design",
   "project_amorak_block1_content": "Each creature has a unique sonic identity built from organic textures, processed animal vocalizations, and synthesized sub-frequencies. The beast's presence is felt through low-frequency rumbles that scale with proximity.",
@@ -372,6 +382,48 @@
     "polish": "Polish"
   },
   "ann": {
+    "config": {
+      "dataasset": {
+        "label": "DataAsset Pattern",
+        "desc": "Pure data container - no logic, just editor-exposed properties. Designers create instances, assign Wwise events and tweak values. No C++ recompilation needed."
+      },
+      "wwise": {
+        "label": "Wwise Reference",
+        "desc": "TObjectPtr to Wwise asset. Audio events, RTPCs, switches - all assigned in editor. Zero hardcoded strings. Change audio by swapping asset references."
+      },
+      "hysteresis": {
+        "label": "Hysteresis Values",
+        "desc": "Start/Stop thresholds prevent audio flickering. Designers tune these per-enemy without code changes. Meta tags add editor validation."
+      }
+    },
+    "poly": {
+      "reflection": {
+        "label": "Runtime Reflection",
+        "desc": "GetClass() returns actual runtime type. For BP_GhostAnomaly inheriting from ABaseAnomaly, this returns BP_GhostAnomaly class."
+      },
+      "hierarchy": {
+        "label": "Inheritance Walk",
+        "desc": "Walks up class hierarchy until settings found. BP_GhostAnomaly → AGhostAnomaly → ABaseAnomaly. First match wins - most specific takes priority."
+      },
+      "tmap": {
+        "label": "TMap Lookup",
+        "desc": "TMap<TSubclassOf<ABaseAnomaly>, FAnomalyAudioSettings> - designers map anomaly classes to audio switches in editor. Add new anomaly = add row in DataAsset."
+      }
+    },
+    "dialogue": {
+      "struct": {
+        "label": "DataTable Row",
+        "desc": "FTableRowBase enables DataTable integration. Each row = one dialogue entry with Wwise switch + duration. CSV import/export friendly."
+      },
+      "datatable": {
+        "label": "Audio Metadata",
+        "desc": "DataTable holds audio config - which Wwise switch, how long to display subtitle. Separate from actual text for cleaner localization."
+      },
+      "stringtable": {
+        "label": "Localized Text",
+        "desc": "StringTable for dialogue text - Unreal's native localization system. Same AnomalyID key in both tables. Text team edits StringTable, audio team edits DataTable."
+      }
+    },
     "enemy": {
       "proximity": {
         "label": "Proximity Callback",
@@ -482,6 +534,60 @@
       "post": {
         "label": "Event Post",
         "desc": "PostAkEvent triggers the Wwise Event on this specific actor. 3D positioned, respects occlusion/attenuation settings configured in Wwise."
+      }
+    },
+    "foot": {
+      "timer": {
+        "label": "Smart Timer",
+        "desc": "Only starts footstep timer when actually moving. Prevents phantom footsteps when standing still. Timer auto-repeats at configured interval."
+      },
+      "cleanup": {
+        "label": "Timer Cleanup",
+        "desc": "Clears timer immediately when movement stops. No lingering footsteps after player halts. Clean state management."
+      },
+      "physmat": {
+        "label": "Physical Material",
+        "desc": "Critical flag: bReturnPhysicalMaterial must be true. Without it, PhysMaterial is always null - common Unreal audio gotcha."
+      },
+      "trace": {
+        "label": "Line Trace",
+        "desc": "Shoots ray downward to detect floor surface. Uses Visibility channel. Returns surface type for Wwise Switch selection."
+      }
+    },
+    "prox": {
+      "hysteresis": {
+        "label": "Hysteresis Gap",
+        "desc": "Start threshold higher than stop threshold. Enemy at 25% triggers audio, but must drop to 15% to stop. Prevents rapid on/off flickering."
+      },
+      "postevent": {
+        "label": "Wwise PostEvent",
+        "desc": "UAkGameplayStatics::PostEvent triggers audio on this actor. 3D positioned, respects attenuation curves set in Wwise project."
+      },
+      "stopthresh": {
+        "label": "Stop Threshold",
+        "desc": "Lower threshold for stopping audio. Creates hysteresis band that smooths transitions. No audio stutter when enemy hovers at boundary."
+      },
+      "rtpc": {
+        "label": "RTPC Update",
+        "desc": "Real-Time Parameter Control. Sends proximity value to Wwise continuously. Controls volume, filter, pitch - smooth modulation, no steps."
+      }
+    },
+    "cache": {
+      "interval": {
+        "label": "Cache Refresh",
+        "desc": "Only refreshes enemy list every N seconds, not every frame. GetAllActorsOfClass is expensive - caching prevents performance hits."
+      },
+      "normalize": {
+        "label": "Normalize Distance",
+        "desc": "Converts raw distance to 0-100% range. Inverted: closer enemy = higher value. Audio systems work with normalized values, not world units."
+      },
+      "threshold": {
+        "label": "Change Threshold",
+        "desc": "Only broadcasts when proximity changes significantly. Prevents audio system spam from micro-movements. Typically 1-5% threshold."
+      },
+      "broadcast": {
+        "label": "Event Broadcast",
+        "desc": "Multicast delegate notifies all listeners. Audio manager, UI, gameplay systems all subscribe. Decoupled architecture - no direct dependencies."
       }
     }
   },

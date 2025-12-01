@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Cpu } from 'lucide-react';
+import { useState } from 'react';
+import { Cpu, ZoomIn, X } from 'lucide-react';
 import { ContentBlock } from '../../../types';
 import MediaRenderer from '../../ui/MediaRenderer';
 import { cn } from '../../../utils';
@@ -22,33 +23,45 @@ const StatsGridBlock = ({ items }: { items: { label: string; value: string }[] }
   );
 };
 
-const SplitContentBlock = ({ block }: { block: ContentBlock }) => {
+const SplitContentBlock = ({ block, onImageClick }: { block: ContentBlock; onImageClick?: (src: string) => void }) => {
   const { t } = useTranslation();
-  
+
+  const handleClick = () => {
+    if (block.media && onImageClick) {
+      onImageClick(block.media);
+    }
+  };
+
   return (
     <div className={cn("grid grid-cols-1 lg:grid-cols-2 gap-12 items-center my-16", block.reverseLayout && "lg:grid-flow-dense")}>
       <div className={cn(block.reverseLayout && "lg:col-start-2")}>
         {block.title && <h3 className="text-2xl font-bold text-white mb-6">{t(block.title, block.title)}</h3>}
         {block.content && (
-            <div 
+            <div
                 className="prose prose-invert max-w-none text-slate-300 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: t(block.content, block.content) }}
             />
         )}
       </div>
-      
+
       <div className={cn(block.reverseLayout && "lg:col-start-1")}>
-        <div className="rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-black aspect-video">
+        <div
+          className="rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-black aspect-video relative group cursor-pointer"
+          onClick={handleClick}
+        >
            {block.media && (
-               <MediaRenderer 
-                  src={block.media} 
-                  alt={block.title} 
+               <MediaRenderer
+                  src={block.media}
+                  alt={block.title}
                   controls={true}
                   className="w-full h-full object-cover"
                />
            )}
+           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+             <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity" size={32} />
+           </div>
         </div>
-        {block.mediaCaption && <p className="text-xs text-center text-slate-500 mt-2 font-mono">{block.mediaCaption}</p>}
+        {block.mediaCaption && <p className="text-xs text-center text-slate-500 mt-2 font-mono">{t(block.mediaCaption, block.mediaCaption)}</p>}
       </div>
     </div>
   );
@@ -80,22 +93,47 @@ const GenericBlock = ({ block }: { block: ContentBlock }) => {
 }
 
 const ContentBlockRenderer = ({ blocks }: ContentBlockRendererProps) => {
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+
   if (!blocks) return null;
 
   return (
-    <div className="space-y-12">
-      {blocks.map((block, idx) => {
-        switch(block.type) {
-            case 'stats_grid':
-                return block.items ? <StatsGridBlock key={idx} items={block.items} /> : null;
-            case 'split_text_media':
-                return <SplitContentBlock key={idx} block={block} />;
-            case 'text':
-            default:
-                return <GenericBlock key={idx} block={block} />;
-        }
-      })}
-    </div>
+    <>
+      <div className="space-y-12">
+        {blocks.map((block, idx) => {
+          switch(block.type) {
+              case 'stats_grid':
+                  return block.items ? <StatsGridBlock key={idx} items={block.items} /> : null;
+              case 'split_text_media':
+                  return <SplitContentBlock key={idx} block={block} onImageClick={setLightboxImage} />;
+              case 'text':
+              default:
+                  return <GenericBlock key={idx} block={block} />;
+          }
+        })}
+      </div>
+
+      {/* Lightbox Modal */}
+      {lightboxImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 cursor-pointer"
+          onClick={() => setLightboxImage(null)}
+        >
+          <button
+            className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors"
+            onClick={() => setLightboxImage(null)}
+          >
+            <X size={32} />
+          </button>
+          <img
+            src={`/${lightboxImage}`}
+            alt="Enlarged view"
+            className="max-w-full max-h-[90vh] object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+    </>
   );
 };
 

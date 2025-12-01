@@ -124,7 +124,7 @@ const CodeViewer = ({ snippets }: CodeViewerProps) => {
 
       {/* Code */}
       <div className="p-4 overflow-x-auto">
-        {lines.map((line, i) => {
+        {lines.map((_, i) => {
           const annotation = annotationMap.get(i + 1);
           const isExpanded = expandedLine === i + 1;
 
