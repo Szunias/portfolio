@@ -4,6 +4,11 @@ export interface CodeAnnotation {
   explanation: string;    // Full explanation
 }
 
+export interface ProjectImage {
+  src: string;
+  caption: string;
+}
+
 export interface CodeSnippet {
   title: string;
   language: string; // e.g., 'cpp', 'python'
@@ -43,7 +48,7 @@ export interface Project {
   };
   media: {
     thumbnail: string;
-    images?: string[];
+    images?: (string | ProjectImage)[];
     video?: string;
     audio?: string; // Path to audio file if applicable
   };

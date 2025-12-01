@@ -1,7 +1,7 @@
 import { useState, useRef, KeyboardEvent } from 'react';
 import { CodeSnippet, CodeAnnotation } from '../../types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Code2, FileCode, Lightbulb, ChevronRight, Zap } from 'lucide-react';
+import { Code2, FileCode, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../../utils';
 
@@ -17,19 +17,9 @@ const highlightCode = (code: string): JSX.Element[] => {
   const lines = code.split('\n');
 
   return lines.map((line, lineIndex) => {
-    // Simple tokenization
     let result: JSX.Element[] = [];
     let remaining = line;
-    let keyIndex = 0;
 
-    // Match strings
-    const stringRegex = /"[^"]*"/g;
-    // Match comments
-    const commentRegex = /\/\/.*/g;
-    // Match numbers
-    const numberRegex = /\b\d+\.?\d*f?\b/g;
-
-    // Check for comment first
     if (remaining.includes('//')) {
       const commentIndex = remaining.indexOf('//');
       const beforeComment = remaining.slice(0, commentIndex);
@@ -53,13 +43,11 @@ const highlightCode = (code: string): JSX.Element[] => {
 
 const processTokens = (text: string, keywords: string[], types: string[], lineIndex: number): JSX.Element[] => {
   const result: JSX.Element[] = [];
-
-  // Simple word-by-word processing
   const parts = text.split(/(\s+|[{}();,<>:&*])/);
 
   parts.forEach((part, i) => {
     if (keywords.includes(part)) {
-      result.push(<span key={`${lineIndex}-${i}`} className="text-purple-400 font-medium">{part}</span>);
+      result.push(<span key={`${lineIndex}-${i}`} className="text-purple-400 font-semibold">{part}</span>);
     } else if (types.some(t => part.includes(t))) {
       result.push(<span key={`${lineIndex}-${i}`} className="text-cyan-400">{part}</span>);
     } else if (/^".*"$/.test(part)) {
@@ -78,7 +66,7 @@ const processTokens = (text: string, keywords: string[], types: string[], lineIn
 
 const CodeViewer = ({ snippets }: CodeViewerProps) => {
   const [activeTab, setActiveTab] = useState(0);
-  const [activeAnnotation, setActiveAnnotation] = useState<CodeAnnotation | null>(null);
+  const [expandedLine, setExpandedLine] = useState<number | null>(null);
   const { t } = useTranslation();
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -88,12 +76,12 @@ const CodeViewer = ({ snippets }: CodeViewerProps) => {
     if (e.key === 'ArrowRight') {
       const next = (index + 1) % snippets.length;
       setActiveTab(next);
-      setActiveAnnotation(null);
+      setExpandedLine(null);
       tabsRef.current[next]?.focus();
     } else if (e.key === 'ArrowLeft') {
       const prev = (index - 1 + snippets.length) % snippets.length;
       setActiveTab(prev);
-      setActiveAnnotation(null);
+      setExpandedLine(null);
       tabsRef.current[prev]?.focus();
     }
   };
@@ -109,206 +97,122 @@ const CodeViewer = ({ snippets }: CodeViewerProps) => {
     });
   }
 
-  const hasAnnotations = currentSnippet.annotations && currentSnippet.annotations.length > 0;
-
   return (
-    <div className="my-8">
-      {/* Header Card - What this code does */}
-      <div className="bg-gradient-to-r from-accent/10 to-purple-500/10 border border-accent/20 rounded-t-2xl p-6">
-        <div className="flex items-start gap-4">
-          <div className="p-3 bg-accent/20 rounded-xl">
-            <Code2 className="text-accent" size={24} />
-          </div>
-          <div className="flex-1">
-            <h4 className="text-lg font-bold text-white mb-2">{currentSnippet.title}</h4>
-            <p className="text-slate-300 text-sm leading-relaxed">
-              {currentSnippet.description}
-            </p>
-          </div>
+    <div className="my-10">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2.5 bg-accent/20 rounded-xl">
+          <Code2 className="text-accent" size={22} />
+        </div>
+        <div>
+          <h3 className="text-lg font-bold text-white">{currentSnippet.title}</h3>
+          <p className="text-slate-400 text-sm">{currentSnippet.description}</p>
         </div>
       </div>
 
-      {/* Tab Bar */}
-      <div className="flex flex-wrap bg-slate-900 border-x border-accent/10">
-        {snippets.map((snippet, index) => (
-          <button
-            key={index}
-            ref={el => tabsRef.current[index] = el}
-            role="tab"
-            aria-selected={activeTab === index}
-            onClick={() => { setActiveTab(index); setActiveAnnotation(null); }}
-            onKeyDown={(e) => handleKeyDown(e, index)}
-            className={cn(
-              "flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-all outline-none",
-              activeTab === index
-                ? 'bg-slate-800/50 text-accent border-accent'
-                : 'text-slate-400 hover:text-white border-transparent hover:bg-slate-800/30'
-            )}
-          >
-            <FileCode size={14} className={activeTab === index ? 'text-accent' : ''} />
-            <span className="truncate max-w-[120px]">{snippet.title.replace('.cpp', '').replace('.h', '')}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Main Content Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 border border-t-0 border-accent/10 rounded-b-2xl overflow-hidden bg-slate-950">
-
-        {/* Code Panel - 2/3 width on large screens */}
-        <div className="lg:col-span-2 relative">
-          {/* Interactive hint */}
-          {hasAnnotations && (
-            <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-2.5 flex items-center gap-3">
-              <Lightbulb size={16} className="text-amber-400" />
-              <span className="text-amber-200 text-sm">
-                {t('code.hover_hint', 'Click highlighted lines to see explanations')}
-              </span>
-            </div>
-          )}
-
-          {/* Code with line numbers */}
-          <div className="overflow-hidden">
-            <div>
-              {lines.map((line, i) => {
-                const annotation = annotationMap.get(i + 1);
-                const isActive = activeAnnotation?.line === i + 1;
-
-                return (
-                  <div
-                    key={i}
-                    onClick={() => annotation && setActiveAnnotation(isActive ? null : annotation)}
-                    className={cn(
-                      "flex group transition-all duration-150",
-                      annotation && "cursor-pointer",
-                      isActive && "bg-accent/20",
-                      annotation && !isActive && "hover:bg-accent/10"
-                    )}
-                  >
-                    {/* Line number */}
-                    <div className={cn(
-                      "w-14 flex-shrink-0 text-right pr-4 py-1 text-sm select-none border-r transition-colors",
-                      annotation
-                        ? isActive
-                          ? "text-accent bg-accent/10 border-accent/30"
-                          : "text-accent/60 border-accent/20"
-                        : "text-slate-600 border-slate-800"
-                    )}>
-                      {i + 1}
-                    </div>
-
-                    {/* Code line */}
-                    <div className="flex-1 py-1 pl-4 pr-6 min-w-0">
-                      <pre className="text-[13px] leading-relaxed font-mono whitespace-pre-wrap break-all">
-                        <code className="text-slate-200">
-                          {annotation && (
-                            <span className={cn(
-                              "inline-block w-2 h-2 rounded-full mr-2 transition-all",
-                              isActive
-                                ? "bg-accent scale-125"
-                                : "bg-accent/50 group-hover:bg-accent"
-                            )} />
-                          )}
-                          {highlightedLines[i]}
-                        </code>
-                      </pre>
-                    </div>
-
-                    {/* Expand indicator */}
-                    {annotation && (
-                      <div className={cn(
-                        "flex items-center pr-4 transition-all",
-                        isActive ? "text-accent" : "text-slate-600 group-hover:text-accent/70"
-                      )}>
-                        <ChevronRight size={16} className={cn(
-                          "transition-transform",
-                          isActive && "rotate-90"
-                        )} />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Annotation Panel - 1/3 width on large screens */}
-        <div className="lg:border-l border-t lg:border-t-0 border-accent/10 bg-slate-900/50">
-          <div className="p-4 border-b border-accent/10">
-            <h4 className="text-sm font-bold text-accent uppercase tracking-wider flex items-center gap-2">
-              <Zap size={14} />
-              {t('code.explanation_title', 'Code Explanation')}
-            </h4>
-          </div>
-
-          <div className="p-4 min-h-[200px]">
-            <AnimatePresence mode="wait">
-              {activeAnnotation ? (
-                <motion.div
-                  key={activeAnnotation.line}
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {/* Label */}
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2 py-1 bg-accent/20 text-accent text-xs font-bold rounded uppercase">
-                      {t('code.line', 'Line')} {activeAnnotation.line}
-                    </span>
-                  </div>
-
-                  {/* Title */}
-                  <h5 className="text-lg font-bold text-white mb-3">
-                    {t(activeAnnotation.label, activeAnnotation.label)}
-                  </h5>
-
-                  {/* Explanation */}
-                  <p className="text-slate-300 leading-relaxed text-[15px]">
-                    {t(activeAnnotation.explanation, activeAnnotation.explanation)}
-                  </p>
-                </motion.div>
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="h-full flex flex-col items-center justify-center text-center py-8"
-                >
-                  <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mb-4">
-                    <Lightbulb size={20} className="text-slate-500" />
-                  </div>
-                  <p className="text-slate-500 text-sm max-w-[200px]">
-                    {t('code.select_line', 'Click a highlighted line to see what it does')}
-                  </p>
-
-                  {/* Quick legend */}
-                  {hasAnnotations && (
-                    <div className="mt-6 space-y-2 text-left w-full max-w-[220px]">
-                      <p className="text-xs text-slate-600 uppercase tracking-wider mb-3">Quick Reference:</p>
-                      {currentSnippet.annotations?.slice(0, 4).map((ann, i) => (
-                        <button
-                          key={i}
-                          onClick={() => setActiveAnnotation(ann)}
-                          className="w-full flex items-center gap-2 text-left text-sm text-slate-400 hover:text-accent transition-colors p-2 rounded hover:bg-slate-800/50"
-                        >
-                          <span className="w-1.5 h-1.5 rounded-full bg-accent/50" />
-                          <span className="truncate">{t(ann.label, ann.label)}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </motion.div>
+      {/* Tab Pills */}
+      {snippets.length > 1 && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          {snippets.map((snippet, index) => (
+            <button
+              key={index}
+              ref={el => tabsRef.current[index] = el}
+              role="tab"
+              aria-selected={activeTab === index}
+              onClick={() => { setActiveTab(index); setExpandedLine(null); }}
+              onKeyDown={(e) => handleKeyDown(e, index)}
+              className={cn(
+                "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all outline-none",
+                activeTab === index
+                  ? 'bg-accent text-white'
+                  : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
               )}
-            </AnimatePresence>
-          </div>
+            >
+              <FileCode size={14} />
+              <span>{snippet.title.replace('.cpp', '').replace('.h', '')}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Code Block */}
+      <div className="bg-slate-900 rounded-xl border border-slate-700/50 overflow-hidden">
+        <div className="p-4">
+          {lines.map((line, i) => {
+            const annotation = annotationMap.get(i + 1);
+            const isExpanded = expandedLine === i + 1;
+
+            return (
+              <div key={i}>
+                {/* Code Line */}
+                <div
+                  onClick={() => annotation && setExpandedLine(isExpanded ? null : i + 1)}
+                  className={cn(
+                    "flex items-start gap-3 py-1 px-2 -mx-2 rounded-lg transition-all",
+                    annotation && "cursor-pointer",
+                    isExpanded && "bg-accent/15",
+                    annotation && !isExpanded && "hover:bg-slate-800/80"
+                  )}
+                >
+                  {/* Line number */}
+                  <span className={cn(
+                    "w-6 text-right text-xs font-mono select-none flex-shrink-0 pt-0.5",
+                    annotation ? "text-accent" : "text-slate-600"
+                  )}>
+                    {i + 1}
+                  </span>
+
+                  {/* Code */}
+                  <code className="text-sm font-mono text-slate-200 whitespace-pre-wrap break-all flex-1">
+                    {highlightedLines[i]}
+                  </code>
+
+                  {/* Expand indicator */}
+                  {annotation && (
+                    <ChevronDown
+                      size={16}
+                      className={cn(
+                        "text-accent flex-shrink-0 transition-transform mt-0.5",
+                        isExpanded && "rotate-180"
+                      )}
+                    />
+                  )}
+                </div>
+
+                {/* Inline Explanation */}
+                <AnimatePresence>
+                  {annotation && isExpanded && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="ml-9 my-2 p-3 bg-accent/10 border-l-2 border-accent rounded-r-lg">
+                        <p className="text-accent font-semibold text-sm mb-1">
+                          {t(annotation.label, annotation.label)}
+                        </p>
+                        <p className="text-slate-300 text-sm leading-relaxed">
+                          {t(annotation.explanation, annotation.explanation)}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {/* Footer */}
-      <div className="mt-2 flex items-center justify-between text-xs text-slate-500 px-1">
+      <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
         <span>{currentSnippet.language.toUpperCase()} • {lines.length} lines</span>
-        {hasAnnotations && (
-          <span className="text-accent/70">{currentSnippet.annotations?.length} interactive points</span>
+        {currentSnippet.annotations && currentSnippet.annotations.length > 0 && (
+          <span className="text-accent/70">
+            {currentSnippet.annotations.length} {t('code.annotations', 'annotations')}
+          </span>
         )}
       </div>
     </div>

@@ -2,7 +2,7 @@ import { useParams, Navigate } from 'react-router-dom';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Code } from 'lucide-react';
+import { Code, Images } from 'lucide-react';
 import SEO from '../components/layout/SEO';
 import ProjectHero from '../components/features/projects/ProjectHero';
 import ProjectSidebar from '../components/features/projects/ProjectSidebar';
@@ -10,6 +10,8 @@ import ContentBlockRenderer from '../components/features/projects/ContentBlockRe
 import CodeViewer from '../components/features/CodeViewer';
 import ChallengesBlock from '../components/features/projects/ChallengesBlock';
 import ProjectRichDetails from '../components/features/projects/ProjectRichDetails';
+import ImageLightbox from '../components/features/ImageLightbox';
+import ProductionTimeline from '../components/features/ProductionTimeline';
 
 const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,8 +50,15 @@ const ProjectDetails = () => {
       <div className="max-w-[1600px] mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16">
         
         {/* LEFT: Content (8 cols) */}
-        <div className="lg:col-span-8 space-y-20">
-            
+        <div className="lg:col-span-8 space-y-16">
+
+            {/* Production Timeline - for Shadow Frames */}
+            {project.id === 'shadow_frames' && (
+                <div className="-mb-8">
+                    <ProductionTimeline />
+                </div>
+            )}
+
             {/* Main Description */}
             <div className="prose prose-invert prose-lg max-w-none text-slate-300 leading-relaxed">
                 <p className="whitespace-pre-line">{description}</p>
@@ -79,24 +88,12 @@ const ProjectDetails = () => {
 
             {/* Gallery */}
             {media.images && media.images.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {media.images.map((img, i) => {
-                        const isVideo = img.endsWith('.mp4') || img.endsWith('.webm');
-                        return (
-                            <div key={i} className="rounded-lg overflow-hidden border border-white/5 hover:border-white/20 transition-colors">
-                                {isVideo ? (
-                                    <video 
-                                        src={`/${img}`} 
-                                        className="w-full h-auto object-cover" 
-                                        controls 
-                                        preload="metadata"
-                                    />
-                                ) : (
-                                    <img src={`/${img}`} alt="" className="w-full h-auto object-cover" />
-                                )}
-                            </div>
-                        );
-                    })}
+                <div className="space-y-6">
+                    <h3 className="text-2xl font-bold text-white flex items-center gap-3">
+                        <Images size={24} className="text-accent" />
+                        {t('details.gallery', 'Gallery')}
+                    </h3>
+                    <ImageLightbox images={media.images} />
                 </div>
             )}
         </div>
