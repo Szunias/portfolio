@@ -65,9 +65,9 @@ const About = () => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8 }}
-                className="lg:col-span-5"
+                className="lg:col-span-5 flex justify-center lg:justify-start"
             >
-                <div className="relative w-full aspect-[3/4] max-w-md mx-auto lg:mx-0">
+                <div className="relative w-[280px] aspect-[3/4] mx-auto lg:mx-0">
                     {/* Tech Borders */}
                     <div className="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-accent/50"></div>
                     <div className="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-accent/50"></div>

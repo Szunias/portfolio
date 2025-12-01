@@ -103,42 +103,45 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                   >
                     {/* Chip Container */}
                     <div className={`
-                        absolute inset-0 bg-[#050505] border border-white/10 clip-path-hex
-                        transition-all duration-300 overflow-hidden
-                        ${(isHovered || isConnected) ? 'border-accent shadow-[0_0_20px_rgba(56,189,248,0.3)]' : 'hover:border-white/30'}
+                        absolute inset-0 rounded-2xl border backdrop-blur-md transition-all duration-500
+                        ${(isHovered || isConnected) 
+                            ? 'bg-accent/10 border-accent shadow-[0_0_30px_rgba(56,189,248,0.25)]' 
+                            : 'bg-white/5 border-white/10 hover:border-white/30 hover:bg-white/10'
+                        }
                     `}>
-                        {/* Internal Scanline */}
-                        <div className={`absolute inset-0 bg-gradient-to-b from-transparent via-accent/10 to-transparent translate-y-[-100%] 
-                            ${(isHovered || isConnected) ? 'animate-[scan_2s_linear_infinite]' : ''}
-                        `}></div>
-                        
-                        {/* Corner Accents */}
-                        <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-white/20"></div>
-                        <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-white/20"></div>
-                        <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-white/20"></div>
-                        <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-white/20"></div>
+                         {/* Corner Accents (Only visible on active) */}
+                        {(isHovered || isConnected) && (
+                            <>
+                                <div className="absolute top-0 left-0 w-2 h-2 border-l-2 border-t-2 border-accent"></div>
+                                <div className="absolute top-0 right-0 w-2 h-2 border-r-2 border-t-2 border-accent"></div>
+                                <div className="absolute bottom-0 left-0 w-2 h-2 border-l-2 border-b-2 border-accent"></div>
+                                <div className="absolute bottom-0 right-0 w-2 h-2 border-r-2 border-b-2 border-accent"></div>
+                            </>
+                        )}
                     </div>
 
                     {/* Content */}
-                    <div className="relative z-10 flex flex-col items-center gap-2 transform transition-transform duration-300 group-hover:scale-105">
+                    <div className="relative z-10 flex flex-col items-center gap-3 transform transition-transform duration-300 group-hover:scale-105">
                         {iconPath ? (
                         <img 
                             src={iconPath} 
                             alt={tech} 
-                            className={`w-8 h-8 object-contain transition-all duration-300
-                                ${(isHovered || isConnected) ? 'drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] brightness-125' : 'opacity-70'}
+                            className={`w-10 h-10 object-contain transition-all duration-300 filter
+                                ${(isHovered || isConnected) 
+                                    ? 'drop-shadow-[0_0_15px_rgba(255,255,255,0.6)] brightness-110' 
+                                    : 'grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100'}
                             `}
                         />
                         ) : (
-                        <div className={`w-8 h-8 rounded-full border border-white/20 flex items-center justify-center
-                             ${(isHovered || isConnected) ? 'bg-accent/20 text-accent border-accent' : 'text-slate-600'}
+                        <div className={`w-10 h-10 rounded-full border flex items-center justify-center transition-colors
+                             ${(isHovered || isConnected) ? 'bg-accent text-black border-accent' : 'border-white/20 text-slate-400'}
                         `}>
-                            <span className="text-[10px] font-bold">Run</span>
+                            <span className="text-xs font-bold">?</span>
                         </div>
                         )}
                         
-                        <span className={`text-[10px] font-mono uppercase tracking-wider transition-colors px-1 bg-black/50 backdrop-blur-sm
-                            ${(isHovered || isConnected) ? 'text-accent' : 'text-slate-500'}
+                        <span className={`text-[11px] font-mono uppercase tracking-wider transition-colors px-2 py-0.5 rounded
+                            ${(isHovered || isConnected) ? 'text-white font-bold bg-black/50 shadow-sm' : 'text-slate-300 group-hover:text-white'}
                         `}>
                         {tech}
                         </span>
@@ -146,7 +149,7 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
 
                     {/* Connecting Status Dot */}
                     {(isHovered || isConnected) && (
-                        <div className="absolute -bottom-1 w-1 h-1 bg-accent shadow-[0_0_5px_#38bdf8] rounded-full"></div>
+                        <div className="absolute -bottom-2 w-1.5 h-1.5 bg-accent shadow-[0_0_10px_#38bdf8] rounded-full"></div>
                     )}
 
                   </motion.div>
