@@ -359,12 +359,14 @@
       ],
       "media": {
         "thumbnail": "assets/images/projects-shadowframes/Menugif.mp4",
-        "video": "https://www.youtube.com/watch?v=RoB4O4JjPAw",
+        "video": "https://www.youtube.com/watch?v=ZPi3lbGKsCg",
         "images": [
-          "assets/images/projects-shadowframes/BP_PlayerOneshotAudioManager.png",
-          "assets/images/projects-shadowframes/SwitchContainer.png",
-          "assets/images/projects-shadowframes/bgshadow.jpeg",
-          "assets/images/projects-shadowframes/nicedae.jpg"
+          "assets/images/projects-shadowframes/DataAssetConfigsList.png",
+          "assets/images/projects-shadowframes/DA_Enemy_Presence.png",
+          "assets/images/projects-shadowframes/WwiseanomalySpawnScreenshot.png",
+          "assets/images/projects-shadowframes/MasterMixerHierarchy.png",
+          "assets/images/projects-shadowframes/MonologueVoicelineSwitchContianer.png",
+          "assets/images/projects-shadowframes/Gameplaymusicconfiguration.png"
         ]
       },
       "full_description": "project_shadowframes_full_desc",
@@ -377,26 +379,66 @@
       ],
       "code_snippets": [
         {
-          "title": "Real-Time Parameter Control (C++)",
+          "title": "EnemyPresenceAudioManager.cpp",
           "language": "cpp",
-          "description": "Updates the Wwise RTPC for enemy proximity every tick. Normalized distance ensures consistent audio behavior regardless of map scale.",
-          "code": "void UEnemyPresenceComponent::TickComponent(float DeltaTime...)\n{\n    // 1. Logic: Find closest enemy & calculate distance\n    UpdateClosestEnemy();\n\n    // 2. Math: Normalize distance to 0.0 - 100.0 range\n    float NormDist = (Distance - MinDist) / (MaxDist - MinDist);\n    float Proximity = FMath::Clamp((1.f - NormDist) * 100.f, 0.f, 100.f);\n\n    // 3. Audio: Update Wwise RTPC in real-time\n    UAkGameplayStatics::SetRTPCValue(\n        RTPC_EnemyProximity,\n        Proximity,\n        0, // Interpolation (handled by Wwise)\n        GetOwner()\n    );\n\n    // 4. Debug: Visual confirmation\n    if (bShowDebug) DrawDebugLine(..., FColor::Red);\n}"
+          "description": "Dynamic audio response to enemy proximity. Starts/stops dread layers and breathing based on distance thresholds, updates RTPC for smooth intensity transitions.",
+          "code": "void UEnemyPresenceAudioManager::OnProximityChanged(float ProximityValue)\n{\n    if (!m_AudioConfig) return;\n\n    const float StartThreshold = m_AudioConfig->m_StartThreshold;\n    const float StopThreshold = m_AudioConfig->m_StopThreshold;\n\n    if (ProximityValue >= StartThreshold)\n    {\n        if (!m_IsDreadLayersPlaying) StartDreadLayers();\n        if (!m_IsBreathingPlaying) StartBreathing();\n    }\n    else if (ProximityValue <= StopThreshold)\n    {\n        if (m_IsDreadLayersPlaying) StopDreadLayers();\n        if (m_IsBreathingPlaying) StopBreathing();\n    }\n\n    if (m_IsDreadLayersPlaying) UpdateProximityRTPC(ProximityValue);\n    if (m_IsBreathingPlaying) UpdateBreathingStress(ProximityValue);\n}",
+          "annotations": [
+            {"line": 1, "label": "ann.enemy.proximity.label", "explanation": "ann.enemy.proximity.desc"},
+            {"line": 5, "label": "ann.enemy.hysteresis.label", "explanation": "ann.enemy.hysteresis.desc"},
+            {"line": 10, "label": "ann.enemy.dread.label", "explanation": "ann.enemy.dread.desc"},
+            {"line": 11, "label": "ann.enemy.breathing.label", "explanation": "ann.enemy.breathing.desc"},
+            {"line": 19, "label": "ann.enemy.rtpc.label", "explanation": "ann.enemy.rtpc.desc"},
+            {"line": 20, "label": "ann.enemy.intensity.label", "explanation": "ann.enemy.intensity.desc"}
+          ]
         },
         {
-          "title": "Dynamic Spatial Attachment (C++)",
+          "title": "FootstepComponent.cpp",
           "language": "cpp",
-          "description": "Dynamically finds specific mesh components (bones) to attach Wwise emitters for precise 3D positioning.",
-          "code": "void UAnomalyAudioManager::InitializeAudioSource(AActor* Owner)\n{\n    const FAnomalyAudioSettings* Settings = Config->GetSettings(Anomaly);\n\n    // Advanced Spatial Audio: Find specific mesh bone\n    if (Settings->SpecialMeshName != NAME_None)\n    {\n        USceneComponent* Target = FindComponentByName(Owner, Settings->SpecialMeshName);\n        if (Target) {\n            AkComponent->AttachToComponent(Target, FAttachmentTransformRules::KeepRelativeTransform);\n        }\n    }\n\n    UAkGameplayStatics::PostEvent(\n        Config->m_GlobalSpawnEvent,\n        AkComponent\n    );\n}"
+          "description": "Physical Material detection via line trace. Maps Unreal's surface types to Wwise Switch names for automatic footstep audio switching.",
+          "code": "FName UFootstepComponent::DetectSurfaceType() const\n{\n    if (!GetOwner()) return FName(\"Default\");\n\n    FHitResult Hit;\n    const FVector Start = GetOwner()->GetActorLocation();\n    const FVector End = Start - FVector(0.f, 0.f, m_TraceDistance);\n    \n    FCollisionQueryParams QueryParams;\n    QueryParams.AddIgnoredActor(GetOwner());\n    QueryParams.bReturnPhysicalMaterial = true;\n\n    if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, QueryParams))\n    {\n        if (UPhysicalMaterial* PhysMat = Hit.PhysMat.Get())\n        {\n            switch (PhysMat->SurfaceType)\n            {\n                case SurfaceType1: return FName(\"Tiles\");\n                case SurfaceType2: return FName(\"Wood\");\n                case SurfaceType3: return FName(\"Concrete\");\n                case SurfaceType4: return FName(\"CreakyWood\");\n                case SurfaceType5: return FName(\"CreakyStairs\");\n                default: return FName(\"Concrete\");\n            }\n        }\n    }\n    return FName(\"Concrete\");\n}",
+          "annotations": [
+            {"line": 1, "label": "ann.footstep.surface.label", "explanation": "ann.footstep.surface.desc"},
+            {"line": 6, "label": "ann.footstep.ray.label", "explanation": "ann.footstep.ray.desc"},
+            {"line": 7, "label": "ann.footstep.trace.label", "explanation": "ann.footstep.trace.desc"},
+            {"line": 11, "label": "ann.footstep.physics.label", "explanation": "ann.footstep.physics.desc"},
+            {"line": 13, "label": "ann.footstep.channel.label", "explanation": "ann.footstep.channel.desc"},
+            {"line": 17, "label": "ann.footstep.mapping.label", "explanation": "ann.footstep.mapping.desc"},
+            {"line": 22, "label": "ann.footstep.creaky.label", "explanation": "ann.footstep.creaky.desc"}
+          ]
         },
         {
-          "title": "Physical Surface Detection (C++)",
+          "title": "PlayerCharacter.h",
           "language": "cpp",
-          "description": "Raycasts downwards to detect the physical material and map it to a Wwise Switch Group for correct footstep sounds.",
-          "code": "FName UFootstepComponent::DetectSurface()\n{\n    FHitResult Hit;\n    FVector Start = Location;\n    FVector End = Start - FVector(0, 0, 100);\n\n    // Physics Query\n    bool bHit = World->LineTraceSingleByChannel(\n        Hit, Start, End, ECC_WorldStatic, Params\n    );\n\n    // Map Physical Material to Wwise Switch\n    if (bHit && Hit.PhysMaterial.IsValid())\n    {\n        return GetSwitchFromPhysMat(Hit.PhysMaterial);\n    }\n\n    return \"Concrete\"; // Fallback\n}"
+          "description": "Multicast delegates for decoupled audio communication. Blueprint-assignable for designer control without C++ modifications.",
+          "code": "DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCameraShutterDelegate);\nDECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCameraReloadDelegate);\nDECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCameraZoomInDelegate);\nDECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPhotoboardEnterDelegate);\nDECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathSequenceStartedDelegate);\n\nUCLASS()\nclass APlayerCharacter : public ACharacter\n{\n    UPROPERTY(BlueprintAssignable, Category = \"Audio\")\n    FOnCameraShutterDelegate OnCameraShutter;\n\n    UPROPERTY(BlueprintAssignable, Category = \"Audio\")\n    FOnCameraReloadDelegate OnCameraReload;\n\n    UPROPERTY(BlueprintAssignable, Category = \"Audio\")\n    FOnCameraZoomInDelegate OnCameraZoomIn;\n\n    UPROPERTY(BlueprintAssignable, Category = \"Audio\")\n    FOnPhotoboardEnterDelegate OnPhotoboardEnter;\n\n    UPROPERTY(BlueprintAssignable, Category = \"Audio\")\n    FOnDeathSequenceStartedDelegate OnDeathSequenceStarted;\n};",
+          "annotations": [
+            {"line": 1, "label": "ann.player.delegate.label", "explanation": "ann.player.delegate.desc"},
+            {"line": 5, "label": "ann.player.death.label", "explanation": "ann.player.death.desc"},
+            {"line": 10, "label": "ann.player.blueprint.label", "explanation": "ann.player.blueprint.desc"},
+            {"line": 11, "label": "ann.player.shutter.label", "explanation": "ann.player.shutter.desc"},
+            {"line": 17, "label": "ann.player.zoom.label", "explanation": "ann.player.zoom.desc"},
+            {"line": 20, "label": "ann.player.photoboard.label", "explanation": "ann.player.photoboard.desc"}
+          ]
+        },
+        {
+          "title": "AnomalyAudioManager.cpp",
+          "language": "cpp",
+          "description": "Event-driven anomaly audio. Binds to anomaly lifecycle delegates (Activated, Captured, Deactivated) and posts corresponding Wwise events.",
+          "code": "void UAnomalyAudioManager::BeginPlay()\n{\n    Super::BeginPlay();\n\n    UCustomGameInstance* GI = Cast<UCustomGameInstance>(GetWorld()->GetGameInstance());\n    if (GI) m_GlobalAudioConfig = GI->GetAnomalyAudioConfig();\n\n    ABaseAnomaly* Anomaly = Cast<ABaseAnomaly>(GetOwner());\n    if (Anomaly)\n    {\n        m_BoundAnomaly = Anomaly;\n        m_BoundAnomaly->OnAnomalyActivated.AddDynamic(this, &UAnomalyAudioManager::OnAnomalyActivated);\n        m_BoundAnomaly->OnAnomalyCaptured.AddDynamic(this, &UAnomalyAudioManager::OnAnomalyCaptured);\n        m_BoundAnomaly->OnAnomalyDeactivated.AddDynamic(this, &UAnomalyAudioManager::OnAnomalyDeactivated);\n        InitializeAudioSource(Anomaly);\n    }\n}\n\nvoid UAnomalyAudioManager::OnAnomalyActivated(ABaseAnomaly* Anomaly)\n{\n    const FAnomalyAudioSettings* Settings = m_GlobalAudioConfig->GetSettingsForAnomaly(m_BoundAnomaly);\n    if (Settings && Settings->SwitchValue)\n        m_AudioSourceComponent->SetSwitch(Settings->SwitchValue);\n\n    m_AudioSourceComponent->PostAkEvent(m_GlobalAudioConfig->m_GlobalActivationEvent, 0, FOnAkPostEventCallback());\n}",
+          "annotations": [
+            {"line": 5, "label": "ann.anomaly.config.label", "explanation": "ann.anomaly.config.desc"},
+            {"line": 6, "label": "ann.anomaly.retrieval.label", "explanation": "ann.anomaly.retrieval.desc"},
+            {"line": 12, "label": "ann.anomaly.binding.label", "explanation": "ann.anomaly.binding.desc"},
+            {"line": 15, "label": "ann.anomaly.spatial.label", "explanation": "ann.anomaly.spatial.desc"},
+            {"line": 21, "label": "ann.anomaly.settings.label", "explanation": "ann.anomaly.settings.desc"},
+            {"line": 23, "label": "ann.anomaly.switch.label", "explanation": "ann.anomaly.switch.desc"},
+            {"line": 25, "label": "ann.anomaly.post.label", "explanation": "ann.anomaly.post.desc"}
+          ]
         }
       ],
       "links": {
-        "video": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "video": "https://www.youtube.com/watch?v=ZPi3lbGKsCg",
         "documentation": "assets/docs/Sound_Grp22_ShadowFrames.pdf"
       },
       "content_blocks": [

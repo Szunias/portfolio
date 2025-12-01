@@ -348,7 +348,126 @@
     "project_not_found": "Project niet gevonden"
   },
   "code": {
-    "live_server": "LIVE SERVER"
+    "live_server": "LIVE SERVER",
+    "hover_hint": "Klik op gemarkeerde regels voor uitleg",
+    "line": "Regel",
+    "annotations": "annotaties",
+    "explanation_title": "Code Uitleg",
+    "select_line": "Klik op een gemarkeerde regel om te zien wat het doet"
+  },
+  "ann": {
+    "enemy": {
+      "proximity": {
+        "label": "Proximity Callback",
+        "desc": "Deze functie wordt aangeroepen door EnemyPresenceComponent wanneer de afstand tot de dichtstbijzijnde vijand verandert. ProximityValue is genormaliseerd 0-100%."
+      },
+      "hysteresis": {
+        "label": "Hysteresis Drempels",
+        "desc": "Twee aparte drempels voorkomen audio-flikkering. StartThreshold (bv. 20%) activeert audio, StopThreshold (bv. 10%) deactiveert. Deze kloof voorkomt snel schakelen."
+      },
+      "dread": {
+        "label": "Dread Lagen",
+        "desc": "Post een Wwise Event dat gelaagde ambient dread-geluiden start - lage drones, verontrustende texturen. Deze lagen intensiveren op basis van RTPC-waarde."
+      },
+      "breathing": {
+        "label": "Stress Ademhaling",
+        "desc": "Activeert de gestresste ademhalingslus van het personage. Gecombineerd met dread-lagen creëert dit een intense horror-atmosfeer wanneer vijanden dichtbij zijn."
+      },
+      "rtpc": {
+        "label": "RTPC Update",
+        "desc": "Real-Time Parameter Control - stuurt ProximityValue naar Wwise. Regelt volume, filter cutoff en pitch in real-time. Vloeiende overgangen, geen harde sneden."
+      },
+      "intensity": {
+        "label": "Ademhaling Intensiteit",
+        "desc": "Aparte RTPC voor ademhaling. Hogere nabijheid = snellere, meer paniekerige ademhaling. Creëert psychologische verbinding tussen speler en personage."
+      }
+    },
+    "footstep": {
+      "surface": {
+        "label": "Oppervlak Detectie",
+        "desc": "Retourneert een FName die direct mapt naar een Wwise Switch-waarde. FootstepAudioManager gebruikt dit om de juiste voetstapgeluid-variatie in te stellen."
+      },
+      "ray": {
+        "label": "Ray Oorsprong",
+        "desc": "Line trace start vanaf de locatie van de actor (voetniveau). Betrouwbaarder dan character mesh sockets voor oppervlakdetectie."
+      },
+      "trace": {
+        "label": "Trace Richting",
+        "desc": "Traceert recht naar beneden met m_TraceDistance eenheden. Configureerbaar in editor - typisch 50-100cm voor trappen en oneffen terrein."
+      },
+      "physics": {
+        "label": "Physics Query",
+        "desc": "Kritieke vlag! bReturnPhysicalMaterial moet true zijn anders is PhysMaterial altijd null. Veelvoorkomende valkuil in Unreal audio-integratie."
+      },
+      "channel": {
+        "label": "Visibility Kanaal",
+        "desc": "Gebruikt ECC_Visibility kanaal voor traces. Kan ook een aangepast trace-kanaal gebruiken voor preciezere audio-only collision detectie."
+      },
+      "mapping": {
+        "label": "Oppervlak Mapping",
+        "desc": "Unreal's SurfaceType enums mappen naar Wwise Switch-namen. Level designers wijzen Physical Materials toe aan vloeren, code speelt automatisch juiste voetstappen."
+      },
+      "creaky": {
+        "label": "Krakende Oppervlakken",
+        "desc": "Speciale oppervlaktetypes voor horror-atmosfeer. CreakyWood en CreakyStairs hebben extra willekeurige kraakgeluiden - speler verraadt positie aan vijanden."
+      }
+    },
+    "player": {
+      "delegate": {
+        "label": "Dynamic Delegate",
+        "desc": "DECLARE_DYNAMIC_MULTICAST laat meerdere listeners (audio, UI, gameplay) abonneren. 'Dynamic' betekent dat het werkt met Blueprints, niet alleen C++."
+      },
+      "death": {
+        "label": "Dood Sequentie",
+        "desc": "Uitgezonden wanneer speler sterft. Triggert dood-stinger, stopt alle ambient audio en start game over sequentie. Kritiek voor audio state management."
+      },
+      "blueprint": {
+        "label": "BlueprintAssignable",
+        "desc": "Sound designers kunnen Wwise Events direct in Blueprint binden zonder C++ aan te raken. Snellere audio-iteratie - geen hercompilatie nodig."
+      },
+      "shutter": {
+        "label": "Camera Sluiter",
+        "desc": "Kern gameplay-mechaniek - foto's maken. Triggert sluiter-klik geluid en fotflits audio. Vijandelijke anomalieën reageren op dit geluid!"
+      },
+      "zoom": {
+        "label": "Zoom Audio",
+        "desc": "Camera zoom triggert servomotor-geluid en subtiele ambient-verandering. Immersieve feedback voor speler die 'onderzoeksmodus' ingaat."
+      },
+      "photoboard": {
+        "label": "Fotobord UI",
+        "desc": "Bij het bekijken van verzamelde foto's wordt ambient audio gedempt en UI-geluiden geactiveerd. Delegates ontkoppelen dit van hardcoded audio-aanroepen."
+      }
+    },
+    "anomaly": {
+      "config": {
+        "label": "Globale Config",
+        "desc": "Audio-configuratie opgeslagen in GameInstance - blijft bestaan tussen level loads. Bevat Wwise Event referenties en per-anomalie instellingen."
+      },
+      "retrieval": {
+        "label": "Config Ophalen",
+        "desc": "GetAnomalyAudioConfig retourneert een Data Asset met alle anomalie-geluidsinstellingen. Designers kunnen aanpassen zonder hercompilatie."
+      },
+      "binding": {
+        "label": "Event Binding",
+        "desc": "AddDynamic abonneert op anomalie-levenscyclus. Wanneer anomalie spawnt/activeert/gevangen wordt, reageert audio automatisch. Geen koppeling met gameplay-code."
+      },
+      "spatial": {
+        "label": "Spatial Bron",
+        "desc": "InitializeAudioSource stelt de AkComponent in voor 3D-positionering. Elke anomalie heeft zijn eigen audio-emitter voor juiste spatialisatie."
+      },
+      "settings": {
+        "label": "Per-Anomalie Instellingen",
+        "desc": "Verschillende anomalietypes hebben unieke geluiden. GetSettingsForAnomaly zoekt het specifieke audioprofiel op - spookachtig gefluister vs poltergeist-crashes."
+      },
+      "switch": {
+        "label": "Wwise Switch",
+        "desc": "SetSwitch vertelt Wwise welke geluidsvariatie te gebruiken. Eén Event, meerdere uitkomsten op basis van anomalietype. Geheugenefficiënt."
+      },
+      "post": {
+        "label": "Event Post",
+        "desc": "PostAkEvent triggert het Wwise Event op deze specifieke actor. 3D gepositioneerd, respecteert occlusie/attenuatie-instellingen geconfigureerd in Wwise."
+      }
+    }
   },
   "tooltips": {
     "live_demo": "Live Demo",

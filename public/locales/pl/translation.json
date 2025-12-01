@@ -387,7 +387,126 @@
     "project_not_found": "Projekt nie znaleziony"
   },
   "code": {
-    "live_server": "SERWER AKTYWNY"
+    "live_server": "SERWER AKTYWNY",
+    "hover_hint": "Kliknij podświetlone linie, aby zobaczyć wyjaśnienia",
+    "line": "Linia",
+    "annotations": "adnotacji",
+    "explanation_title": "Wyjaśnienie Kodu",
+    "select_line": "Kliknij podświetloną linię, żeby zobaczyć co robi"
+  },
+  "ann": {
+    "enemy": {
+      "proximity": {
+        "label": "Callback Bliskości",
+        "desc": "Funkcja wywoływana przez EnemyPresenceComponent przy zmianie odległości do najbliższego wroga. ProximityValue znormalizowane 0-100%."
+      },
+      "hysteresis": {
+        "label": "Progi Histerezy",
+        "desc": "Dwa oddzielne progi zapobiegają migotaniu audio. StartThreshold (np. 20%) włącza dźwięk, StopThreshold (np. 10%) wyłącza. Ta przerwa zapobiega szybkiemu przełączaniu."
+      },
+      "dread": {
+        "label": "Warstwy Grozy",
+        "desc": "Wysyła Event Wwise uruchamiający warstwowe dźwięki grozy - niskie drony, niepokojące tekstury. Warstwy nasilają się w oparciu o wartość RTPC."
+      },
+      "breathing": {
+        "label": "Stresowy Oddech",
+        "desc": "Uruchamia pętlę zestresowanego oddechu postaci. W połączeniu z warstwami grozy tworzy intensywną atmosferę horroru gdy wrogowie są blisko."
+      },
+      "rtpc": {
+        "label": "Aktualizacja RTPC",
+        "desc": "Real-Time Parameter Control - wysyła ProximityValue do Wwise. Kontroluje głośność, filtr i wysokość w czasie rzeczywistym. Płynne przejścia, bez ostrych cięć."
+      },
+      "intensity": {
+        "label": "Intensywność Oddechu",
+        "desc": "Osobny RTPC dla oddechu. Większa bliskość = szybszy, bardziej spanikowany oddech. Tworzy psychologiczne połączenie między graczem a postacią."
+      }
+    },
+    "footstep": {
+      "surface": {
+        "label": "Detekcja Powierzchni",
+        "desc": "Zwraca FName mapujące bezpośrednio na wartość Switch Wwise. FootstepAudioManager używa tego do ustawienia prawidłowej wariacji dźwięku kroków."
+      },
+      "ray": {
+        "label": "Początek Promienia",
+        "desc": "Line trace zaczyna się od lokalizacji aktora (poziom stóp). Bardziej niezawodne niż sockety siatki postaci do detekcji powierzchni."
+      },
+      "trace": {
+        "label": "Kierunek Trace",
+        "desc": "Śledzi w dół o m_TraceDistance jednostek. Konfigurowalny w edytorze - zazwyczaj 50-100cm dla schodów i nierównego terenu."
+      },
+      "physics": {
+        "label": "Zapytanie Fizyki",
+        "desc": "Krytyczna flaga! bReturnPhysicalMaterial musi być true, inaczej PhysMaterial zawsze będzie null. Częsta pułapka w integracji audio Unreal."
+      },
+      "channel": {
+        "label": "Kanał Widoczności",
+        "desc": "Używa kanału ECC_Visibility do trace. Można też użyć własnego kanału trace dla bardziej precyzyjnej detekcji kolizji tylko dla audio."
+      },
+      "mapping": {
+        "label": "Mapowanie Powierzchni",
+        "desc": "Enumy SurfaceType Unreal mapują na nazwy Switch Wwise. Designerzy poziomów przypisują Physical Materials do podłóg, kod automatycznie odtwarza prawidłowe kroki."
+      },
+      "creaky": {
+        "label": "Skrzypiące Powierzchnie",
+        "desc": "Specjalne typy powierzchni dla atmosfery horroru. CreakyWood i CreakyStairs mają dodatkowe losowe skrzypienie - gracz zdradza pozycję wrogom."
+      }
+    },
+    "player": {
+      "delegate": {
+        "label": "Dynamiczny Delegate",
+        "desc": "DECLARE_DYNAMIC_MULTICAST pozwala wielu słuchaczom (audio, UI, gameplay) subskrybować. 'Dynamic' oznacza że działa z Blueprintami, nie tylko C++."
+      },
+      "death": {
+        "label": "Sekwencja Śmierci",
+        "desc": "Rozgłaszane gdy gracz umiera. Uruchamia stinger śmierci, zatrzymuje całe ambient audio i rozpoczyna sekwencję game over. Krytyczne dla zarządzania stanem audio."
+      },
+      "blueprint": {
+        "label": "BlueprintAssignable",
+        "desc": "Sound designerzy mogą bindować Eventy Wwise bezpośrednio w Blueprint bez dotykania C++. Szybsza iteracja audio - bez rekompilacji."
+      },
+      "shutter": {
+        "label": "Migawka Aparatu",
+        "desc": "Główna mechanika rozgrywki - robienie zdjęć. Uruchamia dźwięk kliknięcia migawki i flesza. Anomalie wrogów reagują na ten dźwięk!"
+      },
+      "zoom": {
+        "label": "Audio Zoomu",
+        "desc": "Zoom aparatu uruchamia dźwięk silnika servo i subtelną zmianę ambientu. Immersyjny feedback dla gracza wchodzącego w 'tryb dochodzenia'."
+      },
+      "photoboard": {
+        "label": "UI Tablicy Zdjęć",
+        "desc": "Przy przeglądaniu zebranych zdjęć, ambient audio ścisza się a dźwięki UI aktywują. Delegates oddzielają to od hardcodowanych wywołań audio."
+      }
+    },
+    "anomaly": {
+      "config": {
+        "label": "Globalna Konfiguracja",
+        "desc": "Konfiguracja audio przechowywana w GameInstance - przetrwa między wczytaniami poziomów. Zawiera referencje Eventów Wwise i ustawienia per-anomalia."
+      },
+      "retrieval": {
+        "label": "Pobieranie Konfiguracji",
+        "desc": "GetAnomalyAudioConfig zwraca Data Asset ze wszystkimi ustawieniami dźwięku anomalii. Designerzy mogą modyfikować bez rekompilacji."
+      },
+      "binding": {
+        "label": "Binding Eventów",
+        "desc": "AddDynamic subskrybuje cykl życia anomalii. Gdy anomalia się pojawia/aktywuje/zostaje złapana, audio reaguje automatycznie. Zero sprzężenia z kodem gameplay."
+      },
+      "spatial": {
+        "label": "Źródło Przestrzenne",
+        "desc": "InitializeAudioSource konfiguruje AkComponent do pozycjonowania 3D. Każda anomalia ma własny emiter audio dla prawidłowej spacjalizacji."
+      },
+      "settings": {
+        "label": "Ustawienia Per-Anomalia",
+        "desc": "Różne typy anomalii mają unikalne dźwięki. GetSettingsForAnomaly wyszukuje specyficzny profil audio - upiorny szept vs hałas poltergeista."
+      },
+      "switch": {
+        "label": "Switch Wwise",
+        "desc": "SetSwitch mówi Wwise którą wariację dźwięku użyć. Jeden Event, wiele wyników w zależności od typu anomalii. Wydajne pamięciowo."
+      },
+      "post": {
+        "label": "Event Post",
+        "desc": "PostAkEvent uruchamia Event Wwise na tym konkretnym aktorze. Pozycjonowany 3D, respektuje ustawienia okluzji/tłumienia skonfigurowane w Wwise."
+      }
+    }
   },
   "tooltips": {
     "live_demo": "Demo Live",

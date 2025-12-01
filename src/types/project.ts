@@ -1,8 +1,15 @@
+export interface CodeAnnotation {
+  line: number;           // Line number (1-indexed)
+  label: string;          // Short label shown on hover
+  explanation: string;    // Full explanation
+}
+
 export interface CodeSnippet {
   title: string;
   language: string; // e.g., 'cpp', 'python'
   code: string;
   description?: string;
+  annotations?: CodeAnnotation[];  // Interactive annotations for code lines
 }
 
 export type ContentBlockType = 'text' | 'image' | 'video' | 'split_text_media' | 'stats_grid' | 'code';

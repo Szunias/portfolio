@@ -347,7 +347,126 @@
     "project_not_found": "Project not found"
   },
   "code": {
-    "live_server": "LIVE SERVER"
+    "live_server": "LIVE SERVER",
+    "hover_hint": "Click highlighted lines to see explanations",
+    "line": "Line",
+    "annotations": "annotations",
+    "explanation_title": "Code Explanation",
+    "select_line": "Click a highlighted line to see what it does"
+  },
+  "ann": {
+    "enemy": {
+      "proximity": {
+        "label": "Proximity Callback",
+        "desc": "This function is called by EnemyPresenceComponent whenever the distance to the nearest enemy changes. ProximityValue is normalized 0-100%."
+      },
+      "hysteresis": {
+        "label": "Hysteresis Thresholds",
+        "desc": "Two separate thresholds prevent audio flickering. StartThreshold (e.g. 20%) triggers audio ON, StopThreshold (e.g. 10%) triggers OFF. This gap prevents rapid toggling."
+      },
+      "dread": {
+        "label": "Dread Layers",
+        "desc": "Posts a Wwise Event that starts layered ambient dread sounds - low drones, unsettling textures. These layers intensify based on RTPC value."
+      },
+      "breathing": {
+        "label": "Stress Breathing",
+        "desc": "Triggers player character's stressed breathing loop. Combined with dread layers, creates visceral horror atmosphere when enemies are near."
+      },
+      "rtpc": {
+        "label": "RTPC Update",
+        "desc": "Real-Time Parameter Control - sends ProximityValue to Wwise. Controls volume, filter cutoff, and pitch in real-time. Smooth transitions, no hard cuts."
+      },
+      "intensity": {
+        "label": "Breathing Intensity",
+        "desc": "Separate RTPC for breathing. Higher proximity = faster, more panicked breathing. Creates psychological connection between player and character."
+      }
+    },
+    "footstep": {
+      "surface": {
+        "label": "Surface Detection",
+        "desc": "Returns an FName that maps directly to a Wwise Switch value. FootstepAudioManager uses this to set the correct footstep sound variation."
+      },
+      "ray": {
+        "label": "Ray Origin",
+        "desc": "Line trace starts from actor's location (feet level). More reliable than character mesh sockets for surface detection."
+      },
+      "trace": {
+        "label": "Trace Direction",
+        "desc": "Traces straight down by m_TraceDistance units. Configurable in editor - typically 50-100cm to handle stairs and uneven terrain."
+      },
+      "physics": {
+        "label": "Physics Query",
+        "desc": "Critical flag! bReturnPhysicalMaterial must be true or PhysMaterial will always be null. Common gotcha in Unreal audio integration."
+      },
+      "channel": {
+        "label": "Visibility Channel",
+        "desc": "Uses ECC_Visibility channel for traces. Could also use custom trace channel for more precise audio-only collision detection."
+      },
+      "mapping": {
+        "label": "Surface Mapping",
+        "desc": "Unreal's SurfaceType enums map to Wwise Switch names. Level designers assign Physical Materials to floors, code automatically plays correct footsteps."
+      },
+      "creaky": {
+        "label": "Creaky Surfaces",
+        "desc": "Special surface types for horror atmosphere. CreakyWood and CreakyStairs have additional random creaking sounds - player reveals position to enemies."
+      }
+    },
+    "player": {
+      "delegate": {
+        "label": "Dynamic Delegate",
+        "desc": "DECLARE_DYNAMIC_MULTICAST allows multiple listeners (audio, UI, gameplay) to subscribe. 'Dynamic' means it works with Blueprints, not just C++."
+      },
+      "death": {
+        "label": "Death Sequence",
+        "desc": "Broadcasted when player dies. Triggers death stinger, stops all ambient audio, and starts game over sequence. Critical for audio state management."
+      },
+      "blueprint": {
+        "label": "BlueprintAssignable",
+        "desc": "Sound designers can bind Wwise Events directly in Blueprint without touching C++. Iterate on audio faster - no recompile needed."
+      },
+      "shutter": {
+        "label": "Camera Shutter",
+        "desc": "Core gameplay mechanic - taking photos. Triggers shutter click sound and photo flash audio. Enemy anomalies react to this sound!"
+      },
+      "zoom": {
+        "label": "Zoom Audio",
+        "desc": "Camera zoom triggers servo motor sound and subtle ambience change. Immersive feedback for player entering 'investigation mode'."
+      },
+      "photoboard": {
+        "label": "Photoboard UI",
+        "desc": "When viewing collected photos, ambient audio ducks and UI sounds activate. Delegates decouple this from hardcoded audio calls."
+      }
+    },
+    "anomaly": {
+      "config": {
+        "label": "Global Config",
+        "desc": "Audio configuration stored in GameInstance - persists across level loads. Contains Wwise Event references and per-anomaly settings."
+      },
+      "retrieval": {
+        "label": "Config Retrieval",
+        "desc": "GetAnomalyAudioConfig returns a Data Asset with all anomaly sound settings. Designers can tweak without recompiling."
+      },
+      "binding": {
+        "label": "Event Binding",
+        "desc": "AddDynamic subscribes to anomaly lifecycle. When anomaly spawns/activates/gets captured, audio responds automatically. Zero coupling with gameplay code."
+      },
+      "spatial": {
+        "label": "Spatial Source",
+        "desc": "InitializeAudioSource sets up the AkComponent for 3D positioning. Each anomaly has its own audio emitter for proper spatialization."
+      },
+      "settings": {
+        "label": "Per-Anomaly Settings",
+        "desc": "Different anomaly types have unique sounds. GetSettingsForAnomaly looks up the specific audio profile - ghostly whispers vs poltergeist crashes."
+      },
+      "switch": {
+        "label": "Wwise Switch",
+        "desc": "SetSwitch tells Wwise which sound variation to use. One Event, multiple outcomes based on anomaly type. Memory efficient."
+      },
+      "post": {
+        "label": "Event Post",
+        "desc": "PostAkEvent triggers the Wwise Event on this specific actor. 3D positioned, respects occlusion/attenuation settings configured in Wwise."
+      }
+    }
   },
   "tooltips": {
     "live_demo": "Live Demo",
