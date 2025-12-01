@@ -1,44 +1,105 @@
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { TECH_CONNECTIONS } from '../../constants/techConnections';
-import { TECH_CATEGORIES, TECH_ICON_MAP } from '../../constants/techData';
-import { useTranslation } from 'react-i18next';
+import { TECH_ICON_MAP } from '../../constants/techData';
 
 interface NodePosition {
   id: string;
   x: number;
   y: number;
+  type: 'in' | 'out';
+}
+
+interface WireConnection {
+    source: string;
+    target: string;
+    sourceNode: NodePosition;
+    targetNode: NodePosition;
 }
 
 interface TechConstellationProps {
   onSelect: (tech: string) => void;
 }
 
+// Columns
+const PIPELINE_COLUMNS = [
+  { id: 'code', title: 'CORE', color: '#ef4444', items: ['C++', 'C#', 'Python', 'Blueprints', 'JUCE'] },
+  { id: 'tools', title: 'TOOLS', color: '#eab308', items: ['Reaper', 'GitHub', 'Perforce', 'iZotope RX'] },
+  { id: 'middleware', title: 'AUDIO', color: '#38bdf8', items: ['Wwise', 'FMOD', '3D Audio'] },
+  { id: 'engine', title: 'ENGINE', color: '#a855f7', items: ['Unreal Engine 5', 'Unity'] }
+];
+
+// Sub-component for the Cable Physics
+const HangingCable = ({ start, end, color, isActive }: { start: NodePosition, end: NodePosition, color: string, isActive: boolean }) => {
+    // Calculate physics constants based on distance
+    const dist = Math.abs(end.x - start.x);
+    const midX = (start.x + end.x) / 2;
+    const midY = (start.y + end.y) / 2;
+    
+    // Sag amount: Longer distance = more sag. Active = Less sag (tension).
+    const baseSag = dist * 0.3; 
+    const activeSag = dist * 0.1; 
+    const currentSag = isActive ? activeSag : baseSag;
+
+    // Random offset for sway so they don't all move in perfect sync
+    const swayOffset = useMemo(() => Math.random() * 2, []);
+
+    return (
+        <motion.path
+            initial={false}
+            animate={{
+                d: [
+                    `M ${start.x} ${start.y} Q ${midX} ${midY + currentSag} ${end.x} ${end.y}`,
+                    `M ${start.x} ${start.y} Q ${midX} ${midY + currentSag + (isActive ? 2 : 10)} ${end.x} ${end.y}`,
+                    `M ${start.x} ${start.y} Q ${midX} ${midY + currentSag} ${end.x} ${end.y}`
+                ],
+                stroke: isActive ? color : '#333',
+                strokeWidth: isActive ? 3 : 1,
+                strokeOpacity: isActive ? 1 : 0.3
+            }}
+            transition={{
+                d: {
+                    duration: isActive ? 0.5 : 3 + swayOffset, // Active = snap tight, Idle = slow sway
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                },
+                stroke: { duration: 0.3 },
+                strokeWidth: { duration: 0.3 }
+            }}
+            fill="none"
+            strokeLinecap="round"
+        />
+    );
+};
+
 const TechConstellation = ({ onSelect }: TechConstellationProps) => {
-  const { t } = useTranslation();
   const [hoveredTech, setHoveredTech] = useState<string | null>(null);
   const [nodePositions, setNodePositions] = useState<NodePosition[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Flatten items for easier mapping
-  const allTechs = TECH_CATEGORIES.flatMap(cat => cat.items);
+  const allTechs = PIPELINE_COLUMNS.flatMap(c => c.items);
 
-  // Update positions on resize
   useEffect(() => {
     const updatePositions = () => {
       if (!containerRef.current) return;
       const nodes: NodePosition[] = [];
-      
-      // Find all tech elements and record their center positions relative to container
+      const containerRect = containerRef.current.getBoundingClientRect();
+
       allTechs.forEach(tech => {
-        const el = document.getElementById(`tech-node-${tech}`);
-        if (el && containerRef.current) {
+        const el = document.getElementById(`node-${tech}`);
+        if (el) {
           const rect = el.getBoundingClientRect();
-          const containerRect = containerRef.current.getBoundingClientRect();
           nodes.push({
-            id: tech,
-            x: rect.left - containerRect.left + rect.width / 2,
-            y: rect.top - containerRect.top + rect.height / 2
+            id: `${tech}-in`,
+            x: rect.left - containerRect.left,
+            y: rect.top - containerRect.top + rect.height / 2,
+            type: 'in'
+          });
+          nodes.push({
+            id: `${tech}-out`,
+            x: rect.right - containerRect.left,
+            y: rect.top - containerRect.top + rect.height / 2,
+            type: 'out'
           });
         }
       });
@@ -53,163 +114,122 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
     };
   }, [allTechs]);
 
-  // Get connections for currently hovered tech
-  const activeConnections = hoveredTech ? TECH_CONNECTIONS[hoveredTech] || [] : [];
+  // Get all connections (active + idle background ones)
+  const allWires = useMemo(() => {
+      if (nodePositions.length === 0) return [];
+      const wires: WireConnection[] = [];
+      
+      Object.entries(TECH_CONNECTIONS).forEach(([source, targets]) => {
+          targets.forEach(target => {
+              const sourceNode = nodePositions.find(n => n.id === `${source}-out`);
+              const targetNode = nodePositions.find(n => n.id === `${target}-in`);
+              
+              if (sourceNode && targetNode) {
+                  if (targetNode.x > sourceNode.x) {
+                      wires.push({ source, target, sourceNode, targetNode });
+                  }
+              }
+          });
+      });
+      return wires;
+  }, [nodePositions]);
+
 
   return (
-    <div className="relative py-10 min-h-[600px] flex items-center justify-center select-none" ref={containerRef}>
+    <div className="relative py-10 min-h-[600px] flex flex-col justify-center select-none overflow-hidden" ref={containerRef}>
       
-      {/* Background Grid & Radar Scan */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-xl">
+      {/* Blueprint Background */}
+      <div className="absolute inset-0 z-0 pointer-events-none bg-[#0f0f0f] rounded-xl border border-white/5">
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent/5 to-transparent opacity-30 animate-pulse"></div>
       </div>
 
-      {/* Tech Grid Layout - Organic / Circuit Board */}
-      <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
-        {TECH_CATEGORIES.map((cat, catIdx) => (
-          <div key={catIdx} className="relative group/cat">
-            {/* Category Header - Holographic Badge */}
-            <div className="flex items-center gap-3 mb-6 px-2">
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent to-accent/50"></div>
-                <h3 className="text-xs font-mono text-accent uppercase tracking-[0.3em] font-bold shadow-accent drop-shadow-[0_0_5px_rgba(56,189,248,0.8)]">
-                    {t(`tech_cat.${cat.title}`, cat.title)}
-                </h3>
-                <div className="h-px flex-1 bg-gradient-to-l from-transparent to-accent/50"></div>
+      {/* Nodes Container */}
+      <div className="relative z-20 flex flex-col md:flex-row justify-between items-start gap-16 md:gap-24 px-8 h-full max-w-7xl mx-auto w-full">
+        
+        {PIPELINE_COLUMNS.map((col) => (
+            <div key={col.id} className="flex flex-col gap-8 flex-1 min-w-[160px] z-20">
+                {/* Header */}
+                <div className="flex items-center gap-4 mb-4 opacity-50">
+                    <div className="h-px flex-1 bg-white/20"></div>
+                    <span className="text-[10px] font-mono font-bold text-white uppercase tracking-widest">{col.title}</span>
+                    <div className="h-px flex-1 bg-white/20"></div>
+                </div>
+
+                {/* Nodes List */}
+                <div className="flex flex-col gap-6 justify-center h-full">
+                    {col.items.map(tech => {
+                         // Check if this tech is part of the active connection chain
+                         const isActiveChain = hoveredTech && (
+                             tech === hoveredTech || 
+                             TECH_CONNECTIONS[hoveredTech]?.includes(tech) || 
+                             // Also highlight if this node points TO the hovered node (reverse lookup)
+                             Object.entries(TECH_CONNECTIONS).some(([k, v]) => v.includes(hoveredTech) && k === tech)
+                         );
+
+                         const iconKey = Object.keys(TECH_ICON_MAP).find(k => tech.includes(k));
+                         const iconPath = iconKey ? `/assets/icons/tech/${TECH_ICON_MAP[iconKey]}` : null;
+
+                         return (
+                             <motion.div
+                                id={`node-${tech}`}
+                                key={tech}
+                                layoutId={tech}
+                                onMouseEnter={() => setHoveredTech(tech)}
+                                onMouseLeave={() => setHoveredTech(null)}
+                                onClick={() => onSelect(tech)}
+                                className={`
+                                    relative group cursor-pointer rounded-lg overflow-hidden border transition-all duration-300 w-full
+                                    ${isActiveChain ? 'border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.1)] scale-105 z-30' : 'border-white/5 bg-[#151515] hover:border-white/20 z-10'}
+                                    ${hoveredTech && !isActiveChain ? 'opacity-20 blur-[1px]' : 'opacity-100'}
+                                `}
+                             >
+                                 {/* Color Bar */}
+                                 <div className="absolute left-0 top-0 bottom-0 w-1 opacity-80" style={{ backgroundColor: col.color }}></div>
+
+                                 {/* Body */}
+                                 <div className="p-4 pl-5 flex items-center gap-4">
+                                     {iconPath ? (
+                                         <img src={iconPath} alt="" className="w-8 h-8 object-contain opacity-70 group-hover:opacity-100 filter grayscale group-hover:grayscale-0 transition-all" />
+                                     ) : (
+                                         <div className="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-[10px] font-mono text-slate-500">?</div>
+                                     )}
+                                     <span className={`text-sm font-bold tracking-wide transition-colors ${isActiveChain ? 'text-white' : 'text-slate-400'}`}>
+                                         {tech}
+                                     </span>
+                                 </div>
+
+                                 {/* Ports */}
+                                 <div className={`absolute top-1/2 -left-1.5 -translate-y-1/2 w-3 h-3 rounded-full border border-black transition-colors ${isActiveChain ? 'bg-white' : 'bg-[#333]'}`}></div>
+                                 <div className={`absolute top-1/2 -right-1.5 -translate-y-1/2 w-3 h-3 rounded-full border border-black transition-colors ${isActiveChain ? 'bg-white' : 'bg-[#333]'}`}></div>
+                             </motion.div>
+                         )
+                    })}
+                </div>
             </div>
-
-            {/* Hex/Grid Container */}
-            <div className="flex flex-wrap gap-4 justify-center">
-              {cat.items.map((tech) => {
-                const isHovered = hoveredTech === tech;
-                const isConnected = hoveredTech && (activeConnections.includes(tech));
-                const isDimmed = hoveredTech && !isHovered && !isConnected;
-                const iconKey = Object.keys(TECH_ICON_MAP).find(k => tech.includes(k));
-                const iconPath = iconKey ? `/assets/icons/tech/${TECH_ICON_MAP[iconKey]}` : null;
-
-                return (
-                  <motion.div
-                    id={`tech-node-${tech}`}
-                    key={tech}
-                    layoutId={tech}
-                    className={`
-                      w-24 h-24 relative flex flex-col items-center justify-center 
-                      cursor-pointer transition-all duration-300
-                      ${isDimmed ? 'opacity-10 grayscale blur-[1px]' : 'opacity-100'}
-                    `}
-                    onMouseEnter={() => setHoveredTech(tech)}
-                    onMouseLeave={() => setHoveredTech(null)}
-                    onClick={() => onSelect(tech)}
-                  >
-                    {/* Chip Container */}
-                    <div className={`
-                        absolute inset-0 rounded-2xl border backdrop-blur-md transition-all duration-500
-                        ${(isHovered || isConnected) 
-                            ? 'bg-accent/10 border-accent shadow-[0_0_30px_rgba(56,189,248,0.25)]' 
-                            : 'bg-white/5 border-white/10 hover:border-white/30 hover:bg-white/10'
-                        }
-                    `}>
-                         {/* Corner Accents (Only visible on active) */}
-                        {(isHovered || isConnected) && (
-                            <>
-                                <div className="absolute top-0 left-0 w-2 h-2 border-l-2 border-t-2 border-accent"></div>
-                                <div className="absolute top-0 right-0 w-2 h-2 border-r-2 border-t-2 border-accent"></div>
-                                <div className="absolute bottom-0 left-0 w-2 h-2 border-l-2 border-b-2 border-accent"></div>
-                                <div className="absolute bottom-0 right-0 w-2 h-2 border-r-2 border-b-2 border-accent"></div>
-                            </>
-                        )}
-                    </div>
-
-                    {/* Content */}
-                    <div className="relative z-10 flex flex-col items-center gap-3 transform transition-transform duration-300 group-hover:scale-105">
-                        {iconPath ? (
-                        <img 
-                            src={iconPath} 
-                            alt={tech} 
-                            className={`w-10 h-10 object-contain transition-all duration-300 filter
-                                ${(isHovered || isConnected) 
-                                    ? 'drop-shadow-[0_0_15px_rgba(255,255,255,0.6)] brightness-110' 
-                                    : 'grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100'}
-                            `}
-                        />
-                        ) : (
-                        <div className={`w-10 h-10 rounded-full border flex items-center justify-center transition-colors
-                             ${(isHovered || isConnected) ? 'bg-accent text-black border-accent' : 'border-white/20 text-slate-400'}
-                        `}>
-                            <span className="text-xs font-bold">?</span>
-                        </div>
-                        )}
-                        
-                        <span className={`text-[11px] font-mono uppercase tracking-wider transition-colors px-2 py-0.5 rounded
-                            ${(isHovered || isConnected) ? 'text-white font-bold bg-black/50 shadow-sm' : 'text-slate-300 group-hover:text-white'}
-                        `}>
-                        {tech}
-                        </span>
-                    </div>
-
-                    {/* Connecting Status Dot */}
-                    {(isHovered || isConnected) && (
-                        <div className="absolute -bottom-2 w-1.5 h-1.5 bg-accent shadow-[0_0_10px_#38bdf8] rounded-full"></div>
-                    )}
-
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
         ))}
       </div>
 
-      {/* SVG Layer - Holographic Links */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible">
-        <defs>
-            <filter id="glow-strong">
-                <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-                <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-            </filter>
-        </defs>
-        <AnimatePresence>
-          {hoveredTech && nodePositions.length > 0 && activeConnections.map(targetId => {
-            const start = nodePositions.find(n => n.id === hoveredTech);
-            const end = nodePositions.find(n => n.id === targetId);
-            
-            if (!start || !end) return null;
+      {/* Cables Layer */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible">
+          {allWires.map((wire) => {
+              const isActive = hoveredTech && (
+                  (wire.source === hoveredTech && TECH_CONNECTIONS[hoveredTech].includes(wire.target)) ||
+                  (wire.target === hoveredTech && TECH_CONNECTIONS[wire.source].includes(hoveredTech))
+              );
+              
+              const sourceCol = PIPELINE_COLUMNS.find(c => c.items.includes(wire.source));
+              const color = sourceCol ? sourceCol.color : '#fff';
 
-            return (
-              <g key={`${hoveredTech}-${targetId}`}>
-                  {/* Core Line */}
-                  <motion.path
-                    d={`M ${start.x} ${start.y} L ${end.x} ${end.y}`}
-                    initial={{ pathLength: 0, opacity: 0 }}
-                    animate={{ pathLength: 1, opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    stroke="#38bdf8"
-                    strokeWidth="1"
-                    fill="none"
-                    filter="url(#glow-strong)"
+              return (
+                  <HangingCable 
+                    key={`${wire.source}-${wire.target}`}
+                    start={wire.sourceNode}
+                    end={wire.targetNode}
+                    color={color}
+                    isActive={!!isActive}
                   />
-                  {/* Data Packet Animation */}
-                  <motion.circle
-                    r="2"
-                    fill="white"
-                    initial={{ offsetDistance: "0%" }}
-                    animate={{ offsetDistance: "100%" }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  >
-                      <animateMotion 
-                        dur="1s" 
-                        repeatCount="indefinite"
-                        path={`M ${start.x} ${start.y} L ${end.x} ${end.y}`}
-                      />
-                  </motion.circle>
-              </g>
-            );
+              );
           })}
-        </AnimatePresence>
       </svg>
 
     </div>
