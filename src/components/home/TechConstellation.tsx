@@ -86,30 +86,60 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
       const containerRect = containerRef.current.getBoundingClientRect();
 
       allTechs.forEach(tech => {
-        const el = document.getElementById(`node-${tech}`);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          nodes.push({
-            id: `${tech}-in`,
-            x: rect.left - containerRect.left,
-            y: rect.top - containerRect.top + rect.height / 2,
-            type: 'in'
-          });
-          nodes.push({
-            id: `${tech}-out`,
-            x: rect.right - containerRect.left,
-            y: rect.top - containerRect.top + rect.height / 2,
-            type: 'out'
-          });
+        const portIn = document.getElementById(`port-${tech}-in`);
+        const portOut = document.getElementById(`port-${tech}-out`);
+        
+        // If we have specific ports, use them. Otherwise fallback to node edges (shouldn't happen if rendered correctly)
+        if (portIn && portOut) {
+            const rectIn = portIn.getBoundingClientRect();
+            const rectOut = portOut.getBoundingClientRect();
+
+            nodes.push({
+                id: `${tech}-in`,
+                x: rectIn.left - containerRect.left + rectIn.width / 2,
+                y: rectIn.top - containerRect.top + rectIn.height / 2,
+                type: 'in'
+            });
+            nodes.push({
+                id: `${tech}-out`,
+                x: rectOut.left - containerRect.left + rectOut.width / 2,
+                y: rectOut.top - containerRect.top + rectOut.height / 2,
+                type: 'out'
+            });
+        } else {
+            // Fallback logic (legacy)
+            const el = document.getElementById(`node-${tech}`);
+            if (el) {
+                const rect = el.getBoundingClientRect();
+                nodes.push({
+                    id: `${tech}-in`,
+                    x: rect.left - containerRect.left,
+                    y: rect.top - containerRect.top + rect.height / 2,
+                    type: 'in'
+                });
+                nodes.push({
+                    id: `${tech}-out`,
+                    x: rect.right - containerRect.left,
+                    y: rect.top - containerRect.top + rect.height / 2,
+                    type: 'out'
+                });
+            }
         }
       });
       setNodePositions(nodes);
     };
 
-    const timeout = setTimeout(updatePositions, 500);
+    // Multiple triggers to catch layout shifts/font loads
+    const t1 = setTimeout(updatePositions, 100);
+    const t2 = setTimeout(updatePositions, 500);
+    const t3 = setTimeout(updatePositions, 1000);
+    
     window.addEventListener('resize', updatePositions);
+    
     return () => {
-      clearTimeout(timeout);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
       window.removeEventListener('resize', updatePositions);
     };
   }, [allTechs]);
@@ -173,7 +203,7 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                              <motion.div
                                 id={`node-${tech}`}
                                 key={tech}
-                                layoutId={tech}
+                                // layoutId removed to fix coordinate calculation bugs
                                 onMouseEnter={() => setHoveredTech(tech)}
                                 onMouseLeave={() => setHoveredTech(null)}
                                 onClick={() => onSelect(tech)}
@@ -208,12 +238,14 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                                      </span>
                                  </div>
 
-                                 {/* Ports */}
+                                 {/* Ports - with explicit IDs for coordinate tracking */}
                                  <div 
+                                    id={`port-${tech}-in`}
                                     className="absolute top-1/2 -left-1.5 -translate-y-1/2 w-3 h-3 rounded-full border border-black transition-colors"
                                     style={{ backgroundColor: isActiveChain ? col.color : '#333' }}
                                  ></div>
                                  <div 
+                                    id={`port-${tech}-out`}
                                     className="absolute top-1/2 -right-1.5 -translate-y-1/2 w-3 h-3 rounded-full border border-black transition-colors"
                                     style={{ backgroundColor: isActiveChain ? col.color : '#333' }}
                                  ></div>
