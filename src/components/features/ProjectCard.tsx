@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ImageWithLoader from '../ui/ImageWithLoader';
-import { ArrowRight, Cpu, User, Calendar } from 'lucide-react';
+import { ArrowRight, Cpu, User } from 'lucide-react';
 
 interface ProjectCardProps {
   project: Project;
@@ -87,7 +87,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             
             <div className="flex items-center gap-1.5">
                 <User size={12} />
-                <span className="uppercase tracking-wider">{project.role || 'Audio'}</span>
+                <span className="uppercase tracking-wider">{project.category || 'Audio'}</span>
             </div>
 
             <div className="group-hover:translate-x-1 transition-transform text-accent opacity-0 group-hover:opacity-100">

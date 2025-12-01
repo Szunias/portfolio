@@ -45,10 +45,8 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
       setNodePositions(nodes);
     };
 
-    // Initial timeout to allow layout to settle
     const timeout = setTimeout(updatePositions, 500);
     window.addEventListener('resize', updatePositions);
-    
     return () => {
       clearTimeout(timeout);
       window.removeEventListener('resize', updatePositions);
@@ -59,15 +57,28 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
   const activeConnections = hoveredTech ? TECH_CONNECTIONS[hoveredTech] || [] : [];
 
   return (
-    <div className="relative py-10" ref={containerRef}>
+    <div className="relative py-10 min-h-[600px] flex items-center justify-center select-none" ref={containerRef}>
       
-      {/* Grid of Tech Nodes */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 relative z-10">
+      {/* Background Grid & Radar Scan */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-xl">
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent/5 to-transparent opacity-30 animate-pulse"></div>
+      </div>
+
+      {/* Tech Grid Layout - Organic / Circuit Board */}
+      <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
         {TECH_CATEGORIES.map((cat, catIdx) => (
-          <div key={catIdx} className="bg-white/5 p-6 rounded-3xl border border-white/10 backdrop-blur-md shadow-xl relative z-20">
-            <h3 className="text-xs font-mono text-accent uppercase tracking-[0.2em] mb-6 pb-2 border-b border-white/5 text-center">
-              {t(`tech_cat.${cat.title}`, cat.title)}
-            </h3>
+          <div key={catIdx} className="relative group/cat">
+            {/* Category Header - Holographic Badge */}
+            <div className="flex items-center gap-3 mb-6 px-2">
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent to-accent/50"></div>
+                <h3 className="text-xs font-mono text-accent uppercase tracking-[0.3em] font-bold shadow-accent drop-shadow-[0_0_5px_rgba(56,189,248,0.8)]">
+                    {t(`tech_cat.${cat.title}`, cat.title)}
+                </h3>
+                <div className="h-px flex-1 bg-gradient-to-l from-transparent to-accent/50"></div>
+            </div>
+
+            {/* Hex/Grid Container */}
             <div className="flex flex-wrap gap-4 justify-center">
               {cat.items.map((tech) => {
                 const isHovered = hoveredTech === tech;
@@ -80,46 +91,64 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                   <motion.div
                     id={`tech-node-${tech}`}
                     key={tech}
-                    whileHover={{ scale: 1.05 }}
+                    layoutId={tech}
                     className={`
-                      w-28 h-28 flex flex-col items-center justify-center 
-                      rounded-2xl border transition-all duration-500 cursor-pointer relative group overflow-hidden
-                      ${(isHovered || isConnected)
-                        ? 'bg-secondary border-accent shadow-[0_0_30px_rgba(56,189,248,0.3)] z-30 scale-105' 
-                        : 'bg-gradient-to-br from-white/5 to-transparent border-white/5 hover:border-white/20 z-20'
-                      }
-                      ${isDimmed ? 'opacity-20 blur-[2px]' : 'opacity-100'}
+                      w-24 h-24 relative flex flex-col items-center justify-center 
+                      cursor-pointer transition-all duration-300
+                      ${isDimmed ? 'opacity-10 grayscale blur-[1px]' : 'opacity-100'}
                     `}
                     onMouseEnter={() => setHoveredTech(tech)}
                     onMouseLeave={() => setHoveredTech(null)}
                     onClick={() => onSelect(tech)}
                   >
-                    {/* Active State Glow Background */}
+                    {/* Chip Container */}
+                    <div className={`
+                        absolute inset-0 bg-[#050505] border border-white/10 clip-path-hex
+                        transition-all duration-300 overflow-hidden
+                        ${(isHovered || isConnected) ? 'border-accent shadow-[0_0_20px_rgba(56,189,248,0.3)]' : 'hover:border-white/30'}
+                    `}>
+                        {/* Internal Scanline */}
+                        <div className={`absolute inset-0 bg-gradient-to-b from-transparent via-accent/10 to-transparent translate-y-[-100%] 
+                            ${(isHovered || isConnected) ? 'animate-[scan_2s_linear_infinite]' : ''}
+                        `}></div>
+                        
+                        {/* Corner Accents */}
+                        <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-white/20"></div>
+                        <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-white/20"></div>
+                        <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-white/20"></div>
+                        <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-white/20"></div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="relative z-10 flex flex-col items-center gap-2 transform transition-transform duration-300 group-hover:scale-105">
+                        {iconPath ? (
+                        <img 
+                            src={iconPath} 
+                            alt={tech} 
+                            className={`w-8 h-8 object-contain transition-all duration-300
+                                ${(isHovered || isConnected) ? 'drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] brightness-125' : 'opacity-70'}
+                            `}
+                        />
+                        ) : (
+                        <div className={`w-8 h-8 rounded-full border border-white/20 flex items-center justify-center
+                             ${(isHovered || isConnected) ? 'bg-accent/20 text-accent border-accent' : 'text-slate-600'}
+                        `}>
+                            <span className="text-[10px] font-bold">Run</span>
+                        </div>
+                        )}
+                        
+                        <span className={`text-[10px] font-mono uppercase tracking-wider transition-colors px-1 bg-black/50 backdrop-blur-sm
+                            ${(isHovered || isConnected) ? 'text-accent' : 'text-slate-500'}
+                        `}>
+                        {tech}
+                        </span>
+                    </div>
+
+                    {/* Connecting Status Dot */}
                     {(isHovered || isConnected) && (
-                        <div className="absolute inset-0 bg-accent/5 blur-xl"></div>
+                        <div className="absolute -bottom-1 w-1 h-1 bg-accent shadow-[0_0_5px_#38bdf8] rounded-full"></div>
                     )}
 
-                    {iconPath ? (
-                      <img 
-                        src={iconPath} 
-                        alt={tech} 
-                        className={`w-12 h-12 object-contain mb-3 transition-all duration-500 relative z-10 filter-none drop-shadow-[0_0_5px_rgba(0,0,0,0.5)]
-                            ${(isHovered || isConnected) ? 'scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]' : ''}
-                        `}
-                      />
-                    ) : (
-                      <div className={`w-12 h-12 rounded-full bg-white/10 mb-3 flex items-center justify-center transition-all duration-500
-                          ${(isHovered || isConnected) ? 'bg-accent text-black' : 'text-slate-500'}
-                      `}>
-                          <span className="text-sm font-bold">?</span>
-                      </div>
-                    )}
-                    
-                    <span className={`text-xs font-bold uppercase tracking-wider transition-colors relative z-10 px-2 text-center
-                        ${(isHovered || isConnected) ? 'text-accent' : 'text-slate-300'}
-                    `}>
-                      {tech}
-                    </span>
                   </motion.div>
                 );
               })}
@@ -128,21 +157,16 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
         ))}
       </div>
 
-      {/* SVG Layer for Lines (Placed AFTER grid to be on top) */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none z-50 overflow-visible mix-blend-screen">
+      {/* SVG Layer - Holographic Links */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible">
         <defs>
-          <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#38bdf8" stopOpacity="0" />
-            <stop offset="50%" stopColor="#38bdf8" stopOpacity="1" />
-            <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
-          </linearGradient>
-          <filter id="glow-line">
-            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
+            <filter id="glow-strong">
+                <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+                <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
         </defs>
         <AnimatePresence>
           {hoveredTech && nodePositions.length > 0 && activeConnections.map(targetId => {
@@ -152,25 +176,34 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
             if (!start || !end) return null;
 
             return (
-              <motion.line
-                key={`${hoveredTech}-${targetId}`}
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1, strokeDashoffset: -20 }}
-                exit={{ opacity: 0 }}
-                transition={{ 
-                    pathLength: { duration: 0.3, ease: "easeOut" },
-                    strokeDashoffset: { duration: 0.5, repeat: Infinity, ease: "linear" }
-                }}
-                x1={start.x}
-                y1={start.y}
-                x2={end.x}
-                y2={end.y}
-                stroke="url(#line-gradient)"
-                strokeWidth="3"
-                strokeDasharray="4 6"
-                strokeLinecap="round"
-                filter="url(#glow-line)"
-              />
+              <g key={`${hoveredTech}-${targetId}`}>
+                  {/* Core Line */}
+                  <motion.path
+                    d={`M ${start.x} ${start.y} L ${end.x} ${end.y}`}
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ pathLength: 1, opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    stroke="#38bdf8"
+                    strokeWidth="1"
+                    fill="none"
+                    filter="url(#glow-strong)"
+                  />
+                  {/* Data Packet Animation */}
+                  <motion.circle
+                    r="2"
+                    fill="white"
+                    initial={{ offsetDistance: "0%" }}
+                    animate={{ offsetDistance: "100%" }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  >
+                      <animateMotion 
+                        dur="1s" 
+                        repeatCount="indefinite"
+                        path={`M ${start.x} ${start.y} L ${end.x} ${end.y}`}
+                      />
+                  </motion.circle>
+              </g>
             );
           })}
         </AnimatePresence>
