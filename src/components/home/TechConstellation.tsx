@@ -1,119 +1,110 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { TECH_CONNECTIONS } from '../../constants/techConnections';
 import { TECH_ICON_MAP } from '../../constants/techData';
+import { Cpu, Code2, Music, Wrench } from 'lucide-react';
 
 interface TechConstellationProps {
   onSelect: (tech: string) => void;
 }
 
-// Columns Configuration
-const RACK_COLUMNS = [
-  { id: 'code', title: 'INPUT / CODE', color: '#ef4444', items: ['C++', 'C#', 'Python', 'Blueprints', 'JUCE'] },
-  { id: 'tools', title: 'PROCESS / TOOLS', color: '#eab308', items: ['Reaper', 'GitHub', 'Perforce', 'iZotope RX'] },
-  { id: 'middleware', title: 'MIX / MIDDLEWARE', color: '#38bdf8', items: ['Wwise', 'FMOD', '3D Audio'] },
-  { id: 'engine', title: 'OUTPUT / ENGINE', color: '#a855f7', items: ['Unreal Engine 5', 'Unity'] }
+// Category Configuration with Icons
+const TECH_CARDS = [
+  { 
+    id: 'code', 
+    title: 'PROGRAMMING', 
+    subtitle: 'Core Logic & Systems',
+    icon: Code2,
+    color: 'from-red-500/20 to-red-900/5', 
+    accent: 'text-red-500',
+    border: 'group-hover:border-red-500/50',
+    items: ['C++', 'C#', 'Python', 'Blueprints', 'JUCE', 'React'] 
+  },
+  { 
+    id: 'middleware', 
+    title: 'AUDIO TECH', 
+    subtitle: 'Middleware & Spatial',
+    icon: Music, 
+    color: 'from-blue-500/20 to-blue-900/5', 
+    accent: 'text-blue-400',
+    border: 'group-hover:border-blue-400/50',
+    items: ['Wwise', 'FMOD', 'MetaSounds', '3D Audio', 'Spatializer'] 
+  },
+  { 
+    id: 'engine', 
+    title: 'GAME ENGINES', 
+    subtitle: 'Integration & Environment',
+    icon: Cpu, 
+    color: 'from-purple-500/20 to-purple-900/5', 
+    accent: 'text-purple-500',
+    border: 'group-hover:border-purple-500/50',
+    items: ['Unreal Engine 5', 'Unity', 'Godot', 'CryEngine'] 
+  },
+  { 
+    id: 'tools', 
+    title: 'PRODUCTION', 
+    subtitle: 'DAW & Version Control',
+    icon: Wrench, 
+    color: 'from-yellow-500/20 to-yellow-900/5', 
+    accent: 'text-yellow-500',
+    border: 'group-hover:border-yellow-500/50',
+    items: ['Reaper', 'GitHub', 'Perforce', 'iZotope RX', 'Logic Pro'] 
+  }
 ];
 
 const TechConstellation = ({ onSelect }: TechConstellationProps) => {
-  const [hoveredTech, setHoveredTech] = useState<string | null>(null);
-
   return (
-    <div className="relative py-8 select-none w-full">
-      
-      {/* Main Rack Container */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl mx-auto">
-        
-        {RACK_COLUMNS.map((col) => (
-            <div key={col.id} className="flex flex-col gap-0">
-                
-                {/* Rack Header */}
-                <div className="flex items-center justify-between px-4 py-3 bg-[#111] border-b border-white/10 rounded-t-lg">
-                    <span className="text-[10px] font-mono font-bold text-slate-500 tracking-widest">{col.title}</span>
-                    <div className="flex gap-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-white/10"></div>
-                        <div className="w-1.5 h-1.5 rounded-full bg-white/10"></div>
-                    </div>
+    <div className="w-full py-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto px-4">
+        {TECH_CARDS.map((card, i) => (
+          <motion.div
+            key={card.id}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.1 }}
+            className={`
+                group relative h-[420px] rounded-2xl border border-white/5 bg-[#0a0a0a] overflow-hidden cursor-default
+                transition-all duration-500 hover:shadow-2xl hover:-translate-y-2
+                ${card.border}
+            `}
+          >
+            {/* Background Gradient */}
+            <div className={`absolute inset-0 bg-gradient-to-b ${card.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+            
+            {/* Default State: Big Icon & Title */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 transition-all duration-500 group-hover:opacity-10 group-hover:scale-110 group-hover:blur-sm">
+                <div className={`p-6 rounded-full bg-white/5 mb-6 ${card.accent}`}>
+                    <card.icon size={64} strokeWidth={1} />
                 </div>
+                <h3 className="text-2xl font-display font-bold text-white text-center tracking-wide">{card.title}</h3>
+                <p className="text-sm text-slate-500 font-mono uppercase tracking-widest mt-2">{card.subtitle}</p>
+            </div>
 
-                {/* Rack Mount (Background for items) */}
-                <div className="bg-[#0a0a0a] border-x border-b border-white/5 rounded-b-lg p-2 flex flex-col gap-1 min-h-[300px]">
-                    {col.items.map(tech => {
-                         // Logic: Is this node part of the signal chain?
-                         const isHovered = hoveredTech === tech;
-                         const isConnected = hoveredTech && (
-                             TECH_CONNECTIONS[hoveredTech]?.includes(tech) || 
-                             Object.entries(TECH_CONNECTIONS).some(([k, v]) => v.includes(hoveredTech) && k === tech)
-                         );
-                         
-                         const isSignalActive = isHovered || isConnected;
-                         const isDimmed = hoveredTech && !isSignalActive;
+            {/* Hover State: List of Skills */}
+            <div className="absolute inset-0 flex flex-col justify-center p-8 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0">
+                <h4 className={`text-xl font-bold mb-6 ${card.accent}`}>{card.title}</h4>
+                <div className="flex flex-wrap gap-3">
+                    {card.items.map(tech => {
+                        // Find specific icon if exists
+                        const iconKey = Object.keys(TECH_ICON_MAP).find(k => tech.includes(k));
+                        const iconPath = iconKey ? `/assets/icons/tech/${TECH_ICON_MAP[iconKey]}` : null;
 
-                         const iconKey = Object.keys(TECH_ICON_MAP).find(k => tech.includes(k));
-                         const iconPath = iconKey ? `/assets/icons/tech/${TECH_ICON_MAP[iconKey]}` : null;
-
-                         return (
-                             <motion.div
+                        return (
+                            <button
                                 key={tech}
-                                onMouseEnter={() => setHoveredTech(tech)}
-                                onMouseLeave={() => setHoveredTech(null)}
-                                onClick={() => onSelect(tech)}
-                                className={`
-                                    relative group cursor-pointer flex items-center justify-between p-3 rounded transition-all duration-200
-                                    ${isHovered ? 'bg-[#1a1a1a]' : 'hover:bg-[#111]'}
-                                    ${isDimmed ? 'opacity-30' : 'opacity-100'}
-                                `}
-                             >
-                                 {/* Left Side: Icon + Name */}
-                                 <div className="flex items-center gap-3">
-                                     {/* Status Bar Indicator */}
-                                     <div className={`w-1 h-4 rounded-full transition-colors duration-200 ${isSignalActive ? 'bg-[var(--col)] shadow-[0_0_8px_var(--col)]' : 'bg-[#222]'}`} style={{ '--col': col.color } as any}></div>
-                                     
-                                     {iconPath && (
-                                         <img 
-                                            src={iconPath} 
-                                            alt="" 
-                                            className={`w-5 h-5 object-contain transition-all duration-200 ${isSignalActive ? 'grayscale-0 brightness-110' : 'grayscale opacity-60'}`} 
-                                         />
-                                     )}
-                                     
-                                     <span className={`text-xs font-bold tracking-wide transition-colors ${isSignalActive ? 'text-white' : 'text-slate-400'}`}>
-                                         {tech}
-                                     </span>
-                                 </div>
-
-                                 {/* Right Side: Signal LED */}
-                                 <div className="flex items-center gap-2">
-                                     {/* Signal Text (Optional, only on hover) */}
-                                     <span className={`text-[9px] font-mono uppercase text-[var(--col)] transition-opacity duration-200 ${isSignalActive ? 'opacity-100' : 'opacity-0'}`} style={{ '--col': col.color } as any}>
-                                         SIG
-                                     </span>
-                                     
-                                     {/* The LED */}
-                                     <div className={`
-                                         w-2 h-2 rounded-full transition-all duration-150 border border-black
-                                         ${isSignalActive 
-                                            ? 'bg-[var(--col)] shadow-[0_0_6px_var(--col)] scale-110' 
-                                            : 'bg-[#111] shadow-inner'}
-                                     `} style={{ '--col': col.color } as any}></div>
-                                 </div>
-
-                             </motion.div>
-                         )
+                                onClick={(e) => { e.stopPropagation(); onSelect(tech); }}
+                                className="flex items-center gap-2 px-3 py-2 bg-black/50 border border-white/10 rounded-lg hover:bg-white/10 hover:border-white/30 transition-all hover:scale-105"
+                            >
+                                {iconPath && <img src={iconPath} alt="" className="w-4 h-4 object-contain" />}
+                                <span className="text-sm font-medium text-slate-200">{tech}</span>
+                            </button>
+                        );
                     })}
-                    
-                    {/* Empty Rack Space Filler (Visual) */}
-                    <div className="flex-1 opacity-10 bg-[repeating-linear-gradient(45deg,transparent,transparent_5px,#000_5px,#000_10px)]"></div>
                 </div>
             </div>
+
+          </motion.div>
         ))}
       </div>
-      
-      {/* Legend / System Info */}
-      <div className="text-center mt-8 opacity-40">
-          <p className="text-[10px] font-mono uppercase tracking-widest">Signal Flow Visualization // Hover to trace connection</p>
-      </div>
-
     </div>
   );
 };
