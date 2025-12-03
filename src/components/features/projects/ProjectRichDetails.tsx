@@ -25,23 +25,26 @@ const KeyValueGrid = ({ data }: { data: Record<string, string> }) => {
           <h4 className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2">
             {t(`project.fields.${key}`, key.replace(/_/g, ' '))}
           </h4>
-          <p className="text-slate-300 text-sm leading-relaxed">{value}</p>
+          <p className="text-slate-300 text-sm leading-relaxed">{t(value, value)}</p>
         </div>
       ))}
     </div>
   );
 };
 
-const ListSection = ({ items }: { items: string[] }) => (
-  <ul className="space-y-3">
-    {items.map((item, i) => (
-      <li key={i} className="flex items-start gap-3 text-slate-300">
-        <CheckCircle2 size={18} className="text-accent flex-shrink-0 mt-1" />
-        <span className="leading-relaxed">{item}</span>
-      </li>
-    ))}
-  </ul>
-);
+const ListSection = ({ items }: { items: string[] }) => {
+  const { t } = useTranslation();
+  return (
+    <ul className="space-y-3">
+      {items.map((item, i) => (
+        <li key={i} className="flex items-start gap-3 text-slate-300">
+          <CheckCircle2 size={18} className="text-accent flex-shrink-0 mt-1" />
+          <span className="leading-relaxed">{t(item, item)}</span>
+        </li>
+      ))}
+    </ul>
+  );
+};
 
 const ProjectRichDetails = ({ project }: ProjectRichDetailsProps) => {
   const { t } = useTranslation();

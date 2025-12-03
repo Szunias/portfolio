@@ -33,7 +33,14 @@ export default {
         'music-bar': {
           '0%, 100%': { height: '20%' },
           '50%': { height: '100%' },
+        },
+        'mist': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
         }
+      },
+      animation: {
+        'mist-slow': 'mist 20s linear infinite',
       },
     },
   },
