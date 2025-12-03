@@ -49,7 +49,7 @@ const Showreel = () => {
   return (
     <div className="w-full max-w-6xl mx-auto mt-12 mb-20">
       {/* Video Wrapper */}
-      <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-black/50 bg-black group ring-1 ring-white/10">
+      <div className="relative aspect-video rounded-2xl overflow-hidden bg-black group">
         <iframe
           ref={iframeRef}
           src="https://player.vimeo.com/video/1131121335?badge=0&autopause=0&player_id=0&app_id=58479&controls=1"
@@ -60,7 +60,7 @@ const Showreel = () => {
           allowFullScreen
           title="Showreel"
           onLoad={handleLoad}
-          className="absolute inset-0 w-full h-full border-0"
+          className="absolute inset-0 w-full h-full border-0 scale-[1.005]"
           style={{ border: 'none' }}
         ></iframe>
         
