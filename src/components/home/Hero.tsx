@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import AudioVisualizer from '../ui/AudioVisualizer';
 
 const AudioAura = () => {
   return (
@@ -42,6 +43,11 @@ const Hero = () => {
         {/* Audio Aura - Behind Typography */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0">
             <AudioAura />
+        </div>
+        
+        {/* Dynamic Audio Visualizer - Behind Typography */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 w-full max-w-3xl h-64 opacity-60 pointer-events-none mix-blend-screen">
+            <AudioVisualizer />
         </div>
 
         {/* Main Typography */}
