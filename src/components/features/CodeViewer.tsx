@@ -15,8 +15,8 @@ const highlightCode = (code: string): JSX.Element[] => {
   const lines = code.split('\n');
 
   return lines.map((line, lineIndex) => {
-    let result: JSX.Element[] = [];
-    let remaining = line;
+    const result: JSX.Element[] = [];
+    const remaining = line;
 
     if (remaining.includes('//')) {
       const commentIndex = remaining.indexOf('//');
