@@ -21,9 +21,32 @@ export const TECH_ICON_MAP: { [key: string]: string } = {
 };
 
 export const TECH_CATEGORIES = [
-  { title: 'Audio Middleware', items: ['Wwise', 'FMOD', '3D Audio'] },
-  { title: 'Game Engines', items: ['Unreal Engine 5', 'Unity'] },
-  { title: 'Programming', items: ['C++', 'C#', 'Python', 'Blueprints', 'JUCE', 'Pure Data'] },
-  { title: 'DAW & Production', items: ['Reaper', 'Logic Pro', 'Cubase', 'Studio One', 'Ableton Live', 'iZotope RX'] },
-  { title: 'Tools', items: ['Perforce', 'GitHub'] }
+  {
+    id: 'code',
+    title: 'PROGRAMMING',
+    subtitle: 'Core Logic',
+    accentColor: '#ef4444',
+    items: ['C++', 'C#', 'Python', 'Blueprints', 'JUCE', 'Pure Data']
+  },
+  {
+    id: 'middleware',
+    title: 'AUDIO TECH',
+    subtitle: 'Interactive Systems',
+    accentColor: '#3b82f6',
+    items: ['Wwise', 'FMOD', 'MetaSounds', '3D Audio']
+  },
+  {
+    id: 'engine',
+    title: 'GAME ENGINES',
+    subtitle: 'Environment',
+    accentColor: '#a855f7',
+    items: ['Unreal Engine 5', 'Unity']
+  },
+  {
+    id: 'tools',
+    title: 'PRODUCTION',
+    subtitle: 'DAW & Pipeline',
+    accentColor: '#eab308',
+    items: ['Reaper', 'Logic Pro', 'iZotope RX', 'GitHub', 'Perforce']
+  }
 ];

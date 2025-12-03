@@ -171,9 +171,7 @@ const About = () => {
                     {t('skills.title', 'Technical Skills')}
                 </h2>
             </div>
-            <div className="bg-white/[0.02] border border-white/5 rounded-xl p-4 md:p-8">
-                 <TechConstellation onSelect={setSelectedTech} />
-            </div>
+            <TechConstellation onSelect={setSelectedTech} />
         </div>
 
         {/* TIMELINE (Career Log) */}
