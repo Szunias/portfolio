@@ -24,7 +24,7 @@ const Skills = () => {
   };
 
   // Category Icons
-  const categoryIcons: {[key: string]: any} = {
+  const categoryIcons: {[key: string]: React.ElementType} = {
     'game_audio': Disc,
     'production': Server,
     'development': Database
@@ -32,7 +32,7 @@ const Skills = () => {
 
   // Fallback Lucide Icons for specific keywords
   // Order matters: check specific keywords before generic ones
-  const fallbackIcons: Record<string, any> = {
+  const fallbackIcons: Record<string, React.ElementType> = {
     'blueprint': Workflow,
     'metasounds': Music2,
     'interactive music': Music2,
@@ -82,7 +82,7 @@ const Skills = () => {
 
   // Icon Mapping Logic
   const getIconPath = (skillName: string) => {
-    const name = skillName.toLowerCase().replace(/[\s\.]/g, ''); // remove spaces and dots
+    const name = skillName.toLowerCase().replace(/[\s.]/g, ''); // remove spaces and dots
     
     const map: Record<string, string> = {
       'c++': 'cpplogo.png',

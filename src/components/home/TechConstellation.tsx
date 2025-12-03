@@ -1,12 +1,13 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { TECH_ICON_MAP, TECH_CATEGORIES } from '../../constants/techData';
-import { Cpu, Code2, Music, Wrench } from 'lucide-react';
+import { Cpu, Code2, Music, Wrench, LucideIcon } from 'lucide-react';
 
 interface TechConstellationProps {
   onSelect: (tech: string) => void;
 }
 
-const ICON_MAP: Record<string, any> = {
+const ICON_MAP: Record<string, LucideIcon> = {
   code: Code2,
   middleware: Music,
   engine: Cpu,
@@ -14,6 +15,8 @@ const ICON_MAP: Record<string, any> = {
 };
 
 const TechConstellation = ({ onSelect }: TechConstellationProps) => {
+  const { t } = useTranslation();
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {TECH_CATEGORIES.map((category, index) => {
@@ -33,8 +36,12 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                     <Icon size={24} style={{ color: category.accentColor }} />
                 </div>
                 <div>
-                    <h3 className="text-lg font-bold text-white tracking-wide">{category.title}</h3>
-                    <p className="text-xs text-slate-500 uppercase tracking-wider font-mono">{category.subtitle}</p>
+                    <h3 className="text-lg font-bold text-white tracking-wide">
+                        {t(category.titleKey)}
+                    </h3>
+                    <p className="text-xs text-slate-500 uppercase tracking-wider font-mono">
+                        {t(category.subtitleKey)}
+                    </p>
                 </div>
             </div>
 

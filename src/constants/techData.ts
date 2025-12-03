@@ -1,3 +1,5 @@
+import { TechCategory } from '../types/tech';
+
 export const TECH_ICON_MAP: { [key: string]: string } = {
   'Wwise': 'wwiselogo.png', 
   'FMOD': 'fmodlogo.png', 
@@ -20,32 +22,32 @@ export const TECH_ICON_MAP: { [key: string]: string } = {
   'iZotope': 'dsplogo.png'
 };
 
-export const TECH_CATEGORIES = [
+export const TECH_CATEGORIES: TechCategory[] = [
   {
     id: 'code',
-    title: 'PROGRAMMING',
-    subtitle: 'Core Logic',
+    titleKey: 'tech_category_programming_title',
+    subtitleKey: 'tech_category_programming_subtitle',
     accentColor: '#ef4444',
     items: ['C++', 'C#', 'Python', 'Blueprints', 'JUCE', 'Pure Data']
   },
   {
     id: 'middleware',
-    title: 'AUDIO TECH',
-    subtitle: 'Interactive Systems',
+    titleKey: 'tech_category_middleware_title',
+    subtitleKey: 'tech_category_middleware_subtitle',
     accentColor: '#3b82f6',
     items: ['Wwise', 'FMOD', 'MetaSounds', '3D Audio']
   },
   {
     id: 'engine',
-    title: 'GAME ENGINES',
-    subtitle: 'Environment',
+    titleKey: 'tech_category_engine_title',
+    subtitleKey: 'tech_category_engine_subtitle',
     accentColor: '#a855f7',
     items: ['Unreal Engine 5', 'Unity']
   },
   {
     id: 'tools',
-    title: 'PRODUCTION',
-    subtitle: 'DAW & Pipeline',
+    titleKey: 'tech_category_production_title',
+    subtitleKey: 'tech_category_production_subtitle',
     accentColor: '#eab308',
     items: ['Reaper', 'Logic Pro', 'iZotope RX', 'GitHub', 'Perforce']
   }

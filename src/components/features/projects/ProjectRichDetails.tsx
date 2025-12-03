@@ -6,7 +6,7 @@ interface ProjectRichDetailsProps {
   project: Project;
 }
 
-const Section = ({ title, icon: Icon, children }: { title: string; icon: any; children: React.ReactNode }) => (
+const Section = ({ title, icon: Icon, children }: { title: string; icon: React.ElementType; children: React.ReactNode }) => (
   <div className="py-8 border-t border-white/10">
     <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
       <Icon className="text-accent" size={24} />
