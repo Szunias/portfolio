@@ -96,7 +96,7 @@ const Hero = () => {
             className="text-slate-500 hover:text-white transition-colors text-sm uppercase tracking-widest flex items-center gap-2"
           >
             <Download size={14} />
-            <span>CV / Resume</span>
+            <span>{t('hero_cv_button', 'CV / Resume')}</span>
           </a>
         </motion.div>
 

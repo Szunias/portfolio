@@ -386,10 +386,26 @@
           "description": "Physics-based surface detection with smart timer management for footstep audio.",
           "code": "void UFootstepComponent::TickComponent(float DeltaTime, ...)\n{\n    const float Speed = Owner->GetVelocity().Size();\n    const bool bIsMoving = Speed >= m_MinSpeedThreshold;\n\n    if (bIsMoving && !m_bIsTimerActive)\n    {\n        GetWorld()->GetTimerManager().SetTimer(\n            m_FootstepTimerHandle, this,\n            &UFootstepComponent::PlayFootstep,\n            m_FootstepInterval, true);\n        m_bIsTimerActive = true;\n    }\n    else if (!bIsMoving && m_bIsTimerActive)\n    {\n        GetWorld()->GetTimerManager().ClearTimer(m_FootstepTimerHandle);\n        m_bIsTimerActive = false;\n    }\n}\n\nFName UFootstepComponent::DetectSurface() const\n{\n    FHitResult Hit;\n    FCollisionQueryParams Params;\n    Params.bReturnPhysicalMaterial = true;\n\n    const FVector Start = Owner->GetActorLocation();\n    const FVector End = Start - FVector(0, 0, m_TraceDistance);\n\n    if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params))\n    {\n        if (auto* PhysMat = Hit.PhysMaterial.Get())\n            return GetSurfaceName(PhysMat->SurfaceType);\n    }\n    return NAME_None;\n}",
           "annotations": [
-            {"line": 6, "label": "ann.foot.timer.label", "explanation": "ann.foot.timer.desc"},
-            {"line": 14, "label": "ann.foot.cleanup.label", "explanation": "ann.foot.cleanup.desc"},
-            {"line": 25, "label": "ann.foot.physmat.label", "explanation": "ann.foot.physmat.desc"},
-            {"line": 29, "label": "ann.foot.trace.label", "explanation": "ann.foot.trace.desc"}
+            {
+              "line": 6,
+              "label": "ann.foot.timer.label",
+              "explanation": "ann.foot.timer.desc"
+            },
+            {
+              "line": 14,
+              "label": "ann.foot.cleanup.label",
+              "explanation": "ann.foot.cleanup.desc"
+            },
+            {
+              "line": 25,
+              "label": "ann.foot.physmat.label",
+              "explanation": "ann.foot.physmat.desc"
+            },
+            {
+              "line": 29,
+              "label": "ann.foot.trace.label",
+              "explanation": "ann.foot.trace.desc"
+            }
           ]
         },
         {
@@ -398,10 +414,26 @@
           "description": "State machine with hysteresis thresholds preventing audio flickering near boundaries.",
           "code": "void UEnemyPresenceAudioManager::OnProximityChanged(float ProximityValue)\n{\n    const float StartThreshold = m_Config->m_StartThreshold;\n    const float StopThreshold = m_Config->m_StopThreshold;\n\n    // Hysteresis: different thresholds for start/stop\n    if (ProximityValue >= StartThreshold)\n    {\n        if (!m_bDreadPlaying)\n        {\n            UAkGameplayStatics::PostEvent(m_Config->m_DreadStartEvent, Owner);\n            m_bDreadPlaying = true;\n        }\n        if (!m_bBreathingPlaying)\n            StartStressBreathing();\n    }\n    else if (ProximityValue <= StopThreshold)\n    {\n        if (m_bDreadPlaying)\n        {\n            UAkGameplayStatics::PostEvent(m_Config->m_DreadStopEvent, Owner);\n            m_bDreadPlaying = false;\n        }\n        if (m_bBreathingPlaying)\n            StopStressBreathing();\n    }\n\n    // Continuous RTPC update for smooth audio modulation\n    if (m_bDreadPlaying)\n    {\n        UAkGameplayStatics::SetRTPCValue(\n            m_Config->m_ProximityRTPC, ProximityValue, 0, Owner);\n    }\n}",
           "annotations": [
-            {"line": 7, "label": "ann.prox.hysteresis.label", "explanation": "ann.prox.hysteresis.desc"},
-            {"line": 11, "label": "ann.prox.postevent.label", "explanation": "ann.prox.postevent.desc"},
-            {"line": 17, "label": "ann.prox.stopthresh.label", "explanation": "ann.prox.stopthresh.desc"},
-            {"line": 31, "label": "ann.prox.rtpc.label", "explanation": "ann.prox.rtpc.desc"}
+            {
+              "line": 7,
+              "label": "ann.prox.hysteresis.label",
+              "explanation": "ann.prox.hysteresis.desc"
+            },
+            {
+              "line": 11,
+              "label": "ann.prox.postevent.label",
+              "explanation": "ann.prox.postevent.desc"
+            },
+            {
+              "line": 17,
+              "label": "ann.prox.stopthresh.label",
+              "explanation": "ann.prox.stopthresh.desc"
+            },
+            {
+              "line": 31,
+              "label": "ann.prox.rtpc.label",
+              "explanation": "ann.prox.rtpc.desc"
+            }
           ]
         },
         {
@@ -410,10 +442,26 @@
           "description": "Smart enemy caching with threshold-based event broadcasting to prevent audio spam.",
           "code": "void UEnemyPresenceComponent::TickComponent(float DeltaTime, ...)\n{\n    // Refresh enemy cache periodically, not every frame\n    m_CacheTimer += DeltaTime;\n    if (m_CacheTimer >= m_CacheInterval)\n    {\n        RefreshEnemyCache();\n        m_CacheTimer = 0.f;\n    }\n\n    UpdateClosestEnemy();\n    BroadcastIfChanged(CalculateProximity());\n}\n\nfloat UEnemyPresenceComponent::CalculateProximity() const\n{\n    if (!m_ClosestEnemy) return 0.f;\n\n    const float Distance = FVector::Dist(\n        Owner->GetActorLocation(),\n        m_ClosestEnemy->GetActorLocation());\n\n    // Normalize to 0-100 range, invert (closer = higher)\n    const float Normalized = (Distance - m_MinDist) / (m_MaxDist - m_MinDist);\n    return FMath::Clamp((1.f - Normalized) * 100.f, 0.f, 100.f);\n}\n\nvoid UEnemyPresenceComponent::BroadcastIfChanged(float NewValue)\n{\n    if (FMath::Abs(NewValue - m_CurrentProximity) >= m_ChangeThreshold)\n    {\n        m_CurrentProximity = NewValue;\n        OnProximityChanged.Broadcast(NewValue);\n    }\n}",
           "annotations": [
-            {"line": 5, "label": "ann.cache.interval.label", "explanation": "ann.cache.interval.desc"},
-            {"line": 24, "label": "ann.cache.normalize.label", "explanation": "ann.cache.normalize.desc"},
-            {"line": 30, "label": "ann.cache.threshold.label", "explanation": "ann.cache.threshold.desc"},
-            {"line": 33, "label": "ann.cache.broadcast.label", "explanation": "ann.cache.broadcast.desc"}
+            {
+              "line": 5,
+              "label": "ann.cache.interval.label",
+              "explanation": "ann.cache.interval.desc"
+            },
+            {
+              "line": 24,
+              "label": "ann.cache.normalize.label",
+              "explanation": "ann.cache.normalize.desc"
+            },
+            {
+              "line": 30,
+              "label": "ann.cache.threshold.label",
+              "explanation": "ann.cache.threshold.desc"
+            },
+            {
+              "line": 33,
+              "label": "ann.cache.broadcast.label",
+              "explanation": "ann.cache.broadcast.desc"
+            }
           ]
         }
       ],
@@ -425,10 +473,22 @@
         {
           "type": "stats_grid",
           "items": [
-            { "label": "Role", "value": "Lead Audio Designer" },
-            { "label": "Team", "value": "Multi-Institutional" },
-            { "label": "Engine", "value": "UE5 + Wwise" },
-            { "label": "Status", "value": "In Production" }
+            {
+              "label": "Role",
+              "value": "Lead Audio Designer"
+            },
+            {
+              "label": "Team",
+              "value": "Multi-Institutional"
+            },
+            {
+              "label": "Engine",
+              "value": "UE5 + Wwise"
+            },
+            {
+              "label": "Status",
+              "value": "In Production"
+            }
           ]
         },
         {

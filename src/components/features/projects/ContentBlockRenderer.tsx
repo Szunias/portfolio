@@ -38,7 +38,7 @@ const SplitContentBlock = ({ block, onImageClick }: { block: ContentBlock; onIma
         {block.title && <h3 className="text-2xl font-bold text-white mb-6">{t(block.title, block.title)}</h3>}
         {block.content && (
             <div
-                className="prose prose-invert max-w-none text-slate-300 leading-relaxed"
+                className="prose prose-invert max-w-none text-slate-300/90 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: t(block.content, block.content) }}
             />
         )}

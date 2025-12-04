@@ -96,7 +96,7 @@ const About = () => {
                         
                         {/* Overlay Data */}
                         <div className="absolute bottom-4 left-4 font-mono text-[10px] text-accent opacity-80">
-                            <div>ID: IGOR_SZUNIEWICZ</div>
+                            <div>{t('about_id', 'ID')}: IGOR_SZUNIEWICZ</div>
                             <div>LOC: {personal_info.location.city.toUpperCase()}</div>
                         </div>
                     </div>
@@ -124,14 +124,14 @@ const About = () => {
                 {/* System Properties Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10 border-y border-white/5 py-6">
                     <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">Location</span>
+                        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">{t('about_section_location', 'Location')}</span>
                         <div className="flex items-center gap-2 text-sm text-slate-200">
                             <MapPin size={14} className="text-accent" />
                             {personal_info.location.city}
                         </div>
                     </div>
                     <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">Status</span>
+                        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">{t('about_section_status', 'Status')}</span>
                         <div className="flex items-center gap-2 text-sm text-slate-200">
                             <Zap size={14} className="text-green-500" />
                             {personal_info.availability.status.includes('internship') 
@@ -140,14 +140,14 @@ const About = () => {
                         </div>
                     </div>
                     <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">Mobility</span>
+                        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">{t('about_section_mobility', 'Mobility')}</span>
                         <div className="flex items-center gap-2 text-sm text-slate-200">
                             <Globe size={14} className="text-blue-400" />
                             {t('about_open_relocation', 'Open to Relocation')}
                         </div>
                     </div>
                      <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">Dossier</span>
+                        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">{t('about_section_dossier', 'Dossier')}</span>
                          <a href="/cv/Igor_Szuniewicz_CV.pdf" target="_blank" className="flex items-center gap-2 text-sm text-accent hover:text-white transition-colors cursor-pointer w-fit">
                             <Download size={14} />
                             Download CV
