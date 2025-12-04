@@ -14,9 +14,12 @@ const Showreel = () => {
   const timestamps = [
     { time: 0, label: t('hero.showreel_start', 'Start'), color: 'bg-slate-700', shadow: 'shadow-slate-700/50' },
     { time: 10, label: 'Shadow Frames', color: 'bg-accent', shadow: 'shadow-accent/50' },
-    { time: 35, label: 'Amorak', color: 'bg-purple-500', shadow: 'shadow-purple-500/50' },
-    { time: 58, label: 'Not Today', color: 'bg-green-500', shadow: 'shadow-green-500/50' },
-    { time: 85, label: 'Transientica', color: 'bg-blue-500', shadow: 'shadow-blue-500/50' }
+    { time: 54, label: 'Amorak', color: 'bg-purple-500', shadow: 'shadow-purple-500/50' },
+    { time: 91, label: 'Akantilado', color: 'bg-orange-500', shadow: 'shadow-orange-500/50' },
+    { time: 112, label: 'Ray', color: 'bg-pink-500', shadow: 'shadow-pink-500/50' },
+    { time: 154, label: 'Not Today', color: 'bg-green-500', shadow: 'shadow-green-500/50' },
+    { time: 184, label: 'Ellen Wwise', color: 'bg-cyan-600', shadow: 'shadow-cyan-600/50' },
+    { time: 198, label: 'Pause & Deserve', color: 'bg-red-600', shadow: 'shadow-red-600/50' }
   ];
 
   // Initialize Vimeo Player
@@ -52,7 +55,7 @@ const Showreel = () => {
       <div className="relative aspect-video rounded-2xl overflow-hidden bg-black group">
         <iframe
           ref={iframeRef}
-          src="https://player.vimeo.com/video/1131121335?badge=0&autopause=0&player_id=0&app_id=58479&controls=1"
+          src="https://player.vimeo.com/video/1143625213?badge=0&autopause=0&player_id=0&app_id=58479&controls=1"
           width="100%"
           height="100%"
           frameBorder="0"
