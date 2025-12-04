@@ -33,9 +33,8 @@ const Showreel = () => {
       vimeoPlayer.on('timeupdate', (data) => {
         // Find the current chapter based on time
         const current = timestamps.slice().reverse().find(ts => data.seconds >= ts.time);
-        if (current && current.time !== activeChapter) {
-             // Optional: Auto-update active chapter
-             // setActiveChapter(current.time); 
+        if (current) {
+             setActiveChapter(prev => prev !== current.time ? current.time : prev);
         }
       });
     }
