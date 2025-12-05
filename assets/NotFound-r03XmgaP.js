@@ -1,0 +1,6 @@
+import{c as s,u as a,j as e,L as n}from"./index-Ddh9zEUH.js";import{A as l}from"./alert-triangle-DJz_nJiF.js";/**
+ * @license lucide-react v0.344.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const o=s("Home",[["path",{d:"m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z",key:"y5dka4"}],["polyline",{points:"9 22 9 12 15 12 15 22",key:"e2us08"}]]),i=()=>{const{t}=a();return e.jsxs("div",{className:"min-h-[80vh] flex flex-col items-center justify-center text-center px-4",children:[e.jsxs("div",{className:"relative mb-8",children:[e.jsx("div",{className:"absolute inset-0 bg-accent blur-[60px] opacity-20 animate-pulse"}),e.jsx(l,{size:80,className:"text-accent relative z-10"})]}),e.jsx("h1",{className:"text-6xl font-bold text-white mb-2 font-mono",children:"404"}),e.jsx("p",{className:"text-xl text-slate-400 mb-8 font-mono",children:t("404.title","SIGNAL LOST")}),e.jsx("p",{className:"text-slate-500 max-w-md mb-8",children:t("404.desc","The requested frequency could not be tuned.")}),e.jsxs(n,{to:"/",className:"flex items-center gap-2 px-6 py-3 bg-secondary border border-slate-700 rounded-full hover:border-accent hover:text-accent transition-all group",children:[e.jsx(o,{size:18}),e.jsx("span",{children:t("404.button","Return to Base")})]})]})};export{i as default};

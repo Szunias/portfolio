@@ -1,0 +1,183 @@
+/* Smooth Scrolling Optimizations for 60fps Performance */
+
+/* 1. Enable smooth scrolling and optimize for GPU */
+html {
+  scroll-behavior: smooth;
+  /* Force hardware acceleration for smooth scrolling */
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000px;
+  perspective: 1000px;
+}
+
+body {
+  /* Optimize body for GPU acceleration */
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  /* Improve text rendering during scroll */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
+}
+
+/* 2. Optimize main scrolling container */
+#wrapper {
+  /* Use transform3d for GPU acceleration WITHOUT will-change */
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* 3. Removed universal selector - was creating hundreds of GPU layers! */
+/* * { transform-style: preserve-3d; } ← DELETED - caused massive performance issues */
+
+/* 4. GPU acceleration only on actively animated elements */
+.bg-waves,
+.bg-orbs .orb {
+  /* Only elements that actually animate continuously */
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Elements that only animate on interaction - NO will-change until hover/focus */
+.project-card,
+.music-item {
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* 5. Optimize background elements - removed will-change */
+.bg-waves {
+  /* GPU acceleration via transform3d, NO will-change */
+  transform: translate3d(0, 0, 0);
+  contain: layout style paint;
+}
+
+.bg-orbs .orb {
+  /* Removed will-change - was creating too many layers */
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  contain: layout style paint;
+}
+
+/* 6. Smooth scroll for all anchor links */
+a[href^="#"] {
+  scroll-behavior: smooth;
+}
+
+/* 7. Optimize project cards for scroll performance */
+.projects-grid {
+  /* Contain layout changes within grid */
+  contain: layout;
+}
+
+.project-card {
+  /* GPU acceleration but NO will-change until hover */
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-card:hover,
+.project-card:focus-within {
+  /* Add will-change ONLY on hover for performance */
+  will-change: transform;
+  transform: translate3d(0, -8px, 0);
+}
+
+/* 8. Optimize navigation for scroll performance */
+#nav {
+  /* Reduce repaints during scroll */
+  contain: layout style;
+  transform: translate3d(0, 0, 0);
+}
+
+/* 9. Disable expensive effects on lower-end devices */
+@media (max-width: 768px) {
+  .bg-waves,
+  .bg-orbs,
+  .bg-eq {
+    /* Disable heavy animations on mobile */
+    display: none !important;
+  }
+  
+  #nav {
+    /* Disable backdrop-filter on mobile */
+    backdrop-filter: none !important;
+  }
+  
+  .project-card {
+    /* Simplify transitions on mobile */
+    transition: none;
+  }
+}
+
+/* 10. Optimize for high refresh rate displays (120Hz, 144Hz) */
+@media (min-resolution: 120dpi) and (prefers-reduced-motion: no-preference) {
+  html {
+    /* Better scroll smoothing for high refresh displays */
+    scroll-padding-top: 0;
+    scroll-snap-type: none;
+  }
+  
+  * {
+    /* Optimize for higher frame rates */
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+}
+
+/* 11. Prevent layout shifts during scroll */
+img, video, canvas {
+  /* Prevent dimension changes during scroll */
+  will-change: auto;
+  transform: translate3d(0, 0, 0);
+}
+
+/* 12. Optimize text rendering during scroll */
+p, h1, h2, h3, h4, h5, h6, span, div {
+  /* Improve text rendering performance */
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 13. Contain expensive elements */
+.music-modal,
+.intro-overlay,
+.lang-menu {
+  contain: layout style paint;
+}
+
+/* 14. Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01s !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 15. Performance mode for low-end devices */
+.perf-lite * {
+  will-change: auto !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.perf-lite .bg-waves,
+.perf-lite .bg-orbs,
+.perf-lite .bg-eq {
+  display: none !important;
+}
+
+/* 16. Optimize scroll events */
+body {
+  /* Enable passive event listeners for better scroll performance */
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}

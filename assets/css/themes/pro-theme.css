@@ -1,0 +1,180 @@
+/* Pro Theme – clean, modern, production look
+   Non-destructive: styles enhance existing markup without changing HTML structure. */
+
+:root{
+  --pro-bg: #0a1016;
+  --pro-surface: rgba(18,24,30,0.72);
+  --pro-border: rgba(255,255,255,0.08);
+  --pro-card: rgba(12,18,26,0.6);
+  --pro-text: #e9f7ff;
+  --pro-text-dim: #bcd3e3;
+  --pro-accent: #18bfef;
+  --pro-accent-2: #9a6cff;
+  --pro-shadow: 0 14px 32px rgba(0,0,0,0.35);
+  --pro-radius: 14px;
+  --pro-radius-sm: 10px;
+  --pro-gap: 16px;
+}
+
+/* Layout container */
+#main{ max-width: 72rem; margin: 0 auto; padding: 0 1rem; }
+
+/* Headings */
+h1,h2,h3,h4,h5,h6{ color: var(--pro-text); letter-spacing: .3px; }
+p{ color: var(--pro-text-dim); }
+
+/* Cards */
+.post, .project-card, .contact-card, .about-card, #cv-section .box{
+  background: var(--pro-card);
+  border: 1px solid var(--pro-border);
+  border-radius: var(--pro-radius);
+  box-shadow: var(--pro-shadow);
+}
+
+/* Buttons */
+.button, .actions .button, .button.primary{
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 44px; padding: 0 16px; border-radius: 12px;
+  background: linear-gradient(90deg,var(--pro-accent),var(--pro-accent-2));
+  color: #07131a; border: none;
+  font-weight: 900; letter-spacing: .4px; text-transform: uppercase;
+  box-shadow: 0 10px 26px rgba(24,191,239,0.28);
+}
+.button:hover{ filter: brightness(1.06); transform: translateY(-1px); }
+
+/* Ghost (outline) variant used in hero secondary CTA */
+.hero-cta .button:not(.primary){
+  background: transparent; color: var(--pro-text);
+  border: 2px solid rgba(255,255,255,0.85);
+  box-shadow: none;
+}
+.hero-cta .button:not(.primary):hover{ border-color: var(--pro-accent); color: #fff; }
+
+/* Lists in education / about */
+#cv-section .box ul li, .about-card ul li{ color: var(--pro-text); }
+#cv-section .box ul li strong, .about-card ul li strong{ color: #fff; }
+
+/* Project cards grid polish */
+.projects-grid{ gap: 20px; }
+.project-card .image.fit img{ border-radius: 0; }
+.project-card-content{ color: var(--pro-text-dim); }
+.project-card .actions{ display:flex; gap: 10px; }
+.project-card .button.small{ padding: .55rem .9rem; }
+
+/* Hero spacing */
+#intro{ border: 1px solid transparent; }
+
+/* Pro Hero (inspired by tech/ai landing aesthetics) */
+#intro{ position: relative; padding: 4rem 1rem 2rem !important; text-align: center; background: linear-gradient(180deg, rgba(24,191,239,0.06), rgba(154,108,255,0.04) 40%, transparent 100%); border-radius: var(--pro-radius); }
+#intro h1{ font-size: clamp(2.6rem, 6vw, 4.2rem); letter-spacing: .02em; font-weight: 900; background: linear-gradient(90deg, #ffffff 0%, #cfe9ff 32%, #cdbaff 68%, #ffffff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 6px 24px rgba(24,191,239,0.18); }
+#intro .section-pills{ margin-top: 1.25rem; }
+#intro .hero-cta{ margin-top: 1.25rem; display: inline-flex; gap: 10px; }
+#intro .hero-cta .button{ padding: .85rem 1.25rem; }
+
+/* Subtle divider rhythm */
+#main > section.post{ margin-bottom: 1.4rem; }
+
+/* Forms */
+#contact-form input, #contact-form textarea{ border:1px solid var(--pro-border); }
+
+/* Footer */
+#footer, #copyright{ border-top: 1px solid var(--pro-border); }
+
+/* Motion safety */
+@media (prefers-reduced-motion: reduce){
+  *{ animation: none !important; transition: none !important; }
+}
+
+/* Background: simplify to a clean, professional base */
+html, body { background: #0b141a; }
+
+/* Remove previous decorative overlays */
+body::before,
+body::after {
+  content: none !important;
+  background: none;
+  animation: none;
+}
+
+/* Quiet the extra background elements for a cleaner look */
+.bg-orbs,
+.bg-waves,
+.bg-eq,
+.bg-glow {
+  display: none;
+}
+
+/* Striped Tech - Dynamic & Modern */
+.bg-gradient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    /* Diagonal stripes - 45° */
+    repeating-linear-gradient(45deg,
+      transparent,
+      transparent 59px,
+      rgba(24,191,239,0.06) 59px,
+      rgba(24,191,239,0.06) 60px
+    ),
+    /* Diagonal stripes - -45° (crossing pattern) */
+    repeating-linear-gradient(-45deg,
+      transparent,
+      transparent 59px,
+      rgba(154,108,255,0.05) 59px,
+      rgba(154,108,255,0.05) 60px
+    ),
+    /* Animated gradient overlay */
+    linear-gradient(135deg, 
+      rgba(24,191,239,0.04) 0%, 
+      transparent 50%, 
+      rgba(154,108,255,0.04) 100%
+    ),
+    /* Soft radial glow for depth */
+    radial-gradient(ellipse 1400px 900px at 50% 50%, rgba(24,191,239,0.06), transparent 65%),
+    /* Dark base gradient */
+    linear-gradient(180deg, #0a0d12 0%, #0c1017 100%);
+  background-size: 
+    120px 120px,
+    120px 120px,
+    200% 200%,
+    100% 100%,
+    100% 100%;
+  animation: stripeShift 38s linear infinite;
+  opacity: 1;
+}
+
+/* Stripe shift animation - smooth diagonal movement */
+@keyframes stripeShift {
+  0% { 
+    background-position: 0 0, 0 0, 0% 50%, 50% 50%, 0 0;
+  }
+  100% { 
+    background-position: 120px 120px, -120px -120px, 100% 50%, 50% 50%, 0 0;
+  }
+}
+
+/* Ensure main content sits above background layer */
+#wrapper, #main, #nav, #footer { position: relative; z-index: 1; }
+
+/* Pill navigation under hero */
+.section-pills{ gap: 12px !important; }
+.section-pills a{
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 40px; padding: 0 16px; border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--pro-text); backdrop-filter: blur(6px);
+  transition: background .25s ease, border-color .25s ease, transform .15s ease;
+}
+.section-pills a:hover{
+  background: linear-gradient(90deg, rgba(24,191,239,0.18), rgba(154,108,255,0.18));
+  border-color: rgba(24,191,239,0.45);
+  transform: translateY(-1px);
+}
+
+/* Posts spacing & borders */
+.post{ border-radius: var(--pro-radius); border: 1px solid var(--pro-border); }
+
+

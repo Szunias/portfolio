@@ -1,0 +1,72 @@
+{
+  "back": "Powrót do projektów",
+  "transition": {
+    "well": "no cóż"
+  },
+  "hero": {
+    "badge": "Badania w toku",
+    "title": "Czy AI Audio w czasie rzeczywistym jest możliwe w grach?",
+    "subtitle": "Magisterska podróż przez generowanie dźwięku AI"
+  },
+  "section1": {
+    "title": "O czym jest ten projekt?",
+    "intro": "Może się zastanawiasz dlaczego ktokolwiek próbowałby generować dźwięki AI w grach. No cóż, to jest właściwie fajne pytanie - co gdyby zamiast setek nagranych efektów dźwiękowych, gry mogły tworzyć je w locie? Brzmi jak science fiction, prawda?",
+    "testing": "Więc przez ostatnie kilka tygodni testowałem właśnie to. Główne pytanie brzmiało:",
+    "question": "Czy AI jest wystarczająco szybkie, żeby gracze nawet nie zauważyli opóźnienia między akcją a jej dźwiękiem?",
+    "current_findings": "Obecne odkrycia:",
+    "findings": "Bezpośrednia odpowiedź jak dotąd: AI jest zbyt wolne na natychmiastowe odtwarzanie. ALE - eksploruję obejście żeby wykorzystać jakość AI w grach. Jak? Czytaj dalej."
+  },
+  "section2": {
+    "title": "Jak sprawić by Unity i Python ze sobą gadały",
+    "intro": "Na początku musiałem ogarnąć podstawy - połączenie Unity z Pythonem przez WebSocket. Brzmi skomplikowanie, ale w praktyce Unity mówi \"hej Python, daj mi dźwięk strzału\", a Python generuje go i odsyła.",
+    "architecture_flow": "Unity (C#) ⟷ WebSocket ⟷ Serwer Python",
+    "results_intro": "Pierwsze testy z prostym generatorem proceduralnym wyglądały obiecująco:",
+    "table_sound": "Typ dźwięku",
+    "table_latency": "Opóźnienie",
+    "table_verdict": "Werdykt",
+    "footstep": "Krok",
+    "gunshot": "Strzał",
+    "impact": "Uderzenie",
+    "excellent": "Świetnie",
+    "results_note": "Brzmi super! Wszystko poniżej 60ms jest praktycznie niezauważalne dla graczy. Jedyny problem był taki, że te dźwięki, no cóż... brzmiały syntetycznie. Jak coś z lat 90. Potrzebowałem czegoś lepszego."
+  },
+  "section3": {
+    "title": "Koszmar 12 sekund",
+    "intro": "Spodziewałem się opóźnień. Ale nie <em>czegoś takiego</em>.",
+    "failure_stat": "12.000 ms",
+    "failure_context": "Czas generowania jednego kroku przez AudioLDM.",
+    "narrative": "W grze działającej w 60 klatkach, krok musi wybrzmieć w 16 milisekund. Moja pierwsza próba była 750 razy za wolna. Nawet szybszy MusicGen potrzebował 4 sekund. W świecie gier 4 sekundy to wieczność. To była kompletna porażka."
+  },
+  "section4": {
+    "title": "Anomalia 0.03ms",
+    "intro": "Byłem gotowy porzucić projekt. Ale wtedy, podczas frustrującej sesji debugowania, zauważyłem coś dziwnego w logach.",
+    "epiphany": "Za drugim razem, gdy zażądałem tego samego dźwięku, system go nie generował. Wyciągnął go z pamięci. To było natychmiastowe. Szybsze niż odczyt pliku WAV z dysku.",
+    "question": "Nie musimy być szybcy. Musimy być po prostu wcześniej."
+  },
+  "section5": {
+    "title": "Oszukać czas",
+    "intro": "Jeśli nie możemy generować dźwięku w czasie rzeczywistym, musimy go wygenerować <em>zanim</em> się wydarzy. To zmieniło całą architekturę z 'Reakcji' na 'Predykcję'.",
+    "solution_stat": "Ładowanie...",
+    "solution_label": "Trik",
+    "explanation": "Zbudowałem system, który wykorzystuje ekran ładowania – miejsce, gdzie gracze spodziewają się czekania – by 'wyhalucynować' audio dla nadchodzącego poziomu. Gdy gracz się pojawia, AI już wykonało ciężką pracę. Wynik? Zerowe opóźnienie. Audio AI najwyższej jakości."
+  },
+  "section6": {
+    "title": "Nowy problem: Pamięć kontra Chaos",
+    "intro": "Więc rozwiązaliśmy problem prędkości 'oszukując' ekranem ładowania. Ale to zwycięstwo stworzyło nowego, groźniejszego wroga: <strong>Zużycie RAMu</strong>.",
+    "problem": "Gdybyśmy wygenerowali z góry <em>każdy</em> możliwy dźwięk w grze open-world, potrzebowalibyśmy terabajtów RAMu. Wymieniliśmy czas CPU na Pamięć, i teraz kończy nam się miejsce.",
+    "current_work": "Tutaj właśnie są moje badania <strong>w tym momencie</strong>. Odchodzę od 'Generowania Wszystkiego' na rzecz czegoś mądrzejszego: <strong>Buforowania Predykcyjnego</strong>."
+  },
+  "section7": {
+    "title": "Aktywne eksperymenty",
+    "intro": "Obecnie prowadzę trzy równoległe eksperymenty by rozwiązać kryzys pamięci:",
+    "exp1_title": "Inteligentne czyszczenie",
+    "exp1_desc": "Usuwanie dźwięków natychmiast po ich odegraniu by zwolnić RAM.",
+    "exp2_title": "Okno 10 sekund",
+    "exp2_desc": "AI, które zgaduje co zrobisz w ciągu następnych 10 sekund i generuje TYLKO to.",
+    "status_title": "Status badań: AKTYWNE",
+    "status_desc": "'Cache 0.03ms' działa, ale sprawienie by był skalowalny to nowe wyzwanie. Obecnie koduję algorytm predykcji w Pythonie."
+  },
+  "footer": {
+    "status": "Magisterski projekt badawczy • W toku • 2025 • Igor Szuniewicz"
+  }
+}
