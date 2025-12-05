@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform, useInView, useMotionValueEvent } from 'framer-motion';
+import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { ArrowLeft, ChevronDown, Play } from 'lucide-react';
 import SEO from '../components/layout/SEO';
 import { useTranslation } from 'react-i18next';
@@ -303,7 +303,6 @@ const NightmareScroll = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [ms, setMs] = useState(0);
     const [label, setLabel] = useState('TARGET: 16ms');
-    const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -316,8 +315,6 @@ const NightmareScroll = () => {
             const scrollPastStart = windowHeight - rect.top;
             const rawProgress = (scrollPastStart - (windowHeight * 0.5)) / (sectionHeight - windowHeight);
             const prog = Math.max(0, Math.min(1, rawProgress));
-
-            setProgress(prog);
 
             // Logarithmic/Exponential time scaling from original
             let newMs = 0;
