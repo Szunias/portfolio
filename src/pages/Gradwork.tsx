@@ -97,19 +97,19 @@ const WellTransition = ({ t }: { t: (key: string) => string }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
-        offset: ["start end", "end center"]
+        offset: ["start center", "end center"]
     });
 
-    const opacity = useTransform(scrollYProgress, [0.2, 0.4], [0, 1]);
-    const dot1Opacity = useTransform(scrollYProgress, [0.3, 0.5], [0, 1]);
-    const dot2Opacity = useTransform(scrollYProgress, [0.5, 0.7], [0, 1]);
-    const dot3Opacity = useTransform(scrollYProgress, [0.7, 0.9], [0, 1]);
+    const opacity = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
+    const dot1Opacity = useTransform(scrollYProgress, [0.2, 0.4], [0, 1]);
+    const dot2Opacity = useTransform(scrollYProgress, [0.4, 0.6], [0, 1]);
+    const dot3Opacity = useTransform(scrollYProgress, [0.6, 0.8], [0, 1]);
 
     return (
         <div ref={containerRef} className="relative min-h-[150vh] flex items-start justify-center bg-white">
             <motion.div
                 style={{ opacity }}
-                className="sticky top-[50vh] -translate-y-1/2 text-[clamp(3rem,10vw,5rem)] font-light text-slate-900 text-center p-8"
+                className="sticky top-1/2 -translate-y-1/2 text-[clamp(3rem,10vw,5rem)] font-light text-slate-900 text-center p-8"
             >
                 <span className="italic">{t('transition.well')}</span>
                 <span className="inline-block min-w-[2em] italic">
@@ -133,21 +133,21 @@ const ArchitectureFlow = () => {
 
     const { scrollYProgress } = useScroll({
         target: containerRef,
-        offset: ["start start", "end end"]
+        offset: ["start center", "end center"]
     });
 
     useMotionValueEvent(scrollYProgress, "change", (latest) => {
-        setIsVisible(latest > 0.05 && latest < 0.95);
+        setIsVisible(latest > 0 && latest < 1);
 
-        // Phase mapping for 600vh scroll
-        if (latest < 0.12) setPhase(0);
+        // Phase mapping for 600vh scroll - based on original JS
+        if (latest < 0.10) setPhase(0);
         else if (latest < 0.20) setPhase(1);  // Unity appears
         else if (latest < 0.30) setPhase(2);  // Unity fills, line 1
         else if (latest < 0.40) setPhase(3);  // Python appears
         else if (latest < 0.50) setPhase(4);  // Python fills, line 2
         else if (latest < 0.60) setPhase(5);  // ElevenLabs appears
-        else if (latest < 0.70) setPhase(6);  // ElevenLabs fills
-        else if (latest < 0.85) setPhase(7);  // SUCCESS
+        else if (latest < 0.75) setPhase(6);  // ElevenLabs fills
+        else if (latest < 0.95) setPhase(7);  // SUCCESS
         else setPhase(8);                      // Fade out
     });
 
@@ -159,7 +159,7 @@ const ArchitectureFlow = () => {
 
     return (
         <div ref={containerRef} className="relative min-h-[600vh] bg-white">
-            {/* Fixed content */}
+            {/* Fixed content - offset for navbar */}
             <div
                 className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[500px] px-8 pointer-events-none z-10"
                 style={{
@@ -238,12 +238,12 @@ const NightmareScroll = () => {
 
     const { scrollYProgress } = useScroll({
         target: containerRef,
-        offset: ["start end", "end start"]
+        offset: ["start center", "end center"]
     });
 
     useMotionValueEvent(scrollYProgress, "change", (progress) => {
         // Map progress to 0-1 for the visible portion
-        const normalizedProgress = Math.max(0, Math.min(1, (progress - 0.2) / 0.6));
+        const normalizedProgress = Math.max(0, Math.min(1, progress));
 
         let newMs = 0;
         if (normalizedProgress < 0.1) {
@@ -274,7 +274,7 @@ const NightmareScroll = () => {
 
     return (
         <div ref={containerRef} className="relative min-h-[150vh] bg-white overflow-hidden">
-            <div className="sticky top-[50vh] -translate-y-1/2 flex items-center justify-center">
+            <div className="sticky top-1/2 -translate-y-1/2 flex items-center justify-center">
                 {/* Overheat Aura */}
                 <div
                     className="absolute w-[15vmax] h-[15vmax] rounded-full pointer-events-none"
@@ -430,7 +430,7 @@ const Gradwork = () => {
     const { t } = useTranslation('gradwork');
 
     return (
-        <div className="min-h-screen bg-white text-slate-900">
+        <div className="min-h-screen bg-white text-slate-900 -mt-16">
             <SEO
                 title="AI Audio Research | Igor Szuniewicz"
                 description="Graduate Research: Real-time AI Audio in Games"
