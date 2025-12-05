@@ -95,29 +95,49 @@ const HeroSection = ({ t }: { t: (key: string) => string }) => {
 
 const WellTransition = ({ t }: { t: (key: string) => string }) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start center", "end center"]
-    });
+    const [opacity, setOpacity] = useState(0);
+    const [dotOpacities, setDotOpacities] = useState([0, 0, 0]);
 
-    const opacity = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
-    const dot1Opacity = useTransform(scrollYProgress, [0.2, 0.4], [0, 1]);
-    const dot2Opacity = useTransform(scrollYProgress, [0.4, 0.6], [0, 1]);
-    const dot3Opacity = useTransform(scrollYProgress, [0.6, 0.8], [0, 1]);
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!containerRef.current) return;
+            const rect = containerRef.current.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const scrollY = window.scrollY;
+            const wellTop = scrollY + rect.top;
+            const wellHeight = rect.height;
+
+            // Original formula from old version
+            const progress = Math.max(0, Math.min(1,
+                (scrollY + windowHeight - wellTop) / (windowHeight + wellHeight * 0.5)
+            ));
+
+            setOpacity(progress > 0.2 ? 1 : 0);
+            setDotOpacities([
+                progress > 0.3 ? 1 : 0,
+                progress > 0.5 ? 1 : 0,
+                progress > 0.7 ? 1 : 0
+            ]);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
         <div ref={containerRef} className="relative min-h-[150vh] flex items-start justify-center bg-white">
-            <motion.div
-                style={{ opacity }}
+            <div
                 className="sticky top-1/2 -translate-y-1/2 text-[clamp(3rem,10vw,5rem)] font-light text-slate-900 text-center p-8"
+                style={{ opacity, transition: 'opacity 0.4s ease' }}
             >
                 <span className="italic">{t('transition.well')}</span>
                 <span className="inline-block min-w-[2em] italic">
-                    <motion.span style={{ opacity: dot1Opacity }} className="inline-block">.</motion.span>
-                    <motion.span style={{ opacity: dot2Opacity }} className="inline-block">.</motion.span>
-                    <motion.span style={{ opacity: dot3Opacity }} className="inline-block">.</motion.span>
+                    <span className="inline-block transition-all duration-300" style={{ opacity: dotOpacities[0], transform: dotOpacities[0] ? 'translateY(0)' : 'translateY(10px)' }}>.</span>
+                    <span className="inline-block transition-all duration-300" style={{ opacity: dotOpacities[1], transform: dotOpacities[1] ? 'translateY(0)' : 'translateY(10px)' }}>.</span>
+                    <span className="inline-block transition-all duration-300" style={{ opacity: dotOpacities[2], transform: dotOpacities[2] ? 'translateY(0)' : 'translateY(10px)' }}>.</span>
                 </span>
-            </motion.div>
+            </div>
         </div>
     );
 };
@@ -128,28 +148,86 @@ const WellTransition = ({ t }: { t: (key: string) => string }) => {
 
 const ArchitectureFlow = () => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const [phase, setPhase] = useState(0);
+    const [progress, setProgress] = useState(0);
     const [isVisible, setIsVisible] = useState(false);
 
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start center", "end center"]
-    });
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!containerRef.current) return;
+            const rect = containerRef.current.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const scrollY = window.scrollY;
+            const flowTop = scrollY + rect.top;
+            const flowHeight = rect.height;
 
-    useMotionValueEvent(scrollYProgress, "change", (latest) => {
-        setIsVisible(latest > 0 && latest < 1);
+            // Original formula: (scrollY + windowHeight * 0.5 - flowTop) / flowHeight
+            const rawProgress = (scrollY + windowHeight * 0.5 - flowTop) / flowHeight;
+            const flowProgress = Math.max(0, Math.min(1, rawProgress));
 
-        // Phase mapping for 600vh scroll - based on original JS
-        if (latest < 0.10) setPhase(0);
-        else if (latest < 0.20) setPhase(1);  // Unity appears
-        else if (latest < 0.30) setPhase(2);  // Unity fills, line 1
-        else if (latest < 0.40) setPhase(3);  // Python appears
-        else if (latest < 0.50) setPhase(4);  // Python fills, line 2
-        else if (latest < 0.60) setPhase(5);  // ElevenLabs appears
-        else if (latest < 0.75) setPhase(6);  // ElevenLabs fills
-        else if (latest < 0.95) setPhase(7);  // SUCCESS
-        else setPhase(8);                      // Fade out
-    });
+            setProgress(flowProgress);
+            setIsVisible(rawProgress > 0 && rawProgress < 1);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Phase thresholds from original: P1_END = 0.2, P2_END = 0.4, P3_END = 0.6
+    const P1_END = 0.2;
+    const P2_END = 0.4;
+    const P3_END = 0.6;
+    const P4_END = 0.8;
+
+    // Calculate node states based on progress
+    const getNodeState = (index: number) => {
+        if (index === 0) {
+            if (progress < P1_END) {
+                const local = progress / P1_END;
+                return {
+                    opacity: Math.min(1, local * 2),
+                    y: -200 * (1 - Math.min(1, local * 2)),
+                    filled: local > 0.5
+                };
+            }
+            return { opacity: 1, y: 0, filled: true };
+        }
+        if (index === 1) {
+            if (progress < P1_END) return { opacity: 0, y: -200, filled: false };
+            if (progress < P2_END) {
+                const local = (progress - P1_END) / (P2_END - P1_END);
+                return {
+                    opacity: Math.min(1, local * 2),
+                    y: -200 * (1 - Math.min(1, local * 2)),
+                    filled: local > 0.5
+                };
+            }
+            return { opacity: 1, y: 0, filled: true };
+        }
+        if (index === 2) {
+            if (progress < P2_END) return { opacity: 0, y: -200, filled: false };
+            if (progress < P3_END) {
+                const local = (progress - P2_END) / (P3_END - P2_END);
+                return {
+                    opacity: Math.min(1, local * 2),
+                    y: -200 * (1 - Math.min(1, local * 2)),
+                    filled: local > 0.5
+                };
+            }
+            return { opacity: 1, y: 0, filled: true };
+        }
+        return { opacity: 0, y: 0, filled: false };
+    };
+
+    const getLineOpacity = (index: number) => {
+        if (index === 0) return progress >= P1_END ? 1 : 0;
+        if (index === 1) return progress >= P2_END ? 1 : 0;
+        return 0;
+    };
+
+    const showSuccess = progress >= P4_END;
+    const fadeOutNodes = progress >= P3_END && progress < P4_END;
+    const nodesFadeOpacity = fadeOutNodes ? 1 - ((progress - P3_END) / (P4_END - P3_END)) : (showSuccess ? 0 : 1);
 
     const nodes = [
         { title: 'Unity (C#)', subtitle: 'Game Engine' },
@@ -159,7 +237,6 @@ const ArchitectureFlow = () => {
 
     return (
         <div ref={containerRef} className="relative min-h-[600vh] bg-white">
-            {/* Fixed content - offset for navbar */}
             <div
                 className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[500px] px-8 pointer-events-none z-10"
                 style={{
@@ -168,58 +245,49 @@ const ArchitectureFlow = () => {
                 }}
             >
                 <div className="flex flex-col items-center relative">
-                    {nodes.map((node, index) => (
-                        <div key={index} className="w-full">
-                            {/* Node */}
-                            <motion.div
-                                animate={{
-                                    opacity: phase >= (index * 2 + 1) ? 1 : 0,
-                                    y: phase >= (index * 2 + 1) ? 0 : -30,
-                                }}
-                                transition={{ duration: 0.5 }}
-                                className={`
-                                    w-full bg-white rounded-xl p-6 text-center shadow-lg border-2 relative overflow-hidden
-                                    ${phase >= (index * 2 + 2) ? 'border-emerald-500 shadow-emerald-500/30' : 'border-slate-200'}
-                                `}
-                            >
-                                {/* Fill effect from top */}
-                                <motion.div
-                                    animate={{ height: phase >= (index * 2 + 2) ? '100%' : '0%' }}
-                                    transition={{ duration: 0.8 }}
-                                    className="absolute top-0 left-0 right-0 bg-gradient-to-b from-emerald-100/50 to-emerald-50/30"
-                                    style={{ zIndex: -1 }}
-                                />
-                                <div className="text-lg font-bold text-slate-900">{node.title}</div>
-                                <div className="text-sm text-slate-500">{node.subtitle}</div>
-                            </motion.div>
-
-                            {/* Connector line */}
-                            {index < nodes.length - 1 && (
-                                <div className="relative h-[100px] w-1 mx-auto my-2">
-                                    <motion.div
-                                        animate={{
-                                            opacity: phase >= (index * 2 + 2) ? 1 : 0,
-                                            scaleY: phase >= (index * 2 + 2) ? 1 : 0,
-                                        }}
-                                        transition={{ duration: 0.5 }}
-                                        className="absolute inset-0 origin-top bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.6)]"
+                    {nodes.map((node, index) => {
+                        const state = getNodeState(index);
+                        return (
+                            <div key={index} className="w-full" style={{ opacity: nodesFadeOpacity }}>
+                                <div
+                                    className={`
+                                        w-full bg-white rounded-xl p-6 text-center shadow-lg border-2 relative overflow-hidden transition-all duration-500
+                                        ${state.filled ? 'border-emerald-500 shadow-emerald-500/30' : 'border-slate-200'}
+                                    `}
+                                    style={{
+                                        opacity: state.opacity,
+                                        transform: `translateY(${state.y}px)`
+                                    }}
+                                >
+                                    <div
+                                        className="absolute top-0 left-0 right-0 bg-gradient-to-b from-emerald-100/50 to-emerald-50/30 transition-all duration-800"
+                                        style={{ height: state.filled ? '100%' : '0%', zIndex: -1 }}
                                     />
+                                    <div className="text-lg font-bold text-slate-900">{node.title}</div>
+                                    <div className="text-sm text-slate-500">{node.subtitle}</div>
                                 </div>
-                            )}
-                        </div>
-                    ))}
 
-                    {/* SUCCESS Message */}
-                    {phase >= 7 && (
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="absolute inset-0 flex items-center justify-center bg-white/90"
-                        >
+                                {index < nodes.length - 1 && (
+                                    <div className="relative h-[100px] w-1 mx-auto my-2">
+                                        <div
+                                            className="absolute inset-0 origin-top bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.6)] transition-all duration-500"
+                                            style={{
+                                                opacity: getLineOpacity(index),
+                                                transform: `scaleY(${getLineOpacity(index)})`
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+
+                    {showSuccess && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/90">
                             <span className="text-5xl md:text-7xl font-black text-emerald-500 tracking-wider">
                                 SUCCESS
                             </span>
-                        </motion.div>
+                        </div>
                     )}
                 </div>
             </div>
@@ -235,39 +303,51 @@ const NightmareScroll = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [ms, setMs] = useState(0);
     const [label, setLabel] = useState('TARGET: 16ms');
+    const [progress, setProgress] = useState(0);
 
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start center", "end center"]
-    });
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!containerRef.current) return;
+            const rect = containerRef.current.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const sectionHeight = rect.height;
 
-    useMotionValueEvent(scrollYProgress, "change", (progress) => {
-        // Map progress to 0-1 for the visible portion
-        const normalizedProgress = Math.max(0, Math.min(1, progress));
+            // Original formula from old version
+            const scrollPastStart = windowHeight - rect.top;
+            const rawProgress = (scrollPastStart - (windowHeight * 0.5)) / (sectionHeight - windowHeight);
+            const prog = Math.max(0, Math.min(1, rawProgress));
 
-        let newMs = 0;
-        if (normalizedProgress < 0.1) {
-            newMs = (normalizedProgress / 0.1) * 16;
-        } else if (normalizedProgress < 0.3) {
-            const p = (normalizedProgress - 0.1) / 0.2;
-            newMs = 16 + (p * 84);
-        } else {
-            const p = (normalizedProgress - 0.3) / 0.7;
-            newMs = 100 + (p * p * p * 11900);
-        }
+            setProgress(prog);
 
-        setMs(Math.floor(newMs));
+            // Logarithmic/Exponential time scaling from original
+            let newMs = 0;
+            if (prog < 0.15) {
+                newMs = (prog / 0.15) * 16;
+            } else if (prog < 0.4) {
+                const p = (prog - 0.15) / 0.25;
+                newMs = 16 + (p * 84);
+            } else {
+                const p = (prog - 0.4) / 0.6;
+                newMs = 100 + (p * p * p * 11900);
+            }
 
-        if (newMs < 16) {
-            setLabel('TARGET: 16ms');
-        } else if (newMs < 100) {
-            setLabel('WARNING: LAG DETECTED');
-        } else if (newMs < 5000) {
-            setLabel('UNPLAYABLE');
-        } else {
-            setLabel('SYSTEM FAILURE');
-        }
-    });
+            setMs(Math.floor(newMs));
+
+            if (newMs < 16) {
+                setLabel('TARGET: 16ms');
+            } else if (newMs < 100) {
+                setLabel('WARNING: LAG DETECTED');
+            } else if (newMs < 5000) {
+                setLabel('UNPLAYABLE');
+            } else {
+                setLabel('SYSTEM FAILURE');
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const auraScale = ms < 100 ? 0 : Math.min(8, ((ms - 100) / 5000) * 8);
     const auraOpacity = ms < 100 ? 0 : Math.min(1, (ms - 100) / 3000);
