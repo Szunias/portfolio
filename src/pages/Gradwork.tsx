@@ -581,10 +581,8 @@ const Gradwork = () => {
 
                 <Section num="4" title={t('section4.title')}>
                     <p className="mb-6">{t('section4.intro')}</p>
-                    <div className="bg-slate-900 text-slate-300 rounded-lg p-6 font-mono text-sm mb-6 space-y-1">
-                        <div className="text-slate-500">[LOG] Gen_Request_01: 4102ms</div>
-                        <div className="text-slate-500">[LOG] Gen_Request_02: 4098ms</div>
-                        <div className="text-emerald-400">[LOG] Gen_Request_01: 0.03ms  &lt;-- ???</div>
+                    <div className="bg-slate-900 text-slate-300 rounded-lg p-6 font-mono text-sm mb-6 space-y-1 whitespace-pre-wrap">
+                        {t('section4.logs')}
                     </div>
                     <p className="mb-6">{t('section4.epiphany')}</p>
                     <blockquote className="border-l-4 border-slate-900 pl-6 py-2 text-slate-900 text-xl font-semibold">
@@ -630,6 +628,31 @@ const Gradwork = () => {
                         </div>
                         <p className="text-slate-600">{t('section7.status_desc')}</p>
                     </div>
+                </Section>
+
+                <Section num="8" title={t('section8.title')}>
+                    <p className="mb-6">{t('section8.intro')}</p>
+
+                    <div className="grid gap-6 md:grid-cols-2 mb-8">
+                        <div className="bg-red-50 border border-red-100 rounded-xl p-6">
+                            <h4 className="font-bold text-red-800 mb-2">{t('section8.session2_title')}</h4>
+                            <p className="text-sm text-red-700">{t('section8.session2_desc')}</p>
+                        </div>
+                        <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-6">
+                            <h4 className="font-bold text-emerald-800 mb-2">{t('section8.session4_title')}</h4>
+                            <p className="text-sm text-emerald-700">{t('section8.session4_desc')}</p>
+                        </div>
+                    </div>
+
+                    <div className="bg-slate-900 text-slate-300 rounded-lg p-6 font-mono text-sm mb-6">
+                        <p className="mb-2 text-slate-400">{t('section8.stats_intro')}</p>
+                        <div className="space-y-1">
+                            <div>- {t('section8.stat_proc')}</div>
+                            <div>- {t('section8.stat_cloud')}</div>
+                            <div className="text-emerald-400 font-bold">- {t('section8.stat_hybrid')}</div>
+                        </div>
+                    </div>
+                    <p>{t('section8.summary')}</p>
                 </Section>
             </main>
 
