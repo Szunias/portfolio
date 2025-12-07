@@ -13,13 +13,13 @@ const Showreel = () => {
 
   const timestamps = [
     { time: 0, label: t('hero.showreel_start', 'Start'), color: 'bg-slate-700', shadow: 'shadow-slate-700/50' },
-    { time: 10, label: t('showreel.chapter.shadow_frames', 'Shadow Frames'), color: 'bg-accent', shadow: 'shadow-accent/50' },
-    { time: 54, label: t('showreel.chapter.amorak', 'Amorak'), color: 'bg-purple-500', shadow: 'shadow-purple-500/50' },
-    { time: 91, label: t('showreel.chapter.akantilado', 'Akantilado'), color: 'bg-orange-500', shadow: 'shadow-orange-500/50' },
-    { time: 112, label: t('showreel.chapter.ray', 'Ray'), color: 'bg-pink-500', shadow: 'shadow-pink-500/50' },
-    { time: 154, label: t('showreel.chapter.not_today', 'Not Today'), color: 'bg-green-500', shadow: 'shadow-green-500/50' },
-    { time: 184, label: t('showreel.chapter.ellen_wwise', 'Ellen Wwise'), color: 'bg-cyan-600', shadow: 'shadow-cyan-600/50' },
-    { time: 198, label: t('showreel.chapter.pause_and_deserve', 'Pause & Deserve'), color: 'bg-red-600', shadow: 'shadow-red-600/50' }
+    { time: 10, label: t('hero.chapter.shadow_frames', 'Shadow Frames'), color: 'bg-accent', shadow: 'shadow-accent/50' },
+    { time: 54, label: t('hero.chapter.amorak', 'Amorak'), color: 'bg-purple-500', shadow: 'shadow-purple-500/50' },
+    { time: 91, label: t('hero.chapter.akantilado', 'Akantilado'), color: 'bg-orange-500', shadow: 'shadow-orange-500/50' },
+    { time: 112, label: t('hero.chapter.ray', 'Ray'), color: 'bg-pink-500', shadow: 'shadow-pink-500/50' },
+    { time: 154, label: t('hero.chapter.not_today', 'Not Today'), color: 'bg-green-500', shadow: 'shadow-green-500/50' },
+    { time: 184, label: t('hero.chapter.ellen_wwise', 'Ellen Wwise'), color: 'bg-cyan-600', shadow: 'shadow-cyan-600/50' },
+    { time: 198, label: t('hero.chapter.pause_and_deserve', 'Pause & Deserve'), color: 'bg-red-600', shadow: 'shadow-red-600/50' }
   ];
 
   // Initialize Vimeo Player

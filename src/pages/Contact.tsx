@@ -21,7 +21,7 @@ const Contact = () => {
       <div className="w-full max-w-5xl">
         
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-display font-bold text-white mb-4">{t('nav_contact', 'Get In Touch')}</h1>
+          <h1 className="text-4xl font-display font-bold text-white mb-4">{t('contact_title', 'Get In Touch')}</h1>
           <p className="text-dim text-lg max-w-2xl mx-auto">
             {t('contact_intro', "I'm currently looking for internship opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!")}
           </p>

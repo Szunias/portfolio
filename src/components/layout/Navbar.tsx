@@ -23,11 +23,11 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: t('nav_home', 'Home'), path: ROUTES.HOME },
-    { name: t('nav_projects', 'Projects'), path: ROUTES.PROJECTS },
-    { name: t('nav_music', 'Music'), path: ROUTES.MUSIC },
-    { name: t('nav_about', 'About'), path: ROUTES.ABOUT },
-    { name: t('nav_contact', 'Contact'), path: ROUTES.CONTACT },
+    { name: t('nav.home', 'Home'), path: ROUTES.HOME },
+    { name: t('nav.projects', 'Projects'), path: ROUTES.PROJECTS },
+    { name: t('nav.music', 'Music'), path: ROUTES.MUSIC },
+    { name: t('nav.about', 'About'), path: ROUTES.ABOUT },
+    { name: t('nav.contact', 'Contact'), path: ROUTES.CONTACT },
   ];
 
   return (
