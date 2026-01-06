@@ -30,8 +30,15 @@ const Layout = ({ children }: LayoutProps) => {
       />
 
       <div className="relative z-10 flex flex-col min-h-screen">
+        <a 
+          href="#main-content" 
+          className="skip-to-main"
+          aria-label="Skip to main content"
+        >
+          Skip to main content
+        </a>
         <Navbar />
-        <main className="flex-grow pt-16">
+        <main id="main-content" className="flex-grow pt-16" tabIndex={-1}>
           {children}
         </main>
         <Footer />

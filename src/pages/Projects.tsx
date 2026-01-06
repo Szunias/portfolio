@@ -13,18 +13,24 @@ const Projects = () => {
   const { filter, setFilter, categories, filteredProjects, getCategoryLabel } = useProjectFilter(allProjects);
 
   return (
-    <div className="min-h-screen bg-primary pt-32 pb-20 px-6 lg:px-12">
+    <div className="min-h-screen bg-primary pt-32 pb-20 px-6 lg:px-12 relative overflow-hidden">
+      {/* Ambient Background */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute top-0 right-0 w-[40vw] h-[40vh] bg-accent/5 blur-[120px] rounded-full opacity-30"></div>
+        <div className="absolute bottom-0 left-0 w-[50vw] h-[50vh] bg-purple-900/5 blur-[100px] rounded-full opacity-25"></div>
+      </div>
+      
       <SEO 
         title={t('nav.projects', 'Projects')}
         description={t('projects.description', 'A collection of my work in game audio, implementation, and tool development.')}
       />
 
-      <div className="max-w-[1600px] mx-auto">
+      <div className="max-w-[1600px] mx-auto relative z-10">
         
         {/* Header & Filters */}
         <div className="flex flex-col lg:flex-row justify-between items-end mb-16 gap-8 border-b border-white/10 pb-8">
           <div>
-            <h1 className="text-5xl md:text-7xl font-display font-bold text-white mb-4 tracking-tighter">
+            <h1 className="text-5xl md:text-7xl font-display font-bold text-white mb-4 tracking-tighter drop-shadow-[0_0_30px_rgba(56,189,248,0.2)]">
               {t('projects.title', 'Selected Works')}
             </h1>
             <p className="text-slate-400 max-w-lg text-lg font-light">

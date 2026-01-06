@@ -29,14 +29,14 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1, duration: 0.4 }}
-            className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20 transition-colors"
+            className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-accent/40 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)] transition-all duration-500 hover:scale-[1.02]"
           >
             <div className="flex items-center gap-4 mb-6 border-b border-white/5 pb-4">
                 <div className="p-3 rounded-lg bg-white/5">
                     <Icon size={24} style={{ color: category.accentColor }} />
                 </div>
                 <div>
-                    <h3 className="text-lg font-bold text-white tracking-wide">
+                    <h3 className="text-lg font-bold text-white tracking-wide group-hover:text-accent transition-colors duration-300">
                         {t(category.titleKey)}
                     </h3>
                     <p className="text-xs text-slate-500 uppercase tracking-wider font-mono">
@@ -54,7 +54,7 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                         <button
                             key={tech}
                             onClick={() => onSelect(tech)}
-                            className="flex items-center gap-2 pl-2 pr-3 py-2 rounded-md bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 transition-all group cursor-pointer"
+                            className="flex items-center gap-2 pl-2 pr-3 py-2 rounded-md bg-white/5 hover:bg-white/10 border border-white/5 hover:border-accent/30 hover:shadow-[0_0_15px_rgba(56,189,248,0.1)] transition-all group cursor-pointer"
                         >
                              {iconPath && (
                                 <img 
@@ -63,7 +63,7 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                                     className="w-4 h-4 object-contain opacity-70 group-hover:opacity-100 transition-opacity" 
                                 />
                             )}
-                            <span className="text-sm text-slate-300 group-hover:text-white font-medium">{tech}</span>
+                            <span className="text-sm text-slate-300 group-hover:text-accent font-medium transition-colors duration-300">{tech}</span>
                         </button>
                     )
                 })}

@@ -22,6 +22,32 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('nav')) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen]);
+
   const navLinks = [
     { name: t('nav.home', 'Home'), path: ROUTES.HOME },
     { name: t('nav.projects', 'Projects'), path: ROUTES.PROJECTS },
@@ -35,8 +61,8 @@ const Navbar = () => {
       className={`
         fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b
         ${scrolled 
-          ? 'bg-primary/90 backdrop-blur-md border-white/5 py-4' 
-          : 'bg-primary/60 backdrop-blur-sm border-transparent py-6'
+          ? 'bg-primary/95 backdrop-blur-xl border-white/10 py-4 shadow-[0_4px_20px_rgba(0,0,0,0.3)]' 
+          : 'bg-primary/70 backdrop-blur-md border-transparent py-6'
         }
       `}
       role="navigation"
@@ -45,12 +71,12 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex justify-between items-center">
           
-          {/* Logo - Sora Font, Professional */}
+          {/* Logo - Enhanced */}
           <Link to={ROUTES.HOME} className="group flex flex-col" aria-label="Home">
-            <span className="font-display font-bold text-xl text-white tracking-tight group-hover:text-accent transition-colors">
+            <span className="font-display font-bold text-xl text-white tracking-tight group-hover:text-accent transition-all duration-300 group-hover:drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]">
               IGOR SZUNIEWICZ
             </span>
-            <span className="text-[10px] text-dim uppercase tracking-[0.2em] font-mono group-hover:text-white transition-colors">
+            <span className="text-[10px] text-dim uppercase tracking-[0.2em] font-mono group-hover:text-accent/80 transition-colors duration-300">
               {t('nav.role_label', 'Audio Designer')}
             </span>
           </Link>
@@ -65,15 +91,15 @@ const Navbar = () => {
                     key={link.path}
                     to={link.path}
                     className={`
-                      text-sm font-medium transition-all duration-200 relative py-1
-                      ${isActive ? 'text-white' : 'text-dim hover:text-white'}
+                      text-sm font-medium transition-all duration-300 relative py-1
+                      ${isActive ? 'text-white font-semibold' : 'text-dim hover:text-white'}
                     `}
                     aria-current={isActive ? 'page' : undefined}
                   >
                     {link.name}
-                    {/* Active Indicator Underline */}
+                    {/* Active Indicator Underline - Enhanced */}
                     {isActive && (
-                      <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-accent rounded-full shadow-[0_0_8px_theme(colors.accent)]"></span>
+                      <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-accent rounded-full shadow-[0_0_12px_rgba(56,189,248,0.6)] animate-pulse"></span>
                     )}
                   </Link>
                 );
@@ -125,30 +151,47 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu Dropdown - Full screen overlay style */}
-      <div 
-        id="mobile-menu"
-        className={`
-          md:hidden fixed inset-0 bg-primary z-40 transition-transform duration-300 pt-24 px-6
-          ${isOpen ? 'translate-x-0' : 'translate-x-full'}
-        `}
-      >
-        <div className="flex flex-col gap-6">
-          {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              onClick={() => setIsOpen(false)}
-              className={`
-                text-2xl font-display font-bold
-                ${location.pathname === link.path ? 'text-accent' : 'text-dim hover:text-white'}
-              `}
-              aria-current={location.pathname === link.path ? 'page' : undefined}
+      {isOpen && (
+        <>
+          {/* Solid background overlay */}
+          <div 
+            className="md:hidden fixed inset-0 z-[10000]"
+            style={{ backgroundColor: '#050505' }}
+            onClick={() => setIsOpen(false)}
+          />
+          {/* Menu content */}
+          <div 
+            id="mobile-menu"
+            className="md:hidden fixed inset-0 z-[10001] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div 
+              className="min-h-full w-full backdrop-blur-2xl transition-opacity duration-300 pt-24 px-6 pb-12"
+              style={{ backgroundColor: '#050505' }}
             >
-              {link.name}
-            </Link>
-          ))}
-        </div>
-      </div>
+              <div className="flex flex-col gap-8">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    onClick={() => setIsOpen(false)}
+                    className={`
+                      text-2xl font-display font-bold py-2 transition-all duration-300
+                      ${location.pathname === link.path 
+                        ? 'text-accent drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]' 
+                        : 'text-dim hover:text-white'
+                      }
+                    `}
+                    aria-current={location.pathname === link.path ? 'page' : undefined}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </nav>
   );
 };

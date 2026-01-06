@@ -33,13 +33,13 @@ const Contact = () => {
            <motion.div 
              initial={{ opacity: 0, x: -20 }}
              animate={{ opacity: 1, x: 0 }}
-             className="bg-secondary p-8 rounded-2xl border border-white/10"
+             className="bg-secondary p-8 rounded-2xl border border-white/10 hover:border-accent/30 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)] transition-all duration-500"
            >
               <h2 className="text-2xl font-display font-bold text-white mb-8">{t('contact_info_title', 'Contact Info')}</h2>
               
               <div className="space-y-8">
                  <div className="flex items-start">
-                    <div className="p-3 bg-white/5 rounded-lg text-accent mr-4 border border-white/10">
+                    <div className="p-3 bg-white/5 rounded-lg text-accent mr-4 border border-white/10 hover:border-accent/50 hover:bg-accent/10 transition-all duration-300">
                        <Mail size={24} />
                     </div>
                     <div>
@@ -60,7 +60,7 @@ const Contact = () => {
                  </div>
 
                  <div className="flex items-start">
-                    <div className="p-3 bg-white/5 rounded-lg text-accent mr-4 border border-white/10">
+                    <div className="p-3 bg-white/5 rounded-lg text-accent mr-4 border border-white/10 hover:border-accent/50 hover:bg-accent/10 transition-all duration-300">
                        <MapPin size={24} />
                     </div>
                     <div>
@@ -79,7 +79,7 @@ const Contact = () => {
                       href={personal_info.social_media.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center w-12 h-12 bg-white/5 border border-white/10 rounded-lg text-dim hover:bg-white hover:text-primary transition-all"
+                      className="flex items-center justify-center w-12 h-12 bg-white/5 border border-white/10 rounded-lg text-dim hover:bg-accent hover:border-accent hover:text-primary hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] transition-all duration-300"
                     >
                        <Linkedin size={24} />
                     </a>
@@ -87,7 +87,7 @@ const Contact = () => {
                       href={personal_info.social_media.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center w-12 h-12 bg-white/5 border border-white/10 rounded-lg text-dim hover:bg-white hover:text-primary transition-all"
+                      className="flex items-center justify-center w-12 h-12 bg-white/5 border border-white/10 rounded-lg text-dim hover:bg-accent hover:border-accent hover:text-primary hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] transition-all duration-300"
                     >
                        <Github size={24} />
                     </a>

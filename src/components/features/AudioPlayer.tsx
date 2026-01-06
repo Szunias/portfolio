@@ -32,7 +32,7 @@ const AudioPlayer = () => {
   if (!currentTrack || !isPlayerVisible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-primary/90 backdrop-blur-xl border-t border-white/10 z-50 h-20 flex items-center px-4 sm:px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+    <div className="fixed bottom-0 left-0 right-0 bg-primary/95 backdrop-blur-2xl border-t border-white/10 z-50 h-20 flex items-center px-4 sm:px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.6)] shadow-[0_0_30px_rgba(56,189,248,0.1)]">
       {/* Progress Bar (Top Line) */}
       <div 
         className="absolute top-0 left-0 right-0 h-1 hover:h-2.5 bg-white/5 cursor-pointer group transition-all duration-200 ease-out z-50"
@@ -57,14 +57,14 @@ const AudioPlayer = () => {
         
         {/* Left: Info & Visualizer */}
         <div className="flex items-center gap-4 flex-1 min-w-0">
-            <div className="relative w-12 h-12 rounded bg-slate-800 overflow-hidden border border-white/10 flex-shrink-0 group">
+            <div className="relative w-12 h-12 rounded bg-slate-800 overflow-hidden border border-white/10 flex-shrink-0 group hover:border-accent/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition-all duration-300">
                 <img 
                     src={`/${currentTrack.cover}`} 
                     alt={currentTrack.title} 
-                    className={`w-full h-full object-cover ${isPlaying ? 'animate-[spin-slow]' : ''}`} 
+                    className={`w-full h-full object-cover ${isPlaying ? 'animate-[spin-slow]' : ''} group-hover:scale-110 transition-transform duration-500`} 
                 />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <Maximize2 size={16} className="text-white" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Maximize2 size={16} className="text-accent drop-shadow-[0_0_10px_rgba(56,189,248,0.6)]" />
                 </div>
             </div>
             <div className="min-w-0">
@@ -93,10 +93,10 @@ const AudioPlayer = () => {
                 onClick={togglePlay}
                 variant="primary"
                 size="icon"
-                className="w-10 h-10 rounded-full hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] p-0"
+                className="w-12 h-12 rounded-full hover:scale-110 hover:shadow-[0_0_30px_rgba(56,189,248,0.6)] transition-all duration-300 p-0 bg-accent hover:bg-white text-primary hover:text-accent border-2 border-accent hover:border-white"
                 aria-label={isPlaying ? "Pause" : "Play"}
             >
-                {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-0.5" />}
+                {isPlaying ? <Pause size={22} fill="currentColor" /> : <Play size={22} fill="currentColor" className="ml-0.5" />}
             </Button>
 
             <Button onClick={nextTrack} variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-transparent" aria-label="Next Track">
@@ -134,7 +134,7 @@ const AudioPlayer = () => {
                      }}
                 >
                     <div 
-                        className="h-full bg-gradient-to-r from-sky-600 to-accent shadow-[0_0_10px_rgba(56,189,248,0.4)] group-hover:bg-accent transition-all duration-100" 
+                        className="h-full bg-gradient-to-r from-sky-600 via-sky-500 to-accent shadow-[0_0_15px_rgba(56,189,248,0.5)] group-hover:bg-accent group-hover:shadow-[0_0_20px_rgba(56,189,248,0.7)] transition-all duration-300" 
                         style={{ width: `${volume * 100}%` }}
                     ></div>
                 </div>

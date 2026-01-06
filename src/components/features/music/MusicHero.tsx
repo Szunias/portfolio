@@ -58,7 +58,7 @@ const MusicHero = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         key={displayTrack.id}
-                        className="relative aspect-square rounded-xl overflow-hidden shadow-2xl border border-white/10 group"
+                        className="relative aspect-square rounded-xl overflow-hidden shadow-2xl border border-white/10 group hover:border-accent/40 hover:shadow-[0_0_50px_rgba(56,189,248,0.3)] transition-all duration-500"
                     >
                         <img 
                             src={`/${displayTrack.cover}`} 
@@ -67,16 +67,16 @@ const MusicHero = () => {
                         />
                         {/* Quick Play Overlay on Hero */}
                         <div 
-                            className="absolute inset-0 bg-black/20 flex items-center justify-center cursor-pointer hover:bg-black/10 transition-colors"
+                            className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-center justify-center cursor-pointer hover:from-black/40 hover:via-black/10 transition-all duration-300"
                             onClick={() => currentTrack?.id === displayTrack.id ? togglePlay() : playTrack(displayTrack)}
                             role="button"
                             aria-label={isPlaying && currentTrack?.id === displayTrack.id ? "Pause" : "Play"}
                         >
-                            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:scale-110 transition-transform">
+                            <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-xl border border-white/30 flex items-center justify-center hover:scale-110 hover:bg-white/25 hover:border-accent/50 hover:shadow-[0_0_40px_rgba(56,189,248,0.6)] transition-all duration-300">
                                 {isPlaying && currentTrack?.id === displayTrack.id ? (
-                                    <Pause size={32} fill="currentColor" className="text-white" />
+                                    <Pause size={36} fill="currentColor" className="text-accent drop-shadow-[0_0_15px_rgba(56,189,248,0.6)]" />
                                 ) : (
-                                    <Play size={32} fill="currentColor" className="text-white ml-1" />
+                                    <Play size={36} fill="currentColor" className="text-accent ml-1 drop-shadow-[0_0_15px_rgba(56,189,248,0.6)]" />
                                 )}
                             </div>
                         </div>
@@ -91,17 +91,17 @@ const MusicHero = () => {
                         >
                             <div className="flex items-center gap-2 mb-4">
                                 {displayTrack.tags?.map(tag => (
-                                    <span key={tag} className="px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs text-accent font-mono uppercase tracking-wider">
+                                    <span key={tag} className="px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs text-accent font-mono uppercase tracking-wider hover:border-accent/50 hover:bg-accent/10 hover:shadow-[0_0_15px_rgba(56,189,248,0.2)] transition-all duration-300">
                                         {tag}
                                     </span>
                                 ))}
                             </div>
                             
-                            <h1 className="text-5xl md:text-7xl font-display font-bold text-white mb-2 leading-none">
+                            <h1 className="text-5xl md:text-7xl font-display font-bold text-white mb-2 leading-none drop-shadow-[0_0_30px_rgba(56,189,248,0.2)]">
                                 {displayTrack.title}
                             </h1>
                             <p className="text-xl text-slate-400 font-light">
-                                by <span className="text-white">{displayTrack.artist || 'Igor Szuniewicz'}</span>
+                                by <span className="text-white hover:text-accent transition-colors duration-300">{displayTrack.artist || 'Igor Szuniewicz'}</span>
                             </p>
                         </motion.div>
 
@@ -109,7 +109,7 @@ const MusicHero = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.2 }}
-                            className="text-slate-300 max-w-2xl leading-relaxed text-lg border-l-2 border-accent/30 pl-6"
+                            className="text-slate-300 max-w-2xl leading-relaxed text-lg border-l-2 border-accent/40 pl-6 shadow-[0_0_20px_rgba(56,189,248,0.1)]"
                         >
                             {getDesc(displayTrack)}
                         </motion.p>

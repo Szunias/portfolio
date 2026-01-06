@@ -83,8 +83,8 @@ const ProjectDetails = () => {
             {/* Gallery */}
             {media.images && media.images.length > 0 && (
                 <div className="space-y-6">
-                    <h3 className="text-2xl font-bold text-white flex items-center gap-3">
-                        <Images size={24} className="text-accent" />
+                    <h3 className="text-2xl font-bold text-white flex items-center gap-3 drop-shadow-[0_0_20px_rgba(56,189,248,0.2)]">
+                        <Images size={24} className="text-accent drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]" />
                         {t('details.gallery', 'Gallery')}
                     </h3>
                     <ImageLightbox images={media.images} />

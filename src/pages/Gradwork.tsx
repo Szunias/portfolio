@@ -303,6 +303,7 @@ const NightmareScroll = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [ms, setMs] = useState(0);
     const [label, setLabel] = useState('TARGET: 16ms');
+    const [shakeOffset, setShakeOffset] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
         const handleScroll = () => {
@@ -346,6 +347,19 @@ const NightmareScroll = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Update shake offset when in failure mode
+    useEffect(() => {
+        if (ms > 5000) {
+            const interval = setInterval(() => {
+                setShakeOffset({
+                    x: (Math.random() - 0.5) * 10,
+                    y: (Math.random() - 0.5) * 5
+                });
+            }, 50); // Update every 50ms for shake effect
+            return () => clearInterval(interval);
+        }
+    }, [ms]);
+
     const auraScale = ms < 100 ? 0 : Math.min(8, ((ms - 100) / 5000) * 8);
     const auraOpacity = ms < 100 ? 0 : Math.min(1, (ms - 100) / 3000);
 
@@ -378,7 +392,7 @@ const NightmareScroll = () => {
                             opacity: 0.2 + (ms / 12000) * 0.8,
                             color: ms < 16 ? '#333' : ms < 100 ? '#991b1b' : '#dc2626',
                             textShadow: ms > 5000 ? '2px 0 #fff, -2px 0 #000' : 'none',
-                            transform: ms > 5000 ? `translate(${(Math.random() - 0.5) * 10}px, ${(Math.random() - 0.5) * 5}px)` : 'none'
+                            transform: ms > 5000 ? `translate(${shakeOffset.x}px, ${shakeOffset.y}px)` : 'none'
                         }}
                     >
                         {ms} ms

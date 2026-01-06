@@ -33,7 +33,7 @@ const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
             onClick={onClose}
             role="dialog"
             aria-modal="true"
@@ -43,7 +43,7 @@ const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
                 initial={{ scale: 0.9, y: 20 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.9, y: 20 }}
-                className="bg-secondary border border-accent/20 p-8 rounded-2xl max-w-md w-full shadow-[0_0_50px_rgba(56,189,248,0.1)] relative"
+                className="bg-secondary border border-accent/30 p-8 rounded-2xl max-w-md w-full shadow-[0_0_60px_rgba(56,189,248,0.3)] relative hover:border-accent/40 transition-all duration-300"
                 onClick={(e) => e.stopPropagation()}
             >
                 <Button 

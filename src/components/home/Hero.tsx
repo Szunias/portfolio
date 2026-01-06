@@ -24,10 +24,11 @@ const Hero = () => {
       {/* Black to transparent gradient - smooth transition to Layout gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#020202] via-[#020202]/60 to-transparent pointer-events-none" />
 
-      {/* Ambient Background - "Northern Lights" feel */}
+      {/* Ambient Background - "Northern Lights" feel - Enhanced */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[80vw] h-[50vh] bg-accent/10 blur-[150px] rounded-full opacity-40 mix-blend-screen" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vh] bg-purple-900/10 blur-[120px] rounded-full opacity-20" />
+        <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[80vw] h-[50vh] bg-accent/15 blur-[150px] rounded-full opacity-50 mix-blend-screen animate-pulse" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vh] bg-purple-900/15 blur-[120px] rounded-full opacity-30" />
+        <div className="absolute top-1/2 left-[-10%] w-[50vw] h-[40vh] bg-cyan-500/10 blur-[100px] rounded-full opacity-25" />
       </div>
 
       {/* Watermark "TECHNICAL" Text - Strictly Background */}
@@ -50,16 +51,16 @@ const Hero = () => {
             <AudioVisualizer />
         </div>
 
-        {/* Main Typography */}
+        {/* Main Typography - Enhanced */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="mb-10 relative z-10"
         >
-          <h1 className="font-display font-bold text-[5rem] sm:text-[6rem] md:text-[8rem] leading-[0.9] tracking-tighter text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.1)]">
+          <h1 className="font-display font-bold text-[5rem] sm:text-[6rem] md:text-[8rem] leading-[0.9] tracking-tighter text-white drop-shadow-[0_0_60px_rgba(56,189,248,0.3)]">
             AUDIO <br className="hidden sm:block" /> 
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-accent/80 to-slate-400 drop-shadow-[0_0_40px_rgba(56,189,248,0.2)]">
               DESIGN
             </span>
           </h1>
@@ -102,21 +103,21 @@ const Hero = () => {
 
       </div>
 
-      {/* Footer Tech Stack - Minimalist */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.5, delay: 1 }}
-        className="absolute bottom-8 left-0 right-0 text-center z-20"
-      >
-        <div className="inline-flex items-center gap-4 sm:gap-8 px-6 py-3 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm mx-4">
-          {['Wwise', 'Unreal 5', 'C++', 'FMOD', 'Unity', 'Python'].map((tech, i) => (
-            <span key={i} className="text-[10px] sm:text-xs font-mono text-slate-500 uppercase tracking-wider hover:text-accent transition-colors cursor-default whitespace-nowrap">
-              {tech}
-            </span>
-          ))}
-        </div>
-      </motion.div>
+        {/* Footer Tech Stack - Enhanced */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5, delay: 1 }}
+          className="absolute bottom-8 left-0 right-0 text-center z-20"
+        >
+          <div className="inline-flex items-center gap-4 sm:gap-8 px-8 py-4 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mx-4 shadow-[0_0_30px_rgba(56,189,248,0.1)] hover:border-accent/30 hover:shadow-[0_0_40px_rgba(56,189,248,0.2)] transition-all duration-500">
+            {['Wwise', 'Unreal 5', 'C++', 'FMOD', 'Unity', 'Python'].map((tech, i) => (
+              <span key={i} className="text-[10px] sm:text-xs font-mono text-slate-400 uppercase tracking-wider hover:text-accent transition-colors cursor-default whitespace-nowrap group/tech">
+                <span className="group-hover/tech:text-accent transition-colors">{tech}</span>
+              </span>
+            ))}
+          </div>
+        </motion.div>
 
     </section>
   );

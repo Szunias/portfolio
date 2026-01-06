@@ -58,10 +58,11 @@ const About = () => {
                 description={t('about_page_description', professional_summary.short_bio)}
             />
 
-            {/* Ambient Background */}
+            {/* Ambient Background - Enhanced */}
             <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-[50vw] h-[50vh] bg-accent/5 blur-[120px] rounded-full opacity-30"></div>
-                <div className="absolute bottom-0 left-0 w-[40vw] h-[40vh] bg-purple-900/5 blur-[100px] rounded-full opacity-20"></div>
+                <div className="absolute top-0 right-0 w-[50vw] h-[50vh] bg-accent/8 blur-[120px] rounded-full opacity-40 animate-pulse"></div>
+                <div className="absolute bottom-0 left-0 w-[40vw] h-[40vh] bg-purple-900/8 blur-[100px] rounded-full opacity-30"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vw] h-[30vh] bg-cyan-500/5 blur-[80px] rounded-full opacity-25"></div>
             </div>
 
             {/* Main Content */}
@@ -79,11 +80,11 @@ const About = () => {
                     >
                         {/* HARD CONSTRAINT CONTAINER */}
                         <div style={{ width: '220px', height: '290px' }} className="relative flex-shrink-0 opacity-90 hover:opacity-100 transition-opacity">
-                            {/* Tech Borders */}
-                            <div className="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-accent/50"></div>
-                            <div className="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-accent/50"></div>
-                            <div className="absolute bottom-0 left-0 w-8 h-8 border-l-2 border-b-2 border-accent/50"></div>
-                            <div className="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 border-accent/50"></div>
+                            {/* Tech Borders - Enhanced */}
+                            <div className="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-accent/60 shadow-[0_0_10px_rgba(56,189,248,0.3)] group-hover:border-accent group-hover:shadow-[0_0_20px_rgba(56,189,248,0.5)] transition-all duration-500"></div>
+                            <div className="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-accent/60 shadow-[0_0_10px_rgba(56,189,248,0.3)] group-hover:border-accent group-hover:shadow-[0_0_20px_rgba(56,189,248,0.5)] transition-all duration-500"></div>
+                            <div className="absolute bottom-0 left-0 w-8 h-8 border-l-2 border-b-2 border-accent/60 shadow-[0_0_10px_rgba(56,189,248,0.3)] group-hover:border-accent group-hover:shadow-[0_0_20px_rgba(56,189,248,0.5)] transition-all duration-500"></div>
+                            <div className="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 border-accent/60 shadow-[0_0_10px_rgba(56,189,248,0.3)] group-hover:border-accent group-hover:shadow-[0_0_20px_rgba(56,189,248,0.5)] transition-all duration-500"></div>
 
                             {/* Image Container */}
                             <div className="absolute inset-4 overflow-hidden bg-neutral-900 group">
@@ -111,12 +112,12 @@ const About = () => {
                         className="lg:col-span-7 flex flex-col justify-center"
                     >
                         <div className="mb-8">
-                            <h1 className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl leading-none mb-4 tracking-tight">
+                            <h1 className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl leading-none mb-4 tracking-tight drop-shadow-[0_0_30px_rgba(56,189,248,0.2)]">
                                 IGOR <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-500">SZUNIEWICZ</span>
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-accent/80 to-slate-500 drop-shadow-[0_0_20px_rgba(56,189,248,0.3)]">SZUNIEWICZ</span>
                             </h1>
                             <div className="flex items-center gap-3 text-accent font-mono text-sm tracking-widest uppercase">
-                                <span className="w-8 h-px bg-accent"></span>
+                                <span className="w-8 h-px bg-accent shadow-[0_0_10px_rgba(56,189,248,0.5)]"></span>
                                 {t('about_role', 'Audio Designer & Developer')}
                             </div>
                         </div>
@@ -188,12 +189,12 @@ const About = () => {
                             <div key={i} className="group relative flex gap-8 pb-12 last:pb-0">
                                 {/* Left: Trace Line */}
                                 <div className="absolute left-[7px] top-2 bottom-0 w-px bg-white/10 group-last:hidden"></div>
-                                <div className={`relative z-10 w-4 h-4 rounded-full border-2 border-[#020202] ${item.color === 'text-accent' ? 'bg-accent' : 'bg-slate-700'} mt-1.5 group-hover:scale-125 transition-transform`}></div>
+                                <div className={`relative z-10 w-4 h-4 rounded-full border-2 border-[#020202] ${item.color === 'text-accent' ? 'bg-accent shadow-[0_0_15px_rgba(56,189,248,0.6)]' : 'bg-slate-700'} mt-1.5 group-hover:scale-125 group-hover:shadow-[0_0_20px_rgba(56,189,248,0.8)] transition-all duration-300`}></div>
 
                                 {/* Right: Content */}
                                 <div className="flex-1">
                                     <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-2">
-                                        <h3 className="text-xl font-bold text-white group-hover:text-accent transition-colors">
+                                        <h3 className="text-xl font-bold text-white group-hover:text-accent group-hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.4)] transition-all duration-300">
                                             {item.title}
                                         </h3>
                                         <span className="font-mono text-xs text-slate-500 uppercase tracking-widest bg-white/5 px-2 py-1 rounded">

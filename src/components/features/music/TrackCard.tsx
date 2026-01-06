@@ -26,10 +26,12 @@ const TrackCard = memo(({ track, index, isCurrent, isPlaying, onPlay }: TrackCar
         role="button"
         aria-label={`Play ${track.title} by ${track.artist}`}
     >
-        {/* Cover Art */}
+        {/* Cover Art - Enhanced */}
         <div className={cn(
-            "relative aspect-square rounded-2xl overflow-hidden border border-white/5 shadow-lg transition-all duration-500",
-            isCurrent ? 'ring-2 ring-accent/50 scale-[1.02]' : 'hover:scale-[1.02] hover:border-white/20'
+            "relative aspect-square rounded-2xl overflow-hidden border shadow-lg transition-all duration-500",
+            isCurrent 
+                ? 'ring-2 ring-accent/60 scale-[1.02] border-accent/30 shadow-[0_0_30px_rgba(56,189,248,0.3)]' 
+                : 'border-white/5 hover:scale-[1.05] hover:border-accent/40 hover:shadow-[0_0_40px_rgba(56,189,248,0.2)]'
         )}>
             <img 
                 src={`/${track.cover}`} 
@@ -41,16 +43,18 @@ const TrackCard = memo(({ track, index, isCurrent, isPlaying, onPlay }: TrackCar
                 loading="lazy"
             />
             
-            {/* Hover / Active Overlay */}
+            {/* Hover / Active Overlay - Enhanced */}
             <div className={cn(
-                "absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-300",
+                "absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/20 flex items-center justify-center transition-opacity duration-300",
                 isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
             )}>
                 <div className={cn(
-                    "w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-xl transform transition-transform",
-                    "group-hover:scale-110"
+                    "w-14 h-14 rounded-full bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center text-white shadow-[0_0_30px_rgba(56,189,248,0.4)] transform transition-all duration-300",
+                    isActive 
+                        ? 'scale-110 ring-2 ring-accent/50 shadow-[0_0_40px_rgba(56,189,248,0.6)]' 
+                        : "group-hover:scale-110 group-hover:border-accent/50 group-hover:shadow-[0_0_35px_rgba(56,189,248,0.5)]"
                 )}>
-                    {isActive ? <BarChart3 size={20} className="animate-pulse" /> : <Play size={20} fill="currentColor" className="ml-1" />}
+                    {isActive ? <BarChart3 size={22} className="animate-pulse text-accent" /> : <Play size={22} fill="currentColor" className="ml-1 text-accent" />}
                 </div>
             </div>
         </div>
@@ -59,8 +63,10 @@ const TrackCard = memo(({ track, index, isCurrent, isPlaying, onPlay }: TrackCar
         <div>
             <div className="flex items-start justify-between gap-2">
                 <h4 className={cn(
-                    "font-bold text-sm truncate transition-colors",
-                    isCurrent ? 'text-accent' : 'text-white group-hover:text-white'
+                    "font-bold text-sm truncate transition-all duration-300",
+                    isCurrent 
+                        ? 'text-accent drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]' 
+                        : 'text-white group-hover:text-accent group-hover:drop-shadow-[0_0_8px_rgba(56,189,248,0.3)]'
                 )}>
                     {track.title}
                 </h4>
@@ -74,7 +80,7 @@ const TrackCard = memo(({ track, index, isCurrent, isPlaying, onPlay }: TrackCar
                             {track.year}
                         </span>
                     )}
-                    {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>}
+                    {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse shadow-[0_0_10px_rgba(56,189,248,0.8)]"></span>}
                 </div>
             </div>
         </div>

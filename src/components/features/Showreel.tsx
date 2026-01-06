@@ -50,8 +50,8 @@ const Showreel = () => {
 
   return (
     <div className="w-full max-w-6xl mx-auto mt-12 mb-20">
-      {/* Video Wrapper */}
-      <div className="relative aspect-video rounded-2xl overflow-hidden bg-black group">
+      {/* Video Wrapper - Enhanced */}
+      <div className="relative aspect-video rounded-2xl overflow-hidden bg-black group border border-white/10 hover:border-accent/30 hover:shadow-[0_0_40px_rgba(56,189,248,0.2)] transition-all duration-500">
         <iframe
           ref={iframeRef}
           src="https://player.vimeo.com/video/1143625213?badge=0&autopause=0&player_id=0&app_id=58479&controls=1"
@@ -74,11 +74,11 @@ const Showreel = () => {
             aria-label={t('showreel.play', 'Play Showreel')}
           >
             <motion.div 
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.15 }}
               whileTap={{ scale: 0.95 }}
-              className="w-24 h-24 flex items-center justify-center bg-white/10 backdrop-blur-md rounded-full border border-white/30 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+              className="w-28 h-28 flex items-center justify-center bg-white/15 backdrop-blur-xl rounded-full border border-accent/50 shadow-[0_0_40px_rgba(56,189,248,0.5)] hover:shadow-[0_0_60px_rgba(56,189,248,0.7)] transition-all duration-300"
             >
-               <Play size={40} className="text-white ml-2" fill="currentColor" />
+               <Play size={44} className="text-accent ml-2 drop-shadow-[0_0_15px_rgba(56,189,248,0.6)]" fill="currentColor" />
             </motion.div>
           </button>
         )}
@@ -87,7 +87,7 @@ const Showreel = () => {
       {/* Modern Navigation Bar */}
       <div className="mt-8">
         <div className="flex flex-col items-center">
-           <div className="bg-secondary/80 backdrop-blur-sm border border-white/10 p-1.5 rounded-2xl overflow-x-auto max-w-full no-scrollbar">
+           <div className="bg-secondary/80 backdrop-blur-md border border-white/10 hover:border-accent/30 p-1.5 rounded-2xl overflow-x-auto max-w-full no-scrollbar shadow-[0_0_20px_rgba(0,0,0,0.3)] transition-all duration-300">
              <div className="flex items-center gap-1 min-w-max px-2">
               {timestamps.map((ts) => {
                 const isActive = activeChapter === ts.time;
@@ -101,7 +101,8 @@ const Showreel = () => {
                     {isActive && (
                       <motion.div
                         layoutId="active-pill"
-                        className={`absolute inset-0 rounded-xl ${ts.color} opacity-90`}
+                        className={`absolute inset-0 rounded-xl ${ts.color} opacity-90 shadow-[0_0_20px_var(--tw-shadow-color)]`}
+                        style={{ '--tw-shadow-color': ts.color.includes('accent') ? 'rgba(56,189,248,0.6)' : 'rgba(255,255,255,0.3)' } as React.CSSProperties}
                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                       />
                     )}
@@ -118,9 +119,9 @@ const Showreel = () => {
                           </span>
                        </div>
                        
-                       {/* Status Dot */}
+                       {/* Status Dot - Enhanced */}
                        <span 
-                          className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${ts.color} ${isActive ? `opacity-100 ${ts.shadow} shadow-[0_0_12px_var(--tw-shadow-color)]` : 'opacity-0 -translate-x-2'}`} 
+                          className={`w-2 h-2 rounded-full transition-all duration-500 ${ts.color} ${isActive ? `opacity-100 ${ts.shadow} shadow-[0_0_15px_var(--tw-shadow-color)] animate-pulse` : 'opacity-0 -translate-x-2'}`} 
                        />
                     </div>
                   </button>

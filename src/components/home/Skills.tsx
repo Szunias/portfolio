@@ -145,7 +145,7 @@ const Skills = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.15, duration: 0.6 }}
-                  className="group relative bg-[#0c0c0c] rounded-xl border border-white/5 overflow-hidden hover:border-accent/30 transition-colors duration-500"
+                  className="group relative bg-[#0c0c0c] rounded-xl border border-white/5 overflow-hidden hover:border-accent/40 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)] transition-all duration-500 hover:scale-[1.02]"
                 >
                   {/* "Rack Unit" Header */}
                   <div className="bg-[#111] px-6 py-4 border-b border-white/5 flex items-center justify-between relative">
@@ -157,7 +157,7 @@ const Skills = () => {
                         <div className="p-2 rounded bg-white/5 text-accent group-hover:text-white transition-colors">
                             <CatIcon size={18} />
                         </div>
-                        <h3 className="text-lg font-bold font-mono uppercase tracking-wider text-slate-300 group-hover:text-accent transition-colors">
+                        <h3 className="text-lg font-bold font-mono uppercase tracking-wider text-slate-300 group-hover:text-accent transition-all duration-300 group-hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]">
                             {translatedTitle}
                         </h3>
                     </div>
@@ -176,7 +176,7 @@ const Skills = () => {
                             return (
                                 <div 
                                     key={skill} 
-                                    className="flex items-center gap-3 p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 transition-all duration-300 group/skill h-full"
+                                    className="flex items-center gap-3 p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-transparent hover:border-accent/20 transition-all duration-300 group/skill h-full hover:shadow-[0_0_15px_rgba(56,189,248,0.1)]"
                                 >
                                     <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-black/20 rounded p-1">
                                         {iconPath ? (

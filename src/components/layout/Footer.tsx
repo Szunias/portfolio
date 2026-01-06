@@ -23,16 +23,16 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold text-white mb-4">{t('footer.connect', 'Connect')}</h4>
             <div className="flex space-x-4">
-              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-accent transition p-2 bg-primary rounded-full hover:bg-slate-800">
+              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-accent transition-all duration-300 p-2 bg-primary rounded-full hover:bg-accent hover:text-primary hover:shadow-[0_0_15px_rgba(56,189,248,0.4)]">
                 <Linkedin size={20} />
               </a>
-              <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-accent transition p-2 bg-primary rounded-full hover:bg-slate-800">
+              <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-accent transition-all duration-300 p-2 bg-primary rounded-full hover:bg-accent hover:text-primary hover:shadow-[0_0_15px_rgba(56,189,248,0.4)]">
                 <Github size={20} />
               </a>
-              <a href={`mailto:${personal_info.email}`} className="text-slate-400 hover:text-accent transition p-2 bg-primary rounded-full hover:bg-slate-800">
+              <a href={`mailto:${personal_info.email}`} className="text-slate-400 hover:text-accent transition-all duration-300 p-2 bg-primary rounded-full hover:bg-accent hover:text-primary hover:shadow-[0_0_15px_rgba(56,189,248,0.4)]">
                 <Mail size={20} />
               </a>
-               <a href={personal_info.social_media.spotify} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-accent transition p-2 bg-primary rounded-full hover:bg-slate-800">
+               <a href={personal_info.social_media.spotify} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-accent transition-all duration-300 p-2 bg-primary rounded-full hover:bg-accent hover:text-primary hover:shadow-[0_0_15px_rgba(56,189,248,0.4)]">
                 <Music size={20} />
               </a>
             </div>

@@ -34,7 +34,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
       <div className={`relative w-full aspect-video overflow-hidden border-b transition-colors bg-neutral-900 
         ${isShadowFrames ? 'border-neutral-800 group-hover:border-white/40' : 'border-white/5 group-hover:border-white/40'}`}>
         
-        <div className="absolute inset-0 z-10 bg-black/20 group-hover:bg-transparent transition-colors duration-500"></div>
+        <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/40 via-black/20 to-transparent group-hover:from-black/10 group-hover:via-transparent group-hover:to-transparent transition-all duration-500"></div>
         
         {media.thumbnail ? (
             media.thumbnail.endsWith('.mp4') || media.thumbnail.endsWith('.webm') ? (
@@ -94,7 +94,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
 
         {/* Header */}
         <div className="mb-4 relative z-10">
-            <h3 className={`text-xl font-display font-bold mb-2 truncate transition-colors text-slate-200 group-hover:text-white`}>
+            <h3 className={`text-xl font-display font-bold mb-2 truncate transition-all duration-300 text-slate-200 group-hover:text-white group-hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.3)]`}>
                 {t(titleKey, project.title)}
             </h3>
             <p className="text-slate-400 text-sm font-light leading-relaxed line-clamp-2 mb-4 h-10">
@@ -147,8 +147,8 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
     <div
       className={`group relative w-full rounded-xl overflow-hidden transition-all duration-500 animate-fade-in-up
         ${isShadowFrames 
-          ? 'bg-[#050505] border border-neutral-800 shadow-[0_0_60px_-10px_rgba(255,255,255,0.1)] hover:border-white/40 hover:shadow-[0_0_100px_-10px_rgba(255,255,255,0.2)]' 
-          : 'bg-[#0a0a0a] border border-white/5 hover:border-white/40 hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.05)]'
+          ? 'bg-[#050505] border border-neutral-800 shadow-[0_0_60px_-10px_rgba(255,255,255,0.1)] hover:border-white/50 hover:shadow-[0_0_120px_-10px_rgba(255,255,255,0.25)] hover:scale-[1.02]' 
+          : 'bg-[#0a0a0a] border border-white/5 hover:border-accent/30 hover:shadow-[0_0_60px_-10px_rgba(56,189,248,0.15)] hover:scale-[1.02]'
         }
       `}
       style={{ animationDelay: `${index < 6 ? index * 100 : 0}ms` }}

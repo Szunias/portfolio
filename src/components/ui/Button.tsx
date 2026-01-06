@@ -13,11 +13,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = "inline-flex items-center justify-center rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-accent/50 disabled:opacity-50 disabled:pointer-events-none";
     
     const variants = {
-      primary: "bg-white text-black hover:bg-slate-200 shadow-[0_0_20px_rgba(255,255,255,0.1)]",
-      secondary: "bg-white/10 text-white hover:bg-white/20 border border-white/10 backdrop-blur-md",
-      ghost: "text-slate-400 hover:text-white hover:bg-white/5",
-      icon: "text-slate-400 hover:text-white hover:bg-white/10 rounded-full",
-      danger: "text-red-500 hover:bg-red-500/10 hover:text-red-400"
+      primary: "bg-white text-black hover:bg-slate-200 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105",
+      secondary: "bg-white/10 text-white hover:bg-white/20 border border-white/10 backdrop-blur-md hover:border-accent/30 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]",
+      ghost: "text-slate-400 hover:text-accent hover:bg-white/5 hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.3)]",
+      icon: "text-slate-400 hover:text-accent hover:bg-white/10 rounded-full hover:shadow-[0_0_15px_rgba(56,189,248,0.2)]",
+      danger: "text-red-500 hover:bg-red-500/10 hover:text-red-400 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]"
     };
 
     const sizes = {

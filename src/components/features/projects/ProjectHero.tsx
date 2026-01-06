@@ -48,24 +48,24 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                 >
-                    <Link to="/projects" className="inline-flex items-center text-slate-400 hover:text-white transition-colors mb-8 group">
+                    <Link to="/projects" className="inline-flex items-center text-slate-400 hover:text-accent transition-all duration-300 mb-8 group hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]">
                         <ArrowLeft size={16} className="mr-2 group-hover:-translate-x-1 transition-transform" />
                         {t('projects.viewall', 'Back to Projects')}
                     </Link>
 
                     <div className="flex items-center gap-3 mb-4">
-                        <span className="px-3 py-1 bg-accent text-black text-xs font-bold uppercase tracking-widest rounded-sm">
+                        <span className="px-3 py-1 bg-accent text-black text-xs font-bold uppercase tracking-widest rounded-sm shadow-[0_0_20px_rgba(56,189,248,0.5)]">
                             {project.category}
                         </span>
                         {project.year && (
-                            <span className="text-slate-400 font-mono text-xs border border-white/10 px-3 py-1 rounded-sm">
+                            <span className="text-slate-400 font-mono text-xs border border-white/10 px-3 py-1 rounded-sm hover:border-accent/50 hover:text-accent transition-all duration-300">
                                 <Calendar size={12} className="inline mr-2" />
                                 {project.year}
                             </span>
                         )}
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold text-white max-w-5xl leading-[0.9] tracking-tighter mb-6">
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold text-white max-w-5xl leading-[0.9] tracking-tighter mb-6 drop-shadow-[0_0_40px_rgba(56,189,248,0.3)]">
                         <TechReveal text={t(titleKey, project.title)} />
                     </h1>
 
@@ -74,7 +74,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                     </p>
 
                     {videoId && (
-                        <div className="w-full max-w-4xl aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-black/50 backdrop-blur-sm">
+                        <div className="w-full max-w-4xl aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 hover:border-accent/30 hover:shadow-[0_0_50px_rgba(56,189,248,0.2)] bg-black/50 backdrop-blur-sm transition-all duration-500">
                             <iframe
                                 src={`https://www.youtube.com/embed/${videoId}`}
                                 title="YouTube video player"
@@ -85,7 +85,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                         </div>
                     )}
                     {isLocalVideo && (
-                        <div className="w-full max-w-4xl aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-black/50 backdrop-blur-sm">
+                        <div className="w-full max-w-4xl aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 hover:border-accent/30 hover:shadow-[0_0_50px_rgba(56,189,248,0.2)] bg-black/50 backdrop-blur-sm transition-all duration-500">
                             <video
                                 src={`/${media.video}`}
                                 className="w-full h-full object-cover"

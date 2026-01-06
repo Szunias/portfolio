@@ -18,7 +18,7 @@ const ProjectFilters = ({ categories, activeFilter, onFilterChange, getLabel }: 
             onClick={() => onFilterChange(category)}
             className={`
               relative px-5 py-2 text-xs font-mono uppercase tracking-wider transition-all rounded-full
-              ${isActive ? 'text-black font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5'}
+              ${isActive ? 'text-black font-bold shadow-[0_0_20px_rgba(255,255,255,0.3)]' : 'text-slate-400 hover:text-white hover:bg-white/10 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]'}
             `}
           >
             {isActive && (
