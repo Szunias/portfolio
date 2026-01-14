@@ -407,7 +407,7 @@ const SkillsNetwork = () => {
                         borderColor: isHovered ? categoryColor : 'rgba(255, 255, 255, 0.2)',
                         backgroundColor: isHovered ? `${categoryColor}33` : 'rgba(12, 12, 12, 0.8)',
                         boxShadow: isHovered ? `0 0 40px ${categoryColor}CC` : 'none',
-                        transform: isHovered ? 'translate(-50%, -50%) scale(1.1)' : 'translate(-50%, -50%) scale(1)'
+                        transform: isHovered ? 'scale(1.1)' : 'scale(1)'
                       }}
                     >
                       <div className="p-3 rounded-full bg-white/5 mb-2">

@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { 
   Server, Database, Disc, Code2, Music2, Workflow, Terminal, 
   Share2, Layers, GitGraph, Box, Mic, Sliders, Zap, Bot, 
-  FileAudio, Speaker, Globe, Cpu
+  FileAudio, Speaker, Globe, Cpu, Headphones, Radio, Waves,
+  Volume2, AudioLines, Skull, TreePine, Piano, Gauge, MemoryStick,
+  Gamepad2, Plug, BrainCircuit
 } from 'lucide-react';
 
 const Skills = () => {
@@ -25,46 +27,59 @@ const Skills = () => {
 
   // Category Icons
   const categoryIcons: {[key: string]: React.ElementType} = {
-    'game_audio': Disc,
-    'production': Server,
-    'development': Database
+    'game_audio': Gamepad2,
+    'production': Headphones,
+    'development': Code2
   };
 
   // Fallback Lucide Icons for specific keywords
   // Order matters: check specific keywords before generic ones
   const fallbackIcons: Record<string, React.ElementType> = {
-    'blueprint': Workflow,
-    'metasounds': Music2,
-    'interactive music': Music2,
-    'composition': Music2,
-    'sound design': FileAudio,
+    // Game Audio
+    'interactive music': Radio,
+    'adaptive': Waves,
+    'soundscapes': TreePine,
+    'metasounds': AudioLines,
     'spatial': Globe,
-    '3d': Globe,
-    'surround': Speaker,
-    'field recording': Mic,
-    'foley': Mic,
+    '3d audio': Globe,
+    'voice management': Volume2,
+    'memory budget': Gauge,
+    'memory': MemoryStick,
+    
+    // Production
+    'composition': Piano,
+    'sound design': Headphones,
     'mixing': Sliders,
     'mastering': Sliders,
+    'field recording': Mic,
+    'foley': Mic,
+    'surround': Speaker,
+    '5.1': Speaker,
+    'horror': Skull,
+    
+    // Development
     'dsp': Zap,
     'real-time': Zap,
+    'python': Terminal,
+    'c#': Gamepad2,
+    'c++': Code2,
+    'juce': Code2,
+    'vst': Plug,
+    'plugin': Plug,
+    'machine learning': BrainCircuit,
+    'ml': BrainCircuit,
+    'ai': Bot,
+    'blueprint': Workflow,
+    'scripting': Terminal,
+    
+    // General
     'optimization': Box,
     'profiling': Box,
     'debugging': Box,
-    'memory': Zap,
-    'machine learning': Bot,
-    'ml': Bot,
-    'ai': Bot,
-    'python': Terminal,
-    'scripting': Terminal,
-    'c++': Code2,
-    'c#': Code2,
-    'vst': FileAudio,
-    'plugin': FileAudio,
     'jenkins': Server,
     'ci/cd': Server,
     'middleware': Share2,
     'integration': Share2,
-    'voice management': Sliders,
     'jira': Layers,
     'agile': Layers,
     'scrum': Layers,
@@ -91,6 +106,8 @@ const Skills = () => {
       'csharp': 'csharplogo.png',
       'unreal': 'Unreal_Engine-Logo.wine.png',
       'ue5': 'Unreal_Engine-Logo.wine.png',
+      'metasounds': 'Unreal_Engine-Logo.wine.png',
+      'blueprint': 'Unreal_Engine-Logo.wine.png',
       'unity': 'Unitylogo.png',
       'wwise': 'wwiselogo.png',
       'fmod': 'fmodlogo.png',
@@ -102,14 +119,20 @@ const Skills = () => {
       'ableton': 'abletonlogo.png',
       'cubase': 'Cubaselogo.png',
       'logic': 'logicproicon.png',
+      'flstudio': 'flstudiologo.png',
       'studioone': 'studiooneicon.png',
       'puredata': 'puredatalogo.png',
       'maxmsp': 'puredatalogo.png', 
       'juce': 'JUCE_Logo.png',
+      'vst': 'JUCE_Logo.png',
+      'plugin': 'JUCE_Logo.png',
       'dsp': 'dsplogo.png',
       'tensorflow': 'tensorflowlogo.png',
+      'machinelearning': 'tensorflowlogo.png',
       '3daudio': '3DAudio.png',
-      'spatialaudio': '3DAudio.png'
+      'spatialaudio': '3DAudio.png',
+      'spatial': '3DAudio.png',
+      'surround': '3DAudio.png'
     };
 
     // Check for exact or fuzzy match
@@ -171,7 +194,7 @@ const Skills = () => {
                             const skillName = prefix ? t(`${prefix}_${idx + 1}`, skill) : skill;
                             const FallbackIcon = getFallbackIcon(skill);
 
-                            const needsInvert = iconPath && ['unreal', 'unity', 'github', 'perforce', 'wwise', '3daudio', 'reaper', 'fmod'].some(k => iconPath.toLowerCase().includes(k));
+                            const needsInvert = iconPath && ['unreal', 'unity', 'github', 'perforce', 'wwise', '3daudio', 'reaper', 'fmod', 'juce'].some(k => iconPath.toLowerCase().includes(k));
 
                             return (
                                 <div 

@@ -1,6 +1,6 @@
 import Hero from '../components/home/Hero';
 import ProjectCard from '../components/features/ProjectCard';
-import SkillsNetwork from '../components/home/SkillsNetwork';
+import Skills from '../components/home/Skills';
 import Showreel from '../components/features/Showreel';
 import SEO from '../components/layout/SEO';
 import { usePortfolioData } from '../hooks/usePortfolioData';
@@ -69,7 +69,7 @@ const Home = () => {
         </div>
       </section>
 
-      <SkillsNetwork />
+      <Skills />
     </>
   );
 };
