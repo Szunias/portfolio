@@ -1,232 +1,142 @@
-import { usePortfolioData } from '../../hooks/usePortfolioData';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { 
-  Server, Database, Disc, Code2, Music2, Workflow, Terminal, 
-  Share2, Layers, GitGraph, Box, Mic, Sliders, Zap, Bot, 
-  FileAudio, Speaker, Globe, Cpu, Headphones, Radio, Waves,
-  Volume2, AudioLines, Skull, TreePine, Piano, Gauge, MemoryStick,
-  Gamepad2, Plug, BrainCircuit
-} from 'lucide-react';
+
+// Key technologies with their logos and categories
+const keyTech = [
+  { 
+    name: 'Wwise', 
+    logo: '/assets/icons/tech/wwiselogo.png', 
+    category: 'Middleware',
+    invert: true 
+  },
+  { 
+    name: 'FMOD', 
+    logo: '/assets/icons/tech/fmodlogo.png', 
+    category: 'Middleware',
+    invert: true 
+  },
+  { 
+    name: 'Unreal Engine', 
+    logo: '/assets/icons/tech/Unreal_Engine-Logo.wine.png', 
+    category: 'Engine',
+    invert: true 
+  },
+  { 
+    name: 'Unity', 
+    logo: '/assets/icons/tech/Unitylogo.png', 
+    category: 'Engine',
+    invert: true 
+  },
+  { 
+    name: 'C++', 
+    logo: '/assets/icons/tech/cpplogo.png', 
+    category: 'Code',
+    invert: false 
+  },
+  { 
+    name: 'Python', 
+    logo: '/assets/icons/tech/pythonlogo.png', 
+    category: 'Code',
+    invert: false 
+  },
+];
 
 const Skills = () => {
-  const { core_skills } = usePortfolioData();
   const { t } = useTranslation();
-  
-  const skillPrefixes: {[key: string]: string} = {
-    'game_audio': 'skill_game',
-    'production': 'skill_production',
-    'development': 'skill_dev'
-  };
-
-  const skillKeys: {[key: string]: string} = {
-    'game_audio': 'skill_game_title',
-    'production': 'skill_production_title',
-    'development': 'skill_dev_title'
-  };
-
-  // Category Icons
-  const categoryIcons: {[key: string]: React.ElementType} = {
-    'game_audio': Gamepad2,
-    'production': Headphones,
-    'development': Code2
-  };
-
-  // Fallback Lucide Icons for specific keywords
-  // Order matters: check specific keywords before generic ones
-  const fallbackIcons: Record<string, React.ElementType> = {
-    // Game Audio
-    'interactive music': Radio,
-    'adaptive': Waves,
-    'soundscapes': TreePine,
-    'metasounds': AudioLines,
-    'spatial': Globe,
-    '3d audio': Globe,
-    'voice management': Volume2,
-    'memory budget': Gauge,
-    'memory': MemoryStick,
-    
-    // Production
-    'composition': Piano,
-    'sound design': Headphones,
-    'mixing': Sliders,
-    'mastering': Sliders,
-    'field recording': Mic,
-    'foley': Mic,
-    'surround': Speaker,
-    '5.1': Speaker,
-    'horror': Skull,
-    
-    // Development
-    'dsp': Zap,
-    'real-time': Zap,
-    'python': Terminal,
-    'c#': Gamepad2,
-    'c++': Code2,
-    'juce': Code2,
-    'vst': Plug,
-    'plugin': Plug,
-    'machine learning': BrainCircuit,
-    'ml': BrainCircuit,
-    'ai': Bot,
-    'blueprint': Workflow,
-    'scripting': Terminal,
-    
-    // General
-    'optimization': Box,
-    'profiling': Box,
-    'debugging': Box,
-    'jenkins': Server,
-    'ci/cd': Server,
-    'middleware': Share2,
-    'integration': Share2,
-    'jira': Layers,
-    'agile': Layers,
-    'scrum': Layers,
-    'git': GitGraph,
-    'perforce': GitGraph,
-    'source': GitGraph
-  };
-
-  const getFallbackIcon = (skillName: string) => {
-     const lower = skillName.toLowerCase();
-     // Find the first key that is contained in the skill name
-     const key = Object.keys(fallbackIcons).find(k => lower.includes(k));
-     return key ? fallbackIcons[key] : Cpu; // Generic fallback
-  };
-
-  // Icon Mapping Logic
-  const getIconPath = (skillName: string) => {
-    const name = skillName.toLowerCase().replace(/[\s.]/g, ''); // remove spaces and dots
-    
-    const map: Record<string, string> = {
-      'c++': 'cpplogo.png',
-      'cpp': 'cpplogo.png',
-      'c#': 'csharplogo.png',
-      'csharp': 'csharplogo.png',
-      'unreal': 'Unreal_Engine-Logo.wine.png',
-      'ue5': 'Unreal_Engine-Logo.wine.png',
-      'metasounds': 'Unreal_Engine-Logo.wine.png',
-      'blueprint': 'Unreal_Engine-Logo.wine.png',
-      'unity': 'Unitylogo.png',
-      'wwise': 'wwiselogo.png',
-      'fmod': 'fmodlogo.png',
-      'python': 'pythonlogo.png',
-      'reaper': 'REAPER_logo.png',
-      'perforce': 'Perforcelogo.png',
-      'git': 'github.png',
-      'sourcecontrol': 'github.png',
-      'ableton': 'abletonlogo.png',
-      'cubase': 'Cubaselogo.png',
-      'logic': 'logicproicon.png',
-      'flstudio': 'flstudiologo.png',
-      'studioone': 'studiooneicon.png',
-      'puredata': 'puredatalogo.png',
-      'maxmsp': 'puredatalogo.png', 
-      'juce': 'JUCE_Logo.png',
-      'vst': 'JUCE_Logo.png',
-      'plugin': 'JUCE_Logo.png',
-      'dsp': 'dsplogo.png',
-      'tensorflow': 'tensorflowlogo.png',
-      'machinelearning': 'tensorflowlogo.png',
-      '3daudio': '3DAudio.png',
-      'spatialaudio': '3DAudio.png',
-      'spatial': '3DAudio.png',
-      'surround': '3DAudio.png'
-    };
-
-    // Check for exact or fuzzy match
-    const key = Object.keys(map).find(k => name.includes(k));
-    return key ? `/assets/icons/tech/${map[key]}` : null;
-  };
 
   return (
     <section className="py-24 relative overflow-hidden">
-        {/* Background elements */}
-        <div className="absolute inset-0 bg-[#050505]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent opacity-50" />
+      {/* Background */}
+      <div className="absolute inset-0 bg-[#050508]" />
+      <div 
+        className="absolute inset-0 opacity-[0.08]"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
+          backgroundSize: '32px 32px',
+        }}
+      />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-20">
-          <h2 className="text-4xl font-display font-bold text-white mb-4 tracking-tight">
-            {t('skills.title', 'Technical Arsenal')}
+      <div className="max-w-6xl mx-auto px-6 relative z-10">
+        
+        {/* Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-4 tracking-tight">
+            {t('skills.title', 'Tech Stack')}
           </h2>
-          <div className="h-0.5 w-24 bg-accent/50 mx-auto rounded-full box-shadow-glow"></div>
+          <p className="text-dim text-lg max-w-xl mx-auto">
+            {t('skills.subtitle', 'Core tools I use for game audio implementation and development')}
+          </p>
+        </motion.div>
+
+        {/* Main tech grid - 6 key technologies */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-16">
+          {keyTech.map((tech, index) => (
+            <motion.div
+              key={tech.name}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
+              className="group relative bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-8 hover:border-accent/40 hover:bg-white/[0.04] transition-all duration-500"
+            >
+              {/* Category label */}
+              <span className="absolute top-4 right-4 text-[10px] font-mono text-dim uppercase tracking-wider">
+                {tech.category}
+              </span>
+              
+              {/* Logo */}
+              <div className="flex items-center justify-center h-20 md:h-24 mb-4">
+                <img 
+                  src={tech.logo} 
+                  alt={tech.name}
+                  className={`h-16 md:h-20 w-auto object-contain transition-all duration-500 opacity-60 group-hover:opacity-100 ${tech.invert ? 'invert brightness-200' : ''}`}
+                />
+              </div>
+              
+              {/* Name */}
+              <h3 className="text-center text-lg font-semibold text-white/80 group-hover:text-white transition-colors">
+                {tech.name}
+              </h3>
+            </motion.div>
+          ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {Object.entries(core_skills).map(([key, skillGroup], index) => {
-             const transKey = skillKeys[key];
-             const translatedTitle = transKey ? t(transKey, skillGroup.title) : skillGroup.title;
-             const prefix = skillPrefixes[key];
-             const CatIcon = categoryIcons[key] || Server;
+        {/* Secondary skills - simple list */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+          className="border-t border-white/10 pt-12"
+        >
+          <h3 className="text-center text-sm font-mono text-dim uppercase tracking-widest mb-8">
+            {t('skills.also', 'Also experienced with')}
+          </h3>
+          
+          <div className="flex flex-wrap justify-center gap-3">
+            {[
+              'MetaSounds', 'Blueprints', 'C#', 'Reaper', 'Pro Tools', 
+              'Sound Design', 'Mixing', '3D Audio', 'JUCE', 'DSP'
+            ].map((skill, index) => (
+              <motion.span
+                key={skill}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5 + index * 0.05 }}
+                className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm text-dim hover:text-white hover:border-accent/30 transition-all cursor-default"
+              >
+                {skill}
+              </motion.span>
+            ))}
+          </div>
+        </motion.div>
 
-             return (
-                <motion.div
-                  key={key}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.15, duration: 0.6 }}
-                  className="group relative bg-[#0c0c0c] rounded-xl border border-white/5 overflow-hidden hover:border-accent/40 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)] transition-all duration-500 hover:scale-[1.02]"
-                >
-                  {/* "Rack Unit" Header */}
-                  <div className="bg-[#111] px-6 py-4 border-b border-white/5 flex items-center justify-between relative">
-                    {/* Screw holes */}
-                    <div className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#222] shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]" />
-                    <div className="absolute right-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#222] shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]" />
-
-                    <div className="flex items-center gap-3 ml-2">
-                        <div className="p-2 rounded bg-white/5 text-accent group-hover:text-white transition-colors">
-                            <CatIcon size={18} />
-                        </div>
-                        <h3 className="text-lg font-bold font-mono uppercase tracking-wider text-slate-300 group-hover:text-accent transition-all duration-300 group-hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]">
-                            {translatedTitle}
-                        </h3>
-                    </div>
-                  </div>
-
-                  {/* Skills Grid */}
-                  <div className="p-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {skillGroup.skills.map((skill, idx) => {
-                            const iconPath = getIconPath(skill);
-                            const skillName = prefix ? t(`${prefix}_${idx + 1}`, skill) : skill;
-                            const FallbackIcon = getFallbackIcon(skill);
-
-                            const needsInvert = iconPath && ['unreal', 'unity', 'github', 'perforce', 'wwise', '3daudio', 'reaper', 'fmod', 'juce'].some(k => iconPath.toLowerCase().includes(k));
-
-                            return (
-                                <div 
-                                    key={skill} 
-                                    className="flex items-center gap-3 p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-transparent hover:border-accent/20 transition-all duration-300 group/skill h-full hover:shadow-[0_0_15px_rgba(56,189,248,0.1)]"
-                                >
-                                    <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-black/20 rounded p-1">
-                                        {iconPath ? (
-                                            <img 
-                                                src={iconPath} 
-                                                alt={skillName} 
-                                                className={`w-full h-full object-contain opacity-70 group-hover/skill:opacity-100 transition-all duration-300 filter grayscale group-hover/skill:grayscale-0 ${needsInvert ? 'invert brightness-200' : ''}`}
-                                            />
-                                        ) : (
-                                            <FallbackIcon size={16} className="text-slate-600 group-hover/skill:text-accent transition-colors" />
-                                        )}
-                                    </div>
-                                    <span className="text-sm font-medium text-slate-400 group-hover/skill:text-white transition-colors leading-tight break-words">
-                                        {skillName}
-                                    </span>
-                                </div>
-                            );
-                        })}
-                    </div>
-                  </div>
-                  
-                  {/* Decorative bottom glow */}
-                  <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                </motion.div>
-             );
-          })}
-        </div>
       </div>
     </section>
   );
