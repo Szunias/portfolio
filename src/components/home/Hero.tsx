@@ -33,9 +33,9 @@ const Hero = () => {
             <span>Interactive Audio</span>
             <span className="h-[1px] w-10 bg-slate-600/70" />
           </div>
-          <h1 className="font-display font-semibold text-[4.5rem] sm:text-[6rem] md:text-[7.5rem] leading-[0.92] tracking-tight text-slate-100">
+          <h1 className="font-display font-semibold text-[4.5rem] sm:text-[6rem] md:text-[7.5rem] leading-[0.85] tracking-[0.01em] text-slate-100">
             AUDIO
-            <span className="block text-transparent [-webkit-text-stroke:1px_rgba(226,232,240,0.55)]">
+            <span className="block mt-[-0.04em] hero-outline tracking-[0.18em]">
               DESIGN
             </span>
           </h1>
