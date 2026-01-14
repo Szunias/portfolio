@@ -4,53 +4,244 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 
+interface Shape {
+  id: number;
+  type: 'triangle' | 'square' | 'circle' | 'hexagon' | 'diamond';
+  size: number;
+  color: string;
+  depth: number;
+  baseRotation: number;
+  rotationMode: 'normal' | 'inverted' | 'xOnly' | 'yOnly' | 'diagonal' | 'counter';
+}
+
+const shapes: Shape[] = [
+  { id: 1, type: 'circle', size: 320, color: '#1e3a5f', depth: 0, baseRotation: 0, rotationMode: 'xOnly' },
+  { id: 2, type: 'hexagon', size: 280, color: '#3b1f5b', depth: 1, baseRotation: 30, rotationMode: 'inverted' },
+  { id: 3, type: 'square', size: 220, color: '#1e4d4d', depth: 2, baseRotation: 45, rotationMode: 'diagonal' },
+  { id: 4, type: 'triangle', size: 180, color: '#4a1942', depth: 3, baseRotation: 0, rotationMode: 'yOnly' },
+  { id: 5, type: 'diamond', size: 140, color: '#38bdf8', depth: 4, baseRotation: 0, rotationMode: 'counter' },
+  { id: 6, type: 'circle', size: 80, color: '#a855f7', depth: 5, baseRotation: 0, rotationMode: 'normal' },
+];
+
+const ShapeComponent = ({ 
+  shape, 
+  mousePos,
+  containerCenter,
+  isInRange
+}: { 
+  shape: Shape; 
+  mousePos: { x: number; y: number };
+  containerCenter: { x: number; y: number };
+  isInRange: boolean;
+}) => {
+  const [rotation, setRotation] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    // If mouse is not in range, smoothly return to neutral
+    if (!isInRange) {
+      setRotation({ x: 0, y: 0 });
+      return;
+    }
+
+    const deltaX = mousePos.x - containerCenter.x;
+    const deltaY = mousePos.y - containerCenter.y;
+    
+    const depthScale = 1 + shape.depth * 0.25;
+    const maxRotation = 45;
+    
+    let rotateX = 0;
+    let rotateY = 0;
+    
+    switch (shape.rotationMode) {
+      case 'normal':
+        rotateY = (deltaX / 8) * depthScale;
+        rotateX = (-deltaY / 8) * depthScale;
+        break;
+      case 'inverted':
+        rotateY = (-deltaX / 10) * depthScale;
+        rotateX = (deltaY / 10) * depthScale;
+        break;
+      case 'xOnly':
+        rotateX = (-deltaY / 6) * depthScale;
+        rotateY = 0;
+        break;
+      case 'yOnly':
+        rotateX = 0;
+        rotateY = (deltaX / 6) * depthScale;
+        break;
+      case 'diagonal':
+        rotateY = (-deltaY / 8) * depthScale;
+        rotateX = (-deltaX / 8) * depthScale;
+        break;
+      case 'counter':
+        rotateY = (-deltaX / 6) * depthScale;
+        rotateX = (deltaY / 6) * depthScale;
+        break;
+    }
+    
+    rotateX = Math.max(-maxRotation, Math.min(maxRotation, rotateX));
+    rotateY = Math.max(-maxRotation, Math.min(maxRotation, rotateY));
+    
+    setRotation({ x: rotateX, y: rotateY });
+  }, [mousePos, containerCenter, shape.depth, shape.rotationMode, isInRange]);
+
+  const renderShape = () => {
+    switch (shape.type) {
+      case 'triangle':
+        return (
+          <div 
+            className="w-full h-full"
+            style={{
+              clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+              border: `2px solid ${shape.color}`,
+              backgroundColor: `${shape.color}15`,
+            }}
+          />
+        );
+      case 'square':
+        return (
+          <div 
+            className="w-full h-full"
+            style={{
+              border: `2px solid ${shape.color}`,
+              backgroundColor: `${shape.color}10`,
+            }}
+          />
+        );
+      case 'circle':
+        return (
+          <div 
+            className="w-full h-full rounded-full"
+            style={{
+              border: `2px solid ${shape.color}`,
+              backgroundColor: `${shape.color}08`,
+            }}
+          />
+        );
+      case 'hexagon':
+        return (
+          <div 
+            className="w-full h-full"
+            style={{
+              clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
+              border: `2px solid ${shape.color}`,
+              backgroundColor: `${shape.color}12`,
+            }}
+          />
+        );
+      case 'diamond':
+        return (
+          <div 
+            className="w-full h-full"
+            style={{
+              clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
+              border: `2px solid ${shape.color}`,
+              backgroundColor: `${shape.color}20`,
+              boxShadow: `0 0 60px ${shape.color}40`,
+            }}
+          />
+        );
+    }
+  };
+
+  return (
+    <motion.div
+      className="absolute left-1/2 top-1/2"
+      style={{
+        width: shape.size,
+        height: shape.size,
+        marginLeft: -shape.size / 2,
+        marginTop: -shape.size / 2,
+        zIndex: shape.depth,
+        perspective: '1000px',
+      }}
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 1, delay: 0.1 + shape.depth * 0.15, ease: "easeOut" }}
+    >
+      <motion.div
+        className="w-full h-full"
+        style={{
+          transformStyle: 'preserve-3d',
+          transform: `rotate(${shape.baseRotation}deg)`,
+        }}
+        animate={{
+          rotateX: rotation.x,
+          rotateY: rotation.y,
+        }}
+        transition={{ type: "spring", damping: 20, stiffness: 80 }}
+      >
+        {renderShape()}
+      </motion.div>
+    </motion.div>
+  );
+};
+
 const Hero = () => {
   const { t } = useTranslation();
-  const [rotation, setRotation] = useState({ x: 0, y: 0 });
-  const [distance, setDistance] = useState(0);
-  const discRef = useRef<HTMLDivElement>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [containerCenter, setContainerCenter] = useState({ x: 0, y: 0 });
+  const [isInRange, setIsInRange] = useState(false);
+  const shapesContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateCenter = () => {
+      if (shapesContainerRef.current) {
+        const rect = shapesContainerRef.current.getBoundingClientRect();
+        setContainerCenter({
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        });
+      }
+    };
+    
+    updateCenter();
+    window.addEventListener('resize', updateCenter);
+    window.addEventListener('scroll', updateCenter);
+    
+    return () => {
+      window.removeEventListener('resize', updateCenter);
+      window.removeEventListener('scroll', updateCenter);
+    };
+  }, []);
 
   useEffect(() => {
     const handleMouse = (e: MouseEvent) => {
-      if (!discRef.current) return;
+      setMousePos({ x: e.clientX, y: e.clientY });
       
-      const rect = discRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      
-      // Distance from center (for membrane pulse)
-      const dx = e.clientX - centerX;
-      const dy = e.clientY - centerY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      const maxDist = Math.max(window.innerWidth, window.innerHeight);
-      setDistance(Math.min(dist / maxDist, 1));
-      
-      // INVERSE rotation - look away from mouse
-      const angleX = (e.clientY - centerY) / 8;
-      const angleY = (e.clientX - centerX) / 8;
-      
-      setRotation({ x: angleX, y: -angleY }); // inverted
+      // Check if mouse is within range (400px from center)
+      const dx = e.clientX - containerCenter.x;
+      const dy = e.clientY - containerCenter.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      setIsInRange(distance < 400);
     };
     
     window.addEventListener('mousemove', handleMouse);
     return () => window.removeEventListener('mousemove', handleMouse);
-  }, []);
+  }, [containerCenter]);
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-[#050508]">
 
-      {/* Subtle background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-[#0a0a12] opacity-50" />
+      {/* Subtle dot grid background */}
+      <div 
+        className="absolute inset-0 opacity-[0.15]"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
+          backgroundSize: '40px 40px',
+        }}
+      />
 
-      {/* Main content */}
+      {/* Very subtle vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
+
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 py-20">
         
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           
           {/* Left - Typography */}
           <div className="relative">
             
-            {/* Vertical accent line */}
             <motion.div
               initial={{ height: 0 }}
               animate={{ height: '100%' }}
@@ -58,7 +249,6 @@ const Hero = () => {
               className="absolute -left-6 top-0 w-[2px] bg-gradient-to-b from-accent via-accent/50 to-transparent hidden lg:block"
             />
 
-            {/* Label */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -71,7 +261,6 @@ const Hero = () => {
               </span>
             </motion.div>
 
-            {/* AUDIO */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -82,7 +271,6 @@ const Hero = () => {
               </h1>
             </motion.div>
 
-            {/* DESIGN */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -102,7 +290,6 @@ const Hero = () => {
               />
             </motion.div>
 
-            {/* Description */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -112,7 +299,6 @@ const Hero = () => {
               {t('hero.description_tech', 'Wwise & FMOD implementation. C++ audio systems. MetaSounds procedural audio.')}
             </motion.p>
 
-            {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -138,140 +324,25 @@ const Hero = () => {
             </motion.div>
           </div>
 
-          {/* Right - Interactive Speaker */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="relative hidden lg:flex items-center justify-center"
-            ref={discRef}
+          {/* Right - Layered 3D Shapes */}
+          <div 
+            ref={shapesContainerRef}
+            className="hidden lg:block relative h-[500px]"
           >
-            <div 
-              className="relative w-80 h-80 xl:w-[400px] xl:h-[400px]"
-              style={{ perspective: '800px' }}
-            >
-              {/* Speaker housing */}
-              <motion.div
-                className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#151515] to-[#0a0a0a] border border-white/10 shadow-2xl overflow-hidden"
-                style={{
-                  transformStyle: 'preserve-3d',
-                  rotateX: rotation.x,
-                  rotateY: rotation.y,
-                }}
-                transition={{ type: "spring", damping: 20, stiffness: 150 }}
-              >
-                {/* Speaker grille pattern */}
-                <div 
-                  className="absolute inset-4 rounded-2xl opacity-30"
-                  style={{
-                    backgroundImage: `radial-gradient(circle at center, transparent 1px, rgba(255,255,255,0.03) 1px)`,
-                    backgroundSize: '8px 8px',
-                  }}
-                />
-
-                {/* Main speaker cone */}
-                <div className="absolute inset-8 rounded-full bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-white/5">
-                  
-                  {/* Outer cone ring */}
-                  <div className="absolute inset-2 rounded-full bg-gradient-to-br from-[#222] to-[#111] border border-white/5" />
-                  
-                  {/* Membrane - pulsates based on mouse distance */}
-                  <motion.div 
-                    className="absolute inset-[15%] rounded-full bg-gradient-to-br from-[#1d1d1d] via-[#151515] to-[#1d1d1d] border border-white/10"
-                    animate={{
-                      scale: 1 + distance * 0.15,
-                    }}
-                    transition={{ type: "spring", damping: 15, stiffness: 300 }}
-                  >
-                    {/* Membrane ridges */}
-                    <div className="absolute inset-[10%] rounded-full border border-white/[0.03]" />
-                    <div className="absolute inset-[25%] rounded-full border border-white/[0.03]" />
-                    <div className="absolute inset-[40%] rounded-full border border-white/[0.03]" />
-                    
-                    {/* Dust cap (center) - also reacts */}
-                    <motion.div 
-                      className="absolute inset-[35%] rounded-full bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/30 shadow-[0_0_30px_rgba(56,189,248,0.2)]"
-                      animate={{
-                        scale: 1 + distance * 0.25,
-                        boxShadow: `0 0 ${30 + distance * 40}px rgba(56,189,248,${0.2 + distance * 0.3})`,
-                      }}
-                      transition={{ type: "spring", damping: 15, stiffness: 300 }}
-                    >
-                      {/* Inner glow point */}
-                      <motion.div 
-                        className="absolute inset-[30%] rounded-full bg-accent/40"
-                        animate={{
-                          opacity: 0.4 + distance * 0.6,
-                          scale: 1 + distance * 0.3,
-                        }}
-                        transition={{ type: "spring", damping: 15, stiffness: 300 }}
-                      />
-                    </motion.div>
-                  </motion.div>
-                </div>
-
-                {/* Corner screws */}
-                {[
-                  { top: '12px', left: '12px' },
-                  { top: '12px', right: '12px' },
-                  { bottom: '12px', left: '12px' },
-                  { bottom: '12px', right: '12px' },
-                ].map((pos, i) => (
-                  <div
-                    key={i}
-                    className="absolute w-3 h-3 rounded-full bg-[#0a0a0a] border border-white/10"
-                    style={pos}
-                  >
-                    <div className="absolute inset-[30%] rounded-full bg-white/10" />
-                  </div>
-                ))}
-
-                {/* Reflection */}
-                <div className="absolute inset-0 rounded-3xl bg-gradient-to-tl from-transparent via-white/[0.02] to-white/[0.05] pointer-events-none" />
-              </motion.div>
-
-              {/* Floating tech labels */}
-              {['Wwise', 'FMOD', 'UE5', 'C++'].map((tech, i) => {
-                const positions = [
-                  { top: '-20px', left: '20%' },
-                  { top: '30%', right: '-60px' },
-                  { bottom: '-20px', right: '20%' },
-                  { top: '60%', left: '-50px' },
-                ];
-                return (
-                  <motion.div
-                    key={tech}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 1 + i * 0.1 }}
-                    className="absolute px-3 py-1.5 bg-primary/90 border border-white/10 hover:border-accent/50 rounded text-xs font-mono text-dim hover:text-accent transition-colors cursor-default backdrop-blur-sm"
-                    style={positions[i]}
-                  >
-                    {tech}
-                  </motion.div>
-                );
-              })}
-            </div>
-          </motion.div>
+            {shapes.map((shape) => (
+              <ShapeComponent 
+                key={shape.id} 
+                shape={shape} 
+                mousePos={mousePos}
+                containerCenter={containerCenter}
+                isInRange={isInRange}
+              />
+            ))}
+          </div>
 
         </div>
 
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-      >
-        <span className="text-[10px] font-mono text-dim uppercase tracking-widest">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="w-[1px] h-8 bg-gradient-to-b from-accent/50 to-transparent"
-        />
-      </motion.div>
 
     </section>
   );
