@@ -2,18 +2,6 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import AudioVisualizer from '../ui/AudioVisualizer';
-
-const AudioAura = () => {
-  return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none z-0">
-      {/* Outer soft glow */}
-      <div className="absolute inset-0 bg-accent/5 rounded-full blur-[100px]" />
-      {/* Core glow */}
-      <div className="absolute inset-[30%] bg-accent/8 rounded-full blur-[80px]" />
-    </div>
-  );
-};
 
 const Hero = () => {
   const { t } = useTranslation();
@@ -21,36 +9,18 @@ const Hero = () => {
   return (
     <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
 
-      {/* Black to transparent gradient - smooth transition to Layout gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#020202] via-[#020202]/60 to-transparent pointer-events-none" />
+      {/* Base gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#020202] via-[#020202]/70 to-transparent pointer-events-none" />
 
-      {/* Ambient Background - "Northern Lights" feel - Enhanced */}
+      {/* Subtle static ambience */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[80vw] h-[50vh] bg-accent/15 blur-[150px] rounded-full opacity-50 mix-blend-screen animate-pulse" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vh] bg-purple-900/15 blur-[120px] rounded-full opacity-30" />
-        <div className="absolute top-1/2 left-[-10%] w-[50vw] h-[40vh] bg-cyan-500/10 blur-[100px] rounded-full opacity-25" />
-      </div>
-
-      {/* Watermark "TECHNICAL" Text - Strictly Background */}
-      <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden">
-         <h1 className="font-display font-bold text-[20vw] leading-none text-white opacity-[0.03] blur-sm tracking-tighter whitespace-nowrap">
-            TECHNICAL
-          </h1>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(56,189,248,0.14),transparent_45%),radial-gradient(circle_at_85%_65%,rgba(147,51,234,0.14),transparent_40%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(transparent_94%,rgba(148,163,184,0.06)_100%)] bg-[length:100%_8px] opacity-40" />
       </div>
 
       {/* Content - Z-Index 10 to sit above watermark */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 flex flex-col items-center text-center mt-[-5vh]">
         
-        {/* Audio Aura - Behind Typography */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0">
-            <AudioAura />
-        </div>
-        
-        {/* Dynamic Audio Visualizer - Behind Typography */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 w-full max-w-3xl h-64 opacity-60 pointer-events-none mix-blend-screen">
-            <AudioVisualizer />
-        </div>
-
         {/* Main Typography - Enhanced */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
@@ -58,9 +28,14 @@ const Hero = () => {
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="mb-10 relative z-10"
         >
-          <h1 className="font-display font-bold text-[5rem] sm:text-[6rem] md:text-[8rem] leading-[0.9] tracking-tighter text-white drop-shadow-[0_0_60px_rgba(56,189,248,0.3)]">
-            AUDIO <br className="hidden sm:block" /> 
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-accent/80 to-slate-400 drop-shadow-[0_0_40px_rgba(56,189,248,0.2)]">
+          <div className="inline-flex items-center gap-3 mb-4 text-xs uppercase tracking-[0.35em] text-slate-500">
+            <span className="h-[1px] w-10 bg-slate-600/70" />
+            <span>Interactive Audio</span>
+            <span className="h-[1px] w-10 bg-slate-600/70" />
+          </div>
+          <h1 className="font-display font-semibold text-[4.5rem] sm:text-[6rem] md:text-[7.5rem] leading-[0.92] tracking-tight text-slate-100">
+            AUDIO
+            <span className="block text-transparent [-webkit-text-stroke:1px_rgba(226,232,240,0.55)]">
               DESIGN
             </span>
           </h1>
