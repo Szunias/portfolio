@@ -1,8 +1,9 @@
-import { Suspense, lazy, ComponentType } from 'react';
+import { Suspense, lazy, ComponentType, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import ScrollToTop from './components/layout/ScrollToTop';
 import { ROUTES } from './constants/routes';
+import IntroAnimation from './components/ui/IntroAnimation';
 
 // Helper to handle chunk load errors (auto-reload once)
 const safeLazy = (importFunc: () => Promise<{ default: ComponentType<unknown> }>) => {
@@ -38,27 +39,41 @@ function App() {
   // Clear reload flag on successful load
   sessionStorage.removeItem('chunk_reload');
 
+  // Show intro animation only once per session
+  const [showIntro, setShowIntro] = useState(() => {
+    return !sessionStorage.getItem('intro_shown');
+  });
+
+  useEffect(() => {
+    if (showIntro) {
+      sessionStorage.setItem('intro_shown', 'true');
+    }
+  }, [showIntro]);
+
   return (
-    <Router>
-      <ScrollToTop />
-      <Layout>
-        <Suspense fallback={null}>
-          <Routes>
-            <Route path={ROUTES.HOME} element={<Home />} />
-            <Route path={ROUTES.PROJECTS} element={<Projects />} />
-            <Route path={ROUTES.GRADWORK} element={<Gradwork />} />
-            <Route path={ROUTES.TRANSIENTICA} element={<Transientica />} />
-            <Route path={ROUTES.SOUND_DESIGN} element={<SoundDesign />} />
-            <Route path={ROUTES.MIDDLEWARE_OPTIMIZATION} element={<MiddlewareOptimization />} />
-            <Route path={ROUTES.PROJECT_DETAILS} element={<ProjectDetails />} />
-            <Route path={ROUTES.MUSIC} element={<Music />} />
-            <Route path={ROUTES.ABOUT} element={<About />} />
-            <Route path={ROUTES.CONTACT} element={<Contact />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-      </Layout>
-    </Router>
+    <>
+      {showIntro && <IntroAnimation onComplete={() => setShowIntro(false)} />}
+      <Router>
+        <ScrollToTop />
+        <Layout>
+          <Suspense fallback={null}>
+            <Routes>
+              <Route path={ROUTES.HOME} element={<Home />} />
+              <Route path={ROUTES.PROJECTS} element={<Projects />} />
+              <Route path={ROUTES.GRADWORK} element={<Gradwork />} />
+              <Route path={ROUTES.TRANSIENTICA} element={<Transientica />} />
+              <Route path={ROUTES.SOUND_DESIGN} element={<SoundDesign />} />
+              <Route path={ROUTES.MIDDLEWARE_OPTIMIZATION} element={<MiddlewareOptimization />} />
+              <Route path={ROUTES.PROJECT_DETAILS} element={<ProjectDetails />} />
+              <Route path={ROUTES.MUSIC} element={<Music />} />
+              <Route path={ROUTES.ABOUT} element={<About />} />
+              <Route path={ROUTES.CONTACT} element={<Contact />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </Layout>
+      </Router>
+    </>
   );
 }
 
