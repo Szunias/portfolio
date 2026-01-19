@@ -134,9 +134,12 @@ const Navbar = () => {
                 ))}
               </div>
 
-              <div className="flex items-center gap-4 mt-auto mb-8 pt-6 border-t border-gray-800">
-                <a href={personal_info.social_media.github} className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700"><Github size={24} /></a>
-                <a href={personal_info.social_media.linkedin} className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700"><Linkedin size={24} /></a>
+              <div className="flex items-center justify-between mt-auto mb-8 pt-6 border-t border-gray-800">
+                <div className="flex items-center gap-4">
+                  <a href={personal_info.social_media.github} className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700"><Github size={24} /></a>
+                  <a href={personal_info.social_media.linkedin} className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700"><Linkedin size={24} /></a>
+                </div>
+                <LanguageSwitcher />
               </div>
             </motion.div>
           </>
