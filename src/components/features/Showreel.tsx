@@ -55,7 +55,7 @@ const Showreel = () => {
   return (
     <div className="w-full max-w-5xl mx-auto mt-12 mb-20">
       {/* Video */}
-      <div className="relative aspect-video rounded-2xl overflow-hidden bg-black group border border-white/10 hover:border-accent/30 hover:shadow-[0_0_40px_rgba(56,189,248,0.2)] transition-all duration-500">
+      <div className="relative aspect-video rounded-2xl overflow-hidden bg-black group hover:shadow-[0_0_40px_rgba(56,189,248,0.2)] transition-all duration-500">
         <iframe
           ref={iframeRef}
           src="https://player.vimeo.com/video/1143625213?badge=0&autopause=0&player_id=0&app_id=58479&controls=1"

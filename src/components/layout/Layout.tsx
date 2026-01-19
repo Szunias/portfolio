@@ -12,23 +12,13 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const { i18n } = useTranslation();
-  const backgroundGradient = useBackgroundGradient();
 
   return (
-    <div className="flex flex-col min-h-screen text-text font-sans overflow-x-hidden relative">
+    <div className="flex flex-col min-h-screen text-text font-sans overflow-x-hidden relative bg-[#050508]">
       <Helmet htmlAttributes={{ lang: i18n.language }}>
         <title>Igor Szuniewicz | Audio Designer</title>
         <meta name="description" content="Game Audio Designer & Developer. Wwise, FMOD, Unreal Engine implementation." />
       </Helmet>
-
-      {/* Dynamic Background Gradient */}
-      <div
-        className="fixed inset-0 z-0 pointer-events-none"
-        style={{
-          background: backgroundGradient,
-          transition: 'background 0.5s ease-in-out',
-        }}
-      />
 
       <div className="relative z-10 flex flex-col min-h-screen">
         <a 

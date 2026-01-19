@@ -58,9 +58,6 @@ const About = () => {
                 description={t('about_page_description', professional_summary.short_bio)}
             />
 
-            {/* Background - fades from transparent at top */}
-            <div className="fixed inset-0 bg-[#020202]" style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 100%)' }} />
-
             {/* Ambient Background - Enhanced */}
             <div className="fixed inset-0 z-0 pointer-events-none">
                 <div className="absolute top-0 right-0 w-[50vw] h-[50vh] bg-accent/8 blur-[120px] rounded-full opacity-40 animate-pulse"></div>

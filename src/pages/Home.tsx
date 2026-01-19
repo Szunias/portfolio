@@ -23,9 +23,7 @@ const Home = () => {
       <SEO /> {/* Default home metadata */}
       <Hero />
 
-      <div id="showreel-section">
-        <Showreel />
-      </div>
+      <Showreel />
 
       {/* Featured Projects Section */}
       <section id="projects" className="py-20 relative">
@@ -33,7 +31,7 @@ const Home = () => {
         <div className="absolute inset-0 z-0 pointer-events-none">
           <div className="absolute top-0 left-0 w-[40vw] h-[40vh] bg-accent/5 blur-[100px] rounded-full opacity-30"></div>
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex justify-between items-end mb-12">
             <div>

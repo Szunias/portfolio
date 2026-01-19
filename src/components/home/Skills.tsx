@@ -45,10 +45,9 @@ const Skills = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="py-24 relative overflow-hidden">
-      {/* Background - fades from transparent at top to reveal Layout gradient */}
-      <div className="absolute inset-0 bg-[#050508] z-0" style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 25%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 25%, black 100%)' }} />
-      <div 
+    <section className="py-24 pb-32 relative overflow-hidden">
+
+      <div
         className="absolute inset-0 opacity-[0.08]"
         style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
