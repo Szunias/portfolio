@@ -13,40 +13,28 @@ const Navbar = () => {
   const location = useLocation();
   const { personal_info } = usePortfolioData();
 
-  // Precision scroll detection
+  // Close menu on route change
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+    setIsOpen(false);
+  }, [location.pathname]);
+
+  // Close menu on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
     };
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [isOpen]);
+
+  // Scroll detection
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Close mobile menu when clicking outside
-  useEffect(() => {
-    if (!isOpen) return;
-    
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest('nav')) {
-        setIsOpen(false);
-      }
-    };
-
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEscape);
-    
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, [isOpen]);
 
   const navLinks = [
     { name: t('nav.home', 'Home'), path: ROUTES.HOME },
@@ -57,156 +45,77 @@ const Navbar = () => {
   ];
 
   return (
-    <nav
-      className={`
-        fixed top-0 left-0 right-0 z-[100] transition-all duration-300 border-b
-        ${scrolled
-          ? 'bg-primary/95 backdrop-blur-xl border-white/10 py-4 shadow-[0_4px_20px_rgba(0,0,0,0.3)]'
-          : 'bg-primary/70 backdrop-blur-md border-transparent py-6'
-        }
-      `}
-      role="navigation"
-      aria-label="Main Navigation"
-    >
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          
-          {/* Logo - Enhanced */}
-          <Link to={ROUTES.HOME} className="group flex flex-col" aria-label="Home">
-            <span className="font-display font-bold text-xl text-white tracking-tight group-hover:text-accent transition-all duration-300 group-hover:drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]">
-              IGOR SZUNIEWICZ
-            </span>
-            <span className="text-[10px] text-dim uppercase tracking-[0.2em] font-mono group-hover:text-accent/80 transition-colors duration-300">
-              {t('nav.role_label', 'Audio Designer')}
-            </span>
-          </Link>
+    <>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
+          scrolled
+            ? 'bg-black/95 backdrop-blur-xl border-white/10 py-3'
+            : 'bg-black/80 backdrop-blur-md border-transparent py-5'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex justify-between items-center">
 
-          {/* Desktop Navigation - Clean, spaced out */}
-          <div className="hidden md:flex items-center gap-8">
-            <div className="flex items-center gap-8 mr-8">
-              {navLinks.map((link) => {
-                const isActive = location.pathname === link.path;
-                return (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    className={`
-                      text-sm font-medium transition-all duration-300 relative py-1
-                      ${isActive ? 'text-white font-semibold' : 'text-dim hover:text-white'}
-                    `}
-                    aria-current={isActive ? 'page' : undefined}
-                  >
-                    {link.name}
-                    {/* Active Indicator Underline - Enhanced */}
-                    {isActive && (
-                      <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-accent rounded-full shadow-[0_0_12px_rgba(56,189,248,0.6)] animate-pulse"></span>
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
+            {/* Logo */}
+            <Link to={ROUTES.HOME} className="flex flex-col">
+              <span className="font-bold text-lg text-white">IGOR SZUNIEWICZ</span>
+              <span className="text-[9px] text-gray-400 uppercase tracking-wider">Audio Designer</span>
+            </Link>
 
-            <div className="h-6 w-px bg-white/10 mr-4" aria-hidden="true"></div>
-
-            {/* Socials - Subtle */}
-            <div className="flex items-center gap-4 mr-4">
-              <a 
-                href={personal_info.social_media.github} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-dim hover:text-white transition-colors"
-                aria-label="GitHub Profile"
-              >
-                <Github size={18} />
-              </a>
-              <a 
-                href={personal_info.social_media.linkedin} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-dim hover:text-white transition-colors"
-                aria-label="LinkedIn Profile"
-              >
-                <Linkedin size={18} />
-              </a>
-            </div>
-
-            {/* Language Switcher */}
-            <LanguageSwitcher />
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-3">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-white focus:outline-none p-2 focus:ring-2 focus:ring-accent rounded-md"
-              aria-label={isOpen ? "Close menu" : "Open menu"}
-              aria-expanded={isOpen}
-              aria-controls="mobile-menu"
-            >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-            <LanguageSwitcher />
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu Dropdown - Full screen overlay style */}
-      {isOpen && (
-        <div
-          id="mobile-menu"
-          className="md:hidden fixed inset-0 z-[200] bg-[#050505]"
-          onClick={() => setIsOpen(false)}
-        >
-          <div
-            className="min-h-full w-full pt-28 px-6 pb-12"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Navigation Links */}
-            <nav className="flex flex-col gap-6" aria-label="Mobile Navigation">
+            {/* Desktop Nav */}
+            <div className="hidden md:flex items-center gap-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  onClick={() => setIsOpen(false)}
-                  className={`
-                    text-3xl font-display font-bold py-3 transition-all duration-300 border-b border-white/5
-                    ${location.pathname === link.path
-                      ? 'text-accent'
-                      : 'text-dim hover:text-white hover:border-white/20'
-                    }
-                  `}
-                  aria-current={location.pathname === link.path ? 'page' : undefined}
+                  className={`text-sm ${location.pathname === link.path ? 'text-white font-semibold' : 'text-gray-400 hover:text-white'}`}
                 >
                   {link.name}
                 </Link>
               ))}
-            </nav>
-
-            {/* Social Links in Mobile Menu */}
-            <div className="flex items-center gap-6 mt-12 pt-8 border-t border-white/10">
-              <a
-                href={personal_info.social_media.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white hover:text-accent transition-colors p-2"
-                aria-label="GitHub Profile"
-              >
-                <Github size={28} />
-              </a>
-              <a
-                href={personal_info.social_media.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white hover:text-accent transition-colors p-2"
-                aria-label="LinkedIn Profile"
-              >
-                <Linkedin size={28} />
-              </a>
+              <div className="h-4 w-px bg-white/20"></div>
+              <a href={personal_info.social_media.github} className="text-gray-400 hover:text-white"><Github size={16} /></a>
+              <a href={personal_info.social_media.linkedin} className="text-gray-400 hover:text-white"><Linkedin size={16} /></a>
+              <LanguageSwitcher />
             </div>
+
+            {/* Mobile Hamburger */}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="md:hidden bg-gray-800 text-white p-3 rounded-lg hover:bg-gray-700"
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Menu - SIMPLE */}
+      {isOpen && (
+        <div className="md:hidden fixed inset-0 z-40 bg-black flex flex-col pt-20 px-6">
+          <div className="flex flex-col gap-2">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`text-2xl font-bold py-3 border-b border-gray-800 ${
+                  location.pathname === link.path ? 'text-cyan-400' : 'text-white'
+                }`}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-4 mt-8 pt-6 border-t border-gray-800">
+            <a href={personal_info.social_media.github} className="text-white p-2 bg-gray-800 rounded-lg"><Github size={24} /></a>
+            <a href={personal_info.social_media.linkedin} className="text-white p-2 bg-gray-800 rounded-lg"><Linkedin size={24} /></a>
           </div>
         </div>
       )}
-    </nav>
+    </>
   );
 };
 
