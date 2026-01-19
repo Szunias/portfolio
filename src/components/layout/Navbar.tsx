@@ -152,67 +152,59 @@ const Navbar = () => {
 
       {/* Mobile Menu Dropdown - Full screen overlay style */}
       {isOpen && (
-        <>
-          {/* Solid background overlay */}
-          <div 
-            className="md:hidden fixed inset-0 z-[10000]"
-            style={{ backgroundColor: '#050505' }}
-            onClick={() => setIsOpen(false)}
-          />
-          {/* Menu content */}
-          <div 
-            id="mobile-menu"
-            className="md:hidden fixed inset-0 z-[10001] overflow-y-auto"
+        <div
+          id="mobile-menu"
+          className="md:hidden fixed inset-0 z-[200] bg-[#050505]"
+          onClick={() => setIsOpen(false)}
+        >
+          <div
+            className="min-h-full w-full pt-28 px-6 pb-12"
             onClick={(e) => e.stopPropagation()}
           >
-            <div
-              className="min-h-full w-full backdrop-blur-2xl transition-opacity duration-300 pt-24 px-6 pb-12"
-              style={{ backgroundColor: '#050505' }}
-            >
-              <div className="flex flex-col gap-8">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    onClick={() => setIsOpen(false)}
-                    className={`
-                      text-2xl font-display font-bold py-2 transition-all duration-300
-                      ${location.pathname === link.path
-                        ? 'text-accent drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]'
-                        : 'text-dim hover:text-white'
-                      }
-                    `}
-                    aria-current={location.pathname === link.path ? 'page' : undefined}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
+            {/* Navigation Links */}
+            <nav className="flex flex-col gap-6" aria-label="Mobile Navigation">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setIsOpen(false)}
+                  className={`
+                    text-3xl font-display font-bold py-3 transition-all duration-300 border-b border-white/5
+                    ${location.pathname === link.path
+                      ? 'text-accent'
+                      : 'text-dim hover:text-white hover:border-white/20'
+                    }
+                  `}
+                  aria-current={location.pathname === link.path ? 'page' : undefined}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </nav>
 
-              {/* Social Links in Mobile Menu */}
-              <div className="flex items-center gap-6 mt-8 pt-8 border-t border-white/10">
-                <a
-                  href={personal_info.social_media.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-dim hover:text-white transition-colors"
-                  aria-label="GitHub Profile"
-                >
-                  <Github size={24} />
-                </a>
-                <a
-                  href={personal_info.social_media.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-dim hover:text-white transition-colors"
-                  aria-label="LinkedIn Profile"
-                >
-                  <Linkedin size={24} />
-                </a>
-              </div>
+            {/* Social Links in Mobile Menu */}
+            <div className="flex items-center gap-6 mt-12 pt-8 border-t border-white/10">
+              <a
+                href={personal_info.social_media.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-accent transition-colors p-2"
+                aria-label="GitHub Profile"
+              >
+                <Github size={28} />
+              </a>
+              <a
+                href={personal_info.social_media.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-accent transition-colors p-2"
+                aria-label="LinkedIn Profile"
+              >
+                <Linkedin size={28} />
+              </a>
             </div>
           </div>
-        </>
+        </div>
       )}
     </nav>
   );
