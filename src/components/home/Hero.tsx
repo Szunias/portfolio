@@ -208,16 +208,32 @@ const Hero = () => {
   useEffect(() => {
     const handleMouse = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
-      
-      // Check if mouse is within range (400px from center)
       const dx = e.clientX - containerCenter.x;
       const dy = e.clientY - containerCenter.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
       setIsInRange(distance < 400);
     };
-    
+
+    const handleTouch = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (touch) {
+        setMousePos({ x: touch.clientX, y: touch.clientY });
+        const dx = touch.clientX - containerCenter.x;
+        const dy = touch.clientY - containerCenter.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        setIsInRange(distance < 400);
+      }
+    };
+
     window.addEventListener('mousemove', handleMouse);
-    return () => window.removeEventListener('mousemove', handleMouse);
+    window.addEventListener('touchmove', handleTouch, { passive: true });
+    window.addEventListener('touchstart', handleTouch, { passive: true });
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouse);
+      window.removeEventListener('touchmove', handleTouch);
+      window.removeEventListener('touchstart', handleTouch);
+    };
   }, [containerCenter]);
 
   return (

@@ -22,10 +22,11 @@ const Layout = ({ children }: LayoutProps) => {
       </Helmet>
 
       {/* Dynamic Background Gradient */}
-      <div 
-        className="fixed inset-0 z-0 pointer-events-none transition-opacity duration-700"
-        style={{ 
+      <div
+        className="fixed inset-0 z-0 pointer-events-none"
+        style={{
           background: backgroundGradient,
+          transition: 'background 0.5s ease-in-out',
         }}
       />
 
