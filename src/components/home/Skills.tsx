@@ -48,6 +48,10 @@ const Skills = () => {
     <section className="py-24 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-[#050508]" />
+      {/* Top gradient fade - smooth transition from Layout gradient */}
+      <div className="absolute top-0 left-0 right-0 h-[300px] pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050508]/70 to-[#050508]" />
+      </div>
       <div 
         className="absolute inset-0 opacity-[0.08]"
         style={{

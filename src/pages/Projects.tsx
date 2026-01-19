@@ -14,6 +14,11 @@ const Projects = () => {
 
   return (
     <div className="min-h-screen bg-primary pt-24 pb-16 px-4 sm:px-6 lg:px-12 relative overflow-hidden">
+      {/* Top gradient fade - smooth transition from Layout gradient */}
+      <div className="absolute top-0 left-0 right-0 h-[250px] pointer-events-none z-10">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/70 to-primary" />
+      </div>
+
       {/* Ambient Background */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[40vw] h-[40vh] bg-accent/5 blur-[120px] rounded-full opacity-30"></div>

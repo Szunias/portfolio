@@ -239,6 +239,11 @@ const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-[#050508]">
 
+      {/* Bottom gradient fade - smooth transition to Layout gradient */}
+      <div className="absolute bottom-0 left-0 right-0 h-[400px] z-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-t from-transparent via-[#050508]/80 to-[#050508]" />
+      </div>
+
       {/* Subtle dot grid background */}
       <div 
         className="absolute inset-0 opacity-[0.15]"
