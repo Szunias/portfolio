@@ -13,11 +13,9 @@ const Projects = () => {
   const { filter, setFilter, categories, filteredProjects, getCategoryLabel } = useProjectFilter(allProjects);
 
   return (
-    <div className="min-h-screen bg-primary pt-24 pb-16 px-4 sm:px-6 lg:px-12 relative overflow-hidden">
-      {/* Top gradient fade - smooth transition from Layout gradient */}
-      <div className="absolute top-0 left-0 right-0 h-[250px] pointer-events-none z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/70 to-primary" />
-      </div>
+    <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-12 relative overflow-hidden">
+      {/* Background - fades from transparent at top */}
+      <div className="absolute inset-0 bg-primary" style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 100%)' }} />
 
       {/* Ambient Background */}
       <div className="fixed inset-0 z-0 pointer-events-none">

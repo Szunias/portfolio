@@ -237,24 +237,19 @@ const Hero = () => {
   }, [containerCenter]);
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-[#050508]">
+    <section className="relative min-h-screen flex items-center overflow-hidden">
 
-      {/* Bottom gradient fade - smooth transition to Layout gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-[400px] z-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-t from-transparent via-[#050508]/80 to-[#050508]" />
-      </div>
+      {/* Dark background overlay - fades at bottom to reveal Layout gradient */}
+      <div className="absolute inset-0 bg-[#050508] z-0" style={{ maskImage: 'linear-gradient(to bottom, black 35%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 35%, transparent 100%)' }} />
 
       {/* Subtle dot grid background */}
-      <div 
-        className="absolute inset-0 opacity-[0.15]"
+      <div
+        className="absolute inset-0 opacity-[0.15] z-0"
         style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
           backgroundSize: '40px 40px',
         }}
       />
-
-      {/* Very subtle vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 py-20">
         

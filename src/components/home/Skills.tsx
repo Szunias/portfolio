@@ -46,12 +46,8 @@ const Skills = () => {
 
   return (
     <section className="py-24 relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-[#050508]" />
-      {/* Top gradient fade - smooth transition from Layout gradient */}
-      <div className="absolute top-0 left-0 right-0 h-[300px] pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050508]/70 to-[#050508]" />
-      </div>
+      {/* Background - fades from transparent at top to reveal Layout gradient */}
+      <div className="absolute inset-0 bg-[#050508] z-0" style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 25%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 25%, black 100%)' }} />
       <div 
         className="absolute inset-0 opacity-[0.08]"
         style={{
