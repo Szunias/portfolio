@@ -139,7 +139,7 @@ const Navbar = () => {
                   <a href={personal_info.social_media.github} className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700"><Github size={24} /></a>
                   <a href={personal_info.social_media.linkedin} className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700"><Linkedin size={24} /></a>
                 </div>
-                <LanguageSwitcher />
+                <LanguageSwitcher dropUp />
               </div>
             </motion.div>
           </>

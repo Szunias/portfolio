@@ -9,7 +9,11 @@ const languages = [
   { code: 'nl', label: 'NL' },
 ];
 
-const LanguageSwitcher = () => {
+interface LanguageSwitcherProps {
+  dropUp?: boolean;
+}
+
+const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -49,11 +53,13 @@ const LanguageSwitcher = () => {
             />
 
             <motion.div
-              initial={{ opacity: 0, y: 4 }}
+              initial={{ opacity: 0, y: dropUp ? 4 : -4 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 4 }}
+              exit={{ opacity: 0, y: dropUp ? 4 : -4 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-2 z-[150] p-1 bg-[#111] border border-white/10 rounded-xl shadow-xl"
+              className={`absolute right-0 z-[150] p-1 bg-[#111] border border-white/10 rounded-xl shadow-xl ${
+                dropUp ? 'bottom-full mb-2' : 'top-full mt-2'
+              }`}
             >
               {languages.map((lang) => {
                 const isActive = i18n.language === lang.code;
