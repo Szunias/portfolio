@@ -13,7 +13,7 @@ const Projects = () => {
   const { filter, setFilter, categories, filteredProjects, getCategoryLabel } = useProjectFilter(allProjects);
 
   return (
-    <div className="min-h-screen bg-primary pt-32 pb-20 px-6 lg:px-12 relative overflow-hidden">
+    <div className="min-h-screen bg-primary pt-24 pb-16 px-4 sm:px-6 lg:px-12 relative overflow-hidden">
       {/* Ambient Background */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[40vw] h-[40vh] bg-accent/5 blur-[120px] rounded-full opacity-30"></div>
@@ -28,7 +28,7 @@ const Projects = () => {
       <div className="max-w-[1600px] mx-auto relative z-10">
         
         {/* Header & Filters */}
-        <div className="flex flex-col lg:flex-row justify-between items-end mb-16 gap-8 border-b border-white/10 pb-8">
+        <div className="flex flex-col lg:flex-row justify-between items-end mb-8 lg:mb-16 gap-4 lg:gap-8 border-b border-white/10 pb-6 lg:pb-8">
           <div>
             <h1 className="text-5xl md:text-7xl font-display font-bold text-white mb-4 tracking-tighter drop-shadow-[0_0_30px_rgba(56,189,248,0.2)]">
               {t('projects.title', 'Selected Works')}

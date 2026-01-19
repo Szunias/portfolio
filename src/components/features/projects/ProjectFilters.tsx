@@ -9,7 +9,7 @@ interface ProjectFiltersProps {
 
 const ProjectFilters = ({ categories, activeFilter, onFilterChange, getLabel }: ProjectFiltersProps) => {
   return (
-    <div className="flex flex-wrap gap-2 justify-start lg:justify-end">
+    <div className="flex gap-1.5 justify-start lg:justify-end overflow-x-auto pb-1 lg:pb-0 -mx-2 px-2 lg:mx-0 lg:px-0 no-scrollbar snap-x">
       {categories.map((category) => {
         const isActive = activeFilter === category;
         return (
@@ -17,7 +17,7 @@ const ProjectFilters = ({ categories, activeFilter, onFilterChange, getLabel }: 
             key={category}
             onClick={() => onFilterChange(category)}
             className={`
-              relative px-5 py-2 text-xs font-mono uppercase tracking-wider transition-all rounded-full
+              relative px-3 py-1.5 text-[10px] sm:text-xs sm:px-4 sm:py-2 font-mono uppercase tracking-wider transition-all rounded-full whitespace-nowrap snap-start
               ${isActive ? 'text-black font-bold shadow-[0_0_20px_rgba(255,255,255,0.3)]' : 'text-slate-400 hover:text-white hover:bg-white/10 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]'}
             `}
           >
