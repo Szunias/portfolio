@@ -57,11 +57,11 @@ const Navbar = () => {
   ];
 
   return (
-    <nav 
+    <nav
       className={`
-        fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b
-        ${scrolled 
-          ? 'bg-primary/95 backdrop-blur-xl border-white/10 py-4 shadow-[0_4px_20px_rgba(0,0,0,0.3)]' 
+        fixed top-0 left-0 right-0 z-[100] transition-all duration-300 border-b
+        ${scrolled
+          ? 'bg-primary/95 backdrop-blur-xl border-white/10 py-4 shadow-[0_4px_20px_rgba(0,0,0,0.3)]'
           : 'bg-primary/70 backdrop-blur-md border-transparent py-6'
         }
       `}
@@ -135,17 +135,17 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-4 relative z-[80]">
-             <LanguageSwitcher />
+          <div className="md:hidden flex items-center gap-3">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-white focus:outline-none p-2 focus:ring-2 focus:ring-accent rounded-md relative z-[80]"
+              className="text-white focus:outline-none p-2 focus:ring-2 focus:ring-accent rounded-md"
               aria-label={isOpen ? "Close menu" : "Open menu"}
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
+            <LanguageSwitcher />
           </div>
         </div>
       </div>

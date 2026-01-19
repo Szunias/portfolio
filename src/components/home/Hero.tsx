@@ -146,7 +146,7 @@ const ShapeComponent = ({
 
   return (
     <motion.div
-      className="absolute left-1/2 top-1/2"
+      className="absolute left-1/2 top-1/2 scale-50 sm:scale-60 lg:scale-100"
       style={{
         width: shape.size,
         height: shape.size,
@@ -325,9 +325,9 @@ const Hero = () => {
           </div>
 
           {/* Right - Layered 3D Shapes */}
-          <div 
+          <div
             ref={shapesContainerRef}
-            className="hidden lg:block relative h-[500px]"
+            className="relative h-[300px] sm:h-[400px] lg:h-[500px]"
           >
             {shapes.map((shape) => (
               <ShapeComponent 

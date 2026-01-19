@@ -44,7 +44,7 @@ const LanguageSwitcher = () => {
         {isOpen && (
           <>
             <div
-              className="fixed inset-0 z-[60]"
+              className="fixed inset-0 z-50"
               onClick={() => setIsOpen(false)}
             />
 
@@ -53,7 +53,7 @@ const LanguageSwitcher = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 4 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-2 z-[70] p-1 bg-[#111] border border-white/10 rounded-xl shadow-xl"
+              className="absolute right-0 top-full mt-2 z-[150] p-1 bg-[#111] border border-white/10 rounded-xl shadow-xl"
             >
               {languages.map((lang) => {
                 const isActive = i18n.language === lang.code;
