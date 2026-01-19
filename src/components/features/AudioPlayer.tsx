@@ -32,7 +32,7 @@ const AudioPlayer = () => {
   if (!currentTrack || !isPlayerVisible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-primary/95 backdrop-blur-2xl border-t border-white/10 z-50 h-20 flex items-center px-4 sm:px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.6)] shadow-[0_0_30px_rgba(56,189,248,0.1)]">
+    <div className="fixed bottom-0 left-0 right-0 bg-primary/95 backdrop-blur-2xl border-t border-white/10 z-50 h-20 sm:h-20 flex items-center px-3 sm:px-6 md:px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.6)] shadow-[0_0_30px_rgba(56,189,248,0.1)]">
       {/* Progress Bar (Top Line) */}
       <div 
         className="absolute top-0 left-0 right-0 h-1 hover:h-2.5 bg-white/5 cursor-pointer group transition-all duration-200 ease-out z-50"
@@ -53,11 +53,11 @@ const AudioPlayer = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between w-full max-w-7xl mx-auto gap-4">
-        
+      <div className="flex items-center justify-between w-full max-w-7xl mx-auto gap-2 sm:gap-4">
+
         {/* Left: Info & Visualizer */}
-        <div className="flex items-center gap-4 flex-1 min-w-0">
-            <div className="relative w-12 h-12 rounded bg-slate-800 overflow-hidden border border-white/10 flex-shrink-0 group hover:border-accent/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition-all duration-300">
+        <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+            <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded bg-slate-800 overflow-hidden border border-white/10 flex-shrink-0 group hover:border-accent/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] transition-all duration-300">
                 <img 
                     src={`/${currentTrack.cover}`} 
                     alt={currentTrack.title} 
@@ -68,15 +68,15 @@ const AudioPlayer = () => {
                 </div>
             </div>
             <div className="min-w-0">
-                <h4 className="text-white font-bold text-sm truncate">{currentTrack.title}</h4>
-                <div className="flex items-center gap-2">
+                <h4 className="text-white font-bold text-xs sm:text-sm truncate">{currentTrack.title}</h4>
+                <div className="flex items-center gap-1.5 sm:gap-2">
                     {/* Mini Visualizer */}
-                    <div className="flex items-end gap-[1px] h-3">
-                        {(visualizerData || []).slice(0, 8).map((h, i) => (
-                            <div key={i} className="w-1 bg-accent/50 rounded-t-sm transition-all duration-100" style={{ height: `${h}%` }}></div>
+                    <div className="flex items-end gap-[1px] h-2.5 sm:h-3">
+                        {(visualizerData || []).slice(0, 6).map((h, i) => (
+                            <div key={i} className="w-[2px] sm:w-1 bg-accent/50 rounded-t-sm transition-all duration-100" style={{ height: `${h}%` }}></div>
                         ))}
                     </div>
-                    <span className="text-xs font-mono text-slate-500">
+                    <span className="text-[10px] sm:text-xs font-mono text-slate-500">
                         {formatTime(currentTime)} / {formatTime(duration)}
                     </span>
                 </div>
@@ -84,30 +84,30 @@ const AudioPlayer = () => {
         </div>
 
         {/* Center: Controls */}
-        <div className="flex items-center gap-4 sm:gap-6">
-            <Button onClick={prevTrack} variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-transparent" aria-label="Previous Track">
-                <SkipBack size={20} />
+        <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
+            <Button onClick={prevTrack} variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-transparent p-1 sm:p-2" aria-label="Previous Track">
+                <SkipBack size={16} className="sm:w-5 sm:h-5" />
             </Button>
-            
-            <Button 
+
+            <Button
                 onClick={togglePlay}
                 variant="primary"
                 size="icon"
-                className="w-12 h-12 rounded-full hover:scale-110 hover:shadow-[0_0_30px_rgba(56,189,248,0.6)] transition-all duration-300 p-0 bg-accent hover:bg-white text-primary hover:text-accent border-2 border-accent hover:border-white"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full hover:scale-110 hover:shadow-[0_0_30px_rgba(56,189,248,0.6)] transition-all duration-300 p-0 bg-accent hover:bg-white text-primary hover:text-accent border-2 border-accent hover:border-white flex-shrink-0"
                 aria-label={isPlaying ? "Pause" : "Play"}
             >
-                {isPlaying ? <Pause size={22} fill="currentColor" /> : <Play size={22} fill="currentColor" className="ml-0.5" />}
+                {isPlaying ? <Pause size={18} className="sm:w-[22px] sm:h-[22px]" fill="currentColor" /> : <Play size={18} className="sm:w-[22px] sm:h-[22px] ml-0.5" fill="currentColor" />}
             </Button>
 
-            <Button onClick={nextTrack} variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-transparent" aria-label="Next Track">
-                <SkipForward size={20} />
+            <Button onClick={nextTrack} variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-transparent p-1 sm:p-2" aria-label="Next Track">
+                <SkipForward size={16} className="sm:w-5 sm:h-5" />
             </Button>
         </div>
 
         {/* Right: Volume & Close */}
-        <div className="flex items-center justify-end gap-4 flex-1">
+        <div className="flex items-center justify-end gap-2 sm:gap-4 flex-1">
             <div className="hidden sm:flex items-center gap-2 group">
-                <Button 
+                <Button
                     onClick={() => {
                         if (isMuted) {
                             setVolume(prevVolume);
@@ -133,23 +133,23 @@ const AudioPlayer = () => {
                         setIsMuted(vol === 0);
                      }}
                 >
-                    <div 
-                        className="h-full bg-gradient-to-r from-sky-600 via-sky-500 to-accent shadow-[0_0_15px_rgba(56,189,248,0.5)] group-hover:bg-accent group-hover:shadow-[0_0_20px_rgba(56,189,248,0.7)] transition-all duration-300" 
+                    <div
+                        className="h-full bg-gradient-to-r from-sky-600 via-sky-500 to-accent shadow-[0_0_15px_rgba(56,189,248,0.5)] group-hover:bg-accent group-hover:shadow-[0_0_20px_rgba(56,189,248,0.7)] transition-all duration-300"
                         style={{ width: `${volume * 100}%` }}
                     ></div>
                 </div>
             </div>
 
             {/* Close Button */}
-            <Button 
+            <Button
                 onClick={closePlayer}
                 variant="ghost"
                 size="icon"
-                className="text-slate-500 hover:text-red-500 hover:bg-red-500/10 ml-4"
+                className="text-slate-500 hover:text-red-500 hover:bg-red-500/10 p-1 sm:p-2 sm:ml-4 flex-shrink-0"
                 title="Close Player"
                 aria-label="Close Player"
             >
-                <X size={20} />
+                <X size={16} className="sm:w-5 sm:h-5" />
             </Button>
         </div>
 

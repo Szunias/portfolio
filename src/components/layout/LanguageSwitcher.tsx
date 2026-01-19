@@ -43,17 +43,17 @@ const LanguageSwitcher = () => {
       <AnimatePresence>
         {isOpen && (
           <>
-            <div 
-              className="fixed inset-0 z-40" 
+            <div
+              className="fixed inset-0 z-[60]"
               onClick={() => setIsOpen(false)}
             />
-            
+
             <motion.div
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 4 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-2 z-50 p-1 bg-[#111] border border-white/10 rounded-xl shadow-xl"
+              className="absolute right-0 top-full mt-2 z-[70] p-1 bg-[#111] border border-white/10 rounded-xl shadow-xl"
             >
               {languages.map((lang) => {
                 const isActive = i18n.language === lang.code;

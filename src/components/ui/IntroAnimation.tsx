@@ -111,7 +111,7 @@ const IntroAnimation = ({ onComplete }: { onComplete: () => void }) => {
         ))}
 
         {/* Additional flowing lines */}
-        {snakes.map((snake, i) => (
+        {snakes.map((snake) => (
           <motion.path
             key={`trail-${snake.id}`}
             d={snake.path}

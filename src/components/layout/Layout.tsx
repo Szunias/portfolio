@@ -38,7 +38,7 @@ const Layout = ({ children }: LayoutProps) => {
           Skip to main content
         </a>
         <Navbar />
-        <main id="main-content" className="flex-grow pt-16" tabIndex={-1}>
+        <main id="main-content" className="flex-grow pt-16 md:pt-20 pb-20 md:pb-24" tabIndex={-1}>
           {children}
         </main>
         <Footer />

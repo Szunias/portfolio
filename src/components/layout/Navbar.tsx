@@ -135,11 +135,11 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-4">
+          <div className="md:hidden flex items-center gap-4 relative z-[80]">
              <LanguageSwitcher />
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-white focus:outline-none p-2 focus:ring-2 focus:ring-accent rounded-md"
+              className="text-white focus:outline-none p-2 focus:ring-2 focus:ring-accent rounded-md relative z-[80]"
               aria-label={isOpen ? "Close menu" : "Open menu"}
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
@@ -165,7 +165,7 @@ const Navbar = () => {
             className="md:hidden fixed inset-0 z-[10001] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div 
+            <div
               className="min-h-full w-full backdrop-blur-2xl transition-opacity duration-300 pt-24 px-6 pb-12"
               style={{ backgroundColor: '#050505' }}
             >
@@ -177,8 +177,8 @@ const Navbar = () => {
                     onClick={() => setIsOpen(false)}
                     className={`
                       text-2xl font-display font-bold py-2 transition-all duration-300
-                      ${location.pathname === link.path 
-                        ? 'text-accent drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]' 
+                      ${location.pathname === link.path
+                        ? 'text-accent drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]'
                         : 'text-dim hover:text-white'
                       }
                     `}
@@ -187,6 +187,28 @@ const Navbar = () => {
                     {link.name}
                   </Link>
                 ))}
+              </div>
+
+              {/* Social Links in Mobile Menu */}
+              <div className="flex items-center gap-6 mt-8 pt-8 border-t border-white/10">
+                <a
+                  href={personal_info.social_media.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-dim hover:text-white transition-colors"
+                  aria-label="GitHub Profile"
+                >
+                  <Github size={24} />
+                </a>
+                <a
+                  href={personal_info.social_media.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-dim hover:text-white transition-colors"
+                  aria-label="LinkedIn Profile"
+                >
+                  <Linkedin size={24} />
+                </a>
               </div>
             </div>
           </div>
