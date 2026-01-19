@@ -44,12 +44,14 @@ export interface Project {
     demo?: string;
     repo?: string;
     video?: string;
+    video_legacy?: string;
     documentation?: string;
   };
   media: {
     thumbnail: string;
     images?: (string | ProjectImage)[];
     video?: string;
+    video_legacy?: string;
     audio?: string; // Path to audio file if applicable
   };
   code_snippets?: CodeSnippet[];

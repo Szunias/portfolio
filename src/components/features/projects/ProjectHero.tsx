@@ -18,11 +18,13 @@ const getYoutubeId = (url: string) => {
 const ProjectHero = ({ project }: ProjectHeroProps) => {
     const { t } = useTranslation();
     const media = project.media || {};
+    const links = project.links || {};
 
     const titleKey = `project_${project.id}_title`;
     const shortDescKey = `project_${project.id}_short_desc`;
 
     const videoId = media.video ? getYoutubeId(media.video) : null;
+    const legacyVideoId = media.video_legacy || links.video_legacy ? getYoutubeId(media.video_legacy || links.video_legacy || '') : null;
     const isLocalVideo = media.video && !videoId && (media.video.endsWith('.mp4') || media.video.endsWith('.webm'));
 
     return (
@@ -84,6 +86,25 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                             />
                         </div>
                     )}
+
+                    {/* Legacy trailer for Shadow Frames */}
+                    {legacyVideoId && project.id === 'shadow_frames' && (
+                        <div className="mt-8">
+                            <h3 className="text-lg font-mono text-slate-400 uppercase tracking-wider mb-4">
+                                {t('projects.legacy_trailer', 'Previous Trailer')} / {t('projects.gameplay_preview', 'Gameplay Preview')}
+                            </h3>
+                            <div className="w-full max-w-4xl aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/20 bg-black/80 backdrop-blur-sm transition-all duration-500">
+                                <iframe
+                                    src={`https://www.youtube.com/embed/${legacyVideoId}`}
+                                    title="Legacy YouTube video player"
+                                    className="w-full h-full"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                />
+                            </div>
+                        </div>
+                    )}
+
                     {isLocalVideo && (
                         <div className="w-full max-w-4xl aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 hover:border-accent/30 hover:shadow-[0_0_50px_rgba(56,189,248,0.2)] bg-black/50 backdrop-blur-sm transition-all duration-500">
                             <video
