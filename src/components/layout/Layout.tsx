@@ -4,7 +4,6 @@ import Footer from './Footer';
 import AudioPlayer from '../features/AudioPlayer';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { useBackgroundGradient } from '../../hooks/useBackgroundGradient';
 
 interface LayoutProps {
   children: ReactNode;
