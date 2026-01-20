@@ -25,7 +25,7 @@ const Transientica = () => {
     };
 
     return (
-        <div className="min-h-screen bg-primary text-slate-300 font-sans selection:bg-purple-500/30">
+        <div className="min-h-screen bg-crosshatch bg-primary text-slate-300 font-sans selection:bg-purple-500/30">
             <SEO title="Transientica | AudioLab" description="Real-time ML Audio Classification System" />
             
             {/* Background Elements */}

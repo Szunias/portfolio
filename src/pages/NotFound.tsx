@@ -6,7 +6,7 @@ const NotFound = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4">
+    <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4 bg-dots-grid bg-primary">
       <div className="relative mb-8">
         <div className="absolute inset-0 bg-accent blur-[60px] opacity-20 animate-pulse"></div>
         <AlertTriangle size={80} className="text-accent relative z-10" />

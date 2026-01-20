@@ -17,7 +17,7 @@ const SoundDesign = () => {
     const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
     return (
-        <div ref={containerRef} className="min-h-screen bg-secondary text-slate-300 font-sans selection:bg-orange-500/30">
+        <div ref={containerRef} className="min-h-screen bg-secondary bg-crosshatch text-slate-300 font-sans selection:bg-orange-500/30">
             <SEO title="Sound Design | Igor Szuniewicz" description="Sound Redesigns and Implementation Showcases" />
 
             {/* Hero Section */}

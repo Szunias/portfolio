@@ -8,7 +8,7 @@ const Music = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-primary">
+    <div className="min-h-screen bg-lines-horizontal bg-primary">
         
         {/* HERO SECTION (Now Playing / Featured) */}
         <MusicHero />

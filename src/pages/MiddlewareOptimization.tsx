@@ -35,7 +35,7 @@ const MiddlewareOptimization = () => {
     };
 
     return (
-        <div ref={containerRef} className="min-h-screen bg-white text-slate-900 font-sans selection:bg-purple-100 selection:text-purple-900">
+        <div ref={containerRef} className="min-h-screen bg-white bg-stripes-diagonal text-slate-900 font-sans selection:bg-purple-100 selection:text-purple-900">
             {/* Hero Section */}
             <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 to-white px-4 py-20">
                 <motion.div 

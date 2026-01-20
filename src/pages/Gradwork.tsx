@@ -521,7 +521,7 @@ const Gradwork = () => {
     const { t } = useTranslation('gradwork');
 
     return (
-        <div className="min-h-screen bg-white text-slate-900 -mt-16">
+        <div className="min-h-screen bg-white bg-dots-grid text-slate-900 -mt-16">
             <SEO
                 title="AI Audio Research | Igor Szuniewicz"
                 description="Graduate Research: Real-time AI Audio in Games"

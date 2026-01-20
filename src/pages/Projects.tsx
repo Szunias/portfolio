@@ -13,7 +13,7 @@ const Projects = () => {
   const { filter, setFilter, categories, filteredProjects, getCategoryLabel } = useProjectFilter(allProjects);
 
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-12 relative overflow-hidden">
+    <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-12 relative overflow-hidden bg-waves">
       {/* Ambient Background */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[40vw] h-[40vh] bg-accent/5 blur-[120px] rounded-full opacity-30"></div>

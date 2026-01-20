@@ -35,7 +35,7 @@ const ProjectDetails = () => {
   const description = t(fullDescKey, project.full_description || t(shortDescKey, project.short_description));
 
   return (
-    <div className="min-h-screen bg-primary pb-32">
+    <div className="min-h-screen bg-waves bg-primary pb-32">
       <SEO 
         title={t(titleKey, project.title)} 
         description={t(shortDescKey, project.short_description)}
