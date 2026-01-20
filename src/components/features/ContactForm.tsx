@@ -1,40 +1,39 @@
 import { useState, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Send, CheckCircle } from 'lucide-react';
+import { Mail, ExternalLink } from 'lucide-react';
 import { usePortfolioData } from '../../hooks/usePortfolioData';
 import { Button } from '../ui/Button';
 
 const ContactForm = () => {
   const { t } = useTranslation();
   const { personal_info } = usePortfolioData();
-  
-  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+
+  const [status, setStatus] = useState<'idle' | 'preparing'>('idle');
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus('sending');
+    setStatus('preparing');
 
     const formData = new FormData(e.currentTarget);
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
     const subject = formData.get('subject') as string;
     const message = formData.get('message') as string;
 
-    // Simulate network delay for realism
+    // Prepare mailto link and open email client
+    const mailtoLink = `mailto:${personal_info.email}?subject=${encodeURIComponent(`[Portfolio] ${subject}`)}&body=${encodeURIComponent(message)}`;
+
+    // Small delay to show the preparing state
     setTimeout(() => {
-      // Construct mailto link
-      const mailtoLink = `mailto:${personal_info.email}?subject=[Portfolio Contact] ${encodeURIComponent(subject)}&body=Name: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0A%0A${encodeURIComponent(message)}`;
-      
       window.location.href = mailtoLink;
-      setStatus('success');
-      
-      // Reset after delay
-      setTimeout(() => setStatus('idle'), 3000);
-    }, 1000);
+      setStatus('idle');
+    }, 300);
   };
 
   return (
     <div className="bg-secondary p-8 rounded-2xl border border-white/10 shadow-xl">
+      <div className="flex items-center gap-2 mb-4 text-dim text-sm">
+        <Mail size={16} />
+        {t('contact.opens_email', 'Opens your email client')}
+      </div>
       <h3 className="text-2xl font-display font-bold text-white mb-6">
         {t('contact_form_title', 'Send a Message')}
       </h3>
@@ -94,26 +93,19 @@ const ContactForm = () => {
 
         <Button
           type="submit"
-          disabled={status === 'sending' || status === 'success'}
-          variant={status === 'success' ? 'primary' : 'primary'} // Simplified for now, or add 'success' variant later
-          className={`
-            w-full py-3 gap-2
-            ${status === 'success' ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-accent text-primary hover:bg-white'}
-          `}
+          disabled={status === 'preparing'}
+          variant="primary"
+          className="w-full py-3 gap-2 group"
         >
-          {status === 'idle' && (
+          {status === 'idle' ? (
             <>
-              <Send size={18} />
-              {t('contact_form_submit', 'Send Message')}
+              <ExternalLink size={18} className="group-hover:translate-x-0.5 transition-transform" />
+              {t('contact_form_submit', 'Open in Email App')}
             </>
-          )}
-          {status === 'sending' && (
-            <span className="animate-pulse">{t('contact.processing', 'Processing...')}</span>
-          )}
-          {status === 'success' && (
+          ) : (
             <>
-              <CheckCircle size={18} />
-              {t('contact.sent', 'Sent!')}
+              <Mail size={18} className="animate-spin" />
+              {t('contact.preparing', 'Opening...')}
             </>
           )}
         </Button>

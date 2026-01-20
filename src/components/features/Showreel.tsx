@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import Player from '@vimeo/player';
-import { Play } from 'lucide-react';
+import { Play, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 
@@ -10,6 +10,7 @@ const Showreel = () => {
   const [player, setPlayer] = useState<Player | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeChapter, setActiveChapter] = useState<number>(0);
+  const [error, setError] = useState(false);
 
   const timestamps = [
     { time: 0, label: t('hero.showreel_start', 'Start') },
@@ -27,22 +28,29 @@ const Showreel = () => {
       const vimeoPlayer = new Player(iframeRef.current);
       setPlayer(vimeoPlayer);
 
-      vimeoPlayer.on('play', () => setIsPlaying(true));
-      vimeoPlayer.on('pause', () => setIsPlaying(false));
-      vimeoPlayer.on('timeupdate', (data) => {
-        const current = timestamps.slice().reverse().find(ts => data.seconds >= ts.time);
-        if (current) {
-          setActiveChapter(prev => prev !== current.time ? current.time : prev);
-        }
+      vimeoPlayer.ready().then(() => {
+        vimeoPlayer.on('play', () => setIsPlaying(true));
+        vimeoPlayer.on('pause', () => setIsPlaying(false));
+        vimeoPlayer.on('timeupdate', (data) => {
+          const current = timestamps.slice().reverse().find(ts => data.seconds >= ts.time);
+          if (current) {
+            setActiveChapter(prev => prev !== current.time ? current.time : prev);
+          }
+        });
+      }).catch((err) => {
+        console.error('Vimeo player error:', err);
+        setError(true);
       });
     }
   };
 
   const jumpTo = (seconds: number) => {
-    setActiveChapter(seconds);
     if (player) {
-      player.setCurrentTime(seconds);
-      player.play();
+      player.setCurrentTime(seconds).then(() => {
+        player.play();
+      }).catch((err) => {
+        console.error('Failed to seek video:', err);
+      });
     }
   };
 
@@ -56,32 +64,43 @@ const Showreel = () => {
     <div className="w-full max-w-5xl mx-auto mt-12 mb-20">
       {/* Video */}
       <div className="relative aspect-video rounded-2xl overflow-hidden bg-black group hover:shadow-[0_0_40px_rgba(56,189,248,0.2)] transition-all duration-500">
-        <iframe
-          ref={iframeRef}
-          src="https://player.vimeo.com/video/1143625213?badge=0&autopause=0&player_id=0&app_id=58479&controls=1"
-          width="100%"
-          height="100%"
-          frameBorder="0"
-          allow="autoplay; fullscreen; picture-in-picture"
-          allowFullScreen
-          title="Showreel"
-          onLoad={handleLoad}
-          className="absolute inset-0 w-full h-full border-0"
-        ></iframe>
+        {error ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-900">
+            <AlertCircle size={48} className="text-red-500 mb-4" />
+            <p className="text-white/70 text-center px-4">
+              {t('errors.video_load_failed', 'Failed to load video. Please refresh the page.')}
+            </p>
+          </div>
+        ) : (
+          <>
+            <iframe
+              ref={iframeRef}
+              src="https://player.vimeo.com/video/1143625213?badge=0&autopause=0&player_id=0&app_id=58479&controls=1"
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+              title="Showreel"
+              onLoad={handleLoad}
+              className="absolute inset-0 w-full h-full border-0"
+            ></iframe>
 
-        {!isPlaying && (
-          <button
-            className="absolute inset-0 w-full h-full flex items-center justify-center bg-black/40 hover:bg-black/30 transition-colors cursor-pointer"
-            onClick={() => player?.play()}
-          >
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-20 h-20 flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-full border border-white/20"
-            >
-              <Play size={32} className="text-white ml-1" fill="white" />
-            </motion.div>
-          </button>
+            {!isPlaying && player && (
+              <button
+                className="absolute inset-0 w-full h-full flex items-center justify-center bg-black/40 hover:bg-black/30 transition-colors cursor-pointer"
+                onClick={() => player?.play().catch((err) => console.error('Play failed:', err))}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-20 h-20 flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-full border border-white/20"
+                >
+                  <Play size={32} className="text-white ml-1" fill="white" />
+                </motion.div>
+              </button>
+            )}
+          </>
         )}
       </div>
 

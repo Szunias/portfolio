@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { usePortfolioData } from '../../hooks/usePortfolioData';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,59 @@ interface Node {
   type: 'category' | 'skill';
   connections: string[];
 }
+
+// Moved outside component - no dependencies on component state
+const getIconPath = (skillName: string): string | null => {
+  const name = skillName.toLowerCase().replace(/[\s.]/g, '');
+  const map: Record<string, string> = {
+    'c++': 'cpplogo.png',
+    'cpp': 'cpplogo.png',
+    'c#': 'csharplogo.png',
+    'csharp': 'csharplogo.png',
+    'unreal': 'Unreal_Engine-Logo.wine.png',
+    'ue5': 'Unreal_Engine-Logo.wine.png',
+    'unity': 'Unitylogo.png',
+    'wwise': 'wwiselogo.png',
+    'fmod': 'fmodlogo.png',
+    'python': 'pythonlogo.png',
+    'reaper': 'REAPER_logo.png',
+    'perforce': 'Perforcelogo.png',
+    'git': 'github.png',
+    'github': 'github.png',
+    'juce': 'JUCE_Logo.png',
+    'puredata': 'puredatalogo.png',
+    '3daudio': '3DAudio.png',
+    'spatialaudio': '3DAudio.png'
+  };
+  const key = Object.keys(map).find(k => name.includes(k));
+  return key ? `/assets/icons/tech/${map[key]}` : null;
+};
+
+// Map skill descriptions to tech names - moved outside component (constant)
+const SKILL_TO_TECH_MAP: Record<string, string[]> = {
+  'wwise & fmod integration': ['Wwise', 'FMOD'],
+  'unity & unreal engine': ['Unity', 'Unreal Engine 5'],
+  'metasounds (unreal engine)': ['MetaSounds', 'Unreal Engine 5'],
+  'spatial audio / 3d audio': ['3D Audio'],
+  'c# scripting (unity)': ['C#', 'Unity'],
+  'c++ (juce framework)': ['C++', 'JUCE'],
+  'blueprint scripting (unreal)': ['Blueprints', 'Unreal Engine 5'],
+  'python audio tools': ['Python'],
+  'interactive music systems': ['Wwise', 'FMOD'],
+  'adaptive soundscapes': ['Wwise', 'FMOD', '3D Audio'],
+  'voice management & optimization': ['Wwise', 'FMOD'],
+  'memory budget management': ['Wwise', 'FMOD', 'Unreal Engine 5'],
+  'music composition': ['Logic Pro', 'Cubase', 'Studio One'],
+  'sound design': ['Reaper', 'Logic Pro'],
+  'mixing & mastering': ['Reaper', 'Logic Pro', 'iZotope'],
+  'field recording': ['Reaper'],
+  'foley work': ['Reaper'],
+  '5.1 surround mixing': ['Reaper', 'Logic Pro'],
+  'horror sound design': ['Reaper', 'Logic Pro'],
+  'real-time dsp': ['C++', 'JUCE', 'Pure Data'],
+  'audio plugins (vst)': ['JUCE', 'C++'],
+  'machine learning for audio': ['Python']
+};
 
 const SkillsNetwork = () => {
   const { core_skills } = usePortfolioData();
@@ -103,33 +156,7 @@ const SkillsNetwork = () => {
     setNodes(calculatedNodes);
   }, [calculatedNodes]);
 
-  const getIconPath = (skillName: string) => {
-    const name = skillName.toLowerCase().replace(/[\s.]/g, '');
-    const map: Record<string, string> = {
-      'c++': 'cpplogo.png',
-      'cpp': 'cpplogo.png',
-      'c#': 'csharplogo.png',
-      'csharp': 'csharplogo.png',
-      'unreal': 'Unreal_Engine-Logo.wine.png',
-      'ue5': 'Unreal_Engine-Logo.wine.png',
-      'unity': 'Unitylogo.png',
-      'wwise': 'wwiselogo.png',
-      'fmod': 'fmodlogo.png',
-      'python': 'pythonlogo.png',
-      'reaper': 'REAPER_logo.png',
-      'perforce': 'Perforcelogo.png',
-      'git': 'github.png',
-      'github': 'github.png',
-      'juce': 'JUCE_Logo.png',
-      'puredata': 'puredatalogo.png',
-      '3daudio': '3DAudio.png',
-      'spatialaudio': '3DAudio.png'
-    };
-    const key = Object.keys(map).find(k => name.includes(k));
-    return key ? `/assets/icons/tech/${map[key]}` : null;
-  };
-
-  const getConnectionPath = (from: Node, to: Node): string => {
+  const getConnectionPath = useCallback((from: Node, to: Node): string => {
     const dx = to.x - from.x;
     const dy = to.y - from.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -144,46 +171,20 @@ const SkillsNetwork = () => {
     const controlY = midY + perpY * curvature;
     
     return `M ${from.x} ${from.y} Q ${controlX} ${controlY} ${to.x} ${to.y}`;
-  };
-
-  // Map skill descriptions to tech names in TECH_CONNECTIONS
-  const skillToTechMap: Record<string, string[]> = {
-    'wwise & fmod integration': ['Wwise', 'FMOD'],
-    'unity & unreal engine': ['Unity', 'Unreal Engine 5'],
-    'metasounds (unreal engine)': ['MetaSounds', 'Unreal Engine 5'],
-    'spatial audio / 3d audio': ['3D Audio'],
-    'c# scripting (unity)': ['C#', 'Unity'],
-    'c++ (juce framework)': ['C++', 'JUCE'],
-    'blueprint scripting (unreal)': ['Blueprints', 'Unreal Engine 5'],
-    'python audio tools': ['Python'],
-    'interactive music systems': ['Wwise', 'FMOD'],
-    'adaptive soundscapes': ['Wwise', 'FMOD', '3D Audio'],
-    'voice management & optimization': ['Wwise', 'FMOD'],
-    'memory budget management': ['Wwise', 'FMOD', 'Unreal Engine 5'],
-    'music composition': ['Logic Pro', 'Cubase', 'Studio One'],
-    'sound design': ['Reaper', 'Logic Pro'],
-    'mixing & mastering': ['Reaper', 'Logic Pro', 'iZotope'],
-    'field recording': ['Reaper'],
-    'foley work': ['Reaper'],
-    '5.1 surround mixing': ['Reaper', 'Logic Pro'],
-    'horror sound design': ['Reaper', 'Logic Pro'],
-    'real-time dsp': ['C++', 'JUCE', 'Pure Data'],
-    'audio plugins (vst)': ['JUCE', 'C++'],
-    'machine learning for audio': ['Python']
-  };
+  }, []);
 
   // Extract tech names from skill description
-  const extractTechNames = (skillName: string): string[] => {
+  const extractTechNames = useCallback((skillName: string): string[] => {
     const lower = skillName.toLowerCase().trim();
     
     // Check direct mapping
-    if (skillToTechMap[lower]) {
-      return skillToTechMap[lower];
+    if (SKILL_TO_TECH_MAP[lower]) {
+      return SKILL_TO_TECH_MAP[lower];
     }
-    
+
     // Try to find keywords
     const found: string[] = [];
-    for (const [key, techs] of Object.entries(skillToTechMap)) {
+    for (const [key, techs] of Object.entries(SKILL_TO_TECH_MAP)) {
       if (lower.includes(key.split(' ')[0]) || key.split(' ').some(word => lower.includes(word))) {
         found.push(...techs);
       }
@@ -198,11 +199,11 @@ const SkillsNetwork = () => {
         }
       }
     }
-    
-    return found.length > 0 ? found : [];
-  };
 
-  const getConnectedNodes = (nodeId: string): Node[] => {
+    return found.length > 0 ? found : [];
+  }, []);
+
+  const getConnectedNodes = useCallback((nodeId: string): Node[] => {
     const node = nodes.find(n => n.id === nodeId);
     if (!node) return [];
     
@@ -269,9 +270,9 @@ const SkillsNetwork = () => {
       
       return false;
     });
-    
+
     return connectedNodes;
-  };
+  }, [nodes, extractTechNames]);
 
   const visibleConnections = hoveredNode 
     ? getConnectedNodes(hoveredNode)
