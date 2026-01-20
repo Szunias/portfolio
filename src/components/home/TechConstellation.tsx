@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { memo } from 'react';
 import { TECH_ICON_MAP, TECH_CATEGORIES } from '../../constants/techData';
 import { Cpu, Code2, Music, Wrench, LucideIcon } from 'lucide-react';
 
@@ -14,6 +15,14 @@ const ICON_MAP: Record<string, LucideIcon> = {
   tools: Wrench
 };
 
+// Map accent colors to Tailwind classes
+const ACCENT_COLOR_CLASSES: Record<string, string> = {
+  '#ef4444': 'text-red-500',
+  '#3b82f6': 'text-blue-500',
+  '#a855f7': 'text-purple-500',
+  '#eab308': 'text-yellow-500',
+};
+
 const TechConstellation = ({ onSelect }: TechConstellationProps) => {
   const { t } = useTranslation();
 
@@ -21,6 +30,7 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {TECH_CATEGORIES.map((category, index) => {
         const Icon = ICON_MAP[category.id] || Cpu;
+        const iconColorClass = ACCENT_COLOR_CLASSES[category.accentColor] || 'text-accent';
         
         return (
           <motion.div
@@ -33,7 +43,7 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
           >
             <div className="flex items-center gap-4 mb-6 border-b border-white/5 pb-4">
                 <div className="p-3 rounded-lg bg-white/5">
-                    <Icon size={24} style={{ color: category.accentColor }} />
+                    <Icon size={24} className={iconColorClass} />
                 </div>
                 <div>
                     <h3 className="text-lg font-bold text-white tracking-wide group-hover:text-accent transition-colors duration-300">
@@ -77,4 +87,4 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
   );
 };
 
-export default TechConstellation;
+export default memo(TechConstellation);

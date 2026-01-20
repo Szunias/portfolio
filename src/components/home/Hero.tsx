@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useMemo, useRef, memo } from 'react';
 
 interface Shape {
   id: number;
@@ -175,6 +175,9 @@ const ShapeComponent = ({
   );
 };
 
+// Memoize ShapeComponent to prevent unnecessary re-renders
+const MemoizedShapeComponent = memo(ShapeComponent);
+
 const Hero = () => {
   const { t } = useTranslation();
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -341,9 +344,9 @@ const Hero = () => {
             className="relative h-[300px] sm:h-[400px] lg:h-[500px]"
           >
             {shapes.map((shape) => (
-              <ShapeComponent 
-                key={shape.id} 
-                shape={shape} 
+              <MemoizedShapeComponent
+                key={shape.id}
+                shape={shape}
                 mousePos={mousePos}
                 containerCenter={containerCenter}
                 isInRange={isInRange}

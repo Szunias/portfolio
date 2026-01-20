@@ -73,7 +73,7 @@ const GenericBlock = ({ block }: { block: ContentBlock }) => {
         <div className="border-l-2 border-accent/20 pl-6 md:pl-10 py-2 my-8">
             {block.title && <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3"><Cpu size={20} className="text-accent" /> {t(block.title, block.title)}</h3>}
             {block.content && (
-                <div 
+                <div
                     className="prose prose-invert max-w-none text-slate-300 leading-relaxed mb-8"
                     dangerouslySetInnerHTML={{ __html: t(block.content, block.content) }}
                 />

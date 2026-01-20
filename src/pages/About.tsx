@@ -79,7 +79,7 @@ const About = () => {
                         className="lg:col-span-4 flex justify-center"
                     >
                         {/* HARD CONSTRAINT CONTAINER */}
-                        <div style={{ width: '160px', height: '210px' }} className="relative flex-shrink-0 opacity-90 hover:opacity-100 transition-opacity sm:w-[180px] sm:h-[240px] lg:w-[220px] lg:h-[290px]">
+                        <div className="relative flex-shrink-0 opacity-90 hover:opacity-100 transition-opacity w-[160px] h-[210px] sm:w-[180px] sm:h-[240px] lg:w-[220px] lg:h-[290px]">
                             {/* Tech Borders - Enhanced */}
                             <div className="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-accent/60 shadow-[0_0_10px_rgba(56,189,248,0.3)] group-hover:border-accent group-hover:shadow-[0_0_20px_rgba(56,189,248,0.5)] transition-all duration-500"></div>
                             <div className="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-accent/60 shadow-[0_0_10px_rgba(56,189,248,0.3)] group-hover:border-accent group-hover:shadow-[0_0_20px_rgba(56,189,248,0.5)] transition-all duration-500"></div>

@@ -13,13 +13,21 @@ const AudioPlayer = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [prevVolume, setPrevVolume] = useState(volume);
   const [visualizerData, setVisualizerData] = useState<number[]>(new Array(20).fill(5));
-  
-  // Mock Visualizer
+
+  // Simulated audio visualizer (mock)
+  // Note: Real audio visualization would require Web Audio API with createMediaElementSource
+  // which is blocked by CORS for cross-origin audio. This mock provides visual feedback.
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
     if (isPlaying) {
         interval = setInterval(() => {
-            const newData = new Array(20).fill(0).map(() => Math.random() * 40 + 5);
+            // Generate more realistic-looking frequency data
+            const newData = new Array(20).fill(0).map((_, i) => {
+                // Create a wave pattern with some randomness
+                const wave = Math.sin(Date.now() / 200 + i * 0.5) * 15 + 25;
+                const random = Math.random() * 20;
+                return Math.max(5, Math.min(100, wave + random));
+            });
             setVisualizerData(newData);
         }, 100);
     } else {
@@ -32,7 +40,7 @@ const AudioPlayer = () => {
   if (!currentTrack || !isPlayerVisible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-primary/95 backdrop-blur-2xl border-t border-white/10 z-50 h-20 sm:h-20 flex items-center px-3 sm:px-6 md:px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.6)] shadow-[0_0_30px_rgba(56,189,248,0.1)]">
+    <div className="fixed bottom-0 left-0 right-0 bg-primary/95 backdrop-blur-2xl border-t border-white/10 z-50 h-20 flex items-center px-3 sm:px-6 md:px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.6),0_0_30px_rgba(56,189,248,0.1)]">
       {/* Progress Bar (Top Line) */}
       <div 
         className="absolute top-0 left-0 right-0 h-1 hover:h-2.5 bg-white/5 cursor-pointer group transition-all duration-200 ease-out z-50"

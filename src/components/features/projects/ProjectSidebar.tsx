@@ -24,7 +24,7 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
                 {project.team_size && (
                     <div className="col-span-1">
                         <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
-                            <Users size={10} /> Team
+                            <Users size={12} /> Team
                         </div>
                         <div className="text-white font-bold">{project.team_size} Members</div>
                     </div>
@@ -32,7 +32,7 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
                 {project.engine && (
                     <div className="col-span-1">
                         <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
-                            <Gamepad2 size={10} /> Engine
+                            <Gamepad2 size={12} /> Engine
                         </div>
                         <div className="text-white font-bold">{project.engine}</div>
                     </div>
@@ -40,7 +40,7 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
                 {project.platforms && (
                     <div className="col-span-2">
                         <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
-                            <Monitor size={10} /> Platforms
+                            <Monitor size={12} /> Platforms
                         </div>
                         <div className="text-white text-sm">{project.platforms.join(', ')}</div>
                     </div>
