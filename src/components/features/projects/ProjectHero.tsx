@@ -35,7 +35,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                     media.thumbnail.endsWith('.mp4') ? (
                         <video src={`/${media.thumbnail}`} className="w-full h-full object-cover opacity-40" autoPlay loop muted playsInline />
                     ) : (
-                        <img src={`/${media.thumbnail}`} alt="" className="w-full h-full object-cover opacity-30" />
+                        <img src={`/${media.thumbnail}`} alt="" role="presentation" aria-hidden="true" className="w-full h-full object-cover opacity-30" />
                     )
                 ) : (
                     <div className="w-full h-full bg-neutral-900" />

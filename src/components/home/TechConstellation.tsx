@@ -57,10 +57,12 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
                             className="flex items-center gap-2 pl-2 pr-3 py-2 rounded-md bg-white/5 hover:bg-white/10 border border-white/5 hover:border-accent/30 hover:shadow-[0_0_15px_rgba(56,189,248,0.1)] transition-all group cursor-pointer"
                         >
                              {iconPath && (
-                                <img 
-                                    src={iconPath} 
-                                    alt="" 
-                                    className="w-4 h-4 object-contain opacity-70 group-hover:opacity-100 transition-opacity" 
+                                <img
+                                    src={iconPath}
+                                    alt=""
+                                    role="presentation"
+                                    aria-hidden="true"
+                                    className="w-4 h-4 object-contain opacity-70 group-hover:opacity-100 transition-opacity"
                                 />
                             )}
                             <span className="text-sm text-slate-300 group-hover:text-accent font-medium transition-colors duration-300">{tech}</span>

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { usePortfolioData } from '../../hooks/usePortfolioData';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -52,8 +52,9 @@ const SkillsNetwork = () => {
     return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
-  useEffect(() => {
-    if (dimensions.width === 0 || dimensions.height === 0) return;
+  // Calculate node positions based on dimensions and skills
+  const calculatedNodes = useMemo(() => {
+    if (dimensions.width === 0 || dimensions.height === 0) return [];
 
     const newNodes: Node[] = [];
     const categories = Object.entries(core_skills);
@@ -94,8 +95,13 @@ const SkillsNetwork = () => {
       });
     });
 
-    setNodes(newNodes);
+    return newNodes;
   }, [core_skills, dimensions]);
+
+  // Update nodes state when calculated nodes change
+  useEffect(() => {
+    setNodes(calculatedNodes);
+  }, [calculatedNodes]);
 
   const getIconPath = (skillName: string) => {
     const name = skillName.toLowerCase().replace(/[\s.]/g, '');

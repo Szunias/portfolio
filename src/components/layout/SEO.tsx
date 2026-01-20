@@ -15,7 +15,7 @@ const SEO = ({
   title, 
   description, 
   type = 'website',
-  image = '/assets/cv/pieknyportret.png', // Corrected path to main portrait
+  image = '/assets/cv-image/cvsmile.jpg', // Corrected path to main portrait
   url
 }: SEOProps) => {
   const { i18n } = useTranslation();

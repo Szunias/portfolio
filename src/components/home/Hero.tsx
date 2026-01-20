@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 
 interface Shape {
   id: number;
@@ -23,35 +23,33 @@ const shapes: Shape[] = [
   { id: 6, type: 'circle', size: 80, color: '#a855f7', depth: 5, baseRotation: 0, rotationMode: 'normal' },
 ];
 
-const ShapeComponent = ({ 
-  shape, 
+const ShapeComponent = ({
+  shape,
   mousePos,
   containerCenter,
   isInRange
-}: { 
-  shape: Shape; 
+}: {
+  shape: Shape;
   mousePos: { x: number; y: number };
   containerCenter: { x: number; y: number };
   isInRange: boolean;
 }) => {
-  const [rotation, setRotation] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    // If mouse is not in range, smoothly return to neutral
+  // Derive rotation directly from props using useMemo
+  const rotation = useMemo(() => {
+    // Return neutral if not in range
     if (!isInRange) {
-      setRotation({ x: 0, y: 0 });
-      return;
+      return { x: 0, y: 0 };
     }
 
     const deltaX = mousePos.x - containerCenter.x;
     const deltaY = mousePos.y - containerCenter.y;
-    
+
     const depthScale = 1 + shape.depth * 0.25;
     const maxRotation = 45;
-    
+
     let rotateX = 0;
     let rotateY = 0;
-    
+
     switch (shape.rotationMode) {
       case 'normal':
         rotateY = (deltaX / 8) * depthScale;
@@ -78,11 +76,11 @@ const ShapeComponent = ({
         rotateX = (deltaY / 6) * depthScale;
         break;
     }
-    
+
     rotateX = Math.max(-maxRotation, Math.min(maxRotation, rotateX));
     rotateY = Math.max(-maxRotation, Math.min(maxRotation, rotateY));
-    
-    setRotation({ x: rotateX, y: rotateY });
+
+    return { x: rotateX, y: rotateY };
   }, [mousePos, containerCenter, shape.depth, shape.rotationMode, isInRange]);
 
   const renderShape = () => {
