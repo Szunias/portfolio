@@ -7,7 +7,7 @@ const Hero = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-[#050505] bg-dots-grid">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-[#050505]">
       {/* Subtle background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] via-[#050505] to-[#0a0a0f]" />
 

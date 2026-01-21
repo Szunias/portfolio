@@ -1,230 +1,262 @@
 import { useState } from 'react';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 import { useTranslation } from 'react-i18next';
-import { MapPin, Zap, BookOpen, Cpu, Globe, Download } from 'lucide-react';
+import { MapPin, Mail, Download, Calendar, ExternalLink, Github, Linkedin } from 'lucide-react';
 import { motion } from 'framer-motion';
-import Modal from '../components/ui/Modal';
 import SEO from '../components/layout/SEO';
-import TechConstellation from '../components/home/TechConstellation';
 
 const About = () => {
     const { personal_info, professional_summary } = usePortfolioData();
     const { t } = useTranslation();
-    const [selectedTech, setSelectedTech] = useState<string | null>(null);
 
-    const getTechDescription = (name: string): string => {
-        if (!name) return "";
-
-        // Direct mapping of tech names to translation keys
-        const techKeyMap: Record<string, string> = {
-            'Wwise': 'tech_wwise_desc',
-            'FMOD': 'tech_fmod_desc',
-            'MetaSounds': 'tech_metasounds_desc',
-            '3D Audio': 'tech_3daudio_desc',
-            'Unreal Engine 5': 'tech_unreal_desc',
-            'Unity': 'tech_unity_desc',
-            'C++': 'tech_cpp_desc',
-            'C#': 'tech_csharp_desc',
-            'Python': 'tech_python_desc',
-            'Blueprints': 'tech_blueprints_desc',
-            'JUCE': 'tech_juce_desc',
-            'Pure Data': 'tech_puredata_desc',
-            'Reaper': 'tech_reaper_desc',
-            'Logic Pro': 'tech_logic_desc',
-            'iZotope RX': 'tech_izotoperx_desc',
-            'GitHub': 'tech_github_desc',
-            'Perforce': 'tech_perforce_desc',
-        };
-
-        const translationKey = techKeyMap[name];
-        if (translationKey) {
-            const translated = t(translationKey, { defaultValue: '' });
-            if (translated && translated !== translationKey) return translated;
+    // Skills categories
+    const skillCategories = [
+        {
+            title: t('skills_category_middleware', 'Audio Middleware'),
+            items: ['Wwise', 'FMOD', 'MetaSounds', 'Unity Audio']
+        },
+        {
+            title: t('skills_category_engines', 'Game Engines'),
+            items: ['Unreal Engine 5', 'Unity', 'Godot']
+        },
+        {
+            title: t('skills_category_programming', 'Programming'),
+            items: ['C++', 'C#', 'Python', 'Blueprints']
+        },
+        {
+            title: t('skills_category_audio', 'Audio Tools'),
+            items: ['Reaper', 'Pro Tools', 'Logic Pro', 'iZotope RX']
+        },
+        {
+            title: t('skills_category_other', 'Other'),
+            items: ['JUCE', 'Pure Data', 'Git', 'Perforce']
         }
-
-        return t('tech_desc_default', 'Production proficiency and production experience.');
-    };
+    ];
 
     const timelineItems = [
-        { title: t('timeline_dae_title', 'Howest DAE'), role: t('timeline.role_game_dev', 'Game Development'), date: t('timeline.present', 'Present'), color: 'text-accent' },
-        { title: t('timeline_hs_title', 'High School'), role: t('timeline.role_math_phys', 'Maths & Physics'), date: t('timeline.graduated', 'Graduated'), color: 'text-slate-500' },
-        { title: t('timeline_piano_title', 'Music School'), role: t('timeline.role_piano', 'Classical Piano'), date: t('timeline.graduated', 'Graduated'), color: 'text-slate-500' }
+        {
+            title: t('timeline_dae_title', 'Howest DAE'),
+            role: t('timeline.role_game_dev', 'Game Development'),
+            period: '2022 - Present',
+            description: t('timeline_dae_desc', 'Bachelor in Game Development focusing on game audio and implementation')
+        },
+        {
+            title: t('timeline_hs_title', 'High School'),
+            role: t('timeline.role_math_phys', 'Maths & Physics'),
+            period: '2018 - 2022',
+            description: t('timeline_hs_desc', 'Advanced secondary education with focus on sciences')
+        },
+        {
+            title: t('timeline_piano_title', 'Music School'),
+            role: t('timeline.role_piano', 'Classical Piano'),
+            period: '2012 - 2020',
+            description: t('timeline_piano_desc', '8 years of classical piano education and music theory')
+        }
     ];
 
     return (
-        <div className="min-h-screen text-white overflow-x-hidden">
+        <div className="min-h-screen bg-[#050505]">
             <SEO
                 title={t('nav.about', 'About')}
                 description={t('about_page_description', professional_summary.short_bio)}
             />
 
-            {/* Ambient Background - Enhanced */}
-            <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-[50vw] h-[50vh] bg-accent/8 blur-[120px] rounded-full opacity-40 animate-pulse"></div>
-                <div className="absolute bottom-0 left-0 w-[40vw] h-[40vh] bg-purple-900/8 blur-[100px] rounded-full opacity-30"></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vw] h-[30vh] bg-cyan-500/5 blur-[80px] rounded-full opacity-25"></div>
-            </div>
-
-            {/* Main Content */}
-            <main className="relative z-10 max-w-5xl mx-auto px-6 pt-32 pb-20">
-
-                {/* HERO GRID */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-24 items-start">
-
-                    {/* LEFT: Image Column */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="lg:col-span-4 flex justify-center"
-                    >
-                        {/* HARD CONSTRAINT CONTAINER */}
-                        <div className="relative flex-shrink-0 opacity-90 hover:opacity-100 transition-opacity w-[160px] h-[210px] sm:w-[180px] sm:h-[240px] lg:w-[220px] lg:h-[290px]">
-                            {/* Tech Borders - Enhanced */}
-                            <div className="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-accent/60 shadow-[0_0_10px_rgba(56,189,248,0.3)] group-hover:border-accent group-hover:shadow-[0_0_20px_rgba(56,189,248,0.5)] transition-all duration-500"></div>
-                            <div className="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-accent/60 shadow-[0_0_10px_rgba(56,189,248,0.3)] group-hover:border-accent group-hover:shadow-[0_0_20px_rgba(56,189,248,0.5)] transition-all duration-500"></div>
-                            <div className="absolute bottom-0 left-0 w-8 h-8 border-l-2 border-b-2 border-accent/60 shadow-[0_0_10px_rgba(56,189,248,0.3)] group-hover:border-accent group-hover:shadow-[0_0_20px_rgba(56,189,248,0.5)] transition-all duration-500"></div>
-                            <div className="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 border-accent/60 shadow-[0_0_10px_rgba(56,189,248,0.3)] group-hover:border-accent group-hover:shadow-[0_0_20px_rgba(56,189,248,0.5)] transition-all duration-500"></div>
-
-                            {/* Image Container */}
-                            <div className="absolute inset-4 overflow-hidden bg-neutral-900 group">
-                                <img
-                                    src="/assets/cv-image/cvsmile.jpg"
-                                    alt="Igor Szuniewicz"
-                                    className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-105"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
-
-                                {/* Overlay Data */}
-                                <div className="absolute bottom-4 left-4 font-mono text-[10px] text-accent opacity-80">
-                                    <div>{t('about_id', 'ID')}: IGOR_SZUNIEWICZ</div>
-                                    <div>LOC: {personal_info.location.city.toUpperCase()}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    {/* RIGHT: Bio Column */}
+            {/* Hero Section */}
+            <section className="relative py-24 md:py-32">
+                <div className="max-w-4xl mx-auto px-6">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="lg:col-span-7 flex flex-col justify-center"
+                        transition={{ duration: 0.6 }}
                     >
-                        <div className="mb-8">
-                            <h1 className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl leading-none mb-4 tracking-tight drop-shadow-[0_0_30px_rgba(56,189,248,0.2)]">
-                                IGOR <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-accent/80 to-slate-500 drop-shadow-[0_0_20px_rgba(56,189,248,0.3)]">SZUNIEWICZ</span>
+                        <p className="text-accent font-mono text-sm mb-4 tracking-widest uppercase">
+                            {t('about_header', 'About Me')}
+                        </p>
+                        <div className="flex flex-col sm:flex-row items-start gap-6 mb-8">
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                                Igor Szuniewicz
                             </h1>
-                            <div className="flex items-center gap-3 text-accent font-mono text-sm tracking-widest uppercase">
-                                <span className="w-8 h-px bg-accent shadow-[0_0_10px_rgba(56,189,248,0.5)]"></span>
-                                {t('about_role', 'Audio Designer & Developer')}
+                            <img
+                                src="/assets/cv-image/cvsmile.jpg"
+                                alt="Igor Szuniewicz"
+                                className="w-16 h-16 rounded-xl object-cover border-2 border-white/10"
+                            />
+                        </div>
+                        <p className="text-xl text-slate-300 font-medium mb-4">
+                            {t('about_role', 'Audio Designer & Developer')}
+                        </p>
+                        <p className="text-slate-400 leading-relaxed mb-8 max-w-2xl">
+                            {t('about_bio', professional_summary.extended_bio)}
+                        </p>
+
+                        {/* Quick info */}
+                        <div className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-slate-400 mb-8">
+                            <div className="flex items-center gap-2">
+                                <MapPin size={16} className="text-accent" />
+                                {personal_info.location.city}, {personal_info.location.country}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Mail size={16} className="text-accent" />
+                                {personal_info.email}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-green-500" />
+                                {personal_info.availability.status.includes('internship')
+                                    ? t('status_looking_internship', 'Available for internship')
+                                    : personal_info.availability.status}
                             </div>
                         </div>
 
-                        {/* System Properties Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10 border-y border-white/5 py-6">
-                            <div className="flex flex-col gap-1">
-                                <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">{t('about_section_location', 'Location')}</span>
-                                <div className="flex items-center gap-2 text-sm text-slate-200">
-                                    <MapPin size={14} className="text-accent" />
-                                    {personal_info.location.city}
-                                </div>
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">{t('about_section_status', 'Status')}</span>
-                                <div className="flex items-center gap-2 text-sm text-slate-200">
-                                    <Zap size={14} className="text-green-500" />
-                                    {personal_info.availability.status.includes('internship')
-                                        ? t('status_looking_internship', 'Looking for Internship')
-                                        : personal_info.availability.status}
-                                </div>
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">{t('about_section_mobility', 'Mobility')}</span>
-                                <div className="flex items-center gap-2 text-sm text-slate-200">
-                                    <Globe size={14} className="text-blue-400" />
-                                    {t('about_open_relocation', 'Open to Relocation')}
-                                </div>
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">{t('about_section_dossier', 'Dossier')}</span>
-                                <a href="/cv/Igor_Szuniewicz_CV.pdf" target="_blank" className="flex items-center gap-2 text-sm text-accent hover:text-white transition-colors cursor-pointer w-fit">
-                                    <Download size={14} />
-                                    Download CV
-                                </a>
-                            </div>
-                        </div>
-
-                        <div className="prose prose-invert max-w-none">
-                            <p className="text-slate-400 text-lg font-light leading-relaxed">
-                                {t('about_bio', professional_summary.extended_bio)}
-                            </p>
+                        {/* CTA Buttons */}
+                        <div className="flex flex-wrap gap-4">
+                            <a
+                                href="/cv/Igor_Szuniewicz_CV.pdf"
+                                target="_blank"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-black font-medium rounded-lg hover:bg-slate-200 transition-colors text-sm"
+                            >
+                                <Download size={16} />
+                                {t('about_download_cv', 'Download CV')}
+                            </a>
+                            <a
+                                href={personal_info.social_media.github}
+                                target="_blank"
+                                className="p-2.5 bg-white/5 border border-white/10 rounded-lg text-slate-400 hover:text-white hover:border-white/20 transition-all"
+                            >
+                                <Github size={18} />
+                            </a>
+                            <a
+                                href={personal_info.social_media.linkedin}
+                                target="_blank"
+                                className="p-2.5 bg-white/5 border border-white/10 rounded-lg text-slate-400 hover:text-white hover:border-white/20 transition-all"
+                            >
+                                <Linkedin size={18} />
+                            </a>
                         </div>
                     </motion.div>
                 </div>
+            </section>
 
-                {/* Technical Skills */}
-                <div className="mb-32">
-                    <div className="flex items-end justify-between mb-12 border-b border-white/10 pb-4">
-                        <h2 className="text-2xl font-display font-bold text-white flex items-center gap-3">
-                            <Cpu className="text-accent" size={24} />
-                            {t('skills.title', 'Technical Skills')}
+            {/* Skills Section */}
+            <section className="py-24 border-t border-white/5">
+                <div className="max-w-6xl mx-auto px-6">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="mb-16"
+                    >
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                            {t('skills.title', 'Skills & Expertise')}
                         </h2>
-                    </div>
-                    <TechConstellation onSelect={setSelectedTech} />
-                </div>
+                        <p className="text-slate-400 max-w-xl">
+                            {t('skills.subtitle', 'Tools and technologies I use to create immersive audio experiences')}
+                        </p>
+                    </motion.div>
 
-                {/* TIMELINE (Career Log) */}
-                <div className="max-w-4xl mx-auto">
-                    <div className="flex items-end justify-between mb-12 border-b border-white/10 pb-4">
-                        <h2 className="text-2xl font-display font-bold text-white flex items-center gap-3">
-                            <BookOpen className="text-accent" size={24} />
-                            {t('about_education_title', 'EXECUTION LOG')}
-                        </h2>
-                    </div>
-
-                    <div className="space-y-0">
-                        {timelineItems.map((item, i) => (
-                            <div key={i} className="group relative flex gap-8 pb-12 last:pb-0">
-                                {/* Left: Trace Line */}
-                                <div className="absolute left-[7px] top-2 bottom-0 w-px bg-white/10 group-last:hidden"></div>
-                                <div className={`relative z-10 w-4 h-4 rounded-full border-2 border-[#020202] ${item.color === 'text-accent' ? 'bg-accent shadow-[0_0_15px_rgba(56,189,248,0.6)]' : 'bg-slate-700'} mt-1.5 group-hover:scale-125 group-hover:shadow-[0_0_20px_rgba(56,189,248,0.8)] transition-all duration-300`}></div>
-
-                                {/* Right: Content */}
-                                <div className="flex-1">
-                                    <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-2">
-                                        <h3 className="text-xl font-bold text-white group-hover:text-accent group-hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.4)] transition-all duration-300">
-                                            {item.title}
-                                        </h3>
-                                        <span className="font-mono text-xs text-slate-500 uppercase tracking-widest bg-white/5 px-2 py-1 rounded">
-                                            {item.date}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {skillCategories.map((category, idx) => (
+                            <motion.div
+                                key={category.title}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: idx * 0.1 }}
+                                className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-colors"
+                            >
+                                <h3 className="text-white font-semibold mb-4">{category.title}</h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {category.items.map((skill) => (
+                                        <span
+                                            key={skill}
+                                            className="px-3 py-1.5 bg-white/5 rounded-lg text-sm text-slate-300"
+                                        >
+                                            {skill}
                                         </span>
-                                    </div>
-                                    <p className="text-slate-400 font-light">{item.role}</p>
+                                    ))}
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
                 </div>
+            </section>
 
-            </main>
+            {/* Timeline Section */}
+            <section className="py-24 border-t border-white/5">
+                <div className="max-w-3xl mx-auto px-6">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="mb-16"
+                    >
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                            {t('about_education_title', 'Education')}
+                        </h2>
+                        <p className="text-slate-400">
+                            {t('about_education_subtitle', 'My academic journey and background')}
+                        </p>
+                    </motion.div>
 
-            {/* Tech Detail Modal */}
-            <Modal
-                isOpen={!!selectedTech}
-                onClose={() => setSelectedTech(null)}
-                title={selectedTech || ''}
-            >
-                <div className="flex items-center gap-2 mb-6 text-xs font-mono text-accent uppercase tracking-widest opacity-70">
-                    <div className="w-2 h-2 bg-accent rounded-full animate-pulse"></div>
-                    System Data
+                    <div className="relative">
+                        {/* Timeline line */}
+                        <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-accent/50 via-white/10 to-transparent" />
+
+                        {timelineItems.map((item, idx) => (
+                            <motion.div
+                                key={item.title}
+                                initial={{ opacity: 0, x: idx % 2 === 0 ? -20 : 20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: idx * 0.1 }}
+                                className={`relative flex flex-col md:flex-row gap-8 mb-16 last:mb-0 ${
+                                    idx % 2 === 0 ? 'md:flex-row-reverse' : ''
+                                }`}
+                            >
+                                {/* Dot */}
+                                <div className="absolute left-0 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-accent shadow-[0_0_20px_rgba(56,189,248,0.5)]" />
+
+                                {/* Content */}
+                                <div className="md:w-1/2 md:px-12">
+                                    <span className="text-accent font-mono text-sm mb-2 block">
+                                        {item.period}
+                                    </span>
+                                    <h3 className="text-xl font-bold text-white mb-1">{item.title}</h3>
+                                    <p className="text-slate-400 font-medium mb-3">{item.role}</p>
+                                    <p className="text-slate-500 text-sm">{item.description}</p>
+                                </div>
+
+                                {/* Spacer for alternating layout */}
+                                <div className="hidden md:block md:w-1/2" />
+                            </motion.div>
+                        ))}
+                    </div>
                 </div>
-                <p className="text-slate-300 leading-relaxed whitespace-pre-line font-light">
-                    {selectedTech && getTechDescription(selectedTech)}
-                </p>
-            </Modal>
+            </section>
 
+            {/* CTA Section */}
+            <section className="py-24 border-t border-white/5">
+                <div className="max-w-3xl mx-auto px-6 text-center">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                    >
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                            {t('about_cta_title', "Let's work together")}
+                        </h2>
+                        <p className="text-slate-400 mb-8 max-w-xl mx-auto">
+                            {t('about_cta_subtitle', "I'm always interested in hearing about new projects and opportunities. Feel free to reach out if you'd like to connect.")}
+                        </p>
+                        <a
+                            href="/contact"
+                            className="inline-flex items-center gap-2 px-8 py-4 bg-accent text-black font-semibold rounded-xl hover:bg-accent/80 transition-colors"
+                        >
+                            {t('nav.contact', 'Get In Touch')}
+                            <ExternalLink size={18} />
+                        </a>
+                    </motion.div>
+                </div>
+            </section>
         </div>
     );
 };

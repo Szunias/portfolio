@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Menu, X, Github, Linkedin } from 'lucide-react';
@@ -18,9 +18,8 @@ const Navbar = () => {
   const prevPathnameRef = useRef(location.pathname);
 
   // Close menu on route change
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (prevPathnameRef.current !== location.pathname) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsOpen(false);
       prevPathnameRef.current = location.pathname;
     }

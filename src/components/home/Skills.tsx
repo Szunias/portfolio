@@ -47,14 +47,6 @@ const Skills = () => {
   return (
     <section className="py-24 pb-32 relative overflow-hidden">
 
-      <div
-        className="absolute inset-0 opacity-[0.08]"
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
-          backgroundSize: '32px 32px',
-        }}
-      />
-
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         
         {/* Header */}
