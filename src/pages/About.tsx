@@ -52,7 +52,7 @@ const About = () => {
     ];
 
     return (
-        <div className="min-h-screen text-white overflow-x-hidden bg-stripes-diagonal">
+        <div className="min-h-screen text-white overflow-x-hidden">
             <SEO
                 title={t('nav.about', 'About')}
                 description={t('about_page_description', professional_summary.short_bio)}

@@ -17,7 +17,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen py-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center pt-32 bg-checkerboard">
+    <div className="min-h-screen py-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center pt-32">
       <div className="w-full max-w-5xl">
         
         <div className="text-center mb-16">
