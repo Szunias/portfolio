@@ -61,9 +61,9 @@ const Showreel = () => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto mt-12 mb-20">
+    <div className="w-full max-w-5xl mx-auto my-16">
       {/* Video */}
-      <div className="relative aspect-video rounded-2xl overflow-hidden bg-black group hover:shadow-[0_0_40px_rgba(56,189,248,0.2)] transition-all duration-500">
+      <div className="relative aspect-video rounded-2xl overflow-hidden bg-black">
         {error ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-900">
             <AlertCircle size={48} className="text-red-500 mb-4" />
@@ -93,7 +93,7 @@ const Showreel = () => {
                 aria-label="Play showreel video"
               >
                 <motion.div
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="w-20 h-20 flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-full border border-white/20"
                 >
@@ -105,7 +105,7 @@ const Showreel = () => {
         )}
       </div>
 
-      {/* Chapter Navigation - Minimal */}
+      {/* Chapter Navigation */}
       <div className="mt-6 flex flex-wrap justify-center gap-2">
         {timestamps.map((ts) => {
           const isActive = activeChapter === ts.time;
@@ -115,9 +115,9 @@ const Showreel = () => {
               key={ts.label}
               onClick={() => jumpTo(ts.time)}
               className={`
-                relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-200
+                relative px-4 py-2 rounded-full text-sm font-medium transition-all
                 ${isActive
-                  ? 'bg-accent text-black shadow-[0_0_20px_rgba(56,189,248,0.4)]'
+                  ? 'bg-accent text-black'
                   : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
                 }
               `}
