@@ -118,10 +118,14 @@ const ContentBlockRenderer = ({ blocks }: ContentBlockRendererProps) => {
         <div
           className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 cursor-pointer"
           onClick={() => setLightboxImage(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image lightbox"
         >
           <button
             className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors"
             onClick={() => setLightboxImage(null)}
+            aria-label="Close lightbox"
           >
             <X size={32} />
           </button>

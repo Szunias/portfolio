@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Menu, X, Github, Linkedin } from 'lucide-react';
@@ -14,16 +14,7 @@ const Navbar = () => {
   const location = useLocation();
   const { personal_info } = usePortfolioData();
 
-  // Track previous location to detect route changes
-  const prevPathnameRef = useRef(location.pathname);
-
-  // Close menu on route change
-  useEffect(() => {
-    if (prevPathnameRef.current !== location.pathname) {
-      setIsOpen(false);
-      prevPathnameRef.current = location.pathname;
-    }
-  }, [location.pathname]);
+  const closeMenu = () => setIsOpen(false);
 
   // Close menu on escape key
   useEffect(() => {
@@ -81,8 +72,8 @@ const Navbar = () => {
                 </Link>
               ))}
               <div className="h-4 w-px bg-white/20"></div>
-              <a href={personal_info.social_media.github} className="text-gray-400 hover:text-white"><Github size={16} /></a>
-              <a href={personal_info.social_media.linkedin} className="text-gray-400 hover:text-white"><Linkedin size={16} /></a>
+              <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white"><Github size={16} /></a>
+              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white"><Linkedin size={16} /></a>
               <LanguageSwitcher />
             </div>
 
@@ -119,6 +110,9 @@ const Navbar = () => {
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               className="md:hidden fixed inset-y-0 right-0 w-80 max-w-full z-50 bg-black shadow-2xl flex flex-col pt-20 px-6"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Main navigation menu"
             >
               <div className="flex flex-col gap-2">
                 {navLinks.map((link, index) => (
@@ -130,6 +124,7 @@ const Navbar = () => {
                   >
                     <Link
                       to={link.path}
+                      onClick={closeMenu}
                       className={`text-2xl font-bold py-3 border-b border-gray-800 block ${
                         location.pathname === link.path ? 'text-cyan-400' : 'text-white hover:text-gray-300'
                       }`}
@@ -142,8 +137,8 @@ const Navbar = () => {
 
               <div className="flex items-center justify-between mt-auto mb-8 pt-6 border-t border-gray-800">
                 <div className="flex items-center gap-4">
-                  <a href={personal_info.social_media.github} className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700"><Github size={24} /></a>
-                  <a href={personal_info.social_media.linkedin} className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700"><Linkedin size={24} /></a>
+                  <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700"><Github size={24} /></a>
+                  <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer" className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700"><Linkedin size={24} /></a>
                 </div>
                 <LanguageSwitcher dropUp />
               </div>

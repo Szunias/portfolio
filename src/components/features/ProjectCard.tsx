@@ -161,7 +161,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
       )}
 
       {project.externalLink ? (
-        <a href={project.externalLink} className="block h-full relative z-10">
+        <a href={project.externalLink} target="_blank" rel="noopener noreferrer" className="block h-full relative z-10">
             {cardContent}
         </a>
       ) : (

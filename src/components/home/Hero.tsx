@@ -7,9 +7,13 @@ const Hero = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-[#050505]">
-      {/* Subtle background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] via-[#050505] to-[#0a0a0f]" />
+    <section className="relative min-h-screen flex items-center">
+      {/* Gradient Backgrounds */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-blue-500/8 rounded-full blur-[120px]" />
+        <div className="absolute top-0 left-0 w-[350px] h-[350px] bg-cyan-400/6 rounded-full blur-[100px]" />
+      </div>
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 py-20">
         <div className="max-w-4xl">
@@ -44,7 +48,7 @@ const Hero = () => {
           >
             <Link
               to="/projects"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-medium rounded-lg hover:bg-accent transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-medium rounded-lg hover:bg-slate-200 transition-colors"
             >
               {t('hero.view_work', 'Projects')}
               <ArrowRight size={16} />
@@ -56,7 +60,7 @@ const Hero = () => {
               className="inline-flex items-center gap-2 px-6 py-3 border border-white/20 text-white font-medium rounded-lg hover:border-white/40 transition-colors"
             >
               <Download size={16} />
-              {t('hero_cv_button', 'CV')}
+              {t('hero.cv_button', 'CV')}
             </a>
 
             <Link

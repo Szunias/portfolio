@@ -17,92 +17,105 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen py-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center pt-32">
-      <div className="w-full max-w-5xl">
-        
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-display font-bold text-white mb-4">{t('contact_title', 'Get In Touch')}</h1>
-          <p className="text-dim text-lg max-w-2xl mx-auto">
-            {t('contact_intro', "I'm currently looking for internship opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!")}
-          </p>
-        </div>
+    <div className="min-h-screen">
+      {/* Gradient Backgrounds */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-1/4 left-0 w-96 h-96 bg-blue-500/8 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-purple-500/8 rounded-full blur-[100px]" />
+        <div className="absolute top-0 right-0 w-72 h-72 bg-cyan-400/6 rounded-full blur-[90px]" />
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-           
-           {/* Contact Info Card */}
-           <motion.div 
-             initial={{ opacity: 0, x: -20 }}
-             animate={{ opacity: 1, x: 0 }}
-             className="bg-secondary p-8 rounded-2xl border border-white/10 hover:border-accent/30 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)] transition-all duration-500"
-           >
-              <h2 className="text-2xl font-display font-bold text-white mb-8">{t('contact_info_title', 'Contact Info')}</h2>
-              
-              <div className="space-y-8">
-                 <div className="flex items-start">
-                    <div className="p-3 bg-white/5 rounded-lg text-accent mr-4 border border-white/10 hover:border-accent/50 hover:bg-accent/10 transition-all duration-300">
-                       <Mail size={24} />
-                    </div>
-                    <div>
-                       <p className="text-dim text-xs font-mono uppercase tracking-widest mb-1">{t('contact_info_email', 'Email')}</p>
-                       <div className="flex items-center gap-2">
-                          <a href={`mailto:${personal_info.email}`} className="text-white hover:text-accent transition font-medium text-lg">
-                             {personal_info.email}
-                          </a>
-                          <button 
-                            onClick={copyToClipboard}
-                            className="text-dim hover:text-white transition p-1"
-                            title={t('tooltips.copy_email', 'Copy Email')}
-                          >
-                            {copied ? <Check size={16} className="text-green-500"/> : <Copy size={16}/>}
-                          </button>
-                       </div>
-                    </div>
-                 </div>
+      <div className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center pt-32">
+        <div className="w-full max-w-5xl">
 
-                 <div className="flex items-start">
-                    <div className="p-3 bg-white/5 rounded-lg text-accent mr-4 border border-white/10 hover:border-accent/50 hover:bg-accent/10 transition-all duration-300">
-                       <MapPin size={24} />
-                    </div>
-                    <div>
-                       <p className="text-dim text-xs font-mono uppercase tracking-widest mb-1">{t('contact_info_location', 'Location')}</p>
-                       <p className="text-white font-medium text-lg">
-                         {personal_info.location.city}, {personal_info.location.country}
-                       </p>
-                    </div>
-                 </div>
-              </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-16"
+          >
+            <h1 className="text-4xl font-bold text-white mb-4">{t('contact_title', 'Get In Touch')}</h1>
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+              {t('contact_intro', "I'm currently looking for internship opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!")}
+            </p>
+          </motion.div>
 
-              <div className="mt-12 pt-8 border-t border-white/10">
-                 <h3 className="text-dim text-xs font-mono uppercase tracking-widest mb-4">{t('contact_social_title', 'Find me on')}</h3>
-                 <div className="flex gap-4">
-                    <a 
-                      href={personal_info.social_media.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center w-12 h-12 bg-white/5 border border-white/10 rounded-lg text-dim hover:bg-accent hover:border-accent hover:text-primary hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] transition-all duration-300"
-                    >
-                       <Linkedin size={24} />
-                    </a>
-                    <a 
-                      href={personal_info.social_media.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center w-12 h-12 bg-white/5 border border-white/10 rounded-lg text-dim hover:bg-accent hover:border-accent hover:text-primary hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] transition-all duration-300"
-                    >
-                       <Github size={24} />
-                    </a>
-                 </div>
-              </div>
-           </motion.div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 
-           {/* Functional Contact Form */}
-           <motion.div 
-             initial={{ opacity: 0, x: 20 }}
-             animate={{ opacity: 1, x: 0 }}
-           >
-              <ContactForm />
-           </motion.div>
+             {/* Contact Info Card */}
+             <motion.div
+               initial={{ opacity: 0, x: -20 }}
+               animate={{ opacity: 1, x: 0 }}
+               className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8"
+             >
+                <h2 className="text-xl font-bold text-white mb-8">{t('contact_info_title', 'Contact Info')}</h2>
 
+                <div className="space-y-6">
+                   <div className="flex items-center gap-4">
+                      <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400">
+                         <Mail size={20} />
+                      </div>
+                      <div>
+                         <p className="text-slate-500 text-xs mb-0.5">{t('contact_info_email', 'Email')}</p>
+                         <div className="flex items-center gap-2">
+                            <a href={`mailto:${personal_info.email}`} className="text-white hover:text-blue-400 transition font-medium">
+                              {personal_info.email}
+                            </a>
+                            <button
+                              onClick={copyToClipboard}
+                              className="text-slate-500 hover:text-white transition p-1"
+                              title={t('tooltips.copy_email', 'Copy Email')}
+                            >
+                              {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                            </button>
+                         </div>
+                      </div>
+                   </div>
+
+                   <div className="flex items-center gap-4">
+                      <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400">
+                         <MapPin size={20} />
+                      </div>
+                      <div>
+                         <p className="text-slate-500 text-xs mb-0.5">{t('contact_info_location', 'Location')}</p>
+                         <p className="text-white font-medium">
+                           {personal_info.location.city}, {personal_info.location.country}
+                         </p>
+                      </div>
+                   </div>
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-white/10">
+                   <p className="text-slate-500 text-xs mb-4">{t('contact_social_title', 'Find me on')}</p>
+                   <div className="flex gap-3">
+                      <a
+                        href={personal_info.social_media.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center w-12 h-12 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:bg-blue-500/10 hover:border-blue-500/30 hover:text-blue-400 transition-all"
+                      >
+                         <Linkedin size={20} />
+                      </a>
+                      <a
+                        href={personal_info.social_media.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center w-12 h-12 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:bg-purple-500/10 hover:border-purple-500/30 hover:text-purple-400 transition-all"
+                      >
+                         <Github size={20} />
+                      </a>
+                   </div>
+                </div>
+             </motion.div>
+
+             {/* Contact Form */}
+             <motion.div
+               initial={{ opacity: 0, x: 20 }}
+               animate={{ opacity: 1, x: 0 }}
+             >
+                <ContactForm />
+             </motion.div>
+
+          </div>
         </div>
       </div>
     </div>

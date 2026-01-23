@@ -39,7 +39,7 @@ const TechConstellation = ({ onSelect }: TechConstellationProps) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1, duration: 0.4 }}
-            className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-accent/40 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)] transition-all duration-500 hover:scale-[1.02]"
+            className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-accent/40 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)] transition-all duration-500 hover:scale-[1.02] group"
           >
             <div className="flex items-center gap-4 mb-6 border-b border-white/5 pb-4">
                 <div className="p-3 rounded-lg bg-white/5">

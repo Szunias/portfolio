@@ -3,41 +3,41 @@ import { useTranslation } from 'react-i18next';
 
 // Key technologies with their logos and categories
 const keyTech = [
-  { 
-    name: 'Wwise', 
-    logo: '/assets/icons/tech/wwiselogo.png', 
+  {
+    name: 'Wwise',
+    logo: '/assets/icons/tech/wwiselogo.png',
     category: 'Middleware',
-    invert: true 
+    invert: true
   },
-  { 
-    name: 'FMOD', 
-    logo: '/assets/icons/tech/fmodlogo.png', 
+  {
+    name: 'FMOD',
+    logo: '/assets/icons/tech/fmodlogo.png',
     category: 'Middleware',
-    invert: true 
+    invert: true
   },
-  { 
-    name: 'Unreal Engine', 
-    logo: '/assets/icons/tech/Unreal_Engine-Logo.wine.png', 
+  {
+    name: 'Unreal Engine',
+    logo: '/assets/icons/tech/Unreal_Engine-Logo.wine.png',
     category: 'Engine',
-    invert: true 
+    invert: true
   },
-  { 
-    name: 'Unity', 
-    logo: '/assets/icons/tech/Unitylogo.png', 
+  {
+    name: 'Unity',
+    logo: '/assets/icons/tech/Unitylogo.png',
     category: 'Engine',
-    invert: true 
+    invert: true
   },
-  { 
-    name: 'C++', 
-    logo: '/assets/icons/tech/cpplogo.png', 
+  {
+    name: 'C++',
+    logo: '/assets/icons/tech/cpplogo.png',
     category: 'Code',
-    invert: false 
+    invert: false
   },
-  { 
-    name: 'Python', 
-    logo: '/assets/icons/tech/pythonlogo.png', 
+  {
+    name: 'Python',
+    logo: '/assets/icons/tech/pythonlogo.png',
     category: 'Code',
-    invert: false 
+    invert: false
   },
 ];
 
@@ -46,11 +46,16 @@ const Skills = () => {
 
   return (
     <section className="py-24 pb-32 relative overflow-hidden">
+      {/* Gradient Backgrounds */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[200px]" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[150px]" />
+      </div>
 
       <div className="max-w-6xl mx-auto px-6 relative z-10">
-        
+
         {/* Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -59,7 +64,7 @@ const Skills = () => {
           <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-4 tracking-tight">
             {t('skills.title', 'Tech Stack')}
           </h2>
-          <p className="text-dim text-lg max-w-xl mx-auto">
+          <p className="text-slate-400 text-lg max-w-xl mx-auto">
             {t('skills.subtitle', 'Core tools I use for game audio implementation and development')}
           </p>
         </motion.div>
@@ -73,22 +78,22 @@ const Skills = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="group relative bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-8 hover:border-accent/40 hover:bg-white/[0.04] transition-all duration-500"
+              className="group bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 hover:border-accent/40 hover:bg-white/[0.08] transition-all duration-500"
             >
               {/* Category label */}
-              <span className="absolute top-4 right-4 text-[10px] font-mono text-dim uppercase tracking-wider">
+              <span className="absolute top-4 right-4 text-[10px] font-mono text-slate-500 uppercase tracking-wider">
                 {tech.category}
               </span>
-              
+
               {/* Logo */}
               <div className="flex items-center justify-center h-20 md:h-24 mb-4">
-                <img 
-                  src={tech.logo} 
+                <img
+                  src={tech.logo}
                   alt={tech.name}
                   className={`h-16 md:h-20 w-auto object-contain transition-all duration-500 opacity-60 group-hover:opacity-100 ${tech.invert ? 'invert brightness-200' : ''}`}
                 />
               </div>
-              
+
               {/* Name */}
               <h3 className="text-center text-lg font-semibold text-white/80 group-hover:text-white transition-colors">
                 {tech.name}
@@ -105,13 +110,13 @@ const Skills = () => {
           transition={{ delay: 0.4 }}
           className="border-t border-white/10 pt-12"
         >
-          <h3 className="text-center text-sm font-mono text-dim uppercase tracking-widest mb-8">
+          <h3 className="text-center text-sm font-mono text-slate-500 uppercase tracking-widest mb-8">
             {t('skills.also', 'Also experienced with')}
           </h3>
-          
+
           <div className="flex flex-wrap justify-center gap-3">
             {[
-              'MetaSounds', 'Blueprints', 'C#', 'Reaper', 'Pro Tools', 
+              'MetaSounds', 'Blueprints', 'C#', 'Reaper', 'Pro Tools',
               'Sound Design', 'Mixing', '3D Audio', 'JUCE', 'DSP'
             ].map((skill, index) => (
               <motion.span
@@ -120,7 +125,7 @@ const Skills = () => {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.5 + index * 0.05 }}
-                className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm text-dim hover:text-white hover:border-accent/30 transition-all cursor-default"
+                className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm text-slate-400 hover:text-white hover:border-accent/30 transition-all cursor-default"
               >
                 {skill}
               </motion.span>
