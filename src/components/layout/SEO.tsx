@@ -1,32 +1,22 @@
 'use client';
 
-import { Helmet } from 'react-helmet-async';
 import { useLocale } from 'next-intl';
 import { usePathname } from 'next/navigation';
+import Script from 'next/script';
 
 interface SEOProps {
   title?: string;
   description?: string;
-  type?: 'website' | 'article';
-  name?: string;
-  image?: string;
-  url?: string;
 }
 
 const SEO = ({
   title,
   description,
-  type = 'website',
-  image = '/assets/cv-image/cvsmile.jpg', // Corrected path to main portrait
-  url
 }: SEOProps) => {
   const locale = useLocale();
   const pathname = usePathname();
-  const siteTitle = "Igor Szuniewicz | Audio Designer & Developer";
   const defaultDescription = "Portfolio of Igor Szuniewicz - Audio Designer & Developer specializing in Game Audio, Wwise/FMOD implementation, and Interactive Systems.";
 
-  // Jeśli podano tytuł, dodaj sufiks strony, w przeciwnym razie użyj domyślnego
-  const fullTitle = title ? `${title} | Igor Szuniewicz` : siteTitle;
   const metaDescription = description || defaultDescription;
 
   // SSR-safe URL handling
@@ -34,12 +24,11 @@ const SEO = ({
     if (typeof window !== 'undefined') {
       return window.location.origin;
     }
-    return 'https://igorszuniewicz.github.io'; // Fallback for SSR
+    return 'https://igorszuniewicz.github.io';
   };
 
   const baseUrl = getBaseUrl();
-  const currentUrl = url || (typeof window !== 'undefined' ? window.location.href : `${baseUrl}${pathname}`);
-  const imageUrl = image.startsWith('http') ? image : `${baseUrl}${image}`;
+  const imageUrl = `${baseUrl}/assets/cv-image/cvsmile.jpg`;
 
   // Structured Data (JSON-LD) for better SEO
   const structuredData = {
@@ -64,46 +53,12 @@ const SEO = ({
     ]
   };
 
-  // Get locale for Open Graph
-  const getOgLocale = (locale: string) => {
-    const localeMap: Record<string, string> = {
-      'pl': 'pl_PL',
-      'nl': 'nl_NL',
-      'en': 'en_US'
-    };
-    return localeMap[locale] || 'en_US';
-  };
-
   return (
-    <Helmet>
-      {/* Standard Metadata */}
-      <title>{fullTitle}</title>
-      <meta name="description" content={metaDescription} />
-      <meta name="author" content="Igor Szuniewicz" />
-      <meta name="keywords" content="Audio Designer, Game Audio, Wwise, FMOD, Unreal Engine, Sound Design, Audio Programming, Interactive Audio" />
-      <html lang={locale} />
-
-      {/* Open Graph / Facebook / LinkedIn */}
-      <meta property="og:type" content={type} />
-      <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={metaDescription} />
-      <meta property="og:image" content={imageUrl} />
-      <meta property="og:url" content={currentUrl} />
-      <meta property="og:site_name" content="Igor Szuniewicz Portfolio" />
-      <meta property="og:locale" content={getOgLocale(locale)} />
-
-      {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:creator" content="@Szunias" />
-      <meta name="twitter:title" content={fullTitle} />
-      <meta name="twitter:description" content={metaDescription} />
-      <meta name="twitter:image" content={imageUrl} />
-
-      {/* Structured Data */}
-      <script type="application/ld+json">
-        {JSON.stringify(structuredData)}
-      </script>
-    </Helmet>
+    <Script
+      id="structured-data"
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+    />
   );
 };
 

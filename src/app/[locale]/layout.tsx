@@ -4,6 +4,7 @@ import {getMessages} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {locales} from '@/i18n';
 import Layout from '@/components/layout/Layout';
+import {AudioProvider} from '@/context/AudioContext';
 
 export function generateStaticParams() {
   return locales.map((locale) => ({locale}));
@@ -34,7 +35,9 @@ export default async function LocaleLayout({
       </head>
       <body>
         <NextIntlClientProvider messages={messages}>
-          <Layout>{children}</Layout>
+          <AudioProvider>
+            <Layout>{children}</Layout>
+          </AudioProvider>
         </NextIntlClientProvider>
       </body>
     </html>

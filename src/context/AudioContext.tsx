@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useState, useContext, useRef, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { Track } from '../types';
 import tracksData from '../data/tracks.json';

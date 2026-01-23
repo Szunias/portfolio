@@ -301,7 +301,7 @@ const SkillsNetwork = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-20">
           <h2 className="text-4xl font-display font-bold text-white mb-4 tracking-tight drop-shadow-[0_0_30px_rgba(56,189,248,0.2)]">
-            {t('skills.title') || 'Technical Arsenal'}
+            {t('title') || 'Technical Arsenal'}
           </h2>
           <div className="h-0.5 w-24 bg-accent rounded-full mx-auto shadow-[0_0_10px_rgba(56,189,248,0.5)]"></div>
         </div>
