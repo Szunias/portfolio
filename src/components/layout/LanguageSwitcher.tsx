@@ -31,6 +31,9 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 hover:border-accent/50 bg-white/5 hover:bg-white/10 transition-all duration-300"
         whileTap={{ scale: 0.95 }}
+        aria-label="Select language"
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
       >
         <span className="text-xs font-bold text-white tracking-wider">
           {currentLang.label}
@@ -60,6 +63,8 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
               className={`absolute right-0 z-[150] p-1 bg-[#111] border border-white/10 rounded-xl shadow-xl ${
                 dropUp ? 'bottom-full mb-2' : 'top-full mt-2'
               }`}
+              role="listbox"
+              aria-label="Language selector"
             >
               {languages.map((lang) => {
                 const isActive = i18n.language === lang.code;
@@ -69,11 +74,13 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
                     onClick={() => changeLanguage(lang.code)}
                     className={`
                       w-full px-4 py-2 rounded-lg text-xs font-bold tracking-wider text-left transition-all duration-150
-                      ${isActive 
-                        ? 'bg-accent text-black' 
+                      ${isActive
+                        ? 'bg-accent text-black'
                         : 'text-dim hover:text-white hover:bg-white/10'
                       }
                     `}
+                    role="option"
+                    aria-selected={isActive}
                   >
                     {lang.label}
                   </button>

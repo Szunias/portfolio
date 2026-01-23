@@ -90,6 +90,7 @@ const Showreel = () => {
               <button
                 className="absolute inset-0 w-full h-full flex items-center justify-center bg-black/40 hover:bg-black/30 transition-colors cursor-pointer"
                 onClick={() => player?.play().catch((err) => console.error('Play failed:', err))}
+                aria-label="Play showreel video"
               >
                 <motion.div
                   whileHover={{ scale: 1.1 }}

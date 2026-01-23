@@ -42,7 +42,7 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
                   />
                 ) : (
                   <>
-                    <img src={`/${src}`} alt={caption ? t(caption, caption) : ''} className="w-full h-auto object-cover transition-transform group-hover:scale-[1.02]" />
+                    <img src={`/${src}`} alt={caption ? t(caption, caption) : 'Gallery image'} className="w-full h-auto object-cover transition-transform group-hover:scale-[1.02]" />
                     {/* Zoom overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity p-3 bg-white/20 backdrop-blur-xl border border-white/30 rounded-full hover:scale-110 hover:shadow-[0_0_30px_rgba(56,189,248,0.5)]">
@@ -91,7 +91,7 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
             >
               <img
                 src={`/${selectedImage.src}`}
-                alt={selectedImage.caption ? t(selectedImage.caption, selectedImage.caption) : ''}
+                alt={selectedImage.caption ? t(selectedImage.caption, selectedImage.caption) : 'Enlarged gallery image view'}
                 className="max-w-full max-h-[85vh] object-contain rounded-lg"
               />
               {selectedImage.caption && (

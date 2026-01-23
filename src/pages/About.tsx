@@ -44,6 +44,7 @@ const About = () => {
                                 src="/assets/cv-image/cvsmile.jpg"
                                 alt="Igor Szuniewicz"
                                 className="w-full h-full object-cover"
+                                loading="lazy"
                             />
                         </div>
                     </div>
