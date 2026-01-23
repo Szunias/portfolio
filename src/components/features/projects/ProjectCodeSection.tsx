@@ -1,8 +1,10 @@
+'use client';
+
 import { useState } from 'react';
 import { Code, ChevronDown } from 'lucide-react';
 import CodeViewer from '../CodeViewer';
 import { CodeSnippet } from '../../../types/project';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 
 interface ProjectCodeSectionProps {
   snippets: CodeSnippet[];
@@ -10,7 +12,7 @@ interface ProjectCodeSectionProps {
 
 const ProjectCodeSection = ({ snippets }: ProjectCodeSectionProps) => {
   const [showCode, setShowCode] = useState(false);
-  const { t } = useTranslation();
+  const t = useTranslations('details');
 
   return (
     <div className="border border-white/10 rounded-xl overflow-hidden">
@@ -20,9 +22,9 @@ const ProjectCodeSection = ({ snippets }: ProjectCodeSectionProps) => {
         >
             <div className="flex items-center gap-3">
                 <Code size={20} className="text-accent" />
-                <span className="text-lg font-semibold text-white">{t('details.technical_dive', 'Technical Deep Dive')}</span>
+                <span className="text-lg font-semibold text-white">{t('technical_dive')}</span>
                 <span className="text-xs text-slate-500 font-mono hidden sm:inline">
-                    {t('details.technical_dive_hint', 'Implementation details for programmers')}
+                    {t('technical_dive_hint')}
                 </span>
             </div>
             <ChevronDown

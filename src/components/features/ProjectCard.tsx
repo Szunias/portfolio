@@ -1,6 +1,8 @@
+'use client';
+
 import { Project } from '../../types';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
 import ImageWithLoader from '../ui/ImageWithLoader';
 import { ArrowRight, Tag } from 'lucide-react';
 
@@ -10,7 +12,8 @@ interface ProjectCardProps {
 }
 
 const ProjectCard = ({ project, index }: ProjectCardProps) => {
-  const { t } = useTranslation();
+  const t = useTranslations('card');
+  const locale = useLocale();
   const media = project.media || {};
   
   const titleKey = `project_${project.id}_title`;
@@ -50,7 +53,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             <div className={`w-full h-full transition-all duration-700 ease-out opacity-90 brightness-90 group-hover:opacity-100 group-hover:brightness-110 group-hover:scale-105`}>
                 <ImageWithLoader 
                     src={`/${media.thumbnail}`} 
-                    alt={t(titleKey, project.title)}
+                    alt={t(titleKey) || project.title}
                     loading={index < 4 ? "eager" : "lazy"}
                     className="h-full w-full"
                 />
@@ -58,7 +61,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             )
         ) : (
             <div className="w-full h-full bg-neutral-900 flex items-center justify-center">
-                <span className="text-white/20 font-mono text-xs tracking-widest">{t('card.no_signal', 'NO_SIGNAL')}</span>
+                <span className="text-white/20 font-mono text-xs tracking-widest">{t('no_signal')}</span>
             </div>
         )}
         
@@ -95,10 +98,10 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
         {/* Header */}
         <div className="mb-4 relative z-10">
             <h3 className={`text-xl font-display font-bold mb-2 truncate transition-all duration-300 text-slate-200 group-hover:text-white group-hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.3)]`}>
-                {t(titleKey, project.title)}
+                {t(titleKey) || project.title}
             </h3>
             <p className="text-slate-400 text-sm font-light leading-relaxed line-clamp-2 mb-4 h-10">
-                {t(descKey, project.short_description)}
+                {t(descKey) || project.short_description}
             </p>
 
             {/* Tech Stack Pills */}
@@ -165,7 +168,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             {cardContent}
         </a>
       ) : (
-        <Link to={`/projects/${project.id}`} className="block h-full relative z-10">
+        <Link href={`/${locale}/projects/${project.id}`} className="block h-full relative z-10">
             {cardContent}
         </Link>
       )}

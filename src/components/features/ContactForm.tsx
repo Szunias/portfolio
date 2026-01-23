@@ -1,11 +1,14 @@
+'use client';
+
 import { useState, FormEvent } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 import { Mail, ExternalLink } from 'lucide-react';
 import { usePortfolioData } from '../../hooks/usePortfolioData';
 import { Button } from '../ui/Button';
 
 const ContactForm = () => {
-  const { t } = useTranslation();
+  const t = useTranslations('contact');
+  const tForm = useTranslations();
   const { personal_info } = usePortfolioData();
 
   const [status, setStatus] = useState<'idle' | 'preparing'>('idle');
@@ -32,16 +35,16 @@ const ContactForm = () => {
     <div className="bg-secondary p-8 rounded-2xl border border-white/10 shadow-xl">
       <div className="flex items-center gap-2 mb-4 text-dim text-sm">
         <Mail size={16} />
-        {t('contact.opens_email', 'Opens your email client')}
+        {t('opens_email')}
       </div>
       <h3 className="text-2xl font-display font-bold text-white mb-6">
-        {t('contact_form_title', 'Send a Message')}
+        {tForm('contact_form_title')}
       </h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="name" className="block text-sm font-mono text-dim mb-1">
-            {t('contact_form_name', 'Your Name')}
+            {tForm('contact_form_name')}
           </label>
           <input
             type="text"
@@ -54,7 +57,7 @@ const ContactForm = () => {
 
         <div>
           <label htmlFor="email" className="block text-sm font-mono text-dim mb-1">
-            {t('contact_form_email', 'Email Address')}
+            {tForm('contact_form_email')}
           </label>
           <input
             type="email"
@@ -67,7 +70,7 @@ const ContactForm = () => {
 
         <div>
           <label htmlFor="subject" className="block text-sm font-mono text-dim mb-1">
-            {t('contact_form_subject', 'Subject')}
+            {tForm('contact_form_subject')}
           </label>
           <input
             type="text"
@@ -80,7 +83,7 @@ const ContactForm = () => {
 
         <div>
           <label htmlFor="message" className="block text-sm font-mono text-dim mb-1">
-            {t('contact_form_message', 'Your Message')}
+            {tForm('contact_form_message')}
           </label>
           <textarea
             id="message"
@@ -100,12 +103,12 @@ const ContactForm = () => {
           {status === 'idle' ? (
             <>
               <ExternalLink size={18} className="group-hover:translate-x-0.5 transition-transform" />
-              {t('contact_form_submit', 'Open in Email App')}
+              {tForm('contact_form_submit')}
             </>
           ) : (
             <>
               <Mail size={18} className="animate-spin" />
-              {t('contact.preparing', 'Opening...')}
+              {t('preparing')}
             </>
           )}
         </Button>

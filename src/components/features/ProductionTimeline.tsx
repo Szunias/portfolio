@@ -1,16 +1,18 @@
-import { useTranslation } from 'react-i18next';
+'use client';
+
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 const ProductionTimeline = () => {
-  const { t } = useTranslation();
+  const t = useTranslations('timeline');
   const [hoveredWeek, setHoveredWeek] = useState<number | null>(null);
   const currentWeek = 8;
   const totalWeeks = 9;
 
   const phases = [
-    { name: t('timeline.prototype', 'Prototype'), weeks: [1, 2], color: 'bg-slate-600' },
-    { name: t('timeline.production', 'Production'), weeks: [3, 4, 5, 6, 7], color: 'bg-slate-500' },
-    { name: t('timeline.polish', 'Polish'), weeks: [8, 9], color: 'bg-accent' },
+    { name: t('prototype'), weeks: [1, 2], color: 'bg-slate-600' },
+    { name: t('production'), weeks: [3, 4, 5, 6, 7], color: 'bg-slate-500' },
+    { name: t('polish'), weeks: [8, 9], color: 'bg-accent' },
   ];
 
   const getPhaseForWeek = (week: number) => phases.find(p => p.weeks.includes(week))?.name || '';

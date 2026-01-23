@@ -1,5 +1,7 @@
+'use client';
+
 import { Github, ExternalLink, PlayCircle, Tag, Layers, Users, Monitor, Gamepad2 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 import { Project } from '../../../types';
 
 interface ProjectSidebarProps {
@@ -7,7 +9,7 @@ interface ProjectSidebarProps {
 }
 
 const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
-  const { t } = useTranslation();
+  const t = useTranslations('details');
   const links = project.links || {};
 
   return (
@@ -16,7 +18,7 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
         {/* Actions Card */}
         <div className="p-6 rounded-2xl bg-tertiary border border-white/10 hover:border-accent/30 hover:shadow-[0_0_40px_rgba(56,189,248,0.1)] shadow-xl transition-all duration-500">
             <h3 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-6">
-                {t('details.access', 'Project Access')}
+                {t('access')}
             </h3>
             
             {/* Project Meta Stats */}
@@ -50,22 +52,22 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
             <div className="space-y-3">
                 {links.demo && (
                     <a href={links.demo} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-4 bg-accent text-black font-bold rounded-lg hover:bg-white hover:shadow-[0_0_30px_rgba(56,189,248,0.5)] transition-all duration-300 hover:scale-105">
-                        <ExternalLink size={18} className="mr-2" /> {t('links.demo', 'Launch Project')}
+                        <ExternalLink size={18} className="mr-2" /> {t('demo')}
                     </a>
                 )}
                 {links.video && (
                     <a href={links.video} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-4 bg-white/5 text-white font-bold rounded-lg hover:bg-white/10 hover:border-accent/40 hover:shadow-[0_0_25px_rgba(56,189,248,0.2)] border border-white/10 transition-all duration-300">
-                        <PlayCircle size={18} className="mr-2" /> {t('links.video', 'Watch Demo')}
+                        <PlayCircle size={18} className="mr-2" /> {t('video')}
                     </a>
                 )}
                 {links.repo && (
                     <a href={links.repo} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-4 bg-transparent text-slate-400 font-medium rounded-lg hover:text-accent hover:border-accent/40 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] border border-white/10 transition-all duration-300">
-                        <Github size={18} className="mr-2" /> {t('links.repo', 'Source Code')}
+                        <Github size={18} className="mr-2" /> {t('repo')}
                     </a>
                 )}
                 {links.documentation && (
                    <a href={links.documentation} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-4 bg-transparent text-slate-300 font-medium border border-slate-700 rounded hover:text-white hover:border-slate-500 transition">
-                    <Layers size={18} className="mr-2" /> {t('links.docs', 'Documentation')}
+                    <Layers size={18} className="mr-2" /> {t('docs')}
                   </a>
                 )}
             </div>
@@ -74,7 +76,7 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
         {/* Tech Stack */}
         <div>
             <h3 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                <Layers size={14} /> {t('details.technologies', 'Technologies')}
+                <Layers size={14} /> {t('technologies')}
             </h3>
             <div className="flex flex-wrap gap-2">
                 {project.technologies?.map(tech => (
@@ -89,12 +91,12 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
         {project.tags && (
             <div>
                 <h3 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <Tag size={14} /> {t('details.classification', 'Classification')}
+                    <Tag size={14} /> {t('classification')}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                     {project.tags.map(tag => (
                         <span key={tag} className="text-xs text-slate-400 hover:text-white transition-colors cursor-default">
-                            #{t(`tags.${tag}`, tag)}
+                            #{t(`tags.${tag}`) || tag}
                         </span>
                     ))}
                 </div>

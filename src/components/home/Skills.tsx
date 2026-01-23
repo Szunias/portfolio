@@ -1,5 +1,7 @@
+'use client';
+
 import { motion } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 
 // Enhanced tech data with 3D effects
 const keyTech = [
@@ -48,7 +50,7 @@ const keyTech = [
 ];
 
 const Skills = () => {
-  const { t } = useTranslation();
+  const t = useTranslations('skills');
 
   return (
     <section className="py-24">
@@ -68,7 +70,7 @@ const Skills = () => {
             viewport={{ once: true }}
             className="inline-block px-4 py-2 mb-6 text-xs font-mono text-accent uppercase tracking-widest bg-accent/5 border border-accent/20 rounded-full"
           >
-            {t('skills.badge', 'Technologies')}
+            {t('badge') || 'Technologies'}
           </motion.span>
           <h2 className="text-5xl md:text-7xl font-display font-bold text-white mb-6 tracking-tight">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
@@ -76,7 +78,7 @@ const Skills = () => {
             </span>
           </h2>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            {t('skills.subtitle', 'Core tools I use for game audio implementation and development')}
+            {t('subtitle') || 'Core tools I use for game audio implementation and development'}
           </p>
         </motion.div>
 
@@ -131,7 +133,7 @@ const Skills = () => {
             viewport={{ once: true }}
             className="text-center text-sm font-mono text-slate-500 uppercase tracking-widest mb-12"
           >
-            {t('skills.also', 'Also experienced with')}
+            {t('also') || 'Also experienced with'}
           </motion.h3>
 
           <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">

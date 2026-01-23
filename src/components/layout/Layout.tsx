@@ -1,20 +1,22 @@
+'use client';
+
 import { ReactNode } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import AudioPlayer from '../features/AudioPlayer';
 import { Helmet } from 'react-helmet-async';
-import { useTranslation } from 'react-i18next';
+import { useLocale } from 'next-intl';
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  const { i18n } = useTranslation();
+  const locale = useLocale();
 
   return (
     <div className="flex flex-col min-h-screen text-text font-sans overflow-x-hidden relative bg-[#050508]">
-      <Helmet htmlAttributes={{ lang: i18n.language }}>
+      <Helmet htmlAttributes={{ lang: locale }}>
         <title>Igor Szuniewicz | Audio Designer</title>
         <meta name="description" content="Game Audio Designer & Developer. Wwise, FMOD, Unreal Engine implementation." />
       </Helmet>

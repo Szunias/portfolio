@@ -1,0 +1,61 @@
+{
+  "back": "Back to Projects",
+  "hero": {
+    "badge": "Completed Research",
+    "title": "Real-Time AI Audio for Games",
+    "subtitle": "Graduation thesis exploring AI sound generation for interactive media"
+  },
+  "stats": {
+    "models_tested": "AI Models Tested",
+    "samples_analyzed": "Sound Samples",
+    "achieved_latency": "Achieved Latency",
+    "max_quality": "Max Quality Score",
+    "audiogen": "AudioGen (Local)",
+    "mmaudio_large": "MMAudio Large",
+    "elevenlabs": "ElevenLabs (Cloud)",
+    "procedural": "Procedural DSP",
+    "procedural_verdict": "Procedural",
+    "cached_verdict": "AI Cached",
+    "pregen_verdict": "AI Pre-gen",
+    "recommendation": "Recommendation"
+  },
+  "executive_summary": {
+    "title": "Executive Summary",
+    "content": "Can AI generate sound effects fast enough for real-time gameplay? After testing 5 AI models and analyzing 2000+ samples, the answer is nuanced: **on-demand AI generation is NOT viable** (all models exceed the 100-150ms latency budget), but **caching reduces latency by 95-98%** (from seconds to 35-90ms), and **pre-generation achieves <10ms** perceived latency. The key insight: generative audio is not about making generation faster—it's about hiding generation latency through smart caching and predictive pre-generation."
+  },
+  "research_question": {
+    "title": "The Research Question",
+    "content": "In game development, audio latency is critical. When a player shoots a gun or takes a step, the sound must follow within 100-150 milliseconds—otherwise the disconnect breaks immersion. This thesis investigated whether current AI audio generation models can meet this demanding requirement.\n\n**Core Question:** Can AI-generated sound effects be produced fast enough for real-time gameplay?\n\n**Hardware Used:**\n- NVIDIA RTX 5070 Laptop GPU (8GB VRAM)\n- AMD Ryzen 9 7940HS\n- 64GB RAM\n\n**Models Tested:** AudioGen, MMAudio (Large & Small), ElevenLabs API, and custom Procedural DSP"
+  },
+  "methodology": {
+    "title": "Methodology & Architecture",
+    "content": "The test architecture connected Unreal Engine 5 to a Python backend via WebSocket, enabling real-time audio requests and measurements.\n\n**Architecture Flow:**\n```\nUnreal Engine 5 (C++) ⟷ WebSocket ⟷ Python Backend ⟷ AI Models\n```\n\n**Test Protocol:**\n1. Player action triggers audio request from UE5\n2. WebSocket transmits request to Python server\n3. Python generates/retrieves audio from selected model\n4. Audio returned to UE5 and played\n5. Full round-trip latency measured\n\nEach model was tested with 400+ unique prompts across categories: footsteps, gunshots, impacts, environmental sounds, and UI feedback."
+  },
+  "latency_problem": {
+    "title": "The Latency Problem",
+    "content": "Initial testing revealed a fundamental problem: **every AI model failed** the latency requirement by orders of magnitude.\n\n**First Test Results:**\n- AudioLDM: 12,000ms (12 seconds) per sound\n- MusicGen: 4,000ms (4 seconds) per sound\n- AudioGen: 3,200-3,800ms per sound\n- MMAudio Large: 4,500-5,200ms per sound\n- ElevenLabs: 1,800-2,500ms per sound\n\nIn a game running at 60 FPS, each frame lasts 16.67ms. A 4-second generation delay means the sound arrives **240 frames late**. For twitch-reaction gameplay, this is completely unacceptable.\n\n*\"I was ready to conclude the research as a failure. Then I noticed something strange in the logs...\"*"
+  },
+  "cache_discovery": {
+    "title": "The 0.03ms Anomaly",
+    "content": "During a frustration-filled debug session, an anomaly appeared in the timing logs:\n\n```\n[LOG] Gen_Request_01: 4102ms\n[LOG] Gen_Request_02: 4098ms\n[LOG] Gen_Request_01: 0.03ms  <-- ???\n```\n\nThe second request for the **same** sound didn't regenerate—it retrieved from cache. This was faster than reading a WAV file from disk.\n\n**The Insight:**\n> \"We don't need to be fast. We need to be early.\"\n\nThis shifted the entire research direction. The problem wasn't generation speed—it was **when** we generate. If sounds are pre-generated before they're needed, the player never experiences the latency."
+  },
+  "strategies": {
+    "title": "Three Generation Strategies",
+    "content": "Based on the cache discovery, three distinct strategies emerged:\n\n**1. On-Demand Generation**\n- Generate audio when the action occurs\n- Latency: 2,000-5,000ms\n- Result: **FAILED** - Completely unacceptable for gameplay\n\n**2. Cached Generation**\n- Pre-generate during loading screens, cache in memory\n- Cache hit latency: 35-90ms\n- Cache miss: Falls back to procedural\n- Result: **VIABLE** - Acceptable for most gameplay\n\n**3. Pre-Generated with Prediction**\n- AI predicts upcoming sounds based on game state\n- Sounds generated during idle moments\n- Perceived latency: <10ms\n- Result: **EXCELLENT** - Indistinguishable from traditional audio\n\nThe breakthrough: **latency reduction of 95-98%** through intelligent caching."
+  },
+  "hybrid_solution": {
+    "title": "The Hybrid Solution",
+    "content": "The final architecture combines all approaches into a layered system:\n\n**Layer 1: Procedural DSP (Immediate)**\n- Simple waveform synthesis for instant feedback\n- Latency: 15-25ms\n- Quality: Basic but responsive\n- Handles: First contact, immediate feedback\n\n**Layer 2: AI Background Generation**\n- Full AI generation runs in background thread\n- When complete, replaces procedural sound\n- Player perceives seamless high-quality audio\n\n**Layer 3: Predictive Cache**\n- AI monitors game state (player position, inventory, context)\n- Pre-generates likely sounds during loading/idle\n- Smart cleanup removes unused cached sounds\n\n**Result:** Zero perceived latency with AI-quality audio. The player hears an instant procedural sound, immediately enhanced by the AI-generated version."
+  },
+  "code_examples": {
+    "title": "Implementation Highlights",
+    "content": "**Python WebSocket Handler:**\n```python\nasync def handle_audio_request(websocket, request):\n    sound_id = request['sound_id']\n    \n    # Check cache first (0.03ms)\n    if sound_id in audio_cache:\n        return audio_cache[sound_id]\n    \n    # Generate procedural fallback (20ms)\n    procedural = generate_procedural(request['type'])\n    \n    # Queue AI generation in background\n    asyncio.create_task(\n        generate_ai_audio(sound_id, request)\n    )\n    \n    return procedural\n```\n\n**Unreal Engine 5 - Thread-Safe Audio:**\n```cpp\nvoid UAudioManager::OnAudioReceived(const TArray<uint8>& Data)\n{\n    // Must create USoundWave on game thread\n    AsyncTask(ENamedThreads::GameThread, [this, Data]()\n    {\n        USoundWave* Sound = NewObject<USoundWave>();\n        Sound->RawData.Lock(LOCK_READ_WRITE);\n        // ... process audio data\n        PlaySound(Sound);\n    });\n}\n```\n\n**Pre-generation During Loading:**\n```python\ndef pregenerate_level_audio(level_data):\n    sounds_to_generate = predict_sounds(level_data)\n    \n    with ThreadPoolExecutor(max_workers=4) as executor:\n        futures = [\n            executor.submit(generate_and_cache, sound)\n            for sound in sounds_to_generate\n        ]\n    # Loading screen waits for completion\n```"
+  },
+  "conclusions": {
+    "title": "Conclusions & Recommendations",
+    "content": "**Key Findings:**\n\n1. **On-demand AI generation is NOT viable** for twitch-reaction gameplay. All tested models exceed the 150ms latency budget by 10-30x.\n\n2. **Caching is the solution.** Proper cache architecture reduces effective latency from seconds to milliseconds (95-98% reduction).\n\n3. **Pre-generation during loading** achieves <10ms perceived latency—indistinguishable from traditional pre-recorded audio.\n\n4. **The hybrid approach is production-ready.** Procedural instant feedback + AI background enhancement delivers the best of both worlds.\n\n**Recommendations for Game Developers:**\n- Use procedural DSP for immediate response\n- Implement aggressive pre-caching during loading screens\n- Monitor game state to predict and pre-generate upcoming sounds\n- Accept that real-time AI generation is a \"hide the latency\" problem, not a \"reduce the latency\" problem\n\n**The Core Insight:**\n> \"Generative audio is not about making generation faster—it's about hiding generation latency.\""
+  },
+  "footer": {
+    "status": "Completed Graduation Research | 2025 | Igor Szuniewicz"
+  }
+}

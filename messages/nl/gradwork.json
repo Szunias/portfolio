@@ -1,0 +1,61 @@
+{
+  "back": "Terug naar projecten",
+  "hero": {
+    "badge": "Afgerond Onderzoek",
+    "title": "Real-Time AI Audio voor Games",
+    "subtitle": "Afstudeerscriptie over AI-geluidsgeneratie voor interactieve media"
+  },
+  "stats": {
+    "models_tested": "AI Modellen Getest",
+    "samples_analyzed": "Geluidssamples",
+    "achieved_latency": "Behaalde Latentie",
+    "max_quality": "Max Kwaliteitsscore",
+    "audiogen": "AudioGen (Lokaal)",
+    "mmaudio_large": "MMAudio Large",
+    "elevenlabs": "ElevenLabs (Cloud)",
+    "procedural": "Procedurele DSP",
+    "procedural_verdict": "Procedureel",
+    "cached_verdict": "AI Gecached",
+    "pregen_verdict": "AI Pre-gen",
+    "recommendation": "Aanbeveling"
+  },
+  "executive_summary": {
+    "title": "Samenvatting",
+    "content": "Kan AI geluidseffecten snel genoeg genereren voor real-time gameplay? Na het testen van 5 AI-modellen en het analyseren van 2000+ samples is het antwoord genuanceerd: **on-demand AI-generatie is NIET haalbaar** (alle modellen overschrijden het 100-150ms latentiebudget), maar **caching vermindert latentie met 95-98%** (van seconden naar 35-90ms), en **pre-generatie bereikt <10ms** waargenomen latentie. De kernles: generatieve audio gaat niet over snellere generatie—het gaat over het verbergen van generatielatentie door slimme caching en voorspellende pre-generatie."
+  },
+  "research_question": {
+    "title": "De Onderzoeksvraag",
+    "content": "In game-ontwikkeling is audiolatentie cruciaal. Wanneer een speler schiet of een stap zet, moet het geluid binnen 100-150 milliseconden volgen—anders breekt de disconnect de immersie. Dit onderzoek onderzocht of huidige AI-audiogeneratiemodellen aan deze veeleisende eis kunnen voldoen.\n\n**Kernvraag:** Kunnen AI-gegenereerde geluidseffecten snel genoeg worden geproduceerd voor real-time gameplay?\n\n**Gebruikte Hardware:**\n- NVIDIA RTX 5070 Laptop GPU (8GB VRAM)\n- AMD Ryzen 9 7940HS\n- 64GB RAM\n\n**Geteste Modellen:** AudioGen, MMAudio (Large & Small), ElevenLabs API, en aangepaste Procedurele DSP"
+  },
+  "methodology": {
+    "title": "Methodologie & Architectuur",
+    "content": "De testarchitectuur verbond Unreal Engine 5 met een Python-backend via WebSocket, wat real-time audioverzoeken en metingen mogelijk maakte.\n\n**Architectuurstroom:**\n```\nUnreal Engine 5 (C++) ⟷ WebSocket ⟷ Python Backend ⟷ AI Modellen\n```\n\n**Testprotocol:**\n1. Speleractie triggert audioverzoek vanuit UE5\n2. WebSocket verzendt verzoek naar Python-server\n3. Python genereert/haalt audio op van geselecteerd model\n4. Audio teruggestuurd naar UE5 en afgespeeld\n5. Volledige round-trip latentie gemeten\n\nElk model werd getest met 400+ unieke prompts in categorieën: voetstappen, schoten, impacts, omgevingsgeluiden en UI-feedback."
+  },
+  "latency_problem": {
+    "title": "Het Latentieprobleem",
+    "content": "Initiële tests onthulden een fundamenteel probleem: **elk AI-model faalde** voor de latentie-eis met ordes van grootte.\n\n**Eerste Testresultaten:**\n- AudioLDM: 12.000ms (12 seconden) per geluid\n- MusicGen: 4.000ms (4 seconden) per geluid\n- AudioGen: 3.200-3.800ms per geluid\n- MMAudio Large: 4.500-5.200ms per geluid\n- ElevenLabs: 1.800-2.500ms per geluid\n\nIn een game die op 60 FPS draait, duurt elk frame 16,67ms. Een generatievertraging van 4 seconden betekent dat het geluid **240 frames te laat** arriveert. Voor twitch-reaction gameplay is dit volledig onaanvaardbaar.\n\n*\"Ik stond klaar om het onderzoek als mislukking af te sluiten. Toen merkte ik iets vreemds op in de logs...\"*"
+  },
+  "cache_discovery": {
+    "title": "De 0,03ms Anomalie",
+    "content": "Tijdens een frustrerende debugsessie verscheen een anomalie in de timinglogs:\n\n```\n[LOG] Gen_Request_01: 4102ms\n[LOG] Gen_Request_02: 4098ms\n[LOG] Gen_Request_01: 0.03ms  <-- ???\n```\n\nHet tweede verzoek voor **hetzelfde** geluid genereerde niet opnieuw—het haalde uit cache. Dit was sneller dan het lezen van een WAV-bestand van schijf.\n\n**Het Inzicht:**\n> \"We hoeven niet snel te zijn. We moeten er gewoon eerder zijn.\"\n\nDit verschoof de hele onderzoeksrichting. Het probleem was niet generatiesnelheid—het was **wanneer** we genereren. Als geluiden pre-gegenereerd zijn voordat ze nodig zijn, ervaart de speler nooit de latentie."
+  },
+  "strategies": {
+    "title": "Drie Generatiestrategieën",
+    "content": "Gebaseerd op de cache-ontdekking ontstonden drie verschillende strategieën:\n\n**1. On-Demand Generatie**\n- Genereer audio wanneer de actie plaatsvindt\n- Latentie: 2.000-5.000ms\n- Resultaat: **GEFAALD** - Volledig onaanvaardbaar voor gameplay\n\n**2. Gecachte Generatie**\n- Pre-genereer tijdens laadschermen, cache in geheugen\n- Cache hit latentie: 35-90ms\n- Cache miss: Valt terug op procedureel\n- Resultaat: **HAALBAAR** - Acceptabel voor de meeste gameplay\n\n**3. Pre-Gegenereerd met Voorspelling**\n- AI voorspelt aankomende geluiden op basis van gamestatus\n- Geluiden gegenereerd tijdens idle momenten\n- Waargenomen latentie: <10ms\n- Resultaat: **UITSTEKEND** - Niet te onderscheiden van traditionele audio\n\nDe doorbraak: **latentiereductie van 95-98%** door intelligente caching."
+  },
+  "hybrid_solution": {
+    "title": "De Hybride Oplossing",
+    "content": "De uiteindelijke architectuur combineert alle benaderingen in een gelaagd systeem:\n\n**Laag 1: Procedurele DSP (Direct)**\n- Eenvoudige golfvormsynthese voor directe feedback\n- Latentie: 15-25ms\n- Kwaliteit: Basis maar responsief\n- Behandelt: Eerste contact, directe feedback\n\n**Laag 2: AI Achtergrondgeneratie**\n- Volledige AI-generatie draait in achtergrondthread\n- Bij voltooiing vervangt het procedurele geluid\n- Speler ervaart naadloze hoge-kwaliteit audio\n\n**Laag 3: Voorspellende Cache**\n- AI monitort gamestatus (spelerpositie, inventaris, context)\n- Pre-genereert waarschijnlijke geluiden tijdens laden/idle\n- Slimme opruiming verwijdert ongebruikte gecachte geluiden\n\n**Resultaat:** Nul waargenomen latentie met AI-kwaliteit audio. De speler hoort een direct procedureel geluid, onmiddellijk verbeterd door de AI-gegenereerde versie."
+  },
+  "code_examples": {
+    "title": "Implementatie Highlights",
+    "content": "**Python WebSocket Handler:**\n```python\nasync def handle_audio_request(websocket, request):\n    sound_id = request['sound_id']\n    \n    # Check cache eerst (0.03ms)\n    if sound_id in audio_cache:\n        return audio_cache[sound_id]\n    \n    # Genereer procedurele fallback (20ms)\n    procedural = generate_procedural(request['type'])\n    \n    # Wacht AI generatie in achtergrond\n    asyncio.create_task(\n        generate_ai_audio(sound_id, request)\n    )\n    \n    return procedural\n```\n\n**Unreal Engine 5 - Thread-Safe Audio:**\n```cpp\nvoid UAudioManager::OnAudioReceived(const TArray<uint8>& Data)\n{\n    // Moet USoundWave op game thread maken\n    AsyncTask(ENamedThreads::GameThread, [this, Data]()\n    {\n        USoundWave* Sound = NewObject<USoundWave>();\n        Sound->RawData.Lock(LOCK_READ_WRITE);\n        // ... verwerk audiodata\n        PlaySound(Sound);\n    });\n}\n```\n\n**Pre-generatie Tijdens Laden:**\n```python\ndef pregenerate_level_audio(level_data):\n    sounds_to_generate = predict_sounds(level_data)\n    \n    with ThreadPoolExecutor(max_workers=4) as executor:\n        futures = [\n            executor.submit(generate_and_cache, sound)\n            for sound in sounds_to_generate\n        ]\n    # Laadscherm wacht op voltooiing\n```"
+  },
+  "conclusions": {
+    "title": "Conclusies & Aanbevelingen",
+    "content": "**Belangrijkste Bevindingen:**\n\n1. **On-demand AI-generatie is NIET haalbaar** voor twitch-reaction gameplay. Alle geteste modellen overschrijden het 150ms latentiebudget met 10-30x.\n\n2. **Caching is de oplossing.** Goede cache-architectuur vermindert effectieve latentie van seconden naar milliseconden (95-98% reductie).\n\n3. **Pre-generatie tijdens laden** bereikt <10ms waargenomen latentie—niet te onderscheiden van traditionele vooraf opgenomen audio.\n\n4. **De hybride aanpak is productie-klaar.** Procedurele directe feedback + AI achtergrondverbetering levert het beste van beide werelden.\n\n**Aanbevelingen voor Game Developers:**\n- Gebruik procedurele DSP voor directe respons\n- Implementeer agressieve pre-caching tijdens laadschermen\n- Monitor gamestatus om aankomende geluiden te voorspellen en pre-genereren\n- Accepteer dat real-time AI-generatie een \"verberg de latentie\" probleem is, geen \"verminder de latentie\" probleem\n\n**Het Kerninzicht:**\n> \"Generatieve audio gaat niet over snellere generatie—het gaat over het verbergen van generatielatentie.\""
+  },
+  "footer": {
+    "status": "Afgerond Afstudeeronderzoek | 2025 | Igor Szuniewicz"
+  }
+}

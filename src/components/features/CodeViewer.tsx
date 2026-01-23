@@ -1,7 +1,9 @@
+'use client';
+
 import { useState } from 'react';
 import { CodeSnippet, CodeAnnotation } from '../../types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 import { cn } from '../../utils';
 
 interface CodeViewerProps {
@@ -65,7 +67,7 @@ const processTokens = (text: string, keywords: string[], types: string[], lineIn
 const CodeViewer = ({ snippets }: CodeViewerProps) => {
   const [activeTab, setActiveTab] = useState(0);
   const [expandedLine, setExpandedLine] = useState<number | null>(null);
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   if (!snippets || snippets.length === 0) return null;
 
@@ -164,10 +166,10 @@ const CodeViewer = ({ snippets }: CodeViewerProps) => {
                   >
                     <div className="ml-12 my-2 p-3 bg-accent/5 border-l-2 border-accent rounded-r">
                       <p className="text-accent text-sm font-medium mb-1">
-                        {t(annotation.label, annotation.label)}
+                        {t(annotation.label) || annotation.label}
                       </p>
                       <p className="text-slate-400 text-sm">
-                        {t(annotation.explanation, annotation.explanation)}
+                        {t(annotation.explanation) || annotation.explanation}
                       </p>
                     </div>
                   </motion.div>

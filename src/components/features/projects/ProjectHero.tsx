@@ -1,7 +1,9 @@
+'use client';
+
 import { ArrowLeft, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
 import TechReveal from '../../home/TechReveal';
 import { Project } from '../../../types';
 
@@ -16,7 +18,8 @@ const getYoutubeId = (url: string) => {
 };
 
 const ProjectHero = ({ project }: ProjectHeroProps) => {
-    const { t } = useTranslation();
+    const t = useTranslations('projects');
+    const locale = useLocale();
     const media = project.media || {};
     const links = project.links || {};
 
@@ -50,9 +53,9 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                 >
-                    <Link to="/projects" className="inline-flex items-center text-slate-400 hover:text-accent transition-all duration-300 mb-8 group hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]">
+                    <Link href={`/${locale}/projects`} className="inline-flex items-center text-slate-400 hover:text-accent transition-all duration-300 mb-8 group hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]">
                         <ArrowLeft size={16} className="mr-2 group-hover:-translate-x-1 transition-transform" />
-                        {t('projects.viewall', 'Back to Projects')}
+                        {t('viewall')}
                     </Link>
 
                     <div className="flex items-center gap-3 mb-4">
@@ -68,11 +71,11 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                     </div>
 
                     <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold text-white max-w-5xl leading-[0.9] tracking-tighter mb-6 drop-shadow-[0_0_40px_rgba(56,189,248,0.3)]">
-                        <TechReveal text={t(titleKey, project.title)} />
+                        <TechReveal text={t(titleKey) || project.title} />
                     </h1>
 
                     <p className="text-lg md:text-xl text-slate-300 max-w-2xl font-light leading-relaxed mb-8">
-                        {t(shortDescKey, project.short_description)}
+                        {t(shortDescKey) || project.short_description}
                     </p>
 
                     {videoId && (
@@ -91,7 +94,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                     {legacyVideoId && project.id === 'shadow_frames' && (
                         <div className="mt-8">
                             <h3 className="text-lg font-mono text-slate-400 uppercase tracking-wider mb-4">
-                                {t('projects.legacy_trailer', 'Previous Trailer')} / {t('projects.gameplay_preview', 'Gameplay Preview')}
+                                {t('legacy_trailer')} / {t('gameplay_preview')}
                             </h3>
                             <div className="w-full max-w-4xl aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/20 bg-black/80 backdrop-blur-sm transition-all duration-500">
                                 <iframe

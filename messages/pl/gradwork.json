@@ -1,0 +1,61 @@
+{
+  "back": "Powrót do projektów",
+  "hero": {
+    "badge": "Ukończone Badania",
+    "title": "AI Audio w Czasie Rzeczywistym dla Gier",
+    "subtitle": "Praca dyplomowa badająca generowanie dźwięku AI dla mediów interaktywnych"
+  },
+  "stats": {
+    "models_tested": "Przetestowane Modele AI",
+    "samples_analyzed": "Próbki Dźwięku",
+    "achieved_latency": "Osiągnięte Opóźnienie",
+    "max_quality": "Maks. Ocena Jakości",
+    "audiogen": "AudioGen (Lokalny)",
+    "mmaudio_large": "MMAudio Large",
+    "elevenlabs": "ElevenLabs (Chmura)",
+    "procedural": "Proceduralny DSP",
+    "procedural_verdict": "Proceduralny",
+    "cached_verdict": "AI z Cache",
+    "pregen_verdict": "AI Pre-gen",
+    "recommendation": "Rekomendacja"
+  },
+  "executive_summary": {
+    "title": "Streszczenie",
+    "content": "Czy AI może generować efekty dźwiękowe wystarczająco szybko dla gameplay'u w czasie rzeczywistym? Po przetestowaniu 5 modeli AI i przeanalizowaniu ponad 2000 próbek, odpowiedź jest złożona: **generacja AI na żądanie NIE jest możliwa** (wszystkie modele przekraczają budżet opóźnienia 100-150ms), ale **cache'owanie redukuje opóźnienie o 95-98%** (z sekund do 35-90ms), a **pre-generacja osiąga <10ms** postrzeganego opóźnienia. Kluczowy wniosek: generatywne audio nie polega na szybszej generacji—chodzi o ukrywanie opóźnienia generacji poprzez inteligentne cache'owanie i predykcyjną pre-generację."
+  },
+  "research_question": {
+    "title": "Pytanie Badawcze",
+    "content": "W tworzeniu gier opóźnienie audio jest krytyczne. Gdy gracz strzela lub stawia krok, dźwięk musi nastąpić w ciągu 100-150 milisekund—w przeciwnym razie rozdźwięk przerywa immersję. Ta praca badała, czy obecne modele generacji audio AI mogą spełnić to wymagające kryterium.\n\n**Główne Pytanie:** Czy efekty dźwiękowe generowane przez AI mogą być produkowane wystarczająco szybko dla gameplay'u w czasie rzeczywistym?\n\n**Użyty Sprzęt:**\n- NVIDIA RTX 5070 Laptop GPU (8GB VRAM)\n- AMD Ryzen 9 7940HS\n- 64GB RAM\n\n**Przetestowane Modele:** AudioGen, MMAudio (Large & Small), ElevenLabs API oraz własny Proceduralny DSP"
+  },
+  "methodology": {
+    "title": "Metodologia i Architektura",
+    "content": "Architektura testowa łączyła Unreal Engine 5 z backendem Python przez WebSocket, umożliwiając żądania audio w czasie rzeczywistym i pomiary.\n\n**Przepływ Architektury:**\n```\nUnreal Engine 5 (C++) ⟷ WebSocket ⟷ Backend Python ⟷ Modele AI\n```\n\n**Protokół Testowy:**\n1. Akcja gracza wyzwala żądanie audio z UE5\n2. WebSocket przesyła żądanie do serwera Python\n3. Python generuje/pobiera audio z wybranego modelu\n4. Audio zwracane do UE5 i odtwarzane\n5. Mierzone pełne opóźnienie round-trip\n\nKażdy model był testowany z ponad 400 unikalnymi promptami w kategoriach: kroki, strzały, uderzenia, dźwięki otoczenia i feedback UI."
+  },
+  "latency_problem": {
+    "title": "Problem Opóźnienia",
+    "content": "Początkowe testy ujawniły fundamentalny problem: **każdy model AI zawiódł** wymagania dotyczące opóźnienia o rzędy wielkości.\n\n**Pierwsze Wyniki Testów:**\n- AudioLDM: 12 000ms (12 sekund) na dźwięk\n- MusicGen: 4 000ms (4 sekundy) na dźwięk\n- AudioGen: 3 200-3 800ms na dźwięk\n- MMAudio Large: 4 500-5 200ms na dźwięk\n- ElevenLabs: 1 800-2 500ms na dźwięk\n\nW grze działającej przy 60 FPS każda klatka trwa 16,67ms. Opóźnienie generacji wynoszące 4 sekundy oznacza, że dźwięk dociera **240 klatek za późno**. Dla gameplay'u wymagającego szybkich reakcji jest to całkowicie niedopuszczalne.\n\n*\"Byłem gotowy zakończyć badania jako porażkę. Wtedy zauważyłem coś dziwnego w logach...\"*"
+  },
+  "cache_discovery": {
+    "title": "Anomalia 0,03ms",
+    "content": "Podczas frustrującej sesji debugowania w logach czasowych pojawiła się anomalia:\n\n```\n[LOG] Gen_Request_01: 4102ms\n[LOG] Gen_Request_02: 4098ms\n[LOG] Gen_Request_01: 0.03ms  <-- ???\n```\n\nDrugie żądanie **tego samego** dźwięku nie generowało ponownie—pobierało z cache. To było szybsze niż odczyt pliku WAV z dysku.\n\n**Odkrycie:**\n> \"Nie musimy być szybcy. Musimy być wcześniej.\"\n\nTo zmieniło cały kierunek badań. Problem nie dotyczył szybkości generacji—chodziło o to, **kiedy** generujemy. Jeśli dźwięki są pre-generowane zanim są potrzebne, gracz nigdy nie doświadcza opóźnienia."
+  },
+  "strategies": {
+    "title": "Trzy Strategie Generacji",
+    "content": "Na podstawie odkrycia cache'u wyłoniły się trzy różne strategie:\n\n**1. Generacja Na Żądanie**\n- Generuj audio gdy występuje akcja\n- Opóźnienie: 2 000-5 000ms\n- Wynik: **PORAŻKA** - Całkowicie niedopuszczalne dla gameplay'u\n\n**2. Generacja z Cache'em**\n- Pre-generuj podczas ekranów ładowania, cache'uj w pamięci\n- Opóźnienie przy trafieniu w cache: 35-90ms\n- Brak w cache: Powrót do proceduralnego\n- Wynik: **MOŻLIWE** - Akceptowalne dla większości gameplay'u\n\n**3. Pre-Generacja z Predykcją**\n- AI przewiduje nadchodzące dźwięki na podstawie stanu gry\n- Dźwięki generowane podczas bezczynności\n- Postrzegane opóźnienie: <10ms\n- Wynik: **DOSKONAŁE** - Nieodróżnialne od tradycyjnego audio\n\nPrzełom: **redukcja opóźnienia o 95-98%** dzięki inteligentnemu cache'owaniu."
+  },
+  "hybrid_solution": {
+    "title": "Rozwiązanie Hybrydowe",
+    "content": "Finalna architektura łączy wszystkie podejścia w warstwowy system:\n\n**Warstwa 1: Proceduralny DSP (Natychmiastowy)**\n- Prosta synteza fal dla natychmiastowej odpowiedzi\n- Opóźnienie: 15-25ms\n- Jakość: Podstawowa ale responsywna\n- Obsługuje: Pierwszy kontakt, natychmiastowy feedback\n\n**Warstwa 2: Generacja AI w Tle**\n- Pełna generacja AI działa w wątku tła\n- Po zakończeniu zastępuje proceduralny dźwięk\n- Gracz doświadcza płynnego audio wysokiej jakości\n\n**Warstwa 3: Predykcyjny Cache**\n- AI monitoruje stan gry (pozycja gracza, ekwipunek, kontekst)\n- Pre-generuje prawdopodobne dźwięki podczas ładowania/bezczynności\n- Inteligentne czyszczenie usuwa nieużywane dźwięki z cache\n\n**Wynik:** Zero postrzeganego opóźnienia z jakością AI. Gracz słyszy natychmiastowy dźwięk proceduralny, natychmiast wzbogacony wersją wygenerowaną przez AI."
+  },
+  "code_examples": {
+    "title": "Kluczowe Elementy Implementacji",
+    "content": "**Python WebSocket Handler:**\n```python\nasync def handle_audio_request(websocket, request):\n    sound_id = request['sound_id']\n    \n    # Sprawdź cache najpierw (0.03ms)\n    if sound_id in audio_cache:\n        return audio_cache[sound_id]\n    \n    # Generuj proceduralny fallback (20ms)\n    procedural = generate_procedural(request['type'])\n    \n    # Kolejkuj generację AI w tle\n    asyncio.create_task(\n        generate_ai_audio(sound_id, request)\n    )\n    \n    return procedural\n```\n\n**Unreal Engine 5 - Thread-Safe Audio:**\n```cpp\nvoid UAudioManager::OnAudioReceived(const TArray<uint8>& Data)\n{\n    // Musi tworzyć USoundWave na wątku gry\n    AsyncTask(ENamedThreads::GameThread, [this, Data]()\n    {\n        USoundWave* Sound = NewObject<USoundWave>();\n        Sound->RawData.Lock(LOCK_READ_WRITE);\n        // ... przetwarzaj dane audio\n        PlaySound(Sound);\n    });\n}\n```\n\n**Pre-generacja Podczas Ładowania:**\n```python\ndef pregenerate_level_audio(level_data):\n    sounds_to_generate = predict_sounds(level_data)\n    \n    with ThreadPoolExecutor(max_workers=4) as executor:\n        futures = [\n            executor.submit(generate_and_cache, sound)\n            for sound in sounds_to_generate\n        ]\n    # Ekran ładowania czeka na zakończenie\n```"
+  },
+  "conclusions": {
+    "title": "Wnioski i Rekomendacje",
+    "content": "**Kluczowe Odkrycia:**\n\n1. **Generacja AI na żądanie NIE jest możliwa** dla gameplay'u wymagającego szybkich reakcji. Wszystkie testowane modele przekraczają budżet opóźnienia 150ms o 10-30x.\n\n2. **Cache'owanie jest rozwiązaniem.** Odpowiednia architektura cache redukuje efektywne opóźnienie z sekund do milisekund (redukcja 95-98%).\n\n3. **Pre-generacja podczas ładowania** osiąga <10ms postrzeganego opóźnienia—nieodróżnialne od tradycyjnego, nagranego wcześniej audio.\n\n4. **Podejście hybrydowe jest gotowe do produkcji.** Natychmiastowy feedback proceduralny + wzbogacenie AI w tle dostarcza to, co najlepsze z obu światów.\n\n**Rekomendacje dla Twórców Gier:**\n- Używaj proceduralnego DSP dla natychmiastowej odpowiedzi\n- Implementuj agresywne pre-cache'owanie podczas ekranów ładowania\n- Monitoruj stan gry by przewidywać i pre-generować nadchodzące dźwięki\n- Zaakceptuj, że generacja AI w czasie rzeczywistym to problem \"ukryj opóźnienie\", nie \"zmniejsz opóźnienie\"\n\n**Kluczowy Wniosek:**\n> \"Generatywne audio nie polega na szybszej generacji—chodzi o ukrywanie opóźnienia generacji.\""
+  },
+  "footer": {
+    "status": "Ukończona Praca Dyplomowa | 2025 | Igor Szuniewicz"
+  }
+}

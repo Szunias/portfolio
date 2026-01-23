@@ -1,6 +1,9 @@
-import { useTranslation } from 'react-i18next';
+'use client';
+
+import { useLocale } from 'next-intl';
+import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 const languages = [
@@ -14,15 +17,25 @@ interface LanguageSwitcherProps {
 }
 
 const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
-  const { i18n } = useTranslation();
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
 
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
+  const changeLanguage = (newLocale: string) => {
+    // Remove current locale from pathname and add new one
+    const segments = pathname.split('/');
+    segments[1] = newLocale; // Replace locale in URL
+    const newPath = segments.join('/');
+
+    startTransition(() => {
+      router.push(newPath);
+    });
     setIsOpen(false);
   };
 
-  const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
+  const currentLang = languages.find(l => l.code === locale) || languages[0];
 
   return (
     <div className="relative">
@@ -34,6 +47,7 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
         aria-label="Select language"
         aria-expanded={isOpen}
         aria-haspopup="listbox"
+        disabled={isPending}
       >
         <span className="text-xs font-bold text-white tracking-wider">
           {currentLang.label}
@@ -67,11 +81,12 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
               aria-label="Language selector"
             >
               {languages.map((lang) => {
-                const isActive = i18n.language === lang.code;
+                const isActive = locale === lang.code;
                 return (
                   <button
                     key={lang.code}
                     onClick={() => changeLanguage(lang.code)}
+                    disabled={isPending}
                     className={`
                       w-full px-4 py-2 rounded-lg text-xs font-bold tracking-wider text-left transition-all duration-150
                       ${isActive

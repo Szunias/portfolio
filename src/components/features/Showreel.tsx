@@ -1,11 +1,14 @@
+'use client';
+
 import { useState, useRef } from 'react';
 import Player from '@vimeo/player';
 import { Play, AlertCircle } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 
 const Showreel = () => {
-  const { t } = useTranslation();
+  const t = useTranslations('hero');
+  const tError = useTranslations('errors');
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [player, setPlayer] = useState<Player | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -13,14 +16,14 @@ const Showreel = () => {
   const [error, setError] = useState(false);
 
   const timestamps = [
-    { time: 0, label: t('hero.showreel_start', 'Start') },
-    { time: 10, label: t('hero.chapter.shadow_frames', 'Shadow Frames') },
-    { time: 54, label: t('hero.chapter.amorak', 'Amorak') },
-    { time: 91, label: t('hero.chapter.akantilado', 'Akantilado') },
-    { time: 112, label: t('hero.chapter.ray', 'Ray') },
-    { time: 154, label: t('hero.chapter.not_today', 'Not Today') },
-    { time: 184, label: t('hero.chapter.ellen_wwise', 'Ellen Wwise') },
-    { time: 198, label: t('hero.chapter.pause_and_deserve', 'Pause & Deserve') },
+    { time: 0, label: t('showreel_start') || 'Start' },
+    { time: 10, label: t('chapter.shadow_frames') || 'Shadow Frames' },
+    { time: 54, label: t('chapter.amorak') || 'Amorak' },
+    { time: 91, label: t('chapter.akantilado') || 'Akantilado' },
+    { time: 112, label: t('chapter.ray') || 'Ray' },
+    { time: 154, label: t('chapter.not_today') || 'Not Today' },
+    { time: 184, label: t('chapter.ellen_wwise') || 'Ellen Wwise' },
+    { time: 198, label: t('chapter.pause_and_deserve') || 'Pause & Deserve' },
   ];
 
   const handleLoad = () => {
@@ -68,7 +71,7 @@ const Showreel = () => {
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-900">
             <AlertCircle size={48} className="text-red-500 mb-4" />
             <p className="text-white/70 text-center px-4">
-              {t('errors.video_load_failed', 'Failed to load video. Please refresh the page.')}
+              {tError('video_load_failed') || 'Failed to load video. Please refresh the page.'}
             </p>
           </div>
         ) : (

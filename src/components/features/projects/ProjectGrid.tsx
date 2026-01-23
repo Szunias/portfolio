@@ -1,4 +1,6 @@
-import { useTranslation } from 'react-i18next';
+'use client';
+
+import { useTranslations } from 'next-intl';
 import { Project } from '../../../types';
 import ProjectCard from '../ProjectCard';
 
@@ -7,12 +9,12 @@ interface ProjectGridProps {
 }
 
 const ProjectGrid = ({ projects }: ProjectGridProps) => {
-  const { t } = useTranslation();
+  const t = useTranslations('projects');
 
   if (projects.length === 0) {
     return (
       <div className="py-20 text-center text-slate-600 font-mono">
-        {t('projects.no_results', 'No projects found in this category.')}
+        {t('no_results')}
       </div>
     );
   }

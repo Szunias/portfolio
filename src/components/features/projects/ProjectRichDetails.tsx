@@ -1,4 +1,6 @@
-import { useTranslation } from 'react-i18next';
+'use client';
+
+import { useTranslations } from 'next-intl';
 import { CheckCircle2, Trophy, Cpu, Activity, Music, Layers } from 'lucide-react';
 import { Project } from '../../../types';
 
@@ -17,15 +19,15 @@ const Section = ({ title, icon: Icon, children }: { title: string; icon: React.E
 );
 
 const KeyValueGrid = ({ data }: { data: Record<string, string> }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {Object.entries(data).map(([key, value]) => (
         <div key={key} className="bg-white/5 p-4 rounded-lg border border-white/5 hover:border-accent/30 hover:bg-white/8 hover:shadow-[0_0_20px_rgba(56,189,248,0.1)] transition-all duration-300 group">
           <h4 className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2 group-hover:text-accent/80 transition-colors duration-300">
-            {t(`project.fields.${key}`, key.replace(/_/g, ' '))}
+            {t(`project.fields.${key}`) || key.replace(/_/g, ' ')}
           </h4>
-          <p className="text-slate-300 text-sm leading-relaxed group-hover:text-white transition-colors duration-300">{t(value, value)}</p>
+          <p className="text-slate-300 text-sm leading-relaxed group-hover:text-white transition-colors duration-300">{t(value) || value}</p>
         </div>
       ))}
     </div>
@@ -33,13 +35,13 @@ const KeyValueGrid = ({ data }: { data: Record<string, string> }) => {
 };
 
 const ListSection = ({ items }: { items: string[] }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   return (
     <ul className="space-y-3">
       {items.map((item, i) => (
         <li key={i} className="flex items-start gap-3 text-slate-300 hover:text-white transition-colors duration-300 group">
           <CheckCircle2 size={18} className="text-accent flex-shrink-0 mt-1 group-hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.6)] transition-all duration-300" />
-          <span className="leading-relaxed">{t(item, item)}</span>
+          <span className="leading-relaxed">{t(item) || item}</span>
         </li>
       ))}
     </ul>
@@ -47,49 +49,49 @@ const ListSection = ({ items }: { items: string[] }) => {
 };
 
 const ProjectRichDetails = ({ project }: ProjectRichDetailsProps) => {
-  const { t } = useTranslation();
+  const t = useTranslations('project');
 
   return (
     <div className="space-y-4">
-      
+
       {/* Responsibilities */}
       {project.responsibilities && project.responsibilities.length > 0 && (
-        <Section title={t('project.responsibilities', 'Responsibilities')} icon={Layers}>
+        <Section title={t('responsibilities')} icon={Layers}>
           <ListSection items={project.responsibilities} />
         </Section>
       )}
 
       {/* Technical Achievements */}
       {project.technical_achievements && (
-        <Section title={t('project.achievements', 'Technical Achievements')} icon={Trophy}>
+        <Section title={t('achievements')} icon={Trophy}>
           <KeyValueGrid data={project.technical_achievements} />
         </Section>
       )}
 
       {/* Audio Systems */}
       {project.audio_systems && (
-        <Section title={t('project.audio_systems', 'Audio Systems')} icon={Music}>
+        <Section title={t('audio_systems')} icon={Music}>
           <KeyValueGrid data={project.audio_systems} />
         </Section>
       )}
 
       {/* Performance Metrics */}
       {project.performance_metrics && (
-        <Section title={t('project.metrics', 'Performance Metrics')} icon={Activity}>
+        <Section title={t('metrics')} icon={Activity}>
           <KeyValueGrid data={project.performance_metrics} />
         </Section>
       )}
 
       {/* Technical Stack */}
       {project.technical_stack && (
-        <Section title={t('project.tech_stack', 'Technical Stack')} icon={Cpu}>
+        <Section title={t('tech_stack')} icon={Cpu}>
           <KeyValueGrid data={project.technical_stack} />
         </Section>
       )}
 
        {/* Key Scenes (Animation) */}
        {project.key_scenes && project.key_scenes.length > 0 && (
-        <Section title={t('project.key_scenes', 'Key Audio Scenes')} icon={Music}>
+        <Section title={t('key_scenes')} icon={Music}>
           <ListSection items={project.key_scenes} />
         </Section>
       )}

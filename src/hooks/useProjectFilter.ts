@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Project } from '../types';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 
 // Static translation map
 const KEY_MAP: { [key: string]: string } = {
@@ -19,28 +19,28 @@ const KEY_MAP: { [key: string]: string } = {
 };
 
 export const useProjectFilter = (projects: Project[]) => {
-  const { t } = useTranslation();
+  const t = useTranslations('projects');
   const [filter, setFilter] = useState('All');
 
   // Extract unique categories
-  const categories = useMemo(() => 
+  const categories = useMemo(() =>
     ['All', ...new Set(projects.map(p => p.category))],
     [projects]
   );
 
-  const filteredProjects = useMemo(() => 
+  const filteredProjects = useMemo(() =>
     filter === 'All' ? projects : projects.filter(p => p.category === filter),
     [filter, projects]
   );
 
   // Helper to translate category names
   const getCategoryLabel = (cat: string) => {
-    if (cat === 'All') return t('projects_filter_all', 'All');
-    
+    if (cat === 'All') return t('projects_filter_all');
+
     if (KEY_MAP[cat]) {
-        return t(KEY_MAP[cat], cat);
+        return t(KEY_MAP[cat]);
     }
-    
+
     return cat;
   };
 

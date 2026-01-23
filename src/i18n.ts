@@ -1,39 +1,58 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import Backend from 'i18next-http-backend';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import {notFound} from 'next/navigation';
+import {getRequestConfig} from 'next-intl/server';
 
-i18n
-  // load translation using http -> see /public/locales (i.e. https://github.com/i18next/react-i18next/tree/master/example/react/public/locales)
-  // learn more: https://github.com/i18next/i18next-http-backend
-  .use(Backend)
-  // detect user language
-  // learn more: https://github.com/i18next/i18next-browser-languagedetector
-  .use(LanguageDetector)
-  // pass the i18n instance to react-i18next.
-  .use(initReactI18next)
-  // init i18next
-  // for all options read: https://www.i18next.com/overview/configuration-options
-  .init({
-    fallbackLng: 'en',
-    debug: false,
-    
-    react: {
-      useSuspense: true,
-    },
-    
-    backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json', // Standard path
-    },
-    
-    detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage'],
-    },
+export const locales = ['en', 'pl', 'nl'] as const;
+export type Locale = (typeof locales)[number];
+export const defaultLocale: Locale = 'en';
 
-    // Standard default namespace
-    ns: ['translation', 'soundDesign', 'middlewareOptimization', 'gradwork'],
-    defaultNS: 'translation',
-  });
+// Available translation namespaces
+export const namespaces = [
+  'common',
+  'home',
+  'about',
+  'contact',
+  'projects',
+  'music',
+  'shadow-frames',
+  'transientica',
+  'sound-design',
+  'middleware-optimization',
+  'gradwork'
+] as const;
 
-export default i18n;
+export default getRequestConfig(async ({locale}) => {
+  // Validate that the incoming `locale` parameter is valid
+  if (!locale || !locales.includes(locale as Locale)) notFound();
+
+  // Load all translation files for this locale
+  const messages: Record<string, any> = {};
+
+  for (const ns of namespaces) {
+    try {
+      const nsMessages = (await import(`@/messages/${locale}/${ns}.json`)).default;
+      messages[ns] = nsMessages;
+    } catch (error) {
+      console.warn(`Could not load namespace ${ns} for locale ${locale}`);
+    }
+  }
+
+  return {
+    locale,
+    // Merge all namespaces into a single messages object
+    messages: {
+      ...messages.common,
+      ...messages.home,
+      ...messages.about,
+      ...messages.contact,
+      ...messages.projects,
+      ...messages.music,
+      ...messages['shadow-frames'],
+      ...messages.transientica,
+      ...messages['sound-design'],
+      ...messages['middleware-optimization'],
+      ...messages.gradwork,
+    },
+    timeZone: 'Europe/Brussels',
+    now: new Date()
+  };
+});

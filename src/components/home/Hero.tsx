@@ -1,10 +1,13 @@
+'use client';
+
 import { motion } from 'framer-motion';
 import { ArrowRight, Download, Play } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { useTranslations, useLocale } from 'next-intl';
+import Link from 'next/link';
 
 const Hero = () => {
-  const { t } = useTranslation();
+  const t = useTranslations('hero');
+  const locale = useLocale();
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
@@ -50,7 +53,7 @@ const Hero = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-xl sm:text-2xl md:text-3xl text-slate-300 font-light mt-6 mb-12 max-w-2xl"
           >
-            {t('hero.role', 'Game Audio Designer • Composer • Developer')}
+            {t('role') || 'Game Audio Designer • Composer • Developer'}
           </motion.p>
 
           {/* CTAs with magnetic hover effect */}
@@ -61,11 +64,11 @@ const Hero = () => {
             className="flex flex-wrap gap-4"
           >
             <Link
-              to="/projects"
+              href={`/${locale}/projects`}
               className="group relative inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-semibold rounded-xl overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.4)]"
             >
               <span className="relative z-10 flex items-center gap-2">
-                {t('hero.view_work', 'Projects')}
+                {t('view_work') || 'Projects'}
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
@@ -78,14 +81,14 @@ const Hero = () => {
               className="group relative inline-flex items-center gap-2 px-8 py-4 border border-white/30 text-white font-semibold rounded-xl backdrop-blur-sm bg-white/5 overflow-hidden transition-all hover:scale-105 hover:border-white/50 hover:bg-white/10 hover:shadow-[0_0_30px_rgba(56,189,248,0.3)]"
             >
               <Download size={18} className="group-hover:animate-bounce" />
-              {t('hero.cv_button', 'Download CV')}
+              {t('cv_button') || 'Download CV'}
               <div className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/10 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
             </a>
 
             <Link
-              to="/music"
+              href={`/${locale}/music`}
               className="group relative inline-flex items-center justify-center w-14 h-14 border border-white/30 text-white rounded-xl backdrop-blur-sm bg-white/5 overflow-hidden transition-all hover:scale-110 hover:border-accent/50 hover:shadow-[0_0_30px_rgba(56,189,248,0.5)]"
-              title={t('hero.listen_music', 'Listen to Music')}
+              title={t('listen_music') || 'Listen to Music'}
             >
               <Play size={20} className="ml-0.5 fill-accent group-hover:fill-white transition-colors" />
               <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/10 transition-colors" />

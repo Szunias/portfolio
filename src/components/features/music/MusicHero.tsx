@@ -1,4 +1,6 @@
-import { useTranslation } from 'react-i18next';
+'use client';
+
+import { useTranslations, useLocale } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Sparkles } from 'lucide-react';
 import { Track } from '../../../types';
@@ -6,12 +8,13 @@ import { useAudio } from '../../../context/AudioContext';
 
 const MusicHero = () => {
   const { currentTrack, isPlaying, togglePlay, playTrack, playlist } = useAudio();
-  const { t, i18n } = useTranslation();
+  const t = useTranslations('music');
+  const locale = useLocale();
 
   const displayTrack = currentTrack || playlist[0];
 
   const getDesc = (track: Track) => {
-    const lang = i18n.language.split('-')[0];
+    const lang = locale.split('-')[0];
     return track?.desc?.[lang as 'en'|'pl'|'nl'] || track?.desc?.['en'] || '';
   };
 
@@ -20,7 +23,7 @@ const MusicHero = () => {
         <section className="relative pt-32 pb-20 px-4 sm:px-8 overflow-hidden min-h-[60vh] flex items-center justify-center">
              <div className="text-center text-slate-500">
                 <Sparkles size={48} className="mx-auto mb-4 opacity-50" />
-                <p>{t('music.loading', 'Loading library...')}</p>
+                <p>{t('loading')}</p>
             </div>
         </section>
       );
@@ -119,7 +122,7 @@ const MusicHero = () => {
                 <div className="h-[400px] flex items-center justify-center text-slate-500">
                     <div className="text-center">
                         <Sparkles size={48} className="mx-auto mb-4 opacity-50" />
-                        <p>{t('music.select_track', 'Select a track to begin')}</p>
+                        <p>{t('select_track')}</p>
                     </div>
                 </div>
             )}

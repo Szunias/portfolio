@@ -1,7 +1,9 @@
+'use client';
+
 import { useState } from 'react';
 import { cn } from '../../utils';
 import { ImageOff } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 
 interface MediaRendererProps {
   src: string;
@@ -13,17 +15,17 @@ interface MediaRendererProps {
   muted?: boolean;
 }
 
-const MediaRenderer = ({ 
-  src, 
-  alt = "", 
-  className, 
+const MediaRenderer = ({
+  src,
+  alt = "",
+  className,
   controls = false,
   autoPlay = true,
   loop = true,
   muted = true
 }: MediaRendererProps) => {
   const [hasError, setHasError] = useState(false);
-  const { t } = useTranslation();
+  const t = useTranslations('common');
   const isVideo = src.endsWith('.mp4') || src.endsWith('.webm');
   
   // Normalize path if needed (though assumed to be relative to public root if not http)
@@ -34,7 +36,7 @@ const MediaRenderer = ({
         <div className={cn("flex items-center justify-center bg-neutral-900 text-neutral-600 aspect-video", className)}>
             <div className="flex flex-col items-center gap-2">
                 <ImageOff size={24} />
-                <span className="text-xs">{t('common.media_unavailable', 'Media unavailable')}</span>
+                <span className="text-xs">{t('media_unavailable')}</span>
             </div>
         </div>
       );

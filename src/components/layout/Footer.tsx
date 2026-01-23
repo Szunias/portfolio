@@ -1,10 +1,12 @@
+'use client';
+
 import { Github, Linkedin, Mail, Music } from 'lucide-react';
 import { usePortfolioData } from '../../hooks/usePortfolioData';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 
 const Footer = () => {
   const { personal_info } = usePortfolioData();
-  const { t } = useTranslation();
+  const t = useTranslations();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -15,13 +17,13 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold text-white mb-4">Igor Szuniewicz</h3>
             <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
-              {t('hero.label', 'Audio Designer & Developer')}
+              {t('hero.label') || 'Audio Designer & Developer'}
             </p>
           </div>
 
           {/* Connect */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">{t('footer.connect', 'Connect')}</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">{t('footer.connect') || 'Connect'}</h4>
             <div className="flex space-x-4">
               <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-accent transition-all duration-300 p-2 bg-primary rounded-full hover:bg-accent hover:text-primary hover:shadow-[0_0_15px_rgba(56,189,248,0.4)]">
                 <Linkedin size={20} />
@@ -40,7 +42,7 @@ const Footer = () => {
 
           {/* Quick Info */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">{t('footer.location', 'Location')}</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">{t('footer.location') || 'Location'}</h4>
             <p className="text-slate-400 text-sm">
               {personal_info.location.city}, {personal_info.location.country}
             </p>
@@ -52,10 +54,10 @@ const Footer = () => {
 
         <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-slate-500 text-xs">
-            &copy; {currentYear} Igor Szuniewicz. {t('footer.rights', 'All rights reserved.')}
+            &copy; {currentYear} Igor Szuniewicz. {t('footer.rights') || 'All rights reserved.'}
           </p>
           <p className="text-slate-600 text-xs mt-2 md:mt-0">
-            {t('footer.built_with', 'Built with')} React, TypeScript & Tailwind CSS
+            {t('footer.built_with') || 'Built with'} React, TypeScript & Tailwind CSS
           </p>
         </div>
       </div>

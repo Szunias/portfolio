@@ -1,7 +1,9 @@
+'use client';
+
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { usePortfolioData } from '../../hooks/usePortfolioData';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 import { TECH_CONNECTIONS } from '../../constants/techConnections';
 import { 
   Code2, Music2, Wrench, Zap
@@ -71,7 +73,7 @@ const SKILL_TO_TECH_MAP: Record<string, string[]> = {
 
 const SkillsNetwork = () => {
   const { core_skills } = usePortfolioData();
-  const { t } = useTranslation();
+  const t = useTranslations('skills');
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [nodes, setNodes] = useState<Node[]>([]);
@@ -299,7 +301,7 @@ const SkillsNetwork = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-20">
           <h2 className="text-4xl font-display font-bold text-white mb-4 tracking-tight drop-shadow-[0_0_30px_rgba(56,189,248,0.2)]">
-            {t('skills.title', 'Technical Arsenal')}
+            {t('skills.title') || 'Technical Arsenal'}
           </h2>
           <div className="h-0.5 w-24 bg-accent rounded-full mx-auto shadow-[0_0_10px_rgba(56,189,248,0.5)]"></div>
         </div>
@@ -390,7 +392,7 @@ const SkillsNetwork = () => {
               if (node.type === 'category') {
                 const skillGroup = core_skills[node.category];
                 const transKey = `skill_${node.category}_title`;
-                const title = t(transKey, skillGroup.title);
+                const title = t(transKey) || skillGroup.title;
 
                 return (
                   <motion.div
@@ -519,7 +521,7 @@ const SkillsNetwork = () => {
         {/* Legend/Instructions */}
         <div className="mt-12 text-center">
           <p className="text-slate-400 text-sm font-mono">
-            {t('skills.hover_hint', 'Hover over technologies to see connections')}
+            {t('skills.hover_hint') || 'Hover over technologies to see connections'}
           </p>
         </div>
       </div>

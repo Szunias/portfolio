@@ -1,6 +1,9 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { Menu, X, Github, Linkedin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePortfolioData } from '../../hooks/usePortfolioData';
@@ -10,8 +13,9 @@ import { ROUTES } from '../../constants/routes';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { t } = useTranslation();
-  const location = useLocation();
+  const t = useTranslations('nav');
+  const locale = useLocale();
+  const pathname = usePathname();
   const { personal_info } = usePortfolioData();
 
   const closeMenu = () => setIsOpen(false);
@@ -34,13 +38,23 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Helper to get localized route
+  const getLocalizedPath = (path: string) => {
+    // If it's the home path, just return locale
+    if (path === '/') return `/${locale}`;
+    return `/${locale}${path}`;
+  };
+
   const navLinks = [
-    { name: t('nav.home', 'Home'), path: ROUTES.HOME },
-    { name: t('nav.projects', 'Projects'), path: ROUTES.PROJECTS },
-    { name: t('nav.music', 'Music'), path: ROUTES.MUSIC },
-    { name: t('nav.about', 'About'), path: ROUTES.ABOUT },
-    { name: t('nav.contact', 'Contact'), path: ROUTES.CONTACT },
+    { name: t('home'), path: ROUTES.HOME },
+    { name: t('projects'), path: ROUTES.PROJECTS },
+    { name: t('music'), path: ROUTES.MUSIC },
+    { name: t('about'), path: ROUTES.ABOUT },
+    { name: t('contact'), path: ROUTES.CONTACT },
   ];
+
+  // Get current path without locale
+  const currentPath = pathname.replace(`/${locale}`, '') || '/';
 
   return (
     <>
@@ -55,7 +69,7 @@ const Navbar = () => {
           <div className="flex justify-between items-center">
 
             {/* Logo */}
-            <Link to={ROUTES.HOME} className="flex flex-col">
+            <Link href={`/${locale}`} className="flex flex-col">
               <span className="font-bold text-lg text-white">IGOR SZUNIEWICZ</span>
               <span className="text-[10px] text-gray-400 uppercase tracking-wider">Audio Designer</span>
             </Link>
@@ -65,9 +79,9 @@ const Navbar = () => {
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
-                  to={link.path}
-                  className={`text-sm ${location.pathname === link.path ? 'text-white font-semibold' : 'text-gray-400 hover:text-white'}`}
-                  aria-current={location.pathname === link.path ? 'page' : undefined}
+                  href={getLocalizedPath(link.path)}
+                  className={`text-sm ${currentPath === link.path ? 'text-white font-semibold' : 'text-gray-400 hover:text-white'}`}
+                  aria-current={currentPath === link.path ? 'page' : undefined}
                 >
                   {link.name}
                 </Link>
@@ -124,12 +138,12 @@ const Navbar = () => {
                     transition={{ delay: index * 0.05 }}
                   >
                     <Link
-                      to={link.path}
+                      href={getLocalizedPath(link.path)}
                       onClick={closeMenu}
                       className={`text-2xl font-bold py-3 border-b border-gray-800 block ${
-                        location.pathname === link.path ? 'text-cyan-400' : 'text-white hover:text-gray-300'
+                        currentPath === link.path ? 'text-cyan-400' : 'text-white hover:text-gray-300'
                       }`}
-                      aria-current={location.pathname === link.path ? 'page' : undefined}
+                      aria-current={currentPath === link.path ? 'page' : undefined}
                     >
                       {link.name}
                     </Link>

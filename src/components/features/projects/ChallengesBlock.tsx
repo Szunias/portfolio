@@ -1,4 +1,6 @@
-import { useTranslation } from 'react-i18next';
+'use client';
+
+import { useTranslations } from 'next-intl';
 import { AlertTriangle, CheckCircle2, Target } from 'lucide-react';
 
 interface Challenge {
@@ -12,7 +14,7 @@ interface ChallengesBlockProps {
 }
 
 const ChallengesBlock = ({ challenges }: ChallengesBlockProps) => {
-  const { t } = useTranslation();
+  const t = useTranslations('project');
 
   if (!challenges || challenges.length === 0) return null;
 
@@ -20,7 +22,7 @@ const ChallengesBlock = ({ challenges }: ChallengesBlockProps) => {
     <div className="my-20">
       <h3 className="text-2xl font-display font-bold text-white mb-8 flex items-center gap-3">
         <Target className="text-accent" size={28} />
-        {t('project.challenges_title', 'Challenges & Solutions')}
+        {t('challenges_title')}
       </h3>
       
       <div className="grid gap-6">
@@ -31,7 +33,7 @@ const ChallengesBlock = ({ challenges }: ChallengesBlockProps) => {
                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm font-mono">
                   {i + 1}
                 </span>
-                {t(item.challenge, item.challenge)}
+                {item.challenge}
               </h4>
               
               <div className="grid md:grid-cols-2 gap-8">
@@ -39,10 +41,10 @@ const ChallengesBlock = ({ challenges }: ChallengesBlockProps) => {
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-red-400 text-sm font-mono uppercase tracking-wider">
                     <AlertTriangle size={16} />
-                    {t('project.problem', 'Problem')}
+                    {t('problem')}
                   </div>
                   <p className="text-slate-400 leading-relaxed">
-                    {t(item.problem, item.problem)}
+                    {item.problem}
                   </p>
                 </div>
 
@@ -50,10 +52,10 @@ const ChallengesBlock = ({ challenges }: ChallengesBlockProps) => {
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-green-400 text-sm font-mono uppercase tracking-wider">
                     <CheckCircle2 size={16} />
-                    {t('project.solution', 'Solution')}
+                    {t('solution')}
                   </div>
                   <p className="text-slate-300 leading-relaxed">
-                    {t(item.solution, item.solution)}
+                    {item.solution}
                   </p>
                 </div>
               </div>

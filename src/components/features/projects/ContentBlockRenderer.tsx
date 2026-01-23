@@ -1,4 +1,6 @@
-import { useTranslation } from 'react-i18next';
+'use client';
+
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Cpu, ZoomIn, X } from 'lucide-react';
 import { ContentBlock } from '../../../types';
@@ -10,13 +12,13 @@ interface ContentBlockRendererProps {
 }
 
 const StatsGridBlock = ({ items }: { items: { label: string; value: string }[] }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-12 border-y border-white/10 py-8">
       {items.map((item, idx) => (
         <div key={idx} className="text-center px-2">
-          <div className="text-2xl md:text-3xl font-display font-bold text-white mb-1 break-words hyphens-auto">{t(item.value, item.value)}</div>
-          <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{t(item.label, item.label)}</div>
+          <div className="text-2xl md:text-3xl font-display font-bold text-white mb-1 break-words hyphens-auto">{t(item.value) || item.value}</div>
+          <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{t(item.label) || item.label}</div>
         </div>
       ))}
     </div>
@@ -24,7 +26,7 @@ const StatsGridBlock = ({ items }: { items: { label: string; value: string }[] }
 };
 
 const SplitContentBlock = ({ block, onImageClick }: { block: ContentBlock; onImageClick?: (src: string) => void }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const handleClick = () => {
     if (block.media && onImageClick) {
@@ -35,11 +37,11 @@ const SplitContentBlock = ({ block, onImageClick }: { block: ContentBlock; onIma
   return (
     <div className={cn("grid grid-cols-1 lg:grid-cols-2 gap-12 items-center my-16", block.reverseLayout && "lg:grid-flow-dense")}>
       <div className={cn(block.reverseLayout && "lg:col-start-2")}>
-        {block.title && <h3 className="text-2xl font-bold text-white mb-6">{t(block.title, block.title)}</h3>}
+        {block.title && <h3 className="text-2xl font-bold text-white mb-6">{t(block.title) || block.title}</h3>}
         {block.content && (
             <div
                 className="prose prose-invert max-w-none text-slate-300/90 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: t(block.content, block.content) }}
+                dangerouslySetInnerHTML={{ __html: t(block.content) || block.content }}
             />
         )}
       </div>
@@ -61,28 +63,28 @@ const SplitContentBlock = ({ block, onImageClick }: { block: ContentBlock; onIma
              <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity" size={32} />
            </div>
         </div>
-        {block.mediaCaption && <p className="text-xs text-center text-slate-500 mt-2 font-mono">{t(block.mediaCaption, block.mediaCaption)}</p>}
+        {block.mediaCaption && <p className="text-xs text-center text-slate-500 mt-2 font-mono">{t(block.mediaCaption) || block.mediaCaption}</p>}
       </div>
     </div>
   );
 };
 
 const GenericBlock = ({ block }: { block: ContentBlock }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     return (
         <div className="border-l-2 border-accent/20 pl-6 md:pl-10 py-2 my-8">
-            {block.title && <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3"><Cpu size={20} className="text-accent" /> {t(block.title, block.title)}</h3>}
+            {block.title && <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3"><Cpu size={20} className="text-accent" /> {t(block.title) || block.title}</h3>}
             {block.content && (
                 <div
                     className="prose prose-invert max-w-none text-slate-300 leading-relaxed mb-8"
-                    dangerouslySetInnerHTML={{ __html: t(block.content, block.content) }}
+                    dangerouslySetInnerHTML={{ __html: t(block.content) || block.content }}
                 />
             )}
             {block.media && (
                 <div className="rounded-xl overflow-hidden border border-white/10 bg-black aspect-video shadow-2xl mt-6">
-                    <MediaRenderer 
-                        src={block.media} 
-                        alt={block.title} 
+                    <MediaRenderer
+                        src={block.media}
+                        alt={block.title}
                         controls={true}
                         className="w-full h-full object-cover"
                     />

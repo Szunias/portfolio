@@ -1,6 +1,8 @@
+'use client';
+
 import { Helmet } from 'react-helmet-async';
-import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
+import { useLocale } from 'next-intl';
+import { usePathname } from 'next/navigation';
 
 interface SEOProps {
   title?: string;
@@ -11,22 +13,22 @@ interface SEOProps {
   url?: string;
 }
 
-const SEO = ({ 
-  title, 
-  description, 
+const SEO = ({
+  title,
+  description,
   type = 'website',
   image = '/assets/cv-image/cvsmile.jpg', // Corrected path to main portrait
   url
 }: SEOProps) => {
-  const { i18n } = useTranslation();
-  const location = useLocation();
+  const locale = useLocale();
+  const pathname = usePathname();
   const siteTitle = "Igor Szuniewicz | Audio Designer & Developer";
   const defaultDescription = "Portfolio of Igor Szuniewicz - Audio Designer & Developer specializing in Game Audio, Wwise/FMOD implementation, and Interactive Systems.";
-  
+
   // Jeśli podano tytuł, dodaj sufiks strony, w przeciwnym razie użyj domyślnego
   const fullTitle = title ? `${title} | Igor Szuniewicz` : siteTitle;
   const metaDescription = description || defaultDescription;
-  
+
   // SSR-safe URL handling
   const getBaseUrl = () => {
     if (typeof window !== 'undefined') {
@@ -34,9 +36,9 @@ const SEO = ({
     }
     return 'https://igorszuniewicz.github.io'; // Fallback for SSR
   };
-  
+
   const baseUrl = getBaseUrl();
-  const currentUrl = url || (typeof window !== 'undefined' ? window.location.href : `${baseUrl}${location.pathname}`);
+  const currentUrl = url || (typeof window !== 'undefined' ? window.location.href : `${baseUrl}${pathname}`);
   const imageUrl = image.startsWith('http') ? image : `${baseUrl}${image}`;
 
   // Structured Data (JSON-LD) for better SEO
@@ -62,6 +64,16 @@ const SEO = ({
     ]
   };
 
+  // Get locale for Open Graph
+  const getOgLocale = (locale: string) => {
+    const localeMap: Record<string, string> = {
+      'pl': 'pl_PL',
+      'nl': 'nl_NL',
+      'en': 'en_US'
+    };
+    return localeMap[locale] || 'en_US';
+  };
+
   return (
     <Helmet>
       {/* Standard Metadata */}
@@ -69,7 +81,7 @@ const SEO = ({
       <meta name="description" content={metaDescription} />
       <meta name="author" content="Igor Szuniewicz" />
       <meta name="keywords" content="Audio Designer, Game Audio, Wwise, FMOD, Unreal Engine, Sound Design, Audio Programming, Interactive Audio" />
-      <html lang={i18n.language} />
+      <html lang={locale} />
 
       {/* Open Graph / Facebook / LinkedIn */}
       <meta property="og:type" content={type} />
@@ -78,7 +90,7 @@ const SEO = ({
       <meta property="og:image" content={imageUrl} />
       <meta property="og:url" content={currentUrl} />
       <meta property="og:site_name" content="Igor Szuniewicz Portfolio" />
-      <meta property="og:locale" content={i18n.language === 'pl' ? 'pl_PL' : i18n.language === 'nl' ? 'nl_NL' : 'en_US'} />
+      <meta property="og:locale" content={getOgLocale(locale)} />
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />

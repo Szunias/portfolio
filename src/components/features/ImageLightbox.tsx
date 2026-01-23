@@ -1,8 +1,10 @@
+'use client';
+
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ZoomIn } from 'lucide-react';
 import { ProjectImage } from '../../types';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 
 interface ImageLightboxProps {
   images: (string | ProjectImage)[];
@@ -10,7 +12,7 @@ interface ImageLightboxProps {
 
 const ImageLightbox = ({ images }: ImageLightboxProps) => {
   const [selectedImage, setSelectedImage] = useState<{ src: string; caption: string | null } | null>(null);
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const getImageData = (img: string | ProjectImage) => {
     if (typeof img === 'string') {
@@ -42,7 +44,7 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
                   />
                 ) : (
                   <>
-                    <img src={`/${src}`} alt={caption ? t(caption, caption) : 'Gallery image'} className="w-full h-auto object-cover transition-transform group-hover:scale-[1.02]" />
+                    <img src={`/${src}`} alt={caption ? t(caption) : 'Gallery image'} className="w-full h-auto object-cover transition-transform group-hover:scale-[1.02]" />
                     {/* Zoom overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity p-3 bg-white/20 backdrop-blur-xl border border-white/30 rounded-full hover:scale-110 hover:shadow-[0_0_30px_rgba(56,189,248,0.5)]">
@@ -55,7 +57,7 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
               {caption && (
                 <p className="mt-2 text-sm text-slate-400 flex items-center gap-2">
                   <span className="text-accent font-medium">IMG:</span>
-                  {t(caption, caption)}
+                  {t(caption)}
                 </p>
               )}
             </div>
@@ -91,12 +93,12 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
             >
               <img
                 src={`/${selectedImage.src}`}
-                alt={selectedImage.caption ? t(selectedImage.caption, selectedImage.caption) : 'Enlarged gallery image view'}
+                alt={selectedImage.caption ? t(selectedImage.caption) : 'Enlarged gallery image view'}
                 className="max-w-full max-h-[85vh] object-contain rounded-lg"
               />
               {selectedImage.caption && (
                 <p className="mt-4 text-center text-slate-300">
-                  {t(selectedImage.caption, selectedImage.caption)}
+                  {t(selectedImage.caption)}
                 </p>
               )}
             </motion.div>

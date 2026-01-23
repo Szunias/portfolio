@@ -1,5 +1,7 @@
+'use client';
+
 import { motion } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 import { memo } from 'react';
 import { TECH_ICON_MAP, TECH_CATEGORIES } from '../../constants/techData';
 import { Cpu, Code2, Music, Wrench, LucideIcon } from 'lucide-react';
@@ -24,7 +26,7 @@ const ACCENT_COLOR_CLASSES: Record<string, string> = {
 };
 
 const TechConstellation = ({ onSelect }: TechConstellationProps) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
