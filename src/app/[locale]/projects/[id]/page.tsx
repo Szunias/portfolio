@@ -1,6 +1,6 @@
 'use client';
 
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { usePortfolioData } from '@/hooks/usePortfolioData';
 import { Project } from '@/types';
@@ -12,7 +12,8 @@ import ChallengesBlock from '@/components/features/projects/ChallengesBlock';
 import ProjectCodeSection from '@/components/features/projects/ProjectCodeSection';
 import { motion } from 'framer-motion';
 
-export default function ProjectPage({ params }: { params: { id: string } }) {
+export default function ProjectPage() {
+  const params = useParams<{ id: string }>();
   const locale = useLocale();
   const t = useTranslations('projects');
   const { featured_projects = [], additional_projects = [] } = usePortfolioData();

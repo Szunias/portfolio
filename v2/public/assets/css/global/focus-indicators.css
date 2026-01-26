@@ -1,0 +1,156 @@
+/**
+ * Accessible Focus Indicators
+ * WCAG 2.1 Level AA compliant focus styles for keyboard navigation
+ */
+
+/*
+ * Hide default outline and replace with custom high-contrast indicator
+ * Using :focus-visible to only show on keyboard navigation, not mouse clicks
+ */
+
+/* Remove default outline for all interactive elements */
+*:focus {
+  outline: none;
+}
+
+/* Custom focus indicator - only on keyboard navigation */
+*:focus-visible {
+  outline: 3px solid #60a5fa;
+  outline-offset: 2px;
+  border-radius: 4px;
+  transition: outline-offset 0.15s ease;
+}
+
+/* Buttons - enhanced focus with inner glow */
+button:focus-visible,
+.button:focus-visible,
+.btn:focus-visible,
+[role="button"]:focus-visible {
+  outline: 3px solid #60a5fa;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
+}
+
+/* Links - subtle underline + outline */
+a:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 4px;
+  text-decoration-color: #60a5fa;
+  text-decoration-thickness: 2px;
+}
+
+/* Form inputs */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid #60a5fa;
+  outline-offset: 0;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+}
+
+/* Navigation items */
+nav a:focus-visible,
+.nav-link:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 4px;
+  background: rgba(96, 165, 250, 0.1);
+}
+
+/* Cards and interactive containers */
+.card:focus-visible,
+.project-card:focus-visible,
+.playlist-item:focus-visible,
+.gallery-item:focus-visible {
+  outline: 3px solid #60a5fa;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 6px rgba(96, 165, 250, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Language switcher buttons */
+.lang-btn:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+  background: rgba(96, 165, 250, 0.15);
+}
+
+/* Music player controls */
+.player-btn:focus-visible {
+  outline: 3px solid #60a5fa;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(96, 165, 250, 0.25);
+}
+
+/* Filter tags */
+.filter-tag:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.15);
+}
+
+/* Skip link (for screen readers) */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: #fff;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 100000;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid #60a5fa;
+  outline-offset: 0;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  *:focus-visible {
+    outline: 4px solid #fff;
+    outline-offset: 2px;
+  }
+
+  button:focus-visible,
+  .button:focus-visible {
+    outline: 4px solid #fff;
+    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+  *:focus-visible {
+    outline-color: #93c5fd;
+  }
+
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.25);
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *:focus-visible {
+    transition: none;
+  }
+
+  .card:focus-visible,
+  .project-card:focus-visible {
+    transform: none;
+  }
+}
+
+/* Print styles - hide focus indicators */
+@media print {
+  *:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+}

@@ -18,16 +18,41 @@ const Section = ({ title, icon: Icon, children }: { title: string; icon: React.E
   </div>
 );
 
+// Check if a string looks like a translation key (e.g., "namespace.key" pattern, no spaces)
+const isTranslationKey = (str: string): boolean => {
+  return !str.includes(' ') && str.includes('.');
+};
+
 const KeyValueGrid = ({ data }: { data: Record<string, string> }) => {
   const t = useTranslations();
+
+  const translateIfKey = (value: string): string => {
+    if (isTranslationKey(value)) {
+      try {
+        return t(value);
+      } catch {
+        return value;
+      }
+    }
+    return value;
+  };
+
+  const translateFieldKey = (key: string): string => {
+    try {
+      return t(`project.fields.${key}`);
+    } catch {
+      return key.replace(/_/g, ' ');
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {Object.entries(data).map(([key, value]) => (
         <div key={key} className="bg-white/5 p-4 rounded-lg border border-white/5 hover:border-accent/30 hover:bg-white/8 hover:shadow-[0_0_20px_rgba(56,189,248,0.1)] transition-all duration-300 group">
           <h4 className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2 group-hover:text-accent/80 transition-colors duration-300">
-            {t(`project.fields.${key}`) || key.replace(/_/g, ' ')}
+            {translateFieldKey(key)}
           </h4>
-          <p className="text-slate-300 text-sm leading-relaxed group-hover:text-white transition-colors duration-300">{t(value) || value}</p>
+          <p className="text-slate-300 text-sm leading-relaxed group-hover:text-white transition-colors duration-300">{translateIfKey(value)}</p>
         </div>
       ))}
     </div>
@@ -36,12 +61,24 @@ const KeyValueGrid = ({ data }: { data: Record<string, string> }) => {
 
 const ListSection = ({ items }: { items: string[] }) => {
   const t = useTranslations();
+
+  const translateIfKey = (value: string): string => {
+    if (isTranslationKey(value)) {
+      try {
+        return t(value);
+      } catch {
+        return value;
+      }
+    }
+    return value;
+  };
+
   return (
     <ul className="space-y-3">
       {items.map((item, i) => (
         <li key={i} className="flex items-start gap-3 text-slate-300 hover:text-white transition-colors duration-300 group">
           <CheckCircle2 size={18} className="text-accent flex-shrink-0 mt-1 group-hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.6)] transition-all duration-300" />
-          <span className="leading-relaxed">{t(item) || item}</span>
+          <span className="leading-relaxed">{translateIfKey(item)}</span>
         </li>
       ))}
     </ul>
