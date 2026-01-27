@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
-import { ChevronDown, FileText, Github, ArrowLeft, Mail, Sparkles, HardDrive, Waves, Clock, Lightbulb, CheckCircle2, XCircle, HelpCircle } from 'lucide-react';
+import { ChevronDown, FileText, Github, ArrowLeft, Mail, Sparkles, HardDrive, Waves, Clock, Lightbulb, CheckCircle2, XCircle, HelpCircle, Plug, FlaskConical, Frown } from 'lucide-react';
 import SEO from '../components/layout/SEO';
 import { useTranslation } from 'react-i18next';
 
@@ -628,10 +628,10 @@ const ResearchTimeline = ({ t }: { t: (key: string) => string }) => {
     const isInView = useInView(ref, { once: true, margin: "-100px" });
 
     const events = [
-        { key: 'start', icon: '🔌' },
-        { key: 'models', icon: '🧪' },
-        { key: 'frustration', icon: '🧱' },
-        { key: 'eureka', icon: '💡' },
+        { key: 'start', Icon: Plug },
+        { key: 'models', Icon: FlaskConical },
+        { key: 'frustration', Icon: Frown },
+        { key: 'eureka', Icon: Lightbulb },
     ];
 
     return (
@@ -672,7 +672,7 @@ const ResearchTimeline = ({ t }: { t: (key: string) => string }) => {
                                 <div className={`ml-16 md:ml-0 md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
                                     <div className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all">
                                         <div className="flex items-center gap-3 mb-3 ${index % 2 === 0 ? 'md:justify-end' : ''}">
-                                            <span className="text-2xl">{event.icon}</span>
+                                            <event.Icon className="w-6 h-6 text-accent" />
                                             <span className="text-sm text-accent font-medium">
                                                 {t(`timeline.events.${event.key}.date`)}
                                             </span>
