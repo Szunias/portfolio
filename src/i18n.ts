@@ -32,8 +32,29 @@ i18n
     },
 
     // Standard default namespace
-    ns: ['translation', 'soundDesign', 'middlewareOptimization', 'gradwork'],
+    ns: [
+      'translation',
+      'common',
+      'gradwork',
+      'middlewareOptimization',
+      'soundDesign',
+      'shadowFrames',
+      'audioq',
+      'about',
+      'amorak',
+      'akantilado',
+      'pauseAndDeserve',
+      'notTodayDarling',
+      'contact',
+      'wwiseUnrealFixer',
+      'rayAnimation',
+      'richter',
+      'pawism',
+      'music',
+      'unrealEngineRebuilder'
+    ],
     defaultNS: 'translation',
+    fallbackNS: 'common',
   });
 
 export default i18n;
