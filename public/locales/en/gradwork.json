@@ -1,86 +1,198 @@
 {
   "back": "Back to Projects",
-  "transition": {
-    "well": "well"
-  },
   "hero": {
-    "badge": "Ongoing Research",
-    "title": "Is AI Audio in Real-Time Possible in Games?",
-    "subtitle": "Student research: can AI generate game audio fast enough for real-time playback?"
+    "badge": "Bachelor Thesis 2025",
+    "title": "Can AI Generate Game Audio in Real-Time?",
+    "subtitle": "I spent months finding out. The answer surprised me.",
+    "read_paper": "Read Paper",
+    "view_code": "View Code",
+    "scroll": "Scroll to explore"
   },
-  "section1": {
-    "title": "What's This Project About?",
-    "intro": "You might be wondering why anyone would even try to generate sounds with AI in games. Well, it's actually a pretty cool question - what if instead of having hundreds of pre-recorded sound effects, games could create them on the fly? Sounds like science fiction, right?",
-    "testing": "So for the past few weeks, I've been testing exactly that. The main question was:",
-    "question": "Is AI fast enough that players wouldn't even notice the delay between an action and its sound?",
-    "current_findings": "Current Findings:",
-    "findings": "The direct answer so far: AI is too slow for instant playback. BUT - I'm exploring a workaround to use AI quality in games. How? Keep reading."
+  "whyThisMatters": {
+    "title": "Why Would Anyone Want This?",
+    "description": "Imagine a game where every gunshot sounds unique. Every footstep adapts to the surface. No two explosions are identical. That's the promise of AI audio.",
+    "reasons": {
+      "variation": {
+        "title": "Infinite Variation",
+        "description": "Traditional games ship with 5-10 gunshot samples. Players hear the same sounds loop. AI could generate unique variations every time."
+      },
+      "fileSize": {
+        "title": "Smaller Games",
+        "description": "AAA games ship with gigabytes of audio files. What if we could generate them on-the-fly instead of storing 500 WAV files?"
+      },
+      "adaptive": {
+        "title": "Adaptive Audio",
+        "description": "Sound that reacts to context. A gun sounds different in a cave vs. outdoors. AI could adapt in real-time to the environment."
+      }
+    },
+    "hook": "Sounds amazing, right? There's just one problem..."
   },
-  "section2": {
-    "title": "Making Unity and Python Talk",
-    "intro": "At first, I had to figure out the basics - connecting Unity with Python through WebSocket. Sounds complicated, but in practice Unity just says \"hey Python, give me a gunshot sound\", and Python generates it and sends it back.",
-    "architecture_flow": "Unity (C#) ⟷ WebSocket ⟷ Python Server",
-    "results_intro": "First tests with a simple procedural generator looked promising:",
-    "table_sound": "Sound Type",
-    "table_latency": "Latency",
-    "table_verdict": "Verdict",
-    "footstep": "Footstep",
-    "gunshot": "Gunshot",
-    "impact": "Impact",
-    "excellent": "Excellent",
-    "results_note": "Sounds great! Everything under 60ms is practically unnoticeable to players. The only problem was that these sounds, well... sounded synthetic. Like something from a 90s game. I needed something better."
+  "latency": {
+    "title": "The Latency Problem",
+    "description": "Shoot a gun in a game. If the bang comes 100 milliseconds late, your brain notices. That tiny gap breaks immersion. Now imagine waiting 12 seconds for each sound.",
+    "threshold": "Human perception threshold:",
+    "label_target": "Perfect: 16ms (60 FPS frame)",
+    "label_acceptable": "Acceptable",
+    "label_noticeable": "You notice this",
+    "label_unplayable": "Completely broken",
+    "label_failure": "Why even bother?"
   },
-  "section3": {
-    "title": "The 12-Second Nightmare",
-    "intro": "I expected latency. I didn't expect <em>this</em>.",
-    "failure_stat": "12.000 ms",
-    "failure_context": "Time to generate one footstep with AudioLDM.",
-    "narrative": "In a game running at 60 FPS, a footstep needs to happen in 16 milliseconds. My first attempt was 750 times too slow. Even the faster MusicGen model took 4 seconds. In the world of game development, 4 seconds is an eternity. It was a complete failure."
+  "chart": {
+    "title": "The Numbers Don't Lie",
+    "subtitle": "I tested three AI audio models. Here's how they compare to what games actually need.",
+    "humanReaction": "Human reaction time",
+    "acceptable": "Acceptable for games",
+    "gameFrame": "Game frame (60fps)",
+    "models": {
+      "elevenlabs": "ElevenLabs",
+      "mmaudio": "MMAudio",
+      "audiogen": "AudioGen"
+    },
+    "cached": "With caching",
+    "tooltip": {
+      "elevenlabs": "Cloud API. Best quality, but latency varies wildly based on server load.",
+      "mmaudio": "Video-to-audio model. I adapted it for game use. Runs locally.",
+      "audiogen": "Meta's text-to-audio. Balanced, but still too slow for real-time.",
+      "cached": "Pre-generated sounds played from memory. This is the breakthrough."
+    }
   },
-  "section4": {
+  "models": {
+    "title": "What I Actually Tested",
+    "subtitle": "Three models, hundreds of tests, one Unity prototype. Here's what I found.",
+    "latency": "Latency",
+    "quality": "Quality",
+    "quality_high": "Excellent",
+    "quality_good": "Good",
+    "quality_medium": "Decent",
+    "elevenlabs_note": "Cloud-based. Amazing quality, but you're at the mercy of their servers. I saw 1-second responses and 12-second responses on the same day.",
+    "mmaudio_note": "Originally designed for video soundtracks. I hacked it to work with game events. Surprisingly good ambient sounds.",
+    "audiogen_note": "Meta's model. Most consistent, but 3 seconds is still 3 seconds too slow for a gunshot.",
+    "architecture_title": "The System I Built"
+  },
+  "timeline": {
+    "title": "The Research Journey",
+    "subtitle": "Four months of experiments, bugs, and late-night debugging sessions.",
+    "events": {
+      "start": {
+        "date": "September 2024",
+        "title": "First Connection",
+        "description": "Got Unity talking to Python via WebSocket. Simple prompt: 'gunshot'. Waited 8 seconds. Heard a terrible sound. But it worked!"
+      },
+      "models": {
+        "date": "October 2024",
+        "title": "Testing All Three Models",
+        "description": "ElevenLabs had the best quality but was inconsistent. MMAudio was stable but slower. AudioGen was... okay. None were fast enough."
+      },
+      "frustration": {
+        "date": "November 2024",
+        "title": "The Wall",
+        "description": "Tried everything. Different prompts. Smaller audio files. Lower quality settings. Nothing got below 1 second. I thought the thesis was dead."
+      },
+      "eureka": {
+        "date": "Late November",
+        "title": "3 AM Discovery",
+        "description": "Checking server logs, I noticed something weird. Cache hits showed 0.03ms. Not 3ms. 0.03ms. The bottleneck wasn't AI - it was waiting for AI."
+      }
+    }
+  },
+  "breakthrough": {
     "title": "The 0.03ms Anomaly",
-    "intro": "I was ready to scrap the project. But then, during a frustration-filled debug session, I noticed something weird in the logs.",
-    "logs": "[LOG] Gen_Request_01: 4102ms\n[LOG] Gen_Request_02: 4098ms\n[LOG] Gen_Request_01: 0.03ms  <-- ???",
-    "epiphany": "The second time I requested the same sound, it didn't generate it. It pulled it from memory. It was instant. Faster than any hard drive reading a WAV file.",
-    "question": "We don't need to be fast. We just need to be early."
+    "subtitle": "At 3 AM, staring at server logs, I found something that changed everything.",
+    "story": "I was about to give up. Then I noticed a log line I'd been ignoring: 'cache_hit: 0.03ms'. I had added caching as an afterthought - just to avoid re-generating the same sound twice. But that number... 0.03 milliseconds. That's 40,000 times faster than generating a new sound.",
+    "realization": "The problem wasn't making AI faster. The problem was calling AI at the wrong time.",
+    "metric": {
+      "value": "0.03",
+      "unit": "ms",
+      "label": "Cache hit latency"
+    }
   },
-  "section5": {
-    "title": "Predictive Generation",
-    "intro": "If we can't generate sound in real-time, we have to generate it <em>before</em> it happens. This shifted the entire architecture from 'Reaction' to 'Prediction'.",
-    "solution_stat": "Loading...",
-    "solution_label": "The Trick",
-    "explanation": "I built a system that uses the loading screen—a place where players expect to wait—to 'hallucinate' the audio for the level ahead. By the time the player spawns, the AI has already done the heavy lifting. The result? Zero latency. High-fidelity AI audio."
+  "cachingDiagram": {
+    "title": "The Solution: Generate Early, Play Instantly",
+    "subtitle": "If we can't make AI fast, we make it invisible.",
+    "steps": {
+      "loading": {
+        "label": "Loading Screen",
+        "description": "While the player waits, AI generates sounds in the background"
+      },
+      "cache": {
+        "label": "Cache Fills Up",
+        "description": "10 gunshots, 5 explosions, 8 footsteps - all pre-generated"
+      },
+      "play": {
+        "label": "Player Acts",
+        "description": "Bang! Sound plays from cache in under 50ms"
+      },
+      "refill": {
+        "label": "Background Refill",
+        "description": "AI quietly generates replacement sounds for next time"
+      }
+    }
   },
-  "section6": {
-    "title": "The New Problem: Memory vs. Chaos",
-    "intro": "So we solved the speed limit by 'cheating' with the loading screen. But this victory created a new, more dangerous enemy: <strong>RAM Usage</strong>.",
-    "problem": "If we pre-generate <em>every</em> possible sound for an open-world game, we would need terabytes of RAM. We traded CPU time for Memory, and now we're running out of space.",
-    "current_work": "This is where my research is <strong>right now</strong>. I am moving away from 'Pre-generate Everything' to something smarter: <strong>Predictive Buffering</strong>."
+  "solution": {
+    "title": "Before & After",
+    "subtitle": "Same sounds. Same quality. Completely different experience.",
+    "without_cache": "Without Cache",
+    "with_cache": "With Cache",
+    "unacceptable": "Unplayable",
+    "acceptable": "Feels instant",
+    "reduction": "Latency reduction",
+    "quote": "We don't need to be fast. We just need to be early."
   },
-  "section7": {
-    "title": "Active Experiments",
-    "intro": "I am currently running three parallel experiments to solve the memory crisis:",
-    "exp1_title": "Smart Cleanup",
-    "exp1_desc": "Deleting sounds immediately after they are played to free up RAM.",
-    "exp2_title": "The 10s Window",
-    "exp2_desc": "AI that guesses what you will do in the next 10 seconds and generates ONLY that.",
-    "status_title": "Research Status: ACTIVE",
-    "status_desc": "The '0.03ms Cache' works, but making it scalable is the new frontier. I am currently coding the prediction algorithm in Python."
+  "useCases": {
+    "title": "So When Can We Actually Use This?",
+    "subtitle": "AI audio isn't magic. It's a tool with specific use cases.",
+    "headers": {
+      "useCase": "Use Case",
+      "frequency": "How Often?",
+      "verdict": "Works Today?"
+    },
+    "cases": {
+      "footsteps": {
+        "name": "Footsteps",
+        "frequency": "Every 0.5s",
+        "verdict": "no",
+        "note": "Too frequent. Cache empties faster than AI can fill it."
+      },
+      "ambient": {
+        "name": "Ambient Sounds",
+        "frequency": "Rare",
+        "verdict": "yes",
+        "note": "Perfect. Background sounds can be pre-generated during loading."
+      },
+      "gunshots": {
+        "name": "Gunshots",
+        "frequency": "Varies",
+        "verdict": "maybe",
+        "note": "Works if you limit fire rate or use hybrid cache + fallback."
+      },
+      "cutscenes": {
+        "name": "Cutscene Audio",
+        "frequency": "Scripted",
+        "verdict": "yes",
+        "note": "Best case. You know exactly what's needed ahead of time."
+      },
+      "procedural": {
+        "name": "Procedural Music",
+        "frequency": "Continuous",
+        "verdict": "maybe",
+        "note": "Possible with segment-based generation. Still experimental."
+      }
+    },
+    "verdicts": {
+      "yes": "Yes",
+      "no": "Not yet",
+      "maybe": "Depends"
+    }
   },
-  "section8": {
-    "title": "Update: Verification (06 Dec 2025)",
-    "intro": "The '0.03ms Anomaly' wasn't a glitch. It was the answer. I spent the weekend stress-testing this new 'Hybrid' approach against the old 'Pure AI' method.",
-    "session2_title": "Local AI is Dead",
-    "session2_desc": "I gave the local models one last chance on standard hardware. It's confirmed useless. 4-10 seconds of silence for a single footstep. We can't ship that.",
-    "session4_title": "The Hybrid Solution",
-    "session4_desc": "This actually works. The procedural engine handles the immediate feedback (<5ms), while the AI generates the high-fidelity asset in the background. To the player, it just feels instant.",
-    "stats_intro": "Final metrics from the stress test:",
-    "stat_proc": "Procedural Layer: 5.02ms (Immediate)",
-    "stat_cloud": "Cloud AI: ~2.1s (Background)",
-    "stat_hybrid": "Result: 0ms effective latency",
-    "summary": "We aren't just cheating time anymore. We're managing it. The system is stable."
+  "conclusion": {
+    "main": "AI audio isn't ready to replace traditional game audio.",
+    "secondary": "But with predictive caching, it's ready to enhance it. The technology will only get faster.",
+    "final_thought": "In 2-3 years? Real-time AI audio might actually be possible. For now, we work with what we have.",
+    "download_paper": "Read Full Paper",
+    "github": "View Code",
+    "contact": "Discuss This"
   },
   "footer": {
-    "status": "Student Research Project • Ongoing • 2025 • Igor Szuniewicz"
+    "status": "Bachelor Thesis | 2025 | Igor Szuniewicz"
   }
 }

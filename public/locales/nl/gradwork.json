@@ -1,72 +1,198 @@
 {
   "back": "Terug naar projecten",
-  "transition": {
-    "well": "nou"
-  },
   "hero": {
-    "badge": "Lopend onderzoek",
-    "title": "Is AI Audio in Real-Time mogelijk in games?",
-    "subtitle": "Een afstudeeronderzoek door AI audio generatie"
+    "badge": "Bachelorscriptie 2025",
+    "title": "Kan AI game-audio in real-time genereren?",
+    "subtitle": "Ik heb maanden gezocht naar het antwoord. Het resultaat verraste me.",
+    "read_paper": "Lees paper",
+    "view_code": "Bekijk code",
+    "scroll": "Scroll om te ontdekken"
   },
-  "section1": {
-    "title": "Waar gaat dit project over?",
-    "intro": "Je vraagt je misschien af waarom iemand zelfs zou proberen geluiden te genereren met AI in games. Nou, het is eigenlijk een behoorlijk coole vraag - wat als games in plaats van honderden vooraf opgenomen geluidseffecten, ze ter plekke konden maken? Klinkt als science fiction, toch?",
-    "testing": "Dus de afgelopen weken heb ik precies dat getest. De hoofdvraag was:",
-    "question": "Is AI snel genoeg zodat spelers de vertraging tussen een actie en het geluid niet eens zouden merken?",
-    "current_findings": "Huidige bevindingen:",
-    "findings": "Het directe antwoord tot nu toe: AI is te traag voor directe afspelen. MAAR - ik verken een oplossing om AI-kwaliteit in games te gebruiken. Hoe? Blijf lezen."
+  "whyThisMatters": {
+    "title": "Waarom zou iemand dit willen?",
+    "description": "Stel je een game voor waar elk schot anders klinkt. Elke voetstap past zich aan het oppervlak aan. Geen twee explosies zijn identiek. Dat is de belofte van AI-audio.",
+    "reasons": {
+      "variation": {
+        "title": "Oneindige variatie",
+        "description": "Traditionele games hebben 5-10 schot-samples. Spelers horen dezelfde geluiden steeds opnieuw. AI zou elke keer unieke variaties kunnen genereren."
+      },
+      "fileSize": {
+        "title": "Kleinere games",
+        "description": "AAA-games hebben gigabytes aan audiobestanden. Wat als we ze on-the-fly konden genereren in plaats van 500 WAV-bestanden op te slaan?"
+      },
+      "adaptive": {
+        "title": "Adaptieve audio",
+        "description": "Geluid dat reageert op context. Een pistool klinkt anders in een grot dan buiten. AI zou zich in real-time kunnen aanpassen aan de omgeving."
+      }
+    },
+    "hook": "Klinkt geweldig, toch? Er is maar één probleem..."
   },
-  "section2": {
-    "title": "Unity en Python aan het praten krijgen",
-    "intro": "In het begin moest ik de basis uitzoeken - Unity verbinden met Python via WebSocket. Klinkt ingewikkeld, maar in de praktijk zegt Unity gewoon \"hé Python, geef me een schot geluid\", en Python genereert het en stuurt het terug.",
-    "architecture_flow": "Unity (C#) ⟷ WebSocket ⟷ Python Server",
-    "results_intro": "Eerste tests met een eenvoudige procedurele generator zagen er veelbelovend uit:",
-    "table_sound": "Geluid type",
-    "table_latency": "Latentie",
-    "table_verdict": "Oordeel",
-    "footstep": "Voetstap",
-    "gunshot": "Schot",
-    "impact": "Impact",
-    "excellent": "Uitstekend",
-    "results_note": "Klinkt geweldig! Alles onder 60ms is praktisch onmerkbaar voor spelers. Het enige probleem was dat deze geluiden, nou... synthetisch klonken. Zoals iets uit de jaren 90. Ik had iets beters nodig."
+  "latency": {
+    "title": "Het latentieprobleem",
+    "description": "Je schiet in een game. Als de knal 100 milliseconden te laat komt, merkt je brein het op. Die kleine vertraging breekt de immersie. Stel je nu 12 seconden wachten voor elk geluid voor.",
+    "threshold": "Menselijke perceptiedrempel:",
+    "label_target": "Perfect: 16ms (60 FPS frame)",
+    "label_acceptable": "Acceptabel",
+    "label_noticeable": "Je merkt dit",
+    "label_unplayable": "Volledig kapot",
+    "label_failure": "Waarom zelfs proberen?"
   },
-  "section3": {
-    "title": "De Nachtmerrie van 12 Seconden",
-    "intro": "Ik verwachtte vertraging. Maar <em>dit</em> niet.",
-    "failure_stat": "12.000 ms",
-    "failure_context": "Tijd om één voetstap te genereren met AudioLDM.",
-    "narrative": "In een spel dat draait op 60 FPS, moet een voetstap in 16 milliseconden gebeuren. Mijn eerste poging was 750 keer te traag. Zelfs het snellere MusicGen-model had 4 seconden nodig. In de wereld van game-ontwikkeling is 4 seconden een eeuwigheid. Het was een totale mislukking."
+  "chart": {
+    "title": "De cijfers liegen niet",
+    "subtitle": "Ik testte drie AI-audiomodellen. Hier zie je hoe ze zich verhouden tot wat games echt nodig hebben.",
+    "humanReaction": "Menselijke reactietijd",
+    "acceptable": "Acceptabel voor games",
+    "gameFrame": "Game frame (60fps)",
+    "models": {
+      "elevenlabs": "ElevenLabs",
+      "mmaudio": "MMAudio",
+      "audiogen": "AudioGen"
+    },
+    "cached": "Met caching",
+    "tooltip": {
+      "elevenlabs": "Cloud API. Beste kwaliteit, maar latentie varieert enorm afhankelijk van serverbelasting.",
+      "mmaudio": "Video-naar-audio model. Ik paste het aan voor gamegebruik. Draait lokaal.",
+      "audiogen": "Meta's tekst-naar-audio. Gebalanceerd, maar nog steeds te traag voor real-time.",
+      "cached": "Vooraf gegenereerde geluiden afgespeeld uit geheugen. Dit is de doorbraak."
+    }
   },
-  "section4": {
-    "title": "De 0.03ms Anomalie",
-    "intro": "Ik stond op het punt het project te schrappen. Maar toen, tijdens een frustrerende debug-sessie, merkte ik iets vreemds op in de logs.",
-    "epiphany": "De tweede keer dat ik hetzelfde geluid aanvroeg, werd het niet gegenereerd. Het kwam uit het geheugen. Het was direct. Sneller dan een harde schijf die een WAV-bestand leest.",
-    "question": "We hoeven niet snel te zijn. We moeten er gewoon eerder zijn."
+  "models": {
+    "title": "Wat ik daadwerkelijk testte",
+    "subtitle": "Drie modellen, honderden tests, één Unity-prototype. Dit vond ik.",
+    "latency": "Latentie",
+    "quality": "Kwaliteit",
+    "quality_high": "Uitstekend",
+    "quality_good": "Goed",
+    "quality_medium": "Redelijk",
+    "elevenlabs_note": "Cloud-gebaseerd. Geweldige kwaliteit, maar je bent overgeleverd aan hun servers. Ik zag op dezelfde dag reacties van 1 seconde én 12 seconden.",
+    "mmaudio_note": "Oorspronkelijk ontworpen voor videosoundtracks. Ik hackte het om te werken met game-events. Verrassend goede omgevingsgeluiden.",
+    "audiogen_note": "Meta's model. Meest consistent, maar 3 seconden is nog steeds 3 seconden te traag voor een schot.",
+    "architecture_title": "Het systeem dat ik bouwde"
   },
-  "section5": {
-    "title": "Tijd Bedriegen",
-    "intro": "Als we geen geluid in real-time kunnen genereren, moeten we het genereren <em>voordat</em> het gebeurt. Dit veranderde de hele architectuur van 'Reactie' naar 'Voorspelling'.",
-    "solution_stat": "Laden...",
-    "solution_label": "De Truc",
-    "explanation": "Ik bouwde een systeem dat het laadscherm gebruikt - een plek waar spelers verwachten te wachten - om de audio voor het level vooruit te 'hallucineren'. Tegen de tijd dat de speler spawnt, heeft de AI het zware werk al gedaan. Het resultaat? Nul latentie. High-fidelity AI audio."
+  "timeline": {
+    "title": "De onderzoeksreis",
+    "subtitle": "Vier maanden van experimenten, bugs en nachtelijke debugging-sessies.",
+    "events": {
+      "start": {
+        "date": "September 2024",
+        "title": "Eerste verbinding",
+        "description": "Unity met Python verbonden via WebSocket. Simpele prompt: 'gunshot'. 8 seconden gewacht. Een verschrikkelijk geluid gehoord. Maar het werkte!"
+      },
+      "models": {
+        "date": "Oktober 2024",
+        "title": "Alle drie modellen testen",
+        "description": "ElevenLabs had de beste kwaliteit maar was inconsistent. MMAudio was stabiel maar trager. AudioGen was... oké. Geen was snel genoeg."
+      },
+      "frustration": {
+        "date": "November 2024",
+        "title": "De muur",
+        "description": "Alles geprobeerd. Verschillende prompts. Kleinere audiobestanden. Lagere kwaliteitsinstellingen. Niets kwam onder 1 seconde. Ik dacht dat de thesis dood was."
+      },
+      "eureka": {
+        "date": "Eind november",
+        "title": "Ontdekking om 3 uur 's nachts",
+        "description": "Serverlogs bekijkend, merkte ik iets vreemds op. Cache hits toonden 0.03ms. Niet 3ms. 0.03ms. Het knelpunt was niet AI - het was wachten op AI."
+      }
+    }
   },
-  "section6": {
-    "title": "Het Nieuwe Probleem: Geheugen vs. Chaos",
-    "intro": "Dus we losten de snelheidslimiet op door te 'valsspelen' met het laadscherm. Maar deze overwinning creëerde een nieuwe, gevaarlijkere vijand: <strong>RAM Gebruik</strong>.",
-    "problem": "Als we <em>elk</em> mogelijk geluid vooraf genereren voor een open-wereld spel, zouden we terabytes aan RAM nodig hebben. We ruilden CPU-tijd in voor Geheugen, en nu raken we zonder ruimte.",
-    "current_work": "Dit is waar mijn onderzoek <strong>op dit moment</strong> is. Ik stap af van 'Alles Vooraf Genereren' naar iets slimmers: <strong>Voorspellend Bufferen</strong>."
+  "breakthrough": {
+    "title": "De 0.03ms anomalie",
+    "subtitle": "Om 3 uur 's nachts, starend naar serverlogs, vond ik iets dat alles veranderde.",
+    "story": "Ik stond op het punt om op te geven. Toen merkte ik een logregel op die ik had genegeerd: 'cache_hit: 0.03ms'. Ik had caching toegevoegd als bijzaak - om te voorkomen dat hetzelfde geluid twee keer werd gegenereerd. Maar dat getal... 0.03 milliseconden. Dat is 40.000 keer sneller dan een nieuw geluid genereren.",
+    "realization": "Het probleem was niet om AI sneller te maken. Het probleem was om AI op het verkeerde moment aan te roepen.",
+    "metric": {
+      "value": "0.03",
+      "unit": "ms",
+      "label": "Cache hit latentie"
+    }
   },
-  "section7": {
-    "title": "Actieve Experimenten",
-    "intro": "Ik voer momenteel drie parallelle experimenten uit om de geheugencrisis op te lossen:",
-    "exp1_title": "Slimme Opruiming",
-    "exp1_desc": "Geluiden direct verwijderen nadat ze zijn afgespeeld om RAM vrij te maken.",
-    "exp2_title": "Het 10s Venster",
-    "exp2_desc": "AI die raadt wat je de komende 10 seconden gaat doen en ALLEEN dat genereert.",
-    "status_title": "Onderzoeksstatus: ACTIEF",
-    "status_desc": "De '0.03ms Cache' werkt, maar het schaalbaar maken is de nieuwe grens. Ik codeer momenteel het voorspellingsalgoritme in Python."
+  "cachingDiagram": {
+    "title": "De oplossing: Genereer vroeg, speel direct af",
+    "subtitle": "Als we AI niet snel kunnen maken, maken we het onzichtbaar.",
+    "steps": {
+      "loading": {
+        "label": "Laadscherm",
+        "description": "Terwijl de speler wacht, genereert AI geluiden op de achtergrond"
+      },
+      "cache": {
+        "label": "Cache vult zich",
+        "description": "10 schoten, 5 explosies, 8 voetstappen - allemaal vooraf gegenereerd"
+      },
+      "play": {
+        "label": "Speler handelt",
+        "description": "Bang! Geluid speelt af vanuit cache in minder dan 50ms"
+      },
+      "refill": {
+        "label": "Achtergrond-aanvulling",
+        "description": "AI genereert stilletjes vervangende geluiden voor de volgende keer"
+      }
+    }
+  },
+  "solution": {
+    "title": "Voor & na",
+    "subtitle": "Dezelfde geluiden. Dezelfde kwaliteit. Compleet andere ervaring.",
+    "without_cache": "Zonder cache",
+    "with_cache": "Met cache",
+    "unacceptable": "Onspeelbaar",
+    "acceptable": "Voelt direct",
+    "reduction": "Latentiereductie",
+    "quote": "We hoeven niet snel te zijn. We moeten gewoon vroeg zijn."
+  },
+  "useCases": {
+    "title": "Wanneer kunnen we dit eigenlijk gebruiken?",
+    "subtitle": "AI-audio is geen magie. Het is een tool met specifieke toepassingen.",
+    "headers": {
+      "useCase": "Toepassing",
+      "frequency": "Hoe vaak?",
+      "verdict": "Werkt vandaag?"
+    },
+    "cases": {
+      "footsteps": {
+        "name": "Voetstappen",
+        "frequency": "Elke 0.5s",
+        "verdict": "no",
+        "note": "Te frequent. Cache leegt sneller dan AI kan bijvullen."
+      },
+      "ambient": {
+        "name": "Omgevingsgeluiden",
+        "frequency": "Zeldzaam",
+        "verdict": "yes",
+        "note": "Perfect. Achtergrondgeluiden kunnen vooraf worden gegenereerd tijdens laden."
+      },
+      "gunshots": {
+        "name": "Schoten",
+        "frequency": "Varieert",
+        "verdict": "maybe",
+        "note": "Werkt als je vuursnelheid beperkt of hybride cache + fallback gebruikt."
+      },
+      "cutscenes": {
+        "name": "Cutscene-audio",
+        "frequency": "Gescript",
+        "verdict": "yes",
+        "note": "Beste geval. Je weet precies wat er nodig is van tevoren."
+      },
+      "procedural": {
+        "name": "Procedurele muziek",
+        "frequency": "Continu",
+        "verdict": "maybe",
+        "note": "Mogelijk met segment-gebaseerde generatie. Nog experimenteel."
+      }
+    },
+    "verdicts": {
+      "yes": "Ja",
+      "no": "Nog niet",
+      "maybe": "Hangt ervan af"
+    }
+  },
+  "conclusion": {
+    "main": "AI-audio is niet klaar om traditionele game-audio te vervangen.",
+    "secondary": "Maar met voorspellende caching kan het vandaag al verbeteren. De technologie wordt alleen maar sneller.",
+    "final_thought": "Over 2-3 jaar? Real-time AI-audio zou daadwerkelijk mogelijk kunnen zijn. Voor nu werken we met wat we hebben.",
+    "download_paper": "Lees volledige paper",
+    "github": "Bekijk code",
+    "contact": "Bespreek dit"
   },
   "footer": {
-    "status": "Afstudeeronderzoeksproject • Lopend • 2025 • Igor Szuniewicz"
+    "status": "Bachelorscriptie | 2025 | Igor Szuniewicz"
   }
 }

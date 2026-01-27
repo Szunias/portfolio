@@ -1,88 +1,105 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useInView, useScroll, useTransform } from 'framer-motion';
-import { ArrowLeft, ChevronDown, Play } from 'lucide-react';
+import { motion, useInView } from 'framer-motion';
+import { ChevronDown, FileText, Github, ArrowLeft, Mail, Sparkles, HardDrive, Waves, Clock, Lightbulb, CheckCircle2, XCircle, HelpCircle } from 'lucide-react';
 import SEO from '../components/layout/SEO';
 import { useTranslation } from 'react-i18next';
 
 // ============================================================================
-// HERO SECTION WITH PARALLAX
+// HERO SECTION
 // ============================================================================
 
-const HeroSection = ({ t }: { t: (key: string) => string }) => {
-    const heroRef = useRef<HTMLElement>(null);
-    const { scrollYProgress } = useScroll({
-        target: heroRef,
-        offset: ["start start", "end start"]
-    });
-
-    const titleX = useTransform(scrollYProgress, [0, 1], ["0vw", "30vw"]);
-    const titleOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-    const cloud1X = useTransform(scrollYProgress, [0, 1], [0, -300]);
-    const cloud2X = useTransform(scrollYProgress, [0, 1], [0, 300]);
-    const cloudOpacity = useTransform(scrollYProgress, [0, 0.8], [0.8, 0]);
-
+const GradworkHero = ({ t }: { t: (key: string) => string }) => {
     return (
-        <section
-            ref={heroRef}
-            className="relative h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 to-white"
-        >
-            {/* Clouds */}
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+            {/* Gradient Background */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <motion.div
-                    style={{ x: cloud1X, opacity: cloudOpacity }}
-                    className="absolute top-[20%] -left-[150px] w-[300px] h-[100px] bg-white/90 rounded-[100px] shadow-[0_0_40px_rgba(0,0,0,0.1)]"
-                >
-                    <div className="absolute w-[100px] h-[100px] bg-white/90 rounded-full -top-[50px] left-[50px]" />
-                    <div className="absolute w-[120px] h-[120px] bg-white/90 rounded-full -top-[60px] right-[50px]" />
-                </motion.div>
-                <motion.div
-                    style={{ x: cloud2X, opacity: cloudOpacity }}
-                    className="absolute top-[60%] -right-[175px] w-[350px] h-[120px] bg-white/90 rounded-[100px] shadow-[0_0_40px_rgba(0,0,0,0.1)]"
-                >
-                    <div className="absolute w-[120px] h-[120px] bg-white/90 rounded-full -top-[60px] left-[60px]" />
-                    <div className="absolute w-[140px] h-[140px] bg-white/90 rounded-full -top-[70px] right-[60px]" />
-                </motion.div>
+                    className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] bg-gradient-to-br from-accent/10 via-purple-500/5 to-transparent rounded-full blur-[120px]"
+                    animate={{
+                        scale: [1, 1.1, 1],
+                        opacity: [0.5, 0.7, 0.5],
+                    }}
+                    transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                    }}
+                />
             </div>
 
-            {/* Hero Content */}
-            <div className="relative z-10 text-center px-8 max-w-[1200px]">
+            {/* Content */}
+            <div className="relative z-10 text-center px-6 max-w-5xl">
+                {/* Badge */}
                 <motion.span
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="inline-block px-4 py-2 bg-amber-100/50 text-amber-700 text-sm font-semibold rounded-full mb-6 uppercase tracking-wide"
+                    className="inline-block px-4 py-2 bg-accent/10 text-accent text-sm font-semibold rounded-full mb-8 border border-accent/20"
                 >
                     {t('hero.badge')}
                 </motion.span>
+
+                {/* Title */}
                 <motion.h1
-                    style={{ x: titleX, opacity: titleOpacity }}
-                    className="text-[clamp(2.5rem,8vw,6rem)] font-black leading-[1.1] tracking-tight text-slate-900"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, duration: 0.8 }}
+                    className="text-[clamp(2rem,6vw,4.5rem)] font-black leading-[1.1] tracking-tight mb-6"
                 >
-                    {t('hero.title')}
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-slate-400">
+                        {t('hero.title')}
+                    </span>
                 </motion.h1>
+
+                {/* Subtitle */}
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5, duration: 0.8 }}
-                    className="text-[clamp(1rem,2vw,1.5rem)] text-slate-500 mt-6"
+                    className="text-xl md:text-2xl text-slate-400 mb-12 max-w-2xl mx-auto"
                 >
                     {t('hero.subtitle')}
                 </motion.p>
+
+                {/* CTAs */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7, duration: 0.8 }}
+                    className="flex flex-wrap justify-center gap-4"
+                >
+                    <a
+                        href="#"
+                        className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-semibold rounded-xl transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
+                    >
+                        <FileText size={18} />
+                        {t('hero.read_paper')}
+                    </a>
+                    <a
+                        href="#"
+                        className="group inline-flex items-center gap-2 px-8 py-4 border border-white/20 text-white font-medium rounded-xl backdrop-blur-sm bg-white/5 transition-all hover:scale-105 hover:border-white/40 hover:bg-white/10"
+                    >
+                        <Github size={18} />
+                        {t('hero.view_code')}
+                    </a>
+                </motion.div>
             </div>
 
             {/* Scroll Indicator */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1 }}
+                transition={{ delay: 1.2 }}
                 className="absolute bottom-12 left-1/2 -translate-x-1/2"
             >
                 <motion.div
                     animate={{ y: [0, 10, 0] }}
                     transition={{ duration: 2, repeat: Infinity }}
+                    className="flex flex-col items-center gap-2 text-slate-500"
                 >
-                    <ChevronDown className="w-8 h-8 text-slate-400" />
+                    <span className="text-sm">{t('hero.scroll')}</span>
+                    <ChevronDown className="w-6 h-6" />
                 </motion.div>
             </motion.div>
         </section>
@@ -90,219 +107,93 @@ const HeroSection = ({ t }: { t: (key: string) => string }) => {
 };
 
 // ============================================================================
-// "WELL..." TRANSITION - 150vh like original
+// WHY THIS MATTERS SECTION
 // ============================================================================
 
-const WellTransition = ({ t }: { t: (key: string) => string }) => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [opacity, setOpacity] = useState(0);
-    const [dotOpacities, setDotOpacities] = useState([0, 0, 0]);
+const WhyThisMatters = ({ t }: { t: (key: string) => string }) => {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-    useEffect(() => {
-        const handleScroll = () => {
-            if (!containerRef.current) return;
-            const rect = containerRef.current.getBoundingClientRect();
-            const windowHeight = window.innerHeight;
-            const scrollY = window.scrollY;
-            const wellTop = scrollY + rect.top;
-            const wellHeight = rect.height;
-
-            // Original formula from old version
-            const progress = Math.max(0, Math.min(1,
-                (scrollY + windowHeight - wellTop) / (windowHeight + wellHeight * 0.5)
-            ));
-
-            setOpacity(progress > 0.2 ? 1 : 0);
-            setDotOpacities([
-                progress > 0.3 ? 1 : 0,
-                progress > 0.5 ? 1 : 0,
-                progress > 0.7 ? 1 : 0
-            ]);
-        };
-
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll();
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    return (
-        <div ref={containerRef} className="relative min-h-[150vh] flex items-start justify-center bg-white">
-            <div
-                className="sticky top-1/2 -translate-y-1/2 text-[clamp(3rem,10vw,5rem)] font-light text-slate-900 text-center p-8"
-                style={{ opacity, transition: 'opacity 0.4s ease' }}
-            >
-                <span className="italic">{t('transition.well')}</span>
-                <span className="inline-block min-w-[2em] italic">
-                    <span className="inline-block transition-all duration-300" style={{ opacity: dotOpacities[0], transform: dotOpacities[0] ? 'translateY(0)' : 'translateY(10px)' }}>.</span>
-                    <span className="inline-block transition-all duration-300" style={{ opacity: dotOpacities[1], transform: dotOpacities[1] ? 'translateY(0)' : 'translateY(10px)' }}>.</span>
-                    <span className="inline-block transition-all duration-300" style={{ opacity: dotOpacities[2], transform: dotOpacities[2] ? 'translateY(0)' : 'translateY(10px)' }}>.</span>
-                </span>
-            </div>
-        </div>
-    );
-};
-
-// ============================================================================
-// ARCHITECTURE FLOW - 600vh with fixed positioning like original
-// ============================================================================
-
-const ArchitectureFlow = () => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [progress, setProgress] = useState(0);
-    const [isVisible, setIsVisible] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (!containerRef.current) return;
-            const rect = containerRef.current.getBoundingClientRect();
-            const windowHeight = window.innerHeight;
-            const scrollY = window.scrollY;
-            const flowTop = scrollY + rect.top;
-            const flowHeight = rect.height;
-
-            // Original formula: (scrollY + windowHeight * 0.5 - flowTop) / flowHeight
-            const rawProgress = (scrollY + windowHeight * 0.5 - flowTop) / flowHeight;
-            const flowProgress = Math.max(0, Math.min(1, rawProgress));
-
-            setProgress(flowProgress);
-            setIsVisible(rawProgress > 0 && rawProgress < 1);
-        };
-
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll();
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    // Phase thresholds from original: P1_END = 0.2, P2_END = 0.4, P3_END = 0.6
-    const P1_END = 0.2;
-    const P2_END = 0.4;
-    const P3_END = 0.6;
-    const P4_END = 0.8;
-
-    // Calculate node states based on progress
-    const getNodeState = (index: number) => {
-        if (index === 0) {
-            if (progress < P1_END) {
-                const local = progress / P1_END;
-                return {
-                    opacity: Math.min(1, local * 2),
-                    y: -200 * (1 - Math.min(1, local * 2)),
-                    filled: local > 0.5
-                };
-            }
-            return { opacity: 1, y: 0, filled: true };
-        }
-        if (index === 1) {
-            if (progress < P1_END) return { opacity: 0, y: -200, filled: false };
-            if (progress < P2_END) {
-                const local = (progress - P1_END) / (P2_END - P1_END);
-                return {
-                    opacity: Math.min(1, local * 2),
-                    y: -200 * (1 - Math.min(1, local * 2)),
-                    filled: local > 0.5
-                };
-            }
-            return { opacity: 1, y: 0, filled: true };
-        }
-        if (index === 2) {
-            if (progress < P2_END) return { opacity: 0, y: -200, filled: false };
-            if (progress < P3_END) {
-                const local = (progress - P2_END) / (P3_END - P2_END);
-                return {
-                    opacity: Math.min(1, local * 2),
-                    y: -200 * (1 - Math.min(1, local * 2)),
-                    filled: local > 0.5
-                };
-            }
-            return { opacity: 1, y: 0, filled: true };
-        }
-        return { opacity: 0, y: 0, filled: false };
-    };
-
-    const getLineOpacity = (index: number) => {
-        if (index === 0) return progress >= P1_END ? 1 : 0;
-        if (index === 1) return progress >= P2_END ? 1 : 0;
-        return 0;
-    };
-
-    const showSuccess = progress >= P4_END;
-    const fadeOutNodes = progress >= P3_END && progress < P4_END;
-    const nodesFadeOpacity = fadeOutNodes ? 1 - ((progress - P3_END) / (P4_END - P3_END)) : (showSuccess ? 0 : 1);
-
-    const nodes = [
-        { title: 'Unity (C#)', subtitle: 'Game Engine' },
-        { title: 'Python', subtitle: 'WebSocket Server' },
-        { title: 'ElevenLabs', subtitle: 'AI Audio API' }
+    const reasons = [
+        {
+            icon: Sparkles,
+            key: 'variation',
+            color: 'from-purple-500 to-pink-500',
+        },
+        {
+            icon: HardDrive,
+            key: 'fileSize',
+            color: 'from-blue-500 to-cyan-500',
+        },
+        {
+            icon: Waves,
+            key: 'adaptive',
+            color: 'from-emerald-500 to-teal-500',
+        },
     ];
 
     return (
-        <div ref={containerRef} className="relative min-h-[600vh] bg-white">
-            <div
-                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[500px] px-8 pointer-events-none z-10"
-                style={{
-                    opacity: isVisible ? 1 : 0,
-                    transition: 'opacity 0.3s ease'
-                }}
+        <section ref={ref} className="py-32 px-6 max-w-6xl mx-auto">
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8 }}
             >
-                <div className="flex flex-col items-center relative">
-                    {nodes.map((node, index) => {
-                        const state = getNodeState(index);
-                        return (
-                            <div key={index} className="w-full" style={{ opacity: nodesFadeOpacity }}>
-                                <div
-                                    className={`
-                                        w-full bg-white rounded-xl p-6 text-center shadow-lg border-2 relative overflow-hidden transition-all duration-500
-                                        ${state.filled ? 'border-emerald-500 shadow-emerald-500/30' : 'border-slate-200'}
-                                    `}
-                                    style={{
-                                        opacity: state.opacity,
-                                        transform: `translateY(${state.y}px)`
-                                    }}
-                                >
-                                    <div
-                                        className="absolute top-0 left-0 right-0 bg-gradient-to-b from-emerald-100/50 to-emerald-50/30 transition-all duration-800"
-                                        style={{ height: state.filled ? '100%' : '0%', zIndex: -1 }}
-                                    />
-                                    <div className="text-lg font-bold text-slate-900">{node.title}</div>
-                                    <div className="text-sm text-slate-500">{node.subtitle}</div>
-                                </div>
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-center">
+                    {t('whyThisMatters.title')}
+                </h2>
+                <p className="text-slate-400 text-lg text-center mb-16 max-w-3xl mx-auto">
+                    {t('whyThisMatters.description')}
+                </p>
 
-                                {index < nodes.length - 1 && (
-                                    <div className="relative h-[100px] w-1 mx-auto my-2">
-                                        <div
-                                            className="absolute inset-0 origin-top bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.6)] transition-all duration-500"
-                                            style={{
-                                                opacity: getLineOpacity(index),
-                                                transform: `scaleY(${getLineOpacity(index)})`
-                                            }}
-                                        />
-                                    </div>
-                                )}
+                {/* Reason Cards */}
+                <div className="grid md:grid-cols-3 gap-6 mb-16">
+                    {reasons.map((reason, index) => (
+                        <motion.div
+                            key={reason.key}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={isInView ? { opacity: 1, y: 0 } : {}}
+                            transition={{ duration: 0.6, delay: index * 0.15 }}
+                            className="group relative bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-white/20 transition-all overflow-hidden"
+                        >
+                            {/* Gradient accent */}
+                            <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${reason.color}`} />
+
+                            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${reason.color} flex items-center justify-center mb-4`}>
+                                <reason.icon className="w-6 h-6 text-white" />
                             </div>
-                        );
-                    })}
-
-                    {showSuccess && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-white/90">
-                            <span className="text-5xl md:text-7xl font-black text-emerald-500 tracking-wider">
-                                SUCCESS
-                            </span>
-                        </div>
-                    )}
+                            <h3 className="text-xl font-bold text-white mb-3">
+                                {t(`whyThisMatters.reasons.${reason.key}.title`)}
+                            </h3>
+                            <p className="text-slate-400">
+                                {t(`whyThisMatters.reasons.${reason.key}.description`)}
+                            </p>
+                        </motion.div>
+                    ))}
                 </div>
-            </div>
-        </div>
+
+                {/* Hook */}
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={isInView ? { opacity: 1 } : {}}
+                    transition={{ duration: 0.6, delay: 0.6 }}
+                    className="text-2xl md:text-3xl text-center text-white font-medium"
+                >
+                    {t('whyThisMatters.hook')}
+                </motion.p>
+            </motion.div>
+        </section>
     );
 };
 
 // ============================================================================
-// NIGHTMARE SCROLL - 150vh like original
+// LATENCY PROBLEM SECTION - with scroll counter
 // ============================================================================
 
-const NightmareScroll = () => {
+const LatencyProblem = ({ t }: { t: (key: string) => string }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [ms, setMs] = useState(0);
-    const [label, setLabel] = useState('TARGET: 16ms');
+    const [label, setLabel] = useState('');
     const [shakeOffset, setShakeOffset] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
@@ -312,204 +203,899 @@ const NightmareScroll = () => {
             const windowHeight = window.innerHeight;
             const sectionHeight = rect.height;
 
-            // Original formula from old version
             const scrollPastStart = windowHeight - rect.top;
-            const rawProgress = (scrollPastStart - (windowHeight * 0.5)) / (sectionHeight - windowHeight);
+            const rawProgress = (scrollPastStart - (windowHeight * 0.3)) / (sectionHeight - windowHeight * 0.5);
             const prog = Math.max(0, Math.min(1, rawProgress));
 
-            // Logarithmic/Exponential time scaling from original
+            // Logarithmic time scaling
             let newMs = 0;
-            if (prog < 0.15) {
-                newMs = (prog / 0.15) * 16;
-            } else if (prog < 0.4) {
-                const p = (prog - 0.15) / 0.25;
-                newMs = 16 + (p * 84);
+            if (prog < 0.1) {
+                newMs = (prog / 0.1) * 16;
+            } else if (prog < 0.25) {
+                const p = (prog - 0.1) / 0.15;
+                newMs = 16 + (p * 84); // 16 -> 100
+            } else if (prog < 0.5) {
+                const p = (prog - 0.25) / 0.25;
+                newMs = 100 + (p * 900); // 100 -> 1000
             } else {
-                const p = (prog - 0.4) / 0.6;
-                newMs = 100 + (p * p * p * 11900);
+                const p = (prog - 0.5) / 0.5;
+                newMs = 1000 + (p * p * 11000); // 1000 -> 12000
             }
 
             setMs(Math.floor(newMs));
 
             if (newMs < 16) {
-                setLabel('TARGET: 16ms');
+                setLabel(t('latency.label_target'));
             } else if (newMs < 100) {
-                setLabel('WARNING: LAG DETECTED');
+                setLabel(t('latency.label_acceptable'));
+            } else if (newMs < 1000) {
+                setLabel(t('latency.label_noticeable'));
             } else if (newMs < 5000) {
-                setLabel('UNPLAYABLE');
+                setLabel(t('latency.label_unplayable'));
             } else {
-                setLabel('SYSTEM FAILURE');
+                setLabel(t('latency.label_failure'));
             }
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
         handleScroll();
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    }, [t]);
 
-    // Update shake offset when in failure mode
+    // Shake effect for critical failure
     useEffect(() => {
         if (ms > 5000) {
             const interval = setInterval(() => {
                 setShakeOffset({
-                    x: (Math.random() - 0.5) * 10,
-                    y: (Math.random() - 0.5) * 5
+                    x: (Math.random() - 0.5) * 8,
+                    y: (Math.random() - 0.5) * 4
                 });
-            }, 50); // Update every 50ms for shake effect
+            }, 50);
             return () => clearInterval(interval);
+        } else {
+            setShakeOffset({ x: 0, y: 0 });
         }
     }, [ms]);
 
-    const auraScale = ms < 100 ? 0 : Math.min(8, ((ms - 100) / 5000) * 8);
-    const auraOpacity = ms < 100 ? 0 : Math.min(1, (ms - 100) / 3000);
+    const getColor = () => {
+        if (ms < 16) return 'text-emerald-400';
+        if (ms < 100) return 'text-amber-400';
+        if (ms < 1000) return 'text-orange-500';
+        return 'text-red-500';
+    };
+
+    const auraOpacity = ms < 100 ? 0 : Math.min(0.6, (ms - 100) / 5000);
 
     return (
-        <div ref={containerRef} className="relative min-h-[150vh] bg-white overflow-hidden">
-            <div className="sticky top-1/2 -translate-y-1/2 flex items-center justify-center">
-                {/* Overheat Aura */}
-                <div
-                    className="absolute w-[15vmax] h-[15vmax] rounded-full pointer-events-none"
-                    style={{
-                        background: 'radial-gradient(circle, rgba(239,68,68,0.6) 0%, rgba(185,28,28,0.2) 50%, transparent 70%)',
-                        transform: `scale(${auraScale})`,
-                        opacity: auraOpacity,
-                        mixBlendMode: 'multiply',
-                        transition: 'transform 0.1s, opacity 0.1s'
-                    }}
-                />
+        <section ref={containerRef} className="relative min-h-[200vh]">
+            {/* Sticky Content */}
+            <div className="sticky top-0 h-screen flex flex-col items-center justify-center px-6">
+                {/* Problem Statement */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="text-center mb-12 max-w-3xl"
+                >
+                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                        {t('latency.title')}
+                    </h2>
+                    <p className="text-slate-400 text-lg">
+                        {t('latency.description')}
+                    </p>
+                </motion.div>
+
+                {/* Threshold Badge */}
+                <div className="mb-8">
+                    <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-full">
+                        <span className="text-slate-400">{t('latency.threshold')}</span>
+                        <span className="text-2xl font-mono font-bold text-accent">100ms</span>
+                    </div>
+                </div>
+
+                {/* Latency Counter */}
+                <div className="relative">
+                    {/* Overheat Aura */}
+                    <div
+                        className="absolute inset-0 w-[300px] h-[300px] -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 rounded-full pointer-events-none"
+                        style={{
+                            background: `radial-gradient(circle, rgba(239,68,68,${auraOpacity}) 0%, transparent 70%)`,
+                            filter: 'blur(40px)',
+                        }}
+                    />
+
+                    {/* Counter */}
+                    <div
+                        className={`font-mono font-black leading-none tabular-nums ${getColor()}`}
+                        style={{
+                            fontSize: 'clamp(4rem, 15vw, 10rem)',
+                            transform: ms > 5000 ? `translate(${shakeOffset.x}px, ${shakeOffset.y}px)` : 'none',
+                            textShadow: ms > 5000 ? '2px 0 #fff, -2px 0 #000' : 'none',
+                        }}
+                    >
+                        {ms.toLocaleString()}
+                        <span className="text-[0.4em] ml-2 opacity-60">ms</span>
+                    </div>
+
+                    {/* Label */}
+                    <div className={`text-center mt-4 text-sm font-medium uppercase tracking-wider ${getColor()}`}>
+                        {label}
+                    </div>
+                </div>
 
                 {/* Vignette at critical levels */}
                 {ms > 5000 && (
                     <div className="fixed inset-0 pointer-events-none shadow-[inset_0_0_150px_rgba(220,38,38,0.4)] z-20" />
                 )}
-
-                {/* Content */}
-                <div className="text-center z-10 px-4">
-                    <div
-                        className="font-mono font-black leading-none tabular-nums"
-                        style={{
-                            fontSize: 'clamp(3rem, 12vw, 8rem)',
-                            opacity: 0.2 + (ms / 12000) * 0.8,
-                            color: ms < 16 ? '#333' : ms < 100 ? '#991b1b' : '#dc2626',
-                            textShadow: ms > 5000 ? '2px 0 #fff, -2px 0 #000' : 'none',
-                            transform: ms > 5000 ? `translate(${shakeOffset.x}px, ${shakeOffset.y}px)` : 'none'
-                        }}
-                    >
-                        {ms} ms
-                    </div>
-                    <div
-                        className="text-sm font-medium uppercase tracking-wider mt-4"
-                        style={{ color: ms < 16 ? '#666' : '#dc2626' }}
-                    >
-                        {label}
-                    </div>
-                </div>
             </div>
-        </div>
+        </section>
     );
 };
 
 // ============================================================================
-// AUTOSCROLL BUTTON
+// LATENCY BAR CHART - Animated SVG/CSS chart
 // ============================================================================
 
-const AutoScrollButton = () => {
-    const [visible, setVisible] = useState(false);
-    const [isScrolling, setIsScrolling] = useState(false);
+const LatencyBarChart = ({ t }: { t: (key: string) => string }) => {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const [hoveredBar, setHoveredBar] = useState<string | null>(null);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            if (isScrolling) return;
-            setVisible(window.scrollY < window.innerHeight * 0.5);
-        };
+    const referenceLines = [
+        { value: 200, label: t('chart.humanReaction'), color: 'rgba(168, 85, 247, 0.5)' },
+        { value: 100, label: t('chart.acceptable'), color: 'rgba(34, 197, 94, 0.5)' },
+        { value: 16, label: t('chart.gameFrame'), color: 'rgba(59, 130, 246, 0.5)' },
+    ];
 
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll();
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [isScrolling]);
+    const models = [
+        {
+            key: 'elevenlabs',
+            name: t('chart.models.elevenlabs'),
+            min: 1000,
+            max: 12000,
+            color: 'from-red-500 to-orange-500',
+            bgColor: 'bg-red-500/20',
+        },
+        {
+            key: 'mmaudio',
+            name: t('chart.models.mmaudio'),
+            min: 2000,
+            max: 5000,
+            color: 'from-orange-500 to-yellow-500',
+            bgColor: 'bg-orange-500/20',
+        },
+        {
+            key: 'audiogen',
+            name: t('chart.models.audiogen'),
+            min: 2500,
+            max: 3500,
+            color: 'from-amber-500 to-yellow-500',
+            bgColor: 'bg-amber-500/20',
+        },
+        {
+            key: 'cached',
+            name: t('chart.cached'),
+            min: 21,
+            max: 55,
+            color: 'from-emerald-500 to-green-500',
+            bgColor: 'bg-emerald-500/20',
+        },
+    ];
 
-    const handleAutoScroll = useCallback(() => {
-        setIsScrolling(true);
-        setVisible(false);
-
-        const targetY = document.body.scrollHeight * 0.3;
-        const startY = window.scrollY;
-        const distance = targetY - startY;
-        const duration = 8000;
-        const startTime = performance.now();
-
-        const step = (currentTime: number) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-
-            window.scrollTo(0, startY + distance * ease);
-
-            if (progress < 1) {
-                requestAnimationFrame(step);
-            } else {
-                setIsScrolling(false);
-            }
-        };
-
-        requestAnimationFrame(step);
-    }, []);
-
-    useEffect(() => {
-        const stop = () => { if (isScrolling) setIsScrolling(false); };
-        window.addEventListener('wheel', stop, { passive: true });
-        window.addEventListener('touchstart', stop, { passive: true });
-        return () => {
-            window.removeEventListener('wheel', stop);
-            window.removeEventListener('touchstart', stop);
-        };
-    }, [isScrolling]);
-
-    if (!visible) return null;
+    // Log scale for visualization (max 12000ms)
+    const maxMs = 12000;
+    const logScale = (value: number) => {
+        const minLog = Math.log10(10);
+        const maxLog = Math.log10(maxMs);
+        const valueLog = Math.log10(Math.max(10, value));
+        return ((valueLog - minLog) / (maxLog - minLog)) * 100;
+    };
 
     return (
-        <button
-            onClick={handleAutoScroll}
-            className="fixed right-8 bottom-8 z-50 flex items-center gap-2 px-5 py-3 bg-white border-2 border-emerald-500 rounded-full shadow-lg shadow-emerald-500/30 text-emerald-600 font-semibold text-sm hover:bg-emerald-50 transition-all"
-        >
-            <Play className="w-4 h-4" />
-            Auto Play
-        </button>
+        <section ref={ref} className="py-32 px-6 max-w-5xl mx-auto">
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8 }}
+            >
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-center">
+                    {t('chart.title')}
+                </h2>
+                <p className="text-slate-400 text-lg text-center mb-12 max-w-2xl mx-auto">
+                    {t('chart.subtitle')}
+                </p>
+
+                {/* Chart Container */}
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 relative">
+                    {/* Reference Lines */}
+                    <div className="absolute inset-8 pointer-events-none">
+                        {referenceLines.map((line) => (
+                            <div
+                                key={line.value}
+                                className="absolute w-full border-t border-dashed"
+                                style={{
+                                    bottom: `${logScale(line.value)}%`,
+                                    borderColor: line.color,
+                                }}
+                            >
+                                <span
+                                    className="absolute right-0 -translate-y-1/2 text-xs px-2 py-0.5 rounded"
+                                    style={{ color: line.color, backgroundColor: 'rgba(0,0,0,0.5)' }}
+                                >
+                                    {line.label} ({line.value}ms)
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Bars */}
+                    <div className="flex items-end justify-around gap-4 h-[400px] relative z-10">
+                        {models.map((model, index) => {
+                            const minHeight = logScale(model.min);
+                            const maxHeight = logScale(model.max);
+                            const isHovered = hoveredBar === model.key;
+
+                            return (
+                                <div key={model.key} className="flex flex-col items-center flex-1 max-w-[120px]">
+                                    {/* Bar */}
+                                    <div
+                                        className="w-full relative cursor-pointer"
+                                        style={{ height: '100%' }}
+                                        onMouseEnter={() => setHoveredBar(model.key)}
+                                        onMouseLeave={() => setHoveredBar(null)}
+                                    >
+                                        {/* Bar fill */}
+                                        <motion.div
+                                            initial={{ height: 0 }}
+                                            animate={isInView ? { height: `${maxHeight}%` } : { height: 0 }}
+                                            transition={{
+                                                duration: 1,
+                                                delay: index * 0.15,
+                                                ease: [0.34, 1.56, 0.64, 1]
+                                            }}
+                                            className={`absolute bottom-0 w-full rounded-t-lg bg-gradient-to-t ${model.color} ${isHovered ? 'opacity-100' : 'opacity-80'} transition-opacity`}
+                                        >
+                                            {/* Range indicator */}
+                                            <motion.div
+                                                initial={{ opacity: 0 }}
+                                                animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+                                                transition={{ delay: 1 + index * 0.15 }}
+                                                className="absolute -top-1 left-1/2 -translate-x-1/2 text-xs font-mono text-white/80 whitespace-nowrap bg-black/50 px-2 py-1 rounded"
+                                            >
+                                                {model.min === model.max
+                                                    ? `${model.max}ms`
+                                                    : `${model.min}-${model.max}ms`
+                                                }
+                                            </motion.div>
+
+                                            {/* Min range marker */}
+                                            {model.min !== model.max && (
+                                                <div
+                                                    className="absolute w-full h-0.5 bg-white/30"
+                                                    style={{ bottom: `${(minHeight / maxHeight) * 100}%` }}
+                                                />
+                                            )}
+                                        </motion.div>
+
+                                        {/* Tooltip */}
+                                        {isHovered && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-slate-900 border border-white/20 rounded-lg text-sm text-slate-300 z-20"
+                                            >
+                                                {t(`chart.tooltip.${model.key}`)}
+                                            </motion.div>
+                                        )}
+                                    </div>
+
+                                    {/* Label */}
+                                    <div className="mt-4 text-center">
+                                        <div className="text-sm font-medium text-white">{model.name}</div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {/* Y-axis labels */}
+                    <div className="absolute left-2 top-8 bottom-8 flex flex-col justify-between text-xs text-slate-500 font-mono">
+                        <span>12s</span>
+                        <span>1s</span>
+                        <span>100ms</span>
+                        <span>10ms</span>
+                    </div>
+                </div>
+            </motion.div>
+        </section>
     );
 };
 
 // ============================================================================
-// SECTION COMPONENT
+// MODELS GRID SECTION
 // ============================================================================
 
-interface SectionProps {
-    num: string;
-    title: string;
-    children: React.ReactNode;
-}
+const ModelsGrid = ({ t }: { t: (key: string) => string }) => {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-const Section = ({ num, title, children }: SectionProps) => {
+    const models = [
+        {
+            name: 'ElevenLabs',
+            latency: '1-12s',
+            quality: t('models.quality_high'),
+            note: t('models.elevenlabs_note'),
+        },
+        {
+            name: 'MMAudio',
+            latency: '2-5s',
+            quality: t('models.quality_good'),
+            note: t('models.mmaudio_note'),
+        },
+        {
+            name: 'AudioGen',
+            latency: '~3s',
+            quality: t('models.quality_medium'),
+            note: t('models.audiogen_note'),
+        },
+    ];
+
+    return (
+        <section ref={ref} className="py-32 px-6 max-w-6xl mx-auto">
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8 }}
+            >
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-center">
+                    {t('models.title')}
+                </h2>
+                <p className="text-slate-400 text-lg text-center mb-12 max-w-2xl mx-auto">
+                    {t('models.subtitle')}
+                </p>
+
+                {/* Model Cards */}
+                <div className="grid md:grid-cols-3 gap-6 mb-16">
+                    {models.map((model, index) => (
+                        <motion.div
+                            key={model.name}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={isInView ? { opacity: 1, y: 0 } : {}}
+                            transition={{ duration: 0.6, delay: index * 0.1 }}
+                            className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-accent/30 transition-all"
+                        >
+                            <h3 className="text-xl font-bold text-white mb-4">{model.name}</h3>
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-slate-500">{t('models.latency')}</span>
+                                    <span className="font-mono text-red-400">{model.latency}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-slate-500">{t('models.quality')}</span>
+                                    <span className="text-accent">{model.quality}</span>
+                                </div>
+                            </div>
+                            <p className="text-slate-500 text-sm mt-4 pt-4 border-t border-white/10">
+                                {model.note}
+                            </p>
+                        </motion.div>
+                    ))}
+                </div>
+
+                {/* Architecture Diagram */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    className="bg-white/5 border border-white/10 rounded-2xl p-8"
+                >
+                    <h3 className="text-xl font-bold text-white mb-6 text-center">
+                        {t('models.architecture_title')}
+                    </h3>
+                    <div className="flex flex-wrap items-center justify-center gap-4 text-center">
+                        <div className="px-6 py-4 bg-accent/10 border border-accent/30 rounded-xl">
+                            <div className="font-bold text-white">Unity</div>
+                            <div className="text-sm text-slate-500">Game Engine</div>
+                        </div>
+                        <div className="text-2xl text-slate-600">&rarr;</div>
+                        <div className="px-6 py-4 bg-white/5 border border-white/20 rounded-xl">
+                            <div className="font-bold text-white">Python Server</div>
+                            <div className="text-sm text-slate-500">WebSocket</div>
+                        </div>
+                        <div className="text-2xl text-slate-600">&rarr;</div>
+                        <div className="px-6 py-4 bg-white/5 border border-white/20 rounded-xl">
+                            <div className="font-bold text-white">AI Model</div>
+                            <div className="text-sm text-slate-500">Generation</div>
+                        </div>
+                        <div className="text-2xl text-slate-600">&rarr;</div>
+                        <div className="px-6 py-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                            <div className="font-bold text-white">Cache</div>
+                            <div className="text-sm text-slate-500">Storage</div>
+                        </div>
+                    </div>
+                </motion.div>
+            </motion.div>
+        </section>
+    );
+};
+
+// ============================================================================
+// RESEARCH TIMELINE SECTION
+// ============================================================================
+
+const ResearchTimeline = ({ t }: { t: (key: string) => string }) => {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+    const events = [
+        { key: 'start', icon: '🔌' },
+        { key: 'models', icon: '🧪' },
+        { key: 'frustration', icon: '🧱' },
+        { key: 'eureka', icon: '💡' },
+    ];
+
+    return (
+        <section ref={ref} className="py-32 px-6 max-w-4xl mx-auto">
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8 }}
+            >
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-center">
+                    {t('timeline.title')}
+                </h2>
+                <p className="text-slate-400 text-lg text-center mb-16 max-w-2xl mx-auto">
+                    {t('timeline.subtitle')}
+                </p>
+
+                {/* Timeline */}
+                <div className="relative">
+                    {/* Vertical line */}
+                    <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-accent via-purple-500 to-emerald-500" />
+
+                    {/* Events */}
+                    <div className="space-y-12">
+                        {events.map((event, index) => (
+                            <motion.div
+                                key={event.key}
+                                initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
+                                animate={isInView ? { opacity: 1, x: 0 } : {}}
+                                transition={{ duration: 0.6, delay: index * 0.2 }}
+                                className={`relative flex items-start gap-8 ${
+                                    index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                                }`}
+                            >
+                                {/* Dot */}
+                                <div className="absolute left-8 md:left-1/2 w-4 h-4 -translate-x-1/2 rounded-full bg-white border-4 border-slate-900 z-10" />
+
+                                {/* Content */}
+                                <div className={`ml-16 md:ml-0 md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
+                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all">
+                                        <div className="flex items-center gap-3 mb-3 ${index % 2 === 0 ? 'md:justify-end' : ''}">
+                                            <span className="text-2xl">{event.icon}</span>
+                                            <span className="text-sm text-accent font-medium">
+                                                {t(`timeline.events.${event.key}.date`)}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white mb-2">
+                                            {t(`timeline.events.${event.key}.title`)}
+                                        </h3>
+                                        <p className="text-slate-400">
+                                            {t(`timeline.events.${event.key}.description`)}
+                                        </p>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </motion.div>
+        </section>
+    );
+};
+
+// ============================================================================
+// BREAKTHROUGH SECTION - The 0.03ms discovery
+// ============================================================================
+
+const BreakthroughSection = ({ t }: { t: (key: string) => string }) => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
 
     return (
-        <motion.section
-            ref={ref}
-            initial={{ opacity: 0, y: 50 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="py-32 px-8 max-w-[900px] mx-auto"
-        >
-            <div className="text-[clamp(8rem,20vw,15rem)] font-black leading-none mb-[-4rem] select-none text-slate-100">
-                {num}
+        <section ref={ref} className="py-32 px-6 relative overflow-hidden">
+            {/* Background glow */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[150px]" />
             </div>
-            <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-extrabold mb-8 leading-tight text-slate-900">
-                {title}
-            </h2>
-            <div className="text-lg leading-relaxed text-slate-600">
-                {children}
+
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8 }}
+                className="max-w-4xl mx-auto relative z-10"
+            >
+                <div className="text-center mb-12">
+                    <Lightbulb className="w-16 h-16 text-emerald-400 mx-auto mb-6" />
+                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                        {t('breakthrough.title')}
+                    </h2>
+                    <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+                        {t('breakthrough.subtitle')}
+                    </p>
+                </div>
+
+                {/* The big number */}
+                <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={isInView ? { scale: 1, opacity: 1 } : {}}
+                    transition={{ duration: 0.8, delay: 0.3 }}
+                    className="text-center mb-12"
+                >
+                    <div className="inline-block bg-emerald-500/10 border border-emerald-500/30 rounded-3xl px-12 py-8">
+                        <div className="font-mono font-black text-emerald-400 leading-none" style={{ fontSize: 'clamp(4rem, 15vw, 8rem)' }}>
+                            {t('breakthrough.metric.value')}
+                            <span className="text-[0.3em] ml-2 opacity-60">{t('breakthrough.metric.unit')}</span>
+                        </div>
+                        <div className="text-emerald-400/60 mt-2 text-lg">
+                            {t('breakthrough.metric.label')}
+                        </div>
+                    </div>
+                </motion.div>
+
+                {/* Story */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                    className="bg-white/5 border border-white/10 rounded-2xl p-8 mb-8"
+                >
+                    <p className="text-xl text-slate-300 leading-relaxed mb-6">
+                        {t('breakthrough.story')}
+                    </p>
+                    <p className="text-2xl text-white font-medium">
+                        {t('breakthrough.realization')}
+                    </p>
+                </motion.div>
+            </motion.div>
+        </section>
+    );
+};
+
+// ============================================================================
+// CACHING DIAGRAM - Animated flow
+// ============================================================================
+
+const CachingDiagram = ({ t }: { t: (key: string) => string }) => {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+    const steps = [
+        { key: 'loading', icon: Clock, color: 'from-blue-500 to-cyan-500' },
+        { key: 'cache', icon: HardDrive, color: 'from-purple-500 to-pink-500' },
+        { key: 'play', icon: Waves, color: 'from-emerald-500 to-green-500' },
+        { key: 'refill', icon: Sparkles, color: 'from-amber-500 to-orange-500' },
+    ];
+
+    return (
+        <section ref={ref} className="py-32 px-6 max-w-6xl mx-auto">
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8 }}
+            >
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-center">
+                    {t('cachingDiagram.title')}
+                </h2>
+                <p className="text-slate-400 text-lg text-center mb-16 max-w-2xl mx-auto">
+                    {t('cachingDiagram.subtitle')}
+                </p>
+
+                {/* Flow diagram */}
+                <div className="grid md:grid-cols-4 gap-6">
+                    {steps.map((step, index) => (
+                        <motion.div
+                            key={step.key}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={isInView ? { opacity: 1, y: 0 } : {}}
+                            transition={{ duration: 0.6, delay: index * 0.15 }}
+                            className="relative"
+                        >
+                            {/* Arrow between cards */}
+                            {index < steps.length - 1 && (
+                                <div className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
+                                    <motion.div
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={isInView ? { opacity: 1, x: 0 } : {}}
+                                        transition={{ duration: 0.4, delay: 0.5 + index * 0.15 }}
+                                        className="text-2xl text-slate-600"
+                                    >
+                                        &rarr;
+                                    </motion.div>
+                                </div>
+                            )}
+
+                            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 h-full hover:border-white/20 transition-all">
+                                {/* Step number */}
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${step.color} flex items-center justify-center`}>
+                                        <step.icon className="w-5 h-5 text-white" />
+                                    </div>
+                                    <span className="text-sm font-mono text-slate-500">
+                                        {(index + 1).toString().padStart(2, '0')}
+                                    </span>
+                                </div>
+
+                                <h3 className="text-lg font-bold text-white mb-2">
+                                    {t(`cachingDiagram.steps.${step.key}.label`)}
+                                </h3>
+                                <p className="text-slate-400 text-sm">
+                                    {t(`cachingDiagram.steps.${step.key}.description`)}
+                                </p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </motion.div>
+        </section>
+    );
+};
+
+// ============================================================================
+// CACHING SOLUTION SECTION - Before/After
+// ============================================================================
+
+const CachingSolution = ({ t }: { t: (key: string) => string }) => {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+    return (
+        <section ref={ref} className="py-32 px-6 max-w-4xl mx-auto">
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8 }}
+            >
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-center">
+                    {t('solution.title')}
+                </h2>
+                <p className="text-slate-400 text-lg text-center mb-12 max-w-2xl mx-auto">
+                    {t('solution.subtitle')}
+                </p>
+
+                {/* Before/After Comparison */}
+                <div className="grid md:grid-cols-2 gap-6 mb-12">
+                    {/* Without Cache */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={isInView ? { opacity: 1, x: 0 } : {}}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                        className="bg-red-500/5 border border-red-500/20 rounded-2xl p-8 text-center"
+                    >
+                        <div className="text-red-400 text-sm font-medium uppercase tracking-wider mb-4">
+                            {t('solution.without_cache')}
+                        </div>
+                        <div className="text-4xl md:text-5xl font-mono font-bold text-red-500 mb-2">
+                            1,200 - 12,000
+                            <span className="text-xl ml-1">ms</span>
+                        </div>
+                        <div className="text-red-400/60 text-sm">{t('solution.unacceptable')}</div>
+                    </motion.div>
+
+                    {/* With Cache */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={isInView ? { opacity: 1, x: 0 } : {}}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                        className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-8 text-center"
+                    >
+                        <div className="text-emerald-400 text-sm font-medium uppercase tracking-wider mb-4">
+                            {t('solution.with_cache')}
+                        </div>
+                        <div className="text-4xl md:text-5xl font-mono font-bold text-emerald-400 mb-2">
+                            21 - 55
+                            <span className="text-xl ml-1">ms</span>
+                        </div>
+                        <div className="text-emerald-400/60 text-sm">{t('solution.acceptable')}</div>
+                    </motion.div>
+                </div>
+
+                {/* Key Insight */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center"
+                >
+                    <div className="text-5xl md:text-6xl font-bold text-accent mb-4">
+                        95-98%
+                    </div>
+                    <div className="text-slate-300 text-lg">
+                        {t('solution.reduction')}
+                    </div>
+                </motion.div>
+
+                {/* Quote */}
+                <motion.blockquote
+                    initial={{ opacity: 0 }}
+                    animate={isInView ? { opacity: 1 } : {}}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                    className="mt-12 text-center"
+                >
+                    <p className="text-xl md:text-2xl text-slate-300 italic">
+                        "{t('solution.quote')}"
+                    </p>
+                </motion.blockquote>
+            </motion.div>
+        </section>
+    );
+};
+
+// ============================================================================
+// USE CASE TABLE SECTION
+// ============================================================================
+
+const UseCaseTable = ({ t }: { t: (key: string) => string }) => {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+    const cases = ['footsteps', 'ambient', 'gunshots', 'cutscenes', 'procedural'];
+
+    const getVerdictIcon = (verdict: string) => {
+        switch (verdict) {
+            case 'yes':
+                return <CheckCircle2 className="w-5 h-5 text-emerald-400" />;
+            case 'no':
+                return <XCircle className="w-5 h-5 text-red-400" />;
+            case 'maybe':
+                return <HelpCircle className="w-5 h-5 text-amber-400" />;
+            default:
+                return null;
+        }
+    };
+
+    const getVerdictColor = (verdict: string) => {
+        switch (verdict) {
+            case 'yes':
+                return 'text-emerald-400';
+            case 'no':
+                return 'text-red-400';
+            case 'maybe':
+                return 'text-amber-400';
+            default:
+                return 'text-slate-400';
+        }
+    };
+
+    return (
+        <section ref={ref} className="py-32 px-6 max-w-4xl mx-auto">
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8 }}
+            >
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-center">
+                    {t('useCases.title')}
+                </h2>
+                <p className="text-slate-400 text-lg text-center mb-12 max-w-2xl mx-auto">
+                    {t('useCases.subtitle')}
+                </p>
+
+                {/* Table */}
+                <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+                    {/* Header */}
+                    <div className="grid grid-cols-3 gap-4 p-4 bg-white/5 border-b border-white/10 text-sm font-medium text-slate-400 uppercase tracking-wider">
+                        <div>{t('useCases.headers.useCase')}</div>
+                        <div className="text-center">{t('useCases.headers.frequency')}</div>
+                        <div className="text-center">{t('useCases.headers.verdict')}</div>
+                    </div>
+
+                    {/* Rows */}
+                    {cases.map((caseKey, index) => {
+                        const verdict = t(`useCases.cases.${caseKey}.verdict`);
+                        return (
+                            <motion.div
+                                key={caseKey}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={isInView ? { opacity: 1, x: 0 } : {}}
+                                transition={{ duration: 0.4, delay: index * 0.1 }}
+                                className="grid grid-cols-3 gap-4 p-4 border-b border-white/5 last:border-b-0 hover:bg-white/5 transition-colors"
+                            >
+                                <div>
+                                    <div className="font-medium text-white">
+                                        {t(`useCases.cases.${caseKey}.name`)}
+                                    </div>
+                                    <div className="text-sm text-slate-500 mt-1">
+                                        {t(`useCases.cases.${caseKey}.note`)}
+                                    </div>
+                                </div>
+                                <div className="text-center text-slate-400 self-center font-mono text-sm">
+                                    {t(`useCases.cases.${caseKey}.frequency`)}
+                                </div>
+                                <div className="flex flex-col items-center justify-center gap-1">
+                                    {getVerdictIcon(verdict)}
+                                    <span className={`text-sm font-medium ${getVerdictColor(verdict)}`}>
+                                        {t(`useCases.verdicts.${verdict}`)}
+                                    </span>
+                                </div>
+                            </motion.div>
+                        );
+                    })}
+                </div>
+            </motion.div>
+        </section>
+    );
+};
+
+// ============================================================================
+// CONCLUSION SECTION
+// ============================================================================
+
+const Conclusion = ({ t }: { t: (key: string) => string }) => {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+    return (
+        <section ref={ref} className="py-32 px-6">
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8 }}
+                className="max-w-4xl mx-auto text-center"
+            >
+                {/* Conclusion Text */}
+                <div className="mb-16">
+                    <p className="text-2xl md:text-3xl text-white font-medium leading-relaxed mb-6">
+                        {t('conclusion.main')}
+                    </p>
+                    <p className="text-xl text-slate-400 mb-6">
+                        {t('conclusion.secondary')}
+                    </p>
+                    <p className="text-lg text-slate-500 italic">
+                        {t('conclusion.final_thought')}
+                    </p>
+                </div>
+
+                {/* CTAs */}
+                <div className="flex flex-wrap justify-center gap-4 mb-16">
+                    <a
+                        href="#"
+                        className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-semibold rounded-xl transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
+                    >
+                        <FileText size={18} />
+                        {t('conclusion.download_paper')}
+                    </a>
+                    <a
+                        href="#"
+                        className="group inline-flex items-center gap-2 px-8 py-4 border border-white/20 text-white font-medium rounded-xl backdrop-blur-sm bg-white/5 transition-all hover:scale-105 hover:border-white/40 hover:bg-white/10"
+                    >
+                        <Github size={18} />
+                        {t('conclusion.github')}
+                    </a>
+                    <Link
+                        to="/contact"
+                        className="group inline-flex items-center gap-2 px-8 py-4 border border-accent/30 text-accent font-medium rounded-xl backdrop-blur-sm bg-accent/5 transition-all hover:scale-105 hover:border-accent/50 hover:bg-accent/10"
+                    >
+                        <Mail size={18} />
+                        {t('conclusion.contact')}
+                    </Link>
+                </div>
+
+                {/* Back to Projects */}
+                <Link
+                    to="/projects"
+                    className="inline-flex items-center gap-2 text-slate-500 hover:text-white transition-colors"
+                >
+                    <ArrowLeft size={18} />
+                    {t('back')}
+                </Link>
+            </motion.div>
+
+            {/* Footer */}
+            <div className="mt-16 pt-8 border-t border-white/10 text-center">
+                <p className="text-slate-600 text-sm">{t('footer.status')}</p>
             </div>
-        </motion.section>
+        </section>
     );
 };
 
@@ -521,168 +1107,23 @@ const Gradwork = () => {
     const { t } = useTranslation('gradwork');
 
     return (
-        <div className="min-h-screen bg-white bg-dots-grid text-slate-900 -mt-16">
+        <div className="min-h-screen -mt-16">
             <SEO
                 title="AI Audio Research | Igor Szuniewicz"
-                description="Graduate Research: Real-time AI Audio in Games"
+                description="Bachelor Thesis: Can AI generate sound effects in real-time for video games?"
             />
 
-            <HeroSection t={t} />
-            <WellTransition t={t} />
-
-            <main className="relative bg-white">
-                <Section num="1" title={t('section1.title')}>
-                    <p className="mb-6">{t('section1.intro')}</p>
-                    <p className="mb-6">{t('section1.testing')}</p>
-                    <blockquote className="border-l-4 border-slate-900 pl-6 py-2 my-8 text-slate-900 text-xl font-semibold">
-                        {t('section1.question')}
-                    </blockquote>
-                    <p className="font-semibold text-slate-900 mb-2">{t('section1.current_findings')}</p>
-                    <p>{t('section1.findings')}</p>
-                </Section>
-
-                <ArchitectureFlow />
-
-                <Section num="2" title={t('section2.title')}>
-                    <p className="mb-6">{t('section2.intro')}</p>
-                    <div className="bg-slate-100 border-l-4 border-slate-900 p-6 font-mono text-sm mb-6">
-                        {t('section2.architecture_flow')}
-                    </div>
-                    <p className="mb-4">{t('section2.results_intro')}</p>
-                    <div className="overflow-x-auto mb-6">
-                        <table className="w-full text-left text-sm">
-                            <thead className="border-b-2 border-slate-200">
-                                <tr>
-                                    <th className="py-3 pr-4 font-semibold">{t('section2.table_sound')}</th>
-                                    <th className="py-3 pr-4 font-semibold">{t('section2.table_latency')}</th>
-                                    <th className="py-3 font-semibold">{t('section2.table_verdict')}</th>
-                                </tr>
-                            </thead>
-                            <tbody className="text-slate-600">
-                                <tr className="border-b border-slate-100">
-                                    <td className="py-3 pr-4">{t('section2.footstep')}</td>
-                                    <td className="py-3 pr-4 font-mono">55 ms</td>
-                                    <td className="py-3 text-emerald-600 font-medium">{t('section2.excellent')}</td>
-                                </tr>
-                                <tr className="border-b border-slate-100">
-                                    <td className="py-3 pr-4">{t('section2.gunshot')}</td>
-                                    <td className="py-3 pr-4 font-mono">21 ms</td>
-                                    <td className="py-3 text-emerald-600 font-medium">{t('section2.excellent')}</td>
-                                </tr>
-                                <tr>
-                                    <td className="py-3 pr-4">{t('section2.impact')}</td>
-                                    <td className="py-3 pr-4 font-mono">28 ms</td>
-                                    <td className="py-3 text-emerald-600 font-medium">{t('section2.excellent')}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <p className="text-slate-500 text-sm">{t('section2.results_note')}</p>
-                </Section>
-
-                <NightmareScroll />
-
-                <Section num="3" title={t('section3.title')}>
-                    <p className="mb-8" dangerouslySetInnerHTML={{ __html: t('section3.intro') }} />
-                    <div className="bg-red-50 border-l-4 border-red-500 rounded-r-lg p-8 text-center mb-8">
-                        <div className="text-6xl md:text-7xl font-bold text-red-600 font-mono mb-2">
-                            {t('section3.failure_stat')}
-                        </div>
-                        <div className="text-red-500 text-sm">{t('section3.failure_context')}</div>
-                    </div>
-                    <p dangerouslySetInnerHTML={{ __html: t('section3.narrative') }} />
-                </Section>
-
-                <Section num="4" title={t('section4.title')}>
-                    <p className="mb-6">{t('section4.intro')}</p>
-                    <div className="bg-slate-900 text-slate-300 rounded-lg p-6 font-mono text-sm mb-6 space-y-1 whitespace-pre-wrap">
-                        {t('section4.logs')}
-                    </div>
-                    <p className="mb-6">{t('section4.epiphany')}</p>
-                    <blockquote className="border-l-4 border-slate-900 pl-6 py-2 text-slate-900 text-xl font-semibold">
-                        "{t('section4.question')}"
-                    </blockquote>
-                </Section>
-
-                <Section num="5" title={t('section5.title')}>
-                    <p className="mb-6" dangerouslySetInnerHTML={{ __html: t('section5.intro') }} />
-                    <div className="bg-emerald-50 border-l-4 border-emerald-500 rounded-r-lg p-8 text-center mb-8">
-                        <div className="text-4xl font-bold text-emerald-600 mb-2">{t('section5.solution_stat')}</div>
-                        <div className="text-emerald-500 text-sm uppercase tracking-wider">{t('section5.solution_label')}</div>
-                    </div>
-                    <p dangerouslySetInnerHTML={{ __html: t('section5.explanation') }} />
-                </Section>
-
-                <Section num="6" title={t('section6.title')}>
-                    <p className="mb-6" dangerouslySetInnerHTML={{ __html: t('section6.intro') }} />
-                    <div className="bg-amber-50 border-l-4 border-amber-500 p-6 mb-6">
-                        <p dangerouslySetInnerHTML={{ __html: t('section6.problem') }} />
-                    </div>
-                    <p dangerouslySetInnerHTML={{ __html: t('section6.current_work') }} />
-                </Section>
-
-                <Section num="7" title={t('section7.title')}>
-                    <p className="mb-8">{t('section7.intro')}</p>
-                    <div className="grid md:grid-cols-2 gap-4 mb-8">
-                        <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 hover:-translate-y-1 transition-transform">
-                            <h4 className="font-bold text-slate-900 mb-2">{t('section7.exp1_title')}</h4>
-                            <p className="text-sm text-slate-500">{t('section7.exp1_desc')}</p>
-                        </div>
-                        <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 hover:-translate-y-1 transition-transform">
-                            <h4 className="font-bold text-slate-900 mb-2">{t('section7.exp2_title')}</h4>
-                            <p className="text-sm text-slate-500">{t('section7.exp2_desc')}</p>
-                        </div>
-                    </div>
-                    <div className="bg-amber-50 border-l-4 border-amber-500 rounded-r-lg p-6">
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
-                            <span className="text-amber-700 font-semibold text-sm uppercase tracking-wider">
-                                {t('section7.status_title')}
-                            </span>
-                        </div>
-                        <p className="text-slate-600">{t('section7.status_desc')}</p>
-                    </div>
-                </Section>
-
-                <Section num="8" title={t('section8.title')}>
-                    <p className="mb-6">{t('section8.intro')}</p>
-
-                    <div className="grid gap-6 md:grid-cols-2 mb-8">
-                        <div className="bg-red-50 border border-red-100 rounded-xl p-6">
-                            <h4 className="font-bold text-red-800 mb-2">{t('section8.session2_title')}</h4>
-                            <p className="text-sm text-red-700">{t('section8.session2_desc')}</p>
-                        </div>
-                        <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-6">
-                            <h4 className="font-bold text-emerald-800 mb-2">{t('section8.session4_title')}</h4>
-                            <p className="text-sm text-emerald-700">{t('section8.session4_desc')}</p>
-                        </div>
-                    </div>
-
-                    <div className="bg-slate-900 text-slate-300 rounded-lg p-6 font-mono text-sm mb-6">
-                        <p className="mb-2 text-slate-400">{t('section8.stats_intro')}</p>
-                        <div className="space-y-1">
-                            <div>- {t('section8.stat_proc')}</div>
-                            <div>- {t('section8.stat_cloud')}</div>
-                            <div className="text-emerald-400 font-bold">- {t('section8.stat_hybrid')}</div>
-                        </div>
-                    </div>
-                    <p>{t('section8.summary')}</p>
-                </Section>
-            </main>
-
-            {/* Footer */}
-            <footer className="py-16 text-center bg-slate-50 border-t border-slate-200">
-                <Link
-                    to="/projects"
-                    className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors font-medium"
-                >
-                    <ArrowLeft size={18} />
-                    {t('back')}
-                </Link>
-                <p className="mt-6 text-slate-400 text-sm">{t('footer.status')}</p>
-            </footer>
-
-            <AutoScrollButton />
+            <GradworkHero t={t} />
+            <WhyThisMatters t={t} />
+            <LatencyProblem t={t} />
+            <LatencyBarChart t={t} />
+            <ModelsGrid t={t} />
+            <ResearchTimeline t={t} />
+            <BreakthroughSection t={t} />
+            <CachingDiagram t={t} />
+            <CachingSolution t={t} />
+            <UseCaseTable t={t} />
+            <Conclusion t={t} />
         </div>
     );
 };

@@ -1,86 +1,198 @@
 {
   "back": "Powrót do projektów",
-  "transition": {
-    "well": "no cóż"
-  },
   "hero": {
-    "badge": "Badania w toku",
-    "title": "Czy AI Audio w czasie rzeczywistym jest możliwe w grach?",
-    "subtitle": "Licencjacka podróż przez generowanie dźwięku AI"
+    "badge": "Praca licencjacka 2025",
+    "title": "Czy AI może generować dźwięki do gier w czasie rzeczywistym?",
+    "subtitle": "Spędziłem miesiące szukając odpowiedzi. Wynik mnie zaskoczył.",
+    "read_paper": "Przeczytaj pracę",
+    "view_code": "Zobacz kod",
+    "scroll": "Przewiń, żeby odkryć"
   },
-  "section1": {
-    "title": "O czym jest ten projekt?",
-    "intro": "Może się zastanawiasz dlaczego ktokolwiek próbowałby generować dźwięki AI w grach. No cóż, to jest właściwie fajne pytanie - co gdyby zamiast setek nagranych efektów dźwiękowych, gry mogły tworzyć je w locie? Brzmi jak science fiction, prawda?",
-    "testing": "Więc przez ostatnie kilka tygodni testowałem właśnie to. Główne pytanie brzmiało:",
-    "question": "Czy AI jest wystarczająco szybkie, żeby gracze nawet nie zauważyli opóźnienia między akcją a jej dźwiękiem?",
-    "current_findings": "Obecne odkrycia:",
-    "findings": "Bezpośrednia odpowiedź jak dotąd: AI jest zbyt wolne na natychmiastowe odtwarzanie. ALE - eksploruję obejście żeby wykorzystać jakość AI w grach. Jak? Czytaj dalej."
+  "whyThisMatters": {
+    "title": "Po co komu coś takiego?",
+    "description": "Wyobraź sobie grę, gdzie każdy strzał brzmi inaczej. Każdy krok dopasowuje się do podłoża. Żadne dwie eksplozje nie są identyczne. To obietnica audio generowanego przez AI.",
+    "reasons": {
+      "variation": {
+        "title": "Nieskończona różnorodność",
+        "description": "Tradycyjne gry mają 5-10 sampli strzału. Gracze słyszą te same dźwięki w kółko. AI mogłoby generować unikalne wariacje za każdym razem."
+      },
+      "fileSize": {
+        "title": "Mniejsze gry",
+        "description": "Gry AAA mają gigabajty plików audio. A gdybyśmy mogli je generować w locie zamiast trzymać 500 plików WAV?"
+      },
+      "adaptive": {
+        "title": "Adaptacyjne audio",
+        "description": "Dźwięk reagujący na kontekst. Pistolet brzmi inaczej w jaskini niż na dworze. AI mogłoby adaptować się w czasie rzeczywistym."
+      }
+    },
+    "hook": "Brzmi świetnie, prawda? Jest tylko jeden problem..."
   },
-  "section2": {
-    "title": "Jak sprawić by Unity i Python ze sobą gadały",
-    "intro": "Na początku musiałem ogarnąć podstawy - połączenie Unity z Pythonem przez WebSocket. Brzmi skomplikowanie, ale w praktyce Unity mówi \"hej Python, daj mi dźwięk strzału\", a Python generuje go i odsyła.",
-    "architecture_flow": "Unity (C#) ⟷ WebSocket ⟷ Serwer Python",
-    "results_intro": "Pierwsze testy z prostym generatorem proceduralnym wyglądały obiecująco:",
-    "table_sound": "Typ dźwięku",
-    "table_latency": "Opóźnienie",
-    "table_verdict": "Werdykt",
-    "footstep": "Krok",
-    "gunshot": "Strzał",
-    "impact": "Uderzenie",
-    "excellent": "Świetnie",
-    "results_note": "Brzmi super! Wszystko poniżej 60ms jest praktycznie niezauważalne dla graczy. Jedyny problem był taki, że te dźwięki, no cóż... brzmiały syntetycznie. Jak coś z lat 90. Potrzebowałem czegoś lepszego."
+  "latency": {
+    "title": "Problem latencji",
+    "description": "Strzelasz w grze. Jeśli huk przychodzi 100 milisekund za późno, twój mózg to wyłapuje. Ta mała przerwa psuje immersję. A teraz wyobraź sobie 12 sekund czekania na każdy dźwięk.",
+    "threshold": "Próg percepcji człowieka:",
+    "label_target": "Ideał: 16ms (klatka przy 60 FPS)",
+    "label_acceptable": "Akceptowalne",
+    "label_noticeable": "Zauważasz to",
+    "label_unplayable": "Kompletnie zepsute",
+    "label_failure": "Po co się męczyć?"
   },
-  "section3": {
-    "title": "Koszmar 12 sekund",
-    "intro": "Spodziewałem się opóźnień. Ale nie <em>czegoś takiego</em>.",
-    "failure_stat": "12.000 ms",
-    "failure_context": "Czas generowania jednego kroku przez AudioLDM.",
-    "narrative": "W grze działającej w 60 klatkach, krok musi wybrzmieć w 16 milisekund. Moja pierwsza próba była 750 razy za wolna. Nawet szybszy MusicGen potrzebował 4 sekund. W świecie gier 4 sekundy to wieczność. To była kompletna porażka."
+  "chart": {
+    "title": "Liczby nie kłamią",
+    "subtitle": "Przetestowałem trzy modele AI audio. Oto jak wypadają w porównaniu z tym, czego gry faktycznie potrzebują.",
+    "humanReaction": "Czas reakcji człowieka",
+    "acceptable": "Akceptowalne dla gier",
+    "gameFrame": "Klatka gry (60fps)",
+    "models": {
+      "elevenlabs": "ElevenLabs",
+      "mmaudio": "MMAudio",
+      "audiogen": "AudioGen"
+    },
+    "cached": "Z cachingiem",
+    "tooltip": {
+      "elevenlabs": "Cloud API. Najlepsza jakość, ale latencja skacze w zależności od obciążenia serwerów.",
+      "mmaudio": "Model video-to-audio. Zaadaptowałem go do gier. Działa lokalnie.",
+      "audiogen": "Text-to-audio od Meta. Zbalansowany, ale wciąż za wolny na real-time.",
+      "cached": "Pre-wygenerowane dźwięki odtwarzane z pamięci. To jest przełom."
+    }
   },
-  "section4": {
+  "models": {
+    "title": "Co właściwie testowałem",
+    "subtitle": "Trzy modele, setki testów, jeden prototyp w Unity. Oto co odkryłem.",
+    "latency": "Latencja",
+    "quality": "Jakość",
+    "quality_high": "Świetna",
+    "quality_good": "Dobra",
+    "quality_medium": "Przyzwoita",
+    "elevenlabs_note": "Chmura. Fantastyczna jakość, ale jesteś na łasce ich serwerów. Tego samego dnia widziałem odpowiedzi w 1 sekundę i w 12 sekund.",
+    "mmaudio_note": "Oryginalnie do ścieżek dźwiękowych filmów. Zhackowałem go do eventów w grze. Zaskakująco dobre dźwięki otoczenia.",
+    "audiogen_note": "Model od Meta. Najbardziej stabilny, ale 3 sekundy to wciąż 3 sekundy za dużo na strzał.",
+    "architecture_title": "System, który zbudowałem"
+  },
+  "timeline": {
+    "title": "Podróż badawcza",
+    "subtitle": "Cztery miesiące eksperymentów, bugów i nocnego debugowania.",
+    "events": {
+      "start": {
+        "date": "Wrzesień 2024",
+        "title": "Pierwsze połączenie",
+        "description": "Połączyłem Unity z Pythonem przez WebSocket. Prosty prompt: 'gunshot'. Czekałem 8 sekund. Usłyszałem okropny dźwięk. Ale zadziałało!"
+      },
+      "models": {
+        "date": "Październik 2024",
+        "title": "Testowanie trzech modeli",
+        "description": "ElevenLabs miał najlepszą jakość, ale był niestabilny. MMAudio był stabilny, ale wolniejszy. AudioGen był... okej. Żaden nie był wystarczająco szybki."
+      },
+      "frustration": {
+        "date": "Listopad 2024",
+        "title": "Ściana",
+        "description": "Próbowałem wszystkiego. Różne prompty. Mniejsze pliki audio. Niższa jakość. Nic nie schodziło poniżej 1 sekundy. Myślałem, że praca jest martwa."
+      },
+      "eureka": {
+        "date": "Koniec listopada",
+        "title": "Odkrycie o 3 w nocy",
+        "description": "Przeglądając logi serwera, zauważyłem coś dziwnego. Cache hits pokazywały 0.03ms. Nie 3ms. 0.03ms. Problem nie leżał w AI - leżał w czekaniu na AI."
+      }
+    }
+  },
+  "breakthrough": {
     "title": "Anomalia 0.03ms",
-    "intro": "Byłem gotowy porzucić projekt. Ale wtedy, podczas frustrującej sesji debugowania, zauważyłem coś dziwnego w logach.",
-    "logs": "[LOG] Gen_Request_01: 4102ms\n[LOG] Gen_Request_02: 4098ms\n[LOG] Gen_Request_01: 0.03ms  <-- ???",
-    "epiphany": "Za drugim razem, gdy zażądałem tego samego dźwięku, system go nie generował. Wyciągnął go z pamięci. To było natychmiastowe. Szybsze niż odczyt pliku WAV z dysku.",
-    "question": "Nie musimy być szybcy. Musimy być po prostu wcześniej."
+    "subtitle": "O 3 w nocy, wpatrując się w logi serwera, znalazłem coś co zmieniło wszystko.",
+    "story": "Byłem o krok od rezygnacji. Wtedy zauważyłem linijkę w logach, którą ignorowałem: 'cache_hit: 0.03ms'. Dodałem caching jako dodatek - żeby nie generować tego samego dźwięku dwa razy. Ale ta liczba... 0.03 milisekundy. To 40,000 razy szybciej niż generowanie nowego dźwięku.",
+    "realization": "Problem nie polegał na przyspieszeniu AI. Problem polegał na wywoływaniu AI w złym momencie.",
+    "metric": {
+      "value": "0.03",
+      "unit": "ms",
+      "label": "Latencja cache hit"
+    }
   },
-  "section5": {
-    "title": "Generowanie Predykcyjne",
-    "intro": "Jeśli nie możemy generować dźwięku w czasie rzeczywistym, musimy go wygenerować <em>zanim</em> się wydarzy. To zmieniło całą architekturę z 'Reakcji' na 'Predykcję'.",
-    "solution_stat": "Ładowanie...",
-    "solution_label": "Trik",
-    "explanation": "Zbudowałem system, który wykorzystuje ekran ładowania – miejsce, gdzie gracze spodziewają się czekania – by 'wyhalucynować' audio dla nadchodzącego poziomu. Gdy gracz się pojawia, AI już wykonało ciężką pracę. Wynik? Zerowe opóźnienie. Audio AI najwyższej jakości."
+  "cachingDiagram": {
+    "title": "Rozwiązanie: Generuj wcześniej, odtwarzaj natychmiast",
+    "subtitle": "Jeśli nie możemy przyspieszyć AI, sprawiamy że staje się niewidoczne.",
+    "steps": {
+      "loading": {
+        "label": "Ekran ładowania",
+        "description": "Gdy gracz czeka, AI generuje dźwięki w tle"
+      },
+      "cache": {
+        "label": "Cache się zapełnia",
+        "description": "10 strzałów, 5 eksplozji, 8 kroków - wszystko pre-wygenerowane"
+      },
+      "play": {
+        "label": "Gracz działa",
+        "description": "Bang! Dźwięk odtwarza się z cache w poniżej 50ms"
+      },
+      "refill": {
+        "label": "Uzupełnianie w tle",
+        "description": "AI cicho generuje zamienne dźwięki na następny raz"
+      }
+    }
   },
-  "section6": {
-    "title": "Nowy problem: Pamięć kontra Chaos",
-    "intro": "Więc rozwiązaliśmy problem prędkości 'oszukując' ekranem ładowania. Ale to zwycięstwo stworzyło nowego, groźniejszego wroga: <strong>Zużycie RAMu</strong>.",
-    "problem": "Gdybyśmy wygenerowali z góry <em>każdy</em> możliwy dźwięk w grze open-world, potrzebowalibyśmy terabajtów RAMu. Wymieniliśmy czas CPU na Pamięć, i teraz kończy nam się miejsce.",
-    "current_work": "Tutaj właśnie są moje badania <strong>w tym momencie</strong>. Odchodzę od 'Generowania Wszystkiego' na rzecz czegoś mądrzejszego: <strong>Buforowania Predykcyjnego</strong>."
+  "solution": {
+    "title": "Przed i po",
+    "subtitle": "Te same dźwięki. Ta sama jakość. Zupełnie inne doświadczenie.",
+    "without_cache": "Bez cache",
+    "with_cache": "Z cache",
+    "unacceptable": "Niegrywalne",
+    "acceptable": "Wydaje się natychmiastowe",
+    "reduction": "Redukcja latencji",
+    "quote": "Nie musimy być szybcy. Musimy być po prostu wcześniej."
   },
-  "section7": {
-    "title": "Aktywne eksperymenty",
-    "intro": "Obecnie prowadzę trzy równoległe eksperymenty by rozwiązać kryzys pamięci:",
-    "exp1_title": "Inteligentne czyszczenie",
-    "exp1_desc": "Usuwanie dźwięków natychmiast po ich odegraniu by zwolnić RAM.",
-    "exp2_title": "Okno 10 sekund",
-    "exp2_desc": "AI, które zgaduje co zrobisz w ciągu następnych 10 sekund i generuje TYLKO to.",
-    "status_title": "Status badań: AKTYWNE",
-    "status_desc": "'Cache 0.03ms' działa, ale sprawienie by był skalowalny to nowe wyzwanie. Obecnie koduję algorytm predykcji w Pythonie."
+  "useCases": {
+    "title": "Kiedy można tego faktycznie użyć?",
+    "subtitle": "AI audio to nie magia. To narzędzie z konkretnymi zastosowaniami.",
+    "headers": {
+      "useCase": "Zastosowanie",
+      "frequency": "Jak często?",
+      "verdict": "Działa dziś?"
+    },
+    "cases": {
+      "footsteps": {
+        "name": "Kroki",
+        "frequency": "Co 0.5s",
+        "verdict": "no",
+        "note": "Za częste. Cache opróżnia się szybciej niż AI zdąży go napełnić."
+      },
+      "ambient": {
+        "name": "Dźwięki otoczenia",
+        "frequency": "Rzadko",
+        "verdict": "yes",
+        "note": "Idealne. Dźwięki tła można pre-generować podczas ładowania."
+      },
+      "gunshots": {
+        "name": "Strzały",
+        "frequency": "Różnie",
+        "verdict": "maybe",
+        "note": "Działa jeśli ograniczysz szybkostrzelność lub użyjesz hybrydowego cache + fallback."
+      },
+      "cutscenes": {
+        "name": "Audio cutscen",
+        "frequency": "Skryptowane",
+        "verdict": "yes",
+        "note": "Najlepszy przypadek. Wiesz dokładnie co będzie potrzebne z wyprzedzeniem."
+      },
+      "procedural": {
+        "name": "Muzyka proceduralna",
+        "frequency": "Ciągła",
+        "verdict": "maybe",
+        "note": "Możliwe z generowaniem segmentowym. Wciąż eksperymentalne."
+      }
+    },
+    "verdicts": {
+      "yes": "Tak",
+      "no": "Jeszcze nie",
+      "maybe": "Zależy"
+    }
   },
-  "section8": {
-    "title": "Update: Weryfikacja (06.12.2025)",
-    "intro": "\"Anomalia 0.03ms\" nie była błędem w logach. Była rozwiązaniem. Spędziłem weekend testując czy to podejście wytrzyma w starciu ze standardowym generowaniem.",
-    "session2_title": "Koniec lokalnego AI",
-    "session2_desc": "Dałem lokalnym modelom ostatnią szansę. Wynik? 10 sekund ciszy przy każdym kroku. Tego po prostu nie da się wdrożyć. Zamykam ten temat.",
-    "session4_title": "Rozwiązanie Hybrydowe",
-    "session4_desc": "To działa. Warstwa proceduralna pokrywa pierwsze milisekundy (<5ms), a AI dosyła wysokiej jakości assety w tle. Dla gracza różnica jest niezauważalna.",
-    "stats_intro": "Metryka końcowa:",
-    "stat_proc": "Warstwa Proceduralna: 5.02ms (Natcyhmiast)",
-    "stat_cloud": "Chmura AI: ~2.1s (W tle)",
-    "stat_hybrid": "Wynik: 0ms efektywnego opóźnienia",
-    "summary": "Już nie tylko 'oszukujemy' czas. My nim zarządzamy. System jest stabilny."
+  "conclusion": {
+    "main": "AI audio nie jest gotowe by zastąpić tradycyjne audio w grach.",
+    "secondary": "Ale z predykcyjnym cachingiem może je już dziś wzbogacać. Technologia będzie tylko szybsza.",
+    "final_thought": "Za 2-3 lata? Real-time AI audio może faktycznie być możliwe. Na razie pracujemy z tym co mamy.",
+    "download_paper": "Przeczytaj pracę",
+    "github": "Zobacz kod",
+    "contact": "Porozmawiajmy"
   },
   "footer": {
-    "status": "Licencjacki Projekt Badawczy • W toku • 2025 • Igor Szuniewicz"
+    "status": "Praca licencjacka | 2025 | Igor Szuniewicz"
   }
 }
