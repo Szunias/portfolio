@@ -7,7 +7,7 @@ interface ProjectGridProps {
 }
 
 const ProjectGrid = ({ projects }: ProjectGridProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('projects');
 
   if (projects.length === 0) {
     return (

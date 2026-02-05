@@ -7,7 +7,7 @@ interface ProjectSidebarProps {
 }
 
 const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('projectDetail');
   const links = project.links || {};
 
   return (

@@ -17,7 +17,7 @@ const Section = ({ title, icon: Icon, children }: { title: string; icon: React.E
 );
 
 const KeyValueGrid = ({ data }: { data: Record<string, string> }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('projectDetail');
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {Object.entries(data).map(([key, value]) => (
@@ -33,7 +33,7 @@ const KeyValueGrid = ({ data }: { data: Record<string, string> }) => {
 };
 
 const ListSection = ({ items }: { items: string[] }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('projectDetail');
   return (
     <ul className="space-y-3">
       {items.map((item, i) => (
@@ -47,7 +47,7 @@ const ListSection = ({ items }: { items: string[] }) => {
 };
 
 const ProjectRichDetails = ({ project }: ProjectRichDetailsProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('projectDetail');
 
   return (
     <div className="space-y-4">

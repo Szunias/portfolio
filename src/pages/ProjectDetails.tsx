@@ -16,9 +16,12 @@ import ProductionTimeline from '../components/features/ProductionTimeline';
 const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { featured_projects, additional_projects } = usePortfolioData();
-  const { t } = useTranslation();
 
   const project = [...featured_projects, ...additional_projects].find(p => p.id === id);
+
+  const namespaces: string[] = ['projectDetail', 'projects'];
+  if (project?.i18nNamespace) namespaces.push(project.i18nNamespace);
+  const { t } = useTranslation(namespaces);
 
   useEffect(() => {
     window.scrollTo(0, 0);

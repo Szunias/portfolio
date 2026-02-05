@@ -270,7 +270,7 @@ interface CaseStudyCardProps {
 }
 
 const CaseStudyCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, poster, caption, paragraphs }: CaseStudyCardProps) => {
-    const { t: tCommon } = useTranslation('translation');
+    const { t: tCommon } = useTranslation('common');
     return (
         <motion.article 
             initial={{ opacity: 0, y: 50 }}

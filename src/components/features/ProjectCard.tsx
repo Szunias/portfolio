@@ -10,7 +10,7 @@ interface ProjectCardProps {
 }
 
 const ProjectCard = ({ project, index }: ProjectCardProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('projects');
   const media = project.media || {};
   
   const titleKey = `project_${project.id}_title`;

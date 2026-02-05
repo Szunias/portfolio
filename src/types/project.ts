@@ -32,6 +32,7 @@ export interface ContentBlock {
 
 export interface Project {
   id: string;
+  i18nNamespace?: string;
   title: string;
   category: string; // e.g., "Sound Design", "Music", "Programming"
   year?: string;

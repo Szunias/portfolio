@@ -5,7 +5,7 @@ import { usePortfolioData } from '../../hooks/usePortfolioData';
 import { Button } from '../ui/Button';
 
 const ContactForm = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('contact');
   const { personal_info } = usePortfolioData();
 
   const [status, setStatus] = useState<'idle' | 'preparing'>('idle');

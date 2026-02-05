@@ -7,7 +7,7 @@ import { usePortfolioData } from '../../hooks/usePortfolioData';
 const HERO_TECH_STACK = ['Wwise', 'FMOD', 'Unreal Engine 5', 'C++', 'Reaper', 'Unity'];
 
 const Hero = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('home');
   const { personal_info } = usePortfolioData();
   const shouldReduceMotion = useReducedMotion();
 

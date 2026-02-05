@@ -7,7 +7,7 @@ import ProjectFilters from '../components/features/projects/ProjectFilters';
 
 const Projects = () => {
   const { featured_projects, additional_projects } = usePortfolioData();
-  const { t } = useTranslation();
+  const { t } = useTranslation('projects');
   
   const allProjects = [...featured_projects, ...additional_projects];
   const { filter, setFilter, categories, filteredProjects, getCategoryLabel } = useProjectFilter(allProjects);

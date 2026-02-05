@@ -31,30 +31,9 @@ i18n
       caches: ['localStorage'],
     },
 
-    // Standard default namespace
-    ns: [
-      'translation',
-      'common',
-      'gradwork',
-      'middlewareOptimization',
-      'soundDesign',
-      'shadowFrames',
-      'audioq',
-      'about',
-      'amorak',
-      'akantilado',
-      'pauseAndDeserve',
-      'notTodayDarling',
-      'contact',
-      'wwiseUnrealFixer',
-      'rayAnimation',
-      'richter',
-      'pawism',
-      'music',
-      'unrealEngineRebuilder'
-    ],
-    defaultNS: 'translation',
-    fallbackNS: 'common',
+    ns: ['common'],
+    defaultNS: 'common',
+    partialBundledLanguages: true,
   });
 
 export default i18n;

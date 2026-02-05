@@ -6,7 +6,7 @@ import { useAudio } from '../../../context/AudioContext';
 
 const MusicHero = () => {
   const { currentTrack, isPlaying, togglePlay, playTrack, playlist } = useAudio();
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('music');
 
   const displayTrack = currentTrack || playlist[0];
 

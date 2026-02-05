@@ -5,7 +5,7 @@ import MusicHero from '../components/features/music/MusicHero';
 
 const Music = () => {
   const { playlist, playTrack, currentTrack, isPlaying } = useAudio();
-  const { t } = useTranslation();
+  const { t } = useTranslation('music');
 
   return (
     <div className="min-h-screen bg-lines-horizontal bg-primary">

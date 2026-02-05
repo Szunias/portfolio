@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 
 const Showreel = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('home');
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [player, setPlayer] = useState<Player | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);

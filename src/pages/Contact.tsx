@@ -7,7 +7,7 @@ import { usePortfolioData } from '../hooks/usePortfolioData';
 
 const Contact = () => {
   const { personal_info } = usePortfolioData();
-  const { t } = useTranslation();
+  const { t } = useTranslation('contact');
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {

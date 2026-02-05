@@ -9,7 +9,7 @@ const VISUALIZER_BARS = 6;
 const barDelays = Array.from({ length: VISUALIZER_BARS }, (_, i) => `${i * 0.12}s`);
 
 const AudioPlayer = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   const {
     currentTrack, isPlaying, togglePlay, nextTrack, prevTrack,
     progress, duration, currentTime, seek, volume, setVolume, isPlayerVisible, closePlayer

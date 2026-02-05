@@ -14,7 +14,7 @@ interface LanguageSwitcherProps {
 }
 
 const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation('common');
   const [isOpen, setIsOpen] = useState(false);
 
   const changeLanguage = (lng: string) => {

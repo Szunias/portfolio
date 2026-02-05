@@ -10,7 +10,7 @@ interface ProjectCodeSectionProps {
 
 const ProjectCodeSection = ({ snippets }: ProjectCodeSectionProps) => {
   const [showCode, setShowCode] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('projectDetail');
 
   return (
     <div className="border border-white/10 rounded-xl overflow-hidden">

@@ -16,7 +16,7 @@ const getYoutubeId = (url: string) => {
 };
 
 const ProjectHero = ({ project }: ProjectHeroProps) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['projectDetail', 'projects']);
     const media = project.media || {};
     const links = project.links || {};
 

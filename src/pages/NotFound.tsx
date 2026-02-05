@@ -3,7 +3,7 @@ import { Home, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const NotFound = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('notFound');
 
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4 bg-dots-grid bg-primary">

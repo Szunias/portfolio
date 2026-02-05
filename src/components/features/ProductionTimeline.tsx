@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 
 const ProductionTimeline = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('projectDetail');
   const [hoveredWeek, setHoveredWeek] = useState<number | null>(null);
   const currentWeek = 8;
   const totalWeeks = 9;

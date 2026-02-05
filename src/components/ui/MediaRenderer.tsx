@@ -23,7 +23,7 @@ const MediaRenderer = ({
   muted = true
 }: MediaRendererProps) => {
   const [hasError, setHasError] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   const isVideo = src.endsWith('.mp4') || src.endsWith('.webm');
   
   // Normalize path if needed (though assumed to be relative to public root if not http)

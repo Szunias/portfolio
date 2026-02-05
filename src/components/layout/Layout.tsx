@@ -10,7 +10,7 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('common');
 
   return (
     <div className="flex flex-col min-h-screen text-text font-sans overflow-x-hidden relative bg-[#050508]">

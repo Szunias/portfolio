@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
   const { personal_info } = usePortfolioData();
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   const currentYear = new Date().getFullYear();
 
   return (

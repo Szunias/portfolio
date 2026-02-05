@@ -10,7 +10,7 @@ import { ROUTES } from '../../constants/routes';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   const location = useLocation();
   const { personal_info } = usePortfolioData();
 

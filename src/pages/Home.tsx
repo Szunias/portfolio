@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 
 const Home = () => {
   const { featured_projects } = usePortfolioData();
-  const { t } = useTranslation();
+  const { t } = useTranslation(['home', 'projects']);
 
   const displayProjects = (featured_projects || []).slice(0, 4);
 

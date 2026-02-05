@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import SEO from '../components/layout/SEO';
 
 const Transientica = () => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('transientica');
     const [activeVideo, setActiveVideo] = useState<string | null>(null);
     const mainVideoRef = useRef<HTMLVideoElement>(null);
     const techVideoRef = useRef<HTMLVideoElement>(null);

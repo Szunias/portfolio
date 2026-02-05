@@ -18,7 +18,7 @@ const SEO = ({
   image = '/assets/cv-image/cvsmile.jpg', // Corrected path to main portrait
   url
 }: SEOProps) => {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation('common');
   const location = useLocation();
   const siteTitle = "Igor Szuniewicz | Audio Designer & Developer";
   const defaultDescription = "Portfolio of Igor Szuniewicz - Audio Designer & Developer specializing in Game Audio, Wwise/FMOD implementation, and Interactive Systems.";

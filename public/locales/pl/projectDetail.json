@@ -1,0 +1,638 @@
+{
+  "Engine": "Silnik",
+  "In Production": "W Produkcji",
+  "Lead Audio Designer": "Projektant Dźwięku",
+  "MODULE_AUDIO": "MODUŁ: AUDIO",
+  "MODULE_DEV": "MODUŁ: DEV",
+  "MODULE_PROD": "MODUŁ: PROD",
+  "Multi-Institutional": "Wieloinstytucjonalny",
+  "Role": "Rola",
+  "SYSTEM_ALL": "SYSTEM: WSZYSTKO",
+  "Status": "Status",
+  "Team": "Zespół",
+  "UE5 + Wwise": "UE5 + Wwise",
+  "ann": {
+    "anomaly": {
+      "binding": {
+        "desc": "AddDynamic subskrybuje cykl życia anomalii. Gdy anomalia się pojawia/aktywuje/zostaje złapana, audio reaguje automatycznie. Zero sprzężenia z kodem gameplay.",
+        "label": "Binding Eventów"
+      },
+      "config": {
+        "desc": "Konfiguracja audio przechowywana w GameInstance - przetrwa między wczytaniami poziomów. Zawiera referencje Eventów Wwise i ustawienia per-anomalia.",
+        "label": "Globalna Konfiguracja"
+      },
+      "post": {
+        "desc": "PostAkEvent uruchamia Event Wwise na tym konkretnym aktorze. Pozycjonowany 3D, respektuje ustawienia okluzji/tłumienia skonfigurowane w Wwise.",
+        "label": "Event Post"
+      },
+      "retrieval": {
+        "desc": "GetAnomalyAudioConfig zwraca Data Asset ze wszystkimi ustawieniami dźwięku anomalii. Designerzy mogą modyfikować bez rekompilacji.",
+        "label": "Pobieranie Konfiguracji"
+      },
+      "settings": {
+        "desc": "Różne typy anomalii mają unikalne dźwięki. GetSettingsForAnomaly wyszukuje specyficzny profil audio - upiorny szept vs hałas poltergeista.",
+        "label": "Ustawienia Per-Anomalia"
+      },
+      "spatial": {
+        "desc": "InitializeAudioSource konfiguruje AkComponent do pozycjonowania 3D. Każda anomalia ma własny emiter audio dla prawidłowej spacjalizacji.",
+        "label": "Źródło Przestrzenne"
+      },
+      "switch": {
+        "desc": "SetSwitch mówi Wwise którą wariację dźwięku użyć. Jeden Event, wiele wyników w zależności od typu anomalii. Wydajne pamięciowo.",
+        "label": "Switch Wwise"
+      }
+    },
+    "cache": {
+      "broadcast": {
+        "desc": "Multicast delegate powiadamia wszystkich słuchaczy. Audio manager, UI, systemy gameplay - wszystkie subskrybują. Rozprzężona architektura.",
+        "label": "Broadcast Eventu"
+      },
+      "interval": {
+        "desc": "Odświeża listę wrogów co N sekund, nie co klatkę. GetAllActorsOfClass jest kosztowne - cache zapobiega spadkom wydajności.",
+        "label": "Odświeżanie Cache"
+      },
+      "normalize": {
+        "desc": "Konwertuje surowy dystans na zakres 0-100%. Odwrócone: bliższy wróg = wyższa wartość. Systemy audio pracują na znormalizowanych wartościach.",
+        "label": "Normalizacja Dystansu"
+      },
+      "threshold": {
+        "desc": "Broadcastuje tylko gdy bliskość zmieni się znacząco. Zapobiega spamowaniu systemu audio mikro-ruchami. Typowo próg 1-5%.",
+        "label": "Próg Zmiany"
+      }
+    },
+    "config": {
+      "dataasset": {
+        "desc": "Czysty kontener danych - zero logiki, tylko właściwości edytora. Designerzy tworzą instancje, przypisują eventy Wwise i dostosowują wartości. Bez rekompilacji C++.",
+        "label": "Wzorzec DataAsset"
+      },
+      "hysteresis": {
+        "desc": "Progi Start/Stop zapobiegają migotaniu audio. Designerzy dostosowują je per-enemy bez zmian w kodzie. Meta tagi dodają walidację edytora.",
+        "label": "Wartości Histerezy"
+      },
+      "wwise": {
+        "desc": "TObjectPtr do assetu Wwise. Eventy, RTPC, switche - wszystko przypisane w edytorze. Zero hardcodowanych stringów. Zmiana audio = zamiana referencji.",
+        "label": "Referencja Wwise"
+      }
+    },
+    "dialogue": {
+      "datatable": {
+        "desc": "DataTable przechowuje konfigurację audio - który switch Wwise, jak długo wyświetlać napisy. Oddzielone od tekstu dla czystszej lokalizacji.",
+        "label": "Metadane Audio"
+      },
+      "stringtable": {
+        "desc": "StringTable dla tekstu dialogów - natywny system lokalizacji Unreala. Ten sam klucz AnomalyID w obu tabelach. Zespół tekstowy edytuje StringTable, audio - DataTable.",
+        "label": "Zlokalizowany Tekst"
+      },
+      "struct": {
+        "desc": "FTableRowBase umożliwia integrację z DataTable. Każdy wiersz = jeden wpis dialogu ze switchem Wwise + czasem trwania. Przyjazny dla CSV.",
+        "label": "Wiersz DataTable"
+      }
+    },
+    "enemy": {
+      "breathing": {
+        "desc": "Uruchamia pętlę zestresowanego oddechu postaci. W połączeniu z warstwami grozy tworzy intensywną atmosferę horroru gdy wrogowie są blisko.",
+        "label": "Stresowy Oddech"
+      },
+      "dread": {
+        "desc": "Wysyła Event Wwise uruchamiający warstwowe dźwięki grozy - niskie drony, niepokojące tekstury. Warstwy nasilają się w oparciu o wartość RTPC.",
+        "label": "Warstwy Grozy"
+      },
+      "hysteresis": {
+        "desc": "Dwa oddzielne progi zapobiegają migotaniu audio. StartThreshold (np. 20%) włącza dźwięk, StopThreshold (np. 10%) wyłącza. Ta przerwa zapobiega szybkiemu przełączaniu.",
+        "label": "Progi Histerezy"
+      },
+      "intensity": {
+        "desc": "Osobny RTPC dla oddechu. Większa bliskość = szybszy, bardziej spanikowany oddech. Tworzy psychologiczne połączenie między graczem a postacią.",
+        "label": "Intensywność Oddechu"
+      },
+      "proximity": {
+        "desc": "Funkcja wywoływana przez EnemyPresenceComponent przy zmianie odległości do najbliższego wroga. ProximityValue znormalizowane 0-100%.",
+        "label": "Callback Bliskości"
+      },
+      "rtpc": {
+        "desc": "Real-Time Parameter Control - wysyła ProximityValue do Wwise. Kontroluje głośność, filtr i wysokość w czasie rzeczywistym. Płynne przejścia, bez ostrych cięć.",
+        "label": "Aktualizacja RTPC"
+      }
+    },
+    "foot": {
+      "cleanup": {
+        "desc": "Natychmiast czyści timer gdy ruch się kończy. Żadnych zalegających kroków po zatrzymaniu. Czyste zarządzanie stanem.",
+        "label": "Czyszczenie Timera"
+      },
+      "physmat": {
+        "desc": "Krytyczna flaga: bReturnPhysicalMaterial musi być true. Bez tego PhysMaterial zawsze będzie null - częsta pułapka w audio Unreal.",
+        "label": "Physical Material"
+      },
+      "timer": {
+        "desc": "Uruchamia timer kroków tylko gdy postać się porusza. Zapobiega fantomowym krokom przy staniu. Timer powtarza się w skonfigurowanym interwale.",
+        "label": "Inteligentny Timer"
+      },
+      "trace": {
+        "desc": "Strzela promień w dół aby wykryć powierzchnię. Używa kanału Visibility. Zwraca typ powierzchni dla wyboru Switch Wwise.",
+        "label": "Line Trace"
+      }
+    },
+    "footstep": {
+      "channel": {
+        "desc": "Używa kanału ECC_Visibility do trace. Można też użyć własnego kanału trace dla bardziej precyzyjnej detekcji kolizji tylko dla audio.",
+        "label": "Kanał Widoczności"
+      },
+      "creaky": {
+        "desc": "Specjalne typy powierzchni dla atmosfery horroru. CreakyWood i CreakyStairs mają dodatkowe losowe skrzypienie - gracz zdradza pozycję wrogom.",
+        "label": "Skrzypiące Powierzchnie"
+      },
+      "mapping": {
+        "desc": "Enumy SurfaceType Unreal mapują na nazwy Switch Wwise. Designerzy poziomów przypisują Physical Materials do podłóg, kod automatycznie odtwarza prawidłowe kroki.",
+        "label": "Mapowanie Powierzchni"
+      },
+      "physics": {
+        "desc": "Krytyczna flaga! bReturnPhysicalMaterial musi być true, inaczej PhysMaterial zawsze będzie null. Częsta pułapka w integracji audio Unreal.",
+        "label": "Zapytanie Fizyki"
+      },
+      "ray": {
+        "desc": "Line trace zaczyna się od lokalizacji aktora (poziom stóp). Bardziej niezawodne niż sockety siatki postaci do detekcji powierzchni.",
+        "label": "Początek Promienia"
+      },
+      "surface": {
+        "desc": "Zwraca FName mapujące bezpośrednio na wartość Switch Wwise. FootstepAudioManager używa tego do ustawienia prawidłowej wariacji dźwięku kroków.",
+        "label": "Detekcja Powierzchni"
+      },
+      "trace": {
+        "desc": "Śledzi w dół o m_TraceDistance jednostek. Konfigurowalny w edytorze - zazwyczaj 50-100cm dla schodów i nierównego terenu.",
+        "label": "Kierunek Trace"
+      }
+    },
+    "player": {
+      "blueprint": {
+        "desc": "Sound designerzy mogą bindować Eventy Wwise bezpośrednio w Blueprint bez dotykania C++. Szybsza iteracja audio - bez rekompilacji.",
+        "label": "BlueprintAssignable"
+      },
+      "death": {
+        "desc": "Rozgłaszane gdy gracz umiera. Uruchamia stinger śmierci, zatrzymuje całe ambient audio i rozpoczyna sekwencję game over. Krytyczne dla zarządzania stanem audio.",
+        "label": "Sekwencja Śmierci"
+      },
+      "delegate": {
+        "desc": "DECLARE_DYNAMIC_MULTICAST pozwala wielu słuchaczom (audio, UI, gameplay) subskrybować. 'Dynamic' oznacza że działa z Blueprintami, nie tylko C++.",
+        "label": "Dynamiczny Delegate"
+      },
+      "photoboard": {
+        "desc": "Przy przeglądaniu zebranych zdjęć, ambient audio ścisza się a dźwięki UI aktywują. Delegates oddzielają to od hardcodowanych wywołań audio.",
+        "label": "UI Tablicy Zdjęć"
+      },
+      "shutter": {
+        "desc": "Główna mechanika rozgrywki - robienie zdjęć. Uruchamia dźwięk kliknięcia migawki i flesza. Anomalie wrogów reagują na ten dźwięk!",
+        "label": "Migawka Aparatu"
+      },
+      "zoom": {
+        "desc": "Zoom aparatu uruchamia dźwięk silnika servo i subtelną zmianę ambientu. Immersyjny feedback dla gracza wchodzącego w 'tryb dochodzenia'.",
+        "label": "Audio Zoomu"
+      }
+    },
+    "poly": {
+      "hierarchy": {
+        "desc": "Idzie w górę hierarchii klas aż znajdzie ustawienia. BP_GhostAnomaly → AGhostAnomaly → ABaseAnomaly. Pierwszy match wygrywa.",
+        "label": "Przechodzenie Hierarchii"
+      },
+      "reflection": {
+        "desc": "GetClass() zwraca faktyczny typ runtime. Dla BP_GhostAnomaly dziedziczącego z ABaseAnomaly, zwraca klasę BP_GhostAnomaly.",
+        "label": "Refleksja Runtime"
+      },
+      "tmap": {
+        "desc": "TMap<TSubclassOf<ABaseAnomaly>, FAnomalyAudioSettings> - designerzy mapują klasy anomalii do switchów audio w edytorze. Nowa anomalia = nowy wiersz w DataAsset.",
+        "label": "Lookup TMap"
+      }
+    },
+    "prox": {
+      "hysteresis": {
+        "desc": "Próg startu wyższy niż stopu. Wróg na 25% włącza audio, ale musi spaść do 15% żeby wyłączyć. Zapobiega szybkiemu migotaniu on/off.",
+        "label": "Przerwa Histerezy"
+      },
+      "postevent": {
+        "desc": "UAkGameplayStatics::PostEvent uruchamia audio na tym aktorze. Pozycjonowane 3D, respektuje krzywe tłumienia ustawione w projekcie Wwise.",
+        "label": "Wwise PostEvent"
+      },
+      "rtpc": {
+        "desc": "Real-Time Parameter Control. Wysyła wartość bliskości do Wwise ciągle. Kontroluje głośność, filtr, pitch - płynna modulacja, bez skoków.",
+        "label": "Aktualizacja RTPC"
+      },
+      "stopthresh": {
+        "desc": "Niższy próg dla zatrzymania audio. Tworzy pasmo histerezy wygładzające przejścia. Brak zacinania gdy wróg oscyluje na granicy.",
+        "label": "Próg Stopu"
+      }
+    }
+  },
+  "code": {
+    "annotations": "adnotacji",
+    "explanation_title": "Wyjaśnienie Kodu",
+    "hover_hint": "Kliknij podświetlone linie, aby zobaczyć wyjaśnienia",
+    "line": "Linia",
+    "live_server": "SERWER AKTYWNY",
+    "quick_reference": "Szybki Podgląd",
+    "select_line": "Kliknij podświetloną linię, żeby zobaczyć co robi"
+  },
+  "details": {
+    "about": "O Projekcie",
+    "access": "Dostęp do Projektu",
+    "classification": "Klasyfikacja",
+    "gallery": "Galeria",
+    "links": "Linki Projektu",
+    "tags": "Tagi",
+    "tech": "Implementacja Techniczna",
+    "technical_dive": "Szczegóły Techniczne",
+    "technical_dive_hint": "Detale implementacji dla programistów",
+    "technologies": "Technologie"
+  },
+  "img": {
+    "shadowframes": {
+      "anomaly_spawn": "Konfiguracja eventów Wwise dla wariacji audio anomalii",
+      "data_assets": "Konfiguracje Data Asset dla parametrów audio",
+      "enemy_presence": "Krzywe RTPC Enemy Presence dla audio opartego na bliskości",
+      "mixer_hierarchy": "Hierarchia Master Mixera - organizacja przepływu sygnału",
+      "music_config": "System adaptacyjnego warstwowania muzyki",
+      "voiceline_switch": "Switch Container dla dynamicznego wyboru kwestii"
+    }
+  },
+  "links": {
+    "demo": "Demo Live",
+    "docs": "Dokumentacja",
+    "repo": "Kod Źródłowy",
+    "video": "Obejrzyj Wideo"
+  },
+  "project": {
+    "achievements": "Osiągnięcia",
+    "audio_systems": "Systemy Audio",
+    "challenges_title": "Wyzwania i Rozwiązania",
+    "key_scenes": "Kluczowe Sceny",
+    "metrics": "Metryki",
+    "problem": "Problem",
+    "responsibilities": "Obowiązki",
+    "solution": "Rozwiązanie",
+    "tech_stack": "Technologie"
+  },
+  "project_akantilado_full_desc": "Kompletne foley i ambience dżungli do animacji 3D.\n\nMiks stereo + 5.1 Surround. Foley z bibliotek, warstwowane i zsynchronizowane z animacją. 5-warstwowy system przestrzennego ambientu.",
+  "project_amorak_block1_content": "Potwór musiał brzmieć potężnie. Nałożyłem na siebie nagrania lwa, słonia, tygrysa i hipopotama. Obniżenie tonu dodało ciężaru, a tekstura hipopotama dała unikalny charakter.",
+  "project_amorak_block1_title": "Sound Design Potwora",
+  "project_amorak_block2_content": "Zaprojektowałem otoczenie tak, by podążało za kamerą. Kapiąca woda jest blisko i niepokojąca, a odległe łańcuchy sugerują zagrożenie. Panning binauralny umieszcza każdy dźwięk w konkretnym miejscu wokół głowy słuchacza.",
+  "project_amorak_block2_title": "Audio Przestrzenne",
+  "project_amorak_block3_content": "Miks stawia na potwora. Użyłem dynamicznego duckingu, by ściszyć otoczenie, gdy potwór krzyczy lub postać oddycha. Najważniejsze elementy narracyjne są zawsze słyszalne.",
+  "project_amorak_block3_title": "Strategia Miksu",
+  "project_amorak_full_desc": "90-sekundowy horror. Cały post-production audio.\n\nWorkflow: Krotos Studio → Logic Pro → miks binauralny w Reaper.\nFormat: stereo binauralne, 48kHz/24-bit, -16 LUFS. 4 tygodnie.\n\n• Głos stwora: warstwy lwa, słonia, tygrysa i hipopotama\n• Miks przestrzenny: Dear VR Pro + IEM Suite\n• Dynamika: CLA-76, LA-2A, LA-3A, C6 multiband",
+  "project_audioq_full_desc": "Sampler audio w JUCE z syntezą granularną i efektami tremolo.\n\nFunkcje:\n- Synteza granularna: regulowany rozmiar ziarna i losowe odtwarzanie\n- Własne tremolo: modulacja amplitudy LFO per-sample\n- Filtry TPT: zero opóźnienia\n- APVTS: pełna automatyzacja parametrów",
+  "project_gradwork_full_desc": "Badanie możliwości generowania audio przez AI w czasie rzeczywistym. Testujemy granice opóźnienia i jakości dla zastosowań w grach.",
+  "project_not_today_darling_full_desc": "Jedyny audio designer w 4-osobowej grze wyścigowej na wspólnym ekranie. Brak miejsca na subtelne stereo - walka o każdy decybel headroomu i bajt RAM-u. Efekt: głośny, chaotyczny wyścig który nie klipuje i chodzi płynnie.",
+  "project_nottoday_block1_content": "Wyścigi z boku (side-scrolling) dla 1-4 graczy. Jest głośno, chaotycznie i absurdalnie. Audio Designer & Implementer. Robiłem wszystko: nagrania, sound design, dobór muzyki i implementację.",
+  "project_nottoday_block1_title": "Przegląd Projektu",
+  "project_nottoday_block2_content": "Nie chciałem, żeby silniki brzmiały jak zapętlone MP3. Zbudowałem graf w MetaSounds, gdzie pitch i trzeszczenie gokarta zmieniają się w zależności od prędkości. Słyszysz różnicę dźwięku, gdy wjeżdżasz na inną nawierzchnię.",
+  "project_nottoday_block2_title": "System MetaSounds",
+  "project_pause_and_deserve_full_desc": "Horror psychologiczny gdzie każda pauza ma swoją cenę.\n\nSystem reaktywnego audio w Unity - soundscape zmienia się w zależności od wahania gracza. Mechanika pauzy to nie przerwa - to decyzja która wpływa na grę.",
+  "project_ray_animation_full_desc": "Funky motyw do napisów końcowych.\n\nSound design i kompozycja muzyki do animacji. Balans między lekkim tonem muzycznym a samotną atmosferą wizualną.",
+  "project_richter_full_desc": "Sound design do filmu krótkometrażowego. Foley nagrywane od zera, muzyka z bibliotek orkiestrowych.",
+  "project_shadow_frames_collab_desc": "Współpraca między RITCS (Historia), KASK (Muzyka) i Howest DAE (Game Dev).",
+  "project_shadow_frames_collab_title": "Współpraca Międzyinstytucjonalna",
+  "project_shadow_frames_full_desc": "Gra horrorowa gdzie audio jest główną mechaniką. Gracz słyszy anomalie zanim je zobaczy.\n\nZbudowałem architekturę audio: detekcja powierzchni kroków, system bliskości wroga, audio anomalii, integracja z Wwise. Współpraca z RITCS (scenarzyści) i KASK (kompozytorzy).",
+  "project_transientica_audiolab_full_desc": "System rozpoznawania beatboxu w czasie rzeczywistym. Steruj grą rytmiczną głosem.\n\nZoptymalizowane bufory audio i pipeline ML żeby zejść poniżej 60ms opóźnienia. Python analizuje dźwięk, Unity obsługuje grę - komunikacja przez UDP/OSC.",
+  "project_transientica_block1_content": "System nasłuchuje Twojego mikrofonu i klasyfikuje dźwięki w czasie rzeczywistym używając własnej sieci neuronowej wytrenowanej na tysiącach próbek.",
+  "project_transientica_block1_title": "Jak to działa",
+  "project_transientica_block2_content": "Zbudowane w Unity z pipeline'em Python/scikit-learn. Używa analizy spektralnej i predykcyjnego buforowania, by osiągnąć <45ms opóźnienia.",
+  "project_transientica_block2_title": "Szczegóły Techniczne",
+  "project_unreal_engine_rebuilder_full_desc": "Automatyzacja DevOps dla twórców gier.\n\nUnreal Engine często napotyka uszkodzone pliki pośrednie powodujące błędy linkera. To narzędzie tworzy stan \"Factory Reset\" dla środowiska buildowego - usuwa cache, regeneruje pliki projektu, kompiluje od zera.",
+  "project_wwise_unreal_fixer_full_desc": "Narzędzie ratunkowe dla integracji Wwise z Unreal.\n\nPrzy migracji projektów Wwise lub współpracy przez Perforce, Unreal często gubi ścieżki do assetów (SoundBanks, Events) - aktorzy stają się cisi. To narzędzie naprawia referencje jednym kliknięciem.",
+  "sf": {
+    "ambience_zones": {
+      "desc": "Audio oparte na lokalizacji, które zmienia się gdy poruszasz się po różnych obszarach pubu.",
+      "how": "Trigger volumes wykrywają lokalizację gracza. Przy wejściu do strefy, fade out poprzedniego ambientu i fade in warstw nowej strefy. Płynne crossfade'y zapobiegają skokom audio.",
+      "result": "Płynne przejścia audio między strefami. Gracz podświadomie rozumie układ pubu przez sound design. Każdy obszar ma odrębną tożsamość akustyczną.",
+      "title": "System Stref Ambientu",
+      "what": "5 odrębnych stref z unikalnymi soundscape'ami ambientowymi: Main Bar, Back Room, Bathroom, Hallway, Storage. Każda ma specyficzną atmosferę dźwiękową.",
+      "why": "Ambient specyficzny dla lokacji osadza gracza w przestrzeni. Każdy pokój brzmi akustycznie inaczej, wzmacniając układ i atmosferę pubu."
+    },
+    "anomalies": {
+      "desc": "Częściowo losowe zakłócenia, które nasilają się w miarę postępu gry.",
+      "env_desc": "Sama przestrzeń ulega wypaczeniu i dystorsji. Szum radia wybucha znikąd, światła migoczą erratycznie, a zegar przyspiesza swoje tykanie.",
+      "env_title": "Anomalie środowiskowe",
+      "object_desc": "Krzesła obracają się same, szklanki unoszą w powietrzu, a sztućce brzęczą bez powodu. Codzienne obiekty zaczynają łamać prawa fizyki.",
+      "object_title": "Anomalie obiektów",
+      "shadow_desc": "Ludzkie sylwetki materializują się w ciemności, cienie oddzielają się od swoich źródłowych obiektów i poruszają niezależnie, a ruch występuje tam, gdzie żadne źródło światła nie mogłoby go rzucić.",
+      "shadow_title": "Anomalie cieni",
+      "title": "Typy anomalii"
+    },
+    "anomaly_audio": {
+      "alert": "Alert (0.5s): Wybuch statyczny oznacza spawn",
+      "conclusion": "Brak wizualizacji, brak markerów UI, tylko dźwięk. Audio to system detekcji.",
+      "description": "Każda anomalia uruchamia trzy warstwy audio:",
+      "hint": "Wskazówka (1-2s): Kierunkowy dźwięk wskazuje lokalizację",
+      "presence": "Obecność (pętla): Podtrzymywana do sfotografowania",
+      "title": "3-Stopniowa Detekcja Anomalii"
+    },
+    "anomaly_system": {
+      "desc": "3-stopniowy system detekcji dla 10 różnych typów anomalii paranormalnych z unikalnymi sygnaturami audio.",
+      "how": "RTPC oparte na odległości napędza intensywność audio. Kierunkowe audio prowadzi gracza do anomalii. Każdy typ anomalii ma unikalną sygnaturę dźwiękową do identyfikacji.",
+      "result": "Gracze polegają na wskazówkach audio aby zlokalizować i zidentyfikować anomalie. Sound design jest funkcjonalny i atmosferyczny - napędza podstawową rozgrywkę budując napięcie.",
+      "title": "System Audio Anomalii",
+      "what": "3 etapy detekcji: Daleko (ogólny alert), Medium (kierunkowa wskazówka), Blisko (precyzyjna lokalizacja). 10 typów anomalii including Levitating Glass, Shadow Movement, Spinning Chair.",
+      "why": "Audio jest podstawową mechaniką detekcji. Bez dźwięku znalezienie anomalii jest prawie niemożliwe. Warstwowe podejście (alert → przewodnik → potwierdzenie) tworzy angażującą pętlę rozgrywki."
+    },
+    "audio_design_icon": "AUDIO DESIGN",
+    "audio_systems": {
+      "delegates_desc": "Architektura Separation of Concerns, w której systemy audio komunikują się przez delegaty. Czysta i modularna implementacja.",
+      "delegates_title": "Blueprint Delegates (SOC)",
+      "rtpc_desc": "Im więcej anomalii znajdziesz, tym bardziej napięta atmosfera. Ambienty narastają. Oddech postaci staje się cięższy. Napięcie rośnie.",
+      "rtpc_title": "System dynamiczny oparty na RTPC",
+      "spatial_desc": "Dźwięk pozycyjny 3D dla anomalii, obecności wroga i wskazówek środowiskowych, który jest kluczowy dla rozgrywki.",
+      "spatial_title": "HRTF Dźwięk przestrzenny 3D",
+      "switches_desc": "Atmosfery specyficzne dla pokoi płynnie się przełączają podczas przemieszczania się przez przestrzeń. Łazienka ma przestrzenne dźwięki toalety i kranu, podczas gdy kroki dynamicznie dostosowują się do rodzaju podłoża.",
+      "switches_title": "Switch Containers & Strefy",
+      "title": "Implementacja audio"
+    },
+    "back": "Powrót do projektów",
+    "back_to_shadow_frames": "← Powrót do Shadow Frames",
+    "badge_audio": "AUDIO",
+    "badge_code": "KOD",
+    "block": {
+      "anomaly_desc": "3-stopniowy system detekcji dla 10 różnych typów anomalii paranormalnych z unikalnymi sygnaturami audio.",
+      "anomaly_title": "System Audio Anomalii",
+      "dialogue_desc": "Czyste oddzielenie między akcjami gracza a odpowiedziami audio używając Blueprint delegates.",
+      "dialogue_title": "System Audio Gracza",
+      "enemy_desc": "Dynamiczny system audio reagujący na bliskość wroga. Tworzy napięcie przez warstwy dread i zestresowany oddech. System śledzi odległość...",
+      "enemy_title": "System Audio Obecności Wroga",
+      "mixer_desc": "Switch Containers współpracują z systemem RTPC. Więcej zebranych zdjęć = aktywacja innych warstw ambientu.",
+      "mixer_title": "Architektura Wwise"
+    },
+    "challenges": {
+      "challenge1": {
+        "problem": "Podczas pracy w wieloinstytucjonalnej współpracy ze studentami, problemy z workflow często zakłócały rozwój. Integracja Wwise psuła się po pullach z Perforce, a czasy kompilacji Unreal Engine powodowały znaczne przestoje.",
+        "solution": "Stworzyłem narzędzia Wwise Unreal Fixer i Unreal Engine Rebuilder, by usprawnić workflow. Chociaż to nie była w pełni samodzielna praca (współpracowałem z innymi), te narzędzia stworzyłem głównie po to, by pomóc studentom pracować efektywniej. Wwise Fixer automatycznie przywraca zepsutą integrację Wwise po pullach z Perforce, a Rebuilder automatyzuje proces kompilacji, by zmniejszyć przestoje.",
+        "title": "Narzędzia Optymalizacji Workflow"
+      },
+      "desc": "Problemy napotkane podczas rozwoju i jak je rozwiązałem.",
+      "problem_label": "Problem:",
+      "solution_label": "Rozwiązanie:",
+      "title": "Wyzwania i Rozwiązania"
+    },
+    "challenges_list": {
+      "c1_prob": "Dźwięki gwałtownie włączały się i wyłączały",
+      "c1_sol": "Zaimplementowano histerezę: oddzielne progi start/stop",
+      "c1_title": "Migotanie audio na granicach",
+      "c2_prob": "Obliczanie odległości do wszystkich wrogów w każdej klatce było zbyt obciążające",
+      "c2_sol": "Dodano system cache'owania, który aktualizuje referencję do najbliższego wroga okresowo, a nie w każdej klatce",
+      "c2_title": "Kosztowne sprawdzanie bliskości"
+    },
+    "close": "Zamknij",
+    "code_explanations": {
+      "delegate_how": "DECLARE_DYNAMIC_MULTICAST_DELEGATE tworzy delegate który może być broadcastowany z C++ i nasłuchiwany w Blueprint. UPROPERTY(BlueprintAssignable) pozwala na binding w Blueprint.",
+      "delegate_what": "Definicja multicast delegate'ów dla akcji gracza które wywołują audio events.",
+      "delegate_why": "Multicast delegates pozwalają wielu listenerom (np. Audio Manager) reagować na jedną akcję. Dynamic delegates działają z Blueprint, co daje audio designerowi pełną kontrolę bez modyfikacji kodu C++.",
+      "footstep_how": "Waliduje istnienie owner i world, następnie wykonuje line trace używając kanału ECC_WorldStatic. Sprawdza Physical Material obiektu i mapuje SurfaceType enum na nazwę Switch w Wwise (Tiles, Wood, CreakyWood, Concrete).",
+      "footstep_what": "Funkcja wykrywa typ powierzchni pod graczem używając line trace w dół od pozycji gracza.",
+      "footstep_why": "Użycie Physical Material pozwala na automatyczne wykrywanie bez ręcznego tagowania każdej powierzchni. Mapowanie enum na Switch to jednorazowa konfiguracja łącząca system powierzchni Unreal z Wwise - to konfiguracja, nie na stałe wpisane wywołania audio. Audio designer może modyfikować nazwy Switch w Wwise bez zmian w kodzie.",
+      "rtpc_how": "Waliduje istnienie world, następnie znajduje AkAmbientSound actor po tagu 'AmbientProgressive' (bardziej wydajne i niezawodne niż wyszukiwanie po nazwie string). Ustawia RTPC value (0-5) odpowiadającą liczbie ważnych zdjęć. Wwise automatycznie wykonuje crossfade między warstwami ambientu.",
+      "rtpc_what": "Funkcja aktualizuje RTPC value w Wwise na podstawie liczby zdjęć umieszczonych na tablicy.",
+      "rtpc_why": "RTPC daje płynne przejścia między stanami napięcia. Mogę kontrolować krzywe crossfade dla każdej warstwy w Wwise, dając pełną kontrolę nad emocjonalną progresją bez modyfikacji kodu."
+    },
+    "concept": {
+      "desc": "Jesteś uwięziony w czarno-białym irlandzkim pubie z lat 60., gdzie rzeczywistość się rozpada. Anomalie pojawiają się co 30 do 50 sekund, a dźwięk to jedyne narzędzie, które pozwala je odnaleźć. Załóż słuchawki i słuchaj uważnie. Szklanka dzwoni w kącie. Kroki rozbrzmiewają z pustego korytarza. Krzesło zgrzyta po podłodze samo z siebie. Podążaj za dźwiękiem, żeby zlokalizować każde zakłócenie, a potem je sfotografuj. Masz dokładnie 12 zdjęć, więc wybieraj mądrze.\n\nPub żyje nadprzyrodzoną aktywnością. Szklanki lewitują nad barem. Cienie oderwane od swoich właścicieli poruszają się niezależnie. Krzesła wirują samodzielnie. Ziarnista, czarno-biała estetyka sprawia, że wszystko wygląda jak zapomniana fotografia sprzed dekad.\n\nDźwięk to nie tylko atmosfera. To kluczowa mechanika. Wycisz grę, a jesteś ślepy. Nie będziesz wiedział, gdzie patrzeć, co się dzieje, ani jak przeżyć. Każde skrzypnięcie, szept i trzask to informacja.\n\nKiedy zbierzesz dowody, biegnij do tablicy korkowej i ułóż zdjęcia w prawidłowej kolejności chronologicznej. To sposób, w jaki składasz w całość, co się dzieje i dlaczego. Ale pracuj szybko. Coś cię tropi przez pub, a czas ucieka.",
+      "detailed": "Masz aparat Polaroid i 12 zdjęć. Anomalie występują co 30-50 sekund. Szklanki lewitują, cienie poruszają się same, krzesła się obracają. Dźwiękowe wskazówki mowią gdzie patrzeć: szklanka dzwoni, kroki rozbrzmiewają znikąd, krzesło zgrzyta po podłodze. Bez dźwięku jesteś ślepy. Kiedy zbierzesz dowody, ułóż zdjęcia na tablicy korkowej w kolejności chronologicznej, żeby złożyć całość historii.",
+      "short": "Czarno-biały horror, w którym fotografujesz paranormalne zdarzenia w irlandzkim pubie z lat 60. Dźwięk jest głównym narzędziem do znajdowania anomalii.",
+      "subtitle": "Czarno-biały psychologiczny horror",
+      "title": "Gra"
+    },
+    "context": {
+      "collab1": "RITCS: Narrative Design & Historia",
+      "collab2": "Konserwatorium KASK: Kompozycja muzyczna",
+      "collab3": "Howest DAE: Game Development & Implementacja audio",
+      "collaboration_title": "Współpraca międzyinstytucjonalna",
+      "institution_label": "Instytucja wiodąca",
+      "institution_value": "Howest DAE",
+      "role_label": "Moja rola",
+      "role_value": "Projektant Dźwięku & Implementer Techniczny",
+      "timeline_label": "Oś czasu",
+      "timeline_value": "3 tygodnie prototypu → Sprint 3/5 produkcji",
+      "title": "Przegląd projektu",
+      "type_label": "Typ projektu",
+      "type_value": "Psychologiczny horror"
+    },
+    "dev_tools": {
+      "fixer_desc": "Własna wtyczka C++, która automatycznie przywraca zepsutą integrację Wwise po pull z Perforce. Rozwiązanie jednym kliknięciem.",
+      "fixer_title": "Wwise Unreal Fixer",
+      "rebuilder_desc": "Zautomatyzowane narzędzie build do usprawnienia workflow kompilacji i redukcji przestojów.",
+      "rebuilder_title": "Unreal Engine Rebuilder",
+      "title": "Narzędzia deweloperskie"
+    },
+    "enemy_presence": {
+      "desc": "Dynamiczny system audio reagujący na bliskość wroga. Tworzy napięcie przez warstwy dread i zestresowany oddech.",
+      "how": "OnProximityChanged() otrzymuje wartość bliskości (0-100%), startuje/stopuje warstwy dread, aktualizuje RTPC dla intensywności, dostosowuje stress oddychania. Wszystko walidowane z null safety checks.",
+      "result": "Intensywność audio skaluje się płynnie z poziomem zagrożenia. Gracz czuje narastający strach gdy wróg się zbliża poprzez warstwowe dźwięki ambientowe i zestresowany oddech.",
+      "title": "System Audio Obecności Wroga",
+      "what": "System śledzi odległość wroga i uruchamia warstwy audio. Bliższy wróg = intensywniejszy dźwięk. Ambient dread i stress oddychania skalują się z bliskością.",
+      "why": "Reakcja audio w czasie rzeczywistym tworzy napięcie psychologiczne. RTPC pozwala na płynne przejścia intensywności zamiast nagłych zmian. Oddzielna warstwa oddychania wzmacnia stan strachu gracza."
+    },
+    "footstep": {
+      "desc": "Drewno, płytki, beton – słyszysz różnicę. System wykrywa, po czym chodzisz i odtwarza odpowiedni dźwięk automatycznie.",
+      "how": "Komponent C++ wykonuje line trace w dół od pozycji gracza, wykrywa Physical Material, mapuje go na nazwę Switch w Wwise, a Blueprint Audio Manager odbiera delegate i odtwarza odpowiedni dźwięk.",
+      "result": "Każdy krok pasuje do powierzchni. Automatycznie. Bez ręcznej pracy. Dodaj nowy materiał w Wwise, działa.",
+      "title": "System Kroków: Wykrywanie Powierzchni & Routing Audio",
+      "what": "Line trace w dół od gracza. Wykrywa Physical Material. Mapuje na Switch w Wwise – Płytki, Drewno, Skrzypiące drewno, Beton.",
+      "why": "Czyste rozdzielenie. C++ wykrywa, Blueprint obsługuje audio. Dodaj nowe powierzchnie bez zmiany w C++. Audio designer zmienia nazwy Switch w Wwise bez zmian w kodzie."
+    },
+    "gameplay": {
+      "capture_desc": "Użyj aparatu Polaroid, by sfotografować anomalię. Masz ograniczoną liczbę zdjęć, a każde przeładowanie sprawia, że jesteś bezbronny.",
+      "capture_title": "Sfotografuj",
+      "connect_desc": "Ułóż zdjęcia na tablicy w prawidłowej kolejności, by ujawnić prawdę i osiągnąć dobre zakończenie.",
+      "connect_title": "Połącz",
+      "observe_desc": "Anomalie pojawiają się co 30-50 sekund. Dźwięki środowiska prowadzą do ich lokalizacji.",
+      "observe_title": "Obserwuj",
+      "title": "Główna mechanika: Obserwuj → Sfotografuj → Połącz"
+    },
+    "grid_cards": {
+      "ambience_zones_tagline": "Warstwy audio oparte na lokalizacji",
+      "ambience_zones_title": "System Stref Ambientu",
+      "anomaly_system_tagline": "3-stopniowa detekcja & 10 typów",
+      "anomaly_system_title": "System Audio Anomalii",
+      "enemy_presence_tagline": "RTPC proximity & warstwy dread",
+      "enemy_presence_title": "Audio Obecności Wroga"
+    },
+    "media_captions": {
+      "photos_on_board": "Tablica ze zdjęciami: zebrane fotografie Polaroid, które układasz w odpowiedniej kolejności, aby odkryć historię",
+      "switch_container": "Konfiguracja Wwise Switch Container: kontroluje, które warstwy ambientu są odtwarzane w zależności od liczby zdjęć na tablicy"
+    },
+    "meta": {
+      "engine": {
+        "label": "Silnik",
+        "value": "Unreal Engine 5.5"
+      },
+      "role": {
+        "label": "Rola",
+        "value": "Projektant Dźwięku"
+      },
+      "setting": {
+        "label": "Miejsce",
+        "value": "Irlandzki pub z lat 60."
+      },
+      "style": {
+        "label": "Styl wizualny",
+        "value": "Czarno-biały"
+      }
+    },
+    "next": "Następny",
+    "player_audio": {
+      "desc": "Zrób zdjęcie, przybliż, otwórz tablicę – każda akcja wyzwala odpowiedni audio przez delegaty.",
+      "how": "PlayerCharacter w C++ definiuje multicast delegates. Gdy gracz wykonuje akcję, delegate jest broadcastowany. Blueprint Audio Manager nasłuchuje tych delegate'ów i wywołuje odpowiednie Wwise Events.",
+      "result": "Dodawanie nowego audio jest łatwe. Bez wpisanych na sztywno wywołań. Audio designer zmienia dźwięki w Wwise, kod gracza pozostaje nietknięty.",
+      "title": "System Audio Gracza: Komunikacja przez Delegates",
+      "what": "System łączy akcje gracza (strzał aparatem, zoom, wejście do photoboard) z odpowiednimi eventami audio w Wwise. Każda akcja gracza automatycznie wywołuje odpowiedni dźwięk.",
+      "why": "PlayerCharacter nie wie, że audio istnieje. Audio Manager nie wie, że logika gracza istnieje. Testuj i zmieniaj każdy niezależnie."
+    },
+    "previous": "Poprzedni",
+    "production": {
+      "proto": "✓ Prototyp ukończony (3 tygodnie)",
+      "sprint1": "✓ Sprint 1: Systemy podstawowe",
+      "sprint2": "✓ Sprint 2: Audio środowiska",
+      "sprint3": "◉ Sprint 3: Systemy anomalii (Aktualnie)",
+      "sprint4": "◯ Sprint 4: Wróg & Polish",
+      "sprint5": "◯ Sprint 5: Finalna integracja",
+      "title": "Status produkcji"
+    },
+    "production_notice": "🎮 Sprint 3/5 Produkcji  •  Projekt Międzyinstytucjonalny",
+    "project_metrics": {
+      "desc": "Statystyki produkcji i zakres implementacji technicznej.",
+      "how": "12+ klas C++ dla systemów audio, 8+ Blueprint audio managerów, 200+ eventów/switchów/RTPC Wwise, 5 stref lokacyjnych, 10 typów anomalii.",
+      "result": "Designerzy mogą zmieniać wartości w DataAssets bez czekania na rebuildy kodu. Jak coś crashuje, zazwyczaj widać który system to powoduje.",
+      "title": "Skala Projektu & Metryki Techniczne",
+      "what": "Faza produkcji Sprint 3/5. Wieloinstytucjonalna współpraca. Rozległa implementacja C++ i Blueprint z integracją Wwise.",
+      "why": "To moja największa implementacja Wwise do tej pory. Musiałem nauczyć się jak kilka systemów audio może działać razem bez wzajemnego wywoływania bugów."
+    },
+    "rich_details": {
+      "achievements": {
+        "data": "Wystawiono wszystkie parametry audio dla designerów",
+        "flicker": "Zaimplementowano progi histerezy dla stanów audio",
+        "opt": "Zredukowano użycie CPU poprzez cache'owanie obliczeń odległości"
+      },
+      "audio_systems": {
+        "enemy": "System napięcia sterowany bliskością z histerezą",
+        "footsteps": "Wykrywanie powierzchni oparte na fizyce (raycasting)",
+        "mixing": "Modulacja oddechu i bicia serca w czasie rzeczywistym",
+        "spatial": "Wskazówki dźwiękowe 3D prowadzące graczy"
+      },
+      "responsibilities": {
+        "cpp": "Programowanie systemów audio w C++",
+        "lead": "Audio Designer",
+        "spatial": "Implementacja dźwięku przestrzennego",
+        "wwise": "Integracja Middleware Wwise"
+      },
+      "stack": {
+        "daw_val": "Reaper",
+        "engine_val": "Unreal Engine 5.5",
+        "lang_val": "C++ / Blueprints",
+        "middleware_val": "Wwise 2024.1"
+      }
+    },
+    "rtpc": {
+      "desc": "Więcej zdjęć na tablicy, więcej napięcia. Intensywność ambientu rośnie wraz z postępem.",
+      "how": "PhotoboardWidget śledzi liczbę ważnych zdjęć. Gdy gracz umieszcza zdjęcie, UpdateAmbientRTPC() znajduje AkAmbientSound actor i ustawia RTPC value. Wwise automatycznie wykonuje crossfade między warstwami ambientu.",
+      "result": "Napięcie rośnie płynnie wraz z postępem. Dostosuj krzywe w Wwise, atmosfera adaptuje się automatycznie.",
+      "title": "Dynamiczny System Napięcia: Ambient Sterowany RTPC",
+      "what": "System dynamicznie zmienia intensywność ambientu w zależności od liczby zdjęć umieszczonych na tablicy. Im więcej zdjęć, tym bardziej napięta atmosfera. RTPC value 0-5 kontroluje warstwy ambientu w Wwise.",
+      "why": "RTPC daje płynne przejścia między stanami napięcia bez skoków. Kontroluję krzywe crossfade w Wwise bez dotykania kodu."
+    },
+    "sections": {
+      "audio_doc": "Dokumentacja Audio",
+      "audio_doc_desc": "Kompletna dokumentacja techniczna obejmująca wszystkie systemy audio, pipeline assetów i wytyczne implementacji.",
+      "audio_middleware": "Middleware Audio",
+      "audio_prototypes_desc": "Oryginalne kompozycje i projekt soundscape dla Shadow Frames.",
+      "audio_prototypes_title": "Prototypy Audio",
+      "audio_tools": "Narzędzia Audio",
+      "click_enlarge": "Kliknij aby powiększyć",
+      "concept_icon": "KONCEPT",
+      "core_concept": "Główna Koncepcja",
+      "current": "Aktualnie",
+      "deadline": "Termin: Grudzień 2025 (Sprint 5)",
+      "delegate_code_title": "PlayerCharacter.h: Delegaty",
+      "download_sound_bible": "📄 Pobierz Sound Bible PDF",
+      "footstep_code_title": "FootstepComponent.cpp: Wykrywanie Powierzchni",
+      "game_engine": "Silnik Gry",
+      "gameplay_note": "Praca w toku z Sprintu 3. Gra jest nadal w produkcji.",
+      "gameplay_showcase": "Pokaz Rozgrywki",
+      "how": "JAK",
+      "howest_desc": "Howest DAE (Digital Arts & Entertainment): Game development i techniczna implementacja audio",
+      "howest_name": "Howest DAE",
+      "kask_desc": "Konserwatorium KASK: Kompozycja muzyczna",
+      "kask_name": "Konserwatorium KASK",
+      "menu_vibe": "Shadow Frames: Menu Vibe",
+      "music_desc": "Oryginalna kompozycja muzyczna dla atmosfery gry i progresji emocjonalnej.",
+      "music_title": "Prototyp Muzyki",
+      "my_role": "Moja Rola",
+      "my_role_desc": "Jako Audio Designer zbudowałem architekturę audio dla Shadow Frames: dynamiczne systemy kroków, audio gracza oparte na delegate'ach, progresję napięcia sterowaną RTPC oraz integrację Wwise. Dodatkowe systemy są w fazie rozwoju przed finalnym wydaniem.",
+      "ongoing_project": "Projekt w toku",
+      "org_desc": "Wieloinstytucjonalna współpraca pomiędzy:",
+      "org_title": "Współpraca Międzyinstytucjonalna",
+      "palette_soundscape": "Palette Soundscape Update",
+      "performance": "Wydajność",
+      "result": "REZULTAT",
+      "ritcs_desc": "RITCS (Royal Institute for Theatre, Cinema & Sound, Bruksela): Belgijska szkoła filmowa odpowiedzialna za narrative design i rozwój historii",
+      "ritcs_name": "RITCS",
+      "role_icon": "ROLA",
+      "rtpc_code_title": "PhotoboardWidget.cpp: Aktualizacja RTPC",
+      "sound_lead": "Projektant Dźwięku",
+      "soundscape_title": "Palette Soundscape",
+      "sprint_1": "Sprint 1",
+      "sprint_2": "Sprint 2",
+      "sprint_3": "Sprint 3",
+      "sprint_4": "Sprint 4",
+      "sprint_5": "Sprint 5",
+      "sprint_dev": "Rozwój oparty na sprintach z wieloma fazami poliszu",
+      "tech_icon": "TECH",
+      "technical_stack": "Stack technologiczny",
+      "volume_label": "VOL",
+      "what": "CO",
+      "why": "DLACZEGO"
+    },
+    "subtitle": "Projektant Dźwięku",
+    "tagline": "Dźwięk to przetrwanie.",
+    "tech_stack": {
+      "audio_tools": "Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho",
+      "engine": "Unreal Engine 5.5",
+      "title": "Stack technologiczny",
+      "wwise": "Wwise 2024.1"
+    },
+    "title": "Shadow Frames",
+    "wwise_arch": {
+      "desc": "Kontynuacja systemu RTPC - Switch Containers w Wwise reagują na zdjęcia zebrane na photoboard, tworząc dynamiczne warstwy ambientu.",
+      "how": "Wartość RTPC z PhotoboardWidget (0-5 na podstawie zdjęć) steruje wyborem Switch Container w Wwise. Każdy stan Switch odpowiada różnym warstwom ambientu. Wwise automatycznie wykonuje crossfade między warstwami gdy zdjęcia są zbierane.",
+      "result": "Dynamiczny system ambientu reagujący na postęp gracza przez zbieranie zdjęć na photoboard. To częściowa implementacja - pełny system będzie znacznie większy z dodatkowymi warstwami i złożonością.",
+      "title": "Architektura Wwise: Switch Containers & Integracja z Photoboard",
+      "what": "System Switch Container w Wwise reaguje na liczbę zdjęć zebranych na photoboard. Gdy gracz zbiera więcej zdjęć, Switch Containers aktywują różne warstwy ambientu, współpracując z systemem RTPC.",
+      "why": "Switch Containers dają dyskretną kontrolę warstw, RTPC obsługuje płynne przejścia. Ta kombinacja daje strukturalne zmiany (różne zestawy ambientu) i płynną progresję intensywności. Mogę kontrolować odpowiedź każdej warstwy w Wwise."
+    }
+  },
+  "stats_ml": {
+    "accuracy": "Dokładność",
+    "classes": "Klasy",
+    "dataset": "Zbiór Danych",
+    "latency": "Opóźnienie",
+    "latency_final": "Wynik Końcowy",
+    "latency_initial": "Wynik Początkowy",
+    "latency_target": "Cel Opóźnienia",
+    "status": "Status"
+  },
+  "timeline": {
+    "graduated": "Ukończone",
+    "polish": "Szlif",
+    "present": "Obecnie",
+    "production": "Produkcja",
+    "prototype": "Prototyp",
+    "role_game_dev": "Tworzenie Gier",
+    "role_math_phys": "Matematyka i Fizyka",
+    "role_piano": "Pianino Klasyczne",
+    "title": "Postęp Produkcji"
+  },
+  "tooltips": {
+    "copy_email": "Skopiuj Email",
+    "github_repo": "Repozytorium GitHub",
+    "live_demo": "Demo Live",
+    "screenshot": "zrzut ekranu"
+  },
+  "projects": {
+    "legacy_trailer": "Previous Trailer",
+    "gameplay_preview": "Gameplay Preview"
+  }
+}

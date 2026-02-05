@@ -10,7 +10,7 @@ interface ContentBlockRendererProps {
 }
 
 const StatsGridBlock = ({ items }: { items: { label: string; value: string }[] }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('projectDetail');
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-12 border-y border-white/10 py-8">
       {items.map((item, idx) => (
@@ -24,7 +24,7 @@ const StatsGridBlock = ({ items }: { items: { label: string; value: string }[] }
 };
 
 const SplitContentBlock = ({ block, onImageClick }: { block: ContentBlock; onImageClick?: (src: string) => void }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('projectDetail');
 
   const handleClick = () => {
     if (block.media && onImageClick) {
@@ -68,7 +68,7 @@ const SplitContentBlock = ({ block, onImageClick }: { block: ContentBlock; onIma
 };
 
 const GenericBlock = ({ block }: { block: ContentBlock }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('projectDetail');
     return (
         <div className="border-l-2 border-accent/20 pl-6 md:pl-10 py-2 my-8">
             {block.title && <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3"><Cpu size={20} className="text-accent" /> {t(block.title, block.title)}</h3>}

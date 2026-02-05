@@ -10,7 +10,7 @@ interface ImageLightboxProps {
 
 const ImageLightbox = ({ images }: ImageLightboxProps) => {
   const [selectedImage, setSelectedImage] = useState<{ src: string; caption: string | null } | null>(null);
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
 
   const getImageData = (img: string | ProjectImage) => {
     if (typeof img === 'string') {

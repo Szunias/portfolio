@@ -19,7 +19,7 @@ const KEY_MAP: { [key: string]: string } = {
 };
 
 export const useProjectFilter = (projects: Project[]) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('projects');
   const [filter, setFilter] = useState('All');
 
   // Extract unique categories

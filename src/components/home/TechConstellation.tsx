@@ -24,7 +24,7 @@ const ACCENT_COLOR_CLASSES: Record<string, string> = {
 };
 
 const TechConstellation = ({ onSelect }: TechConstellationProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('home');
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

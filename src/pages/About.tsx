@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 const About = () => {
     const portfolioData = usePortfolioData();
     const { personal_info, professional_summary } = portfolioData;
-    const { t } = useTranslation();
+    const { t } = useTranslation('about');
     const [emailCopied, setEmailCopied] = useState(false);
 
     const toolNameMap: Record<string, string> = {

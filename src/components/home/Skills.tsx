@@ -48,7 +48,7 @@ const keyTech = [
 ];
 
 const Skills = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('home');
 
   return (
     <section className="py-24">

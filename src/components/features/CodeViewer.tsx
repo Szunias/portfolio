@@ -65,7 +65,7 @@ const processTokens = (text: string, keywords: string[], types: string[], lineIn
 const CodeViewer = ({ snippets }: CodeViewerProps) => {
   const [activeTab, setActiveTab] = useState(0);
   const [expandedLine, setExpandedLine] = useState<number | null>(null);
-  const { t } = useTranslation();
+  const { t } = useTranslation('projectDetail');
 
   if (!snippets || snippets.length === 0) return null;
 

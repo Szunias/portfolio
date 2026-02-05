@@ -71,7 +71,7 @@ const SKILL_TO_TECH_MAP: Record<string, string[]> = {
 
 const SkillsNetwork = () => {
   const { core_skills } = usePortfolioData();
-  const { t } = useTranslation();
+  const { t } = useTranslation('home');
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [nodes, setNodes] = useState<Node[]>([]);

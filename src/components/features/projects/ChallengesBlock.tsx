@@ -12,7 +12,7 @@ interface ChallengesBlockProps {
 }
 
 const ChallengesBlock = ({ challenges }: ChallengesBlockProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('projectDetail');
 
   if (!challenges || challenges.length === 0) return null;
 
