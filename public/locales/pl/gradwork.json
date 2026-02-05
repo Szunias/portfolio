@@ -1,196 +1,93 @@
 {
   "back": "Powrót do projektów",
-  "hero": {
+  "header": {
     "badge": "Praca licencjacka 2025",
     "title": "Czy AI może generować dźwięki do gier w czasie rzeczywistym?",
-    "subtitle": "Spędziłem miesiące szukając odpowiedzi. Wynik mnie zaskoczył.",
+    "description": "W ramach pracy licencjackiej zbudowałem system łączący Unity z modelami AI audio przez serwer Python WebSocket. Sprawdziłem, czy AI potrafi generować efekty dźwiękowe wystarczająco szybko do gier — i co się dzieje, gdy nie potrafi.",
     "read_paper": "Przeczytaj pracę",
-    "view_code": "Zobacz kod",
-    "scroll": "Przewiń, żeby odkryć"
+    "view_code": "Zobacz kod"
   },
-  "whyThisMatters": {
-    "title": "Po co komu coś takiego?",
-    "description": "Wyobraź sobie grę, gdzie każdy strzał brzmi inaczej. Każdy krok dopasowuje się do podłoża. Żadne dwie eksplozje nie są identyczne. To obietnica audio generowanego przez AI.",
-    "reasons": {
-      "variation": {
-        "title": "Nieskończona różnorodność",
-        "description": "Tradycyjne gry mają 5-10 sampli strzału. Gracze słyszą te same dźwięki w kółko. AI mogłoby generować unikalne wariacje za każdym razem."
-      },
-      "fileSize": {
-        "title": "Mniejsze gry",
-        "description": "Gry AAA mają gigabajty plików audio. A gdybyśmy mogli je generować w locie zamiast trzymać 500 plików WAV?"
-      },
-      "adaptive": {
-        "title": "Adaptacyjne audio",
-        "description": "Dźwięk reagujący na kontekst. Pistolet brzmi inaczej w jaskini niż na dworze. AI mogłoby adaptować się w czasie rzeczywistym."
-      }
-    },
-    "hook": "Problem? Latencja."
+  "setup": {
+    "title": "Co badałem i dlaczego",
+    "intro": "Gry zawierają setki nagranych wcześniej plików dźwiękowych. Każdy strzał, krok i eksplozja to plik WAV nagrany w studiu. AI mogłoby generować je na bieżąco — za każdym razem inne, dopasowane do kontekstu, bez gigabajtów plików audio. Haczyk to latencja. Jeśli dźwięk przyjdzie choćby 100ms za późno, gracz to zauważy.",
+    "approach": "Zbudowałem prototyp: grę w Unity, która wysyła żądania audio przez WebSocket do serwera Python, który wywołuje model AI i streamuje wynik z powrotem. Przetestowałem trzy modele — ElevenLabs (cloud API, najlepsza jakość, ale niestabilna latencja), MMAudio (video-to-audio, zaadaptowany do eventów w grze, działa lokalnie) i AudioGen (text-to-audio od Meta, najbardziej stabilny, ale wciąż wolny).",
+    "architecture_title": "Architektura systemu"
   },
-  "latency": {
-    "title": "Problem latencji",
-    "description": "Strzelasz w grze. Jeśli huk przychodzi 100 milisekund za późno, twój mózg to wyłapuje. Ta mała przerwa psuje immersję. A teraz wyobraź sobie 12 sekund czekania na każdy dźwięk.",
-    "threshold": "Próg percepcji człowieka:",
-    "label_target": "Ideał: 16ms (klatka przy 60 FPS)",
-    "label_acceptable": "Akceptowalne",
-    "label_noticeable": "Zauważasz to",
-    "label_unplayable": "Kompletnie zepsute",
-    "label_failure": "Po co się męczyć?"
-  },
-  "chart": {
-    "title": "Wyniki testów",
-    "subtitle": "Przetestowałem trzy modele AI audio. Oto jak wypadają w porównaniu z tym, czego gry faktycznie potrzebują.",
-    "humanReaction": "Czas reakcji człowieka",
-    "acceptable": "Akceptowalne dla gier",
-    "gameFrame": "Klatka gry (60fps)",
-    "models": {
-      "elevenlabs": "ElevenLabs",
-      "mmaudio": "MMAudio",
-      "audiogen": "AudioGen"
-    },
-    "cached": "Z cachingiem",
-    "tooltip": {
-      "elevenlabs": "Cloud API. Najlepsza jakość, ale latencja skacze w zależności od obciążenia serwerów.",
-      "mmaudio": "Model video-to-audio. Zaadaptowałem go do gier. Działa lokalnie.",
-      "audiogen": "Text-to-audio od Meta. Zbalansowany, ale wciąż za wolny na real-time.",
-      "cached": "Pre-wygenerowane dźwięki odtwarzane z pamięci. To jest przełom."
-    }
-  },
-  "models": {
-    "title": "Co właściwie testowałem",
-    "subtitle": "Trzy modele, setki testów, jeden prototyp w Unity. Oto co odkryłem.",
-    "latency": "Latencja",
-    "quality": "Jakość",
-    "quality_high": "Świetna",
-    "quality_good": "Dobra",
-    "quality_medium": "Przyzwoita",
-    "elevenlabs_note": "Chmura. Fantastyczna jakość, ale jesteś na łasce ich serwerów. Tego samego dnia widziałem odpowiedzi w 1 sekundę i w 12 sekund.",
-    "mmaudio_note": "Oryginalnie do ścieżek dźwiękowych filmów. Zaadaptowałem go do eventów w grze. Zaskakująco dobre dźwięki otoczenia.",
-    "audiogen_note": "Model od Meta. Najbardziej stabilny, ale 3 sekundy to wciąż 3 sekundy za dużo na strzał.",
-    "architecture_title": "System, który zbudowałem"
-  },
-  "timeline": {
-    "title": "Podróż badawcza",
-    "subtitle": "Cztery miesiące eksperymentów, bugów i nocnego debugowania.",
-    "events": {
-      "start": {
-        "date": "Wrzesień 2024",
-        "title": "Pierwsze połączenie",
-        "description": "Połączyłem Unity z Pythonem przez WebSocket. Prosty prompt: 'gunshot'. Czekałem 8 sekund. Usłyszałem okropny dźwięk. Ale zadziałało!"
-      },
+  "results": {
+    "title": "Zmierzona latencja",
+    "subtitle": "Czasy generowania dla każdego modelu w porównaniu z tym, czego gry faktycznie potrzebują. Skala logarytmiczna — różnice są aż tak duże.",
+    "chart": {
+      "humanReaction": "Czas reakcji człowieka",
+      "acceptable": "Akceptowalne dla gier",
+      "gameFrame": "Klatka gry (60fps)",
       "models": {
-        "date": "Październik 2024",
-        "title": "Testowanie trzech modeli",
-        "description": "ElevenLabs miał najlepszą jakość, ale był niestabilny. MMAudio był stabilny, ale wolniejszy. AudioGen był... okej. Żaden nie był wystarczająco szybki."
+        "elevenlabs": "ElevenLabs",
+        "mmaudio": "MMAudio",
+        "audiogen": "AudioGen"
       },
-      "frustration": {
-        "date": "Listopad 2024",
-        "title": "Ściana",
-        "description": "Próbowałem wszystkiego. Różne prompty. Mniejsze pliki audio. Niższa jakość. Nic nie schodziło poniżej 1 sekundy. Myślałem, że praca jest martwa."
-      },
-      "eureka": {
-        "date": "Koniec listopada",
-        "title": "Przełom",
-        "description": "Przeglądając logi serwera, zauważyłem coś dziwnego. Cache hits pokazywały 0.03ms. Nie 3ms. 0.03ms. Problem nie leżał w AI - leżał w czekaniu na AI."
+      "cached": "Z cachingiem",
+      "tooltip": {
+        "elevenlabs": "Cloud API. Najlepsza jakość, ale latencja skacze — od 1s do 12s tego samego dnia.",
+        "mmaudio": "Model video-to-audio zaadaptowany do gier. Działa lokalnie, 2-5s na dźwięk.",
+        "audiogen": "Text-to-audio od Meta. Najbardziej stabilny (~3s), ale wciąż za wolny na real-time.",
+        "cached": "Wygenerowane wcześniej dźwięki serwowane z pamięci. Czas dostarczenia 21-55ms."
       }
-    }
-  },
-  "breakthrough": {
-    "title": "Anomalia 0.03ms",
-    "subtitle": "Wtedy zauważyłem anomalię w logach serwera.",
-    "story": "Byłem o krok od rezygnacji. Wtedy zauważyłem linijkę w logach, którą ignorowałem: 'cache_hit: 0.03ms'. Dodałem caching jako dodatek - żeby nie generować tego samego dźwięku dwa razy. Ale ta liczba... 0.03 milisekundy. To 40,000 razy szybciej niż generowanie nowego dźwięku.",
-    "realization": "Problem nie polegał na przyspieszeniu AI. Problem polegał na wywoływaniu AI w złym momencie.",
-    "metric": {
-      "value": "0.03",
-      "unit": "ms",
-      "label": "Latencja cache hit"
-    }
-  },
-  "cachingDiagram": {
-    "title": "Rozwiązanie: Generuj wcześniej, odtwarzaj natychmiast",
-    "subtitle": "Jeśli nie możemy przyspieszyć AI, sprawiamy że staje się niewidoczne.",
-    "steps": {
-      "loading": {
-        "label": "Ekran ładowania",
-        "description": "Gdy gracz czeka, AI generuje dźwięki w tle"
+    },
+    "summary_title": "Porównanie modeli",
+    "models": {
+      "elevenlabs": {
+        "latency": "1-12s",
+        "quality": "Świetna",
+        "note": "Chmura, jakość zależy od obciążenia serwerów"
       },
-      "cache": {
-        "label": "Cache się zapełnia",
-        "description": "10 strzałów, 5 eksplozji, 8 kroków - wszystko pre-wygenerowane"
+      "mmaudio": {
+        "latency": "2-5s",
+        "quality": "Dobra",
+        "note": "Lokalny, oryginalnie do ścieżek dźwiękowych filmów"
       },
-      "play": {
-        "label": "Gracz działa",
-        "description": "Bang! Dźwięk odtwarza się z cache w poniżej 50ms"
-      },
-      "refill": {
-        "label": "Uzupełnianie w tle",
-        "description": "AI cicho generuje zamienne dźwięki na następny raz"
+      "audiogen": {
+        "latency": "~3s",
+        "quality": "Przyzwoita",
+        "note": "Najbardziej stabilny, ale 3s to wciąż 3s za dużo"
       }
     }
   },
   "solution": {
-    "title": "Przed i po",
-    "subtitle": "Te same dźwięki. Ta sama jakość. Zupełnie inne doświadczenie.",
+    "title": "Caching jako faktyczne rozwiązanie",
+    "story": "Żaden model nie zbliżył się do real-time. Najszybszy miał ponad sekundę — około 60x za wolno na strzał. Wcześniej dodałem prosty cache, żeby nie generować tego samego dźwięku dwa razy. Potem zauważyłem czasy cache hitów w logach serwera: 21-55ms. To mieści się w akceptowalnym zakresie dla gier.",
+    "insight": "Podejście zmieniło się z „przyspiesz AI" na „wywołaj AI we właściwym momencie". Generuj dźwięki podczas ekranów ładowania albo spokojnych momentów, trzymaj je w cache i serwuj natychmiast, gdy gracz ich potrzebuje. Gdy dźwięk z cache zostanie użyty, system cicho generuje zamiennik w tle.",
+    "before_after_title": "Przed i po cachingu",
     "without_cache": "Bez cache",
     "with_cache": "Z cache",
     "unacceptable": "Niegrywalne",
     "acceptable": "Wydaje się natychmiastowe",
-    "reduction": "Redukcja latencji",
-    "quote": "Nie chodzi o szybkość generowania - chodzi o moment wywołania."
-  },
-  "useCases": {
-    "title": "Kiedy można tego faktycznie użyć?",
-    "subtitle": "AI audio to nie magia. To narzędzie z konkretnymi zastosowaniami.",
-    "headers": {
-      "useCase": "Zastosowanie",
-      "frequency": "Jak często?",
-      "verdict": "Działa dziś?"
-    },
-    "cases": {
-      "footsteps": {
-        "name": "Kroki",
-        "frequency": "Co 0.5s",
-        "verdict": "no",
-        "note": "Za częste. Cache opróżnia się szybciej niż AI zdąży go napełnić."
+    "flow_title": "Jak działa cache",
+    "steps": {
+      "loading": {
+        "label": "Ekran ładowania",
+        "description": "AI generuje dźwięki w tle, gdy gracz czeka"
       },
-      "ambient": {
-        "name": "Dźwięki otoczenia",
-        "frequency": "Rzadko",
-        "verdict": "yes",
-        "note": "Idealne. Dźwięki tła można pre-generować podczas ładowania."
+      "cache": {
+        "label": "Cache gotowy",
+        "description": "10 strzałów, 5 eksplozji, 8 kroków — wszystko wygenerowane wcześniej"
       },
-      "gunshots": {
-        "name": "Strzały",
-        "frequency": "Różnie",
-        "verdict": "maybe",
-        "note": "Działa jeśli ograniczysz szybkostrzelność lub użyjesz hybrydowego cache + fallback."
+      "play": {
+        "label": "Gracz działa",
+        "description": "Dźwięk odtwarza się z cache w poniżej 55ms"
       },
-      "cutscenes": {
-        "name": "Audio cutscen",
-        "frequency": "Skryptowane",
-        "verdict": "yes",
-        "note": "Najlepszy przypadek. Wiesz dokładnie co będzie potrzebne z wyprzedzeniem."
-      },
-      "procedural": {
-        "name": "Muzyka proceduralna",
-        "frequency": "Ciągła",
-        "verdict": "maybe",
-        "note": "Możliwe z generowaniem segmentowym. Wciąż eksperymentalne."
+      "refill": {
+        "label": "Uzupełnianie w tle",
+        "description": "System generuje zamienne dźwięki na następny raz"
       }
     },
-    "verdicts": {
-      "yes": "Tak",
-      "no": "Jeszcze nie",
-      "maybe": "Zależy"
-    }
+    "usecases": "Najlepiej działa to z przewidywalnymi dźwiękami — audio otoczenia, efekty w cutscenkach, strzały z ograniczoną szybkostrzelnością. Gorzej radzi sobie z bardzo częstymi eventami jak kroki, gdzie cache opróżnia się szybciej niż AI zdąży go uzupełnić."
   },
-  "conclusion": {
-    "main": "AI audio nie jest gotowe by zastąpić tradycyjne audio w grach.",
-    "secondary": "Ale z predykcyjnym cachingiem może je już dziś wzbogacać. Technologia będzie tylko szybsza.",
-    "final_thought": "Za 2-3 lata? Real-time AI audio może faktycznie być możliwe. Na razie pracujemy z tym co mamy.",
-    "download_paper": "Przeczytaj pracę",
-    "github": "Zobacz kod",
-    "contact": "Porozmawiajmy"
+  "closing": {
+    "conclusion": "AI audio nie jest gotowe, żeby zastąpić tradycyjny sound design w grach. Generowanie jest za wolne na użycie w czasie rzeczywistym. Ale z predykcyjnym cachingiem może je uzupełniać — dodając różnorodność i zmniejszając rozmiar plików audio w odpowiednich zastosowaniach.",
+    "reflection": "Najciekawsze odkrycie nie dotyczyło żadnego konkretnego modelu. Chodziło o to, że problem był architektoniczny, nie obliczeniowy. Technologia będzie coraz szybsza, ale już dziś myślenie o tym, kiedy generować, jest ważniejsze niż to, jak szybko generować.",
+    "read_paper": "Przeczytaj pracę",
+    "view_code": "Zobacz kod",
+    "back_to_projects": "Powrót do projektów"
   },
   "footer": {
     "status": "Praca licencjacka | 2025 | Igor Szuniewicz"
