@@ -37,10 +37,17 @@ export default {
         'mist': {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(360deg)' },
+        },
+        'visualizer-bar': {
+          '0%, 100%': { height: '10%' },
+          '25%': { height: '60%' },
+          '50%': { height: '90%' },
+          '75%': { height: '40%' },
         }
       },
       animation: {
         'mist-slow': 'mist 20s linear infinite',
+        'visualizer-bar': 'visualizer-bar 0.8s ease-in-out infinite',
       },
     },
   },

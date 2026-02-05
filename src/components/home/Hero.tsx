@@ -1,10 +1,17 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Download, Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { usePortfolioData } from '../../hooks/usePortfolioData';
+
+const HERO_TECH_STACK = ['Wwise', 'FMOD', 'Unreal Engine 5', 'C++', 'Reaper', 'Unity'];
 
 const Hero = () => {
   const { t } = useTranslation();
+  const { personal_info } = usePortfolioData();
+  const shouldReduceMotion = useReducedMotion();
+
+  const techStack = (personal_info as unknown as Record<string, unknown>).hero_tech_stack as string[] | undefined || HERO_TECH_STACK;
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
@@ -12,10 +19,10 @@ const Hero = () => {
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] bg-gradient-to-br from-purple-500/10 via-blue-500/8 to-cyan-400/8 rounded-full blur-[100px]"
-          animate={{
+          animate={shouldReduceMotion ? {} : {
             scale: [1, 1.1, 1],
           }}
-          transition={{
+          transition={shouldReduceMotion ? {} : {
             duration: 8,
             repeat: Infinity,
             ease: 'easeInOut',
@@ -99,7 +106,7 @@ const Hero = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="mt-20 flex flex-wrap gap-4"
           >
-            {['Wwise', 'FMOD', 'Unreal Engine 5', 'C++', 'Reaper', 'Unity'].map((tech, index) => (
+            {techStack.map((tech, index) => (
               <motion.span
                 key={tech}
                 initial={{ opacity: 0, scale: 0.9 }}

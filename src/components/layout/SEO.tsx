@@ -23,7 +23,7 @@ const SEO = ({
   const siteTitle = "Igor Szuniewicz | Audio Designer & Developer";
   const defaultDescription = "Portfolio of Igor Szuniewicz - Audio Designer & Developer specializing in Game Audio, Wwise/FMOD implementation, and Interactive Systems.";
   
-  // Jeśli podano tytuł, dodaj sufiks strony, w przeciwnym razie użyj domyślnego
+  // If title is provided, add site suffix; otherwise use default
   const fullTitle = title ? `${title} | Igor Szuniewicz` : siteTitle;
   const metaDescription = description || defaultDescription;
   
@@ -32,7 +32,7 @@ const SEO = ({
     if (typeof window !== 'undefined') {
       return window.location.origin;
     }
-    return 'https://igorszuniewicz.github.io'; // Fallback for SSR
+    return 'https://igorszuniewicz.com'; // Fallback for SSR
   };
   
   const baseUrl = getBaseUrl();
@@ -69,6 +69,7 @@ const SEO = ({
       <meta name="description" content={metaDescription} />
       <meta name="author" content="Igor Szuniewicz" />
       <meta name="keywords" content="Audio Designer, Game Audio, Wwise, FMOD, Unreal Engine, Sound Design, Audio Programming, Interactive Audio" />
+      <link rel="canonical" href={currentUrl} />
       <html lang={i18n.language} />
 
       {/* Open Graph / Facebook / LinkedIn */}

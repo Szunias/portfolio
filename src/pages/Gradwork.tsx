@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
-import { FileText, Github, ArrowLeft, Clock, HardDrive, Waves, Sparkles } from 'lucide-react';
+import { ArrowLeft, Clock, HardDrive, Waves, Sparkles } from 'lucide-react';
 import SEO from '../components/layout/SEO';
 import { useTranslation } from 'react-i18next';
 
@@ -31,20 +31,13 @@ const Header = ({ t }: { t: (key: string) => string }) => {
                 </p>
 
                 <div className="flex flex-wrap justify-center gap-4">
-                    <a
-                        href="#"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-semibold rounded-xl transition-all hover:scale-105"
+                    <Link
+                        to="/projects"
+                        className="inline-flex items-center gap-2 px-6 py-3 border border-white/10 text-slate-400 font-medium rounded-xl transition-all hover:text-white hover:border-white/20"
                     >
-                        <FileText size={18} />
-                        {t('header.read_paper')}
-                    </a>
-                    <a
-                        href="#"
-                        className="inline-flex items-center gap-2 px-6 py-3 border border-white/20 text-white font-medium rounded-xl bg-white/5 transition-all hover:scale-105 hover:border-white/40"
-                    >
-                        <Github size={18} />
-                        {t('header.view_code')}
-                    </a>
+                        <ArrowLeft size={18} />
+                        {t('closing.back_to_projects')}
+                    </Link>
                 </div>
             </motion.div>
         </section>
@@ -469,20 +462,6 @@ const ClosingSection = ({ t }: { t: (key: string) => string }) => {
 
                 {/* Links */}
                 <div className="flex flex-wrap justify-center gap-4 mb-8">
-                    <a
-                        href="#"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-semibold rounded-xl transition-all hover:scale-105"
-                    >
-                        <FileText size={18} />
-                        {t('closing.read_paper')}
-                    </a>
-                    <a
-                        href="#"
-                        className="inline-flex items-center gap-2 px-6 py-3 border border-white/20 text-white font-medium rounded-xl bg-white/5 transition-all hover:scale-105 hover:border-white/40"
-                    >
-                        <Github size={18} />
-                        {t('closing.view_code')}
-                    </a>
                     <Link
                         to="/projects"
                         className="inline-flex items-center gap-2 px-6 py-3 border border-white/10 text-slate-400 font-medium rounded-xl transition-all hover:text-white hover:border-white/20"

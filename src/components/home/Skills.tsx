@@ -72,7 +72,7 @@ const Skills = () => {
           </motion.span>
           <h2 className="text-5xl md:text-7xl font-display font-bold text-white mb-6 tracking-tight">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
-              Tech Stack
+              {t('skills.title', 'Tech Stack')}
             </span>
           </h2>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">

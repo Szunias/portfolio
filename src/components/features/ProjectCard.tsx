@@ -45,6 +45,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
                 loop
                 autoPlay
                 playsInline
+                preload="none"
             />
             ) : (
             <div className={`w-full h-full transition-all duration-700 ease-out opacity-90 brightness-90 group-hover:opacity-100 group-hover:brightness-110 group-hover:scale-105`}>
@@ -131,7 +132,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
 
             <div className="flex items-center gap-2 group/btn">
                 <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:inline text-white">
-                  View Project
+                  {t('card.view_project', 'View Project')}
                 </span>
                 <div className="group-hover:translate-x-1 transition-transform text-white">
                     <ArrowRight size={14} />

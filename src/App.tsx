@@ -56,7 +56,11 @@ function App() {
       <Router>
         <ScrollToTop />
         <Layout>
-          <Suspense fallback={null}>
+          <Suspense fallback={
+            <div className="min-h-[60vh] flex items-center justify-center">
+              <div className="w-3 h-3 rounded-full bg-accent animate-pulse" />
+            </div>
+          }>
             <Routes>
               <Route path={ROUTES.HOME} element={<Home />} />
               <Route path={ROUTES.PROJECTS} element={<Projects />} />

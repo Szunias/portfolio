@@ -10,7 +10,7 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
     <div className="flex flex-col min-h-screen text-text font-sans overflow-x-hidden relative bg-[#050508]">
@@ -25,7 +25,7 @@ const Layout = ({ children }: LayoutProps) => {
           className="skip-to-main"
           aria-label="Skip to main content"
         >
-          Skip to main content
+          {t('accessibility.skip_to_main', 'Skip to main content')}
         </a>
         <Navbar />
         <main id="main-content" className="flex-grow pt-16 md:pt-20 pb-20 md:pb-24" role="main" tabIndex={-1}>

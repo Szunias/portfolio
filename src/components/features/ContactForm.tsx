@@ -15,11 +15,13 @@ const ContactForm = () => {
     setStatus('preparing');
 
     const formData = new FormData(e.currentTarget);
+    const name = formData.get('name') as string;
     const subject = formData.get('subject') as string;
     const message = formData.get('message') as string;
 
     // Prepare mailto link and open email client
-    const mailtoLink = `mailto:${personal_info.email}?subject=${encodeURIComponent(`[Portfolio] ${subject}`)}&body=${encodeURIComponent(message)}`;
+    const body = `From: ${name}\n\n${message}`;
+    const mailtoLink = `mailto:${personal_info.email}?subject=${encodeURIComponent(`[Portfolio] ${subject}`)}&body=${encodeURIComponent(body)}`;
 
     // Small delay to show the preparing state
     setTimeout(() => {
@@ -48,6 +50,7 @@ const ContactForm = () => {
             id="name"
             name="name"
             required
+            aria-required="true"
             className="w-full bg-primary border border-white/10 rounded-lg px-4 py-3 text-white focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors"
           />
         </div>
@@ -61,6 +64,7 @@ const ContactForm = () => {
             id="email"
             name="email"
             required
+            aria-required="true"
             className="w-full bg-primary border border-white/10 rounded-lg px-4 py-3 text-white focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors"
           />
         </div>
@@ -74,6 +78,7 @@ const ContactForm = () => {
             id="subject"
             name="subject"
             required
+            aria-required="true"
             className="w-full bg-primary border border-white/10 rounded-lg px-4 py-3 text-white focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors"
           />
         </div>
@@ -87,6 +92,7 @@ const ContactForm = () => {
             name="message"
             rows={5}
             required
+            aria-required="true"
             className="w-full bg-primary border border-white/10 rounded-lg px-4 py-3 text-white focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors resize-none"
           ></textarea>
         </div>

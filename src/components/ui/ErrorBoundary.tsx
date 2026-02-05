@@ -1,4 +1,5 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
+import i18n from '../../i18n';
 
 interface Props {
   children: ReactNode;
@@ -29,15 +30,15 @@ class ErrorBoundary extends Component<Props, State> {
         <div className="min-h-screen bg-primary flex items-center justify-center p-8" role="alert">
           <div className="max-w-2xl w-full bg-secondary border border-red-500/30 rounded-lg p-8 shadow-xl">
             <h1 className="text-3xl font-display font-bold text-white mb-4">
-              Something went wrong
+              {i18n.t('error.title', 'Something went wrong')}
             </h1>
             <p className="text-dim mb-6">
-              An unexpected error occurred. Please try refreshing the page.
+              {i18n.t('error.description', 'An unexpected error occurred. Please try refreshing the page.')}
             </p>
             {this.state.error && (
               <details className="mb-6">
                 <summary className="text-sm text-dim cursor-pointer hover:text-white mb-2">
-                  Error details
+                  {i18n.t('error.details', 'Error details')}
                 </summary>
                 <pre className="bg-primary/50 p-4 rounded border border-white/10 text-xs text-red-400 overflow-auto max-h-64 whitespace-pre-wrap font-mono">
                   {this.state.error.toString()}
@@ -49,7 +50,7 @@ class ErrorBoundary extends Component<Props, State> {
               onClick={() => window.location.reload()}
               className="px-6 py-3 bg-accent text-primary font-medium rounded-lg hover:bg-white transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-primary"
             >
-              Reload Page
+              {i18n.t('error.reload', 'Reload Page')}
             </button>
           </div>
         </div>

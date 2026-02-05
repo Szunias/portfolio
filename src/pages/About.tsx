@@ -7,16 +7,33 @@ import SEO from '../components/layout/SEO';
 import { Link } from 'react-router-dom';
 
 const About = () => {
-    const { personal_info, professional_summary } = usePortfolioData();
+    const portfolioData = usePortfolioData();
+    const { personal_info, professional_summary } = portfolioData;
     const { t } = useTranslation();
     const [emailCopied, setEmailCopied] = useState(false);
 
+    const toolNameMap: Record<string, string> = {
+        Unreal_Engine: 'Unreal Engine 5',
+        C_Sharp: 'C#',
+        C_Plus_Plus: 'C++',
+        Pro_Tools: 'Pro Tools',
+        Logic_Pro: 'Logic Pro',
+        Max_MSP: 'Max/MSP',
+        iZotope_RX: 'iZotope RX',
+    };
+    const getToolNames = (categoryKey: string) => {
+        const cat = (portfolioData as unknown as Record<string, unknown>).technical_skills_matrix as Record<string, { tools?: Record<string, unknown> }> | undefined;
+        const tools = cat?.[categoryKey]?.tools;
+        if (!tools) return [];
+        return Object.keys(tools).map(k => toolNameMap[k] || k);
+    };
+
     const skills = {
-        middleware: ['Wwise', 'FMOD', 'MetaSounds'],
-        engines: ['Unreal Engine 5', 'Unity'],
-        programming: ['C++', 'C#', 'Python', 'Blueprints'],
-        production: ['Reaper', 'Pro Tools', 'Logic Pro', 'JUCE', 'Pure Data'],
-        tools: ['iZotope RX', 'Git', 'Perforce']
+        middleware: getToolNames('audio_middleware'),
+        engines: getToolNames('game_engines'),
+        programming: getToolNames('programming_scripting'),
+        production: getToolNames('daws_production'),
+        tools: getToolNames('dsp_specialized'),
     };
 
     const timeline = [

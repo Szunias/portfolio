@@ -244,7 +244,7 @@ const Transientica = () => {
                         {t('transientica.cta.view_all', 'View All Projects')}
                     </Link>
                     <p className="mt-8 text-slate-600 text-sm">
-                        &copy; 2025 Igor Szuniewicz
+                        &copy; {new Date().getFullYear()} Igor Szuniewicz
                     </p>
                 </div>
 

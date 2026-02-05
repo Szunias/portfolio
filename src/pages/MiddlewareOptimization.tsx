@@ -270,6 +270,7 @@ interface CaseStudyCardProps {
 }
 
 const CaseStudyCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, poster, caption, paragraphs }: CaseStudyCardProps) => {
+    const { t: tCommon } = useTranslation('translation');
     return (
         <motion.article 
             initial={{ opacity: 0, y: 50 }}
@@ -328,7 +329,7 @@ const CaseStudyCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, po
                             className="w-full h-full object-cover"
                         >
                             <source src={videoSrc} type="video/mp4" />
-                            Your browser does not support the video tag.
+                            {tCommon('common.video_unsupported', 'Your browser does not support video playback.')}
                         </video>
                     )}
                 </div>

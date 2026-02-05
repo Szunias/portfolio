@@ -158,7 +158,7 @@ const SoundDesign = () => {
                     {t('footer.back_link', 'Back to Projects')}
                 </Link>
                 <p className="mt-8 text-slate-500 text-sm">
-                    {t('footer.status', '© 2025 Igor Szuniewicz')}
+                    &copy; {new Date().getFullYear()} Igor Szuniewicz
                 </p>
             </footer>
         </div>
