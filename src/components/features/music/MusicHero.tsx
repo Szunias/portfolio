@@ -66,11 +66,13 @@ const MusicHero = () => {
                             className="w-full h-full object-cover"
                         />
                         {/* Quick Play Overlay on Hero */}
-                        <div 
+                        <div
                             className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-center justify-center cursor-pointer hover:from-black/40 hover:via-black/10 transition-all duration-300"
                             onClick={() => currentTrack?.id === displayTrack.id ? togglePlay() : playTrack(displayTrack)}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); currentTrack?.id === displayTrack.id ? togglePlay() : playTrack(displayTrack); } }}
                             role="button"
-                            aria-label={isPlaying && currentTrack?.id === displayTrack.id ? "Pause" : "Play"}
+                            tabIndex={0}
+                            aria-label={isPlaying && currentTrack?.id === displayTrack.id ? t('music.pause', 'Pause') : t('music.play', 'Play')}
                         >
                             <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-xl border border-white/30 flex items-center justify-center hover:scale-110 hover:bg-white/25 hover:border-accent/50 hover:shadow-[0_0_40px_rgba(56,189,248,0.6)] transition-all duration-300">
                                 {isPlaying && currentTrack?.id === displayTrack.id ? (
@@ -100,8 +102,8 @@ const MusicHero = () => {
                             <h1 className="text-5xl md:text-7xl font-display font-bold text-white mb-2 leading-none drop-shadow-[0_0_30px_rgba(56,189,248,0.2)]">
                                 {displayTrack.title}
                             </h1>
-                            <p className="text-xl text-slate-400 font-light">
-                                by <span className="text-white hover:text-accent transition-colors duration-300">{displayTrack.artist || 'Igor Szuniewicz'}</span>
+                            <p className="text-xl text-slate-300 font-light">
+                                {t('music.by_artist', 'by')} <span className="text-white hover:text-accent transition-colors duration-300">{displayTrack.artist || 'Igor Szuniewicz'}</span>
                             </p>
                         </motion.div>
 

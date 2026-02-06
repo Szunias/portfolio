@@ -1,26 +1,27 @@
 import { usePortfolioData } from '../hooks/usePortfolioData';
 import { useTranslation } from 'react-i18next';
-import { MapPin, Mail, Download, Github, Linkedin, GraduationCap, Copy, Check, ExternalLink } from 'lucide-react';
+import { Download, Github, Linkedin, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 import SEO from '../components/layout/SEO';
 import { Link } from 'react-router-dom';
+import AboutTimeline from '../components/features/about/AboutTimeline';
+import AboutSkillsSidebar from '../components/features/about/AboutSkillsSidebar';
+
+const toolNameMap: Record<string, string> = {
+    Unreal_Engine: 'Unreal Engine 5',
+    C_Sharp: 'C#',
+    C_Plus_Plus: 'C++',
+    Pro_Tools: 'Pro Tools',
+    Logic_Pro: 'Logic Pro',
+    Max_MSP: 'Max/MSP',
+    iZotope_RX: 'iZotope RX',
+};
 
 const About = () => {
     const portfolioData = usePortfolioData();
     const { personal_info, professional_summary } = portfolioData;
     const { t } = useTranslation('about');
-    const [emailCopied, setEmailCopied] = useState(false);
 
-    const toolNameMap: Record<string, string> = {
-        Unreal_Engine: 'Unreal Engine 5',
-        C_Sharp: 'C#',
-        C_Plus_Plus: 'C++',
-        Pro_Tools: 'Pro Tools',
-        Logic_Pro: 'Logic Pro',
-        Max_MSP: 'Max/MSP',
-        iZotope_RX: 'iZotope RX',
-    };
     const getToolNames = (categoryKey: string) => {
         const cat = (portfolioData as unknown as Record<string, unknown>).technical_skills_matrix as Record<string, { tools?: Record<string, unknown> }> | undefined;
         const tools = cat?.[categoryKey]?.tools;
@@ -56,16 +57,6 @@ const About = () => {
             institution: 'State Music School'
         }
     ];
-
-    const handleCopyEmail = async () => {
-        try {
-            await navigator.clipboard.writeText(personal_info.email);
-            setEmailCopied(true);
-            setTimeout(() => setEmailCopied(false), 2000);
-        } catch (err) {
-            console.error('Failed to copy email:', err);
-        }
-    };
 
     return (
         <div className="min-h-screen relative">
@@ -192,45 +183,7 @@ const About = () => {
                         </motion.div>
 
                         {/* Education Timeline */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.1 }}
-                            className="bg-white/5 border border-white/10 rounded-2xl p-8"
-                        >
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="p-2 bg-accent/10 rounded-xl">
-                                    <GraduationCap className="text-accent" size={20} />
-                                </div>
-                                <h2 className="text-2xl font-bold text-white">
-                                    {t('about_education_title', 'Education')}
-                                </h2>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {timeline.map((item, i) => (
-                                    <motion.div
-                                        key={i}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: i * 0.1, duration: 0.5 }}
-                                        className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-accent/30 transition-all group"
-                                    >
-                                        <span className="inline-block px-3 py-1 text-xs font-mono text-accent bg-accent/10 rounded-full mb-3">
-                                            {item.year}
-                                        </span>
-                                        <h3 className="text-white font-semibold mb-2 group-hover:text-accent transition-colors">
-                                            {item.title}
-                                        </h3>
-                                        <p className="text-slate-500 text-sm">
-                                            {item.institution}
-                                        </p>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </motion.div>
+                        <AboutTimeline timeline={timeline} t={t} />
 
                         {/* Design Philosophy */}
                         <motion.div
@@ -262,9 +215,9 @@ const About = () => {
                                         title: t('principle_collaboration_title', 'Iterate with Feedback'),
                                         desc: t('principle_collaboration_desc', 'Audio needs input from designers, programmers, and players. I document systems and iterate based on playtests.')
                                     }
-                                ].map((principle, i) => (
+                                ].map((principle) => (
                                     <div
-                                        key={i}
+                                        key={principle.title}
                                         className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-accent/20 transition-all"
                                     >
                                         <h3 className="text-white font-semibold mb-2">{principle.title}</h3>
@@ -276,172 +229,7 @@ const About = () => {
                     </div>
 
                     {/* Sidebar - 4 columns */}
-                    <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-32 lg:self-start">
-
-                        {/* Quick Info Card */}
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6 }}
-                            className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-5"
-                        >
-                            <h3 className="text-lg font-bold text-white mb-4">
-                                {t('about_quick_info', 'Quick Info')}
-                            </h3>
-
-                            {/* Location */}
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-white/5 rounded-lg">
-                                    <MapPin className="text-accent" size={18} />
-                                </div>
-                                <div>
-                                    <p className="text-white font-medium">{personal_info.location.city}</p>
-                                    <p className="text-slate-500 text-sm">{personal_info.location.country}</p>
-                                </div>
-                            </div>
-
-                            {/* Status */}
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-white/5 rounded-lg flex items-center justify-center">
-                                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
-                                </div>
-                                <div>
-                                    <p className="text-white font-medium">{t('status_looking_internship', 'Available for internship')}</p>
-                                    <p className="text-slate-500 text-sm">{personal_info.availability.status}</p>
-                                </div>
-                            </div>
-
-                            {/* Email */}
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-white/5 rounded-lg">
-                                    <Mail className="text-accent" size={18} />
-                                </div>
-                                <button
-                                    onClick={handleCopyEmail}
-                                    className="group flex items-center gap-2 text-slate-300 hover:text-white transition-colors"
-                                >
-                                    <span className="text-sm truncate max-w-[180px]">{personal_info.email}</span>
-                                    {emailCopied ? (
-                                        <Check size={14} className="text-green-400" />
-                                    ) : (
-                                        <Copy size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    )}
-                                </button>
-                            </div>
-                        </motion.div>
-
-                        {/* Skills Cards */}
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.1 }}
-                            className="bg-white/5 border border-white/10 rounded-2xl p-6"
-                        >
-                            <h3 className="text-lg font-bold text-white mb-4">
-                                {t('tech_middleware_title', 'Middleware')}
-                            </h3>
-                            <div className="flex flex-wrap gap-2">
-                                {skills.middleware.map(skill => (
-                                    <span
-                                        key={skill}
-                                        className="px-3 py-1.5 text-xs font-mono text-accent bg-accent/5 border border-accent/20 rounded-full"
-                                    >
-                                        {skill}
-                                    </span>
-                                ))}
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.15 }}
-                            className="bg-white/5 border border-white/10 rounded-2xl p-6"
-                        >
-                            <h3 className="text-lg font-bold text-white mb-4">
-                                {t('tech_engines_title', 'Game Engines')}
-                            </h3>
-                            <div className="flex flex-wrap gap-2">
-                                {skills.engines.map(skill => (
-                                    <span
-                                        key={skill}
-                                        className="px-3 py-1.5 text-xs font-mono text-accent bg-accent/5 border border-accent/20 rounded-full"
-                                    >
-                                        {skill}
-                                    </span>
-                                ))}
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.2 }}
-                            className="bg-white/5 border border-white/10 rounded-2xl p-6"
-                        >
-                            <h3 className="text-lg font-bold text-white mb-4">
-                                {t('tech_programming_title', 'Programming')}
-                            </h3>
-                            <div className="flex flex-wrap gap-2">
-                                {skills.programming.map(skill => (
-                                    <span
-                                        key={skill}
-                                        className="px-3 py-1.5 text-xs font-mono text-accent bg-accent/5 border border-accent/20 rounded-full"
-                                    >
-                                        {skill}
-                                    </span>
-                                ))}
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.25 }}
-                            className="bg-white/5 border border-white/10 rounded-2xl p-6"
-                        >
-                            <h3 className="text-lg font-bold text-white mb-4">
-                                {t('tech_production_title', 'Production')}
-                            </h3>
-                            <div className="flex flex-wrap gap-2">
-                                {skills.production.map(skill => (
-                                    <span
-                                        key={skill}
-                                        className="px-3 py-1.5 text-xs font-mono text-accent bg-accent/5 border border-accent/20 rounded-full"
-                                    >
-                                        {skill}
-                                    </span>
-                                ))}
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.3 }}
-                            className="bg-white/5 border border-white/10 rounded-2xl p-6"
-                        >
-                            <h3 className="text-lg font-bold text-white mb-4">
-                                {t('tech_specialized_title', 'Tools')}
-                            </h3>
-                            <div className="flex flex-wrap gap-2">
-                                {skills.tools.map(skill => (
-                                    <span
-                                        key={skill}
-                                        className="px-3 py-1.5 text-xs font-mono text-accent bg-accent/5 border border-accent/20 rounded-full"
-                                    >
-                                        {skill}
-                                    </span>
-                                ))}
-                            </div>
-                        </motion.div>
-                    </div>
+                    <AboutSkillsSidebar personalInfo={personal_info} skills={skills} t={t} />
                 </div>
             </section>
         </div>

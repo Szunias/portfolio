@@ -67,9 +67,15 @@ const Showreel = () => {
         {error ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-900">
             <AlertCircle size={48} className="text-red-500 mb-4" />
-            <p className="text-white/70 text-center px-4">
+            <p className="text-white/70 text-center px-4 mb-4">
               {t('errors.video_load_failed', 'Failed to load video. Please refresh the page.')}
             </p>
+            <button
+              onClick={() => { setError(false); setPlayer(null); }}
+              className="px-6 py-2 bg-accent text-black font-semibold rounded-lg hover:bg-white transition-colors"
+            >
+              {t('hero.retry', 'Try Again')}
+            </button>
           </div>
         ) : (
           <>
@@ -81,7 +87,7 @@ const Showreel = () => {
               frameBorder="0"
               allow="autoplay; fullscreen; picture-in-picture"
               allowFullScreen
-              title="Showreel"
+              title={t('hero.showreel_title', 'Igor Szuniewicz Audio Design Showreel')}
               onLoad={handleLoad}
               className="absolute inset-0 w-full h-full border-0"
             ></iframe>
@@ -118,7 +124,7 @@ const Showreel = () => {
                 relative px-4 py-2 rounded-full text-sm font-medium transition-all
                 ${isActive
                   ? 'bg-accent text-black'
-                  : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
+                  : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
                 }
               `}
             >

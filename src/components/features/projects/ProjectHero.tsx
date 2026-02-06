@@ -33,7 +33,15 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
             <div className="absolute inset-0 z-0">
                 {media.thumbnail ? (
                     media.thumbnail.endsWith('.mp4') ? (
-                        <video src={`/${media.thumbnail}`} className="w-full h-full object-cover opacity-40" autoPlay loop muted playsInline />
+                        <video
+                            src={`/${media.thumbnail}`}
+                            className="w-full h-full object-cover opacity-40"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            onError={(e) => { (e.currentTarget as HTMLVideoElement).style.display = 'none'; }}
+                        />
                     ) : (
                         <img src={`/${media.thumbnail}`} alt="" role="presentation" aria-hidden="true" className="w-full h-full object-cover opacity-30" />
                     )

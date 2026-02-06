@@ -33,9 +33,11 @@ const TrackCard = memo(({ track, index, isCurrent, isPlaying, onPlay }: TrackCar
                 ? 'ring-2 ring-accent/60 scale-[1.02] border-accent/30 shadow-[0_0_30px_rgba(56,189,248,0.3)]' 
                 : 'border-white/5 hover:scale-[1.05] hover:border-accent/40 hover:shadow-[0_0_40px_rgba(56,189,248,0.2)]'
         )}>
-            <img 
-                src={`/${track.cover}`} 
-                alt={track.title} 
+            <img
+                src={`/${track.cover}`}
+                alt={track.title}
+                width={300}
+                height={300}
                 className={cn(
                     "w-full h-full object-cover transition-transform duration-700",
                     isActive ? 'scale-110' : 'group-hover:scale-110'

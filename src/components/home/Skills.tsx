@@ -105,6 +105,8 @@ const Skills = () => {
                 <img
                   src={tech.logo}
                   alt={tech.name}
+                  width={96}
+                  height={96}
                   className={`h-24 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity ${tech.invert ? 'invert brightness-200' : ''}`}
                 />
               </div>

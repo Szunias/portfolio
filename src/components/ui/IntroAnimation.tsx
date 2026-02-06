@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
 const NUM_SNAKES = 5;
@@ -43,8 +43,15 @@ const generateSnakes = (): Snake[] => {
 const IntroAnimation = ({ onComplete }: { onComplete: () => void }) => {
   const [snakes] = useState<Snake[]>(generateSnakes);
   const [isExiting, setIsExiting] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
+    if (shouldReduceMotion) {
+      // Skip animation entirely for reduced motion preference
+      onComplete();
+      return;
+    }
+
     // Start exit after animation plays
     const exitTimer = setTimeout(() => {
       setIsExiting(true);
@@ -59,7 +66,7 @@ const IntroAnimation = ({ onComplete }: { onComplete: () => void }) => {
       clearTimeout(exitTimer);
       clearTimeout(completeTimer);
     };
-  }, [onComplete]);
+  }, [onComplete, shouldReduceMotion]);
 
   return (
     <motion.div

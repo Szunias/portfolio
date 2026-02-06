@@ -34,7 +34,7 @@ const MediaRenderer = ({
         <div className={cn("flex items-center justify-center bg-neutral-900 text-neutral-600 aspect-video", className)}>
             <div className="flex flex-col items-center gap-2">
                 <ImageOff size={24} />
-                <span className="text-xs">{t('common.media_unavailable', 'Media unavailable')}</span>
+                <span className="text-xs">{t('media_unavailable', 'Media unavailable')}</span>
             </div>
         </div>
       );

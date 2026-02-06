@@ -2,6 +2,7 @@ import { useParams, Navigate } from 'react-router-dom';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 import { Images } from 'lucide-react';
 import SEO from '../components/layout/SEO';
 import ProjectHero from '../components/features/projects/ProjectHero';
@@ -37,8 +38,21 @@ const ProjectDetails = () => {
   const fullDescKey = `project_${project.id}_full_desc`;
   const description = t(fullDescKey, project.full_description || t(shortDescKey, project.short_description));
 
+  const breadcrumbData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": typeof window !== 'undefined' ? window.location.origin : 'https://igorszuniewicz.com' },
+      { "@type": "ListItem", "position": 2, "name": "Projects", "item": (typeof window !== 'undefined' ? window.location.origin : 'https://igorszuniewicz.com') + '/projects' },
+      { "@type": "ListItem", "position": 3, "name": t(titleKey, project.title) }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-waves bg-primary pb-32">
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbData)}</script>
+      </Helmet>
       <SEO 
         title={t(titleKey, project.title)} 
         description={t(shortDescKey, project.short_description)}

@@ -36,7 +36,7 @@ const SEO = ({
   };
   
   const baseUrl = getBaseUrl();
-  const currentUrl = url || (typeof window !== 'undefined' ? window.location.href : `${baseUrl}${location.pathname}`);
+  const currentUrl = url || (typeof window !== 'undefined' ? window.location.origin + window.location.pathname : `${baseUrl}${location.pathname}`);
   const imageUrl = image.startsWith('http') ? image : `${baseUrl}${image}`;
 
   // Structured Data (JSON-LD) for better SEO
@@ -49,8 +49,8 @@ const SEO = ({
     "url": baseUrl,
     "image": imageUrl,
     "sameAs": [
-      "https://github.com/igorszuniewicz",
-      "https://www.linkedin.com/in/igorszuniewicz"
+      "https://github.com/Szunias",
+      "https://www.linkedin.com/in/igor-szuniewicz-a6877a2a3"
     ],
     "knowsAbout": [
       "Game Audio",

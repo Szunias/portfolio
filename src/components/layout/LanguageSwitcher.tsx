@@ -29,7 +29,7 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
       {/* Trigger */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 hover:border-accent/50 bg-white/5 hover:bg-white/10 transition-all duration-300"
+        className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-white/10 hover:border-accent/50 bg-white/5 hover:bg-white/10 transition-all duration-300"
         whileTap={{ scale: 0.95 }}
         aria-label="Select language"
         aria-expanded={isOpen}

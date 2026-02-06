@@ -3,6 +3,7 @@ import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Maximize2, X } fr
 import { formatTime } from '../../utils';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useReducedMotion } from 'framer-motion';
 import { Button } from '../ui/Button';
 
 const VISUALIZER_BARS = 6;
@@ -17,6 +18,7 @@ const AudioPlayer = () => {
 
   const [isMuted, setIsMuted] = useState(false);
   const [prevVolume, setPrevVolume] = useState(volume);
+  const shouldReduceMotion = useReducedMotion();
 
   if (!currentTrack || !isPlayerVisible) return null;
 
@@ -63,16 +65,16 @@ const AudioPlayer = () => {
                     <div className="flex items-end gap-[1px] h-2.5 sm:h-3">
                         {barDelays.map((delay, i) => (
                             <div
-                                key={i}
-                                className={`w-[2px] sm:w-1 bg-accent/50 rounded-t-sm ${isPlaying ? 'animate-visualizer-bar' : ''}`}
+                                key={`bar-${i}`}
+                                className={`w-[2px] sm:w-1 bg-accent/50 rounded-t-sm ${isPlaying && !shouldReduceMotion ? 'animate-visualizer-bar' : ''}`}
                                 style={{
-                                    height: isPlaying ? undefined : '10%',
-                                    animationDelay: isPlaying ? delay : undefined,
+                                    height: isPlaying && !shouldReduceMotion ? undefined : '10%',
+                                    animationDelay: isPlaying && !shouldReduceMotion ? delay : undefined,
                                 }}
                             />
                         ))}
                     </div>
-                    <span className="text-[10px] sm:text-xs font-mono text-slate-400">
+                    <span className="text-[10px] sm:text-xs font-mono text-slate-300">
                         {formatTime(currentTime)} / {formatTime(duration)}
                     </span>
                 </div>
@@ -81,7 +83,7 @@ const AudioPlayer = () => {
 
         {/* Center: Controls */}
         <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
-            <Button onClick={prevTrack} variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-transparent p-1 sm:p-2" aria-label="Previous Track">
+            <Button onClick={prevTrack} variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-transparent p-2 sm:p-3" aria-label={t('buttons.previous', 'Previous Track')}>
                 <SkipBack size={16} className="sm:w-5 sm:h-5" />
             </Button>
 
@@ -90,12 +92,12 @@ const AudioPlayer = () => {
                 variant="primary"
                 size="icon"
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-full hover:scale-110 hover:shadow-[0_0_30px_rgba(56,189,248,0.6)] transition-all duration-300 p-0 bg-accent hover:bg-white text-primary hover:text-accent border-2 border-accent hover:border-white flex-shrink-0"
-                aria-label={isPlaying ? "Pause" : "Play"}
+                aria-label={isPlaying ? t('buttons.pause', 'Pause') : t('buttons.play', 'Play')}
             >
                 {isPlaying ? <Pause size={18} className="sm:w-[22px] sm:h-[22px]" fill="currentColor" /> : <Play size={18} className="sm:w-[22px] sm:h-[22px] ml-0.5" fill="currentColor" />}
             </Button>
 
-            <Button onClick={nextTrack} variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-transparent p-1 sm:p-2" aria-label="Next Track">
+            <Button onClick={nextTrack} variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-transparent p-2 sm:p-3" aria-label={t('buttons.next', 'Next Track')}>
                 <SkipForward size={16} className="sm:w-5 sm:h-5" />
             </Button>
         </div>
@@ -117,7 +119,7 @@ const AudioPlayer = () => {
                     variant="ghost"
                     size="icon"
                     className="text-slate-400 group-hover:text-white hover:bg-transparent"
-                    aria-label={isMuted ? "Unmute" : "Mute"}
+                    aria-label={isMuted ? t('buttons.unmute', 'Unmute') : t('buttons.mute', 'Mute')}
                 >
                     {volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
                 </Button>

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ZoomIn } from 'lucide-react';
+import { X, ZoomIn, Loader2 } from 'lucide-react';
 import { ProjectImage } from '../../types';
 import { useTranslation } from 'react-i18next';
 
@@ -10,7 +10,13 @@ interface ImageLightboxProps {
 
 const ImageLightbox = ({ images }: ImageLightboxProps) => {
   const [selectedImage, setSelectedImage] = useState<{ src: string; caption: string | null } | null>(null);
+  const [lightboxLoading, setLightboxLoading] = useState(true);
   const { t } = useTranslation('common');
+
+  const handleOpenLightbox = useCallback((src: string, caption: string | null) => {
+    setLightboxLoading(true);
+    setSelectedImage({ src, caption });
+  }, []);
 
   const getImageData = (img: string | ProjectImage) => {
     if (typeof img === 'string') {
@@ -30,7 +36,7 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
           return (
             <div key={i} className="group">
               <div
-                onClick={() => !isVideo && setSelectedImage({ src, caption })}
+                onClick={() => !isVideo && handleOpenLightbox(src, caption)}
                 className={`relative rounded-xl overflow-hidden border border-white/10 bg-slate-900/50 ${!isVideo ? 'cursor-pointer hover:border-accent/50 hover:shadow-[0_0_30px_rgba(56,189,248,0.2)]' : ''} transition-all duration-500`}
               >
                 {isVideo ? (
@@ -89,10 +95,16 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
               onClick={(e) => e.stopPropagation()}
               className="max-w-[90vw] max-h-[85vh] cursor-default"
             >
+              {lightboxLoading && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Loader2 size={32} className="text-accent animate-spin" />
+                </div>
+              )}
               <img
                 src={`/${selectedImage.src}`}
                 alt={selectedImage.caption ? t(selectedImage.caption, selectedImage.caption) : t('gallery.enlarged_alt', 'Enlarged gallery image view')}
-                className="max-w-full max-h-[85vh] object-contain rounded-lg"
+                className={`max-w-full max-h-[85vh] object-contain rounded-lg transition-opacity ${lightboxLoading ? 'opacity-0' : 'opacity-100'}`}
+                onLoad={() => setLightboxLoading(false)}
               />
               {selectedImage.caption && (
                 <p className="mt-4 text-center text-slate-300">

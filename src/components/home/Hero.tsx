@@ -69,7 +69,7 @@ const Hero = () => {
           >
             <Link
               to="/projects"
-              className="group relative inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-semibold rounded-xl overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.4)]"
+              className="group relative inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-semibold rounded-xl overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
             >
               <span className="relative z-10 flex items-center gap-2">
                 {t('hero.view_work', 'Projects')}
@@ -82,7 +82,7 @@ const Hero = () => {
               href="/cv/Igor_Szuniewicz_CV.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative inline-flex items-center gap-2 px-8 py-4 border border-white/30 text-white font-semibold rounded-xl backdrop-blur-sm bg-white/5 overflow-hidden transition-all hover:scale-105 hover:border-white/50 hover:bg-white/10 hover:shadow-[0_0_30px_rgba(56,189,248,0.3)]"
+              className="group relative inline-flex items-center gap-2 px-8 py-4 border border-white/30 text-white font-semibold rounded-xl backdrop-blur-sm bg-white/5 overflow-hidden transition-all hover:scale-105 hover:border-white/50 hover:bg-white/10 hover:shadow-[0_0_30px_rgba(56,189,248,0.3)] focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
             >
               <Download size={18} className="group-hover:animate-bounce" />
               {t('hero.cv_button', 'Download CV')}
@@ -91,7 +91,7 @@ const Hero = () => {
 
             <Link
               to="/music"
-              className="group relative inline-flex items-center justify-center w-14 h-14 border border-white/30 text-white rounded-xl backdrop-blur-sm bg-white/5 overflow-hidden transition-all hover:scale-110 hover:border-accent/50 hover:shadow-[0_0_30px_rgba(56,189,248,0.5)]"
+              className="group relative inline-flex items-center justify-center w-14 h-14 border border-white/30 text-white rounded-xl backdrop-blur-sm bg-white/5 overflow-hidden transition-all hover:scale-110 hover:border-accent/50 hover:shadow-[0_0_30px_rgba(56,189,248,0.5)] focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
               title={t('hero.listen_music', 'Listen to Music')}
             >
               <Play size={20} className="ml-0.5 fill-accent group-hover:fill-white transition-colors" />

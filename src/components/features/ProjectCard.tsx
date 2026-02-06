@@ -1,8 +1,9 @@
 import { Project } from '../../types';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useRef, useEffect } from 'react';
 import ImageWithLoader from '../ui/ImageWithLoader';
-import { ArrowRight, Tag } from 'lucide-react';
+import { ArrowRight, Tag, ExternalLink } from 'lucide-react';
 
 interface ProjectCardProps {
   project: Project;
@@ -12,6 +13,24 @@ interface ProjectCardProps {
 const ProjectCard = ({ project, index }: ProjectCardProps) => {
   const { t } = useTranslation('projects');
   const media = project.media || {};
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.25 }
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
   
   const titleKey = `project_${project.id}_title`;
   const descKey = `project_${project.id}_short_desc`;
@@ -39,11 +58,11 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
         {media.thumbnail ? (
             media.thumbnail.endsWith('.mp4') || media.thumbnail.endsWith('.webm') ? (
             <video
+                ref={videoRef}
                 src={`/${media.thumbnail}`}
                 className={`w-full h-full object-cover transition-all duration-700 ease-out opacity-90 brightness-90 group-hover:opacity-100 group-hover:brightness-110 group-hover:scale-105`}
                 muted
                 loop
-                autoPlay
                 playsInline
                 preload="none"
             />
@@ -163,6 +182,9 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
 
       {project.externalLink ? (
         <a href={project.externalLink} target="_blank" rel="noopener noreferrer" className="block h-full relative z-10">
+            <div className="absolute top-3 left-3 z-30">
+              <ExternalLink size={14} className="text-white/60" />
+            </div>
             {cardContent}
         </a>
       ) : (

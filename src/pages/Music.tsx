@@ -2,6 +2,7 @@ import { useAudio } from '../context/AudioContext';
 import { useTranslation } from 'react-i18next';
 import TrackCard from '../components/features/music/TrackCard';
 import MusicHero from '../components/features/music/MusicHero';
+import SEO from '../components/layout/SEO';
 
 const Music = () => {
   const { playlist, playTrack, currentTrack, isPlaying } = useAudio();
@@ -9,7 +10,11 @@ const Music = () => {
 
   return (
     <div className="min-h-screen bg-lines-horizontal bg-primary">
-        
+        <SEO
+          title={t('page_title', 'Music')}
+          description={t('page_description', 'Original compositions from film scores, electronic music, and experimental sound design.')}
+        />
+
         {/* HERO SECTION (Now Playing / Featured) */}
         <MusicHero />
 
