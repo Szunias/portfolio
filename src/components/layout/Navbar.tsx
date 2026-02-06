@@ -57,7 +57,7 @@ const Navbar = () => {
             {/* Logo */}
             <Link to={ROUTES.HOME} className="flex flex-col">
               <span className="font-bold text-lg text-white">IGOR SZUNIEWICZ</span>
-              <span className="text-[10px] text-gray-400 uppercase tracking-wider">Audio Designer</span>
+              <span className="text-[10px] text-gray-400 uppercase tracking-wider">{t('brand.tagline', 'Audio Designer')}</span>
             </Link>
 
             {/* Desktop Nav */}

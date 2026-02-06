@@ -60,7 +60,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                 >
                     <Link to="/projects" className="inline-flex items-center text-slate-400 hover:text-accent transition-all duration-300 mb-8 group hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]">
                         <ArrowLeft size={16} className="mr-2 group-hover:-translate-x-1 transition-transform" />
-                        {t('projects.viewall', 'Back to Projects')}
+                        {t('projects.view_all', 'Back to Projects')}
                     </Link>
 
                     <div className="flex items-center gap-3 mb-4">

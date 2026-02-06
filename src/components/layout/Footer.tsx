@@ -55,7 +55,7 @@ const Footer = () => {
             &copy; {currentYear} Igor Szuniewicz. {t('footer.rights', 'All rights reserved.')}
           </p>
           <p className="text-slate-600 text-xs mt-2 md:mt-0">
-            {t('footer.built_with', 'Built with')} React, TypeScript & Tailwind CSS
+            {t('footer.built_with_tech', 'Built with React, TypeScript & Tailwind CSS')}
           </p>
         </div>
       </div>
