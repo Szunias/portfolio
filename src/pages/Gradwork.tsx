@@ -12,8 +12,8 @@ const Gradwork = () => {
     return (
         <div className="min-h-screen -mt-16">
             <SEO
-                title="AI Audio Research | Igor Szuniewicz"
-                description="Bachelor Thesis: Can AI generate sound effects in real-time for video games?"
+                title={t('seo.title')}
+                description={t('seo.description')}
             />
 
             <GradworkHeader t={t} />

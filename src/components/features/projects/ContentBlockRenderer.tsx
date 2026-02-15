@@ -93,6 +93,7 @@ const GenericBlock = ({ block }: { block: ContentBlock }) => {
 }
 
 const ContentBlockRenderer = ({ blocks }: ContentBlockRendererProps) => {
+  const { t } = useTranslation('common');
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   if (!blocks) return null;
@@ -131,7 +132,7 @@ const ContentBlockRenderer = ({ blocks }: ContentBlockRendererProps) => {
           </button>
           <img
             src={`/${lightboxImage}`}
-            alt="Enlarged view"
+            alt={t('gallery.enlarged_view', 'Enlarged view')}
             className="max-w-full max-h-[90vh] object-contain rounded-lg"
             onClick={(e) => e.stopPropagation()}
           />

@@ -18,7 +18,7 @@ const SoundDesign = () => {
 
     return (
         <div ref={containerRef} className="min-h-screen bg-secondary bg-crosshatch text-slate-300 font-sans selection:bg-orange-500/30">
-            <SEO title="Sound Design | Igor Szuniewicz" description="Sound Redesigns and Implementation Showcases" />
+            <SEO title={t('seo.title')} description={t('seo.description')} />
 
             {/* Hero Section */}
             <section className="relative min-h-[80vh] flex flex-col items-center justify-center overflow-hidden px-4 py-20">
