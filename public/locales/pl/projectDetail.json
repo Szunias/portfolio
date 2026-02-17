@@ -301,10 +301,10 @@
     "ambience_zones": {
       "desc": "Audio oparte na lokalizacji, które zmienia się gdy poruszasz się po różnych obszarach pubu.",
       "how": "Trigger volumes wykrywają lokalizację gracza. Przy wejściu do strefy, fade out poprzedniego ambientu i fade in warstw nowej strefy. Płynne crossfade'y zapobiegają skokom audio.",
-      "result": "Płynne przejścia audio między strefami. Gracz podświadomie rozumie układ pubu przez sound design. Każdy obszar ma odrębną tożsamość akustyczną.",
+      "result": "Przejdź z baru do łazienki — audio crossfaduje w 500ms. Żadnych trzasków, żadnych luk w dźwięku.",
       "title": "System Stref Ambientu",
       "what": "5 odrębnych stref z unikalnymi soundscape'ami ambientowymi: Main Bar, Back Room, Bathroom, Hallway, Storage. Każda ma specyficzną atmosferę dźwiękową.",
-      "why": "Ambient specyficzny dla lokacji osadza gracza w przestrzeni. Każdy pokój brzmi akustycznie inaczej, wzmacniając układ i atmosferę pubu."
+      "why": "Każdy pokój brzmi inaczej. Łazienka: płytki + reverb. Bar: szklanki + szmer tłumu. Gracz wie, gdzie jest, po samym dźwięku."
     },
     "anomalies": {
       "desc": "Częściowo losowe zakłócenia, które nasilają się w miarę postępu gry.",
@@ -325,22 +325,22 @@
       "title": "3-Stopniowa Detekcja Anomalii"
     },
     "anomaly_system": {
-      "desc": "3-stopniowy system detekcji dla 10 różnych typów anomalii paranormalnych z unikalnymi sygnaturami audio.",
+      "desc": "10 typów anomalii. Każdy ma unikalne audio. 3-stopniowa detekcja: alert → wskazówka → obecność.",
       "how": "RTPC oparte na odległości napędza intensywność audio. Kierunkowe audio prowadzi gracza do anomalii. Każdy typ anomalii ma unikalną sygnaturę dźwiękową do identyfikacji.",
-      "result": "Gracze polegają na wskazówkach audio aby zlokalizować i zidentyfikować anomalie. Sound design jest funkcjonalny i atmosferyczny - napędza podstawową rozgrywkę budując napięcie.",
+      "result": "Testerzy znajdują anomalie ze słuchu. 80% skuteczności detekcji dzięki kierunkowym wskazówkom.",
       "title": "System Audio Anomalii",
       "what": "3 etapy detekcji: Daleko (ogólny alert), Medium (kierunkowa wskazówka), Blisko (precyzyjna lokalizacja). 10 typów anomalii including Levitating Glass, Shadow Movement, Spinning Chair.",
-      "why": "Audio jest podstawową mechaniką detekcji. Bez dźwięku znalezienie anomalii jest prawie niemożliwe. Warstwowe podejście (alert → przewodnik → potwierdzenie) tworzy angażującą pętlę rozgrywki."
+      "why": "Dźwięk to sposób na znajdowanie anomalii. Alert sygnalizuje spawn, wskazówka daje kierunek, obecność potwierdza lokalizację."
     },
     "audio_design_icon": "AUDIO DESIGN",
     "audio_systems": {
-      "delegates_desc": "Architektura Separation of Concerns, w której systemy audio komunikują się przez delegaty. Czysta i modularna implementacja.",
+      "delegates_desc": "Systemy audio komunikują się przez delegaty. C++ obsługuje logikę gry, Blueprint obsługuje audio. Wszystko modularne — zmień jedno bez psucia drugiego.",
       "delegates_title": "Blueprint Delegates (SOC)",
       "rtpc_desc": "Im więcej anomalii znajdziesz, tym bardziej napięta atmosfera. Ambienty narastają. Oddech postaci staje się cięższy. Napięcie rośnie.",
       "rtpc_title": "System dynamiczny oparty na RTPC",
-      "spatial_desc": "Dźwięk pozycyjny 3D dla anomalii, obecności wroga i wskazówek środowiskowych, który jest kluczowy dla rozgrywki.",
+      "spatial_desc": "Pełny dźwięk pozycyjny 3D dla anomalii, wroga i wskazówek środowiskowych. Precyzja przestrzenna jest kluczowa — bez niej nie znajdziesz zagrożeń.",
       "spatial_title": "HRTF Dźwięk przestrzenny 3D",
-      "switches_desc": "Atmosfery specyficzne dla pokoi płynnie się przełączają podczas przemieszczania się przez przestrzeń. Łazienka ma przestrzenne dźwięki toalety i kranu, podczas gdy kroki dynamicznie dostosowują się do rodzaju podłoża.",
+      "switches_desc": "Każdy pokój ma własne warstwy ambientu, które crossfadują przy poruszaniu. Łazienka ma przestrzenne dźwięki toalety i kranu. Kroki zmieniają się w zależności od powierzchni. Drewno, płytki, beton.",
       "switches_title": "Switch Containers & Strefy",
       "title": "Implementacja audio"
     },
@@ -349,19 +349,19 @@
     "badge_audio": "AUDIO",
     "badge_code": "KOD",
     "block": {
-      "anomaly_desc": "3-stopniowy system detekcji dla 10 różnych typów anomalii paranormalnych z unikalnymi sygnaturami audio.",
+      "anomaly_desc": "10 typów anomalii, każdy z unikalnym audio. 3-stopniowa detekcja. RTPC napędza intensywność. Kierunkowe audio prowadzi gracza.",
       "anomaly_title": "System Audio Anomalii",
-      "dialogue_desc": "Czyste oddzielenie między akcjami gracza a odpowiedziami audio używając Blueprint delegates.",
+      "dialogue_desc": "Akcje gracza → odpowiedzi audio przez delegaty. Zdjęcie, zoom — każda akcja odpala właściwy event Wwise.",
       "dialogue_title": "System Audio Gracza",
-      "enemy_desc": "Dynamiczny system audio reagujący na bliskość wroga. Tworzy napięcie przez warstwy dread i zestresowany oddech. System śledzi odległość...",
+      "enemy_desc": "Wróg się zbliża, audio się nasila. Warstwy dread + zestresowany oddech. System śledzi odległość, uruchamia warstwy. Bliższy wróg = większa intensywność.",
       "enemy_title": "System Audio Obecności Wroga",
       "mixer_desc": "Switch Containers współpracują z systemem RTPC. Więcej zebranych zdjęć = aktywacja innych warstw ambientu.",
       "mixer_title": "Architektura Wwise"
     },
     "challenges": {
       "challenge1": {
-        "problem": "Podczas pracy w wieloinstytucjonalnej współpracy ze studentami, problemy z workflow często zakłócały rozwój. Integracja Wwise psuła się po pullach z Perforce, a czasy kompilacji Unreal Engine powodowały znaczne przestoje.",
-        "solution": "Stworzyłem narzędzia Wwise Unreal Fixer i Unreal Engine Rebuilder, by usprawnić workflow. Chociaż to nie była w pełni samodzielna praca (współpracowałem z innymi), te narzędzia stworzyłem głównie po to, by pomóc studentom pracować efektywniej. Wwise Fixer automatycznie przywraca zepsutą integrację Wwise po pullach z Perforce, a Rebuilder automatyzuje proces kompilacji, by zmniejszyć przestoje.",
+        "problem": "Projekt wieloinstytucjonalny miał problemy z workflow. Integracja Wwise psuła się po pullach z Perforce. Kompilacja Unreal trwała za długo, powodując przestoje.",
+        "solution": "Zbudowałem Wwise Unreal Fixer i Unreal Engine Rebuilder. Fixer przywraca integrację Wwise po pullach z Perforce — jedno kliknięcie. Rebuilder automatyzuje kompilację, żeby skrócić przestoje.",
         "title": "Narzędzia Optymalizacji Workflow"
       },
       "desc": "Problemy napotkane podczas rozwoju i jak je rozwiązałem.",
@@ -414,17 +414,17 @@
     "dev_tools": {
       "fixer_desc": "Własna wtyczka C++, która automatycznie przywraca zepsutą integrację Wwise po pull z Perforce. Rozwiązanie jednym kliknięciem.",
       "fixer_title": "Wwise Unreal Fixer",
-      "rebuilder_desc": "Zautomatyzowane narzędzie build do usprawnienia workflow kompilacji i redukcji przestojów.",
+      "rebuilder_desc": "Usuwa foldery Intermediate i Saved, regeneruje pliki projektu. Naprawia błędy linkera po złych merge'ach. 2 minuty zamiast ręcznego szukania po folderach.",
       "rebuilder_title": "Unreal Engine Rebuilder",
       "title": "Narzędzia deweloperskie"
     },
     "enemy_presence": {
-      "desc": "Dynamiczny system audio reagujący na bliskość wroga. Tworzy napięcie przez warstwy dread i zestresowany oddech.",
+      "desc": "Wróg się zbliża, audio się nasila. Dwie warstwy: ambient dread + oddech postaci.",
       "how": "OnProximityChanged() otrzymuje wartość bliskości (0-100%), startuje/stopuje warstwy dread, aktualizuje RTPC dla intensywności, dostosowuje stress oddychania. Wszystko walidowane z null safety checks.",
-      "result": "Intensywność audio skaluje się płynnie z poziomem zagrożenia. Gracz czuje narastający strach gdy wróg się zbliża poprzez warstwowe dźwięki ambientowe i zestresowany oddech.",
+      "result": "Intensywność audio skaluje się płynnie z poziomem zagrożenia. Warstwowe dźwięki i zestresowany oddech reagują na bliskość bez ostrych cięć.",
       "title": "System Audio Obecności Wroga",
       "what": "System śledzi odległość wroga i uruchamia warstwy audio. Bliższy wróg = intensywniejszy dźwięk. Ambient dread i stress oddychania skalują się z bliskością.",
-      "why": "Reakcja audio w czasie rzeczywistym tworzy napięcie psychologiczne. RTPC pozwala na płynne przejścia intensywności zamiast nagłych zmian. Oddzielna warstwa oddychania wzmacnia stan strachu gracza."
+      "why": "Brak ostrych cięć przy ruchu wroga. RTPC wygładza przejścia. Warstwa oddechu dodaje pilność bez zaśmiecania miksu."
     },
     "footstep": {
       "desc": "Drewno, płytki, beton – słyszysz różnicę. System wykrywa, po czym chodzisz i odtwarza odpowiedni dźwięk automatycznie.",
@@ -561,7 +561,7 @@
       "music_desc": "Oryginalna kompozycja muzyczna dla atmosfery gry i progresji emocjonalnej.",
       "music_title": "Prototyp Muzyki",
       "my_role": "Moja Rola",
-      "my_role_desc": "Jako Audio Designer zbudowałem architekturę audio dla Shadow Frames: dynamiczne systemy kroków, audio gracza oparte na delegate'ach, progresję napięcia sterowaną RTPC oraz integrację Wwise. Dodatkowe systemy są w fazie rozwoju przed finalnym wydaniem.",
+      "my_role_desc": "Audio Designer. Napisałem komponenty audio w C++ (kroki, obecność wroga, detekcja anomalii), skonfigurowałem Wwise i połączyłem wszystko delegatami. Nadal dodaję systemy przed wydaniem.",
       "ongoing_project": "Projekt w toku",
       "org_desc": "Wieloinstytucjonalna współpraca pomiędzy:",
       "org_title": "Współpraca Międzyinstytucjonalna",

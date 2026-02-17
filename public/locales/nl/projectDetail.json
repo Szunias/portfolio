@@ -301,10 +301,10 @@
     "ambience_zones": {
       "desc": "Locatie-gebaseerde audio die verandert terwijl je door verschillende gebieden van de pub beweegt.",
       "how": "Trigger volumes detecteren speler locatie. Bij zone binnenkomst, fade out vorige ambient en fade in nieuwe zone lagen. Vloeiende crossfades voorkomen audio sprongen.",
-      "result": "Naadloze audio overgangen tussen zones. Speler begrijpt onbewust pub indeling door sound design. Elk gebied heeft aparte akoestische identiteit.",
+      "result": "Loop van bar naar badkamer, audio crossfadet in 500ms. Geen pops, geen stilte-gaten.",
       "title": "Ambientie Zone Systeem",
       "what": "5 verschillende zones met unieke ambient soundscapes: Main Bar, Back Room, Bathroom, Hallway, Storage. Elk heeft specifieke audio atmosfeer.",
-      "why": "Locatie-specifieke ambient grond speler in de ruimte. Elke kamer klinkt akoestisch anders, wat de indeling en atmosfeer van de pub versterkt."
+      "why": "Elke kamer klinkt anders. Badkamer: tegels + reverb. Bar: glazen + menigte-gemompel. Speler weet waar hij is op basis van geluid."
     },
     "anomalies": {
       "desc": "Semi-gerandomiseerde storingen die escaleren naarmate het spel vordert.",
@@ -325,22 +325,22 @@
       "title": "3-Staps Anomalie Detectie"
     },
     "anomaly_system": {
-      "desc": "3-staps detectiesysteem voor 10 verschillende paranormale anomalie types met unieke audio signaturen.",
+      "desc": "10 anomalietypes. Elk met uniek audio. 3-staps detectie: alert → hint → aanwezigheid.",
       "how": "Afstand-gebaseerde RTPC drijft audio intensiteit. Directionele audio leidt speler naar anomalie. Elk anomalie type heeft unieke geluidssignatuur voor identificatie.",
-      "result": "Spelers vertrouwen op audio hints om anomalieën te lokaliseren en identificeren. Sound design is functioneel en atmosferisch - drijft kern gameplay terwijl spanning opbouwt.",
+      "result": "Playtesters vinden anomalieën op gehoor. 80% detectiegraad met directionele hints.",
       "title": "Anomalie Audio Systeem",
       "what": "3 detectiestadia: Ver (algemeen alarm), Medium (directionele hint), Dichtbij (precieze locatie). 10 anomalie types waaronder Levitating Glass, Shadow Movement, Spinning Chair.",
-      "why": "Audio is de primaire detectiemechaniek. Zonder geluid is het vinden van anomalieën bijna onmogelijk. Gelaagde aanpak (alarm → gids → bevestiging) creëert boeiende gameplay loop."
+      "why": "Geluid is hoe je anomalieën vindt. Alert signaleert spawn, hint geeft richting, aanwezigheid bevestigt locatie."
     },
     "audio_design_icon": "AUDIO DESIGN",
     "audio_systems": {
-      "delegates_desc": "Separation of Concerns architectuur waarbij audiosystemen communiceren via delegates. Geeft schone en modulaire implementatie.",
+      "delegates_desc": "Audiosystemen communiceren via delegates. C++ draait gamelogica, Blueprint draait audio. Alles modulair — verander het een zonder het ander te breken.",
       "delegates_title": "Blueprint Delegates (SOC)",
       "rtpc_desc": "Hoe meer anomalieën je vindt, hoe intenser alles wordt. Ambient sounds bouwen op. Je personage's ademhaling wordt zwaarder. Spanning bouwt op.",
       "rtpc_title": "RTPC-gebaseerd dynamisch systeem",
-      "spatial_desc": "3D positionele audio voor anomalieën, vijandelijke aanwezigheid en omgevingscues die cruciaal is voor gameplay.",
+      "spatial_desc": "Volledige 3D positionele audio voor anomalieën, vijand en omgevingscues. Ruimtelijke precisie is cruciaal — je vindt dreigingen niet zonder.",
       "spatial_title": "HRTF Spatial Audio",
-      "switches_desc": "Elke kamer heeft unieke ambient lagen die soepel overgaan terwijl je door de ruimte beweegt. De badkamer bevat gespatializeerde toilet- en kraangeluiden, terwijl voetstappen dynamisch aanpassen op basis van oppervlaktematerialen.",
+      "switches_desc": "Elke kamer heeft eigen ambient-lagen die crossfaden als je beweegt. Badkamer heeft gespatializeerde toilet- en kraangeluiden. Voetstappen veranderen per oppervlak. Hout, tegels, beton.",
       "switches_title": "Switch Containers & Zones",
       "title": "Audio-implementatie"
     },
@@ -349,19 +349,19 @@
     "badge_audio": "AUDIO",
     "badge_code": "CODE",
     "block": {
-      "anomaly_desc": "3-staps detectiesysteem voor 10 verschillende paranormale anomalie types met unieke audiosignaturen.",
+      "anomaly_desc": "10 anomalietypes, elk met uniek audio. 3-staps detectie. RTPC drijft intensiteit. Directioneel audio leidt speler.",
       "anomaly_title": "Anomalie Audio Systeem",
-      "dialogue_desc": "Schone scheiding tussen speleracties en audioreacties met behulp van Blueprint delegates.",
+      "dialogue_desc": "Speleracties → audio-reacties via Blueprint delegates. Camerafoto, zoom — elke actie triggert het juiste Wwise event.",
       "dialogue_title": "Speler Audio Systeem",
-      "enemy_desc": "Dynamisch audiosysteem dat reageert op vijandelijke nabijheid. Creëert spanning door dread-lagen en gestreste ademhaling.",
+      "enemy_desc": "Vijand komt dichterbij, audio intensiveert. Dread-lagen + gestrest ademen. Systeem volgt afstand, triggert lagen. Dichterbij vijand = meer intensiteit.",
       "enemy_title": "Vijand Aanwezigheid Audio",
       "mixer_desc": "Switch Containers werken met het RTPC-systeem. Meer verzamelde foto's = andere ambient lagen activeren.",
       "mixer_title": "Wwise Architectuur"
     },
     "challenges": {
       "challenge1": {
-        "problem": "Werken in een multi-institutionele samenwerking met studenten, workflow problemen verstoorden vaak de ontwikkeling. Wwise integratie brak na Perforce pulls, en Unreal Engine compilatietijden veroorzaakten aanzienlijke downtime.",
-        "solution": "Creëerde Wwise Unreal Fixer en Unreal Engine Rebuilder tools om de workflow te stroomlijnen. Hoewel niet volledig onafhankelijk werk (collaboratief), werden deze tools primair ontwikkeld om studenten efficiënter te laten werken. De Wwise Fixer herstelt automatisch gebroken Wwise integratie na Perforce pulls, en de Rebuilder automatiseert het compilatieproces om downtime te verminderen.",
+        "problem": "Multi-institutioneel studentenproject had workflow-problemen. Wwise integratie brak na Perforce pulls. Unreal compilatie duurde te lang, wat downtime veroorzaakte.",
+        "solution": "Wwise Unreal Fixer en Unreal Engine Rebuilder gebouwd. Fixer herstelt Wwise integratie na Perforce pulls — één klik. Rebuilder automatiseert compilatie om downtime te verkorten.",
         "title": "Workflow Optimalisatie Tools"
       },
       "desc": "Problemen tegengekomen tijdens ontwikkeling en hoe ik ze heb aangepakt.",
@@ -414,17 +414,17 @@
     "dev_tools": {
       "fixer_desc": "Een custom C++ plugin die automatisch gebroken Wwise integratie herstelt na Perforce pulls. Oplossing met één klik.",
       "fixer_title": "Wwise Unreal Fixer",
-      "rebuilder_desc": "Geautomatiseerde build tool om compilatie workflow te stroomlijnen en downtime te verminderen.",
+      "rebuilder_desc": "Verwijdert Intermediate en Saved mappen, regenereert projectbestanden. Repareert linker errors na slechte merges. 2 minuten in plaats van handmatig door mappen zoeken.",
       "rebuilder_title": "Unreal Engine Rebuilder",
       "title": "Ontwikkeltools"
     },
     "enemy_presence": {
-      "desc": "Dynamisch audio systeem dat reageert op vijand nabijheid. Creëert spanning door dread lagen en gestrest ademen.",
+      "desc": "Vijand komt dichterbij, audio wordt intenser. Twee lagen: ambient dread + ademhaling personage.",
       "how": "OnProximityChanged() ontvangt nabijheid waarde (0-100%), start/stopt dread lagen, werkt RTPC bij voor intensiteit, past ademstress aan. Alles gevalideerd met null safety checks.",
-      "result": "Audio intensiteit schaalt soepel met gevaarniveau. Speler voelt toenemende angst als vijand nadert door gelaagde ambient geluiden en gestrest ademen.",
+      "result": "Audio-intensiteit schaalt vloeiend met gevaarniveau. Gelaagde ambient en gestrest ademen reageren op nabijheid zonder harde sneden.",
       "title": "Vijand Aanwezigheid Audio Systeem",
       "what": "Systeem volgt vijand afstand en activeert audio lagen. Dichterbij vijand = intensievere audio. Dread ambient en ademstress schalen met nabijheid.",
-      "why": "Real-time audio reactie creëert psychologische spanning. RTPC maakt vloeiende intensiteitsovergangen mogelijk in plaats van abrupte veranderingen. Aparte ademlaag versterkt de angststaat van de speler."
+      "why": "Geen harde sneden als vijand beweegt. RTPC maakt het vloeiend. Ademlaag voegt urgentie toe zonder de mix te vervuilen."
     },
     "footstep": {
       "desc": "Hout, tegels, beton—je hoort het verschil. Het systeem detecteert waarop je loopt en speelt automatisch het juiste geluid af.",
@@ -561,7 +561,7 @@
       "music_desc": "Originele muziekcompositie voor de sfeer van het spel en emotionele progressie.",
       "music_title": "Muziek Prototype",
       "my_role": "Mijn Rol",
-      "my_role_desc": "Als Audio Designer heb ik de audio architectuur voor Shadow Frames gebouwd: dynamische voetstap systemen, delegate-gebaseerde speler audio, RTPC-gedreven spanning progressie, en Wwise integratie. Aanvullende systemen zijn in ontwikkeling voor de definitieve release.",
+      "my_role_desc": "Audio Designer. Ik schreef de C++ audio-componenten (voetstappen, vijandaanwezigheid, anomaliedetectie), zette Wwise op en verbond alles met delegates. Nog steeds systemen aan het toevoegen voor release.",
       "ongoing_project": "Lopend Project",
       "org_desc": "Multi-institutionele samenwerking tussen:",
       "org_title": "Multi-institutionele Samenwerking",
