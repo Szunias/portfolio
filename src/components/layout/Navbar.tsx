@@ -47,8 +47,8 @@ const Navbar = () => {
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
           scrolled
-            ? 'bg-black/95 backdrop-blur-xl border-white/10 py-3'
-            : 'bg-black/80 backdrop-blur-md border-transparent py-5'
+            ? 'bg-primary border-border py-3'
+            : 'bg-primary/80 border-transparent py-5'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -56,32 +56,37 @@ const Navbar = () => {
 
             {/* Logo */}
             <Link to={ROUTES.HOME} className="flex flex-col">
-              <span className="font-bold text-lg text-white">IGOR SZUNIEWICZ</span>
-              <span className="text-[10px] text-gray-400 uppercase tracking-wider">{t('brand.tagline', 'Audio Designer')}</span>
+              <span className="font-display text-lg text-cream-light tracking-wide">IGOR SZUNIEWICZ</span>
+              <span className="text-[10px] text-dim uppercase tracking-wider font-mono">{t('brand.tagline', 'Audio Designer')}</span>
             </Link>
 
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center gap-6">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`text-sm ${location.pathname === link.path ? 'text-white font-semibold' : 'text-gray-400 hover:text-white'}`}
-                  aria-current={location.pathname === link.path ? 'page' : undefined}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <div className="h-4 w-px bg-white/20"></div>
-              <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white" aria-label="GitHub"><Github size={16} /></a>
-              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer me" className="text-gray-400 hover:text-white" aria-label="LinkedIn"><Linkedin size={16} /></a>
+              {navLinks.map((link) => {
+                const isActive = location.pathname === link.path;
+                return (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={`text-sm transition-colors duration-200 ${isActive ? 'text-cream font-medium' : 'text-dim hover:text-cream'}`}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    <span className={isActive ? 'border-b border-accent pb-0.5' : ''}>
+                      {link.name}
+                    </span>
+                  </Link>
+                );
+              })}
+              <div className="h-4 w-px bg-border"></div>
+              <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" className="text-dim hover:text-cream transition-colors duration-200" aria-label="GitHub"><Github size={16} /></a>
+              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer me" className="text-dim hover:text-cream transition-colors duration-200" aria-label="LinkedIn"><Linkedin size={16} /></a>
               <LanguageSwitcher />
             </div>
 
             {/* Mobile Hamburger */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden bg-gray-800 text-white p-3 rounded-lg hover:bg-gray-700"
+              className="md:hidden text-cream p-3 rounded-sm border border-border hover:border-border-hover transition-colors"
               aria-label="Toggle menu"
             >
               {isOpen ? <X size={20} /> : <Menu size={20} />}
@@ -91,7 +96,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu - ANIMATED SLIDE FROM RIGHT */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -100,17 +105,17 @@ const Navbar = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="md:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+              className="md:hidden fixed inset-0 z-40 bg-black/60"
               onClick={() => setIsOpen(false)}
             />
 
-            {/* Menu Panel - slides from right */}
+            {/* Menu Panel */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="md:hidden fixed inset-y-0 right-0 w-80 max-w-full z-50 bg-black shadow-2xl flex flex-col pt-20 px-6"
+              className="md:hidden fixed inset-y-0 right-0 w-80 max-w-full z-50 bg-primary border-l border-border flex flex-col pt-20 px-6"
               role="dialog"
               aria-modal="true"
               aria-label="Main navigation menu"
@@ -126,8 +131,8 @@ const Navbar = () => {
                     <Link
                       to={link.path}
                       onClick={closeMenu}
-                      className={`text-2xl font-bold py-3 border-b border-gray-800 block ${
-                        location.pathname === link.path ? 'text-cyan-400' : 'text-white hover:text-gray-300'
+                      className={`text-2xl font-display py-3 border-b border-border block ${
+                        location.pathname === link.path ? 'text-accent' : 'text-cream hover:text-accent-light'
                       }`}
                       aria-current={location.pathname === link.path ? 'page' : undefined}
                     >
@@ -137,10 +142,10 @@ const Navbar = () => {
                 ))}
               </div>
 
-              <div className="flex items-center justify-between mt-auto mb-8 pt-6 border-t border-gray-800">
+              <div className="flex items-center justify-between mt-auto mb-8 pt-6 border-t border-border">
                 <div className="flex items-center gap-4">
-                  <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700" aria-label="GitHub"><Github size={24} /></a>
-                  <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer me" className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700" aria-label="LinkedIn"><Linkedin size={24} /></a>
+                  <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" className="text-dim hover:text-cream p-3 transition-colors" aria-label="GitHub"><Github size={24} /></a>
+                  <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer me" className="text-dim hover:text-cream p-3 transition-colors" aria-label="LinkedIn"><Linkedin size={24} /></a>
                 </div>
                 <LanguageSwitcher dropUp />
               </div>

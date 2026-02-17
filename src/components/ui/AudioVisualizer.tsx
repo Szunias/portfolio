@@ -34,7 +34,7 @@ const AudioVisualizer = () => {
       const center = width / 2;
       const maxBarHeight = height * 0.4; // Max height relative to container
       
-      ctx.fillStyle = 'rgba(56, 189, 248, 0.3)'; // text-accent color with opacity
+      ctx.fillStyle = 'rgba(193, 127, 62, 0.3)'; // accent color with opacity
 
       for (let i = 0; i < barCount; i++) {
         // Generate noise-like value using combined sine waves

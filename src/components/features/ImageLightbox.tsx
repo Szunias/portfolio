@@ -37,7 +37,7 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
             <div key={i} className="group">
               <div
                 onClick={() => !isVideo && handleOpenLightbox(src, caption)}
-                className={`relative rounded-xl overflow-hidden border border-white/10 bg-slate-900/50 ${!isVideo ? 'cursor-pointer hover:border-accent/50 hover:shadow-[0_0_30px_rgba(56,189,248,0.2)]' : ''} transition-all duration-500`}
+                className={`relative rounded-sm overflow-hidden border border-border ${!isVideo ? 'cursor-pointer hover:border-border-hover' : ''} transition-colors duration-200`}
               >
                 {isVideo ? (
                   <video
@@ -48,19 +48,19 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
                   />
                 ) : (
                   <>
-                    <img src={`/${src}`} alt={caption ? t(caption, caption) : 'Gallery image'} loading="lazy" className="w-full h-auto object-cover transition-transform group-hover:scale-[1.02]" />
+                    <img src={`/${src}`} alt={caption ? t(caption, caption) : 'Gallery image'} loading="lazy" className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.01]" />
                     {/* Zoom overlay */}
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity p-3 bg-white/20 backdrop-blur-xl border border-white/30 rounded-full hover:scale-110 hover:shadow-[0_0_30px_rgba(56,189,248,0.5)]">
-                        <ZoomIn size={24} className="text-accent drop-shadow-[0_0_10px_rgba(56,189,248,0.6)]" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity p-3 border border-border-hover rounded-sm">
+                        <ZoomIn size={24} className="text-cream" />
                       </div>
                     </div>
                   </>
                 )}
               </div>
               {caption && (
-                <p className="mt-2 text-sm text-slate-400 flex items-center gap-2">
-                  <span className="text-accent font-medium">IMG:</span>
+                <p className="mt-2 text-sm text-dim flex items-center gap-2">
+                  <span className="text-accent font-mono text-xs">IMG:</span>
                   {t(caption, caption)}
                 </p>
               )}
@@ -77,21 +77,22 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedImage(null)}
-            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out"
+            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 cursor-zoom-out"
           >
             {/* Close button */}
             <button
               onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:scale-110"
+              className="absolute top-4 right-4 p-2 border border-border hover:border-border-hover rounded-sm transition-colors duration-200"
             >
-              <X size={24} className="text-white" />
+              <X size={24} className="text-cream" />
             </button>
 
             {/* Image */}
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.2 }}
               onClick={(e) => e.stopPropagation()}
               className="max-w-[90vw] max-h-[85vh] cursor-default"
             >
@@ -103,11 +104,11 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
               <img
                 src={`/${selectedImage.src}`}
                 alt={selectedImage.caption ? t(selectedImage.caption, selectedImage.caption) : t('gallery.enlarged_alt', 'Enlarged gallery image view')}
-                className={`max-w-full max-h-[85vh] object-contain rounded-lg transition-opacity ${lightboxLoading ? 'opacity-0' : 'opacity-100'}`}
+                className={`max-w-full max-h-[85vh] object-contain rounded-sm transition-opacity ${lightboxLoading ? 'opacity-0' : 'opacity-100'}`}
                 onLoad={() => setLightboxLoading(false)}
               />
               {selectedImage.caption && (
-                <p className="mt-4 text-center text-slate-300">
+                <p className="mt-4 text-center text-dim">
                   {t(selectedImage.caption, selectedImage.caption)}
                 </p>
               )}

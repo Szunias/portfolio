@@ -42,27 +42,25 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.3 }}
             className="text-center mb-16"
           >
-            <h2 className="text-5xl md:text-6xl font-display font-bold mb-6">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
-                {t('projects.featured_title', 'Selected Work')}
-              </span>
+            <h2 className="text-5xl md:text-6xl font-display text-cream-light mb-6">
+              {t('projects.featured_title', 'Selected Work')}
             </h2>
 
-            <p className="text-slate-400 text-lg max-w-2xl mx-auto mb-8">
+            <p className="text-dim text-lg max-w-2xl mx-auto mb-8">
               {t('projects.subtitle', 'A collection of my game audio and development projects')}
             </p>
 
             <Link
               to="/projects"
-              className="group inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+              className="group inline-flex items-center gap-2 text-dim hover:text-cream transition-colors"
             >
-              <span className="border-b border-slate-600 group-hover:border-accent transition-colors">
+              <span className="border-b border-border group-hover:border-accent transition-colors">
                 {t('projects.view_all', 'View All Projects')}
               </span>
               <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
@@ -74,11 +72,11 @@ const Home = () => {
             {displayProjects.map((project, index) => (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, y: 15 }}
+                initial={{ opacity: 0, y: 8 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{
-                  duration: 0.35,
+                  duration: 0.3,
                   delay: index * 0.05,
                 }}
               >
@@ -96,7 +94,7 @@ const Home = () => {
           >
             <Link
               to="/projects"
-              className="group inline-flex items-center gap-2 px-8 py-4 bg-white/5 backdrop-blur-sm border border-white/10 text-slate-400 rounded-xl hover:bg-white/10 hover:border-accent/40 hover:text-white transition-all"
+              className="group inline-flex items-center gap-2 px-8 py-4 border border-border text-dim rounded-sm hover:border-border-hover hover:text-cream transition-colors duration-200"
             >
               {t('projects.view_all', 'View All Projects')}
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />

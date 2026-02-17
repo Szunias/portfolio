@@ -31,15 +31,13 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
     observer.observe(video);
     return () => observer.disconnect();
   }, []);
-  
+
   const titleKey = `project_${project.id}_title`;
   const descKey = `project_${project.id}_short_desc`;
-  const isShadowFrames = project.id === 'shadow_frames';
 
   // Prioritize key tech tags
   const keyTech = ['C++', 'Unreal', 'Wwise', 'MetaSounds', 'Blueprints', 'Unity', 'C#'];
   const allTags = [...(project.technologies || []), ...(project.tags || [])];
-  // Deduplicate and prioritize
   const uniqueTags = Array.from(new Set(allTags));
   const displayTags = uniqueTags.sort((a, b) => {
       const aIsKey = keyTech.some(k => a.includes(k)) ? 1 : 0;
@@ -48,28 +46,24 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
   }).slice(0, 3);
 
   const cardContent = (
-    <div className="flex flex-col h-full relative z-10">
-      {/* Image Section - Technical Viewport */}
-      <div className={`relative w-full aspect-video overflow-hidden border-b transition-colors bg-neutral-900 
-        ${isShadowFrames ? 'border-neutral-800 group-hover:border-white/40' : 'border-white/5 group-hover:border-white/40'}`}>
-        
-        <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/40 via-black/20 to-transparent group-hover:from-black/10 group-hover:via-transparent group-hover:to-transparent transition-all duration-500"></div>
-        
+    <div className="flex flex-col h-full">
+      {/* Image Section */}
+      <div className="relative w-full aspect-video overflow-hidden border-b border-border">
         {media.thumbnail ? (
             media.thumbnail.endsWith('.mp4') || media.thumbnail.endsWith('.webm') ? (
             <video
                 ref={videoRef}
                 src={`/${media.thumbnail}`}
-                className={`w-full h-full object-cover transition-all duration-700 ease-out opacity-90 brightness-90 group-hover:opacity-100 group-hover:brightness-110 group-hover:scale-105`}
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
                 muted
                 loop
                 playsInline
                 preload="none"
             />
             ) : (
-            <div className={`w-full h-full transition-all duration-700 ease-out opacity-90 brightness-90 group-hover:opacity-100 group-hover:brightness-110 group-hover:scale-105`}>
-                <ImageWithLoader 
-                    src={`/${media.thumbnail}`} 
+            <div className="w-full h-full opacity-90 group-hover:opacity-100 transition-opacity duration-300">
+                <ImageWithLoader
+                    src={`/${media.thumbnail}`}
                     alt={t(titleKey, project.title)}
                     loading={index < 4 ? "eager" : "lazy"}
                     className="h-full w-full"
@@ -77,118 +71,77 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             </div>
             )
         ) : (
-            <div className="w-full h-full bg-neutral-900 flex items-center justify-center">
-                <span className="text-white/20 font-mono text-xs tracking-widest">{t('card.no_signal', 'NO_SIGNAL')}</span>
+            <div className="w-full h-full bg-secondary flex items-center justify-center">
+                <span className="text-dim font-mono text-xs tracking-widest">{t('card.no_signal', 'NO_SIGNAL')}</span>
             </div>
         )}
-        
-        {/* Overlay Badge */}
+
+        {/* Year Badge */}
         <div className="absolute top-3 right-3 z-20">
-            <span className={`px-2 py-1 backdrop-blur-sm border text-[10px] font-mono uppercase tracking-wider rounded shadow-sm
-              ${isShadowFrames 
-                ? 'bg-black/80 border-neutral-700 text-neutral-400' 
-                : 'bg-black/60 border-white/10 text-white/80'
-              }`}>
+            <span className="px-2 py-1 bg-primary/80 border border-border text-[10px] font-mono text-dim uppercase tracking-wider rounded-sm">
                 {project.year || '202X'}
             </span>
         </div>
       </div>
 
       {/* Content Section */}
-      <div className={`flex-1 p-5 flex flex-col relative ${isShadowFrames ? 'bg-[#050505]' : 'bg-[#0a0a0a]'}`}>
-        
-        {/* Shadow Frames Special Effects - Black Mist */}
-        {isShadowFrames && (
-          <>
-            {/* Rising Mist Gradient */}
-            <div className="absolute inset-0 z-0 bg-gradient-to-t from-black via-neutral-900/80 to-transparent opacity-90 pointer-events-none" />
-            {/* Foggy noise overlay */}
-            <div className="absolute inset-0 z-0 opacity-30 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-800/40 via-transparent to-transparent pointer-events-none" />
-          </>
-        )}
-
-        {/* Subtle Grid Background (Standard) */}
-        {!isShadowFrames && (
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-        )}
-
+      <div className="flex-1 p-5 flex flex-col">
         {/* Header */}
-        <div className="mb-4 relative z-10">
-            <h3 className={`text-xl font-display font-bold mb-2 truncate transition-all duration-300 text-slate-200 group-hover:text-white group-hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.3)]`}>
+        <div className="mb-4">
+            <h3 className="text-xl font-display text-cream mb-2 truncate group-hover:text-cream-light transition-colors duration-200">
                 {t(titleKey, project.title)}
             </h3>
-            <p className="text-slate-400 text-sm font-light leading-relaxed line-clamp-2 mb-4 h-10">
+            <p className="text-dim text-sm font-light leading-relaxed line-clamp-2 mb-4 h-10">
                 {t(descKey, project.short_description)}
             </p>
 
             {/* Tech Stack Pills */}
             <div className="flex flex-wrap gap-2">
                 {displayTags.map(tag => (
-                    <span key={tag} className={`px-2 py-1 rounded border text-[10px] font-mono transition-colors whitespace-nowrap
-                      ${isShadowFrames
-                        ? 'bg-neutral-900/80 border-neutral-800 text-slate-500 group-hover:border-white/30 group-hover:text-white'
-                        : 'bg-white/5 border-white/10 text-slate-400 group-hover:border-white/30 group-hover:text-white'
-                      }`}>
+                    <span key={tag} className="px-2 py-1 rounded-sm border border-border text-[10px] font-mono text-dim group-hover:border-border-hover group-hover:text-cream transition-colors whitespace-nowrap">
                         {tag}
                     </span>
                 ))}
             </div>
         </div>
 
-        {/* Spacer to push footer down */}
+        {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Technical Footer Data */}
-        <div className={`mt-4 pt-4 border-t flex items-center justify-between text-[10px] font-mono transition-colors relative z-10
-          ${isShadowFrames 
-            ? 'border-neutral-800 text-slate-600 group-hover:text-slate-300' 
-            : 'border-white/5 text-slate-500 group-hover:text-slate-300'
-          }`}>
+        {/* Footer */}
+        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-[10px] font-mono text-dim group-hover:text-cream transition-colors duration-200">
             <div className="flex items-center gap-1.5">
                 <Tag size={12} />
                 <span className="uppercase tracking-wider">{project.category || 'Audio'}</span>
             </div>
 
-            <div className="flex items-center gap-2 group/btn">
-                <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:inline text-white">
+            <div className="flex items-center gap-2">
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hidden sm:inline">
                   {t('card.view_project', 'View Project')}
                 </span>
-                <div className="group-hover:translate-x-1 transition-transform text-white">
+                <div className="group-hover:translate-x-1 transition-transform">
                     <ArrowRight size={14} />
                 </div>
             </div>
         </div>
-
       </div>
     </div>
   );
 
   return (
     <div
-      className={`group relative w-full rounded-xl overflow-hidden transition-all duration-500 animate-fade-in-up
-        ${isShadowFrames 
-          ? 'bg-[#050505] border border-neutral-800 shadow-[0_0_60px_-10px_rgba(255,255,255,0.1)] hover:border-white/50 hover:shadow-[0_0_120px_-10px_rgba(255,255,255,0.25)] hover:scale-[1.02]' 
-          : 'bg-[#0a0a0a] border border-white/5 hover:border-accent/30 hover:shadow-[0_0_60px_-10px_rgba(56,189,248,0.15)] hover:scale-[1.02]'
-        }
-      `}
+      className="group relative w-full rounded-sm overflow-hidden bg-secondary border border-border hover:border-border-hover hover:-translate-y-0.5 transition-all duration-200 animate-fade-in-up"
       style={{ animationDelay: `${index < 4 ? index * 50 : 0}ms` }}
     >
-      {/* Animated Mist Layer for Shadow Frames */}
-      {isShadowFrames && (
-        <div className="absolute -inset-[100%] animate-mist-slow opacity-30 pointer-events-none z-0">
-          <div className="w-full h-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(255,255,255,0.1)_60deg,transparent_120deg,rgba(255,255,255,0.1)_180deg,transparent_240deg,rgba(255,255,255,0.1)_300deg,transparent_360deg)] blur-3xl" />
-        </div>
-      )}
-
       {project.externalLink ? (
-        <a href={project.externalLink} target="_blank" rel="noopener noreferrer" className="block h-full relative z-10">
+        <a href={project.externalLink} target="_blank" rel="noopener noreferrer" className="block h-full">
             <div className="absolute top-3 left-3 z-30">
-              <ExternalLink size={14} className="text-white/60" />
+              <ExternalLink size={14} className="text-dim" />
             </div>
             {cardContent}
         </a>
       ) : (
-        <Link to={`/projects/${project.id}`} className="block h-full relative z-10">
+        <Link to={`/projects/${project.id}`} className="block h-full">
             {cardContent}
         </Link>
       )}

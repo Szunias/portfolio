@@ -20,18 +20,18 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.8 }}
             >
-                <h2 className="text-2xl md:text-3xl font-bold text-white mb-8">
+                <h2 className="text-2xl md:text-3xl font-display font-bold text-cream-light mb-8">
                     {t('solution.title')}
                 </h2>
 
                 {/* Story prose */}
-                <div className="space-y-6 text-slate-300 text-lg leading-relaxed mb-12">
+                <div className="space-y-6 text-dim text-lg leading-relaxed mb-12">
                     <p>{t('solution.story')}</p>
                     <p>{t('solution.insight')}</p>
                 </div>
 
                 {/* Before/After Comparison */}
-                <h3 className="text-lg font-bold text-white mb-4">
+                <h3 className="text-lg font-display font-bold text-cream-light mb-4">
                     {t('solution.before_after_title')}
                 </h3>
                 <div className="grid md:grid-cols-2 gap-6 mb-12">
@@ -39,7 +39,7 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={isInView ? { opacity: 1, x: 0 } : {}}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="bg-red-500/5 border border-red-500/20 rounded-2xl p-8 text-center"
+                        className="bg-red-500/5 border border-red-500/20 rounded-sm p-8 text-center"
                     >
                         <div className="text-red-400 text-sm font-medium uppercase tracking-wider mb-4">
                             {t('solution.without_cache')}
@@ -55,7 +55,7 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                         initial={{ opacity: 0, x: 20 }}
                         animate={isInView ? { opacity: 1, x: 0 } : {}}
                         transition={{ duration: 0.6, delay: 0.3 }}
-                        className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-8 text-center"
+                        className="bg-emerald-500/5 border border-emerald-500/20 rounded-sm p-8 text-center"
                     >
                         <div className="text-emerald-400 text-sm font-medium uppercase tracking-wider mb-4">
                             {t('solution.with_cache')}
@@ -69,7 +69,7 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                 </div>
 
                 {/* 4-step caching flow */}
-                <h3 className="text-lg font-bold text-white mb-4">
+                <h3 className="text-lg font-display font-bold text-cream-light mb-4">
                     {t('solution.flow_title')}
                 </h3>
                 <div className="grid md:grid-cols-4 gap-4 mb-12">
@@ -82,24 +82,24 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                             className="relative"
                         >
                             {index < steps.length - 1 && (
-                                <div className="hidden md:block absolute top-1/2 -right-2 transform -translate-y-1/2 z-10 text-xl text-slate-600">
+                                <div className="hidden md:block absolute top-1/2 -right-2 transform -translate-y-1/2 z-10 text-xl text-dim">
                                     &rarr;
                                 </div>
                             )}
 
-                            <div className="bg-white/5 border border-white/10 rounded-xl p-5 h-full">
+                            <div className="bg-secondary border border-border rounded-sm p-5 h-full">
                                 <div className="flex items-center gap-2 mb-3">
-                                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${step.color} flex items-center justify-center`}>
+                                    <div className={`w-8 h-8 rounded-sm bg-gradient-to-br ${step.color} flex items-center justify-center`}>
                                         <step.icon className="w-4 h-4 text-white" />
                                     </div>
-                                    <span className="text-xs font-mono text-slate-500">
+                                    <span className="text-xs font-mono text-dim">
                                         {(index + 1).toString().padStart(2, '0')}
                                     </span>
                                 </div>
-                                <h4 className="text-sm font-bold text-white mb-1">
+                                <h4 className="text-sm font-bold text-cream-light mb-1">
                                     {t(`solution.steps.${step.key}.label`)}
                                 </h4>
-                                <p className="text-slate-400 text-xs">
+                                <p className="text-dim text-xs">
                                     {t(`solution.steps.${step.key}.description`)}
                                 </p>
                             </div>
@@ -108,7 +108,7 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                 </div>
 
                 {/* Use cases in prose */}
-                <p className="text-slate-400 text-base leading-relaxed">
+                <p className="text-dim text-base leading-relaxed">
                     {t('solution.usecases')}
                 </p>
             </motion.div>

@@ -7,48 +7,36 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#050505", // Deeper black like old site
-        secondary: "#0a0a0a", // Slightly lighter for cards
-        tertiary: "#0f0f0f", // Even lighter
-        accent: "#38bdf8", // Sky blue
-        gold: "#c9a961", // From Amorak/Shadow Frames
-        dim: "#a1a1aa", // Dim text
-        success: "#22c55e", // Green-500
+        primary: "#111111",
+        secondary: "#161616",
+        tertiary: "#1c1c1c",
+        accent: "#c17f3e",
+        'accent-light': "#d4a574",
+        dim: "#8a8a8a",
+        cream: "#e8e4df",
+        'cream-light': "#f0ece6",
+        border: "#2a2a2a",
+        'border-hover': "#3a3a3a",
+        gold: "#c17f3e",
+        success: "#22c55e",
         canvas: {
-          DEFAULT: "#0d1117", // GitHub Dark dim
-          header: "#161b22", // GitHub Dark header
-          border: "#30363d", // GitHub Dark border
+          DEFAULT: "#161616",
+          header: "#1c1c1c",
+          border: "#2a2a2a",
         }
       },
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'],
-        display: ['Sora', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'hero-glow': 'conic-gradient(from 180deg at 50% 50%, #2a8af6 0deg, #a853ba 180deg, #e92a67 360deg)',
+        sans: ['DM Sans', 'sans-serif'],
+        display: ['Cormorant Garamond', 'serif'],
+        mono: ['IBM Plex Mono', 'monospace'],
       },
       keyframes: {
         'music-bar': {
           '0%, 100%': { height: '20%' },
           '50%': { height: '100%' },
         },
-        'mist': {
-          '0%': { transform: 'rotate(0deg)' },
-          '100%': { transform: 'rotate(360deg)' },
-        },
-        'visualizer-bar': {
-          '0%, 100%': { height: '10%' },
-          '25%': { height: '60%' },
-          '50%': { height: '90%' },
-          '75%': { height: '40%' },
-        }
       },
-      animation: {
-        'mist-slow': 'mist 20s linear infinite',
-        'visualizer-bar': 'visualizer-bar 0.8s ease-in-out infinite',
-      },
+      animation: {},
     },
   },
   plugins: [],

@@ -31,7 +31,7 @@ const ProjectDetails = () => {
   if (!project) return <Navigate to="/404" replace />;
 
   const media = project.media || {};
-  
+
   // Translation keys
   const titleKey = `project_${project.id}_title`;
   const shortDescKey = `project_${project.id}_short_desc`;
@@ -64,24 +64,24 @@ const ProjectDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-waves bg-primary pb-32">
+    <div className="min-h-screen bg-primary pb-32">
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(breadcrumbData)}</script>
         <script type="application/ld+json">{JSON.stringify(creativeWorkData)}</script>
       </Helmet>
-      <SEO 
-        title={t(titleKey, project.title)} 
+      <SEO
+        title={t(titleKey, project.title)}
         description={t(shortDescKey, project.short_description)}
         image={media.thumbnail ? `/${media.thumbnail}` : undefined}
         type="article"
       />
 
-      {/* --- CINEMATIC HERO --- */}
+      {/* --- HERO --- */}
       <ProjectHero project={project} />
 
       {/* --- MAIN LAYOUT --- */}
       <div className="max-w-[1600px] mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16">
-        
+
         {/* LEFT: Content (8 cols) */}
         <div className="lg:col-span-8 space-y-16">
 
@@ -93,7 +93,7 @@ const ProjectDetails = () => {
             )}
 
             {/* Main Description */}
-            <div className="prose prose-invert prose-lg max-w-none text-slate-300 leading-relaxed">
+            <div className="prose prose-invert prose-lg max-w-none text-dim leading-relaxed">
                 <p className="whitespace-pre-line">{description}</p>
             </div>
 
@@ -116,8 +116,8 @@ const ProjectDetails = () => {
             {/* Gallery */}
             {media.images && media.images.length > 0 && (
                 <div className="space-y-6">
-                    <h3 className="text-2xl font-bold text-white flex items-center gap-3 drop-shadow-[0_0_20px_rgba(56,189,248,0.2)]">
-                        <Images size={24} className="text-accent drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]" />
+                    <h3 className="text-2xl font-display text-cream-light flex items-center gap-3">
+                        <Images size={24} className="text-accent" />
                         {t('details.gallery', 'Gallery')}
                     </h3>
                     <ImageLightbox images={media.images} />

@@ -29,13 +29,13 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
       {/* Trigger */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-white/10 hover:border-accent/50 bg-white/5 hover:bg-white/10 transition-all duration-300"
+        className="flex items-center gap-1.5 px-4 py-2 rounded-sm border border-border hover:border-border-hover bg-transparent transition-colors duration-200"
         whileTap={{ scale: 0.95 }}
         aria-label="Select language"
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
-        <span className="text-xs font-bold text-white tracking-wider">
+        <span className="text-xs font-medium text-cream tracking-wider font-mono">
           {currentLang.label}
         </span>
         <motion.div
@@ -60,7 +60,7 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: dropUp ? 4 : -4 }}
               transition={{ duration: 0.15 }}
-              className={`absolute right-0 z-[150] p-1 bg-[#111] border border-white/10 rounded-xl shadow-xl ${
+              className={`absolute right-0 z-[150] p-1 bg-secondary border border-border rounded-sm ${
                 dropUp ? 'bottom-full mb-2' : 'top-full mt-2'
               }`}
               role="listbox"
@@ -73,10 +73,10 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
                     key={lang.code}
                     onClick={() => changeLanguage(lang.code)}
                     className={`
-                      w-full px-4 py-2 rounded-lg text-xs font-bold tracking-wider text-left transition-all duration-150
+                      w-full px-4 py-2 rounded-sm text-xs font-medium tracking-wider text-left transition-colors duration-150 font-mono
                       ${isActive
-                        ? 'bg-accent text-black'
-                        : 'text-dim hover:text-white hover:bg-white/10'
+                        ? 'bg-accent text-primary'
+                        : 'text-dim hover:text-cream hover:bg-tertiary'
                       }
                     `}
                     role="option"

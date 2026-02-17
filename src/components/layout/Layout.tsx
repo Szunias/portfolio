@@ -13,7 +13,7 @@ const Layout = ({ children }: LayoutProps) => {
   const { t, i18n } = useTranslation('common');
 
   return (
-    <div className="flex flex-col min-h-screen text-text font-sans overflow-x-hidden relative bg-[#050508]">
+    <div className="flex flex-col min-h-screen text-cream font-sans overflow-x-hidden relative bg-primary">
       <Helmet htmlAttributes={{ lang: i18n.language }} />
 
       <div className="relative z-10 flex flex-col min-h-screen">

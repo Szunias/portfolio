@@ -32,12 +32,12 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="bg-secondary p-8 rounded-2xl border border-white/10 shadow-xl">
+    <div className="bg-secondary p-8 rounded-sm border border-border">
       <div className="flex items-center gap-2 mb-4 text-dim text-sm">
         <Mail size={16} />
         {t('contact_form_title', 'Send a Message')}
       </div>
-      <h3 className="text-2xl font-display font-bold text-white mb-6">
+      <h3 className="text-2xl font-display text-cream-light mb-6">
         {t('contact_form_title', 'Send a Message')}
       </h3>
 
@@ -52,7 +52,7 @@ const ContactForm = () => {
             name="from_name"
             required
             aria-required="true"
-            className="w-full bg-primary border border-white/10 rounded-lg px-4 py-3 text-white focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors"
+            className="w-full bg-primary border border-border rounded-sm px-4 py-3 text-cream focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors"
           />
         </div>
 
@@ -66,7 +66,7 @@ const ContactForm = () => {
             name="from_email"
             required
             aria-required="true"
-            className="w-full bg-primary border border-white/10 rounded-lg px-4 py-3 text-white focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors"
+            className="w-full bg-primary border border-border rounded-sm px-4 py-3 text-cream focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors"
           />
         </div>
 
@@ -80,7 +80,7 @@ const ContactForm = () => {
             name="subject"
             required
             aria-required="true"
-            className="w-full bg-primary border border-white/10 rounded-lg px-4 py-3 text-white focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors"
+            className="w-full bg-primary border border-border rounded-sm px-4 py-3 text-cream focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors"
           />
         </div>
 
@@ -94,7 +94,7 @@ const ContactForm = () => {
             rows={5}
             required
             aria-required="true"
-            className="w-full bg-primary border border-white/10 rounded-lg px-4 py-3 text-white focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors resize-none"
+            className="w-full bg-primary border border-border rounded-sm px-4 py-3 text-cream focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors resize-none"
           ></textarea>
         </div>
 

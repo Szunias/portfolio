@@ -16,17 +16,15 @@ interface AboutTimelineProps {
 const AboutTimeline = ({ timeline, t }: AboutTimelineProps) => {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.35 }}
-            className="bg-white/5 border border-white/10 rounded-2xl p-8"
+            transition={{ duration: 0.3 }}
+            className="bg-secondary border border-border rounded-sm p-8"
         >
             <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-accent/10 rounded-xl">
-                    <GraduationCap className="text-accent" size={20} aria-hidden="true" />
-                </div>
-                <h2 className="text-2xl font-bold text-white">
+                <GraduationCap className="text-accent" size={20} aria-hidden="true" />
+                <h2 className="text-2xl font-display text-cream-light">
                     {t('about_education_title', 'Education')}
                 </h2>
             </div>
@@ -35,19 +33,19 @@ const AboutTimeline = ({ timeline, t }: AboutTimelineProps) => {
                 {timeline.map((item, i) => (
                     <motion.article
                         key={item.year}
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ opacity: 0, y: 8 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: i * 0.05, duration: 0.3 }}
-                        className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-accent/30 transition-all group"
+                        className="bg-tertiary border border-border rounded-sm p-5 hover:border-border-hover transition-colors duration-200"
                     >
-                        <span className="inline-block px-3 py-1 text-xs font-mono text-accent bg-accent/10 rounded-full mb-3">
+                        <span className="inline-block px-3 py-1 text-xs font-mono text-accent border border-accent/20 rounded-sm mb-3">
                             {item.year}
                         </span>
-                        <h3 className="text-white font-semibold mb-2 group-hover:text-accent transition-colors">
+                        <h3 className="text-cream font-medium mb-2">
                             {item.title}
                         </h3>
-                        <p className="text-slate-500 text-sm">
+                        <p className="text-dim text-sm">
                             {item.institution}
                         </p>
                     </motion.article>

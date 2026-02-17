@@ -17,7 +17,7 @@ const ImageWithLoader = ({ src, alt, className = "", loading = "lazy" }: ImageWi
     <div className={cn("relative overflow-hidden bg-primary", className)}>
       {/* Skeleton / Fallback */}
       {!isLoaded && !hasError && (
-        <div className="absolute inset-0 bg-white/5 animate-pulse z-0" />
+        <div className="absolute inset-0 bg-secondary animate-pulse z-0" />
       )}
       
       {hasError ? (

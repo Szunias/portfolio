@@ -63,16 +63,16 @@ const Showreel = () => {
   return (
     <div className="w-full max-w-5xl mx-auto my-16">
       {/* Video */}
-      <div className="relative aspect-video rounded-2xl overflow-hidden bg-black">
+      <div className="relative aspect-video rounded-sm overflow-hidden bg-black">
         {error ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-900">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-secondary">
             <AlertCircle size={48} className="text-red-500 mb-4" />
-            <p className="text-white/70 text-center px-4 mb-4">
+            <p className="text-dim text-center px-4 mb-4">
               {t('errors.video_load_failed', 'Failed to load video. Please refresh the page.')}
             </p>
             <button
               onClick={() => { setError(false); setPlayer(null); }}
-              className="px-6 py-2 bg-accent text-black font-semibold rounded-lg hover:bg-white transition-colors"
+              className="px-6 py-2 bg-accent text-primary font-medium rounded-sm hover:bg-accent-light transition-colors"
             >
               {t('hero.retry', 'Try Again')}
             </button>
@@ -101,9 +101,9 @@ const Showreel = () => {
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-20 h-20 flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-full border border-white/20"
+                  className="w-20 h-20 flex items-center justify-center border border-border-hover rounded-full"
                 >
-                  <Play size={32} className="text-white ml-1" fill="white" />
+                  <Play size={32} className="text-cream ml-1" fill="currentColor" />
                 </motion.div>
               </button>
             )}
@@ -121,10 +121,10 @@ const Showreel = () => {
               key={ts.label}
               onClick={() => jumpTo(ts.time)}
               className={`
-                relative px-4 py-2 rounded-full text-sm font-medium transition-all
+                relative px-4 py-2 rounded-sm text-sm font-medium transition-colors duration-200
                 ${isActive
-                  ? 'bg-accent text-black'
-                  : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+                  ? 'bg-accent text-primary'
+                  : 'border border-border text-dim hover:border-border-hover hover:text-cream'
                 }
               `}
             >

@@ -28,8 +28,8 @@ class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-primary flex items-center justify-center p-8" role="alert">
-          <div className="max-w-2xl w-full bg-secondary border border-red-500/30 rounded-lg p-8 shadow-xl">
-            <h1 className="text-3xl font-display font-bold text-white mb-4">
+          <div className="max-w-2xl w-full bg-secondary border border-border rounded-sm p-8">
+            <h1 className="text-3xl font-display text-cream-light mb-4">
               {i18n.t('error.title', 'Something went wrong')}
             </h1>
             <p className="text-dim mb-6">
@@ -40,7 +40,7 @@ class ErrorBoundary extends Component<Props, State> {
                 <summary className="text-sm text-dim cursor-pointer hover:text-white mb-2">
                   {i18n.t('error.details', 'Error details')}
                 </summary>
-                <pre className="bg-primary/50 p-4 rounded border border-white/10 text-xs text-red-400 overflow-auto max-h-64 whitespace-pre-wrap font-mono">
+                <pre className="bg-primary p-4 rounded-sm border border-border text-xs text-red-400 overflow-auto max-h-64 whitespace-pre-wrap font-mono">
                   {this.state.error.toString()}
                   {this.state.error.stack && `\n\n${this.state.error.stack}`}
                 </pre>
@@ -48,7 +48,7 @@ class ErrorBoundary extends Component<Props, State> {
             )}
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-accent text-primary font-medium rounded-lg hover:bg-white transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-primary"
+              className="px-6 py-3 bg-accent text-primary font-medium rounded-sm hover:bg-accent-light transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-primary"
             >
               {i18n.t('error.reload', 'Reload Page')}
             </button>

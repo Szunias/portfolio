@@ -35,7 +35,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                     media.thumbnail.endsWith('.mp4') ? (
                         <video
                             src={`/${media.thumbnail}`}
-                            className="w-full h-full object-cover opacity-40"
+                            className="w-full h-full object-cover opacity-30"
                             autoPlay
                             loop
                             muted
@@ -43,48 +43,48 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                             onError={(e) => { (e.currentTarget as HTMLVideoElement).style.display = 'none'; }}
                         />
                     ) : (
-                        <img src={`/${media.thumbnail}`} alt="" role="presentation" aria-hidden="true" className="w-full h-full object-cover opacity-30" />
+                        <img src={`/${media.thumbnail}`} alt="" role="presentation" aria-hidden="true" className="w-full h-full object-cover opacity-20" />
                     )
                 ) : (
-                    <div className="w-full h-full bg-neutral-900" />
+                    <div className="w-full h-full bg-secondary" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-primary/40" />
             </div>
 
             {/* Hero Content */}
             <div className="relative z-10 flex-1 flex flex-col justify-end pb-20 px-6 lg:px-12 max-w-[1600px] mx-auto pt-32">
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 0.3 }}
                 >
-                    <Link to="/projects" className="inline-flex items-center text-slate-400 hover:text-accent transition-all duration-300 mb-8 group hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]">
+                    <Link to="/projects" className="inline-flex items-center text-dim hover:text-cream transition-colors duration-200 mb-8 group">
                         <ArrowLeft size={16} className="mr-2 group-hover:-translate-x-1 transition-transform" />
                         {t('projects.view_all', 'Back to Projects')}
                     </Link>
 
                     <div className="flex items-center gap-3 mb-4">
-                        <span className="px-3 py-1 bg-accent text-black text-xs font-bold uppercase tracking-widest rounded-sm shadow-[0_0_20px_rgba(56,189,248,0.5)]">
+                        <span className="px-3 py-1 bg-accent text-primary text-xs font-mono font-medium uppercase tracking-widest rounded-sm">
                             {project.category}
                         </span>
                         {project.year && (
-                            <span className="text-slate-400 font-mono text-xs border border-white/10 px-3 py-1 rounded-sm hover:border-accent/50 hover:text-accent transition-all duration-300">
+                            <span className="text-dim font-mono text-xs border border-border px-3 py-1 rounded-sm hover:border-border-hover transition-colors duration-200">
                                 <Calendar size={12} className="inline mr-2" />
                                 {project.year}
                             </span>
                         )}
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold text-white max-w-5xl leading-[0.9] tracking-tighter mb-6 drop-shadow-[0_0_40px_rgba(56,189,248,0.3)]">
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-display text-cream-light max-w-5xl leading-[0.9] tracking-wide mb-6">
                         <TechReveal text={t(titleKey, project.title)} />
                     </h1>
 
-                    <p className="text-lg md:text-xl text-slate-300 max-w-2xl font-light leading-relaxed mb-8">
+                    <p className="text-lg md:text-xl text-dim max-w-2xl font-light leading-relaxed mb-8">
                         {t(shortDescKey, project.short_description)}
                     </p>
 
                     {videoId && (
-                        <div className="w-full max-w-4xl aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 hover:border-accent/30 hover:shadow-[0_0_50px_rgba(56,189,248,0.2)] bg-black/50 backdrop-blur-sm transition-all duration-500">
+                        <div className="w-full max-w-4xl aspect-video rounded-sm overflow-hidden border border-border bg-black transition-colors duration-200">
                             <iframe
                                 src={`https://www.youtube.com/embed/${videoId}`}
                                 title="YouTube video player"
@@ -98,10 +98,10 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                     {/* Legacy trailer for Shadow Frames */}
                     {legacyVideoId && project.id === 'shadow_frames' && (
                         <div className="mt-8">
-                            <h3 className="text-lg font-mono text-slate-400 uppercase tracking-wider mb-4">
+                            <h3 className="text-lg font-mono text-dim uppercase tracking-wider mb-4">
                                 {t('projects.legacy_trailer', 'Previous Trailer')} / {t('projects.gameplay_preview', 'Gameplay Preview')}
                             </h3>
-                            <div className="w-full max-w-4xl aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/20 bg-black/80 backdrop-blur-sm transition-all duration-500">
+                            <div className="w-full max-w-4xl aspect-video rounded-sm overflow-hidden border border-border bg-black transition-colors duration-200">
                                 <iframe
                                     src={`https://www.youtube.com/embed/${legacyVideoId}`}
                                     title="Legacy YouTube video player"
@@ -114,7 +114,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                     )}
 
                     {isLocalVideo && (
-                        <div className="w-full max-w-4xl aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 hover:border-accent/30 hover:shadow-[0_0_50px_rgba(56,189,248,0.2)] bg-black/50 backdrop-blur-sm transition-all duration-500">
+                        <div className="w-full max-w-4xl aspect-video rounded-sm overflow-hidden border border-border bg-black transition-colors duration-200">
                             <video
                                 src={`/${media.video}`}
                                 className="w-full h-full object-cover"

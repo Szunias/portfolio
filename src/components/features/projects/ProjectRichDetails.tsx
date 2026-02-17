@@ -7,9 +7,9 @@ interface ProjectRichDetailsProps {
 }
 
 const Section = ({ title, icon: Icon, children }: { title: string; icon: React.ElementType; children: React.ReactNode }) => (
-  <div className="py-8 border-t border-white/10 group">
-    <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 group-hover:text-accent transition-colors duration-300">
-      <Icon className="text-accent group-hover:drop-shadow-[0_0_15px_rgba(56,189,248,0.6)] transition-all duration-300" size={24} />
+  <div className="py-8 border-t border-border">
+    <h3 className="text-xl font-display text-cream-light mb-6 flex items-center gap-3">
+      <Icon className="text-accent" size={24} />
       {title}
     </h3>
     {children}
@@ -21,11 +21,11 @@ const KeyValueGrid = ({ data }: { data: Record<string, string> }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {Object.entries(data).map(([key, value]) => (
-        <div key={key} className="bg-white/5 p-4 rounded-lg border border-white/5 hover:border-accent/30 hover:bg-white/8 hover:shadow-[0_0_20px_rgba(56,189,248,0.1)] transition-all duration-300 group">
-          <h4 className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2 group-hover:text-accent/80 transition-colors duration-300">
+        <div key={key} className="bg-secondary p-4 rounded-sm border border-border hover:border-border-hover transition-colors duration-200">
+          <h4 className="text-xs font-mono text-dim uppercase tracking-wider mb-2">
             {t(`project.fields.${key}`, key.replace(/_/g, ' '))}
           </h4>
-          <p className="text-slate-300 text-sm leading-relaxed group-hover:text-white transition-colors duration-300">{t(value, value)}</p>
+          <p className="text-cream text-sm leading-relaxed">{t(value, value)}</p>
         </div>
       ))}
     </div>
@@ -37,8 +37,8 @@ const ListSection = ({ items }: { items: string[] }) => {
   return (
     <ul className="space-y-3">
       {items.map((item, i) => (
-        <li key={i} className="flex items-start gap-3 text-slate-300 hover:text-white transition-colors duration-300 group">
-          <CheckCircle2 size={18} className="text-accent flex-shrink-0 mt-1 group-hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.6)] transition-all duration-300" />
+        <li key={i} className="flex items-start gap-3 text-dim hover:text-cream transition-colors duration-200">
+          <CheckCircle2 size={18} className="text-accent flex-shrink-0 mt-1" />
           <span className="leading-relaxed">{t(item, item)}</span>
         </li>
       ))}
@@ -51,7 +51,7 @@ const ProjectRichDetails = ({ project }: ProjectRichDetailsProps) => {
 
   return (
     <div className="space-y-4">
-      
+
       {/* Responsibilities */}
       {project.responsibilities && project.responsibilities.length > 0 && (
         <Section title={t('project.responsibilities', 'Responsibilities')} icon={Layers}>

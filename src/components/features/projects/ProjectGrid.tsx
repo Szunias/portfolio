@@ -11,7 +11,7 @@ const ProjectGrid = ({ projects }: ProjectGridProps) => {
 
   if (projects.length === 0) {
     return (
-      <div className="py-20 text-center text-slate-600 font-mono">
+      <div className="py-20 text-center text-dim font-mono">
         {t('projects.no_results', 'No projects found in this category.')}
       </div>
     );

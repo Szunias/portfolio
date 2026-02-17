@@ -1,49 +1,42 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
-// Enhanced tech data with 3D effects
 const keyTech = [
   {
     name: 'Wwise',
     logo: '/assets/icons/tech/wwiselogo.png',
     category: 'Middleware',
     invert: true,
-    color: 'from-purple-500/20 to-blue-500/20'
   },
   {
     name: 'FMOD',
     logo: '/assets/icons/tech/fmodlogo.png',
     category: 'Middleware',
     invert: true,
-    color: 'from-cyan-500/20 to-blue-500/20'
   },
   {
     name: 'Unreal Engine',
     logo: '/assets/icons/tech/Unreal_Engine-Logo.wine.png',
     category: 'Engine',
     invert: true,
-    color: 'from-purple-500/20 to-pink-500/20'
   },
   {
     name: 'Unity',
     logo: '/assets/icons/tech/Unitylogo.png',
     category: 'Engine',
     invert: true,
-    color: 'from-gray-500/20 to-slate-500/20'
   },
   {
     name: 'C++',
     logo: '/assets/icons/tech/cpplogo.png',
     category: 'Code',
     invert: false,
-    color: 'from-blue-500/20 to-cyan-500/20'
   },
   {
     name: 'Python',
     logo: '/assets/icons/tech/pythonlogo.png',
     category: 'Code',
     invert: false,
-    color: 'from-yellow-500/20 to-green-500/20'
   },
 ];
 
@@ -56,23 +49,21 @@ const Skills = () => {
 
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.3 }}
           className="text-center mb-16"
         >
           <span
-            className="inline-block px-4 py-2 mb-6 text-xs font-mono text-accent uppercase tracking-widest bg-accent/5 border border-accent/20 rounded-full"
+            className="inline-block px-4 py-2 mb-6 text-xs font-mono text-accent uppercase tracking-widest border border-accent/20 rounded-sm"
           >
             {t('skills.badge', 'Technologies')}
           </span>
-          <h2 className="text-5xl md:text-7xl font-display font-bold text-white mb-6 tracking-tight">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
-              {t('skills.title', 'Tech Stack')}
-            </span>
+          <h2 className="text-5xl md:text-7xl font-display text-cream-light mb-6 tracking-wide">
+            {t('skills.title', 'Tech Stack')}
           </h2>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+          <p className="text-dim text-lg max-w-2xl mx-auto">
             {t('skills.subtitle', 'Core tools I use for game audio implementation and development')}
           </p>
         </motion.div>
@@ -82,18 +73,17 @@ const Skills = () => {
           {keyTech.map((tech, index) => (
             <motion.div
               key={tech.name}
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 8 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{
                 delay: index * 0.05,
-                duration: 0.35,
+                duration: 0.3,
               }}
-              whileHover={{ scale: 1.02 }}
-              className="relative group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:border-white/20 transition-all"
+              className="relative group bg-secondary border border-border rounded-sm p-8 hover:border-border-hover transition-colors duration-200"
             >
               {/* Category label */}
-              <span className="absolute top-6 right-6 text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+              <span className="absolute top-6 right-6 text-[10px] font-mono text-dim uppercase tracking-widest">
                 {tech.category}
               </span>
 
@@ -109,7 +99,7 @@ const Skills = () => {
               </div>
 
               {/* Name */}
-              <h3 className="text-2xl font-bold text-white/90 group-hover:text-white transition-colors text-center">
+              <h3 className="text-2xl font-display text-cream group-hover:text-cream-light transition-colors text-center">
                 {tech.name}
               </h3>
             </motion.div>
@@ -121,19 +111,18 @@ const Skills = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0 }}
-          className="border-t border-white/10 pt-16"
+          className="border-t border-border pt-16"
         >
           <motion.h3
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center text-sm font-mono text-slate-500 uppercase tracking-widest mb-12"
+            className="text-center text-sm font-mono text-dim uppercase tracking-widest mb-12"
           >
             {t('skills.also', 'Also experienced with')}
           </motion.h3>
 
-          <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
             {[
               'MetaSounds', 'Blueprints', 'C#', 'Reaper', 'Pro Tools',
               'Sound Design', 'Mixing', '3D Audio', 'JUCE', 'DSP', 'Wwise API',
@@ -145,8 +134,7 @@ const Skills = () => {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.02 }}
-                whileHover={{ scale: 1.05 }}
-                className="px-5 py-2.5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-sm text-slate-400 hover:text-white hover:border-accent/40 hover:bg-white/10 transition-all cursor-default"
+                className="px-5 py-2.5 border border-border rounded-sm text-sm text-dim hover:text-cream hover:border-border-hover transition-colors duration-200 cursor-default"
               >
                 {skill}
               </motion.span>

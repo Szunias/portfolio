@@ -47,48 +47,42 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
     return (
         <div className="lg:col-span-4 lg:sticky lg:top-32 lg:self-start">
             <motion.div
-                initial={{ opacity: 0, x: 10 }}
+                initial={{ opacity: 0, x: 8 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3 }}
-                className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-5"
+                className="bg-secondary border border-border rounded-sm p-6 space-y-5"
             >
                 {/* Quick Info */}
-                <h3 className="text-lg font-bold text-white">
+                <h3 className="text-lg font-display text-cream-light">
                     {t('about_quick_info', 'Quick Info')}
                 </h3>
 
                 {/* Location */}
                 <div className="flex items-center gap-3">
-                    <div className="p-2 bg-white/5 rounded-lg">
-                        <MapPin className="text-accent" size={18} aria-hidden="true" />
-                    </div>
+                    <MapPin className="text-accent flex-shrink-0" size={18} aria-hidden="true" />
                     <div>
-                        <p className="text-white font-medium">{personalInfo.location.city}</p>
-                        <p className="text-slate-500 text-sm">{personalInfo.location.country}</p>
+                        <p className="text-cream font-medium">{personalInfo.location.city}</p>
+                        <p className="text-dim text-sm">{personalInfo.location.country}</p>
                     </div>
                 </div>
 
                 {/* Status */}
                 <div className="flex items-center gap-3">
-                    <div className="p-2 bg-white/5 rounded-lg flex items-center justify-center">
-                        <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" aria-hidden="true" />
-                    </div>
+                    <div className="w-3 h-3 bg-green-400/80 rounded-full animate-pulse flex-shrink-0" aria-hidden="true" />
                     <div>
-                        <p className="text-white font-medium">{t('status_looking_internship', 'Available for internship')}</p>
-                        <p className="text-slate-500 text-sm">{personalInfo.availability.status}</p>
+                        <p className="text-cream font-medium">{t('status_looking_internship', 'Available for internship')}</p>
+                        <p className="text-dim text-sm">{personalInfo.availability.status}</p>
                     </div>
                 </div>
 
                 {/* Email */}
                 <div className="flex items-center gap-3">
-                    <div className="p-2 bg-white/5 rounded-lg">
-                        <Mail className="text-accent" size={18} aria-hidden="true" />
-                    </div>
+                    <Mail className="text-accent flex-shrink-0" size={18} aria-hidden="true" />
                     <button
                         onClick={handleCopyEmail}
                         aria-label="Copy email to clipboard"
-                        className="group flex items-center gap-2 text-slate-300 hover:text-white transition-colors"
+                        className="group flex items-center gap-2 text-dim hover:text-cream transition-colors"
                     >
                         <span className="text-sm truncate max-w-[180px]">{personalInfo.email}</span>
                         {emailCopied ? (
@@ -100,19 +94,19 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
                 </div>
 
                 {/* Divider */}
-                <div className="border-t border-white/10" />
+                <div className="border-t border-border" />
 
                 {/* Skills Sections */}
                 {skillSections.map((section) => (
                     <div key={section.key}>
-                        <h4 className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2">
+                        <h4 className="text-xs font-mono text-dim uppercase tracking-wider mb-2">
                             {section.title}
                         </h4>
                         <ul className="flex flex-wrap gap-1.5">
                             {section.items.map(skill => (
                                 <li
                                     key={skill}
-                                    className="px-2.5 py-1 text-xs font-mono text-accent bg-accent/5 border border-accent/20 rounded-full"
+                                    className="px-2.5 py-1 text-xs font-mono text-accent bg-accent/5 border border-accent/20 rounded-sm"
                                 >
                                     {skill}
                                 </li>
