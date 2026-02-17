@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, MapPin, Linkedin, Github, Copy, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -6,13 +6,22 @@ import ContactForm from '../components/features/ContactForm';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 import SEO from '../components/layout/SEO';
 
+// Base64-encoded email — bots won't scrape it from static HTML
+const ENCODED_EMAIL = 'aWdvcnN6dW5pZXdpY3p3b3JrQGdtYWlsLmNvbQ==';
+
 const Contact = () => {
   const { personal_info } = usePortfolioData();
   const { t } = useTranslation('contact');
   const [copied, setCopied] = useState(false);
+  const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    setEmail(atob(ENCODED_EMAIL));
+  }, []);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(personal_info.email);
+    if (!email) return;
+    navigator.clipboard.writeText(email);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -62,13 +71,18 @@ const Contact = () => {
                       <div>
                          <p className="text-slate-500 text-xs mb-0.5">{t('contact_info_email', 'Email')}</p>
                          <div className="flex items-center gap-2">
-                            <a href={`mailto:${personal_info.email}`} className="text-white hover:text-blue-400 transition font-medium">
-                              {personal_info.email}
-                            </a>
+                            {email ? (
+                              <a href={`mailto:${email}`} className="text-white hover:text-blue-400 transition font-medium">
+                                {email}
+                              </a>
+                            ) : (
+                              <span className="text-dim">...</span>
+                            )}
                             <button
                               onClick={copyToClipboard}
                               className="text-slate-500 hover:text-white transition p-1"
                               title={t('tooltips.copy_email', 'Copy Email')}
+                              disabled={!email}
                             >
                               {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
                             </button>
