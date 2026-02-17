@@ -23,7 +23,7 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold text-white mb-4">{t('footer.connect', 'Connect')}</h4>
             <div className="flex space-x-4">
-              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-slate-400 hover:text-accent transition-all duration-300 p-2 bg-primary rounded-full hover:bg-accent hover:text-primary hover:shadow-[0_0_15px_rgba(56,189,248,0.4)]">
+              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer me" aria-label="LinkedIn" className="text-slate-400 hover:text-accent transition-all duration-300 p-2 bg-primary rounded-full hover:bg-accent hover:text-primary hover:shadow-[0_0_15px_rgba(56,189,248,0.4)]">
                 <Linkedin size={20} />
               </a>
               <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-slate-400 hover:text-accent transition-all duration-300 p-2 bg-primary rounded-full hover:bg-accent hover:text-primary hover:shadow-[0_0_15px_rgba(56,189,248,0.4)]">

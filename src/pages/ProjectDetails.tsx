@@ -38,20 +38,36 @@ const ProjectDetails = () => {
   const fullDescKey = `project_${project.id}_full_desc`;
   const description = t(fullDescKey, project.full_description || t(shortDescKey, project.short_description));
 
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://igorszuniewicz.com';
+
   const breadcrumbData = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": typeof window !== 'undefined' ? window.location.origin : 'https://igorszuniewicz.com' },
-      { "@type": "ListItem", "position": 2, "name": "Projects", "item": (typeof window !== 'undefined' ? window.location.origin : 'https://igorszuniewicz.com') + '/projects' },
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": baseUrl },
+      { "@type": "ListItem", "position": 2, "name": "Projects", "item": `${baseUrl}/projects` },
       { "@type": "ListItem", "position": 3, "name": t(titleKey, project.title) }
     ]
+  };
+
+  const creativeWorkData = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": t(titleKey, project.title),
+    "description": t(shortDescKey, project.short_description),
+    "author": {
+      "@type": "Person",
+      "name": "Igor Szuniewicz"
+    },
+    ...(media.thumbnail && { "image": `${baseUrl}/${media.thumbnail}` }),
+    "url": `${baseUrl}/projects/${project.id}`
   };
 
   return (
     <div className="min-h-screen bg-waves bg-primary pb-32">
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(breadcrumbData)}</script>
+        <script type="application/ld+json">{JSON.stringify(creativeWorkData)}</script>
       </Helmet>
       <SEO 
         title={t(titleKey, project.title)} 

@@ -74,7 +74,7 @@ const Navbar = () => {
               ))}
               <div className="h-4 w-px bg-white/20"></div>
               <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white" aria-label="GitHub"><Github size={16} /></a>
-              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white" aria-label="LinkedIn"><Linkedin size={16} /></a>
+              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer me" className="text-gray-400 hover:text-white" aria-label="LinkedIn"><Linkedin size={16} /></a>
               <LanguageSwitcher />
             </div>
 
@@ -140,7 +140,7 @@ const Navbar = () => {
               <div className="flex items-center justify-between mt-auto mb-8 pt-6 border-t border-gray-800">
                 <div className="flex items-center gap-4">
                   <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700" aria-label="GitHub"><Github size={24} /></a>
-                  <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer" className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700" aria-label="LinkedIn"><Linkedin size={24} /></a>
+                  <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer me" className="text-white p-3 bg-gray-800 rounded-lg hover:bg-gray-700" aria-label="LinkedIn"><Linkedin size={24} /></a>
                 </div>
                 <LanguageSwitcher dropUp />
               </div>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowLeft, ChevronDown, Cpu, Zap, Layers, Code, Database, Music } from 'lucide-react';
+import SEO from '../components/layout/SEO';
 
 const MiddlewareOptimization = () => {
     const { t } = useTranslation('middlewareOptimization');
@@ -36,6 +37,10 @@ const MiddlewareOptimization = () => {
 
     return (
         <div ref={containerRef} className="min-h-screen bg-white bg-stripes-diagonal text-slate-900 font-sans selection:bg-purple-100 selection:text-purple-900">
+            <SEO
+                title={t('seo_title', 'Wwise Middleware Optimization')}
+                description={t('seo_description', 'Three Wwise middleware projects: voice management, spatial audio, and cross-platform memory optimization.')}
+            />
             {/* Hero Section */}
             <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 to-white px-4 py-20">
                 <motion.div 

@@ -139,7 +139,7 @@ const About = () => {
                             <a
                                 href={personal_info.social_media.linkedin}
                                 target="_blank"
-                                rel="noopener noreferrer"
+                                rel="noopener noreferrer me"
                                 className="group inline-flex items-center gap-2 px-6 py-4 border border-white/20 text-white font-medium rounded-xl backdrop-blur-sm bg-white/5 transition-all hover:scale-105 hover:border-white/40 hover:bg-white/10"
                             >
                                 <Linkedin size={18} />

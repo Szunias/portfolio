@@ -4,6 +4,7 @@ import { Mail, MapPin, Linkedin, Github, Copy, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ContactForm from '../components/features/ContactForm';
 import { usePortfolioData } from '../hooks/usePortfolioData';
+import SEO from '../components/layout/SEO';
 
 const Contact = () => {
   const { personal_info } = usePortfolioData();
@@ -18,6 +19,10 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title={t('seo_title', 'Contact')}
+        description={t('seo_description', 'Get in touch with Igor Szuniewicz for game audio, tool development, and middleware integration.')}
+      />
       {/* Gradient Backgrounds */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/4 left-0 w-96 h-96 bg-blue-500/8 rounded-full blur-[120px]" />
@@ -90,7 +95,7 @@ const Contact = () => {
                       <a
                         href={personal_info.social_media.linkedin}
                         target="_blank"
-                        rel="noopener noreferrer"
+                        rel="noopener noreferrer me"
                         className="flex items-center justify-center w-12 h-12 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:bg-blue-500/10 hover:border-blue-500/30 hover:text-blue-400 transition-all"
                       >
                          <Linkedin size={20} />

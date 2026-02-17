@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import Hero from '../components/home/Hero';
 import ProjectCard from '../components/features/ProjectCard';
 import Skills from '../components/home/Skills';
@@ -15,9 +16,20 @@ const Home = () => {
 
   const displayProjects = (featured_projects || []).slice(0, 4);
 
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "url": "https://igorszuniewicz.com",
+    "name": "Igor Szuniewicz | Audio Designer & Developer",
+    "description": "Portfolio of Igor Szuniewicz - Audio Designer & Developer specializing in Game Audio, Wwise/FMOD implementation, and Interactive Systems."
+  };
+
   return (
     <>
       <SEO />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(websiteSchema)}</script>
+      </Helmet>
       <Hero />
 
       {/* Showreel Section */}

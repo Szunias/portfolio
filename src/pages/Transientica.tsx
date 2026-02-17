@@ -26,7 +26,10 @@ const Transientica = () => {
 
     return (
         <div className="min-h-screen bg-crosshatch bg-primary text-slate-300 font-sans selection:bg-purple-500/30">
-            <SEO title="Transientica | AudioLab" description="Real-time ML Audio Classification System" />
+            <SEO
+                title={t('transientica.seo_title', 'Transientica | AudioLab')}
+                description={t('transientica.seo_description', 'Voice-controlled rhythm game using real-time ML audio classification. Beatbox sounds trigger gameplay actions with under 60ms latency.')}
+            />
             
             {/* Background Elements */}
             <div className="fixed inset-0 z-0 pointer-events-none">

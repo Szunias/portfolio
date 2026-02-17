@@ -9,38 +9,44 @@ interface SEOProps {
   name?: string;
   image?: string;
   url?: string;
+  noindex?: boolean;
 }
 
-const SEO = ({ 
-  title, 
-  description, 
+const SEO = ({
+  title,
+  description,
   type = 'website',
-  image = '/assets/cv-image/cvsmile.jpg', // Corrected path to main portrait
-  url
+  image = '/assets/cv-image/cvsmile.jpg',
+  url,
+  noindex = false
 }: SEOProps) => {
   const { i18n } = useTranslation('common');
   const location = useLocation();
   const siteTitle = "Igor Szuniewicz | Audio Designer & Developer";
   const defaultDescription = "Portfolio of Igor Szuniewicz - Audio Designer & Developer specializing in Game Audio, Wwise/FMOD implementation, and Interactive Systems.";
-  
-  // If title is provided, add site suffix; otherwise use default
+
   const fullTitle = title ? `${title} | Igor Szuniewicz` : siteTitle;
   const metaDescription = description || defaultDescription;
-  
-  // SSR-safe URL handling
+
   const getBaseUrl = () => {
     if (typeof window !== 'undefined') {
       return window.location.origin;
     }
-    return 'https://igorszuniewicz.com'; // Fallback for SSR
+    return 'https://igorszuniewicz.com';
   };
-  
+
   const baseUrl = getBaseUrl();
   const currentUrl = url || (typeof window !== 'undefined' ? window.location.origin + window.location.pathname : `${baseUrl}${location.pathname}`);
   const imageUrl = image.startsWith('http') ? image : `${baseUrl}${image}`;
 
-  // Structured Data (JSON-LD) for better SEO
-  const structuredData = {
+  const isHomePage = location.pathname === '/' || location.pathname === '';
+
+  // OG locale mapping
+  const ogLocale = i18n.language === 'pl' ? 'pl_PL' : i18n.language === 'nl' ? 'nl_NL' : 'en_US';
+  const alternateLocales = ['en_US', 'pl_PL', 'nl_NL'].filter(l => l !== ogLocale);
+
+  // Person schema only on homepage
+  const personData = isHomePage ? {
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Igor Szuniewicz",
@@ -50,7 +56,9 @@ const SEO = ({
     "image": imageUrl,
     "sameAs": [
       "https://github.com/Szunias",
-      "https://www.linkedin.com/in/igor-szuniewicz-a6877a2a3"
+      "https://www.linkedin.com/in/igorszuniewicz",
+      "https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6",
+      "https://igorszuniewicz.itch.io"
     ],
     "knowsAbout": [
       "Game Audio",
@@ -60,7 +68,7 @@ const SEO = ({
       "Audio Programming",
       "Sound Design"
     ]
-  };
+  } : null;
 
   return (
     <Helmet>
@@ -72,6 +80,15 @@ const SEO = ({
       <link rel="canonical" href={currentUrl} />
       <html lang={i18n.language} />
 
+      {/* Robots */}
+      {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+      {/* Hreflang — multilingual SEO */}
+      <link rel="alternate" hrefLang="en" href={currentUrl} />
+      <link rel="alternate" hrefLang="pl" href={currentUrl} />
+      <link rel="alternate" hrefLang="nl" href={currentUrl} />
+      <link rel="alternate" hrefLang="x-default" href={currentUrl} />
+
       {/* Open Graph / Facebook / LinkedIn */}
       <meta property="og:type" content={type} />
       <meta property="og:title" content={fullTitle} />
@@ -79,7 +96,10 @@ const SEO = ({
       <meta property="og:image" content={imageUrl} />
       <meta property="og:url" content={currentUrl} />
       <meta property="og:site_name" content="Igor Szuniewicz Portfolio" />
-      <meta property="og:locale" content={i18n.language === 'pl' ? 'pl_PL' : i18n.language === 'nl' ? 'nl_NL' : 'en_US'} />
+      <meta property="og:locale" content={ogLocale} />
+      {alternateLocales.map(locale => (
+        <meta key={locale} property="og:locale:alternate" content={locale} />
+      ))}
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -88,10 +108,12 @@ const SEO = ({
       <meta name="twitter:description" content={metaDescription} />
       <meta name="twitter:image" content={imageUrl} />
 
-      {/* Structured Data */}
-      <script type="application/ld+json">
-        {JSON.stringify(structuredData)}
-      </script>
+      {/* Structured Data — Person only on homepage */}
+      {personData && (
+        <script type="application/ld+json">
+          {JSON.stringify(personData)}
+        </script>
+      )}
     </Helmet>
   );
 };

@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom';
 import { Home, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import SEO from '../components/layout/SEO';
 
 const NotFound = () => {
   const { t } = useTranslation('notFound');
 
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4 bg-dots-grid bg-primary">
+      <SEO title="404" noindex />
       <div className="relative mb-8">
         <div className="absolute inset-0 bg-accent blur-[60px] opacity-20 animate-pulse"></div>
         <AlertTriangle size={80} className="text-accent relative z-10" />

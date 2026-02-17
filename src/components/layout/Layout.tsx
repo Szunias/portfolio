@@ -14,10 +14,7 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className="flex flex-col min-h-screen text-text font-sans overflow-x-hidden relative bg-[#050508]">
-      <Helmet htmlAttributes={{ lang: i18n.language }}>
-        <title>Igor Szuniewicz | Audio Designer</title>
-        <meta name="description" content="Game Audio Designer & Developer. Wwise, FMOD, Unreal Engine implementation." />
-      </Helmet>
+      <Helmet htmlAttributes={{ lang: i18n.language }} />
 
       <div className="relative z-10 flex flex-col min-h-screen">
         <a 
