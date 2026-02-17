@@ -23,7 +23,8 @@ const About = () => {
     const { t } = useTranslation('about');
 
     const getToolNames = (categoryKey: string) => {
-        const cat = (portfolioData as unknown as Record<string, unknown>).technical_skills_matrix as Record<string, { tools?: Record<string, unknown> }> | undefined;
+        interface SkillsMatrix { [key: string]: { tools?: Record<string, unknown> } }
+        const cat = (portfolioData as unknown as { technical_skills_matrix?: SkillsMatrix }).technical_skills_matrix;
         const tools = cat?.[categoryKey]?.tools;
         if (!tools) return [];
         return Object.keys(tools).map(k => toolNameMap[k] || k);
@@ -41,19 +42,16 @@ const About = () => {
         {
             year: '2022 - 2026',
             title: t('timeline_dae_title', 'DAE: Game Development'),
-            desc: t('timeline_dae_desc', 'Audio integration, Wwise/FMOD middleware, and game audio workflows at Howest Belgium.'),
             institution: 'Howest University of Applied Sciences'
         },
         {
             year: '2018 - 2022',
             title: t('timeline_hs_title', 'High School — Mathematics & Physics'),
-            desc: t('timeline_hs_desc', 'Mathematics, physics and computer science at Nicolaus Copernicus High School in Kolobrzeg, Poland.'),
             institution: 'Nicolaus Copernicus High School'
         },
         {
             year: '2012 - 2018',
             title: t('timeline_piano_title', 'Classical Piano & Music Theory'),
-            desc: t('timeline_piano_desc', 'Classical piano education at First Degree State Music School in Kolobrzeg, Poland.'),
             institution: 'State Music School'
         }
     ];

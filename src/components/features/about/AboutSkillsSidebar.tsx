@@ -61,7 +61,7 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
                 {/* Location */}
                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-white/5 rounded-lg">
-                        <MapPin className="text-accent" size={18} />
+                        <MapPin className="text-accent" size={18} aria-hidden="true" />
                     </div>
                     <div>
                         <p className="text-white font-medium">{personalInfo.location.city}</p>
@@ -72,7 +72,7 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
                 {/* Status */}
                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-white/5 rounded-lg flex items-center justify-center">
-                        <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
+                        <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" aria-hidden="true" />
                     </div>
                     <div>
                         <p className="text-white font-medium">{t('status_looking_internship', 'Available for internship')}</p>
@@ -83,10 +83,11 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
                 {/* Email */}
                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-white/5 rounded-lg">
-                        <Mail className="text-accent" size={18} />
+                        <Mail className="text-accent" size={18} aria-hidden="true" />
                     </div>
                     <button
                         onClick={handleCopyEmail}
+                        aria-label="Copy email to clipboard"
                         className="group flex items-center gap-2 text-slate-300 hover:text-white transition-colors"
                     >
                         <span className="text-sm truncate max-w-[180px]">{personalInfo.email}</span>
@@ -107,16 +108,16 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
                         <h4 className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2">
                             {section.title}
                         </h4>
-                        <div className="flex flex-wrap gap-1.5">
+                        <ul className="flex flex-wrap gap-1.5">
                             {section.items.map(skill => (
-                                <span
+                                <li
                                     key={skill}
                                     className="px-2.5 py-1 text-xs font-mono text-accent bg-accent/5 border border-accent/20 rounded-full"
                                 >
                                     {skill}
-                                </span>
+                                </li>
                             ))}
-                        </div>
+                        </ul>
                     </div>
                 ))}
             </motion.div>
