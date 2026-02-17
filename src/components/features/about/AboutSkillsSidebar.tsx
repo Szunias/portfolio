@@ -37,21 +37,21 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
     };
 
     const skillSections = [
-        { key: 'middleware', title: t('tech_middleware_title', 'Middleware'), items: skills.middleware, delay: 0.1 },
-        { key: 'engines', title: t('tech_engines_title', 'Game Engines'), items: skills.engines, delay: 0.15 },
-        { key: 'programming', title: t('tech_programming_title', 'Programming'), items: skills.programming, delay: 0.2 },
-        { key: 'production', title: t('tech_production_title', 'Production'), items: skills.production, delay: 0.25 },
-        { key: 'tools', title: t('tech_specialized_title', 'Tools'), items: skills.tools, delay: 0.3 },
+        { key: 'middleware', title: t('tech_middleware_title', 'Middleware'), items: skills.middleware },
+        { key: 'engines', title: t('tech_engines_title', 'Game Engines'), items: skills.engines },
+        { key: 'programming', title: t('tech_programming_title', 'Programming'), items: skills.programming },
+        { key: 'production', title: t('tech_production_title', 'Production'), items: skills.production },
+        { key: 'tools', title: t('tech_specialized_title', 'Tools'), items: skills.tools },
     ];
 
     return (
         <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-32 lg:self-start">
             {/* Quick Info Card */}
             <motion.div
-                initial={{ opacity: 0, x: 20 }}
+                initial={{ opacity: 0, x: 10 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
+                transition={{ duration: 0.3 }}
                 className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-5"
             >
                 <h3 className="text-lg font-bold text-white mb-4">
@@ -103,10 +103,10 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
             {skillSections.map((section) => (
                 <motion.div
                     key={section.key}
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: 10 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: section.delay }}
+                    transition={{ duration: 0.3 }}
                     className="bg-white/5 border border-white/10 rounded-2xl p-6"
                 >
                     <h3 className="text-lg font-bold text-white mb-4">{section.title}</h3>

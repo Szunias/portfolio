@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, MapPin, Linkedin, Github, Copy, Check } from 'lucide-react';
-import { motion } from 'framer-motion';
 import ContactForm from '../components/features/ContactForm';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 import SEO from '../components/layout/SEO';
@@ -42,25 +41,17 @@ const Contact = () => {
       <div className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center pt-32">
         <div className="w-full max-w-5xl">
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-16"
-          >
+          <div className="text-center mb-16">
             <h1 className="text-4xl font-bold text-white mb-4">{t('contact_title', 'Get In Touch')}</h1>
             <p className="text-slate-400 text-lg max-w-2xl mx-auto">
               {t('contact_intro', "I'm currently looking for internship opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!")}
             </p>
-          </motion.div>
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 
              {/* Contact Info Card */}
-             <motion.div
-               initial={{ opacity: 0, x: -20 }}
-               animate={{ opacity: 1, x: 0 }}
-               className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8"
-             >
+             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
                 <h2 className="text-xl font-bold text-white mb-8">{t('contact_info_title', 'Contact Info')}</h2>
 
                 <div className="space-y-6">
@@ -124,15 +115,12 @@ const Contact = () => {
                       </a>
                    </div>
                 </div>
-             </motion.div>
+             </div>
 
              {/* Contact Form */}
-             <motion.div
-               initial={{ opacity: 0, x: 20 }}
-               animate={{ opacity: 1, x: 0 }}
-             >
+             <div>
                 <ContactForm />
-             </motion.div>
+             </div>
 
           </div>
         </div>

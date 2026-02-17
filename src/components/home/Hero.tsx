@@ -1,4 +1,3 @@
-import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Download, Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -9,7 +8,6 @@ const HERO_TECH_STACK = ['Wwise', 'FMOD', 'Unreal Engine 5', 'C++', 'Reaper', 'U
 const Hero = () => {
   const { t } = useTranslation('home');
   const { personal_info } = usePortfolioData();
-  const shouldReduceMotion = useReducedMotion();
 
   const techStack = (personal_info as unknown as Record<string, unknown>).hero_tech_stack as string[] | undefined || HERO_TECH_STACK;
 
@@ -17,16 +15,8 @@ const Hero = () => {
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Subtle gradient background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
+        <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] bg-gradient-to-br from-purple-500/10 via-blue-500/8 to-cyan-400/8 rounded-full blur-[100px]"
-          animate={shouldReduceMotion ? {} : {
-            scale: [1, 1.1, 1],
-          }}
-          transition={shouldReduceMotion ? {} : {
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
         />
       </div>
 
@@ -34,11 +24,7 @@ const Hero = () => {
         <div className="max-w-5xl">
 
           {/* Name with gradient */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <div>
             <h1 className="font-display font-black text-[5rem] sm:text-[7rem] lg:text-[8rem] leading-[0.85] tracking-tight">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-slate-400">
                 IGOR
@@ -48,23 +34,17 @@ const Hero = () => {
                 SZUNIEWICZ
               </span>
             </h1>
-          </motion.div>
+          </div>
 
           {/* Role */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+          <p
             className="text-xl sm:text-2xl md:text-3xl text-slate-300 font-light mt-6 mb-12 max-w-2xl"
           >
             {t('hero.role', 'Game Audio Designer • Composer • Developer')}
-          </motion.p>
+          </p>
 
           {/* CTAs with magnetic hover effect */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
+          <div
             className="flex flex-wrap gap-4"
           >
             <Link
@@ -97,27 +77,21 @@ const Hero = () => {
               <Play size={20} className="ml-0.5 fill-accent group-hover:fill-white transition-colors" />
               <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/10 transition-colors" />
             </Link>
-          </motion.div>
+          </div>
 
           {/* Tech stack */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+          <div
             className="mt-20 flex flex-wrap gap-4"
           >
-            {techStack.map((tech, index) => (
-              <motion.span
+            {techStack.map((tech) => (
+              <span
                 key={tech}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5 + index * 0.05 }}
                 className="px-4 py-2 text-sm font-mono text-slate-400 border border-white/10 rounded-full bg-white/5 backdrop-blur-sm hover:border-accent/40 hover:text-white hover:bg-white/10 transition-all cursor-default"
               >
                 {tech}
-              </motion.span>
+              </span>
             ))}
-          </motion.div>
+          </div>
 
         </div>
       </div>

@@ -64,16 +64,8 @@ const About = () => {
 
             {/* Subtle Background - matching Home page style */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden">
-                <motion.div
+                <div
                     className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-gradient-to-br from-purple-500/8 via-blue-500/6 to-transparent rounded-full blur-[120px]"
-                    animate={{
-                        scale: [1, 1.05, 1],
-                    }}
-                    transition={{
-                        duration: 10,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
-                    }}
                 />
             </div>
 
@@ -82,11 +74,7 @@ const About = () => {
                 <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 py-20">
                     <div className="max-w-5xl">
                         {/* Name with gradient */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6 }}
-                        >
+                        <div>
                             <h1 className="font-display font-black text-[4rem] sm:text-[5.5rem] lg:text-[7rem] leading-[0.9] tracking-tight">
                                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-slate-400">
                                     IGOR
@@ -96,23 +84,17 @@ const About = () => {
                                     SZUNIEWICZ
                                 </span>
                             </h1>
-                        </motion.div>
+                        </div>
 
                         {/* Role */}
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.6, delay: 0.2 }}
+                        <p
                             className="text-xl sm:text-2xl md:text-3xl text-slate-300 font-light mt-6 mb-12 max-w-2xl"
                         >
                             {t('about_role', 'Game Audio Designer • Developer')}
-                        </motion.p>
+                        </p>
 
                         {/* CTAs */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 0.4 }}
+                        <div
                             className="flex flex-wrap gap-4"
                         >
                             <a
@@ -154,7 +136,7 @@ const About = () => {
                                 <ExternalLink size={16} className="group-hover:translate-x-1 transition-transform" />
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                             </Link>
-                        </motion.div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -168,10 +150,10 @@ const About = () => {
 
                         {/* Bio Section */}
                         <motion.div
-                            initial={{ opacity: 0, y: 30 }}
+                            initial={{ opacity: 0, y: 15 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.6 }}
+                            transition={{ duration: 0.35 }}
                             className="bg-white/5 border border-white/10 rounded-2xl p-8"
                         >
                             <h2 className="text-2xl font-bold text-white mb-4">
@@ -187,10 +169,10 @@ const About = () => {
 
                         {/* Design Philosophy */}
                         <motion.div
-                            initial={{ opacity: 0, y: 30 }}
+                            initial={{ opacity: 0, y: 15 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.2 }}
+                            transition={{ duration: 0.35 }}
                             className="bg-white/5 border border-white/10 rounded-2xl p-8"
                         >
                             <h2 className="text-2xl font-bold text-white mb-6">

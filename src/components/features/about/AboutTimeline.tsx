@@ -17,10 +17,10 @@ interface AboutTimelineProps {
 const AboutTimeline = ({ timeline, t }: AboutTimelineProps) => {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ duration: 0.35 }}
             className="bg-white/5 border border-white/10 rounded-2xl p-8"
         >
             <div className="flex items-center gap-3 mb-6">
@@ -36,10 +36,10 @@ const AboutTimeline = ({ timeline, t }: AboutTimelineProps) => {
                 {timeline.map((item, i) => (
                     <motion.div
                         key={item.year}
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ delay: i * 0.1, duration: 0.5 }}
+                        transition={{ delay: i * 0.05, duration: 0.3 }}
                         className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-accent/30 transition-all group"
                     >
                         <span className="inline-block px-3 py-1 text-xs font-mono text-accent bg-accent/10 rounded-full mb-3">

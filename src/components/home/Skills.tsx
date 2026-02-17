@@ -56,20 +56,17 @@ const Skills = () => {
 
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.3 }}
           className="text-center mb-16"
         >
-          <motion.span
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
+          <span
             className="inline-block px-4 py-2 mb-6 text-xs font-mono text-accent uppercase tracking-widest bg-accent/5 border border-accent/20 rounded-full"
           >
             {t('skills.badge', 'Technologies')}
-          </motion.span>
+          </span>
           <h2 className="text-5xl md:text-7xl font-display font-bold text-white mb-6 tracking-tight">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
               {t('skills.title', 'Tech Stack')}
@@ -85,12 +82,12 @@ const Skills = () => {
           {keyTech.map((tech, index) => (
             <motion.div
               key={tech.name}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{
-                delay: index * 0.1,
-                duration: 0.6,
+                delay: index * 0.05,
+                duration: 0.35,
               }}
               whileHover={{ scale: 1.02 }}
               className="relative group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:border-white/20 transition-all"
@@ -124,7 +121,7 @@ const Skills = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0 }}
           className="border-t border-white/10 pt-16"
         >
           <motion.h3
@@ -144,10 +141,10 @@ const Skills = () => {
             ].map((skill, index) => (
               <motion.span
                 key={skill}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.4 + index * 0.03 }}
+                transition={{ delay: index * 0.02 }}
                 whileHover={{ scale: 1.05 }}
                 className="px-5 py-2.5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-sm text-slate-400 hover:text-white hover:border-accent/40 hover:bg-white/10 transition-all cursor-default"
               >

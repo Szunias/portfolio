@@ -171,7 +171,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
           : 'bg-[#0a0a0a] border border-white/5 hover:border-accent/30 hover:shadow-[0_0_60px_-10px_rgba(56,189,248,0.15)] hover:scale-[1.02]'
         }
       `}
-      style={{ animationDelay: `${index < 6 ? index * 100 : 0}ms` }}
+      style={{ animationDelay: `${index < 4 ? index * 50 : 0}ms` }}
     >
       {/* Animated Mist Layer for Shadow Frames */}
       {isShadowFrames && (

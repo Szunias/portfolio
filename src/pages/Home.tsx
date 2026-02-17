@@ -42,10 +42,10 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.3 }}
             className="text-center mb-16"
           >
             <h2 className="text-5xl md:text-6xl font-display font-bold mb-6">
@@ -74,12 +74,12 @@ const Home = () => {
             {displayProjects.map((project, index) => (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{
-                  duration: 0.6,
-                  delay: index * 0.1,
+                  duration: 0.35,
+                  delay: index * 0.05,
                 }}
               >
                 <ProjectCard project={project} index={index} />

@@ -16,25 +16,6 @@ const MiddlewareOptimization = () => {
     const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
     const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
-    const fadeInUp = {
-        hidden: { opacity: 0, y: 30 },
-        visible: { 
-            opacity: 1, 
-            y: 0,
-            transition: { duration: 0.6, ease: "easeOut" }
-        }
-    };
-
-    const staggerContainer = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1
-            }
-        }
-    };
-
     return (
         <div ref={containerRef} className="min-h-screen bg-white bg-stripes-diagonal text-slate-900 font-sans selection:bg-purple-100 selection:text-purple-900">
             <SEO
@@ -43,80 +24,49 @@ const MiddlewareOptimization = () => {
             />
             {/* Hero Section */}
             <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 to-white px-4 py-20">
-                <motion.div 
+                <motion.div
                     style={{ opacity, scale }}
                     className="relative z-10 max-w-5xl w-full text-center"
                 >
-                    <motion.div 
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-50 text-purple-600 text-sm font-bold uppercase tracking-wider mb-8 border border-purple-100"
-                    >
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-50 text-purple-600 text-sm font-bold uppercase tracking-wider mb-8 border border-purple-100">
                         <Zap size={16} />
                         {t('hero.tag')}
-                    </motion.div>
+                    </div>
 
-                    <motion.h1 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3, duration: 0.8 }}
-                        className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-slate-900 mb-6 leading-tight"
-                    >
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-slate-900 mb-6 leading-tight">
                         {t('hero.title')}
-                    </motion.h1>
+                    </h1>
 
-                    <motion.p 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.5, duration: 0.8 }}
-                        className="text-lg md:text-2xl text-slate-500 max-w-3xl mx-auto mb-12 font-light leading-relaxed"
-                    >
+                    <p className="text-lg md:text-2xl text-slate-500 max-w-3xl mx-auto mb-12 font-light leading-relaxed">
                         {t('hero.lead')}
-                    </motion.p>
+                    </p>
 
                     {/* Wwise Logo */}
-                    <motion.div 
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.6 }}
-                        className="bg-white p-8 rounded-3xl shadow-2xl shadow-purple-100/50 inline-block mb-12 hover:shadow-purple-200/50 transition-shadow duration-300"
-                    >
+                    <div className="bg-white p-8 rounded-3xl shadow-2xl shadow-purple-100/50 inline-block mb-12 hover:shadow-purple-200/50 transition-shadow duration-300">
                         <img
                             src="/assets/images/projects-pausedeserve/wwise_logo_rgb-77Awrfoo.png"
                             alt="Wwise Logo"
                             className="w-48 md:w-64 h-auto"
                             loading="lazy"
                         />
-                    </motion.div>
+                    </div>
 
                     {/* Context Note */}
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.7 }}
-                        className="max-w-2xl mx-auto bg-sky-50 border-l-4 border-sky-400 p-6 rounded-r-xl text-left mb-12"
-                    >
+                    <div className="max-w-2xl mx-auto bg-sky-50 border-l-4 border-sky-400 p-6 rounded-r-xl text-left mb-12">
                         <p className="text-sky-900 text-sm md:text-base leading-relaxed">
                             {t('hero.context')}
                         </p>
-                    </motion.div>
+                    </div>
 
                     {/* Quick Stats */}
-                    <motion.div 
-                        variants={staggerContainer}
-                        initial="hidden"
-                        animate="visible"
-                        className="flex flex-wrap justify-center gap-6 md:gap-10"
-                    >
+                    <div className="flex flex-wrap justify-center gap-6 md:gap-10">
                         {[
                             { num: t('hero.stat1_num'), text: t('hero.stat1_text') },
                             { num: t('hero.stat2_num'), text: t('hero.stat2_text') },
                             { num: t('hero.stat3_num'), text: t('hero.stat3_text') }
                         ].map((stat, index) => (
-                            <motion.div 
+                            <div
                                 key={index}
-                                variants={fadeInUp}
                                 className="flex items-baseline gap-3 px-6 py-4 bg-white rounded-2xl border border-slate-100 shadow-lg shadow-slate-100/50 hover:-translate-y-1 transition-transform duration-300"
                             >
                                 <span className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-purple-500">
@@ -125,39 +75,34 @@ const MiddlewareOptimization = () => {
                                 <span className="text-slate-500 font-medium text-sm uppercase tracking-wide">
                                     {stat.text}
                                 </span>
-                            </motion.div>
+                            </div>
                         ))}
-                    </motion.div>
+                    </div>
                 </motion.div>
 
-                <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.5, duration: 1 }}
-                    className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-slate-300"
-                >
+                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-slate-300">
                     <ChevronDown size={32} />
-                </motion.div>
+                </div>
             </section>
 
             {/* Main Content */}
             <main className="relative z-20 bg-white">
                 {/* Section Header */}
                 <section className="max-w-4xl mx-auto px-6 py-24 text-center">
-                    <motion.h2 
-                        initial="hidden"
-                        whileInView="visible"
+                    <motion.h2
+                        initial={{ opacity: 0, y: 15 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        variants={fadeInUp}
+                        transition={{ duration: 0.35 }}
                         className="text-4xl md:text-5xl font-bold text-slate-900 mb-6"
                     >
                         {t('section.title')}
                     </motion.h2>
-                    <motion.p 
-                        initial="hidden"
-                        whileInView="visible"
+                    <motion.p
+                        initial={{ opacity: 0, y: 15 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        variants={fadeInUp}
+                        transition={{ duration: 0.35 }}
                         className="text-xl text-slate-500 leading-relaxed"
                     >
                         {t('section.subtitle')}
@@ -166,7 +111,7 @@ const MiddlewareOptimization = () => {
 
                 <div className="max-w-6xl mx-auto px-6 pb-32 space-y-32">
                     {/* Project 1: Boney Boogaloo */}
-                    <CaseStudyCard 
+                    <CaseStudyCard
                         title={t('boney.title')}
                         badges={[t('boney.badge1'), t('boney.badge2')]}
                         time={t('boney.badge3')}
@@ -178,7 +123,7 @@ const MiddlewareOptimization = () => {
                     />
 
                     {/* Project 2: Ellen */}
-                    <CaseStudyCard 
+                    <CaseStudyCard
                         title={t('ellen.title')}
                         badges={[t('ellen.badge1'), t('ellen.badge2')]}
                         time={t('ellen.badge3')}
@@ -189,7 +134,7 @@ const MiddlewareOptimization = () => {
                     />
 
                     {/* Project 3: Stomach Aches */}
-                    <CaseStudyCard 
+                    <CaseStudyCard
                         title={t('stomach.title')}
                         badges={[t('stomach.badge1'), t('stomach.badge2')]}
                         time={t('stomach.badge3')}
@@ -210,32 +155,32 @@ const MiddlewareOptimization = () => {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            <SkillCard 
+                            <SkillCard
                                 icon={<Cpu className="text-purple-500" />}
                                 title={t('learned.skill1_name')}
                                 desc={t('learned.skill1_desc')}
                             />
-                            <SkillCard 
+                            <SkillCard
                                 icon={<Layers className="text-sky-500" />}
                                 title={t('learned.skill2_name')}
                                 desc={t('learned.skill2_desc')}
                             />
-                            <SkillCard 
+                            <SkillCard
                                 icon={<Code className="text-pink-500" />}
                                 title={t('learned.skill3_name')}
                                 desc={t('learned.skill3_desc')}
                             />
-                            <SkillCard 
+                            <SkillCard
                                 icon={<Database className="text-amber-500" />}
                                 title={t('learned.skill4_name')}
                                 desc={t('learned.skill4_desc')}
                             />
-                            <SkillCard 
+                            <SkillCard
                                 icon={<Music className="text-indigo-500" />}
                                 title={t('learned.skill5_name')}
                                 desc={t('learned.skill5_desc')}
                             />
-                            <SkillCard 
+                            <SkillCard
                                 icon={<Zap className="text-emerald-500" />}
                                 title={t('learned.skill6_name')}
                                 desc={t('learned.skill6_desc')}
@@ -247,8 +192,8 @@ const MiddlewareOptimization = () => {
 
             {/* Footer */}
             <footer className="bg-white py-20 text-center border-t border-slate-100">
-                <Link 
-                    to="/projects" 
+                <Link
+                    to="/projects"
                     className="inline-flex items-center gap-2 px-8 py-4 bg-white text-slate-900 font-semibold rounded-full border border-slate-200 shadow-lg shadow-slate-100 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group"
                 >
                     <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
@@ -277,11 +222,11 @@ interface CaseStudyCardProps {
 const CaseStudyCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, poster, caption, paragraphs }: CaseStudyCardProps) => {
     const { t: tCommon } = useTranslation('common');
     return (
-        <motion.article 
-            initial={{ opacity: 0, y: 50 }}
+        <motion.article
+            initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.4 }}
             className="bg-slate-50 rounded-3xl p-8 md:p-12 shadow-sm hover:shadow-md transition-shadow duration-300"
         >
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
@@ -301,15 +246,15 @@ const CaseStudyCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, po
             <div className="bg-white rounded-2xl overflow-hidden shadow-lg shadow-slate-200/50 mb-10 border border-slate-100">
                 <div className="p-6 border-b border-slate-100">
                     <h4 className="font-bold text-lg text-slate-800 flex items-center gap-2">
-                        <svg 
-                            width="18" 
-                            height="18" 
-                            viewBox="0 0 24 24" 
-                            fill="currentColor" 
-                            stroke="currentColor" 
-                            strokeWidth="2" 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
                             className="text-purple-500"
                         >
                             <polygon points="5 3 19 12 5 21 5 3"></polygon>
@@ -362,10 +307,11 @@ interface SkillCardProps {
 
 const SkillCard = ({ icon, title, desc }: SkillCardProps) => {
     return (
-        <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.3 }}
             whileHover={{ y: -5 }}
             className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:shadow-purple-100/50 transition-all duration-300"
         >

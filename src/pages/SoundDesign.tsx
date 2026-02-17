@@ -29,40 +29,21 @@ const SoundDesign = () => {
                     style={{ opacity, scale }}
                     className="relative z-10 max-w-5xl w-full text-center"
                 >
-                    <motion.div 
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 text-orange-400 text-sm font-bold uppercase tracking-wider mb-8 border border-orange-500/20"
-                    >
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 text-orange-400 text-sm font-bold uppercase tracking-wider mb-8 border border-orange-500/20">
                         <Music size={16} />
                         {t('hero.badge', 'Sound Design Portfolio')}
-                    </motion.div>
+                    </div>
 
-                    <motion.h1 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-white mb-6 leading-tight"
-                    >
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-white mb-6 leading-tight">
                         {t('hero.title', 'Sonic Landscapes')}
-                    </motion.h1>
+                    </h1>
 
-                    <motion.p 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                        className="text-lg md:text-2xl text-slate-400 max-w-3xl mx-auto mb-12 font-light leading-relaxed"
-                    >
+                    <p className="text-lg md:text-2xl text-slate-400 max-w-3xl mx-auto mb-12 font-light leading-relaxed">
                         {t('hero.subtitle', 'A collection of linear media redesigns and implementation showcases.')}
-                    </motion.p>
+                    </p>
 
                     {/* Tools Grid */}
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="flex flex-wrap justify-center gap-8 opacity-70 grayscale hover:grayscale-0 transition-all duration-500"
-                    >
+                    <div className="flex flex-wrap justify-center gap-8 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
                         {[
                             { name: 'Reaper', src: '/assets/images/tools/reaper.png' },
                             { name: 'Logic Pro', src: '/assets/images/tools/logic.png' },
@@ -70,15 +51,15 @@ const SoundDesign = () => {
                             { name: 'Studio One', src: '/assets/images/tools/studioone.png' },
                             { name: '3D Audio', src: '/assets/images/tools/3daudio.png' }
                         ].map((tool) => (
-                            <img 
+                            <img
                                 key={tool.name}
-                                src={tool.src} 
-                                alt={tool.name} 
-                                className="h-12 w-auto object-contain hover:scale-110 transition-transform" 
-                                title={tool.name} 
+                                src={tool.src}
+                                alt={tool.name}
+                                className="h-12 w-auto object-contain hover:scale-110 transition-transform"
+                                title={tool.name}
                             />
                         ))}
-                    </motion.div>
+                    </div>
                 </motion.div>
             </section>
 
@@ -185,10 +166,11 @@ const VideoCard = ({ title, desc, badge, videoSrc, poster }: VideoCardProps) => 
     };
 
     return (
-        <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+        <motion.div
+            initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.35 }}
             className="bg-[#111] rounded-2xl overflow-hidden border border-white/5 group hover:border-orange-500/30 transition-colors"
         >
             <div className="relative aspect-video bg-black group-hover:shadow-[0_0_30px_rgba(249,115,22,0.1)] transition-shadow">
