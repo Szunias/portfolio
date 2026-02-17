@@ -65,18 +65,18 @@
     "rtpc_title": "RTPC-gebaseerd dynamisch systeem",
     "rtpc_desc": "Ambient soundscape en speler ademintensiteit reageren op het aantal anomalieën. Meer anomalieën = hogere spanning.",
     "switches_title": "Switch Containers & Zones",
-    "switches_desc": "Elke kamer heeft unieke ambient lagen die soepel overgaan terwijl je door de ruimte beweegt. De badkamer bevat gespatializeerde toilet- en kraangeluiden, terwijl voetstappen dynamisch aanpassen op basis van oppervlaktematerialen.",
+    "switches_desc": "Elke kamer heeft eigen ambient-lagen die crossfaden als je beweegt. Badkamer heeft gespatializeerde toilet- en kraangeluiden. Voetstappen veranderen per oppervlak. Hout, tegels, beton.",
     "delegates_title": "Blueprint Delegates (SOC)",
-    "delegates_desc": "Separation of Concerns architectuur waarbij audiosystemen communiceren via delegates. Geeft schone en modulaire implementatie.",
+    "delegates_desc": "Audiosystemen communiceren via delegates. C++ draait gamelogica, Blueprint draait audio. Alles modulair — verander het een zonder het ander te breken.",
     "spatial_title": "HRTF Spatial Audio",
-    "spatial_desc": "3D positionele audio voor anomalieën, vijandelijke aanwezigheid en omgevingscues die cruciaal is voor gameplay."
+    "spatial_desc": "Volledige 3D positionele audio voor anomalieën, vijand en omgevingscues. Ruimtelijke precisie is cruciaal — je vindt dreigingen niet zonder."
   },
   "dev_tools": {
     "title": "Ontwikkeltools",
     "fixer_title": "Wwise Unreal Fixer",
     "fixer_desc": "Een custom C++ plugin die automatisch gebroken Wwise integratie herstelt na Perforce pulls. Oplossing met één klik.",
     "rebuilder_title": "Unreal Engine Rebuilder",
-    "rebuilder_desc": "Geautomatiseerde build tool om compilatie workflow te stroomlijnen en downtime te verminderen."
+    "rebuilder_desc": "Verwijdert Intermediate en Saved mappen, regenereert projectbestanden. Repareert linker errors na slechte merges."
   },
   "production": {
     "title": "Productiestatus",
@@ -105,19 +105,19 @@
   },
   "footstep": {
     "title": "Voetstap Systeem: Oppervlak Detectie & Audio Routing",
-    "desc": "Fysieke materiaal detectie stuurt dynamische audio schakeling voor realistische oppervlak-gebaseerde voetstappen.",
+    "desc": "Voetstappen veranderen op basis van waar je op loopt. Hout, tegels, beton. Het systeem detecteert het oppervlak en schakelt geluiden in Wwise automatisch.",
     "what": "Systeem detecteert oppervlaktetype onder speler (hout, tegels, beton) en schakelt automatisch geschikte voetstap geluiden in Wwise. Elke speler stap matcht het materiaal waarop ze lopen.",
     "how": "C++ component voert line trace uit naar beneden vanaf speler positie, detecteert Physical Material, mapt het naar Wwise Switch naam, en Blueprint Audio Manager ontvangt delegate en speelt geschikt geluid af.",
     "why": "Separation of Concerns - C++ handelt detectie logica af, Blueprint handelt audio af. Delegates zorgen voor losse koppeling tussen systemen. Dit maakt toevoegen van nieuwe oppervlakken gemakkelijk zonder C++ code te wijzigen.",
-    "result": "Dit produceert realistische voetstappen die automatisch overeenkomen met elk oppervlak, zonder vereiste handmatige schakeling, met gemakkelijke uitbreiding voor nieuwe materialen. Het systeem handelt elke speler stap automatisch af zonder interventie."
+    "result": "Voetstappen matchen elk oppervlak automatisch. Geen handmatig werk nodig. Nieuwe materialen toevoegen is eenvoudig."
   },
   "player_audio": {
     "title": "Speler Audio Systeem: Delegate-Gebaseerde Communicatie",
-    "desc": "Schone scheiding tussen speler acties en audio reacties met Blueprint delegates.",
+    "desc": "Speleracties triggeren audio via delegates. Camerafoto, zoom, prikbord-interactie. Elke actie roept het juiste Wwise event aan.",
     "what": "Systeem verbindt speler acties (camera schot, zoom, photoboard entry) met geschikte audio events in Wwise. Elke speler actie activeert automatisch corresponderend geluid.",
     "how": "PlayerCharacter in C++ definieert multicast delegates. Wanneer speler actie uitvoert, delegate wordt uitgezonden. Blueprint Audio Manager luistert naar deze delegates en roept geschikte Wwise Events aan.",
     "why": "Delegates zorgen voor losse koppeling - PlayerCharacter weet niets over audio, Audio Manager weet niets over speler logica. Dit vergemakkelijkt testen, debuggen en wijzigingen. Elk systeem kan onafhankelijk ontwikkeld worden.",
-    "result": "Het resultaat is een schone architectuur die het toevoegen van nieuwe audio acties eenvoudig maakt, zonder hardcoded calls, waar audio designer geluiden vrijelijk kan wijzigen zonder speler code aan te raken."
+    "result": "Nieuwe audio-acties toevoegen is makkelijk. Geen hardcoded calls. Audio designer verandert geluiden in Wwise zonder spelcode aan te raken."
   },
   "rtpc": {
     "title": "Dynamisch Spanning Systeem: RTPC-Gedreven Ambience",
@@ -125,7 +125,7 @@
     "what": "Systeem verandert dynamisch ambient intensiteit op basis van aantal foto's geplaatst op bord. Meer foto's = meer gespannen atmosfeer. RTPC waarde 0-5 controleert ambient lagen in Wwise.",
     "how": "PhotoboardWidget volgt aantal belangrijke foto's. Wanneer speler foto plaatst, UpdateAmbientRTPC() vindt AkAmbientSound actor en zet RTPC waarde. Wwise crossfade automatisch tussen ambient lagen.",
     "why": "RTPC geeft vloeiende overgangen tussen spanning staten zonder sprongen. Ik controleer crossfade curves in Wwise zonder code aan te raken.",
-    "result": "Dit creëert een vloeiende spanning progressie zonder schokkerige audio sprongen, met gemakkelijke curve aanpassingen binnen Wwise, waar de atmosfeer automatisch aanpast aan speler voortgang."
+    "result": "Spanning bouwt vloeiend op met je voortgang. Pas curves aan in Wwise, atmosfeer past automatisch aan."
   },
   "wwise_arch": {
     "title": "Wwise Architectuur: Switch Containers & Photoboard Integratie",
@@ -210,8 +210,8 @@
     "solution_label": "Oplossing:",
     "challenge1": {
       "title": "Workflow Optimalisatie Tools",
-      "problem": "Werken in een multi-institutionele samenwerking met studenten, workflow problemen verstoorden vaak de ontwikkeling. Wwise integratie brak na Perforce pulls, en Unreal Engine compilatietijden veroorzaakten aanzienlijke downtime.",
-      "solution": "Creëerde Wwise Unreal Fixer en Unreal Engine Rebuilder tools om de workflow te stroomlijnen. Hoewel niet volledig onafhankelijk werk (collaboratief), werden deze tools primair ontwikkeld om studenten efficiënter te laten werken. De Wwise Fixer herstelt automatisch gebroken Wwise integratie na Perforce pulls, en de Rebuilder automatiseert het compilatieproces om downtime te verminderen."
+      "problem": "Multi-institutioneel studentenproject had workflow-problemen. Wwise integratie brak na Perforce pulls. Unreal compilatie duurde te lang, wat downtime veroorzaakte.",
+      "solution": "Wwise Unreal Fixer en Unreal Engine Rebuilder gebouwd. Fixer herstelt Wwise integratie na Perforce pulls (één klik). Rebuilder automatiseert compilatie om downtime te verkorten."
     }
   },
   "code_explanations": {
@@ -231,7 +231,7 @@
     "what": "Systeem volgt vijand afstand en activeert audio lagen. Dichterbij vijand = intensievere audio. Dread ambient en ademstress schalen met nabijheid.",
     "how": "OnProximityChanged() ontvangt nabijheid waarde (0-100%), start/stopt dread lagen, werkt RTPC bij voor intensiteit, past ademstress aan. Alles gevalideerd met null safety checks.",
     "why": "Real-time audio reactie creëert psychologische spanning. RTPC maakt vloeiende intensiteitsovergangen mogelijk in plaats van abrupte veranderingen. Aparte ademlaag versterkt de angststaat van de speler.",
-    "result": "Audio intensiteit schaalt soepel met gevaarniveau. Speler voelt toenemende angst als vijand nadert door gelaagde ambient geluiden en gestrest ademen."
+    "result": "Hoe dichterbij de vijand, hoe erger alles klinkt. Dread-lagen en gestrest ademen stapelen zich op naarmate hij dichterbij komt."
   },
   "ambience_zones": {
     "title": "Ambientie Zone Systeem",
@@ -239,7 +239,7 @@
     "what": "5 verschillende zones met unieke ambient soundscapes: Main Bar, Back Room, Bathroom, Hallway, Storage. Elk heeft specifieke audio atmosfeer.",
     "how": "Trigger volumes detecteren speler locatie. Bij zone binnenkomst, fade out vorige ambient en fade in nieuwe zone lagen. Vloeiende crossfades voorkomen audio sprongen.",
     "why": "Locatie-specifieke ambient grond speler in de ruimte. Elke kamer klinkt akoestisch anders, wat de indeling en atmosfeer van de pub versterkt.",
-    "result": "Naadloze audio overgangen tussen zones. Speler begrijpt onbewust pub indeling door sound design. Elk gebied heeft aparte akoestische identiteit."
+    "result": "Soepele overgangen tussen zones. Elke kamer klinkt anders, dus je weet altijd waar je bent in de pub."
   },
   "anomaly_system": {
     "title": "Anomalie Audio Systeem",
@@ -247,7 +247,7 @@
     "what": "3 detectiestadia: Ver (algemeen alarm), Medium (directionele hint), Dichtbij (precieze locatie). 10 anomalie types waaronder Levitating Glass, Shadow Movement, Spinning Chair.",
     "how": "Afstand-gebaseerde RTPC drijft audio intensiteit. Directionele audio leidt speler naar anomalie. Elk anomalie type heeft unieke geluidssignatuur voor identificatie.",
     "why": "Audio is de primaire detectiemechaniek. Zonder geluid is het vinden van anomalieën bijna onmogelijk. Gelaagde aanpak (alarm → gids → bevestiging) creëert boeiende gameplay loop.",
-    "result": "Spelers vertrouwen op audio hints om anomalieën te lokaliseren en identificeren. Sound design is functioneel en atmosferisch - drijft kern gameplay terwijl spanning opbouwt."
+    "result": "Geluid is de enige manier om anomalieën te vinden. Elk type heeft een eigen signatuur, dus ervaren spelers leren ze op gehoor te herkennen."
   },
   "project_metrics": {
     "title": "Projectschaal & Technische Metrieken",
