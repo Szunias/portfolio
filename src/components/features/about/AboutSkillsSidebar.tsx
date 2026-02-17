@@ -45,8 +45,7 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
     ];
 
     return (
-        <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-32 lg:self-start">
-            {/* Quick Info Card */}
+        <div className="lg:col-span-4 lg:sticky lg:top-32 lg:self-start">
             <motion.div
                 initial={{ opacity: 0, x: 10 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -54,7 +53,8 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
                 transition={{ duration: 0.3 }}
                 className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-5"
             >
-                <h3 className="text-lg font-bold text-white mb-4">
+                {/* Quick Info */}
+                <h3 className="text-lg font-bold text-white">
                     {t('about_quick_info', 'Quick Info')}
                 </h3>
 
@@ -97,31 +97,29 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
                         )}
                     </button>
                 </div>
-            </motion.div>
 
-            {/* Skills Cards */}
-            {skillSections.map((section) => (
-                <motion.div
-                    key={section.key}
-                    initial={{ opacity: 0, x: 10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.3 }}
-                    className="bg-white/5 border border-white/10 rounded-2xl p-6"
-                >
-                    <h3 className="text-lg font-bold text-white mb-4">{section.title}</h3>
-                    <div className="flex flex-wrap gap-2">
-                        {section.items.map(skill => (
-                            <span
-                                key={skill}
-                                className="px-3 py-1.5 text-xs font-mono text-accent bg-accent/5 border border-accent/20 rounded-full"
-                            >
-                                {skill}
-                            </span>
-                        ))}
+                {/* Divider */}
+                <div className="border-t border-white/10" />
+
+                {/* Skills Sections */}
+                {skillSections.map((section) => (
+                    <div key={section.key}>
+                        <h4 className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2">
+                            {section.title}
+                        </h4>
+                        <div className="flex flex-wrap gap-1.5">
+                            {section.items.map(skill => (
+                                <span
+                                    key={skill}
+                                    className="px-2.5 py-1 text-xs font-mono text-accent bg-accent/5 border border-accent/20 rounded-full"
+                                >
+                                    {skill}
+                                </span>
+                            ))}
+                        </div>
                     </div>
-                </motion.div>
-            ))}
+                ))}
+            </motion.div>
         </div>
     );
 };
