@@ -27,6 +27,18 @@ const Navbar = () => {
     }
   }, [isOpen]);
 
+  // Body scroll lock on mobile menu open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   // Scroll detection
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);

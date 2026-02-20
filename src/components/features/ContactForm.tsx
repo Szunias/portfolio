@@ -50,6 +50,7 @@ const ContactForm = () => {
             type="text"
             id="name"
             name="from_name"
+            autoComplete="name"
             required
             aria-required="true"
             className="w-full bg-primary border border-border rounded-sm px-4 py-3 text-cream focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors"
@@ -64,6 +65,7 @@ const ContactForm = () => {
             type="email"
             id="email"
             name="from_email"
+            autoComplete="email"
             required
             aria-required="true"
             className="w-full bg-primary border border-border rounded-sm px-4 py-3 text-cream focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors"

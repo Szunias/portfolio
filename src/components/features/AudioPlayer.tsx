@@ -1,7 +1,7 @@
 import { useAudio } from '../../context/AudioContext';
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, X } from 'lucide-react';
 import { formatTime } from '../../utils';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useReducedMotion } from 'framer-motion';
 import { Button } from '../ui/Button';
@@ -13,7 +13,7 @@ const AudioPlayer = () => {
   const { t } = useTranslation('common');
   const {
     currentTrack, isPlaying, togglePlay, nextTrack, prevTrack,
-    progress, duration, currentTime, seek, volume, setVolume, isPlayerVisible, closePlayer
+    seek, volume, setVolume, isPlayerVisible, closePlayer, getAudioRef
   } = useAudio();
 
   const [isMuted, setIsMuted] = useState(false);

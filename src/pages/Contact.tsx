@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, MapPin, Linkedin, Github, Copy, Check } from 'lucide-react';
 import ContactForm from '../components/features/ContactForm';
@@ -12,11 +12,7 @@ const Contact = () => {
   const { personal_info } = usePortfolioData();
   const { t } = useTranslation('contact');
   const [copied, setCopied] = useState(false);
-  const [email, setEmail] = useState('');
-
-  useEffect(() => {
-    setEmail(atob(ENCODED_EMAIL));
-  }, []);
+  const email = useMemo(() => atob(ENCODED_EMAIL), []);
 
   const copyToClipboard = () => {
     if (!email) return;

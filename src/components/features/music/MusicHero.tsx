@@ -69,7 +69,7 @@ const MusicHero = () => {
                         <div
                             className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-center justify-center cursor-pointer hover:from-black/40 hover:via-black/10 transition-all duration-300"
                             onClick={() => currentTrack?.id === displayTrack.id ? togglePlay() : playTrack(displayTrack)}
-                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); currentTrack?.id === displayTrack.id ? togglePlay() : playTrack(displayTrack); } }}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (currentTrack?.id === displayTrack.id) togglePlay(); else playTrack(displayTrack); } }}
                             role="button"
                             tabIndex={0}
                             aria-label={isPlaying && currentTrack?.id === displayTrack.id ? t('music.pause', 'Pause') : t('music.play', 'Play')}

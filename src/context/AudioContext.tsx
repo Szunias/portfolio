@@ -125,6 +125,8 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
     setVolumeState(vol);
   }, []);
 
+  const getAudioRef = useCallback(() => audioRef.current, []);
+
   const closePlayer = useCallback(() => {
     setIsPlayerVisible(false);
     if (audioRef.current) {
@@ -229,8 +231,8 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
     closePlayer
   }), [
     currentTrack, isPlaying, playlist, playTrack, togglePlay, nextTrack, 
-    prevTrack, loadPlaylist, progress, duration, currentTime, seek, 
-    volume, setVolume, isPlayerVisible, closePlayer
+    prevTrack, loadPlaylist, seek, 
+    volume, setVolume, isPlayerVisible, closePlayer, getAudioRef
   ]);
 
   return (

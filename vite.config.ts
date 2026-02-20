@@ -21,6 +21,19 @@ const copy404 = () => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-motion': ['framer-motion'],
+          'vendor-icons': ['lucide-react'],
+          'vendor-i18n': ['i18next', 'react-i18next', 'i18next-browser-languagedetector', 'i18next-http-backend'],
+          'vendor-utils': ['@vimeo/player', '@emailjs/browser']
+        }
+      }
+    }
+  },
   plugins: [react(), copy404()],
   resolve: {
     alias: {
