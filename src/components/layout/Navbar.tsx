@@ -68,8 +68,8 @@ const Navbar = () => {
 
             {/* Logo */}
             <Link to={ROUTES.HOME} className="flex flex-col">
-              <span className="font-display text-lg text-cream-light tracking-wide">IGOR SZUNIEWICZ</span>
-              <span className="text-[10px] text-dim uppercase tracking-wider font-mono">{t('brand.tagline', 'Audio Designer')}</span>
+              <span className="font-display text-base uppercase text-cream tracking-[0.2em]">IGOR SZUNIEWICZ</span>
+              <span className="text-[9px] text-accent uppercase tracking-[0.3em] font-mono mt-0.5">{t('brand.tagline', 'Audio Designer')}</span>
             </Link>
 
             {/* Desktop Nav */}
@@ -80,7 +80,7 @@ const Navbar = () => {
                   <Link
                     key={link.path}
                     to={link.path}
-                    className={`text-sm transition-colors duration-200 ${isActive ? 'text-cream font-medium' : 'text-dim hover:text-cream'}`}
+                    className={`group relative text-xs uppercase tracking-widest transition-colors duration-300 font-mono ${isActive ? 'text-cream' : 'text-dim hover:text-cream'}`}
                     aria-current={isActive ? 'page' : undefined}
                   >
                     <span className={isActive ? 'border-b border-accent pb-0.5' : ''}>

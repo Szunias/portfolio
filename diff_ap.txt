@@ -1,0 +1,81 @@
+﻿git : warning: in the
+ working copy of 'src
+/components/features/
+AudioPlayer.tsx', LF 
+will be replaced by C
+RLF the next time Git
+ touches it
+At line:1 char:1
++ git diff -- "src/co
+mponents/features/Aud
+ioPlayer.tsx" 2>&1 | 
+Out-File ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (warning   
+ : in the... Git     
+touches it:Strin    g
+) [], RemoteExc    ep
+tion
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+diff --git a/src/components/features/AudioPlayer.tsx b/src/components/features/AudioPlayer.tsx
+index cfe45f1..9f30a45 100644
+--- a/src/components/features/AudioPlayer.tsx
++++ b/src/components/features/AudioPlayer.tsx
+@@ -19,6 +19,40 @@ const AudioPlayer = () => {
+   const [isMuted, setIsMuted] = useState(false);
+   const [prevVolume, setPrevVolume] = useState(volume);
+   const shouldReduceMotion = useReducedMotion();
++  
++  const [progress, setProgress] = useState(0);
++  const [currentTime, setCurrentTime] = useState(0);
++  const [duration, setDuration] = useState(0);
++  const rafRef = useRef<number>();
++
++  useEffect(() => {
++    const audio = getAudioRef();
++    if (!audio || !isPlayerVisible) return;
++
++    const updateProgress = () => {
++      if (audio.duration) {
++        setCurrentTime(audio.currentTime);
++        setDuration(audio.duration);
++        setProgress((audio.currentTime / audio.duration) * 100);
++      }
++      rafRef.current = requestAnimationFrame(updateProgress);
++    };
++
++    if (isPlaying) {
++      rafRef.current = requestAnimationFrame(updateProgress);
++    } else {
++      if (rafRef.current) cancelAnimationFrame(rafRef.current);
++      if (audio.duration) {
++        setCurrentTime(audio.currentTime);
++        setDuration(audio.duration);
++        setProgress((audio.currentTime / audio.duration) * 100);
++      }
++    }
++
++    return () => {
++      if (rafRef.current) cancelAnimationFrame(rafRef.current);
++    };
++  }, [isPlaying, isPlayerVisible, getAudioRef]);
+ 
+   if (!currentTrack || !isPlayerVisible) return null;
+ 
+@@ -146,8 +180,4 @@ const AudioPlayer = () => {
+         </div>
+ 
+       </div>
+-    </div>
+-  );
+-};
+-
+-export default AudioPlayer;
++    </div

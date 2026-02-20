@@ -15,6 +15,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="flex flex-col min-h-screen text-cream font-sans overflow-x-hidden relative bg-primary">
       <Helmet htmlAttributes={{ lang: i18n.language }} />
+      <div className="bg-noise" aria-hidden="true" />
 
       <div className="relative z-10 flex flex-col min-h-screen">
         <a 

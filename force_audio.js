@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const audioPlayerPath = path.join(__dirname, 'src/components/features/AudioPlayer.tsx');
-
 const content = `import { useAudio } from '../../context/AudioContext';
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, X } from 'lucide-react';
 import { formatTime } from '../../utils';
@@ -12,7 +10,7 @@ import { useReducedMotion } from 'framer-motion';
 import { Button } from '../ui/Button';
 
 const VISUALIZER_BARS = 6;
-const barDelays = Array.from({ length: VISUALIZER_BARS }, (_, i) => \`\${i * 0.12}s\`);
+const barDelays = Array.from({ length: VISUALIZER_BARS }, (_, i) => \\`\\${i * 0.12}s\\`);
 
 const AudioPlayer = () => {
   const { t } = useTranslation('common');
@@ -24,6 +22,7 @@ const AudioPlayer = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [prevVolume, setPrevVolume] = useState(volume);
   const shouldReduceMotion = useReducedMotion();
+  
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -73,7 +72,7 @@ const AudioPlayer = () => {
       >
         <div
             className="h-full bg-accent transition-all duration-200 rounded-r-full"
-            style={{ width: \`\${progress}%\` }}
+            style={{ width: \\`\\${progress}%\\` }}
         >
             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 group-hover:w-3 group-hover:h-3 bg-cream rounded-full transition-all duration-200"></div>
         </div>
@@ -85,7 +84,7 @@ const AudioPlayer = () => {
         <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
             <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-sm bg-secondary overflow-hidden border border-border flex-shrink-0">
                 <img
-                    src={\`/\${currentTrack.cover}\`}
+                    src={\\`/\\${currentTrack.cover}\\`}
                     alt={currentTrack.title}
                     className="w-full h-full object-cover"
                 />
@@ -97,8 +96,8 @@ const AudioPlayer = () => {
                     <div className="flex items-end gap-[1px] h-2.5 sm:h-3">
                         {barDelays.map((delay, i) => (
                             <div
-                                key={\`bar-\${i}\`}
-                                className={\`w-[2px] sm:w-1 bg-accent/60 rounded-t-sm \${isPlaying && !shouldReduceMotion ? 'animate-[music-bar_0.8s_ease-in-out_infinite]' : ''}\`}
+                                key={\\`bar-\\${i}\\`}
+                                className={\\`w-[2px] sm:w-1 bg-accent/60 rounded-t-sm \\${isPlaying && !shouldReduceMotion ? 'animate-[music-bar_0.8s_ease-in-out_infinite]' : ''}\\`}
                                 style={{
                                     height: isPlaying && !shouldReduceMotion ? undefined : '10%',
                                     animationDelay: isPlaying && !shouldReduceMotion ? delay : undefined,
@@ -165,7 +164,7 @@ const AudioPlayer = () => {
                 >
                     <div
                         className="h-full bg-accent transition-all duration-200"
-                        style={{ width: \`\${volume * 100}%\` }}
+                        style={{ width: \\`\\${volume * 100}%\\` }}
                     ></div>
                 </div>
             </div>
@@ -177,4 +176,6 @@ const AudioPlayer = () => {
                 size="icon"
                 className="text-dim hover:text-red-500/80 p-1 sm:p-2 sm:ml-4 flex-shrink-0"
                 title={t('audio_player.close', 'Close Player')}
-                aria-label={t('audio_player.
+                aria-label={t('audio_player.close', 'Close Player')}
+            >
+                <X size={16} className=
