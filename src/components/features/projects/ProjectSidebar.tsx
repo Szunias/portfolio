@@ -16,7 +16,7 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
 
         {/* Actions Card */}
         <div className="p-6 rounded-sm bg-secondary border border-border">
-            <h3 className="text-xs font-mono text-dim uppercase tracking-widest mb-6">
+            <h3 className="text-xs font-label text-dim uppercase tracking-wide mb-6">
                 {t('details.access', 'Project Access')}
             </h3>
 
@@ -74,12 +74,12 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
 
         {/* Tech Stack */}
         <div>
-            <h3 className="text-xs font-mono text-dim uppercase tracking-widest mb-4 flex items-center gap-2">
+            <h3 className="text-xs font-label text-dim uppercase tracking-wide mb-4 flex items-center gap-2">
                 <Layers size={14} /> {t('details.technologies', 'Technologies')}
             </h3>
             <div className="flex flex-wrap gap-2">
                 {project.technologies?.map(tech => (
-                    <span key={tech} className="px-3 py-1.5 text-xs font-mono text-accent bg-accent/5 border border-accent/20 rounded-sm hover:bg-accent/10 hover:border-accent/30 transition-colors duration-200 cursor-default">
+                    <span key={tech} className="px-3 py-1.5 text-xs font-label text-accent bg-accent/5 border border-accent/20 rounded-sm hover:bg-accent/10 hover:border-accent/30 transition-colors duration-200 cursor-default">
                         {tech}
                     </span>
                 ))}
@@ -89,7 +89,7 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
         {/* Tags */}
         {project.tags && (
             <div>
-                <h3 className="text-xs font-mono text-dim uppercase tracking-widest mb-4 flex items-center gap-2">
+                <h3 className="text-xs font-label text-dim uppercase tracking-wide mb-4 flex items-center gap-2">
                     <Tag size={14} /> {t('details.classification', 'Classification')}
                 </h3>
                 <div className="flex flex-wrap gap-2">

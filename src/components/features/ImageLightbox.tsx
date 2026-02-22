@@ -1,9 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { X, ZoomIn, Loader2 } from 'lucide-react';
 
 import type { ProjectImage } from '@/types';
+import { spring, noMotion } from '@/constants/motion';
 
 interface ImageLightboxProps {
   images: readonly (string | ProjectImage)[];
@@ -21,6 +22,7 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
   const [lightboxLoading, setLightboxLoading] = useState(true);
   const [videoErrors, setVideoErrors] = useState<Set<number>>(new Set());
   const { t } = useTranslation('common');
+  const prefersReducedMotion = useReducedMotion();
 
   const selectedImage = selectedIndex !== null ? getImageData(images[selectedIndex]) : null;
 
@@ -135,10 +137,10 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
 
             {/* Image */}
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              initial={prefersReducedMotion ? noMotion.initial : { scale: 0.95, opacity: 0 }}
+              animate={prefersReducedMotion ? noMotion.animate : { scale: 1, opacity: 1 }}
+              exit={prefersReducedMotion ? { opacity: 0 } : { scale: 0.95, opacity: 0 }}
+              transition={prefersReducedMotion ? noMotion.transition : spring.interactive}
               onClick={(e) => e.stopPropagation()}
               className="max-w-[90vw] max-h-[85vh] cursor-default"
             >

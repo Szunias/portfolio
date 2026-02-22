@@ -73,13 +73,13 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             )
         ) : (
             <div className="w-full h-full bg-secondary flex items-center justify-center">
-                <span className="text-dim font-mono text-xs tracking-widest">{t('card.no_signal', 'NO_SIGNAL')}</span>
+                <span className="text-dim font-mono text-xs tracking-widest">{t('card.no_signal', 'NO_SIGNAL')}</span>  {/* mono OK: technical fallback */}
             </div>
         )}
 
         {/* Year Badge */}
         <div className="absolute top-3 right-3 z-20">
-            <span className="px-2 py-1 bg-primary/80 border border-border text-[10px] font-mono text-dim uppercase tracking-wider rounded-sm">
+            <span className="px-2 py-1 bg-primary/80 border border-border text-[10px] font-label text-dim uppercase tracking-wide rounded-sm">
                 {project.year || '202X'}
             </span>
         </div>
@@ -99,7 +99,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             {/* Tech Stack Pills */}
             <div className="flex flex-wrap gap-2">
                 {displayTags.map(tag => (
-                    <span key={tag} className="px-2 py-1 rounded-sm border border-border text-[10px] font-mono text-dim group-hover:border-border-hover group-hover:text-cream transition-colors whitespace-nowrap">
+                    <span key={tag} className="px-2 py-1 rounded-sm border border-border text-[10px] font-label text-dim group-hover:border-border-hover group-hover:text-cream transition-colors whitespace-nowrap tracking-wide">
                         {tag}
                     </span>
                 ))}
@@ -110,7 +110,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
         <div className="flex-1" />
 
         {/* Footer */}
-        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-[10px] font-mono text-dim group-hover:text-cream transition-colors duration-200">
+        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-[10px] font-label text-dim group-hover:text-cream transition-colors duration-200">
             <div className="flex items-center gap-1.5">
                 <Tag size={12} />
                 <span className="uppercase tracking-wider">{project.category || 'Audio'}</span>
@@ -131,7 +131,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
 
   return (
     <div
-      className="group relative w-full rounded-sm overflow-hidden bg-secondary border border-border hover:border-border-hover hover:-translate-y-0.5 transition-all duration-200 animate-fade-in-up"
+      className="group relative w-full rounded-sm overflow-hidden bg-secondary border border-border hover:border-border-hover hover:-translate-y-0.5 hover:shadow-[0_4px_24px_rgba(200,180,140,0.06)] transition-all duration-200 animate-fade-in-up cursor-pointer"
       style={{ animationDelay: `${index < 4 ? index * 50 : 0}ms` }}
     >
       {project.externalLink ? (

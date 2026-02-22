@@ -41,7 +41,7 @@ const IntroAnimation = ({ onComplete }: { onComplete: () => void }) => {
         <h1 className="font-display text-5xl sm:text-6xl text-cream-light tracking-wide">
           Igor Szuniewicz
         </h1>
-        <p className="text-dim text-sm mt-3 font-mono tracking-wider">
+        <p className="text-dim text-sm mt-3 font-label tracking-wider uppercase">
           Audio Designer
         </p>
       </motion.div>

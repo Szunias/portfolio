@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { ArrowRight } from 'lucide-react';
 
@@ -10,11 +10,13 @@ import Hero from '../components/home/Hero';
 import Skills from '../components/home/Skills';
 import SEO from '../components/layout/SEO';
 import { usePortfolioData } from '../hooks/usePortfolioData';
+import { sectionReveal, cardIn, stagger, noMotion } from '../constants/motion';
 
 /** Landing page with hero, showreel video, featured projects grid, and skills section. */
 const Home = () => {
   const { featured_projects } = usePortfolioData();
   const { t } = useTranslation(['home', 'projects']);
+  const prefersReducedMotion = useReducedMotion();
 
   const displayProjects = (featured_projects || []).slice(0, 4);
 
@@ -39,15 +41,20 @@ const Home = () => {
         <Showreel />
       </div>
 
+      {/* Section divider */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="h-px bg-border" />
+      </div>
+
       {/* Projects Section */}
-      <section id="projects" className="py-24">
+      <section id="projects" className="pt-20 pb-28">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
+            whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
             viewport={{ once: true }}
-            transition={{ duration: 0.3 }}
+            transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
             className="text-center mb-16"
           >
             <h2 className="text-5xl md:text-6xl font-display text-cream-light mb-6">
@@ -69,18 +76,19 @@ const Home = () => {
             </Link>
           </motion.div>
 
-          {/* Projects Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Projects Grid — first project featured full-width */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {displayProjects.map((project, index) => (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, y: 8 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={prefersReducedMotion ? noMotion.initial : cardIn.initial}
+                whileInView={prefersReducedMotion ? noMotion.animate : cardIn.animate}
                 viewport={{ once: true }}
-                transition={{
-                  duration: 0.3,
-                  delay: index * 0.05,
+                transition={prefersReducedMotion ? noMotion.transition : {
+                  ...cardIn.transition,
+                  delay: index * stagger.cards,
                 }}
+                className={index === 0 ? 'md:col-span-2' : ''}
               >
                 <ProjectCard project={project} index={index} />
               </motion.div>
@@ -89,9 +97,10 @@ const Home = () => {
 
           {/* Mobile View All Button */}
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
+            whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
             viewport={{ once: true }}
+            transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
             className="mt-12 text-center md:hidden"
           >
             <Link
@@ -104,6 +113,11 @@ const Home = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Section divider */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="h-px bg-border" />
+      </div>
 
       {/* Skills */}
       <Skills />

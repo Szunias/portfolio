@@ -98,7 +98,7 @@ const SoundDesign = () => {
                                     <h3 className="text-2xl font-display font-bold text-accent mb-2 tracking-widest uppercase">
                                         {t('section1.video3.placeholder_title', 'SIGNAL OFFLINE')}
                                     </h3>
-                                    <p className="text-dim font-mono text-sm">
+                                    <p className="text-dim font-label text-sm tracking-wide">
                                         {t('section1.video3.placeholder_subtitle', 'Content currently unavailable due to NDA or pending release.')}
                                     </p>
                                 </div>

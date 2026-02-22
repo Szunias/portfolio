@@ -5,7 +5,7 @@ const PageLoader = () => {
         <span className="font-display text-2xl text-cream-light animate-pulse tracking-wide">
           Loading
         </span>
-        <span className="text-xs font-mono text-dim uppercase tracking-widest">
+        <span className="text-xs font-label text-dim uppercase tracking-wider">
           ...
         </span>
       </div>

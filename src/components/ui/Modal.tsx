@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { X } from 'lucide-react';
 
 import { Button } from './Button';
+import { spring, noMotion } from '@/constants/motion';
 
 interface ModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface ModalProps {
 }
 
 const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
+  const prefersReducedMotion = useReducedMotion();
   // Handle Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -42,10 +44,10 @@ const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
             aria-labelledby={title ? "modal-title" : undefined}
         >
             <motion.div
-                initial={{ scale: 0.95, y: 8 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.95, y: 8 }}
-                transition={{ duration: 0.2 }}
+                initial={prefersReducedMotion ? noMotion.initial : { scale: 0.95, y: 8, opacity: 0 }}
+                animate={prefersReducedMotion ? noMotion.animate : { scale: 1, y: 0, opacity: 1 }}
+                exit={prefersReducedMotion ? { opacity: 0 } : { scale: 0.95, y: 8, opacity: 0 }}
+                transition={prefersReducedMotion ? noMotion.transition : spring.interactive}
                 className="bg-secondary border border-border p-8 rounded-sm max-w-md w-full relative"
                 onClick={(e) => e.stopPropagation()}
             >

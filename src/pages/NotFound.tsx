@@ -13,7 +13,7 @@ const NotFound = () => {
       <SEO title="404" noindex />
 
       <h1 className="text-[8rem] font-display text-cream-light mb-2 leading-none">404</h1>
-      <p className="text-xl text-dim mb-8 font-mono">{t('404.title', 'SIGNAL LOST')}</p>
+      <p className="text-xl text-dim mb-8 font-label tracking-widest uppercase">{t('404.title', 'SIGNAL LOST')}</p>
 
       <p className="text-dim max-w-md mb-8">
         {t('404.desc', 'The requested frequency could not be tuned.')}

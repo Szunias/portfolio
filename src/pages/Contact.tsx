@@ -43,12 +43,12 @@ const Contact = () => {
         description={t('seo_description', 'Get in touch with Igor Szuniewicz for game audio, tool development, and middleware integration.')}
       />
 
-      <div className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center pt-32">
-        <div className="w-full max-w-5xl">
+      <div className="relative z-10 pt-32 pb-28 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <div className="w-full max-w-6xl">
 
           <div className="text-center mb-16">
-            <h1 className="text-4xl font-display text-cream-light mb-4">{t('contact_title', 'Get In Touch')}</h1>
-            <p className="text-dim text-lg max-w-2xl mx-auto">
+            <h1 className="text-4xl sm:text-5xl font-display text-cream-light mb-4 tracking-wide">{t('contact_title', 'Get In Touch')}</h1>
+            <p className="text-dim text-lg max-w-xl mx-auto leading-7">
               {t('contact_intro', "I'm currently looking for internship opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!")}
             </p>
           </div>
@@ -79,7 +79,7 @@ const Contact = () => {
                               aria-label={t('tooltips.copy_email', 'Copy Email')}
                               disabled={!email}
                             >
-                              {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                              {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
                             </button>
                          </div>
                       </div>

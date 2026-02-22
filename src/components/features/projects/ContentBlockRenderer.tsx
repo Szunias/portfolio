@@ -23,7 +23,7 @@ const StatsGridBlock = ({ items }: StatsGridBlockProps) => {
       {items.map((item, idx) => (
         <div key={idx} className="text-center px-2">
           <div className="text-2xl md:text-3xl font-display text-cream-light mb-1 break-words hyphens-auto">{t(item.value, item.value)}</div>
-          <div className="text-[10px] font-mono text-dim uppercase tracking-widest">{t(item.label, item.label)}</div>
+          <div className="text-[10px] font-label text-dim uppercase tracking-wide">{t(item.label, item.label)}</div>
         </div>
       ))}
     </div>
@@ -73,7 +73,7 @@ const SplitContentBlock = ({ block, onImageClick }: SplitContentBlockProps) => {
              <ZoomIn className="text-cream opacity-0 group-hover:opacity-100 transition-opacity" size={32} />
            </div>
         </div>
-        {block.mediaCaption && <p className="text-xs text-center text-dim mt-2 font-mono">{t(block.mediaCaption, block.mediaCaption)}</p>}
+        {block.mediaCaption && <p className="text-xs text-center text-dim mt-2 italic">{t(block.mediaCaption, block.mediaCaption)}</p>}
       </div>
     </div>
   );

@@ -18,7 +18,7 @@ const ProjectFilters = ({ categories, activeFilter, onFilterChange, getLabel }: 
             onClick={() => onFilterChange(category)}
             aria-pressed={isActive}
             className={`
-              relative px-3 py-1.5 text-[10px] sm:text-xs sm:px-4 sm:py-2 font-mono uppercase tracking-wider transition-colors duration-200 rounded-sm whitespace-nowrap snap-start focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none
+              relative px-3 py-1.5 text-[10px] sm:text-xs sm:px-4 sm:py-2 font-label uppercase tracking-wide transition-colors duration-200 rounded-sm whitespace-nowrap snap-start focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none
               ${isActive ? 'text-primary font-bold' : 'text-dim hover:text-cream'}
             `}
           >

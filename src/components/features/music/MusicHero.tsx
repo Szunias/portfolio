@@ -1,13 +1,15 @@
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Play, Pause, Sparkles } from 'lucide-react';
 
 import { useAudio } from '@/context/AudioContext';
 import type { Track } from '@/types';
+import { hero, detailIn, sectionReveal, noMotion } from '@/constants/motion';
 
 const MusicHero = () => {
   const { currentTrack, isPlaying, togglePlay, playTrack, playlist } = useAudio();
   const { t, i18n } = useTranslation('music');
+  const prefersReducedMotion = useReducedMotion();
 
   const displayTrack = currentTrack || playlist[0];
 
@@ -58,8 +60,9 @@ const MusicHero = () => {
                 <div className="grid grid-cols-1 md:grid-cols-[350px_1fr] gap-12 items-end">
                     {/* Cover Art */}
                     <motion.div
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={prefersReducedMotion ? noMotion.initial : hero.initial}
+                        animate={prefersReducedMotion ? noMotion.animate : hero.animate}
+                        transition={prefersReducedMotion ? noMotion.transition : hero.transition}
                         key={displayTrack.id}
                         className="relative aspect-square rounded-sm overflow-hidden border border-border group hover:border-border-hover transition-colors duration-200"
                     >
@@ -90,13 +93,14 @@ const MusicHero = () => {
                     {/* Track Details */}
                     <div className="flex flex-col gap-6">
                         <motion.div
-                            initial={{ opacity: 0, x: -8 }}
-                            animate={{ opacity: 1, x: 0 }}
+                            initial={prefersReducedMotion ? noMotion.initial : detailIn.initial}
+                            animate={prefersReducedMotion ? noMotion.animate : detailIn.animate}
+                            transition={prefersReducedMotion ? noMotion.transition : detailIn.transition}
                             key={`info-${displayTrack.id}`}
                         >
                             <div className="flex items-center gap-2 mb-4">
                                 {displayTrack.tags?.map(tag => (
-                                    <span key={tag} className="px-3 py-1 rounded-sm border border-border text-xs text-accent font-mono uppercase tracking-wider hover:border-accent/30 transition-colors duration-200">
+                                    <span key={tag} className="px-3 py-1 rounded-sm border border-border text-xs text-accent font-label uppercase tracking-wide hover:border-accent/30 transition-colors duration-200">
                                         {tag}
                                     </span>
                                 ))}
@@ -111,10 +115,10 @@ const MusicHero = () => {
                         </motion.div>
 
                         <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.2 }}
-                            className="text-dim max-w-2xl leading-relaxed text-lg border-l-2 border-accent/40 pl-6"
+                            initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
+                            animate={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
+                            transition={prefersReducedMotion ? noMotion.transition : { ...sectionReveal.transition, delay: 0.2 }}
+                            className="text-dim max-w-2xl leading-7 text-lg border-l-2 border-accent/40 pl-6"
                         >
                             {getDesc(displayTrack)}
                         </motion.p>

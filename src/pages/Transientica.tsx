@@ -45,7 +45,7 @@ const Transientica = () => {
             <main className="relative z-10 max-w-7xl mx-auto px-6 pb-32">
                 {/* Hero */}
                 <section className="py-20 text-center">
-                    <div className="inline-block px-4 py-1.5 rounded-sm bg-secondary border border-border text-accent text-sm font-mono uppercase tracking-wider mb-8">
+                    <div className="inline-block px-4 py-1.5 rounded-sm bg-secondary border border-border text-accent text-sm font-label uppercase tracking-wide mb-8">
                         {t('transientica.hero.badge', 'Machine Learning Audio')}
                     </div>
 
@@ -56,7 +56,7 @@ const Transientica = () => {
                         </span>
                     </h1>
 
-                    <p className="text-xl text-dim max-w-2xl mx-auto mb-12 leading-relaxed">
+                    <p className="text-xl text-dim max-w-2xl mx-auto mb-12 leading-7">
                         {t('transientica.hero.description', 'A system that listens to your microphone and classifies sounds in real-time using a custom neural network trained on thousands of samples.')}
                     </p>
 
@@ -113,7 +113,7 @@ const Transientica = () => {
                                 <div className="w-20 h-20 bg-secondary rounded-sm flex items-center justify-center border border-border">
                                     <Play size={32} className="text-cream-light ml-1 fill-cream-light" />
                                 </div>
-                                <span className="absolute bottom-8 text-cream-light font-mono text-sm tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+                                <span className="absolute bottom-8 text-cream-light font-label text-sm tracking-wide uppercase opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
                                     {t('transientica.video.watch_demo', 'Watch Demo')}
                                 </span>
                             </div>
@@ -133,7 +133,7 @@ const Transientica = () => {
                             <div className="text-3xl font-display font-bold text-accent mb-2">
                                 {stat.val}
                             </div>
-                            <p className="text-dim text-sm uppercase tracking-wider font-mono">
+                            <p className="text-dim text-sm uppercase tracking-wide font-label">
                                 {stat.label}
                             </p>
                         </div>

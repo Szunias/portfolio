@@ -31,13 +31,13 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
       {/* Trigger */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-4 py-2 rounded-sm border border-border hover:border-border-hover bg-transparent transition-colors duration-200"
+        className="flex items-center gap-1.5 px-4 py-2 rounded-sm border border-border hover:border-border-hover bg-transparent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
         whileTap={{ scale: 0.95 }}
         aria-label="Select language"
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
-        <span className="text-xs font-medium text-cream tracking-wider font-mono">
+        <span className="text-xs font-medium text-cream tracking-wider font-label">
           {currentLang.label}
         </span>
         <motion.div
@@ -75,7 +75,7 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
                     key={lang.code}
                     onClick={() => changeLanguage(lang.code)}
                     className={`
-                      w-full px-4 py-2 rounded-sm text-xs font-medium tracking-wider text-left transition-colors duration-150 font-mono
+                      w-full px-4 py-2 rounded-sm text-xs font-medium tracking-wider text-left transition-colors duration-150 font-label
                       ${isActive
                         ? 'bg-accent text-primary'
                         : 'text-dim hover:text-cream hover:bg-tertiary'

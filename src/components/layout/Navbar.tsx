@@ -7,6 +7,7 @@ import { Menu, X, Github, Linkedin } from 'lucide-react';
 import LanguageSwitcher from '@/components/layout/LanguageSwitcher';
 import { usePortfolioData } from '@/hooks/usePortfolioData';
 import { ROUTES } from '@/constants/routes';
+import { stagger } from '@/constants/motion';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -100,9 +101,9 @@ const Navbar = () => {
           <div className="flex justify-between items-center">
 
             {/* Logo */}
-            <Link to={ROUTES.HOME} className="flex flex-col">
+            <Link to={ROUTES.HOME} className="flex flex-col rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary">
               <span className="font-display text-base uppercase text-cream tracking-[0.2em]">IGOR SZUNIEWICZ</span>
-              <span className="text-[9px] text-accent uppercase tracking-[0.3em] font-mono mt-0.5">{t('brand.tagline', 'Audio Designer')}</span>
+              <span className="text-[9px] text-accent uppercase tracking-[0.25em] font-label mt-0.5">{t('brand.tagline', 'Audio Designer')}</span>
             </Link>
 
             {/* Desktop Nav */}
@@ -113,25 +114,24 @@ const Navbar = () => {
                   <Link
                     key={link.path}
                     to={link.path}
-                    className={`group relative text-xs uppercase tracking-widest transition-colors duration-300 font-mono ${active ? 'text-cream' : 'text-dim hover:text-cream'}`}
+                    className={`group relative text-xs uppercase tracking-wider transition-colors duration-300 font-label pb-1 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary ${active ? 'text-cream' : 'text-dim hover:text-cream'}`}
                     aria-current={active ? 'page' : undefined}
                   >
-                    <span className={active ? 'border-b border-accent pb-0.5' : ''}>
-                      {link.name}
-                    </span>
+                    {link.name}
+                    <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-px bg-accent transition-all duration-300 ${active ? 'w-full' : 'w-0 group-hover:w-full'}`} />
                   </Link>
                 );
               })}
               <div className="h-4 w-px bg-border"></div>
-              <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" className="text-dim hover:text-cream transition-colors duration-200" aria-label="GitHub"><Github size={16} /></a>
-              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer me" className="text-dim hover:text-cream transition-colors duration-200" aria-label="LinkedIn"><Linkedin size={16} /></a>
+              <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" className="text-dim hover:text-cream transition-colors duration-200 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary" aria-label="GitHub"><Github size={16} /></a>
+              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer me" className="text-dim hover:text-cream transition-colors duration-200 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary" aria-label="LinkedIn"><Linkedin size={16} /></a>
               <LanguageSwitcher />
             </div>
 
             {/* Mobile Hamburger */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden text-cream p-3 rounded-sm border border-border hover:border-border-hover transition-colors"
+              className="md:hidden text-cream p-3 rounded-sm border border-border hover:border-border-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
               aria-label="Toggle menu"
             >
               {isOpen ? <X size={20} /> : <Menu size={20} />}
@@ -172,7 +172,7 @@ const Navbar = () => {
                     key={link.path}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
+                    transition={{ delay: index * stagger.navItems }}
                   >
                     <Link
                       to={link.path}

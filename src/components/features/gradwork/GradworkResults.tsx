@@ -155,7 +155,7 @@ const GradworkResults = ({ t }: { t: (key: string) => string }) => {
                                 <div className="font-bold text-cream-light mb-2">{model.name}</div>
                                 <div className="flex justify-between text-sm mb-1">
                                     <span className="text-dim">Latency</span>
-                                    <span className="font-mono text-red-400">
+                                    <span className="font-mono text-error">
                                         {t(`results.models.${model.key}.latency`)}
                                     </span>
                                 </div>

@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
+
+import { sectionReveal, cardIn, stagger, noMotion } from '@/constants/motion';
 
 const keyTech = [
   {
@@ -42,21 +44,22 @@ const keyTech = [
 
 const Skills = () => {
   const { t } = useTranslation('home');
+  const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section className="py-24">
+    <section className="pt-16 pb-32">
       <div className="max-w-7xl mx-auto px-6">
 
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
+          whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
           viewport={{ once: true }}
-          transition={{ duration: 0.3 }}
-          className="text-center mb-16"
+          transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
+          className="text-center mb-12"
         >
           <span
-            className="inline-block px-4 py-2 mb-6 text-xs font-mono text-accent uppercase tracking-widest border border-accent/20 rounded-sm"
+            className="inline-block px-4 py-2 mb-6 text-xs font-label text-accent uppercase tracking-wide border border-accent/20 rounded-sm"
           >
             {t('skills.badge', 'Technologies')}
           </span>
@@ -68,22 +71,24 @@ const Skills = () => {
           </p>
         </motion.div>
 
-        {/* Tech Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+        {/* Tech Grid — first two cards span wider for visual hierarchy */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-20">
           {keyTech.map((tech, index) => (
             <motion.div
               key={tech.name}
-              initial={{ opacity: 0, y: 8 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={prefersReducedMotion ? noMotion.initial : cardIn.initial}
+              whileInView={prefersReducedMotion ? noMotion.animate : cardIn.animate}
               viewport={{ once: true }}
-              transition={{
-                delay: index * 0.05,
-                duration: 0.3,
+              transition={prefersReducedMotion ? noMotion.transition : {
+                ...cardIn.transition,
+                delay: index * stagger.cards,
               }}
-              className="relative group bg-secondary border border-border rounded-sm p-8 hover:border-border-hover transition-colors duration-200"
+              className={`relative group bg-secondary border border-border rounded-sm p-8 hover:border-border-hover hover:bg-elevated transition-colors duration-200 ${
+                index < 2 ? 'lg:col-span-2' : ''
+              }`}
             >
               {/* Category label */}
-              <span className="absolute top-6 right-6 text-[10px] font-mono text-dim uppercase tracking-widest">
+              <span className="absolute top-6 right-6 text-[10px] font-label text-dim uppercase tracking-wide">
                 {tech.category}
               </span>
 
@@ -108,16 +113,18 @@ const Skills = () => {
 
         {/* Secondary Skills */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
+          whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
           viewport={{ once: true }}
-          className="border-t border-border pt-16"
+          transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
+          className="border-t border-border pt-14"
         >
           <motion.h3
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
+            whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
             viewport={{ once: true }}
-            className="text-center text-sm font-mono text-dim uppercase tracking-widest mb-12"
+            transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
+            className="text-center text-sm font-label text-dim uppercase tracking-wide mb-12"
           >
             {t('skills.also', 'Also experienced with')}
           </motion.h3>
@@ -130,11 +137,11 @@ const Skills = () => {
             ].map((skill, index) => (
               <motion.span
                 key={skill}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                initial={prefersReducedMotion ? noMotion.initial : { opacity: 0 }}
+                whileInView={prefersReducedMotion ? noMotion.animate : { opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.02 }}
-                className="px-5 py-2.5 border border-border rounded-sm text-sm text-dim hover:text-cream hover:border-border-hover transition-colors duration-200 cursor-default"
+                transition={prefersReducedMotion ? noMotion.transition : { delay: index * stagger.tags }}
+                className="px-5 py-2.5 border border-border rounded-sm text-sm text-dim hover:text-cream hover:border-border-hover hover:bg-elevated transition-colors duration-200 cursor-default"
               >
                 {skill}
               </motion.span>

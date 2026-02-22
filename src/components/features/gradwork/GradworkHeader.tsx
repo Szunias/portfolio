@@ -1,14 +1,17 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 
+import { hero, noMotion } from '@/constants/motion';
+
 const GradworkHeader = ({ t }: { t: (key: string) => string }) => {
+    const prefersReducedMotion = useReducedMotion();
     return (
         <section className="pt-32 pb-16 px-6 max-w-4xl mx-auto">
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+                initial={prefersReducedMotion ? noMotion.initial : hero.initial}
+                animate={prefersReducedMotion ? noMotion.animate : hero.animate}
+                transition={prefersReducedMotion ? noMotion.transition : hero.transition}
                 className="text-center"
             >
                 <span className="inline-block px-4 py-2 bg-accent/10 text-accent text-sm font-semibold rounded-full mb-6 border border-accent/20">

@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Download, Gamepad2, GraduationCap, Wrench } from 'lucide-react';
 
 import AboutSkillsSidebar from '../components/features/about/AboutSkillsSidebar';
 import AboutTimeline from '../components/features/about/AboutTimeline';
 import SEO from '../components/layout/SEO';
 import { usePortfolioData } from '../hooks/usePortfolioData';
+import { sectionReveal, noMotion } from '../constants/motion';
 
 const toolNameMap: Record<string, string> = {
     Unreal_Engine: 'Unreal Engine 5',
@@ -23,6 +24,7 @@ const About = () => {
     const portfolioData = usePortfolioData();
     const { personal_info } = portfolioData;
     const { t } = useTranslation('about');
+    const prefersReducedMotion = useReducedMotion();
 
     const getToolNames = (categoryKey: string) => {
         const matrix = portfolioData.technical_skills_matrix;
@@ -80,11 +82,11 @@ const About = () => {
             <SEO title={t('about_page_title', 'About Me')} description={t('about_page_description')} />
 
             {/* A: Page Header */}
-            <section className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 pt-32 pb-8">
-                <p className="text-accent font-mono text-sm tracking-wider uppercase mb-3">
+            <section className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 pt-32 pb-6">
+                <p className="text-accent font-label text-sm tracking-wide uppercase mb-3">
                     {t('about_page_label', 'About')}
                 </p>
-                <h1 className="text-4xl sm:text-5xl font-display text-cream-light mb-3">
+                <h1 className="text-4xl sm:text-6xl font-display text-cream-light mb-3 tracking-wide">
                     {t('about_page_title', 'About Me')}
                 </h1>
                 <p className="text-xl text-dim font-light max-w-2xl">
@@ -93,7 +95,7 @@ const About = () => {
             </section>
 
             {/* B: Two-Column Layout */}
-            <section className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 pb-16">
+            <section className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 pb-20">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
 
                     {/* Main Content - 8 columns */}
@@ -101,49 +103,49 @@ const About = () => {
 
                         {/* B1: Journey */}
                         <motion.div
-                            initial={{ opacity: 0, y: 8 }}
-                            whileInView={{ opacity: 1, y: 0 }}
+                            initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
+                            whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.3 }}
+                            transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
                         >
-                            <h2 className="text-2xl font-display text-cream-light mb-4">
+                            <h2 className="text-3xl font-display text-cream-light mb-4">
                                 {t('about_journey_title', 'Journey')}
                             </h2>
-                            <p className="text-dim leading-relaxed text-lg mb-4">
+                            <p className="text-dim leading-7 text-lg mb-4">
                                 {t('about_journey_p1')}
                             </p>
-                            <p className="text-dim leading-relaxed text-lg">
+                            <p className="text-dim leading-7 text-lg">
                                 {t('about_journey_p2')}
                             </p>
                         </motion.div>
 
                         {/* B2: What Drives Me */}
                         <motion.div
-                            initial={{ opacity: 0, y: 8 }}
-                            whileInView={{ opacity: 1, y: 0 }}
+                            initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
+                            whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.3 }}
+                            transition={prefersReducedMotion ? noMotion.transition : { ...sectionReveal.transition, delay: 0.1 }}
                         >
-                            <h2 className="text-2xl font-display text-cream-light mb-4">
+                            <h2 className="text-3xl font-display text-cream-light mb-4">
                                 {t('about_drives_title', 'What Drives Me')}
                             </h2>
-                            <p className="text-dim leading-relaxed text-lg mb-4">
+                            <p className="text-dim leading-7 text-lg mb-4">
                                 {t('about_drives_p1')}
                             </p>
-                            <p className="text-dim leading-relaxed text-lg">
+                            <p className="text-dim leading-7 text-lg">
                                 {t('about_drives_p2')}
                             </p>
                         </motion.div>
 
                         {/* B3: Philosophy Quote */}
                         <motion.blockquote
-                            initial={{ opacity: 0, y: 8 }}
-                            whileInView={{ opacity: 1, y: 0 }}
+                            initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
+                            whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.3 }}
+                            transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
                             className="border-l-2 border-accent pl-6 py-2"
                         >
-                            <p className="text-dim text-lg italic leading-relaxed">
+                            <p className="text-dim text-lg italic leading-loose font-display">
                                 {t('philosophy_quote')}
                             </p>
                         </motion.blockquote>
@@ -153,12 +155,12 @@ const About = () => {
 
                         {/* B5: Notable Work */}
                         <motion.div
-                            initial={{ opacity: 0, y: 8 }}
-                            whileInView={{ opacity: 1, y: 0 }}
+                            initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
+                            whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.3 }}
+                            transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
                         >
-                            <h2 className="text-2xl font-display text-cream-light mb-6">
+                            <h2 className="text-3xl font-display text-cream-light mb-6">
                                 {t('achievements_title', 'Notable Work')}
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -184,14 +186,14 @@ const About = () => {
             {/* C: CTA Banner */}
             <section className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 pb-32">
                 <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
+                    whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.3 }}
+                    transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
                     className="border border-border rounded-sm p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6"
                 >
                     <div>
-                        <h2 className="text-2xl font-display text-cream-light mb-2">
+                        <h2 className="text-3xl font-display text-cream-light mb-2">
                             {t('cta_title', 'Available for Internship')}
                         </h2>
                         <p className="text-dim max-w-xl">
@@ -201,7 +203,7 @@ const About = () => {
                     <div className="flex flex-wrap gap-3 shrink-0">
                         <Link
                             to="/contact"
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-primary font-medium rounded-sm transition-colors duration-200 hover:bg-accent-light"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-primary font-medium rounded-sm transition-all duration-200 hover:bg-accent-light active:scale-[0.97]"
                         >
                             {t('cta_contact', 'Get in Touch')}
                         </Link>
@@ -209,7 +211,7 @@ const About = () => {
                             href="/cv/Igor_Szuniewicz_CV.pdf"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-6 py-3 border border-border text-cream font-medium rounded-sm transition-colors duration-200 hover:border-border-hover"
+                            className="inline-flex items-center gap-2 px-6 py-3 border border-border text-cream font-medium rounded-sm transition-all duration-200 hover:border-border-hover active:scale-[0.97]"
                         >
                             <Download size={16} />
                             {t('cta_cv', 'View CV')}

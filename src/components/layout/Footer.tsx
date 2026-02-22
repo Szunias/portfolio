@@ -9,9 +9,9 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border pt-12 pb-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+    <footer className="border-t border-border pt-16 pb-12">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
           {/* Brand */}
           <div>
             <h3 className="font-display text-xl text-cream-light mb-4">Igor Szuniewicz</h3>
@@ -24,16 +24,16 @@ const Footer = () => {
           <div>
             <h4 className="text-sm font-medium text-cream mb-4 uppercase tracking-wider">{t('footer.connect', 'Connect')}</h4>
             <div className="flex space-x-4">
-              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer me" aria-label="LinkedIn" className="text-dim hover:text-cream transition-colors duration-200">
+              <a href={personal_info.social_media.linkedin} target="_blank" rel="noopener noreferrer me" aria-label="LinkedIn" className="text-dim hover:text-accent transition-all duration-200 hover:scale-110 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary">
                 <Linkedin size={20} />
               </a>
-              <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-dim hover:text-cream transition-colors duration-200">
+              <a href={personal_info.social_media.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-dim hover:text-accent transition-all duration-200 hover:scale-110 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary">
                 <Github size={20} />
               </a>
-              <a href={`mailto:${personal_info.email}`} aria-label="Email" className="text-dim hover:text-cream transition-colors duration-200">
+              <a href={`mailto:${personal_info.email}`} aria-label="Email" className="text-dim hover:text-accent transition-all duration-200 hover:scale-110 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary">
                 <Mail size={20} />
               </a>
-              <a href={personal_info.social_media.spotify} target="_blank" rel="noopener noreferrer" aria-label="Spotify" className="text-dim hover:text-cream transition-colors duration-200">
+              <a href={personal_info.social_media.spotify} target="_blank" rel="noopener noreferrer" aria-label="Spotify" className="text-dim hover:text-accent transition-all duration-200 hover:scale-110 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary">
                 <Music size={20} />
               </a>
             </div>

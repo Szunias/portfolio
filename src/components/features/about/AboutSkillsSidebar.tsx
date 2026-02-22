@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { MapPin, Mail, Copy, Check } from 'lucide-react';
 import type { TFunction } from 'i18next';
 
 import type { PersonalInfo } from '@/types';
+import { detailInRight, noMotion } from '@/constants/motion';
 
 interface AboutSkills {
     middleware: string[];
@@ -21,6 +22,7 @@ interface AboutSkillsSidebarProps {
 
 const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps) => {
     const [emailCopied, setEmailCopied] = useState(false);
+    const prefersReducedMotion = useReducedMotion();
 
     const handleCopyEmail = async () => {
         try {
@@ -43,10 +45,10 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
     return (
         <div className="lg:col-span-4 lg:sticky lg:top-32 lg:self-start">
             <motion.div
-                initial={{ opacity: 0, x: 8 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={prefersReducedMotion ? noMotion.initial : detailInRight.initial}
+                whileInView={prefersReducedMotion ? noMotion.animate : detailInRight.animate}
                 viewport={{ once: true }}
-                transition={{ duration: 0.3 }}
+                transition={prefersReducedMotion ? noMotion.transition : detailInRight.transition}
                 className="bg-secondary border border-border rounded-sm p-6 space-y-5"
             >
                 {/* Quick Info */}
@@ -65,7 +67,7 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
 
                 {/* Status */}
                 <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 bg-green-400/80 rounded-full animate-pulse flex-shrink-0" aria-hidden="true" />
+                    <div className="w-3 h-3 bg-success/80 rounded-full animate-pulse flex-shrink-0" aria-hidden="true" />
                     <div>
                         <p className="text-cream font-medium">{t('status_looking_internship', 'Available for internship')}</p>
                         <p className="text-dim text-sm">{personalInfo.availability.status}</p>
@@ -82,7 +84,7 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
                     >
                         <span className="text-sm truncate max-w-[180px]">{personalInfo.email}</span>
                         {emailCopied ? (
-                            <Check size={14} className="text-green-400" />
+                            <Check size={14} className="text-success" />
                         ) : (
                             <Copy size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                         )}
@@ -95,14 +97,14 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
                 {/* Skills Sections */}
                 {skillSections.map((section) => (
                     <div key={section.key}>
-                        <h4 className="text-xs font-mono text-dim uppercase tracking-wider mb-2">
+                        <h4 className="text-xs font-label text-dim uppercase tracking-wide mb-2">
                             {section.title}
                         </h4>
                         <ul className="flex flex-wrap gap-1.5">
                             {section.items.map(skill => (
                                 <li
                                     key={skill}
-                                    className="px-2.5 py-1 text-xs font-mono text-accent bg-accent/5 border border-accent/20 rounded-sm"
+                                    className="px-2.5 py-1 text-xs font-label text-accent bg-accent/5 border border-accent/20 rounded-sm"
                                 >
                                     {skill}
                                 </li>

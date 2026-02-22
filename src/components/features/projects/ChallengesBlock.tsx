@@ -33,7 +33,7 @@ const ChallengesBlock = ({ challenges }: ChallengesBlockProps) => {
               <div className="grid md:grid-cols-2 gap-8">
                 {/* Problem */}
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-red-400/80 text-sm font-mono uppercase tracking-wider">
+                  <div className="flex items-center gap-2 text-error/80 text-sm font-label uppercase tracking-wide">
                     <AlertTriangle size={16} />
                     {t('project.problem', 'Problem')}
                   </div>
@@ -44,7 +44,7 @@ const ChallengesBlock = ({ challenges }: ChallengesBlockProps) => {
 
                 {/* Solution */}
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-green-400/80 text-sm font-mono uppercase tracking-wider">
+                  <div className="flex items-center gap-2 text-success/80 text-sm font-label uppercase tracking-wide">
                     <CheckCircle2 size={16} />
                     {t('project.solution', 'Solution')}
                   </div>

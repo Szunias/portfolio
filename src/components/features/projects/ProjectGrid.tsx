@@ -12,18 +12,24 @@ const ProjectGrid = ({ projects }: ProjectGridProps) => {
 
   if (projects.length === 0) {
     return (
-      <div className="py-20 text-center text-dim font-mono">
+      <div className="py-20 text-center text-dim">
         {t('projects.no_results', 'No projects found in this category.')}
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8"
-    >
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6">
       {projects.map((project, index) => {
+        // First project featured full-width, every 4th after that spans 2 cols
+        const isWide = index === 0 || (index > 0 && index % 4 === 0);
         return (
-          <ProjectCard key={project.id} project={project} index={index} />
+          <div
+            key={project.id}
+            className={isWide ? 'md:col-span-2' : ''}
+          >
+            <ProjectCard project={project} index={index} />
+          </div>
         );
       })}
     </div>

@@ -21,7 +21,7 @@ const Music = () => {
         <MusicHero />
 
         {/* LIBRARY GRID */}
-        <section className="py-20 px-4 sm:px-8 bg-primary relative z-20">
+        <section className="pt-16 pb-28 px-4 sm:px-8 bg-primary relative z-20">
             <div className="max-w-7xl mx-auto">
                 <div className="flex items-center justify-between mb-12 border-b border-border pb-4">
                     <h2 className="text-2xl font-display text-cream-light">{t('music.library', 'Library')}</h2>

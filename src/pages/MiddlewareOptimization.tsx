@@ -2,10 +2,11 @@ import { useRef } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, ChevronDown, Cpu, Zap, Layers, Code, Database, Music } from 'lucide-react';
 
 import SEO from '../components/layout/SEO';
+import { sectionReveal, cardIn, detailIn, noMotion } from '../constants/motion';
 
 /** Wwise middleware optimization page showcasing three case studies with video demos. */
 const MiddlewareOptimization = () => {
@@ -93,19 +94,19 @@ const MiddlewareOptimization = () => {
                 {/* Section Header */}
                 <section className="max-w-4xl mx-auto px-6 py-24 text-center">
                     <motion.h2
-                        initial={{ opacity: 0, y: 15 }}
-                        whileInView={{ opacity: 1, y: 0 }}
+                        initial={sectionReveal.initial}
+                        whileInView={sectionReveal.animate}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.35 }}
+                        transition={sectionReveal.transition}
                         className="text-4xl md:text-5xl font-display font-bold text-cream-light mb-6"
                     >
                         {t('section.title')}
                     </motion.h2>
                     <motion.p
-                        initial={{ opacity: 0, y: 15 }}
-                        whileInView={{ opacity: 1, y: 0 }}
+                        initial={sectionReveal.initial}
+                        whileInView={sectionReveal.animate}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.35 }}
+                        transition={{ ...sectionReveal.transition, delay: 0.1 }}
                         className="text-xl text-dim leading-relaxed"
                     >
                         {t('section.subtitle')}
@@ -224,12 +225,13 @@ interface CaseStudyCardProps {
 
 const CaseStudyCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, poster, caption, paragraphs }: CaseStudyCardProps) => {
     const { t: tCommon } = useTranslation('common');
+    const prefersReducedMotion = useReducedMotion();
     return (
         <motion.article
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={prefersReducedMotion ? noMotion.initial : detailIn.initial}
+            whileInView={prefersReducedMotion ? noMotion.animate : detailIn.animate}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.4 }}
+            transition={prefersReducedMotion ? noMotion.transition : detailIn.transition}
             className="bg-secondary border border-border rounded-sm p-8 md:p-12"
         >
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
@@ -309,13 +311,14 @@ interface SkillCardProps {
 }
 
 const SkillCard = ({ icon, title, desc }: SkillCardProps) => {
+    const prefersReducedMotion = useReducedMotion();
     return (
         <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={prefersReducedMotion ? noMotion.initial : cardIn.initial}
+            whileInView={prefersReducedMotion ? noMotion.animate : cardIn.animate}
             viewport={{ once: true }}
-            transition={{ duration: 0.3 }}
-            whileHover={{ y: -5 }}
+            transition={prefersReducedMotion ? noMotion.transition : cardIn.transition}
+            whileHover={prefersReducedMotion ? {} : { y: -4 }}
             className="bg-secondary p-8 rounded-sm border border-border hover:border-border-hover transition-all duration-300"
         >
             <div className="w-12 h-12 bg-primary rounded-sm flex items-center justify-center mb-6">

@@ -27,10 +27,10 @@ const AudioPlayer = () => {
   if (!currentTrack || !isPlayerVisible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-primary border-t border-border z-50 h-20 flex items-center px-3 sm:px-6 md:px-8" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+    <div className="fixed bottom-0 left-0 right-0 bg-primary/90 backdrop-blur-md border-t border-border z-50 h-20 flex items-center px-3 sm:px-6 md:px-8" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
       {/* Progress Bar (Top Line) */}
       <div
-        className={`absolute top-0 left-0 right-0 h-1 hover:h-2.5 bg-secondary group transition-all duration-200 ease-out z-50 ${duration > 0 ? 'cursor-pointer' : 'cursor-default'}`}
+        className={`absolute top-0 left-0 right-0 h-1 hover:h-2 bg-secondary group transition-all duration-200 ease-out z-50 ${duration > 0 ? 'cursor-pointer' : 'cursor-default'}`}
         onClick={(e) => {
             if (duration <= 0) return;
             const rect = e.currentTarget.getBoundingClientRect();
@@ -38,11 +38,13 @@ const AudioPlayer = () => {
             seek(percent * duration);
         }}
       >
+        {/* Invisible expanded hit area for easier scrubbing */}
+        <div className="absolute -top-2 -bottom-2 left-0 right-0" />
         <div
-            className="h-full bg-accent transition-all duration-200 rounded-r-full"
+            className="h-full bg-accent transition-all duration-200 rounded-r-full relative"
             style={{ width: `${progress}%` }}
         >
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 group-hover:w-3 group-hover:h-3 bg-cream rounded-full transition-all duration-200"></div>
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 group-hover:w-3.5 group-hover:h-3.5 bg-cream rounded-full shadow-md transition-all duration-200 -translate-x-[1px]"></div>
         </div>
       </div>
 
@@ -50,7 +52,7 @@ const AudioPlayer = () => {
 
         {/* Left: Info & Visualizer */}
         <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-            <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-sm bg-secondary overflow-hidden border border-border flex-shrink-0">
+            <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-md bg-secondary overflow-hidden border border-border flex-shrink-0 shadow-lg">
                 <img
                     src={`/${currentTrack.cover}`}
                     alt={currentTrack.title}
@@ -140,7 +142,7 @@ const AudioPlayer = () => {
                 onClick={closePlayer}
                 variant="ghost"
                 size="icon"
-                className="text-dim hover:text-red-500/80 p-1 sm:p-2 sm:ml-4 flex-shrink-0"
+                className="text-dim hover:text-error/80 p-1 sm:p-2 sm:ml-4 flex-shrink-0"
                 title={t('audio_player.close', 'Close Player')}
                 aria-label={t('audio_player.close', 'Close Player')}
             >

@@ -39,23 +39,24 @@ body {
 /* Custom Scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #2a2a2a #111111;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-primary;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-border-hover rounded-full;
+  background: rgba(255,255,255,0.1);
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-accent;
+  background: rgba(193, 127, 62, 0.5);
 }
 
 /* Fade In Up Animation */
@@ -96,6 +97,26 @@ body {
     color: #000000 !important;
     text-decoration: underline;
   }
+}
+
+/* Custom Selection Color */
+::selection {
+  background-color: rgba(193, 127, 62, 0.3);
+  color: #f0ece6;
+}
+
+/* Subtle Radial Vignette Overlay */
+.bg-vignette {
+  position: relative;
+}
+
+.bg-vignette::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.3) 100%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Subtle Noise Texture for Premium Audio Vibe */

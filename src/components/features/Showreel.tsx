@@ -81,12 +81,12 @@ const Showreel = () => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto my-16">
+    <div className="w-full max-w-5xl mx-auto mt-12 mb-20">
       {/* Video */}
       <div className="relative aspect-video rounded-sm overflow-hidden bg-black">
         {error ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-secondary">
-            <AlertCircle size={48} className="text-red-500 mb-4" />
+            <AlertCircle size={48} className="text-error mb-4" />
             <p className="text-dim text-center px-4 mb-4">
               {t('errors.video_load_failed', 'Failed to load video. Please refresh the page.')}
             </p>

@@ -1,9 +1,10 @@
 import { memo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Play, BarChart3 } from 'lucide-react';
 
 import type { Track } from '@/types';
 import { cn } from '@/utils';
+import { cardIn, stagger, noMotion } from '@/constants/motion';
 
 interface TrackCardProps {
   track: Track;
@@ -15,13 +16,17 @@ interface TrackCardProps {
 
 const TrackCard = memo(({ track, index, isCurrent, isPlaying, onPlay }: TrackCardProps) => {
   const isActive = isCurrent && isPlaying;
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={prefersReducedMotion ? noMotion.initial : cardIn.initial}
+        whileInView={prefersReducedMotion ? noMotion.animate : cardIn.animate}
         viewport={{ once: true }}
-        transition={{ delay: index * 0.05, duration: 0.3 }}
+        transition={prefersReducedMotion ? noMotion.transition : {
+            ...cardIn.transition,
+            delay: index * stagger.cards,
+        }}
         onClick={() => onPlay(track)}
         className="group relative flex flex-col gap-3 cursor-pointer"
         role="button"

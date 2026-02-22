@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, Calendar } from 'lucide-react';
 
 import TechReveal from '@/components/home/TechReveal';
 import type { Project } from '@/types';
+import { hero, noMotion } from '@/constants/motion';
 
 interface ProjectHeroProps {
     project: Project;
@@ -18,6 +19,7 @@ const getYoutubeId = (url: string) => {
 
 const ProjectHero = ({ project }: ProjectHeroProps) => {
     const { t } = useTranslation(['projectDetail', 'projects']);
+    const prefersReducedMotion = useReducedMotion();
     const media = project.media || {};
     const links = project.links || {};
 
@@ -55,9 +57,9 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
             {/* Hero Content */}
             <div className="relative z-10 flex-1 flex flex-col justify-end pb-20 px-6 lg:px-12 max-w-[1600px] mx-auto pt-32">
                 <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
+                    initial={prefersReducedMotion ? noMotion.initial : hero.initial}
+                    animate={prefersReducedMotion ? noMotion.animate : hero.animate}
+                    transition={prefersReducedMotion ? noMotion.transition : hero.transition}
                 >
                     <Link to="/projects" className="inline-flex items-center text-dim hover:text-cream transition-colors duration-200 mb-8 group">
                         <ArrowLeft size={16} className="mr-2 group-hover:-translate-x-1 transition-transform" />
@@ -65,11 +67,11 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                     </Link>
 
                     <div className="flex items-center gap-3 mb-4">
-                        <span className="px-3 py-1 bg-accent text-primary text-xs font-mono font-medium uppercase tracking-widest rounded-sm">
+                        <span className="px-3 py-1 bg-accent text-primary text-xs font-label font-medium uppercase tracking-wide rounded-sm">
                             {project.category}
                         </span>
                         {project.year && (
-                            <span className="text-dim font-mono text-xs border border-border px-3 py-1 rounded-sm hover:border-border-hover transition-colors duration-200">
+                            <span className="text-dim font-label text-xs border border-border px-3 py-1 rounded-sm hover:border-border-hover transition-colors duration-200">
                                 <Calendar size={12} className="inline mr-2" />
                                 {project.year}
                             </span>
@@ -80,7 +82,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                         <TechReveal text={t(titleKey, project.title)} />
                     </h1>
 
-                    <p className="text-lg md:text-xl text-dim max-w-2xl font-light leading-relaxed mb-8">
+                    <p className="text-lg md:text-xl text-dim max-w-2xl font-light leading-7 mb-8">
                         {t(shortDescKey, project.short_description || project.description || '')}
                     </p>
 
@@ -99,7 +101,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                     {/* Legacy trailer for Shadow Frames */}
                     {legacyVideoId && project.id === 'shadow_frames' && (
                         <div className="mt-8">
-                            <h3 className="text-lg font-mono text-dim uppercase tracking-wider mb-4">
+                            <h3 className="text-lg font-label text-dim uppercase tracking-wide mb-4">
                                 {t('projects.legacy_trailer', 'Previous Trailer')} / {t('projects.gameplay_preview', 'Gameplay Preview')}
                             </h3>
                             <div className="w-full max-w-4xl aspect-video rounded-sm overflow-hidden border border-border bg-black transition-colors duration-200">

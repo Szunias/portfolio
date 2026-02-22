@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 
 import AudioPlayer from '../features/AudioPlayer';
+import ScrollProgress from '../ui/ScrollProgress';
 import Footer from './Footer';
 import Navbar from './Navbar';
 
@@ -17,6 +18,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="flex flex-col min-h-screen text-cream font-sans overflow-x-hidden relative bg-primary">
       <Helmet htmlAttributes={{ lang: i18n.language }} />
+      <ScrollProgress />
       <div className="bg-noise" aria-hidden="true" />
 
       <div className="relative z-10 flex flex-col min-h-screen">

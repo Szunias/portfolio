@@ -46,7 +46,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 <summary className="text-sm text-dim cursor-pointer hover:text-white mb-2">
                   {i18n.t('error.details', 'Error details')}
                 </summary>
-                <pre className="bg-primary p-4 rounded-sm border border-border text-xs text-red-400 overflow-auto max-h-64 whitespace-pre-wrap font-mono">
+                <pre className="bg-primary p-4 rounded-sm border border-border text-xs text-error overflow-auto max-h-64 whitespace-pre-wrap font-mono">
                   {this.state.error.toString()}
                   {this.state.error.stack && `\n\n${this.state.error.stack}`}
                 </pre>
