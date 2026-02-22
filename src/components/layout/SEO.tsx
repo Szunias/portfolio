@@ -1,6 +1,6 @@
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 interface SEOProps {
   title?: string;
@@ -12,6 +12,7 @@ interface SEOProps {
   noindex?: boolean;
 }
 
+/** Sets <head> meta tags for SEO, Open Graph, Twitter cards, and JSON-LD structured data. */
 const SEO = ({
   title,
   description,

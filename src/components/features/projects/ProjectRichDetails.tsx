@@ -1,12 +1,19 @@
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, Trophy, Cpu, Activity, Music, Layers } from 'lucide-react';
-import { Project } from '../../../types';
+
+import type { Project } from '@/types';
 
 interface ProjectRichDetailsProps {
   project: Project;
 }
 
-const Section = ({ title, icon: Icon, children }: { title: string; icon: React.ElementType; children: React.ReactNode }) => (
+interface SectionProps {
+  title: string;
+  icon: React.ElementType;
+  children: React.ReactNode;
+}
+
+const Section = ({ title, icon: Icon, children }: SectionProps) => (
   <div className="py-8 border-t border-border">
     <h3 className="text-xl font-display text-cream-light mb-6 flex items-center gap-3">
       <Icon className="text-accent" size={24} />
@@ -16,7 +23,11 @@ const Section = ({ title, icon: Icon, children }: { title: string; icon: React.E
   </div>
 );
 
-const KeyValueGrid = ({ data }: { data: Record<string, string> }) => {
+interface KeyValueGridProps {
+  data: Readonly<Record<string, string>>;
+}
+
+const KeyValueGrid = ({ data }: KeyValueGridProps) => {
   const { t } = useTranslation('projectDetail');
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -32,7 +43,11 @@ const KeyValueGrid = ({ data }: { data: Record<string, string> }) => {
   );
 };
 
-const ListSection = ({ items }: { items: string[] }) => {
+interface ListSectionProps {
+  items: readonly string[];
+}
+
+const ListSection = ({ items }: ListSectionProps) => {
   const { t } = useTranslation('projectDetail');
   return (
     <ul className="space-y-3">

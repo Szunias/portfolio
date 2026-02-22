@@ -1,9 +1,10 @@
-import { Project } from '../../types';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { useRef, useEffect } from 'react';
-import ImageWithLoader from '../ui/ImageWithLoader';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Tag, ExternalLink } from 'lucide-react';
+
+import ImageWithLoader from '@/components/ui/ImageWithLoader';
+import type { Project } from '@/types';
 
 interface ProjectCardProps {
   project: Project;

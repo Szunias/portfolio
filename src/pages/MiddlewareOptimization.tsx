@@ -1,10 +1,13 @@
-import { useRef, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { useRef } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowLeft, ChevronDown, Cpu, Zap, Layers, Code, Database, Music } from 'lucide-react';
+
 import SEO from '../components/layout/SEO';
 
+/** Wwise middleware optimization page showcasing three case studies with video demos. */
 const MiddlewareOptimization = () => {
     const { t } = useTranslation('middlewareOptimization');
     const containerRef = useRef(null);

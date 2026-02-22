@@ -1,10 +1,12 @@
-import { usePortfolioData } from '../hooks/usePortfolioData';
 import { useTranslation } from 'react-i18next';
-import { useProjectFilter } from '../hooks/useProjectFilter';
-import SEO from '../components/layout/SEO';
-import ProjectGrid from '../components/features/projects/ProjectGrid';
-import ProjectFilters from '../components/features/projects/ProjectFilters';
 
+import ProjectFilters from '../components/features/projects/ProjectFilters';
+import ProjectGrid from '../components/features/projects/ProjectGrid';
+import SEO from '../components/layout/SEO';
+import { usePortfolioData } from '../hooks/usePortfolioData';
+import { useProjectFilter } from '../hooks/useProjectFilter';
+
+/** All projects page with category filters and a bento grid layout. */
 const Projects = () => {
   const { featured_projects, additional_projects } = usePortfolioData();
   const { t } = useTranslation('projects');

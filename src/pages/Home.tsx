@@ -1,15 +1,17 @@
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import Hero from '../components/home/Hero';
+import { ArrowRight } from 'lucide-react';
+
 import ProjectCard from '../components/features/ProjectCard';
-import Skills from '../components/home/Skills';
 import Showreel from '../components/features/Showreel';
+import Hero from '../components/home/Hero';
+import Skills from '../components/home/Skills';
 import SEO from '../components/layout/SEO';
 import { usePortfolioData } from '../hooks/usePortfolioData';
-import { useTranslation } from 'react-i18next';
-import { ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
+/** Landing page with hero, showreel video, featured projects grid, and skills section. */
 const Home = () => {
   const { featured_projects } = usePortfolioData();
   const { t } = useTranslation(['home', 'projects']);

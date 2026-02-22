@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Code, ChevronDown } from 'lucide-react';
-import CodeViewer from '../CodeViewer';
-import { CodeSnippet } from '../../../types/project';
 import { useTranslation } from 'react-i18next';
+import { Code, ChevronDown } from 'lucide-react';
+
+import CodeViewer from '@/components/features/CodeViewer';
+import type { CodeSnippet } from '@/types/project';
 
 interface ProjectCodeSectionProps {
-  snippets: CodeSnippet[];
+  snippets: readonly CodeSnippet[];
 }
 
 const ProjectCodeSection = ({ snippets }: ProjectCodeSectionProps) => {

@@ -1,8 +1,10 @@
+import type { PortfolioData } from '../types';
 import portfolioData from '../data/portfolioData.json';
-import { PortfolioData } from '../types';
 
-// In a real app, this might use useEffect to fetch data,
-// but for a static portfolio, importing JSON directly is most efficient.
+/**
+ * Provides typed access to the static portfolio data (projects, personal info, skills).
+ * Uses a double cast because the JSON import type doesn't match the PortfolioData interface.
+ */
 export const usePortfolioData = (): PortfolioData => {
   return portfolioData as unknown as PortfolioData;
 };

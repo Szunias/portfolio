@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Home } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 import SEO from '../components/layout/SEO';
 
+/** 404 page with a themed "signal lost" message and link back to home. */
 const NotFound = () => {
   const { t } = useTranslation('notFound');
 

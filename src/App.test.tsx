@@ -1,8 +1,9 @@
 import { render, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import { HelmetProvider } from 'react-helmet-async';
+
 import App from './App';
 import { AudioProvider } from './context/AudioContext';
-import { HelmetProvider } from 'react-helmet-async';
 
 // Mock i18next
 vi.mock('react-i18next', () => ({

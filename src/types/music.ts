@@ -1,12 +1,17 @@
+export interface TrackSource {
+  readonly url: string;
+  readonly type: string;
+}
+
 export interface Track {
-  id: string;
-  title: string;
-  artist: string;
-  cover: string;
-  sources: { url: string; type: string }[];
-  desc: { [key: string]: string };
-  tags: string[];
-  length: number;
-  year?: number;
-  date?: string;
+  readonly id: string;
+  readonly title: string;
+  readonly artist: string;
+  readonly cover: string;
+  readonly sources: TrackSource[];
+  readonly desc: Record<string, string>;
+  readonly tags: string[];
+  readonly length: number;
+  readonly year?: number;
+  readonly date?: string;
 }

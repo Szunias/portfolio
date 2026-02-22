@@ -1,25 +1,32 @@
-import { useParams, Navigate } from 'react-router-dom';
-import { usePortfolioData } from '../hooks/usePortfolioData';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Images } from 'lucide-react';
-import SEO from '../components/layout/SEO';
-import ProjectHero from '../components/features/projects/ProjectHero';
-import ProjectSidebar from '../components/features/projects/ProjectSidebar';
-import ContentBlockRenderer from '../components/features/projects/ContentBlockRenderer';
-import ProjectCodeSection from '../components/features/projects/ProjectCodeSection';
-import ChallengesBlock from '../components/features/projects/ChallengesBlock';
-import ProjectRichDetails from '../components/features/projects/ProjectRichDetails';
+
 import ImageLightbox from '../components/features/ImageLightbox';
 import ProductionTimeline from '../components/features/ProductionTimeline';
+import ChallengesBlock from '../components/features/projects/ChallengesBlock';
+import ContentBlockRenderer from '../components/features/projects/ContentBlockRenderer';
+import ProjectCodeSection from '../components/features/projects/ProjectCodeSection';
+import ProjectHero from '../components/features/projects/ProjectHero';
+import ProjectRichDetails from '../components/features/projects/ProjectRichDetails';
+import ProjectSidebar from '../components/features/projects/ProjectSidebar';
+import SEO from '../components/layout/SEO';
+import { usePortfolioData } from '../hooks/usePortfolioData';
 
+/**
+ * Dynamic project detail page. Loads the project by URL :id param,
+ * then dynamically loads the project-specific i18n namespace for translations.
+ */
 const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { featured_projects, additional_projects } = usePortfolioData();
 
   const project = [...featured_projects, ...additional_projects].find(p => p.id === id);
 
+  // Load shared namespaces plus the project-specific namespace (e.g. "shadowFrames")
+  // so each project's unique translation keys are available via t()
   const namespaces: string[] = ['projectDetail', 'projects'];
   if (project?.i18nNamespace) namespaces.push(project.i18nNamespace);
   const { t } = useTranslation(namespaces);

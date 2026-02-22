@@ -1,7 +1,8 @@
-import { ArrowRight, Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { usePortfolioData } from '../../hooks/usePortfolioData';
+import { ArrowRight, Play } from 'lucide-react';
+
+import { usePortfolioData } from '@/hooks/usePortfolioData';
 
 const HERO_TECH_STACK = ['Wwise', 'FMOD', 'Unreal Engine 5', 'C++', 'Reaper', 'Unity'];
 
@@ -9,7 +10,7 @@ const Hero = () => {
   const { t } = useTranslation('home');
   const { personal_info } = usePortfolioData();
 
-  const techStack = (personal_info as unknown as Record<string, unknown>).hero_tech_stack as string[] | undefined || HERO_TECH_STACK;
+  const techStack = personal_info.hero_tech_stack ?? HERO_TECH_STACK;
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-primary">

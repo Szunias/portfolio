@@ -3,15 +3,15 @@ import { Project } from './project';
 import { CoreSkills, TechnicalSkillsMatrix } from './skills';
 
 export interface PortfolioData {
-  personal_info: PersonalInfo;
-  education: {
-    current: EducationItem;
-    previous: EducationItem[];
+  readonly personal_info: PersonalInfo;
+  readonly education: {
+    readonly current: EducationItem;
+    readonly previous: readonly EducationItem[];
   };
-  professional_summary: ProfessionalSummary;
-  featured_projects: Project[];
-  additional_projects: Project[];
-  core_skills: CoreSkills;
-  statistics: Statistics;
-  technical_skills_matrix: TechnicalSkillsMatrix;
+  readonly professional_summary: ProfessionalSummary;
+  readonly featured_projects: readonly Project[];
+  readonly additional_projects: readonly Project[];
+  readonly core_skills: CoreSkills;
+  readonly statistics: Statistics;
+  readonly technical_skills_matrix: TechnicalSkillsMatrix;
 }

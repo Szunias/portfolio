@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { GraduationCap } from 'lucide-react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 
 interface TimelineItem {
     year: string;

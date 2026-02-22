@@ -1,10 +1,12 @@
 import { useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowLeft, Play, VolumeX, Music } from 'lucide-react';
+
 import SEO from '../components/layout/SEO';
 
+/** Sound design portfolio page showcasing video redesigns and implementation work. */
 const SoundDesign = () => {
     const { t } = useTranslation('soundDesign');
     const containerRef = useRef(null);

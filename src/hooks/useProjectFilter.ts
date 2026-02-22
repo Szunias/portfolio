@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
-import { Project } from '../types';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import type { Project } from '../types';
 
 // Static translation map
 const KEY_MAP: { [key: string]: string } = {
@@ -18,7 +19,21 @@ const KEY_MAP: { [key: string]: string } = {
   'Film Score': 'projects_filter_filmscore'
 };
 
-export const useProjectFilter = (projects: Project[]) => {
+interface UseProjectFilterResult {
+  filter: string;
+  setFilter: (filter: string) => void;
+  categories: string[];
+  filteredProjects: readonly Project[];
+  getCategoryLabel: (cat: string) => string;
+}
+
+/**
+ * Manages category filtering for the projects page.
+ * Extracts unique categories, filters projects by the active category,
+ * and translates category labels via i18n.
+ * @param projects - Full list of projects to filter
+ */
+export const useProjectFilter = (projects: readonly Project[]): UseProjectFilterResult => {
   const { t } = useTranslation('projects');
   const [filter, setFilter] = useState('All');
 
@@ -34,15 +49,15 @@ export const useProjectFilter = (projects: Project[]) => {
   );
 
   // Helper to translate category names
-  const getCategoryLabel = (cat: string) => {
+  const getCategoryLabel = useCallback((cat: string) => {
     if (cat === 'All') return t('projects_filter_all', 'All');
-    
+
     if (KEY_MAP[cat]) {
         return t(KEY_MAP[cat], cat);
     }
-    
+
     return cat;
-  };
+  }, [t]);
 
   return {
     filter,

@@ -1,47 +1,57 @@
-# Igor Szuniewicz
+# Igor Szuniewicz - Portfolio
 
-Game Audio Programmer
+Personal portfolio site for Igor Szuniewicz, a game audio designer and developer specializing in sound design, middleware integration, and interactive audio systems.
 
----
+## Tech Stack
 
-## About
+- **Framework:** React 18 + TypeScript
+- **Build:** Vite
+- **Styling:** Tailwind CSS 3, Framer Motion
+- **i18n:** react-i18next with EN / PL / NL (per-page namespace lazy loading)
+- **Audio:** Custom audio player with playlist support
+- **Deployment:** GitHub Pages
 
-Student at Digital Arts and Entertainment (DAE), Howest - Belgium.
+## Getting Started
 
-Currently researching real-time audio generation using machine learning models for video game applications. Main focus is measuring and optimizing latency between audio request and playback.
+```bash
+npm install
+npm run dev       # Start dev server
+npm run build     # Type-check + production build
+npm run preview   # Preview production build locally
+```
 
----
+## Project Structure
 
-## Skills
+```
+src/
+  components/
+    features/     # Domain components (AudioPlayer, Showreel, ContactForm, etc.)
+    home/         # Home page sections (Hero, Skills)
+    layout/       # Layout shell (Navbar, Footer, SEO)
+    ui/           # Reusable primitives (Button, ErrorBoundary)
+  constants/      # Route definitions
+  context/        # AudioContext provider
+  data/           # Portfolio data JSON + tracks
+  hooks/          # usePortfolioData, useProjectFilter
+  pages/          # Route-level page components
+  types/          # TypeScript type definitions
+  utils/          # Shared utility functions
+public/
+  locales/        # i18n translation files (en/, pl/, nl/)
+  assets/         # Images, videos, fonts
+```
 
-- **Game Engines:** Unreal Engine 5, Unity
-- **Programming:** C++, Python, C#
-- **Audio Middleware:** Wwise, FMOD
-- **Audio Tools:** Pro Tools, REAPER
+## Available Scripts
 
----
+| Script | Description |
+|---|---|
+| `npm run dev` | Start Vite dev server |
+| `npm run build` | TypeScript check + Vite production build |
+| `npm run preview` | Preview the production build |
+| `npm run lint` | Run ESLint |
+| `npm run test` | Run Vitest |
+| `npm run deploy` | Build and deploy to GitHub Pages |
 
-## Projects
+## Deployment
 
-### Real-Time Audio Generation
-Research on AI-generated sound effects for games. Testing multiple ML models (ElevenLabs, AudioGen, Stable Audio) to measure generation latency.
-
-Key finding: Pre-generation with caching provides 80,000x speedup, making AI audio practical for games.
-
-Tech stack: Unreal Engine 5.5, Python, WebSocket
-
-### EchoGates
-Third-person horror game featuring dynamic audio systems and procedurally generated sound effects.
-
-### AudioQ
-VST3 audio plugin implementing real-time audio effects and granular synthesis. Built with JUCE framework.
-
-### BirdGame3
-3D bird simulation game with environmental audio and reactive soundscapes.
-
----
-
-## Contact
-
-- GitHub: Szunias
-- Institution: Howest - DAE
+The site is deployed to GitHub Pages via the `gh-pages` package. Running `npm run deploy` builds the project and pushes the `dist/` directory to the `gh-pages` branch.

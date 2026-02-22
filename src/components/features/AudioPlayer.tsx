@@ -1,14 +1,16 @@
-import { useAudio } from '../../context/AudioContext';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, X } from 'lucide-react';
-import { formatTime } from '../../utils';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useReducedMotion } from 'framer-motion';
-import { Button } from '../ui/Button';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, X } from 'lucide-react';
+
+import { Button } from '@/components/ui/Button';
+import { useAudio } from '@/context/AudioContext';
+import { formatTime } from '@/utils';
 
 const VISUALIZER_BARS = 6;
 const barDelays = Array.from({ length: VISUALIZER_BARS }, (_, i) => `${i * 0.12}s`);
 
+/** Fixed bottom audio player bar with playback controls, progress scrubber, and volume slider. */
 const AudioPlayer = () => {
   const { t } = useTranslation('common');
   const {

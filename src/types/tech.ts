@@ -1,7 +1,7 @@
 export interface TechCategory {
-  id: string;
-  titleKey: string;
-  subtitleKey: string;
-  accentColor: string;
-  items: string[];
+  readonly id: string;
+  readonly titleKey: string;
+  readonly subtitleKey: string;
+  readonly accentColor: string;
+  readonly items: readonly string[];
 }

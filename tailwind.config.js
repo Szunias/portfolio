@@ -17,13 +17,6 @@ export default {
         'cream-light': "#f0ece6",
         border: "#2a2a2a",
         'border-hover': "#3a3a3a",
-        gold: "#c17f3e",
-        success: "#22c55e",
-        canvas: {
-          DEFAULT: "#161616",
-          header: "#1c1c1c",
-          border: "#2a2a2a",
-        }
       },
       fontFamily: {
         sans: ['DM Sans', 'sans-serif'],
@@ -36,7 +29,6 @@ export default {
           '50%': { height: '100%' },
         },
       },
-      animation: {},
     },
   },
   plugins: [],

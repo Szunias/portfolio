@@ -1,51 +1,52 @@
 export interface PersonalInfo {
-  name: string;
-  title: string;
-  role: string;
-  email: string;
-  location: {
-    city: string;
-    country: string;
-    region: string;
+  readonly name: string;
+  readonly title: string;
+  readonly role: string;
+  readonly email: string;
+  readonly location: {
+    readonly city: string;
+    readonly country: string;
+    readonly region: string;
   };
-  availability: {
-    status: string;
-    period: string;
-    duration: string;
-    passport: string;
-    relocation: string;
-    remote: string;
+  readonly availability: {
+    readonly status: string;
+    readonly period: string;
+    readonly duration: string;
+    readonly passport: string;
+    readonly relocation: string;
+    readonly remote: string;
   };
-  languages: string[];
-  social_media: {
-    github: string;
-    linkedin: string;
-    spotify: string;
-    itch_io: string;
-    website: string;
+  readonly languages: readonly string[];
+  readonly social_media: {
+    readonly github: string;
+    readonly linkedin: string;
+    readonly spotify: string;
+    readonly itch_io: string;
+    readonly website: string;
   };
+  readonly hero_tech_stack?: readonly string[];
 }
 
 export interface EducationItem {
-  institution: string;
-  location: string;
-  program: string;
-  status: string;
-  specialization?: string;
-  focus?: string;
-  started_age?: number;
-  description?: string;
+  readonly institution: string;
+  readonly location: string;
+  readonly program: string;
+  readonly status: string;
+  readonly specialization?: string;
+  readonly focus?: string;
+  readonly started_age?: number;
+  readonly description?: string;
 }
 
 export interface ProfessionalSummary {
-  tagline: string;
-  short_bio: string;
-  extended_bio: string;
+  readonly tagline: string;
+  readonly short_bio: string;
+  readonly extended_bio: string;
 }
 
 export interface Statistics {
-  years_of_music: string;
-  completed_projects: string;
-  tools_built: string;
-  ml_audio_latency: string;
+  readonly years_of_music: string;
+  readonly completed_projects: string;
+  readonly tools_built: string;
+  readonly ml_audio_latency: string;
 }

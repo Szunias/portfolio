@@ -1,8 +1,9 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Play, BarChart3 } from 'lucide-react';
-import { Track } from '../../../types';
-import { cn } from '../../../utils';
+
+import type { Track } from '@/types';
+import { cn } from '@/utils';
 
 interface TrackCardProps {
   track: Track;
@@ -84,5 +85,7 @@ const TrackCard = memo(({ track, index, isCurrent, isPlaying, onPlay }: TrackCar
     </motion.div>
   );
 });
+
+TrackCard.displayName = 'TrackCard';
 
 export default TrackCard;

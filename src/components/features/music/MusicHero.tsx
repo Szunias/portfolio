@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Sparkles } from 'lucide-react';
-import { Track } from '../../../types';
-import { useAudio } from '../../../context/AudioContext';
+
+import { useAudio } from '@/context/AudioContext';
+import type { Track } from '@/types';
 
 const MusicHero = () => {
   const { currentTrack, isPlaying, togglePlay, playTrack, playlist } = useAudio();

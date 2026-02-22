@@ -1,11 +1,12 @@
-import { usePortfolioData } from '../hooks/usePortfolioData';
 import { useTranslation } from 'react-i18next';
-import { Download, Gamepad2, GraduationCap, Wrench } from 'lucide-react';
-import { motion } from 'framer-motion';
-import SEO from '../components/layout/SEO';
 import { Link } from 'react-router-dom';
-import AboutTimeline from '../components/features/about/AboutTimeline';
+import { motion } from 'framer-motion';
+import { Download, Gamepad2, GraduationCap, Wrench } from 'lucide-react';
+
 import AboutSkillsSidebar from '../components/features/about/AboutSkillsSidebar';
+import AboutTimeline from '../components/features/about/AboutTimeline';
+import SEO from '../components/layout/SEO';
+import { usePortfolioData } from '../hooks/usePortfolioData';
 
 const toolNameMap: Record<string, string> = {
     Unreal_Engine: 'Unreal Engine 5',
@@ -17,15 +18,15 @@ const toolNameMap: Record<string, string> = {
     iZotope_RX: 'iZotope RX',
 };
 
+/** About page with biography, education timeline, skills sidebar, and CTA banner. */
 const About = () => {
     const portfolioData = usePortfolioData();
     const { personal_info } = portfolioData;
     const { t } = useTranslation('about');
 
     const getToolNames = (categoryKey: string) => {
-        interface SkillsMatrix { [key: string]: { tools?: Record<string, unknown> } }
-        const cat = (portfolioData as unknown as { technical_skills_matrix?: SkillsMatrix }).technical_skills_matrix;
-        const tools = cat?.[categoryKey]?.tools;
+        const matrix = portfolioData.technical_skills_matrix;
+        const tools = matrix?.[categoryKey]?.tools;
         if (!tools) return [];
         return Object.keys(tools).map(k => toolNameMap[k] || k);
     };

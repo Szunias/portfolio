@@ -1,9 +1,10 @@
-import { ArrowLeft, Calendar } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import TechReveal from '../../home/TechReveal';
-import { Project } from '../../../types';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Calendar } from 'lucide-react';
+
+import TechReveal from '@/components/home/TechReveal';
+import type { Project } from '@/types';
 
 interface ProjectHeroProps {
     project: Project;

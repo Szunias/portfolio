@@ -1,15 +1,11 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Mail, Copy, Check } from 'lucide-react';
-import { useState } from 'react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 
-interface PersonalInfo {
-    location: { city: string; country: string };
-    availability: { status: string };
-    email: string;
-}
+import type { PersonalInfo } from '@/types';
 
-interface Skills {
+interface AboutSkills {
     middleware: string[];
     engines: string[];
     programming: string[];
@@ -19,7 +15,7 @@ interface Skills {
 
 interface AboutSkillsSidebarProps {
     personalInfo: PersonalInfo;
-    skills: Skills;
+    skills: AboutSkills;
     t: TFunction;
 }
 

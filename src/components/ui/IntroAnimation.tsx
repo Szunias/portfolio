@@ -1,5 +1,5 @@
-import { motion, useReducedMotion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 
 const IntroAnimation = ({ onComplete }: { onComplete: () => void }) => {
   const [isExiting, setIsExiting] = useState(false);

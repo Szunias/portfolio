@@ -1,14 +1,16 @@
-import { ReactNode } from 'react';
-import Navbar from './Navbar';
-import Footer from './Footer';
-import AudioPlayer from '../features/AudioPlayer';
-import { Helmet } from 'react-helmet-async';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
+
+import AudioPlayer from '../features/AudioPlayer';
+import Footer from './Footer';
+import Navbar from './Navbar';
 
 interface LayoutProps {
   children: ReactNode;
 }
 
+/** Root layout shell: skip-link, navbar, main content area, footer, and the fixed audio player. */
 const Layout = ({ children }: LayoutProps) => {
   const { t, i18n } = useTranslation('common');
 

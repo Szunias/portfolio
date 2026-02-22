@@ -1,13 +1,15 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, MapPin, Linkedin, Github, Copy, Check } from 'lucide-react';
-import ContactForm from '../components/features/ContactForm';
-import { usePortfolioData } from '../hooks/usePortfolioData';
-import SEO from '../components/layout/SEO';
 
-// Base64-encoded email — bots won't scrape it from static HTML
+import ContactForm from '../components/features/ContactForm';
+import SEO from '../components/layout/SEO';
+import { usePortfolioData } from '../hooks/usePortfolioData';
+
+/** Base64-encoded email to deter scraper bots from harvesting it in static HTML. */
 const ENCODED_EMAIL = 'aWdvcnN6dW5pZXdpY3p3b3JrQGdtYWlsLmNvbQ==';
 
+/** Contact page with info card (email, location, socials) and the EmailJS contact form. */
 const Contact = () => {
   const { personal_info } = usePortfolioData();
   const { t } = useTranslation('contact');

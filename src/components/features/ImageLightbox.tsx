@@ -1,17 +1,28 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ZoomIn, Loader2 } from 'lucide-react';
-import { ProjectImage } from '../../types';
-import { useTranslation } from 'react-i18next';
+
+import type { ProjectImage } from '@/types';
 
 interface ImageLightboxProps {
-  images: (string | ProjectImage)[];
+  images: readonly (string | ProjectImage)[];
 }
 
 const ImageLightbox = ({ images }: ImageLightboxProps) => {
   const [selectedImage, setSelectedImage] = useState<{ src: string; caption: string | null } | null>(null);
   const [lightboxLoading, setLightboxLoading] = useState(true);
   const { t } = useTranslation('common');
+
+  // Close lightbox on Escape key
+  useEffect(() => {
+    if (!selectedImage) return;
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedImage(null);
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [selectedImage]);
 
   const handleOpenLightbox = useCallback((src: string, caption: string | null) => {
     setLightboxLoading(true);

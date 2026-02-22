@@ -2,8 +2,10 @@ import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Play, Activity, Cpu, Layers, Zap } from 'lucide-react';
+
 import SEO from '../components/layout/SEO';
 
+/** Transientica project page: voice-controlled rhythm game using real-time ML audio classification. */
 const Transientica = () => {
     const { t } = useTranslation('transientica');
     const [activeVideo, setActiveVideo] = useState<string | null>(null);

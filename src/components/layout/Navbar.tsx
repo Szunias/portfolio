@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, Github, Linkedin } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { usePortfolioData } from '../../hooks/usePortfolioData';
-import LanguageSwitcher from './LanguageSwitcher';
-import { ROUTES } from '../../constants/routes';
+import { Menu, X, Github, Linkedin } from 'lucide-react';
+
+import LanguageSwitcher from '@/components/layout/LanguageSwitcher';
+import { usePortfolioData } from '@/hooks/usePortfolioData';
+import { ROUTES } from '@/constants/routes';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);

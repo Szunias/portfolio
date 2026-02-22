@@ -1,28 +1,33 @@
-import { Suspense, lazy, ComponentType, useState, useEffect } from 'react';
+import { Suspense, lazy, useState, useEffect } from 'react';
+import type { ComponentType } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import Layout from './components/layout/Layout';
 import ScrollToTop from './components/layout/ScrollToTop';
-import { ROUTES } from './constants/routes';
 import IntroAnimation from './components/ui/IntroAnimation';
+import { ROUTES } from './constants/routes';
 
-// Helper to handle chunk load errors (auto-reload once)
+/**
+ * Wraps React.lazy with automatic recovery from chunk load failures.
+ * On first failure: reloads the page (handles stale deployments).
+ * On second failure: throws so the ErrorBoundary can catch it.
+ * Uses sessionStorage to track reload attempts and prevent infinite loops.
+ */
 const safeLazy = (importFunc: () => Promise<{ default: ComponentType<unknown> }>) => {
   return lazy(() => {
     return importFunc().catch(error => {
       console.error("Chunk load failed", error);
-      // Check if we already tried to reload to avoid infinite loops
       const hasReloaded = sessionStorage.getItem('chunk_reload');
       if (!hasReloaded) {
         sessionStorage.setItem('chunk_reload', 'true');
         window.location.reload();
-        return new Promise(() => { }); // Never resolve, page reloads
+        return new Promise(() => { }); // Never resolves; page reloads instead
       }
-      throw error; // If already reloaded, let the error boundary catch it
+      throw error;
     });
   });
 };
 
-// Lazy load pages with safety
 const Home = safeLazy(() => import('./pages/Home'));
 const Projects = safeLazy(() => import('./pages/Projects'));
 const ProjectDetails = safeLazy(() => import('./pages/ProjectDetails'));
@@ -36,15 +41,15 @@ const Music = safeLazy(() => import('./pages/Music'));
 const NotFound = safeLazy(() => import('./pages/NotFound'));
 
 function App() {
-  // Clear reload flag on successful load
-  sessionStorage.removeItem('chunk_reload');
-
   // Show intro animation only once per session
   const [showIntro, setShowIntro] = useState(() => {
     return !sessionStorage.getItem('intro_shown');
   });
 
   useEffect(() => {
+    // Clear the safeLazy reload flag now that the app loaded successfully
+    sessionStorage.removeItem('chunk_reload');
+
     if (showIntro) {
       sessionStorage.setItem('intro_shown', 'true');
     }

@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { CodeSnippet, CodeAnnotation } from '../../types';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { cn } from '../../utils';
+import { motion, AnimatePresence } from 'framer-motion';
+
+import type { CodeSnippet, CodeAnnotation } from '@/types';
+import { cn } from '@/utils';
 
 interface CodeViewerProps {
-  snippets: CodeSnippet[];
+  snippets: readonly CodeSnippet[];
 }
 
 const highlightCode = (code: string): JSX.Element[] => {

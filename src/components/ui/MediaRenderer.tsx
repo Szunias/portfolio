@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { cn } from '../../utils';
-import { ImageOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { ImageOff } from 'lucide-react';
+
+import { cn } from '@/utils';
 
 interface MediaRendererProps {
   src: string;

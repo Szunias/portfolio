@@ -1,6 +1,7 @@
-import { Github, Linkedin, Mail, Music } from 'lucide-react';
-import { usePortfolioData } from '../../hooks/usePortfolioData';
 import { useTranslation } from 'react-i18next';
+import { Github, Linkedin, Mail, Music } from 'lucide-react';
+
+import { usePortfolioData } from '@/hooks/usePortfolioData';
 
 const Footer = () => {
   const { personal_info } = usePortfolioData();

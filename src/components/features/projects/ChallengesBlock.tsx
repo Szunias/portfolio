@@ -1,14 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle, CheckCircle2, Target } from 'lucide-react';
 
-interface Challenge {
-  challenge: string;
-  problem: string;
-  solution: string;
-}
+import type { ChallengeSolved } from '@/types';
 
 interface ChallengesBlockProps {
-  challenges: Challenge[];
+  challenges: readonly ChallengeSolved[];
 }
 
 const ChallengesBlock = ({ challenges }: ChallengesBlockProps) => {

@@ -1,6 +1,7 @@
-import { Github, ExternalLink, PlayCircle, Tag, Layers, Users, Monitor, Gamepad2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Project } from '../../../types';
+import { Github, ExternalLink, PlayCircle, Tag, Layers, Users, Monitor, Gamepad2 } from 'lucide-react';
+
+import type { Project } from '@/types';
 
 interface ProjectSidebarProps {
   project: Project;

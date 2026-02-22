@@ -1,24 +1,24 @@
 export interface SkillCategory {
-  title: string;
-  skills: string[];
+  readonly title: string;
+  readonly skills: readonly string[];
 }
 
 export interface CoreSkills {
-  [key: string]: SkillCategory;
+  readonly [key: string]: SkillCategory;
 }
 
 export interface TechTool {
-  level?: string;
-  description?: string;
-  desc?: string;
-  rich_descriptions?: { [key: string]: string };
+  readonly level?: string;
+  readonly description?: string;
+  readonly desc?: string;
+  readonly rich_descriptions?: Readonly<Record<string, string>>;
 }
 
-export interface TechCategory {
-  category: string;
-  tools: { [key: string]: TechTool };
+export interface SkillsMatrixCategory {
+  readonly category: string;
+  readonly tools: Readonly<Record<string, TechTool>>;
 }
 
 export interface TechnicalSkillsMatrix {
-  [key: string]: TechCategory;
+  readonly [key: string]: SkillsMatrixCategory;
 }

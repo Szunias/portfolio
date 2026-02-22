@@ -1,7 +1,7 @@
 import { useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 const GradworkClosing = ({ t }: { t: (key: string) => string }) => {
     const ref = useRef(null);

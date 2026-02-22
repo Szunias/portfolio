@@ -1,17 +1,28 @@
-import { useState, useRef, FormEvent } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import type { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, Send, CheckCircle, AlertCircle } from 'lucide-react';
 import emailjs from '@emailjs/browser';
+
 import { Button } from '../ui/Button';
 
 type FormStatus = 'idle' | 'sending' | 'sent' | 'error';
 
+/** Contact form that sends messages via EmailJS. Manages idle/sending/sent/error states. */
 const ContactForm = () => {
   const { t } = useTranslation('contact');
   const formRef = useRef<HTMLFormElement>(null);
   const [status, setStatus] = useState<FormStatus>('idle');
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  // Clean up pending timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
+  const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus('sending');
 
@@ -24,12 +35,12 @@ const ContactForm = () => {
       );
       setStatus('sent');
       formRef.current?.reset();
-      setTimeout(() => setStatus('idle'), 3000);
+      timeoutRef.current = setTimeout(() => setStatus('idle'), 3000);
     } catch {
       setStatus('error');
-      setTimeout(() => setStatus('idle'), 4000);
+      timeoutRef.current = setTimeout(() => setStatus('idle'), 4000);
     }
-  };
+  }, []);
 
   return (
     <div className="bg-secondary p-8 rounded-sm border border-border">

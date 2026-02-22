@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { Project } from '../../../types';
-import ProjectCard from '../ProjectCard';
+
+import ProjectCard from '@/components/features/ProjectCard';
+import type { Project } from '@/types';
 
 interface ProjectGridProps {
-  projects: Project[];
+  projects: readonly Project[];
 }
 
 const ProjectGrid = ({ projects }: ProjectGridProps) => {

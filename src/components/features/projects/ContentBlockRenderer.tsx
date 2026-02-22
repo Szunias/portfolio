@@ -1,15 +1,22 @@
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
 import { Cpu, ZoomIn, X } from 'lucide-react';
-import { ContentBlock } from '../../../types';
-import MediaRenderer from '../../ui/MediaRenderer';
-import { cn } from '../../../utils';
+
+import MediaRenderer from '@/components/ui/MediaRenderer';
+import type { ContentBlock } from '@/types';
+import { cn } from '@/utils';
 
 interface ContentBlockRendererProps {
-  blocks?: ContentBlock[];
+  blocks?: readonly ContentBlock[];
 }
 
-const StatsGridBlock = ({ items }: { items: { label: string; value: string }[] }) => {
+import type { StatsGridItem } from '../../../types';
+
+interface StatsGridBlockProps {
+  items: readonly StatsGridItem[];
+}
+
+const StatsGridBlock = ({ items }: StatsGridBlockProps) => {
   const { t } = useTranslation('projectDetail');
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-12 border-y border-border py-8">
@@ -23,7 +30,12 @@ const StatsGridBlock = ({ items }: { items: { label: string; value: string }[] }
   );
 };
 
-const SplitContentBlock = ({ block, onImageClick }: { block: ContentBlock; onImageClick?: (src: string) => void }) => {
+interface SplitContentBlockProps {
+  block: ContentBlock;
+  onImageClick?: (src: string) => void;
+}
+
+const SplitContentBlock = ({ block, onImageClick }: SplitContentBlockProps) => {
   const { t } = useTranslation('projectDetail');
 
   const handleClick = () => {
@@ -67,7 +79,11 @@ const SplitContentBlock = ({ block, onImageClick }: { block: ContentBlock; onIma
   );
 };
 
-const GenericBlock = ({ block }: { block: ContentBlock }) => {
+interface GenericBlockProps {
+  block: ContentBlock;
+}
+
+const GenericBlock = ({ block }: GenericBlockProps) => {
     const { t } = useTranslation('projectDetail');
     return (
         <div className="border-l-2 border-accent/20 pl-6 md:pl-10 py-2 my-8">
@@ -95,6 +111,16 @@ const GenericBlock = ({ block }: { block: ContentBlock }) => {
 const ContentBlockRenderer = ({ blocks }: ContentBlockRendererProps) => {
   const { t } = useTranslation('common');
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+
+  // Close lightbox on Escape key
+  useEffect(() => {
+    if (!lightboxImage) return;
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightboxImage(null);
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [lightboxImage]);
 
   if (!blocks) return null;
 

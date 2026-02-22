@@ -1,11 +1,13 @@
-import SEO from '../components/layout/SEO';
 import { useTranslation } from 'react-i18next';
-import GradworkHeader from '../components/features/gradwork/GradworkHeader';
-import GradworkSetup from '../components/features/gradwork/GradworkSetup';
-import GradworkResults from '../components/features/gradwork/GradworkResults';
-import GradworkSolution from '../components/features/gradwork/GradworkSolution';
-import GradworkClosing from '../components/features/gradwork/GradworkClosing';
 
+import GradworkClosing from '../components/features/gradwork/GradworkClosing';
+import GradworkHeader from '../components/features/gradwork/GradworkHeader';
+import GradworkResults from '../components/features/gradwork/GradworkResults';
+import GradworkSetup from '../components/features/gradwork/GradworkSetup';
+import GradworkSolution from '../components/features/gradwork/GradworkSolution';
+import SEO from '../components/layout/SEO';
+
+/** Bachelor thesis page covering real-time ML audio generation research. */
 const Gradwork = () => {
     const { t } = useTranslation('gradwork');
 

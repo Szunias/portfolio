@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { cn } from '../../utils';
 import { ImageOff } from 'lucide-react';
+
+import { cn } from '@/utils';
 
 interface ImageWithLoaderProps {
   src: string;

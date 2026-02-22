@@ -1,22 +1,28 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
-import i18n from '../../i18n';
+import { Component } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
 
-interface Props {
+import i18n from '@/i18n';
+
+interface ErrorBoundaryProps {
   children: ReactNode;
 }
 
-interface State {
+interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
 }
 
-class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
+/**
+ * Catches unhandled rendering errors and displays a localized fallback UI.
+ * Uses i18n.t() directly because class components cannot use hooks.
+ */
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null };
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
   }
 

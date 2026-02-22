@@ -1,9 +1,21 @@
-import { useState, useRef } from 'react';
-import Player from '@vimeo/player';
-import { Play, AlertCircle } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
+import { Play, AlertCircle } from 'lucide-react';
+import Player from '@vimeo/player';
 
+const TIMESTAMPS = [
+  { time: 0, labelKey: 'hero.showreel_start', fallback: 'Start' },
+  { time: 10, labelKey: 'hero.chapter.shadow_frames', fallback: 'Shadow Frames' },
+  { time: 54, labelKey: 'hero.chapter.amorak', fallback: 'Amorak' },
+  { time: 91, labelKey: 'hero.chapter.akantilado', fallback: 'Akantilado' },
+  { time: 112, labelKey: 'hero.chapter.ray', fallback: 'Ray' },
+  { time: 154, labelKey: 'hero.chapter.not_today', fallback: 'Not Today' },
+  { time: 184, labelKey: 'hero.chapter.ellen_wwise', fallback: 'Ellen Wwise' },
+  { time: 198, labelKey: 'hero.chapter.pause_and_deserve', fallback: 'Pause & Deserve' },
+] as const;
+
+/** Embeds the Vimeo showreel with chapter navigation timestamps. */
 const Showreel = () => {
   const { t } = useTranslation('home');
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -12,18 +24,19 @@ const Showreel = () => {
   const [activeChapter, setActiveChapter] = useState<number>(0);
   const [error, setError] = useState(false);
 
-  const timestamps = [
-    { time: 0, label: t('hero.showreel_start', 'Start') },
-    { time: 10, label: t('hero.chapter.shadow_frames', 'Shadow Frames') },
-    { time: 54, label: t('hero.chapter.amorak', 'Amorak') },
-    { time: 91, label: t('hero.chapter.akantilado', 'Akantilado') },
-    { time: 112, label: t('hero.chapter.ray', 'Ray') },
-    { time: 154, label: t('hero.chapter.not_today', 'Not Today') },
-    { time: 184, label: t('hero.chapter.ellen_wwise', 'Ellen Wwise') },
-    { time: 198, label: t('hero.chapter.pause_and_deserve', 'Pause & Deserve') },
-  ];
+  // Clean up Vimeo player on unmount
+  useEffect(() => {
+    return () => {
+      if (player) {
+        player.off('play');
+        player.off('pause');
+        player.off('timeupdate');
+        player.destroy().catch(() => {});
+      }
+    };
+  }, [player]);
 
-  const handleLoad = () => {
+  const handleLoad = useCallback(() => {
     if (iframeRef.current && !player) {
       const vimeoPlayer = new Player(iframeRef.current);
       setPlayer(vimeoPlayer);
@@ -32,7 +45,8 @@ const Showreel = () => {
         vimeoPlayer.on('play', () => setIsPlaying(true));
         vimeoPlayer.on('pause', () => setIsPlaying(false));
         vimeoPlayer.on('timeupdate', (data) => {
-          const current = timestamps.slice().reverse().find(ts => data.seconds >= ts.time);
+          // Walk timestamps in reverse to find the latest one that's been passed
+          const current = TIMESTAMPS.slice().reverse().find(ts => data.seconds >= ts.time);
           if (current) {
             setActiveChapter(prev => prev !== current.time ? current.time : prev);
           }
@@ -42,7 +56,7 @@ const Showreel = () => {
         setError(true);
       });
     }
-  };
+  }, [player]);
 
   const jumpTo = (seconds: number) => {
     if (player) {
@@ -113,12 +127,13 @@ const Showreel = () => {
 
       {/* Chapter Navigation */}
       <div className="mt-6 flex flex-wrap justify-center gap-2">
-        {timestamps.map((ts) => {
+        {TIMESTAMPS.map((ts) => {
           const isActive = activeChapter === ts.time;
+          const label = t(ts.labelKey, ts.fallback);
 
           return (
             <button
-              key={ts.label}
+              key={ts.time}
               onClick={() => jumpTo(ts.time)}
               className={`
                 relative px-4 py-2 rounded-sm text-sm font-medium transition-colors duration-200
@@ -130,7 +145,7 @@ const Showreel = () => {
             >
               <span className="flex items-center gap-2">
                 <span className="font-mono text-xs opacity-60">{formatTime(ts.time)}</span>
-                <span>{ts.label}</span>
+                <span>{label}</span>
               </span>
             </button>
           );

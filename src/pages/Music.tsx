@@ -1,9 +1,11 @@
-import { useAudio } from '../context/AudioContext';
 import { useTranslation } from 'react-i18next';
-import TrackCard from '../components/features/music/TrackCard';
-import MusicHero from '../components/features/music/MusicHero';
-import SEO from '../components/layout/SEO';
 
+import MusicHero from '../components/features/music/MusicHero';
+import TrackCard from '../components/features/music/TrackCard';
+import SEO from '../components/layout/SEO';
+import { useAudio } from '../context/AudioContext';
+
+/** Music library page displaying all tracks as a grid of playable cards. */
 const Music = () => {
   const { playlist, playTrack, currentTrack, isPlaying } = useAudio();
   const { t } = useTranslation('music');
