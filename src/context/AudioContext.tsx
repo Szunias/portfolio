@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import type { Track } from '../types';
 import tracksData from '../data/tracks.json';
 
-interface AudioContextType {
+interface AudioControlsContextType {
   currentTrack: Track | null;
   isPlaying: boolean;
   playlist: Track[];
@@ -13,9 +13,6 @@ interface AudioContextType {
   nextTrack: () => void;
   prevTrack: () => void;
   loadPlaylist: (tracks: Track[]) => void;
-  progress: number; // 0-100
-  duration: number; // seconds
-  currentTime: number; // seconds
   seek: (time: number) => void;
   volume: number;
   setVolume: (vol: number) => void;
@@ -23,7 +20,14 @@ interface AudioContextType {
   closePlayer: () => void;
 }
 
-const AudioContext = createContext<AudioContextType | undefined>(undefined);
+interface AudioProgressContextType {
+  progress: number; // 0-100
+  duration: number; // seconds
+  currentTime: number; // seconds
+}
+
+const AudioControlsContext = createContext<AudioControlsContextType | undefined>(undefined);
+const AudioProgressContext = createContext<AudioProgressContextType | undefined>(undefined);
 
 /**
  * Global audio playback provider. Manages a single HTMLAudioElement shared across the app,
@@ -94,6 +98,9 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
       audio.removeEventListener('loadedmetadata', updateProgress);
       audio.removeEventListener('error', handleError);
       audio.pause();
+      // Clear source and release network connection on unmount
+      audio.removeAttribute('src');
+      audio.load();
     };
   }, []);
 
@@ -134,7 +141,9 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
 
   const togglePlay = useCallback(() => {
     if (audioRef.current && currentTrack) {
-      if (isPlaying) {
+      // Check the audio element directly instead of relying on isPlaying state,
+      // which can be stale when called from playTrack's closure
+      if (!audioRef.current.paused) {
         audioRef.current.pause();
         setIsPlaying(false);
       } else {
@@ -143,7 +152,7 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
           .catch(e => console.error("Playback failed", e));
       }
     }
-  }, [currentTrack, isPlaying]);
+  }, [currentTrack]);
 
   const playTrack = useCallback((track: Track) => {
     setIsPlayerVisible(true);
@@ -159,10 +168,13 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
       }
       const src = track.sources[0]?.url;
       if (src) {
+        // Set track state BEFORE starting playback so UI is in sync during transition
+        setCurrentTrack(track);
+
         const formattedSrc = src.startsWith('http') || src.startsWith('/') ? src : `/${src}`;
         audioRef.current.src = encodeURI(formattedSrc);
         audioRef.current.load();
-        
+
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
           playPromise
@@ -172,7 +184,6 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
               setIsPlaying(false);
             });
         }
-        setCurrentTrack(track);
       }
     }
   }, [currentTrack, togglePlay]);
@@ -197,7 +208,7 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
   }, [currentTrack, playlist, playTrack]);
 
   const seek = useCallback((time: number) => {
-    if (audioRef.current) {
+    if (audioRef.current && audioRef.current.duration > 0) {
       audioRef.current.currentTime = time;
       setCurrentTime(time);
     }
@@ -207,7 +218,7 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
     setPlaylist(tracks);
   }, []);
 
-  const value = useMemo(() => ({
+  const controlsValue = useMemo(() => ({
     currentTrack,
     isPlaying,
     playlist,
@@ -216,9 +227,6 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
     nextTrack,
     prevTrack,
     loadPlaylist,
-    progress,
-    duration,
-    currentTime,
     seek,
     volume,
     setVolume,
@@ -226,26 +234,48 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
     closePlayer
   }), [
     currentTrack, isPlaying, playlist, playTrack, togglePlay, nextTrack,
-    prevTrack, loadPlaylist, progress, duration, currentTime, seek,
-    volume, setVolume, isPlayerVisible, closePlayer
+    prevTrack, loadPlaylist, seek, volume, setVolume, isPlayerVisible, closePlayer
   ]);
 
+  const progressValue = useMemo(() => ({
+    progress,
+    duration,
+    currentTime,
+  }), [progress, duration, currentTime]);
+
   return (
-    <AudioContext.Provider value={value}>
-      {children}
-    </AudioContext.Provider>
+    <AudioControlsContext.Provider value={controlsValue}>
+      <AudioProgressContext.Provider value={progressValue}>
+        {children}
+      </AudioProgressContext.Provider>
+    </AudioControlsContext.Provider>
   );
 };
 
 /**
- * Hook to access the global audio playback context.
+ * Hook to access audio controls (play/pause/seek/volume/playlist).
+ * Only re-renders when controls change (track change, play/pause, volume).
  * Must be used within an AudioProvider.
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAudio = () => {
-  const context = useContext(AudioContext);
+  const context = useContext(AudioControlsContext);
   if (context === undefined) {
     throw new Error('useAudio must be used within an AudioProvider');
+  }
+  return context;
+};
+
+/**
+ * Hook to access audio progress (currentTime, duration, progress percentage).
+ * Re-renders ~4x/sec during playback. Only use in components that display progress.
+ * Must be used within an AudioProvider.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export const useAudioProgress = () => {
+  const context = useContext(AudioProgressContext);
+  if (context === undefined) {
+    throw new Error('useAudioProgress must be used within an AudioProvider');
   }
   return context;
 };

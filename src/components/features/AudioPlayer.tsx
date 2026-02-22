@@ -4,7 +4,7 @@ import { useReducedMotion } from 'framer-motion';
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, X } from 'lucide-react';
 
 import { Button } from '@/components/ui/Button';
-import { useAudio } from '@/context/AudioContext';
+import { useAudio, useAudioProgress } from '@/context/AudioContext';
 import { formatTime } from '@/utils';
 
 const VISUALIZER_BARS = 6;
@@ -15,21 +15,24 @@ const AudioPlayer = () => {
   const { t } = useTranslation('common');
   const {
     currentTrack, isPlaying, togglePlay, nextTrack, prevTrack,
-    progress, duration, currentTime, seek, volume, setVolume, isPlayerVisible, closePlayer
+    seek, volume, setVolume, isPlayerVisible, closePlayer
   } = useAudio();
+  const { progress, duration, currentTime } = useAudioProgress();
 
-  const [isMuted, setIsMuted] = useState(false);
   const [prevVolume, setPrevVolume] = useState(volume);
   const shouldReduceMotion = useReducedMotion();
+  // Derive muted state from volume to keep in sync with AudioContext
+  const isMuted = volume === 0;
 
   if (!currentTrack || !isPlayerVisible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-primary border-t border-border z-50 h-20 flex items-center px-3 sm:px-6 md:px-8">
+    <div className="fixed bottom-0 left-0 right-0 bg-primary border-t border-border z-50 h-20 flex items-center px-3 sm:px-6 md:px-8" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
       {/* Progress Bar (Top Line) */}
       <div
-        className="absolute top-0 left-0 right-0 h-1 hover:h-2.5 bg-secondary cursor-pointer group transition-all duration-200 ease-out z-50"
+        className={`absolute top-0 left-0 right-0 h-1 hover:h-2.5 bg-secondary group transition-all duration-200 ease-out z-50 ${duration > 0 ? 'cursor-pointer' : 'cursor-default'}`}
         onClick={(e) => {
+            if (duration <= 0) return;
             const rect = e.currentTarget.getBoundingClientRect();
             const percent = (e.clientX - rect.left) / rect.width;
             seek(percent * duration);
@@ -104,12 +107,10 @@ const AudioPlayer = () => {
                 <Button
                     onClick={() => {
                         if (isMuted) {
-                            setVolume(prevVolume);
-                            setIsMuted(false);
+                            setVolume(prevVolume || 0.7);
                         } else {
                             setPrevVolume(volume);
                             setVolume(0);
-                            setIsMuted(true);
                         }
                     }}
                     variant="ghost"
@@ -124,7 +125,7 @@ const AudioPlayer = () => {
                         const rect = e.currentTarget.getBoundingClientRect();
                         const vol = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
                         setVolume(vol);
-                        setIsMuted(vol === 0);
+                        if (vol > 0) setPrevVolume(vol);
                      }}
                 >
                     <div

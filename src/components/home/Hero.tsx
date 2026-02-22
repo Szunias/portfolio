@@ -51,7 +51,7 @@ const Hero = () => {
           </div>
 
           <p className="text-dim text-lg sm:text-xl font-light mt-8 max-w-lg leading-relaxed">
-             Crafting immersive sonic experiences and robust audio systems for interactive media.
+             {t('hero.tagline', 'Crafting immersive sonic experiences and robust audio systems for interactive media.')}
           </p>
 
           {/* Buttons: Editorial Style */}
@@ -78,6 +78,7 @@ const Hero = () => {
               to="/music"
               className="ml-4 md:ml-8 relative flex items-center justify-center w-14 h-14 rounded-full border border-border group hover:border-accent transition-all duration-500 bg-secondary/50"
               title={t('hero.listen_music', 'Listen to Music')}
+              aria-label={t('hero.listen_music', 'Listen to Music')}
             >
               <div className="absolute inset-0 rounded-full bg-accent/20 scale-50 opacity-0 group-hover:scale-150 group-hover:opacity-0 transition-all duration-1000 ease-out animate-ping" />
               <Play size={18} className="ml-1 text-cream group-hover:text-accent transition-colors" fill="currentColor" />

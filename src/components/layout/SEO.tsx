@@ -84,11 +84,8 @@ const SEO = ({
       {/* Robots */}
       {noindex && <meta name="robots" content="noindex, nofollow" />}
 
-      {/* Hreflang — multilingual SEO */}
-      <link rel="alternate" hrefLang="en" href={currentUrl} />
-      <link rel="alternate" hrefLang="pl" href={currentUrl} />
-      <link rel="alternate" hrefLang="nl" href={currentUrl} />
-      <link rel="alternate" hrefLang="x-default" href={currentUrl} />
+      {/* Hreflang omitted: language is stored in localStorage, not in URL path/subdomain,
+         so all hreflang tags would point to the same URL — misleading for search engines. */}
 
       {/* Open Graph / Facebook / LinkedIn */}
       <meta property="og:type" content={type} />

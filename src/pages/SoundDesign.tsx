@@ -95,9 +95,9 @@ const SoundDesign = () => {
                                     <div className="w-20 h-20 mx-auto mb-6 rounded-full border-2 border-accent/30 flex items-center justify-center text-accent">
                                         <VolumeX size={32} />
                                     </div>
-                                    <h4 className="text-2xl font-display font-bold text-accent mb-2 tracking-widest uppercase">
+                                    <h3 className="text-2xl font-display font-bold text-accent mb-2 tracking-widest uppercase">
                                         {t('section1.video3.placeholder_title', 'SIGNAL OFFLINE')}
-                                    </h4>
+                                    </h3>
                                     <p className="text-dim font-mono text-sm">
                                         {t('section1.video3.placeholder_subtitle', 'Content currently unavailable due to NDA or pending release.')}
                                     </p>
@@ -174,6 +174,10 @@ const VideoCard = ({ title, desc, badge, videoSrc, poster }: VideoCardProps) => 
                         className="absolute inset-0 bg-cover bg-center z-10 cursor-pointer group/poster"
                         style={{ backgroundImage: `url('${poster}')` }}
                         onClick={handlePlay}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handlePlay(); } }}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Play ${title}`}
                     >
                         <div className="absolute inset-0 bg-black/40 group-hover/poster:bg-black/20 transition-colors flex items-center justify-center">
                             <div className="w-20 h-20 bg-accent/90 rounded-full flex items-center justify-center shadow-lg transition-transform">

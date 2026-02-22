@@ -48,5 +48,6 @@ export interface Statistics {
   readonly years_of_music: string;
   readonly completed_projects: string;
   readonly tools_built: string;
+  readonly languages_fluent: number;
   readonly ml_audio_latency: string;
 }

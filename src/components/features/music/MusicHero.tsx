@@ -45,7 +45,9 @@ const MusicHero = () => {
                     <img
                         src={`/${displayTrack.cover}`}
                         className="w-full h-full object-cover blur-[100px] opacity-30 scale-110"
-                        alt="Ambience"
+                        alt=""
+                        role="presentation"
+                        aria-hidden="true"
                     />
                 )}
             </motion.div>

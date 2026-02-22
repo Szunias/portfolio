@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Images } from 'lucide-react';
 
@@ -14,6 +14,7 @@ import ProjectRichDetails from '../components/features/projects/ProjectRichDetai
 import ProjectSidebar from '../components/features/projects/ProjectSidebar';
 import SEO from '../components/layout/SEO';
 import { usePortfolioData } from '../hooks/usePortfolioData';
+import NotFound from './NotFound';
 
 /**
  * Dynamic project detail page. Loads the project by URL :id param,
@@ -35,7 +36,7 @@ const ProjectDetails = () => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  if (!project) return <Navigate to="/404" replace />;
+  if (!project) return <NotFound />;
 
   const media = project.media || {};
 
@@ -43,7 +44,8 @@ const ProjectDetails = () => {
   const titleKey = `project_${project.id}_title`;
   const shortDescKey = `project_${project.id}_short_desc`;
   const fullDescKey = `project_${project.id}_full_desc`;
-  const description = t(fullDescKey, project.full_description || t(shortDescKey, project.short_description));
+  const shortDesc = project.short_description || project.description || '';
+  const description = t(fullDescKey, project.full_description || t(shortDescKey, shortDesc));
 
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://igorszuniewicz.com';
 
@@ -61,12 +63,12 @@ const ProjectDetails = () => {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
     "name": t(titleKey, project.title),
-    "description": t(shortDescKey, project.short_description),
+    "description": t(shortDescKey, shortDesc),
     "author": {
       "@type": "Person",
       "name": "Igor Szuniewicz"
     },
-    ...(media.thumbnail && { "image": `${baseUrl}/${media.thumbnail}` }),
+    ...(media.thumbnail && { "image": media.thumbnail.startsWith('/') ? `${baseUrl}${media.thumbnail}` : `${baseUrl}/${media.thumbnail}` }),
     "url": `${baseUrl}/projects/${project.id}`
   };
 
@@ -78,8 +80,8 @@ const ProjectDetails = () => {
       </Helmet>
       <SEO
         title={t(titleKey, project.title)}
-        description={t(shortDescKey, project.short_description)}
-        image={media.thumbnail ? `/${media.thumbnail}` : undefined}
+        description={t(shortDescKey, shortDesc)}
+        image={media.thumbnail ? (media.thumbnail.startsWith('/') ? media.thumbnail : `/${media.thumbnail}`) : undefined}
         type="article"
       />
 

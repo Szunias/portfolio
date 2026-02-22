@@ -93,7 +93,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
                 {t(titleKey, project.title)}
             </h3>
             <p className="text-dim text-sm font-light leading-relaxed line-clamp-2 mb-4 h-10">
-                {t(descKey, project.short_description)}
+                {t(descKey, project.short_description || project.description || '')}
             </p>
 
             {/* Tech Stack Pills */}

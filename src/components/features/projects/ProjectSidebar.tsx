@@ -65,7 +65,7 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
                     </a>
                 )}
                 {links.documentation && (
-                   <a href={links.documentation} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-4 text-dim font-medium border border-border rounded-sm hover:text-cream hover:border-border-hover transition-colors duration-200">
+                   <a href={links.documentation.startsWith('http') ? links.documentation : `/${links.documentation}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-4 text-dim font-medium border border-border rounded-sm hover:text-cream hover:border-border-hover transition-colors duration-200">
                     <Layers size={18} className="mr-2" /> {t('links.docs', 'Documentation')}
                   </a>
                 )}

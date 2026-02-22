@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,17 +15,37 @@ const Navbar = () => {
   const location = useLocation();
   const { personal_info } = usePortfolioData();
 
-  const closeMenu = () => setIsOpen(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const closeMenu = useCallback(() => setIsOpen(false), []);
 
-  // Close menu on escape key
+  // Close menu on escape key + focus trap
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsOpen(false);
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+        return;
+      }
+      if (e.key === 'Tab' && menuRef.current) {
+        const focusable = menuRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      return () => document.removeEventListener('keydown', handleEscape);
-    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen]);
 
   // Body scroll lock on mobile menu open
@@ -40,10 +60,19 @@ const Navbar = () => {
     };
   }, [isOpen]);
 
-  // Scroll detection
+  // Scroll detection (RAF-throttled)
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 20);
+          ticking = false;
+        });
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -54,6 +83,9 @@ const Navbar = () => {
     { name: t('nav.about', 'About'), path: ROUTES.ABOUT },
     { name: t('nav.contact', 'Contact'), path: ROUTES.CONTACT },
   ];
+
+  const isLinkActive = (path: string) =>
+    path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
 
   return (
     <>
@@ -76,15 +108,15 @@ const Navbar = () => {
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center gap-6">
               {navLinks.map((link) => {
-                const isActive = location.pathname === link.path;
+                const active = isLinkActive(link.path);
                 return (
                   <Link
                     key={link.path}
                     to={link.path}
-                    className={`group relative text-xs uppercase tracking-widest transition-colors duration-300 font-mono ${isActive ? 'text-cream' : 'text-dim hover:text-cream'}`}
-                    aria-current={isActive ? 'page' : undefined}
+                    className={`group relative text-xs uppercase tracking-widest transition-colors duration-300 font-mono ${active ? 'text-cream' : 'text-dim hover:text-cream'}`}
+                    aria-current={active ? 'page' : undefined}
                   >
-                    <span className={isActive ? 'border-b border-accent pb-0.5' : ''}>
+                    <span className={active ? 'border-b border-accent pb-0.5' : ''}>
                       {link.name}
                     </span>
                   </Link>
@@ -124,6 +156,7 @@ const Navbar = () => {
 
             {/* Menu Panel */}
             <motion.div
+              ref={menuRef}
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -145,9 +178,9 @@ const Navbar = () => {
                       to={link.path}
                       onClick={closeMenu}
                       className={`text-2xl font-display py-3 border-b border-border block ${
-                        location.pathname === link.path ? 'text-accent' : 'text-cream hover:text-accent-light'
+                        isLinkActive(link.path) ? 'text-accent' : 'text-cream hover:text-accent-light'
                       }`}
-                      aria-current={location.pathname === link.path ? 'page' : undefined}
+                      aria-current={isLinkActive(link.path) ? 'page' : undefined}
                     >
                       {link.name}
                     </Link>

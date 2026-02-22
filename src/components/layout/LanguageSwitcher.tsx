@@ -22,7 +22,9 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
     setIsOpen(false);
   };
 
-  const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
+  // Normalize language code (e.g., 'en-GB' -> 'en') for matching
+  const baseLang = i18n.language.split('-')[0];
+  const currentLang = languages.find(l => l.code === baseLang) || languages[0];
 
   return (
     <div className="relative">
@@ -67,7 +69,7 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
               aria-label="Language selector"
             >
               {languages.map((lang) => {
-                const isActive = i18n.language === lang.code;
+                const isActive = baseLang === lang.code;
                 return (
                   <button
                     key={lang.code}

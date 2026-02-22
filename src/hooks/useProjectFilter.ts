@@ -56,6 +56,9 @@ export const useProjectFilter = (projects: readonly Project[]): UseProjectFilter
         return t(KEY_MAP[cat], cat);
     }
 
+    if (import.meta.env.DEV) {
+      console.warn(`[useProjectFilter] Unmapped category "${cat}" — add it to KEY_MAP for i18n support`);
+    }
     return cat;
   }, [t]);
 

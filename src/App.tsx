@@ -9,17 +9,18 @@ import { ROUTES } from './constants/routes';
 
 /**
  * Wraps React.lazy with automatic recovery from chunk load failures.
- * On first failure: reloads the page (handles stale deployments).
- * On second failure: throws so the ErrorBoundary can catch it.
- * Uses sessionStorage to track reload attempts and prevent infinite loops.
+ * On first failure for a given chunk: reloads the page (handles stale deployments).
+ * On second failure for the same chunk: throws so the ErrorBoundary can catch it.
+ * Uses sessionStorage with chunk-specific keys to track reload attempts per chunk.
  */
 const safeLazy = (importFunc: () => Promise<{ default: ComponentType<unknown> }>) => {
+  const chunkKey = `chunk_reload:${importFunc.toString().slice(0, 80)}`;
   return lazy(() => {
     return importFunc().catch(error => {
       console.error("Chunk load failed", error);
-      const hasReloaded = sessionStorage.getItem('chunk_reload');
+      const hasReloaded = sessionStorage.getItem(chunkKey);
       if (!hasReloaded) {
-        sessionStorage.setItem('chunk_reload', 'true');
+        sessionStorage.setItem(chunkKey, 'true');
         window.location.reload();
         return new Promise(() => { }); // Never resolves; page reloads instead
       }
@@ -47,8 +48,11 @@ function App() {
   });
 
   useEffect(() => {
-    // Clear the safeLazy reload flag now that the app loaded successfully
-    sessionStorage.removeItem('chunk_reload');
+    // Clear all safeLazy reload flags now that the app loaded successfully
+    for (let i = sessionStorage.length - 1; i >= 0; i--) {
+      const key = sessionStorage.key(i);
+      if (key?.startsWith('chunk_reload:')) sessionStorage.removeItem(key);
+    }
 
     if (showIntro) {
       sessionStorage.setItem('intro_shown', 'true');

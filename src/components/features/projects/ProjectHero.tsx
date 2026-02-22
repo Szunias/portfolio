@@ -81,7 +81,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                     </h1>
 
                     <p className="text-lg md:text-xl text-dim max-w-2xl font-light leading-relaxed mb-8">
-                        {t(shortDescKey, project.short_description)}
+                        {t(shortDescKey, project.short_description || project.description || '')}
                     </p>
 
                     {videoId && (

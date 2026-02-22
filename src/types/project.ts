@@ -46,13 +46,14 @@ export interface Project {
   readonly i18nNamespace?: string;
   readonly title: string;
   readonly category: string;
-  readonly year?: string;
-  readonly short_description: string;
+  readonly year?: number;
+  readonly description?: string;
+  readonly short_description?: string;
   readonly full_description?: string;
   readonly content_blocks?: readonly ContentBlock[];
   readonly tags: readonly string[];
-  readonly technologies: readonly string[];
-  readonly links: {
+  readonly technologies?: readonly string[];
+  readonly links?: {
     readonly demo?: string;
     readonly repo?: string;
     readonly video?: string;
@@ -81,5 +82,5 @@ export interface Project {
   readonly audio_design?: Readonly<Record<string, string>>;
   readonly technical_work?: Readonly<Record<string, string>>;
   readonly externalLink?: string;
-  readonly featured: boolean;
+  readonly featured?: boolean;
 }

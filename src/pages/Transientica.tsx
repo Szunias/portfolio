@@ -90,6 +90,10 @@ const Transientica = () => {
                     <div
                         className={`relative aspect-video rounded-sm overflow-hidden border border-border bg-black group cursor-pointer transition-all duration-500`}
                         onClick={() => handleVideoClick('main-video')}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleVideoClick('main-video'); } }}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={t('transientica.video.watch_demo', 'Watch Demo')}
                     >
                         <video
                             ref={mainVideoRef}
@@ -126,9 +130,9 @@ const Transientica = () => {
                         { val: t('transientica.stats.year_value', '2024'), label: t('transientica.stats.year_label', 'Year') }
                     ].map((stat) => (
                         <div key={stat.label} className="p-6 bg-secondary border border-border rounded-sm text-center hover:bg-tertiary transition-colors">
-                            <h4 className="text-3xl font-display font-bold text-accent mb-2">
+                            <div className="text-3xl font-display font-bold text-accent mb-2">
                                 {stat.val}
-                            </h4>
+                            </div>
                             <p className="text-dim text-sm uppercase tracking-wider font-mono">
                                 {stat.label}
                             </p>
@@ -168,19 +172,19 @@ const Transientica = () => {
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         <div className="space-y-8">
                             <div>
-                                <h4 className="text-xl font-display font-bold text-accent mb-3 flex items-center gap-2">
+                                <h3 className="text-xl font-display font-bold text-accent mb-3 flex items-center gap-2">
                                     <Zap size={20} />
                                     {t('transientica.technical.spectral.title', 'Spectral Analysis')}
-                                </h4>
+                                </h3>
                                 <p className="text-dim leading-relaxed">
                                     {t('transientica.technical.spectral.desc', 'The system converts raw audio waveforms into Mel-spectrograms, which are then fed into the neural network as image data. This allows the model to recognize patterns in frequency and time simultaneously.')}
                                 </p>
                             </div>
                             <div>
-                                <h4 className="text-xl font-display font-bold text-accent-light mb-3 flex items-center gap-2">
+                                <h3 className="text-xl font-display font-bold text-accent-light mb-3 flex items-center gap-2">
                                     <Cpu size={20} />
                                     {t('transientica.technical.optimization.title', 'Optimization')}
-                                </h4>
+                                </h3>
                                 <p className="text-dim leading-relaxed">
                                     {t('transientica.technical.optimization.desc', 'Inference is optimized using ONNX Runtime, allowing the Python-trained PyTorch model to run efficiently within the C# environment of Unity without heavy dependencies.')}
                                 </p>
@@ -190,6 +194,10 @@ const Transientica = () => {
                         <div
                             className={`relative h-[300px] rounded-sm overflow-hidden border border-border bg-black group cursor-pointer ${activeVideo === 'tech-video' ? 'ring-2 ring-accent' : ''}`}
                             onClick={() => handleVideoClick('tech-video')}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleVideoClick('tech-video'); } }}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={t('transientica.technical.title', 'Technical Deep Dive') + ' — ' + t('transientica.video.watch_demo', 'Watch Demo')}
                         >
                             <video
                                 ref={techVideoRef}

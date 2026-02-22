@@ -18,9 +18,22 @@ const Contact = () => {
 
   const copyToClipboard = () => {
     if (!email) return;
-    navigator.clipboard.writeText(email);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    navigator.clipboard.writeText(email).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {
+      // Fallback for browsers where clipboard API is unavailable
+      const textarea = document.createElement('textarea');
+      textarea.value = email;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
   };
 
   return (
@@ -63,6 +76,7 @@ const Contact = () => {
                               onClick={copyToClipboard}
                               className="text-dim hover:text-cream transition-colors p-1"
                               title={t('tooltips.copy_email', 'Copy Email')}
+                              aria-label={t('tooltips.copy_email', 'Copy Email')}
                               disabled={!email}
                             >
                               {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
@@ -89,6 +103,7 @@ const Contact = () => {
                         href={personal_info.social_media.linkedin}
                         target="_blank"
                         rel="noopener noreferrer me"
+                        aria-label="LinkedIn"
                         className="flex items-center justify-center w-12 h-12 border border-border rounded-sm text-dim hover:border-border-hover hover:text-cream transition-colors duration-200"
                       >
                          <Linkedin size={20} />
@@ -97,6 +112,7 @@ const Contact = () => {
                         href={personal_info.social_media.github}
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label="GitHub"
                         className="flex items-center justify-center w-12 h-12 border border-border rounded-sm text-dim hover:border-border-hover hover:text-cream transition-colors duration-200"
                       >
                          <Github size={20} />

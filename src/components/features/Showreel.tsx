@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Play, AlertCircle } from 'lucide-react';
+import { Play, AlertCircle, Loader2 } from 'lucide-react';
 import Player from '@vimeo/player';
+
+import { formatTime } from '@/utils';
 
 const TIMESTAMPS = [
   { time: 0, labelKey: 'hero.showreel_start', fallback: 'Start' },
@@ -19,27 +21,32 @@ const TIMESTAMPS = [
 const Showreel = () => {
   const { t } = useTranslation('home');
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [player, setPlayer] = useState<Player | null>(null);
+  const playerRef = useRef<Player | null>(null);
+  const [playerReady, setPlayerReady] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [iframeLoading, setIframeLoading] = useState(true);
   const [activeChapter, setActiveChapter] = useState<number>(0);
   const [error, setError] = useState(false);
 
   // Clean up Vimeo player on unmount
   useEffect(() => {
     return () => {
-      if (player) {
-        player.off('play');
-        player.off('pause');
-        player.off('timeupdate');
-        player.destroy().catch(() => {});
+      const p = playerRef.current;
+      if (p) {
+        p.off('play');
+        p.off('pause');
+        p.off('timeupdate');
+        p.destroy().catch(() => {});
+        playerRef.current = null;
       }
     };
-  }, [player]);
+  }, []);
 
   const handleLoad = useCallback(() => {
-    if (iframeRef.current && !player) {
+    if (iframeRef.current && !playerRef.current) {
+      setIframeLoading(false);
       const vimeoPlayer = new Player(iframeRef.current);
-      setPlayer(vimeoPlayer);
+      playerRef.current = vimeoPlayer;
 
       vimeoPlayer.ready().then(() => {
         vimeoPlayer.on('play', () => setIsPlaying(true));
@@ -51,27 +58,26 @@ const Showreel = () => {
             setActiveChapter(prev => prev !== current.time ? current.time : prev);
           }
         });
+        setPlayerReady(true);
       }).catch((err) => {
         console.error('Vimeo player error:', err);
+        // Clean up the failed player instance
+        vimeoPlayer.destroy().catch(() => {});
+        playerRef.current = null;
         setError(true);
       });
     }
-  }, [player]);
+  }, []);
 
   const jumpTo = (seconds: number) => {
-    if (player) {
-      player.setCurrentTime(seconds).then(() => {
-        player.play();
+    const p = playerRef.current;
+    if (p && playerReady) {
+      p.setCurrentTime(seconds).then(() => {
+        p.play();
       }).catch((err) => {
         console.error('Failed to seek video:', err);
       });
     }
-  };
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -85,7 +91,7 @@ const Showreel = () => {
               {t('errors.video_load_failed', 'Failed to load video. Please refresh the page.')}
             </p>
             <button
-              onClick={() => { setError(false); setPlayer(null); }}
+              onClick={() => { setError(false); setPlayerReady(false); setIframeLoading(true); playerRef.current = null; }}
               className="px-6 py-2 bg-accent text-primary font-medium rounded-sm hover:bg-accent-light transition-colors"
             >
               {t('hero.retry', 'Try Again')}
@@ -106,10 +112,16 @@ const Showreel = () => {
               className="absolute inset-0 w-full h-full border-0"
             ></iframe>
 
-            {!isPlaying && player && (
+            {iframeLoading && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Loader2 size={32} className="text-accent animate-spin" />
+              </div>
+            )}
+
+            {!isPlaying && playerReady && (
               <button
                 className="absolute inset-0 w-full h-full flex items-center justify-center bg-black/40 hover:bg-black/30 transition-colors cursor-pointer"
-                onClick={() => player?.play().catch((err) => console.error('Play failed:', err))}
+                onClick={() => playerRef.current?.play().catch((err) => console.error('Play failed:', err))}
                 aria-label="Play showreel video"
               >
                 <motion.div
@@ -135,11 +147,14 @@ const Showreel = () => {
             <button
               key={ts.time}
               onClick={() => jumpTo(ts.time)}
+              disabled={!playerReady}
               className={`
                 relative px-4 py-2 rounded-sm text-sm font-medium transition-colors duration-200
-                ${isActive
-                  ? 'bg-accent text-primary'
-                  : 'border border-border text-dim hover:border-border-hover hover:text-cream'
+                ${!playerReady
+                  ? 'border border-border text-dim opacity-50 cursor-not-allowed'
+                  : isActive
+                    ? 'bg-accent text-primary'
+                    : 'border border-border text-dim hover:border-border-hover hover:text-cream'
                 }
               `}
             >

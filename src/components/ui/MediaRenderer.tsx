@@ -25,7 +25,7 @@ const MediaRenderer = ({
 }: MediaRendererProps) => {
   const [hasError, setHasError] = useState(false);
   const { t } = useTranslation('common');
-  const isVideo = src.endsWith('.mp4') || src.endsWith('.webm');
+  const isVideo = /\.(mp4|webm|mov|ogv|avi)$/i.test(src);
   
   // Normalize path if needed (though assumed to be relative to public root if not http)
   const mediaSrc = src.startsWith('http') || src.startsWith('/') ? src : `/${src}`;

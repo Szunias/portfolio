@@ -9,32 +9,60 @@ interface ImageLightboxProps {
   images: readonly (string | ProjectImage)[];
 }
 
+const getImageData = (img: string | ProjectImage) => {
+  if (typeof img === 'string') {
+    return { src: img, caption: null };
+  }
+  return { src: img.src, caption: img.caption };
+};
+
 const ImageLightbox = ({ images }: ImageLightboxProps) => {
-  const [selectedImage, setSelectedImage] = useState<{ src: string; caption: string | null } | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [lightboxLoading, setLightboxLoading] = useState(true);
+  const [videoErrors, setVideoErrors] = useState<Set<number>>(new Set());
   const { t } = useTranslation('common');
 
-  // Close lightbox on Escape key
-  useEffect(() => {
-    if (!selectedImage) return;
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSelectedImage(null);
-    };
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, [selectedImage]);
+  const selectedImage = selectedIndex !== null ? getImageData(images[selectedIndex]) : null;
 
-  const handleOpenLightbox = useCallback((src: string, caption: string | null) => {
-    setLightboxLoading(true);
-    setSelectedImage({ src, caption });
+  // Collect only image (non-video) indices for arrow navigation
+  const imageIndices = images.reduce<number[]>((acc, img, i) => {
+    const { src } = getImageData(img);
+    if (!src.endsWith('.mp4') && !src.endsWith('.webm')) acc.push(i);
+    return acc;
   }, []);
 
-  const getImageData = (img: string | ProjectImage) => {
-    if (typeof img === 'string') {
-      return { src: img, caption: null };
-    }
-    return { src: img.src, caption: img.caption };
-  };
+  // Lock body scroll and handle keyboard when lightbox is open
+  useEffect(() => {
+    if (selectedIndex === null) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedIndex(null);
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        const currentPos = imageIndices.indexOf(selectedIndex);
+        if (currentPos === -1) return;
+        const nextPos = e.key === 'ArrowRight'
+          ? (currentPos + 1) % imageIndices.length
+          : (currentPos - 1 + imageIndices.length) % imageIndices.length;
+        setLightboxLoading(true);
+        setSelectedIndex(imageIndices[nextPos]);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedIndex, imageIndices]);
+
+  const handleOpenLightbox = useCallback((index: number) => {
+    setLightboxLoading(true);
+    setSelectedIndex(index);
+  }, []);
 
   return (
     <>
@@ -45,18 +73,25 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
           const isVideo = src.endsWith('.mp4') || src.endsWith('.webm');
 
           return (
-            <div key={i} className="group">
+            <div key={src} className="group">
               <div
-                onClick={() => !isVideo && handleOpenLightbox(src, caption)}
+                onClick={() => !isVideo && handleOpenLightbox(i)}
                 className={`relative rounded-sm overflow-hidden border border-border ${!isVideo ? 'cursor-pointer hover:border-border-hover' : ''} transition-colors duration-200`}
               >
                 {isVideo ? (
-                  <video
-                    src={`/${src}`}
-                    className="w-full h-auto object-cover"
-                    controls
-                    preload="metadata"
-                  />
+                  videoErrors.has(i) ? (
+                    <div className="flex items-center justify-center bg-secondary text-dim aspect-video">
+                      <span className="text-xs">{t('media_unavailable', 'Media unavailable')}</span>
+                    </div>
+                  ) : (
+                    <video
+                      src={`/${src}`}
+                      className="w-full h-auto object-cover"
+                      controls
+                      preload="metadata"
+                      onError={() => setVideoErrors(prev => new Set(prev).add(i))}
+                    />
+                  )
                 ) : (
                   <>
                     <img src={`/${src}`} alt={caption ? t(caption, caption) : 'Gallery image'} loading="lazy" className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.01]" />
@@ -87,12 +122,12 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelectedImage(null)}
+            onClick={() => setSelectedIndex(null)}
             className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 cursor-zoom-out"
           >
             {/* Close button */}
             <button
-              onClick={() => setSelectedImage(null)}
+              onClick={() => setSelectedIndex(null)}
               className="absolute top-4 right-4 p-2 border border-border hover:border-border-hover rounded-sm transition-colors duration-200"
             >
               <X size={24} className="text-cream" />
