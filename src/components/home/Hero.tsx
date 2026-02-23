@@ -18,9 +18,9 @@ const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-surface">
       <div className="relative z-10 w-full max-w-content-wide mx-auto px-6 lg:px-12 py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-16 items-center">
+        <div className="max-w-3xl">
 
-          {/* Left: Main Content */}
+          {/* Main Content */}
           <motion.div
             initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -74,24 +74,6 @@ const Hero = () => {
                 {t('hero.view_projects', 'View Projects')}
               </Link>
             </motion.div>
-          </motion.div>
-
-          {/* Right: Animated Waveform Visual */}
-          <motion.div
-            initial={prefersReducedMotion ? noMotion.initial : { opacity: 0, x: 20 }}
-            animate={prefersReducedMotion ? noMotion.animate : { opacity: 1, x: 0 }}
-            transition={prefersReducedMotion ? noMotion.transition : { delay: 0.5, duration: 0.6 }}
-            className="hidden lg:flex items-center justify-center"
-          >
-            <div className="flex items-end gap-2 h-48">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div
-                  key={i}
-                  className={`w-3 bg-accent rounded-sm origin-bottom ${!prefersReducedMotion ? `animate-waveform-${i}` : ''}`}
-                  style={{ height: '30%' }}
-                />
-              ))}
-            </div>
           </motion.div>
 
         </div>
