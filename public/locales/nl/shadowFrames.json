@@ -61,15 +61,15 @@
     "connect_desc": "Rangschik foto's op het prikbord in de juiste volgorde om de waarheid te onthullen en de goede ending te bereiken."
   },
   "audio_systems": {
-    "title": "Audio-implementatie",
-    "rtpc_title": "RTPC-gebaseerd dynamisch systeem",
-    "rtpc_desc": "RTPC-waarde (0-5) regelt ambient-lagen in Wwise. Meer foto's op het bord = meer spanning. Ademhaling wordt zwaarder, ambient drones intensiveren. Vloeiende crossfades, geen harde sneden.",
-    "switches_title": "Switch Containers & Zones",
-    "switches_desc": "Elke kamer heeft eigen ambient-lagen die crossfaden als je beweegt. Badkamer heeft gespatializeerde toilet- en kraangeluiden. Voetstappen veranderen per oppervlak. Hout, tegels, beton.",
-    "delegates_title": "Blueprint Delegates (SOC)",
-    "delegates_desc": "Audiosystemen communiceren via delegates. C++ draait gamelogica, Blueprint draait audio. Alles modulair — verander het een zonder het ander te breken.",
-    "spatial_title": "HRTF Spatial Audio",
-    "spatial_desc": "Volledige 3D positionele audio voor anomalieën, vijand en omgevingscues. Ruimtelijke precisie is cruciaal — je vindt dreigingen niet zonder."
+    "title": "Audio Systemen",
+    "rtpc_title": "Hoe Spanning Schaalt",
+    "rtpc_desc": "Hoe meer foto's je verzamelt, hoe intenser alles wordt. Ambient sounds bouwen op. Je personage's ademhaling wordt zwaarder. Ik heb RTPCs in Wwise gebruikt zodat spanning smooth opbouwt, geen sprongen.",
+    "switches_title": "Kamer-Gebaseerde Ambience",
+    "switches_desc": "Loop de badkamer in en je hoort de toilet druppelen, de kraan lopen. Stap op hout, je krijgt houten voetstappen. Ga naar tegels, het geluid wisselt. Elke kamer heeft z'n eigen lagen.",
+    "delegates_title": "Hoe Audio Met Gameplay Praat",
+    "delegates_desc": "De game vertelt Wwise wat er gebeurt via delegates. C++ handelt game logica af. Blueprint handelt audio af. Ze weten niks van elkaar. Zo kan ik het een veranderen zonder het ander kapot te maken.",
+    "spatial_title": "3D Spatial Audio",
+    "spatial_desc": "Volledige positionele audio voor alles — anomalieën, vijand, omgevingscues. Je moet weten waar geluiden vandaan komen of je vindt bedreigingen niet. Dat is de kern mechaniek."
   },
   "dev_tools": {
     "title": "Ontwikkeltools",
@@ -104,36 +104,36 @@
     "audio_tools": "Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho"
   },
   "footstep": {
-    "title": "Voetstap Systeem: Oppervlak Detectie & Audio Routing",
-    "desc": "Voetstappen veranderen op basis van waar je op loopt. Hout, tegels, beton. Het systeem detecteert het oppervlak en schakelt geluiden in Wwise automatisch.",
-    "what": "Systeem detecteert oppervlaktetype onder speler (hout, tegels, beton) en schakelt automatisch geschikte voetstap geluiden in Wwise. Elke speler stap matcht het materiaal waarop ze lopen.",
-    "how": "C++ component voert line trace uit naar beneden vanaf speler positie, detecteert Physical Material, mapt het naar Wwise Switch naam, en Blueprint Audio Manager ontvangt delegate en speelt geschikt geluid af.",
-    "why": "Separation of Concerns - C++ handelt detectie logica af, Blueprint handelt audio af. Delegates zorgen voor losse koppeling tussen systemen. Dit maakt toevoegen van nieuwe oppervlakken gemakkelijk zonder C++ code te wijzigen.",
-    "result": "Voetstappen matchen elk oppervlak automatisch. Geen handmatig werk nodig. Nieuwe materialen toevoegen is eenvoudig."
+    "title": "Hoe Voetstappen Werken",
+    "desc": "Hout, tegels, beton—je hoort het verschil. De game checkt wat onder je is en kiest het juiste geluid.",
+    "what": "C++ schiet een line trace naar beneden vanaf je voeten. Checkt op welk oppervlak je staat — hout, tegels, beton. Stuurt die info naar Wwise als een Switch.",
+    "how": "Unreal detecteert het Physical Material. Mapt het naar een Wwise Switch naam. Blueprint Audio Manager luistert en speelt de juiste voetstap af.",
+    "why": "C++ doet detectielogica. Blueprint handelt audio af. Ik kan nieuwe oppervlakken toevoegen in de editor zonder code aan te raken.",
+    "result": "Elke voetstap past bij de vloer. Automatisch. Voeg een nieuw materiaal toe in Wwise en het werkt."
   },
   "player_audio": {
-    "title": "Speler Audio Systeem: Delegate-Gebaseerde Communicatie",
-    "desc": "Speleracties triggeren audio via delegates. Camerafoto, zoom, prikbord-interactie. Elke actie roept het juiste Wwise event aan.",
-    "what": "Systeem verbindt speler acties (camera schot, zoom, photoboard entry) met geschikte audio events in Wwise. Elke speler actie activeert automatisch corresponderend geluid.",
-    "how": "PlayerCharacter in C++ definieert multicast delegates. Wanneer speler actie uitvoert, delegate wordt uitgezonden. Blueprint Audio Manager luistert naar deze delegates en roept geschikte Wwise Events aan.",
-    "why": "Delegates zorgen voor losse koppeling - PlayerCharacter weet niets over audio, Audio Manager weet niets over speler logica. Dit vergemakkelijkt testen, debuggen en wijzigingen. Elk systeem kan onafhankelijk ontwikkeld worden.",
-    "result": "Nieuwe audio-acties toevoegen is makkelijk. Geen hardcoded calls. Audio designer verandert geluiden in Wwise zonder spelcode aan te raken."
+    "title": "Speler Geluiden",
+    "desc": "Maak een foto, zoom, open het fotobord—elke actie triggert audio. De speler code weet niet dat audio bestaat.",
+    "what": "PlayerCharacter broadcast een delegate als je iets doet (foto, zoom). Blueprint Audio Manager hoort het en speelt het geluid af in Wwise.",
+    "how": "Ik heb C++ multicast delegates gebruikt. Blueprint kan erop binden. Eén speler actie kan meerdere audio responses triggeren.",
+    "why": "Speler logica en audio zijn gescheiden. Ik kan voetstapgeluiden wijzigen in Wwise zonder de game te rebuilden.",
+    "result": "Nieuwe speler audio toevoegen is makkelijk. Geen hardcoded event names. Audio en gameplay lopen niet in de weg."
   },
   "rtpc": {
-    "title": "Dynamisch Spanning Systeem: RTPC-Gedreven Ambience",
-    "desc": "Progressieve ambient intensiteit schaalt met game state - foto's geplaatst op bord verhogen spanning.",
-    "what": "Systeem verandert dynamisch ambient intensiteit op basis van aantal foto's geplaatst op bord. Meer foto's = meer gespannen atmosfeer. RTPC waarde 0-5 controleert ambient lagen in Wwise.",
-    "how": "PhotoboardWidget volgt aantal belangrijke foto's. Wanneer speler foto plaatst, UpdateAmbientRTPC() vindt AkAmbientSound actor en zet RTPC waarde. Wwise crossfade automatisch tussen ambient lagen.",
-    "why": "RTPC geeft vloeiende overgangen tussen spanning staten zonder sprongen. Ik controleer crossfade curves in Wwise zonder code aan te raken.",
-    "result": "Spanning bouwt vloeiend op met je voortgang. Pas curves aan in Wwise, atmosfeer past automatisch aan."
+    "title": "Hoe Spanning Opbouwt",
+    "desc": "Hoe meer foto's je verzamelt, hoe erger alles klinkt. Je personage's ademhaling wordt zwaarder. De ambient drones worden luider.",
+    "what": "Ik heb RTPCs in Wwise opgezet om te tracken hoeveel foto's op het bord zitten (0-5). Meer foto's = hogere spanning = intensere ambient lagen.",
+    "how": "Als je een foto pinnen, stuurt de game een waarde naar Wwise. Wwise mixt automatisch tussen kalme en gestresste lagen. Geen harde cuts.",
+    "why": "RTPCs laten me smooth crossfades maken zonder code. Ik kan tweaken hoe snel spanning opbouwt direct in Wwise.",
+    "result": "Spanning bouwt op terwijl je speelt. Pas curves aan in Wwise en de sfeer verandert meteen."
   },
   "wwise_arch": {
-    "title": "Wwise Architectuur: Switch Containers & Photoboard Integratie",
-    "desc": "Voortzetting van het RTPC systeem - Switch Containers in Wwise reageren op foto's verzameld op het photoboard, creërend dynamische ambient lagen.",
-    "what": "Switch Container systeem in Wwise reageert op aantal foto's verzameld op photoboard. Wanneer speler meer foto's verzamelt, Switch Containers activeren verschillende ambient lagen, werkend in combinatie met RTPC systeem.",
-    "how": "De RTPC waarde van PhotoboardWidget (0-5 gebaseerd op foto's) stuurt Switch Container selectie in Wwise. Elke Switch staat correspondeert met verschillende ambient lagen. Wwise crossfade automatisch tussen lagen wanneer foto's worden verzameld.",
-    "why": "Switch Containers bieden discrete laag controle, RTPC behandelt vloeiende overgangen. Deze combinatie geeft structurele veranderingen (verschillende ambient sets) en vloeiende intensiteit progressie. Ik kan elke laag's respons controleren in Wwise.",
-    "result": "Dynamisch ambient systeem dat reageert op speler progressie door photoboard verzameling. Dit is een gedeeltelijke implementatie - het volledige systeem zal veel groter zijn met extra lagen en complexiteit."
+    "title": "Wwise Setup",
+    "desc": "Switch Containers + RTPCs werken samen. Verschillende foto-aantallen triggeren verschillende ambient sets.",
+    "what": "Het aantal foto's (0-5) bepaalt welke Switch Container state actief is in Wwise. Elke state heeft eigen ambient lagen. RTPC maakt de crossfades smooth.",
+    "how": "PhotoboardWidget stuurt de RTPC waarde naar Wwise. Wwise kiest de matchende Switch state en mixt de lagen.",
+    "why": "Switches laten me hele ambient sets wisselen (badkamer vs. bar). RTPC handelt smooth transitions af binnen elke set. Ik krijg zowel structurele veranderingen als geleidelijke spanning.",
+    "result": "Ambient reageert op wat je doet. Nog steeds aan het bouwen — finale versie krijgt veel meer lagen."
   },
   "sections": {
     "gameplay_showcase": "Gameplay Showcase",
@@ -165,7 +165,7 @@
     "tech_icon": "TECH",
     "core_concept": "Kern Concept",
     "my_role": "Mijn Rol",
-    "my_role_desc": "Als Audio Designer heb ik de audio architectuur voor Shadow Frames gebouwd: dynamische voetstap systemen, delegate-gebaseerde speler audio, RTPC-gedreven spanning progressie, en Wwise integratie. Aanvullende systemen zijn in ontwikkeling voor de definitieve release.",
+    "my_role_desc": "Audio designer op een studenten horror game gemaakt door drie scholen. Ik heb de C++ code geschreven voor voetstappen, vijandaanwezigheid en anomalie detectie. Hele Wwise integratie opgezet. Nog steeds systemen aan het toevoegen voor we shippen in december.",
     "technical_stack": "Technische Stack",
     "ritcs_name": "RITCS",
     "kask_name": "KASK Conservatorium",
@@ -210,8 +210,8 @@
     "solution_label": "Oplossing:",
     "challenge1": {
       "title": "Workflow Optimalisatie Tools",
-      "problem": "Multi-institutioneel studentenproject had workflow-problemen. Wwise integratie brak na Perforce pulls. Unreal compilatie duurde te lang, wat downtime veroorzaakte.",
-      "solution": "Wwise Unreal Fixer en Unreal Engine Rebuilder gebouwd. Fixer herstelt Wwise integratie na Perforce pulls (één klik). Rebuilder automatiseert compilatie om downtime te verkorten."
+      "problem": "Elke keer als iemand van Perforce pulde, ging Wwise kapot. Asset paden verdwenen. Actors werden stil. We verloren 20 minuten met handmatig fixen.",
+      "solution": "Ik heb een C++ tool gebouwd die de integratie in één klik fixt. Ook een rebuilder gemaakt die intermediate files wist en het project regenereert. Heeft het team veel downtime bespaard."
     }
   },
   "code_explanations": {
@@ -253,8 +253,8 @@
     "title": "Projectschaal & Technische Metrieken",
     "desc": "Productie statistieken en technische implementatie omvang.",
     "what": "Sprint 3/5 productie fase. Multi-institutionele samenwerking. Uitgebreide C++ en Blueprint implementatie met Wwise integratie.",
-    "how": "12+ C++ classes voor audio systemen, 8+ Blueprint audio managers, 200+ Wwise events/switches/RTPCs, 5 locatie zones, 10 anomalie types.",
-    "why": "Dit is mijn grootste Wwise-implementatie tot nu toe. Moest leren hoe meerdere audio systemen kunnen samenwerken zonder elkaars bugs te triggeren.",
+    "how": "12 C++ classes, 8 Blueprint managers, meer dan 200 Wwise events. 5 locatie zones, 10 soorten anomalieën.",
+    "why": "Dit is het grootste Wwise project dat ik heb gedaan. Ik moest uitzoeken hoe ik meerdere systemen samen laat werken zonder dat ze crashen.",
     "result": "Designers kunnen waarden aanpassen in DataAssets zonder te wachten op code rebuilds. Als iets crasht, is het meestal duidelijk welk systeem het veroorzaakt."
   },
   "media_captions": {

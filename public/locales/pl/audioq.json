@@ -3,41 +3,41 @@
   "hero": {
     "badge": "Plugin Audio",
     "brandMain": "AUDIO<span style=\"color: #ff6ea9;\">Q</span>",
-    "subtitle": "Sampler VST3/AU zbudowany w JUCE. Synteza granularna, DSP tremolo, filtry TPT, pełna automatyzacja DAW.",
+    "subtitle": "Plugin samplowy który zrobiłem w C++/JUCE. Ma syntezę granularną, tremolo, filtry i kompresor. Działa jako VST3 i AU.",
     "downloadPlugin": "Pobierz Plugin",
     "viewGithub": "Zobacz na GitHub"
   },
   "features": {
     "badge": "Funkcje",
     "title": "Co robi",
-    "subtitle": "Zbudowane od zera. Każda funkcja rozwiązuje konkretny problem, jaki miałem tworząc muzykę.",
+    "subtitle": "Zrobiłem to żeby rozwiązać problemy które miałem robiąc muzykę. Wszystko tu jest czymś czego faktycznie używam.",
     "f1": {
       "title": "Wczytywanie Drag & Drop",
-      "desc": "Upuść dowolny plik audio w oknie pluginu. Natychmiastowa wizualizacja fali, więc dokładnie wiesz z czym pracujesz. Obsługuje WAV, AIFF, MP3—praktycznie wszystko co JUCE może odczytać."
+      "desc": "Wrzucasz dowolny plik audio do okna. Widzisz falę od razu. Obsługuje WAV, AIFF, MP3—praktycznie wszystko co JUCE czyta."
     },
     "f2": {
       "title": "Synteza Granularna",
-      "desc": "Bierze małe kawałki audio (ziarenka) i odtwarza je z randomizacją. Super do tekstur ambient i dziwnego sound designu. Rozmiar ziarna, randomizacja pozycji i wygładzanie crossfade—wszystko regulowane w czasie rzeczywistym."
+      "desc": "Tnie audio na małe kawałki i odtwarza je z randomizacją. Dobre do tekstur ambient i dziwnego sound designu. Możesz zmieniać rozmiar ziarna, randomizację pozycji i wygładzanie crossfade w czasie rzeczywistym."
     },
     "f3": {
       "title": "Własny Efekt Tremolo",
-      "desc": "Napisałem to DSP od zera—próbka po próbce sinusoidalny LFO dla płynnej modulacji amplitudy. Brzmi o wiele lepiej niż zwykła automatyzacja głośności. Niezależne kontrolki częstotliwości i głębokości reagują natychmiast."
+      "desc": "Napisałem to DSP od zera. To per-sample sinusoidalny LFO do modulacji amplitudy. Brzmi o wiele lepiej niż automatyzacja głośności. Kontrolki częstotliwości i głębokości reagują natychmiast."
     },
     "f4": {
       "title": "System Filtrów",
-      "desc": "Filtry górnoprzepustowe i dolnoprzepustowe TPT z JUCE DSP. Design zero-delay znaczy, że reagują natychmiast bez artefaktów. Pełny zakres 20Hz-20kHz—obetnij doły, obetnij góry, cokolwiek potrzebuje track."
+      "desc": "Filtry górnoprzepustowe i dolnoprzepustowe TPT z JUCE. Design zero-delay znaczy, że reagują natychmiast bez artefaktów. Pełny zakres 20Hz-20kHz—obetnij doły, obetnij góry, co tylko potrzebujesz."
     },
     "f5": {
       "title": "Wbudowany Kompresor",
-      "desc": "Moduł kompresora JUCE z pełną kontrolą parametrów. Próg, ratio, attack, release—wszystko automatyzowalne. Przydatne do oswajania dynamiki przy warstwowaniu granularnych tekstur."
+      "desc": "Moduł kompresora JUCE. Próg, ratio, attack, release—wszystko automatyzowalne. Przydatne do oswajania dynamiki przy warstwowaniu granularnych tekstur."
     },
     "f6": {
       "title": "Kontrola Tempa",
-      "desc": "Przyspiesz lub zwolnij sample od 20-300 BPM używając ResamplingAudioSource. Ekstremalne rozciąganie czasu tworzy ciekawe artefakty. Własne regiony pętli pozwalają izolować konkretne sekcje do granularnego odtwarzania."
+      "desc": "Przyspiesz lub zwolnij sample od 20-300 BPM używając ResamplingAudioSource JUCE. Ekstremalne rozciąganie czasu tworzy dziwne artefakty. Możesz ustawić własne regiony pętli żeby izolować konkretne sekcje."
     },
     "f7": {
       "title": "Podwójny Wyświetlacz Fali",
-      "desc": "Dwa widoki fali—jeden pokazuje oryginalny plik, drugi to co faktycznie wychodzi po całym przetwarzaniu. Pomocne do zrozumienia co tryb granularny i zmiany tempa faktycznie robią z twoim dźwiękiem."
+      "desc": "Dwa widoki fali—jeden pokazuje oryginalny plik, drugi to co wychodzi po przetwarzaniu. Pomocne żeby zobaczyć co tryb granularny i zmiany tempa faktycznie robią."
     },
     "f8": {
       "title": "System Bezpieczeństwa Głośności",
@@ -45,7 +45,7 @@
     },
     "f9": {
       "title": "Pełna Automatyzacja DAW",
-      "desc": "Każdy pojedynczy parametr jest automatyzowalny w twoim DAW. Zbudowane z AudioProcessorValueTreeState więc stan sesji jest zawsze zapisany. Ustaw parametr, zapisz projekt, otwórz ponownie—wszystko dokładnie tam gdzie zostawiłeś."
+      "desc": "Każdy parametr jest automatyzowalny. Użyłem AudioProcessorValueTreeState więc stan sesji DAW jest zawsze zapisany. Ustawisz parametr, zapiszesz projekt, otworzysz—wszystko tam gdzie zostawiłeś."
     }
   },
   "demo": {
@@ -65,22 +65,22 @@
   "apvts": {
     "badge": "Architektura JUCE",
     "title": "AudioProcessorValueTreeState",
-    "subtitle": "System zarządzania parametrami dla automatyzacji i zapisywania stanu",
+    "subtitle": "Jak działają parametry i automatyzacja",
     "what": {
       "title": "Co robi",
-      "desc": "Zarządza parametrami pluginu i obsługuje automatyzację DAW. Zapamiętuje ustawienia między sesjami."
+      "desc": "Zarządza wszystkimi parametrami pluginu i obsługuje automatyzację DAW. Zapamiętuje ustawienia między sesjami."
     },
     "how": {
       "title": "Jak działa",
       "desc": "Każdy parametr ma zakres i wartość domyślną. DAW odczytuje je i automatyzuje automatycznie."
     },
     "why": {
-      "title": "Dlaczego to rozwiązanie",
-      "desc": "JUCE obsługuje wątki i stan wewnętrznie. Nie trzeba ręcznego kodu do automatyzacji."
+      "title": "Dlaczego tego użyłem",
+      "desc": "JUCE obsługuje wątki i stan wewnętrznie. Nie musiałem pisać dodatkowego kodu do automatyzacji."
     },
     "result": {
       "title": "Rezultat",
-      "desc": "Wszystkie parametry automatyzowalne bez dodatkowego kodu."
+      "desc": "Wszystkie parametry działają w DAW bez dodatkowego kodu."
     },
     "code": {
       "title": "PluginProcessor.cpp — Definicja Parametrów",

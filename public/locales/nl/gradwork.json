@@ -7,15 +7,15 @@
   "header": {
     "badge": "Bachelorscriptie 2025",
     "title": "Kan AI game-audio in real-time genereren?",
-    "description": "Voor mijn bachelorscriptie bouwde ik een systeem dat Unity via een Python WebSocket-server verbindt met AI-audiomodellen. Ik testte of AI geluidseffecten snel genoeg kan genereren voor games — en wat er gebeurt als dat niet lukt.",
+    "description": "Voor mijn bachelorscriptie probeerde ik uit te zoeken of AI geluidseffecten snel genoeg kan genereren voor games. Ik bouwde een Unity-prototype dat met AI-modellen praat via een Python-server. Spoiler: het is nog niet klaar, maar ik vond een workaround.",
     "read_paper": "Lees paper",
     "view_code": "Bekijk code"
   },
   "setup": {
     "title": "Wat ik testte en waarom",
-    "intro": "Games bevatten honderden vooraf opgenomen geluidsbestanden. Elk schot, elke voetstap en explosie is een WAV-bestand dat iemand in een studio opnam. AI zou deze on-the-fly kunnen genereren — elke keer uniek, aangepast aan de context, zonder gigabytes aan audio-assets. Het probleem is latentie. Als een geluid zelfs maar 100ms te laat komt, merken spelers het.",
-    "approach": "Ik bouwde een prototype: een Unity-game die audio-aanvragen via WebSocket naar een Python-server stuurt, die een AI-model aanroept en het resultaat terugstreamt. Ik testte drie modellen — ElevenLabs (cloud API, beste kwaliteit maar inconsistente latentie), MMAudio (video-naar-audio, aangepast voor game-events, draait lokaal), en AudioGen (Meta's tekst-naar-audio, meest consistent maar nog steeds traag).",
-    "architecture_title": "Systeemarchitectuur"
+    "intro": "Games bevatten honderden vooraf opgenomen geluidsbestanden. Elk schot, elke voetstap, elke explosie — allemaal WAV-bestanden die iemand in een studio opnam. AI zou deze on-the-fly kunnen genereren. Elk geluid zou uniek zijn, aangepast aan de situatie, zonder gigabytes aan bestanden. Het probleem: latentie. Als een geluid zelfs maar 100ms te laat komt, merken spelers het.",
+    "approach": "Ik bouwde een prototype. Unity stuurt aanvragen naar een Python-server, die een AI-model aanroept en de audio terugstreamt. Ik testte drie modellen: ElevenLabs (cloud API, beste kwaliteit maar de latentie springt), MMAudio (video-naar-audio model dat ik aanpaste voor games, draait lokaal), en AudioGen (Meta's tekst-naar-audio, meest consistent maar nog steeds traag).",
+    "architecture_title": "Hoe het werkt"
   },
   "results": {
     "title": "Gemeten latentie",
@@ -57,9 +57,9 @@
     }
   },
   "solution": {
-    "title": "Caching als daadwerkelijke oplossing",
-    "story": "Geen van de modellen kwam in de buurt van real-time. De snelste deed er nog meer dan een seconde over — ongeveer 60x te traag voor een schot. Ik had eerder een simpele cache toegevoegd, puur om te voorkomen dat hetzelfde geluid twee keer werd gegenereerd. Toen zag ik de cache hit-tijden in de serverlogs: 21-55ms. Dat valt binnen het acceptabele bereik voor games.",
-    "insight": "De aanpak verschoof van \"maak AI sneller\" naar \"roep AI op het juiste moment aan.\" Genereer geluiden tijdens laadschermen of rustige momenten, sla ze op in een cache, en serveer ze direct wanneer de speler ze nodig heeft. Wanneer een gecacht geluid wordt gebruikt, genereert het systeem stilletjes een vervanging op de achtergrond.",
+    "title": "Geluiden van tevoren cachen",
+    "story": "Geen van de modellen kwam in de buurt van real-time. De snelste deed er nog meer dan een seconde over — ongeveer 60x te traag voor een schot. Ik had eerder een simpele cache toegevoegd om te voorkomen dat hetzelfde geluid twee keer werd gegenereerd. Toen zag ik de tijden in de logs: 21-55ms. Dat is snel genoeg.",
+    "insight": "De vraag veranderde van \"hoe maak ik AI sneller\" naar \"wanneer roep ik AI aan?\" Genereer geluiden tijdens laadschermen of rustige momenten. Sla ze op in een cache. Serveer ze direct wanneer de speler ze nodig heeft. Wanneer een geluid wordt gebruikt, genereer je een nieuwe op de achtergrond als vervanging.",
     "before_after_title": "Voor & na caching",
     "without_cache": "Zonder cache",
     "with_cache": "Met cache",
@@ -84,11 +84,11 @@
         "description": "Systeem genereert vervangende geluiden voor de volgende keer"
       }
     },
-    "usecases": "Dit werkt het best voor voorspelbare geluiden — omgevingsaudio, cutscene-effecten, schoten met beperkte vuursnelheid. Het heeft moeite met zeer frequente events zoals voetstappen, waar de cache sneller leegloopt dan AI kan aanvullen."
+    "usecases": "Dit werkt het best voor voorspelbare geluiden — omgevingsaudio, cutscene-effecten, schoten met beperkte vuursnelheid. Het faalt bij zeer frequente events zoals voetstappen, waar de cache sneller leegloopt dan AI kan aanvullen."
   },
   "closing": {
-    "conclusion": "AI-audio is niet klaar om traditioneel game-geluidsontwerp te vervangen. Generatie is te traag voor real-time gebruik. Maar met voorspellende caching kan het aanvullen — meer variatie en kleinere bestandsgroottes voor de juiste toepassingen.",
-    "reflection": "De interessantste bevinding ging niet over een specifiek model. Het was dat het probleem architecturaal was, niet computationeel. De technologie wordt steeds sneller, maar ook vandaag al is nadenken over wanneer je genereert belangrijker dan hoe snel je genereert.",
+    "conclusion": "AI-audio is niet klaar om traditioneel game-geluidsontwerp te vervangen. Het is te traag voor real-time gebruik. Maar als je geluiden van tevoren cachet, kan het variatie toevoegen en bestandsgroottes verkleinen voor bepaalde toepassingen.",
+    "reflection": "Het interessantste deel was niet een specifiek model. Het was beseffen dat het probleem niet gaat over AI sneller maken — het gaat over het op het juiste moment aanroepen. De tech wordt steeds beter, maar zelfs nu is wanneer je genereert belangrijker dan hoe snel je genereert.",
     "read_paper": "Lees paper",
     "view_code": "Bekijk code",
     "back_to_projects": "Terug naar projecten"
