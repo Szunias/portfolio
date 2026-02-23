@@ -63,7 +63,7 @@
   "audio_systems": {
     "title": "Audio-implementatie",
     "rtpc_title": "RTPC-gebaseerd dynamisch systeem",
-    "rtpc_desc": "Ambient soundscape en speler ademintensiteit reageren op het aantal anomalieën. Meer anomalieën = hogere spanning.",
+    "rtpc_desc": "RTPC-waarde (0-5) regelt ambient-lagen in Wwise. Meer foto's op het bord = meer spanning. Ademhaling wordt zwaarder, ambient drones intensiveren. Vloeiende crossfades, geen harde sneden.",
     "switches_title": "Switch Containers & Zones",
     "switches_desc": "Elke kamer heeft eigen ambient-lagen die crossfaden als je beweegt. Badkamer heeft gespatializeerde toilet- en kraangeluiden. Voetstappen veranderen per oppervlak. Hout, tegels, beton.",
     "delegates_title": "Blueprint Delegates (SOC)",
@@ -227,10 +227,10 @@
   },
   "enemy_presence": {
     "title": "Vijand Aanwezigheid Audio Systeem",
-    "desc": "Dynamisch audio systeem dat reageert op vijand nabijheid. Creëert spanning door dread lagen en gestrest ademen.",
+    "desc": "Vijand komt dichterbij, audio wordt erger. Twee lagen stapelen op: ambient dread (lage drones, verontrustende texturen) en gestrest ademen. Beide schalen met nabijheid via RTPC.",
     "what": "Systeem volgt vijand afstand en activeert audio lagen. Dichterbij vijand = intensievere audio. Dread ambient en ademstress schalen met nabijheid.",
     "how": "OnProximityChanged() ontvangt nabijheid waarde (0-100%), start/stopt dread lagen, werkt RTPC bij voor intensiteit, past ademstress aan. Alles gevalideerd met null safety checks.",
-    "why": "Real-time audio reactie creëert psychologische spanning. RTPC maakt vloeiende intensiteitsovergangen mogelijk in plaats van abrupte veranderingen. Aparte ademlaag versterkt de angststaat van de speler.",
+    "why": "Geen harde sneden als de vijand beweegt. RTPC maakt het vloeiend. De ademlaag voegt urgentie toe zonder de mix te vervuilen.",
     "result": "Hoe dichterbij de vijand, hoe erger alles klinkt. Dread-lagen en gestrest ademen stapelen zich op naarmate hij dichterbij komt."
   },
   "ambience_zones": {
@@ -238,7 +238,7 @@
     "desc": "Locatie-gebaseerde audio die verandert terwijl je door verschillende gebieden van de pub beweegt.",
     "what": "5 verschillende zones met unieke ambient soundscapes: Main Bar, Back Room, Bathroom, Hallway, Storage. Elk heeft specifieke audio atmosfeer.",
     "how": "Trigger volumes detecteren speler locatie. Bij zone binnenkomst, fade out vorige ambient en fade in nieuwe zone lagen. Vloeiende crossfades voorkomen audio sprongen.",
-    "why": "Locatie-specifieke ambient grond speler in de ruimte. Elke kamer klinkt akoestisch anders, wat de indeling en atmosfeer van de pub versterkt.",
+    "why": "Elke kamer klinkt anders. Badkamer: tegels + reverb. Bar: glazen + menigte-gemompel. Je weet waar je bent gewoon door te luisteren.",
     "result": "Soepele overgangen tussen zones. Elke kamer klinkt anders, dus je weet altijd waar je bent in de pub."
   },
   "anomaly_system": {
@@ -246,7 +246,7 @@
     "desc": "3-staps detectiesysteem voor 10 verschillende paranormale anomalie types met unieke audio signaturen.",
     "what": "3 detectiestadia: Ver (algemeen alarm), Medium (directionele hint), Dichtbij (precieze locatie). 10 anomalie types waaronder Levitating Glass, Shadow Movement, Spinning Chair.",
     "how": "Afstand-gebaseerde RTPC drijft audio intensiteit. Directionele audio leidt speler naar anomalie. Elk anomalie type heeft unieke geluidssignatuur voor identificatie.",
-    "why": "Audio is de primaire detectiemechaniek. Zonder geluid is het vinden van anomalieën bijna onmogelijk. Gelaagde aanpak (alarm → gids → bevestiging) creëert boeiende gameplay loop.",
+    "why": "Geluid is hoe je anomalieën vindt. Alert signaleert de spawn, hint geeft richting, aanwezigheid bevestigt de locatie. Demp het spel en je bent blind.",
     "result": "Geluid is de enige manier om anomalieën te vinden. Elk type heeft een eigen signatuur, dus ervaren spelers leren ze op gehoor te herkennen."
   },
   "project_metrics": {

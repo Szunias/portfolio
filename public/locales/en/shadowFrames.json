@@ -63,7 +63,7 @@
   "audio_systems": {
     "title": "Audio Implementation",
     "rtpc_title": "RTPC-Based Dynamic System",
-    "rtpc_desc": "Ambient sound and player breathing get more intense with each anomaly that spawns. More anomalies = higher tension.",
+    "rtpc_desc": "RTPC value (0-5) controls ambient layers in Wwise. More photos on the board = higher tension. Breathing gets heavier, ambient drones intensify. Smooth crossfades, no hard cuts.",
     "switches_title": "Switch Containers & Zones",
     "switches_desc": "Each room has its own ambient layers that crossfade as you move. Bathroom has spatialized toilet and faucet sounds. Footsteps change based on surface. Wood, tiles, concrete.",
     "delegates_title": "Blueprint Delegates (SOC)",
@@ -227,10 +227,10 @@
   },
   "enemy_presence": {
     "title": "Enemy Presence Audio System",
-    "desc": "Dynamic audio system that responds to enemy proximity. Creates tension through dread layers and stressed breathing.",
+    "desc": "Enemy gets closer, audio gets worse. Two layers stack up: ambient dread (low drones, unsettling textures) and stressed character breathing. Both scale with proximity via RTPC.",
     "what": "System tracks enemy distance and triggers audio layers. Closer enemy = more intense audio. Dread ambience and breathing stress scale with proximity.",
     "how": "OnProximityChanged() receives proximity value (0-100%), starts/stops dread layers, updates RTPC for intensity, adjusts breathing stress. All validated with null safety checks.",
-    "why": "Real-time audio response creates psychological tension. RTPC allows smooth intensity transitions instead of abrupt changes. Separate breathing layer reinforces player's fear state.",
+    "why": "No hard cuts when the enemy moves. RTPC smooths the transitions. The breathing layer adds urgency without cluttering the mix.",
     "result": "The closer the enemy, the worse everything sounds. Dread layers and stressed breathing stack up as it gets closer."
   },
   "ambience_zones": {
@@ -238,7 +238,7 @@
     "desc": "Location-based audio that changes as you move through different areas of the pub.",
     "what": "5 distinct zones with unique ambient soundscapes: Main Bar, Back Room, Bathroom, Hallway, Storage. Each has specific audio atmosphere.",
     "how": "Trigger volumes detect player location. On zone enter, fade out previous ambience and fade in new zone's layers. Smooth crossfades prevent audio jumps.",
-    "why": "Location-specific ambience grounds player in the space. Each room feels acoustically different, reinforcing the pub's layout and atmosphere.",
+    "why": "Each room sounds different. Bathroom: tiles + reverb. Bar: glasses + crowd murmur. You know where you are just by listening.",
     "result": "Smooth transitions between zones. Each room sounds different, so you always know where you are in the pub."
   },
   "anomaly_system": {
@@ -246,7 +246,7 @@
     "desc": "3-stage detection system for 10 different paranormal anomaly types with unique audio signatures.",
     "what": "3 detection stages: Far (general alert), Medium (directional cue), Close (precise location). 10 anomaly types including Levitating Glass, Shadow Movement, Spinning Chair.",
     "how": "Distance-based RTPC drives audio intensity. Directional audio guides player to anomaly. Each anomaly type has unique sound signature for identification.",
-    "why": "Audio is the primary detection mechanic. Without sound, finding anomalies is nearly impossible. Layered approach (alert → guide → confirm) creates engaging gameplay loop.",
+    "why": "Sound is how you find anomalies. Alert signals the spawn, hint gives direction, presence confirms the location. Mute the game and you're blind.",
     "result": "Sound is the only way to find anomalies. Each type has its own signature, so experienced players learn to identify them by ear."
   },
   "project_metrics": {

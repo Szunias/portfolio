@@ -63,7 +63,7 @@
   "audio_systems": {
     "title": "Implementacja audio",
     "rtpc_title": "System dynamiczny oparty na RTPC",
-    "rtpc_desc": "Ambient i oddech gracza nasilają się z każdą anomalią. Więcej anomalii = większe napięcie.",
+    "rtpc_desc": "RTPC (0-5) kontroluje warstwy ambientu w Wwise. Więcej zdjęć na tablicy = większe napięcie. Oddech cięższy, ambient drony nasilają się. Płynne crossfade, bez ostrych cięć.",
     "switches_title": "Switch Containers & Strefy",
     "switches_desc": "Każdy pokój ma własne warstwy ambientu, które crossfadują przy poruszaniu. Łazienka ma przestrzenne dźwięki toalety i kranu. Kroki zmieniają się w zależności od powierzchni. Drewno, płytki, beton.",
     "delegates_title": "Blueprint Delegates (SOC)",
@@ -227,10 +227,10 @@
   },
   "enemy_presence": {
     "title": "System Audio Obecności Wroga",
-    "desc": "Dynamiczny system audio reagujący na bliskość wroga. Tworzy napięcie przez warstwy dread i zestresowany oddech.",
+    "desc": "Wróg się zbliża, audio robi się coraz gorsze. Dwie warstwy się nakładają: ambient dread (niskie drony, niepokojące tekstury) i zestresowany oddech postaci. Obie skalują się z bliskością przez RTPC.",
     "what": "System śledzi odległość wroga i uruchamia warstwy audio. Bliższy wróg = intensywniejszy dźwięk. Ambient dread i stress oddychania skalują się z bliskością.",
     "how": "OnProximityChanged() otrzymuje wartość bliskości (0-100%), startuje/stopuje warstwy dread, aktualizuje RTPC dla intensywności, dostosowuje stress oddychania. Wszystko walidowane z null safety checks.",
-    "why": "Reakcja audio w czasie rzeczywistym tworzy napięcie psychologiczne. RTPC pozwala na płynne przejścia intensywności zamiast nagłych zmian. Oddzielna warstwa oddychania wzmacnia stan strachu gracza.",
+    "why": "Brak ostrych cięć przy ruchu wroga. RTPC wygładza przejścia. Warstwa oddechu dodaje pilność bez zaśmiecania miksu.",
     "result": "Im bliżej wróg, tym gorzej wszystko brzmi. Warstwy dreadu i zestresowany oddech narastają razem z bliskością."
   },
   "ambience_zones": {
@@ -238,7 +238,7 @@
     "desc": "Audio oparte na lokalizacji, które zmienia się gdy poruszasz się po różnych obszarach pubu.",
     "what": "5 odrębnych stref z unikalnymi soundscape'ami ambientowymi: Main Bar, Back Room, Bathroom, Hallway, Storage. Każda ma specyficzną atmosferę dźwiękową.",
     "how": "Trigger volumes wykrywają lokalizację gracza. Przy wejściu do strefy, fade out poprzedniego ambientu i fade in warstw nowej strefy. Płynne crossfade'y zapobiegają skokom audio.",
-    "why": "Ambient specyficzny dla lokacji osadza gracza w przestrzeni. Każdy pokój brzmi akustycznie inaczej, wzmacniając układ i atmosferę pubu.",
+    "why": "Każdy pokój brzmi inaczej. Łazienka: płytki + reverb. Bar: szklanki + szmer tłumu. Wiesz, gdzie jesteś, po samym dźwięku.",
     "result": "Płynne przejścia między strefami. Każdy pokój brzmi inaczej, więc zawsze wiesz, gdzie jesteś w pubie."
   },
   "anomaly_system": {
@@ -246,7 +246,7 @@
     "desc": "3-stopniowy system detekcji dla 10 różnych typów anomalii paranormalnych z unikalnymi sygnaturami audio.",
     "what": "3 etapy detekcji: Daleko (ogólny alert), Medium (kierunkowa wskazówka), Blisko (precyzyjna lokalizacja). 10 typów anomalii: Lewitująca Szklanka, Ruch Cienia, Obracające się Krzesło i inne.",
     "how": "RTPC oparte na odległości napędza intensywność audio. Kierunkowe audio prowadzi gracza do anomalii. Każdy typ anomalii ma unikalną sygnaturę dźwiękową do identyfikacji.",
-    "why": "Audio jest podstawową mechaniką detekcji. Bez dźwięku znalezienie anomalii jest prawie niemożliwe. Warstwowe podejście (alert → przewodnik → potwierdzenie) tworzy angażującą pętlę rozgrywki.",
+    "why": "Dźwięk to sposób na znajdowanie anomalii. Alert sygnalizuje spawn, wskazówka daje kierunek, obecność potwierdza lokalizację. Wycisz grę i jesteś ślepy.",
     "result": "Dźwięk to jedyny sposób na znalezienie anomalii. Każdy typ ma swoją sygnaturę, więc doświadczeni gracze uczą się rozpoznawać je ze słuchu."
   },
   "project_metrics": {
