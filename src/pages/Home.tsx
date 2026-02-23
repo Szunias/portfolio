@@ -37,14 +37,14 @@ const Home = () => {
       <Hero />
 
       {/* Showreel Section */}
-      <div className="bg-surface">
+      <div className="bg-surface border-t border-border">
         <div className="max-w-content-wide mx-auto px-6 lg:px-8">
           <Showreel />
         </div>
       </div>
 
       {/* Projects Section */}
-      <section id="projects" className="bg-surface py-10 md:py-16">
+      <section id="projects" className="bg-surface py-16">
         <div className="max-w-content mx-auto px-6 lg:px-8">
           {/* Header */}
           <motion.div

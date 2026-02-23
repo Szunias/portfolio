@@ -17,7 +17,7 @@ const SEO = ({
   title,
   description,
   type = 'website',
-  image = '/assets/cv-image/cvsmile.jpg',
+  image,
   url,
   noindex = false
 }: SEOProps) => {
@@ -38,7 +38,7 @@ const SEO = ({
 
   const baseUrl = getBaseUrl();
   const currentUrl = url || (typeof window !== 'undefined' ? window.location.origin + window.location.pathname : `${baseUrl}${location.pathname}`);
-  const imageUrl = image.startsWith('http') ? image : `${baseUrl}${image}`;
+  const imageUrl = image ? (image.startsWith('http') ? image : `${baseUrl}${image}`) : undefined;
 
   const isHomePage = location.pathname === '/' || location.pathname === '';
 
@@ -54,7 +54,6 @@ const SEO = ({
     "jobTitle": "Audio Designer & Developer",
     "description": metaDescription,
     "url": baseUrl,
-    "image": imageUrl,
     "sameAs": [
       "https://github.com/Szunias",
       "https://www.linkedin.com/in/igorszuniewicz",
@@ -91,7 +90,7 @@ const SEO = ({
       <meta property="og:type" content={type} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={metaDescription} />
-      <meta property="og:image" content={imageUrl} />
+      {imageUrl && <meta property="og:image" content={imageUrl} />}
       <meta property="og:url" content={currentUrl} />
       <meta property="og:site_name" content="Igor Szuniewicz Portfolio" />
       <meta property="og:locale" content={ogLocale} />
@@ -104,7 +103,7 @@ const SEO = ({
       <meta name="twitter:creator" content="@Szunias" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={metaDescription} />
-      <meta name="twitter:image" content={imageUrl} />
+      {imageUrl && <meta name="twitter:image" content={imageUrl} />}
 
       {/* Structured Data — Person only on homepage */}
       {personData && (

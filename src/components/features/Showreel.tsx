@@ -81,7 +81,7 @@ const Showreel = () => {
   };
 
   return (
-    <div id="showreel" className="w-full max-w-content mx-auto py-16">
+    <div id="showreel" className="w-full max-w-content mx-auto py-12 md:py-16">
       {/* Video Container with Premium Styling */}
       <div className="relative aspect-video rounded-lg overflow-hidden bg-surface-raised border border-border shadow-glow-accent">
         {error ? (
