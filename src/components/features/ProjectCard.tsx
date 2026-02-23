@@ -44,7 +44,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
       const aIsKey = keyTech.some(k => a.includes(k)) ? 1 : 0;
       const bIsKey = keyTech.some(k => b.includes(k)) ? 1 : 0;
       return bIsKey - aIsKey;
-  }).slice(0, 3);
+  }).slice(0, 4);
 
   const cardContent = (
     <div className="flex flex-col h-full">
@@ -97,9 +97,9 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             </p>
 
             {/* Tech Stack Pills */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 overflow-hidden">
                 {displayTags.map(tag => (
-                    <span key={tag} className="px-2.5 py-1 rounded font-mono text-label uppercase bg-accent/10 text-accent border border-accent/15 group-hover:bg-accent/18 group-hover:border-accent/30 transition-colors whitespace-nowrap">
+                    <span key={tag} className="px-2.5 py-1 rounded font-mono text-label uppercase bg-accent/10 text-accent border border-accent/15 group-hover:bg-accent/18 group-hover:border-accent/30 transition-colors">
                         {tag}
                     </span>
                 ))}

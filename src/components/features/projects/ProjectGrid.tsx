@@ -28,19 +28,14 @@ const ProjectGrid = ({ projects }: ProjectGridProps) => {
       animate={prefersReducedMotion ? noMotion.animate : "visible"}
       variants={prefersReducedMotion ? undefined : containerVariants}
     >
-      {projects.map((project, index) => {
-        // First project featured full-width, every 4th after that spans 2 cols
-        const isWide = index === 0 || (index > 0 && index % 4 === 0);
-        return (
-          <motion.div
-            key={project.id}
-            className={isWide ? 'md:col-span-2' : ''}
-            variants={prefersReducedMotion ? undefined : itemVariants}
-          >
-            <ProjectCard project={project} index={index} />
-          </motion.div>
-        );
-      })}
+      {projects.map((project, index) => (
+        <motion.div
+          key={project.id}
+          variants={prefersReducedMotion ? undefined : itemVariants}
+        >
+          <ProjectCard project={project} index={index} />
+        </motion.div>
+      ))}
     </motion.div>
   );
 };

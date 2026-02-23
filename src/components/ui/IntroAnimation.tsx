@@ -30,31 +30,17 @@ const IntroAnimation = ({ onComplete }: { onComplete: () => void }) => {
       className="fixed inset-0 z-[9999] bg-surface flex items-center justify-center overflow-hidden"
       initial={{ opacity: 1 }}
       animate={{ opacity: isExiting ? 0 : 1 }}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
     >
-      {/* Animated Waveform */}
-      <motion.div
-        className="flex items-end gap-2.5 h-32 mb-8"
+      {/* Name Display */}
+      <motion.h1
+        className="font-display text-4xl md:text-5xl text-text-primary tracking-tight"
         initial={{ opacity: 0 }}
         animate={{ opacity: isExiting ? 0 : 1 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
+        transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
       >
-        {[1, 2, 3, 4, 5].map((i) => (
-          <motion.div
-            key={i}
-            className="w-4 bg-accent rounded-sm origin-bottom"
-            initial={{ scaleY: 0.3 }}
-            animate={isExiting ? { scaleY: 0.3 } : { scaleY: [0.3, 1, 0.3] }}
-            transition={{
-              duration: 1.2,
-              delay: i * 0.1,
-              repeat: isExiting ? 0 : Infinity,
-              ease: 'easeInOut'
-            }}
-            style={{ height: '100%' }}
-          />
-        ))}
-      </motion.div>
+        Igor Szuniewicz
+      </motion.h1>
     </motion.div>
   );
 };
