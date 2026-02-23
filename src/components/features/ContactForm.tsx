@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Mail, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { Send, CheckCircle, AlertCircle } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 
 import { Button } from '../ui/Button';
@@ -117,10 +117,10 @@ const ContactForm = () => {
 
   if (configError) {
     return (
-      <div className="bg-secondary p-8 rounded-sm border border-border">
-        <div className="flex items-center gap-2 text-error">
-          <AlertCircle size={18} />
-          <p>{t('contact_form_config_error', 'Contact form is temporarily unavailable. Please email directly.')}</p>
+      <div className="bg-surface-raised p-8 rounded-lg border border-border">
+        <div className="flex items-center gap-3 text-error">
+          <AlertCircle size={20} />
+          <p className="text-body">{t('contact_form_config_error', 'Contact form is temporarily unavailable. Please email directly.')}</p>
         </div>
       </div>
     );
@@ -129,18 +129,14 @@ const ContactForm = () => {
   const isDisabled = status === 'sending' || status === 'cooldown';
 
   return (
-    <div className="bg-secondary p-8 rounded-sm border border-border">
-      <div className="flex items-center gap-2 mb-4 text-dim text-sm">
-        <Mail size={16} />
-        {t('contact_form_title', 'Send a Message')}
-      </div>
-      <h3 className="text-2xl font-display text-cream-light mb-6">
+    <div className="bg-surface-raised p-8 rounded-lg border border-border">
+      <h3 className="text-h3 font-display text-text-primary mb-6">
         {t('contact_form_title', 'Send a Message')}
       </h3>
 
-      <form ref={formRef} onSubmit={handleSubmit} className="space-y-4" noValidate>
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-5" noValidate>
         <div>
-          <label htmlFor="name" className="block text-sm font-label text-dim mb-1">
+          <label htmlFor="name" className="block text-body-sm font-medium text-text-secondary mb-2">
             {t('contact_form_name', 'Your Name')}
           </label>
           <input
@@ -150,12 +146,13 @@ const ContactForm = () => {
             autoComplete="name"
             required
             aria-required="true"
-            className="w-full bg-primary border border-border rounded-sm px-4 py-3 text-cream focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary transition-colors"
+            className="w-full bg-surface-raised border border-border rounded-md py-3 px-4 text-text-primary placeholder:text-text-tertiary focus:border-accent focus:shadow-input-focus focus:outline-none transition-all duration-200"
+            placeholder={t('contact_form_name_placeholder', 'John Doe')}
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-label text-dim mb-1">
+          <label htmlFor="email" className="block text-body-sm font-medium text-text-secondary mb-2">
             {t('contact_form_email', 'Email Address')}
           </label>
           <input
@@ -167,42 +164,30 @@ const ContactForm = () => {
             aria-required="true"
             aria-invalid={validationError ? 'true' : undefined}
             aria-describedby={validationError ? 'email-error' : undefined}
-            className="w-full bg-primary border border-border rounded-sm px-4 py-3 text-cream focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary transition-colors"
+            className={`w-full bg-surface-raised border ${validationError ? 'border-error shadow-input-error' : 'border-border'} rounded-md py-3 px-4 text-text-primary placeholder:text-text-tertiary focus:border-accent focus:shadow-input-focus focus:outline-none transition-all duration-200`}
+            placeholder={t('contact_form_email_placeholder', 'john@example.com')}
           />
           {validationError && (
-            <p id="email-error" className="text-error text-sm mt-1" role="alert">
+            <p id="email-error" className="text-error text-body-sm mt-2 flex items-center gap-1.5" role="alert">
+              <AlertCircle size={14} />
               {validationError}
             </p>
           )}
         </div>
 
         <div>
-          <label htmlFor="subject" className="block text-sm font-label text-dim mb-1">
-            {t('contact_form_subject', 'Subject')}
-          </label>
-          <input
-            type="text"
-            id="subject"
-            name="subject"
-            autoComplete="off"
-            required
-            aria-required="true"
-            className="w-full bg-primary border border-border rounded-sm px-4 py-3 text-cream focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary transition-colors"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="message" className="block text-sm font-label text-dim mb-1">
+          <label htmlFor="message" className="block text-body-sm font-medium text-text-secondary mb-2">
             {t('contact_form_message', 'Your Message')}
           </label>
           <textarea
             id="message"
             name="message"
             autoComplete="off"
-            rows={5}
+            rows={6}
             required
             aria-required="true"
-            className="w-full bg-primary border border-border rounded-sm px-4 py-3 text-cream focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary transition-colors resize-none"
+            className="w-full bg-surface-raised border border-border rounded-md py-3 px-4 text-text-primary placeholder:text-text-tertiary focus:border-accent focus:shadow-input-focus focus:outline-none transition-all duration-200 resize-none"
+            placeholder={t('contact_form_message_placeholder', 'Tell me about your project or opportunity...')}
           ></textarea>
         </div>
 
@@ -220,33 +205,41 @@ const ContactForm = () => {
           )}
           {status === 'sending' && (
             <>
-              <Mail size={18} className="animate-spin" />
+              <div className="w-4 h-4 border-2 border-surface border-t-transparent rounded-full animate-spin" />
               {t('contact_form_sending', 'Sending...')}
             </>
           )}
           {status === 'sent' && (
             <>
-              <CheckCircle size={18} className="text-success" />
-              {t('contact_form_sent', 'Message sent!')}
+              <CheckCircle size={18} />
+              {t('contact_form_sent', "Message sent! I'll get back to you soon.")}
             </>
           )}
           {status === 'error' && (
             <>
-              <AlertCircle size={18} className="text-error" />
+              <AlertCircle size={18} />
               {t('contact_form_error', 'Failed to send. Try again.')}
             </>
           )}
           {status === 'cooldown' && (
             <>
-              <CheckCircle size={18} className="text-success" />
+              <CheckCircle size={18} />
               {t('contact_form_cooldown', 'Message sent! Please wait before sending another.')}
             </>
           )}
         </Button>
 
+        {/* Success state message (appears below button) */}
+        {status === 'sent' && (
+          <div className="flex items-center gap-2 text-success text-body-sm bg-success/10 border border-success/20 rounded-md px-4 py-3">
+            <CheckCircle size={16} />
+            <span>{t('contact_form_success_message', "Thanks! I'll respond within 24-48 hours.")}</span>
+          </div>
+        )}
+
         {/* Aria-live region for screen reader announcements */}
         <div aria-live="polite" className="sr-only">
-          {status === 'sent' && t('contact_form_sent', 'Message sent!')}
+          {status === 'sent' && t('contact_form_sent', "Message sent! I'll get back to you soon.")}
           {status === 'error' && t('contact_form_error', 'Failed to send. Try again.')}
           {status === 'cooldown' && t('contact_form_cooldown', 'Message sent! Please wait before sending another.')}
           {status === 'sending' && t('contact_form_sending', 'Sending...')}

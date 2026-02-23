@@ -28,7 +28,7 @@ const highlightCode = (code: string): JSX.Element[] => {
         <span key={`before-${lineIndex}`}>{processTokens(beforeComment, keywords, types, lineIndex)}</span>
       );
       result.push(
-        <span key={`comment-${lineIndex}`} className="text-dim italic">{comment}</span>
+        <span key={`comment-${lineIndex}`} className="text-text-secondary italic">{comment}</span>
       );
     } else {
       result.push(
@@ -82,9 +82,9 @@ const CodeViewer = ({ snippets }: CodeViewerProps) => {
   }
 
   return (
-    <div className="rounded-sm overflow-hidden border border-border bg-secondary">
+    <div className="rounded-sm overflow-hidden border border-border bg-surface-raised">
       {/* Window bar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-tertiary border-b border-border">
+      <div className="flex items-center justify-between px-4 py-2 bg-surface-overlay border-b border-border">
         <div className="flex items-center gap-2">
           <div className="flex gap-1.5">
             <div className="w-3 h-3 rounded-full bg-[#f38ba8]" />
@@ -102,8 +102,8 @@ const CodeViewer = ({ snippets }: CodeViewerProps) => {
               className={cn(
                 "px-3 py-1 text-xs rounded transition-all",
                 activeTab === index
-                  ? 'bg-secondary text-cream'
-                  : 'text-dim hover:text-cream'
+                  ? 'bg-surface-raised text-text-primary'
+                  : 'text-text-secondary hover:text-text-primary'
               )}
             >
               {snippet.title}
@@ -111,14 +111,14 @@ const CodeViewer = ({ snippets }: CodeViewerProps) => {
           ))}
         </div>
 
-        <div className="text-xs text-dim">
+        <div className="text-xs text-text-secondary">
           {currentSnippet.language.toUpperCase()}
         </div>
       </div>
 
       {/* Description */}
       {currentSnippet.description && (
-        <div className="px-4 py-2 bg-tertiary/50 border-b border-border text-sm text-dim">
+        <div className="px-4 py-2 bg-surface-overlay/50 border-b border-border text-sm text-text-secondary">
           {currentSnippet.description}
         </div>
       )}
@@ -137,12 +137,12 @@ const CodeViewer = ({ snippets }: CodeViewerProps) => {
                   "flex gap-4 py-0.5 px-2 -mx-2 rounded transition-colors",
                   annotation && "cursor-pointer",
                   isExpanded && "bg-accent/10",
-                  annotation && !isExpanded && "hover:bg-tertiary"
+                  annotation && !isExpanded && "hover:bg-surface-overlay"
                 )}
               >
                 <span className={cn(
                   "w-8 text-right text-xs font-mono select-none",
-                  annotation ? "text-accent" : "text-dim"
+                  annotation ? "text-accent" : "text-text-secondary"
                 )}>
                   {i + 1}
                 </span>
@@ -167,7 +167,7 @@ const CodeViewer = ({ snippets }: CodeViewerProps) => {
                       <p className="text-accent text-sm font-medium mb-1">
                         {t(annotation.label, annotation.label)}
                       </p>
-                      <p className="text-dim text-sm">
+                      <p className="text-text-secondary text-sm">
                         {t(annotation.explanation, annotation.explanation)}
                       </p>
                     </div>

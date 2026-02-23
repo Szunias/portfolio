@@ -49,37 +49,37 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
   const cardContent = (
     <div className="flex flex-col h-full">
       {/* Image Section */}
-      <div className="relative w-full aspect-video overflow-hidden border-b border-border">
+      <div className="relative w-full aspect-video overflow-hidden">
         {media.thumbnail ? (
             media.thumbnail.endsWith('.mp4') || media.thumbnail.endsWith('.webm') ? (
             <video
                 ref={videoRef}
                 src={`/${media.thumbnail}`}
-                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
+                className="w-full h-full object-cover transition-opacity duration-300"
                 muted
                 loop
                 playsInline
                 preload="none"
             />
             ) : (
-            <div className="w-full h-full opacity-90 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="w-full h-full transition-opacity duration-300">
                 <ImageWithLoader
                     src={`/${media.thumbnail}`}
                     alt={t(titleKey, project.title)}
                     loading={index < 4 ? "eager" : "lazy"}
-                    className="h-full w-full"
+                    className="h-full w-full object-cover"
                 />
             </div>
             )
         ) : (
-            <div className="w-full h-full bg-secondary flex items-center justify-center">
-                <span className="text-dim font-mono text-xs tracking-widest">{t('card.no_signal', 'NO_SIGNAL')}</span>  {/* mono OK: technical fallback */}
+            <div className="w-full h-full bg-surface-overlay flex items-center justify-center">
+                <span className="text-text-tertiary font-mono text-caption uppercase tracking-widest">{t('card.no_signal', 'NO_SIGNAL')}</span>
             </div>
         )}
 
         {/* Year Badge */}
         <div className="absolute top-3 right-3 z-20">
-            <span className="px-2 py-1 bg-primary/80 border border-border text-[10px] font-label text-dim uppercase tracking-wide rounded-sm">
+            <span className="px-2 py-1 bg-surface-raised/90 border border-border text-label font-mono text-text-secondary uppercase rounded">
                 {project.year || '202X'}
             </span>
         </div>
@@ -89,17 +89,17 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
       <div className="flex-1 p-5 flex flex-col">
         {/* Header */}
         <div className="mb-4">
-            <h3 className="text-xl font-display text-cream mb-2 truncate group-hover:text-cream-light transition-colors duration-200">
+            <h3 className="text-h3 font-display text-text-primary mb-2 truncate group-hover:text-accent transition-colors duration-200">
                 {t(titleKey, project.title)}
             </h3>
-            <p className="text-dim text-sm font-light leading-relaxed line-clamp-2 mb-4 h-10">
+            <p className="text-text-secondary text-body-sm leading-relaxed line-clamp-2 mb-4 h-10">
                 {t(descKey, project.short_description || project.description || '')}
             </p>
 
             {/* Tech Stack Pills */}
             <div className="flex flex-wrap gap-2">
                 {displayTags.map(tag => (
-                    <span key={tag} className="px-2 py-1 rounded-sm border border-border text-[10px] font-label text-dim group-hover:border-border-hover group-hover:text-cream transition-colors whitespace-nowrap tracking-wide">
+                    <span key={tag} className="px-2.5 py-1 rounded font-mono text-label uppercase bg-accent/10 text-accent border border-accent/15 group-hover:bg-accent/18 group-hover:border-accent/30 transition-colors whitespace-nowrap">
                         {tag}
                     </span>
                 ))}
@@ -110,10 +110,10 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
         <div className="flex-1" />
 
         {/* Footer */}
-        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-[10px] font-label text-dim group-hover:text-cream transition-colors duration-200">
+        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-label font-mono text-text-secondary group-hover:text-text-primary transition-colors duration-200">
             <div className="flex items-center gap-1.5">
                 <Tag size={12} />
-                <span className="uppercase tracking-wider">{project.category || 'Audio'}</span>
+                <span className="uppercase">{project.category || 'Audio'}</span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -131,18 +131,17 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
 
   return (
     <div
-      className="group relative w-full rounded-sm overflow-hidden bg-secondary border border-border hover:border-border-hover hover:-translate-y-0.5 hover:shadow-[0_4px_24px_rgba(200,180,140,0.06)] transition-all duration-200 animate-fade-in-up cursor-pointer"
-      style={{ animationDelay: `${index < 4 ? index * 50 : 0}ms` }}
+      className="group relative w-full rounded-lg overflow-hidden bg-surface-raised border border-border hover:border-border-hover hover:-translate-y-0.5 hover:shadow-hover transition-all duration-300 cursor-pointer"
     >
       {project.externalLink ? (
-        <a href={project.externalLink} target="_blank" rel="noopener noreferrer" className="block h-full">
+        <a href={project.externalLink} target="_blank" rel="noopener noreferrer" className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-lg">
             <div className="absolute top-3 left-3 z-30">
-              <ExternalLink size={14} className="text-dim" />
+              <ExternalLink size={14} className="text-text-secondary" />
             </div>
             {cardContent}
         </a>
       ) : (
-        <Link to={`/projects/${project.id}`} className="block h-full">
+        <Link to={`/projects/${project.id}`} className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-lg">
             {cardContent}
         </Link>
       )}

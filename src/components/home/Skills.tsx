@@ -1,44 +1,44 @@
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
 
-import { sectionReveal, cardIn, stagger, noMotion } from '@/constants/motion';
+import { containerVariants, itemVariants, sectionReveal, noMotion } from '@/constants/motion';
 
-const keyTech = [
+// Workflow-based skill groupings that show COMPETENCE, not just tool names
+const skillGroups = [
   {
-    name: 'Wwise',
-    logo: '/assets/icons/tech/wwiselogo.png',
-    category: 'Middleware',
-    invert: true,
+    key: 'middleware',
+    titleKey: 'skills.group_middleware',
+    defaultTitle: 'Audio Middleware',
+    tools: ['Wwise', 'FMOD', 'MetaSounds'],
+    accentWarm: false,
   },
   {
-    name: 'FMOD',
-    logo: '/assets/icons/tech/fmodlogo.png',
-    category: 'Middleware',
-    invert: true,
+    key: 'engines',
+    titleKey: 'skills.group_engines',
+    defaultTitle: 'Game Engines',
+    tools: ['Unreal Engine 5', 'Unity', 'Blueprints'],
+    accentWarm: false,
   },
   {
-    name: 'Unreal Engine',
-    logo: '/assets/icons/tech/Unreal_Engine-Logo.wine.png',
-    category: 'Engine',
-    invert: true,
+    key: 'programming',
+    titleKey: 'skills.group_programming',
+    defaultTitle: 'Programming',
+    tools: ['C++', 'Python', 'C#', 'JUCE'],
+    accentWarm: true,
   },
   {
-    name: 'Unity',
-    logo: '/assets/icons/tech/Unitylogo.png',
-    category: 'Engine',
-    invert: true,
+    key: 'production',
+    titleKey: 'skills.group_production',
+    defaultTitle: 'Sound Design',
+    tools: ['Reaper', 'Pro Tools', 'Logic Pro', 'Field Recording', 'Mixing'],
+    accentWarm: false,
   },
   {
-    name: 'C++',
-    logo: '/assets/icons/tech/cpplogo.png',
-    category: 'Code',
-    invert: false,
-  },
-  {
-    name: 'Python',
-    logo: '/assets/icons/tech/pythonlogo.png',
-    category: 'Code',
-    invert: false,
+    key: 'specialized',
+    titleKey: 'skills.group_specialized',
+    defaultTitle: 'Specialized',
+    tools: ['3D Audio', 'DSP', 'iZotope RX', 'Max/MSP', 'Perforce', 'GitHub'],
+    accentWarm: true,
   },
 ];
 
@@ -47,106 +47,65 @@ const Skills = () => {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section className="pt-16 pb-32">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="pt-16 pb-32 bg-surface">
+      <div className="max-w-content mx-auto px-6 lg:px-8">
 
         {/* Header */}
         <motion.div
           initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
           whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
           <span
-            className="inline-block px-4 py-2 mb-6 text-xs font-label text-accent uppercase tracking-wide border border-accent/20 rounded-sm"
+            className="inline-block px-4 py-2 mb-6 font-mono text-label uppercase bg-accent/10 text-accent border border-accent/15 rounded px-2.5 py-1"
           >
             {t('skills.badge', 'Technologies')}
           </span>
-          <h2 className="text-5xl md:text-7xl font-display text-cream-light mb-6 tracking-wide">
+          <h2 className="font-display text-h2 text-text-primary mb-4">
             {t('skills.title', 'Tech Stack')}
           </h2>
-          <p className="text-dim text-lg max-w-2xl mx-auto">
+          <p className="text-text-secondary text-body max-w-2xl mx-auto">
             {t('skills.subtitle', 'Core tools I use for game audio implementation and development')}
           </p>
         </motion.div>
 
-        {/* Tech Grid — first two cards span wider for visual hierarchy */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-20">
-          {keyTech.map((tech, index) => (
+        {/* Skill Groups - Workstation Style */}
+        <motion.div
+          initial={prefersReducedMotion ? noMotion.initial : containerVariants.hidden}
+          whileInView={prefersReducedMotion ? noMotion.animate : containerVariants.visible}
+          viewport={{ once: true, amount: 0.1 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {skillGroups.map((group) => (
             <motion.div
-              key={tech.name}
-              initial={prefersReducedMotion ? noMotion.initial : cardIn.initial}
-              whileInView={prefersReducedMotion ? noMotion.animate : cardIn.animate}
-              viewport={{ once: true }}
-              transition={prefersReducedMotion ? noMotion.transition : {
-                ...cardIn.transition,
-                delay: index * stagger.cards,
-              }}
-              className={`relative group bg-secondary border border-border rounded-sm p-8 hover:border-border-hover hover:bg-elevated transition-colors duration-200 ${
-                index < 2 ? 'lg:col-span-2' : ''
-              }`}
+              key={group.key}
+              variants={prefersReducedMotion ? {} : itemVariants}
+              className="bg-surface-raised border border-border rounded-lg p-6 hover:border-border-hover transition-all duration-200 focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2 focus-within:ring-offset-surface"
             >
-              {/* Category label */}
-              <span className="absolute top-6 right-6 text-[10px] font-label text-dim uppercase tracking-wide">
-                {tech.category}
-              </span>
-
-              {/* Logo */}
-              <div className="flex items-center justify-center h-28 mb-6">
-                <img
-                  src={tech.logo}
-                  alt={tech.name}
-                  width={96}
-                  height={96}
-                  className={`h-24 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity ${tech.invert ? 'invert brightness-200' : ''}`}
-                />
-              </div>
-
-              {/* Name */}
-              <h3 className="text-2xl font-display text-cream group-hover:text-cream-light transition-colors text-center">
-                {tech.name}
+              {/* Group Title */}
+              <h3 className="font-display text-h3 text-text-primary mb-4">
+                {t(group.titleKey, group.defaultTitle)}
               </h3>
+
+              {/* Tools as Tags */}
+              <div className="flex flex-wrap gap-2">
+                {group.tools.map((tool) => (
+                  <span
+                    key={tool}
+                    className={`font-mono text-label uppercase rounded px-2.5 py-1 border ${
+                      group.accentWarm
+                        ? 'bg-accent-warm/10 text-accent-warm border-accent-warm/15'
+                        : 'bg-accent/10 text-accent border-accent/15'
+                    }`}
+                  >
+                    {tool}
+                  </span>
+                ))}
+              </div>
             </motion.div>
           ))}
-        </div>
-
-        {/* Secondary Skills */}
-        <motion.div
-          initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
-          whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
-          viewport={{ once: true }}
-          transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
-          className="border-t border-border pt-14"
-        >
-          <motion.h3
-            initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
-            whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
-            viewport={{ once: true }}
-            transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
-            className="text-center text-sm font-label text-dim uppercase tracking-wide mb-12"
-          >
-            {t('skills.also', 'Also experienced with')}
-          </motion.h3>
-
-          <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-            {[
-              'MetaSounds', 'Blueprints', 'C#', 'Reaper', 'Pro Tools',
-              'Sound Design', 'Mixing', '3D Audio', 'JUCE', 'DSP', 'Wwise API',
-              'FMOD Studio', 'Blueprint Visual Scripting'
-            ].map((skill, index) => (
-              <motion.span
-                key={skill}
-                initial={prefersReducedMotion ? noMotion.initial : { opacity: 0 }}
-                whileInView={prefersReducedMotion ? noMotion.animate : { opacity: 1 }}
-                viewport={{ once: true }}
-                transition={prefersReducedMotion ? noMotion.transition : { delay: index * stagger.tags }}
-                className="px-5 py-2.5 border border-border rounded-sm text-sm text-dim hover:text-cream hover:border-border-hover hover:bg-elevated transition-colors duration-200 cursor-default"
-              >
-                {skill}
-              </motion.span>
-            ))}
-          </div>
         </motion.div>
 
       </div>

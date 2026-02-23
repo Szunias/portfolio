@@ -82,7 +82,7 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
               >
                 {isVideo ? (
                   videoErrors.has(i) ? (
-                    <div className="flex items-center justify-center bg-secondary text-dim aspect-video">
+                    <div className="flex items-center justify-center bg-surface-raised text-text-secondary aspect-video">
                       <span className="text-xs">{t('media_unavailable', 'Media unavailable')}</span>
                     </div>
                   ) : (
@@ -100,14 +100,14 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
                     {/* Zoom overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity p-3 border border-border-hover rounded-sm">
-                        <ZoomIn size={24} className="text-cream" />
+                        <ZoomIn size={24} className="text-text-primary" />
                       </div>
                     </div>
                   </>
                 )}
               </div>
               {caption && (
-                <p className="mt-2 text-sm text-dim flex items-center gap-2">
+                <p className="mt-2 text-sm text-text-secondary flex items-center gap-2">
                   <span className="text-accent font-mono text-xs">IMG:</span>
                   {t(caption, caption)}
                 </p>
@@ -132,7 +132,7 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
               onClick={() => setSelectedIndex(null)}
               className="absolute top-4 right-4 p-2 border border-border hover:border-border-hover rounded-sm transition-colors duration-200"
             >
-              <X size={24} className="text-cream" />
+              <X size={24} className="text-text-primary" />
             </button>
 
             {/* Image */}
@@ -156,7 +156,7 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
                 onLoad={() => setLightboxLoading(false)}
               />
               {selectedImage.caption && (
-                <p className="mt-4 text-center text-dim">
+                <p className="mt-4 text-center text-text-secondary">
                   {t(selectedImage.caption, selectedImage.caption)}
                 </p>
               )}

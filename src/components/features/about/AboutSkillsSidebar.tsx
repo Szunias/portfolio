@@ -49,10 +49,10 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
                 whileInView={prefersReducedMotion ? noMotion.animate : detailInRight.animate}
                 viewport={{ once: true }}
                 transition={prefersReducedMotion ? noMotion.transition : detailInRight.transition}
-                className="bg-secondary border border-border rounded-sm p-6 space-y-5"
+                className="bg-surface-raised border border-border rounded-lg p-6 space-y-5"
             >
                 {/* Quick Info */}
-                <h3 className="text-lg font-display text-cream-light">
+                <h3 className="font-sans text-h5 text-text-primary">
                     {t('about_quick_info', 'Quick Info')}
                 </h3>
 
@@ -60,8 +60,8 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
                 <div className="flex items-center gap-3">
                     <MapPin className="text-accent flex-shrink-0" size={18} aria-hidden="true" />
                     <div>
-                        <p className="text-cream font-medium">{personalInfo.location.city}</p>
-                        <p className="text-dim text-sm">{personalInfo.location.country}</p>
+                        <p className="text-text-primary font-medium">{personalInfo.location.city}</p>
+                        <p className="text-text-secondary text-body-sm">{personalInfo.location.country}</p>
                     </div>
                 </div>
 
@@ -69,8 +69,8 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
                 <div className="flex items-center gap-3">
                     <div className="w-3 h-3 bg-success/80 rounded-full animate-pulse flex-shrink-0" aria-hidden="true" />
                     <div>
-                        <p className="text-cream font-medium">{t('status_looking_internship', 'Available for internship')}</p>
-                        <p className="text-dim text-sm">{personalInfo.availability.status}</p>
+                        <p className="text-text-primary font-medium">{t('status_looking_internship', 'Available for internship')}</p>
+                        <p className="text-text-secondary text-body-sm">{personalInfo.availability.status}</p>
                     </div>
                 </div>
 
@@ -80,9 +80,9 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
                     <button
                         onClick={handleCopyEmail}
                         aria-label="Copy email to clipboard"
-                        className="group flex items-center gap-2 text-dim hover:text-cream transition-colors"
+                        className="group flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised rounded"
                     >
-                        <span className="text-sm truncate max-w-[180px]">{personalInfo.email}</span>
+                        <span className="text-body-sm truncate max-w-[180px]">{personalInfo.email}</span>
                         {emailCopied ? (
                             <Check size={14} className="text-success" />
                         ) : (
@@ -97,14 +97,14 @@ const AboutSkillsSidebar = ({ personalInfo, skills, t }: AboutSkillsSidebarProps
                 {/* Skills Sections */}
                 {skillSections.map((section) => (
                     <div key={section.key}>
-                        <h4 className="text-xs font-label text-dim uppercase tracking-wide mb-2">
+                        <h4 className="font-sans text-h5 text-text-primary mb-2">
                             {section.title}
                         </h4>
                         <ul className="flex flex-wrap gap-1.5">
                             {section.items.map(skill => (
                                 <li
                                     key={skill}
-                                    className="px-2.5 py-1 text-xs font-label text-accent bg-accent/5 border border-accent/20 rounded-sm"
+                                    className="font-mono text-label uppercase bg-accent/10 text-accent border border-accent/15 rounded px-2.5 py-1"
                                 >
                                     {skill}
                                 </li>

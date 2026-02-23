@@ -27,10 +27,10 @@ const AudioPlayer = () => {
   if (!currentTrack || !isPlayerVisible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-primary/90 backdrop-blur-md border-t border-border z-50 h-20 flex items-center px-3 sm:px-6 md:px-8" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+    <div className="fixed bottom-0 left-0 right-0 bg-surface-overlay/90 backdrop-blur-xl border-t border-border z-audio-player flex items-center px-3 sm:px-6 md:px-8" style={{ height: '72px', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
       {/* Progress Bar (Top Line) */}
       <div
-        className={`absolute top-0 left-0 right-0 h-1 hover:h-2 bg-secondary group transition-all duration-200 ease-out z-50 ${duration > 0 ? 'cursor-pointer' : 'cursor-default'}`}
+        className={`absolute top-0 left-0 right-0 h-1 hover:h-2 bg-border group transition-all duration-200 ease-out z-50 ${duration > 0 ? 'cursor-pointer' : 'cursor-default'}`}
         onClick={(e) => {
             if (duration <= 0) return;
             const rect = e.currentTarget.getBoundingClientRect();
@@ -44,7 +44,7 @@ const AudioPlayer = () => {
             className="h-full bg-accent transition-all duration-200 rounded-r-full relative"
             style={{ width: `${progress}%` }}
         >
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 group-hover:w-3.5 group-hover:h-3.5 bg-cream rounded-full shadow-md transition-all duration-200 -translate-x-[1px]"></div>
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 group-hover:w-4 group-hover:h-4 bg-accent-hover rounded-full shadow-glow-accent transition-all duration-200 -translate-x-[1px]"></div>
         </div>
       </div>
 
@@ -52,7 +52,7 @@ const AudioPlayer = () => {
 
         {/* Left: Info & Visualizer */}
         <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-            <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-md bg-secondary overflow-hidden border border-border flex-shrink-0 shadow-lg">
+            <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-surface-raised overflow-hidden border border-border flex-shrink-0 shadow-glow-accent">
                 <img
                     src={`/${currentTrack.cover}`}
                     alt={currentTrack.title}
@@ -60,14 +60,14 @@ const AudioPlayer = () => {
                 />
             </div>
             <div className="min-w-0">
-                <h4 className="text-cream font-medium text-xs sm:text-sm truncate">{currentTrack.title}</h4>
+                <h4 className="text-text-primary font-medium text-sm truncate">{currentTrack.title}</h4>
                 <div className="flex items-center gap-1.5 sm:gap-2">
                     {/* Mini Visualizer */}
                     <div className="flex items-end gap-[1px] h-2.5 sm:h-3">
                         {barDelays.map((delay, i) => (
                             <div
                                 key={`bar-${i}`}
-                                className={`w-[2px] sm:w-1 bg-accent/60 rounded-t-sm ${isPlaying && !shouldReduceMotion ? 'animate-[music-bar_0.8s_ease-in-out_infinite]' : ''}`}
+                                className={`w-[2px] sm:w-1 bg-accent rounded-t-sm ${isPlaying && !shouldReduceMotion ? 'animate-[music-bar_0.8s_ease-in-out_infinite]' : ''}`}
                                 style={{
                                     height: isPlaying && !shouldReduceMotion ? undefined : '10%',
                                     animationDelay: isPlaying && !shouldReduceMotion ? delay : undefined,
@@ -75,7 +75,7 @@ const AudioPlayer = () => {
                             />
                         ))}
                     </div>
-                    <span className="text-[10px] sm:text-xs font-mono text-dim">
+                    <span className="text-[10px] sm:text-xs font-mono text-text-tertiary">
                         {formatTime(currentTime)} / {formatTime(duration)}
                     </span>
                 </div>
@@ -84,7 +84,7 @@ const AudioPlayer = () => {
 
         {/* Center: Controls */}
         <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
-            <Button onClick={prevTrack} variant="ghost" size="icon" className="text-dim hover:text-cream p-2 sm:p-3" aria-label={t('buttons.previous', 'Previous Track')}>
+            <Button onClick={prevTrack} variant="ghost" size="icon" className="text-text-secondary hover:text-accent p-2 sm:p-3 transition-colors duration-200" aria-label={t('buttons.previous', 'Previous Track')}>
                 <SkipBack size={16} className="sm:w-5 sm:h-5" />
             </Button>
 
@@ -92,13 +92,13 @@ const AudioPlayer = () => {
                 onClick={togglePlay}
                 variant="primary"
                 size="icon"
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full p-0 bg-accent hover:bg-accent-light text-primary flex-shrink-0"
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full p-0 bg-accent hover:bg-accent-hover text-surface flex-shrink-0 shadow-glow-accent transition-all duration-200"
                 aria-label={isPlaying ? t('buttons.pause', 'Pause') : t('buttons.play', 'Play')}
             >
-                {isPlaying ? <Pause size={18} className="sm:w-[22px] sm:h-[22px]" fill="currentColor" /> : <Play size={18} className="sm:w-[22px] sm:h-[22px] ml-0.5" fill="currentColor" />}
+                {isPlaying ? <Pause size={20} className="sm:w-6 sm:h-6" fill="currentColor" /> : <Play size={20} className="sm:w-6 sm:h-6 ml-0.5" fill="currentColor" />}
             </Button>
 
-            <Button onClick={nextTrack} variant="ghost" size="icon" className="text-dim hover:text-cream p-2 sm:p-3" aria-label={t('buttons.next', 'Next Track')}>
+            <Button onClick={nextTrack} variant="ghost" size="icon" className="text-text-secondary hover:text-accent p-2 sm:p-3 transition-colors duration-200" aria-label={t('buttons.next', 'Next Track')}>
                 <SkipForward size={16} className="sm:w-5 sm:h-5" />
             </Button>
         </div>
@@ -117,12 +117,12 @@ const AudioPlayer = () => {
                     }}
                     variant="ghost"
                     size="icon"
-                    className="text-dim group-hover:text-cream"
+                    className="text-text-secondary hover:text-accent transition-colors duration-200"
                     aria-label={isMuted ? t('buttons.unmute', 'Unmute') : t('buttons.mute', 'Mute')}
                 >
                     {volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
                 </Button>
-                <div className="w-24 h-1.5 hover:h-3 bg-secondary rounded-full overflow-hidden relative cursor-pointer transition-all duration-200"
+                <div className="w-24 h-2 hover:h-3 bg-border rounded-full overflow-hidden relative cursor-pointer transition-all duration-200"
                      onClick={(e) => {
                         const rect = e.currentTarget.getBoundingClientRect();
                         const vol = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
@@ -142,7 +142,7 @@ const AudioPlayer = () => {
                 onClick={closePlayer}
                 variant="ghost"
                 size="icon"
-                className="text-dim hover:text-error/80 p-1 sm:p-2 sm:ml-4 flex-shrink-0"
+                className="text-text-secondary hover:text-error p-1 sm:p-2 sm:ml-4 flex-shrink-0 transition-colors duration-200"
                 title={t('audio_player.close', 'Close Player')}
                 aria-label={t('audio_player.close', 'Close Player')}
             >

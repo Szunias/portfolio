@@ -3,7 +3,48 @@
 @tailwind utilities;
 
 :root {
-  background-color: #111111;
+  /* Base surfaces */
+  --surface-base: #0b0b10;
+  --surface-raised: #12121a;
+  --surface-overlay: #1a1a25;
+
+  /* Text */
+  --text-primary: #e8e4de;
+  --text-secondary: #a8a4a0;
+  --text-tertiary: #6b6966;
+  --text-muted: #4a4845;
+
+  /* Accent */
+  --accent: #2dd4a8;
+  --accent-hover: #5eead4;
+  --accent-muted: rgba(45, 212, 168, 0.15);
+  --accent-warm: #e6a04a;
+  --accent-warm-hover: #f0b866;
+
+  /* Borders */
+  --border: #1f1f2a;
+  --border-hover: #2a2a38;
+  --border-accent: rgba(45, 212, 168, 0.4);
+
+  /* Status */
+  --success: #4ade80;
+  --error: #f87171;
+  --warning: #fbbf24;
+
+  /* Transitions */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-dramatic: 800ms;
+  --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0.0, 0.2, 1);
+
+  /* Layout */
+  --nav-height: 64px;
+  --audio-player-height: 72px;
+
+  /* Color scheme */
+  background-color: var(--surface-base);
   color-scheme: dark;
 }
 
@@ -13,33 +54,21 @@ html {
 
 body {
   margin: 0;
-  font-family: 'DM Sans', sans-serif;
-  background-color: #111111;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--surface-base);
   overflow-x: hidden;
 }
 
-/* Skip to main content link for accessibility */
-.skip-to-main {
-  position: absolute;
-  top: -40px;
-  left: 0;
-  background: var(--accent, #c17f3e);
-  color: #111111;
-  padding: 8px 16px;
-  text-decoration: none;
-  z-index: 100;
-  font-weight: 600;
-  border-radius: 0 0 4px 0;
+/* Selection */
+::selection {
+  background-color: rgba(45, 212, 168, 0.25);
+  color: var(--text-primary);
 }
 
-.skip-to-main:focus {
-  top: 0;
-}
-
-/* Custom Scrollbar */
+/* Scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.1) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
 }
 
 ::-webkit-scrollbar {
@@ -51,31 +80,45 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(193, 127, 62, 0.5);
+  background: rgba(45, 212, 168, 0.3);
 }
 
-/* Fade In Up Animation */
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
+/* Skip to main content link for accessibility */
+.skip-to-main {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--accent);
+  color: var(--surface-base);
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 100;
+  font-weight: 600;
+  border-radius: 0 0 4px 0;
+}
+
+.skip-to-main:focus {
+  top: 0;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
-.animate-fade-in-up {
-  animation: fade-in-up 0.3s ease-out both;
-}
-
-/* Print Styles */
+/* Print */
 @media print {
   body, :root {
     background-color: #ffffff !important;
@@ -97,35 +140,4 @@ body {
     color: #000000 !important;
     text-decoration: underline;
   }
-}
-
-/* Custom Selection Color */
-::selection {
-  background-color: rgba(193, 127, 62, 0.3);
-  color: #f0ece6;
-}
-
-/* Subtle Radial Vignette Overlay */
-.bg-vignette {
-  position: relative;
-}
-
-.bg-vignette::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.3) 100%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Subtle Noise Texture for Premium Audio Vibe */
-.bg-noise {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.04;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-  position: fixed;
-  inset: 0;
-  z-index: 50;
 }

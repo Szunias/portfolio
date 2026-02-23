@@ -78,24 +78,24 @@ const About = () => {
     ];
 
     return (
-        <div className="min-h-screen relative">
+        <div className="min-h-screen relative bg-surface">
             <SEO title={t('about_page_title', 'About Me')} description={t('about_page_description')} />
 
             {/* A: Page Header */}
-            <section className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 pt-32 pb-6">
-                <p className="text-accent font-label text-sm tracking-wide uppercase mb-3">
+            <section className="relative z-10 max-w-content mx-auto px-6 lg:px-8 pt-32 pb-6">
+                <p className="font-mono text-label uppercase bg-accent/10 text-accent border border-accent/15 rounded px-2.5 py-1 inline-block mb-3">
                     {t('about_page_label', 'About')}
                 </p>
-                <h1 className="text-4xl sm:text-6xl font-display text-cream-light mb-3 tracking-wide">
+                <h1 className="font-display text-h1 text-text-primary mb-3">
                     {t('about_page_title', 'About Me')}
                 </h1>
-                <p className="text-xl text-dim font-light max-w-2xl">
+                <p className="text-body text-text-secondary font-light max-w-2xl">
                     {t('about_role', 'Audio Designer & Developer')}
                 </p>
             </section>
 
             {/* B: Two-Column Layout */}
-            <section className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 pb-20">
+            <section className="relative z-10 max-w-content mx-auto px-6 lg:px-8 pb-20">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
 
                     {/* Main Content - 8 columns */}
@@ -108,13 +108,13 @@ const About = () => {
                             viewport={{ once: true }}
                             transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
                         >
-                            <h2 className="text-3xl font-display text-cream-light mb-4">
+                            <h2 className="font-display text-h2 text-text-primary mb-4">
                                 {t('about_journey_title', 'Journey')}
                             </h2>
-                            <p className="text-dim leading-7 text-lg mb-4">
+                            <p className="text-text-secondary text-body mb-4">
                                 {t('about_journey_p1')}
                             </p>
-                            <p className="text-dim leading-7 text-lg">
+                            <p className="text-text-secondary text-body">
                                 {t('about_journey_p2')}
                             </p>
                         </motion.div>
@@ -126,13 +126,13 @@ const About = () => {
                             viewport={{ once: true }}
                             transition={prefersReducedMotion ? noMotion.transition : { ...sectionReveal.transition, delay: 0.1 }}
                         >
-                            <h2 className="text-3xl font-display text-cream-light mb-4">
+                            <h2 className="font-display text-h2 text-text-primary mb-4">
                                 {t('about_drives_title', 'What Drives Me')}
                             </h2>
-                            <p className="text-dim leading-7 text-lg mb-4">
+                            <p className="text-text-secondary text-body mb-4">
                                 {t('about_drives_p1')}
                             </p>
-                            <p className="text-dim leading-7 text-lg">
+                            <p className="text-text-secondary text-body">
                                 {t('about_drives_p2')}
                             </p>
                         </motion.div>
@@ -145,7 +145,7 @@ const About = () => {
                             transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
                             className="border-l-2 border-accent pl-6 py-2"
                         >
-                            <p className="text-dim text-lg italic leading-loose font-display">
+                            <p className="text-text-secondary text-body italic leading-loose font-display">
                                 {t('philosophy_quote')}
                             </p>
                         </motion.blockquote>
@@ -160,18 +160,18 @@ const About = () => {
                             viewport={{ once: true }}
                             transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
                         >
-                            <h2 className="text-3xl font-display text-cream-light mb-6">
+                            <h2 className="font-display text-h2 text-text-primary mb-6">
                                 {t('achievements_title', 'Notable Work')}
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {achievements.map((item) => (
                                     <div
                                         key={item.title}
-                                        className="bg-secondary border border-border rounded-sm p-5 hover:border-border-hover transition-colors duration-200"
+                                        className="bg-surface-raised border border-border rounded-lg p-5 hover:border-border-hover transition-colors duration-200"
                                     >
                                         <item.icon className="text-accent mb-3" size={24} />
-                                        <h3 className="text-cream font-medium mb-2">{item.title}</h3>
-                                        <p className="text-dim text-sm leading-relaxed">{item.desc}</p>
+                                        <h3 className="text-text-primary font-medium mb-2">{item.title}</h3>
+                                        <p className="text-text-secondary text-body-sm leading-relaxed">{item.desc}</p>
                                     </div>
                                 ))}
                             </div>
@@ -184,26 +184,26 @@ const About = () => {
             </section>
 
             {/* C: CTA Banner */}
-            <section className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 pb-32">
+            <section className="relative z-10 max-w-content mx-auto px-6 lg:px-8 pb-32">
                 <motion.div
                     initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
                     whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
                     viewport={{ once: true }}
                     transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
-                    className="border border-border rounded-sm p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6"
+                    className="bg-surface-raised border border-border rounded-lg p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6"
                 >
                     <div>
-                        <h2 className="text-3xl font-display text-cream-light mb-2">
+                        <h2 className="font-display text-h2 text-text-primary mb-2">
                             {t('cta_title', 'Available for Internship')}
                         </h2>
-                        <p className="text-dim max-w-xl">
+                        <p className="text-text-secondary text-body max-w-xl">
                             {t('cta_desc')}
                         </p>
                     </div>
                     <div className="flex flex-wrap gap-3 shrink-0">
                         <Link
                             to="/contact"
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-primary font-medium rounded-sm transition-all duration-200 hover:bg-accent-light active:scale-[0.97]"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-surface font-semibold rounded-md transition-all duration-200 hover:bg-accent-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
                         >
                             {t('cta_contact', 'Get in Touch')}
                         </Link>
@@ -211,7 +211,7 @@ const About = () => {
                             href="/cv/Igor_Szuniewicz_CV.pdf"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-6 py-3 border border-border text-cream font-medium rounded-sm transition-all duration-200 hover:border-border-hover active:scale-[0.97]"
+                            className="inline-flex items-center gap-2 px-6 py-3 border border-border text-text-primary font-medium rounded-md transition-all duration-200 hover:border-text-secondary hover:bg-surface-overlay active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
                         >
                             <Download size={16} />
                             {t('cta_cv', 'View CV')}

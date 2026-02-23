@@ -13,7 +13,7 @@ const IntroAnimation = ({ onComplete }: { onComplete: () => void }) => {
 
     const exitTimer = setTimeout(() => {
       setIsExiting(true);
-    }, 2000);
+    }, 2200);
 
     const completeTimer = setTimeout(() => {
       onComplete();
@@ -27,23 +27,33 @@ const IntroAnimation = ({ onComplete }: { onComplete: () => void }) => {
 
   return (
     <motion.div
-      className="fixed inset-0 z-[9999] bg-primary flex items-center justify-center overflow-hidden"
+      className="fixed inset-0 z-[9999] bg-surface flex items-center justify-center overflow-hidden"
       initial={{ opacity: 1 }}
       animate={{ opacity: isExiting ? 0 : 1 }}
-      transition={{ duration: 0.8 }}
+      transition={{ duration: 0.6 }}
     >
+      {/* Animated Waveform */}
       <motion.div
-        className="relative z-10 text-center"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: isExiting ? 0 : 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
+        className="flex items-end gap-2.5 h-32 mb-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isExiting ? 0 : 1 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
       >
-        <h1 className="font-display text-5xl sm:text-6xl text-cream-light tracking-wide">
-          Igor Szuniewicz
-        </h1>
-        <p className="text-dim text-sm mt-3 font-label tracking-wider uppercase">
-          Audio Designer
-        </p>
+        {[1, 2, 3, 4, 5].map((i) => (
+          <motion.div
+            key={i}
+            className="w-4 bg-accent rounded-sm origin-bottom"
+            initial={{ scaleY: 0.3 }}
+            animate={isExiting ? { scaleY: 0.3 } : { scaleY: [0.3, 1, 0.3] }}
+            transition={{
+              duration: 1.2,
+              delay: i * 0.1,
+              repeat: isExiting ? 0 : Infinity,
+              ease: 'easeInOut'
+            }}
+            style={{ height: '100%' }}
+          />
+        ))}
       </motion.div>
     </motion.div>
   );

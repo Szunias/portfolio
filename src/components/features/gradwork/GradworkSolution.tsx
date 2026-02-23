@@ -20,18 +20,18 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.8 }}
             >
-                <h2 className="text-2xl md:text-3xl font-display font-bold text-cream-light mb-8">
+                <h2 className="text-2xl md:text-3xl font-display font-bold text-text-primary mb-8">
                     {t('solution.title')}
                 </h2>
 
                 {/* Story prose */}
-                <div className="space-y-6 text-dim text-lg leading-relaxed mb-12">
+                <div className="space-y-6 text-text-secondary text-lg leading-relaxed mb-12">
                     <p>{t('solution.story')}</p>
                     <p>{t('solution.insight')}</p>
                 </div>
 
                 {/* Before/After Comparison */}
-                <h3 className="text-lg font-display font-bold text-cream-light mb-4">
+                <h3 className="text-lg font-display font-bold text-text-primary mb-4">
                     {t('solution.before_after_title')}
                 </h3>
                 <div className="grid md:grid-cols-2 gap-6 mb-12">
@@ -69,7 +69,7 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                 </div>
 
                 {/* 4-step caching flow */}
-                <h3 className="text-lg font-display font-bold text-cream-light mb-4">
+                <h3 className="text-lg font-display font-bold text-text-primary mb-4">
                     {t('solution.flow_title')}
                 </h3>
                 <div className="grid md:grid-cols-4 gap-4 mb-12">
@@ -82,24 +82,24 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                             className="relative"
                         >
                             {index < steps.length - 1 && (
-                                <div className="hidden md:block absolute top-1/2 -right-2 transform -translate-y-1/2 z-10 text-xl text-dim">
+                                <div className="hidden md:block absolute top-1/2 -right-2 transform -translate-y-1/2 z-10 text-xl text-text-secondary">
                                     &rarr;
                                 </div>
                             )}
 
-                            <div className="bg-secondary border border-border rounded-sm p-5 h-full">
+                            <div className="bg-surface-raised border border-border rounded-sm p-5 h-full">
                                 <div className="flex items-center gap-2 mb-3">
                                     <div className={`w-8 h-8 rounded-sm bg-gradient-to-br ${step.color} flex items-center justify-center`}>
                                         <step.icon className="w-4 h-4 text-white" />
                                     </div>
-                                    <span className="text-xs font-mono text-dim">
+                                    <span className="text-xs font-mono text-text-secondary">
                                         {(index + 1).toString().padStart(2, '0')}
                                     </span>
                                 </div>
-                                <h4 className="text-sm font-bold text-cream-light mb-1">
+                                <h4 className="text-sm font-bold text-text-primary mb-1">
                                     {t(`solution.steps.${step.key}.label`)}
                                 </h4>
-                                <p className="text-dim text-xs">
+                                <p className="text-text-secondary text-xs">
                                     {t(`solution.steps.${step.key}.description`)}
                                 </p>
                             </div>
@@ -108,7 +108,7 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                 </div>
 
                 {/* Use cases in prose */}
-                <p className="text-dim text-base leading-relaxed">
+                <p className="text-text-secondary text-base leading-relaxed">
                     {t('solution.usecases')}
                 </p>
             </motion.div>

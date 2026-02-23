@@ -23,11 +23,11 @@ const AboutTimeline = ({ timeline, t }: AboutTimelineProps) => {
             whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
             viewport={{ once: true }}
             transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
-            className="bg-secondary border border-border rounded-sm p-8"
+            className="bg-surface-raised border border-border rounded-lg p-8"
         >
             <div className="flex items-center gap-3 mb-6">
                 <GraduationCap className="text-accent" size={20} aria-hidden="true" />
-                <h2 className="text-2xl font-display text-cream-light">
+                <h2 className="font-display text-h3 text-text-primary">
                     {t('about_education_title', 'Education')}
                 </h2>
             </div>
@@ -43,15 +43,15 @@ const AboutTimeline = ({ timeline, t }: AboutTimelineProps) => {
                             ...cardIn.transition,
                             delay: i * stagger.timeline,
                         }}
-                        className="bg-tertiary border border-border rounded-sm p-5 hover:border-border-hover transition-colors duration-200"
+                        className="bg-surface-overlay border border-border rounded-lg p-5 hover:border-border-hover transition-colors duration-200"
                     >
-                        <span className="inline-block px-3 py-1 text-xs font-label text-accent border border-accent/20 rounded-sm mb-3">
+                        <span className="inline-block font-mono text-label uppercase bg-accent/10 text-accent border border-accent/15 rounded px-2.5 py-1 mb-3">
                             {item.year}
                         </span>
-                        <h3 className="text-cream font-medium mb-2">
+                        <h3 className="text-text-primary font-medium mb-2">
                             {item.title}
                         </h3>
-                        <p className="text-dim text-sm">
+                        <p className="text-text-secondary text-body-sm">
                             {item.institution}
                         </p>
                     </motion.article>

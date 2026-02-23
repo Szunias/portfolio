@@ -81,18 +81,18 @@ const Showreel = () => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto mt-12 mb-20">
-      {/* Video */}
-      <div className="relative aspect-video rounded-sm overflow-hidden bg-black">
+    <div id="showreel" className="w-full max-w-content mx-auto py-16">
+      {/* Video Container with Premium Styling */}
+      <div className="relative aspect-video rounded-lg overflow-hidden bg-surface-raised border border-border shadow-glow-accent">
         {error ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-secondary">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-raised">
             <AlertCircle size={48} className="text-error mb-4" />
-            <p className="text-dim text-center px-4 mb-4">
+            <p className="text-text-secondary text-center px-4 mb-4 text-body-sm">
               {t('errors.video_load_failed', 'Failed to load video. Please refresh the page.')}
             </p>
             <button
               onClick={() => { setError(false); setPlayerReady(false); setIframeLoading(true); playerRef.current = null; }}
-              className="px-6 py-2 bg-accent text-primary font-medium rounded-sm hover:bg-accent-light transition-colors"
+              className="px-6 py-3 bg-accent text-surface font-semibold rounded-md hover:bg-accent-hover focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface transition-all duration-200"
             >
               {t('hero.retry', 'Try Again')}
             </button>
@@ -113,23 +113,23 @@ const Showreel = () => {
             ></iframe>
 
             {iframeLoading && (
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center justify-center bg-surface-raised">
                 <Loader2 size={32} className="text-accent animate-spin" />
               </div>
             )}
 
             {!isPlaying && playerReady && (
               <button
-                className="absolute inset-0 w-full h-full flex items-center justify-center bg-black/40 hover:bg-black/30 transition-colors cursor-pointer"
+                className="absolute inset-0 w-full h-full flex items-center justify-center bg-surface/60 hover:bg-surface/40 transition-colors cursor-pointer"
                 onClick={() => playerRef.current?.play().catch((err) => console.error('Play failed:', err))}
                 aria-label="Play showreel video"
               >
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-20 h-20 flex items-center justify-center border border-border-hover rounded-full"
+                  className="w-20 h-20 flex items-center justify-center bg-surface-raised/80 border-2 border-accent rounded-full shadow-glow-accent"
                 >
-                  <Play size={32} className="text-cream ml-1" fill="currentColor" />
+                  <Play size={32} className="text-accent ml-1" fill="currentColor" />
                 </motion.div>
               </button>
             )}
@@ -137,34 +137,40 @@ const Showreel = () => {
         )}
       </div>
 
-      {/* Chapter Navigation */}
-      <div className="mt-6 flex flex-wrap justify-center gap-2">
-        {TIMESTAMPS.map((ts) => {
-          const isActive = activeChapter === ts.time;
-          const label = t(ts.labelKey, ts.fallback);
+      {/* Chapter Navigation - Tracklist Style */}
+      <div className="mt-8 space-y-2">
+        <h3 className="font-mono text-label uppercase text-text-tertiary tracking-wider mb-4">
+          {t('hero.chapters', 'Chapters')}
+        </h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+          {TIMESTAMPS.map((ts) => {
+            const isActive = activeChapter === ts.time;
+            const label = t(ts.labelKey, ts.fallback);
 
-          return (
-            <button
-              key={ts.time}
-              onClick={() => jumpTo(ts.time)}
-              disabled={!playerReady}
-              className={`
-                relative px-4 py-2 rounded-sm text-sm font-medium transition-colors duration-200
-                ${!playerReady
-                  ? 'border border-border text-dim opacity-50 cursor-not-allowed'
-                  : isActive
-                    ? 'bg-accent text-primary'
-                    : 'border border-border text-dim hover:border-border-hover hover:text-cream'
-                }
-              `}
-            >
-              <span className="flex items-center gap-2">
-                <span className="font-mono text-xs opacity-60">{formatTime(ts.time)}</span>
-                <span>{label}</span>
-              </span>
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={ts.time}
+                onClick={() => jumpTo(ts.time)}
+                disabled={!playerReady}
+                className={`
+                  relative px-3 py-2 rounded text-left text-body-sm font-medium transition-all duration-200
+                  ${!playerReady
+                    ? 'border border-border text-text-tertiary opacity-50 cursor-not-allowed'
+                    : isActive
+                      ? 'bg-accent/10 text-accent border border-accent/15'
+                      : 'border border-border text-text-secondary hover:border-border-hover hover:text-text-primary hover:bg-surface-overlay'
+                  }
+                  focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface
+                `}
+              >
+                <span className="flex flex-col gap-1">
+                  <span className="font-mono text-caption text-text-tertiary">{formatTime(ts.time)}</span>
+                  <span className="truncate">{label}</span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

@@ -73,7 +73,7 @@ const ProjectDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-primary pb-32">
+    <div className="min-h-screen bg-surface pb-32">
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(breadcrumbData)}</script>
         <script type="application/ld+json">{JSON.stringify(creativeWorkData)}</script>
@@ -89,10 +89,10 @@ const ProjectDetails = () => {
       <ProjectHero project={project} />
 
       {/* --- MAIN LAYOUT --- */}
-      <div className="max-w-[1600px] mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16">
+      <div className="max-w-content-wide mx-auto px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
 
         {/* LEFT: Content (8 cols) */}
-        <div className="lg:col-span-8 space-y-16">
+        <div className="lg:col-span-8 space-y-12 lg:space-y-16">
 
             {/* Production Timeline - for Shadow Frames */}
             {project.id === 'shadow_frames' && (
@@ -102,8 +102,8 @@ const ProjectDetails = () => {
             )}
 
             {/* Main Description */}
-            <div className="prose prose-invert prose-lg max-w-none text-dim leading-relaxed">
-                <p className="whitespace-pre-line">{description}</p>
+            <div className="prose prose-invert prose-lg max-w-none text-text-secondary leading-relaxed">
+                <p className="whitespace-pre-line text-body">{description}</p>
             </div>
 
             {/* Dynamic Content Blocks */}
@@ -125,7 +125,7 @@ const ProjectDetails = () => {
             {/* Gallery */}
             {media.images && media.images.length > 0 && (
                 <div className="space-y-6">
-                    <h3 className="text-2xl font-display text-cream-light flex items-center gap-3">
+                    <h3 className="text-h2 font-display text-text-primary flex items-center gap-3">
                         <Images size={24} className="text-accent" />
                         {t('details.gallery', 'Gallery')}
                     </h3>

@@ -12,11 +12,11 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
   const links = project.links || {};
 
   return (
-    <div className="sticky top-32 space-y-8">
+    <div className="sticky top-32 space-y-6">
 
         {/* Actions Card */}
-        <div className="p-6 rounded-sm bg-secondary border border-border">
-            <h3 className="text-xs font-label text-dim uppercase tracking-wide mb-6">
+        <div className="p-6 rounded-lg bg-surface-raised border border-border">
+            <h3 className="text-label font-mono text-text-tertiary uppercase mb-6">
                 {t('details.access', 'Project Access')}
             </h3>
 
@@ -24,48 +24,48 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
             <div className="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-border">
                 {project.team_size && (
                     <div className="col-span-1">
-                        <div className="text-[10px] text-dim uppercase tracking-wider mb-1 flex items-center gap-1">
+                        <div className="text-label font-mono text-text-tertiary uppercase mb-1 flex items-center gap-1">
                             <Users size={12} /> Team
                         </div>
-                        <div className="text-cream font-medium">{project.team_size} Members</div>
+                        <div className="text-text-primary text-body-sm font-medium">{project.team_size} Members</div>
                     </div>
                 )}
                 {project.engine && (
                     <div className="col-span-1">
-                        <div className="text-[10px] text-dim uppercase tracking-wider mb-1 flex items-center gap-1">
+                        <div className="text-label font-mono text-text-tertiary uppercase mb-1 flex items-center gap-1">
                             <Gamepad2 size={12} /> Engine
                         </div>
-                        <div className="text-cream font-medium">{project.engine}</div>
+                        <div className="text-text-primary text-body-sm font-medium">{project.engine}</div>
                     </div>
                 )}
                 {project.platforms && (
                     <div className="col-span-2">
-                        <div className="text-[10px] text-dim uppercase tracking-wider mb-1 flex items-center gap-1">
+                        <div className="text-label font-mono text-text-tertiary uppercase mb-1 flex items-center gap-1">
                             <Monitor size={12} /> Platforms
                         </div>
-                        <div className="text-cream text-sm">{project.platforms.join(', ')}</div>
+                        <div className="text-text-primary text-body-sm">{project.platforms.join(', ')}</div>
                     </div>
                 )}
             </div>
 
             <div className="space-y-3">
                 {links.demo && (
-                    <a href={links.demo} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-4 bg-accent text-primary font-medium rounded-sm hover:bg-accent-light transition-colors duration-200">
+                    <a href={links.demo} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-3 px-6 bg-accent text-surface text-body-sm font-semibold rounded-md hover:bg-accent-hover transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised">
                         <ExternalLink size={18} className="mr-2" /> {t('links.demo', 'Launch Project')}
                     </a>
                 )}
                 {links.video && (
-                    <a href={links.video} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-4 text-cream font-medium rounded-sm border border-border hover:border-border-hover transition-colors duration-200">
+                    <a href={links.video} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-3 px-6 text-text-primary text-body-sm font-medium rounded-md border border-border hover:border-border-hover hover:bg-surface-overlay transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised">
                         <PlayCircle size={18} className="mr-2" /> {t('links.video', 'Watch Demo')}
                     </a>
                 )}
                 {links.repo && (
-                    <a href={links.repo} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-4 text-dim font-medium rounded-sm border border-border hover:border-border-hover hover:text-cream transition-colors duration-200">
+                    <a href={links.repo} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-3 px-6 text-text-secondary text-body-sm font-medium rounded-md border border-border hover:border-border-hover hover:text-text-primary hover:bg-surface-overlay transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised">
                         <Github size={18} className="mr-2" /> {t('links.repo', 'Source Code')}
                     </a>
                 )}
                 {links.documentation && (
-                   <a href={links.documentation.startsWith('http') ? links.documentation : `/${links.documentation}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-4 text-dim font-medium border border-border rounded-sm hover:text-cream hover:border-border-hover transition-colors duration-200">
+                   <a href={links.documentation.startsWith('http') ? links.documentation : `/${links.documentation}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-3 px-6 text-text-secondary text-body-sm font-medium border border-border rounded-md hover:text-text-primary hover:border-border-hover hover:bg-surface-overlay transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised">
                     <Layers size={18} className="mr-2" /> {t('links.docs', 'Documentation')}
                   </a>
                 )}
@@ -74,12 +74,12 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
 
         {/* Tech Stack */}
         <div>
-            <h3 className="text-xs font-label text-dim uppercase tracking-wide mb-4 flex items-center gap-2">
+            <h3 className="text-label font-mono text-text-tertiary uppercase mb-4 flex items-center gap-2">
                 <Layers size={14} /> {t('details.technologies', 'Technologies')}
             </h3>
             <div className="flex flex-wrap gap-2">
                 {project.technologies?.map(tech => (
-                    <span key={tech} className="px-3 py-1.5 text-xs font-label text-accent bg-accent/5 border border-accent/20 rounded-sm hover:bg-accent/10 hover:border-accent/30 transition-colors duration-200 cursor-default">
+                    <span key={tech} className="px-2.5 py-1 text-label font-mono uppercase text-accent bg-accent/10 border border-accent/15 rounded hover:bg-accent/18 hover:border-accent/30 transition-colors duration-200 cursor-default">
                         {tech}
                     </span>
                 ))}
@@ -89,12 +89,12 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
         {/* Tags */}
         {project.tags && (
             <div>
-                <h3 className="text-xs font-label text-dim uppercase tracking-wide mb-4 flex items-center gap-2">
+                <h3 className="text-label font-mono text-text-tertiary uppercase mb-4 flex items-center gap-2">
                     <Tag size={14} /> {t('details.classification', 'Classification')}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                     {project.tags.map(tag => (
-                        <span key={tag} className="text-xs text-dim hover:text-cream transition-colors cursor-default">
+                        <span key={tag} className="text-caption text-text-secondary hover:text-accent transition-colors cursor-default">
                             #{t(`tags.${tag}`, tag)}
                         </span>
                     ))}

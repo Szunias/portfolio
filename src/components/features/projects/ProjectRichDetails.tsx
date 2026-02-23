@@ -15,7 +15,7 @@ interface SectionProps {
 
 const Section = ({ title, icon: Icon, children }: SectionProps) => (
   <div className="py-8 border-t border-border">
-    <h3 className="text-xl font-display text-cream-light mb-6 flex items-center gap-3">
+    <h3 className="text-h3 font-display text-text-primary mb-6 flex items-center gap-3">
       <Icon className="text-accent" size={24} />
       {title}
     </h3>
@@ -30,13 +30,13 @@ interface KeyValueGridProps {
 const KeyValueGrid = ({ data }: KeyValueGridProps) => {
   const { t } = useTranslation('projectDetail');
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       {Object.entries(data).map(([key, value]) => (
-        <div key={key} className="bg-secondary p-4 rounded-sm border border-border hover:border-border-hover transition-colors duration-200">
-          <h4 className="text-xs font-label text-dim uppercase tracking-wide mb-2">
+        <div key={key} className="bg-surface-raised p-5 rounded-lg border border-border hover:border-border-hover transition-colors duration-200">
+          <h4 className="text-label font-mono text-text-tertiary uppercase mb-2">
             {t(`project.fields.${key}`, key.replace(/_/g, ' '))}
           </h4>
-          <p className="text-cream text-sm leading-relaxed">{t(value, value)}</p>
+          <p className="text-text-primary text-body-sm leading-relaxed">{t(value, value)}</p>
         </div>
       ))}
     </div>
@@ -52,9 +52,9 @@ const ListSection = ({ items }: ListSectionProps) => {
   return (
     <ul className="space-y-3">
       {items.map((item, i) => (
-        <li key={i} className="flex items-start gap-3 text-dim hover:text-cream transition-colors duration-200">
+        <li key={i} className="flex items-start gap-3 text-text-secondary hover:text-text-primary transition-colors duration-200">
           <CheckCircle2 size={18} className="text-accent flex-shrink-0 mt-1" />
-          <span className="leading-relaxed">{t(item, item)}</span>
+          <span className="leading-relaxed text-body-sm">{t(item, item)}</span>
         </li>
       ))}
     </ul>

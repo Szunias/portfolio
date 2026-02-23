@@ -32,7 +32,7 @@ const MediaRenderer = ({
 
   if (hasError) {
       return (
-        <div className={cn("flex items-center justify-center bg-secondary text-dim aspect-video", className)}>
+        <div className={cn("flex items-center justify-center bg-surface-raised text-text-secondary aspect-video", className)}>
             <div className="flex flex-col items-center gap-2">
                 <ImageOff size={24} />
                 <span className="text-xs">{t('media_unavailable', 'Media unavailable')}</span>

@@ -21,7 +21,7 @@ const MusicHero = () => {
   if (!displayTrack && playlist.length === 0) {
       return (
         <section className="relative pt-32 pb-20 px-4 sm:px-8 overflow-hidden min-h-[60vh] flex items-center justify-center">
-             <div className="text-center text-dim">
+             <div className="text-center text-text-secondary">
                 <Sparkles size={48} className="mx-auto mb-4 opacity-50" />
                 <p>{t('music.loading', 'Loading library...')}</p>
             </div>
@@ -41,8 +41,8 @@ const MusicHero = () => {
                 transition={{ duration: 1 }}
                 className="absolute inset-0 z-0"
             >
-                <div className="absolute inset-0 bg-primary/70 z-10"></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-transparent z-10"></div>
+                <div className="absolute inset-0 bg-surface/70 z-10"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/80 to-transparent z-10"></div>
                 {displayTrack && (
                     <img
                         src={`/${displayTrack.cover}`}
@@ -64,7 +64,7 @@ const MusicHero = () => {
                         animate={prefersReducedMotion ? noMotion.animate : hero.animate}
                         transition={prefersReducedMotion ? noMotion.transition : hero.transition}
                         key={displayTrack.id}
-                        className="relative aspect-square rounded-sm overflow-hidden border border-border group hover:border-border-hover transition-colors duration-200"
+                        className="relative aspect-square rounded-lg overflow-hidden border border-border group hover:border-border-hover transition-colors duration-200"
                     >
                         <img
                             src={`/${displayTrack.cover}`}
@@ -80,11 +80,11 @@ const MusicHero = () => {
                             tabIndex={0}
                             aria-label={isPlaying && currentTrack?.id === displayTrack.id ? t('music.pause', 'Pause') : t('music.play', 'Play')}
                         >
-                            <div className="w-20 h-20 rounded-full border border-border-hover flex items-center justify-center hover:scale-105 hover:border-accent transition-all duration-200">
+                            <div className="w-20 h-20 rounded-full border-2 border-border-hover bg-surface-overlay/20 backdrop-blur-sm flex items-center justify-center hover:scale-105 hover:border-accent hover:bg-accent/10 transition-all duration-200">
                                 {isPlaying && currentTrack?.id === displayTrack.id ? (
-                                    <Pause size={36} fill="currentColor" className="text-cream" />
+                                    <Pause size={36} fill="currentColor" className="text-accent" />
                                 ) : (
-                                    <Play size={36} fill="currentColor" className="text-cream ml-1" />
+                                    <Play size={36} fill="currentColor" className="text-accent ml-1" />
                                 )}
                             </div>
                         </div>
@@ -100,17 +100,17 @@ const MusicHero = () => {
                         >
                             <div className="flex items-center gap-2 mb-4">
                                 {displayTrack.tags?.map(tag => (
-                                    <span key={tag} className="px-3 py-1 rounded-sm border border-border text-xs text-accent font-label uppercase tracking-wide hover:border-accent/30 transition-colors duration-200">
+                                    <span key={tag} className="px-3 py-1 rounded border border-border bg-accent/10 text-xs text-accent font-mono uppercase tracking-wide hover:border-accent/40 hover:bg-accent/15 transition-colors duration-200">
                                         {tag}
                                     </span>
                                 ))}
                             </div>
 
-                            <h1 className="text-5xl md:text-7xl font-display text-cream-light mb-2 leading-none">
+                            <h1 className="text-5xl md:text-7xl font-display text-text-primary mb-2 leading-none">
                                 {displayTrack.title}
                             </h1>
-                            <p className="text-xl text-dim font-light">
-                                {t('music.by_artist', 'by')} <span className="text-cream">{displayTrack.artist || 'Igor Szuniewicz'}</span>
+                            <p className="text-xl text-text-secondary font-light">
+                                {t('music.by_artist', 'by')} <span className="text-text-primary">{displayTrack.artist || 'Igor Szuniewicz'}</span>
                             </p>
                         </motion.div>
 
@@ -118,14 +118,14 @@ const MusicHero = () => {
                             initial={prefersReducedMotion ? noMotion.initial : sectionReveal.initial}
                             animate={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
                             transition={prefersReducedMotion ? noMotion.transition : { ...sectionReveal.transition, delay: 0.2 }}
-                            className="text-dim max-w-2xl leading-7 text-lg border-l-2 border-accent/40 pl-6"
+                            className="text-text-secondary max-w-2xl leading-7 text-lg border-l-2 border-accent/40 pl-6"
                         >
                             {getDesc(displayTrack)}
                         </motion.p>
                     </div>
                 </div>
             ) : (
-                <div className="h-[400px] flex items-center justify-center text-dim">
+                <div className="h-[400px] flex items-center justify-center text-text-secondary">
                     <div className="text-center">
                         <Sparkles size={48} className="mx-auto mb-4 opacity-50" />
                         <p>{t('music.select_track', 'Select a track to begin')}</p>

@@ -26,7 +26,7 @@ const Transientica = () => {
     };
 
     return (
-        <div className="min-h-screen bg-primary text-cream font-sans selection:bg-accent/30">
+        <div className="min-h-screen bg-surface text-text-primary font-sans selection:bg-accent/30">
             <SEO
                 title={t('transientica.seo_title', 'Transientica | AudioLab')}
                 description={t('transientica.seo_description', 'Voice-controlled rhythm game using real-time ML audio classification. Beatbox sounds trigger gameplay actions with under 60ms latency.')}
@@ -35,7 +35,7 @@ const Transientica = () => {
             <div className="relative z-10 pt-8 px-6">
                 <Link
                     to="/projects"
-                    className="inline-flex items-center gap-2 text-dim hover:text-cream-light transition-colors px-4 py-2 rounded-sm bg-secondary border border-border"
+                    className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors px-4 py-2 rounded-sm bg-surface-raised border border-border"
                 >
                     <ArrowLeft size={16} />
                     {t('transientica.cta.back', 'Back to Projects')}
@@ -45,18 +45,18 @@ const Transientica = () => {
             <main className="relative z-10 max-w-7xl mx-auto px-6 pb-32">
                 {/* Hero */}
                 <section className="py-20 text-center">
-                    <div className="inline-block px-4 py-1.5 rounded-sm bg-secondary border border-border text-accent text-sm font-label uppercase tracking-wide mb-8">
+                    <div className="inline-block px-4 py-1.5 rounded-sm bg-surface-raised border border-border text-accent text-sm font-mono uppercase tracking-wide mb-8">
                         {t('transientica.hero.badge', 'Machine Learning Audio')}
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl font-display font-bold text-cream-light mb-6 leading-tight">
+                    <h1 className="text-5xl md:text-7xl font-display font-bold text-text-primary mb-6 leading-tight">
                         {t('transientica.hero.title_main', 'Transientica')}<br />
                         <span className="text-accent">
                             {t('transientica.hero.title_sub', 'Real-time Classification')}
                         </span>
                     </h1>
 
-                    <p className="text-xl text-dim max-w-2xl mx-auto mb-12 leading-7">
+                    <p className="text-xl text-text-secondary max-w-2xl mx-auto mb-12 leading-7">
                         {t('transientica.hero.description', 'A system that listens to your microphone and classifies sounds in real-time using a custom neural network trained on thousands of samples.')}
                     </p>
 
@@ -78,7 +78,7 @@ const Transientica = () => {
                             t('transientica.tags.unity', 'Unity'),
                             t('transientica.tags.python', 'Python')
                         ].map((tag) => (
-                            <span key={tag} className="px-4 py-2 bg-secondary border border-border rounded-sm text-sm text-cream">
+                            <span key={tag} className="px-4 py-2 bg-surface-raised border border-border rounded-sm text-sm text-text-primary">
                                 {tag}
                             </span>
                         ))}
@@ -110,10 +110,10 @@ const Transientica = () => {
 
                         {activeVideo !== 'main-video' && (
                             <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-colors">
-                                <div className="w-20 h-20 bg-secondary rounded-sm flex items-center justify-center border border-border">
-                                    <Play size={32} className="text-cream-light ml-1 fill-cream-light" />
+                                <div className="w-20 h-20 bg-surface-raised rounded-sm flex items-center justify-center border border-border">
+                                    <Play size={32} className="text-text-primary ml-1 fill-cream-light" />
                                 </div>
-                                <span className="absolute bottom-8 text-cream-light font-label text-sm tracking-wide uppercase opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+                                <span className="absolute bottom-8 text-text-primary font-mono text-sm tracking-wide uppercase opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
                                     {t('transientica.video.watch_demo', 'Watch Demo')}
                                 </span>
                             </div>
@@ -129,11 +129,11 @@ const Transientica = () => {
                         { val: t('transientica.stats.classes_value', '12'), label: t('transientica.stats.classes_label', 'Sound Classes') },
                         { val: t('transientica.stats.year_value', '2024'), label: t('transientica.stats.year_label', 'Year') }
                     ].map((stat) => (
-                        <div key={stat.label} className="p-6 bg-secondary border border-border rounded-sm text-center hover:bg-tertiary transition-colors">
+                        <div key={stat.label} className="p-6 bg-surface-raised border border-border rounded-sm text-center hover:bg-surface-overlay transition-colors">
                             <div className="text-3xl font-display font-bold text-accent mb-2">
                                 {stat.val}
                             </div>
-                            <p className="text-dim text-sm uppercase tracking-wide font-label">
+                            <p className="text-text-secondary text-sm uppercase tracking-wide font-mono">
                                 {stat.label}
                             </p>
                         </div>
@@ -142,7 +142,7 @@ const Transientica = () => {
 
                 {/* Features */}
                 <section className="mb-32">
-                    <h2 className="text-4xl font-display font-bold text-cream-light text-center mb-16">
+                    <h2 className="text-4xl font-display font-bold text-text-primary text-center mb-16">
                         {t('transientica.features.title', 'Key Features')}
                     </h2>
                     <div className="grid md:grid-cols-3 gap-8">
@@ -165,8 +165,8 @@ const Transientica = () => {
                 </section>
 
                 {/* Technical Deep Dive */}
-                <section className="bg-secondary border border-border rounded-sm p-8 md:p-12">
-                    <h2 className="text-3xl font-display font-bold text-cream-light mb-8">
+                <section className="bg-surface-raised border border-border rounded-sm p-8 md:p-12">
+                    <h2 className="text-3xl font-display font-bold text-text-primary mb-8">
                         {t('transientica.technical.title', 'Technical Deep Dive')}
                     </h2>
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -176,16 +176,16 @@ const Transientica = () => {
                                     <Zap size={20} />
                                     {t('transientica.technical.spectral.title', 'Spectral Analysis')}
                                 </h3>
-                                <p className="text-dim leading-relaxed">
+                                <p className="text-text-secondary leading-relaxed">
                                     {t('transientica.technical.spectral.desc', 'The system converts raw audio waveforms into Mel-spectrograms, which are then fed into the neural network as image data. This allows the model to recognize patterns in frequency and time simultaneously.')}
                                 </p>
                             </div>
                             <div>
-                                <h3 className="text-xl font-display font-bold text-accent-light mb-3 flex items-center gap-2">
+                                <h3 className="text-xl font-display font-bold text-accent-hover mb-3 flex items-center gap-2">
                                     <Cpu size={20} />
                                     {t('transientica.technical.optimization.title', 'Optimization')}
                                 </h3>
-                                <p className="text-dim leading-relaxed">
+                                <p className="text-text-secondary leading-relaxed">
                                     {t('transientica.technical.optimization.desc', 'Inference is optimized using ONNX Runtime, allowing the Python-trained PyTorch model to run efficiently within the C# environment of Unity without heavy dependencies.')}
                                 </p>
                             </div>
@@ -212,8 +212,8 @@ const Transientica = () => {
                             </video>
                             {activeVideo !== 'tech-video' && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10">
-                                    <div className="w-16 h-16 bg-secondary rounded-sm flex items-center justify-center border border-border">
-                                        <Play size={24} className="text-cream-light ml-1 fill-cream-light" />
+                                    <div className="w-16 h-16 bg-surface-raised rounded-sm flex items-center justify-center border border-border">
+                                        <Play size={24} className="text-text-primary ml-1 fill-cream-light" />
                                     </div>
                                 </div>
                             )}
@@ -229,7 +229,7 @@ const Transientica = () => {
                     >
                         {t('transientica.cta.view_all', 'View All Projects')}
                     </Link>
-                    <p className="mt-8 text-dim text-sm">
+                    <p className="mt-8 text-text-secondary text-sm">
                         &copy; {new Date().getFullYear()} Igor Szuniewicz
                     </p>
                 </div>
@@ -240,12 +240,12 @@ const Transientica = () => {
 };
 
 const FeatureCard = ({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) => (
-    <div className="p-8 bg-secondary border border-border rounded-sm hover:bg-tertiary transition-colors duration-300 group">
-        <div className="w-12 h-12 bg-tertiary rounded-sm flex items-center justify-center text-cream-light mb-6 group-hover:text-accent transition-colors">
+    <div className="p-8 bg-surface-raised border border-border rounded-sm hover:bg-surface-overlay transition-colors duration-300 group">
+        <div className="w-12 h-12 bg-surface-overlay rounded-sm flex items-center justify-center text-text-primary mb-6 group-hover:text-accent transition-colors">
             {icon}
         </div>
-        <h3 className="text-xl font-display font-bold text-cream-light mb-3">{title}</h3>
-        <p className="text-dim leading-relaxed">
+        <h3 className="text-xl font-display font-bold text-text-primary mb-3">{title}</h3>
+        <p className="text-text-secondary leading-relaxed">
             {desc}
         </p>
     </div>

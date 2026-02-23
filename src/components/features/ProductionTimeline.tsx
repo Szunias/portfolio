@@ -38,16 +38,16 @@ const ProductionTimeline = () => {
               />
               {/* Tooltip */}
               {hoveredWeek === week && (
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-secondary rounded-sm text-xs whitespace-nowrap z-10 border border-border">
-                  <span className="text-cream font-medium">W{week}</span>
-                  <span className="text-dim ml-1">{getPhaseForWeek(week)}</span>
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-surface-raised rounded-sm text-xs whitespace-nowrap z-10 border border-border">
+                  <span className="text-text-primary font-medium">W{week}</span>
+                  <span className="text-text-secondary ml-1">{getPhaseForWeek(week)}</span>
                 </div>
               )}
             </div>
           ))}
         </div>
-        <span className="text-sm text-dim ml-2">
-          <span className="text-cream font-medium">{currentWeek}</span>/{totalWeeks}
+        <span className="text-sm text-text-secondary ml-2">
+          <span className="text-text-primary font-medium">{currentWeek}</span>/{totalWeeks}
         </span>
       </div>
 
@@ -58,7 +58,7 @@ const ProductionTimeline = () => {
           return (
             <div key={i} className="flex items-center gap-1.5">
               <div className={`w-2 h-2 rounded-sm ${phase.color}`} />
-              <span className={isActive ? 'text-cream font-medium' : 'text-dim'}>
+              <span className={isActive ? 'text-text-primary font-medium' : 'text-text-secondary'}>
                 {phase.name}
               </span>
             </div>

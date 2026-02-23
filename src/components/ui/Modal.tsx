@@ -48,20 +48,20 @@ const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
                 animate={prefersReducedMotion ? noMotion.animate : { scale: 1, y: 0, opacity: 1 }}
                 exit={prefersReducedMotion ? { opacity: 0 } : { scale: 0.95, y: 8, opacity: 0 }}
                 transition={prefersReducedMotion ? noMotion.transition : spring.interactive}
-                className="bg-secondary border border-border p-8 rounded-sm max-w-md w-full relative"
+                className="bg-surface-raised border border-border p-8 rounded-sm max-w-md w-full relative"
                 onClick={(e) => e.stopPropagation()}
             >
                 <Button
                     onClick={onClose}
                     variant="ghost"
                     size="icon"
-                    className="absolute top-4 right-4 text-dim hover:text-cream"
+                    className="absolute top-4 right-4 text-text-secondary hover:text-text-primary"
                     aria-label="Close modal"
                 >
                     <X size={24} />
                 </Button>
 
-                {title && <h3 id="modal-title" className="text-2xl font-display text-cream-light mb-2">{title}</h3>}
+                {title && <h3 id="modal-title" className="text-2xl font-display text-text-primary mb-2">{title}</h3>}
                 {children}
             </motion.div>
         </motion.div>

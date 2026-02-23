@@ -21,32 +21,32 @@ const MiddlewareOptimization = () => {
     const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
     return (
-        <div ref={containerRef} className="min-h-screen bg-primary text-cream-light font-sans selection:bg-accent/20 selection:text-accent-light">
+        <div ref={containerRef} className="min-h-screen bg-surface text-text-primary font-sans selection:bg-accent/20 selection:text-accent-hover">
             <SEO
                 title={t('seo_title', 'Wwise Middleware Optimization')}
                 description={t('seo_description', 'Three Wwise middleware projects: voice management, spatial audio, and cross-platform memory optimization.')}
             />
             {/* Hero Section */}
-            <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-primary px-4 py-20">
+            <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-surface px-4 py-20">
                 <motion.div
                     style={{ opacity, scale }}
                     className="relative z-10 max-w-5xl w-full text-center"
                 >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-secondary text-accent text-sm font-bold uppercase tracking-wider mb-8 border border-border">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-surface-raised text-accent text-sm font-bold uppercase tracking-wider mb-8 border border-border">
                         <Zap size={16} />
                         {t('hero.tag')}
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-black tracking-tight text-cream-light mb-6 leading-tight">
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-black tracking-tight text-text-primary mb-6 leading-tight">
                         {t('hero.title')}
                     </h1>
 
-                    <p className="text-lg md:text-2xl text-dim max-w-3xl mx-auto mb-12 font-light leading-relaxed">
+                    <p className="text-lg md:text-2xl text-text-secondary max-w-3xl mx-auto mb-12 font-light leading-relaxed">
                         {t('hero.lead')}
                     </p>
 
                     {/* Wwise Logo */}
-                    <div className="bg-secondary p-8 rounded-sm inline-block mb-12 border border-border transition-colors duration-300">
+                    <div className="bg-surface-raised p-8 rounded-sm inline-block mb-12 border border-border transition-colors duration-300">
                         <img
                             src="/assets/images/projects-pausedeserve/wwise_logo_rgb-77Awrfoo.png"
                             alt="Wwise Logo"
@@ -56,8 +56,8 @@ const MiddlewareOptimization = () => {
                     </div>
 
                     {/* Context Note */}
-                    <div className="max-w-2xl mx-auto bg-secondary border-l-4 border-accent p-6 rounded-sm text-left mb-12">
-                        <p className="text-cream text-sm md:text-base leading-relaxed">
+                    <div className="max-w-2xl mx-auto bg-surface-raised border-l-4 border-accent p-6 rounded-sm text-left mb-12">
+                        <p className="text-text-primary text-sm md:text-base leading-relaxed">
                             {t('hero.context')}
                         </p>
                     </div>
@@ -71,12 +71,12 @@ const MiddlewareOptimization = () => {
                         ].map((stat, index) => (
                             <div
                                 key={index}
-                                className="flex items-baseline gap-3 px-6 py-4 bg-secondary rounded-sm border border-border hover:-translate-y-1 transition-transform duration-300"
+                                className="flex items-baseline gap-3 px-6 py-4 bg-surface-raised rounded-sm border border-border hover:-translate-y-1 transition-transform duration-300"
                             >
                                 <span className="text-3xl font-black text-accent">
                                     {stat.num}
                                 </span>
-                                <span className="text-dim font-medium text-sm uppercase tracking-wide">
+                                <span className="text-text-secondary font-medium text-sm uppercase tracking-wide">
                                     {stat.text}
                                 </span>
                             </div>
@@ -84,13 +84,13 @@ const MiddlewareOptimization = () => {
                     </div>
                 </motion.div>
 
-                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-dim">
+                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-text-secondary">
                     <ChevronDown size={32} />
                 </div>
             </section>
 
             {/* Main Content */}
-            <main className="relative z-20 bg-primary">
+            <main className="relative z-20 bg-surface">
                 {/* Section Header */}
                 <section className="max-w-4xl mx-auto px-6 py-24 text-center">
                     <motion.h2
@@ -98,7 +98,7 @@ const MiddlewareOptimization = () => {
                         whileInView={sectionReveal.animate}
                         viewport={{ once: true }}
                         transition={sectionReveal.transition}
-                        className="text-4xl md:text-5xl font-display font-bold text-cream-light mb-6"
+                        className="text-4xl md:text-5xl font-display font-bold text-text-primary mb-6"
                     >
                         {t('section.title')}
                     </motion.h2>
@@ -107,7 +107,7 @@ const MiddlewareOptimization = () => {
                         whileInView={sectionReveal.animate}
                         viewport={{ once: true }}
                         transition={{ ...sectionReveal.transition, delay: 0.1 }}
-                        className="text-xl text-dim leading-relaxed"
+                        className="text-xl text-text-secondary leading-relaxed"
                     >
                         {t('section.subtitle')}
                     </motion.p>
@@ -151,11 +151,11 @@ const MiddlewareOptimization = () => {
                 </div>
 
                 {/* Skills Section */}
-                <section className="bg-secondary py-32 px-6">
+                <section className="bg-surface-raised py-32 px-6">
                     <div className="max-w-6xl mx-auto">
                         <div className="text-center mb-20">
-                            <h2 className="text-4xl font-display font-bold text-cream-light mb-4">{t('learned.title')}</h2>
-                            <p className="text-dim text-lg">{t('learned.subtitle')}</p>
+                            <h2 className="text-4xl font-display font-bold text-text-primary mb-4">{t('learned.title')}</h2>
+                            <p className="text-text-secondary text-lg">{t('learned.subtitle')}</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -165,7 +165,7 @@ const MiddlewareOptimization = () => {
                                 desc={t('learned.skill1_desc')}
                             />
                             <SkillCard
-                                icon={<Layers className="text-accent-light" />}
+                                icon={<Layers className="text-accent-hover" />}
                                 title={t('learned.skill2_name')}
                                 desc={t('learned.skill2_desc')}
                             />
@@ -175,7 +175,7 @@ const MiddlewareOptimization = () => {
                                 desc={t('learned.skill3_desc')}
                             />
                             <SkillCard
-                                icon={<Database className="text-accent-light" />}
+                                icon={<Database className="text-accent-hover" />}
                                 title={t('learned.skill4_name')}
                                 desc={t('learned.skill4_desc')}
                             />
@@ -185,7 +185,7 @@ const MiddlewareOptimization = () => {
                                 desc={t('learned.skill5_desc')}
                             />
                             <SkillCard
-                                icon={<Zap className="text-accent-light" />}
+                                icon={<Zap className="text-accent-hover" />}
                                 title={t('learned.skill6_name')}
                                 desc={t('learned.skill6_desc')}
                             />
@@ -195,15 +195,15 @@ const MiddlewareOptimization = () => {
             </main>
 
             {/* Footer */}
-            <footer className="bg-primary py-20 text-center border-t border-border">
+            <footer className="bg-surface py-20 text-center border-t border-border">
                 <Link
                     to="/projects"
-                    className="inline-flex items-center gap-2 px-8 py-4 bg-secondary text-cream-light font-semibold rounded-sm border border-border hover:-translate-y-1 hover:border-border-hover transition-all duration-300 group"
+                    className="inline-flex items-center gap-2 px-8 py-4 bg-surface-raised text-text-primary font-semibold rounded-sm border border-border hover:-translate-y-1 hover:border-border-hover transition-all duration-300 group"
                 >
                     <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
                     {t('back')}
                 </Link>
-                <p className="mt-8 text-dim text-sm">
+                <p className="mt-8 text-text-secondary text-sm">
                     {t('footer')}
                 </p>
             </footer>
@@ -232,25 +232,25 @@ const CaseStudyCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, po
             whileInView={prefersReducedMotion ? noMotion.animate : detailIn.animate}
             viewport={{ once: true, margin: "-100px" }}
             transition={prefersReducedMotion ? noMotion.transition : detailIn.transition}
-            className="bg-secondary border border-border rounded-sm p-8 md:p-12"
+            className="bg-surface-raised border border-border rounded-sm p-8 md:p-12"
         >
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-                <h3 className="text-3xl md:text-4xl font-display font-bold text-cream-light">{title}</h3>
+                <h3 className="text-3xl md:text-4xl font-display font-bold text-text-primary">{title}</h3>
                 <div className="flex flex-wrap gap-3">
                     {badges.map((badge: string, i: number) => (
                         <span key={i} className="px-4 py-1.5 bg-accent/10 text-accent text-sm font-semibold rounded-sm border border-accent/20">
                             {badge}
                         </span>
                     ))}
-                    <span className="px-4 py-1.5 bg-accent/10 text-accent-light text-sm font-semibold rounded-sm border border-accent/20">
+                    <span className="px-4 py-1.5 bg-accent/10 text-accent-hover text-sm font-semibold rounded-sm border border-accent/20">
                         {time}
                     </span>
                 </div>
             </div>
 
-            <div className="bg-primary rounded-sm overflow-hidden mb-10 border border-border">
+            <div className="bg-surface rounded-sm overflow-hidden mb-10 border border-border">
                 <div className="p-6 border-b border-border">
-                    <h4 className="font-bold text-lg text-cream flex items-center gap-2">
+                    <h4 className="font-bold text-lg text-text-primary flex items-center gap-2">
                         <svg
                             width="18"
                             height="18"
@@ -288,14 +288,14 @@ const CaseStudyCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, po
                         </video>
                     )}
                 </div>
-                <p className="p-6 text-dim text-sm bg-secondary">
+                <p className="p-6 text-text-secondary text-sm bg-surface-raised">
                     {caption}
                 </p>
             </div>
 
             <div className="space-y-6">
                 {paragraphs.map((p: string, i: number) => (
-                    <p key={i} className="text-lg text-cream leading-relaxed pl-6 border-l-4 border-accent/40">
+                    <p key={i} className="text-lg text-text-primary leading-relaxed pl-6 border-l-4 border-accent/40">
                         {p}
                     </p>
                 ))}
@@ -319,13 +319,13 @@ const SkillCard = ({ icon, title, desc }: SkillCardProps) => {
             viewport={{ once: true }}
             transition={prefersReducedMotion ? noMotion.transition : cardIn.transition}
             whileHover={prefersReducedMotion ? {} : { y: -4 }}
-            className="bg-secondary p-8 rounded-sm border border-border hover:border-border-hover transition-all duration-300"
+            className="bg-surface-raised p-8 rounded-sm border border-border hover:border-border-hover transition-all duration-300"
         >
-            <div className="w-12 h-12 bg-primary rounded-sm flex items-center justify-center mb-6">
+            <div className="w-12 h-12 bg-surface rounded-sm flex items-center justify-center mb-6">
                 {icon}
             </div>
-            <h3 className="text-xl font-display font-bold text-cream-light mb-3">{title}</h3>
-            <p className="text-dim leading-relaxed">
+            <h3 className="text-xl font-display font-bold text-text-primary mb-3">{title}</h3>
+            <p className="text-text-secondary leading-relaxed">
                 {desc}
             </p>
         </motion.div>

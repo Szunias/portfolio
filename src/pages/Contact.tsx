@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Mail, MapPin, Linkedin, Github, Copy, Check } from 'lucide-react';
+import { Mail, MapPin, Linkedin, Github, Copy, Check, Clock } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 import ContactForm from '../components/features/ContactForm';
 import SEO from '../components/layout/SEO';
 import { usePortfolioData } from '../hooks/usePortfolioData';
+import { fadeUpVariants } from '@/constants/motion';
 
 /** Base64-encoded email to deter scraper bots from harvesting it in static HTML. */
 const ENCODED_EMAIL = 'aWdvcnN6dW5pZXdpY3p3b3JrQGdtYWlsLmNvbQ==';
@@ -37,94 +39,138 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-surface">
       <SEO
         title={t('seo_title', 'Contact')}
         description={t('seo_description', 'Get in touch with Igor Szuniewicz for game audio, tool development, and middleware integration.')}
       />
 
-      <div className="relative z-10 pt-32 pb-28 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-        <div className="w-full max-w-6xl">
+      <div className="relative z-10 pt-32 pb-28 px-4 md:px-8">
+        <div className="w-full max-w-content mx-auto">
 
-          <div className="text-center mb-16">
-            <h1 className="text-4xl sm:text-5xl font-display text-cream-light mb-4 tracking-wide">{t('contact_title', 'Get In Touch')}</h1>
-            <p className="text-dim text-lg max-w-xl mx-auto leading-7">
+          <motion.div
+            className="text-center mb-16"
+            initial="hidden"
+            animate="visible"
+            variants={fadeUpVariants}
+          >
+            <h1 className="font-display text-h1 text-text-primary mb-4">{t('contact_title', 'Get In Touch')}</h1>
+            <p className="text-text-secondary text-body max-w-2xl mx-auto">
               {t('contact_intro', "I'm currently looking for internship opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!")}
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 
              {/* Contact Info Card */}
-             <div className="bg-secondary border border-border rounded-sm p-8">
-                <h2 className="text-xl font-display text-cream-light mb-8">{t('contact_info_title', 'Contact Info')}</h2>
+             <motion.div
+               className="bg-surface-raised border border-border rounded-lg p-8"
+               initial="hidden"
+               animate="visible"
+               variants={fadeUpVariants}
+               transition={{ delay: 0.1 }}
+             >
+                <h2 className="text-h3 font-display text-text-primary mb-6">{t('contact_info_title', 'Contact Info')}</h2>
 
                 <div className="space-y-6">
-                   <div className="flex items-center gap-4">
-                      <Mail size={20} className="text-accent flex-shrink-0" />
-                      <div>
-                         <p className="text-dim text-xs mb-0.5">{t('contact_info_email', 'Email')}</p>
-                         <div className="flex items-center gap-2">
+                   {/* Email - Prominent */}
+                   <div className="flex items-start gap-4">
+                      <Mail size={24} className="text-accent flex-shrink-0 mt-1" />
+                      <div className="flex-1">
+                         <p className="text-text-secondary text-body-sm mb-1.5">{t('contact_info_email', 'Email')}</p>
+                         <div className="flex items-center gap-2 flex-wrap">
                             {email ? (
-                              <a href={`mailto:${email}`} className="text-cream hover:text-accent transition-colors font-medium">
+                              <a
+                                href={`mailto:${email}`}
+                                className="text-accent hover:text-accent-hover transition-colors text-body font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised rounded-sm"
+                              >
                                 {email}
                               </a>
                             ) : (
-                              <span className="text-dim">...</span>
+                              <span className="text-text-tertiary">...</span>
                             )}
                             <button
                               onClick={copyToClipboard}
-                              className="text-dim hover:text-cream transition-colors p-1"
+                              className="text-text-secondary hover:text-text-primary transition-colors p-1.5 rounded-md hover:bg-surface-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised"
                               title={t('tooltips.copy_email', 'Copy Email')}
                               aria-label={t('tooltips.copy_email', 'Copy Email')}
                               disabled={!email}
                             >
-                              {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
+                              {copied ? <Check size={16} className="text-success" /> : <Copy size={16} />}
                             </button>
                          </div>
                       </div>
                    </div>
 
-                   <div className="flex items-center gap-4">
-                      <MapPin size={20} className="text-accent flex-shrink-0" />
-                      <div>
-                         <p className="text-dim text-xs mb-0.5">{t('contact_info_location', 'Location')}</p>
-                         <p className="text-cream font-medium">
+                   {/* LinkedIn - Prominent */}
+                   <div className="flex items-start gap-4">
+                      <Linkedin size={24} className="text-accent flex-shrink-0 mt-1" />
+                      <div className="flex-1">
+                         <p className="text-text-secondary text-body-sm mb-1.5">{t('contact_info_linkedin', 'LinkedIn')}</p>
+                         <a
+                           href={personal_info.social_media.linkedin}
+                           target="_blank"
+                           rel="noopener noreferrer me"
+                           className="text-accent hover:text-accent-hover transition-colors text-body font-semibold inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised rounded-sm"
+                         >
+                           {t('contact_info_linkedin_label', 'View Profile')}
+                         </a>
+                      </div>
+                   </div>
+
+                   {/* Location with Timezone */}
+                   <div className="flex items-start gap-4">
+                      <MapPin size={24} className="text-accent flex-shrink-0 mt-1" />
+                      <div className="flex-1">
+                         <p className="text-text-secondary text-body-sm mb-1.5">{t('contact_info_location', 'Location')}</p>
+                         <p className="text-text-primary font-semibold text-body">
                            {personal_info.location.city}, {personal_info.location.country}
+                         </p>
+                      </div>
+                   </div>
+
+                   {/* Timezone */}
+                   <div className="flex items-start gap-4">
+                      <Clock size={24} className="text-accent flex-shrink-0 mt-1" />
+                      <div className="flex-1">
+                         <p className="text-text-secondary text-body-sm mb-1.5">{t('contact_info_timezone', 'Timezone')}</p>
+                         <p className="text-text-primary font-semibold text-body">
+                           {t('contact_info_timezone_value', 'CET/CEST (UTC+1/+2)')}
                          </p>
                       </div>
                    </div>
                 </div>
 
+                {/* Availability Status Badge */}
                 <div className="mt-8 pt-6 border-t border-border">
-                   <p className="text-dim text-xs mb-4">{t('contact_social_title', 'Find me on')}</p>
-                   <div className="flex gap-3">
-                      <a
-                        href={personal_info.social_media.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer me"
-                        aria-label="LinkedIn"
-                        className="flex items-center justify-center w-12 h-12 border border-border rounded-sm text-dim hover:border-border-hover hover:text-cream transition-colors duration-200"
-                      >
-                         <Linkedin size={20} />
-                      </a>
-                      <a
-                        href={personal_info.social_media.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="GitHub"
-                        className="flex items-center justify-center w-12 h-12 border border-border rounded-sm text-dim hover:border-border-hover hover:text-cream transition-colors duration-200"
-                      >
-                         <Github size={20} />
-                      </a>
+                   <div className="inline-flex items-center gap-2 bg-success/10 text-success border border-success/20 rounded-md px-3 py-1.5">
+                      <div className="w-2 h-2 rounded-full bg-success animate-pulse-glow"></div>
+                      <span className="text-body-sm font-medium">{t('contact_availability_internship', 'Available for internship')}</span>
                    </div>
                 </div>
-             </div>
+
+                <div className="mt-6">
+                   <a
+                     href={personal_info.social_media.github}
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="inline-flex items-center gap-2 text-text-secondary hover:text-accent transition-colors text-body-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised rounded-sm"
+                   >
+                      <Github size={18} />
+                      <span>{String(t('contact_github_label', 'View GitHub'))}</span>
+                   </a>
+                </div>
+             </motion.div>
 
              {/* Contact Form */}
-             <div>
+             <motion.div
+               initial="hidden"
+               animate="visible"
+               variants={fadeUpVariants}
+               transition={{ delay: 0.2 }}
+             >
                 <ContactForm />
-             </div>
+             </motion.div>
 
           </div>
         </div>

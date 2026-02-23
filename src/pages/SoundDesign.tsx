@@ -19,7 +19,7 @@ const SoundDesign = () => {
     const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
     return (
-        <div ref={containerRef} className="min-h-screen bg-secondary text-cream font-sans selection:bg-accent/30">
+        <div ref={containerRef} className="min-h-screen bg-surface-raised text-text-primary font-sans selection:bg-accent/30">
             <SEO title={t('seo.title')} description={t('seo.description')} />
 
             {/* Hero Section */}
@@ -33,11 +33,11 @@ const SoundDesign = () => {
                         {t('hero.badge', 'Sound Design Portfolio')}
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-cream-light mb-6 leading-tight">
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-text-primary mb-6 leading-tight">
                         {t('hero.title', 'Sonic Landscapes')}
                     </h1>
 
-                    <p className="text-lg md:text-2xl text-dim max-w-3xl mx-auto mb-12 font-light leading-relaxed">
+                    <p className="text-lg md:text-2xl text-text-secondary max-w-3xl mx-auto mb-12 font-light leading-relaxed">
                         {t('hero.subtitle', 'A collection of linear media redesigns and implementation showcases.')}
                     </p>
 
@@ -65,7 +65,7 @@ const SoundDesign = () => {
             {/* Main Content */}
             <main className="relative z-20 max-w-7xl mx-auto px-6 pb-32">
                 <section className="mb-20">
-                    <h2 className="text-3xl font-display font-bold text-cream-light mb-12 border-l-4 border-accent pl-6">
+                    <h2 className="text-3xl font-display font-bold text-text-primary mb-12 border-l-4 border-accent pl-6">
                         {t('section1.title', 'Redesigns & Showcases')}
                     </h2>
 
@@ -89,8 +89,8 @@ const SoundDesign = () => {
                         />
 
                         {/* Video 3: Weapon Sound Design - SIGNAL OFFLINE */}
-                        <div className="bg-secondary rounded-sm overflow-hidden border border-border group relative h-full min-h-[400px] flex flex-col">
-                            <div className="relative flex-grow bg-primary flex items-center justify-center overflow-hidden">
+                        <div className="bg-surface-raised rounded-sm overflow-hidden border border-border group relative h-full min-h-[400px] flex flex-col">
+                            <div className="relative flex-grow bg-surface flex items-center justify-center overflow-hidden">
                                 <div className="text-center relative z-10 p-8">
                                     <div className="w-20 h-20 mx-auto mb-6 rounded-full border-2 border-accent/30 flex items-center justify-center text-accent">
                                         <VolumeX size={32} />
@@ -98,14 +98,14 @@ const SoundDesign = () => {
                                     <h3 className="text-2xl font-display font-bold text-accent mb-2 tracking-widest uppercase">
                                         {t('section1.video3.placeholder_title', 'SIGNAL OFFLINE')}
                                     </h3>
-                                    <p className="text-dim font-label text-sm tracking-wide">
+                                    <p className="text-text-secondary font-mono text-sm tracking-wide">
                                         {t('section1.video3.placeholder_subtitle', 'Content currently unavailable due to NDA or pending release.')}
                                     </p>
                                 </div>
                             </div>
-                            <div className="p-8 border-t border-border bg-tertiary">
-                                <h3 className="text-xl font-display font-bold text-cream-light mb-2 opacity-50">{t('section1.video3.title', 'Weapon Sound Design')}</h3>
-                                <p className="text-dim text-sm mb-4 opacity-50">{t('section1.video3.description', 'Procedural weapon synthesis system.')}</p>
+                            <div className="p-8 border-t border-border bg-surface-overlay">
+                                <h3 className="text-xl font-display font-bold text-text-primary mb-2 opacity-50">{t('section1.video3.title', 'Weapon Sound Design')}</h3>
+                                <p className="text-text-secondary text-sm mb-4 opacity-50">{t('section1.video3.description', 'Procedural weapon synthesis system.')}</p>
                                 <span className="px-3 py-1 bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider rounded-sm border border-accent/20">
                                     {t('section1.video3.badge', 'Confidential')}
                                 </span>
@@ -125,15 +125,15 @@ const SoundDesign = () => {
             </main>
 
             {/* Footer */}
-            <footer className="py-20 text-center border-t border-border bg-primary">
+            <footer className="py-20 text-center border-t border-border bg-surface">
                 <Link
                     to="/projects"
-                    className="inline-flex items-center gap-2 px-8 py-4 bg-secondary text-cream-light font-semibold rounded-sm border border-border hover:bg-tertiary transition-all duration-300 group"
+                    className="inline-flex items-center gap-2 px-8 py-4 bg-surface-raised text-text-primary font-semibold rounded-sm border border-border hover:bg-surface-overlay transition-all duration-300 group"
                 >
                     <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
                     {t('footer.back_link', 'Back to Projects')}
                 </Link>
-                <p className="mt-8 text-dim text-sm">
+                <p className="mt-8 text-text-secondary text-sm">
                     &copy; {new Date().getFullYear()} Igor Szuniewicz
                 </p>
             </footer>
@@ -166,9 +166,9 @@ const VideoCard = ({ title, desc, badge, videoSrc, poster }: VideoCardProps) => 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.35 }}
-            className="bg-secondary rounded-sm overflow-hidden border border-border group hover:border-accent/30 transition-colors"
+            className="bg-surface-raised rounded-sm overflow-hidden border border-border group hover:border-accent/30 transition-colors"
         >
-            <div className="relative aspect-video bg-primary transition-shadow">
+            <div className="relative aspect-video bg-surface transition-shadow">
                 {!isPlaying && (
                     <div
                         className="absolute inset-0 bg-cover bg-center z-10 cursor-pointer group/poster"
@@ -181,7 +181,7 @@ const VideoCard = ({ title, desc, badge, videoSrc, poster }: VideoCardProps) => 
                     >
                         <div className="absolute inset-0 bg-black/40 group-hover/poster:bg-black/20 transition-colors flex items-center justify-center">
                             <div className="w-20 h-20 bg-accent/90 rounded-full flex items-center justify-center shadow-lg transition-transform">
-                                <Play size={32} className="text-cream-light ml-1 fill-cream-light" />
+                                <Play size={32} className="text-text-primary ml-1 fill-cream-light" />
                             </div>
                         </div>
                     </div>
@@ -197,14 +197,14 @@ const VideoCard = ({ title, desc, badge, videoSrc, poster }: VideoCardProps) => 
                     <source src={videoSrc} type="video/mp4" />
                 </video>
             </div>
-            <div className="p-8 border-t border-border bg-tertiary">
+            <div className="p-8 border-t border-border bg-surface-overlay">
                 <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-2xl font-display font-bold text-cream-light group-hover:text-accent transition-colors">{title}</h3>
+                    <h3 className="text-2xl font-display font-bold text-text-primary group-hover:text-accent transition-colors">{title}</h3>
                     <span className="px-3 py-1 bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider rounded-sm border border-accent/20">
                         {badge}
                     </span>
                 </div>
-                <p className="text-dim leading-relaxed text-sm">
+                <p className="text-text-secondary leading-relaxed text-sm">
                     {desc}
                 </p>
             </div>
