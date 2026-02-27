@@ -139,7 +139,7 @@ const Showreel = () => {
 
       {/* Chapter Navigation - Tracklist Style */}
       <div className="mt-8 space-y-2">
-        <h3 className="font-mono text-label uppercase text-text-tertiary tracking-wider mb-4">
+        <h3 className="font-mono text-label uppercase text-text-secondary tracking-wider mb-4">
           {t('hero.chapters', 'Chapters')}
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -164,7 +164,7 @@ const Showreel = () => {
                 `}
               >
                 <span className="flex flex-col gap-1">
-                  <span className="font-mono text-caption text-text-tertiary">{formatTime(ts.time)}</span>
+                  <span className="font-mono text-caption text-text-secondary">{formatTime(ts.time)}</span>
                   <span className="truncate">{label}</span>
                 </span>
               </button>
