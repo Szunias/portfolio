@@ -83,7 +83,7 @@ interface ScrollWordProps {
 }
 
 const ScrollWord = ({ word, scrollYProgress, rangeStart, rangeEnd }: ScrollWordProps) => {
-  const opacity = useTransform(scrollYProgress, [rangeStart, rangeEnd], [0.15, 1]);
+  const opacity = useTransform(scrollYProgress, [rangeStart, rangeEnd], [0.35, 1]);
   return (
     <motion.span style={{ opacity }} className="inline-block mr-[0.3em]">
       {word}
@@ -108,12 +108,12 @@ const Hero = () => {
   );
   const words = description.split(/\s+/).filter(Boolean);
 
-  // CTA buttons fade in towards the end of the scroll
-  const ctaOpacity = useTransform(scrollYProgress, [0.75, 0.9], [0, 1]);
-  const ctaY = useTransform(scrollYProgress, [0.75, 0.9], [20, 0]);
+  // CTA buttons: visible from the start, fully opaque by mid-scroll
+  const ctaOpacity = useTransform(scrollYProgress, [0, 0.5], [0.6, 1]);
+  const ctaY = useTransform(scrollYProgress, [0, 0.3], [8, 0]);
 
   return (
-    <section ref={heroRef} className="relative h-[250vh] bg-surface">
+    <section ref={heroRef} className="relative h-[180vh] bg-surface">
       {/* Sticky inner container that stays visible while scrolling */}
       <div className="sticky top-0 h-screen min-h-screen flex flex-col justify-center overflow-hidden">
         {/* Decorative waveform */}
@@ -132,15 +132,15 @@ const Hero = () => {
             </p>
 
             {/* Scroll-driven word-by-word text reveal */}
-            <div className="text-body md:text-h5 text-text-secondary max-w-2xl leading-relaxed mb-16">
+            <div className="text-body md:text-h5 text-text-secondary max-w-2xl leading-relaxed mb-8">
               {prefersReducedMotion ? (
                 <p>{description}</p>
               ) : (
                 <p aria-label={description}>
                   {words.map((word, i) => {
-                    // Each word gets a portion of the 0.1-0.65 scroll range
-                    const rangeStart = 0.1 + (i / words.length) * 0.55;
-                    const rangeEnd = 0.1 + ((i + 1) / words.length) * 0.55;
+                    // Each word gets a portion of the 0.05-0.6 scroll range
+                    const rangeStart = 0.05 + (i / words.length) * 0.55;
+                    const rangeEnd = 0.05 + ((i + 1) / words.length) * 0.55;
                     return (
                       <ScrollWord
                         key={`${word}-${i}`}
