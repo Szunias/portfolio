@@ -12,7 +12,7 @@ const Gradwork = () => {
     const { t } = useTranslation('gradwork');
 
     return (
-        <div className="min-h-screen -mt-16">
+        <div className="min-h-screen">
             <SEO
                 title={t('seo.title')}
                 description={t('seo.description')}

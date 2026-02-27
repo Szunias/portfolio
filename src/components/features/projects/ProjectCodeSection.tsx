@@ -17,6 +17,7 @@ const ProjectCodeSection = ({ snippets }: ProjectCodeSectionProps) => {
     <div className="border border-border rounded-lg overflow-hidden bg-surface-raised">
         <button
             onClick={() => setShowCode(!showCode)}
+            aria-expanded={showCode}
             className="w-full px-6 py-4 flex items-center justify-between hover:bg-surface-overlay transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
         >
             <div className="flex items-center gap-3">

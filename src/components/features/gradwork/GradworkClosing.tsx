@@ -1,18 +1,22 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
+
+import { sectionReveal, noMotion } from '@/constants/motion';
 
 const GradworkClosing = ({ t }: { t: (key: string) => string }) => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const prefersReducedMotion = useReducedMotion();
+    const preset = prefersReducedMotion ? noMotion : sectionReveal;
 
     return (
         <section ref={ref} className="py-20 px-6">
             <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8 }}
+                initial={preset.initial}
+                animate={isInView ? preset.animate : {}}
+                transition={preset.transition}
                 className="max-w-4xl mx-auto"
             >
                 <div className="space-y-4 text-text-secondary text-lg leading-relaxed mb-12">

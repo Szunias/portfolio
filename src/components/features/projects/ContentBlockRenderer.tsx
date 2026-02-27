@@ -58,8 +58,12 @@ const SplitContentBlock = ({ block, onImageClick }: SplitContentBlockProps) => {
 
       <div className={cn(block.reverseLayout && "lg:col-start-1")}>
         <div
-          className="rounded-lg overflow-hidden border border-border bg-black aspect-video relative group cursor-pointer hover:border-border-hover transition-colors duration-300"
+          className="rounded-lg overflow-hidden border border-border bg-black aspect-video relative group cursor-pointer hover:border-border-hover transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           onClick={handleClick}
+          onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && block.media && onImageClick) { e.preventDefault(); onImageClick(block.media); } }}
+          role="button"
+          tabIndex={0}
+          aria-label={block.title ? `View ${block.title}` : 'View media'}
         >
            {block.media && (
                <MediaRenderer

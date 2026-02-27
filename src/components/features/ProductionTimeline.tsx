@@ -16,7 +16,7 @@ const ProductionTimeline = () => {
   const getPhaseForWeek = (week: number) => phases.find(p => p.weeks.includes(week))?.name || '';
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" role="group" aria-label={t('timeline.label', `Production timeline: Week ${currentWeek} of ${totalWeeks}`)}>
       {/* Week indicator */}
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-1.5">

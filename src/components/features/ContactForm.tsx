@@ -146,7 +146,7 @@ const ContactForm = () => {
             autoComplete="name"
             required
             aria-required="true"
-            className="w-full bg-surface-raised border border-border rounded-md py-3 px-4 text-text-primary placeholder:text-text-tertiary focus:border-accent focus:shadow-input-focus focus:outline-none transition-all duration-200"
+            className="w-full bg-surface border border-border rounded-md py-3 px-4 text-text-primary placeholder:text-text-tertiary focus:border-accent focus:shadow-input-focus focus:outline-none transition-all duration-200"
             placeholder={t('contact_form_name_placeholder', 'John Doe')}
           />
         </div>
@@ -164,7 +164,7 @@ const ContactForm = () => {
             aria-required="true"
             aria-invalid={validationError ? 'true' : undefined}
             aria-describedby={validationError ? 'email-error' : undefined}
-            className={`w-full bg-surface-raised border ${validationError ? 'border-error shadow-input-error' : 'border-border'} rounded-md py-3 px-4 text-text-primary placeholder:text-text-tertiary focus:border-accent focus:shadow-input-focus focus:outline-none transition-all duration-200`}
+            className={`w-full bg-surface border ${validationError ? 'border-error shadow-input-error' : 'border-border'} rounded-md py-3 px-4 text-text-primary placeholder:text-text-tertiary focus:border-accent focus:shadow-input-focus focus:outline-none transition-all duration-200`}
             placeholder={t('contact_form_email_placeholder', 'john@example.com')}
           />
           {validationError && (
@@ -186,7 +186,7 @@ const ContactForm = () => {
             rows={6}
             required
             aria-required="true"
-            className="w-full bg-surface-raised border border-border rounded-md py-3 px-4 text-text-primary placeholder:text-text-tertiary focus:border-accent focus:shadow-input-focus focus:outline-none transition-all duration-200 resize-none"
+            className="w-full bg-surface border border-border rounded-md py-3 px-4 text-text-primary placeholder:text-text-tertiary focus:border-accent focus:shadow-input-focus focus:outline-none transition-all duration-200 resize-none"
             placeholder={t('contact_form_message_placeholder', 'Tell me about your project or opportunity...')}
           ></textarea>
         </div>

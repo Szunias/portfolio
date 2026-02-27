@@ -94,13 +94,15 @@ const CodeViewer = ({ snippets }: CodeViewerProps) => {
         </div>
 
         {/* File tabs */}
-        <div className="flex gap-1">
+        <div className="flex gap-1" role="tablist" aria-label={t('code.file_tabs', 'Code file tabs')}>
           {snippets.map((snippet, index) => (
             <button
               key={index}
               onClick={() => { setActiveTab(index); setExpandedLine(null); }}
+              role="tab"
+              aria-selected={activeTab === index}
               className={cn(
-                "px-3 py-1 text-xs rounded transition-all",
+                "px-3 py-1 text-xs rounded transition-all focus-visible:ring-2 focus-visible:ring-accent",
                 activeTab === index
                   ? 'bg-surface-raised text-text-primary'
                   : 'text-text-secondary hover:text-text-primary'
@@ -133,11 +135,16 @@ const CodeViewer = ({ snippets }: CodeViewerProps) => {
             <div key={i}>
               <div
                 onClick={() => annotation && setExpandedLine(isExpanded ? null : i + 1)}
+                onKeyDown={(e) => { if (annotation && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); setExpandedLine(isExpanded ? null : i + 1); } }}
+                role={annotation ? 'button' : undefined}
+                tabIndex={annotation ? 0 : undefined}
+                aria-expanded={annotation ? isExpanded : undefined}
                 className={cn(
                   "flex gap-4 py-0.5 px-2 -mx-2 rounded transition-colors",
                   annotation && "cursor-pointer",
                   isExpanded && "bg-accent/10",
-                  annotation && !isExpanded && "hover:bg-surface-overlay"
+                  annotation && !isExpanded && "hover:bg-surface-overlay",
+                  annotation && "focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-surface-raised"
                 )}
               >
                 <span className={cn(

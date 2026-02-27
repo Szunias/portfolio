@@ -78,7 +78,11 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
             <div key={src} className="group">
               <div
                 onClick={() => !isVideo && handleOpenLightbox(i)}
-                className={`relative rounded-sm overflow-hidden border border-border ${!isVideo ? 'cursor-pointer hover:border-border-hover' : ''} transition-colors duration-200`}
+                onKeyDown={(e) => { if (!isVideo && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); handleOpenLightbox(i); } }}
+                role={!isVideo ? 'button' : undefined}
+                tabIndex={!isVideo ? 0 : undefined}
+                aria-label={!isVideo ? t('gallery.open', 'Open image in lightbox') : undefined}
+                className={`relative rounded-sm overflow-hidden border border-border ${!isVideo ? 'cursor-pointer hover:border-border-hover focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface' : ''} transition-colors duration-200`}
               >
                 {isVideo ? (
                   videoErrors.has(i) ? (
@@ -126,11 +130,15 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
             exit={{ opacity: 0 }}
             onClick={() => setSelectedIndex(null)}
             className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 cursor-zoom-out"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t('gallery.lightbox', 'Image lightbox')}
           >
             {/* Close button */}
             <button
               onClick={() => setSelectedIndex(null)}
-              className="absolute top-4 right-4 p-2 border border-border hover:border-border-hover rounded-sm transition-colors duration-200"
+              className="absolute top-4 right-4 p-2 border border-border hover:border-border-hover rounded-sm transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+              aria-label={t('gallery.close', 'Close lightbox')}
             >
               <X size={24} className="text-text-primary" />
             </button>

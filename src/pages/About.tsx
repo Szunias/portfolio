@@ -266,7 +266,7 @@ const About = () => {
                         variants={itemVars}
                         aria-label={`${t('stat_piano_value', '12')} ${t('stat_piano_label', 'Years Piano')}`}
                     >
-                        <span className="block font-display text-h1 md:text-hero text-accent">
+                        <span className="block font-display text-h1 md:text-hero text-accent-warm">
                             <AnimatedNumber
                                 target={12}
                                 isInView={pianoInView}
@@ -340,7 +340,7 @@ const About = () => {
                         <div className="flex flex-wrap gap-3">
                             <Link
                                 to="/contact"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-surface font-semibold rounded-md transition-all duration-200 hover:bg-accent-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-accent-warm text-surface font-semibold rounded-md transition-all duration-200 hover:bg-accent-warm-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-warm focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
                             >
                                 {t('cta_contact', 'Say hi')}
                             </Link>

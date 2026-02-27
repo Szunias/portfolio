@@ -124,13 +124,13 @@ const Transientica = () => {
                 {/* Stats */}
                 <section className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-32">
                     {[
-                        { val: t('transientica.stats.latency_value', '< 50ms'), label: t('transientica.stats.latency_label', 'Latency') },
-                        { val: t('transientica.stats.accuracy_value', '94%'), label: t('transientica.stats.accuracy_label', 'Accuracy') },
-                        { val: t('transientica.stats.classes_value', '12'), label: t('transientica.stats.classes_label', 'Sound Classes') },
-                        { val: t('transientica.stats.year_value', '2024'), label: t('transientica.stats.year_label', 'Year') }
+                        { val: t('transientica.stats.latency_value', '< 50ms'), label: t('transientica.stats.latency_label', 'Latency'), color: 'text-accent-warm' },
+                        { val: t('transientica.stats.accuracy_value', '94%'), label: t('transientica.stats.accuracy_label', 'Accuracy'), color: 'text-accent' },
+                        { val: t('transientica.stats.classes_value', '12'), label: t('transientica.stats.classes_label', 'Sound Classes'), color: 'text-accent' },
+                        { val: t('transientica.stats.year_value', '2024'), label: t('transientica.stats.year_label', 'Year'), color: 'text-accent' }
                     ].map((stat) => (
                         <div key={stat.label} className="p-6 bg-surface-raised border border-border rounded-sm text-center hover:bg-surface-overlay transition-colors">
-                            <div className="text-3xl font-display font-bold text-accent mb-2">
+                            <div className={`text-3xl font-display font-bold mb-2 ${stat.color}`}>
                                 {stat.val}
                             </div>
                             <p className="text-text-secondary text-sm uppercase tracking-wide font-mono">

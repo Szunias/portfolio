@@ -13,12 +13,12 @@ const NotFound = () => {
       <SEO title="404" noindex />
 
       {/* Waveform Flatline - 5 bars with low amplitude */}
-      <div className="flex items-center gap-1.5 mb-8" role="presentation" aria-hidden="true">
-        <div className="w-1 h-2 bg-accent/30 rounded-full animate-waveform-1" style={{ animationDuration: '2s' }}></div>
-        <div className="w-1 h-2 bg-accent/30 rounded-full animate-waveform-2" style={{ animationDuration: '2s' }}></div>
-        <div className="w-1 h-2 bg-accent/30 rounded-full animate-waveform-3" style={{ animationDuration: '2s' }}></div>
-        <div className="w-1 h-2 bg-accent/30 rounded-full animate-waveform-4" style={{ animationDuration: '2s' }}></div>
-        <div className="w-1 h-2 bg-accent/30 rounded-full animate-waveform-5" style={{ animationDuration: '2s' }}></div>
+      <div className="flex items-end gap-1.5 mb-8 h-10" role="presentation" aria-hidden="true">
+        <div className="w-1.5 bg-accent/50 rounded-full animate-waveform-1 origin-bottom" style={{ height: '24px', animationDuration: '2.5s' }}></div>
+        <div className="w-1.5 bg-accent/50 rounded-full animate-waveform-2 origin-bottom" style={{ height: '32px', animationDuration: '2.5s' }}></div>
+        <div className="w-1.5 bg-accent/50 rounded-full animate-waveform-3 origin-bottom" style={{ height: '20px', animationDuration: '2.5s' }}></div>
+        <div className="w-1.5 bg-accent/50 rounded-full animate-waveform-4 origin-bottom" style={{ height: '28px', animationDuration: '2.5s' }}></div>
+        <div className="w-1.5 bg-accent/50 rounded-full animate-waveform-5 origin-bottom" style={{ height: '24px', animationDuration: '2.5s' }}></div>
       </div>
 
       <h1 className="text-hero font-display text-text-primary mb-2 leading-none">404</h1>

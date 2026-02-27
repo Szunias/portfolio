@@ -36,7 +36,7 @@ const MiddlewareOptimization = () => {
                         {t('hero.tag')}
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-black tracking-tight text-text-primary mb-6 leading-tight">
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-text-primary mb-6 leading-tight">
                         {t('hero.title')}
                     </h1>
 
@@ -64,15 +64,15 @@ const MiddlewareOptimization = () => {
                     {/* Quick Stats */}
                     <div className="flex flex-wrap justify-center gap-6 md:gap-10">
                         {[
-                            { num: t('hero.stat1_num'), text: t('hero.stat1_text') },
-                            { num: t('hero.stat2_num'), text: t('hero.stat2_text') },
-                            { num: t('hero.stat3_num'), text: t('hero.stat3_text') }
+                            { num: t('hero.stat1_num'), text: t('hero.stat1_text'), color: 'text-accent-warm' },
+                            { num: t('hero.stat2_num'), text: t('hero.stat2_text'), color: 'text-accent' },
+                            { num: t('hero.stat3_num'), text: t('hero.stat3_text'), color: 'text-accent' }
                         ].map((stat, index) => (
                             <div
                                 key={index}
                                 className="flex items-baseline gap-3 px-6 py-4 bg-surface-raised rounded-sm border border-border hover:-translate-y-1 transition-transform duration-300"
                             >
-                                <span className="text-3xl font-black text-accent">
+                                <span className={`text-3xl font-bold ${stat.color}`}>
                                     {stat.num}
                                 </span>
                                 <span className="text-text-secondary font-medium text-sm uppercase tracking-wide">

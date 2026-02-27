@@ -14,11 +14,11 @@ const GradworkHeader = ({ t }: { t: (key: string) => string }) => {
                 transition={prefersReducedMotion ? noMotion.transition : hero.transition}
                 className="text-center"
             >
-                <span className="inline-block px-4 py-2 bg-accent/10 text-accent text-sm font-semibold rounded-full mb-6 border border-accent/20">
+                <span className="inline-block px-4 py-2 bg-accent/10 text-accent text-sm font-semibold rounded-sm mb-6 border border-accent/20">
                     {t('header.badge')}
                 </span>
 
-                <h1 className="text-[clamp(1.8rem,5vw,3.5rem)] font-display font-black leading-[1.1] tracking-tight mb-6 text-text-primary">
+                <h1 className="text-[clamp(1.8rem,5vw,3.5rem)] font-display font-bold leading-[1.1] tracking-tight mb-6 text-text-primary">
                     {t('header.title')}
                 </h1>
 

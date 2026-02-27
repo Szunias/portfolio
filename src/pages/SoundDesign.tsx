@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { Play, VolumeX, Music } from 'lucide-react';
 
 import SEO from '../components/layout/SEO';
+import { cardIn, noMotion } from '../constants/motion';
 
 /** Sound design portfolio page showcasing video redesigns and implementation work. */
 const SoundDesign = () => {
@@ -138,6 +139,7 @@ interface VideoCardProps {
 const VideoCard = ({ title, desc, badge, videoSrc, poster }: VideoCardProps) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
+    const prefersReducedMotion = useReducedMotion();
 
     const handlePlay = () => {
         if (videoRef.current) {
@@ -148,10 +150,10 @@ const VideoCard = ({ title, desc, badge, videoSrc, poster }: VideoCardProps) => 
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={prefersReducedMotion ? noMotion.initial : cardIn.initial}
+            whileInView={prefersReducedMotion ? noMotion.animate : cardIn.animate}
             viewport={{ once: true }}
-            transition={{ duration: 0.35 }}
+            transition={prefersReducedMotion ? noMotion.transition : cardIn.transition}
             className="bg-surface-raised rounded-sm overflow-hidden border border-border group hover:border-accent/30 transition-colors"
         >
             <div className="relative aspect-video bg-surface transition-shadow">
@@ -166,7 +168,7 @@ const VideoCard = ({ title, desc, badge, videoSrc, poster }: VideoCardProps) => 
                         aria-label={`Play ${title}`}
                     >
                         <div className="absolute inset-0 bg-black/40 group-hover/poster:bg-black/20 transition-colors flex items-center justify-center">
-                            <div className="w-20 h-20 bg-accent/90 rounded-full flex items-center justify-center shadow-lg transition-transform">
+                            <div className="w-20 h-20 bg-surface-raised rounded-sm flex items-center justify-center border border-border shadow-lg transition-transform">
                                 <Play size={32} className="text-text-primary ml-1 fill-text-primary" />
                             </div>
                         </div>

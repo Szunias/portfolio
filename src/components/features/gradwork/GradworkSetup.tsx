@@ -1,16 +1,20 @@
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
+
+import { sectionReveal, noMotion } from '@/constants/motion';
 
 const GradworkSetup = ({ t }: { t: (key: string) => string }) => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const prefersReducedMotion = useReducedMotion();
+    const preset = prefersReducedMotion ? noMotion : sectionReveal;
 
     return (
         <section ref={ref} className="py-20 px-6 max-w-4xl mx-auto">
             <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8 }}
+                initial={preset.initial}
+                animate={isInView ? preset.animate : {}}
+                transition={preset.transition}
             >
                 <h2 className="text-2xl md:text-3xl font-display font-bold text-text-primary mb-8">
                     {t('setup.title')}

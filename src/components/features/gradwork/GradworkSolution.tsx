@@ -1,6 +1,8 @@
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Clock, HardDrive, Waves, Sparkles } from 'lucide-react';
+
+import { sectionReveal, detailIn, detailInRight, cardIn, noMotion } from '@/constants/motion';
 
 const steps = [
     { key: 'loading', icon: Clock, color: 'from-accent to-accent-hover' },
@@ -12,13 +14,15 @@ const steps = [
 const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const prefersReducedMotion = useReducedMotion();
+    const preset = prefersReducedMotion ? noMotion : sectionReveal;
 
     return (
         <section ref={ref} className="py-20 px-6 max-w-4xl mx-auto">
             <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8 }}
+                initial={preset.initial}
+                animate={isInView ? preset.animate : {}}
+                transition={preset.transition}
             >
                 <h2 className="text-2xl md:text-3xl font-display font-bold text-text-primary mb-8">
                     {t('solution.title')}
@@ -36,9 +40,9 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                 </h3>
                 <div className="grid md:grid-cols-2 gap-6 mb-12">
                     <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={isInView ? { opacity: 1, x: 0 } : {}}
-                        transition={{ duration: 0.6, delay: 0.2 }}
+                        initial={prefersReducedMotion ? noMotion.initial : detailIn.initial}
+                        animate={isInView ? (prefersReducedMotion ? noMotion.animate : detailIn.animate) : {}}
+                        transition={prefersReducedMotion ? noMotion.transition : { ...detailIn.transition, delay: 0.2 }}
                         className="bg-error/5 border border-error/20 rounded-sm p-8 text-center"
                     >
                         <div className="text-error text-sm font-medium uppercase tracking-wider mb-4">
@@ -52,9 +56,9 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                     </motion.div>
 
                     <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={isInView ? { opacity: 1, x: 0 } : {}}
-                        transition={{ duration: 0.6, delay: 0.3 }}
+                        initial={prefersReducedMotion ? noMotion.initial : detailInRight.initial}
+                        animate={isInView ? (prefersReducedMotion ? noMotion.animate : detailInRight.animate) : {}}
+                        transition={prefersReducedMotion ? noMotion.transition : { ...detailInRight.transition, delay: 0.3 }}
                         className="bg-success/5 border border-success/20 rounded-sm p-8 text-center"
                     >
                         <div className="text-success text-sm font-medium uppercase tracking-wider mb-4">
@@ -76,9 +80,9 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                     {steps.map((step, index) => (
                         <motion.div
                             key={step.key}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={isInView ? { opacity: 1, y: 0 } : {}}
-                            transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
+                            initial={prefersReducedMotion ? noMotion.initial : cardIn.initial}
+                            animate={isInView ? (prefersReducedMotion ? noMotion.animate : cardIn.animate) : {}}
+                            transition={prefersReducedMotion ? noMotion.transition : { ...cardIn.transition, delay: 0.4 + index * 0.1 }}
                             className="relative"
                         >
                             {index < steps.length - 1 && (

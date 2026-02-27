@@ -43,7 +43,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             </p>
             {this.state.error && (
               <details className="mb-6">
-                <summary className="text-sm text-text-secondary cursor-pointer hover:text-white mb-2">
+                <summary className="text-sm text-text-secondary cursor-pointer hover:text-text-primary mb-2">
                   {i18n.t('error.details', 'Error details')}
                 </summary>
                 <pre className="bg-surface p-4 rounded-sm border border-border text-xs text-error overflow-auto max-h-64 whitespace-pre-wrap font-mono">
@@ -54,7 +54,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             )}
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-accent text-surface font-medium rounded-sm hover:bg-accent-hover transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface"
+              className="px-6 py-3 bg-accent text-surface font-medium rounded-sm hover:bg-accent-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
             >
               {i18n.t('error.reload', 'Reload Page')}
             </button>

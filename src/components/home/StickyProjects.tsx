@@ -88,7 +88,7 @@ const StickyProjectsDesktop = ({ projects }: StickyProjectsProps) => {
 
           {/* Progress dots */}
           <div className="mt-8 flex items-center gap-6">
-            <div className="flex gap-2">
+            <div className="flex gap-2" aria-hidden="true">
               {projects.map((_, i) => (
                 <ProgressDot key={i} index={i} activeIndex={activeIndex} />
               ))}

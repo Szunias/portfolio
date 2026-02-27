@@ -50,7 +50,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                                 onError={(e) => { (e.currentTarget as HTMLVideoElement).style.display = 'none'; }}
                             />
                         ) : (
-                            <img src={`/${media.thumbnail}`} alt="" role="presentation" aria-hidden="true" className="w-full h-full object-cover opacity-[0.30]" />
+                            <img src={`/${media.thumbnail}`} alt="" role="presentation" aria-hidden="true" className="w-full h-full object-cover opacity-[0.30]" fetchPriority="high" />
                         )
                     ) : (
                         <div className="w-full h-full bg-surface-raised" />
@@ -100,10 +100,11 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                         <div className="w-full max-w-4xl aspect-video rounded-lg overflow-hidden border border-border bg-black hover:border-border-hover transition-colors duration-300">
                             <iframe
                                 src={`https://www.youtube.com/embed/${videoId}`}
-                                title="YouTube video player"
+                                title={`${t(`projects:project_${project.id}_title`, project.title)} - Video`}
                                 className="w-full h-full"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen
+                                loading="lazy"
                             />
                         </div>
                     )}
@@ -127,10 +128,11 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                             <div className="w-full max-w-4xl aspect-video rounded-lg overflow-hidden border border-border bg-black hover:border-border-hover transition-colors duration-300">
                                 <iframe
                                     src={`https://www.youtube.com/embed/${legacyVideoId}`}
-                                    title="Legacy YouTube video player"
+                                    title={`${t(`projects:project_${project.id}_title`, project.title)} - ${t('projects.legacy_trailer', 'Previous Trailer')}`}
                                     className="w-full h-full"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowFullScreen
+                                    loading="lazy"
                                 />
                             </div>
                         </div>

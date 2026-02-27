@@ -91,6 +91,7 @@ const Navbar = () => {
   return (
     <>
       <nav
+        aria-label="Main navigation"
         className={`fixed top-0 left-0 right-0 z-nav transition-all duration-300 border-b ${
           scrolled
             ? 'bg-surface-overlay/80 backdrop-blur-lg border-border py-3'
@@ -141,7 +142,9 @@ const Navbar = () => {
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="md:hidden text-text-primary p-3 rounded-md border border-border hover:border-border-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-              aria-label="Toggle menu"
+              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isOpen}
+              aria-controls="mobile-nav-menu"
             >
               {isOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -170,6 +173,7 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              id="mobile-nav-menu"
               className="md:hidden fixed inset-y-0 right-0 w-80 max-w-full z-nav bg-surface border-l border-border flex flex-col pt-20 px-6"
               role="dialog"
               aria-modal="true"

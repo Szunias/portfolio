@@ -12,6 +12,8 @@ interface SEOProps {
   noindex?: boolean;
 }
 
+const SITE_URL = 'https://igorszuniewicz.com';
+
 /** Sets <head> meta tags for SEO, Open Graph, Twitter cards, and JSON-LD structured data. */
 const SEO = ({
   title,
@@ -29,16 +31,12 @@ const SEO = ({
   const fullTitle = title ? `${title} | Igor Szuniewicz` : siteTitle;
   const metaDescription = description || defaultDescription;
 
-  const getBaseUrl = () => {
-    if (typeof window !== 'undefined') {
-      return window.location.origin;
-    }
-    return 'https://igorszuniewicz.com';
-  };
-
-  const baseUrl = getBaseUrl();
-  const currentUrl = url || (typeof window !== 'undefined' ? window.location.origin + window.location.pathname : `${baseUrl}${location.pathname}`);
-  const imageUrl = image ? (image.startsWith('http') ? image : `${baseUrl}${image}`) : undefined;
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : SITE_URL;
+  const currentUrl = url || `${baseUrl}${location.pathname}`;
+  const defaultImage = `${SITE_URL}/assets/images/backgrounds/bg.jpg`;
+  const imageUrl = image
+    ? (image.startsWith('http') ? image : `${baseUrl}${image}`)
+    : defaultImage;
 
   const isHomePage = location.pathname === '/' || location.pathname === '';
 
@@ -53,7 +51,7 @@ const SEO = ({
     "name": "Igor Szuniewicz",
     "jobTitle": "Audio Designer & Developer",
     "description": metaDescription,
-    "url": baseUrl,
+    "url": SITE_URL,
     "sameAs": [
       "https://github.com/Szunias",
       "https://www.linkedin.com/in/igorszuniewicz",
@@ -67,6 +65,22 @@ const SEO = ({
       "Unreal Engine",
       "Audio Programming",
       "Sound Design"
+    ]
+  } : null;
+
+  // BreadcrumbList schema for non-homepage
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const breadcrumbData = !isHomePage && pathSegments.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+      ...pathSegments.map((segment, i) => ({
+        "@type": "ListItem",
+        "position": i + 2,
+        "name": segment.replace(/-/g, ' ').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+        "item": `${SITE_URL}/${pathSegments.slice(0, i + 1).join('/')}`
+      }))
     ]
   } : null;
 
@@ -90,7 +104,9 @@ const SEO = ({
       <meta property="og:type" content={type} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={metaDescription} />
-      {imageUrl && <meta property="og:image" content={imageUrl} />}
+      <meta property="og:image" content={imageUrl} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta property="og:url" content={currentUrl} />
       <meta property="og:site_name" content="Igor Szuniewicz Portfolio" />
       <meta property="og:locale" content={ogLocale} />
@@ -103,12 +119,19 @@ const SEO = ({
       <meta name="twitter:creator" content="@Szunias" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={metaDescription} />
-      {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+      <meta name="twitter:image" content={imageUrl} />
 
       {/* Structured Data — Person only on homepage */}
       {personData && (
         <script type="application/ld+json">
           {JSON.stringify(personData)}
+        </script>
+      )}
+
+      {/* Structured Data — Breadcrumbs on inner pages */}
+      {breadcrumbData && (
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbData)}
         </script>
       )}
     </Helmet>

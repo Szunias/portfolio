@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
+
+import { sectionReveal, cardIn, noMotion } from '@/constants/motion';
 
 const LatencyBarChart = ({ t }: { t: (key: string) => string }) => {
     const ref = useRef(null);
@@ -115,6 +117,8 @@ const LatencyBarChart = ({ t }: { t: (key: string) => string }) => {
 const GradworkResults = ({ t }: { t: (key: string) => string }) => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const prefersReducedMotion = useReducedMotion();
+    const preset = prefersReducedMotion ? noMotion : sectionReveal;
 
     const models = [
         { key: 'elevenlabs', name: 'ElevenLabs' },
@@ -125,9 +129,9 @@ const GradworkResults = ({ t }: { t: (key: string) => string }) => {
     return (
         <section ref={ref} className="py-20 px-6 max-w-5xl mx-auto">
             <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8 }}
+                initial={preset.initial}
+                animate={isInView ? preset.animate : {}}
+                transition={preset.transition}
             >
                 <h2 className="text-2xl md:text-3xl font-display font-bold text-text-primary mb-4 text-center">
                     {t('results.title')}
@@ -147,9 +151,9 @@ const GradworkResults = ({ t }: { t: (key: string) => string }) => {
                         {models.map((model, index) => (
                             <motion.div
                                 key={model.key}
-                                initial={{ opacity: 0, y: 15 }}
-                                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                                transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
+                                initial={prefersReducedMotion ? noMotion.initial : cardIn.initial}
+                                animate={isInView ? (prefersReducedMotion ? noMotion.animate : cardIn.animate) : {}}
+                                transition={prefersReducedMotion ? noMotion.transition : { ...cardIn.transition, delay: 0.3 + index * 0.1 }}
                                 className="bg-surface-raised border border-border rounded-sm p-4"
                             >
                                 <div className="font-bold text-text-primary mb-2">{model.name}</div>

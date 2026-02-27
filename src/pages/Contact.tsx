@@ -93,11 +93,14 @@ const Contact = () => {
                               onClick={copyToClipboard}
                               className="text-text-secondary hover:text-text-primary transition-colors p-1.5 rounded-md hover:bg-surface-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised"
                               title={t('tooltips.copy_email', 'Copy Email')}
-                              aria-label={t('tooltips.copy_email', 'Copy Email')}
+                              aria-label={copied ? t('tooltips.email_copied', 'Email copied') : t('tooltips.copy_email', 'Copy Email')}
                               disabled={!email}
                             >
                               {copied ? <Check size={16} className="text-success" /> : <Copy size={16} />}
                             </button>
+                            <span className="sr-only" aria-live="polite">
+                              {copied ? t('tooltips.email_copied', 'Email copied to clipboard') : ''}
+                            </span>
                          </div>
                       </div>
                    </div>

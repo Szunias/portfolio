@@ -75,18 +75,6 @@ export default {
           '0%, 100%': { transform: 'scaleY(0.3)' },
           '50%': { transform: 'scaleY(1)' },
         },
-        'vu-sweep': {
-          '0%': { width: '0%' },
-          '70%': { width: '105%' },
-          '100%': { width: 'var(--target-width, 100%)' },
-        },
-        'oscilloscope': {
-          '0%': { transform: 'translateX(0) translateY(0)' },
-          '25%': { transform: 'translateX(25%) translateY(-8px)' },
-          '50%': { transform: 'translateX(50%) translateY(0)' },
-          '75%': { transform: 'translateX(75%) translateY(8px)' },
-          '100%': { transform: 'translateX(100%) translateY(0)' },
-        },
         'fade-in-up': {
           '0%': { opacity: '0', transform: 'translateY(8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
@@ -102,8 +90,6 @@ export default {
         'waveform-3': 'waveform-bar 1.2s ease-in-out 0.3s infinite',
         'waveform-4': 'waveform-bar 1.2s ease-in-out 0.1s infinite',
         'waveform-5': 'waveform-bar 1.2s ease-in-out 0.25s infinite',
-        'vu-sweep': 'vu-sweep 1s ease-out forwards',
-        'oscilloscope': 'oscilloscope 2s ease-in-out infinite',
         'fade-in-up': 'fade-in-up 0.3s ease-out both',
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
       },

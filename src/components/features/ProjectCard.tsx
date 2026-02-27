@@ -60,6 +60,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
                 loop
                 playsInline
                 preload="none"
+                aria-label={t(titleKey, project.title)}
             />
             ) : (
             <div className="w-full h-full transition-opacity duration-300">

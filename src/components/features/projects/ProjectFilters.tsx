@@ -17,7 +17,7 @@ const ProjectFilters = ({ categories, activeFilter, onFilterChange, getLabel }: 
               onClick={() => onFilterChange(category)}
               aria-pressed={isActive}
               className={`
-                relative px-2.5 py-1 font-mono text-label uppercase transition-all duration-200 rounded whitespace-nowrap snap-start focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:outline-none
+                relative px-3 py-2 font-mono text-label uppercase transition-all duration-200 rounded whitespace-nowrap snap-start focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:outline-none min-h-[44px] min-w-[44px] flex items-center justify-center
                 ${isActive
                   ? 'bg-accent text-surface border border-accent'
                   : 'bg-accent/10 text-accent border border-accent/15 hover:bg-accent/18 hover:border-accent/30'}
