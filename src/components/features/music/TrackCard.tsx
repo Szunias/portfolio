@@ -86,7 +86,6 @@ const TrackCard = memo(({ track, index, isCurrent, isPlaying, onPlay }: TrackCar
                             {track.year}
                         </span>
                     )}
-                    {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse shadow-glow-accent"></span>}
                 </div>
             </div>
         </div>

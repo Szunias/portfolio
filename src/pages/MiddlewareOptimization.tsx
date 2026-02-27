@@ -1,9 +1,8 @@
 import { useRef } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
-import { ArrowLeft, ChevronDown, Cpu, Zap, Layers, Code, Database, Music } from 'lucide-react';
+import { Cpu, Zap, Layers, Code, Database, Music } from 'lucide-react';
 
 import SEO from '../components/layout/SEO';
 import { sectionReveal, cardIn, detailIn, noMotion } from '../constants/motion';
@@ -83,10 +82,6 @@ const MiddlewareOptimization = () => {
                         ))}
                     </div>
                 </motion.div>
-
-                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-text-secondary">
-                    <ChevronDown size={32} />
-                </div>
             </section>
 
             {/* Main Content */}
@@ -194,19 +189,6 @@ const MiddlewareOptimization = () => {
                 </section>
             </main>
 
-            {/* Footer */}
-            <footer className="bg-surface py-20 text-center border-t border-border">
-                <Link
-                    to="/projects"
-                    className="inline-flex items-center gap-2 px-8 py-4 bg-surface-raised text-text-primary font-semibold rounded-sm border border-border hover:-translate-y-1 hover:border-border-hover transition-all duration-300 group"
-                >
-                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                    {t('back')}
-                </Link>
-                <p className="mt-8 text-text-secondary text-sm">
-                    {t('footer')}
-                </p>
-            </footer>
         </div>
     );
 };
@@ -261,6 +243,7 @@ const CaseStudyCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, po
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             className="text-accent"
+                            aria-hidden="true"
                         >
                             <polygon points="5 3 19 12 5 21 5 3"></polygon>
                         </svg>

@@ -31,11 +31,6 @@ const GradworkClosing = ({ t }: { t: (key: string) => string }) => {
                     </Link>
                 </div>
             </motion.div>
-
-            {/* Footer */}
-            <div className="mt-12 pt-8 border-t border-border text-center">
-                <p className="text-text-secondary text-sm">{t('footer.status')}</p>
-            </div>
         </section>
     );
 };

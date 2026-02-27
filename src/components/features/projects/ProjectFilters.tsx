@@ -31,7 +31,7 @@ const ProjectFilters = ({ categories, activeFilter, onFilterChange, getLabel }: 
         })}
       </div>
       {/* Gradient fade hint for mobile scroll */}
-      <div className="absolute top-0 right-0 bottom-0 w-16 pointer-events-none bg-gradient-to-l from-[#0b0b10] to-transparent lg:hidden" aria-hidden="true" />
+      <div className="absolute top-0 right-0 bottom-0 w-16 pointer-events-none bg-gradient-to-l from-surface to-transparent lg:hidden" aria-hidden="true" />
     </div>
   );
 };

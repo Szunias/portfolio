@@ -52,24 +52,22 @@ const Home = () => {
             whileInView={prefersReducedMotion ? noMotion.animate : sectionReveal.animate}
             viewport={{ once: true }}
             transition={prefersReducedMotion ? noMotion.transition : sectionReveal.transition}
-            className="text-center mb-12"
+            className="mb-12"
           >
             <h2 className="font-display text-h1 text-text-primary mb-4">
               {t('projects.featured_title', 'Selected Work')}
             </h2>
 
-            <p className="text-text-secondary text-body max-w-2xl mx-auto mb-6">
+            <p className="text-text-secondary text-body max-w-2xl mb-6">
               {t('projects.subtitle', 'A collection of my game audio and development projects')}
             </p>
 
             <Link
               to="/projects"
-              className="group inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded"
+              className="group inline-flex items-center gap-2 px-4 py-2 border border-border text-text-secondary rounded-md hover:border-accent hover:text-text-primary hover:bg-surface-overlay focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface transition-all duration-200"
             >
-              <span className="border-b border-border group-hover:border-accent transition-colors">
-                {t('projects.view_all', 'View All Projects')}
-              </span>
-              <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
+              {t('projects.view_all', 'View All Projects')}
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>
 

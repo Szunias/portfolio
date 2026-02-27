@@ -32,6 +32,7 @@ const ProjectGrid = ({ projects }: ProjectGridProps) => {
         <motion.div
           key={project.id}
           variants={prefersReducedMotion ? undefined : itemVariants}
+          className={index === 0 ? 'md:col-span-2' : undefined}
         >
           <ProjectCard project={project} index={index} />
         </motion.div>

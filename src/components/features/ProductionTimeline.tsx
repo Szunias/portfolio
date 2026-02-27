@@ -8,8 +8,8 @@ const ProductionTimeline = () => {
   const totalWeeks = 9;
 
   const phases = [
-    { name: t('timeline.prototype', 'Prototype'), weeks: [1, 2], color: 'bg-slate-600' },
-    { name: t('timeline.production', 'Production'), weeks: [3, 4, 5, 6, 7], color: 'bg-slate-500' },
+    { name: t('timeline.prototype', 'Prototype'), weeks: [1, 2], color: 'bg-surface-overlay' },
+    { name: t('timeline.production', 'Production'), weeks: [3, 4, 5, 6, 7], color: 'bg-text-tertiary' },
     { name: t('timeline.polish', 'Polish'), weeks: [8, 9], color: 'bg-accent' },
   ];
 
@@ -31,9 +31,9 @@ const ProductionTimeline = () => {
                 className={`
                   w-3 h-3 rounded-full transition-all cursor-pointer
                   hover:scale-125
-                  ${week < currentWeek ? 'bg-dim/40 hover:bg-dim/60' : ''}
+                  ${week < currentWeek ? 'bg-text-muted/40 hover:bg-text-muted/60' : ''}
                   ${week === currentWeek ? 'bg-accent w-4 h-4 ring-2 ring-accent/30' : ''}
-                  ${week > currentWeek ? 'bg-slate-700 hover:bg-slate-600' : ''}
+                  ${week > currentWeek ? 'bg-surface-overlay/50 hover:bg-surface-overlay' : ''}
                 `}
               />
               {/* Tooltip */}

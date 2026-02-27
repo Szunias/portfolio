@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -6,9 +7,46 @@ import { Download } from 'lucide-react';
 import SEO from '../components/layout/SEO';
 import { sectionReveal, noMotion } from '../constants/motion';
 
+const PROFILE_IMAGE = `${import.meta.env.BASE_URL}assets/images/profile.jpg`;
+
+/** Inline SVG waveform icon for the photo placeholder. */
+const WaveformIcon = () => (
+    <svg
+        width="48"
+        height="48"
+        viewBox="0 0 48 48"
+        fill="none"
+        className="text-text-tertiary"
+        aria-hidden="true"
+    >
+        <rect x="10" y="18" width="4" height="12" rx="2" fill="currentColor" opacity="0.5" />
+        <rect x="18" y="12" width="4" height="24" rx="2" fill="currentColor" opacity="0.7" />
+        <rect x="26" y="16" width="4" height="16" rx="2" fill="currentColor" opacity="0.6" />
+        <rect x="34" y="14" width="4" height="20" rx="2" fill="currentColor" opacity="0.5" />
+    </svg>
+);
+
+/** Small 3-bar waveform accent for the section divider. */
+const DividerWaveform = () => (
+    <svg
+        width="24"
+        height="16"
+        viewBox="0 0 24 16"
+        fill="none"
+        className="text-accent"
+        aria-hidden="true"
+    >
+        <rect x="4" y="4" width="2" height="8" rx="1" fill="currentColor" />
+        <rect x="11" y="1" width="2" height="14" rx="1" fill="currentColor" />
+        <rect x="18" y="4" width="2" height="8" rx="1" fill="currentColor" />
+    </svg>
+);
+
 const About = () => {
     const { t } = useTranslation('about');
     const prefersReducedMotion = useReducedMotion();
+    const [imageLoaded, setImageLoaded] = useState(false);
+    const [imageError, setImageError] = useState(false);
 
     const reveal = prefersReducedMotion ? noMotion : sectionReveal;
 
@@ -48,23 +86,49 @@ const About = () => {
                     </p>
                 </motion.section>
 
-                {/* --- STORY: Short paragraphs, varied rhythm --- */}
+                {/* --- STORY + PHOTO: Two-column on desktop, stacked on mobile --- */}
                 <motion.section
                     initial={fadeFromLeft.initial}
                     whileInView={fadeFromLeft.animate}
                     viewport={{ once: true }}
                     transition={fadeFromLeft.transition}
-                    className="space-y-8 mb-20"
+                    className="mb-20"
                 >
-                    <p className="text-body text-text-secondary leading-relaxed">
-                        {t('story_1')}
-                    </p>
-                    <p className="text-body text-text-secondary leading-relaxed">
-                        {t('story_2')}
-                    </p>
-                    <p className="text-body text-text-secondary leading-relaxed">
-                        {t('story_3')}
-                    </p>
+                    <div className="flex flex-col md:flex-row gap-10">
+                        {/* Story text */}
+                        <div className="space-y-8 flex-1">
+                            <p className="text-body text-text-secondary leading-relaxed">
+                                {t('story_1')}
+                            </p>
+                            <p className="text-body text-text-secondary leading-relaxed">
+                                {t('story_2')}
+                            </p>
+                            <p className="text-body text-text-secondary leading-relaxed">
+                                {t('story_3')}
+                            </p>
+                        </div>
+
+                        {/* Profile photo / placeholder */}
+                        <div className="flex-shrink-0 mx-auto md:mx-0">
+                            <div className="aspect-[3/4] w-full max-w-[280px] rounded-lg overflow-hidden bg-surface-raised border border-border relative">
+                                {!imageError && (
+                                    <img
+                                        src={PROFILE_IMAGE}
+                                        alt={t('profile_photo_alt', 'Igor Szuniewicz')}
+                                        className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                                        onLoad={() => setImageLoaded(true)}
+                                        onError={() => setImageError(true)}
+                                    />
+                                )}
+                                {/* Placeholder: visible when image fails or while loading */}
+                                {!imageLoaded && (
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <WaveformIcon />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </motion.section>
 
                 {/* --- PULL QUOTE --- */}
@@ -79,6 +143,15 @@ const About = () => {
                         {t('pull_quote')}
                     </p>
                 </motion.blockquote>
+
+                {/* --- VISUAL BREAK: Decorative divider with waveform accent --- */}
+                <div className="flex items-center justify-center my-20">
+                    <div className="w-[30%] border-t border-border" />
+                    <div className="mx-4">
+                        <DividerWaveform />
+                    </div>
+                    <div className="w-[30%] border-t border-border" />
+                </div>
 
                 {/* --- HOW I WORK: Short, practical --- */}
                 <motion.section

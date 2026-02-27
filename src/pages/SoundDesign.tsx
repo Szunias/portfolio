@@ -1,8 +1,7 @@
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowLeft, Play, VolumeX, Music } from 'lucide-react';
+import { Play, VolumeX, Music } from 'lucide-react';
 
 import SEO from '../components/layout/SEO';
 
@@ -19,7 +18,7 @@ const SoundDesign = () => {
     const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
     return (
-        <div ref={containerRef} className="min-h-screen bg-surface-raised text-text-primary font-sans selection:bg-accent/30">
+        <div ref={containerRef} className="min-h-screen bg-surface text-text-primary font-sans selection:bg-accent/30">
             <SEO title={t('seo.title')} description={t('seo.description')} />
 
             {/* Hero Section */}
@@ -124,19 +123,6 @@ const SoundDesign = () => {
                 </section>
             </main>
 
-            {/* Footer */}
-            <footer className="py-20 text-center border-t border-border bg-surface">
-                <Link
-                    to="/projects"
-                    className="inline-flex items-center gap-2 px-8 py-4 bg-surface-raised text-text-primary font-semibold rounded-sm border border-border hover:bg-surface-overlay transition-all duration-300 group"
-                >
-                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                    {t('footer.back_link', 'Back to Projects')}
-                </Link>
-                <p className="mt-8 text-text-secondary text-sm">
-                    &copy; {new Date().getFullYear()} Igor Szuniewicz
-                </p>
-            </footer>
         </div>
     );
 };
@@ -181,7 +167,7 @@ const VideoCard = ({ title, desc, badge, videoSrc, poster }: VideoCardProps) => 
                     >
                         <div className="absolute inset-0 bg-black/40 group-hover/poster:bg-black/20 transition-colors flex items-center justify-center">
                             <div className="w-20 h-20 bg-accent/90 rounded-full flex items-center justify-center shadow-lg transition-transform">
-                                <Play size={32} className="text-text-primary ml-1 fill-cream-light" />
+                                <Play size={32} className="text-text-primary ml-1 fill-text-primary" />
                             </div>
                         </div>
                     </div>

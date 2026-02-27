@@ -54,7 +54,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             )}
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-accent text-primary font-medium rounded-sm hover:bg-accent-light transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-primary"
+              className="px-6 py-3 bg-accent text-surface font-medium rounded-sm hover:bg-accent-hover transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface"
             >
               {i18n.t('error.reload', 'Reload Page')}
             </button>

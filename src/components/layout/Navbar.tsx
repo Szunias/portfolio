@@ -101,9 +101,18 @@ const Navbar = () => {
           <div className="flex justify-between items-center">
 
             {/* Logo */}
-            <Link to={ROUTES.HOME} className="flex flex-col rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
-              <span className="font-display text-base uppercase text-text-primary tracking-[0.2em]">IGOR SZUNIEWICZ</span>
-              <span className="text-[9px] text-accent uppercase tracking-[0.25em] font-mono mt-0.5">{t('brand.tagline', 'Audio Designer')}</span>
+            <Link to={ROUTES.HOME} className="flex items-center gap-2.5 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
+              {/* Waveform mark */}
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true" className="text-accent flex-shrink-0">
+                <rect x="1" y="6" width="2.5" height="6" rx="1" fill="currentColor" />
+                <rect x="5.5" y="3" width="2.5" height="12" rx="1" fill="currentColor" />
+                <rect x="10" y="5" width="2.5" height="8" rx="1" fill="currentColor" />
+                <rect x="14.5" y="7" width="2.5" height="4" rx="1" fill="currentColor" />
+              </svg>
+              <div className="flex flex-col">
+                <span className="font-display text-base uppercase text-text-primary tracking-[0.2em]">IGOR SZUNIEWICZ</span>
+                <span className="text-[11px] text-accent uppercase tracking-[0.25em] font-mono mt-0.5">{t('brand.tagline', 'Audio Designer')}</span>
+              </div>
             </Link>
 
             {/* Desktop Nav */}

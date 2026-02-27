@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Play, Pause, Sparkles } from 'lucide-react';
+import { Play, Pause } from 'lucide-react';
 
 import { useAudio } from '@/context/AudioContext';
 import type { Track } from '@/types';
@@ -22,7 +22,12 @@ const MusicHero = () => {
       return (
         <section className="relative pt-32 pb-20 px-4 sm:px-8 overflow-hidden min-h-[60vh] flex items-center justify-center">
              <div className="text-center text-text-secondary">
-                <Sparkles size={48} className="mx-auto mb-4 opacity-50" />
+                <div className="flex items-end justify-center gap-1.5 h-12 mb-4" role="status" aria-label="Loading">
+                  <div className="w-1 bg-accent rounded-full animate-waveform-1 motion-reduce:animate-none motion-reduce:h-4"></div>
+                  <div className="w-1 bg-accent rounded-full animate-waveform-2 motion-reduce:animate-none motion-reduce:h-7"></div>
+                  <div className="w-1 bg-accent rounded-full animate-waveform-3 motion-reduce:animate-none motion-reduce:h-10"></div>
+                  <div className="w-1 bg-accent rounded-full animate-waveform-4 motion-reduce:animate-none motion-reduce:h-6"></div>
+                </div>
                 <p>{t('music.loading', 'Loading library...')}</p>
             </div>
         </section>
@@ -127,7 +132,12 @@ const MusicHero = () => {
             ) : (
                 <div className="h-[400px] flex items-center justify-center text-text-secondary">
                     <div className="text-center">
-                        <Sparkles size={48} className="mx-auto mb-4 opacity-50" />
+                        <div className="flex items-end justify-center gap-1.5 h-12 mb-4">
+                          <div className="w-1 bg-accent/50 rounded-full h-4"></div>
+                          <div className="w-1 bg-accent/50 rounded-full h-7"></div>
+                          <div className="w-1 bg-accent/50 rounded-full h-10"></div>
+                          <div className="w-1 bg-accent/50 rounded-full h-6"></div>
+                        </div>
                         <p>{t('music.select_track', 'Select a track to begin')}</p>
                     </div>
                 </div>

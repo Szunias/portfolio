@@ -13,10 +13,10 @@ const LatencyBarChart = ({ t }: { t: (key: string) => string }) => {
     ];
 
     const models = [
-        { key: 'elevenlabs', name: t('results.chart.models.elevenlabs'), min: 1000, max: 12000, color: 'from-red-500 to-orange-500' },
-        { key: 'mmaudio', name: t('results.chart.models.mmaudio'), min: 2000, max: 5000, color: 'from-orange-500 to-yellow-500' },
-        { key: 'audiogen', name: t('results.chart.models.audiogen'), min: 2500, max: 3500, color: 'from-amber-500 to-yellow-500' },
-        { key: 'cached', name: t('results.chart.cached'), min: 21, max: 55, color: 'from-emerald-500 to-green-500' },
+        { key: 'elevenlabs', name: t('results.chart.models.elevenlabs'), min: 1000, max: 12000, color: 'from-error to-accent-warm' },
+        { key: 'mmaudio', name: t('results.chart.models.mmaudio'), min: 2000, max: 5000, color: 'from-accent-warm to-warning' },
+        { key: 'audiogen', name: t('results.chart.models.audiogen'), min: 2500, max: 3500, color: 'from-warning to-accent-warm' },
+        { key: 'cached', name: t('results.chart.cached'), min: 21, max: 55, color: 'from-success to-accent' },
     ];
 
     const maxMs = 12000;
@@ -78,7 +78,7 @@ const LatencyBarChart = ({ t }: { t: (key: string) => string }) => {
                                     </motion.div>
 
                                     {model.min !== model.max && (
-                                        <div className="absolute w-full h-0.5 bg-cream/30" style={{ bottom: `${(minHeight / maxHeight) * 100}%` }} />
+                                        <div className="absolute w-full h-0.5 bg-text-primary/30" style={{ bottom: `${(minHeight / maxHeight) * 100}%` }} />
                                     )}
                                 </motion.div>
 

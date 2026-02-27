@@ -25,15 +25,15 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
                 {project.team_size && (
                     <div className="col-span-1">
                         <div className="text-label font-mono text-text-tertiary uppercase mb-1 flex items-center gap-1">
-                            <Users size={12} /> Team
+                            <Users size={12} /> {t('details.team', 'Team')}
                         </div>
-                        <div className="text-text-primary text-body-sm font-medium">{project.team_size} Members</div>
+                        <div className="text-text-primary text-body-sm font-medium">{project.team_size} {t('details.members', 'Members')}</div>
                     </div>
                 )}
                 {project.engine && (
                     <div className="col-span-1">
                         <div className="text-label font-mono text-text-tertiary uppercase mb-1 flex items-center gap-1">
-                            <Gamepad2 size={12} /> Engine
+                            <Gamepad2 size={12} /> {t('details.engine', 'Engine')}
                         </div>
                         <div className="text-text-primary text-body-sm font-medium">{project.engine}</div>
                     </div>
@@ -41,7 +41,7 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
                 {project.platforms && (
                     <div className="col-span-2">
                         <div className="text-label font-mono text-text-tertiary uppercase mb-1 flex items-center gap-1">
-                            <Monitor size={12} /> Platforms
+                            <Monitor size={12} /> {t('details.platforms', 'Platforms')}
                         </div>
                         <div className="text-text-primary text-body-sm">{project.platforms.join(', ')}</div>
                     </div>

@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Tag, ExternalLink } from 'lucide-react';
+import { ArrowRight, ExternalLink } from 'lucide-react';
 
 import ImageWithLoader from '@/components/ui/ImageWithLoader';
 import type { Project } from '@/types';
@@ -92,12 +92,15 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             <h3 className="text-h3 font-display text-text-primary mb-2 truncate group-hover:text-accent transition-colors duration-200">
                 {t(titleKey, project.title)}
             </h3>
-            <p className="text-text-secondary text-body-sm leading-relaxed line-clamp-2 mb-4 h-10">
+            <p className="text-text-secondary text-body-sm leading-relaxed line-clamp-2 mb-4">
                 {t(descKey, project.short_description || project.description || '')}
             </p>
 
-            {/* Tech Stack Pills */}
+            {/* Tech Stack Pills + Category */}
             <div className="flex flex-wrap gap-2 overflow-hidden">
+                <span className="px-2.5 py-1 rounded font-mono text-label uppercase bg-surface-overlay text-text-secondary border border-border">
+                    {project.category || 'Audio'}
+                </span>
                 {displayTags.map(tag => (
                     <span key={tag} className="px-2.5 py-1 rounded font-mono text-label uppercase bg-accent/10 text-accent border border-accent/15 group-hover:bg-accent/18 group-hover:border-accent/30 transition-colors">
                         {tag}
@@ -109,13 +112,8 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Footer */}
-        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-label font-mono text-text-secondary group-hover:text-text-primary transition-colors duration-200">
-            <div className="flex items-center gap-1.5">
-                <Tag size={12} />
-                <span className="uppercase">{project.category || 'Audio'}</span>
-            </div>
-
+        {/* Footer - inline arrow */}
+        <div className="mt-4 flex items-center justify-end text-label font-mono text-text-secondary group-hover:text-accent transition-colors duration-200">
             <div className="flex items-center gap-2">
                 <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hidden sm:inline">
                   {t('card.view_project', 'View Project')}
@@ -131,7 +129,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
 
   return (
     <div
-      className="group relative w-full rounded-lg overflow-hidden bg-surface-raised border border-border hover:border-border-hover hover:-translate-y-0.5 hover:shadow-hover transition-all duration-300 cursor-pointer"
+      className="group relative w-full rounded-lg overflow-hidden bg-surface-raised border border-border hover:border-border-hover hover:-translate-y-1 hover:shadow-hover transition-all duration-300 cursor-pointer"
     >
       {project.externalLink ? (
         <a href={project.externalLink} target="_blank" rel="noopener noreferrer" className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-lg">

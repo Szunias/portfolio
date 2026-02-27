@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import ScrollToTop from './components/layout/ScrollToTop';
 import IntroAnimation from './components/ui/IntroAnimation';
+import PageLoader from './components/ui/PageLoader';
 import { ROUTES } from './constants/routes';
 
 /**
@@ -65,11 +66,7 @@ function App() {
       <Router>
         <ScrollToTop />
         <Layout>
-          <Suspense fallback={
-            <div className="min-h-[60vh] flex items-center justify-center">
-              <div className="w-3 h-3 rounded-full bg-accent animate-pulse" />
-            </div>
-          }>
+          <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path={ROUTES.HOME} element={<Home />} />
               <Route path={ROUTES.PROJECTS} element={<Projects />} />

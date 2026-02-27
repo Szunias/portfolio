@@ -5,6 +5,81 @@ import { motion, useReducedMotion } from 'framer-motion';
 
 import { noMotion } from '@/constants/motion';
 
+/**
+ * Decorative SVG waveform that evokes audio / sound design.
+ * Renders a smooth polyline with gentle amplitude oscillation.
+ */
+const Waveform = ({ reduced }: { reduced: boolean | null }) => {
+  // Generate a hand-crafted waveform path (audio-style sine with varying amplitude)
+  const points = (() => {
+    const pts: string[] = [];
+    const steps = 120;
+    const width = 1200;
+    const midY = 40;
+    for (let i = 0; i <= steps; i++) {
+      const x = (i / steps) * width;
+      const t = i / steps;
+      // Envelope: fade in, peak in middle, fade out
+      const envelope = Math.sin(t * Math.PI) * 0.9 + 0.1;
+      // Multi-frequency waveform for organic audio feel
+      const wave =
+        Math.sin(t * Math.PI * 8) * 12 +
+        Math.sin(t * Math.PI * 14 + 0.5) * 6 +
+        Math.sin(t * Math.PI * 22 + 1.2) * 3;
+      const y = midY + wave * envelope;
+      pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+    }
+    return pts.join(' ');
+  })();
+
+  return (
+    <motion.div
+      className="absolute inset-x-0 pointer-events-none select-none"
+      style={{ top: '55%', transform: 'translateY(-50%)' }}
+      aria-hidden="true"
+      initial={reduced ? { opacity: 0.15 } : { opacity: 0 }}
+      animate={reduced ? { opacity: 0.15 } : { opacity: 0.15 }}
+      transition={reduced ? { duration: 0 } : { duration: 1.2, delay: 0.3 }}
+    >
+      <svg
+        viewBox="0 0 1200 80"
+        preserveAspectRatio="none"
+        className="w-[80%] mx-auto h-16 md:h-20"
+        fill="none"
+      >
+        {/* Main waveform line */}
+        <motion.polyline
+          points={points}
+          stroke="currentColor"
+          className="text-accent"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+          initial={reduced ? {} : { pathLength: 0 }}
+          animate={reduced ? {} : { pathLength: 1 }}
+          transition={reduced ? {} : { duration: 2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        />
+        {/* Ghost / echo line offset slightly for depth */}
+        <motion.polyline
+          points={points}
+          stroke="currentColor"
+          className="text-accent"
+          strokeWidth="0.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+          opacity={0.3}
+          transform="translate(0, 6)"
+          initial={reduced ? {} : { pathLength: 0 }}
+          animate={reduced ? {} : { pathLength: 1 }}
+          transition={reduced ? {} : { duration: 2.2, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        />
+      </svg>
+    </motion.div>
+  );
+};
+
 const Hero = () => {
   const { t } = useTranslation('home');
   const prefersReducedMotion = useReducedMotion();
@@ -29,7 +104,10 @@ const Hero = () => {
         };
 
   return (
-    <section className="relative min-h-[90vh] flex items-start pt-32 md:pt-40 pb-20 overflow-hidden bg-surface">
+    <section className="relative min-h-[70vh] flex items-start pt-32 md:pt-40 pb-20 overflow-hidden bg-surface">
+      {/* Decorative audio waveform */}
+      <Waveform reduced={prefersReducedMotion} />
+
       <div className="relative z-10 w-full max-w-content-wide mx-auto px-6 lg:px-12">
         <div className="max-w-5xl">
           {/* Availability badge - top left - fast attack */}

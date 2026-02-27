@@ -100,6 +100,16 @@ const Footer = () => {
           </div>
         </div>
 
+        {/* CTA */}
+        <div className="text-center mb-8">
+          <Link
+            to="/contact"
+            className="text-text-secondary hover:text-accent transition-colors text-body-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised rounded-sm"
+          >
+            {t('footer.cta', "Let's create something together \u2192")}
+          </Link>
+        </div>
+
         {/* Bottom bar - minimal */}
         <div className="border-t border-border pt-6 flex flex-col sm:flex-row justify-between items-center gap-2">
           <p className="text-text-tertiary text-caption">

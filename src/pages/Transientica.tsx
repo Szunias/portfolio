@@ -62,11 +62,11 @@ const Transientica = () => {
 
                     {/* Audio Visualizer Animation — CSS-driven */}
                     <div className="flex justify-center items-end gap-1 h-16 mb-12">
-                        {[...Array(7)].map((_, i) => (
+                        {['animate-waveform-1','animate-waveform-2','animate-waveform-3','animate-waveform-4','animate-waveform-5','animate-waveform-3','animate-waveform-1'].map((anim, i) => (
                             <div
                                 key={`vis-${i}`}
-                                className="w-2 bg-accent rounded-full opacity-60 animate-bounce"
-                                style={{ animationDelay: `${i * 0.15}s`, height: '40px' }}
+                                className={`w-2 bg-accent rounded-full opacity-60 origin-bottom ${anim}`}
+                                style={{ height: '40px' }}
                             />
                         ))}
                     </div>
@@ -111,7 +111,7 @@ const Transientica = () => {
                         {activeVideo !== 'main-video' && (
                             <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-colors">
                                 <div className="w-20 h-20 bg-surface-raised rounded-sm flex items-center justify-center border border-border">
-                                    <Play size={32} className="text-text-primary ml-1 fill-cream-light" />
+                                    <Play size={32} className="text-text-primary ml-1 fill-text-primary" />
                                 </div>
                                 <span className="absolute bottom-8 text-text-primary font-mono text-sm tracking-wide uppercase opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
                                     {t('transientica.video.watch_demo', 'Watch Demo')}
@@ -213,26 +213,13 @@ const Transientica = () => {
                             {activeVideo !== 'tech-video' && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10">
                                     <div className="w-16 h-16 bg-surface-raised rounded-sm flex items-center justify-center border border-border">
-                                        <Play size={24} className="text-text-primary ml-1 fill-cream-light" />
+                                        <Play size={24} className="text-text-primary ml-1 fill-text-primary" />
                                     </div>
                                 </div>
                             )}
                         </div>
                     </div>
                 </section>
-
-                {/* Footer CTA */}
-                <div className="mt-32 text-center">
-                    <Link
-                        to="/projects"
-                        className="inline-flex items-center px-8 py-4 bg-accent text-primary font-bold rounded-sm transition-colors hover:bg-accent-light"
-                    >
-                        {t('transientica.cta.view_all', 'View All Projects')}
-                    </Link>
-                    <p className="mt-8 text-text-secondary text-sm">
-                        &copy; {new Date().getFullYear()} Igor Szuniewicz
-                    </p>
-                </div>
 
             </main>
         </div>

@@ -30,7 +30,7 @@ const Layout = ({ children }: LayoutProps) => {
           {t('accessibility.skip_to_main', 'Skip to main content')}
         </a>
         <Navbar />
-        <main id="main-content" className="flex-grow pt-16 md:pt-20 pb-24" role="main" tabIndex={-1}>
+        <main id="main-content" className="flex-grow pt-16 md:pt-20 pb-24" tabIndex={-1}>
           {children}
         </main>
         <Footer />

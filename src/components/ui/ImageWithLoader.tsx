@@ -22,7 +22,7 @@ const ImageWithLoader = ({ src, alt, className = "", loading = "lazy" }: ImageWi
       )}
       
       {hasError ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-neutral-900 text-neutral-600">
+        <div className="absolute inset-0 flex items-center justify-center bg-surface text-text-muted">
             <ImageOff size={24} />
         </div>
       ) : (

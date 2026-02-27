@@ -3,10 +3,10 @@ import { motion, useInView } from 'framer-motion';
 import { Clock, HardDrive, Waves, Sparkles } from 'lucide-react';
 
 const steps = [
-    { key: 'loading', icon: Clock, color: 'from-blue-500 to-cyan-500' },
-    { key: 'cache', icon: HardDrive, color: 'from-purple-500 to-pink-500' },
-    { key: 'play', icon: Waves, color: 'from-emerald-500 to-green-500' },
-    { key: 'refill', icon: Sparkles, color: 'from-amber-500 to-orange-500' },
+    { key: 'loading', icon: Clock, color: 'from-accent to-accent-hover' },
+    { key: 'cache', icon: HardDrive, color: 'from-accent-warm to-warning' },
+    { key: 'play', icon: Waves, color: 'from-success to-accent' },
+    { key: 'refill', icon: Sparkles, color: 'from-warning to-accent-warm' },
 ];
 
 const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
@@ -55,16 +55,16 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                         initial={{ opacity: 0, x: 20 }}
                         animate={isInView ? { opacity: 1, x: 0 } : {}}
                         transition={{ duration: 0.6, delay: 0.3 }}
-                        className="bg-emerald-500/5 border border-emerald-500/20 rounded-sm p-8 text-center"
+                        className="bg-success/5 border border-success/20 rounded-sm p-8 text-center"
                     >
-                        <div className="text-emerald-400 text-sm font-medium uppercase tracking-wider mb-4">
+                        <div className="text-success text-sm font-medium uppercase tracking-wider mb-4">
                             {t('solution.with_cache')}
                         </div>
-                        <div className="text-4xl md:text-5xl font-mono font-bold text-emerald-400 mb-2">
+                        <div className="text-4xl md:text-5xl font-mono font-bold text-success mb-2">
                             21 - 55
                             <span className="text-xl ml-1">ms</span>
                         </div>
-                        <div className="text-emerald-400/60 text-sm">{t('solution.acceptable')}</div>
+                        <div className="text-success/60 text-sm">{t('solution.acceptable')}</div>
                     </motion.div>
                 </div>
 

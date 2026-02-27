@@ -371,7 +371,7 @@ const AudioPlayer = () => {
 
           {/* Track info */}
           <div className="min-w-0">
-            <p className="text-text-primary font-medium text-sm truncate max-w-[120px] sm:max-w-[200px] md:max-w-none">
+            <p className="text-text-primary font-medium text-sm truncate max-w-[180px] sm:max-w-[200px] md:max-w-none">
               {currentTrack.title}
             </p>
             <div className="flex items-center gap-1.5">
@@ -406,10 +406,10 @@ const AudioPlayer = () => {
           {/* Previous */}
           <button
             onClick={prevTrack}
-            className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full text-text-secondary hover:text-accent hover:bg-white/5 transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+            className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full text-text-secondary hover:text-accent hover:bg-white/5 transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
             aria-label={t('buttons.previous')}
           >
-            <SkipBack size={18} />
+            <SkipBack className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
           </button>
 
           {/* Play / Pause */}
@@ -428,10 +428,10 @@ const AudioPlayer = () => {
           {/* Next */}
           <button
             onClick={nextTrack}
-            className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full text-text-secondary hover:text-accent hover:bg-white/5 transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+            className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full text-text-secondary hover:text-accent hover:bg-white/5 transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
             aria-label={t('buttons.next')}
           >
-            <SkipForward size={18} />
+            <SkipForward className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
           </button>
         </div>
 
@@ -516,7 +516,7 @@ const AudioPlayer = () => {
           {/* Close button */}
           <button
             onClick={closePlayer}
-            className="flex items-center justify-center w-10 h-10 rounded-full text-text-secondary hover:text-error hover:bg-white/5 transition-colors duration-150 sm:ml-2 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+            className="flex items-center justify-center w-10 h-10 rounded-full text-text-secondary hover:text-text-primary hover:bg-surface-raised transition-colors duration-150 sm:ml-2 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
             aria-label={t('audio_player.close', 'Close Player')}
           >
             <X size={18} />
