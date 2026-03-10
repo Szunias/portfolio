@@ -1,79 +1,26 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     motion,
     useReducedMotion,
     useInView,
-    useSpring,
-    useMotionValue,
-    AnimatePresence,
 } from 'framer-motion';
-import { Download } from 'lucide-react';
+import { Download, ArrowRight } from 'lucide-react';
 
 import { Button } from '../components/ui/Button';
 import SEO from '../components/layout/SEO';
 
 const PROFILE_IMAGE = `${import.meta.env.BASE_URL}assets/images/profile.jpg`;
 
-/** Inline SVG waveform icon for the photo placeholder. */
-const WaveformIcon = () => (
-    <svg
-        width="48"
-        height="48"
-        viewBox="0 0 48 48"
-        fill="none"
-        className="text-text-tertiary"
-        aria-hidden="true"
-    >
-        <rect x="10" y="18" width="4" height="12" rx="2" fill="currentColor" opacity="0.5" />
-        <rect x="18" y="12" width="4" height="24" rx="2" fill="currentColor" opacity="0.7" />
-        <rect x="26" y="16" width="4" height="16" rx="2" fill="currentColor" opacity="0.6" />
-        <rect x="34" y="14" width="4" height="20" rx="2" fill="currentColor" opacity="0.5" />
-    </svg>
-);
+const TOOLS = [
+    'Wwise', 'FMOD', 'Reaper',
+    'Unreal Engine', 'MetaSounds', 'Unity',
+    'Python', 'C++', 'C#',
+    'Perforce', 'Git', 'Blueprints',
+];
 
 /* ------------------------------------------------------------------ */
-/*  Animated counter component for stat cards                          */
-/* ------------------------------------------------------------------ */
-
-interface AnimatedNumberProps {
-    target: number;
-    isInView: boolean;
-    reducedMotion: boolean | null;
-}
-
-const AnimatedNumber = ({ target, isInView, reducedMotion }: AnimatedNumberProps) => {
-    const motionValue = useMotionValue(0);
-    const springValue = useSpring(motionValue, {
-        stiffness: 80,
-        damping: 20,
-        restDelta: 0.5,
-    });
-    const [displayValue, setDisplayValue] = useState(0);
-
-    useEffect(() => {
-        if (reducedMotion) {
-            setDisplayValue(target);
-            return;
-        }
-        if (isInView) {
-            motionValue.set(target);
-        }
-    }, [isInView, target, motionValue, reducedMotion]);
-
-    useEffect(() => {
-        if (reducedMotion) return;
-        const unsubscribe = springValue.on('change', (latest) => {
-            setDisplayValue(Math.round(latest));
-        });
-        return unsubscribe;
-    }, [springValue, reducedMotion]);
-
-    return <>{displayValue}</>;
-};
-
-/* ------------------------------------------------------------------ */
-/*  Variant definitions                                                */
+/*  Motion variants                                                    */
 /* ------------------------------------------------------------------ */
 
 const gridContainerVariants = {
@@ -104,7 +51,58 @@ const noMotionItemVariants = {
 };
 
 /* ------------------------------------------------------------------ */
-/*  About page component                                               */
+/*  Section label                                                      */
+/* ------------------------------------------------------------------ */
+
+const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+    <h2 className="font-mono text-overline text-text-tertiary uppercase tracking-widest mb-5">
+        {children}
+    </h2>
+);
+
+/* ------------------------------------------------------------------ */
+/*  Stat card with value + label + detail line                         */
+/* ------------------------------------------------------------------ */
+
+interface StatCardProps {
+    value: string;
+    label: string;
+    detail: string;
+    color?: string;
+}
+
+const StatCard = ({ value, label, detail, color = 'text-accent' }: StatCardProps) => {
+    const ref = useRef<HTMLDivElement>(null);
+    const isInView = useInView(ref, { once: true, amount: 0.5 });
+    const prefersReducedMotion = useReducedMotion();
+
+    return (
+        <motion.div
+            ref={ref}
+            className="md:col-span-1 bg-surface-raised rounded-xl border border-border p-6"
+            variants={gridItemVariants}
+            aria-label={`${value} ${label}`}
+        >
+            <motion.span
+                className={`block font-display text-h2 md:text-h1 ${color}`}
+                initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }}
+                animate={isInView ? { opacity: 1 } : undefined}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
+                {value}
+            </motion.span>
+            <span className="block font-mono text-caption text-text-secondary uppercase tracking-wider mt-1">
+                {label}
+            </span>
+            <p className="text-caption text-text-tertiary mt-3 leading-relaxed">
+                {detail}
+            </p>
+        </motion.div>
+    );
+};
+
+/* ------------------------------------------------------------------ */
+/*  About page                                                         */
 /* ------------------------------------------------------------------ */
 
 const About = () => {
@@ -113,7 +111,6 @@ const About = () => {
 
     const [imageLoaded, setImageLoaded] = useState(false);
     const [imageError, setImageError] = useState(false);
-    const [storyExpanded, setStoryExpanded] = useState(false);
 
     const containerVars = prefersReducedMotion
         ? noMotionContainerVariants
@@ -121,19 +118,6 @@ const About = () => {
     const itemVars = prefersReducedMotion
         ? noMotionItemVariants
         : gridItemVariants;
-
-    // Refs for stat count-up
-    const statGamesRef = useRef<HTMLDivElement>(null);
-    const statPianoRef = useRef<HTMLDivElement>(null);
-    const statLatencyRef = useRef<HTMLDivElement>(null);
-
-    const gamesInView = useInView(statGamesRef, { once: true, amount: 0.5 });
-    const pianoInView = useInView(statPianoRef, { once: true, amount: 0.5 });
-    const latencyInView = useInView(statLatencyRef, { once: true, amount: 0.5 });
-
-    const toggleStory = useCallback(() => {
-        setStoryExpanded((prev) => !prev);
-    }, []);
 
     return (
         <div className="min-h-screen relative bg-surface">
@@ -148,22 +132,38 @@ const About = () => {
                     viewport={{ once: true }}
                 >
                     {/* ============================================ */}
-                    {/* Row 1: INTRO (span 3)                        */}
+                    {/* Row 1 — Hook headline + subtitle             */}
                     {/* ============================================ */}
                     <motion.section
-                        className="md:col-span-3"
+                        className="md:col-span-3 pb-2"
                         variants={itemVars}
                     >
-                        <h1 className="font-display text-h1 text-text-primary leading-tight">
-                            {t('intro')}
+                        <h1 className="font-display text-h1 md:text-hero text-text-primary leading-tight">
+                            {t('hook')}
                         </h1>
+                        <p className="font-mono text-body-sm text-text-tertiary mt-3 tracking-wide">
+                            {t('intro_sub')}
+                        </p>
                     </motion.section>
 
                     {/* ============================================ */}
-                    {/* Row 2: PHOTO (1 col) + STORY (2 cols)        */}
+                    {/* Row 2 — Story (2 cols) + Photo (1 col)       */}
+                    {/* On mobile: story first, photo second         */}
                     {/* ============================================ */}
                     <motion.div
-                        className="md:col-span-1 bg-surface-raised rounded-xl border border-border overflow-hidden"
+                        className="md:col-span-2 bg-surface-raised rounded-xl border border-border p-6 md:p-8 order-2 md:order-1"
+                        variants={itemVars}
+                    >
+                        <SectionLabel>{t('section_story')}</SectionLabel>
+                        <div className="space-y-5 text-body text-text-secondary leading-relaxed max-w-[65ch]">
+                            <p>{t('story_1')}</p>
+                            <p>{t('story_2')}</p>
+                            <p>{t('story_3')}</p>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        className="md:col-span-1 bg-surface-raised rounded-xl border border-border overflow-hidden order-1 md:order-2"
                         variants={itemVars}
                     >
                         <div className="aspect-[3/4] w-full relative">
@@ -177,136 +177,45 @@ const About = () => {
                                 />
                             )}
                             {!imageLoaded && (
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <WaveformIcon />
-                                </div>
+                                <div className="absolute inset-0 bg-surface-overlay" />
                             )}
                         </div>
                     </motion.div>
 
-                    <motion.div
-                        className="md:col-span-2 bg-surface-raised rounded-xl border border-border p-6 md:p-8"
-                        variants={itemVars}
-                    >
-                        <p className="text-body text-text-secondary leading-relaxed">
-                            {t('story_1')}
-                        </p>
-
-                        <AnimatePresence initial={false}>
-                            {storyExpanded && (
-                                <motion.div
-                                    key="story-expanded"
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: 'auto', opacity: 1 }}
-                                    exit={{ height: 0, opacity: 0 }}
-                                    transition={{ duration: 0.3, ease: 'easeInOut' }}
-                                    className="overflow-hidden"
-                                >
-                                    <div className="space-y-6 pt-6">
-                                        <p className="text-body text-text-secondary leading-relaxed">
-                                            {t('story_2')}
-                                        </p>
-                                        <p className="text-body text-text-secondary leading-relaxed">
-                                            {t('story_3')}
-                                        </p>
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        <button
-                            onClick={toggleStory}
-                            aria-expanded={storyExpanded}
-                            className="text-accent hover:text-accent-hover text-body-sm font-medium mt-4 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-sm"
-                        >
-                            {storyExpanded
-                                ? t('story_collapse', 'Show less')
-                                : t('story_expand', 'Read more')}
-                        </button>
-                    </motion.div>
+                    {/* ============================================ */}
+                    {/* Row 3 — Stats (3 cards with detail lines)    */}
+                    {/* ============================================ */}
+                    <StatCard
+                        value={t('stat_daw_value')}
+                        label={t('stat_daw_label')}
+                        detail={t('stat_daw_detail')}
+                        color="text-accent"
+                    />
+                    <StatCard
+                        value={t('stat_mix_value')}
+                        label={t('stat_mix_label')}
+                        detail={t('stat_mix_detail')}
+                        color="text-accent-warm"
+                    />
+                    <StatCard
+                        value={t('stat_people_value')}
+                        label={t('stat_people_label')}
+                        detail={t('stat_people_detail')}
+                        color="text-accent"
+                    />
 
                     {/* ============================================ */}
-                    {/* Row 3: QUOTE (span 3, accent band)           */}
-                    {/* ============================================ */}
-                    <motion.div
-                        className="md:col-span-3 bg-surface-raised rounded-xl border border-border py-12 md:py-16 px-6 md:px-10"
-                        variants={itemVars}
-                    >
-                        <blockquote className="max-w-content mx-auto border-l-4 border-accent pl-6 md:pl-8">
-                            <p className="font-display text-h2 md:text-h1 text-text-primary leading-snug italic">
-                                {t('pull_quote')}
-                            </p>
-                        </blockquote>
-                    </motion.div>
-
-                    {/* ============================================ */}
-                    {/* Row 4: STATS (3 equal cards)                  */}
-                    {/* ============================================ */}
-                    <motion.div
-                        ref={statGamesRef}
-                        className="md:col-span-1 bg-surface-raised rounded-xl border border-border p-6 text-center"
-                        variants={itemVars}
-                        aria-label={`${t('stat_games_value', '4')} ${t('stat_games_label', 'Games Shipped')}`}
-                    >
-                        <span className="block font-display text-h1 md:text-hero text-accent">
-                            <AnimatedNumber
-                                target={4}
-                                isInView={gamesInView}
-                                reducedMotion={prefersReducedMotion}
-                            />
-                        </span>
-                        <span className="block font-mono text-caption text-text-secondary uppercase tracking-wider mt-2">
-                            {t('stat_games_label', 'Games Shipped')}
-                        </span>
-                    </motion.div>
-
-                    <motion.div
-                        ref={statPianoRef}
-                        className="md:col-span-1 bg-surface-raised rounded-xl border border-border p-6 text-center"
-                        variants={itemVars}
-                        aria-label={`${t('stat_piano_value', '12')} ${t('stat_piano_label', 'Years Piano')}`}
-                    >
-                        <span className="block font-display text-h1 md:text-hero text-accent-warm">
-                            <AnimatedNumber
-                                target={12}
-                                isInView={pianoInView}
-                                reducedMotion={prefersReducedMotion}
-                            />
-                        </span>
-                        <span className="block font-mono text-caption text-text-secondary uppercase tracking-wider mt-2">
-                            {t('stat_piano_label', 'Years Piano')}
-                        </span>
-                    </motion.div>
-
-                    <motion.div
-                        ref={statLatencyRef}
-                        className="md:col-span-1 bg-surface-raised rounded-xl border border-border p-6 text-center"
-                        variants={itemVars}
-                        aria-label={`${t('stat_latency_value', '<55ms')} ${t('stat_latency_label', 'Best Latency')}`}
-                    >
-                        <motion.span
-                            className="block font-display text-h1 md:text-hero text-accent"
-                            initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }}
-                            animate={latencyInView ? { opacity: 1 } : undefined}
-                            transition={{ duration: 0.6, ease: 'easeOut' }}
-                        >
-                            {t('stat_latency_value', '<55ms')}
-                        </motion.span>
-                        <span className="block font-mono text-caption text-text-secondary uppercase tracking-wider mt-2">
-                            {t('stat_latency_label', 'Best Latency')}
-                        </span>
-                    </motion.div>
-
-                    {/* ============================================ */}
-                    {/* Row 5: APPROACH (2 cols) + EDUCATION (1 col)  */}
+                    {/* Row 4 — How I Work (2 cols) + Toolkit (1 col)*/}
                     {/* ============================================ */}
                     <motion.div
                         className="md:col-span-2 bg-surface-raised rounded-xl border border-border p-6 md:p-8"
                         variants={itemVars}
                     >
-                        <div className="text-body text-text-secondary space-y-6">
-                            <p className="leading-relaxed">{t('approach_1')}</p>
-                            <p className="leading-relaxed">{t('approach_2')}</p>
+                        <SectionLabel>{t('section_approach')}</SectionLabel>
+                        <div className="space-y-5 text-body text-text-secondary leading-relaxed max-w-[65ch]">
+                            <p>{t('approach_1')}</p>
+                            <p>{t('approach_2')}</p>
+                            <p>{t('approach_3')}</p>
                         </div>
                     </motion.div>
 
@@ -314,27 +223,49 @@ const About = () => {
                         className="md:col-span-1 bg-surface-raised rounded-xl border border-border p-6"
                         variants={itemVars}
                     >
-                        <div className="space-y-2">
-                            <div className="bg-surface-overlay rounded-md px-3 py-2 font-mono text-body-sm text-text-secondary">
-                                {t('edu_dae')}
-                            </div>
-                            <div className="bg-surface-overlay rounded-md px-3 py-2 font-mono text-body-sm text-text-secondary">
-                                {t('edu_hs')}
-                            </div>
-                            <div className="bg-surface-overlay rounded-md px-3 py-2 font-mono text-body-sm text-text-secondary">
-                                {t('edu_piano')}
-                            </div>
+                        <SectionLabel>{t('section_toolkit')}</SectionLabel>
+                        <div className="flex flex-wrap gap-2">
+                            {TOOLS.map((tool) => (
+                                <span
+                                    key={tool}
+                                    className="px-3 py-1.5 bg-surface-overlay rounded-md font-mono text-caption text-text-secondary border border-border hover:border-border-hover hover:text-text-primary transition-colors"
+                                >
+                                    {tool}
+                                </span>
+                            ))}
                         </div>
                     </motion.div>
 
                     {/* ============================================ */}
-                    {/* Row 6: CTA (span 3)                          */}
+                    {/* Row 5 — Education (1 col) + CTA (2 cols)     */}
                     {/* ============================================ */}
-                    <motion.section
-                        className="md:col-span-3 bg-surface-raised rounded-xl border border-border p-6 md:p-8"
+                    <motion.div
+                        className="md:col-span-1 bg-surface-raised rounded-xl border border-border p-6"
                         variants={itemVars}
                     >
-                        <p className="font-display text-h3 text-text-primary mb-6">
+                        <SectionLabel>{t('section_education')}</SectionLabel>
+                        <div className="space-y-4">
+                            {(['dae', 'hs', 'piano'] as const).map((key) => (
+                                <div key={key} className="border-l-2 border-border pl-4">
+                                    <p className="font-display text-body-sm text-text-primary font-medium">
+                                        {t(`edu_${key}_name`)}
+                                    </p>
+                                    <p className="font-mono text-caption text-text-tertiary mt-0.5">
+                                        {t(`edu_${key}_desc`)}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+
+                    <motion.section
+                        className="md:col-span-2 bg-surface-raised rounded-xl border border-accent/20 p-6 md:p-8"
+                        variants={itemVars}
+                    >
+                        <h2 className="font-display text-h3 text-text-primary mb-2">
+                            {t('cta_heading')}
+                        </h2>
+                        <p className="text-body-sm text-text-secondary mb-6">
                             {t('cta_text')}
                         </p>
                         <div className="flex flex-wrap gap-3">
@@ -343,7 +274,8 @@ const About = () => {
                                 size="lg"
                                 onClick={() => window.location.href = '/contact'}
                             >
-                                {t('cta_contact', 'Say hi')}
+                                {t('cta_contact')}
+                                <ArrowRight size={16} />
                             </Button>
                             <a
                                 href={`${import.meta.env.BASE_URL}cv/Igor_Szuniewicz_CV.pdf`}
@@ -352,7 +284,7 @@ const About = () => {
                             >
                                 <Button variant="secondary" size="lg" className="gap-2" tabIndex={-1}>
                                     <Download size={16} />
-                                    {t('cta_cv', 'My CV')}
+                                    {t('cta_cv')}
                                 </Button>
                             </a>
                         </div>
