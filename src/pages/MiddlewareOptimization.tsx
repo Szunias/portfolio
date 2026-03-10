@@ -26,26 +26,26 @@ const MiddlewareOptimization = () => {
                 description={t('seo_description', 'Three Wwise middleware projects: voice management, spatial audio, and cross-platform memory optimization.')}
             />
             {/* Hero Section */}
-            <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-surface px-4 py-20">
+            <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-surface px-6 md:px-12 lg:px-16 pt-32 pb-20">
                 <motion.div
                     style={{ opacity, scale }}
                     className="relative z-10 max-w-5xl w-full text-center"
                 >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-surface-raised text-accent text-sm font-bold uppercase tracking-wider mb-8 border border-border">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-surface-raised text-accent text-sm font-bold uppercase tracking-wider mb-8 border border-border">
                         <Zap size={16} />
                         {t('hero.tag')}
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-text-primary mb-6 leading-tight">
+                    <h1 className="text-h1 md:text-hero font-display text-text-primary mb-6 leading-tight">
                         {t('hero.title')}
                     </h1>
 
-                    <p className="text-lg md:text-2xl text-text-secondary max-w-3xl mx-auto mb-12 font-light leading-relaxed">
+                    <p className="text-lg md:text-h3 text-text-secondary max-w-3xl mx-auto mb-12 font-light leading-relaxed">
                         {t('hero.lead')}
                     </p>
 
                     {/* Wwise Logo */}
-                    <div className="bg-surface-raised p-8 rounded-sm inline-block mb-12 border border-border transition-colors duration-300">
+                    <div className="bg-surface-raised p-8 rounded-xl inline-block mb-12 border border-border transition-colors duration-300">
                         <img
                             src="/assets/images/projects-pausedeserve/wwise_logo_rgb-77Awrfoo.png"
                             alt="Wwise Logo"
@@ -55,7 +55,7 @@ const MiddlewareOptimization = () => {
                     </div>
 
                     {/* Context Note */}
-                    <div className="max-w-2xl mx-auto bg-surface-raised border-l-4 border-accent p-6 rounded-sm text-left mb-12">
+                    <div className="max-w-2xl mx-auto bg-surface-raised border-l-4 border-accent p-6 rounded-xl text-left mb-12">
                         <p className="text-text-primary text-sm md:text-base leading-relaxed">
                             {t('hero.context')}
                         </p>
@@ -70,7 +70,7 @@ const MiddlewareOptimization = () => {
                         ].map((stat, index) => (
                             <div
                                 key={index}
-                                className="flex items-baseline gap-3 px-6 py-4 bg-surface-raised rounded-sm border border-border hover:-translate-y-1 transition-transform duration-300"
+                                className="flex items-baseline gap-3 px-6 py-4 bg-surface-raised rounded-xl border border-border hover:-translate-y-1 transition-transform duration-300"
                             >
                                 <span className={`text-3xl font-bold ${stat.color}`}>
                                     {stat.num}
@@ -87,13 +87,13 @@ const MiddlewareOptimization = () => {
             {/* Main Content */}
             <main className="relative z-20 bg-surface">
                 {/* Section Header */}
-                <section className="max-w-4xl mx-auto px-6 py-24 text-center">
+                <section className="max-w-content-wide mx-auto px-6 md:px-12 lg:px-16 py-20 md:py-28 text-center">
                     <motion.h2
                         initial={sectionReveal.initial}
                         whileInView={sectionReveal.animate}
                         viewport={{ once: true }}
                         transition={sectionReveal.transition}
-                        className="text-4xl md:text-5xl font-display font-bold text-text-primary mb-6"
+                        className="text-h2 md:text-h1 font-display text-text-primary mb-6"
                     >
                         {t('section.title')}
                     </motion.h2>
@@ -108,7 +108,7 @@ const MiddlewareOptimization = () => {
                     </motion.p>
                 </section>
 
-                <div className="max-w-6xl mx-auto px-6 pb-32 space-y-32">
+                <div className="max-w-content-wide mx-auto px-6 md:px-12 lg:px-16 pb-32 space-y-20 md:space-y-28">
                     {/* Project 1: Boney Boogaloo */}
                     <CaseStudyCard
                         title={t('boney.title')}
@@ -146,10 +146,10 @@ const MiddlewareOptimization = () => {
                 </div>
 
                 {/* Skills Section */}
-                <section className="bg-surface-raised py-32 px-6">
-                    <div className="max-w-6xl mx-auto">
+                <section className="bg-surface-raised py-20 md:py-28 px-6 md:px-12 lg:px-16">
+                    <div className="max-w-content-wide mx-auto">
                         <div className="text-center mb-20">
-                            <h2 className="text-4xl font-display font-bold text-text-primary mb-4">{t('learned.title')}</h2>
+                            <h2 className="text-h2 font-display text-text-primary mb-4">{t('learned.title')}</h2>
                             <p className="text-text-secondary text-lg">{t('learned.subtitle')}</p>
                         </div>
 
@@ -214,23 +214,23 @@ const CaseStudyCard = ({ title, badges, time, videoTitle, videoSrc, vimeoSrc, po
             whileInView={prefersReducedMotion ? noMotion.animate : detailIn.animate}
             viewport={{ once: true, margin: "-100px" }}
             transition={prefersReducedMotion ? noMotion.transition : detailIn.transition}
-            className="bg-surface-raised border border-border rounded-sm p-8 md:p-12"
+            className="bg-surface-raised border border-border rounded-xl p-8 md:p-12"
         >
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-                <h3 className="text-3xl md:text-4xl font-display font-bold text-text-primary">{title}</h3>
+                <h3 className="text-h2 md:text-h1 font-display text-text-primary">{title}</h3>
                 <div className="flex flex-wrap gap-3">
                     {badges.map((badge: string, i: number) => (
-                        <span key={i} className="px-4 py-1.5 bg-accent/10 text-accent text-sm font-semibold rounded-sm border border-accent/20">
+                        <span key={i} className="px-4 py-1.5 bg-accent/10 text-accent text-sm font-semibold rounded-md border border-accent/20">
                             {badge}
                         </span>
                     ))}
-                    <span className="px-4 py-1.5 bg-accent/10 text-accent-hover text-sm font-semibold rounded-sm border border-accent/20">
+                    <span className="px-4 py-1.5 bg-accent/10 text-accent-hover text-sm font-semibold rounded-md border border-accent/20">
                         {time}
                     </span>
                 </div>
             </div>
 
-            <div className="bg-surface rounded-sm overflow-hidden mb-10 border border-border">
+            <div className="bg-surface rounded-xl overflow-hidden mb-10 border border-border">
                 <div className="p-6 border-b border-border">
                     <h4 className="font-bold text-lg text-text-primary flex items-center gap-2">
                         <svg
@@ -302,12 +302,12 @@ const SkillCard = ({ icon, title, desc }: SkillCardProps) => {
             viewport={{ once: true }}
             transition={prefersReducedMotion ? noMotion.transition : cardIn.transition}
             whileHover={prefersReducedMotion ? {} : { y: -4 }}
-            className="bg-surface-raised p-8 rounded-sm border border-border hover:border-border-hover transition-all duration-300"
+            className="bg-surface-raised p-8 rounded-xl border border-border hover:border-border-hover transition-all duration-300"
         >
-            <div className="w-12 h-12 bg-surface rounded-sm flex items-center justify-center mb-6">
+            <div className="w-12 h-12 bg-surface rounded-lg flex items-center justify-center mb-6">
                 {icon}
             </div>
-            <h3 className="text-xl font-display font-bold text-text-primary mb-3">{title}</h3>
+            <h3 className="text-h4 font-display text-text-primary mb-3">{title}</h3>
             <p className="text-text-secondary leading-relaxed">
                 {desc}
             </p>

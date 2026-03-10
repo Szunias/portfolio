@@ -18,13 +18,13 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
     const preset = prefersReducedMotion ? noMotion : sectionReveal;
 
     return (
-        <section ref={ref} className="py-20 px-6 max-w-4xl mx-auto">
+        <section ref={ref} className="py-20 md:py-28 px-6 md:px-12 lg:px-16 max-w-content-wide mx-auto">
             <motion.div
                 initial={preset.initial}
                 animate={isInView ? preset.animate : {}}
                 transition={preset.transition}
             >
-                <h2 className="text-2xl md:text-3xl font-display font-bold text-text-primary mb-8">
+                <h2 className="text-h2 font-display text-text-primary mb-8">
                     {t('solution.title')}
                 </h2>
 
@@ -43,7 +43,7 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                         initial={prefersReducedMotion ? noMotion.initial : detailIn.initial}
                         animate={isInView ? (prefersReducedMotion ? noMotion.animate : detailIn.animate) : {}}
                         transition={prefersReducedMotion ? noMotion.transition : { ...detailIn.transition, delay: 0.2 }}
-                        className="bg-error/5 border border-error/20 rounded-sm p-8 text-center"
+                        className="bg-error/5 border border-error/20 rounded-xl p-8 text-center"
                     >
                         <div className="text-error text-sm font-medium uppercase tracking-wider mb-4">
                             {t('solution.without_cache')}
@@ -59,7 +59,7 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                         initial={prefersReducedMotion ? noMotion.initial : detailInRight.initial}
                         animate={isInView ? (prefersReducedMotion ? noMotion.animate : detailInRight.animate) : {}}
                         transition={prefersReducedMotion ? noMotion.transition : { ...detailInRight.transition, delay: 0.3 }}
-                        className="bg-success/5 border border-success/20 rounded-sm p-8 text-center"
+                        className="bg-success/5 border border-success/20 rounded-xl p-8 text-center"
                     >
                         <div className="text-success text-sm font-medium uppercase tracking-wider mb-4">
                             {t('solution.with_cache')}
@@ -91,9 +91,9 @@ const GradworkSolution = ({ t }: { t: (key: string) => string }) => {
                                 </div>
                             )}
 
-                            <div className="bg-surface-raised border border-border rounded-sm p-5 h-full">
+                            <div className="bg-surface-raised border border-border rounded-xl p-5 h-full">
                                 <div className="flex items-center gap-2 mb-3">
-                                    <div className={`w-8 h-8 rounded-sm bg-gradient-to-br ${step.color} flex items-center justify-center`}>
+                                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${step.color} flex items-center justify-center`}>
                                         <step.icon className="w-4 h-4 text-white" />
                                     </div>
                                     <span className="text-xs font-mono text-text-secondary">

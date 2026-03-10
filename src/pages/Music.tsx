@@ -21,14 +21,14 @@ const Music = () => {
         <MusicHero />
 
         {/* LIBRARY GRID */}
-        <section className="pt-16 pb-28 px-4 sm:px-8 bg-surface relative z-20">
-            <div className="max-w-7xl mx-auto">
+        <section className="pt-16 pb-28 px-6 md:px-12 lg:px-16 bg-surface relative z-20">
+            <div className="max-w-content-wide mx-auto">
                 <div className="flex items-center justify-between mb-12 border-b border-border pb-4">
                     <h2 className="text-h1 font-display text-text-primary">{t('music.library', 'Library')}</h2>
                     <span className="text-sm font-mono text-text-tertiary">{playlist.length} {t('music.releases', 'Releases')}</span>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-10">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                     {playlist.map((track, index) => (
                         <TrackCard
                             key={track.id}

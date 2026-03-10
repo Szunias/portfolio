@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import {
     motion,
     useReducedMotion,
@@ -11,6 +10,7 @@ import {
 } from 'framer-motion';
 import { Download } from 'lucide-react';
 
+import { Button } from '../components/ui/Button';
 import SEO from '../components/layout/SEO';
 
 const PROFILE_IMAGE = `${import.meta.env.BASE_URL}assets/images/profile.jpg`;
@@ -139,7 +139,7 @@ const About = () => {
         <div className="min-h-screen relative bg-surface">
             <SEO title={t('about_page_title', 'About')} description={t('about_page_description')} />
 
-            <div className="relative z-10 max-w-content-wide mx-auto px-6 lg:px-8 pt-32 pb-32">
+            <div className="relative z-10 max-w-content-wide mx-auto px-6 md:px-12 lg:px-16 pt-32 pb-32">
                 <motion.div
                     className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5"
                     variants={containerVars}
@@ -163,7 +163,7 @@ const About = () => {
                     {/* Row 2: PHOTO (1 col) + STORY (2 cols)        */}
                     {/* ============================================ */}
                     <motion.div
-                        className="md:col-span-1 bg-surface-raised rounded-lg border border-border overflow-hidden"
+                        className="md:col-span-1 bg-surface-raised rounded-xl border border-border overflow-hidden"
                         variants={itemVars}
                     >
                         <div className="aspect-[3/4] w-full relative">
@@ -185,7 +185,7 @@ const About = () => {
                     </motion.div>
 
                     <motion.div
-                        className="md:col-span-2 bg-surface-raised rounded-lg border border-border p-6 md:p-8"
+                        className="md:col-span-2 bg-surface-raised rounded-xl border border-border p-6 md:p-8"
                         variants={itemVars}
                     >
                         <p className="text-body text-text-secondary leading-relaxed">
@@ -229,11 +229,11 @@ const About = () => {
                     {/* Row 3: QUOTE (span 3, accent band)           */}
                     {/* ============================================ */}
                     <motion.div
-                        className="md:col-span-3 -mx-4 md:-mx-5 bg-accent/5 py-12 md:py-16 px-6 md:px-10"
+                        className="md:col-span-3 bg-surface-raised rounded-xl border border-border py-12 md:py-16 px-6 md:px-10"
                         variants={itemVars}
                     >
-                        <blockquote className="max-w-content mx-auto">
-                            <p className="font-display text-h2 md:text-h1 text-text-primary leading-snug">
+                        <blockquote className="max-w-content mx-auto border-l-4 border-accent pl-6 md:pl-8">
+                            <p className="font-display text-h2 md:text-h1 text-text-primary leading-snug italic">
                                 {t('pull_quote')}
                             </p>
                         </blockquote>
@@ -244,7 +244,7 @@ const About = () => {
                     {/* ============================================ */}
                     <motion.div
                         ref={statGamesRef}
-                        className="md:col-span-1 bg-surface-raised rounded-lg border border-border p-6 text-center"
+                        className="md:col-span-1 bg-surface-raised rounded-xl border border-border p-6 text-center"
                         variants={itemVars}
                         aria-label={`${t('stat_games_value', '4')} ${t('stat_games_label', 'Games Shipped')}`}
                     >
@@ -262,7 +262,7 @@ const About = () => {
 
                     <motion.div
                         ref={statPianoRef}
-                        className="md:col-span-1 bg-surface-raised rounded-lg border border-border p-6 text-center"
+                        className="md:col-span-1 bg-surface-raised rounded-xl border border-border p-6 text-center"
                         variants={itemVars}
                         aria-label={`${t('stat_piano_value', '12')} ${t('stat_piano_label', 'Years Piano')}`}
                     >
@@ -280,7 +280,7 @@ const About = () => {
 
                     <motion.div
                         ref={statLatencyRef}
-                        className="md:col-span-1 bg-surface-raised rounded-lg border border-border p-6 text-center"
+                        className="md:col-span-1 bg-surface-raised rounded-xl border border-border p-6 text-center"
                         variants={itemVars}
                         aria-label={`${t('stat_latency_value', '<55ms')} ${t('stat_latency_label', 'Best Latency')}`}
                     >
@@ -301,7 +301,7 @@ const About = () => {
                     {/* Row 5: APPROACH (2 cols) + EDUCATION (1 col)  */}
                     {/* ============================================ */}
                     <motion.div
-                        className="md:col-span-2 bg-surface-raised rounded-lg border border-border p-6 md:p-8"
+                        className="md:col-span-2 bg-surface-raised rounded-xl border border-border p-6 md:p-8"
                         variants={itemVars}
                     >
                         <div className="text-body text-text-secondary space-y-6">
@@ -311,7 +311,7 @@ const About = () => {
                     </motion.div>
 
                     <motion.div
-                        className="md:col-span-1 bg-surface-raised rounded-lg border border-border p-6"
+                        className="md:col-span-1 bg-surface-raised rounded-xl border border-border p-6"
                         variants={itemVars}
                     >
                         <div className="space-y-2">
@@ -331,27 +331,29 @@ const About = () => {
                     {/* Row 6: CTA (span 3)                          */}
                     {/* ============================================ */}
                     <motion.section
-                        className="md:col-span-3 bg-surface-raised rounded-lg border border-border p-6 md:p-8"
+                        className="md:col-span-3 bg-surface-raised rounded-xl border border-border p-6 md:p-8"
                         variants={itemVars}
                     >
                         <p className="font-display text-h3 text-text-primary mb-6">
                             {t('cta_text')}
                         </p>
                         <div className="flex flex-wrap gap-3">
-                            <Link
-                                to="/contact"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-accent-warm text-surface font-semibold rounded-md transition-all duration-200 hover:bg-accent-warm-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-warm focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+                            <Button
+                                variant="primary"
+                                size="lg"
+                                onClick={() => window.location.href = '/contact'}
                             >
                                 {t('cta_contact', 'Say hi')}
-                            </Link>
+                            </Button>
                             <a
                                 href={`${import.meta.env.BASE_URL}cv/Igor_Szuniewicz_CV.pdf`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-6 py-3 border border-border text-text-primary font-medium rounded-md transition-all duration-200 hover:border-text-secondary hover:bg-surface-overlay active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
                             >
-                                <Download size={16} />
-                                {t('cta_cv', 'My CV')}
+                                <Button variant="secondary" size="lg" className="gap-2" tabIndex={-1}>
+                                    <Download size={16} />
+                                    {t('cta_cv', 'My CV')}
+                                </Button>
                             </a>
                         </div>
                     </motion.section>

@@ -1,19 +1,11 @@
-import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Play, ArrowRight } from 'lucide-react';
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useReducedMotion,
-  type MotionValue,
-} from 'framer-motion';
+import { Play, ArrowRight, ChevronDown } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 
-/**
- * Decorative SVG waveform that evokes audio / sound design.
- * Renders a smooth polyline with gentle amplitude oscillation.
- */
+/* ------------------------------------------------------------------ */
+/*  Decorative waveform – subtle background element                   */
+/* ------------------------------------------------------------------ */
 const Waveform = () => {
   const points = (() => {
     const pts: string[] = [];
@@ -36,14 +28,13 @@ const Waveform = () => {
 
   return (
     <div
-      className="absolute inset-x-0 pointer-events-none select-none"
-      style={{ top: '55%', transform: 'translateY(-50%)' }}
+      className="absolute inset-0 pointer-events-none select-none overflow-hidden"
       aria-hidden="true"
     >
       <svg
         viewBox="0 0 1200 80"
         preserveAspectRatio="none"
-        className="w-[80%] mx-auto h-16 md:h-20 opacity-10"
+        className="absolute right-0 top-1/2 -translate-y-1/2 w-[70%] h-[60%] opacity-[0.06]"
         fill="none"
       >
         <polyline
@@ -53,7 +44,6 @@ const Waveform = () => {
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          fill="none"
         />
         <polyline
           points={points}
@@ -62,8 +52,7 @@ const Waveform = () => {
           strokeWidth="0.8"
           strokeLinecap="round"
           strokeLinejoin="round"
-          fill="none"
-          opacity={0.3}
+          opacity={0.4}
           transform="translate(0, 6)"
         />
       </svg>
@@ -71,132 +60,131 @@ const Waveform = () => {
   );
 };
 
-/**
- * A single word in the scroll-driven text reveal.
- * Maps a sub-range of scrollYProgress to opacity 0.15 -> 1.
- */
-interface ScrollWordProps {
-  word: string;
-  scrollYProgress: MotionValue<number>;
-  rangeStart: number;
-  rangeEnd: number;
-}
+/* ------------------------------------------------------------------ */
+/*  Animation variants                                                */
+/* ------------------------------------------------------------------ */
+const ease: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
 
-const ScrollWord = ({ word, scrollYProgress, rangeStart, rangeEnd }: ScrollWordProps) => {
-  const opacity = useTransform(scrollYProgress, [rangeStart, rangeEnd], [0.35, 1]);
-  return (
-    <motion.span style={{ opacity }} className="inline-block mr-[0.3em]">
-      {word}
-    </motion.span>
-  );
+const staggerContainer = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.15, delayChildren: 0.1 },
+  },
 };
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease },
+  },
+};
+
+/* ------------------------------------------------------------------ */
+/*  Hero                                                              */
+/* ------------------------------------------------------------------ */
 const Hero = () => {
   const { t } = useTranslation('home');
   const prefersReducedMotion = useReducedMotion();
-  const heroRef = useRef<HTMLDivElement>(null);
 
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ['start start', 'end end'],
-  });
-
-  // Get the description and split into words
   const description = t(
     'hero.description',
-    "I make sound for games. Footsteps, ambience, enemy audio. If it plays during gameplay, I probably made it."
+    'I make sound for games. Footsteps, ambience, enemy audio. If it plays during gameplay, I probably made it.',
   );
-  const words = description.split(/\s+/).filter(Boolean);
 
-  // CTA buttons: visible from the start, fully opaque by mid-scroll
-  const ctaOpacity = useTransform(scrollYProgress, [0, 0.5], [0.6, 1]);
-  const ctaY = useTransform(scrollYProgress, [0, 0.3], [8, 0]);
+  const Container = prefersReducedMotion ? 'div' : motion.div;
+  const Item = prefersReducedMotion ? 'div' : motion.div;
+  const ItemP = prefersReducedMotion ? 'p' : motion.p;
+  const ItemH1 = prefersReducedMotion ? 'h1' : motion.h1;
 
   return (
-    <section ref={heroRef} className="relative h-[180vh] bg-surface">
-      {/* Sticky inner container that stays visible while scrolling */}
-      <div className="sticky top-0 h-screen min-h-screen flex flex-col justify-center overflow-hidden">
-        {/* Decorative waveform */}
-        <Waveform />
+    <section className="relative min-h-[calc(100vh-5rem)] flex flex-col justify-center bg-surface overflow-hidden">
+      {/* Background waveform */}
+      <Waveform />
 
-        <div className="relative z-10 w-full max-w-content-wide mx-auto px-6 lg:px-12">
-          <div className="max-w-5xl">
-            {/* Name */}
-            <h1 className="font-display text-[clamp(3rem,10vw,7rem)] text-text-primary leading-[0.95] tracking-[-0.04em] mb-4 text-left">
-              IGOR SZUNIEWICZ
-            </h1>
+      {/* Content */}
+      <Container
+        className="relative z-10 w-full max-w-content-wide mx-auto px-6 md:px-12 lg:px-16 py-16"
+        {...(!prefersReducedMotion && {
+          variants: staggerContainer,
+          initial: 'hidden',
+          animate: 'visible',
+        })}
+      >
+        <div className="max-w-3xl">
+          {/* Overline */}
+          <Item
+            className="text-overline uppercase tracking-widest text-accent font-mono mb-5"
+            {...(!prefersReducedMotion && { variants: fadeUp })}
+          >
+            {t('hero.role', 'Game Audio Designer')}
+          </Item>
 
-            {/* Role */}
-            <p className="font-mono text-h4 md:text-h3 text-text-secondary uppercase tracking-widest mb-12">
-              {t('hero.role', 'Game Audio Designer')}
-            </p>
+          {/* Name */}
+          <ItemH1
+            className="font-display text-[clamp(2.5rem,7vw,5rem)] text-text-primary font-bold leading-[1.05] tracking-[-0.04em] mb-6"
+            {...(!prefersReducedMotion && { variants: fadeUp })}
+          >
+            IGOR SZUNIEWICZ
+          </ItemH1>
 
-            {/* Scroll-driven word-by-word text reveal */}
-            <div className="text-body md:text-h5 text-text-secondary max-w-2xl leading-relaxed mb-8">
-              {prefersReducedMotion ? (
-                <p>{description}</p>
-              ) : (
-                <p aria-label={description}>
-                  {words.map((word, i) => {
-                    // Each word gets a portion of the 0.05-0.6 scroll range
-                    const rangeStart = 0.05 + (i / words.length) * 0.55;
-                    const rangeEnd = 0.05 + ((i + 1) / words.length) * 0.55;
-                    return (
-                      <ScrollWord
-                        key={`${word}-${i}`}
-                        word={word}
-                        scrollYProgress={scrollYProgress}
-                        rangeStart={rangeStart}
-                        rangeEnd={rangeEnd}
-                      />
-                    );
-                  })}
-                </p>
-              )}
-            </div>
+          {/* Description */}
+          <ItemP
+            className="text-lg text-text-secondary max-w-xl leading-relaxed mb-10"
+            {...(!prefersReducedMotion && { variants: fadeUp })}
+          >
+            {description}
+          </ItemP>
 
-            {/* CTA Buttons */}
-            {prefersReducedMotion ? (
-              <div className="flex flex-wrap items-center gap-3">
-                <Link
-                  to="#showreel"
-                  className="group inline-flex items-center gap-2 px-5 py-3 bg-accent text-surface font-sans font-semibold text-body-sm rounded-md hover:bg-accent-hover hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface transition-all duration-150"
-                >
-                  <Play size={14} fill="currentColor" className="group-hover:rotate-12 transition-transform duration-150" />
-                  {t('hero.watch_showreel', 'Watch Showreel')}
-                </Link>
-                <Link
-                  to="/projects"
-                  className="group inline-flex items-center gap-2 px-5 py-3 border border-border text-text-primary font-sans font-medium text-body-sm rounded-md hover:border-text-secondary hover:bg-surface-overlay focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface transition-all duration-200"
-                >
-                  {t('hero.view_projects', 'View Projects')}
-                  <ArrowRight size={14} className="opacity-60 group-hover:translate-x-0.5 transition-transform" />
-                </Link>
-              </div>
-            ) : (
-              <motion.div
-                style={{ opacity: ctaOpacity, y: ctaY }}
-                className="flex flex-wrap items-center gap-3"
-              >
-                <Link
-                  to="#showreel"
-                  className="group inline-flex items-center gap-2 px-5 py-3 bg-accent text-surface font-sans font-semibold text-body-sm rounded-md hover:bg-accent-hover hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface transition-all duration-150"
-                >
-                  <Play size={14} fill="currentColor" className="group-hover:rotate-12 transition-transform duration-150" />
-                  {t('hero.watch_showreel', 'Watch Showreel')}
-                </Link>
-                <Link
-                  to="/projects"
-                  className="group inline-flex items-center gap-2 px-5 py-3 border border-border text-text-primary font-sans font-medium text-body-sm rounded-md hover:border-text-secondary hover:bg-surface-overlay focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface transition-all duration-200"
-                >
-                  {t('hero.view_projects', 'View Projects')}
-                  <ArrowRight size={14} className="opacity-60 group-hover:translate-x-0.5 transition-transform" />
-                </Link>
-              </motion.div>
-            )}
-          </div>
+          {/* CTA Buttons */}
+          <Item
+            className="flex flex-wrap items-center gap-4"
+            {...(!prefersReducedMotion && { variants: fadeUp })}
+          >
+            <Link
+              to="#showreel"
+              className="group inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent text-surface font-semibold text-body-sm rounded-lg hover:bg-accent-hover active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface transition-all duration-200"
+            >
+              <Play
+                size={14}
+                fill="currentColor"
+                className="group-hover:scale-110 transition-transform duration-150"
+              />
+              {t('hero.watch_showreel', 'Watch Showreel')}
+            </Link>
+            <Link
+              to="/projects"
+              className="group inline-flex items-center justify-center gap-2 px-6 py-3 border border-border text-text-primary font-semibold text-body-sm rounded-lg hover:border-accent hover:bg-surface-raised active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface transition-all duration-200"
+            >
+              {t('hero.view_projects', 'View Projects')}
+              <ArrowRight
+                size={14}
+                className="opacity-60 group-hover:translate-x-0.5 transition-transform duration-150"
+              />
+            </Link>
+          </Item>
         </div>
-      </div>
+      </Container>
+
+      {/* Scroll indicator */}
+      {prefersReducedMotion ? (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-text-tertiary">
+          <ChevronDown size={20} />
+        </div>
+      ) : (
+        <motion.div
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 text-text-tertiary"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, y: [0, 6, 0] }}
+          transition={{
+            opacity: { duration: 0.6, delay: 1.2, ease },
+            y: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+          }}
+        >
+          <ChevronDown size={20} />
+        </motion.div>
+      )}
     </section>
   );
 };

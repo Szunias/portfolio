@@ -8,7 +8,7 @@ interface ProjectFiltersProps {
 const ProjectFilters = ({ categories, activeFilter, onFilterChange, getLabel }: ProjectFiltersProps) => {
   return (
     <div className="relative">
-      <div className="flex gap-2 justify-start lg:justify-end overflow-x-auto pb-1 lg:pb-0 -mx-2 px-2 lg:mx-0 lg:px-0 no-scrollbar snap-x">
+      <div className="flex gap-3 justify-start lg:justify-end overflow-x-auto pb-1 lg:pb-0 -mx-2 px-2 lg:mx-0 lg:px-0 no-scrollbar snap-x">
         {categories.map((category) => {
           const isActive = activeFilter === category;
           return (
@@ -17,10 +17,10 @@ const ProjectFilters = ({ categories, activeFilter, onFilterChange, getLabel }: 
               onClick={() => onFilterChange(category)}
               aria-pressed={isActive}
               className={`
-                relative px-3 py-2 font-mono text-label uppercase transition-all duration-200 rounded whitespace-nowrap snap-start focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:outline-none min-h-[44px] min-w-[44px] flex items-center justify-center
+                relative px-4 py-2 text-label uppercase tracking-wider transition-all duration-200 rounded-lg whitespace-nowrap snap-start focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:outline-none min-h-[44px] min-w-[44px] flex items-center justify-center font-medium
                 ${isActive
                   ? 'bg-accent text-surface border border-accent'
-                  : 'bg-accent/10 text-accent border border-accent/15 hover:bg-accent/18 hover:border-accent/30'}
+                  : 'bg-surface-raised text-text-secondary border border-border hover:text-text-primary hover:border-border-hover'}
               `}
             >
               <span className="relative z-10">

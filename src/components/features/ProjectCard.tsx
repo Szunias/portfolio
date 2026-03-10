@@ -1,9 +1,11 @@
 import { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ExternalLink } from 'lucide-react';
 
 import ImageWithLoader from '@/components/ui/ImageWithLoader';
+import { cardHover } from '@/constants/motion';
 import type { Project } from '@/types';
 
 interface ProjectCardProps {
@@ -13,6 +15,7 @@ interface ProjectCardProps {
 
 const ProjectCard = ({ project, index }: ProjectCardProps) => {
   const { t } = useTranslation('projects');
+  const prefersReducedMotion = useReducedMotion();
   const media = project.media || {};
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -49,28 +52,34 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
   const cardContent = (
     <div className="flex flex-col h-full">
       {/* Image Section */}
-      <div className="relative w-full aspect-video overflow-hidden">
+      <div className="relative w-full aspect-[16/9] overflow-hidden">
         {media.thumbnail ? (
             media.thumbnail.endsWith('.mp4') || media.thumbnail.endsWith('.webm') ? (
-            <video
+            <motion.video
                 ref={videoRef}
                 src={`/${media.thumbnail}`}
-                className="w-full h-full object-cover transition-opacity duration-300"
+                className="w-full h-full object-cover"
                 muted
                 loop
                 playsInline
                 preload="none"
                 aria-label={t(titleKey, project.title)}
+                whileHover={prefersReducedMotion ? undefined : { scale: 1.03 }}
+                transition={{ duration: 0.3 }}
             />
             ) : (
-            <div className="w-full h-full transition-opacity duration-300">
+            <motion.div
+                className="w-full h-full"
+                whileHover={prefersReducedMotion ? undefined : { scale: 1.03 }}
+                transition={{ duration: 0.3 }}
+            >
                 <ImageWithLoader
                     src={`/${media.thumbnail}`}
                     alt={t(titleKey, project.title)}
                     loading={index < 4 ? "eager" : "lazy"}
                     className="h-full w-full object-cover"
                 />
-            </div>
+            </motion.div>
             )
         ) : (
             <div className="w-full h-full bg-surface-overlay flex items-center justify-center">
@@ -80,7 +89,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
 
         {/* Year Badge */}
         <div className="absolute top-3 right-3 z-20">
-            <span className="px-2 py-1 bg-surface-raised/90 border border-border text-label font-mono text-text-secondary uppercase rounded">
+            <span className="px-2 py-1 bg-surface-raised/90 border border-border text-label font-mono text-text-secondary uppercase rounded-md">
                 {project.year || '202X'}
             </span>
         </div>
@@ -88,26 +97,28 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
 
       {/* Content Section */}
       <div className="flex-1 p-5 flex flex-col">
-        {/* Header */}
-        <div className="mb-4">
-            <h3 className="text-h3 font-display text-text-primary mb-2 truncate group-hover:text-accent transition-colors duration-200">
-                {t(titleKey, project.title)}
-            </h3>
-            <p className="text-text-secondary text-body-sm leading-relaxed line-clamp-2 mb-4">
-                {t(descKey, project.short_description || project.description || '')}
-            </p>
+        {/* Category overline */}
+        <span className="text-overline uppercase text-accent tracking-wider font-medium mb-2">
+            {project.category || 'Audio'}
+        </span>
 
-            {/* Tech Stack Pills + Category */}
-            <div className="flex flex-wrap gap-2 overflow-hidden">
-                <span className="px-2.5 py-1 rounded font-mono text-label uppercase bg-surface-overlay text-text-secondary border border-border">
-                    {project.category || 'Audio'}
+        {/* Title */}
+        <h3 className="font-display text-lg font-semibold text-text-primary mb-2 truncate group-hover:text-accent transition-colors duration-200">
+            {t(titleKey, project.title)}
+        </h3>
+
+        {/* Description */}
+        <p className="text-sm text-text-secondary line-clamp-2 mb-4">
+            {t(descKey, project.short_description || project.description || '')}
+        </p>
+
+        {/* Tech Stack Pills */}
+        <div className="flex flex-wrap gap-2 overflow-hidden">
+            {displayTags.map(tag => (
+                <span key={tag} className="px-2.5 py-1 rounded-md font-mono text-label uppercase bg-accent-muted text-accent border border-accent/15 group-hover:border-accent/30 transition-colors">
+                    {tag}
                 </span>
-                {displayTags.map(tag => (
-                    <span key={tag} className="px-2.5 py-1 rounded font-mono text-label uppercase bg-accent/10 text-accent border border-accent/15 group-hover:bg-accent/18 group-hover:border-accent/30 transition-colors">
-                        {tag}
-                    </span>
-                ))}
-            </div>
+            ))}
         </div>
 
         {/* Spacer */}
@@ -129,22 +140,24 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
   );
 
   return (
-    <div
-      className="group relative w-full rounded-lg overflow-hidden bg-surface-raised border border-border hover:border-border-hover hover:-translate-y-1 hover:shadow-hover transition-all duration-300 cursor-pointer"
+    <motion.div
+      className="group relative w-full rounded-xl overflow-hidden bg-surface-raised border border-border hover:border-border-accent hover:shadow-glow transition-colors duration-300 cursor-pointer"
+      whileHover={prefersReducedMotion ? undefined : cardHover.whileHover}
+      transition={cardHover.transition}
     >
       {project.externalLink ? (
-        <a href={project.externalLink} target="_blank" rel="noopener noreferrer" className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-lg">
+        <a href={project.externalLink} target="_blank" rel="noopener noreferrer" className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-xl">
             <div className="absolute top-3 left-3 z-30">
               <ExternalLink size={14} className="text-text-secondary" />
             </div>
             {cardContent}
         </a>
       ) : (
-        <Link to={`/projects/${project.id}`} className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-lg">
+        <Link to={`/projects/${project.id}`} className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-xl">
             {cardContent}
         </Link>
       )}
-    </div>
+    </motion.div>
   );
 };
 

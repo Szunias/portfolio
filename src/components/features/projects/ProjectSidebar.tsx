@@ -15,7 +15,7 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
     <div className="sticky top-32 space-y-6">
 
         {/* Actions Card */}
-        <div className="p-6 rounded-lg bg-surface-raised border border-border">
+        <div className="p-6 rounded-xl bg-surface-raised border border-border">
             <h3 className="text-label font-mono text-text-tertiary uppercase mb-6">
                 {t('details.access', 'Project Access')}
             </h3>
@@ -79,7 +79,7 @@ const ProjectSidebar = ({ project }: ProjectSidebarProps) => {
             </h3>
             <div className="flex flex-wrap gap-2">
                 {project.technologies?.map(tech => (
-                    <span key={tech} className="px-2.5 py-1 text-label font-mono uppercase text-accent bg-accent/10 border border-accent/15 rounded hover:bg-accent/18 hover:border-accent/30 transition-colors duration-200 cursor-default">
+                    <span key={tech} className="px-3 py-1 text-label font-mono uppercase text-accent-secondary bg-surface-overlay rounded-md hover:bg-accent/18 hover:border-accent/30 transition-colors duration-200 cursor-default">
                         {tech}
                     </span>
                 ))}

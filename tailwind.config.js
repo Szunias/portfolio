@@ -9,28 +9,31 @@ export default {
       colors: {
         // Backgrounds
         surface: {
-          DEFAULT: '#0b0b10',
-          raised: '#12121a',
-          overlay: '#1a1a25',
+          DEFAULT: '#0C0C11',
+          raised: '#141419',
+          overlay: '#1C1C24',
+          subtle: '#22222D',
         },
         // Text
-        'text-primary': '#e8e4de',
-        'text-secondary': '#a8a4a0',
-        'text-tertiary': '#6b6966',
-        'text-muted': '#4a4845',
+        'text-primary': '#E8E4DE',
+        'text-secondary': '#A8A4A0',
+        'text-tertiary': '#6B6966',
+        'text-muted': '#4A4845',
         // Accents
         accent: {
-          DEFAULT: '#2dd4a8',
-          hover: '#5eead4',
-          muted: 'rgba(45, 212, 168, 0.15)',
-          warm: '#e6a04a',
-          'warm-hover': '#f0b866',
+          DEFAULT: '#D4A853',
+          hover: '#E6BE6A',
+          muted: 'rgba(212, 168, 83, 0.12)',
+          warm: '#D4A853',
+          'warm-hover': '#E6BE6A',
+          secondary: '#5B8A72',
+          'secondary-hover': '#6FA088',
         },
         // Borders
         border: {
-          DEFAULT: '#1f1f2a',
-          hover: '#2a2a38',
-          accent: 'rgba(45, 212, 168, 0.4)',
+          DEFAULT: '#1E1E28',
+          hover: '#2A2A36',
+          accent: 'rgba(212, 168, 83, 0.3)',
         },
         // Status
         success: '#4ade80',
@@ -43,17 +46,18 @@ export default {
         mono: ['JetBrains Mono', 'monospace'],
       },
       fontSize: {
-        'hero': ['4rem', { lineHeight: '1.1', letterSpacing: '-0.03em', fontWeight: '700' }],
+        'hero': ['4.5rem', { lineHeight: '1.05', letterSpacing: '-0.04em', fontWeight: '700' }],
         'h1': ['3rem', { lineHeight: '1.15', letterSpacing: '-0.02em', fontWeight: '600' }],
         'h2': ['2rem', { lineHeight: '1.2', letterSpacing: '-0.01em', fontWeight: '600' }],
         'h3': ['1.5rem', { lineHeight: '1.3', letterSpacing: '0', fontWeight: '500' }],
         'h4': ['1.25rem', { lineHeight: '1.4', letterSpacing: '0', fontWeight: '600' }],
         'h5': ['1rem', { lineHeight: '1.4', letterSpacing: '0.01em', fontWeight: '600' }],
         'h6': ['0.875rem', { lineHeight: '1.4', letterSpacing: '0.05em', fontWeight: '500' }],
-        'body': ['1rem', { lineHeight: '1.6', letterSpacing: '0', fontWeight: '400' }],
+        'body': ['1rem', { lineHeight: '1.7', letterSpacing: '0', fontWeight: '400' }],
         'body-sm': ['0.875rem', { lineHeight: '1.5', letterSpacing: '0', fontWeight: '400' }],
         'caption': ['0.75rem', { lineHeight: '1.4', letterSpacing: '0.02em', fontWeight: '400' }],
-        'label': ['0.75rem', { lineHeight: '1.3', letterSpacing: '0.08em', fontWeight: '500' }],
+        'overline': ['0.6875rem', { lineHeight: '1.3', letterSpacing: '0.12em', fontWeight: '500' }],
+        'label': ['0.6875rem', { lineHeight: '1.3', letterSpacing: '0.1em', fontWeight: '600' }],
         'code': ['0.875rem', { lineHeight: '1.5', letterSpacing: '0', fontWeight: '400' }],
       },
       borderRadius: {
@@ -63,11 +67,11 @@ export default {
         'xl': '12px',
       },
       boxShadow: {
-        'elevated': '0 4px 12px rgba(0, 0, 0, 0.2)',
-        'hover': '0 8px 24px rgba(0, 0, 0, 0.3)',
-        'glow-accent': '0 0 20px rgba(45, 212, 168, 0.15)',
-        'glow-warm': '0 0 20px rgba(230, 160, 74, 0.15)',
-        'input-focus': '0 0 0 3px rgba(45, 212, 168, 0.15)',
+        'elevated': '0 4px 16px rgba(0, 0, 0, 0.25)',
+        'hover': '0 8px 32px rgba(0, 0, 0, 0.35)',
+        'glow': '0 0 24px rgba(212, 168, 83, 0.1)',
+        'glow-accent': '0 0 20px rgba(212, 168, 83, 0.15)',
+        'input-focus': '0 0 0 3px rgba(212, 168, 83, 0.15)',
         'input-error': '0 0 0 3px rgba(248, 113, 113, 0.15)',
       },
       keyframes: {
@@ -116,6 +120,7 @@ export default {
       transitionTimingFunction: {
         'ease-out-custom': 'cubic-bezier(0.0, 0.0, 0.2, 1)',
         'ease-in-out-custom': 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+        'ease-standard': 'cubic-bezier(0.25, 0.1, 0.25, 1)',
       },
     },
   },

@@ -44,13 +44,13 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-surface-raised border-t border-border">
-      <div className="max-w-content-wide mx-auto px-4 md:px-8 py-12">
+    <footer className="border-t border-border">
+      <div className="max-w-content-wide mx-auto px-6 md:px-12 lg:px-16 py-12">
 
-        {/* Main footer content - more minimal/editorial */}
+        {/* Main footer content - 2-column: Brand+nav (left) + Social (right) */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-8 mb-8">
 
-          {/* Brand + Social */}
+          {/* Brand + Navigation */}
           <div className="flex flex-col gap-6">
             <div>
               <h3 className="font-display text-h4 text-text-primary mb-2">Igor Szuniewicz</h3>
@@ -59,59 +59,39 @@ const Footer = () => {
               </p>
             </div>
 
-            {/* Social links - prominent with good touch targets */}
-            <div className="flex gap-3">
-              {socialLinks.map(({ href, icon: Icon, label, rel }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target={rel ? '_blank' : undefined}
-                  rel={rel}
-                  aria-label={label}
-                  className="flex items-center justify-center w-11 h-11 text-text-secondary hover:text-accent transition-colors rounded-md hover:bg-surface-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised"
+            {/* Navigation links - horizontal */}
+            <nav className="flex flex-wrap gap-x-6 gap-y-2" aria-label={t('footer.nav_label', 'Footer navigation')}>
+              {navLinks.map(({ to, label }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  className="text-text-secondary hover:text-accent transition-colors text-body-sm w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-sm"
                 >
-                  <Icon size={20} />
-                </a>
+                  {label}
+                </Link>
               ))}
-            </div>
+            </nav>
           </div>
 
-          {/* Navigation links */}
-          <nav className="flex flex-col gap-3" aria-label={t('footer.nav_label', 'Footer navigation')}>
-            {navLinks.map(({ to, label }) => (
-              <Link
-                key={to}
-                to={to}
-                className="text-text-secondary hover:text-accent transition-colors text-body-sm w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised rounded-sm"
+          {/* Social icons */}
+          <div className="flex gap-3">
+            {socialLinks.map(({ href, icon: Icon, label, rel }) => (
+              <a
+                key={label}
+                href={href}
+                target={rel ? '_blank' : undefined}
+                rel={rel}
+                aria-label={label}
+                className="flex items-center justify-center w-11 h-11 text-text-secondary hover:text-accent transition-colors rounded-md hover:bg-surface-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
               >
-                {label}
-              </Link>
+                <Icon size={20} />
+              </a>
             ))}
-          </nav>
-
-          {/* Location */}
-          <div className="text-body-sm">
-            <p className="text-text-primary font-medium mb-1">
-              {personal_info.location.city}, {personal_info.location.country}
-            </p>
-            <p className="text-text-tertiary">
-              {t('footer.timezone', 'CET/CEST (UTC+1/+2)')}
-            </p>
           </div>
-        </div>
-
-        {/* CTA */}
-        <div className="text-center mb-8">
-          <Link
-            to="/contact"
-            className="text-text-secondary hover:text-accent transition-colors text-body-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised rounded-sm"
-          >
-            {t('footer.cta', "Let's create something together \u2192")}
-          </Link>
         </div>
 
         {/* Bottom bar - minimal */}
-        <div className="border-t border-border pt-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+        <div className="border-t border-border pt-6">
           <p className="text-text-tertiary text-caption">
             &copy; {currentYear} Igor Szuniewicz. {t('footer.rights', 'All rights reserved.')}
           </p>

@@ -45,8 +45,8 @@ const Contact = () => {
         description={t('seo_description', 'Get in touch with Igor Szuniewicz for game audio, tool development, and middleware integration.')}
       />
 
-      <div className="relative z-10 pt-32 pb-28 px-4 md:px-8">
-        <div className="w-full max-w-content mx-auto">
+      <div className="relative z-10 pt-32 pb-28 px-6 md:px-12 lg:px-16">
+        <div className="w-full max-w-content-wide mx-auto">
 
           <motion.div
             className="text-center mb-16"
@@ -64,7 +64,7 @@ const Contact = () => {
 
              {/* Contact Info Card */}
              <motion.div
-               className="bg-surface-raised border border-border rounded-lg p-8"
+               className="bg-surface-raised border border-border rounded-xl p-8"
                initial="hidden"
                animate="visible"
                variants={fadeUpVariants}

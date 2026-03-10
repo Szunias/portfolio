@@ -15,17 +15,20 @@ const Projects = () => {
   const { filter, setFilter, categories, filteredProjects, getCategoryLabel } = useProjectFilter(allProjects);
 
   return (
-    <div className="min-h-screen bg-surface pt-28 pb-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-surface pt-32 pb-24 relative overflow-hidden">
       <SEO
         title={t('nav.projects', 'Projects')}
         description={t('projects.description', 'A collection of my work in game audio, implementation, and tool development.')}
       />
 
-      <div className="max-w-content-wide mx-auto relative z-10">
+      <div className="max-w-content-wide mx-auto px-6 md:px-12 lg:px-16 relative z-10">
 
         {/* Header & Filters */}
         <div className="flex flex-col lg:flex-row justify-between items-end mb-10 lg:mb-16 gap-4 lg:gap-8 border-b border-border pb-6 lg:pb-8">
           <div>
+            <span className="text-overline uppercase text-accent tracking-wider font-medium block mb-3">
+              {t('projects.overline', 'PORTFOLIO')}
+            </span>
             <h1 className="text-h1 md:text-hero font-display text-text-primary mb-4">
               {t('projects.title', 'Selected Works')}
             </h1>

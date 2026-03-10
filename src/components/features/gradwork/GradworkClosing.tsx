@@ -12,12 +12,12 @@ const GradworkClosing = ({ t }: { t: (key: string) => string }) => {
     const preset = prefersReducedMotion ? noMotion : sectionReveal;
 
     return (
-        <section ref={ref} className="py-20 px-6">
+        <section ref={ref} className="py-20 md:py-28 px-6 md:px-12 lg:px-16">
             <motion.div
                 initial={preset.initial}
                 animate={isInView ? preset.animate : {}}
                 transition={preset.transition}
-                className="max-w-4xl mx-auto"
+                className="max-w-content-wide mx-auto"
             >
                 <div className="space-y-4 text-text-secondary text-lg leading-relaxed mb-12">
                     <p>{t('closing.conclusion')}</p>
@@ -28,7 +28,7 @@ const GradworkClosing = ({ t }: { t: (key: string) => string }) => {
                 <div className="flex flex-wrap justify-center gap-4 mb-8">
                     <Link
                         to="/projects"
-                        className="inline-flex items-center gap-2 px-6 py-3 border border-border text-text-secondary font-medium rounded-sm transition-all hover:text-text-primary hover:border-border-hover"
+                        className="inline-flex items-center gap-2 px-6 py-3 border border-border text-text-secondary font-medium rounded-lg transition-all hover:text-text-primary hover:border-border-hover"
                     >
                         <ArrowLeft size={18} />
                         {t('closing.back_to_projects')}

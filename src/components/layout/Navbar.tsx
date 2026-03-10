@@ -94,11 +94,11 @@ const Navbar = () => {
         aria-label="Main navigation"
         className={`fixed top-0 left-0 right-0 z-nav transition-all duration-300 border-b ${
           scrolled
-            ? 'bg-surface-overlay/80 backdrop-blur-lg border-border py-3'
-            : 'bg-surface-overlay/60 backdrop-blur-md border-border/30 py-5'
+            ? 'bg-surface/80 backdrop-blur-xl border-border py-3'
+            : 'bg-transparent border-transparent py-5'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="max-w-content-wide mx-auto px-6 md:px-12 lg:px-16">
           <div className="flex justify-between items-center">
 
             {/* Logo */}

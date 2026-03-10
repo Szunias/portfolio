@@ -30,7 +30,7 @@ const LatencyBarChart = ({ t }: { t: (key: string) => string }) => {
     };
 
     return (
-        <div ref={ref} className="bg-surface-raised border border-border rounded-sm p-8 relative">
+        <div ref={ref} className="bg-surface-raised border border-border rounded-xl p-8 relative">
             {/* Reference Lines */}
             <div className="absolute inset-8 pointer-events-none">
                 {referenceLines.map((line) => (
@@ -127,13 +127,13 @@ const GradworkResults = ({ t }: { t: (key: string) => string }) => {
     ];
 
     return (
-        <section ref={ref} className="py-20 px-6 max-w-5xl mx-auto">
+        <section ref={ref} className="py-20 md:py-28 px-6 md:px-12 lg:px-16 max-w-content-wide mx-auto">
             <motion.div
                 initial={preset.initial}
                 animate={isInView ? preset.animate : {}}
                 transition={preset.transition}
             >
-                <h2 className="text-2xl md:text-3xl font-display font-bold text-text-primary mb-4 text-center">
+                <h2 className="text-h2 font-display text-text-primary mb-4 text-center">
                     {t('results.title')}
                 </h2>
                 <p className="text-text-secondary text-lg text-center mb-12 max-w-2xl mx-auto">
@@ -154,7 +154,7 @@ const GradworkResults = ({ t }: { t: (key: string) => string }) => {
                                 initial={prefersReducedMotion ? noMotion.initial : cardIn.initial}
                                 animate={isInView ? (prefersReducedMotion ? noMotion.animate : cardIn.animate) : {}}
                                 transition={prefersReducedMotion ? noMotion.transition : { ...cardIn.transition, delay: 0.3 + index * 0.1 }}
-                                className="bg-surface-raised border border-border rounded-sm p-4"
+                                className="bg-surface-raised border border-border rounded-xl p-4"
                             >
                                 <div className="font-bold text-text-primary mb-2">{model.name}</div>
                                 <div className="flex justify-between text-sm mb-1">

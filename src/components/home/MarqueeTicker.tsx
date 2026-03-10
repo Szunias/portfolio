@@ -63,7 +63,7 @@ const MarqueeTicker = () => {
 
   return (
     <section
-      className="py-8 bg-surface border-t border-border border-b border-border overflow-hidden"
+      className="py-8 bg-surface border-y border-border overflow-hidden"
       aria-hidden="true"
     >
       <TickerRow items={ROW_1} direction="left" reduced={prefersReducedMotion} />

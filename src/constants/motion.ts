@@ -4,18 +4,24 @@
  * that can be spread directly onto motion components.
  */
 
+// --- Standard easing ---
+const easeStandard: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
+
+// --- Standard viewport setting for whileInView ---
+export const viewportOnce = { once: true, margin: '-80px' as const };
+
 // --- Page Transition ---
 export const pageVariants = {
   initial: { opacity: 0, y: 12 },
   animate: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.0, 0.0, 0.2, 1] }
+    transition: { duration: 0.5, ease: easeStandard }
   },
   exit: {
     opacity: 0,
     y: -8,
-    transition: { duration: 0.3, ease: [0.4, 0.0, 1, 1] }
+    transition: { duration: 0.2, ease: easeStandard }
   }
 };
 
@@ -33,49 +39,64 @@ export const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: [0.0, 0.0, 0.2, 1] }
+    transition: { duration: 0.5, ease: easeStandard }
   }
 };
 
 // --- Fade Up (Section Entrance, Scroll-triggered) ---
 export const fadeUpVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 16 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: [0.0, 0.0, 0.2, 1] }
+    transition: { duration: 0.6, ease: easeStandard }
   }
+};
+
+// --- Fade In (no vertical movement) ---
+export const fadeInVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.5, ease: easeStandard }
+  }
+};
+
+// --- Card Hover ---
+export const cardHover = {
+  whileHover: { y: -4 },
+  transition: { duration: 0.3, ease: easeStandard },
 };
 
 // --- Legacy Presets (for compatibility with existing imports) ---
 export const hero = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+  transition: { duration: 0.6, ease: easeStandard },
 };
 
 export const sectionReveal = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
-  transition: { duration: 0.4, ease: 'easeOut' },
+  transition: { duration: 0.4, ease: easeStandard },
 };
 
 export const cardIn = {
   initial: { opacity: 0, y: 12, scale: 0.98 },
   animate: { opacity: 1, y: 0, scale: 1 },
-  transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
+  transition: { duration: 0.35, ease: easeStandard },
 };
 
 export const detailIn = {
   initial: { opacity: 0, x: -16 },
   animate: { opacity: 1, x: 0 },
-  transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
+  transition: { duration: 0.4, ease: easeStandard },
 };
 
 export const detailInRight = {
   initial: { opacity: 0, x: 16 },
   animate: { opacity: 1, x: 0 },
-  transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
+  transition: { duration: 0.4, ease: easeStandard },
 };
 
 // --- Stagger delays by context ---
@@ -83,7 +104,7 @@ export const stagger = {
   cards: 0.08,
   tags: 0.03,
   timeline: 0.1,
-  navItems: 0.06,
+  navItems: 0.08,
   skills: 0.05,
 } as const;
 

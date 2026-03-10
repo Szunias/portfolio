@@ -263,7 +263,7 @@ const AudioPlayer = () => {
     <div
       role="region"
       aria-label={t('audio_player.label', 'Audio player')}
-      className="fixed bottom-0 left-0 right-0 bg-surface-overlay/90 backdrop-blur-xl border-t border-border z-audio-player select-none"
+      className="fixed bottom-0 left-0 right-0 bg-surface-raised/95 backdrop-blur-xl border-t border-border z-audio-player select-none"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       {/* ============================================================ */}
@@ -317,7 +317,7 @@ const AudioPlayer = () => {
         {/* Visual bar container */}
         <div className="relative h-[3px] group-hover/progress:h-[5px] transition-all duration-150 w-full">
           {/* Background track */}
-          <div className="absolute inset-0 bg-white/10 rounded-full" />
+          <div className="absolute inset-0 bg-surface-subtle rounded-full" />
 
           {/* Progress fill */}
           <div
@@ -356,7 +356,7 @@ const AudioPlayer = () => {
       {/* ============================================================ */}
       {/*  MAIN CONTROLS AREA                                          */}
       {/* ============================================================ */}
-      <div className="flex items-center justify-between w-full max-w-7xl mx-auto gap-2 sm:gap-3 px-3 sm:px-6 md:px-8 h-[68px]">
+      <div className="flex items-center justify-between w-full max-w-content-wide mx-auto gap-2 sm:gap-3 px-3 sm:px-6 md:px-8 h-[68px]">
 
         {/* ── Left: Album art + track info + visualizer ────────── */}
         <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
@@ -406,7 +406,7 @@ const AudioPlayer = () => {
           {/* Previous */}
           <button
             onClick={prevTrack}
-            className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full text-text-secondary hover:text-accent hover:bg-white/5 transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+            className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full text-text-secondary hover:text-accent hover:bg-surface-overlay transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
             aria-label={t('buttons.previous')}
           >
             <SkipBack className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
@@ -428,7 +428,7 @@ const AudioPlayer = () => {
           {/* Next */}
           <button
             onClick={nextTrack}
-            className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full text-text-secondary hover:text-accent hover:bg-white/5 transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+            className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full text-text-secondary hover:text-accent hover:bg-surface-overlay transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
             aria-label={t('buttons.next')}
           >
             <SkipForward className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
@@ -450,7 +450,7 @@ const AudioPlayer = () => {
                   setVolume(0);
                 }
               }}
-              className="flex items-center justify-center w-9 h-9 rounded-full text-text-secondary hover:text-accent hover:bg-white/5 transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+              className="flex items-center justify-center w-9 h-9 rounded-full text-text-secondary hover:text-accent hover:bg-surface-overlay transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
               aria-label={isMuted ? t('buttons.unmute', 'Unmute') : t('buttons.mute', 'Mute')}
             >
               <VolumeIcon vol={volume} />
@@ -492,7 +492,7 @@ const AudioPlayer = () => {
               {/* Visual bar */}
               <div className="relative h-1 group-hover/vol:h-1.5 transition-all duration-150 rounded-full">
                 {/* Background */}
-                <div className="absolute inset-0 bg-white/10 rounded-full" />
+                <div className="absolute inset-0 bg-surface-subtle rounded-full" />
                 {/* Fill */}
                 <div
                   className="absolute inset-y-0 left-0 bg-accent rounded-full"

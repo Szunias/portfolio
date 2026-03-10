@@ -29,14 +29,14 @@ const TrackCard = memo(({ track, index, isCurrent, isPlaying, onPlay }: TrackCar
         }}
         onClick={() => onPlay(track)}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPlay(track); } }}
-        className="group relative flex flex-col gap-3 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-lg"
+        className="group relative flex flex-col gap-3 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-xl"
         role="button"
         tabIndex={0}
         aria-label={`Play ${track.title} by ${track.artist}`}
     >
         {/* Cover Art */}
         <div className={cn(
-            "relative aspect-square rounded-lg overflow-hidden border transition-all duration-200",
+            "relative aspect-square rounded-xl overflow-hidden border transition-all duration-200",
             isCurrent
                 ? 'border-accent shadow-glow-accent'
                 : 'border-border hover:border-border-hover hover:shadow-elevated'

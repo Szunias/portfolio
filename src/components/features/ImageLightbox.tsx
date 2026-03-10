@@ -82,7 +82,7 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
                 role={!isVideo ? 'button' : undefined}
                 tabIndex={!isVideo ? 0 : undefined}
                 aria-label={!isVideo ? t('gallery.open', 'Open image in lightbox') : undefined}
-                className={`relative rounded-sm overflow-hidden border border-border ${!isVideo ? 'cursor-pointer hover:border-border-hover focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface' : ''} transition-colors duration-200`}
+                className={`relative rounded-xl overflow-hidden border border-border ${!isVideo ? 'cursor-pointer hover:border-border-hover focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface' : ''} transition-colors duration-200`}
               >
                 {isVideo ? (
                   videoErrors.has(i) ? (
@@ -103,7 +103,7 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
                     <img src={`/${src}`} alt={caption ? t(caption, caption) : 'Gallery image'} loading="lazy" className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.01]" />
                     {/* Zoom overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity p-3 border border-border-hover rounded-sm">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity p-3 border border-border-hover rounded-xl">
                         <ZoomIn size={24} className="text-text-primary" />
                       </div>
                     </div>
@@ -137,7 +137,7 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
             {/* Close button */}
             <button
               onClick={() => setSelectedIndex(null)}
-              className="absolute top-4 right-4 p-2 border border-border hover:border-border-hover rounded-sm transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+              className="absolute top-4 right-4 p-2 border border-border hover:border-border-hover rounded-xl transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
               aria-label={t('gallery.close', 'Close lightbox')}
             >
               <X size={24} className="text-text-primary" />
@@ -160,7 +160,7 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
               <img
                 src={`/${selectedImage.src}`}
                 alt={selectedImage.caption ? t(selectedImage.caption, selectedImage.caption) : t('gallery.enlarged_alt', 'Enlarged gallery image view')}
-                className={`max-w-full max-h-[85vh] object-contain rounded-sm transition-opacity ${lightboxLoading ? 'opacity-0' : 'opacity-100'}`}
+                className={`max-w-full max-h-[85vh] object-contain rounded-xl transition-opacity ${lightboxLoading ? 'opacity-0' : 'opacity-100'}`}
                 onLoad={() => setLightboxLoading(false)}
               />
               {selectedImage.caption && (

@@ -14,7 +14,7 @@ const ProjectCodeSection = ({ snippets }: ProjectCodeSectionProps) => {
   const { t } = useTranslation('projectDetail');
 
   return (
-    <div className="border border-border rounded-lg overflow-hidden bg-surface-raised">
+    <div className="border border-border rounded-xl overflow-hidden bg-surface-raised">
         <button
             onClick={() => setShowCode(!showCode)}
             aria-expanded={showCode}

@@ -11,7 +11,7 @@ import { usePortfolioData } from '../hooks/usePortfolioData';
 /** Landing page with hero, showreel video, marquee ticker, and sticky project reveal. */
 const Home = () => {
   const { featured_projects } = usePortfolioData();
-  const { t } = useTranslation(['home', 'projects']);
+  useTranslation(['home', 'projects']);
 
   const displayProjects = (featured_projects || []).slice(0, 4);
 
@@ -31,17 +31,8 @@ const Home = () => {
       </Helmet>
       <Hero />
 
-      {/* Showreel Section — no border-t, flows naturally from hero */}
-      <section className="bg-surface" aria-label={t('hero.watch_showreel', 'Watch Showreel')}>
-        <div className="max-w-content-wide mx-auto px-6 lg:px-8">
-          <h2 className="font-mono text-caption uppercase tracking-wider text-text-secondary mb-2 pt-8">
-            {t('hero.watch_showreel', 'Watch Showreel')}
-          </h2>
-          <Showreel />
-        </div>
-      </section>
+      <Showreel />
 
-      {/* Marquee Ticker — replaces Skills */}
       <MarqueeTicker />
 
       {/* Projects — Sticky scroll reveal on desktop, cards on mobile */}

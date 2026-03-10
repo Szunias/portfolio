@@ -117,7 +117,7 @@ const ContactForm = () => {
 
   if (configError) {
     return (
-      <div className="bg-surface-raised p-8 rounded-lg border border-border">
+      <div className="bg-surface-raised p-8 rounded-xl border border-border">
         <div className="flex items-center gap-3 text-error">
           <AlertCircle size={20} />
           <p className="text-body">{t('contact_form_config_error', 'Contact form is temporarily unavailable. Please email directly.')}</p>
@@ -129,7 +129,7 @@ const ContactForm = () => {
   const isDisabled = status === 'sending' || status === 'cooldown';
 
   return (
-    <div className="bg-surface-raised p-8 rounded-lg border border-border">
+    <div className="bg-surface-raised p-8 rounded-xl border border-border">
       <h3 className="text-h3 font-display text-text-primary mb-6">
         {t('contact_form_title', 'Send a Message')}
       </h3>

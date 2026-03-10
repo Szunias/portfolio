@@ -32,7 +32,7 @@ const KeyValueGrid = ({ data }: KeyValueGridProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       {Object.entries(data).map(([key, value]) => (
-        <div key={key} className="bg-surface-raised p-5 rounded-lg border border-border hover:border-border-hover transition-colors duration-200">
+        <div key={key} className="bg-surface-raised p-5 rounded-xl border border-border hover:border-border-hover transition-colors duration-200">
           <h4 className="text-label font-mono text-text-tertiary uppercase mb-2">
             {t(`project.fields.${key}`, key.replace(/_/g, ' '))}
           </h4>

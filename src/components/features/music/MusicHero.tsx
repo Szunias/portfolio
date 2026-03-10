@@ -60,7 +60,7 @@ const MusicHero = () => {
             </motion.div>
         </AnimatePresence>
 
-        <div className="max-w-7xl mx-auto w-full relative z-20">
+        <div className="max-w-content-wide mx-auto w-full relative z-20">
             {displayTrack ? (
                 <div className="grid grid-cols-1 md:grid-cols-[350px_1fr] gap-12 items-end">
                     {/* Cover Art */}

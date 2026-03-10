@@ -34,7 +34,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-surface flex items-center justify-center p-8" role="alert">
-          <div className="max-w-2xl w-full bg-surface-raised border border-border rounded-sm p-8">
+          <div className="max-w-2xl w-full bg-surface-raised border border-border rounded-xl p-8">
             <h1 className="text-3xl font-display text-text-primary mb-4">
               {i18n.t('error.title', 'Something went wrong')}
             </h1>
@@ -46,7 +46,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 <summary className="text-sm text-text-secondary cursor-pointer hover:text-text-primary mb-2">
                   {i18n.t('error.details', 'Error details')}
                 </summary>
-                <pre className="bg-surface p-4 rounded-sm border border-border text-xs text-error overflow-auto max-h-64 whitespace-pre-wrap font-mono">
+                <pre className="bg-surface p-4 rounded-lg border border-border text-xs text-error overflow-auto max-h-64 whitespace-pre-wrap font-mono">
                   {this.state.error.toString()}
                   {this.state.error.stack && `\n\n${this.state.error.stack}`}
                 </pre>
@@ -54,7 +54,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             )}
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-accent text-surface font-medium rounded-sm hover:bg-accent-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+              className="px-6 py-3 bg-accent text-surface font-medium rounded-lg hover:bg-accent-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
             >
               {i18n.t('error.reload', 'Reload Page')}
             </button>

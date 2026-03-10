@@ -11,12 +11,12 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading, children, ...props }, ref) => {
 
-    const baseStyles = "inline-flex items-center justify-center rounded-md font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:opacity-40 disabled:pointer-events-none";
+    const baseStyles = "inline-flex items-center justify-center rounded-lg font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:opacity-40 disabled:pointer-events-none";
 
     const variants = {
       primary: "bg-accent text-surface hover:bg-accent-hover active:scale-[0.98]",
-      secondary: "border border-border text-text-primary hover:border-text-secondary hover:bg-surface-overlay active:scale-[0.98]",
-      ghost: "text-text-secondary hover:text-text-primary hover:bg-surface-raised",
+      secondary: "border border-border text-text-primary hover:border-accent hover:bg-surface-overlay active:scale-[0.98]",
+      ghost: "text-text-secondary hover:text-text-primary hover:bg-surface-overlay",
       icon: "text-text-secondary hover:text-text-primary hover:bg-surface-overlay",
       danger: "text-error hover:bg-error/10 active:scale-[0.98]"
     };

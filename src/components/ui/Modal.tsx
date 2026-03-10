@@ -71,7 +71,7 @@ const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
                 animate={prefersReducedMotion ? noMotion.animate : { scale: 1, y: 0, opacity: 1 }}
                 exit={prefersReducedMotion ? { opacity: 0 } : { scale: 0.95, y: 8, opacity: 0 }}
                 transition={prefersReducedMotion ? noMotion.transition : spring.interactive}
-                className="bg-surface-raised border border-border p-8 rounded-sm max-w-md w-full relative"
+                className="bg-surface-raised border border-border p-8 rounded-xl max-w-md w-full relative"
                 onClick={(e) => e.stopPropagation()}
             >
                 <Button

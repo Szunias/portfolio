@@ -21,7 +21,7 @@ const ChallengesBlock = ({ challenges }: ChallengesBlockProps) => {
 
       <div className="grid gap-5 lg:gap-6">
         {challenges.map((item, i) => (
-          <div key={i} className="bg-surface-raised border border-border rounded-lg overflow-hidden hover:border-border-hover transition-colors duration-200">
+          <div key={i} className="bg-surface-raised border border-border rounded-xl overflow-hidden hover:border-border-hover transition-colors duration-200">
             <div className="p-6 md:p-8">
               <h4 className="text-h4 font-display text-text-primary mb-6 flex items-center gap-3">
                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-surface-overlay border border-border flex items-center justify-center text-sm font-mono text-text-secondary">

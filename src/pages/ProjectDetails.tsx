@@ -89,7 +89,7 @@ const ProjectDetails = () => {
       <ProjectHero project={project} />
 
       {/* --- MAIN LAYOUT --- */}
-      <div className="max-w-content-wide mx-auto px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+      <div className="max-w-content-wide mx-auto px-6 md:px-12 lg:px-16 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
 
         {/* LEFT: Content (8 cols) */}
         <div className="lg:col-span-8 space-y-12 lg:space-y-16">

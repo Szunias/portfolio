@@ -82,7 +82,7 @@ const CodeViewer = ({ snippets }: CodeViewerProps) => {
   }
 
   return (
-    <div className="rounded-sm overflow-hidden border border-border bg-surface-raised">
+    <div className="rounded-xl overflow-hidden border border-border bg-surface-raised">
       {/* Window bar */}
       <div className="flex items-center justify-between px-4 py-2 bg-surface-overlay border-b border-border">
         <div className="flex items-center gap-2">

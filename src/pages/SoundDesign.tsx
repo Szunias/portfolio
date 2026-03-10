@@ -23,21 +23,21 @@ const SoundDesign = () => {
             <SEO title={t('seo.title')} description={t('seo.description')} />
 
             {/* Hero Section */}
-            <section className="relative min-h-[80vh] flex flex-col items-center justify-center overflow-hidden px-4 py-20">
+            <section className="relative min-h-[80vh] flex flex-col items-center justify-center overflow-hidden px-6 md:px-12 lg:px-16 pt-32 pb-20">
                 <motion.div
                     style={{ opacity, scale }}
                     className="relative z-10 max-w-5xl w-full text-center"
                 >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-accent/10 text-accent text-sm font-bold uppercase tracking-wider mb-8 border border-accent/20">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent/10 text-accent text-sm font-bold uppercase tracking-wider mb-8 border border-accent/20">
                         <Music size={16} />
                         {t('hero.badge', 'Sound Design Portfolio')}
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-text-primary mb-6 leading-tight">
+                    <h1 className="text-h1 md:text-hero font-display text-text-primary mb-6 leading-tight">
                         {t('hero.title', 'Sonic Landscapes')}
                     </h1>
 
-                    <p className="text-lg md:text-2xl text-text-secondary max-w-3xl mx-auto mb-12 font-light leading-relaxed">
+                    <p className="text-lg md:text-h3 text-text-secondary max-w-3xl mx-auto mb-12 font-light leading-relaxed">
                         {t('hero.subtitle', 'A collection of linear media redesigns and implementation showcases.')}
                     </p>
 
@@ -63,9 +63,9 @@ const SoundDesign = () => {
             </section>
 
             {/* Main Content */}
-            <main className="relative z-20 max-w-7xl mx-auto px-6 pb-32">
-                <section className="mb-20">
-                    <h2 className="text-3xl font-display font-bold text-text-primary mb-12 border-l-4 border-accent pl-6">
+            <main className="relative z-20 max-w-content-wide mx-auto px-6 md:px-12 lg:px-16 pb-32">
+                <section className="mb-20 md:mb-28">
+                    <h2 className="text-h2 font-display text-text-primary mb-12 border-l-4 border-accent pl-6">
                         {t('section1.title', 'Redesigns & Showcases')}
                     </h2>
 
@@ -89,7 +89,7 @@ const SoundDesign = () => {
                         />
 
                         {/* Video 3: Weapon Sound Design - SIGNAL OFFLINE */}
-                        <div className="bg-surface-raised rounded-sm overflow-hidden border border-border group relative h-full min-h-[400px] flex flex-col">
+                        <div className="bg-surface-raised rounded-xl overflow-hidden border border-border group relative h-full min-h-[400px] flex flex-col">
                             <div className="relative flex-grow bg-surface flex items-center justify-center overflow-hidden">
                                 <div className="text-center relative z-10 p-8">
                                     <div className="w-20 h-20 mx-auto mb-6 rounded-full border-2 border-accent/30 flex items-center justify-center text-accent">
@@ -106,7 +106,7 @@ const SoundDesign = () => {
                             <div className="p-8 border-t border-border bg-surface-overlay">
                                 <h3 className="text-xl font-display font-bold text-text-primary mb-2 opacity-50">{t('section1.video3.title', 'Weapon Sound Design')}</h3>
                                 <p className="text-text-secondary text-sm mb-4 opacity-50">{t('section1.video3.description', 'Procedural weapon synthesis system.')}</p>
-                                <span className="px-3 py-1 bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider rounded-sm border border-accent/20">
+                                <span className="px-3 py-1 bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider rounded-md border border-accent/20">
                                     {t('section1.video3.badge', 'Confidential')}
                                 </span>
                             </div>
@@ -154,7 +154,7 @@ const VideoCard = ({ title, desc, badge, videoSrc, poster }: VideoCardProps) => 
             whileInView={prefersReducedMotion ? noMotion.animate : cardIn.animate}
             viewport={{ once: true }}
             transition={prefersReducedMotion ? noMotion.transition : cardIn.transition}
-            className="bg-surface-raised rounded-sm overflow-hidden border border-border group hover:border-accent/30 transition-colors"
+            className="bg-surface-raised rounded-xl overflow-hidden border border-border group hover:border-accent/30 transition-colors"
         >
             <div className="relative aspect-video bg-surface transition-shadow">
                 {!isPlaying && (
@@ -168,7 +168,7 @@ const VideoCard = ({ title, desc, badge, videoSrc, poster }: VideoCardProps) => 
                         aria-label={`Play ${title}`}
                     >
                         <div className="absolute inset-0 bg-black/40 group-hover/poster:bg-black/20 transition-colors flex items-center justify-center">
-                            <div className="w-20 h-20 bg-surface-raised rounded-sm flex items-center justify-center border border-border shadow-lg transition-transform">
+                            <div className="w-20 h-20 bg-surface-raised rounded-xl flex items-center justify-center border border-border shadow-lg transition-transform">
                                 <Play size={32} className="text-text-primary ml-1 fill-text-primary" />
                             </div>
                         </div>
@@ -188,7 +188,7 @@ const VideoCard = ({ title, desc, badge, videoSrc, poster }: VideoCardProps) => 
             <div className="p-8 border-t border-border bg-surface-overlay">
                 <div className="flex justify-between items-start mb-4">
                     <h3 className="text-2xl font-display font-bold text-text-primary group-hover:text-accent transition-colors">{title}</h3>
-                    <span className="px-3 py-1 bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider rounded-sm border border-accent/20">
+                    <span className="px-3 py-1 bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider rounded-md border border-accent/20">
                         {badge}
                     </span>
                 </div>

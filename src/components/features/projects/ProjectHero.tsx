@@ -59,7 +59,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                 </div>
 
                 {/* Hero Content */}
-                <div className="relative z-10 flex-1 flex flex-col justify-end pb-16 lg:pb-20 px-6 lg:px-8 max-w-content-wide mx-auto pt-32">
+                <div className="relative z-10 flex-1 flex flex-col justify-end pb-16 lg:pb-20 px-6 md:px-12 lg:px-16 max-w-content-wide mx-auto pt-32">
                     <motion.div
                         initial={prefersReducedMotion ? noMotion.initial : hero.initial}
                         animate={prefersReducedMotion ? noMotion.animate : hero.animate}
@@ -95,7 +95,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
 
             {/* Video section — below the hero for better visual flow */}
             {(hasVideo || hasLegacyVideo) && (
-                <div className="max-w-content-wide mx-auto px-6 lg:px-8 -mt-8 relative z-10 space-y-8 mb-12">
+                <div className="max-w-content-wide mx-auto px-6 md:px-12 lg:px-16 -mt-8 relative z-10 space-y-8 mb-12">
                     {videoId && (
                         <div className="w-full max-w-4xl aspect-video rounded-lg overflow-hidden border border-border bg-black hover:border-border-hover transition-colors duration-300">
                             <iframe

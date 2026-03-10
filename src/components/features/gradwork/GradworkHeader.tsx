@@ -7,14 +7,14 @@ import { hero, noMotion } from '@/constants/motion';
 const GradworkHeader = ({ t }: { t: (key: string) => string }) => {
     const prefersReducedMotion = useReducedMotion();
     return (
-        <section className="pt-32 pb-16 px-6 max-w-4xl mx-auto">
+        <section className="pt-32 pb-16 px-6 md:px-12 lg:px-16 max-w-content-wide mx-auto">
             <motion.div
                 initial={prefersReducedMotion ? noMotion.initial : hero.initial}
                 animate={prefersReducedMotion ? noMotion.animate : hero.animate}
                 transition={prefersReducedMotion ? noMotion.transition : hero.transition}
                 className="text-center"
             >
-                <span className="inline-block px-4 py-2 bg-accent/10 text-accent text-sm font-semibold rounded-sm mb-6 border border-accent/20">
+                <span className="inline-block px-4 py-2 bg-accent/10 text-accent text-sm font-semibold rounded-md mb-6 border border-accent/20">
                     {t('header.badge')}
                 </span>
 
@@ -29,7 +29,7 @@ const GradworkHeader = ({ t }: { t: (key: string) => string }) => {
                 <div className="flex flex-wrap justify-center gap-4">
                     <Link
                         to="/projects"
-                        className="inline-flex items-center gap-2 px-6 py-3 border border-border text-text-secondary font-medium rounded-sm transition-all hover:text-text-primary hover:border-border-hover"
+                        className="inline-flex items-center gap-2 px-6 py-3 border border-border text-text-secondary font-medium rounded-lg transition-all hover:text-text-primary hover:border-border-hover"
                     >
                         <ArrowLeft size={18} />
                         {t('closing.back_to_projects')}

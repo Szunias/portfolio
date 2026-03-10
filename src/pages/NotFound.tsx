@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Home } from 'lucide-react';
 
+import { Button } from '../components/ui/Button';
 import SEO from '../components/layout/SEO';
 
 /** 404 page with audio-themed "Dead Air" message and waveform flatline animation. */
@@ -9,7 +10,7 @@ const NotFound = () => {
   const { t } = useTranslation('notFound');
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4 bg-surface">
+    <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4 bg-surface pt-32">
       <SEO title="404" noindex />
 
       {/* Waveform Flatline - 5 bars with low amplitude */}
@@ -28,12 +29,11 @@ const NotFound = () => {
         {t('404.desc', 'The requested frequency could not be tuned.')}
       </p>
 
-      <Link
-        to="/"
-        className="inline-flex items-center gap-2 px-6 py-3 border border-border rounded-md text-text-primary hover:border-accent hover:text-accent transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-      >
-        <Home size={18} />
-        <span>{t('404.button', 'Return to Base')}</span>
+      <Link to="/">
+        <Button variant="secondary" size="lg" className="gap-2" tabIndex={-1}>
+          <Home size={18} />
+          <span>{t('404.button', 'Return to Base')}</span>
+        </Button>
       </Link>
     </div>
   );

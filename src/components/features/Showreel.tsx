@@ -81,9 +81,15 @@ const Showreel = () => {
   };
 
   return (
-    <div id="showreel" className="w-full max-w-content mx-auto py-12 md:py-16">
+    <section id="showreel" className="bg-surface py-20 md:py-28 lg:py-32">
+      <div className="max-w-content-wide mx-auto px-6 md:px-12 lg:px-16">
+      {/* Section heading */}
+      <span className="text-overline uppercase tracking-widest text-accent font-mono block mb-3">
+        {t('hero.watch_showreel', 'Watch Showreel')}
+      </span>
+
       {/* Video Container with Premium Styling */}
-      <div className="relative aspect-video rounded-lg overflow-hidden bg-surface-raised border border-border shadow-glow-accent">
+      <div className="relative aspect-video rounded-xl overflow-hidden bg-surface-raised border border-border shadow-glow-accent">
         {error ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-raised">
             <AlertCircle size={48} className="text-error mb-4" />
@@ -173,7 +179,8 @@ const Showreel = () => {
           })}
         </div>
       </div>
-    </div>
+      </div>
+    </section>
   );
 };
 
