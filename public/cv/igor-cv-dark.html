@@ -1,912 +1,394 @@
-<!doctype html>
-<html lang="en" style="background: #000">
-    <head>
-    <script>
-/** Language preload - prevents lang flicker */
-(function(){
-"use strict";
-const savedLang=localStorage.getItem("language")||"en";
-document.documentElement.setAttribute("lang",savedLang);
-window.__preloadedLang=savedLang;
-})();
-    </script>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Igor Szuniewicz - CV</title>
-        <meta name="robots" content="index, follow" />
-        <link
-            rel="canonical"
-            href="https://igorszuniewicz.com/cv/igor-cv-dark.html"
-        />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
-        />
-        <link
-            rel="preload"
-            as="image"
-            href="pieknyportret_rect.webp"
-            type="image/webp"
-        />
-        <link
-            rel="preload"
-            as="image"
-            href="pieknyportret_rect.png"
-            type="image/png"
-        />
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-
-            body {
-                font-family: "Space Grotesk", sans-serif;
-                background: #1a1a1a;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                min-height: 100vh;
-                padding: 30px;
-            }
-
-            .page {
-                width: 210mm;
-                height: 297mm;
-                background: #0d0d0d;
-                position: relative;
-                overflow: hidden;
-            }
-
-            /* Vertical accent bar - gradient style */
-            .accent-bar {
-                position: absolute;
-                left: 0;
-                top: 0;
-                bottom: 0;
-                width: 4px;
-                background: linear-gradient(
-                    180deg,
-                    #00ff88 0%,
-                    #00ff88 50%,
-                    #00c2ff 85%,
-                    #0080ff 100%
-                );
-            }
-
-            /* Subtle corner accents */
-            .page::before {
-                content: "";
-                position: absolute;
-                top: 0;
-                right: 0;
-                width: 120px;
-                height: 120px;
-                background: radial-gradient(
-                    circle at top right,
-                    rgba(0, 255, 136, 0.03),
-                    transparent 70%
-                );
-                pointer-events: none;
-            }
-
-            .page::after {
-                content: "";
-                position: absolute;
-                bottom: 0;
-                right: 0;
-                width: 150px;
-                height: 80px;
-                background: radial-gradient(
-                    circle at bottom right,
-                    rgba(0, 194, 255, 0.03),
-                    transparent 70%
-                );
-                pointer-events: none;
-            }
-
-            /* Main container */
-            .container {
-                padding: 20px 45px 30px 55px;
-                height: 100%;
-                display: flex;
-                flex-direction: column;
-            }
-
-            /* Header */
-            .header {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                margin-bottom: 18px;
-                padding-top: 15px;
-                padding-bottom: 15px;
-                border-bottom: 2px solid transparent;
-                background: linear-gradient(
-                        90deg,
-                        rgba(0, 255, 136, 0.2) 0%,
-                        transparent 50%
-                    )
-                    bottom / 100% 2px no-repeat;
-            }
-
-            .name {
-                font-size: 58px;
-                font-weight: 700;
-                color: #fff;
-                letter-spacing: -1.5px;
-                margin-bottom: 12px;
-                line-height: 0.9;
-            }
-
-            .title {
-                font-size: 17px;
-                color: #00ff88;
-                font-weight: 500;
-                letter-spacing: 0.5px;
-                position: relative;
-                padding-left: 15px;
-            }
-
-            .title::before {
-                content: "";
-                position: absolute;
-                left: 0;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 3px;
-                height: 3px;
-                background: #00ff88;
-                border-radius: 50%;
-            }
-
-            .header-right {
-                display: flex;
-                gap: 15px;
-                flex-shrink: 0;
-            }
-
-            .qr-box {
-                width: 55px;
-                height: 55px;
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(0, 255, 136, 0.3);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 8px;
-                color: rgba(255, 255, 255, 0.3);
-                overflow: hidden;
-            }
-
-            .qr-box img {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-                pointer-events: none;
-                user-select: none;
-                -webkit-user-drag: none;
-                -webkit-touch-callout: none;
-            }
-
-            .photo-box {
-                width: 180px;
-                height: 210px;
-                background: rgba(255, 255, 255, 0.03);
-                border: 2px solid rgba(0, 255, 136, 0.25);
-                overflow: hidden;
-                position: relative;
-            }
-
-            .photo-box img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                pointer-events: none;
-                user-select: none;
-                -webkit-user-drag: none;
-                -webkit-touch-callout: none;
-            }
-
-            /* Image protection overlay */
-            .photo-box::after {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: transparent;
-                z-index: 10;
-            }
-
-            /* Content grid */
-            .content {
-                display: grid;
-                grid-template-columns: 1.75fr 1fr;
-                gap: 35px;
-                flex: 1;
-            }
-
-            /* Section */
-            .section {
-                margin-bottom: 18px;
-            }
-
-            .section-title {
-                font-size: 10px;
-                font-weight: 700;
-                color: #00ff88;
-                text-transform: uppercase;
-                letter-spacing: 2.5px;
-                margin-bottom: 8px;
-                position: relative;
-                padding-left: 0;
-                padding-bottom: 5px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-
-            .section-title::before {
-                content: "";
-                width: 3px;
-                height: 3px;
-                background: #00ff88;
-                border-radius: 50%;
-                flex-shrink: 0;
-            }
-
-            .section-title::after {
-                content: "";
-                flex: 1;
-                height: 1px;
-                background: rgba(0, 255, 136, 0.2);
-            }
-
-            /* Profile */
-            .profile {
-                font-size: 11px;
-                line-height: 1.65;
-                color: rgba(255, 255, 255, 0.85);
-                padding: 0;
-            }
-
-            /* Item */
-            .item {
-                margin-bottom: 16px;
-                padding-left: 14px;
-                border-left: 2px solid rgba(0, 255, 136, 0.2);
-                position: relative;
-            }
-
-            .item::before {
-                content: "";
-                position: absolute;
-                left: -3px;
-                top: 6px;
-                width: 4px;
-                height: 4px;
-                background: #00ff88;
-                border-radius: 50%;
-            }
-
-            .item-top {
-                display: flex;
-                justify-content: space-between;
-                align-items: baseline;
-                margin-bottom: 3px;
-            }
-
-            .item-name {
-                font-size: 12px;
-                font-weight: 600;
-                color: #ffffff;
-            }
-
-            .item-year {
-                font-size: 9px;
-                color: #00c2ff;
-                font-weight: 500;
-            }
-
-            .item-sub {
-                font-size: 9.5px;
-                color: rgba(255, 255, 255, 0.5);
-                margin-bottom: 6px;
-                font-style: italic;
-            }
-
-            .item-desc {
-                font-size: 10px;
-                line-height: 1.6;
-                color: rgba(255, 255, 255, 0.75);
-            }
-
-            /* Skills - clean bars */
-            .skill {
-                font-size: 10.5px;
-                color: rgba(255, 255, 255, 0.85);
-                margin-bottom: 7px;
-                padding-left: 16px;
-                position: relative;
-                padding-top: 3px;
-                padding-bottom: 3px;
-            }
-
-            .skill::before {
-                content: "";
-                position: absolute;
-                left: 0;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 10px;
-                height: 2px;
-                background: #00ff88;
-            }
-
-            /* Languages */
-            .lang {
-                margin-bottom: 10px;
-                padding-left: 14px;
-                border-left: 2px solid rgba(0, 255, 136, 0.2);
-                padding-top: 3px;
-                padding-bottom: 3px;
-            }
-
-            .lang-name {
-                font-size: 10.5px;
-                font-weight: 600;
-                color: #fff;
-                margin-bottom: 2px;
-            }
-
-            .lang-level {
-                font-size: 9px;
-                color: rgba(255, 255, 255, 0.5);
-            }
-
-            /* Footer */
-            .footer {
-                margin-top: auto;
-                padding-top: 18px;
-                background: linear-gradient(
-                        90deg,
-                        rgba(0, 255, 136, 0.15) 0%,
-                        transparent 50%
-                    )
-                    top / 100% 2px no-repeat;
-                display: flex;
-                gap: 22px;
-                align-items: center;
-                font-size: 9px;
-                color: rgba(255, 255, 255, 0.5);
-            }
-
-            .footer span {
-                color: #00ff88;
-                font-weight: 600;
-            }
-
-            .qr-corner {
-                position: absolute;
-                bottom: 20px;
-                right: 20px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 5px;
-                z-index: 10;
-            }
-
-            .qr-corner img {
-                width: 110px;
-                height: 110px;
-                object-fit: contain;
-                border: 2px solid rgba(0, 255, 136, 0.3);
-                padding: 5px;
-                background: rgba(0, 0, 0, 0.5);
-                pointer-events: none;
-                user-select: none;
-                -webkit-user-drag: none;
-                -webkit-touch-callout: none;
-            }
-
-            .qr-corner::after {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: transparent;
-                z-index: 10;
-            }
-
-            .qr-corner-label {
-                font-size: 9px;
-                color: rgba(255, 255, 255, 0.5);
-                text-align: center;
-                font-weight: 500;
-            }
-
-            @media print {
-                body {
-                    background: white;
-                    padding: 0;
-                }
-            }
-
-            /* Responsive Mobile Styles */
-            @media screen and (max-width: 768px) {
-                body {
-                    padding: 15px;
-                    overflow-x: hidden;
-                }
-
-                .page {
-                    width: 100%;
-                    height: auto;
-                    min-height: 100vh;
-                    padding-bottom: 20px;
-                }
-
-                .container {
-                    padding: 15px 20px 20px 25px;
-                }
-
-                .header {
-                    flex-direction: column;
-                    gap: 15px;
-                    align-items: flex-start;
-                    margin-bottom: 15px;
-                }
-
-                .name {
-                    font-size: 36px;
-                    margin-bottom: 8px;
-                }
-
-                .title {
-                    font-size: 13px;
-                    padding-left: 12px;
-                }
-
-                .header-right {
-                    order: -1;
-                    width: 100%;
-                    justify-content: center;
-                }
-
-                .photo-box {
-                    width: 140px;
-                    height: 165px;
-                }
-
-                .content {
-                    grid-template-columns: 1fr;
-                    gap: 20px;
-                }
-
-                .section {
-                    margin-bottom: 15px;
-                }
-
-                .section-title {
-                    font-size: 9px;
-                    margin-bottom: 7px;
-                }
-
-                .profile {
-                    font-size: 10px;
-                    line-height: 1.6;
-                }
-
-                .item {
-                    margin-bottom: 12px;
-                    padding-bottom: 10px;
-                }
-
-                .item-name {
-                    font-size: 11px;
-                }
-
-                .item-year {
-                    font-size: 8.5px;
-                }
-
-                .item-sub {
-                    font-size: 9px;
-                    margin-bottom: 5px;
-                }
-
-                .item-desc {
-                    font-size: 9.5px;
-                    line-height: 1.5;
-                }
-
-                .skill {
-                    font-size: 10px;
-                    margin-bottom: 6px;
-                }
-
-                .lang {
-                    margin-bottom: 8px;
-                }
-
-                .lang-name {
-                    font-size: 10px;
-                }
-
-                .lang-level {
-                    font-size: 8.5px;
-                }
-
-                .footer {
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: 8px;
-                    padding-top: 15px;
-                    font-size: 8.5px;
-                }
-
-                .qr-corner {
-                    position: static;
-                    margin-top: 20px;
-                    align-self: center;
-                }
-
-                .qr-corner img {
-                    width: 90px;
-                    height: 90px;
-                }
-
-                .qr-corner-label {
-                    font-size: 8px;
-                }
-            }
-
-            @media screen and (max-width: 480px) {
-                body {
-                    padding: 10px;
-                }
-
-                .page {
-                    padding-bottom: 15px;
-                }
-
-                .container {
-                    padding: 12px 15px 15px 20px;
-                }
-
-                .name {
-                    font-size: 28px;
-                }
-
-                .title {
-                    font-size: 11px;
-                }
-
-                .photo-box {
-                    width: 120px;
-                    height: 145px;
-                }
-
-                .profile {
-                    font-size: 9.5px;
-                }
-
-                .item-name {
-                    font-size: 10px;
-                }
-
-                .item-year {
-                    font-size: 8px;
-                }
-
-                .item-sub {
-                    font-size: 8.5px;
-                }
-
-                .item-desc {
-                    font-size: 9px;
-                }
-
-                .skill {
-                    font-size: 9.5px;
-                }
-
-                .footer {
-                    font-size: 8px;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="page">
-            <div class="accent-bar"></div>
-
-            <div class="container">
-                <div class="header">
-                    <div>
-                        <div class="name">Igor Szuniewicz</div>
-                        <div class="title">
-                            Audio Engineer & Interactive Sound Developer
-                        </div>
-                    </div>
-                    <div class="header-right">
-                        <div class="photo-box">
-                            <picture>
-                                <source
-                                    srcset="pieknyportret_rect.webp"
-                                    type="image/webp"
-                                />
-                                <img
-                                    src="pieknyportret_rect.png"
-                                    alt="Igor Szuniewicz"
-                                />
-                            </picture>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="content">
-                    <div class="left">
-                        <div class="section">
-                            <div class="section-title">
-                                Professional Summary
-                            </div>
-                            <p class="profile">
-                                Audio engineer and composer specializing in
-                                interactive sound systems and real-time audio
-                                processing for games and interactive media.
-                                Proven expertise in Wwise/FMOD implementation,
-                                DSP algorithm development, and adaptive music
-                                systems. Strong technical foundation combining
-                                classical music training with modern software
-                                development (C++, C#, Python). Delivered
-                                production-ready audio solutions with sub-60ms
-                                latency and 82% ML classification accuracy.
-                            </p>
-                        </div>
-
-                        <div class="section">
-                            <div class="section-title">Key Projects</div>
-
-                            <div class="item">
-                                <div class="item-top">
-                                    <div class="item-name">
-                                        Transientica: AudioLab
-                                    </div>
-                                    <div class="item-year">2025</div>
-                                </div>
-                                <div class="item-sub">
-                                    Real-Time ML Audio Analysis • Python, Unity,
-                                    TensorFlow
-                                </div>
-                                <div class="item-desc">
-                                    Beatbox-controlled rhythm game with
-                                    real-time ML audio classification achieving
-                                    sub-60ms latency and 82% accuracy.
-                                    Python/TensorFlow backend, Unity frontend,
-                                    OSC networking.
-                                </div>
-                            </div>
-
-                            <div class="item">
-                                <div class="item-top">
-                                    <div class="item-name">
-                                        Interactive Music Systems
-                                    </div>
-                                    <div class="item-year">2024</div>
-                                </div>
-                                <div class="item-sub">
-                                    Adaptive Audio Design • Wwise, Unreal Engine
-                                </div>
-                                <div class="item-desc">
-                                    Three production-ready interactive music
-                                    systems with vertical layering, RTPC
-                                    control, and 3D spatial audio. Smooth
-                                    transitions.
-                                </div>
-                            </div>
-
-                            <div class="item">
-                                <div class="item-top">
-                                    <div class="item-name">
-                                        Not Today, Darling!
-                                    </div>
-                                    <div class="item-year">2025</div>
-                                </div>
-                                <div class="item-sub">
-                                    Full Game Audio Production • Unity, FMOD
-                                </div>
-                                <div class="item-desc">
-                                    Complete audio solution for multiplayer
-                                    side-scroller: sound design, mixing,
-                                    implementation, and voiceover direction.
-                                    Dynamic mix system for 1-4 players.
-                                </div>
-                            </div>
-
-                            <div class="item">
-                                <div class="item-top">
-                                    <div class="item-name">
-                                        Amorak - Short Film
-                                    </div>
-                                    <div class="item-year">2024</div>
-                                </div>
-                                <div class="item-sub">
-                                    Sound Design & Spatial Audio • Reaper, Pro
-                                    Tools
-                                </div>
-                                <div class="item-desc">
-                                    Immersive soundscape for animated short film
-                                    with unique creature sound signatures and
-                                    proximity-based 3D spatial audio mixing.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="section">
-                            <div class="section-title">Education</div>
-
-                            <div class="item">
-                                <div class="item-top">
-                                    <div class="item-name">
-                                        Bachelor - Digital Arts & Entertainment
-                                    </div>
-                                    <div class="item-year">2023 – 2026</div>
-                                </div>
-                                <div class="item-sub">
-                                    Howest University of Applied Sciences,
-                                    Belgium
-                                </div>
-                                <div class="item-desc">
-                                    Specialization: Game Development - Game
-                                    Audio Integration. Advanced training in
-                                    Wwise/FMOD, interactive music systems,
-                                    real-time audio processing, and game engine
-                                    implementation.
-                                </div>
-                            </div>
-
-                            <div class="item">
-                                <div class="item-top">
-                                    <div class="item-name">
-                                        Classical Piano & Music Theory
-                                    </div>
-                                    <div class="item-year">2013 – 2019</div>
-                                </div>
-                                <div class="item-sub">
-                                    State Music School, Kołobrzeg, Poland
-                                </div>
-                                <div class="item-desc">
-                                    Comprehensive training in piano performance,
-                                    composition, music theory, and ensemble
-                                    playing. Strong foundation in musical
-                                    analysis and creative composition.
-                                </div>
-                            </div>
-
-                            <div class="item">
-                                <div class="item-top">
-                                    <div class="item-name">
-                                        High School Diploma - Mathematics &
-                                        Physics
-                                    </div>
-                                    <div class="item-year">2019 – 2023</div>
-                                </div>
-                                <div class="item-sub">
-                                    Copernicus High School, Kołobrzeg, Poland
-                                </div>
-                                <div class="item-desc">
-                                    Advanced mathematics and physics
-                                    specialization, providing strong analytical
-                                    and problem-solving foundation for technical
-                                    audio work.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="section">
-                            <div class="section-title">Certifications</div>
-
-                            <div class="item">
-                                <div class="item-top">
-                                    <div class="item-name">
-                                        Complete C# Unity 3D Game Development in
-                                        Unity 6
-                                    </div>
-                                    <div class="item-year">2024</div>
-                                </div>
-                                <div class="item-sub">Issued by Udemy</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="right">
-                        <div class="section">
-                            <div class="section-title">Core Competencies</div>
-                            <div class="skill">Game Audio Implementation</div>
-                            <div class="skill">Interactive Music Design</div>
-                            <div class="skill">Real-Time Audio Processing</div>
-                            <div class="skill">3D Spatial Audio & HRTF</div>
-                            <div class="skill">DSP Algorithm Development</div>
-                            <div class="skill">
-                                Audio Plugin Development (VST)
-                            </div>
-                            <div class="skill">ML-Based Audio Analysis</div>
-                            <div class="skill">Music Composition & Scoring</div>
-                            <div class="skill">Sound Design & Foley</div>
-                            <div class="skill">Mixing & Mastering</div>
-                        </div>
-
-                        <div class="section">
-                            <div class="section-title">Technical Skills</div>
-                            <div class="skill">Wwise • FMOD</div>
-                            <div class="skill">Unreal Engine 5 • Unity</div>
-                            <div class="skill">C++ • C# • Python</div>
-                            <div class="skill">JUCE Framework</div>
-                            <div class="skill">TensorFlow • ML Audio</div>
-                            <div class="skill">Reaper • Pro Tools</div>
-                            <div class="skill">Studio One • Logic Pro</div>
-                            <div class="skill">Git • Perforce</div>
-                        </div>
-
-                        <div class="section">
-                            <div class="section-title">Languages</div>
-                            <div class="lang">
-                                <div class="lang-name">English</div>
-                                <div class="lang-level">Fluent (C1)</div>
-                            </div>
-                            <div class="lang">
-                                <div class="lang-name">Polish</div>
-                                <div class="lang-level">Native</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="footer">
-                    <div><span>Email</span> igorszuniewiczwork@gmail.com</div>
-                    <div><span>Phone</span> +48 605 117 516</div>
-                    <div><span>Location</span> Kortrijk, Belgium</div>
-                </div>
-            </div>
-
-            <div class="qr-corner">
-                <img src="qr-code-igorszuniewicz.png" alt="QR Code" />
-                <div class="qr-corner-label">Scan for Portfolio</div>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Igor Szuniewicz CV 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+@page { size: 210mm 297mm; margin: 0; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+:root {
+  --bg: #0B0B0B;
+  --gold: #D4A843;
+  --gold-dk: #B8922F;
+  --white: #F0F0F0;
+  --gray: #AAAAAA;
+  --muted: #606060;
+}
+body { font-family: 'Space Grotesk', sans-serif; margin: 0; background: #1a1a1a; }
+
+.a4 {
+  width: 210mm; height: 297mm; margin: 0 auto;
+  position: relative; overflow: hidden; color: var(--white);
+  background: url('bg-metal.jpg') center / cover no-repeat;
+}
+.a4::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(11,11,11,0.91); z-index: 0;
+}
+
+/* ===== DECORATIONS ===== */
+.deco-glow-tl {
+  position: absolute; top: 0; left: 0; width: 130mm; height: 130mm;
+  background: radial-gradient(ellipse at 25% 20%, rgba(212,168,67,0.05) 0%, transparent 55%);
+  pointer-events: none; z-index: 1;
+}
+.deco-corner-tl {
+  position: absolute; top: 4.5mm; left: 4.5mm; width: 10mm; height: 10mm;
+  border-top: 0.4mm solid var(--gold); border-left: 0.4mm solid var(--gold);
+  opacity: 0.2; pointer-events: none; z-index: 1;
+}
+.deco-corner-br {
+  position: absolute; bottom: 4.5mm; right: 4.5mm; width: 10mm; height: 10mm;
+  border-bottom: 0.4mm solid var(--gold); border-right: 0.4mm solid var(--gold);
+  opacity: 0.2; pointer-events: none; z-index: 1;
+}
+.deco-bottom-bar {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 0.5mm;
+  background: linear-gradient(90deg, transparent 5%, var(--gold-dk) 30%, var(--gold) 50%, var(--gold-dk) 70%, transparent 95%);
+  opacity: 0.45; z-index: 5; pointer-events: none;
+}
+
+/* ===== LAYOUT ===== */
+.page {
+  position: relative; z-index: 2;
+  display: grid;
+  grid-template-columns: 72mm 1fr;
+  grid-template-rows: auto 1fr;
+  width: 100%; height: 100%;
+}
+
+/* ===== HEADER ===== */
+.header {
+  grid-column: 1 / -1;
+  padding: 7mm 14mm 4mm 14mm;
+  border-bottom: 0.3mm solid rgba(212,168,67,0.15);
+}
+.header-inner { display: flex; justify-content: space-between; align-items: flex-start; gap: 4mm; }
+.header-left { flex: 1; }
+.name-first {
+  display: block; font-size: 38pt; font-weight: 800;
+  letter-spacing: -0.5pt; line-height: 1; color: var(--white); text-transform: uppercase;
+}
+.name-last {
+  display: inline-block; font-size: 48pt; font-weight: 900;
+  letter-spacing: -0.5pt; line-height: 1; text-transform: uppercase;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dk) 100%);
+  color: var(--bg); padding: 0.5mm 4.5mm 1.5mm; margin-left: -4.5mm; margin-top: 1mm;
+}
+.subtitle {
+  font-size: 10pt; font-weight: 500; color: var(--gold);
+  letter-spacing: 2.5pt; text-transform: uppercase; margin-top: 2mm;
+}
+.quote {
+  font-size: 7.5pt; font-weight: 400; font-style: italic; color: var(--gray);
+  margin-top: 3mm; line-height: 1.6; max-width: 100mm;
+  border-left: 0.6mm solid var(--gold); padding-left: 3mm;
+}
+.photo-frame { position: relative; width: 36mm; height: 46mm; flex-shrink: 0; margin-top: 1mm; }
+.photo-frame::before {
+  content: ''; position: absolute;
+  top: -1mm; left: -1mm; right: -1mm; bottom: -1mm;
+  border: 0.4mm solid var(--gold); border-radius: 2mm; opacity: 0.3;
+}
+.photo {
+  width: 100%; height: 100%; border: 0.5mm solid var(--gold); border-radius: 1.5mm;
+  overflow: hidden; position: relative; z-index: 1;
+}
+.photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; display: block; }
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  background: rgba(11,11,11,0.93);
+  padding: 5mm 5mm 5mm 6mm;
+  border-right: 0.3mm solid rgba(212,168,67,0.08);
+  position: relative;
+}
+.sidebar::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background-image: radial-gradient(circle, rgba(212,168,67,0.02) 0.4px, transparent 0.4px);
+  background-size: 3.5mm 3.5mm; pointer-events: none;
+}
+.sb-section { margin-bottom: 5mm; position: relative; }
+.sb-section:last-child { margin-bottom: 0; }
+.sb-title {
+  font-size: 7.5pt; font-weight: 700; color: var(--gold); text-transform: uppercase;
+  letter-spacing: 2pt; padding-left: 2.5mm; margin-bottom: 3mm; position: relative;
+}
+.sb-title::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 0.8mm; background: var(--gold); border-radius: 0.4mm;
+}
+
+/* Skills */
+.skill-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2.5mm; }
+.skill-name { font-size: 8pt; font-weight: 500; color: var(--white); }
+.skill-lvl { font-size: 6.5pt; font-weight: 600; }
+.skill-lvl.adv { color: var(--gold); }
+.skill-lvl.int { color: var(--gray); }
+
+/* Tools icons */
+.tools-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.5mm; }
+.tool-cell { display: flex; flex-direction: column; align-items: center; gap: 1mm; padding: 1.5mm 0; }
+.tool-icon { width: 8mm; height: 8mm; display: flex; align-items: center; justify-content: center; }
+.tool-icon img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+.tool-icon img[src$=".png"] { filter: brightness(0) invert(1); }
+.tool-label { font-size: 5pt; font-weight: 600; color: var(--muted); text-align: center; }
+
+/* Languages */
+.lang-row { display: flex; justify-content: space-between; margin-bottom: 2.5mm; font-size: 8pt; }
+.lang-name { color: var(--white); font-weight: 500; }
+.lang-lvl { color: var(--gray); font-size: 6.5pt; }
+
+/* Contact */
+.contact-row { display: flex; align-items: center; gap: 2mm; margin-bottom: 2.5mm; font-size: 7pt; color: var(--gray); }
+.contact-icon {
+  width: 5mm; height: 5mm; border-radius: 1mm;
+  background: rgba(212,168,67,0.08); border: 0.2mm solid rgba(212,168,67,0.2);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.contact-icon i { color: var(--gold); font-size: 6pt; }
+.contact-row a { color: var(--gray); text-decoration: none; }
+.qr-block {
+  display: flex; align-items: center; gap: 3mm;
+  margin-top: 3.5mm; padding-top: 3.5mm;
+  border-top: 0.25mm solid rgba(212,168,67,0.12);
+}
+.qr {
+  width: 18mm; height: 18mm; background: #fff; border-radius: 1.2mm;
+  overflow: hidden; padding: 0.8mm; flex-shrink: 0;
+  border: 0.3mm solid rgba(212,168,67,0.3);
+}
+.qr img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.qr-text { font-size: 6pt; color: var(--muted); line-height: 1.5; }
+.qr-text strong { color: var(--gold); font-weight: 700; font-size: 6.5pt; display: block; margin-bottom: 0.5mm; }
+
+/* ===== MAIN ===== */
+.main { padding: 4mm 10mm 4mm 7mm; position: relative; }
+.mn-section { margin-bottom: 3.5mm; }
+.mn-section:last-child { margin-bottom: 0; }
+.mn-title-wrap { display: flex; align-items: center; margin-bottom: 3mm; }
+.mn-title {
+  display: inline-block; font-size: 10.5pt; font-weight: 800;
+  color: var(--bg); text-transform: uppercase; letter-spacing: 1.5pt;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dk) 100%);
+  padding: 1mm 4mm 1.5mm; white-space: nowrap;
+}
+.mn-title-line { flex: 1; height: 0.3mm; background: var(--gold); opacity: 0.25; }
+
+/* Achievements */
+.ach-cat { margin-bottom: 2.5mm; padding-left: 3mm; border-left: 0.4mm solid rgba(212,168,67,0.2); }
+.ach-cat:last-child { margin-bottom: 0; }
+.ach-head { font-size: 9pt; margin-bottom: 1.5mm; }
+.ach-head strong { font-weight: 700; color: var(--white); }
+.ach-head .ach-sub { font-weight: 400; color: var(--gray); font-size: 8pt; }
+.ach-bullets { list-style: none; padding-left: 3mm; }
+.ach-bullets li {
+  position: relative; padding-left: 3mm; margin-bottom: 2mm;
+  font-size: 8pt; color: var(--gray); line-height: 1.55;
+}
+.ach-bullets li::before {
+  content: ''; position: absolute; left: 0; top: 1.5mm;
+  width: 1.2mm; height: 1.2mm; background: var(--gold); border-radius: 0.2mm;
+}
+
+/* Experience */
+.exp-item { position: relative; padding-left: 4.5mm; }
+.exp-item::before {
+  content: ''; position: absolute; left: 0; top: 1mm;
+  width: 2.5mm; height: 2.5mm; background: var(--gold); border-radius: 50%;
+}
+.exp-item::after {
+  content: ''; position: absolute; left: 1mm; top: 4mm;
+  width: 0.4mm; height: calc(100% - 4mm); background: rgba(212,168,67,0.15);
+}
+.exp-date { font-size: 7pt; color: var(--gold); font-weight: 600; }
+.exp-role { font-size: 9.5pt; font-weight: 700; color: var(--white); margin-top: 0.5mm; }
+.exp-desc { font-size: 8pt; color: var(--gray); margin-top: 1mm; line-height: 1.5; }
+
+/* Projects */
+.proj-grid { display: flex; flex-direction: column; gap: 2mm; }
+.proj-item {
+  font-size: 8pt; line-height: 1.4; padding: 1mm 0 1mm 3mm;
+  border-left: 0.4mm solid rgba(212,168,67,0.2);
+}
+.proj-name { font-weight: 700; color: var(--white); font-size: 8.5pt; }
+.proj-type {
+  display: inline-block; font-size: 5.5pt; font-weight: 700; color: var(--gold);
+  background: rgba(212,168,67,0.07); border: 0.2mm solid rgba(212,168,67,0.18);
+  border-radius: 0.6mm; padding: 0.3mm 1.8mm; margin: 0 0.5mm;
+  text-transform: uppercase; letter-spacing: 0.4pt; vertical-align: middle;
+}
+.proj-desc { color: var(--gray); }
+
+/* Education */
+.edu-timeline { position: relative; padding-left: 4.5mm; }
+.edu-item { position: relative; margin-bottom: 3mm; }
+.edu-item:last-child { margin-bottom: 0; }
+.edu-item::before {
+  content: ''; position: absolute; left: -4.5mm; top: 1mm;
+  width: 2.5mm; height: 2.5mm; background: var(--gold); border-radius: 50%;
+}
+.edu-timeline::before {
+  content: ''; position: absolute; left: 0.85mm; top: 3.5mm;
+  width: 0.4mm; height: calc(100% - 7mm); background: rgba(212,168,67,0.15);
+}
+.edu-date { font-size: 7pt; color: var(--gold); font-weight: 600; }
+.edu-degree { font-size: 9pt; font-weight: 700; color: var(--white); margin-top: 0.5mm; }
+.edu-school { font-size: 8pt; color: var(--gray); margin-top: 0.3mm; }
+.edu-thesis { font-size: 7.5pt; color: var(--gray); font-style: italic; margin-top: 0.5mm; }
+
+@media screen { .a4 { margin: 20px auto; box-shadow: 0 4px 80px rgba(0,0,0,0.8); } }
+@media print { body { background: none; } }
+</style>
+</head>
+<body>
+
+<div class="a4">
+  <div class="deco-glow-tl"></div>
+  <div class="deco-corner-tl"></div>
+  <div class="deco-corner-br"></div>
+  <div class="deco-bottom-bar"></div>
+
+  <div class="page">
+    <header class="header">
+      <div class="header-inner">
+        <div class="header-left">
+          <span class="name-first">Igor</span>
+          <span class="name-last">Szuniewicz</span>
+          <p class="subtitle">Sound Designer &nbsp;/&nbsp; Audio Programmer</p>
+          <p class="quote">
+            Game audio designer and programmer with a classical piano background
+            and a physics-driven mindset. I build audio that lives inside the engine,
+            from spatial VR soundscapes to real-time ML classifiers.
+          </p>
         </div>
+        <div class="photo-frame">
+          <div class="photo"><img src="cvsmile.jpg" alt="Igor Szuniewicz"></div>
+        </div>
+      </div>
+    </header>
 
-        <script>
-            // Prevent right-click on images
-            document.addEventListener("contextmenu", function (e) {
-                if (e.target.tagName === "IMG") {
-                    e.preventDefault();
-                    return false;
-                }
-            });
+    <aside class="sidebar">
+      <div class="sb-section">
+        <h3 class="sb-title">Skills</h3>
+        <div class="skill-row"><span class="skill-name">Sound design</span><span class="skill-lvl adv">advanced</span></div>
+        <div class="skill-row"><span class="skill-name">Audio implementation</span><span class="skill-lvl adv">advanced</span></div>
+        <div class="skill-row"><span class="skill-name">Spatial audio</span><span class="skill-lvl adv">advanced</span></div>
+        <div class="skill-row"><span class="skill-name">Adaptive music</span><span class="skill-lvl adv">advanced</span></div>
+        <div class="skill-row"><span class="skill-name">Audio programming</span><span class="skill-lvl int">intermediate</span></div>
+        <div class="skill-row"><span class="skill-name">Music composition</span><span class="skill-lvl adv">advanced</span></div>
+        <div class="skill-row"><span class="skill-name">Programming</span><span class="skill-lvl int">intermediate</span></div>
+      </div>
+      <div class="sb-section">
+        <h3 class="sb-title">Toolkit</h3>
+        <div class="tools-grid">
+          <div class="tool-cell"><div class="tool-icon"><img src="icons/wwise.svg" alt="Wwise"></div><span class="tool-label">Wwise</span></div>
+          <div class="tool-cell"><div class="tool-icon"><img src="icons/fmod.svg" alt="FMOD"></div><span class="tool-label">FMOD</span></div>
+          <div class="tool-cell"><div class="tool-icon"><img src="icons/protools.svg" alt="Pro Tools"></div><span class="tool-label">Pro Tools</span></div>
+          <div class="tool-cell"><div class="tool-icon"><img src="icons/unreal.svg" alt="UE5"></div><span class="tool-label">UE5</span></div>
+          <div class="tool-cell"><div class="tool-icon"><img src="icons/unity.svg" alt="Unity"></div><span class="tool-label">Unity</span></div>
+          <div class="tool-cell"><div class="tool-icon"><img src="icons/perforce.svg" alt="Perforce"></div><span class="tool-label">Perforce</span></div>
+          <div class="tool-cell"><div class="tool-icon"><img src="icons/juce.svg" alt="JUCE"></div><span class="tool-label">JUCE</span></div>
+          <div class="tool-cell"><div class="tool-icon"><img src="icons/blender.svg" alt="Blender"></div><span class="tool-label">Blender</span></div>
+          <div class="tool-cell"><div class="tool-icon"><img src="icons/git.png" alt="GitHub"></div><span class="tool-label">GitHub</span></div>
+          <div class="tool-cell"><div class="tool-icon"><img src="icons/python.png" alt="Python"></div><span class="tool-label">Python</span></div>
+          <div class="tool-cell"><div class="tool-icon"><img src="icons/cpp.png" alt="C++"></div><span class="tool-label">C++</span></div>
+          <div class="tool-cell"><div class="tool-icon"><img src="icons/dotnet.svg" alt="C#"></div><span class="tool-label">C#</span></div>
+        </div>
+      </div>
+      <div class="sb-section">
+        <h3 class="sb-title">Languages</h3>
+        <div class="lang-row"><span class="lang-name">Polish</span><span class="lang-lvl">native</span></div>
+        <div class="lang-row"><span class="lang-name">English</span><span class="lang-lvl">fluent</span></div>
+        <div class="lang-row"><span class="lang-name">German</span><span class="lang-lvl">basic</span></div>
+      </div>
+      <div class="sb-section">
+        <h3 class="sb-title">Contact</h3>
+        <div class="contact-row"><div class="contact-icon"><i class="fas fa-globe"></i></div><a href="https://igorszuniewicz.com">igorszuniewicz.com</a></div>
+        <div class="contact-row"><div class="contact-icon"><i class="fas fa-envelope"></i></div><a href="mailto:igorszuniewiczwork@gmail.com">igor...work@gmail.com</a></div>
+        <div class="contact-row"><div class="contact-icon"><i class="fas fa-phone"></i></div>+48 605 117 516</div>
+        <div class="contact-row"><div class="contact-icon"><i class="fab fa-linkedin"></i></div><a href="https://linkedin.com/in/igorszuniewicz">igorszuniewicz</a></div>
+        <div class="contact-row"><div class="contact-icon"><i class="fab fa-github"></i></div><a href="https://github.com/Szunias">Szunias</a></div>
+        <div class="contact-row"><div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>Kortrijk, Belgium</div>
+        <div class="qr-block">
+          <div class="qr"><img src="qr-code-igorszuniewicz.png" alt="Portfolio QR"></div>
+          <div class="qr-text"><strong>Scan for portfolio</strong>igorszuniewicz.com</div>
+        </div>
+      </div>
+    </aside>
 
-            // Prevent dragging images
-            document.addEventListener("dragstart", function (e) {
-                if (e.target.tagName === "IMG") {
-                    e.preventDefault();
-                    return false;
-                }
-            });
+    <main class="main">
+      <section class="mn-section">
+        <div class="mn-title-wrap"><span class="mn-title">Key Achievements</span><span class="mn-title-line"></span></div>
+        <div class="ach-cat">
+          <p class="ach-head"><strong>Technical sound designer</strong> <span class="ach-sub">- real-time audio in game engines.</span></p>
+          <ul class="ach-bullets">
+            <li>Spatial audio for VR/AR training: Steam Audio reflections, material absorption, sound transmission.</li>
+            <li>C++ audio systems: footstep detection, proximity with hysteresis, DataAsset-driven configs.</li>
+          </ul>
+        </div>
+        <div class="ach-cat">
+          <p class="ach-head"><strong>Audio programmer</strong> <span class="ach-sub">- tools and prototypes for interactive audio.</span></p>
+          <ul class="ach-bullets">
+            <li>Real-time ML beatbox classifier - 92% accuracy, 45 ms latency (Python, scikit-learn).</li>
+            <li>VST3/AU sampler plugin with granular synthesis and TPT filters (C++/JUCE).</li>
+          </ul>
+        </div>
+        <div class="ach-cat">
+          <p class="ach-head"><strong>Sound designer and composer</strong> <span class="ach-sub">- games, animation, film.</span></p>
+          <ul class="ach-bullets">
+            <li>200+ Wwise events with dynamic RTPC tension system for horror game.</li>
+            <li>Full post-production for animation: creature vocals, foley, binaural mix.</li>
+          </ul>
+        </div>
+      </section>
 
-            // Disable keyboard shortcuts for saving images
-            document.addEventListener("keydown", function (e) {
-                // Ctrl+S or Cmd+S
-                if ((e.ctrlKey || e.metaKey) && e.key === "s") {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-        </script>
-    </body>
+      <section class="mn-section">
+        <div class="mn-title-wrap"><span class="mn-title">Experience</span><span class="mn-title-line"></span></div>
+        <div class="exp-item">
+          <span class="exp-date">Feb 2026 - Present</span>
+          <h3 class="exp-role">Lead Technical Sound Designer (XR Labs, Belgium)</h3>
+          <p class="exp-desc">Spatial audio pipeline for VR/AR training simulations (police, military, customs). UE5 + Wwise - from recording and design to final in-engine mix.</p>
+        </div>
+      </section>
+
+      <section class="mn-section">
+        <div class="mn-title-wrap"><span class="mn-title">Projects</span><span class="mn-title-line"></span></div>
+        <div class="proj-grid">
+          <div class="proj-item"><span class="proj-name">Shadow Frames</span> <span class="proj-type">team</span> <span class="proj-desc">- Horror game, UE5 + Wwise, C++ audio</span></div>
+          <div class="proj-item"><span class="proj-name">Not Today, Darling!</span> <span class="proj-type">team</span> <span class="proj-desc">- Racing, MetaSounds, adaptive music</span></div>
+          <div class="proj-item"><span class="proj-name">Transientica: AudioLab</span> <span class="proj-type">solo</span> <span class="proj-desc">- ML beatbox game, Python + Unity</span></div>
+          <div class="proj-item"><span class="proj-name">Ray Animation</span> <span class="proj-type">collab</span> <span class="proj-desc">- Graduation film score</span></div>
+          <div class="proj-item"><span class="proj-name">AudioQ</span> <span class="proj-type">solo</span> <span class="proj-desc">- VST3/AU plugin, C++/JUCE</span></div>
+          <div class="proj-item"><span class="proj-name">Amorak</span> <span class="proj-type">collab</span> <span class="proj-desc">- Horror animation, post-production</span></div>
+        </div>
+      </section>
+
+      <section class="mn-section">
+        <div class="mn-title-wrap"><span class="mn-title">Education</span><span class="mn-title-line"></span></div>
+        <div class="edu-timeline">
+          <div class="edu-item">
+            <span class="edu-date">2023 - 2026</span>
+            <h3 class="edu-degree">Bachelor - Game Sound Integration</h3>
+            <p class="edu-school">Howest DAE, Belgium</p>
+            <p class="edu-thesis">Thesis: Generative AI for Real-Time Adaptive Game Audio</p>
+          </div>
+          <div class="edu-item">
+            <span class="edu-date">2013 - 2019</span>
+            <h3 class="edu-degree">Classical Piano &amp; Music Theory</h3>
+            <p class="edu-school">State Music School, Poland</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+</body>
 </html>
