@@ -1,10 +1,6 @@
-import { useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import {
-    motion,
-    useInView,
-    useReducedMotion,
-} from 'framer-motion';
+import { useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Download } from 'lucide-react';
 
 import SEO from '../components/layout/SEO';
@@ -46,6 +42,8 @@ const TOOLS = [
     'Perforce', 'Git', 'Blueprints',
 ];
 
+const PARAGRAPH_KEYS = ['1', '2', '3'] as const;
+
 const gridContainerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -79,42 +77,17 @@ const SectionLabel = ({ children }: { children: React.ReactNode }) => (
     </h2>
 );
 
-interface StatCardProps {
-    value: string;
-    label: string;
-    detail: string;
-    color?: string;
-}
-
-const StatCard = ({ value, label, detail, color = 'text-accent' }: StatCardProps) => {
-    const ref = useRef<HTMLDivElement>(null);
-    const isInView = useInView(ref, { once: true, amount: 0.5 });
-    const prefersReducedMotion = useReducedMotion();
-
-    return (
-        <motion.div
-            ref={ref}
-            className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-1"
-            variants={gridItemVariants}
-            aria-label={`${value} ${label}`}
-        >
-            <motion.span
-                className={`block font-display text-h2 md:text-h1 ${color}`}
-                initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }}
-                animate={isInView ? { opacity: 1 } : undefined}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
-            >
-                {value}
-            </motion.span>
-            <span className="mt-1 block font-mono text-caption uppercase tracking-wider text-text-secondary">
-                {label}
-            </span>
-            <p className="mt-3 text-caption leading-relaxed text-text-tertiary">
-                {detail}
-            </p>
-        </motion.div>
-    );
-};
+const RichParagraph = ({ i18nKey }: { i18nKey: string }) => (
+    <p className="text-body leading-8 text-[#d1cbc3]">
+        <Trans
+            ns="about"
+            i18nKey={i18nKey}
+            components={{
+                strong: <strong className="font-medium text-text-primary" />,
+            }}
+        />
+    </p>
+);
 
 const About = () => {
     const { t } = useTranslation('about');
@@ -142,10 +115,7 @@ const About = () => {
                     whileInView="visible"
                     viewport={{ once: true }}
                 >
-                    <motion.section
-                        className="pb-2 md:col-span-3"
-                        variants={itemVars}
-                    >
+                    <motion.section className="pb-2 md:col-span-3" variants={itemVars}>
                         <h1 className="font-display text-h1 leading-tight text-text-primary md:text-hero">
                             {t('hook')}
                         </h1>
@@ -154,20 +124,30 @@ const About = () => {
                         </p>
                     </motion.section>
 
-                    <motion.div
-                        className="order-2 rounded-xl border border-border bg-surface-raised p-6 md:order-1 md:col-span-2 md:p-8"
+                    <motion.section
+                        className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-3 md:p-8"
                         variants={itemVars}
                     >
-                        <SectionLabel>{t('section_story')}</SectionLabel>
-                        <div className="max-w-[65ch] space-y-5 text-body leading-relaxed text-text-secondary">
-                            <p>{t('story_1')}</p>
-                            <p>{t('story_2')}</p>
-                            <p>{t('story_3')}</p>
+                        <div className="mb-8 max-w-2xl">
+                            <SectionLabel>{t('section_affiliations')}</SectionLabel>
                         </div>
-                    </motion.div>
+
+                        <div className="grid grid-cols-2 items-center gap-x-8 gap-y-10 md:grid-cols-4 md:gap-x-12 lg:gap-x-16">
+                            {AFFILIATIONS.map((affiliation) => (
+                                <div key={affiliation.name} className="flex min-h-[64px] items-center justify-center">
+                                    <img
+                                        src={affiliation.image}
+                                        alt={affiliation.name}
+                                        className={`${affiliation.widthClass} ${affiliation.imageClass} object-contain opacity-90 transition duration-300 hover:opacity-100`}
+                                        loading="lazy"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </motion.section>
 
                     <motion.div
-                        className="order-1 overflow-hidden rounded-xl border border-border bg-surface-raised md:order-2 md:col-span-1"
+                        className="overflow-hidden rounded-xl border border-border bg-surface-raised md:col-span-1"
                         variants={itemVars}
                     >
                         <div className="relative aspect-[3/4] w-full">
@@ -180,40 +160,31 @@ const About = () => {
                                     onError={() => setImageError(true)}
                                 />
                             )}
-                            {!imageLoaded && (
-                                <div className="absolute inset-0 bg-surface-overlay" />
-                            )}
+                            {!imageLoaded && <div className="absolute inset-0 bg-surface-overlay" />}
                         </div>
                     </motion.div>
 
-                    <StatCard
-                        value={t('stat_daw_value')}
-                        label={t('stat_daw_label')}
-                        detail={t('stat_daw_detail')}
-                        color="text-accent"
-                    />
-                    <StatCard
-                        value={t('stat_mix_value')}
-                        label={t('stat_mix_label')}
-                        detail={t('stat_mix_detail')}
-                        color="text-accent-warm"
-                    />
-                    <StatCard
-                        value={t('stat_people_value')}
-                        label={t('stat_people_label')}
-                        detail={t('stat_people_detail')}
-                        color="text-accent"
-                    />
+                    <motion.section
+                        className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-2 md:p-8"
+                        variants={itemVars}
+                    >
+                        <SectionLabel>{t('section_background')}</SectionLabel>
+                        <div className="max-w-[72ch] space-y-5">
+                            {PARAGRAPH_KEYS.map((key) => (
+                                <RichParagraph key={key} i18nKey={`background_${key}`} />
+                            ))}
+                        </div>
+                    </motion.section>
 
                     <motion.div
                         className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-2 md:p-8"
                         variants={itemVars}
                     >
                         <SectionLabel>{t('section_approach')}</SectionLabel>
-                        <div className="max-w-[65ch] space-y-5 text-body leading-relaxed text-text-secondary">
-                            <p>{t('approach_1')}</p>
-                            <p>{t('approach_2')}</p>
-                            <p>{t('approach_3')}</p>
+                        <div className="max-w-[72ch] space-y-5">
+                            {PARAGRAPH_KEYS.map((key) => (
+                                <RichParagraph key={key} i18nKey={`approach_${key}`} />
+                            ))}
                         </div>
                     </motion.div>
 
@@ -233,31 +204,6 @@ const About = () => {
                             ))}
                         </div>
                     </motion.div>
-
-                    <motion.section
-                        className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-3 md:p-8"
-                        variants={itemVars}
-                    >
-                        <div className="mb-8 max-w-2xl">
-                            <SectionLabel>{t('section_affiliations')}</SectionLabel>
-                        </div>
-
-                        <div className="grid grid-cols-2 items-center gap-x-8 gap-y-10 md:grid-cols-4 md:gap-x-12 lg:gap-x-16">
-                            {AFFILIATIONS.map((affiliation) => (
-                                <div
-                                    key={affiliation.name}
-                                    className="flex min-h-[64px] items-center justify-center"
-                                >
-                                    <img
-                                        src={affiliation.image}
-                                        alt={affiliation.name}
-                                        className={`${affiliation.widthClass} ${affiliation.imageClass} object-contain opacity-90 transition duration-300 hover:opacity-100`}
-                                        loading="lazy"
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </motion.section>
 
                     <motion.div
                         className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-1"
