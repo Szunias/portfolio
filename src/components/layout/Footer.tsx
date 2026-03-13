@@ -44,7 +44,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="border-t border-border">
+    <footer className="relative z-10 rounded-t-2xl border-t border-border bg-surface shadow-[0_-8px_30px_rgb(0,0,0,0.3)]">
       <div className="max-w-content-wide mx-auto px-6 md:px-12 lg:px-16 py-12">
 
         {/* Main footer content - 2-column: Brand+nav (left) + Social (right) */}
