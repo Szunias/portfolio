@@ -16,7 +16,7 @@ const Layout = ({ children }: LayoutProps) => {
   const { t, i18n } = useTranslation('common');
 
   return (
-    <div className="flex flex-col min-h-screen text-text-primary font-sans overflow-x-hidden relative bg-surface">
+    <div className="flex flex-col min-h-screen text-text-primary font-sans overflow-x-clip relative bg-surface">
       <Helmet htmlAttributes={{ lang: i18n.language }} />
       <ScrollProgress />
       <div className="bg-noise" aria-hidden="true" />

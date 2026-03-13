@@ -48,7 +48,13 @@ const Home = () => {
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(websiteSchema)}</script>
       </Helmet>
-      <Hero onOpenShowreel={() => setIsShowreelOpen(true)} />
+      {/* Hero pinned behind page content — footer slides over it on scroll */}
+      <div className="fixed inset-0 z-0">
+        <Hero onOpenShowreel={() => setIsShowreelOpen(true)} />
+      </div>
+
+      {/* Spacer matches hero height so footer starts below the fold */}
+      <div className="h-screen" aria-hidden="true" />
 
       {isShowreelOpen ? (
         <div

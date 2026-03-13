@@ -41,7 +41,7 @@ const Hero = ({ onOpenShowreel }: HeroProps) => {
   const ItemH1 = prefersReducedMotion ? 'h1' : motion.h1;
 
   return (
-    <section className="sticky top-0 z-0 flex h-screen flex-col justify-center overflow-hidden bg-surface">
+    <section className="relative flex h-full flex-col justify-center overflow-hidden bg-surface">
       <img
         src={backgroundImage}
         alt=""
