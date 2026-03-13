@@ -130,7 +130,7 @@ const noMotionItemVariants = {
 };
 
 const SectionLabel = ({ children }: { children: React.ReactNode }) => (
-    <h2 className="mb-5 font-mono text-overline uppercase tracking-widest text-text-tertiary">
+    <h2 className="mb-6 font-pixel text-[10px] uppercase tracking-[0.16em] text-[#8d8882]">
         {children}
     </h2>
 );
