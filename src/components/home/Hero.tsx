@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Play, ArrowRight } from 'lucide-react';
+import { Play, ArrowRight, Download } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 
 const ease: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
@@ -110,6 +110,16 @@ const Hero = ({ onOpenShowreel }: HeroProps) => {
                 className="opacity-60 transition-transform duration-150 group-hover:translate-x-0.5"
               />
             </Link>
+
+            <a
+              href={`${import.meta.env.BASE_URL}cv/Igor_Szuniewicz_CV.pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-black/15 px-6 py-3 text-body-sm font-semibold text-text-primary transition-all duration-200 hover:border-accent hover:bg-surface-raised active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+            >
+              <Download size={14} className="opacity-60" />
+              {t('hero.cv_button', 'CV')}
+            </a>
           </Item>
         </div>
       </Container>
