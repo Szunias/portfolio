@@ -61,7 +61,7 @@ const Transientica = () => {
                     </p>
 
                     {/* Audio Visualizer Animation — CSS-driven */}
-                    <div className="flex justify-center items-end gap-1 h-16 mb-12">
+                    <div className="flex justify-center items-end gap-1 h-16 mb-12" aria-hidden="true">
                         {['animate-waveform-1','animate-waveform-2','animate-waveform-3','animate-waveform-4','animate-waveform-5','animate-waveform-3','animate-waveform-1'].map((anim, i) => (
                             <div
                                 key={`vis-${i}`}

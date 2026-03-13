@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Cpu, ZoomIn, X } from 'lucide-react';
 
@@ -115,15 +115,34 @@ const GenericBlock = ({ block }: GenericBlockProps) => {
 const ContentBlockRenderer = ({ blocks }: ContentBlockRendererProps) => {
   const { t } = useTranslation('common');
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const lightboxRef = useRef<HTMLDivElement>(null);
 
-  // Close lightbox on Escape key
+  // Close lightbox on Escape key + focus trap
   useEffect(() => {
     if (!lightboxImage) return;
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setLightboxImage(null);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setLightboxImage(null);
+        return;
+      }
+      if (e.key === 'Tab' && lightboxRef.current) {
+        const focusable = lightboxRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [lightboxImage]);
 
   if (!blocks) return null;
@@ -147,16 +166,17 @@ const ContentBlockRenderer = ({ blocks }: ContentBlockRendererProps) => {
       {/* Lightbox Modal */}
       {lightboxImage && (
         <div
+          ref={lightboxRef}
           className="fixed inset-0 z-modal bg-black/95 flex items-center justify-center p-4 cursor-pointer"
           onClick={() => setLightboxImage(null)}
           role="dialog"
           aria-modal="true"
-          aria-label="Image lightbox"
+          aria-label={t('gallery.lightbox', 'Image lightbox')}
         >
           <button
             className="absolute top-6 right-6 text-text-secondary hover:text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded"
             onClick={() => setLightboxImage(null)}
-            aria-label="Close lightbox"
+            aria-label={t('gallery.close', 'Close lightbox')}
           >
             <X size={32} />
           </button>

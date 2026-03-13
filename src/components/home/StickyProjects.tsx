@@ -48,10 +48,10 @@ const StickyProjects = ({ projects }: StickyProjectsProps) => {
               {t('home:projects.overline', 'Selected Work')}
             </span>
             <h2 className="font-display text-h1 text-text-primary mb-3">
-              {t('projects:featured_title', 'Featured Projects')}
+              {t('home:projects.featured_title', 'Featured Projects')}
             </h2>
             <p className="text-body text-text-secondary max-w-2xl">
-              {t('projects:subtitle', 'A collection of my game audio and development projects')}
+              {t('home:projects.subtitle', 'A collection of my game audio and development projects')}
             </p>
           </div>
 
@@ -60,7 +60,7 @@ const StickyProjects = ({ projects }: StickyProjectsProps) => {
             to="/projects"
             className="hidden md:inline-flex group items-center gap-2 px-4 py-2 border border-border text-text-primary font-semibold text-sm rounded-lg hover:border-accent hover:bg-surface-overlay active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface transition-all duration-200 shrink-0"
           >
-            {t('projects:view_all', 'All Projects')}
+            {t('home:projects.view_all', 'All Projects')}
             <ArrowRight
               size={16}
               className="group-hover:translate-x-1 transition-transform"
@@ -91,7 +91,7 @@ const StickyProjects = ({ projects }: StickyProjectsProps) => {
             to="/projects"
             className="group inline-flex items-center justify-center gap-2 px-6 py-3 border border-border text-text-primary font-semibold text-sm rounded-lg hover:border-accent hover:bg-surface-overlay active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface transition-all duration-200"
           >
-            {t('projects:view_all', 'All Projects')}
+            {t('home:projects.view_all', 'All Projects')}
             <ArrowRight
               size={16}
               className="group-hover:translate-x-1 transition-transform"

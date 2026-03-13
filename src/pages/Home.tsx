@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 
@@ -10,6 +10,7 @@ import SEO from '../components/layout/SEO';
 const Home = () => {
   useTranslation(['home']);
   const [isShowreelOpen, setIsShowreelOpen] = useState(false);
+  const showreelDialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isShowreelOpen) {
@@ -23,6 +24,22 @@ const Home = () => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setIsShowreelOpen(false);
+        return;
+      }
+      if (event.key === 'Tab' && showreelDialogRef.current) {
+        const focusable = showreelDialogRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"]), iframe',
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     };
 
@@ -58,8 +75,12 @@ const Home = () => {
 
       {isShowreelOpen ? (
         <div
+          ref={showreelDialogRef}
           className="fixed inset-0 z-[90] flex items-center justify-center bg-black/80 px-4 py-6 backdrop-blur-sm md:px-8"
           onClick={() => setIsShowreelOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Showreel"
         >
           <div onClick={(event) => event.stopPropagation()}>
             <Showreel mode="modal" onClose={() => setIsShowreelOpen(false)} />

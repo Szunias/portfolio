@@ -125,10 +125,10 @@ const ProjectDetails = () => {
             {/* Gallery */}
             {media.images && media.images.length > 0 && (
                 <div className="space-y-6">
-                    <h3 className="text-h2 font-display text-text-primary flex items-center gap-3">
+                    <h2 className="text-h2 font-display text-text-primary flex items-center gap-3">
                         <Images size={24} className="text-accent" />
                         {t('details.gallery', 'Gallery')}
-                    </h3>
+                    </h2>
                     <ImageLightbox images={media.images} />
                 </div>
             )}

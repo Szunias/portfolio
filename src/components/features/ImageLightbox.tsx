@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { X, ZoomIn, Loader2 } from 'lucide-react';
@@ -26,12 +26,18 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
 
   const selectedImage = selectedIndex !== null ? getImageData(images[selectedIndex]) : null;
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+
   // Collect only image (non-video) indices for arrow navigation
-  const imageIndices = images.reduce<number[]>((acc, img, i) => {
-    const { src } = getImageData(img);
-    if (!src.endsWith('.mp4') && !src.endsWith('.webm')) acc.push(i);
-    return acc;
-  }, []);
+  const imageIndices = useMemo(
+    () =>
+      images.reduce<number[]>((acc, img, i) => {
+        const { src } = getImageData(img);
+        if (!src.endsWith('.mp4') && !src.endsWith('.webm')) acc.push(i);
+        return acc;
+      }, []),
+    [images],
+  );
 
   // Lock body scroll and handle keyboard when lightbox is open
   useEffect(() => {
@@ -51,6 +57,20 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
           : (currentPos - 1 + imageIndices.length) % imageIndices.length;
         setLightboxLoading(true);
         setSelectedIndex(imageIndices[nextPos]);
+      } else if (e.key === 'Tab' && dialogRef.current) {
+        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
     document.addEventListener('keydown', handleKeyDown);
@@ -125,11 +145,12 @@ const ImageLightbox = ({ images }: ImageLightboxProps) => {
       <AnimatePresence>
         {selectedImage && (
           <motion.div
+            ref={dialogRef}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedIndex(null)}
-            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 cursor-zoom-out"
+            className="fixed inset-0 z-modal bg-black/95 flex items-center justify-center p-4 cursor-zoom-out"
             role="dialog"
             aria-modal="true"
             aria-label={t('gallery.lightbox', 'Image lightbox')}
