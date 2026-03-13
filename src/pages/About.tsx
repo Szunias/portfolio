@@ -17,21 +17,25 @@ const AFFILIATIONS = [
         name: 'Digital Arts & Entertainment',
         image: `${import.meta.env.BASE_URL}assets/images/affiliations/dae-official.svg`,
         widthClass: 'w-[12rem] md:w-[13rem]',
+        imageClass: 'max-h-16 md:max-h-20',
     },
     {
         name: 'Howest',
         image: `${import.meta.env.BASE_URL}assets/images/affiliations/howest-official.svg`,
         widthClass: 'w-[9.5rem] md:w-[10.5rem]',
+        imageClass: 'max-h-16 md:max-h-20',
     },
     {
         name: 'Royal Military Academy',
         image: `${import.meta.env.BASE_URL}assets/images/affiliations/rma-official.png`,
         widthClass: 'w-[8rem] md:w-[8.75rem]',
+        imageClass: 'max-h-16 md:max-h-20',
     },
     {
         name: 'XR Labs',
         image: `${import.meta.env.BASE_URL}assets/images/affiliations/xralbs.avif`,
-        widthClass: 'w-[6.5rem] md:w-[7.25rem]',
+        widthClass: 'w-[14rem] md:w-[17rem]',
+        imageClass: 'max-h-28 md:max-h-32',
     },
 ] as const;
 
@@ -247,7 +251,7 @@ const About = () => {
                                     <img
                                         src={affiliation.image}
                                         alt={affiliation.name}
-                                        className={`${affiliation.widthClass} max-h-16 object-contain opacity-90 transition duration-300 hover:opacity-100 md:max-h-20`}
+                                        className={`${affiliation.widthClass} ${affiliation.imageClass} object-contain opacity-90 transition duration-300 hover:opacity-100`}
                                         loading="lazy"
                                     />
                                 </div>
