@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Download } from 'lucide-react';
@@ -6,7 +5,10 @@ import { ArrowRight, Download } from 'lucide-react';
 import SEO from '../components/layout/SEO';
 import { Button } from '../components/ui/Button';
 
-const PROFILE_IMAGE = `${import.meta.env.BASE_URL}assets/images/profile.jpg`;
+const BACKGROUND_IMAGE = {
+    name: 'Crime fighters looking for trace of criminals',
+    image: `${import.meta.env.BASE_URL}assets/images/about-grid/crime-fighters.jpg`,
+} as const;
 
 const AFFILIATIONS = [
     {
@@ -149,9 +151,6 @@ const About = () => {
     const { t } = useTranslation('about');
     const prefersReducedMotion = useReducedMotion();
 
-    const [imageLoaded, setImageLoaded] = useState(false);
-    const [imageError, setImageError] = useState(false);
-
     const containerVars = prefersReducedMotion
         ? noMotionContainerVariants
         : gridContainerVariants;
@@ -203,20 +202,16 @@ const About = () => {
                     </motion.section>
 
                     <motion.div
-                        className="overflow-hidden rounded-xl border border-border bg-surface-raised md:col-span-1"
+                        className="group overflow-hidden rounded-xl border border-border bg-surface-raised md:col-span-1"
                         variants={itemVars}
                     >
-                        <div className="relative aspect-[3/4] w-full">
-                            {!imageError && (
-                                <img
-                                    src={PROFILE_IMAGE}
-                                    alt={t('profile_photo_alt', 'Igor Szuniewicz')}
-                                    className={`h-full w-full object-cover transition duration-500 ease-out hover:scale-[1.06] ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                                    onLoad={() => setImageLoaded(true)}
-                                    onError={() => setImageError(true)}
-                                />
-                            )}
-                            {!imageLoaded && <div className="absolute inset-0 bg-surface-overlay" />}
+                        <div className="relative h-full min-h-[420px] w-full">
+                            <img
+                                src={BACKGROUND_IMAGE.image}
+                                alt={BACKGROUND_IMAGE.name}
+                                className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.04]"
+                                loading="lazy"
+                            />
                         </div>
                     </motion.div>
 
