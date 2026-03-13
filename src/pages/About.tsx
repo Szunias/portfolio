@@ -36,10 +36,66 @@ const AFFILIATIONS = [
 ] as const;
 
 const TOOLS = [
-    'Wwise', 'FMOD', 'Reaper',
-    'Unreal Engine', 'MetaSounds', 'Unity',
-    'Python', 'C++', 'C#',
-    'Perforce', 'Git', 'Blueprints',
+    {
+        name: 'Wwise',
+        image: `${import.meta.env.BASE_URL}assets/icons/toolkit-svg/wwise.svg`,
+        accentClass: 'hover:border-[#f68a36]/40 hover:shadow-[0_0_30px_rgba(246,138,54,0.12)]',
+    },
+    {
+        name: 'FMOD',
+        image: `${import.meta.env.BASE_URL}assets/icons/toolkit-svg/fmod.svg`,
+        accentClass: 'hover:border-[#e23a2e]/40 hover:shadow-[0_0_30px_rgba(226,58,46,0.12)]',
+    },
+    {
+        name: 'Pro Tools',
+        image: `${import.meta.env.BASE_URL}assets/icons/toolkit-svg/protools.svg`,
+        accentClass: 'hover:border-[#6c5ce7]/40 hover:shadow-[0_0_30px_rgba(108,92,231,0.12)]',
+    },
+    {
+        name: 'Unreal Engine',
+        image: `${import.meta.env.BASE_URL}assets/icons/toolkit-svg/unreal.svg`,
+        accentClass: 'hover:border-white/25 hover:shadow-[0_0_30px_rgba(255,255,255,0.08)]',
+    },
+    {
+        name: 'Unity',
+        image: `${import.meta.env.BASE_URL}assets/icons/toolkit-svg/unity.svg`,
+        accentClass: 'hover:border-white/25 hover:shadow-[0_0_30px_rgba(255,255,255,0.08)]',
+    },
+    {
+        name: 'Perforce',
+        image: `${import.meta.env.BASE_URL}assets/icons/toolkit-svg/perforce.svg`,
+        accentClass: 'hover:border-[#41b883]/35 hover:shadow-[0_0_30px_rgba(65,184,131,0.12)]',
+    },
+    {
+        name: 'JUCE',
+        image: `${import.meta.env.BASE_URL}assets/icons/toolkit-svg/juce.svg`,
+        accentClass: 'hover:border-[#8bc34a]/35 hover:shadow-[0_0_30px_rgba(139,195,74,0.12)]',
+    },
+    {
+        name: 'Blender',
+        image: `${import.meta.env.BASE_URL}assets/icons/toolkit-svg/blender.svg`,
+        accentClass: 'hover:border-[#f5792a]/40 hover:shadow-[0_0_30px_rgba(245,121,42,0.12)]',
+    },
+    {
+        name: 'GitHub',
+        image: `${import.meta.env.BASE_URL}assets/icons/tech/github.png`,
+        accentClass: 'hover:border-white/25 hover:shadow-[0_0_30px_rgba(255,255,255,0.08)]',
+    },
+    {
+        name: 'Python',
+        image: `${import.meta.env.BASE_URL}assets/icons/tech/pythonlogo.png`,
+        accentClass: 'hover:border-[#ffd43b]/35 hover:shadow-[0_0_30px_rgba(255,212,59,0.12)]',
+    },
+    {
+        name: 'C++',
+        image: `${import.meta.env.BASE_URL}assets/icons/tech/c++logo.png`,
+        accentClass: 'hover:border-[#6295cb]/35 hover:shadow-[0_0_30px_rgba(98,149,203,0.12)]',
+    },
+    {
+        name: 'C#',
+        image: `${import.meta.env.BASE_URL}assets/icons/toolkit-svg/dotnet.svg`,
+        accentClass: 'hover:border-[#9b4f96]/35 hover:shadow-[0_0_30px_rgba(155,79,150,0.12)]',
+    },
 ];
 
 const PARAGRAPH_KEYS = ['1', '2', '3'] as const;
@@ -134,11 +190,11 @@ const About = () => {
 
                         <div className="grid grid-cols-2 items-center gap-x-8 gap-y-10 md:grid-cols-4 md:gap-x-12 lg:gap-x-16">
                             {AFFILIATIONS.map((affiliation) => (
-                                <div key={affiliation.name} className="flex min-h-[64px] items-center justify-center">
+                                <div key={affiliation.name} className="flex min-h-[64px] items-center justify-center overflow-hidden">
                                     <img
                                         src={affiliation.image}
                                         alt={affiliation.name}
-                                        className={`${affiliation.widthClass} ${affiliation.imageClass} object-contain opacity-90 transition duration-300 hover:opacity-100`}
+                                        className={`${affiliation.widthClass} ${affiliation.imageClass} object-contain opacity-90 transition duration-300 ease-out hover:scale-110 hover:opacity-100`}
                                         loading="lazy"
                                     />
                                 </div>
@@ -155,7 +211,7 @@ const About = () => {
                                 <img
                                     src={PROFILE_IMAGE}
                                     alt={t('profile_photo_alt', 'Igor Szuniewicz')}
-                                    className={`h-full w-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                                    className={`h-full w-full object-cover transition duration-500 ease-out hover:scale-[1.06] ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                                     onLoad={() => setImageLoaded(true)}
                                     onError={() => setImageError(true)}
                                 />
@@ -193,14 +249,22 @@ const About = () => {
                         variants={itemVars}
                     >
                         <SectionLabel>{t('section_toolkit')}</SectionLabel>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                             {TOOLS.map((tool) => (
-                                <span
-                                    key={tool}
-                                    className="rounded-md border border-border bg-surface-overlay px-3 py-1.5 font-mono text-caption text-text-secondary transition-colors hover:border-border-hover hover:text-text-primary"
+                                <div
+                                    key={tool.name}
+                                    className={`group relative flex aspect-square items-center justify-center rounded-xl border border-white/8 bg-[#0d1016] p-1.5 transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-[#111621] ${tool.accentClass}`}
                                 >
-                                    {tool}
-                                </span>
+                                    <img
+                                        src={tool.image}
+                                        alt={tool.name}
+                                        className="max-h-36 w-full object-contain opacity-95 brightness-0 invert transition duration-300 ease-out group-hover:scale-[1.16] group-hover:opacity-100"
+                                        loading="lazy"
+                                    />
+                                    <div className="pointer-events-none absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-3 rounded-md border border-white/10 bg-black/85 px-2.5 py-1 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-white/95 opacity-0 transition duration-200 ease-out group-hover:-translate-y-5 group-hover:opacity-100">
+                                        {tool.name}
+                                    </div>
+                                </div>
                             ))}
                         </div>
                     </motion.div>
