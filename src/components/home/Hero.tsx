@@ -84,7 +84,11 @@ const fadeUp = {
 /* ------------------------------------------------------------------ */
 /*  Hero                                                              */
 /* ------------------------------------------------------------------ */
-const Hero = () => {
+type HeroProps = {
+  onOpenShowreel?: () => void;
+};
+
+const Hero = ({ onOpenShowreel }: HeroProps) => {
   const { t } = useTranslation('home');
   const prefersReducedMotion = useReducedMotion();
 
@@ -142,8 +146,9 @@ const Hero = () => {
             className="flex flex-wrap items-center gap-4"
             {...(!prefersReducedMotion && { variants: fadeUp })}
           >
-            <Link
-              to="#showreel"
+            <button
+              type="button"
+              onClick={onOpenShowreel}
               className="group inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent text-surface font-semibold text-body-sm rounded-lg hover:bg-accent-hover active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface transition-all duration-200"
             >
               <Play
@@ -152,7 +157,7 @@ const Hero = () => {
                 className="group-hover:scale-110 transition-transform duration-150"
               />
               {t('hero.watch_showreel', 'Watch Showreel')}
-            </Link>
+            </button>
             <Link
               to="/projects"
               className="group inline-flex items-center justify-center gap-2 px-6 py-3 border border-border text-text-primary font-semibold text-body-sm rounded-lg hover:border-accent hover:bg-surface-raised active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface transition-all duration-200"

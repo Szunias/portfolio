@@ -1,19 +1,38 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 
 import Showreel from '../components/features/Showreel';
 import Hero from '../components/home/Hero';
-import MarqueeTicker from '../components/home/MarqueeTicker';
-import StickyProjects from '../components/home/StickyProjects';
 import SEO from '../components/layout/SEO';
-import { usePortfolioData } from '../hooks/usePortfolioData';
 
-/** Landing page with hero, showreel video, marquee ticker, and sticky project reveal. */
+/** Minimal landing page with hero and showreel. */
 const Home = () => {
-  const { featured_projects } = usePortfolioData();
-  useTranslation(['home', 'projects']);
+  useTranslation(['home']);
+  const [isShowreelOpen, setIsShowreelOpen] = useState(false);
 
-  const displayProjects = (featured_projects || []).slice(0, 4);
+  useEffect(() => {
+    if (!isShowreelOpen) {
+      document.body.style.overflow = '';
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsShowreelOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isShowreelOpen]);
 
   const websiteSchema = {
     "@context": "https://schema.org",
@@ -29,14 +48,18 @@ const Home = () => {
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(websiteSchema)}</script>
       </Helmet>
-      <Hero />
+      <Hero onOpenShowreel={() => setIsShowreelOpen(true)} />
 
-      <Showreel />
-
-      <MarqueeTicker />
-
-      {/* Projects — Sticky scroll reveal on desktop, cards on mobile */}
-      <StickyProjects projects={displayProjects} />
+      {isShowreelOpen ? (
+        <div
+          className="fixed inset-0 z-[90] flex items-center justify-center bg-black/80 px-4 py-6 backdrop-blur-sm md:px-8"
+          onClick={() => setIsShowreelOpen(false)}
+        >
+          <div onClick={(event) => event.stopPropagation()}>
+            <Showreel mode="modal" onClose={() => setIsShowreelOpen(false)} />
+          </div>
+        </div>
+      ) : null}
     </>
   );
 };

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Play, AlertCircle, Loader2 } from 'lucide-react';
+import { Play, AlertCircle, Loader2, X } from 'lucide-react';
 import Player from '@vimeo/player';
 
 import { formatTime } from '@/utils';
@@ -17,8 +17,13 @@ const TIMESTAMPS = [
   { time: 198, labelKey: 'hero.chapter.pause_and_deserve', fallback: 'Pause & Deserve' },
 ] as const;
 
+type ShowreelProps = {
+  mode?: 'section' | 'modal';
+  onClose?: () => void;
+};
+
 /** Embeds the Vimeo showreel with chapter navigation timestamps. */
-const Showreel = () => {
+const Showreel = ({ mode = 'section', onClose }: ShowreelProps) => {
   const { t } = useTranslation('home');
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<Player | null>(null);
@@ -80,13 +85,34 @@ const Showreel = () => {
     }
   };
 
-  return (
-    <section id="showreel" className="bg-surface py-20 md:py-28 lg:py-32">
-      <div className="max-w-content-wide mx-auto px-6 md:px-12 lg:px-16">
-      {/* Section heading */}
-      <span className="text-overline uppercase tracking-widest text-accent font-mono block mb-3">
-        {t('hero.watch_showreel', 'Watch Showreel')}
-      </span>
+  const content = (
+    <>
+      {mode === 'section' ? (
+        <span className="text-overline uppercase tracking-widest text-accent font-mono block mb-3">
+          {t('hero.watch_showreel', 'Watch Showreel')}
+        </span>
+      ) : (
+        <div className="mb-5 flex items-start justify-between gap-4">
+          <div>
+            <span className="text-overline uppercase tracking-widest text-accent font-mono block mb-2">
+              {t('hero.watch_showreel', 'Watch Showreel')}
+            </span>
+            <h2 className="font-display text-h3 text-text-primary">
+              {t('hero.showreel_title', 'Igor Szuniewicz Audio Design Showreel')}
+            </h2>
+          </div>
+          {onClose ? (
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-text-secondary transition-colors hover:border-border-hover hover:text-text-primary"
+              aria-label="Close showreel"
+            >
+              <X size={18} />
+            </button>
+          ) : null}
+        </div>
+      )}
 
       {/* Video Container with Premium Styling */}
       <div className="relative aspect-video rounded-xl overflow-hidden bg-surface-raised border border-border shadow-glow-accent">
@@ -179,6 +205,21 @@ const Showreel = () => {
           })}
         </div>
       </div>
+    </>
+  );
+
+  if (mode === 'modal') {
+    return (
+      <div className="w-full max-w-5xl rounded-[28px] border border-border bg-surface p-5 shadow-[0_30px_80px_rgba(0,0,0,0.45)] md:p-7">
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <section id="showreel" className="bg-surface py-20 md:py-28 lg:py-32">
+      <div className="max-w-content-wide mx-auto px-6 md:px-12 lg:px-16">
+        {content}
       </div>
     </section>
   );
