@@ -1,12 +1,12 @@
 import { Trans, useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Download } from 'lucide-react';
 
 import SEO from '../components/layout/SEO';
-import { Button } from '../components/ui/Button';
+import { ROUTES } from '../constants/routes';
 
 const BACKGROUND_IMAGE = {
-    name: 'Crime fighters looking for trace of criminals',
     image: `${import.meta.env.BASE_URL}assets/images/about-grid/crime-fighters.jpg`,
 } as const;
 
@@ -136,7 +136,7 @@ const SectionLabel = ({ children }: { children: React.ReactNode }) => (
 );
 
 const RichParagraph = ({ i18nKey }: { i18nKey: string }) => (
-    <p className="text-body leading-8 text-[#d1cbc3]">
+    <p className="text-body leading-7 sm:leading-8 text-[#d1cbc3]">
         <Trans
             ns="about"
             i18nKey={i18nKey}
@@ -162,7 +162,7 @@ const About = () => {
         <div className="relative min-h-screen bg-surface">
             <SEO title={t('about_page_title', 'About')} description={t('about_page_description')} />
 
-            <div className="relative z-10 mx-auto max-w-content-wide px-6 pb-32 pt-32 md:px-12 lg:px-16">
+            <div className="relative z-10 mx-auto max-w-content-wide px-6 pb-16 pt-24 sm:pb-24 sm:pt-28 md:px-12 md:pb-32 md:pt-32 lg:px-16">
                 <motion.div
                     className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5"
                     variants={containerVars}
@@ -171,7 +171,7 @@ const About = () => {
                     viewport={{ once: true }}
                 >
                     <motion.section className="pb-2 md:col-span-3" variants={itemVars}>
-                        <h1 className="font-display text-h1 leading-tight text-text-primary md:text-hero">
+                        <h1 className="font-display text-h2 sm:text-h1 leading-tight text-text-primary md:text-hero">
                             {t('hook')}
                         </h1>
                         <p className="mt-3 font-mono text-body-sm tracking-wide text-text-tertiary">
@@ -193,7 +193,7 @@ const About = () => {
                                     <img
                                         src={affiliation.image}
                                         alt={affiliation.name}
-                                        className={`${affiliation.widthClass} ${affiliation.imageClass} object-contain opacity-90 transition duration-300 ease-out hover:scale-110 hover:opacity-100`}
+                                        className={`${affiliation.widthClass} ${affiliation.imageClass} max-w-full object-contain opacity-90 transition duration-300 ease-out hover:scale-110 hover:opacity-100`}
                                         loading="lazy"
                                     />
                                 </div>
@@ -205,10 +205,10 @@ const About = () => {
                         className="group overflow-hidden rounded-xl border border-border bg-surface-raised md:col-span-1"
                         variants={itemVars}
                     >
-                        <div className="relative h-full min-h-[420px] w-full">
+                        <div className="relative h-full min-h-[280px] sm:min-h-[360px] md:min-h-[420px] w-full">
                             <img
                                 src={BACKGROUND_IMAGE.image}
-                                alt={BACKGROUND_IMAGE.name}
+                                alt={t('background_image_alt')}
                                 className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.04]"
                                 loading="lazy"
                             />
@@ -227,7 +227,7 @@ const About = () => {
                         </div>
                     </motion.section>
 
-                    <motion.div
+                    <motion.section
                         className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-2 md:p-8"
                         variants={itemVars}
                     >
@@ -237,34 +237,38 @@ const About = () => {
                                 <RichParagraph key={key} i18nKey={`approach_${key}`} />
                             ))}
                         </div>
-                    </motion.div>
+                    </motion.section>
 
-                    <motion.div
+                    <motion.section
                         className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-1"
                         variants={itemVars}
                     >
                         <SectionLabel>{t('section_toolkit')}</SectionLabel>
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-3">
                             {TOOLS.map((tool) => (
                                 <div
                                     key={tool.name}
-                                    className={`group relative flex aspect-square items-center justify-center rounded-xl border border-white/8 bg-[#0d1016] p-1.5 transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-[#111621] ${tool.accentClass}`}
+                                    tabIndex={0}
+                                    role="img"
+                                    aria-label={tool.name}
+                                    className={`group relative flex aspect-square items-center justify-center rounded-xl border border-white/8 bg-[#0d1016] p-1.5 transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-[#111621] focus-within:-translate-y-0.5 focus-within:bg-[#111621] ${tool.accentClass}`}
                                 >
                                     <img
                                         src={tool.image}
                                         alt={tool.name}
+                                        aria-hidden="true"
                                         className="max-h-36 w-full object-contain opacity-95 brightness-0 invert transition duration-300 ease-out group-hover:scale-[1.16] group-hover:opacity-100"
                                         loading="lazy"
                                     />
-                                    <div className="pointer-events-none absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-3 rounded-md border border-white/10 bg-black/85 px-2.5 py-1 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-white/95 opacity-0 transition duration-200 ease-out group-hover:-translate-y-5 group-hover:opacity-100">
+                                    <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-3 rounded-md border border-white/10 bg-black/85 px-2.5 py-1 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-white/95 opacity-0 transition duration-200 ease-out group-hover:-translate-y-5 group-hover:opacity-100 group-focus-within:-translate-y-5 group-focus-within:opacity-100">
                                         {tool.name}
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    </motion.div>
+                    </motion.section>
 
-                    <motion.div
+                    <motion.section
                         className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-1"
                         variants={itemVars}
                     >
@@ -281,7 +285,7 @@ const About = () => {
                                 </div>
                             ))}
                         </div>
-                    </motion.div>
+                    </motion.section>
 
                     <motion.section
                         className="rounded-xl border border-accent/20 bg-surface-raised p-6 md:col-span-2 md:p-8"
@@ -294,25 +298,21 @@ const About = () => {
                             {t('cta_text')}
                         </p>
                         <div className="flex flex-wrap gap-3">
-                            <Button
-                                variant="primary"
-                                size="lg"
-                                onClick={() => {
-                                    window.location.href = '/contact';
-                                }}
+                            <Link
+                                to={ROUTES.CONTACT}
+                                className="inline-flex items-center justify-center rounded-lg font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface bg-accent text-surface hover:bg-accent-hover active:scale-[0.98] text-base px-6 py-3 gap-2"
                             >
                                 {t('cta_contact')}
-                                <ArrowRight size={16} />
-                            </Button>
+                                <ArrowRight size={16} aria-hidden="true" />
+                            </Link>
                             <a
                                 href={`${import.meta.env.BASE_URL}cv/Igor_Szuniewicz_CV.pdf`}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center rounded-lg font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface border border-border text-text-primary hover:border-accent hover:bg-surface-overlay active:scale-[0.98] text-base px-6 py-3 gap-2"
                             >
-                                <Button variant="secondary" size="lg" className="gap-2" tabIndex={-1}>
-                                    <Download size={16} />
-                                    {t('cta_cv')}
-                                </Button>
+                                <Download size={16} aria-hidden="true" />
+                                {t('cta_cv')}
                             </a>
                         </div>
                     </motion.section>
