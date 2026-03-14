@@ -12,39 +12,9 @@
   "Team": "Team",
   "UE5 + Wwise": "UE5 + Wwise",
   "ann": {
-    "anomaly": {
-      "binding": {
-        "desc": "AddDynamic abonneert op anomalie-levenscyclus. Wanneer anomalie spawnt/activeert/gevangen wordt, reageert audio automatisch. Geen koppeling met gameplay-code.",
-        "label": "Event Binding"
-      },
-      "config": {
-        "desc": "Audio-configuratie opgeslagen in GameInstance - blijft bestaan tussen level loads. Bevat Wwise Event referenties en per-anomalie instellingen.",
-        "label": "Globale Config"
-      },
-      "post": {
-        "desc": "PostAkEvent triggert het Wwise Event op deze specifieke actor. 3D gepositioneerd, respecteert occlusie/attenuatie-instellingen geconfigureerd in Wwise.",
-        "label": "Event Post"
-      },
-      "retrieval": {
-        "desc": "GetAnomalyAudioConfig retourneert een Data Asset met alle anomalie-geluidsinstellingen. Designers kunnen aanpassen zonder hercompilatie.",
-        "label": "Config Ophalen"
-      },
-      "settings": {
-        "desc": "Verschillende anomalietypes hebben unieke geluiden. GetSettingsForAnomaly zoekt het specifieke audioprofiel op - spookachtig gefluister vs poltergeist-crashes.",
-        "label": "Per-Anomalie Instellingen"
-      },
-      "spatial": {
-        "desc": "InitializeAudioSource stelt de AkComponent in voor 3D-positionering. Elke anomalie heeft zijn eigen audio-emitter voor juiste spatialisatie.",
-        "label": "Spatial Bron"
-      },
-      "switch": {
-        "desc": "SetSwitch vertelt Wwise welke geluidsvariatie te gebruiken. Eén Event, meerdere uitkomsten op basis van anomalietype. Geheugenefficiënt.",
-        "label": "Wwise Switch"
-      }
-    },
     "cache": {
       "broadcast": {
-        "desc": "Multicast delegate informeert alle luisteraars. Audio manager, UI, gameplay systemen abonneren allemaal. Geen directe afhankelijkheden—elk systeem is apart.",
+        "desc": "Multicast delegate informeert alle luisteraars. Audio manager, UI, gameplay systemen abonneren allemaal. Geen directe afhankelijkheden — elk systeem is apart.",
         "label": "Event Broadcast"
       },
       "interval": {
@@ -58,60 +28,6 @@
       "threshold": {
         "desc": "Broadcast alleen bij significante nabijheidsverandering. Voorkomt audiosysteem spam door microbewegingen. Typisch 1-5% drempel.",
         "label": "Wijzigingsdrempel"
-      }
-    },
-    "config": {
-      "dataasset": {
-        "desc": "Pure data container - geen logica, alleen editor-exposed properties. Designers maken instances, wijzen Wwise events toe en passen waarden aan. Geen C++ hercompilatie nodig.",
-        "label": "DataAsset Patroon"
-      },
-      "hysteresis": {
-        "desc": "Start/Stop drempels voorkomen audio flikkering. Designers tunen deze per-enemy zonder codewijzigingen. Meta tags voegen editor validatie toe.",
-        "label": "Hysteresis Waarden"
-      },
-      "wwise": {
-        "desc": "TObjectPtr naar Wwise asset. Audio events, RTPCs, switches - alles toegewezen in editor. Nul hardcoded strings. Verander audio door asset referenties te wisselen.",
-        "label": "Wwise Referentie"
-      }
-    },
-    "dialogue": {
-      "datatable": {
-        "desc": "DataTable houdt audio config - welke Wwise switch, hoe lang ondertitel te tonen. Gescheiden van tekst voor schonere lokalisatie.",
-        "label": "Audio Metadata"
-      },
-      "stringtable": {
-        "desc": "StringTable voor dialoog tekst - Unreal's native lokalisatie systeem. Zelfde AnomalyID key in beide tabellen. Tekst team bewerkt StringTable, audio team bewerkt DataTable.",
-        "label": "Gelokaliseerde Tekst"
-      },
-      "struct": {
-        "desc": "FTableRowBase maakt DataTable integratie mogelijk. Elke rij = één dialoog entry met Wwise switch + duur. CSV import/export vriendelijk.",
-        "label": "DataTable Rij"
-      }
-    },
-    "enemy": {
-      "breathing": {
-        "desc": "Activeert de gestresste ademhalingslus van het personage. Gecombineerd met dread-lagen creëert dit een intense horror-atmosfeer wanneer vijanden dichtbij zijn.",
-        "label": "Stress Ademhaling"
-      },
-      "dread": {
-        "desc": "Post een Wwise Event dat gelaagde ambient dread-geluiden start - lage drones, verontrustende texturen. Deze lagen intensiveren op basis van RTPC-waarde.",
-        "label": "Dread Lagen"
-      },
-      "hysteresis": {
-        "desc": "Twee aparte drempels voorkomen audio-flikkering. StartThreshold (bv. 20%) activeert audio, StopThreshold (bv. 10%) deactiveert. Deze kloof voorkomt snel schakelen.",
-        "label": "Hysteresis Drempels"
-      },
-      "intensity": {
-        "desc": "Aparte RTPC voor ademhaling. Hogere nabijheid = snellere, meer paniekerige ademhaling. Creëert psychologische verbinding tussen speler en personage.",
-        "label": "Ademhaling Intensiteit"
-      },
-      "proximity": {
-        "desc": "Deze functie wordt aangeroepen door EnemyPresenceComponent wanneer de afstand tot de dichtstbijzijnde vijand verandert. ProximityValue is genormaliseerd 0-100%.",
-        "label": "Proximity Callback"
-      },
-      "rtpc": {
-        "desc": "Real-Time Parameter Control - stuurt ProximityValue naar Wwise. Regelt volume, filter cutoff en pitch in real-time. Vloeiende overgangen, geen harde sneden.",
-        "label": "RTPC Update"
       }
     },
     "foot": {
@@ -132,76 +48,6 @@
         "label": "Line Trace"
       }
     },
-    "footstep": {
-      "channel": {
-        "desc": "Gebruikt ECC_Visibility kanaal voor traces. Kan ook een aangepast trace-kanaal gebruiken voor preciezere audio-only collision detectie.",
-        "label": "Visibility Kanaal"
-      },
-      "creaky": {
-        "desc": "Speciale oppervlaktetypes voor horror-atmosfeer. CreakyWood en CreakyStairs hebben extra willekeurige kraakgeluiden - speler verraadt positie aan vijanden.",
-        "label": "Krakende Oppervlakken"
-      },
-      "mapping": {
-        "desc": "Unreal's SurfaceType enums mappen naar Wwise Switch-namen. Level designers wijzen Physical Materials toe aan vloeren, code speelt automatisch juiste voetstappen.",
-        "label": "Oppervlak Mapping"
-      },
-      "physics": {
-        "desc": "Kritieke vlag! bReturnPhysicalMaterial moet true zijn anders is PhysMaterial altijd null. Veelvoorkomende valkuil in Unreal audio-integratie.",
-        "label": "Physics Query"
-      },
-      "ray": {
-        "desc": "Line trace start vanaf de locatie van de actor (voetniveau). Betrouwbaarder dan character mesh sockets voor oppervlakdetectie.",
-        "label": "Ray Oorsprong"
-      },
-      "surface": {
-        "desc": "Retourneert een FName die direct mapt naar een Wwise Switch-waarde. FootstepAudioManager gebruikt dit om de juiste voetstapgeluid-variatie in te stellen.",
-        "label": "Oppervlak Detectie"
-      },
-      "trace": {
-        "desc": "Traceert recht naar beneden met m_TraceDistance eenheden. Configureerbaar in editor - typisch 50-100cm voor trappen en oneffen terrein.",
-        "label": "Trace Richting"
-      }
-    },
-    "player": {
-      "blueprint": {
-        "desc": "Sound designers kunnen Wwise Events direct in Blueprint binden zonder C++ aan te raken. Snellere audio-iteratie - geen hercompilatie nodig.",
-        "label": "BlueprintAssignable"
-      },
-      "death": {
-        "desc": "Uitgezonden wanneer speler sterft. Triggert dood-stinger, stopt alle ambient audio en start game over sequentie. Kritiek voor audio state management.",
-        "label": "Dood Sequentie"
-      },
-      "delegate": {
-        "desc": "DECLARE_DYNAMIC_MULTICAST laat meerdere listeners (audio, UI, gameplay) abonneren. 'Dynamic' betekent dat het werkt met Blueprints, niet alleen C++.",
-        "label": "Dynamic Delegate"
-      },
-      "photoboard": {
-        "desc": "Bij het bekijken van verzamelde foto's wordt ambient audio gedempt en UI-geluiden geactiveerd. Delegates ontkoppelen dit van hardcoded audio-aanroepen.",
-        "label": "Fotobord UI"
-      },
-      "shutter": {
-        "desc": "Kern gameplay-mechaniek - foto's maken. Triggert sluiter-klik geluid en fotflits audio. Vijandelijke anomalieën reageren op dit geluid!",
-        "label": "Camera Sluiter"
-      },
-      "zoom": {
-        "desc": "Camera zoom triggert servomotor-geluid en subtiele ambient-verandering. Immersieve feedback voor speler die 'onderzoeksmodus' ingaat.",
-        "label": "Zoom Audio"
-      }
-    },
-    "poly": {
-      "hierarchy": {
-        "desc": "Loopt omhoog in class hiërarchie tot settings gevonden. BP_GhostAnomaly → AGhostAnomaly → ABaseAnomaly. Eerste match wint - meest specifieke heeft prioriteit.",
-        "label": "Hiërarchie Walk"
-      },
-      "reflection": {
-        "desc": "GetClass() retourneert actuele runtime type. Voor BP_GhostAnomaly die erft van ABaseAnomaly, retourneert dit BP_GhostAnomaly klasse.",
-        "label": "Runtime Reflectie"
-      },
-      "tmap": {
-        "desc": "TMap<TSubclassOf<ABaseAnomaly>, FAnomalyAudioSettings> - designers mappen anomaly classes naar audio switches in editor. Nieuwe anomaly = nieuwe rij in DataAsset.",
-        "label": "TMap Lookup"
-      }
-    },
     "prox": {
       "hysteresis": {
         "desc": "Startdrempel hoger dan stopdrempel. Vijand op 25% triggert audio, maar moet naar 15% dalen om te stoppen. Voorkomt snel aan/uit flikkeren.",
@@ -216,7 +62,7 @@
         "label": "RTPC Update"
       },
       "stopthresh": {
-        "desc": "Lagere drempel voor stoppen audio. Creëert hysteresisband die overgangen vloeiend maakt. Geen audio stotteren bij grenswaarde.",
+        "desc": "Lagere drempel voor stoppen audio. Creeert hysteresisband die overgangen vloeiend maakt. Geen audio stotteren bij grenswaarde.",
         "label": "Stop Drempel"
       }
     }
@@ -245,14 +91,14 @@
     "tech": "Hoe het werkt",
     "technical_dive": "Onder de motorkap",
     "technical_dive_hint": "C++ en Blueprint implementatiedetails",
-    "technologies": "Technologieën"
+    "technologies": "Technologieen"
   },
   "img": {
     "shadowframes": {
       "anomaly_spawn": "Wwise Event setup voor anomalie audiovariaties",
       "data_assets": "Data Asset configuraties voor audiogedragsparameters",
       "enemy_presence": "Enemy Presence RTPC curves voor nabijheidsgebaseerde audio",
-      "mixer_hierarchy": "Master Mixer hiërarchie - signaalstroom organisatie",
+      "mixer_hierarchy": "Master Mixer hierarchie - signaalstroom organisatie",
       "music_config": "Adaptief gameplay muziek layering systeem",
       "voiceline_switch": "Switch Container voor dynamische voiceline selectie"
     }
@@ -263,260 +109,75 @@
     "repo": "Broncode",
     "video": "Bekijk Video"
   },
-  "project_amorak_block1_content": "Het monster moest massief klinken. Ik laagde opnames van leeuw, olifant, tijger en nijlpaard. Door de pitch te verlagen ontstond gewicht, terwijl de nijlpaardtextuur een uniek karakter gaf.",
-  "project_amorak_block1_title": "Het monstergeluid bouwen",
-  "project_amorak_block2_content": "De omgeving volgt de camera. Druppelend water is dichtbij en verontrustend, verre kettingen suggereren iets groters. Binaurale panning plaatst elk geluid precies op een plek rond je hoofd.",
-  "project_amorak_block2_title": "De ruimte echt laten klinken",
-  "project_amorak_block3_content": "Het monster wint altijd in de mix. Ik gebruikte dynamische ducking om de omgeving te dempen wanneer het monster schreeuwt of het personage ademt.",
-  "project_amorak_block3_title": "Het samenvoegen",
-  "project_nottoday_block1_content": "Side-scrolling racegame voor 1 tot 4 spelers. Chaotisch, luid en belachelijk. Ik deed alles qua audio: opnemen, sound design, muziekkeuze en implementatie.",
-  "project_nottoday_block1_title": "Projectoverzicht",
-  "project_nottoday_block2_content": "Ik wilde niet dat de motoren klonken als geloopte MP3's. Ik bouwde een graph in MetaSounds waarbij pitch en rammel-intensiteit veranderen op basis van snelheid. Je hoort het verschil als je van tapijt naar tegels rijdt.",
-  "project_nottoday_block2_title": "MetaSounds Systeem",
-  "project_shadow_frames_collab_desc": "Samenwerking tussen RITCS, KASK en Howest DAE.",
-  "project_shadow_frames_collab_title": "Multi-institutionele Samenwerking",
-  "project_transientica_block1_content": "Een systeem dat luistert naar je microfoon en geluiden in real-time classificeert met behulp van een aangepast neuraal netwerk, getraind op duizenden samples.",
-  "project_transientica_block1_title": "Hoe het Werkt",
-  "project_transientica_block2_content": "Gebouwd in Unity met een Python/scikit-learn pijplijn. Gebruikt spectrale analyse en voorspellende buffering om <45ms latentie te bereiken.",
-  "project_transientica_block2_title": "Technische Details",
   "project": {
     "achievements": "Wat werkte",
     "audio_systems": "Audiosystemen",
     "challenges_title": "Problemen die ik tegenkwam",
-    "key_scenes": "Belangrijke Scènes",
+    "key_scenes": "Belangrijke Scenes",
     "metrics": "Project Stats",
     "problem": "Probleem",
     "responsibilities": "Wat ik deed",
     "solution": "Oplossing",
     "tech_stack": "Gebruikte tools"
   },
-  "project_akantilado_full_desc": "Sound design voor een studentenanimatie. Twee katten achtervolgen een gouden bol door de jungle. Ik bouwde 5-laags spatial ambience—vogels in boomkruinen, geritsel, grondwater, wind, dierenleven. Alle foley kwam uit bibliotheken, toen synchroniseerde ik alles frame-voor-frame met de animatie. Maakte twee eindmixen: stereo voor bioscoop, toen 5.1 surround.",
-  "project_amorak_full_desc": "90-seconden horror teaser. Ik deed alle audio post-productie.\n\nHet monster moest massief klinken. Ik laagde 4 dierenopnames—leeuw, olifant, tijger, nijlpaard. Pitch verlagen voegde gewicht toe. Maakte een binaurale mix in Reaper met Dear VR Pro en IEM Suite. Eindoplevering: stereo binauraal, 48kHz/24-bit, -16 LUFS. Duurde 4 weken.\n\nDynamiek: CLA-76, LA-2A, LA-3A, C6 multiband.",
-  "project_audioq_full_desc": "VST3/AU sampler plugin gebouwd in JUCE en C++. Sleep een audiobestand erin en bewerk het met granulaire synthese, handgeschreven tremolo DSP, TPT zero-delay filters en ingebouwde compressor. Elke parameter is DAW-automatiseerbaar. De tremolo schreef ik helemaal zelf—per-sample sine LFO voor vloeiende modulatie. Open source op GitHub.",
-  "project_gradwork_full_desc": "Bachelorproef. Ik bouwde een Unity-game die met AI-modellen praat via een Python-server en testte of ze geluiden snel genoeg kunnen genereren voor games. Testte ElevenLabs, MMAudio en AudioGen. Geen enkel was snel genoeg—de snelste deed er nog meer dan een seconde over. De workaround: geluiden cachen tijdens laadschermen en serveren in minder dan 55ms wanneer nodig.",
-  "project_not_today_darling_full_desc": "Solo audio designer in een 4-speler split-screen racer. Geen ruimte voor subtiel stereo—vechten voor elke decibel headroom en byte RAM. Resultaat: luid, chaotisch racen dat nooit clipt en soepel draait.",
-  "project_pause_and_deserve_full_desc": "Solo horror-prototype gebouwd in 8 weken om Unreal Engine 5 te leren.\n\nPauzeren bevriest de vijand, maar elk gebruik maakt hem permanent sneller. Audio reageert op aarzeling -- bosambience, ademhaling op basis van nabijheid, tikkende klok tijdens bevriezing. MetaSounds + Sound Cues, 100% Blueprints.",
-  "project_ray_animation_full_desc": "Disco-funk score voor een DAE-afstudeerfilm. De originele componist stopte 8 dagen voor de bioscooppremière. Ik schreef het hoofdnummer en de aftiteling vanaf nul—koperblazers, slap bass, DJ scratches, Waves J37 tape-effecten. Elke hit frame-gesynchroniseerd met Ray's danschoreografie. Kreeg een staande ovatie bij de première.",
-  "project_richter_full_desc": "Sound design voor een studentenfilm over een aardbeving. Alle foley opnieuw opgenomen met een Zoom H6—voetstappen op hout, beton en tapijt, deuren, papier. Ik schreef een korte orkestrale score aangepast aan de filmsnedes. Geen commerciële libraries. Verwerkte alles in Reaper. Gebruikte Cubase voor granulaire stretching.",
-  "project_shadow_frames_full_desc": "Horrorgame waarin audio de kernmechaniek is. Spelers horen anomalieën voordat ze ze zien.\n\nIk bouwde de audiosystemen: voetstap oppervlakdetectie, vijand-nabijheidssysteem, anomalie-audio, Wwise-integratie. Samenwerking met RITCS (schrijvers) en KASK (componisten).",
-  "project_transientica_audiolab_full_desc": "Real-time beatbox herkenningssysteem. Bestuur ritmegames met je stem.\n\nGeoptimaliseerde audiobuffers en ML-pipeline om onder 60ms latentie te blijven. Python verwerkt audio-analyse, Unity regelt gameplay - communicatie via UDP/OSC.",
-  "project_unreal_engine_rebuilder_full_desc": "Build automatiseringstool voor Unreal Engine.\n\nUnreal Engine beschadigt soms tussenbestanden, wat linker errors veroorzaakt. Deze tool maakt een \"factory reset\" voor de build—wist cache, regenereert projectbestanden, compileert vanaf nul. Bespaart uren handmatig opruimen.",
-  "project_wwise_unreal_fixer_full_desc": "Reddingstool voor Wwise-Unreal integratie.\n\nBij het migreren van Wwise-projecten of pullen via Perforce verliest Unreal vaak asset-paden (SoundBanks, Events)—actoren worden stil. Deze tool repareert alle referenties met één klik.",
+  "project_akantilado_full_desc": "Ik deed het sound design voor een studentenanimatie over twee katten die een gouden bol door de jungle achtervolgen. Bouwde 5-laags spatial ambience — vogels in boomkruinen, geritsel, grondwater, wind, dierenleven. Alle foley uit bibliotheken, daarna alles frame-voor-frame gesynchroniseerd. Twee eindmixen opgeleverd: stereo voor de bioscoop en 5.1 surround.",
+  "project_amorak_block1_content": "Het monster moest massief klinken. Ik laagde vier dierenopnames — leeuw, olifant, tijger, nijlpaard — en pitchte ze naar beneden voor gewicht. De nijlpaardtextuur gaf dat hoge raspgeluid.",
+  "project_amorak_block1_title": "Het monstergeluid bouwen",
+  "project_amorak_block2_content": "Ik ontwierp de omgeving zodat die de camera volgt. Druppelend water zit dichtbij en verontrustend. Verre kettingen suggereren iets groters. Binaurale panning plaatst elk geluid op een precies punt rond je hoofd.",
+  "project_amorak_block2_title": "De ruimte echt laten klinken",
+  "project_amorak_block3_content": "Het monster wint altijd in de mix. Ik zette dynamische ducking op zodat de omgeving zakt wanneer het monster schreeuwt of het personage ademt.",
+  "project_amorak_block3_title": "Het samenvoegen",
+  "project_amorak_full_desc": "90-seconden horror teaser waarbij ik alle audio post-productie deed.\n\nHet monster moest massief aanvoelen, dus ik laagde vier dierenopnames — leeuw, olifant, tijger, nijlpaard — en pitchte ze naar beneden. Maakte een binaurale mix in Reaper met Dear VR Pro en IEM Suite. Opgeleverd: stereo binauraal, 48kHz/24-bit, -16 LUFS. Duurde ongeveer 4 weken.\n\nDynamiek: CLA-76, LA-2A, LA-3A, C6 multiband.",
+  "project_audioq_full_desc": "Een VST3/AU sampler plugin gebouwd in JUCE en C++. Sleep een audiobestand erin en bewerk het met granulaire synthese, handgeschreven tremolo DSP, TPT zero-delay filters en een ingebouwde compressor. Elke parameter is DAW-automatiseerbaar. De tremolo schreef ik helemaal zelf — per-sample sine LFO voor vloeiende modulatie. Open source op GitHub.",
+  "project_gradwork_full_desc": "Mijn bachelorproef. Ik bouwde een Unity-game die via een Python-server met AI-modellen praat en testte of ze snel genoeg geluiden kunnen genereren voor real-time gameplay. Testte ElevenLabs, MMAudio en AudioGen — geen was snel genoeg. De snelste deed er nog meer dan een seconde over. Mijn workaround: geluiden cachen tijdens laadschermen en serveren in minder dan 55ms wanneer nodig.",
+  "project_not_today_darling_full_desc": "Ik was de enige audio-persoon in een 4-speler gedeeld-scherm racer. Geen ruimte voor subtiel stereowerk — vechten om elke decibel headroom en byte RAM. Resultaat: luid, chaotisch racen dat nooit clipt en soepel draait.",
+  "project_nottoday_block1_content": "Een side-scrolling racegame voor 1-4 spelers. Chaotisch, luid en belachelijk. Ik deed alles qua audio: opnemen, sound design, muziekkeuze en implementatie.",
+  "project_nottoday_block1_title": "Projectoverzicht",
+  "project_nottoday_block2_content": "Ik wilde niet dat de motoren klonken als geloopte MP3's, dus bouwde ik een MetaSounds graph waarbij pitch en rammel-intensiteit veranderen met snelheid. Je hoort het verschil als je van tapijt naar tegels rijdt — het geluid reageert direct.",
+  "project_nottoday_block2_title": "MetaSounds Systeem",
+  "project_pause_and_deserve_full_desc": "Een solo horror-prototype gebouwd in 8 weken om Unreal Engine 5 te leren.\n\nPauzeren bevriest de vijand, maar elk gebruik maakt hem permanent sneller. Audio reageert op je aarzeling — bosambience verschuift, ademhaling schaalt met nabijheid, een klok tikt tijdens bevriezing. MetaSounds + Sound Cues, 100% Blueprints.",
+  "project_ray_animation_full_desc": "Disco-funk score voor een DAE-afstudeerfilm. De originele componist stopte 8 dagen voor de premiere, dus schreef ik het hoofdnummer en de aftiteling vanaf nul — koperblazers, slap bass, DJ scratches, Waves J37 tape-effecten. Elke hit frame-gesynchroniseerd met Ray's danschoreografie. Kreeg een staande ovatie bij de premiere.",
+  "project_richter_full_desc": "Sound design voor een studentenfilm over een aardbeving. Ik nam alle foley opnieuw op met een Zoom H6 — voetstappen op hout, beton en tapijt, deuren, papier. Schreef een korte orkestrale score aangepast aan de filmsnedes. Geen commerciele libraries. Alles verwerkt in Reaper, Cubase gebruikt voor granulaire stretching.",
+  "project_shadow_frames_collab_desc": "Samenwerking tussen RITCS (Verhaal), KASK (Muziek) en Howest DAE (Game Dev).",
+  "project_shadow_frames_collab_title": "Multi-institutionele Samenwerking",
+  "project_shadow_frames_full_desc": "Een horrorgame waarin audio de kernmechaniek is — spelers horen anomalieen voordat ze ze zien.\n\nIk bouwde de audiosystemen: voetstap oppervlakdetectie, vijand-nabijheid, anomalie-audio en Wwise-integratie. Werk samen met RITCS (schrijvers) en KASK (componisten).",
+  "project_transientica_audiolab_full_desc": "Een real-time beatbox herkenningssysteem — bestuur ritmegames met je stem.\n\nIk optimaliseerde audiobuffers en de ML-pipeline om onder 60ms latentie te blijven. Python verwerkt audio-analyse, Unity regelt gameplay, en ze communiceren via UDP/OSC.",
+  "project_transientica_block1_content": "Het systeem luistert naar je microfoon en classificeert geluiden in real-time met een aangepast neuraal netwerk, getraind op duizenden samples.",
+  "project_transientica_block1_title": "Hoe het Werkt",
+  "project_transientica_block2_content": "Gebouwd in Unity met een Python/scikit-learn pijplijn. Gebruikt spectrale analyse en voorspellende buffering om onder 45ms latentie te komen.",
+  "project_transientica_block2_title": "Technische Details",
+  "project_unreal_engine_rebuilder_full_desc": "Een build automatiseringstool voor Unreal Engine.\n\nUnreal beschadigt soms tussenbestanden en gooit linker errors. Deze tool doet een schone factory reset — wist cache, regenereert projectbestanden en hercompileert vanaf nul. Bespaart uren handmatig opruimen.",
+  "project_wwise_unreal_fixer_full_desc": "Een reddingstool voor Wwise-Unreal integratie.\n\nBij het migreren van Wwise-projecten of pullen via Perforce verliest Unreal vaak asset-paden — SoundBanks, Events, actoren worden stil. Deze tool repareert alle gebroken referenties met een klik.",
   "sf": {
-    "ambience_zones": {
-      "desc": "Locatie-gebaseerde audio die verandert terwijl je door verschillende gebieden van de pub beweegt.",
-      "how": "Trigger volumes detecteren speler locatie. Bij zone binnenkomst, fade out vorige ambient en fade in nieuwe zone lagen. Vloeiende crossfades voorkomen audio sprongen.",
-      "result": "Loop van bar naar badkamer, audio crossfadet in 500ms. Geen pops, geen stilte-gaten.",
-      "title": "Ambiance Zone Systeem",
-      "what": "5 verschillende zones met unieke ambient soundscapes: Main Bar, Back Room, Bathroom, Hallway, Storage. Elk heeft specifieke audio atmosfeer.",
-      "why": "Elke kamer klinkt anders. Badkamer: tegels + reverb. Bar: glazen + menigte-gemompel. Speler weet waar hij is op basis van geluid."
-    },
-    "anomalies": {
-      "desc": "Semi-gerandomiseerde storingen die escaleren naarmate het spel vordert.",
-      "env_desc": "De ruimte zelf vervormt en verstoort. Radio static barst uit het niets los, lichten flikkeren erratisch, en de klok versnelt zijn tikken.",
-      "env_title": "Omgevings anomalieën",
-      "object_desc": "Stoelen draaien op eigen houtje, glazen zweven in de lucht, en bestek rammelt zonder oorzaak. Alledaagse objecten beginnen de wetten van de fysica te tarten.",
-      "object_title": "Object anomalieën",
-      "shadow_desc": "Menselijke silhouetten materialiseren in de duisternis, schaduwen loskomen van hun bronobjecten en bewegen onafhankelijk, en beweging vindt plaats op plekken waar geen lichtbron het zou kunnen werpen.",
-      "shadow_title": "Schaduw anomalieën",
-      "title": "Anomalie types"
-    },
-    "anomaly_audio": {
-      "alert": "Alert (0.5s): Static burst markeert de spawn",
-      "conclusion": "Geen visuals, geen UI markers, alleen geluid. Audio is het detectiesysteem.",
-      "description": "Elke anomalie triggert drie audio lagen:",
-      "hint": "Hint (1-2s): Directioneel geluid wijst je erheen",
-      "presence": "Aanwezigheid (loop): Aangehouden tot vastgelegd",
-      "title": "3-Staps Anomalie Detectie"
-    },
-    "anomaly_system": {
-      "desc": "10 anomalietypes. Elk met uniek audio. 3-staps detectie: alert → hint → aanwezigheid.",
-      "how": "Afstand-gebaseerde RTPC drijft audio intensiteit. Directionele audio leidt speler naar anomalie. Elk anomalie type heeft unieke geluidssignatuur voor identificatie.",
-      "result": "Playtesters vinden anomalieën op gehoor. 80% detectiegraad met directionele hints.",
-      "title": "Anomalie Audio Systeem",
-      "what": "3 detectiestadia: Ver (algemeen alarm), Medium (directionele hint), Dichtbij (precieze locatie). 10 anomalie types waaronder Levitating Glass, Shadow Movement, Spinning Chair.",
-      "why": "Geluid is hoe je anomalieën vindt. Alert signaleert spawn, hint geeft richting, aanwezigheid bevestigt locatie."
-    },
-    "audio_design_icon": "AUDIO DESIGN",
-    "audio_systems": {
-      "delegates_desc": "Audiosystemen communiceren via delegates. C++ draait gamelogica, Blueprint draait audio. Elk deel werkt apart. Verander het een zonder het ander te breken.",
-      "delegates_title": "Blueprint Delegates (SOC)",
-      "rtpc_desc": "Hoe meer anomalieën je vindt, hoe intenser alles wordt. Ambient sounds bouwen op. Je personage's ademhaling wordt zwaarder. Spanning bouwt op.",
-      "rtpc_title": "RTPC-gebaseerd dynamisch systeem",
-      "spatial_desc": "Volledige 3D positionele audio voor anomalieën, vijand en omgevingscues. Ruimtelijke precisie is cruciaal — je vindt dreigingen niet zonder.",
-      "spatial_title": "HRTF Spatial Audio",
-      "switches_desc": "Elke kamer heeft eigen ambient-lagen die crossfaden als je beweegt. Badkamer heeft gespatializeerde toilet- en kraangeluiden. Voetstappen veranderen per oppervlak. Hout, tegels, beton.",
-      "switches_title": "Switch Containers & Zones",
-      "title": "Audio-implementatie"
-    },
-    "back": "Terug naar projecten",
-    "back_to_shadow_frames": "← Terug naar Shadow Frames",
-    "badge_audio": "AUDIO",
-    "badge_code": "CODE",
     "block": {
-      "anomaly_desc": "10 anomalietypes, elk met uniek audio. 3-staps detectie. RTPC drijft intensiteit. Directioneel audio leidt speler.",
+      "anomaly_desc": "10 anomalietypes, elk met eigen audio. 3-staps detectie gestuurd door RTPC. Directioneel audio leidt de speler naar elke anomalie.",
       "anomaly_title": "Anomalie Audio Systeem",
-      "dialogue_desc": "Speleracties → audio-reacties via Blueprint delegates. Camerafoto, zoom — elke actie triggert het juiste Wwise event.",
+      "dialogue_desc": "Speleracties triggeren audio-reacties via Blueprint delegates. Camerafoto, zoom — elke actie vuurt het juiste Wwise event af.",
       "dialogue_title": "Speler Audio Systeem",
-      "enemy_desc": "Vijand komt dichterbij, audio intensiveert. Dread-lagen + gestrest ademen. Systeem volgt afstand, triggert lagen. Dichterbij vijand = meer intensiteit.",
+      "enemy_desc": "Hoe dichterbij de vijand, hoe intenser het audio. Dread-lagen en gestrest ademen stapelen op met nabijheid. Dichterbij = meer intensiteit.",
       "enemy_title": "Vijand Aanwezigheid Audio",
-      "mixer_desc": "Switch Containers werken met het RTPC-systeem. Meer verzamelde foto's = andere ambient lagen activeren.",
+      "mixer_desc": "Switch Containers gecombineerd met het RTPC-systeem. Hoe meer foto's je verzamelt, hoe meer ambient-lagen erbij komen.",
       "mixer_title": "Wwise Setup"
     },
-    "challenges": {
-      "challenge1": {
-        "problem": "Multi-institutioneel studentenproject had workflow-problemen. Wwise integratie brak na Perforce pulls. Unreal compilatie duurde te lang, wat downtime veroorzaakte.",
-        "solution": "Wwise Unreal Fixer en Unreal Engine Rebuilder gebouwd. Fixer herstelt Wwise integratie na Perforce pulls — één klik. Rebuilder automatiseert compilatie om downtime te verkorten.",
-        "title": "Workflow Tools"
-      },
-      "desc": "Problemen tegengekomen tijdens ontwikkeling en hoe ik ze heb aangepakt.",
-      "problem_label": "Probleem:",
-      "solution_label": "Oplossing:",
-      "title": "Uitdagingen & Oplossingen"
-    },
     "challenges_list": {
-      "c1_prob": "Geluiden schakelden snel aan/uit",
-      "c1_sol": "Hysteresis geïmplementeerd",
-      "c1_title": "Audio flikkering",
-      "c2_prob": "Afstand berekenen tot alle vijanden in elk frame was te zwaar",
-      "c2_sol": "Caching systeem toegevoegd dat de dichtstbijzijnde vijand periodiek bijwerkt, niet elk frame",
+      "c1_prob": "Geluiden schakelden snel aan/uit wanneer de speler bij trigger-randen stond",
+      "c1_sol": "Hysteresis toegevoegd met aparte start/stop drempels (Start 70%, Stop 60%)",
+      "c1_title": "Audio flikkering bij grenzen",
+      "c2_prob": "Afstand berekenen tot elke vijand elk frame was te duur",
+      "c2_sol": "Een caching systeem gebouwd dat de dichtstbijzijnde vijand periodiek bijwerkt in plaats van elk frame",
       "c2_title": "Dure nabijheidschecks"
-    },
-    "close": "Sluiten",
-    "code_explanations": {
-      "delegate_how": "DECLARE_DYNAMIC_MULTICAST_DELEGATE creëert delegate die kan worden uitgezonden vanuit C++ en beluisterd in Blueprint. UPROPERTY(BlueprintAssignable) maakt binding in Blueprint mogelijk.",
-      "delegate_what": "Definitie van multicast delegates voor speler acties die audio events activeren.",
-      "delegate_why": "Multicast delegates maken het mogelijk dat meerdere listeners (bijv. Audio Manager) reageren op één actie. Dynamic delegates werken met Blueprint, wat audio designer volledige controle geeft zonder C++ code te wijzigen.",
-      "footstep_how": "Valideert dat owner en world bestaan, voert dan line trace uit met ECC_WorldStatic kanaal. Controleert object's Physical Material en mapt SurfaceType enum naar Wwise Switch naam (Tiles, Wood, CreakyWood, Concrete).",
-      "footstep_what": "Functie detecteert oppervlaktetype onder speler met line trace naar beneden vanaf speler positie.",
-      "footstep_why": "Gebruik van Physical Material maakt automatische detectie mogelijk zonder handmatig taggen van elk oppervlak. De enum-naar-Switch mapping is een eenmalige setup die Unreal's oppervlak systeem verbindt met Wwise - dit is configuratie, geen hardcoded audio calls. Audio designer kan Switch namen in Wwise wijzigen zonder code wijzigingen.",
-      "rtpc_how": "Valideert dat world bestaat, vindt dan AkAmbientSound actor via tag 'AmbientProgressive' (efficiënter en betrouwbaarder dan naam string zoeken). Zet RTPC waarde (0-5) overeenkomend met aantal belangrijke foto's. Wwise crossfade automatisch tussen ambient lagen.",
-      "rtpc_what": "Functie werkt RTPC waarde bij in Wwise op basis van aantal foto's geplaatst op bord.",
-      "rtpc_why": "RTPC geeft vloeiende overgangen tussen spanning staten. Ik kan crossfade curves controleren voor elke laag in Wwise, wat volledige controle geeft over emotionele progressie zonder code wijzigingen."
-    },
-    "concept": {
-      "desc": "Je zit gevangen in een zwart-witte Ierse pub uit de jaren 60 waar de werkelijkheid instort. Anomalieën verschijnen elke 30 tot 50 seconden, en geluid is je enige middel om ze te vinden. Zet je koptelefoon op en luister goed. Een glas rinkelt in de hoek. Voetstappen echoën vanuit een lege gang. Een stoel schraapt vanzelf over de vloer. Volg het geluid om elke verstoring te lokaliseren en fotografeer het dan. Je hebt precies 12 foto's, dus kies verstandig.\n\nDe pub bruist van bovennatuurlijke activiteit. Glazen zweven boven de bar. Schaduwen loskomen van hun eigenaren en bewegen onafhankelijk. Stoelen draaien vanzelf. De korrelige zwart-wit esthetiek doet alles aanvoelen als een vergeten foto van tientallen jaren geleden.\n\nGeluid is niet alleen atmosferisch. Het is de kernmechaniek. Demp het spel en je bent blind. Je weet niet waar je moet kijken, wat er gebeurt, of hoe je moet overleven. Elk gekraak, gefluister en geknal is informatie.\n\nZodra je je bewijs hebt verzameld, ren je naar het prikbord en rangschik je de foto's in de juiste chronologische volgorde. Zo puzzel je samen wat er gebeurt en waarom. Maar werk snel. Iets jaagt je door de pub, en de tijd loopt af.",
-      "detailed": "Je hebt een Polaroid-camera en 12 foto's. Anomalieën gebeuren elke 30-50 seconden. Glazen zweven, schaduwen bewegen zelfstandig, stoelen draaien. Audio cues vertellen waar je moet kijken: een glas rinkelt, voetstappen echoën uit het niets, een stoel schraapt over de vloer. Zonder geluid ben je blind. Als je het bewijs hebt verzameld, rangschik je de foto's op een prikbord in chronologische volgorde om erachter te komen wat er gebeurt.",
-      "short": "Zwart-wit horror game waarin je paranormale gebeurtenissen fotografeert in een Ierse pub uit de jaren 60. Geluid is je belangrijkste tool om anomalieën te vinden.",
-      "subtitle": "Zwart-wit psychologische horror",
-      "title": "De Game"
-    },
-    "context": {
-      "collab1": "RITCS: Narrative Design & Verhaal",
-      "collab2": "KASK Conservatorium: Muziekcompositie",
-      "collab3": "Howest DAE: Game Development & Audio-implementatie",
-      "collaboration_title": "Multi-institutionele samenwerking",
-      "institution_label": "Leidende instelling",
-      "institution_value": "Howest DAE",
-      "role_label": "Mijn rol",
-      "role_value": "Audio Designer",
-      "timeline_label": "Tijdlijn",
-      "timeline_value": "3 Weken Prototype → Sprint 3/5 Productie",
-      "title": "Projectoverzicht",
-      "type_label": "Projecttype",
-      "type_value": "Psychologische Horror Game"
-    },
-    "dev_tools": {
-      "fixer_desc": "Een custom C++ plugin die automatisch gebroken Wwise integratie herstelt na Perforce pulls. Oplossing met één klik.",
-      "fixer_title": "Wwise Unreal Fixer",
-      "rebuilder_desc": "Verwijdert Intermediate en Saved mappen, regenereert projectbestanden. Repareert linker errors na slechte merges. 2 minuten in plaats van handmatig door mappen zoeken.",
-      "rebuilder_title": "Unreal Engine Rebuilder",
-      "title": "Ontwikkeltools"
-    },
-    "enemy_presence": {
-      "desc": "Vijand komt dichterbij, audio wordt erger. Twee lagen stapelen op: ambient dread (lage drones, verontrustende texturen) en gestrest ademen. Beide schalen met nabijheid via RTPC.",
-      "how": "OnProximityChanged() ontvangt nabijheid waarde (0-100%), start/stopt dread lagen, werkt RTPC bij voor intensiteit, past ademstress aan. Alles gevalideerd met null safety checks.",
-      "result": "Audio-intensiteit schaalt vloeiend met gevaarniveau. Gelaagde ambient en gestrest ademen reageren op nabijheid zonder harde sneden.",
-      "title": "Vijand Aanwezigheid Audio Systeem",
-      "what": "Systeem volgt vijand afstand en activeert audio lagen. Dichterbij vijand = intensievere audio. Dread ambient en ademstress schalen met nabijheid.",
-      "why": "Geen harde sneden als vijand beweegt. RTPC maakt het vloeiend. Ademlaag voegt urgentie toe zonder de mix te vervuilen."
-    },
-    "footstep": {
-      "desc": "Hout, tegels, beton—je hoort het verschil. Het systeem detecteert waarop je loopt en speelt automatisch het juiste geluid af.",
-      "how": "C++ component voert line trace uit naar beneden vanaf speler positie, detecteert Physical Material, mapt het naar Wwise Switch naam, en Blueprint Audio Manager ontvangt delegate en speelt geschikt geluid af.",
-      "result": "Elke voetstap past bij de ondergrond. Automatisch. Geen handmatig werk. Voeg een nieuw materiaal toe in Wwise, het werkt.",
-      "title": "Voetstap Systeem: Oppervlak Detectie & Audio Routing",
-      "what": "Line trace omlaag vanaf de speler. Detecteert Physical Material. Mapt naar Wwise Switch: Tegels, Hout, Krakend Hout, Beton.",
-      "why": "Schone scheiding. C++ doet detectie, Blueprint doet audio. Voeg nieuwe oppervlakken toe zonder C++ aanpassingen. Audio designer wijzigt Switch namen in Wwise zonder code wijzigingen."
-    },
-    "gameplay": {
-      "capture_desc": "Gebruik je Polaroid-camera om de anomalie te fotograferen. Je hebt beperkte film, en elke herlaad maakt je kwetsbaar.",
-      "capture_title": "Vastleggen",
-      "connect_desc": "Rangschik foto's op het prikbord in de juiste volgorde om de waarheid te onthullen en de goede ending te bereiken.",
-      "connect_title": "Verbinden",
-      "observe_desc": "Anomalieën verschijnen elke 30-50 seconden. Omgevingsgeluiden leiden je naar hun locatie.",
-      "observe_title": "Observeer",
-      "title": "Kernmechanisme: Observeer → Vastleggen → Verbinden"
-    },
-    "grid_cards": {
-      "ambience_zones_tagline": "Locatie-gebaseerde audio lagen",
-      "ambience_zones_title": "Ambiance Zone Systeem",
-      "anomaly_system_tagline": "3-staps detectie & 10 types",
-      "anomaly_system_title": "Anomalie Audio Systeem",
-      "enemy_presence_tagline": "RTPC nabijheid & dread lagen",
-      "enemy_presence_title": "Vijand Aanwezigheid Audio"
-    },
-    "media_captions": {
-      "photos_on_board": "Fotobord: verzamelde Polaroid foto's die het verhaal onthullen wanneer je ze in de juiste volgorde plaatst",
-      "switch_container": "Wwise Switch Container configuratie: bepaalt welke ambient lagen afspelen op basis van het aantal foto's op het bord"
-    },
-    "meta": {
-      "engine": {
-        "label": "Engine",
-        "value": "Unreal Engine 5.5"
-      },
-      "role": {
-        "label": "Rol",
-        "value": "Audio Designer"
-      },
-      "setting": {
-        "label": "Setting",
-        "value": "Ierse Pub Jaren 60"
-      },
-      "style": {
-        "label": "Visuele stijl",
-        "value": "Zwart-wit"
-      }
-    },
-    "next": "Volgende",
-    "player_audio": {
-      "desc": "Maak een foto, zoom, open fotobord—elke actie triggert het juiste audio via delegates.",
-      "how": "PlayerCharacter in C++ definieert multicast delegates. Wanneer speler actie uitvoert, delegate wordt uitgezonden. Blueprint Audio Manager luistert naar deze delegates en roept geschikte Wwise Events aan.",
-      "result": "Nieuwe audio toevoegen is eenvoudig. Geen hardcoded calls. Audio designer wijzigt geluiden in Wwise, speler code blijft onaangetast.",
-      "title": "Speler Audio Systeem: Delegate-Gebaseerde Communicatie",
-      "what": "Systeem verbindt speler acties (camera schot, zoom, photoboard entry) met geschikte audio events in Wwise. Elke speler actie activeert automatisch corresponderend geluid.",
-      "why": "PlayerCharacter weet niets van audio. Audio Manager weet niets van speler logica. Test en wijzig elk onafhankelijk."
-    },
-    "previous": "Vorige",
-    "production": {
-      "proto": "✓ Prototype Compleet (3 weken)",
-      "sprint1": "✓ Sprint 1: Kernsystemen",
-      "sprint2": "✓ Sprint 2: Omgevingsaudio",
-      "sprint3": "◉ Sprint 3: Anomalie systemen (Huidig)",
-      "sprint4": "◯ Sprint 4: Vijand & Polish",
-      "sprint5": "◯ Sprint 5: Definitieve Integratie",
-      "title": "Productiestatus"
-    },
-    "production_notice": "🎮 Sprint 3/5 Productie  •  Multi-Institutioneel Project",
-    "project_metrics": {
-      "desc": "Productie statistieken en technische implementatie omvang.",
-      "how": "12+ C++ classes voor audio systemen, 8+ Blueprint audio managers, 200+ Wwise events/switches/RTPCs, 5 locatie zones, 10 anomalie types.",
-      "result": "Designers kunnen waarden aanpassen in DataAssets zonder te wachten op code rebuilds. Als iets crasht, is het meestal duidelijk welk systeem het veroorzaakt.",
-      "title": "Projectschaal & Technische Metrieken",
-      "what": "Sprint 3/5 productie fase. Multi-institutionele samenwerking. Uitgebreide C++ en Blueprint implementatie met Wwise integratie.",
-      "why": "Dit is de grootste Wwise-implementatie die ik tot nu toe heb gedaan. Moest leren hoe om te gaan met meerdere audio systemen die samen moeten werken zonder elkaars bugs te triggeren."
     },
     "rich_details": {
       "achievements": {
-        "data": "Data Assets exposed",
-        "flicker": "Hysteresis drempels",
-        "opt": "Gereduceerd CPU-gebruik"
+        "data": "Alle audioparameters beschikbaar gemaakt voor designers via Unreal Data Assets",
+        "flicker": "Hysteresis drempels toegevoegd om te voorkomen dat audio-staten aan/uit flikkeren",
+        "opt": "CPU-belasting verminderd door vijandafstanden te cachen en over te stappen op event-based updates"
       },
       "audio_systems": {
-        "enemy": "Nabijheidsgedreven spanningssysteem",
-        "footsteps": "Fysieke materiaal detectie",
-        "mixing": "Real-time RTPC modulatie",
-        "spatial": "3D audio cues"
+        "enemy": "Nabijheidsgedreven spanning met hysteresis tegen audio-flikkering",
+        "footsteps": "Fysieke oppervlakdetectie via raycasting met snelheidsgebaseerde intervallen",
+        "mixing": "Real-time RTPC modulatie van ademhaling en hartslag op basis van dreigingsniveau",
+        "spatial": "3D audio cues die spelers naar verborgen paranormale gebeurtenissen leiden"
       },
       "responsibilities": {
         "cpp": "C++ Audio Systems Programming",
@@ -530,94 +191,7 @@
         "lang_val": "C++ / Blueprints",
         "middleware_val": "Wwise 2024.1"
       }
-    },
-    "rtpc": {
-      "desc": "Meer foto's op het bord, meer spanning. Ambient intensiteit neemt toe naarmate je vordert.",
-      "how": "PhotoboardWidget volgt aantal belangrijke foto's. Wanneer speler foto plaatst, UpdateAmbientRTPC() vindt AkAmbientSound actor en zet RTPC waarde. Wwise crossfade automatisch tussen ambient lagen.",
-      "result": "Spanning bouwt vloeiend op met je voortgang. Pas curves aan in Wwise, sfeer past zich automatisch aan.",
-      "title": "Dynamisch Spanning Systeem: RTPC-Gedreven Ambience",
-      "what": "Systeem verandert dynamisch ambient intensiteit op basis van aantal foto's geplaatst op bord. Meer foto's = meer gespannen atmosfeer. RTPC waarde 0-5 controleert ambient lagen in Wwise.",
-      "why": "RTPC geeft vloeiende overgangen tussen spanning staten zonder sprongen. Ik controleer crossfade curves in Wwise zonder code aan te raken."
-    },
-    "sections": {
-      "audio_doc": "Audio Documentatie",
-      "audio_doc_desc": "Volledige technische documentatie die alle audio systemen, asset pipeline en implementatie richtlijnen dekt.",
-      "audio_middleware": "Audio Middleware",
-      "audio_prototypes_desc": "Originele composities en soundscape design voor Shadow Frames.",
-      "audio_prototypes_title": "Audio Prototypes",
-      "audio_tools": "Audio Tools",
-      "click_enlarge": "Klik om te vergroten",
-      "concept_icon": "CONCEPT",
-      "core_concept": "Kern Concept",
-      "current": "Huidig",
-      "deadline": "Doel: December 2025 (Sprint 5)",
-      "delegate_code_title": "PlayerCharacter.h: Delegates",
-      "download_sound_bible": "📄 Download Sound Bible PDF",
-      "footstep_code_title": "FootstepComponent.cpp: Oppervlak Detectie",
-      "game_engine": "Game Engine",
-      "gameplay_note": "Sprint 3 werk in uitvoering. Game is nog in ontwikkeling.",
-      "gameplay_showcase": "Gameplay Showcase",
-      "how": "HOE",
-      "howest_desc": "Howest DAE (Digital Arts & Entertainment): Game development en technische audio-implementatie",
-      "howest_name": "Howest DAE",
-      "kask_desc": "KASK Conservatorium: Muziekcompositie",
-      "kask_name": "KASK Conservatorium",
-      "menu_vibe": "Shadow Frames: Menu Vibe",
-      "music_desc": "Originele muziekcompositie voor de sfeer van het spel en emotionele progressie.",
-      "music_title": "Muziek Prototype",
-      "my_role": "Mijn Rol",
-      "my_role_desc": "Audio Designer. Ik schreef de C++ audio-componenten (voetstappen, vijandaanwezigheid, anomaliedetectie), zette Wwise op en verbond alles met delegates. Nog steeds systemen aan het toevoegen voor release.",
-      "ongoing_project": "Lopend Project",
-      "org_desc": "Multi-institutionele samenwerking tussen:",
-      "org_title": "Multi-institutionele Samenwerking",
-      "palette_soundscape": "Palette Soundscape Update",
-      "performance": "Prestaties",
-      "result": "RESULTAAT",
-      "ritcs_desc": "RITCS (Royal Institute for Theatre, Cinema & Sound, Brussel): Belgische filmschool verantwoordelijk voor narrative design en verhalontwikkeling",
-      "ritcs_name": "RITCS",
-      "role_icon": "ROLE",
-      "rtpc_code_title": "PhotoboardWidget.cpp: RTPC Update",
-      "sound_lead": "Audio Designer",
-      "soundscape_title": "Palette Soundscape",
-      "sprint_1": "Sprint 1",
-      "sprint_2": "Sprint 2",
-      "sprint_3": "Sprint 3",
-      "sprint_4": "Sprint 4",
-      "sprint_5": "Sprint 5",
-      "sprint_dev": "Sprint-gebaseerde ontwikkeling met meerdere polish fasen",
-      "tech_icon": "TECH",
-      "technical_stack": "Technische Stack",
-      "volume_label": "VOL",
-      "what": "WAT",
-      "why": "WAAROM"
-    },
-    "subtitle": "Audio Designer",
-    "tagline": "Geluid is overleven.",
-    "tech_stack": {
-      "audio_tools": "Reaper, Waves J37, PaulXStretch, Valhalla FreqEcho",
-      "engine": "Unreal Engine 5.5",
-      "title": "Technische stack",
-      "wwise": "Wwise 2024.1"
-    },
-    "title": "Shadow Frames",
-    "wwise_arch": {
-      "desc": "Voortzetting van het RTPC systeem - Switch Containers in Wwise reageren op foto's verzameld op het photoboard, creërend dynamische ambient lagen.",
-      "how": "De RTPC waarde van PhotoboardWidget (0-5 gebaseerd op foto's) stuurt Switch Container selectie in Wwise. Elke Switch staat correspondeert met verschillende ambient lagen. Wwise crossfade automatisch tussen lagen wanneer foto's worden verzameld.",
-      "result": "Dynamisch ambient systeem dat reageert op speler progressie door photoboard verzameling. Dit is een gedeeltelijke implementatie - het volledige systeem zal veel groter zijn met extra lagen en complexiteit.",
-      "title": "Wwise Setup: Switch Containers & Photoboard Integratie",
-      "what": "Switch Container systeem in Wwise reageert op aantal foto's verzameld op photoboard. Wanneer speler meer foto's verzamelt, Switch Containers activeren verschillende ambient lagen, werkend in combinatie met RTPC systeem.",
-      "why": "Switch Containers bieden discrete laag controle, RTPC behandelt vloeiende overgangen. Deze combinatie geeft structurele veranderingen (verschillende ambient sets) en vloeiende intensiteit progressie. Ik kan elke laag's respons controleren in Wwise."
     }
-  },
-  "stats_ml": {
-    "accuracy": "Nauwkeurigheid",
-    "classes": "Klassen",
-    "dataset": "Dataset",
-    "latency": "Latentie",
-    "latency_final": "Eindresultaat",
-    "latency_initial": "Initieel Resultaat",
-    "latency_target": "Doel Latentie",
-    "status": "Status"
   },
   "stats": {
     "latency": "Real-time Audio Latentie",
@@ -628,24 +202,6 @@
     "proc_latency": "Lokale Latentie",
     "throughput": "Doorvoer",
     "status": "Status"
-  },
-  "timeline": {
-    "graduated": "Afgestudeerd",
-    "label": "Ontwikkelingsvoortgang",
-    "present": "Heden",
-    "role_game_dev": "Game Development",
-    "role_math_phys": "Wiskunde & Natuurkunde",
-    "role_piano": "Klassiek Piano",
-    "polish": "Polijsten",
-    "production": "Productie",
-    "prototype": "Prototype",
-    "title": "Ontwikkelingsvoortgang"
-  },
-  "tooltips": {
-    "copy_email": "Kopieer E-mail",
-    "github_repo": "GitHub Repo",
-    "live_demo": "Live Demo",
-    "screenshot": "screenshot"
   },
   "projects": {
     "legacy_trailer": "Vorige Trailer",
