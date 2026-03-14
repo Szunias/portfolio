@@ -8,7 +8,7 @@ import SEO from '../components/layout/SEO';
 
 /** Minimal landing page with hero and showreel. */
 const Home = () => {
-  useTranslation(['home']);
+  const { t } = useTranslation('home');
   const [isShowreelOpen, setIsShowreelOpen] = useState(false);
   const showreelDialogRef = useRef<HTMLDivElement>(null);
 
@@ -18,7 +18,6 @@ const Home = () => {
       return;
     }
 
-    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -46,9 +45,18 @@ const Home = () => {
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.body.style.overflow = '';
       window.removeEventListener('keydown', handleKeyDown);
     };
+  }, [isShowreelOpen]);
+
+  useEffect(() => {
+    if (isShowreelOpen && showreelDialogRef.current) {
+      const firstFocusable = showreelDialogRef.current.querySelector<HTMLElement>(
+        'button, [tabindex]:not([tabindex="-1"]), iframe'
+      );
+      firstFocusable?.focus();
+    }
   }, [isShowreelOpen]);
 
   const websiteSchema = {
@@ -56,7 +64,7 @@ const Home = () => {
     "@type": "WebSite",
     "url": "https://igorszuniewicz.com",
     "name": "Igor Szuniewicz | Audio Designer & Developer",
-    "description": "Portfolio of Igor Szuniewicz - Audio Designer & Developer specializing in Game Audio, Wwise/FMOD implementation, and Interactive Systems."
+    "description": t('hero.description', 'I make sound for games. Footsteps, ambience, enemy audio. If it plays during gameplay, I probably made it.')
   };
 
   return (
@@ -71,7 +79,7 @@ const Home = () => {
       </div>
 
       {/* Spacer matches hero height so footer starts below the fold */}
-      <div className="h-screen" aria-hidden="true" />
+      <div className="h-dvh" aria-hidden="true" />
 
       {isShowreelOpen ? (
         <div
@@ -80,7 +88,7 @@ const Home = () => {
           onClick={() => setIsShowreelOpen(false)}
           role="dialog"
           aria-modal="true"
-          aria-label="Showreel"
+          aria-label={t('hero.showreel_title', 'Showreel')}
         >
           <div onClick={(event) => event.stopPropagation()}>
             <Showreel mode="modal" onClose={() => setIsShowreelOpen(false)} />

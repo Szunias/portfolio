@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, Calendar } from 'lucide-react';
 
-import TechReveal from '@/components/home/TechReveal';
+import TechReveal from '@/components/ui/TechReveal';
 import type { Project } from '@/types';
 import { hero, noMotion } from '@/constants/motion';
 
