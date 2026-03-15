@@ -9,6 +9,7 @@ export const ROUTES = {
   NOT_TODAY_DARLING: '/projects/not_today_darling',
   AUDIOQ: '/projects/audioq',
   RAY_ANIMATION: '/projects/ray_animation',
+  AMORAK: '/projects/amorak',
   MIDDLEWARE_OPTIMIZATION: '/projects/middleware-optimization',
   MUSIC: '/music',
   ABOUT: '/about',
