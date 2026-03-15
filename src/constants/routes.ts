@@ -6,6 +6,7 @@ export const ROUTES = {
   TRANSIENTICA: '/projects/transientica_audiolab',
   SOUND_DESIGN: '/projects/sound-design',
   SHADOW_FRAMES: '/projects/shadow_frames',
+  NOT_TODAY_DARLING: '/projects/not_today_darling',
   MIDDLEWARE_OPTIMIZATION: '/projects/middleware-optimization',
   MUSIC: '/music',
   ABOUT: '/about',
