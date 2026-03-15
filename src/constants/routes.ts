@@ -13,6 +13,7 @@ export const ROUTES = {
   MIDDLEWARE_OPTIMIZATION: '/projects/middleware-optimization',
   RICHTER: '/projects/richter',
   AKANTILADO: '/projects/akantilado',
+  PAUSE_AND_DESERVE: '/projects/pause_and_deserve',
   MUSIC: '/music',
   ABOUT: '/about',
   CONTACT: '/contact',

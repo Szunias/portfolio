@@ -46,6 +46,7 @@ const Amorak = safeLazy(() => import('./pages/Amorak'));
 const MiddlewareOptimization = safeLazy(() => import('./pages/MiddlewareOptimization'));
 const Richter = safeLazy(() => import('./pages/Richter'));
 const Akantilado = safeLazy(() => import('./pages/Akantilado'));
+const PauseAndDeserve = safeLazy(() => import('./pages/PauseAndDeserve'));
 const Music = safeLazy(() => import('./pages/Music'));
 const NotFound = safeLazy(() => import('./pages/NotFound'));
 
@@ -88,6 +89,7 @@ function App() {
               <Route path={ROUTES.MIDDLEWARE_OPTIMIZATION} element={<MiddlewareOptimization />} />
               <Route path={ROUTES.RICHTER} element={<Richter />} />
               <Route path={ROUTES.AKANTILADO} element={<Akantilado />} />
+              <Route path={ROUTES.PAUSE_AND_DESERVE} element={<PauseAndDeserve />} />
               <Route path={ROUTES.PROJECT_DETAILS} element={<ProjectDetails />} />
               <Route path={ROUTES.MUSIC} element={<Music />} />
               <Route path={ROUTES.ABOUT} element={<About />} />
