@@ -304,6 +304,23 @@ const ShadowFrames = () => {
                         {t('gallery.desc', 'Screenshots from the Wwise project showing the mixer hierarchy, DataAsset configurations, RTPC curves, and event structure.')}
                     </p>
 
+                    {/* Sound Design Showcase Video */}
+                    <div className="mb-8">
+                        <div className="aspect-video rounded-xl overflow-hidden border border-border bg-black">
+                            <video
+                                controls
+                                playsInline
+                                poster="/assets/images/projects-shadowframes/Menugif.mp4"
+                                className="w-full h-full object-cover"
+                            >
+                                <source src="/assets/images/projects-shadowframes/videodemoprod3withwwiseprofiler.mp4" type="video/mp4" />
+                            </video>
+                        </div>
+                        <p className="text-text-secondary text-sm mt-3 text-center">
+                            {t('gallery.video_label', 'Sound Design Showcase with Wwise Profiler')}
+                        </p>
+                    </div>
+
                     <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
                         {GALLERY_IMAGES.map((img) => (
                             <button

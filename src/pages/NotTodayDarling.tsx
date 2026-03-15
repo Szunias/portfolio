@@ -194,7 +194,7 @@ const NotTodayDarling = () => {
                     </div>
                 </motion.section>
 
-                {/* ── 5. VIDEO ── */}
+                {/* ── 5. VIDEOS ── */}
                 <motion.section {...mv} className="mb-20 md:mb-28">
                     <h2 className="text-h2 font-display text-text-primary mb-8">
                         {t('video.title', 'Gameplay')}
@@ -208,6 +208,19 @@ const NotTodayDarling = () => {
                             allowFullScreen
                             loading="lazy"
                         />
+                    </div>
+
+                    <h3 className="text-h3 font-display text-text-primary mt-12 mb-6">
+                        {t('video.sound_title', 'Sound Design Showcase')}
+                    </h3>
+                    <div className="aspect-video rounded-xl overflow-hidden border border-border bg-black">
+                        <video
+                            controls
+                            playsInline
+                            className="w-full h-full object-cover"
+                        >
+                            <source src="/assets/images/projects-nottoday/2025-10-12 16-52-48.mp4" type="video/mp4" />
+                        </video>
                     </div>
                 </motion.section>
 
