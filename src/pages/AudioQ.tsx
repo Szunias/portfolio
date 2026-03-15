@@ -151,6 +151,8 @@ void setResamplingRatio(double ratio) {
     },
 ] as const;
 
+const FEATURES = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'] as const;
+
 const gridContainerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -222,29 +224,31 @@ const AudioQ = () => {
                         </p>
                     </motion.section>
 
-                    {/* Plugin logo + video */}
-                    <motion.div
-                        className="group overflow-hidden rounded-xl border border-border bg-black md:col-span-1"
-                        variants={itemVars}
-                    >
-                        <div className="relative h-full min-h-[280px] sm:min-h-[320px] w-full">
-                            <video
-                                autoPlay loop muted playsInline
-                                poster="/assets/images/projects-audioq/AudioQPicture.png"
-                                className="h-full w-full object-cover"
-                            >
-                                <source src="/assets/images/projects-audioq/AudioQ-Showcase.mp4" type="video/mp4" />
-                            </video>
-                        </div>
-                    </motion.div>
-
-                    {/* About the project */}
+                    {/* Video showcase */}
                     <motion.section
                         className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-2 md:p-8"
                         variants={itemVars}
                     >
+                        <SectionLabel>{t('section.demo')}</SectionLabel>
+                        <div className="aspect-video rounded-lg overflow-hidden bg-black">
+                            <video
+                                controls
+                                playsInline
+                                poster="/assets/images/projects-audioq/AudioQPicture.png"
+                                className="w-full h-full object-cover"
+                            >
+                                <source src="/assets/images/projects-audioq/AudioQ-Showcase.mp4" type="video/mp4" />
+                            </video>
+                        </div>
+                    </motion.section>
+
+                    {/* About the project */}
+                    <motion.section
+                        className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-1 md:p-8"
+                        variants={itemVars}
+                    >
                         <SectionLabel>{t('section.about')}</SectionLabel>
-                        <p className="text-body leading-7 sm:leading-8 text-[#d1cbc3] max-w-[72ch]">
+                        <p className="text-body leading-7 sm:leading-8 text-[#d1cbc3]">
                             {t('about.text')}
                         </p>
                         <div className="flex flex-wrap gap-2 mt-6">
@@ -252,6 +256,26 @@ const AudioQ = () => {
                                 <span key={pill} className="px-3 py-1.5 border border-border rounded-md text-xs text-text-secondary font-mono">
                                     {pill}
                                 </span>
+                            ))}
+                        </div>
+                    </motion.section>
+
+                    {/* Features */}
+                    <motion.section
+                        className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-3 md:p-8"
+                        variants={itemVars}
+                    >
+                        <SectionLabel>{t('section.features')}</SectionLabel>
+                        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-4">
+                            {FEATURES.map((key) => (
+                                <div key={key} className="border-l-2 border-border pl-4">
+                                    <p className="font-display text-body-sm font-medium text-text-primary">
+                                        {t(`features.${key}.title`)}
+                                    </p>
+                                    <p className="mt-0.5 text-caption text-text-tertiary">
+                                        {t(`features.${key}.desc`)}
+                                    </p>
+                                </div>
                             ))}
                         </div>
                     </motion.section>
