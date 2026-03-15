@@ -21,17 +21,14 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
     const { t } = useTranslation(['projectDetail', 'projects']);
     const prefersReducedMotion = useReducedMotion();
     const media = project.media || {};
-    const links = project.links || {};
 
     const titleKey = `project_${project.id}_title`;
     const shortDescKey = `project_${project.id}_short_desc`;
 
     const videoId = media.video ? getYoutubeId(media.video) : null;
-    const legacyVideoId = media.video_legacy || links.video_legacy ? getYoutubeId(media.video_legacy || links.video_legacy || '') : null;
     const isLocalVideo = media.video && !videoId && (media.video.endsWith('.mp4') || media.video.endsWith('.webm'));
 
     const hasVideo = videoId || isLocalVideo;
-    const hasLegacyVideo = legacyVideoId && project.id === 'shadow_frames';
 
     return (
         <>
@@ -94,7 +91,7 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
             </div>
 
             {/* Video section — below the hero for better visual flow */}
-            {(hasVideo || hasLegacyVideo) && (
+            {hasVideo && (
                 <div className="max-w-content-wide mx-auto px-6 md:px-12 lg:px-16 -mt-8 relative z-10 space-y-8 mb-12">
                     {videoId && (
                         <div className="w-full max-w-4xl aspect-video rounded-lg overflow-hidden border border-border bg-black hover:border-border-hover transition-colors duration-300">
@@ -117,24 +114,6 @@ const ProjectHero = ({ project }: ProjectHeroProps) => {
                                 controls
                                 preload="metadata"
                             />
-                        </div>
-                    )}
-
-                    {hasLegacyVideo && (
-                        <div>
-                            <h3 className="text-h5 font-mono text-text-secondary uppercase mb-4">
-                                {t('projects.legacy_trailer', 'Previous Trailer')} / {t('projects.gameplay_preview', 'Gameplay Preview')}
-                            </h3>
-                            <div className="w-full max-w-4xl aspect-video rounded-lg overflow-hidden border border-border bg-black hover:border-border-hover transition-colors duration-300">
-                                <iframe
-                                    src={`https://www.youtube.com/embed/${legacyVideoId}`}
-                                    title={`${t(`projects:project_${project.id}_title`, project.title)} - ${t('projects.legacy_trailer', 'Previous Trailer')}`}
-                                    className="w-full h-full"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                    loading="lazy"
-                                />
-                            </div>
                         </div>
                     )}
                 </div>

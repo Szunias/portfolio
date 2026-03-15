@@ -5,6 +5,7 @@ export const ROUTES = {
   GRADWORK: '/projects/gradwork',
   TRANSIENTICA: '/projects/transientica_audiolab',
   SOUND_DESIGN: '/projects/sound-design',
+  SHADOW_FRAMES: '/projects/shadow_frames',
   MIDDLEWARE_OPTIMIZATION: '/projects/middleware-optimization',
   MUSIC: '/music',
   ABOUT: '/about',

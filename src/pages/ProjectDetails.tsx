@@ -5,7 +5,6 @@ import { Helmet } from 'react-helmet-async';
 import { Images } from 'lucide-react';
 
 import ImageLightbox from '../components/features/ImageLightbox';
-import ProductionTimeline from '../components/features/ProductionTimeline';
 import ChallengesBlock from '../components/features/projects/ChallengesBlock';
 import ContentBlockRenderer from '../components/features/projects/ContentBlockRenderer';
 import ProjectCodeSection from '../components/features/projects/ProjectCodeSection';
@@ -93,13 +92,6 @@ const ProjectDetails = () => {
 
         {/* LEFT: Content (8 cols) */}
         <div className="lg:col-span-8 space-y-12 lg:space-y-16">
-
-            {/* Production Timeline - for Shadow Frames */}
-            {project.id === 'shadow_frames' && (
-                <div className="-mb-8">
-                    <ProductionTimeline />
-                </div>
-            )}
 
             {/* Main Description */}
             <div className="prose prose-invert prose-lg max-w-none text-text-secondary leading-relaxed">
