@@ -48,6 +48,7 @@ const Richter = safeLazy(() => import('./pages/Richter'));
 const Akantilado = safeLazy(() => import('./pages/Akantilado'));
 const PauseAndDeserve = safeLazy(() => import('./pages/PauseAndDeserve'));
 const WwiseUnrealFixer = safeLazy(() => import('./pages/WwiseUnrealFixer'));
+const UnrealEngineRebuilder = safeLazy(() => import('./pages/UnrealEngineRebuilder'));
 const Music = safeLazy(() => import('./pages/Music'));
 const NotFound = safeLazy(() => import('./pages/NotFound'));
 
@@ -92,6 +93,7 @@ function App() {
               <Route path={ROUTES.AKANTILADO} element={<Akantilado />} />
               <Route path={ROUTES.PAUSE_AND_DESERVE} element={<PauseAndDeserve />} />
               <Route path={ROUTES.WWISE_UNREAL_FIXER} element={<WwiseUnrealFixer />} />
+              <Route path={ROUTES.UNREAL_ENGINE_REBUILDER} element={<UnrealEngineRebuilder />} />
               <Route path={ROUTES.PROJECT_DETAILS} element={<ProjectDetails />} />
               <Route path={ROUTES.MUSIC} element={<Music />} />
               <Route path={ROUTES.ABOUT} element={<About />} />
