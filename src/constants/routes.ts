@@ -8,6 +8,7 @@ export const ROUTES = {
   SHADOW_FRAMES: '/projects/shadow_frames',
   NOT_TODAY_DARLING: '/projects/not_today_darling',
   AUDIOQ: '/projects/audioq',
+  RAY_ANIMATION: '/projects/ray_animation',
   MIDDLEWARE_OPTIMIZATION: '/projects/middleware-optimization',
   MUSIC: '/music',
   ABOUT: '/about',

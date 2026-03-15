@@ -41,6 +41,7 @@ const SoundDesign = safeLazy(() => import('./pages/SoundDesign'));
 const ShadowFrames = safeLazy(() => import('./pages/ShadowFrames'));
 const NotTodayDarling = safeLazy(() => import('./pages/NotTodayDarling'));
 const AudioQ = safeLazy(() => import('./pages/AudioQ'));
+const RayAnimation = safeLazy(() => import('./pages/RayAnimation'));
 const MiddlewareOptimization = safeLazy(() => import('./pages/MiddlewareOptimization'));
 const Music = safeLazy(() => import('./pages/Music'));
 const NotFound = safeLazy(() => import('./pages/NotFound'));
@@ -78,6 +79,7 @@ function App() {
               <Route path={ROUTES.SHADOW_FRAMES} element={<ShadowFrames />} />
               <Route path={ROUTES.NOT_TODAY_DARLING} element={<NotTodayDarling />} />
               <Route path={ROUTES.AUDIOQ} element={<AudioQ />} />
+              <Route path={ROUTES.RAY_ANIMATION} element={<RayAnimation />} />
               <Route path={ROUTES.SOUND_DESIGN} element={<SoundDesign />} />
               <Route path={ROUTES.MIDDLEWARE_OPTIMIZATION} element={<MiddlewareOptimization />} />
               <Route path={ROUTES.PROJECT_DETAILS} element={<ProjectDetails />} />
