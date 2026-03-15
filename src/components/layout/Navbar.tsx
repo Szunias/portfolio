@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Github, Linkedin } from 'lucide-react';
 
 import LanguageSwitcher from '@/components/layout/LanguageSwitcher';
-import LogoMark from '@/components/ui/Logo';
 import { usePortfolioData } from '@/hooks/usePortfolioData';
 import { ROUTES } from '@/constants/routes';
 import { stagger } from '@/constants/motion';
@@ -103,12 +102,9 @@ const Navbar = () => {
           <div className="flex justify-between items-center">
 
             {/* Logo */}
-            <Link to={ROUTES.HOME} className="flex items-center gap-3 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
-              <LogoMark size={28} className="text-accent flex-shrink-0" />
-              <div className="flex flex-col">
-                <span className="font-display text-base uppercase text-text-primary tracking-[0.18em] leading-none">IGOR SZUNIEWICZ</span>
-                <span className="text-[10px] text-accent uppercase tracking-[0.3em] font-mono mt-1">{t('brand.tagline', 'Audio Designer')}</span>
-              </div>
+            <Link to={ROUTES.HOME} className="flex flex-col rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
+              <span className="font-display text-[15px] font-semibold uppercase text-text-primary tracking-[0.22em] leading-none">IGOR SZUNIEWICZ</span>
+              <span className="text-[9px] text-accent uppercase tracking-[0.35em] font-mono mt-1.5">{t('brand.tagline', 'Audio Designer')}</span>
             </Link>
 
             {/* Desktop Nav */}

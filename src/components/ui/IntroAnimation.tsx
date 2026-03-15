@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
-import LogoMark from './Logo';
-
 /**
  * "Tape Head" intro animation.
  * A thin vertical accent line sweeps left-to-right like a DAW playhead,
@@ -71,22 +69,19 @@ const IntroAnimation = ({ onComplete }: { onComplete: () => void }) => {
           onClick={skip}
           role="presentation"
         >
-          {/* Logo mark + Name — revealed by clip-path following the scan line */}
+          {/* Name — revealed by clip-path following the scan line */}
           <motion.div
-            className="flex items-center gap-5 select-none"
+            className="flex flex-col items-center select-none"
             initial={{ clipPath: 'inset(0 100% 0 0)' }}
             animate={{ clipPath: 'inset(0 0% 0 0)' }}
             transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
           >
-            <LogoMark size={48} className="text-accent flex-shrink-0 md:w-14 md:h-14 lg:w-16 lg:h-16" />
-            <div className="flex flex-col">
-              <span className="font-display text-3xl md:text-4xl lg:text-5xl text-text-primary tracking-tight">
-                Igor Szuniewicz
-              </span>
-              <span className="text-xs md:text-sm text-accent uppercase tracking-[0.3em] font-mono mt-1">
-                Audio Designer
-              </span>
-            </div>
+            <span className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold text-text-primary tracking-tight">
+              Igor Szuniewicz
+            </span>
+            <span className="text-xs md:text-sm text-accent uppercase tracking-[0.35em] font-mono mt-2">
+              Audio Designer
+            </span>
           </motion.div>
 
           {/* Scan line — thin vertical accent bar sweeping L to R */}
