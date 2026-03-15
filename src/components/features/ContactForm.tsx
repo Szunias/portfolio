@@ -22,6 +22,7 @@ function sanitize(value: string): string {
 const ContactForm = () => {
   const { t } = useTranslation('contact');
   const formRef = useRef<HTMLFormElement>(null);
+  const successRef = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<FormStatus>('idle');
   const [configError, setConfigError] = useState(false);
   const [validationError, setValidationError] = useState('');
@@ -115,11 +116,18 @@ const ContactForm = () => {
     }
   }, [status, t]);
 
+  // Focus the success message for screen readers when status becomes 'sent'
+  useEffect(() => {
+    if (status === 'sent' && successRef.current) {
+      successRef.current.focus();
+    }
+  }, [status]);
+
   if (configError) {
     return (
       <div className="bg-surface-raised p-8 rounded-xl border border-border">
         <div className="flex items-center gap-3 text-error">
-          <AlertCircle size={20} />
+          <AlertCircle size={20} aria-hidden="true" />
           <p className="text-body">{t('contact_form_config_error', 'Contact form is temporarily unavailable. Please email directly.')}</p>
         </div>
       </div>
@@ -169,7 +177,7 @@ const ContactForm = () => {
           />
           {validationError && (
             <p id="email-error" className="text-error text-body-sm mt-2 flex items-center gap-1.5" role="alert">
-              <AlertCircle size={14} />
+              <AlertCircle size={14} aria-hidden="true" />
               {validationError}
             </p>
           )}
@@ -199,31 +207,31 @@ const ContactForm = () => {
         >
           {status === 'idle' && (
             <>
-              <Send size={18} className="group-hover:translate-x-0.5 transition-transform" />
+              <Send size={18} aria-hidden="true" className="group-hover:translate-x-0.5 transition-transform" />
               {t('contact_form_submit', 'Send Message')}
             </>
           )}
           {status === 'sending' && (
             <>
-              <div className="w-4 h-4 border-2 border-surface border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-surface border-t-transparent rounded-full animate-spin" role="status" aria-label={t('contact_form_sending', 'Sending...')} />
               {t('contact_form_sending', 'Sending...')}
             </>
           )}
           {status === 'sent' && (
             <>
-              <CheckCircle size={18} />
+              <CheckCircle size={18} aria-hidden="true" />
               {t('contact_form_sent', "Message sent! I'll get back to you soon.")}
             </>
           )}
           {status === 'error' && (
             <>
-              <AlertCircle size={18} />
+              <AlertCircle size={18} aria-hidden="true" />
               {t('contact_form_error', 'Failed to send. Try again.')}
             </>
           )}
           {status === 'cooldown' && (
             <>
-              <CheckCircle size={18} />
+              <CheckCircle size={18} aria-hidden="true" />
               {t('contact_form_cooldown', 'Message sent! Please wait before sending another.')}
             </>
           )}
@@ -231,8 +239,8 @@ const ContactForm = () => {
 
         {/* Success state message (appears below button) */}
         {status === 'sent' && (
-          <div className="flex items-center gap-2 text-success text-body-sm bg-success/10 border border-success/20 rounded-md px-4 py-3">
-            <CheckCircle size={16} />
+          <div ref={successRef} tabIndex={-1} className="flex items-center gap-2 text-success text-body-sm bg-success/10 border border-success/20 rounded-md px-4 py-3">
+            <CheckCircle size={16} aria-hidden="true" />
             <span>{t('contact_form_success_message', "Thanks! I'll respond within 24-48 hours.")}</span>
           </div>
         )}
