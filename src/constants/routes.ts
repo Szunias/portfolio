@@ -14,6 +14,7 @@ export const ROUTES = {
   RICHTER: '/projects/richter',
   AKANTILADO: '/projects/akantilado',
   PAUSE_AND_DESERVE: '/projects/pause_and_deserve',
+  WWISE_UNREAL_FIXER: '/projects/wwise_unreal_fixer',
   MUSIC: '/music',
   ABOUT: '/about',
   CONTACT: '/contact',
