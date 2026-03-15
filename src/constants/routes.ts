@@ -11,6 +11,7 @@ export const ROUTES = {
   RAY_ANIMATION: '/projects/ray_animation',
   AMORAK: '/projects/amorak',
   MIDDLEWARE_OPTIMIZATION: '/projects/middleware-optimization',
+  RICHTER: '/projects/richter',
   MUSIC: '/music',
   ABOUT: '/about',
   CONTACT: '/contact',
