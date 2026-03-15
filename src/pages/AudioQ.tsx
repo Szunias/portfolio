@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Cpu, Layers, Zap, Shield, Sliders, Music, AlertTriangle, ChevronDown, Github, Download, Play } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Download, Github, ChevronDown } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 
 import SEO from '../components/layout/SEO';
 import CodeViewer from '../components/features/CodeViewer';
-import { fadeUpVariants, viewportOnce, noMotion } from '../constants/motion';
 import type { CodeSnippet } from '../types/project';
 
 const TECH_PILLS = ['C++', 'JUCE', 'VST3/AU', 'DSP'] as const;
@@ -152,249 +151,167 @@ void setResamplingRatio(double ratio) {
     },
 ] as const;
 
+const gridContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.06, delayChildren: 0.1 },
+    },
+};
+
+const gridItemVariants = {
+    hidden: { opacity: 0, y: 12 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.4, ease: [0.0, 0.0, 0.2, 1] },
+    },
+};
+
+const noMotionContainerVariants = {
+    hidden: { opacity: 1 },
+    visible: { opacity: 1, transition: { staggerChildren: 0 } },
+};
+
+const noMotionItemVariants = {
+    hidden: { opacity: 1, y: 0 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0 } },
+};
+
+const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+    <h2 className="mb-6 font-pixel text-[10px] uppercase tracking-[0.16em] text-[#8d8882]">
+        {children}
+    </h2>
+);
+
 /** AudioQ project page: VST sampler plugin built in C++/JUCE. */
 const AudioQ = () => {
     const { t } = useTranslation('audioq');
     const [codeOpen, setCodeOpen] = useState(false);
     const prefersReducedMotion = useReducedMotion();
 
-    const mv = prefersReducedMotion
-        ? { initial: noMotion.initial, whileInView: noMotion.animate, transition: noMotion.transition }
-        : { initial: fadeUpVariants.hidden, whileInView: fadeUpVariants.visible, viewport: viewportOnce };
+    const containerVars = prefersReducedMotion ? noMotionContainerVariants : gridContainerVariants;
+    const itemVars = prefersReducedMotion ? noMotionItemVariants : gridItemVariants;
 
     return (
-        <div className="min-h-screen bg-surface text-text-primary font-sans selection:bg-accent/30">
+        <div className="relative min-h-screen bg-surface">
             <SEO title={t('seo_title')} description={t('seo_description')} />
 
-            {/* ── 1. HERO ── */}
-            <section className="relative pt-32 pb-20 md:pb-28 text-center px-6 md:px-12 lg:px-16 max-w-content-wide mx-auto">
-                <Link
-                    to="/projects"
-                    className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-sm mb-16"
+            <div className="relative z-10 mx-auto max-w-content-wide px-6 pb-16 pt-24 sm:pb-24 sm:pt-28 md:px-12 md:pb-32 md:pt-32 lg:px-16">
+                <motion.div
+                    className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5"
+                    variants={containerVars}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
                 >
-                    <ArrowLeft size={14} />
-                    {t('nav.back')}
-                </Link>
-
-                <div className="inline-block px-4 py-1.5 rounded-md bg-surface-raised border border-border text-accent text-sm font-mono uppercase tracking-widest mb-8">
-                    {t('hero.badge')}
-                </div>
-
-                <div className="flex justify-center mb-8">
-                    <img
-                        src="/assets/images/projects-audioq/AudioQLogo.jpeg"
-                        alt="AudioQ"
-                        className="w-24 h-24 rounded-2xl border border-border shadow-lg"
-                    />
-                </div>
-
-                <h1 className="text-h1 md:text-hero font-display font-bold text-text-primary mb-6 leading-tight">
-                    {t('hero.title')}<span className="text-accent">{t('hero.subtitle')}</span>
-                </h1>
-
-                <p className="text-xl text-text-secondary max-w-2xl mx-auto mb-12 leading-7">
-                    {t('hero.desc')}
-                </p>
-
-                <div className="flex flex-wrap justify-center gap-3 mb-10">
-                    {TECH_PILLS.map((pill) => (
-                        <span key={pill} className="px-4 py-2 bg-surface-raised border border-border rounded-md text-sm text-text-primary font-mono">
-                            {pill}
-                        </span>
-                    ))}
-                </div>
-
-                <div className="flex flex-wrap justify-center gap-4">
-                    <a
-                        href="https://github.com/Szunias/AudioQ/releases"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-surface rounded-lg font-mono text-sm hover:bg-accent-hover transition-colors"
-                    >
-                        <Download size={16} />
-                        {t('hero.download')}
-                    </a>
-                    <a
-                        href="https://github.com/Szunias/AudioQ"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-surface-raised border border-border rounded-lg font-mono text-sm text-text-primary hover:border-accent/40 transition-colors"
-                    >
-                        <Github size={16} />
-                        {t('hero.github')}
-                    </a>
-                </div>
-            </section>
-
-            <main className="relative z-10 max-w-content-wide mx-auto px-6 md:px-12 lg:px-16 pb-32">
-
-                {/* ── 2. VIDEO DEMO ── */}
-                <motion.section {...mv} className="mb-20 md:mb-28">
-                    <div className="relative aspect-video rounded-xl overflow-hidden border border-border bg-black">
-                        <video
-                            autoPlay loop muted playsInline
-                            poster="/assets/images/projects-audioq/AudioQPicture.png"
-                            className="w-full h-full object-cover"
-                        >
-                            <source src="/assets/images/projects-audioq/AudioQ-Showcase.mp4" type="video/mp4" />
-                        </video>
-                    </div>
-                </motion.section>
-
-                {/* ── 3. FEATURES ── */}
-                <motion.section {...mv} className="mb-20 md:mb-28">
-                    <h2 className="text-h2 font-display text-text-primary text-center mb-4">
-                        {t('features.title')}
-                    </h2>
-                    <p className="text-text-secondary text-center max-w-2xl mx-auto mb-16">
-                        {t('features.subtitle')}
-                    </p>
-                    <div className="grid md:grid-cols-3 gap-6">
-                        {[
-                            { icon: <Music size={28} />, title: t('features.granular.title'), desc: t('features.granular.desc') },
-                            { icon: <Zap size={28} />, title: t('features.tremolo.title'), desc: t('features.tremolo.desc') },
-                            { icon: <Sliders size={28} />, title: t('features.filters.title'), desc: t('features.filters.desc') },
-                            { icon: <Play size={28} />, title: t('features.tempo.title'), desc: t('features.tempo.desc') },
-                            { icon: <Shield size={28} />, title: t('features.safety.title'), desc: t('features.safety.desc') },
-                            { icon: <Cpu size={28} />, title: t('features.automation.title'), desc: t('features.automation.desc') },
-                        ].map((f) => (
-                            <div key={f.title} className="p-8 bg-surface-raised border border-border rounded-xl hover:bg-surface-overlay transition-colors duration-300 group">
-                                <div className="w-12 h-12 bg-surface-overlay rounded-lg flex items-center justify-center text-text-primary mb-6 group-hover:text-accent transition-colors">
-                                    {f.icon}
-                                </div>
-                                <h3 className="text-h4 font-display text-text-primary mb-3">{f.title}</h3>
-                                <p className="text-text-secondary leading-relaxed text-sm">{f.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-                </motion.section>
-
-                {/* ── 4. ARCHITECTURE ── */}
-                <motion.section {...mv} className="mb-20 md:mb-28">
-                    <h2 className="text-h2 font-display text-text-primary text-center mb-16">
-                        {t('architecture.title')}
-                    </h2>
-                    <div className="grid md:grid-cols-3 gap-6">
-                        {[
-                            { icon: <Layers size={28} />, title: t('architecture.apvts.title'), desc: t('architecture.apvts.desc') },
-                            { icon: <Cpu size={28} />, title: t('architecture.process.title'), desc: t('architecture.process.desc') },
-                            { icon: <Play size={28} />, title: t('architecture.player.title'), desc: t('architecture.player.desc') },
-                        ].map((a) => (
-                            <div key={a.title} className="p-8 bg-surface-raised border border-border rounded-xl hover:bg-surface-overlay transition-colors duration-300 group">
-                                <div className="w-12 h-12 bg-surface-overlay rounded-lg flex items-center justify-center text-text-primary mb-6 group-hover:text-accent transition-colors">
-                                    {a.icon}
-                                </div>
-                                <h3 className="text-h4 font-display text-text-primary mb-3">{a.title}</h3>
-                                <p className="text-text-secondary leading-relaxed text-sm">{a.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-                </motion.section>
-
-                {/* ── 5. CHALLENGES ── */}
-                <motion.section {...mv} className="mb-20 md:mb-28">
-                    <h2 className="text-h2 font-display text-text-primary mb-8">
-                        {t('challenges.title')}
-                    </h2>
-                    <div className="grid md:grid-cols-3 gap-6">
-                        {[
-                            {
-                                title: t('challenges.c1_title'),
-                                problem: t('challenges.c1_problem'),
-                                solution: t('challenges.c1_solution'),
-                            },
-                            {
-                                title: t('challenges.c2_title'),
-                                problem: t('challenges.c2_problem'),
-                                solution: t('challenges.c2_solution'),
-                            },
-                            {
-                                title: t('challenges.c3_title'),
-                                problem: t('challenges.c3_problem'),
-                                solution: t('challenges.c3_solution'),
-                            },
-                        ].map((c) => (
-                            <div key={c.title} className="p-6 bg-surface-raised border border-border rounded-xl">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <AlertTriangle size={16} className="text-accent" />
-                                    <h4 className="font-display font-bold text-text-primary text-sm">{c.title}</h4>
-                                </div>
-                                <p className="text-text-secondary text-sm mb-3">
-                                    <span className="text-text-primary font-mono text-xs">PROBLEM </span>
-                                    {c.problem}
-                                </p>
-                                <p className="text-text-secondary text-sm">
-                                    <span className="text-accent font-mono text-xs">SOLUTION </span>
-                                    {c.solution}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                </motion.section>
-
-                {/* ── 6. CODE DEEP DIVE ── */}
-                <motion.section {...mv} className="mb-20 md:mb-28">
-                    <button
-                        onClick={() => setCodeOpen(!codeOpen)}
-                        className="w-full flex items-center justify-between p-6 bg-surface-raised border border-border rounded-xl hover:bg-surface-overlay transition-colors group"
-                    >
-                        <div className="flex items-center gap-3">
-                            <Cpu size={20} className="text-accent" />
-                            <h2 className="text-h3 font-display text-text-primary">{t('code.title')}</h2>
-                        </div>
-                        <ChevronDown
-                            size={20}
-                            className={`text-text-secondary transition-transform duration-300 ${codeOpen ? 'rotate-180' : ''}`}
-                        />
-                    </button>
-                    {codeOpen && (
-                        <div className="mt-4">
-                            <CodeViewer snippets={CODE_SNIPPETS} />
-                        </div>
-                    )}
-                </motion.section>
-
-                {/* ── 7. FOOTER ── */}
-                <motion.section {...mv} className="border-t border-border pt-16">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-12">
-                        <div>
-                            <h3 className="text-h3 font-display text-text-primary mb-2">{t('cta.title')}</h3>
-                            <p className="text-text-secondary text-sm">{t('cta.subtitle')}</p>
-                        </div>
-                        <div className="flex gap-4">
-                            <a
-                                href="https://github.com/Szunias/AudioQ/releases"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-surface rounded-lg font-mono text-sm hover:bg-accent-hover transition-colors"
-                            >
-                                <Download size={16} />
-                                {t('cta.download')}
-                            </a>
-                            <a
-                                href="https://github.com/Szunias/AudioQ"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-surface-raised border border-border rounded-lg font-mono text-sm text-text-primary hover:border-accent/40 transition-colors"
-                            >
-                                <Github size={16} />
-                                {t('cta.source')}
-                            </a>
-                        </div>
-                    </div>
-
-                    <div className="mt-0 text-center">
+                    {/* Header */}
+                    <motion.section className="pb-2 md:col-span-3" variants={itemVars}>
                         <Link
-                            to="/projects/amorak"
-                            className="inline-flex items-center gap-3 px-8 py-4 bg-surface-raised border border-border rounded-xl hover:border-accent/40 hover:bg-surface-overlay transition-colors group"
+                            to="/projects"
+                            className="inline-flex items-center gap-2 text-text-tertiary hover:text-text-primary transition-colors text-sm mb-6"
                         >
-                            <span className="text-text-secondary text-sm">{t('nav.next_project')}</span>
-                            <span className="text-text-primary font-display font-bold group-hover:text-accent transition-colors">Amorak</span>
-                            <ArrowRight size={18} className="text-text-secondary group-hover:text-accent group-hover:translate-x-1 transition-all" />
+                            <ArrowLeft size={14} />
+                            {t('nav.back')}
                         </Link>
-                    </div>
-                </motion.section>
-            </main>
+                        <h1 className="font-display text-h2 sm:text-h1 leading-tight text-text-primary md:text-hero">
+                            {t('hero.title')}<span className="text-accent">{t('hero.subtitle')}</span>
+                        </h1>
+                        <p className="mt-3 font-mono text-body-sm tracking-wide text-text-tertiary">
+                            {t('hero.tagline')}
+                        </p>
+                    </motion.section>
+
+                    {/* Plugin logo + video */}
+                    <motion.div
+                        className="group overflow-hidden rounded-xl border border-border bg-black md:col-span-1"
+                        variants={itemVars}
+                    >
+                        <div className="relative h-full min-h-[280px] sm:min-h-[320px] w-full">
+                            <video
+                                autoPlay loop muted playsInline
+                                poster="/assets/images/projects-audioq/AudioQPicture.png"
+                                className="h-full w-full object-cover"
+                            >
+                                <source src="/assets/images/projects-audioq/AudioQ-Showcase.mp4" type="video/mp4" />
+                            </video>
+                        </div>
+                    </motion.div>
+
+                    {/* About the project */}
+                    <motion.section
+                        className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-2 md:p-8"
+                        variants={itemVars}
+                    >
+                        <SectionLabel>{t('section.about')}</SectionLabel>
+                        <p className="text-body leading-7 sm:leading-8 text-[#d1cbc3] max-w-[72ch]">
+                            {t('about.text')}
+                        </p>
+                        <div className="flex flex-wrap gap-2 mt-6">
+                            {TECH_PILLS.map((pill) => (
+                                <span key={pill} className="px-3 py-1.5 border border-border rounded-md text-xs text-text-secondary font-mono">
+                                    {pill}
+                                </span>
+                            ))}
+                        </div>
+                    </motion.section>
+
+                    {/* Code deep dive */}
+                    <motion.section className="md:col-span-3" variants={itemVars}>
+                        <button
+                            onClick={() => setCodeOpen((o) => !o)}
+                            className="w-full flex items-center justify-between p-6 rounded-xl border border-border bg-surface-raised hover:bg-surface-overlay transition-colors"
+                        >
+                            <SectionLabel>{t('section.code')}</SectionLabel>
+                            <ChevronDown
+                                size={18}
+                                className={`text-text-tertiary transition-transform duration-300 ${codeOpen ? 'rotate-180' : ''}`}
+                            />
+                        </button>
+                        {codeOpen && (
+                            <div className="mt-4">
+                                <CodeViewer snippets={CODE_SNIPPETS} />
+                            </div>
+                        )}
+                    </motion.section>
+
+                    {/* Footer */}
+                    <motion.section
+                        className="rounded-xl border border-accent/20 bg-surface-raised p-6 md:col-span-3 md:p-8"
+                        variants={itemVars}
+                    >
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                            <div className="flex flex-wrap gap-3">
+                                <a
+                                    href="https://github.com/Szunias/AudioQ/releases"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-3 font-semibold text-surface transition-all hover:bg-accent-hover active:scale-[0.98]"
+                                >
+                                    <Download size={16} />
+                                    {t('download.cta')}
+                                </a>
+                                <a
+                                    href="https://github.com/Szunias/AudioQ"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 rounded-lg border border-border px-5 py-3 font-semibold text-text-primary transition-all hover:border-accent hover:bg-surface-overlay active:scale-[0.98]"
+                                >
+                                    <Github size={16} />
+                                    {t('download.github')}
+                                </a>
+                            </div>
+                            <Link
+                                to="/projects/amorak"
+                                className="inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-3 font-semibold text-surface transition-all hover:bg-accent-hover active:scale-[0.98]"
+                            >
+                                {t('nav.next_project')}
+                                <ArrowRight size={16} />
+                            </Link>
+                        </div>
+                    </motion.section>
+                </motion.div>
+            </div>
         </div>
     );
 };
