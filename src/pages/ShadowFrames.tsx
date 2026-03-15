@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Volume2, Radio, Eye, ChevronDown, ExternalLink, FileText, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ExternalLink, FileText, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 import SEO from '../components/layout/SEO';
@@ -234,10 +234,10 @@ const ShadowFrames = () => {
                     <div className="grid lg:grid-cols-2 gap-12 items-start">
                         <div className="space-y-6">
                             <p className="text-text-secondary leading-relaxed">
-                                {t('concept.p1', 'Shadow Frames is a psychological horror game set in a 1960s Irish pub rendered entirely in black and white. Anomalies appear every 30 to 50 seconds — glasses levitate, shadows move on their own, chairs spin. Audio is how you find them.')}
+                                {t('concept.p1', 'Shadow Frames is a psychological horror game set in a 1960s Irish pub rendered entirely in black and white. Anomalies appear every 30 to 50 seconds. Glasses levitate, shadows move on their own, chairs spin. Audio is how you find them.')}
                             </p>
                             <p className="text-text-secondary leading-relaxed">
-                                {t('concept.p2', 'Sound is not atmosphere — it is the gameplay mechanic. Mute the game and you are blind. Every creak, whisper, and rattle is directional information that guides you to the next anomaly. Photograph it, pin it to the board, piece together the story.')}
+                                {t('concept.p2', 'Sound is not atmosphere, it is the gameplay mechanic. Mute the game and you are blind. Every creak, whisper, and rattle is directional information that guides you to the next anomaly. Photograph it, pin it to the board, piece together the story.')}
                             </p>
                         </div>
 
@@ -278,19 +278,16 @@ const ShadowFrames = () => {
 
                     <div className="grid md:grid-cols-3 gap-6">
                         <SystemCard
-                            icon={<Volume2 size={28} />}
                             title={t('systems.footstep.title', 'Footstep Detection')}
-                            desc={t('systems.footstep.desc', 'Physics line-trace fires downward from the player\'s feet each step. The hit result\'s Physical Material maps to a Wwise Switch — wood, tiles, concrete, creaky wood. New surfaces are added in the editor without touching code.')}
+                            desc={t('systems.footstep.desc', 'Physics line-trace fires downward from the player\'s feet each step. The hit result\'s Physical Material maps to a Wwise Switch: wood, tiles, concrete, creaky wood. New surfaces are added in the editor without touching code.')}
                         />
                         <SystemCard
-                            icon={<Radio size={28} />}
                             title={t('systems.proximity.title', 'Enemy Proximity')}
                             desc={t('systems.proximity.desc', 'A hysteresis state machine with dual thresholds (start at 70%, stop at 60%) prevents audio flickering when the enemy hovers near a boundary. RTPC smoothly scales dread ambience and stress breathing with distance.')}
                         />
                         <SystemCard
-                            icon={<Eye size={28} />}
                             title={t('systems.anomaly.title', 'Anomaly System')}
-                            desc={t('systems.anomaly.desc', 'Three-stage detection: alert burst on spawn, directional hint for location, sustained presence loop until captured. RTPC tension scaling drives intensity. Spatial audio cues are the only way to find anomalies — no UI markers.')}
+                            desc={t('systems.anomaly.desc', 'Three-stage detection: alert burst on spawn, directional hint for location, sustained presence loop until captured. RTPC tension scaling drives intensity. Spatial audio cues are the only way to find anomalies. No UI markers.')}
                         />
                     </div>
                 </motion.section>
@@ -307,17 +304,17 @@ const ShadowFrames = () => {
                     {/* Sound Design Showcase Video */}
                     <div className="mb-8">
                         <div className="aspect-video rounded-xl overflow-hidden border border-border bg-black">
-                            <video
-                                controls
-                                playsInline
-                                poster="/assets/images/projects-shadowframes/Menugif.mp4"
-                                className="w-full h-full object-cover"
-                            >
-                                <source src="/assets/images/projects-shadowframes/videodemoprod3withwwiseprofiler.mp4" type="video/mp4" />
-                            </video>
+                            <iframe
+                                src="https://www.youtube.com/embed/zTvxEx0Aoxc"
+                                title={t('gallery.video_label', 'Sound Design Showcase')}
+                                className="w-full h-full"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                loading="lazy"
+                            />
                         </div>
                         <p className="text-text-secondary text-sm mt-3 text-center">
-                            {t('gallery.video_label', 'Sound Design Showcase with Wwise Profiler')}
+                            {t('gallery.video_label', 'Sound Design Showcase')}
                         </p>
                     </div>
 
@@ -357,7 +354,7 @@ const ShadowFrames = () => {
                                 {t('code.title', 'Technical Deep Dive')}
                             </h2>
                             <p className="text-text-secondary text-sm mt-1">
-                                {t('code.hint', '3 annotated C++ snippets — click lines with dots for explanations')}
+                                {t('code.hint', '3 annotated C++ snippets. Click lines with dots for explanations')}
                             </p>
                         </div>
                         <ChevronDown
@@ -465,11 +462,8 @@ const ShadowFrames = () => {
     );
 };
 
-const SystemCard = ({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) => (
-    <div className="p-8 bg-surface-raised border border-border rounded-xl hover:bg-surface-overlay transition-colors duration-300 group">
-        <div className="w-12 h-12 bg-surface-overlay rounded-lg flex items-center justify-center text-text-primary mb-6 group-hover:text-accent transition-colors">
-            {icon}
-        </div>
+const SystemCard = ({ title, desc }: { title: string; desc: string }) => (
+    <div className="p-8 bg-surface-raised border border-border rounded-xl hover:bg-surface-overlay transition-colors duration-300">
         <h3 className="text-h4 font-display text-text-primary mb-3">{title}</h3>
         <p className="text-text-secondary leading-relaxed text-sm">{desc}</p>
     </div>
