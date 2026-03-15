@@ -1,61 +1,42 @@
 {
-  "transientica": {
-    "seo_title": "Transientica | AudioLab",
-    "seo_description": "Stemgestuurde ritmegame met realtime ML audioclassificatie. Beatbox geluiden activeren gameplay acties met minder dan 60ms latentie.",
-    "cta": {
-      "back": "Terug",
-      "view_all": "Bekijk Alle Projecten"
-    },
-    "features": {
-      "architecture": {
-        "desc": "Python doet de analyse. Unity draait de game. Ze praten via UDP/OSC.",
-        "title": "Gesplitste pipeline"
-      },
-      "ml": {
-        "desc": "Ieders beatbox klinkt anders. Het systeem traint op jouw stem en microfoon voor betere nauwkeurigheid.",
-        "title": "Leert je Stem"
-      },
-      "realtime": {
-        "desc": "Onder 60ms latentie—cruciaal voor ritmegames. Kleine buffers, geoptimaliseerde ML pipeline.",
-        "title": "Lage latentie"
-      },
-      "title": "Hoe het werkt"
-    },
-    "hero": {
-      "badge": "ONDERZOEKSPROJECT",
-      "description": "Je beatboxt in de microfoon. De game herkent welk geluid je maakte en triggert de bijbehorende actie. Geen controller—alleen je stem en een microfoon.",
-      "title_main": "TRANSIENTICA",
-      "title_sub": "AUDIOLAB"
-    },
-    "stats": {
-      "accuracy_label": "Nauwkeurigheid",
-      "accuracy_value": "92%",
-      "classes_label": "Geluidsklassen",
-      "classes_value": "3",
-      "latency_label": "Latentie",
-      "latency_value": "<60ms",
-      "year_label": "Jaar",
-      "year_value": "2025"
-    },
-    "tags": {
-      "audio": "Realtime Audio",
-      "ml": "Machine Learning",
-      "python": "Python",
-      "unity": "Unity"
-    },
-    "technical": {
-      "optimization": {
-        "desc": "Kleine buffers (512 samples), snel model (RandomForest), UDP communicatie.",
-        "title": "Hoe ik het snel hield"
-      },
-      "spectral": {
-        "desc": "Kicks hebben veel laag. Snares zijn ruis. Ik heb het systeem geleerd deze spectrale kenmerken te herkennen met tijdsverloop.",
-        "title": "Spectrale Analyse"
-      },
-      "title": "Technische Diepgang"
-    },
-    "video": {
-      "watch_demo": "Bekijk Demo"
-    }
-  }
+  "seo_title": "Transientica AudioLab | ML Audio Classificatie",
+  "seo_description": "Stemgestuurde ritmegame met realtime ML audioclassificatie. Beatbox geluiden activeren gameplay acties met minder dan 60ms latentie.",
+  "hero.badge": "Onderzoeksproject",
+  "hero.title": "Transientica",
+  "hero.subtitle": "AudioLab",
+  "hero.desc": "Beatbox in de microfoon, speel een ritmegame. Realtime ML-herkenning met minder dan 60ms latentie.",
+  "stats.latency_label": "Latentie",
+  "stats.latency_value": "< 45ms",
+  "stats.accuracy_label": "Nauwkeurigheid",
+  "stats.accuracy_value": "92%",
+  "stats.classes_label": "Geluidsklassen",
+  "stats.classes_value": "3",
+  "stats.dataset_label": "Samples",
+  "stats.dataset_value": "2000+",
+  "features.title": "Hoe het werkt",
+  "features.realtime.title": "Lage latentie",
+  "features.realtime.desc": "Onder 60ms latentie — cruciaal voor een ritmegame. Kleine FFT-buffers (512 samples), geoptimaliseerde ML pipeline, UDP voor OSC-communicatie.",
+  "features.ml.title": "Leert je Stem",
+  "features.ml.desc": "Ieders beatbox klinkt anders. Het systeem traint op jouw stem en microfoon voor betere nauwkeurigheid. 30 voorbeelden per geluidsklasse, dan spelen.",
+  "features.architecture.title": "Gesplitste Pipeline",
+  "features.architecture.desc": "Python doet audio-analyse en ML-inferentie. Unity draait de gameplay. Ze communiceren via UDP/OSC — schone scheiding, makkelijk debuggen.",
+  "technical.title": "Technische Deep Dive",
+  "technical.spectral.title": "Spectrale Analyse",
+  "technical.spectral.desc": "Kicks hebben veel laag. Snares zijn ruis. Het systeem leert deze spectrale kenmerken herkennen — spectrale centroïde, zero-crossing rate en envelope shape scheiden de drie klassen.",
+  "technical.optimization.title": "Optimalisatie",
+  "technical.optimization.desc": "Klein FFT-venster (512 samples, 11ms), circulaire buffer om I/O-blokkering te elimineren, lichtgewicht SVM-classifier (2ms inferentie vs 15ms voor een neuraal net), en UDP-transport voor minimale overhead.",
+  "challenges.title": "Uitdagingen & Oplossingen",
+  "challenges.c1_title": "Latentie onder 50ms krijgen",
+  "challenges.c1_problem": "Eerste versie had 180ms vertraging — veel te langzaam voor een ritmegame.",
+  "challenges.c1_solution": "FFT-venster verkleind, circulaire buffer toegevoegd, overgeschakeld naar lichtgewicht SVM, UDP voor OSC. Teruggebracht naar 45ms bij 92% nauwkeurigheid.",
+  "challenges.c2_title": "Kick vs Snare Verwarring",
+  "challenges.c2_problem": "Beide hebben scherpe transiënten en breedbandruis — de classifier bleef verkeerd raden.",
+  "challenges.c2_solution": "Spectrale centroïde, zero-crossing rate en envelope shape toegevoegd als features. Aparte modellen gebouwd voor solo hits vs patronen. Nauwkeurigheid ging van 78% naar 92%.",
+  "challenges.c3_title": "Geen Audio Dropouts",
+  "challenges.c3_problem": "Zware ML-verwerking veroorzaakte buffer underruns op tragere machines.",
+  "challenges.c3_solution": "Threads gescheiden met een lock-free ringbuffer. Audio blokkeert nooit, ML draait op eigen worker thread.",
+  "video.watch_demo": "Bekijk Demo",
+  "video.tech_demo": "Technische Demo",
+  "nav.back": "Terug naar projecten",
+  "nav.next_project": "Volgend project"
 }

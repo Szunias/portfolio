@@ -1,61 +1,42 @@
 {
-  "transientica": {
-    "seo_title": "Transientica | AudioLab",
-    "seo_description": "Gra rytmiczna sterowana głosem z klasyfikacją audio ML w czasie rzeczywistym. Dźwięki beatboxu wyzwalają akcje w grze z opóźnieniem poniżej 60ms.",
-    "cta": {
-      "back": "Wróć",
-      "view_all": "Zobacz Wszystkie Projekty"
-    },
-    "features": {
-      "architecture": {
-        "desc": "Python robi analizę. Unity odpala grę. Gadają przez UDP/OSC.",
-        "title": "Podzielony pipeline"
-      },
-      "ml": {
-        "desc": "Każdy beatboxuje inaczej. System uczy się twojego głosu i mikrofonu żeby działać lepiej.",
-        "title": "Uczy się Twojego Głosu"
-      },
-      "realtime": {
-        "desc": "Poniżej 60ms opóźnienia—kluczowe dla gier rytmicznych. Małe bufory, zoptymalizowany pipeline ML.",
-        "title": "Niska latencja"
-      },
-      "title": "Jak to działa"
-    },
-    "hero": {
-      "badge": "PROJEKT BADAWCZY",
-      "description": "Beatboxujesz do mikrofonu. Gra rozpoznaje jaki dźwięk zrobiłeś i odpala odpowiednią akcję. Bez kontrolera—tylko głos i mikrofon.",
-      "title_main": "TRANSIENTICA",
-      "title_sub": "AUDIOLAB"
-    },
-    "stats": {
-      "accuracy_label": "Dokładność",
-      "accuracy_value": "92%",
-      "classes_label": "Klasy Dźwięku",
-      "classes_value": "3",
-      "latency_label": "Opóźnienie",
-      "latency_value": "<60ms",
-      "year_label": "Rok",
-      "year_value": "2025"
-    },
-    "tags": {
-      "audio": "Audio Czasu Rzeczywistego",
-      "ml": "Uczenie Maszynowe",
-      "python": "Python",
-      "unity": "Unity"
-    },
-    "technical": {
-      "optimization": {
-        "desc": "Małe bufory (512 próbek), szybki model (RandomForest) i komunikacja po UDP.",
-        "title": "Jak to utrzymałem szybkim"
-      },
-      "spectral": {
-        "desc": "Stopy mają dużo dołu. Werbel to szum. Nauczyłem system rozpoznawać te cechy w widmie i czasie.",
-        "title": "Analiza Spektralna"
-      },
-      "title": "Analiza Techniczna"
-    },
-    "video": {
-      "watch_demo": "Obejrzyj Demo"
-    }
-  }
+  "seo_title": "Transientica AudioLab | Klasyfikacja Audio ML",
+  "seo_description": "Gra rytmiczna sterowana głosem z klasyfikacją audio ML w czasie rzeczywistym. Dźwięki beatboxu wyzwalają akcje w grze z opóźnieniem poniżej 60ms.",
+  "hero.badge": "Projekt Badawczy",
+  "hero.title": "Transientica",
+  "hero.subtitle": "AudioLab",
+  "hero.desc": "Beatboxujesz do mikrofonu, grasz w grę rytmiczną. Rozpoznawanie ML w czasie rzeczywistym z opóźnieniem poniżej 60ms.",
+  "stats.latency_label": "Opóźnienie",
+  "stats.latency_value": "< 45ms",
+  "stats.accuracy_label": "Dokładność",
+  "stats.accuracy_value": "92%",
+  "stats.classes_label": "Klasy Dźwięku",
+  "stats.classes_value": "3",
+  "stats.dataset_label": "Próbki",
+  "stats.dataset_value": "2000+",
+  "features.title": "Jak to działa",
+  "features.realtime.title": "Niska latencja",
+  "features.realtime.desc": "Poniżej 60ms opóźnienia — kluczowe dla gry rytmicznej. Małe bufory FFT (512 próbek), zoptymalizowany pipeline ML, UDP do komunikacji OSC.",
+  "features.ml.title": "Uczy się Twojego Głosu",
+  "features.ml.desc": "Każdy beatboxuje inaczej. System trenuje się na twoim głosie i mikrofonie dla lepszej dokładności. 30 przykładów na klasę dźwięku, potem grasz.",
+  "features.architecture.title": "Podzielony Pipeline",
+  "features.architecture.desc": "Python obsługuje analizę audio i wnioskowanie ML. Unity obsługuje rozgrywkę. Komunikują się przez UDP/OSC — czyste rozdzielenie, łatwe debugowanie.",
+  "technical.title": "Szczegóły Techniczne",
+  "technical.spectral.title": "Analiza Spektralna",
+  "technical.spectral.desc": "Stopy mają dużo dołu. Werbel to szum. System uczy się rozpoznawać te cechy spektralne — centroid spektralny, współczynnik przejść przez zero i kształt obwiedni rozdzielają trzy klasy.",
+  "technical.optimization.title": "Optymalizacja",
+  "technical.optimization.desc": "Małe okno FFT (512 próbek, 11ms), bufor cykliczny eliminujący blokowanie I/O, lekki klasyfikator SVM (2ms wnioskowania vs 15ms dla sieci neuronowej) i transport UDP dla minimalnego narzutu.",
+  "challenges.title": "Wyzwania i Rozwiązania",
+  "challenges.c1_title": "Opóźnienie poniżej 50ms",
+  "challenges.c1_problem": "Pierwsza wersja miała 180ms opóźnienia — za wolno na grę rytmiczną.",
+  "challenges.c1_solution": "Zmniejszyłem okno FFT, dodałem bufor cykliczny, zamieniłem na lekki SVM, przeszedłem na UDP dla OSC. Spadło do 45ms przy 92% dokładności.",
+  "challenges.c2_title": "Kick kontra Snare",
+  "challenges.c2_problem": "Oba mają ostre transjenty i szum szerokopasmowy — klasyfikator ciągle się mylił.",
+  "challenges.c2_solution": "Dodałem centroid spektralny, współczynnik przejść przez zero i kształt obwiedni jako cechy. Zbudowałem osobne modele dla pojedynczych uderzeń i wzorców. Dokładność wzrosła z 78% do 92%.",
+  "challenges.c3_title": "Bez przerw w audio",
+  "challenges.c3_problem": "Ciężkie przetwarzanie ML powodowało niedopełnienia buforów na wolniejszych maszynach.",
+  "challenges.c3_solution": "Rozdzieliłem wątki z bezblokadowym ringbufferem. Audio nigdy nie blokuje, ML działa na swoim wątku roboczym.",
+  "video.watch_demo": "Obejrzyj Demo",
+  "video.tech_demo": "Demo Techniczne",
+  "nav.back": "Powrót do projektów",
+  "nav.next_project": "Następny projekt"
 }
