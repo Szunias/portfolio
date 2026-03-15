@@ -1,280 +1,49 @@
 {
-  "back": "← Terug",
-  "hero": {
-    "badge": "Audio Plugin",
-    "brandMain": "AUDIO<span style=\"color: #ff6ea9;\">Q</span>",
-    "subtitle": "Een sampler plugin die ik heb gemaakt in C++/JUCE. Heeft granulaire synthese, tremolo, filters en een compressor. Werkt als VST3 en AU.",
-    "downloadPlugin": "Download plugin",
-    "viewGithub": "Bekijk op GitHub"
-  },
-  "features": {
-    "badge": "Functies",
-    "title": "Wat het doet",
-    "subtitle": "Ik heb dit gemaakt om problemen op te lossen die ik had tijdens het maken van muziek. Alles hier is iets dat ik echt gebruik.",
-    "f1": {
-      "title": "Drag & Drop Laden",
-      "desc": "Drop elk audiobestand in het venster. Je ziet de golfvorm direct. Ondersteunt WAV, AIFF, MP3—eigenlijk alles wat JUCE kan lezen."
-    },
-    "f2": {
-      "title": "Granulaire Synthese",
-      "desc": "Hakt de audio in kleine stukjes en speelt ze af met randomisatie. Goed voor ambient texturen en vreemd geluidsontwerp. Je kunt korrelgrootte, positie-randomisatie en crossfade-smoothing realtime aanpassen."
-    },
-    "f3": {
-      "title": "Custom Tremolo-effect",
-      "desc": "Ik heb deze DSP vanaf nul geschreven. Het is een per-sample sinusoïdale LFO voor amplitudemodulatie. Klinkt veel beter dan alleen volume automatiseren. Rate en depth reageren direct."
-    },
-    "f4": {
-      "title": "Filtersysteem",
-      "desc": "High-pass en low-pass TPT filters van JUCE. Zero-delay ontwerp betekent dat ze direct reageren zonder artefacten. Volledig 20Hz-20kHz bereik—snijd de lows, snijd de highs, wat je maar nodig hebt."
-    },
-    "f5": {
-      "title": "Ingebouwde Compressor",
-      "desc": "JUCE's compressor-module. Threshold, ratio, attack, release—allemaal automatiseerbaar. Nuttig om dynamiek te temmen wanneer je granulaire texturen laagt."
-    },
-    "f6": {
-      "title": "Tempo-controle",
-      "desc": "Versnel of vertraag samples van 20-300 BPM met JUCE's ResamplingAudioSource. Extreme time-stretching creëert vreemde artefacten. Je kunt custom loop-regio's instellen om specifieke secties te isoleren."
-    },
-    "f7": {
-      "title": "Dubbele Golfvormweergave",
-      "desc": "Twee golfvormweergaves—één toont het origineel, één toont wat eruit komt na verwerking. Handig om te zien wat granular modus en tempo-aanpassingen daadwerkelijk doen."
-    },
-    "f8": {
-      "title": "Volume-veiligheidssysteem",
-      "desc": "Stopt afspelen als pieken veilige niveaus overschrijden. Redde mijn koptelefoon tijdens testen. Voorkomt feedbackloops en clipping."
-    },
-    "f9": {
-      "title": "Volledige DAW-automatisering",
-      "desc": "Elke parameter is automatiseerbaar. Ik heb AudioProcessorValueTreeState gebruikt dus je DAW sessiestatus is altijd opgeslagen. Stel een parameter in, sla je project op, open het opnieuw—alles staat waar je het achterliet."
-    }
-  },
-  "demo": {
-    "badge": "Demo",
-    "title": "Zie AudioQ in Actie"
-  },
-  "tech": {
-    "badge": "Tech Stack",
-    "title": "Wat ik gebruikte"
-  },
-  "cta": {
-    "title": "Download AudioQ",
-    "subtitle": "Gratis VST3/AU plugin voor Windows, macOS en Linux.",
-    "download": "Download laatste versie",
-    "source": "Bekijk broncode"
-  },
-  "apvts": {
-    "badge": "JUCE-architectuur",
-    "title": "AudioProcessorValueTreeState",
-    "subtitle": "Parameterbeheersysteem voor automatisering en statusopslag",
-    "what": {
-      "title": "Wat het doet",
-      "desc": "Beheert pluginparameters en handelt DAW-automatisering af. Onthoudt instellingen tussen sessies."
-    },
-    "how": {
-      "title": "Hoe het werkt",
-      "desc": "Elke parameter krijgt een bereik en standaardwaarde. De DAW leest en automatiseert ze automatisch."
-    },
-    "why": {
-      "title": "Waarom deze aanpak",
-      "desc": "JUCE handelt threading en statusbeheer intern af. Geen handmatige code nodig voor automatisering."
-    },
-    "result": {
-      "title": "Resultaat",
-      "desc": "Alle parameters automatiseerbaar zonder extra code."
-    },
-    "code": {
-      "title": "PluginProcessor.cpp — Parameterdefinitie",
-      "what": "Creëert en retourneert pluginparameters met bereiken en standaardwaarden.",
-      "how": "Elke AudioParameterFloat wordt toegevoegd aan een vector en geconverteerd naar ParameterLayout.",
-      "why": "Enkele definitiepunt houdt parameters consistent. Alle parameters zijn standaard automatiseerbaar.",
-      "gain": {
-        "title": "Gain-parameter",
-        "text": "Regelt uitgangsvolume. Bereik 0.0-3.1623 (~+10dB) maakt zowel verzwakking als versterking mogelijk."
-      },
-      "tempo": {
-        "title": "Tempo-parameter",
-        "text": "Regelt afspeelsnelheid via resampling. Bereik 20-300 BPM maakt extreme tijdrekeffecten mogelijk."
-      },
-      "filters": {
-        "title": "Filterparameters",
-        "text": "Low-pass en high-pass filter cutoff-frequenties. Bereik 20Hz-20kHz voor volledige tooncontrole."
-      }
-    }
-  },
-  "processBlock": {
-    "badge": "Audioverwerking",
-    "title": "processBlock-implementatie",
-    "subtitle": "Realtime audiopipeline",
-    "what": {
-      "title": "Wat het doet",
-      "desc": "Belangrijkste audio-callback aangeroepen door de DAW. Verwerkt audiobuffers in realtime met minimale latentie."
-    },
-    "how": {
-      "title": "Hoe het werkt",
-      "desc": "Haalt audio op van de file player, past vervolgens filters → compressor → tremolo sequentieel toe. Leest parameters van APVTS."
-    },
-    "why": {
-      "title": "Waarom deze aanpak",
-      "desc": "De audiothread heeft strikte timing-eisen. APVTS biedt lock-free parametertoegang zonder blokkering."
-    },
-    "result": {
-      "title": "Resultaat",
-      "desc": "Lage latentie met correcte effectvolgorde. Geen audio-dropouts tijdens parameterwijzigingen."
-    },
-    "code": {
-      "title": "PluginProcessor.cpp — Audioverwerking",
-      "what": "Past alle effecten toe op inkomende audiobuffers.",
-      "how": "Leest APVTS-parameters, haalt audio op, past DSP sequentieel toe, en past dan finale gain toe.",
-      "why": "Sequentiële verwerking behoudt correcte effectvolgorde. JUCE DSP biedt SIMD-optimalisatie.",
-      "safety": {
-        "title": "Volume-veiligheid",
-        "text": "Stopt automatisch afspelen wanneer gevaarlijke niveaus worden gedetecteerd. Beschermt luidsprekers en gehoor."
-      },
-      "params": {
-        "title": "Parameter Lezen",
-        "text": "APVTS biedt thread-safe toegang via atomic pointers. Lock-free operatie voor de audiothread."
-      },
-      "tempo": {
-        "title": "Tempo-controle",
-        "text": "Berekent de resampling-ratio op basis van BPM. AudioFilePlayer gebruikt ResamplingAudioSource voor snelheidsaanpassingen."
-      },
-      "fetch": {
-        "title": "Audio Ophalen",
-        "text": "AudioFilePlayer vult de buffer met samples uit het geladen bestand. Handelt zowel looping als granulaire modi af."
-      },
-      "filterConfig": {
-        "title": "Filterconfiguratie",
-        "text": "State Variable TPT filters reageren direct op cutoff-veranderingen zonder artefacten. Cutoffs worden bijgewerkt voor het verwerken van elke buffer."
-      },
-      "dsp": {
-        "title": "DSP-verwerking",
-        "text": "AudioBlock en ProcessContext maken SIMD-optimalisatie mogelijk. In-place verwerking maximaliseert prestatie."
-      }
-    }
-  },
-  "tremolo": {
-    "badge": "Custom DSP",
-    "title": "Tremolo-effect implementatie",
-    "subtitle": "Per-sample LFO voor amplitudemodulatie",
-    "what": {
-      "title": "Wat het doet",
-      "desc": "Amplitudemodulatie met een laagfrequente oscillator. Creëert ritmische pulsatie-effecten."
-    },
-    "how": {
-      "title": "Hoe het werkt",
-      "desc": "Sinusgolf LFO wordt berekend voor elke sample. Elke sample wordt vermenigvuldigd met de LFO-waarde op basis van de depth-parameter."
-    },
-    "why": {
-      "title": "Waarom eigen implementatie",
-      "desc": "Handmatig geschreven voor volledige controle over het effect. Per-sample verwerking garandeert vloeiende modulatie."
-    },
-    "result": {
-      "title": "Resultaat",
-      "desc": "Vloeiende tremolo met precieze rate- en depth-controle. Geen aliasing of stepping-artefacten."
-    },
-    "code": {
-      "title": "PluginProcessor.cpp — Tremolo-implementatie",
-      "what": "Custom tremolo met sinusgolf LFO voor amplitudemodulatie.",
-      "how": "Fase-increment wordt berekend per sample. Sinusgolf wordt toegepast op alle kanalen.",
-      "why": "Per-sample verwerking zorgt voor gladheid. Handmatige implementatie maakt precieze controle mogelijk.",
-      "phase": {
-        "title": "Fase-increment",
-        "text": "Converteert Hz naar radialen per sample voor sinusgeneratie. Zorgt dat de LFO één cyclus voltooit bij de opgegeven rate."
-      },
-      "lfo": {
-        "title": "LFO-generatie",
-        "text": "Sinusgolf bereik van 0 tot 1. Formule (1-depth)+(depth*LFO) zorgt dat depth=0 geen modulatie produceert."
-      },
-      "processing": {
-        "title": "Per-sample Verwerking",
-        "text": "Past modulatie toe op alle kanalen. Directe buffertoegang maximaliseert prestatie."
-      },
-      "wrap": {
-        "title": "Fase-wrapping",
-        "text": "Wikkelt fase om overflow te voorkomen. Houdt waarde in 0-2π bereik voor continue sinusgeneratie."
-      }
-    }
-  },
-  "filters": {
-    "badge": "JUCE DSP",
-    "title": "Filters & compressor",
-    "subtitle": "DSP-modules uit JUCE-bibliotheek",
-    "what": {
-      "title": "Wat gebruikt wordt",
-      "desc": "Gebouwd met JUCE's StateVariableTPTFilter en Compressor modules. Beide zijn SIMD-geoptimaliseerd."
-    },
-    "how": {
-      "title": "Hoe ze werken",
-      "desc": "TPT-filters gebruiken Topology-Preserving Transform voor zero-delay filtering. Compressor gebruikt look-ahead met gladde enveloppen."
-    },
-    "why": {
-      "title": "Waarom JUCE DSP",
-      "desc": "JUCE DSP-modules zijn al geoptimaliseerd en bewezen in de praktijk. Bespaart ontwikkeltijd terwijl kwaliteit gegarandeerd wordt."
-    },
-    "result": {
-      "title": "Resultaat",
-      "desc": "Professionele filtering en compressie met laag CPU-gebruik. Parameters reageren vloeiend op veranderingen."
-    },
-    "code": {
-      "title": "PluginProcessor.cpp — DSP Setup",
-      "what": "Initialisatie in prepareToPlay, aangeroepen voor audioverwerking start.",
-      "how": "ProcessSpec definieert samplerate, blokgrootte en aantal kanalen. Alle modules worden voorbereid met dezelfde spec.",
-      "why": "prepareToPlay wordt aangeroepen voor verwerking begint. DSP-modules hebben de correcte samplerate en buffergroottes nodig.",
-      "spec": {
-        "title": "ProcessSpec-configuratie",
-        "text": "Definieert de audioverwerkingsomgeving. Alle JUCE DSP-modules vereisen deze spec om consistente samplerate te garanderen."
-      },
-      "filterInit": {
-        "title": "Filter-initialisatie",
-        "text": "StateVariableTPTFilter biedt zero-delay filtering via TPT-ontwerp. Voorbereid en gereset voor schone start."
-      },
-      "compInit": {
-        "title": "Compressor-initialisatie",
-        "text": "JUCE Compressor handelt dynamisch bereikontrole af. Voorbereid met dezelfde spec voor juiste werking."
-      }
-    }
-  },
-  "audioPlayer": {
-    "badge": "Audio-afspelen",
-    "title": "AudioFilePlayer-systeem",
-    "subtitle": "Bestand laden, afspelen en tempomanipulatie",
-    "what": {
-      "title": "Wat het regelt",
-      "desc": "Beheert bestand laden, afspelen, looping en tempo-controle. Gebouwd met AudioTransportSource en ResamplingAudioSource."
-    },
-    "how": {
-      "title": "Hoe het gebouwd is",
-      "desc": "Bestanden laden in AudioFormatReaderSource, gewikkeld in ResamplingAudioSource, en verbonden met AudioTransportSource."
-    },
-    "why": {
-      "title": "Waarom deze architectuur",
-      "desc": "JUCE's AudioSource-architectuur handhaaft schone scheiding. Elke bron handelt één verantwoordelijkheid af."
-    },
-    "result": {
-      "title": "Resultaat",
-      "desc": "Soepel afspelen met 20-300 BPM tempo-controle. Betrouwbare looping en granulaire modus-ondersteuning."
-    },
-    "code": {
-      "title": "AudioFilePlayer.cpp — Afspeelsysteem",
-      "what": "AudioSource-keten voor afspelen met tempo-controle.",
-      "how": "Reader is gewikkeld in ResamplingAudioSource en verbonden met AudioTransportSource.",
-      "why": "ResamplingAudioSource wijzigt snelheid met behoud van kwaliteit. AudioTransportSource biedt play/stop/loop-functionaliteit.",
-      "reading": {
-        "title": "Bestand Lezen",
-        "text": "AudioFormatManager detecteert het bestandsformaat en creëert de juiste reader. Ondersteunt WAV, AIFF, MP3 en meer."
-      },
-      "resampling": {
-        "title": "Resampling Setup",
-        "text": "ResamplingAudioSource maakt tempo-controle mogelijk. Ratio van 1.0 is normale snelheid, 2.0 is dubbele snelheid."
-      },
-      "transport": {
-        "title": "Transport Setup",
-        "text": "AudioTransportSource biedt play/stop/loop-besturing. Beheert afspeelpositie en handelt looping automatisch af."
-      },
-      "tempoControl": {
-        "title": "Tempo-controle",
-        "text": "Resampling-ratio wijzigt afspeelsnelheid. Berekend uit BPM: ratio = gewenstBPM / 120."
-      }
-    }
-  }
+  "seo_title": "AudioQ | VST Sampler Plugin",
+  "seo_description": "Sampler plugin gebouwd in C++/JUCE met granulaire synthese, custom tremolo DSP, zero-delay filters en compressor. VST3 en AU.",
+  "hero.badge": "Audio Plugin",
+  "hero.title": "Audio",
+  "hero.subtitle": "Q",
+  "hero.desc": "Een sampler plugin die ik heb gemaakt in C++/JUCE. Granulaire synthese, handgeschreven tremolo, zero-delay filters, compressor. Alles is DAW-automatiseerbaar.",
+  "hero.download": "Download Plugin",
+  "hero.github": "Bekijk op GitHub",
+  "features.title": "Wat het doet",
+  "features.subtitle": "Ik heb dit gemaakt om problemen op te lossen die ik had tijdens het maken van muziek. Alles hier is iets dat ik echt gebruik.",
+  "features.granular.title": "Granulaire Synthese",
+  "features.granular.desc": "Hakt audio in kleine stukjes en speelt ze af met randomisatie. Goed voor ambient texturen en vreemd geluidsontwerp. Korrelgrootte, positie-randomisatie en crossfade-smoothing realtime aanpasbaar.",
+  "features.tremolo.title": "Custom Tremolo DSP",
+  "features.tremolo.desc": "Handgeschreven per-sample sinusoïdale LFO voor amplitudemodulatie. Klinkt veel beter dan alleen volume automatiseren. Rate en depth reageren direct.",
+  "features.filters.title": "Zero-Delay Filters",
+  "features.filters.desc": "High-pass en low-pass TPT filters van JUCE. Zero-delay ontwerp betekent directe respons zonder artefacten. Volledig 20Hz-20kHz bereik.",
+  "features.tempo.title": "Tempo-controle",
+  "features.tempo.desc": "Versnel of vertraag samples van 20-300 BPM met JUCE's ResamplingAudioSource. Extreme time-stretching creëert vreemde artefacten. Custom loop-regio's om specifieke secties te isoleren.",
+  "features.safety.title": "Volume-veiligheid",
+  "features.safety.desc": "Stopt afspelen als pieken veilige niveaus overschrijden. Redde mijn koptelefoon tijdens testen. Voorkomt feedbackloops en clipping.",
+  "features.automation.title": "Volledige DAW-automatisering",
+  "features.automation.desc": "Elke parameter is automatiseerbaar. AudioProcessorValueTreeState houdt DAW sessiestatus opgeslagen. Stel een parameter in, sla je project op, open opnieuw — alles staat waar je het achterliet.",
+  "architecture.title": "Plugin-architectuur",
+  "architecture.apvts.title": "Parametersysteem (APVTS)",
+  "architecture.apvts.desc": "Beheert alle pluginparameters en handelt DAW-automatisering af. AudioProcessorValueTreeState biedt thread-safe atomaire toegang — geen locks op de audiothread. Onthoudt instellingen tussen sessies.",
+  "architecture.process.title": "Realtime Process Block",
+  "architecture.process.desc": "Belangrijkste audio-callback aangeroepen door de DAW. Leest parameters lock-free, vult buffer van de file player, past filters, compressor en tremolo sequentieel toe. Lage latentie met correcte effectvolgorde.",
+  "architecture.player.title": "Audio File Player",
+  "architecture.player.desc": "Beheert bestand laden, afspelen, looping en tempo-controle. AudioFormatReaderSource gewikkeld in ResamplingAudioSource voor snelheidswijzigingen, verbonden met AudioTransportSource voor transportbesturing.",
+  "challenges.title": "Uitdagingen & Oplossingen",
+  "challenges.c1_title": "Audiothread-veiligheid",
+  "challenges.c1_problem": "DAW audio-callback heeft strikte realtime-eisen — elke lock of allocatie veroorzaakt audio-dropouts.",
+  "challenges.c1_solution": "APVTS gebruikt voor lock-free parametertoegang via atomic pointers. Geen heap-allocaties in processBlock. Alle DSP-status vooraf gealloceerd in prepareToPlay.",
+  "challenges.c2_title": "Granulaire Artefacten",
+  "challenges.c2_problem": "Korrelgrenzen veroorzaakten klikken en poppen. Abrupte sneden tussen korrels produceerden harde artefacten.",
+  "challenges.c2_solution": "Crossfade-smoothing toegevoegd tussen korrels met instelbare overlap. Positie-randomisatie breekt repetitieve patronen op. Resultaat: vloeiende ambient texturen zonder klikken.",
+  "challenges.c3_title": "Gevaarlijke Volumepieken",
+  "challenges.c3_problem": "Extreme tempo- en granulaire instellingen produceerden soms onverwachte volumepieken die luidsprekers of gehoor konden beschadigen.",
+  "challenges.c3_solution": "Veiligheidssysteem gebouwd dat piekniveaus monitort en afspelen automatisch stopt bij overschrijding. Redde mijn koptelefoon meer dan eens tijdens ontwikkeling.",
+  "code.title": "Code Deep Dive",
+  "code.hint": "5 geannoteerde C++ fragmenten uit de broncode",
+  "cta.title": "Download AudioQ",
+  "cta.subtitle": "Gratis VST3/AU plugin voor Windows, macOS en Linux.",
+  "cta.download": "Download Laatste Versie",
+  "cta.source": "Bekijk Broncode",
+  "nav.back": "Terug naar projecten",
+  "nav.next_project": "Volgend project"
 }
