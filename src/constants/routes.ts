@@ -12,6 +12,7 @@ export const ROUTES = {
   AMORAK: '/projects/amorak',
   MIDDLEWARE_OPTIMIZATION: '/projects/middleware-optimization',
   RICHTER: '/projects/richter',
+  AKANTILADO: '/projects/akantilado',
   MUSIC: '/music',
   ABOUT: '/about',
   CONTACT: '/contact',
