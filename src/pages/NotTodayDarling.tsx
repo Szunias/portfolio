@@ -1,11 +1,21 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Download } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Download, ExternalLink } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 
 import SEO from '../components/layout/SEO';
+import ImageLightbox from '../components/features/ImageLightbox';
 
-const TECH_PILLS = ['MetaSounds', 'Unreal Engine', 'Sound Cues', 'Reaper'] as const;
+const TECH_PILLS = ['MetaSounds', 'Unreal Engine 5', 'Sound Cues', 'Reaper'] as const;
+
+const GALLERY_IMAGES = [
+    { src: 'assets/images/projects-nottoday/MSP_MonoArray.png', caption: 'gallery.caption_mono' },
+    { src: 'assets/images/projects-nottoday/MS_Pickup.png', caption: 'gallery.caption_pickup' },
+    { src: 'assets/images/projects-nottoday/MS_Powerups.png', caption: 'gallery.caption_powerups' },
+    { src: 'assets/images/projects-nottoday/SoundClasses.png', caption: 'gallery.caption_classes' },
+    { src: 'assets/images/projects-nottoday/SoundClassMixes.png', caption: 'gallery.caption_mixes' },
+    { src: 'assets/images/projects-nottoday/AttenuationPresets.png', caption: 'gallery.caption_attenuation' },
+] as const;
 
 const gridContainerVariants = {
     hidden: { opacity: 0 },
@@ -60,7 +70,7 @@ const NotTodayDarling = () => {
                     whileInView="visible"
                     viewport={{ once: true }}
                 >
-                    {/* Header */}
+                    {/* ── Row 1: Header ── */}
                     <motion.section className="pb-2 md:col-span-3" variants={itemVars}>
                         <Link
                             to="/projects"
@@ -75,9 +85,16 @@ const NotTodayDarling = () => {
                         <p className="mt-3 font-mono text-body-sm tracking-wide text-text-tertiary">
                             {t('hero.subtitle')}
                         </p>
+                        <div className="flex flex-wrap gap-2 mt-4">
+                            {TECH_PILLS.map((pill) => (
+                                <span key={pill} className="px-3 py-1.5 border border-border rounded-md text-xs text-text-secondary font-mono">
+                                    {pill}
+                                </span>
+                            ))}
+                        </div>
                     </motion.section>
 
-                    {/* Hero video */}
+                    {/* ── Row 2: Game video + Concept ── */}
                     <motion.div
                         className="group overflow-hidden rounded-xl border border-border bg-black md:col-span-1"
                         variants={itemVars}
@@ -98,43 +115,58 @@ const NotTodayDarling = () => {
                         </div>
                     </motion.div>
 
-                    {/* About the project */}
                     <motion.section
                         className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-2 md:p-8"
                         variants={itemVars}
                     >
-                        <SectionLabel>{t('section.about')}</SectionLabel>
-                        <p className="text-body leading-7 sm:leading-8 text-[#d1cbc3] max-w-[72ch]">
-                            {t('about.text')}
+                        <SectionLabel>{t('section.concept')}</SectionLabel>
+                        <p className="text-accent font-display text-lg mb-4">
+                            {t('concept.hook')}
                         </p>
-                        <div className="flex flex-wrap gap-2 mt-6">
-                            {TECH_PILLS.map((pill) => (
-                                <span key={pill} className="px-3 py-1.5 border border-border rounded-md text-xs text-text-secondary font-mono">
-                                    {pill}
-                                </span>
-                            ))}
+                        <div className="max-w-[72ch] space-y-4">
+                            <p className="text-body leading-7 sm:leading-8 text-[#d1cbc3]">
+                                {t('concept.p1')}
+                            </p>
+                            <p className="text-body leading-7 sm:leading-8 text-[#d1cbc3]">
+                                {t('concept.p2')}
+                            </p>
+                        </div>
+                        <div className="flex flex-wrap gap-x-8 gap-y-3 mt-6 pt-6 border-t border-border">
+                            <div>
+                                <p className="font-mono text-[10px] uppercase tracking-wider text-[#8d8882]">{t('meta.role')}</p>
+                                <p className="text-sm text-text-primary font-display font-medium">Solo Audio Designer</p>
+                            </div>
+                            <div>
+                                <p className="font-mono text-[10px] uppercase tracking-wider text-[#8d8882]">{t('meta.team')}</p>
+                                <p className="text-sm text-text-primary font-display font-medium">8-person team</p>
+                            </div>
+                            <div>
+                                <p className="font-mono text-[10px] uppercase tracking-wider text-[#8d8882]">{t('meta.duration')}</p>
+                                <p className="text-sm text-text-primary font-display font-medium">12 weeks</p>
+                            </div>
                         </div>
                     </motion.section>
 
-                    {/* Trailer */}
+                    {/* ── Row 3: Audio Systems + Sound Showcase ── */}
                     <motion.section
                         className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-2 md:p-8"
                         variants={itemVars}
                     >
-                        <SectionLabel>{t('section.trailer')}</SectionLabel>
-                        <div className="aspect-video rounded-lg overflow-hidden bg-black">
-                            <iframe
-                                src="https://www.youtube-nocookie.com/embed/6lFEvyicea0"
-                                title={t('hero.title') + ' Trailer'}
-                                className="w-full h-full"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                                loading="lazy"
-                            />
-                        </div>
+                        <SectionLabel>{t('section.systems')}</SectionLabel>
+                        <ul className="space-y-5">
+                            {(['engine', 'mix', 'voices'] as const).map((key) => (
+                                <li key={key} className="border-l-2 border-accent/40 pl-4">
+                                    <p className="font-display text-sm font-medium text-text-primary">
+                                        {t(`systems.${key}.title`)}
+                                    </p>
+                                    <p className="mt-1 text-body-sm leading-relaxed text-text-secondary">
+                                        {t(`systems.${key}.desc`)}
+                                    </p>
+                                </li>
+                            ))}
+                        </ul>
                     </motion.section>
 
-                    {/* Sound showcase */}
                     <motion.section
                         className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-1 md:p-8"
                         variants={itemVars}
@@ -147,21 +179,93 @@ const NotTodayDarling = () => {
                         </div>
                     </motion.section>
 
-                    {/* Footer */}
+                    {/* ── Row 4: MetaSounds Gallery ── */}
                     <motion.section
-                        className="rounded-xl border border-accent/20 bg-surface-raised p-6 md:col-span-3 md:p-8"
+                        className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-3 md:p-8"
                         variants={itemVars}
                     >
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                        <SectionLabel>{t('section.gallery')}</SectionLabel>
+                        <ImageLightbox images={GALLERY_IMAGES} />
+                    </motion.section>
+
+                    {/* ── Row 5: Challenges & Solutions ── */}
+                    <motion.section
+                        className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-3 md:p-8"
+                        variants={itemVars}
+                    >
+                        <SectionLabel>{t('section.challenges')}</SectionLabel>
+                        <div className="grid md:grid-cols-2 gap-5">
+                            {([1, 2] as const).map((n) => (
+                                <div key={n} className="border-l-2 border-accent/40 pl-5 space-y-3">
+                                    <p className="font-display text-sm font-medium text-text-primary">
+                                        {t(`challenge${n}.title`)}
+                                    </p>
+                                    <div>
+                                        <p className="font-mono text-[10px] uppercase tracking-wider text-[#8d8882] mb-1">
+                                            {t('challenge_label.hard')}
+                                        </p>
+                                        <p className="text-body-sm leading-relaxed text-text-secondary">
+                                            {t(`challenge${n}.hard`)}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="font-mono text-[10px] uppercase tracking-wider text-[#8d8882] mb-1">
+                                            {t('challenge_label.did')}
+                                        </p>
+                                        <p className="text-body-sm leading-relaxed text-text-secondary">
+                                            {t(`challenge${n}.did`)}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.section>
+
+                    {/* ── Row 6: Trailer image + Links & CTA ── */}
+                    <motion.div
+                        className="group overflow-hidden rounded-xl border border-border bg-surface-raised md:col-span-1"
+                        variants={itemVars}
+                    >
+                        <div className="relative h-full min-h-[240px] w-full">
+                            <img
+                                src="/assets/images/projects-nottoday/highqualitythumbnail.jpg"
+                                alt="Not Today, Darling! gameplay"
+                                className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.04]"
+                                loading="lazy"
+                            />
+                        </div>
+                    </motion.div>
+
+                    <motion.section
+                        className="rounded-xl border border-accent/20 bg-surface-raised p-6 md:col-span-2 md:p-8"
+                        variants={itemVars}
+                    >
+                        <SectionLabel>{t('section.links')}</SectionLabel>
+                        <div className="space-y-3 mb-8">
+                            <a
+                                href="https://www.youtube.com/watch?v=6lFEvyicea0"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-3 p-4 border border-border rounded-lg hover:border-accent/40 transition-colors group"
+                            >
+                                <ExternalLink size={18} className="text-accent" />
+                                <span className="text-text-primary group-hover:text-accent transition-colors text-sm">
+                                    {t('links.trailer')}
+                                </span>
+                            </a>
                             <a
                                 href="https://freyaspes.itch.io/not-today-darling"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 rounded-lg border border-border px-5 py-3 font-semibold text-text-primary transition-all hover:border-accent hover:bg-surface-overlay active:scale-[0.98]"
+                                className="flex items-center gap-3 p-4 border border-border rounded-lg hover:border-accent/40 transition-colors group"
                             >
-                                <Download size={16} />
-                                {t('download.cta')}
+                                <Download size={18} className="text-accent" />
+                                <span className="text-text-primary group-hover:text-accent transition-colors text-sm">
+                                    {t('links.download')}
+                                </span>
                             </a>
+                        </div>
+                        <div className="flex justify-end">
                             <Link
                                 to="/projects/transientica_audiolab"
                                 className="inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-3 font-semibold text-surface transition-all hover:bg-accent-hover active:scale-[0.98]"
