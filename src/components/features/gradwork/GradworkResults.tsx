@@ -158,13 +158,13 @@ const GradworkResults = ({ t }: { t: (key: string) => string }) => {
                             >
                                 <div className="font-bold text-text-primary mb-2">{model.name}</div>
                                 <div className="flex justify-between text-sm mb-1">
-                                    <span className="text-text-secondary">Latency</span>
+                                    <span className="text-text-secondary">{t('results.label_latency')}</span>
                                     <span className="font-mono text-error">
                                         {t(`results.models.${model.key}.latency`)}
                                     </span>
                                 </div>
                                 <div className="flex justify-between text-sm mb-2">
-                                    <span className="text-text-secondary">Quality</span>
+                                    <span className="text-text-secondary">{t('results.label_quality')}</span>
                                     <span className="text-accent">
                                         {t(`results.models.${model.key}.quality`)}
                                     </span>

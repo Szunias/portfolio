@@ -26,13 +26,13 @@ const NotFound = () => {
       <p className="text-xl text-text-secondary mb-4 font-mono tracking-widest uppercase">{t('404.title', 'DEAD AIR')}</p>
 
       <p className="text-text-secondary max-w-md mb-8 text-body">
-        {t('404.desc', 'The requested frequency could not be tuned.')}
+        {t('404.desc', 'Nothing here but dead air. The page you\'re looking for was moved, deleted, or never existed.')}
       </p>
 
       <Link to="/">
         <Button variant="secondary" size="lg" className="gap-2" tabIndex={-1}>
           <Home size={18} />
-          <span>{t('404.button', 'Return to Base')}</span>
+          <span>{t('404.button', 'Back to safety')}</span>
         </Button>
       </Link>
     </div>

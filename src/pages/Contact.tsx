@@ -40,7 +40,7 @@ const Contact = () => {
     <div className="min-h-screen bg-surface">
       <SEO
         title={t('seo_title', 'Contact')}
-        description={t('seo_description', 'Get in touch with Igor Szuniewicz for game audio, tool development, and middleware integration.')}
+        description={t('seo_description', 'Contact Igor Szuniewicz about game audio, technical sound design, Wwise integration, or freelance work.')}
       />
 
       <div className="relative z-10 pt-24 pb-16 px-6 sm:pt-28 sm:pb-20 md:px-12 md:pt-32 md:pb-28 lg:px-16">
@@ -52,9 +52,9 @@ const Contact = () => {
             animate="visible"
             variants={variants}
           >
-            <h1 className="font-display text-h1 text-text-primary mb-4">{t('contact_title', 'Get In Touch')}</h1>
+            <h1 className="font-display text-h1 text-text-primary mb-4">{t('contact_title', 'Say Hi')}</h1>
             <p className="text-text-secondary text-body max-w-2xl mx-auto">
-              {t('contact_intro', "I'm currently looking for internship opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!")}
+              {t('contact_intro', "I do game audio, technical sound design, Wwise integration, and spatial audio work. Got a project, a question, or just want to chat about Wwise? Hit me up.")}
             </p>
           </motion.div>
 
@@ -145,7 +145,7 @@ const Contact = () => {
                 <div className="mt-8 pt-6 border-t border-border">
                    <div className="inline-flex items-center gap-2 bg-success/10 text-success border border-success/20 rounded-md px-3 py-1.5">
                       <div className="w-2 h-2 rounded-full bg-success animate-pulse-glow"></div>
-                      <span className="text-body-sm font-medium">{t('contact_availability_internship', 'Available for internship')}</span>
+                      <span className="text-body-sm font-medium">{t('contact_availability_internship', 'Available for work')}</span>
                    </div>
                 </div>
 

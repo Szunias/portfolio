@@ -18,7 +18,7 @@ const Projects = () => {
     <div className="min-h-screen bg-surface pt-32 pb-24 relative overflow-hidden">
       <SEO
         title={t('nav.projects', 'Projects')}
-        description={t('projects.description', 'A collection of my work in game audio, implementation, and tool development.')}
+        description={t('projects.description', 'Game audio, sound design, and the tools I built to make it all work.')}
       />
 
       <div className="max-w-content-wide mx-auto px-6 md:px-12 lg:px-16 relative z-10">
@@ -30,10 +30,10 @@ const Projects = () => {
               {t('projects.overline', 'PORTFOLIO')}
             </span>
             <h1 className="text-h1 md:text-hero font-display text-text-primary mb-4">
-              {t('projects.title', 'Selected Works')}
+              {t('projects.title', 'Projects')}
             </h1>
             <p className="text-text-secondary max-w-lg text-body-sm md:text-body leading-relaxed">
-              {t('projects.description', 'Exploring the intersection of sound, code, and interactive experiences.')}
+              {t('projects.description', 'Game audio, sound design, and the tools I built to make it all work.')}
             </p>
           </div>
 

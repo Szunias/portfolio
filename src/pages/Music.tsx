@@ -14,7 +14,7 @@ const Music = () => {
     <div className="min-h-screen bg-surface">
         <SEO
           title={t('page_title', 'Music')}
-          description={t('page_description', 'Original compositions from film scores, electronic music, and experimental sound design.')}
+          description={t('page_description', 'Music I\'ve written for student films, game projects, and personal experiments.')}
         />
 
         {/* HERO SECTION */}

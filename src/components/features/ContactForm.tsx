@@ -139,7 +139,7 @@ const ContactForm = () => {
   return (
     <div className="bg-surface-raised p-8 rounded-xl border border-border">
       <h3 className="text-h3 font-display text-text-primary mb-6">
-        {t('contact_form_title', 'Send a Message')}
+        {t('contact_form_title', 'Drop me a line')}
       </h3>
 
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-5" noValidate>
@@ -195,7 +195,7 @@ const ContactForm = () => {
             required
             aria-required="true"
             className="w-full bg-surface border border-border rounded-md py-3 px-4 text-text-primary placeholder:text-text-tertiary focus:border-accent focus:shadow-input-focus focus:outline-none transition-all duration-200 resize-none"
-            placeholder={t('contact_form_message_placeholder', 'Tell me about your project or opportunity...')}
+            placeholder={t('contact_form_message_placeholder', 'Tell me about your project')}
           ></textarea>
         </div>
 
@@ -208,7 +208,7 @@ const ContactForm = () => {
           {status === 'idle' && (
             <>
               <Send size={18} aria-hidden="true" className="group-hover:translate-x-0.5 transition-transform" />
-              {t('contact_form_submit', 'Send Message')}
+              {t('contact_form_submit', 'Send')}
             </>
           )}
           {status === 'sending' && (
@@ -220,7 +220,7 @@ const ContactForm = () => {
           {status === 'sent' && (
             <>
               <CheckCircle size={18} aria-hidden="true" />
-              {t('contact_form_sent', "Message sent! I'll get back to you soon.")}
+              {t('contact_form_sent', 'Message sent!')}
             </>
           )}
           {status === 'error' && (
@@ -247,7 +247,7 @@ const ContactForm = () => {
 
         {/* Aria-live region for screen reader announcements */}
         <div aria-live="polite" className="sr-only">
-          {status === 'sent' && t('contact_form_sent', "Message sent! I'll get back to you soon.")}
+          {status === 'sent' && t('contact_form_sent', 'Message sent!')}
           {status === 'error' && t('contact_form_error', 'Failed to send. Try again.')}
           {status === 'cooldown' && t('contact_form_cooldown', 'Message sent! Please wait before sending another.')}
           {status === 'sending' && t('contact_form_sending', 'Sending...')}

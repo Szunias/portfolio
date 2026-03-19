@@ -26,7 +26,7 @@ const SEO = ({
   const { i18n } = useTranslation('common');
   const location = useLocation();
   const siteTitle = "Igor Szuniewicz | Audio Designer & Developer";
-  const defaultDescription = "Portfolio of Igor Szuniewicz - Audio Designer & Developer specializing in Game Audio, Wwise/FMOD implementation, and Interactive Systems.";
+  const defaultDescription = "Igor Szuniewicz - Audio Designer & Developer. Game audio, sound design, Wwise/FMOD implementation, and audio programming.";
 
   const fullTitle = title ? `${title} | Igor Szuniewicz` : siteTitle;
   const metaDescription = description || defaultDescription;

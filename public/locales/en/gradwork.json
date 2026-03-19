@@ -15,7 +15,15 @@
     "title": "What I tested and why",
     "intro": "Games contain hundreds of pre-recorded sound files. Every shot, footstep, and explosion is a WAV file someone recorded in a studio. AI could generate these on the fly. Every sound would be unique, adapted to the situation, without gigabytes of files. The problem: latency. If a sound arrives even 100ms late, players notice.",
     "approach": "I built a prototype. Unity sends requests to a Python server, which calls an AI model and streams back audio. I tested three models: ElevenLabs (cloud API, best quality but latency spikes), MMAudio (video-to-audio model I adapted for games, runs locally), and AudioGen (Meta's text-to-audio, most consistent but still slow).",
-    "architecture_title": "How it works"
+    "architecture_title": "How it works",
+    "arch_unity": "Unity",
+    "arch_unity_sub": "Game Engine",
+    "arch_python": "Python Server",
+    "arch_python_sub": "WebSocket",
+    "arch_ai": "AI Model",
+    "arch_ai_sub": "Generation",
+    "arch_cache": "Cache",
+    "arch_cache_sub": "Storage"
   },
   "results": {
     "title": "Measured Latency",
@@ -38,6 +46,8 @@
       }
     },
     "summary_title": "Model Comparison",
+    "label_latency": "Latency",
+    "label_quality": "Quality",
     "models": {
       "elevenlabs": {
         "latency": "1-12s",
@@ -98,10 +108,10 @@
   },
   "session2": {
     "title": "Local AI Testing (It Failed)",
-    "content": "Tried running MusicGen and AudioLDM2 on student hardware with no GPU. Results: 4-10 seconds per sound. Way too slow for any gameplay that needs fast reactions. Local-only AI generation isn't viable yet."
+    "content": "I tried running MusicGen and AudioLDM2 on student hardware with no GPU. Results: 4-10 seconds per sound. Way too slow for any gameplay that needs fast reactions. Local-only AI generation isn't viable yet."
   },
   "session4": {
     "title": "Stress-Testing the Hybrid Approach",
-    "content": "Combined procedural audio with cloud AI in a hybrid system. Pushed it hard: 100 simultaneous requests handled in under 200ms. Hit 2253 generations per second. Procedural path runs at 5ms, cloud path at 2-4 seconds. The hybrid model works for real games."
+    "content": "I combined procedural audio with cloud AI in a hybrid system and pushed it hard: 100 simultaneous requests handled in under 200ms. Hit 2253 generations per second. Procedural path runs at 5ms, cloud path at 2-4 seconds. The hybrid model works for real games."
   }
 }

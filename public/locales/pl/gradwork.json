@@ -15,7 +15,15 @@
     "title": "Co testowałem i dlaczego",
     "intro": "Gry zawierają setki nagranych wcześniej plików dźwiękowych. Każdy strzał, krok i eksplozja to plik WAV nagrany w studiu. AI mogłoby generować je na bieżąco. Każdy dźwięk byłby unikalny, dostosowany do sytuacji, bez gigabajtów plików. Problem: latencja. Jeśli dźwięk przyjdzie choćby 100ms za późno, gracz to zauważy.",
     "approach": "Zbudowałem prototyp. Unity wysyła żądania do serwera w Pythonie, który wywołuje model AI i streamuje z powrotem audio. Przetestowałem trzy modele: ElevenLabs (cloud API, najlepsza jakość, ale latencja skacze), MMAudio (model video-to-audio, który zaadaptowałem do gier, działa lokalnie) i AudioGen (text-to-audio od Meta, najbardziej stabilny, ale wciąż wolny).",
-    "architecture_title": "Jak to działa"
+    "architecture_title": "Jak to działa",
+    "arch_unity": "Unity",
+    "arch_unity_sub": "Silnik gry",
+    "arch_python": "Serwer Python",
+    "arch_python_sub": "WebSocket",
+    "arch_ai": "Model AI",
+    "arch_ai_sub": "Generowanie",
+    "arch_cache": "Cache",
+    "arch_cache_sub": "Przechowywanie"
   },
   "results": {
     "title": "Zmierzona latencja",
@@ -38,6 +46,8 @@
       }
     },
     "summary_title": "Porównanie modeli",
+    "label_latency": "Latencja",
+    "label_quality": "Jakość",
     "models": {
       "elevenlabs": {
         "latency": "1-12s",
@@ -97,11 +107,11 @@
     "status": "Praca licencjacka | 2025 | Igor Szuniewicz"
   },
   "session2": {
-    "title": "Sesja #2: Rzeczywistość lokalnego AI (Porażka)",
-    "content": "Data: 2025-12-05. Próbowaliśmy uruchomić MusicGen i AudioLDM2 lokalnie na sprzęcie studenckim (bez CUDA). Wynik: 4-10 sekund opóźnienia na dźwięk. Efekt: Czyste lokalne AI na razie się nie nadaje do gameplay z szybkimi reakcjami. Potrzebujemy szybszego rozwiązania."
+    "title": "Lokalne AI (Porażka)",
+    "content": "Próbowałem uruchomić MusicGen i AudioLDM2 lokalnie na sprzęcie studenckim bez GPU. Wynik: 4-10 sekund na dźwięk. Za wolno na gameplay wymagający szybkich reakcji. Czyste lokalne AI na razie się nie nadaje."
   },
   "session4": {
-    "title": "Sesja #4: Stress Test modelu hybrydowego",
-    "content": "Data: 2025-12-05. Przetestowaliśmy nową architekturę 'Hybrydową' (Proceduralna + Cloud AI). \n- Test obciążeniowy: 100 jednoczesnych żądań obsłużonych w <200ms.\n- Przepustowość: osiągnięto 2253 generacji/s.\n- Opóźnienie: 5.02ms (Proceduralna) vs 2-4s (Cloud).\nPodejście hybrydowe nadaje się do prawdziwych gier."
+    "title": "Stress Test podejścia hybrydowego",
+    "content": "Połączyłem audio proceduralne z cloud AI w systemie hybrydowym i obciążyłem go porządnie: 100 jednoczesnych żądań obsłużonych w poniżej 200ms. Osiągnąłem 2253 generacji na sekundę. Ścieżka proceduralna: 5ms, ścieżka cloud: 2-4s. Podejście hybrydowe nadaje się do prawdziwych gier."
   }
 }

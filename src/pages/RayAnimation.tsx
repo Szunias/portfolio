@@ -148,6 +148,26 @@ const RayAnimation = () => {
                         </div>
                     </motion.section>
 
+                    {/* Sync & Production */}
+                    <motion.section
+                        className="rounded-xl border border-border bg-surface-raised p-6 md:col-span-3 md:p-8"
+                        variants={itemVars}
+                    >
+                        <SectionLabel>{t('section.sync')}</SectionLabel>
+                        <div className="grid gap-4 sm:grid-cols-3">
+                            {(['s1', 's2', 's3'] as const).map((key) => (
+                                <div key={key} className="border-l-2 border-accent/40 pl-4">
+                                    <p className="font-display text-sm font-medium text-text-primary">
+                                        {t(`sync.${key}.title`)}
+                                    </p>
+                                    <p className="mt-1 text-body-sm leading-relaxed text-text-secondary">
+                                        {t(`sync.${key}.desc`)}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.section>
+
                     {/* Footer */}
                     <motion.section
                         className="rounded-xl border border-accent/20 bg-surface-raised p-6 md:col-span-3 md:p-8"

@@ -146,7 +146,7 @@ const Transientica = () => {
                         <FeatureCard
                             icon={<Activity size={28} />}
                             title={t('features.realtime.title', 'Low Latency')}
-                            desc={t('features.realtime.desc', 'Under 60ms latency — crucial for a rhythm game. Small FFT buffers (512 samples), optimized ML pipeline, UDP for OSC communication.')}
+                            desc={t('features.realtime.desc', 'Under 60ms latency — you need that for a rhythm game. Small FFT buffers (512 samples), a lean ML pipeline, and UDP for OSC communication.')}
                         />
                         <FeatureCard
                             icon={<Cpu size={28} />}
@@ -156,7 +156,7 @@ const Transientica = () => {
                         <FeatureCard
                             icon={<Layers size={28} />}
                             title={t('features.architecture.title', 'Split Pipeline')}
-                            desc={t('features.architecture.desc', 'Python handles audio analysis and ML inference. Unity handles gameplay. They talk over UDP/OSC — clean separation, easy to debug.')}
+                            desc={t('features.architecture.desc', 'Python handles audio analysis and ML inference. Unity handles gameplay. They talk over UDP/OSC. Each side can be debugged and updated independently.')}
                         />
                     </div>
                 </motion.section>
@@ -174,7 +174,7 @@ const Transientica = () => {
                                     {t('technical.spectral.title', 'Spectral Analysis')}
                                 </h3>
                                 <p className="text-text-secondary leading-relaxed">
-                                    {t('technical.spectral.desc', 'Kicks have lots of low end. Snares are noise. The system learns to recognize these spectral features over time — spectral centroid, zero-crossing rate, and envelope shape separate the three classes.')}
+                                    {t('technical.spectral.desc', 'Kicks have lots of low end. Snares are noise. The classifier picks up on these differences. Spectral centroid, zero-crossing rate, and envelope shape separate the three classes.')}
                                 </p>
                             </div>
                             <div>

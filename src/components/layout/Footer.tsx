@@ -55,7 +55,7 @@ const Footer = () => {
             <div>
               <h3 className="font-display text-h4 text-text-primary mb-2">Igor Szuniewicz</h3>
               <p className="text-text-secondary text-body-sm max-w-xs">
-                {t('hero.label', 'Audio Designer & Developer')}
+                {t('nav.role_label', 'Audio Designer')}
               </p>
             </div>
 

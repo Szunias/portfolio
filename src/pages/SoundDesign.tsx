@@ -30,15 +30,15 @@ const SoundDesign = () => {
                 >
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent/10 text-accent text-sm font-bold uppercase tracking-wider mb-8 border border-accent/20">
                         <Music size={16} />
-                        {t('hero.badge', 'Sound Design Portfolio')}
+                        {t('hero.badge')}
                     </div>
 
                     <h1 className="text-h1 md:text-hero font-display text-text-primary mb-6 leading-tight">
-                        {t('hero.title', 'Sonic Landscapes')}
+                        {t('hero.title')}
                     </h1>
 
                     <p className="text-lg md:text-h3 text-text-secondary max-w-3xl mx-auto mb-12 font-light leading-relaxed">
-                        {t('hero.subtitle', 'A collection of linear media redesigns and implementation showcases.')}
+                        {t('hero.subtitle')}
                     </p>
 
                     {/* Tools Grid */}
@@ -66,24 +66,24 @@ const SoundDesign = () => {
             <main className="relative z-20 max-w-content-wide mx-auto px-6 md:px-12 lg:px-16 pb-32">
                 <section className="mb-20 md:mb-28">
                     <h2 className="text-h2 font-display text-text-primary mb-12 border-l-4 border-accent pl-6">
-                        {t('section1.title', 'Redesigns & Showcases')}
+                        {t('section1.title')}
                     </h2>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                         {/* Video 1: God of War */}
                         <VideoCard
-                            title={t('section1.video1.title', 'God of War - Krotos Redesign')}
-                            desc={t('section1.video1.description', 'Sound redesign using Krotos Studio for creature vocalizations and environmental textures.')}
-                            badge={t('section1.video1.badge', 'Redesign')}
+                            title={t('section1.video1.title')}
+                            desc={t('section1.video1.description')}
+                            badge={t('section1.video1.badge')}
                             videoSrc="/assets/videos/krotosvideo.mp4"
                             poster="/assets/images/godofwarkrotos.jpg"
                         />
 
                         {/* Video 2: Baldur's Gate */}
                         <VideoCard
-                            title={t('section1.video2.title', "Baldur's Gate 3 - Magic Combat")}
-                            desc={t('section1.video2.description', 'Focus on magical impact sounds and spell casting layers.')}
-                            badge={t('section1.video2.badge', 'Redesign')}
+                            title={t('section1.video2.title')}
+                            desc={t('section1.video2.description')}
+                            badge={t('section1.video2.badge')}
                             videoSrc="/assets/videos/baldursremake.mp4"
                             poster="/assets/images/baldurspreview.png"
                         />
@@ -96,27 +96,27 @@ const SoundDesign = () => {
                                         <VolumeX size={32} />
                                     </div>
                                     <h3 className="text-2xl font-display font-bold text-accent mb-2 tracking-widest uppercase">
-                                        {t('section1.video3.placeholder_title', 'SIGNAL OFFLINE')}
+                                        {t('section1.video3.placeholder_title')}
                                     </h3>
                                     <p className="text-text-secondary font-mono text-sm tracking-wide">
-                                        {t('section1.video3.placeholder_subtitle', 'Content currently unavailable due to NDA or pending release.')}
+                                        {t('section1.video3.placeholder_subtitle')}
                                     </p>
                                 </div>
                             </div>
                             <div className="p-8 border-t border-border bg-surface-overlay">
-                                <h3 className="text-xl font-display font-bold text-text-primary mb-2 opacity-50">{t('section1.video3.title', 'Weapon Sound Design')}</h3>
-                                <p className="text-text-secondary text-sm mb-4 opacity-50">{t('section1.video3.description', 'Procedural weapon synthesis system.')}</p>
+                                <h3 className="text-xl font-display font-bold text-text-primary mb-2 opacity-50">{t('section1.video3.title')}</h3>
+                                <p className="text-text-secondary text-sm mb-4 opacity-50">{t('section1.video3.description')}</p>
                                 <span className="px-3 py-1 bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider rounded-md border border-accent/20">
-                                    {t('section1.video3.badge', 'Confidential')}
+                                    {t('section1.video3.badge')}
                                 </span>
                             </div>
                         </div>
 
                         {/* Video 4: Fracture Horizon */}
                         <VideoCard
-                            title={t('section1.video4.title', 'Fractured Horizon')}
-                            desc={t('section1.video4.description', 'Sci-fi ambience and UI sound design for a futuristic interface.')}
-                            badge={t('section1.video4.badge', 'Implementation')}
+                            title={t('section1.video4.title')}
+                            desc={t('section1.video4.description')}
+                            badge={t('section1.video4.badge')}
                             videoSrc="/assets/videos/fracturedhorzion.mp4"
                             poster="/assets/images/frafturedhorizon.png"
                         />

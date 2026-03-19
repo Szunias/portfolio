@@ -32,23 +32,23 @@ const GradworkSetup = ({ t }: { t: (key: string) => string }) => {
                     </h3>
                     <div className="flex flex-wrap items-center justify-center gap-4 text-center">
                         <div className="px-6 py-4 bg-accent/10 border border-accent/30 rounded-lg">
-                            <div className="font-bold text-text-primary">Unity</div>
-                            <div className="text-sm text-text-secondary">Game Engine</div>
+                            <div className="font-bold text-text-primary">{t('setup.arch_unity')}</div>
+                            <div className="text-sm text-text-secondary">{t('setup.arch_unity_sub')}</div>
                         </div>
                         <div className="text-2xl text-text-secondary">&rarr;</div>
                         <div className="px-6 py-4 bg-surface-raised border border-border rounded-lg">
-                            <div className="font-bold text-text-primary">Python Server</div>
-                            <div className="text-sm text-text-secondary">WebSocket</div>
+                            <div className="font-bold text-text-primary">{t('setup.arch_python')}</div>
+                            <div className="text-sm text-text-secondary">{t('setup.arch_python_sub')}</div>
                         </div>
                         <div className="text-2xl text-text-secondary">&rarr;</div>
                         <div className="px-6 py-4 bg-surface-raised border border-border rounded-lg">
-                            <div className="font-bold text-text-primary">AI Model</div>
-                            <div className="text-sm text-text-secondary">Generation</div>
+                            <div className="font-bold text-text-primary">{t('setup.arch_ai')}</div>
+                            <div className="text-sm text-text-secondary">{t('setup.arch_ai_sub')}</div>
                         </div>
                         <div className="text-2xl text-text-secondary">&rarr;</div>
                         <div className="px-6 py-4 bg-accent/10 border border-accent/30 rounded-lg">
-                            <div className="font-bold text-text-primary">Cache</div>
-                            <div className="text-sm text-text-secondary">Storage</div>
+                            <div className="font-bold text-text-primary">{t('setup.arch_cache')}</div>
+                            <div className="text-sm text-text-secondary">{t('setup.arch_cache_sub')}</div>
                         </div>
                     </div>
                 </div>

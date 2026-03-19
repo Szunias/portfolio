@@ -91,7 +91,7 @@ const Navbar = () => {
   return (
     <>
       <nav
-        aria-label="Main navigation"
+        aria-label={t('accessibility.main_navigation', 'Main navigation')}
         className={`fixed top-0 left-0 right-0 z-nav transition-all duration-300 border-b ${
           scrolled
             ? 'bg-surface/80 backdrop-blur-xl border-border py-3'
@@ -133,7 +133,7 @@ const Navbar = () => {
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="md:hidden text-text-primary p-3 rounded-md border border-border hover:border-border-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              aria-label={isOpen ? t('accessibility.close_menu', 'Close menu') : t('accessibility.open_menu', 'Open menu')}
               aria-expanded={isOpen}
               aria-controls="mobile-nav-menu"
             >
@@ -168,7 +168,7 @@ const Navbar = () => {
               className="md:hidden fixed inset-y-0 right-0 w-80 max-w-full z-nav bg-surface border-l border-border flex flex-col pt-20 px-6"
               role="dialog"
               aria-modal="true"
-              aria-label="Main navigation menu"
+              aria-label={t('accessibility.navigation_menu', 'Main navigation menu')}
             >
               <div className="flex flex-col gap-2">
                 {navLinks.map((link, index) => (
