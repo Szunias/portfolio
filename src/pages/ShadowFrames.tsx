@@ -271,15 +271,15 @@ const ShadowFrames = () => {
                         <div className="flex flex-wrap gap-x-8 gap-y-3 mt-6 pt-6 border-t border-border">
                             <div>
                                 <p className="font-mono text-[10px] uppercase tracking-wider text-[#8d8882]">{t('meta.role')}</p>
-                                <p className="text-sm text-text-primary font-display font-medium">Audio Designer</p>
+                                <p className="text-sm text-text-primary font-display font-medium">{t('meta.role_value')}</p>
                             </div>
                             <div>
                                 <p className="font-mono text-[10px] uppercase tracking-wider text-[#8d8882]">{t('meta.team')}</p>
-                                <p className="text-sm text-text-primary font-display font-medium">DAE + RITCS + KASK</p>
+                                <p className="text-sm text-text-primary font-display font-medium">{t('meta.team_value')}</p>
                             </div>
                             <div>
                                 <p className="font-mono text-[10px] uppercase tracking-wider text-[#8d8882]">{t('meta.year')}</p>
-                                <p className="text-sm text-text-primary font-display font-medium">2025</p>
+                                <p className="text-sm text-text-primary font-display font-medium">{t('meta.year_value')}</p>
                             </div>
                         </div>
                     </motion.section>

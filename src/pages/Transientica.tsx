@@ -245,11 +245,11 @@ const Transientica = () => {
                                     <h4 className="font-display font-bold text-text-primary text-sm">{c.title}</h4>
                                 </div>
                                 <p className="text-text-secondary text-sm mb-3">
-                                    <span className="text-text-primary font-mono text-xs">PROBLEM </span>
+                                    <span className="text-text-primary font-mono text-xs">{t('challenges.problem_label')} </span>
                                     {c.problem}
                                 </p>
                                 <p className="text-text-secondary text-sm">
-                                    <span className="text-accent font-mono text-xs">SOLUTION </span>
+                                    <span className="text-accent font-mono text-xs">{t('challenges.solution_label')} </span>
                                     {c.solution}
                                 </p>
                             </div>

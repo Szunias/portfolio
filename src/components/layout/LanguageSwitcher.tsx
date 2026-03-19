@@ -14,7 +14,7 @@ interface LanguageSwitcherProps {
 }
 
 const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
-  const { i18n } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   const [isOpen, setIsOpen] = useState(false);
 
   const changeLanguage = (lng: string) => {
@@ -33,7 +33,7 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1.5 px-4 py-2 rounded-md border border-border hover:border-border-hover bg-transparent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
         whileTap={{ scale: 0.95 }}
-        aria-label="Select language"
+        aria-label={t('accessibility.select_language')}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
@@ -66,7 +66,7 @@ const LanguageSwitcher = ({ dropUp = false }: LanguageSwitcherProps) => {
                 dropUp ? 'bottom-full mb-2' : 'top-full mt-2'
               }`}
               role="listbox"
-              aria-label="Language selector"
+              aria-label={t('accessibility.language_selector')}
             >
               {languages.map((lang) => {
                 const isActive = baseLang === lang.code;

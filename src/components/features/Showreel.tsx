@@ -25,6 +25,7 @@ type ShowreelProps = {
 /** Embeds the Vimeo showreel with chapter navigation timestamps. */
 const Showreel = ({ mode = 'section', onClose }: ShowreelProps) => {
   const { t } = useTranslation('home');
+  const { t: tCommon } = useTranslation('common');
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<Player | null>(null);
   const [playerReady, setPlayerReady] = useState(false);
@@ -106,7 +107,7 @@ const Showreel = ({ mode = 'section', onClose }: ShowreelProps) => {
               type="button"
               onClick={onClose}
               className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-text-secondary transition-colors hover:border-border-hover hover:text-text-primary"
-              aria-label="Close showreel"
+              aria-label={tCommon('accessibility.close_showreel')}
             >
               <X size={18} />
             </button>
@@ -154,7 +155,7 @@ const Showreel = ({ mode = 'section', onClose }: ShowreelProps) => {
               <button
                 className="absolute inset-0 w-full h-full flex items-center justify-center bg-surface/60 hover:bg-surface/40 transition-colors cursor-pointer"
                 onClick={() => playerRef.current?.play().catch((err) => console.error('Play failed:', err))}
-                aria-label="Play showreel video"
+                aria-label={tCommon('accessibility.play_showreel')}
               >
                 <motion.div
                   whileHover={{ scale: 1.05 }}

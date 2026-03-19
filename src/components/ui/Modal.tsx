@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { X } from 'lucide-react';
 
@@ -14,6 +15,7 @@ interface ModalProps {
 }
 
 const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
+  const { t } = useTranslation('common');
   const prefersReducedMotion = useReducedMotion();
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -79,7 +81,7 @@ const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
                     variant="ghost"
                     size="icon"
                     className="absolute top-4 right-4 text-text-secondary hover:text-text-primary"
-                    aria-label="Close modal"
+                    aria-label={t('accessibility.close_modal')}
                 >
                     <X size={24} />
                 </Button>

@@ -134,15 +134,15 @@ const NotTodayDarling = () => {
                         <div className="flex flex-wrap gap-x-8 gap-y-3 mt-6 pt-6 border-t border-border">
                             <div>
                                 <p className="font-mono text-[10px] uppercase tracking-wider text-[#8d8882]">{t('meta.role')}</p>
-                                <p className="text-sm text-text-primary font-display font-medium">Solo Audio Designer</p>
+                                <p className="text-sm text-text-primary font-display font-medium">{t('meta.role_value')}</p>
                             </div>
                             <div>
                                 <p className="font-mono text-[10px] uppercase tracking-wider text-[#8d8882]">{t('meta.team')}</p>
-                                <p className="text-sm text-text-primary font-display font-medium">8-person team</p>
+                                <p className="text-sm text-text-primary font-display font-medium">{t('meta.team_value')}</p>
                             </div>
                             <div>
                                 <p className="font-mono text-[10px] uppercase tracking-wider text-[#8d8882]">{t('meta.duration')}</p>
-                                <p className="text-sm text-text-primary font-display font-medium">12 weeks</p>
+                                <p className="text-sm text-text-primary font-display font-medium">{t('meta.duration_value')}</p>
                             </div>
                         </div>
                     </motion.section>

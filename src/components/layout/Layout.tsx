@@ -25,7 +25,7 @@ const Layout = ({ children }: LayoutProps) => {
         <a
           href="#main-content"
           className="skip-to-main"
-          aria-label="Skip to main content"
+          aria-label={t('accessibility.skip_to_content')}
         >
           {t('accessibility.skip_to_main', 'Skip to main content')}
         </a>
