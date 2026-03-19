@@ -7,14 +7,14 @@
   "header": {
     "badge": "Bachelor Thesis 2025",
     "title": "Can AI generate game audio in real-time?",
-    "description": "For my bachelor thesis I tried to find out if AI can generate sound effects fast enough for games. I built a Unity prototype that talks to AI models through a Python server. Spoiler: it's not ready yet, but I found a workaround.",
+    "description": "For my bachelor thesis I tried to answer one question: can AI generate sound effects fast enough for games? I built a Unity prototype that talks to AI models through a Python server. Short answer: not yet. But I found a workaround that actually works.",
     "read_paper": "Read Paper",
     "view_code": "View Code"
   },
   "setup": {
     "title": "What I tested and why",
-    "intro": "Games contain hundreds of pre-recorded sound files. Every shot, footstep, and explosion is a WAV file someone recorded in a studio. AI could generate these on the fly. Every sound would be unique, adapted to the situation, without gigabytes of files. The problem: latency. If a sound arrives even 100ms late, players notice.",
-    "approach": "I built a prototype. Unity sends requests to a Python server, which calls an AI model and streams back audio. I tested three models: ElevenLabs (cloud API, best quality but latency spikes), MMAudio (video-to-audio model I adapted for games, runs locally), and AudioGen (Meta's text-to-audio, most consistent but still slow).",
+    "intro": "Every gunshot, footstep, and explosion in a game is a pre-recorded WAV file. Hundreds of them per project. AI could generate these on the fly, so every sound would be unique and adapted to the situation, no gigabytes of files shipping with the game. The catch: latency. If a sound arrives even 100ms late, players notice. That's the problem I set out to measure.",
+    "approach": "I built a prototype. Unity sends requests to a Python server, which calls an AI model and streams audio back. Tested three models: ElevenLabs (cloud API, best quality, latency all over the place), MMAudio (video-to-audio model I hacked to work for games, runs locally), and AudioGen (Meta's text-to-audio, most consistent but still too slow).",
     "architecture_title": "How it works",
     "arch_unity": "Unity",
     "arch_unity_sub": "Game Engine",
@@ -27,7 +27,7 @@
   },
   "results": {
     "title": "Measured Latency",
-    "subtitle": "Generation times for each model compared to what games actually need. Log scale, because the differences are that large.",
+    "subtitle": "Generation times for each model vs. what games actually need. Log scale because the gaps are enormous.",
     "chart": {
       "humanReaction": "Human reaction time",
       "acceptable": "Acceptable for games",
@@ -39,10 +39,10 @@
       },
       "cached": "With caching",
       "tooltip": {
-        "elevenlabs": "Cloud API. Best quality, but latency jumps wildly, from 1s to 12s on the same day.",
+        "elevenlabs": "Cloud API. Best quality, but latency jumps wildly: 1s to 12s on the same day.",
         "mmaudio": "Video-to-audio model adapted for games. Runs locally, 2-5s per sound.",
-        "audiogen": "Meta's text-to-audio. Most consistent (~3s), but still too slow for real-time.",
-        "cached": "Pre-generated sounds served from memory. Delivery time 21-55ms."
+        "audiogen": "Meta's text-to-audio. Most consistent at ~3s, but that's still 3s too slow.",
+        "cached": "Pre-generated sounds served from memory. 21-55ms delivery."
       }
     },
     "summary_title": "Model Comparison",
@@ -52,24 +52,24 @@
       "elevenlabs": {
         "latency": "1-12s",
         "quality": "Excellent",
-        "note": "Cloud-based, quality depends on server load"
+        "note": "Cloud-based. Quality depends on server load that day."
       },
       "mmaudio": {
         "latency": "2-5s",
         "quality": "Good",
-        "note": "Local, originally designed for video soundtracks"
+        "note": "Runs locally. Originally built for video soundtracks, not games."
       },
       "audiogen": {
         "latency": "~3s",
         "quality": "Decent",
-        "note": "Most consistent, but 3s is still 3s too slow"
+        "note": "Most consistent of the three. Still 3 seconds too slow."
       }
     }
   },
   "solution": {
     "title": "Caching sounds ahead of time",
-    "story": "None of the models came close to real-time. The fastest still took over a second, about 60x too slow for a gunshot. I had added a simple cache earlier to avoid generating the same sound twice. Then I noticed the times in the logs: 21-55ms. That's fast enough.",
-    "insight": "I stopped trying to make AI faster and started thinking about timing instead. Generate sounds during loading screens or quiet moments. Cache them. When a player triggers one, serve it instantly and queue up a replacement in the background.",
+    "story": "None of the models came close to real-time. The fastest was still over a second, roughly 60x too slow for a gunshot. I'd added a simple cache earlier just to avoid regenerating the same sound twice. Then I looked at the delivery times in the logs. 21-55ms. That's fast enough.",
+    "insight": "So I stopped trying to make AI faster and started thinking about when to generate instead. Load screens, quiet gameplay moments, menu screens. Cache the sounds. When the player pulls the trigger, serve from cache instantly and queue a replacement in the background.",
     "before_after_title": "Before & after caching",
     "without_cache": "Without cache",
     "with_cache": "With cache",
@@ -83,22 +83,22 @@
       },
       "cache": {
         "label": "Cache ready",
-        "description": "10 shots, 5 explosions, 8 footsteps, all pre-generated"
+        "description": "10 shots, 5 explosions, 8 footsteps, all sitting in memory"
       },
       "play": {
         "label": "Player acts",
-        "description": "Sound plays from cache in under 55ms"
+        "description": "Sound plays from cache. Under 55ms."
       },
       "refill": {
         "label": "Background refill",
-        "description": "System generates replacement sounds for next time"
+        "description": "System quietly generates replacements for next time"
       }
     },
-    "usecases": "This works best for predictable sounds like ambient audio, cutscene effects, and shots with limited fire rate. It fails for very frequent events like footsteps, where the cache drains faster than AI can refill it."
+    "usecases": "Works best for predictable sounds: ambient audio, cutscene effects, weapons with limited fire rates. Falls apart for footsteps and other very frequent events where the cache empties faster than AI can refill it."
   },
   "closing": {
-    "conclusion": "AI audio is not ready to replace traditional game sound design. It's too slow for real-time. But if you cache sounds ahead of time, it can add variety and reduce file sizes for certain use cases.",
-    "reflection": "The interesting part wasn't which model worked best. It was figuring out that speed doesn't matter if you generate at the right time. Even slow AI works if you call it when nobody's listening.",
+    "conclusion": "AI audio can't replace traditional sound design in games. Not yet. It's too slow for real-time. But cache sounds ahead of time and it can add variety and cut file sizes for the right use cases.",
+    "reflection": "The interesting part wasn't which model performed best. It was realizing that generation speed doesn't matter if you pick the right moment to generate. Even slow AI works when nobody's listening.",
     "read_paper": "Read Paper",
     "view_code": "View Code",
     "back_to_projects": "Back to Projects"
@@ -107,11 +107,11 @@
     "status": "Bachelor Thesis | 2025 | Igor Szuniewicz"
   },
   "session2": {
-    "title": "Local AI Testing (It Failed)",
-    "content": "I tried running MusicGen and AudioLDM2 on student hardware with no GPU. Results: 4-10 seconds per sound. Way too slow for any gameplay that needs fast reactions. Local-only AI generation isn't viable yet."
+    "title": "Local AI Testing (Didn't Work)",
+    "content": "Tried running MusicGen and AudioLDM2 on student hardware. No GPU. 4 to 10 seconds per sound. Completely unusable for anything that needs quick feedback. Local-only generation is a dead end on this kind of hardware."
   },
   "session4": {
-    "title": "Stress-Testing the Hybrid Approach",
-    "content": "I combined procedural audio with cloud AI in a hybrid system and pushed it hard: 100 simultaneous requests handled in under 200ms. Hit 2253 generations per second. Procedural path runs at 5ms, cloud path at 2-4 seconds. The hybrid model works for real games."
+    "title": "Stress-Testing the Hybrid System",
+    "content": "Mixed procedural audio with cloud AI and hammered it: 100 simultaneous requests, all handled under 200ms. Hit 2253 generations per second at peak. The procedural path runs at 5ms, cloud path at 2-4 seconds. The hybrid approach holds up. It could ship."
   }
 }
