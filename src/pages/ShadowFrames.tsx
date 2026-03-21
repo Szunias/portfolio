@@ -267,6 +267,9 @@ const ShadowFrames = () => {
                             <p className="text-body leading-7 sm:leading-8 text-[#d1cbc3]">
                                 {t('concept.p2')}
                             </p>
+                            <p className="text-body leading-7 sm:leading-8 text-[#d1cbc3]">
+                                {t('concept.p3')}
+                            </p>
                         </div>
                         <div className="flex flex-wrap gap-x-8 gap-y-3 mt-6 pt-6 border-t border-border">
                             <div>
