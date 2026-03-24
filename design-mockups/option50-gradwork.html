@@ -716,12 +716,12 @@
 <!-- PROJECT HERO -->
 <header class="project-hero">
   <h1 class="project-hero__title">AI Audio Research</h1>
-  <p class="project-hero__subtitle">Can AI generate game audio in real-time? I built a prototype to find out.</p>
+  <p class="project-hero__subtitle">I asked a simple question: can AI make game sounds on the fly? Built a prototype. Tested three models. Found out they're all too slow - then found a workaround.</p>
 
   <div class="project-hero__meta">
     <div class="meta-item">
       <span class="meta-item__label">Role</span>
-      <span class="meta-item__value">Researcher</span>
+      <span class="meta-item__value">Solo Researcher</span>
     </div>
     <div class="meta-item">
       <span class="meta-item__label">Type</span>
@@ -749,41 +749,41 @@
 
 <!-- THE RESEARCH -->
 <section class="concept-section reveal" id="concept" aria-labelledby="concept-title">
-  <span class="section-label">Bachelor Thesis</span>
-  <h2 class="section-title" id="concept-title">The Question</h2>
+  <span class="section-label">The Research</span>
+  <h2 class="section-title" id="concept-title">What I Tested and Why</h2>
   <div class="section-rule"></div>
 
   <div class="concept-layout">
     <div class="concept-body">
-      <p class="drop-cap">Every gunshot, footstep, and explosion in a game is a pre-recorded WAV file. Hundreds of them per project. AI could generate these on the fly - every sound different, no gigabytes of samples shipping with the game. The catch: latency. If a sound shows up even 100ms late, players notice. I wanted to know exactly how slow these models are.</p>
+      <p class="drop-cap">Games ship with thousands of WAV files. Gunshots, footsteps, explosions - all pre-recorded, all taking up space. What if AI generated them on the fly? Every sound unique, no giant audio banks. The problem: latency. A gunshot that arrives 100ms late feels broken. I wanted to measure exactly how far off we are.</p>
 
-      <p>I built a prototype where Unity sends requests to a Python server over WebSocket. The server calls an AI model and streams audio back. I tested three models: ElevenLabs (cloud API, sounds the best, but latency is all over the place), MMAudio (runs locally on my GPU, originally a video-to-audio model), and AudioGen (Meta's text-to-audio, most consistent but still way too slow).</p>
+      <p>Unity sends a text prompt to a Python server over WebSocket. The server calls an AI model and streams audio back. I tested three: ElevenLabs (cloud API - sounds amazing, latency is a lottery), MMAudio (local GPU - I hacked a video-to-audio model to accept text prompts), and AudioGen (Meta's text-to-audio - most consistent, still way too slow).</p>
     </div>
 
     <aside class="concept-sidebar reveal-stagger">
       <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Test Date</span>
-        <span class="concept-sidebar__value">2025-12-05</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Processing Latency</span>
-        <span class="concept-sidebar__value">5.02ms</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Peak Throughput</span>
-        <span class="concept-sidebar__value">2253 gen/s</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Status</span>
-        <span class="concept-sidebar__value">Hybrid System</span>
+        <span class="concept-sidebar__label">The Question</span>
+        <span class="concept-sidebar__value">Can AI replace pre-recorded game audio?</span>
       </div>
       <div class="concept-sidebar__fact">
         <span class="concept-sidebar__label">Models Tested</span>
-        <span class="concept-sidebar__value">3</span>
+        <span class="concept-sidebar__value">ElevenLabs, MMAudio, AudioGen</span>
       </div>
       <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Best Cache Delivery</span>
-        <span class="concept-sidebar__value">21-55ms</span>
+        <span class="concept-sidebar__label">Fastest Model</span>
+        <span class="concept-sidebar__value">Still 1 second+ too slow</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Cache Delivery</span>
+        <span class="concept-sidebar__value">21-55ms (fast enough)</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Stack</span>
+        <span class="concept-sidebar__value">Unity + Python + WebSocket</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Short Answer</span>
+        <span class="concept-sidebar__value">Not yet. But there's a workaround.</span>
       </div>
     </aside>
   </div>
@@ -800,21 +800,21 @@
       <div class="system-item__title-wrap">
         <h3 class="system-item__title">ElevenLabs</h3>
       </div>
-      <p class="system-item__desc">Cloud API. Sounds the best by far, but latency jumps wildly: 1s to 12s on the same day depending on their server load.</p>
+      <p class="system-item__desc">Cloud API. Best sounding by far - sometimes you can't tell it's generated. But the latency is a dice roll: 1 second on a good request, 12 on a bad one. Same day, same prompt.</p>
     </div>
 
     <div class="system-item">
       <div class="system-item__title-wrap">
         <h3 class="system-item__title">MMAudio</h3>
       </div>
-      <p class="system-item__desc">Runs locally on GPU, 2-5s per sound. It was built for video soundtracks, so I had to hack the pipeline to accept text prompts instead of video frames.</p>
+      <p class="system-item__desc">Runs locally on GPU. 2-5 seconds per sound. It was built to add soundtracks to video, not games - I had to hack the pipeline to accept text prompts instead of video frames.</p>
     </div>
 
     <div class="system-item">
       <div class="system-item__title-wrap">
         <h3 class="system-item__title">AudioGen</h3>
       </div>
-      <p class="system-item__desc">Meta's text-to-audio. Most consistent at ~3s, but that's still 3 seconds too slow.</p>
+      <p class="system-item__desc">Meta's text-to-audio. Most consistent of the three at about 3 seconds. Reliable, predictable - and still 3 seconds too slow for a gunshot.</p>
     </div>
   </div>
 </section>
@@ -826,9 +826,9 @@
   <div class="section-rule"></div>
 
   <div class="finding-body">
-    <p>None of the models came close to real-time. The fastest was still over a second - roughly 60x too slow for a gunshot. I'd added a cache early on just to stop regenerating the same sound twice. Then I checked the delivery times in the logs: 21-55ms. That's fast enough.</p>
+    <p>Every model failed the speed test. The fastest was still over a second - roughly 60x too slow for a gunshot. I'd added a simple cache early on just to avoid regenerating the same sound twice. Then I looked at the delivery times: 21-55ms. Hold on. That's fast enough.</p>
 
-    <p>So I stopped trying to make AI faster and started thinking about <em>when</em> to generate instead. Load screens, quiet gameplay moments, menu screens. Cache the sounds. When the player pulls the trigger, serve from cache instantly and queue a replacement in the background.</p>
+    <p>So I stopped trying to make AI faster and asked a different question: <em>when</em> should you generate? Load screens. Menu screens. Quiet moments. Pre-generate the sounds, cache them. Player pulls the trigger, sound plays from memory. Queue a fresh variation in the background. Nobody notices.</p>
   </div>
 </section>
 
@@ -838,7 +838,7 @@
     <div>
       <div class="callout-card__label">Documentation</div>
       <h3 class="callout-card__title">Read the Full Paper</h3>
-      <p class="callout-card__desc">Bachelor thesis: Can AI generate real-time sound effects for games?</p>
+      <p class="callout-card__desc">The full thesis. Every benchmark, every failure, and the caching trick that made it all work.</p>
     </div>
     <a class="callout-card__link" href="../old/public/assets/images/projects-gradwork/AI_Audio_Research_Extended.docx">Read Paper</a>
   </div>

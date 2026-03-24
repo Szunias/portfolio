@@ -702,7 +702,7 @@
 <!-- PROJECT HERO -->
 <header class="project-hero">
   <h1 class="project-hero__title">Transientica: AudioLab</h1>
-  <p class="project-hero__subtitle">Beatbox into your mic, play a rhythm game. Real-time ML recognition with under 60ms latency.</p>
+  <p class="project-hero__subtitle">You beatbox into a mic. The game turns it into drums. 45 milliseconds, no MIDI controller, just your mouth.</p>
 
   <div class="project-hero__meta">
     <div class="meta-item">
@@ -741,45 +741,37 @@
 
   <div class="concept-layout">
     <div class="concept-body">
-      <p class="drop-cap">Can you play a rhythm game with your mouth? That's what I set out to test. Beatbox a kick, snare, or hi-hat, and the game responds in real-time.</p>
+      <p class="drop-cap">The idea was stupid-simple: what if your voice was the controller? Beatbox a kick, snare, or hi-hat into your laptop mic, and a rhythm game responds like you're hitting real pads.</p>
 
-      <p>I built the audio analysis pipeline in Python - spectral-flux onset detection feeding into an SVM classifier - and connected it to Unity over UDP/OSC. The classifier trains on your voice specifically: give it 30 examples of each drum sound and it learns your beatbox style. Different mic, different person, it still works because it calibrates to you.</p>
+      <p>The first version was terrible. 180ms of lag. Try clapping on a beat that responds almost a fifth of a second late. You can't. So the whole project became an obsession with one number: how low can the latency go?</p>
 
-      <p>The hard constraint was latency. A rhythm game with 180ms delay is unplayable. I got it down to 45ms at 92% accuracy across 2000+ test samples. The trick was keeping everything small: 512-sample FFT window, lock-free ringbuffer between threads, lightweight SVM that classifies in 2ms.</p>
+      <p>Answer: 45ms. Fast enough that your brain doesn't notice the gap. The system trains on your voice specifically - give it 30 examples of each sound and it learns how you beatbox. Different person, different mic, it recalibrates. My kick sounds nothing like yours, and it doesn't have to.</p>
     </div>
 
     <aside class="concept-sidebar reveal-stagger">
       <div class="concept-sidebar__fact">
         <span class="concept-sidebar__label">Latency</span>
-        <span class="concept-sidebar__value">&lt;45ms</span>
+        <span class="concept-sidebar__value">&lt;45ms (started at 180ms)</span>
       </div>
       <div class="concept-sidebar__fact">
         <span class="concept-sidebar__label">Accuracy</span>
-        <span class="concept-sidebar__value">92%</span>
+        <span class="concept-sidebar__value">92% (up from 78%)</span>
       </div>
       <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Sound Classes</span>
-        <span class="concept-sidebar__value">3 (Kick/Snare/HiHat)</span>
+        <span class="concept-sidebar__label">Sounds Recognized</span>
+        <span class="concept-sidebar__value">Kick, Snare, Hi-Hat</span>
       </div>
       <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Dataset</span>
+        <span class="concept-sidebar__label">Training</span>
+        <span class="concept-sidebar__value">30 examples per sound, then play</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Classification Speed</span>
+        <span class="concept-sidebar__value">2ms (SVM vs 15ms neural net)</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Tested On</span>
         <span class="concept-sidebar__value">2000+ samples</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">FFT Window</span>
-        <span class="concept-sidebar__value">512 samples (11ms)</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">SVM Inference</span>
-        <span class="concept-sidebar__value">2ms</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Transport</span>
-        <span class="concept-sidebar__value">UDP/OSC</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Threads</span>
-        <span class="concept-sidebar__value">Audio + ML separated</span>
       </div>
     </aside>
   </div>
@@ -797,35 +789,35 @@
       Your browser does not support the video tag.
     </video>
   </div>
-  <p class="video-caption">Transientica: AudioLab Demo</p>
+  <p class="video-caption">Live demo - beatboxing into the mic, game responding in real time</p>
 </section>
 
 <!-- HOW IT WORKS -->
 <section class="systems-section reveal" id="systems" aria-labelledby="systems-title">
-  <span class="section-label">Technical</span>
+  <span class="section-label">Under the Hood</span>
   <h2 class="section-title" id="systems-title">How It Works</h2>
   <div class="section-rule"></div>
 
   <div class="systems-grid">
     <div class="system-item">
       <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Low Latency Pipeline</h3>
+        <h3 class="system-item__title">Hear the Sound, Classify It, Respond</h3>
       </div>
-      <p class="system-item__desc">Under 60ms. That's the ceiling for a rhythm game to feel playable. Small FFT buffers (512 samples), minimal feature extraction, and UDP for OSC keep it there.</p>
+      <p class="system-item__desc">Mic audio hits a 512-sample FFT window (11ms of sound). Spectral centroid, zero-crossing rate, and envelope shape get extracted. SVM classifies the hit in 2ms. Result flies to Unity over UDP. Total time from mouth to game: under 45ms. A neural net would have added 13ms just on inference - that's why I picked SVM.</p>
     </div>
 
     <div class="system-item">
       <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Learns Your Voice</h3>
+        <h3 class="system-item__title">Why Kicks and Snares Are Hard</h3>
       </div>
-      <p class="system-item__desc">Everyone beatboxes differently. The system trains on your voice and your microphone specifically, so accuracy stays high. Give it 30 examples per sound class, then play.</p>
+      <p class="system-item__desc">Both are sharp transients with broadband noise. To a basic classifier, they look almost identical. The difference is where the energy lives: kicks sit in the low end, snares are mostly noise spread across the spectrum. Spectral centroid is what finally let the system tell them apart. That single feature took accuracy from 78% to the low 90s.</p>
     </div>
 
     <div class="system-item">
       <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Split Architecture</h3>
+        <h3 class="system-item__title">Two Processes, One Game</h3>
       </div>
-      <p class="system-item__desc">Python handles audio analysis and ML inference. Unity handles gameplay. They talk over UDP/OSC, so I could restart one without touching the other. Made debugging way easier.</p>
+      <p class="system-item__desc">Python does the audio math. Unity runs the game. They talk over OSC on localhost. This sounds like overengineering, but it saved me constantly. I could tweak the classifier, retrain it, and test it without restarting Unity. And when the game crashed (often), the audio pipeline just kept running.</p>
     </div>
   </div>
 </section>
@@ -838,27 +830,27 @@
 
   <div class="challenges-grid">
     <div class="challenge-card">
-      <h3 class="challenge-card__title">Getting Latency Under 50ms</h3>
+      <h3 class="challenge-card__title">180ms of Lag (Four Times Too Slow)</h3>
       <span class="challenge-card__label">What Was Hard</span>
-      <p class="challenge-card__text">First version had 180ms lag. Completely unplayable for a rhythm game.</p>
+      <p class="challenge-card__text">The first working prototype recognized sounds. It just did it 180ms late. Try tapping a rhythm and hearing the response a fifth of a second later. Your brain rejects it immediately.</p>
       <span class="challenge-card__label">What I Did</span>
-      <p class="challenge-card__text">Shrunk the FFT window, added a circular buffer, swapped to a lightweight SVM, switched to UDP for OSC. 45ms at 92% accuracy. Done.</p>
+      <p class="challenge-card__text">Shaved time everywhere. Smaller FFT window. Circular buffer to kill I/O blocking. SVM instead of neural net (2ms inference vs 15ms). UDP instead of TCP. Each change saved 20-40ms. Final result: 45ms at 92% accuracy.</p>
     </div>
 
     <div class="challenge-card">
-      <h3 class="challenge-card__title">Kick vs Snare Confusion</h3>
+      <h3 class="challenge-card__title">The Classifier Thought Every Sound Was a Kick</h3>
       <span class="challenge-card__label">What Was Hard</span>
-      <p class="challenge-card__text">Both have sharp transients and broadband noise. The classifier couldn't tell them apart reliably.</p>
+      <p class="challenge-card__text">Kicks and snares both hit hard and fast. To a naive classifier looking at amplitude and timing, they're basically the same sound. Accuracy was stuck at 78%.</p>
       <span class="challenge-card__label">What I Did</span>
-      <p class="challenge-card__text">Added spectral centroid, zero-crossing rate, and envelope shape as features. Built separate models for solo hits vs patterns. That pushed accuracy from 78% to 92%.</p>
+      <p class="challenge-card__text">Stopped looking at volume. Started looking at where the energy lives. Spectral centroid (low = kick, high = snare), zero-crossing rate, envelope shape. Also built separate models for solo hits vs rapid patterns. 78% became 92%.</p>
     </div>
 
     <div class="challenge-card">
-      <h3 class="challenge-card__title">No Audio Dropouts</h3>
+      <h3 class="challenge-card__title">Audio Would Just... Stop</h3>
       <span class="challenge-card__label">What Was Hard</span>
-      <p class="challenge-card__text">Heavy ML processing caused buffer underruns on slower machines. Audio would just cut out.</p>
+      <p class="challenge-card__text">On slower machines, the ML inference would hog the CPU. The audio buffer would underrun. No error, no warning - just silence in the middle of playing.</p>
       <span class="challenge-card__label">What I Did</span>
-      <p class="challenge-card__text">Separated threads with a lock-free ringbuffer. Audio never blocks. ML runs on its own worker thread.</p>
+      <p class="challenge-card__text">Lock-free ringbuffer between threads. Audio capture runs on its own thread and never waits for ML. If classification is slow, audio keeps flowing and the next hit still gets captured. Zero dropouts after the fix.</p>
     </div>
   </div>
 </section>
