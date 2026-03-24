@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,15 +14,15 @@
   }
 
   :root {
-    --cream: #faf8f5;
-    --white: #ffffff;
-    --black: #1a1a1a;
+    --cream: #1a1a1a;
+    --white: #222;
+    --black: #f0ece6;
     --accent: #c0542e;
-    --accent-light: #f3ebe6;
-    --grey: #5e5e5e;
-    --grey-light: #717171;
-    --grey-rule: #d8d4cf;
-    --dark-section: #1c1c26;
+    --accent-light: #2a1f1a;
+    --grey: #b0b0b0;
+    --grey-light: #999;
+    --grey-rule: #333;
+    --dark-section: #111;
     --serif: Georgia, 'Times New Roman', Times, serif;
     --sans: system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     --brand-secondary: 'DM Sans', sans-serif;
@@ -31,16 +31,34 @@
     --margin: 80px;
   }
 
+  [data-theme="light"] {
+    --cream: #faf8f5;
+    --white: #ffffff;
+    --black: #1a1a1a;
+    --accent-light: #f3ebe6;
+    --grey: #5e5e5e;
+    --grey-light: #717171;
+    --grey-rule: #d8d4cf;
+    --dark-section: #1c1c26;
+  }
+
   ::selection {
     background: var(--accent);
-    color: var(--white);
+    color: #fff;
   }
 
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    scrollbar-width: thin;
+    scrollbar-color: var(--grey-rule) transparent;
   }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--grey-rule); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
   body {
     font-family: var(--sans);
@@ -127,6 +145,26 @@
     max-width: var(--page-max);
     margin: 0 auto;
     padding: 28px var(--margin) 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--grey-rule);
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    color: var(--black);
+    font-size: 14px;
+    line-height: 1;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .back-nav a {
@@ -683,7 +721,7 @@
 
   .callout-card {
     background: var(--accent);
-    color: var(--white);
+    color: #fff;
     padding: 40px 48px;
     display: grid;
     grid-template-columns: 1fr auto;
@@ -732,15 +770,15 @@
     font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--white);
+    color: #fff;
     background: none;
     transition: border-color 0.2s, background 0.2s;
     white-space: nowrap;
   }
 
   .callout-card__link:hover {
-    border-color: var(--white);
-    color: var(--white);
+    border-color: #fff;
+    color: #fff;
     background: rgba(255,255,255,0.1);
   }
 
@@ -939,6 +977,7 @@
 <!-- BACK NAV -->
 <nav class="back-nav" aria-label="Breadcrumb">
   <a href="option50-combo-b.html">Back to Projects</a>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">☀</button>
 </nav>
 
 <!-- PROJECT HERO -->
@@ -1147,14 +1186,14 @@
       <li><a href="https://www.youtube.com/watch?v=878QcFfuhZY" target="_blank" rel="noopener">Watch Trailer on YouTube</a></li>
       <li><a href="../old/public/assets/images/projects-shadowframes/Sound_Grp22_ShadowFrames.pdf" target="_blank" rel="noopener">Sound Bible (PDF)</a></li>
     </ul>
-    <a class="next-project-btn" href="#">Next Project</a>
+    <a class="next-project-btn" href="option50-nottoday.html">Next Project</a>
   </div>
 </nav>
 
 <!-- FOOTER -->
 <footer class="colophon">
   <span>Igor Szuniewicz &copy; 2026</span>
-  <span>Designed with care, set in Outfit, Georgia &amp; System UI</span>
+  <span>Designed with care, set in DM Sans, Georgia &amp; System UI</span>
   <span>No templates were harmed</span>
 </footer>
 
@@ -1237,6 +1276,21 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeLightbox();
   if (e.key === 'ArrowLeft') navigate(-1);
   if (e.key === 'ArrowRight') navigate(1);
+});
+
+// Theme toggle
+const themeToggle = document.getElementById('themeToggle');
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+function updateToggle() {
+  themeToggle.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '☽' : '☀';
+}
+updateToggle();
+themeToggle.addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  updateToggle();
 });
 </script>
 </body>
