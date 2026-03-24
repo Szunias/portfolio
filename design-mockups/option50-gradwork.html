@@ -716,7 +716,7 @@
 <!-- PROJECT HERO -->
 <header class="project-hero">
   <h1 class="project-hero__title">AI Audio Research</h1>
-  <p class="project-hero__subtitle">Can AI generate game audio in real-time? For my bachelor thesis I tested the limits.</p>
+  <p class="project-hero__subtitle">Can AI generate game audio in real-time? I built a prototype to find out.</p>
 
   <div class="project-hero__meta">
     <div class="meta-item">
@@ -755,9 +755,9 @@
 
   <div class="concept-layout">
     <div class="concept-body">
-      <p class="drop-cap">Every gunshot, footstep, and explosion in a game is a pre-recorded WAV file. Hundreds of them per project. AI could generate these on the fly, so every sound would be unique and adapted to the situation, no gigabytes of files shipping with the game. The catch: latency. If a sound arrives even 100ms late, players notice. That's the problem I set out to measure.</p>
+      <p class="drop-cap">Every gunshot, footstep, and explosion in a game is a pre-recorded WAV file. Hundreds of them per project. AI could generate these on the fly &mdash; every sound different, no gigabytes of samples shipping with the game. The catch: latency. If a sound shows up even 100ms late, players notice. I wanted to know exactly how slow these models are.</p>
 
-      <p>I built a prototype. Unity sends requests to a Python server, which calls an AI model and streams audio back. Tested three models: ElevenLabs (cloud API, best quality, latency all over the place), MMAudio (video-to-audio model I hacked to work for games, runs locally), and AudioGen (Meta's text-to-audio, most consistent but still too slow).</p>
+      <p>I built a prototype where Unity sends requests to a Python server over WebSocket. The server calls an AI model and streams audio back. I tested three models: ElevenLabs (cloud API, sounds the best, but latency is all over the place), MMAudio (runs locally on my GPU, originally a video-to-audio model), and AudioGen (Meta's text-to-audio, most consistent but still way too slow).</p>
     </div>
 
     <aside class="concept-sidebar reveal-stagger">
@@ -800,14 +800,14 @@
       <div class="system-item__title-wrap">
         <h3 class="system-item__title">ElevenLabs</h3>
       </div>
-      <p class="system-item__desc">Cloud API. Best quality, but latency jumps wildly: 1s to 12s on the same day. Quality depends on server load.</p>
+      <p class="system-item__desc">Cloud API. Sounds the best by far, but latency jumps wildly: 1s to 12s on the same day depending on their server load.</p>
     </div>
 
     <div class="system-item">
       <div class="system-item__title-wrap">
         <h3 class="system-item__title">MMAudio</h3>
       </div>
-      <p class="system-item__desc">Video-to-audio model adapted for games. Runs locally, 2&ndash;5s per sound. Originally built for video soundtracks, not games.</p>
+      <p class="system-item__desc">Runs locally on GPU, 2&ndash;5s per sound. It was built for video soundtracks, so I had to hack the pipeline to accept text prompts instead of video frames.</p>
     </div>
 
     <div class="system-item">
@@ -826,7 +826,7 @@
   <div class="section-rule"></div>
 
   <div class="finding-body">
-    <p>None of the models came close to real-time. The fastest was still over a second, roughly 60x too slow for a gunshot. I'd added a simple cache earlier just to avoid regenerating the same sound twice. Then I looked at the delivery times in the logs. 21&ndash;55ms. That's fast enough.</p>
+    <p>None of the models came close to real-time. The fastest was still over a second &mdash; roughly 60x too slow for a gunshot. I'd added a cache early on just to stop regenerating the same sound twice. Then I checked the delivery times in the logs: 21&ndash;55ms. That's fast enough.</p>
 
     <p>So I stopped trying to make AI faster and started thinking about <em>when</em> to generate instead. Load screens, quiet gameplay moments, menu screens. Cache the sounds. When the player pulls the trigger, serve from cache instantly and queue a replacement in the background.</p>
   </div>
