@@ -1,0 +1,2008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>igor.audio — Game Audio Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================
+   RESET & BASE
+   ============================ */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #0C0C0C;
+  --surface: #161616;
+  --raised: #1C1C1C;
+  --hover: #222222;
+  --text-primary: #E8E8E8;
+  --text-secondary: #888888;
+  --text-tertiary: #555555;
+  --accent: #E8853A;
+  --accent-dim: rgba(232, 133, 58, 0.15);
+  --accent-glow: rgba(232, 133, 58, 0.25);
+  --blue: #4A9EFF;
+  --blue-dim: rgba(74, 158, 255, 0.12);
+  --border: #2A2A2A;
+  --radius: 6px;
+  --radius-sm: 4px;
+  --nav-height: 56px;
+  --player-height: 72px;
+  --transition: 0.2s ease;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Space Grotesk', 'DM Sans', monospace;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  border: none;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* ============================
+   TOP NAVIGATION BAR
+   ============================ */
+.topnav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--nav-height);
+  background: rgba(12, 12, 12, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+}
+
+.topnav-brand {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.topnav-brand .dot {
+  color: var(--accent);
+}
+
+.topnav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.topnav-tab {
+  padding: 16px 24px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.3px;
+  position: relative;
+  transition: color var(--transition);
+}
+
+.topnav-tab:hover {
+  color: var(--text-primary);
+}
+
+.topnav-tab.active {
+  color: var(--text-primary);
+}
+
+.topnav-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+.topnav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.availability-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.availability-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(232, 133, 58, 0.4); }
+  50% { opacity: 0.6; box-shadow: 0 0 0 4px rgba(232, 133, 58, 0); }
+}
+
+.lang-btn {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.lang-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--text-tertiary);
+}
+
+/* ============================
+   MAIN CONTENT
+   ============================ */
+.main-content {
+  padding-top: var(--nav-height);
+  padding-bottom: calc(var(--player-height) + 40px);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ============================
+   HERO — "NOW PLAYING" CARD
+   ============================ */
+.hero {
+  padding: 48px 0 0;
+  margin-bottom: 48px;
+}
+
+.hero-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.hero-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 260px;
+}
+
+.hero-waveform-panel {
+  position: relative;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(74, 158, 255, 0.04) 0%, rgba(12, 12, 12, 0) 60%);
+}
+
+.hero-waveform-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(74, 158, 255, 0.03) 0px, rgba(74, 158, 255, 0.03) 1px, transparent 1px, transparent 20px),
+    repeating-linear-gradient(0deg, rgba(74, 158, 255, 0.02) 0px, rgba(74, 158, 255, 0.02) 1px, transparent 1px, transparent 20px);
+  pointer-events: none;
+}
+
+.spectral-display {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 160px;
+  position: relative;
+  z-index: 1;
+}
+
+.spectral-bar {
+  width: 4px;
+  border-radius: 2px;
+  background: var(--blue);
+  opacity: 0.7;
+  transition: height 0.6s ease;
+  animation: spectral-idle 3s ease-in-out infinite;
+}
+
+.spectral-bar:nth-child(odd) {
+  opacity: 0.5;
+}
+
+@keyframes spectral-idle {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.85); }
+}
+
+.hero-info-panel {
+  padding: 48px 48px 48px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-now-playing {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-now-playing .eq-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.hero-now-playing .eq-bar {
+  width: 3px;
+  background: var(--accent);
+  border-radius: 1px;
+  animation: eq-bounce 1.2s ease-in-out infinite;
+}
+
+.hero-now-playing .eq-bar:nth-child(1) { height: 4px; animation-delay: 0s; }
+.hero-now-playing .eq-bar:nth-child(2) { height: 8px; animation-delay: 0.15s; }
+.hero-now-playing .eq-bar:nth-child(3) { height: 6px; animation-delay: 0.3s; }
+.hero-now-playing .eq-bar:nth-child(4) { height: 10px; animation-delay: 0.45s; }
+
+@keyframes eq-bounce {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.4); }
+}
+
+.hero-name {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.hero-role {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.hero-details {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  line-height: 1.5;
+}
+
+.hero-details span {
+  color: var(--text-secondary);
+}
+
+/* Hero transport bar */
+.hero-transport {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+  border-top: 1px solid var(--border);
+  background: rgba(22, 22, 22, 0.6);
+}
+
+.transport-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.transport-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 14px;
+  transition: color var(--transition), background var(--transition);
+}
+
+.transport-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255,255,255,0.05);
+}
+
+.transport-btn.play-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #0C0C0C;
+  font-size: 14px;
+  transition: transform var(--transition), background var(--transition);
+}
+
+.transport-btn.play-btn:hover {
+  transform: scale(1.05);
+  background: #F09548;
+}
+
+.transport-track-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-right: auto;
+}
+
+.transport-progress {
+  flex: 1;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.transport-waveform-bar {
+  flex: 1;
+  height: 24px;
+  position: relative;
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.transport-waveform-bg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 0 2px;
+}
+
+.transport-waveform-bg .w-bar {
+  flex: 1;
+  background: rgba(255,255,255,0.08);
+  border-radius: 1px;
+  min-width: 2px;
+}
+
+.transport-waveform-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 35%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 0 2px;
+}
+
+.transport-waveform-fill .w-bar {
+  flex-shrink: 0;
+  width: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+  opacity: 0.9;
+}
+
+.transport-time {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  min-width: 80px;
+  text-align: right;
+}
+
+/* ============================
+   STATS ROW
+   ============================ */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 56px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -1px;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.stat-meter {
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.stat-meter-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1.5s ease;
+}
+
+.stat-meter-fill.amber { background: var(--accent); }
+.stat-meter-fill.blue { background: var(--blue); }
+
+/* VU meter style */
+.stat-vu {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 20px;
+}
+
+.stat-vu-segment {
+  flex: 1;
+  border-radius: 1px;
+  background: rgba(255,255,255,0.06);
+  transition: background 0.3s ease;
+}
+
+.stat-vu-segment.active {
+  background: var(--accent);
+}
+
+.stat-vu-segment.active.high {
+  background: #E85A3A;
+}
+
+/* Mini waveform in stat card */
+.stat-waveform {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  height: 20px;
+}
+
+.stat-waveform .sw-bar {
+  flex: 1;
+  background: var(--blue);
+  border-radius: 1px;
+  opacity: 0.6;
+  animation: stat-wave 4s ease-in-out infinite;
+}
+
+@keyframes stat-wave {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.7); }
+}
+
+/* Language indicators in stat card */
+.stat-langs {
+  display: flex;
+  gap: 8px;
+}
+
+.stat-lang {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+.stat-lang.active {
+  color: var(--accent);
+  border-color: rgba(232, 133, 58, 0.3);
+  background: var(--accent-dim);
+}
+
+/* ============================
+   SECTION HEADINGS
+   ============================ */
+.section {
+  margin-bottom: 56px;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--text-primary);
+}
+
+.section-link {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: color var(--transition);
+}
+
+.section-link:hover {
+  color: var(--accent);
+}
+
+/* ============================
+   PROJECT CARDS — CHANNEL STRIP STYLE
+   ============================ */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.project-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  position: relative;
+  cursor: pointer;
+  transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+  overflow: hidden;
+}
+
+.project-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(232, 133, 58, 0.1);
+}
+
+.project-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.project-channel-num {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  letter-spacing: 1px;
+}
+
+.project-year {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+
+.project-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+
+.project-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+/* Mini waveform in project card */
+.project-waveform {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  height: 24px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+  transition: opacity var(--transition);
+}
+
+.project-card:hover .project-waveform {
+  opacity: 0.8;
+}
+
+.project-waveform .pw-bar {
+  flex: 1;
+  border-radius: 1px;
+  min-width: 2px;
+}
+
+.project-tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.project-tag {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.project-card:hover .project-tag {
+  color: var(--text-secondary);
+  border-color: rgba(255,255,255,0.1);
+}
+
+/* Category level meter at bottom of card */
+.project-level-meter {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.04);
+  overflow: hidden;
+}
+
+.project-level-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.8s ease;
+}
+
+.project-level-fill.game-audio { background: var(--accent); width: 75%; }
+.project-level-fill.ml { background: var(--blue); width: 92%; }
+.project-level-fill.dev-tools { background: #8B5CF6; width: 60%; }
+
+/* ============================
+   ABOUT SECTION — DAW-STYLE PANEL
+   ============================ */
+.about-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+}
+
+.about-bio {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.about-bio strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.about-params {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.param-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.param-row:last-child {
+  border-bottom: none;
+}
+
+.param-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  min-width: 70px;
+}
+
+.param-value {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.param-value.highlight {
+  color: var(--accent);
+}
+
+/* ============================
+   TOOLS RACK
+   ============================ */
+.tools-rack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tool-module {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: border-color var(--transition), background var(--transition);
+  cursor: default;
+}
+
+.tool-module:hover {
+  border-color: var(--text-tertiary);
+  background: var(--raised);
+}
+
+.tool-led {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  box-shadow: 0 0 4px rgba(85, 85, 85, 0.3);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tool-module:hover .tool-led {
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(232, 133, 58, 0.4);
+}
+
+.tool-module.active .tool-led {
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(232, 133, 58, 0.4);
+}
+
+.tool-name {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.tool-module:hover .tool-name {
+  color: var(--text-primary);
+}
+
+.tool-module.active .tool-name {
+  color: var(--text-primary);
+}
+
+/* Mini knob (CSS-only) */
+.tool-knob {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  position: relative;
+}
+
+.tool-knob::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 5px;
+  background: var(--text-tertiary);
+  border-radius: 1px;
+}
+
+.tool-module:hover .tool-knob {
+  border-color: var(--text-tertiary);
+}
+
+.tool-module:hover .tool-knob::after {
+  background: var(--accent);
+}
+
+/* ============================
+   BOTTOM PLAYER BAR — DAW TRANSPORT
+   ============================ */
+.player-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--player-height);
+  background: #111111;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 260px 1fr 220px;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.player-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.player-waveform-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.player-waveform-thumb .mini-bars {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  height: 24px;
+}
+
+.player-waveform-thumb .mini-bar {
+  width: 2px;
+  border-radius: 1px;
+  background: var(--blue);
+  opacity: 0.6;
+}
+
+.player-track-info {
+  min-width: 0;
+}
+
+.player-track-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-track-artist {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* Player center — DAW-style transport */
+.player-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.player-transport {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.player-tbtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: color var(--transition), background var(--transition), border-color var(--transition);
+}
+
+.player-tbtn:hover {
+  color: var(--text-primary);
+  background: var(--raised);
+  border-color: var(--text-tertiary);
+}
+
+.player-tbtn.play {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  color: #0C0C0C;
+  font-size: 14px;
+  transition: transform var(--transition), background var(--transition);
+}
+
+.player-tbtn.play:hover {
+  transform: scale(1.05);
+  background: #F09548;
+}
+
+/* Waveform progress bar in player */
+.player-waveform-progress {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.player-waveform-container {
+  flex: 1;
+  height: 20px;
+  position: relative;
+  cursor: pointer;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.player-waveform-bg-bars {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.player-waveform-bg-bars .wb {
+  flex: 1;
+  background: rgba(255,255,255,0.07);
+  border-radius: 1px;
+  min-width: 2px;
+}
+
+.player-waveform-fill-bars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 35%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.player-waveform-fill-bars .wb {
+  flex-shrink: 0;
+  width: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+.player-time {
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  min-width: 74px;
+  text-align: right;
+}
+
+/* Player right */
+.player-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.player-volume {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-vol-icon {
+  color: var(--text-secondary);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.player-vol-bar {
+  width: 80px;
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+.player-vol-fill {
+  height: 100%;
+  width: 70%;
+  background: var(--text-secondary);
+  border-radius: 2px;
+  transition: background var(--transition);
+}
+
+.player-vol-bar:hover .player-vol-fill {
+  background: var(--accent);
+}
+
+.hq-badge {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  padding: 2px 6px;
+  border: 1px solid rgba(232, 133, 58, 0.3);
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+}
+
+.player-time-display {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 24px;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hero-main {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hero-name {
+    font-size: 34px;
+  }
+
+  .topnav-tab {
+    padding: 16px 16px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .topnav {
+    padding: 0 16px;
+  }
+
+  .topnav-tabs {
+    position: static;
+    transform: none;
+    overflow-x: auto;
+    gap: 0;
+    -webkit-overflow-scrolling: touch;
+    margin-left: 16px;
+  }
+
+  .topnav-tab {
+    padding: 16px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .availability-badge span:not(.availability-dot) {
+    display: none;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+
+  .hero {
+    padding: 32px 0 0;
+    margin-bottom: 32px;
+  }
+
+  .hero-main {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-waveform-panel {
+    padding: 24px;
+    min-height: 120px;
+  }
+
+  .hero-info-panel {
+    padding: 24px;
+  }
+
+  .hero-name {
+    font-size: 30px;
+  }
+
+  .hero-transport {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .transport-progress {
+    width: 100%;
+    max-width: none;
+    order: 10;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-panel {
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+
+  .tools-rack {
+    gap: 8px;
+  }
+
+  .tool-module {
+    padding: 10px 14px;
+  }
+
+  /* Simplified player */
+  .player-bar {
+    grid-template-columns: 1fr auto;
+    height: 64px;
+    padding: 0 12px;
+  }
+
+  .player-center {
+    display: none;
+  }
+
+  .player-right {
+    gap: 8px;
+  }
+
+  .player-volume {
+    display: none;
+  }
+
+  .hq-badge {
+    display: none;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .hero-name {
+    font-size: 24px;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .section-title {
+    font-size: 18px;
+  }
+
+  .project-card {
+    padding: 20px;
+  }
+
+  .project-name {
+    font-size: 16px;
+  }
+
+  .tool-module {
+    padding: 8px 12px;
+  }
+
+  .tool-name {
+    font-size: 12px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================
+     TOP NAVIGATION BAR
+     ============================ -->
+<nav class="topnav">
+  <div class="topnav-brand">igor<span class="dot">.</span>audio</div>
+  <div class="topnav-tabs" id="nav-tabs">
+    <button class="topnav-tab active" data-tab="overview">overview</button>
+    <button class="topnav-tab" data-tab="projects">projects</button>
+    <button class="topnav-tab" data-tab="about">about</button>
+    <button class="topnav-tab" data-tab="tools">tools</button>
+  </div>
+  <div class="topnav-right">
+    <div class="availability-badge">
+      <span class="availability-dot"></span>
+      <span>available for work</span>
+    </div>
+    <button class="lang-btn" id="lang-btn">EN</button>
+  </div>
+</nav>
+
+<!-- ============================
+     MAIN CONTENT
+     ============================ -->
+<div class="main-content">
+  <div class="container">
+
+    <!-- HERO — NOW PLAYING CARD -->
+    <section class="hero">
+      <div class="hero-card">
+        <div class="hero-main">
+          <div class="hero-waveform-panel">
+            <div class="spectral-display" id="spectral-display">
+              <!-- Bars generated by JS -->
+            </div>
+          </div>
+          <div class="hero-info-panel">
+            <div class="hero-now-playing">
+              <div class="eq-bars" id="eq-bars">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+              </div>
+              now playing
+            </div>
+            <h1 class="hero-name">Igor Szuniewicz</h1>
+            <p class="hero-role">Game Audio Designer</p>
+            <p class="hero-details">
+              Currently: <span>Looking for internship</span> &middot; Howest DAE &middot; Belgium
+            </p>
+          </div>
+        </div>
+        <div class="hero-transport">
+          <div class="transport-controls">
+            <button class="transport-btn" title="Previous">&#x23EE;</button>
+            <button class="transport-btn play-btn" id="hero-play-btn" title="Play">&#x25B6;</button>
+            <button class="transport-btn" title="Next">&#x23ED;</button>
+          </div>
+          <div class="transport-track-name">Showreel 2025</div>
+          <div class="transport-progress">
+            <div class="transport-waveform-bar" id="hero-waveform-bar">
+              <div class="transport-waveform-bg" id="hero-waveform-bg">
+                <!-- Generated by JS -->
+              </div>
+              <div class="transport-waveform-fill" id="hero-waveform-fill">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+            <span class="transport-time" id="hero-time">2:34 / 4:12</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS ROW -->
+    <section class="stats-row" id="stats-row">
+      <div class="stat-card">
+        <div class="stat-value">13+</div>
+        <div class="stat-label">Projects</div>
+        <div class="stat-meter">
+          <div class="stat-meter-fill amber" style="width: 0%" id="stat-meter-1"></div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">92%</div>
+        <div class="stat-label">ML Accuracy</div>
+        <div class="stat-vu" id="stat-vu">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">45ms</div>
+        <div class="stat-label">Latency</div>
+        <div class="stat-waveform" id="stat-waveform">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Languages</div>
+        <div class="stat-langs">
+          <span class="stat-lang active">EN</span>
+          <span class="stat-lang">PL</span>
+          <span class="stat-lang">NL</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS SECTION -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Projects</h2>
+        <a href="#" class="section-link">View all 13 projects &rarr;</a>
+      </div>
+      <div class="projects-grid" id="projects-grid">
+        <!-- Generated by JS -->
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">About</h2>
+      </div>
+      <div class="about-panel">
+        <div class="about-bio">
+          <strong>21, from Poland, studying in Belgium.</strong> I build audio systems for games, design sounds,
+          compose adaptive scores, and write tools that make audio pipelines faster. I shipped 13 projects in
+          two years &mdash; from horror games where audio is the only weapon, to ML classifiers that identify
+          sounds in 45ms, to VST plugins built from scratch in JUCE.
+          <br><br>
+          I work across the full pipeline: recording, synthesis, middleware integration, engine implementation,
+          mixing. I am fluent in English, Polish, and Dutch.
+        </div>
+        <div class="about-params">
+          <div class="param-row">
+            <div class="param-label">LOC</div>
+            <div class="param-value">Kortrijk, BE</div>
+          </div>
+          <div class="param-row">
+            <div class="param-label">EDU</div>
+            <div class="param-value">Howest DAE</div>
+          </div>
+          <div class="param-row">
+            <div class="param-label">LANG</div>
+            <div class="param-value">EN / PL / NL</div>
+          </div>
+          <div class="param-row">
+            <div class="param-label">AVAIL</div>
+            <div class="param-value highlight">Jan &ndash; Jun 2026</div>
+          </div>
+          <div class="param-row">
+            <div class="param-label">FOCUS</div>
+            <div class="param-value">Game Audio &middot; Interactive Sound</div>
+          </div>
+          <div class="param-row">
+            <div class="param-label">STACK</div>
+            <div class="param-value">Wwise &middot; Unreal &middot; C++ &middot; Python</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOOLS SECTION -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Tools</h2>
+      </div>
+      <div class="tools-rack" id="tools-rack">
+        <!-- Generated by JS -->
+      </div>
+    </section>
+
+  </div><!-- .container -->
+</div><!-- .main-content -->
+
+<!-- ============================
+     BOTTOM PLAYER BAR — DAW TRANSPORT
+     ============================ -->
+<div class="player-bar">
+  <div class="player-left">
+    <div class="player-waveform-thumb">
+      <div class="mini-bars" id="player-mini-bars">
+        <!-- Generated by JS -->
+      </div>
+    </div>
+    <div class="player-track-info">
+      <div class="player-track-name" id="player-track-name">Showreel 2025</div>
+      <div class="player-track-artist" id="player-track-artist">Igor Szuniewicz</div>
+    </div>
+  </div>
+
+  <div class="player-center">
+    <div class="player-transport">
+      <button class="player-tbtn" title="Previous">&#x23EE;</button>
+      <button class="player-tbtn" title="Rewind">&#x23EA;</button>
+      <button class="player-tbtn play" id="player-play-btn" title="Play">&#x25B6;</button>
+      <button class="player-tbtn" title="Fast Forward">&#x23E9;</button>
+      <button class="player-tbtn" title="Next">&#x23ED;</button>
+    </div>
+    <div class="player-waveform-progress">
+      <div class="player-waveform-container" id="player-waveform-container">
+        <div class="player-waveform-bg-bars" id="player-waveform-bg">
+          <!-- Generated by JS -->
+        </div>
+        <div class="player-waveform-fill-bars" id="player-waveform-fill">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+      <span class="player-time" id="player-time">2:34 / 4:12</span>
+    </div>
+  </div>
+
+  <div class="player-right">
+    <div class="player-volume">
+      <span class="player-vol-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M12.95 0.63c-0.26-0.26-0.68-0.26-0.94 0s-0.26 0.68 0 0.94C13.34 2.9 14 4.86 14 7s-0.66 4.1-1.99 5.43c-0.26 0.26-0.26 0.68 0 0.94 0.13 0.13 0.3 0.19 0.47 0.19s0.34-0.06 0.47-0.19C14.49 11.83 15.33 9.53 15.33 7S14.49 2.17 12.95 0.63zM10.79 2.79c-0.26-0.26-0.68-0.26-0.94 0s-0.26 0.68 0 0.94C10.6 4.48 11 5.68 11 7s-0.4 2.52-1.15 3.27c-0.26 0.26-0.26 0.68 0 0.94 0.13 0.13 0.3 0.19 0.47 0.19s0.34-0.06 0.47-0.19C11.79 10.21 12.33 8.68 12.33 7S11.79 3.79 10.79 2.79zM7 1.5L3.5 5H1C0.45 5 0 5.45 0 6v4c0 0.55 0.45 1 1 1h2.5L7 14.5V1.5z"/></svg>
+      </span>
+      <div class="player-vol-bar" id="player-vol-bar">
+        <div class="player-vol-fill" id="player-vol-fill"></div>
+      </div>
+    </div>
+    <span class="hq-badge">HQ</span>
+    <span class="player-time-display" id="player-time-display">2:34 / 4:12</span>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ============================
+  // UTILITY: Generate random heights for waveform bars
+  // ============================
+  function randomHeights(count, min, max) {
+    var heights = [];
+    for (var i = 0; i < count; i++) {
+      heights.push(min + Math.random() * (max - min));
+    }
+    return heights;
+  }
+
+  // Seed-based pseudo-random for reproducible waveforms per project
+  function seededHeights(seed, count, min, max) {
+    var heights = [];
+    var s = seed;
+    for (var i = 0; i < count; i++) {
+      s = (s * 9301 + 49297) % 233280;
+      var rnd = s / 233280;
+      heights.push(min + rnd * (max - min));
+    }
+    return heights;
+  }
+
+  // ============================
+  // SPECTRAL DISPLAY (Hero)
+  // ============================
+  var spectralDisplay = document.getElementById('spectral-display');
+  var spectralBars = 60;
+  var spectralHeights = [];
+
+  // Create a natural spectral shape: low on edges, peak in the middle-left
+  for (var i = 0; i < spectralBars; i++) {
+    var t = i / spectralBars;
+    // Bell curve peaking at ~30%
+    var base = Math.exp(-Math.pow((t - 0.3) * 3.5, 2)) * 140;
+    // Add randomness
+    var noise = Math.random() * 30 - 10;
+    var h = Math.max(8, Math.min(155, base + noise));
+    spectralHeights.push(h);
+
+    var bar = document.createElement('div');
+    bar.className = 'spectral-bar';
+    bar.style.height = h + 'px';
+    bar.style.animationDelay = (Math.random() * 3) + 's';
+    bar.style.animationDuration = (2.5 + Math.random() * 2) + 's';
+    spectralDisplay.appendChild(bar);
+  }
+
+  // Subtle spectral animation: bars shift slightly
+  function animateSpectral() {
+    var bars = spectralDisplay.querySelectorAll('.spectral-bar');
+    bars.forEach(function(bar, i) {
+      var baseH = spectralHeights[i];
+      var shift = (Math.sin(Date.now() / 1500 + i * 0.3) * 8) + (Math.sin(Date.now() / 800 + i * 0.7) * 4);
+      bar.style.height = Math.max(6, baseH + shift) + 'px';
+    });
+    requestAnimationFrame(animateSpectral);
+  }
+  animateSpectral();
+
+  // ============================
+  // HERO TRANSPORT WAVEFORM
+  // ============================
+  function generateWaveformBars(container, count, heightMin, heightMax, className) {
+    var heights = randomHeights(count, heightMin, heightMax);
+    for (var i = 0; i < count; i++) {
+      var bar = document.createElement('div');
+      bar.className = className;
+      bar.style.height = heights[i] + '%';
+      container.appendChild(bar);
+    }
+    return heights;
+  }
+
+  var heroWaveformBg = document.getElementById('hero-waveform-bg');
+  var heroWaveformFill = document.getElementById('hero-waveform-fill');
+  var heroBarCount = 80;
+  var heroHeights = [];
+
+  for (var i = 0; i < heroBarCount; i++) {
+    var t = i / heroBarCount;
+    var env = 0.4 + 0.6 * Math.sin(t * Math.PI);
+    var h = (20 + Math.random() * 60) * env;
+    heroHeights.push(h);
+
+    var bgBar = document.createElement('div');
+    bgBar.className = 'w-bar';
+    bgBar.style.height = h + '%';
+    heroWaveformBg.appendChild(bgBar);
+
+    var fillBar = document.createElement('div');
+    fillBar.className = 'w-bar';
+    fillBar.style.height = h + '%';
+    fillBar.style.width = '2px';
+    heroWaveformFill.appendChild(fillBar);
+  }
+
+  // ============================
+  // STATS — VU meter, waveform, level bar
+  // ============================
+
+  // Level meter (projects stat)
+  setTimeout(function() {
+    document.getElementById('stat-meter-1').style.width = '75%';
+  }, 300);
+
+  // VU meter (ML accuracy)
+  var vuContainer = document.getElementById('stat-vu');
+  var vuSegments = 12;
+  for (var i = 0; i < vuSegments; i++) {
+    var seg = document.createElement('div');
+    seg.className = 'stat-vu-segment';
+    seg.style.height = (6 + Math.random() * 14) + 'px';
+    if (i < Math.floor(vuSegments * 0.92)) {
+      seg.classList.add('active');
+    }
+    if (i >= Math.floor(vuSegments * 0.85)) {
+      seg.classList.add('high');
+    }
+    vuContainer.appendChild(seg);
+  }
+
+  // VU subtle animation
+  function animateVU() {
+    var segs = vuContainer.querySelectorAll('.stat-vu-segment');
+    var threshold = 10 + Math.sin(Date.now() / 1000) * 1.5;
+    segs.forEach(function(seg, i) {
+      if (i < Math.floor(threshold)) {
+        seg.classList.add('active');
+      } else {
+        seg.classList.remove('active');
+      }
+    });
+    requestAnimationFrame(animateVU);
+  }
+  animateVU();
+
+  // Stat waveform (latency)
+  var statWaveform = document.getElementById('stat-waveform');
+  for (var i = 0; i < 20; i++) {
+    var bar = document.createElement('div');
+    bar.className = 'sw-bar';
+    var h = 4 + Math.random() * 16;
+    bar.style.height = h + 'px';
+    bar.style.animationDelay = (i * 0.15) + 's';
+    bar.style.animationDuration = (3 + Math.random() * 2) + 's';
+    statWaveform.appendChild(bar);
+  }
+
+  // ============================
+  // PROJECT CARDS
+  // ============================
+  var projects = [
+    {
+      num: '01',
+      name: 'Shadow Frames',
+      desc: 'Horror game. Audio is your only weapon.',
+      tags: ['wwise', 'unreal', 'c++'],
+      year: '2025',
+      category: 'game-audio',
+      seed: 42,
+      barColor: '#E8853A'
+    },
+    {
+      num: '02',
+      name: 'Transientica',
+      desc: 'ML audio classifier. 92% accuracy, 45ms.',
+      tags: ['python', 'svm'],
+      year: '2025',
+      category: 'ml',
+      seed: 137,
+      barColor: '#4A9EFF'
+    },
+    {
+      num: '03',
+      name: 'Not Today, Darling!',
+      desc: 'Solo audio. 70 Wwise events.',
+      tags: ['wwise', 'metasounds'],
+      year: '2025',
+      category: 'game-audio',
+      seed: 256,
+      barColor: '#E8853A'
+    },
+    {
+      num: '04',
+      name: 'AudioQ',
+      desc: 'VST sampler plugin from scratch.',
+      tags: ['juce', 'c++'],
+      year: '2024',
+      category: 'dev-tools',
+      seed: 789,
+      barColor: '#8B5CF6'
+    }
+  ];
+
+  var projectsGrid = document.getElementById('projects-grid');
+
+  projects.forEach(function(proj) {
+    var card = document.createElement('div');
+    card.className = 'project-card';
+
+    // Generate unique waveform for each project
+    var waveformHTML = '<div class="project-waveform">';
+    var heights = seededHeights(proj.seed, 50, 15, 100);
+    for (var i = 0; i < 50; i++) {
+      waveformHTML += '<div class="pw-bar" style="height:' + heights[i] + '%;background:' + proj.barColor + ';opacity:0.4"></div>';
+    }
+    waveformHTML += '</div>';
+
+    var tagsHTML = '<div class="project-tags">';
+    proj.tags.forEach(function(tag) {
+      tagsHTML += '<span class="project-tag">' + tag + '</span>';
+    });
+    tagsHTML += '</div>';
+
+    var levelClass = proj.category;
+
+    card.innerHTML =
+      '<div class="project-card-top">' +
+        '<span class="project-channel-num">CH ' + proj.num + '</span>' +
+        '<span class="project-year">' + proj.year + '</span>' +
+      '</div>' +
+      '<div class="project-name">' + proj.name + '</div>' +
+      '<div class="project-desc">' + proj.desc + '</div>' +
+      waveformHTML +
+      tagsHTML +
+      '<div class="project-level-meter">' +
+        '<div class="project-level-fill ' + levelClass + '"></div>' +
+      '</div>';
+
+    projectsGrid.appendChild(card);
+  });
+
+  // ============================
+  // TOOLS RACK
+  // ============================
+  var tools = [
+    { name: 'Wwise', active: true, knob: true },
+    { name: 'FMOD', active: true, knob: false },
+    { name: 'Unreal Engine', active: true, knob: true },
+    { name: 'C++', active: false, knob: false },
+    { name: 'Python', active: false, knob: false },
+    { name: 'Reaper', active: true, knob: true },
+    { name: 'JUCE', active: false, knob: true },
+    { name: 'MetaSounds', active: false, knob: false },
+    { name: 'Pro Tools', active: false, knob: true }
+  ];
+
+  var toolsRack = document.getElementById('tools-rack');
+
+  tools.forEach(function(tool) {
+    var mod = document.createElement('div');
+    mod.className = 'tool-module' + (tool.active ? ' active' : '');
+    var inner = '<div class="tool-led"></div>' +
+      '<span class="tool-name">' + tool.name + '</span>';
+    if (tool.knob) {
+      inner += '<div class="tool-knob"></div>';
+    }
+    mod.innerHTML = inner;
+    toolsRack.appendChild(mod);
+  });
+
+  // ============================
+  // PLAYER BAR — Mini waveform thumbnail
+  // ============================
+  var playerMiniBars = document.getElementById('player-mini-bars');
+  for (var i = 0; i < 16; i++) {
+    var bar = document.createElement('div');
+    bar.className = 'mini-bar';
+    bar.style.height = (4 + Math.random() * 20) + 'px';
+    playerMiniBars.appendChild(bar);
+  }
+
+  // Player waveform progress bars
+  var playerWaveformBg = document.getElementById('player-waveform-bg');
+  var playerWaveformFill = document.getElementById('player-waveform-fill');
+  var playerBarCount = 120;
+
+  for (var i = 0; i < playerBarCount; i++) {
+    var t = i / playerBarCount;
+    var env = 0.3 + 0.7 * Math.sin(t * Math.PI);
+    var h = (15 + Math.random() * 70) * env;
+
+    var bgBar = document.createElement('div');
+    bgBar.className = 'wb';
+    bgBar.style.height = h + '%';
+    playerWaveformBg.appendChild(bgBar);
+
+    var fillBar = document.createElement('div');
+    fillBar.className = 'wb';
+    fillBar.style.height = h + '%';
+    fillBar.style.width = '2px';
+    playerWaveformFill.appendChild(fillBar);
+  }
+
+  // ============================
+  // PLAYBACK STATE
+  // ============================
+  var isPlaying = false;
+  var currentProgress = 35; // percentage (start at 2:34 of 4:12)
+  var totalSeconds = 252; // 4:12
+
+  var heroPlayBtn = document.getElementById('hero-play-btn');
+  var playerPlayBtn = document.getElementById('player-play-btn');
+  var heroWaveformFillEl = document.getElementById('hero-waveform-fill');
+  var playerWaveformFillEl = document.getElementById('player-waveform-fill');
+  var heroTimeEl = document.getElementById('hero-time');
+  var playerTimeEl = document.getElementById('player-time');
+  var playerTimeDisplayEl = document.getElementById('player-time-display');
+  var eqBars = document.getElementById('eq-bars');
+
+  var progressInterval = null;
+
+  function formatTime(seconds) {
+    var m = Math.floor(seconds / 60);
+    var s = Math.floor(seconds % 60);
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+  function updateDisplay() {
+    var currentSec = Math.floor((currentProgress / 100) * totalSeconds);
+    var timeStr = formatTime(currentSec) + ' / ' + formatTime(totalSeconds);
+
+    heroWaveformFillEl.style.width = currentProgress + '%';
+    playerWaveformFillEl.style.width = currentProgress + '%';
+    heroTimeEl.textContent = timeStr;
+    playerTimeEl.textContent = timeStr;
+    playerTimeDisplayEl.textContent = timeStr;
+  }
+
+  function startPlayback() {
+    stopPlayback();
+    isPlaying = true;
+    heroPlayBtn.innerHTML = '&#x23F8;';
+    playerPlayBtn.innerHTML = '&#x23F8;';
+    eqBars.style.opacity = '1';
+
+    progressInterval = setInterval(function() {
+      if (currentProgress < 100) {
+        currentProgress += 0.08;
+        updateDisplay();
+      } else {
+        currentProgress = 0;
+        stopPlayback();
+      }
+    }, 100);
+  }
+
+  function stopPlayback() {
+    isPlaying = false;
+    heroPlayBtn.innerHTML = '&#x25B6;';
+    playerPlayBtn.innerHTML = '&#x25B6;';
+    eqBars.style.opacity = '0.5';
+
+    if (progressInterval) {
+      clearInterval(progressInterval);
+      progressInterval = null;
+    }
+  }
+
+  function togglePlayback() {
+    if (isPlaying) {
+      stopPlayback();
+    } else {
+      startPlayback();
+    }
+  }
+
+  heroPlayBtn.addEventListener('click', togglePlayback);
+  playerPlayBtn.addEventListener('click', togglePlayback);
+
+  // Click on player waveform to seek
+  var playerWaveformContainer = document.getElementById('player-waveform-container');
+  playerWaveformContainer.addEventListener('click', function(e) {
+    var rect = this.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    currentProgress = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    updateDisplay();
+  });
+
+  // Click on hero waveform to seek
+  var heroWaveformBarEl = document.getElementById('hero-waveform-bar');
+  heroWaveformBarEl.addEventListener('click', function(e) {
+    var rect = this.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    currentProgress = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    updateDisplay();
+  });
+
+  // Volume bar
+  var playerVolBar = document.getElementById('player-vol-bar');
+  var playerVolFill = document.getElementById('player-vol-fill');
+  playerVolBar.addEventListener('click', function(e) {
+    var rect = this.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    playerVolFill.style.width = pct + '%';
+  });
+
+  updateDisplay();
+
+  // ============================
+  // TAB NAVIGATION
+  // ============================
+  var tabs = document.querySelectorAll('.topnav-tab');
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      this.classList.add('active');
+    });
+  });
+
+  // ============================
+  // LANGUAGE TOGGLE
+  // ============================
+  var langBtn = document.getElementById('lang-btn');
+  var langs = ['EN', 'PL', 'NL'];
+  var langIndex = 0;
+  langBtn.addEventListener('click', function() {
+    langIndex = (langIndex + 1) % langs.length;
+    this.textContent = langs[langIndex];
+  });
+
+  // ============================
+  // PROJECT CARD CLICK — update player
+  // ============================
+  projectsGrid.addEventListener('click', function(e) {
+    var card = e.target.closest('.project-card');
+    if (!card) return;
+
+    var name = card.querySelector('.project-name').textContent;
+    document.getElementById('player-track-name').textContent = name;
+    document.getElementById('player-track-artist').textContent = 'Igor Szuniewicz';
+    currentProgress = 0;
+    startPlayback();
+  });
+
+  // ============================
+  // KEYBOARD SHORTCUTS
+  // ============================
+  document.addEventListener('keydown', function(e) {
+    if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
+      e.preventDefault();
+      togglePlayback();
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>

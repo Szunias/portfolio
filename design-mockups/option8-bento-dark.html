@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Igor Szuniewicz — Game Audio Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ===== RESET ===== */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ===== BASE ===== */
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: #121212;
+    color: #E0E0E0;
+    font-family: 'Space Grotesk', 'DM Sans', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 6px;
+  }
+
+  /* ===== BENTO GRID ===== */
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto;
+    gap: 6px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  /* ===== CARD BASE ===== */
+  .card {
+    background: #1A1A1A;
+    border: 1px solid #2A2A2A;
+    border-radius: 12px;
+    padding: 24px;
+    transition: transform 0.2s ease, border-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+  }
+
+  /* ===== ROW 1 + ROW 2: NAV CARD ===== */
+  .card--nav {
+    grid-row: 1 / 3;
+    grid-column: 1;
+    background: #1A1A1A;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+    padding: 28px 20px;
+  }
+
+  .nav-link {
+    display: block;
+    font-family: 'Space Grotesk', 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #585858;
+    text-decoration: none;
+    padding: 12px 8px;
+    border-left: 2px solid transparent;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .nav-link:hover {
+    color: #1DB954;
+    border-left-color: #1DB954;
+    background: rgba(29, 185, 84, 0.04);
+  }
+
+  .nav-link--active {
+    color: #1DB954;
+    border-left-color: #1DB954;
+  }
+
+  .nav-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: #3a3a3a;
+    text-transform: uppercase;
+    padding: 0 8px;
+    margin-bottom: 8px;
+  }
+
+  /* ===== ROW 1: NAME CARD ===== */
+  .card--name {
+    grid-column: 2 / 4;
+    grid-row: 1;
+    background: #1A1A1A;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 36px 32px;
+  }
+
+  .name-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(2.4rem, 5vw, 4.2rem);
+    line-height: 0.95;
+    color: #E0E0E0;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .name-role {
+    font-size: 0.95rem;
+    color: #808080;
+    font-weight: 400;
+    margin-bottom: 14px;
+    letter-spacing: 0.01em;
+  }
+
+  .status-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: #1DB954;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    background: #1DB954;
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(29, 185, 84, 0.4); }
+    50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(29, 185, 84, 0); }
+  }
+
+  /* ===== ROW 1: NOW PLAYING ===== */
+  .card--nowplaying {
+    grid-column: 4;
+    grid-row: 1;
+    background: #1A1A1A;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .np-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #585858;
+    margin-bottom: 8px;
+  }
+
+  .np-track {
+    font-size: 0.82rem;
+    color: #E0E0E0;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .np-artist {
+    font-size: 0.72rem;
+    color: #585858;
+  }
+
+  .waveform {
+    display: flex;
+    align-items: flex-end;
+    gap: 2.5px;
+    height: 48px;
+    margin-top: 16px;
+  }
+
+  .waveform-bar {
+    width: 3px;
+    background: #1DB954;
+    border-radius: 1.5px;
+    animation: wave 1.2s ease-in-out infinite;
+  }
+
+  .waveform-bar:nth-child(1)  { height: 20%; animation-delay: 0s; }
+  .waveform-bar:nth-child(2)  { height: 45%; animation-delay: 0.1s; }
+  .waveform-bar:nth-child(3)  { height: 70%; animation-delay: 0.15s; }
+  .waveform-bar:nth-child(4)  { height: 35%; animation-delay: 0.25s; }
+  .waveform-bar:nth-child(5)  { height: 85%; animation-delay: 0.05s; }
+  .waveform-bar:nth-child(6)  { height: 55%; animation-delay: 0.3s; }
+  .waveform-bar:nth-child(7)  { height: 90%; animation-delay: 0.2s; }
+  .waveform-bar:nth-child(8)  { height: 40%; animation-delay: 0.35s; }
+  .waveform-bar:nth-child(9)  { height: 65%; animation-delay: 0.12s; }
+  .waveform-bar:nth-child(10) { height: 30%; animation-delay: 0.28s; }
+  .waveform-bar:nth-child(11) { height: 75%; animation-delay: 0.08s; }
+  .waveform-bar:nth-child(12) { height: 50%; animation-delay: 0.22s; }
+  .waveform-bar:nth-child(13) { height: 80%; animation-delay: 0.18s; }
+  .waveform-bar:nth-child(14) { height: 25%; animation-delay: 0.32s; }
+  .waveform-bar:nth-child(15) { height: 60%; animation-delay: 0.06s; }
+  .waveform-bar:nth-child(16) { height: 95%; animation-delay: 0.14s; }
+  .waveform-bar:nth-child(17) { height: 45%; animation-delay: 0.26s; }
+  .waveform-bar:nth-child(18) { height: 70%; animation-delay: 0.1s; }
+  .waveform-bar:nth-child(19) { height: 35%; animation-delay: 0.3s; }
+  .waveform-bar:nth-child(20) { height: 55%; animation-delay: 0.16s; }
+
+  @keyframes wave {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.35); }
+  }
+
+  .np-progress {
+    width: 100%;
+    height: 2px;
+    background: #2A2A2A;
+    border-radius: 1px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+
+  .np-progress-fill {
+    height: 100%;
+    width: 38%;
+    background: #1DB954;
+    border-radius: 1px;
+  }
+
+  /* ===== ROW 2: STATS CARDS ===== */
+  .card--stat {
+    background: #1A1A1A;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px;
+  }
+
+  .stat-number {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    line-height: 1;
+    color: #1DB954;
+    margin-bottom: 6px;
+  }
+
+  .stat-number--white {
+    color: #E0E0E0;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    color: #585858;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+  }
+
+  /* ===== ROW 2: LOCATION CARD ===== */
+  .card--location {
+    background: #222222;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .location-flag {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+  }
+
+  .location-city {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #E0E0E0;
+    margin-bottom: 4px;
+  }
+
+  .location-school {
+    font-size: 0.72rem;
+    color: #585858;
+    letter-spacing: 0.04em;
+  }
+
+  /* ===== ROW 3: FEATURED PROJECT ===== */
+  .card--featured {
+    grid-column: 1 / 3;
+    background: #1A1A1A;
+    border-top: 2px solid #1DB954;
+    padding: 32px;
+  }
+
+  .card--featured:hover {
+    border-color: #1DB954;
+  }
+
+  .featured-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #1DB954;
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+
+  .featured-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    color: #E0E0E0;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .featured-desc {
+    font-size: 0.85rem;
+    color: #808080;
+    line-height: 1.55;
+    margin-bottom: 18px;
+    max-width: 520px;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #808080;
+    background: #2A2A2A;
+    border: 1px solid #333;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+
+  /* ===== ROW 3: SMALLER PROJECT CARDS ===== */
+  .card--project {
+    background: #1A1A1A;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+  }
+
+  .card--project:hover {
+    border-color: #1DB954;
+  }
+
+  .project-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1.1rem;
+    color: #E0E0E0;
+    margin-bottom: 8px;
+  }
+
+  .project-sub {
+    font-size: 0.78rem;
+    color: #585858;
+    line-height: 1.45;
+    margin-bottom: 16px;
+  }
+
+  /* ===== ROW 4: GREEN CTA CARD ===== */
+  .card--cta {
+    background: #1DB954;
+    border-color: #1DB954;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 28px 24px;
+    animation: cta-glow 3s ease-in-out infinite;
+    cursor: pointer;
+  }
+
+  .card--cta:hover {
+    transform: translateY(-2px);
+    background: #1ed760;
+  }
+
+  @keyframes cta-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(29, 185, 84, 0); }
+    50% { box-shadow: 0 0 20px 2px rgba(29, 185, 84, 0.12); }
+  }
+
+  .cta-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1.8rem;
+    color: #121212;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .cta-sub {
+    font-size: 0.75rem;
+    color: #0d4a22;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+
+  .cta-arrow {
+    font-size: 1.6rem;
+    color: #121212;
+    margin-top: 12px;
+    transition: transform 0.2s ease;
+  }
+
+  .card--cta:hover .cta-arrow {
+    transform: translateX(4px);
+  }
+
+  /* ===== ROW 4: TOOLS GRID ===== */
+  .card--tools {
+    grid-column: 2 / 4;
+    background: #1A1A1A;
+    padding: 24px;
+  }
+
+  .tools-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #3a3a3a;
+    margin-bottom: 16px;
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+  }
+
+  .tool-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: #222222;
+    border: 1px solid #2A2A2A;
+    transition: border-color 0.2s ease;
+  }
+
+  .tool-item:hover {
+    border-color: #444;
+  }
+
+  .tool-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .tool-dot--green { background: #1DB954; }
+  .tool-dot--red { background: #FF5252; }
+  .tool-dot--amber { background: #FFAB40; }
+  .tool-dot--blue { background: #448AFF; }
+  .tool-dot--purple { background: #B388FF; }
+
+  .tool-name {
+    font-size: 0.72rem;
+    color: #808080;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  /* ===== ROW 4: LANGUAGES CARD ===== */
+  .card--languages {
+    background: #222222;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .lang-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #3a3a3a;
+    margin-bottom: 16px;
+  }
+
+  .lang-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .lang-item:last-child { margin-bottom: 0; }
+
+  .lang-code {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #E0E0E0;
+    width: 24px;
+    text-transform: uppercase;
+  }
+
+  .lang-bar-track {
+    flex: 1;
+    height: 3px;
+    background: #2A2A2A;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .lang-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: #1DB954;
+  }
+
+  .lang-bar-fill--pl { width: 100%; }
+  .lang-bar-fill--en { width: 95%; }
+  .lang-bar-fill--nl { width: 55%; }
+
+  .lang-level {
+    font-size: 0.62rem;
+    color: #585858;
+    width: 52px;
+    text-align: right;
+    letter-spacing: 0.02em;
+  }
+
+  /* ===== ROW 5: FOOTER STATUS BAR ===== */
+  .card--footer {
+    grid-column: 1 / -1;
+    background: #161616;
+    border-radius: 12px;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .card--footer:hover {
+    transform: none;
+  }
+
+  .footer-left {
+    font-size: 0.68rem;
+    color: #3a3a3a;
+    letter-spacing: 0.02em;
+  }
+
+  .footer-center {
+    display: flex;
+    gap: 20px;
+  }
+
+  .footer-link {
+    font-size: 0.68rem;
+    color: #585858;
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    text-transform: lowercase;
+    transition: color 0.2s ease;
+  }
+
+  .footer-link:hover {
+    color: #1DB954;
+  }
+
+  .footer-right {
+    font-size: 0.62rem;
+    color: #2e2e2e;
+    letter-spacing: 0.04em;
+  }
+
+  /* ===== LINK RESETS ===== */
+  a.card {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* ===== RESPONSIVE: TABLET (2 cols) ===== */
+  @media (max-width: 960px) {
+    .bento {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card--nav {
+      grid-row: auto;
+      grid-column: 1 / -1;
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: 0;
+      padding: 12px 16px;
+      flex-wrap: wrap;
+    }
+
+    .nav-label { display: none; }
+
+    .nav-link {
+      border-left: none;
+      border-bottom: 2px solid transparent;
+      padding: 8px 14px;
+      font-size: 0.75rem;
+    }
+
+    .nav-link:hover,
+    .nav-link--active {
+      border-left-color: transparent;
+      border-bottom-color: #1DB954;
+    }
+
+    .card--name {
+      grid-column: 1 / -1;
+    }
+
+    .card--featured {
+      grid-column: 1 / -1;
+    }
+
+    .card--tools {
+      grid-column: 1 / -1;
+    }
+
+    .card--footer {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* ===== RESPONSIVE: MOBILE (1 col) ===== */
+  @media (max-width: 580px) {
+    body {
+      padding: 4px;
+    }
+
+    .bento {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+
+    .card--nav {
+      grid-column: 1;
+    }
+
+    .card--name {
+      grid-column: 1;
+      padding: 28px 20px;
+    }
+
+    .name-title {
+      font-size: 2.2rem;
+    }
+
+    .card--featured {
+      grid-column: 1;
+    }
+
+    .card--tools {
+      grid-column: 1;
+    }
+
+    .card--footer {
+      grid-column: 1;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .tools-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="bento">
+
+  <!-- ROW 1+2: NAV (spans 2 rows on desktop) -->
+  <nav class="card card--nav">
+    <div class="nav-label">navigate</div>
+    <a href="#" class="nav-link nav-link--active">Home</a>
+    <a href="#" class="nav-link">Projects</a>
+    <a href="#" class="nav-link">About</a>
+    <a href="#" class="nav-link">Music</a>
+    <a href="#" class="nav-link">Contact</a>
+  </nav>
+
+  <!-- ROW 1: NAME -->
+  <div class="card card--name">
+    <h1 class="name-title">Igor<br>Szuniewicz</h1>
+    <p class="name-role">Game Audio Designer &amp; Programmer</p>
+    <div class="status-line">
+      <span class="status-dot"></span>
+      Available for internship
+    </div>
+  </div>
+
+  <!-- ROW 1: NOW PLAYING -->
+  <div class="card card--nowplaying">
+    <div>
+      <div class="np-label">Now Playing</div>
+      <div class="np-track">Shadow Frames OST</div>
+      <div class="np-artist">Igor Szuniewicz</div>
+    </div>
+    <div class="waveform">
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+    </div>
+    <div class="np-progress">
+      <div class="np-progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- ROW 2: STAT 1 -->
+  <div class="card card--stat">
+    <div class="stat-number">92%</div>
+    <div class="stat-label">ML accuracy</div>
+  </div>
+
+  <!-- ROW 2: STAT 2 -->
+  <div class="card card--stat">
+    <div class="stat-number stat-number--white">45ms</div>
+    <div class="stat-label">Latency</div>
+  </div>
+
+  <!-- ROW 2: LOCATION -->
+  <div class="card card--location">
+    <div class="location-flag">&#x1F1E7;&#x1F1EA;</div>
+    <div class="location-city">Kortrijk, BE</div>
+    <div class="location-school">Howest DAE</div>
+  </div>
+
+  <!-- ROW 3: FEATURED PROJECT -->
+  <a href="#" class="card card--featured">
+    <div class="featured-label">Featured Project</div>
+    <h2 class="featured-title">Transientica</h2>
+    <p class="featured-desc">ML-powered drum transient classifier. Trained an SVM on 1,200 hand-labeled samples to classify kick, snare, and hat transients in real time. 45ms detection latency, 92% accuracy on test set.</p>
+    <div class="tag-row">
+      <span class="tag">Python</span>
+      <span class="tag">SVM</span>
+      <span class="tag">FFT</span>
+      <span class="tag">Librosa</span>
+      <span class="tag">Real-time</span>
+    </div>
+  </a>
+
+  <!-- ROW 3: PROJECT - SHADOW FRAMES -->
+  <a href="#" class="card card--project">
+    <div>
+      <h3 class="project-title">Shadow Frames</h3>
+      <p class="project-sub">Horror game where audio is the only weapon. No UI markers &mdash; players find anomalies by listening.</p>
+    </div>
+    <div class="tag-row">
+      <span class="tag">Wwise</span>
+      <span class="tag">Unreal</span>
+      <span class="tag">C++</span>
+    </div>
+  </a>
+
+  <!-- ROW 3: PROJECT - NOT TODAY, DARLING -->
+  <a href="#" class="card card--project">
+    <div>
+      <h3 class="project-title">Not Today, Darling!</h3>
+      <p class="project-sub">Solo audio designer. 70 Wwise events, 32-voice budget, 180MB footprint on Switch-grade specs.</p>
+    </div>
+    <div class="tag-row">
+      <span class="tag">MetaSounds</span>
+      <span class="tag">Wwise</span>
+      <span class="tag">UE5</span>
+    </div>
+  </a>
+
+  <!-- ROW 4: GREEN CTA -->
+  <a href="mailto:igor@example.com" class="card card--cta">
+    <div class="cta-title">LET'S<br>TALK</div>
+    <div class="cta-sub">igor@szuniewicz.com</div>
+    <div class="cta-arrow">&rarr;</div>
+  </a>
+
+  <!-- ROW 4: TOOLS -->
+  <div class="card card--tools">
+    <div class="tools-label">Tools &amp; Tech</div>
+    <div class="tools-grid">
+      <div class="tool-item">
+        <span class="tool-dot tool-dot--green"></span>
+        <span class="tool-name">Wwise</span>
+      </div>
+      <div class="tool-item">
+        <span class="tool-dot tool-dot--blue"></span>
+        <span class="tool-name">FMOD</span>
+      </div>
+      <div class="tool-item">
+        <span class="tool-dot tool-dot--purple"></span>
+        <span class="tool-name">Unreal Engine</span>
+      </div>
+      <div class="tool-item">
+        <span class="tool-dot tool-dot--red"></span>
+        <span class="tool-name">C++</span>
+      </div>
+      <div class="tool-item">
+        <span class="tool-dot tool-dot--amber"></span>
+        <span class="tool-name">Python</span>
+      </div>
+      <div class="tool-item">
+        <span class="tool-dot tool-dot--green"></span>
+        <span class="tool-name">Reaper</span>
+      </div>
+      <div class="tool-item">
+        <span class="tool-dot tool-dot--purple"></span>
+        <span class="tool-name">JUCE</span>
+      </div>
+      <div class="tool-item">
+        <span class="tool-dot tool-dot--blue"></span>
+        <span class="tool-name">MetaSounds</span>
+      </div>
+      <div class="tool-item">
+        <span class="tool-dot tool-dot--red"></span>
+        <span class="tool-name">Pro Tools</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 4: LANGUAGES -->
+  <div class="card card--languages">
+    <div class="lang-label">Languages</div>
+    <div class="lang-item">
+      <span class="lang-code">PL</span>
+      <div class="lang-bar-track">
+        <div class="lang-bar-fill lang-bar-fill--pl"></div>
+      </div>
+      <span class="lang-level">Native</span>
+    </div>
+    <div class="lang-item">
+      <span class="lang-code">EN</span>
+      <div class="lang-bar-track">
+        <div class="lang-bar-fill lang-bar-fill--en"></div>
+      </div>
+      <span class="lang-level">Fluent</span>
+    </div>
+    <div class="lang-item">
+      <span class="lang-code">NL</span>
+      <div class="lang-bar-track">
+        <div class="lang-bar-fill lang-bar-fill--nl"></div>
+      </div>
+      <span class="lang-level">Learning</span>
+    </div>
+  </div>
+
+  <!-- ROW 5: FOOTER STATUS BAR -->
+  <div class="card card--footer">
+    <div class="footer-left">&copy; 2026 Igor Szuniewicz</div>
+    <div class="footer-center">
+      <a href="#" class="footer-link">github</a>
+      <a href="#" class="footer-link">linkedin</a>
+      <a href="#" class="footer-link">spotify</a>
+    </div>
+    <div class="footer-right">React + TypeScript + Vite</div>
+  </div>
+
+</div>
+
+</body>
+</html>

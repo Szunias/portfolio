@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Igor Szuniewicz — Game Audio Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ── Reset ── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: auto; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: #0E0E12;
+    color: #E8E8E8;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::-webkit-scrollbar { display: none; }
+  body { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* ── Tokens ── */
+  :root {
+    --bg:       #0E0E12;
+    --bg-alt-1: #111116;
+    --bg-alt-2: #13131A;
+    --bg-alt-3: #0F0F15;
+    --text:     #E8E8E8;
+    --text-dim: #888888;
+    --accent:   #FF6633;
+    --accent-glow: rgba(255, 102, 51, 0.15);
+  }
+
+  /* ── Horizontal track ── */
+  .track {
+    display: flex;
+    width: 700vw; /* 7 panels */
+    height: 100vh;
+    will-change: transform;
+    transition: transform 0.7s cubic-bezier(0.45, 0, 0.15, 1);
+  }
+
+  .panel {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding: 0 clamp(2rem, 6vw, 7rem);
+  }
+
+  /* Alternating bg shades */
+  .panel:nth-child(odd)  { background: var(--bg); }
+  .panel:nth-child(even) { background: var(--bg-alt-1); }
+  .panel:nth-child(3)    { background: var(--bg-alt-2); }
+  .panel:nth-child(5)    { background: var(--bg-alt-3); }
+
+  /* ── Watermarks ── */
+  .watermark {
+    position: absolute;
+    right: 5vw;
+    bottom: -0.08em;
+    font-size: clamp(15rem, 25vw, 30rem);
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.018);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
+  .panel-content { position: relative; z-index: 1; width: 100%; }
+
+  /* ── Top navigation ── */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 clamp(1.5rem, 4vw, 4rem);
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(14,14,18,0.9) 60%, transparent);
+    pointer-events: none;
+  }
+
+  .topbar > * { pointer-events: auto; }
+
+  .topbar-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .topbar-dots {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .topbar-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--text-dim);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    position: relative;
+  }
+
+  .topbar-dot.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  .topbar-dot:hover {
+    border-color: var(--accent);
+  }
+
+  .topbar-dot-label {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.55rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+  }
+
+  .topbar-dot:hover .topbar-dot-label,
+  .topbar-dot.active .topbar-dot-label {
+    opacity: 1;
+  }
+
+  .topbar-counter {
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .topbar-counter span { color: var(--accent); font-weight: 600; }
+
+  /* ── Bottom progress bar ── */
+  .progress-track {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.04);
+    z-index: 100;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.7s cubic-bezier(0.45, 0, 0.15, 1);
+  }
+
+  /* ── Panel 1: Intro ── */
+  .intro-block { max-width: 600px; }
+
+  .intro-block h1 {
+    font-size: clamp(2.4rem, 4vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .intro-block .subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    color: var(--accent);
+    font-weight: 500;
+    margin-top: 0.4em;
+  }
+
+  .intro-block .bio {
+    font-size: 1rem;
+    color: var(--text-dim);
+    margin-top: 1.2em;
+    line-height: 1.65;
+    max-width: 440px;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: clamp(2rem, 6vw, 7rem);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--text-dim);
+    font-size: 0.82rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+  }
+
+  .scroll-hint .arrow {
+    display: inline-block;
+    animation: nudgeRight 1.6s ease-in-out infinite;
+    font-size: 1.1rem;
+  }
+
+  @keyframes nudgeRight {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(6px); }
+  }
+
+  /* ── Panel 2: Showreel ── */
+  .showreel-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .showreel-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-dim);
+    margin-bottom: 1.2rem;
+  }
+
+  .showreel-embed {
+    width: min(72vw, 960px);
+    aspect-ratio: 16 / 9;
+    background: #16161c;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .showreel-embed::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255,102,51,0.06) 0%, transparent 70%);
+  }
+
+  .play-btn {
+    width: 64px;
+    height: 64px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .play-btn:hover {
+    background: var(--accent);
+    transform: scale(1.08);
+  }
+
+  .play-btn svg { fill: var(--accent); transition: fill 0.3s ease; }
+  .play-btn:hover svg { fill: #0E0E12; }
+
+  /* ── Project panels (3,4,5) ── */
+  .project-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+    width: 100%;
+  }
+
+  .project-layout.flipped .project-text { order: 2; }
+  .project-layout.flipped .project-visual { order: 1; }
+
+  .project-text h2 {
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .project-text .project-desc {
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    line-height: 1.65;
+    margin-top: 1rem;
+    max-width: 420px;
+  }
+
+  .project-meta {
+    display: flex;
+    gap: 1.8rem;
+    margin-top: 1.4rem;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+  }
+
+  .project-meta strong { color: var(--text); font-weight: 600; }
+
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 1.2rem;
+  }
+
+  .tech-tag {
+    padding: 0.3em 0.7em;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .project-visual {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-visual::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 8px;
+    pointer-events: none;
+  }
+
+  .visual-shadow   { background: linear-gradient(135deg, #1a0a0a 0%, #2d1111 40%, #0E0E12 100%); }
+  .visual-transient { background: linear-gradient(135deg, #0a0e1e 0%, #0f1833 40%, #0E0E12 100%); }
+  .visual-darling   { background: linear-gradient(135deg, #14081c 0%, #1f0e2e 40%, #0E0E12 100%); }
+
+  /* Big stats */
+  .big-stats {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1.6rem;
+  }
+
+  .big-stat-value {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .big-stat-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    margin-top: 0.3rem;
+  }
+
+  .project-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.6rem;
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: gap 0.3s ease;
+  }
+
+  .project-cta:hover { gap: 0.9rem; }
+
+  /* ── Panel 6: About ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: clamp(3rem, 6vw, 7rem);
+    width: 100%;
+    align-items: start;
+  }
+
+  .about-grid h2 {
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1.2rem;
+  }
+
+  .about-grid p {
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    max-width: 460px;
+  }
+
+  .about-sidebar h3 {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 0.8rem;
+    margin-top: 1.8rem;
+  }
+
+  .about-sidebar h3:first-child { margin-top: 0; }
+
+  .about-sidebar ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .about-sidebar li {
+    padding: 0.35em 0.75em;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 3px;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .about-education {
+    font-size: 0.88rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .about-education .school {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ── Panel 7: Contact ── */
+  .contact-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .contact-center h2 {
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .contact-center .contact-sub {
+    font-size: 1rem;
+    color: var(--text-dim);
+    margin-top: 0.8rem;
+    max-width: 360px;
+    line-height: 1.6;
+  }
+
+  .contact-email {
+    display: inline-block;
+    margin-top: 2rem;
+    font-size: 1.1rem;
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1.5px solid rgba(255,255,255,0.15);
+    padding-bottom: 0.15em;
+    transition: border-color 0.3s ease, color 0.3s ease;
+  }
+
+  .contact-email:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .contact-links {
+    display: flex;
+    gap: 1.6rem;
+    margin-top: 2rem;
+  }
+
+  .contact-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    transition: color 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .contact-links a:hover { color: var(--accent); }
+
+  .contact-links svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+
+  /* ── Panel entrance animations ── */
+  .panel .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .panel.in-view .fade-up {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .panel .fade-up:nth-child(2) { transition-delay: 0.08s; }
+  .panel .fade-up:nth-child(3) { transition-delay: 0.16s; }
+  .panel .fade-up:nth-child(4) { transition-delay: 0.24s; }
+  .panel .fade-up:nth-child(5) { transition-delay: 0.32s; }
+  .panel .fade-up:nth-child(6) { transition-delay: 0.40s; }
+  .panel .fade-up:nth-child(7) { transition-delay: 0.48s; }
+
+  /* ── Responsive: mobile vertical fallback ── */
+  @media (max-width: 768px) {
+    body { overflow-y: auto; overflow-x: hidden; }
+
+    .track {
+      display: flex;
+      flex-direction: column;
+      width: 100vw;
+      height: auto;
+      transition: none;
+      transform: none !important;
+    }
+
+    .panel {
+      width: 100vw;
+      height: auto;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 5rem 1.5rem 3rem;
+    }
+
+    .topbar { background: rgba(14,14,18,0.95); backdrop-filter: blur(8px); }
+
+    .progress-track { display: none; }
+
+    .watermark {
+      font-size: 8rem;
+      right: 1rem;
+      bottom: 0;
+    }
+
+    .scroll-hint { display: none; }
+
+    .showreel-embed { width: 100%; }
+
+    .project-layout {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .project-layout.flipped .project-text { order: 1; }
+    .project-layout.flipped .project-visual { order: 2; }
+
+    .project-visual { aspect-ratio: 16 / 9; }
+
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .big-stats { flex-wrap: wrap; }
+
+    /* On mobile, all panels are in view (no scroll-triggered anim) */
+    .panel .fade-up {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<nav class="topbar">
+  <div class="topbar-name">Igor Szuniewicz</div>
+  <div class="topbar-dots" id="topbar-dots">
+    <div class="topbar-dot active" data-panel="0"><span class="topbar-dot-label">Intro</span></div>
+    <div class="topbar-dot" data-panel="1"><span class="topbar-dot-label">Reel</span></div>
+    <div class="topbar-dot" data-panel="2"><span class="topbar-dot-label">Shadow Frames</span></div>
+    <div class="topbar-dot" data-panel="3"><span class="topbar-dot-label">Transientica</span></div>
+    <div class="topbar-dot" data-panel="4"><span class="topbar-dot-label">Not Today</span></div>
+    <div class="topbar-dot" data-panel="5"><span class="topbar-dot-label">About</span></div>
+    <div class="topbar-dot" data-panel="6"><span class="topbar-dot-label">Contact</span></div>
+  </div>
+  <div class="topbar-counter"><span id="counter-current">01</span> / 07</div>
+</nav>
+
+<!-- ── Progress bar ── -->
+<div class="progress-track">
+  <div class="progress-fill" id="progress-fill"></div>
+</div>
+
+<!-- ── Horizontal track ── -->
+<div class="track" id="track">
+
+  <!-- Panel 1 — Intro -->
+  <section class="panel" id="panel-0">
+    <span class="watermark">01</span>
+    <div class="panel-content intro-block">
+      <h1 class="fade-up">Igor Szuniewicz</h1>
+      <div class="subtitle fade-up">Game Audio Designer</div>
+      <p class="bio fade-up">21-year-old audio designer studying at Howest DAE in Belgium. I build sound systems, implement adaptive audio, and ship game-ready soundscapes. Currently looking for an internship starting February 2026.</p>
+    </div>
+    <div class="scroll-hint">
+      Scroll <span class="arrow">&rarr;</span>
+    </div>
+  </section>
+
+  <!-- Panel 2 — Showreel -->
+  <section class="panel" id="panel-1">
+    <span class="watermark">02</span>
+    <div class="panel-content showreel-wrap">
+      <div class="showreel-label fade-up">Demo Reel 2025</div>
+      <div class="showreel-embed fade-up">
+        <div class="play-btn">
+          <svg width="22" height="26" viewBox="0 0 22 26"><polygon points="2,0 22,13 2,26"/></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panel 3 — Shadow Frames -->
+  <section class="panel" id="panel-2">
+    <span class="watermark">03</span>
+    <div class="panel-content">
+      <div class="project-layout">
+        <div class="project-text">
+          <h2 class="fade-up">Shadow Frames</h2>
+          <p class="project-desc fade-up">Horror puzzle game where audio is the only weapon. I designed a real-time frequency analysis system using SVM classification so players identify anomalies by listening, not looking. No UI markers -- pure ear-driven gameplay.</p>
+          <div class="project-meta fade-up">
+            <div><strong>Role</strong> Solo Audio Designer</div>
+            <div><strong>Year</strong> 2025</div>
+          </div>
+          <div class="tech-tags fade-up">
+            <span class="tech-tag">Wwise</span>
+            <span class="tech-tag">Unreal Engine 5</span>
+            <span class="tech-tag">C++</span>
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">SVM</span>
+          </div>
+          <a class="project-cta fade-up">View project &rarr;</a>
+        </div>
+        <div class="project-visual visual-shadow fade-up"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panel 4 — Transientica -->
+  <section class="panel" id="panel-3">
+    <span class="watermark">04</span>
+    <div class="panel-content">
+      <div class="project-layout flipped">
+        <div class="project-text">
+          <h2 class="fade-up">Transientica</h2>
+          <p class="project-desc fade-up">Real-time audio classification engine that detects transient sounds with 92% accuracy at 45ms latency. Built a custom FFT pipeline and SVM model trained on 2,000+ labeled samples. Runs in-engine without frame drops.</p>
+          <div class="big-stats fade-up">
+            <div>
+              <div class="big-stat-value">92%</div>
+              <div class="big-stat-label">Accuracy</div>
+            </div>
+            <div>
+              <div class="big-stat-value">45ms</div>
+              <div class="big-stat-label">Latency</div>
+            </div>
+          </div>
+          <div class="tech-tags fade-up">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">C++</span>
+            <span class="tech-tag">FFT</span>
+            <span class="tech-tag">SVM</span>
+            <span class="tech-tag">Unreal Engine</span>
+          </div>
+          <a class="project-cta fade-up">View project &rarr;</a>
+        </div>
+        <div class="project-visual visual-transient fade-up"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panel 5 — Not Today, Darling! -->
+  <section class="panel" id="panel-4">
+    <span class="watermark">05</span>
+    <div class="panel-content">
+      <div class="project-layout">
+        <div class="project-text">
+          <h2 class="fade-up">Not Today, Darling!</h2>
+          <p class="project-desc fade-up">Solo audio designer on an 8-person team. Built the full audio pipeline from scratch: 70+ Wwise events, procedural MetaSounds, and a 5.1 surround mix squeezed into 180MB with a 32-voice budget. Shipped on deadline.</p>
+          <div class="project-meta fade-up">
+            <div><strong>Role</strong> Solo Audio Designer</div>
+            <div><strong>Team</strong> 8 people</div>
+          </div>
+          <div class="tech-tags fade-up">
+            <span class="tech-tag">Wwise</span>
+            <span class="tech-tag">MetaSounds</span>
+            <span class="tech-tag">Unreal Engine 5</span>
+            <span class="tech-tag">Reaper</span>
+          </div>
+          <a class="project-cta fade-up">View project &rarr;</a>
+        </div>
+        <div class="project-visual visual-darling fade-up"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panel 6 — About -->
+  <section class="panel" id="panel-5">
+    <span class="watermark">06</span>
+    <div class="panel-content">
+      <div class="about-grid">
+        <div>
+          <h2 class="fade-up">About</h2>
+          <p class="fade-up">I'm Igor -- a game audio designer from Poland, currently studying Digital Arts &amp; Entertainment at Howest in Kortrijk, Belgium. I build audio systems that make players feel something before they see anything.</p>
+          <p class="fade-up">My focus sits at the intersection of sound design and technical audio: adaptive systems, real-time classification, middleware integration, and making everything run within tight memory and voice budgets.</p>
+          <p class="fade-up">Looking for an internship starting February 2026 where I can ship audio that matters.</p>
+        </div>
+        <div class="about-sidebar">
+          <h3 class="fade-up">Tools</h3>
+          <ul class="fade-up">
+            <li>Wwise</li>
+            <li>FMOD</li>
+            <li>MetaSounds</li>
+            <li>Reaper</li>
+            <li>Unreal Engine 5</li>
+            <li>C++</li>
+            <li>Blueprints</li>
+            <li>Python</li>
+            <li>JUCE</li>
+          </ul>
+          <h3 class="fade-up">Education</h3>
+          <div class="about-education fade-up">
+            <span class="school">Howest DAE</span><br>
+            Digital Arts &amp; Entertainment<br>
+            Kortrijk, Belgium
+          </div>
+          <h3 class="fade-up">Languages</h3>
+          <ul class="fade-up">
+            <li>Polish (native)</li>
+            <li>English (fluent)</li>
+            <li>Dutch (learning)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panel 7 — Contact -->
+  <section class="panel" id="panel-6">
+    <span class="watermark">07</span>
+    <div class="panel-content contact-center">
+      <h2 class="fade-up">Let's talk.</h2>
+      <p class="contact-sub fade-up">Open to internships, collaborations, and game jams. If you're building something that needs great audio, reach out.</p>
+      <a href="mailto:igor@example.com" class="contact-email fade-up">igor@example.com</a>
+      <div class="contact-links fade-up">
+        <a href="#">
+          <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.27c-.97 0-1.75-.79-1.75-1.76s.78-1.76 1.75-1.76 1.75.79 1.75 1.76-.78 1.76-1.75 1.76zm13.5 11.27h-3v-5.34c0-1.27-.03-2.91-1.77-2.91-1.77 0-2.04 1.38-2.04 2.81v5.44h-3v-10h2.88v1.37h.04c.4-.76 1.38-1.56 2.84-1.56 3.04 0 3.6 2 3.6 4.59v5.6z"/></svg>
+          LinkedIn
+        </a>
+        <a href="#">
+          <svg viewBox="0 0 24 24"><path d="M12 0c-6.63 0-12 5.37-12 12 0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.21.08 1.85 1.24 1.85 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.41 1.02.01 2.04.14 3 .41 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.69.82.57 4.77-1.59 8.21-6.09 8.21-11.39 0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a href="#">
+          <svg viewBox="0 0 24 24"><path d="M23.5 6.51c-.02.29-.02.58-.02.88 0 8.97-6.83 19.31-19.31 19.31-3.83 0-7.4-1.12-10.4-3.04.54.06 1.07.09 1.62.09 3.18 0 6.1-1.08 8.43-2.9-2.97-.06-5.47-2.01-6.33-4.7.41.07.84.11 1.28.11.62 0 1.22-.08 1.79-.24-3.1-.63-5.43-3.36-5.43-6.64v-.09c.91.51 1.96.81 3.07.85-1.82-1.21-3.01-3.29-3.01-5.64 0-1.24.33-2.4.92-3.4 3.34 4.1 8.33 6.8 13.95 7.08-.12-.5-.18-1.02-.18-1.56 0-3.74 3.04-6.78 6.78-6.78 1.95 0 3.71.82 4.95 2.14 1.54-.3 2.99-.87 4.3-1.64-.51 1.58-1.58 2.9-2.98 3.74 1.37-.16 2.68-.53 3.9-1.06-.91 1.36-2.06 2.55-3.38 3.51z"/></svg>
+          Twitter
+        </a>
+        <a href="#">
+          <svg viewBox="0 0 24 24"><path d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2zm0 2c-1.93 0-3.68.78-4.95 2.05l7.9 7.9A8 8 0 0 0 12 4zm0 16c1.93 0 3.68-.78 4.95-2.05l-7.9-7.9A8 8 0 0 0 12 20z"/></svg>
+          ArtStation
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /track -->
+
+<script>
+(function() {
+  'use strict';
+
+  const track       = document.getElementById('track');
+  const dots        = document.querySelectorAll('.topbar-dot');
+  const counter     = document.getElementById('counter-current');
+  const progressBar = document.getElementById('progress-fill');
+  const panels      = document.querySelectorAll('.panel');
+  const totalPanels = panels.length;
+
+  let current       = 0;
+  let isAnimating   = false;
+  let isMobile      = window.matchMedia('(max-width: 768px)').matches;
+
+  // ── Helpers ──
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function goTo(index, smooth) {
+    if (index < 0 || index >= totalPanels) return;
+    if (isMobile) return; // On mobile, let normal scroll handle it
+
+    current = index;
+    isAnimating = true;
+
+    const offset = -(current * 100);
+    track.style.transform = `translateX(${offset}vw)`;
+
+    // Update dots
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+
+    // Update counter
+    counter.textContent = pad(current + 1);
+
+    // Update progress bar
+    const progress = (current / (totalPanels - 1)) * 100;
+    progressBar.style.width = progress + '%';
+
+    // Update in-view state for animations
+    panels.forEach((p, i) => p.classList.toggle('in-view', i === current));
+
+    // Release lock after transition
+    setTimeout(() => { isAnimating = false; }, 750);
+  }
+
+  // ── Initial state ──
+  goTo(0, false);
+
+  // ── Wheel → horizontal ──
+  let wheelAccum = 0;
+  const WHEEL_THRESHOLD = 60;
+
+  window.addEventListener('wheel', function(e) {
+    if (isMobile || isAnimating) return;
+    e.preventDefault();
+
+    // Use deltaY (vertical scroll) to navigate horizontally
+    wheelAccum += e.deltaY;
+
+    if (Math.abs(wheelAccum) >= WHEEL_THRESHOLD) {
+      if (wheelAccum > 0) goTo(current + 1);
+      else goTo(current - 1);
+      wheelAccum = 0;
+    }
+  }, { passive: false });
+
+  // ── Keyboard ──
+  window.addEventListener('keydown', function(e) {
+    if (isMobile || isAnimating) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); goTo(current - 1); }
+    if (e.key === 'Home')  { e.preventDefault(); goTo(0); }
+    if (e.key === 'End')   { e.preventDefault(); goTo(totalPanels - 1); }
+  });
+
+  // ── Dot clicks ──
+  dots.forEach(dot => {
+    dot.addEventListener('click', function() {
+      const idx = parseInt(this.dataset.panel, 10);
+      goTo(idx);
+    });
+  });
+
+  // ── Touch swipe (for tablets in landscape) ──
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  window.addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  window.addEventListener('touchend', function(e) {
+    if (isMobile || isAnimating) return;
+
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+
+    // Only act on horizontal swipes
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      if (dx < 0) goTo(current + 1);
+      else goTo(current - 1);
+    }
+  }, { passive: true });
+
+  // ── Responsive check ──
+  window.matchMedia('(max-width: 768px)').addEventListener('change', function(e) {
+    isMobile = e.matches;
+    if (isMobile) {
+      track.style.transform = 'none';
+      panels.forEach(p => p.classList.add('in-view'));
+    } else {
+      goTo(current, false);
+    }
+  });
+
+  // ── Mobile: make all panels visible on load ──
+  if (isMobile) {
+    panels.forEach(p => p.classList.add('in-view'));
+  }
+
+})();
+</script>
+</body>
+</html>

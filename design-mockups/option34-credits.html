@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGOR SZUNIEWICZ — GAME AUDIO</title>
+<style>
+  /* RESET */
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --bg: #0a0a0a;
+    --text: #e8e8e8;
+    --text-dim: #888888;
+    --text-faint: #555555;
+    --accent: #c9a84c;
+    --accent-dim: #8a7235;
+    --divider: #2a2a2a;
+    --section-gap: 120px;
+    --content-pad: 40px;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 18px;
+    overflow-x: hidden;
+    /* Film grain overlay */
+    background-image:
+      repeating-radial-gradient(circle at 17% 32%, rgba(255,255,255,0.013) 0px, transparent 1px),
+      repeating-radial-gradient(circle at 73% 68%, rgba(255,255,255,0.011) 0px, transparent 1px),
+      repeating-radial-gradient(circle at 41% 91%, rgba(255,255,255,0.015) 0px, transparent 1px),
+      repeating-radial-gradient(circle at 89% 14%, rgba(255,255,255,0.009) 0px, transparent 1px);
+    background-size: 3px 3px, 4px 4px, 2px 2px, 5px 5px;
+  }
+
+  /* Grain pseudo-element for stronger texture */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.2s, opacity 0.2s;
+  }
+
+  a:hover {
+    color: var(--text);
+  }
+
+  /* =========================================
+     WRAPPER - CENTERED COLUMN
+     ========================================= */
+
+  .credits-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 var(--content-pad);
+    text-align: center;
+  }
+
+  /* =========================================
+     OPENING - THE BIG NAME
+     ========================================= */
+
+  .opening {
+    padding: 140px 0 100px;
+    position: relative;
+  }
+
+  .opening__presented {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5em;
+    color: var(--text-dim);
+    margin-bottom: 50px;
+    font-weight: 300;
+  }
+
+  .opening__name {
+    font-size: clamp(56px, 10vw, 120px);
+    font-weight: 200;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 30px;
+  }
+
+  .opening__name span {
+    display: block;
+  }
+
+  .opening__role {
+    font-size: clamp(14px, 2vw, 18px);
+    text-transform: uppercase;
+    letter-spacing: 0.55em;
+    color: var(--accent);
+    font-weight: 300;
+  }
+
+  .opening__status {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid var(--divider);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--text-faint);
+    line-height: 2.2;
+  }
+
+  .opening__status strong {
+    color: var(--accent);
+    font-weight: 400;
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    letter-spacing: 0.4em;
+  }
+
+  /* =========================================
+     DIVIDERS - CINEMATIC SEPARATORS
+     ========================================= */
+
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 80px 0;
+    color: var(--text-faint);
+  }
+
+  .divider__line {
+    flex: 1;
+    height: 1px;
+    background: var(--divider);
+    max-width: 200px;
+  }
+
+  .divider__dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent-dim);
+  }
+
+  .divider--small {
+    padding: 50px 0;
+  }
+
+  .divider--small .divider__line {
+    max-width: 80px;
+  }
+
+  /* =========================================
+     SECTION TITLES - LIKE CREDIT CATEGORIES
+     ========================================= */
+
+  .credit-section-title {
+    font-size: clamp(11px, 1.5vw, 13px);
+    text-transform: uppercase;
+    letter-spacing: 0.6em;
+    color: var(--text-dim);
+    margin-bottom: 60px;
+    font-weight: 400;
+    position: relative;
+  }
+
+  .credit-section-title::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--accent-dim);
+    margin: 20px auto 0;
+  }
+
+  /* =========================================
+     STATS - THE NUMBERS
+     ========================================= */
+
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 50px;
+    margin-bottom: 20px;
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-item__number {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 200;
+    color: var(--text);
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+
+  .stat-item__label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    color: var(--text-faint);
+    margin-top: 12px;
+  }
+
+  /* =========================================
+     BIO - CENTERED STORYTELLING
+     ========================================= */
+
+  .bio-credits {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .bio-credits p {
+    font-size: 18px;
+    line-height: 1.85;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    font-weight: 300;
+  }
+
+  .bio-credits p:last-child {
+    margin-bottom: 0;
+  }
+
+  .bio-credits em {
+    color: var(--text);
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  .bio-facts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px 50px;
+    margin-top: 50px;
+    padding-top: 40px;
+    border-top: 1px solid var(--divider);
+  }
+
+  .bio-fact {
+    text-align: center;
+  }
+
+  .bio-fact__label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    color: var(--text-faint);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .bio-fact__value {
+    font-size: 15px;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  .bio-principle {
+    margin-top: 50px;
+    padding: 30px 40px;
+    border: 1px solid var(--divider);
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text-dim);
+    font-style: italic;
+    font-weight: 300;
+    position: relative;
+  }
+
+  .bio-principle::before {
+    content: '\201C';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    color: var(--accent-dim);
+    font-style: normal;
+    line-height: 1;
+    background: var(--bg);
+    padding: 0 12px;
+  }
+
+  /* =========================================
+     PROJECTS - FILM CREDITS STYLE
+     ========================================= */
+
+  .project-credit {
+    margin-bottom: 70px;
+    text-align: center;
+    position: relative;
+  }
+
+  .project-credit:last-child {
+    margin-bottom: 0;
+  }
+
+  .project-credit__year {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5em;
+    color: var(--text-faint);
+    margin-bottom: 12px;
+  }
+
+  .project-credit__title {
+    font-size: clamp(24px, 3.5vw, 36px);
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .project-credit__role {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    color: var(--accent);
+    margin-bottom: 18px;
+    font-weight: 300;
+  }
+
+  .project-credit__desc {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text-dim);
+    max-width: 560px;
+    margin: 0 auto 18px;
+    font-weight: 300;
+  }
+
+  .project-credit__tags {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .project-credit__tags span {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-faint);
+    border: 1px solid var(--divider);
+    padding: 4px 12px;
+  }
+
+  /* Small separator between projects */
+  .project-sep {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 40px 0;
+  }
+
+  .project-sep__dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--text-faint);
+  }
+
+  /* =========================================
+     DEPARTMENTS - SKILLS AS CREW CREDITS
+     ========================================= */
+
+  .department {
+    margin-bottom: 70px;
+    text-align: center;
+  }
+
+  .department:last-child {
+    margin-bottom: 0;
+  }
+
+  .department__name {
+    font-size: clamp(12px, 1.8vw, 15px);
+    text-transform: uppercase;
+    letter-spacing: 0.5em;
+    color: var(--accent);
+    margin-bottom: 30px;
+    font-weight: 400;
+    position: relative;
+    display: inline-block;
+  }
+
+  .department__name::before,
+  .department__name::after {
+    content: '\2014';
+    margin: 0 18px;
+    color: var(--accent-dim);
+    font-weight: 200;
+  }
+
+  .department__list {
+    list-style: none;
+    font-size: 17px;
+    line-height: 2.4;
+    color: var(--text-dim);
+    font-weight: 300;
+  }
+
+  .department__list li {
+    letter-spacing: 0.05em;
+  }
+
+  /* =========================================
+     TOOLS - EQUIPMENT CREDITS
+     ========================================= */
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .tool-credit {
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid var(--divider);
+  }
+
+  .tool-credit__name {
+    font-size: 16px;
+    color: var(--text);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+  }
+
+  .tool-credit__level {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.35em;
+    color: var(--text-faint);
+    margin-top: 4px;
+  }
+
+  /* =========================================
+     APPROACH - DIRECTOR'S NOTES
+     ========================================= */
+
+  .directors-note {
+    margin-bottom: 55px;
+    text-align: center;
+    max-width: 580px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .directors-note:last-child {
+    margin-bottom: 0;
+  }
+
+  .directors-note__title {
+    font-size: 20px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+
+  .directors-note__text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-dim);
+    font-weight: 300;
+  }
+
+  /* =========================================
+     CONTACT - SPECIAL THANKS
+     ========================================= */
+
+  .special-thanks {
+    text-align: center;
+  }
+
+  .special-thanks__cta {
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 200;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text);
+    margin-bottom: 50px;
+    line-height: 1.3;
+  }
+
+  .special-thanks__links {
+    list-style: none;
+    font-size: 16px;
+    line-height: 3;
+    margin-bottom: 60px;
+  }
+
+  .special-thanks__links a {
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--divider);
+    padding-bottom: 2px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .special-thanks__links a:hover {
+    border-color: var(--accent);
+  }
+
+  .availability-box {
+    border: 1px solid var(--divider);
+    padding: 40px;
+    display: inline-block;
+    text-align: center;
+    max-width: 440px;
+  }
+
+  .availability-box__title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5em;
+    color: var(--accent);
+    margin-bottom: 20px;
+    font-weight: 400;
+  }
+
+  .availability-box__details {
+    font-size: 14px;
+    line-height: 2.2;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    font-weight: 300;
+  }
+
+  /* =========================================
+     FOOTER - END CARD
+     ========================================= */
+
+  .end-card {
+    padding: 100px 0 60px;
+    text-align: center;
+  }
+
+  .end-card__copyright {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    color: var(--text-faint);
+    margin-bottom: 14px;
+  }
+
+  .end-card__tagline {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--text-faint);
+    opacity: 0.5;
+  }
+
+  .end-card__fin {
+    margin-top: 60px;
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 200;
+    text-transform: uppercase;
+    letter-spacing: 0.6em;
+    color: var(--text-faint);
+    opacity: 0.4;
+  }
+
+  /* =========================================
+     RESPONSIVE
+     ========================================= */
+
+  @media (max-width: 768px) {
+    :root {
+      --content-pad: 28px;
+    }
+
+    .opening {
+      padding: 100px 0 70px;
+    }
+
+    .opening__name {
+      letter-spacing: 0.08em;
+    }
+
+    .opening__role {
+      letter-spacing: 0.3em;
+    }
+
+    .divider {
+      padding: 60px 0;
+    }
+
+    .divider--small {
+      padding: 35px 0;
+    }
+
+    .stats-row {
+      gap: 30px 40px;
+    }
+
+    .project-credit {
+      margin-bottom: 50px;
+    }
+
+    .project-sep {
+      padding: 30px 0;
+    }
+
+    .tools-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .department {
+      margin-bottom: 50px;
+    }
+
+    .bio-facts {
+      gap: 24px 40px;
+    }
+
+    .bio-principle {
+      padding: 24px 28px;
+    }
+
+    .special-thanks__cta {
+      letter-spacing: 0.12em;
+    }
+
+    .availability-box {
+      padding: 30px 24px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    :root {
+      --content-pad: 20px;
+    }
+
+    .opening {
+      padding: 80px 0 50px;
+    }
+
+    .opening__presented {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+    }
+
+    .opening__role {
+      letter-spacing: 0.2em;
+      font-size: 12px;
+    }
+
+    .opening__status {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+    }
+
+    .credit-section-title {
+      letter-spacing: 0.35em;
+      margin-bottom: 40px;
+    }
+
+    .project-credit__title {
+      letter-spacing: 0.06em;
+    }
+
+    .project-credit__role {
+      letter-spacing: 0.2em;
+      font-size: 12px;
+    }
+
+    .project-credit__desc {
+      font-size: 15px;
+    }
+
+    .department__name {
+      letter-spacing: 0.3em;
+    }
+
+    .department__name::before,
+    .department__name::after {
+      margin: 0 10px;
+    }
+
+    .department__list {
+      font-size: 15px;
+    }
+
+    .directors-note__title {
+      font-size: 18px;
+      letter-spacing: 0.08em;
+    }
+
+    .directors-note__text {
+      font-size: 15px;
+    }
+
+    .special-thanks__links {
+      font-size: 14px;
+    }
+
+    .availability-box {
+      padding: 24px 20px;
+    }
+
+    .end-card__copyright,
+    .end-card__tagline {
+      letter-spacing: 0.2em;
+      font-size: 10px;
+    }
+
+    .bio-principle {
+      padding: 20px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="credits-container">
+
+  <!-- ===== OPENING TITLE ===== -->
+  <section class="opening">
+    <div class="opening__presented">A Portfolio by</div>
+    <h1 class="opening__name">
+      <span>Igor</span>
+      <span>Szuniewicz</span>
+    </h1>
+    <div class="opening__role">Game Audio Designer</div>
+
+    <div class="opening__status">
+      <strong>Seeking Internship</strong>
+      Jan &ndash; Jun 2026<br>
+      Kortrijk, Belgium<br>
+      EU Passport &middot; Can Relocate &middot; Remote OK
+    </div>
+  </section>
+
+  <!-- ===== DIVIDER ===== -->
+  <div class="divider">
+    <div class="divider__line"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__line"></div>
+  </div>
+
+  <!-- ===== STATS ===== -->
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="stat-item__number">10+</div>
+      <div class="stat-item__label">Years in Music</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-item__number">12+</div>
+      <div class="stat-item__label">Projects Shipped</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-item__number">5+</div>
+      <div class="stat-item__label">Tools Built</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-item__number">3</div>
+      <div class="stat-item__label">Languages Fluent</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-item__number">&lt;45ms</div>
+      <div class="stat-item__label">ML Audio Latency</div>
+    </div>
+  </div>
+
+  <!-- ===== DIVIDER ===== -->
+  <div class="divider">
+    <div class="divider__line"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__line"></div>
+  </div>
+
+  <!-- ===== BIO ===== -->
+  <div class="credit-section-title">About</div>
+
+  <div class="bio-credits">
+    <p>I spent 12 years studying classical piano, but I was always more curious about <em>why</em> sound works than how to perform it. That curiosity took me from music school through physics and maths, and eventually into game audio.</p>
+    <p>Now I design sounds and write the C++ and Python tools that make them run in real-time. I study at Howest DAE in Belgium, specializing in sound integration &mdash; Wwise, FMOD, Unreal Engine, the whole pipeline.</p>
+    <p>I design and implement game audio &mdash; Wwise integration, C++ audio systems, and Unreal Engine.</p>
+
+    <div class="bio-facts">
+      <div class="bio-fact">
+        <span class="bio-fact__label">Education</span>
+        <span class="bio-fact__value">Howest DAE &mdash; Sound Integration</span>
+      </div>
+      <div class="bio-fact">
+        <span class="bio-fact__label">Background</span>
+        <span class="bio-fact__value">Classical Piano (12 years)</span>
+      </div>
+      <div class="bio-fact">
+        <span class="bio-fact__label">Location</span>
+        <span class="bio-fact__value">Kortrijk, Belgium</span>
+      </div>
+      <div class="bio-fact">
+        <span class="bio-fact__label">Languages</span>
+        <span class="bio-fact__value">English, Polish (native), Dutch</span>
+      </div>
+      <div class="bio-fact">
+        <span class="bio-fact__label">Previous</span>
+        <span class="bio-fact__value">Bilingual HS &mdash; Math &amp; Physics</span>
+      </div>
+    </div>
+
+    <div class="bio-principle">
+      A gunshot that sounds amazing but causes a frame drop is a bad sound. Audio has to work within CPU and memory budgets &mdash; that's non-negotiable.
+    </div>
+  </div>
+
+  <!-- ===== DIVIDER ===== -->
+  <div class="divider">
+    <div class="divider__line"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__line"></div>
+  </div>
+
+  <!-- ===== PROJECTS ===== -->
+  <div class="credit-section-title">Productions</div>
+
+  <!-- Project 01 -->
+  <div class="project-credit">
+    <div class="project-credit__year">2025</div>
+    <div class="project-credit__title">Shadow Frames</div>
+    <div class="project-credit__role">Sound Designer &amp; Audio Programmer</div>
+    <div class="project-credit__desc">Psychological horror in a 1960s Irish pub &mdash; black and white, sound-driven. You find anomalies by listening, not looking. C++ audio systems, Wwise integration, enemy proximity tracking, 3-stage anomaly detection. Cross-institutional collab with RITCS writers and KASK composers.</div>
+    <div class="project-credit__tags">
+      <span>Horror</span>
+      <span>Wwise</span>
+      <span>UE5 C++</span>
+      <span>Spatial Audio</span>
+    </div>
+  </div>
+
+  <div class="project-sep">
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+  </div>
+
+  <!-- Project 02 -->
+  <div class="project-credit">
+    <div class="project-credit__year">2025</div>
+    <div class="project-credit__title">Not Today, Darling!</div>
+    <div class="project-credit__role">Sound Designer &amp; Composer</div>
+    <div class="project-credit__desc">Solo audio on a 4-player shared-screen racer. No room for subtle stereo tricks &mdash; fighting for every decibel of headroom and byte of RAM. Procedural MetaSounds engine audio, 150ms surface crossfades, voice priority culling. 160MB down to under 2MB per player.</div>
+    <div class="project-credit__tags">
+      <span>MetaSounds</span>
+      <span>Unreal Engine</span>
+      <span>Multiplayer</span>
+      <span>Racing</span>
+    </div>
+  </div>
+
+  <div class="project-sep">
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+  </div>
+
+  <!-- Project 03 -->
+  <div class="project-credit">
+    <div class="project-credit__year">2025</div>
+    <div class="project-credit__title">Transientica: AudioLab</div>
+    <div class="project-credit__role">ML Engineer &amp; Audio Developer</div>
+    <div class="project-credit__desc">Beatbox into your mic, play a rhythm game. Real-time ML recognition &mdash; 92% accuracy, 45ms latency (down from 180ms). Python/scikit-learn for the ML, Unity for gameplay, UDP/OSC bridge. Lock-free ringbuffer, audio pinned to high-priority thread.</div>
+    <div class="project-credit__tags">
+      <span>Machine Learning</span>
+      <span>Python</span>
+      <span>Unity</span>
+      <span>DSP</span>
+      <span>Research</span>
+    </div>
+  </div>
+
+  <div class="project-sep">
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+  </div>
+
+  <!-- Project 04 -->
+  <div class="project-credit">
+    <div class="project-credit__year">2025</div>
+    <div class="project-credit__title">AI Audio Research</div>
+    <div class="project-credit__role">Researcher &amp; Developer</div>
+    <div class="project-credit__desc">Can AI generate audio fast enough for games? I tested the limits. 5.02ms processing latency, 2253 generations/second. Hybrid system approach.</div>
+    <div class="project-credit__tags">
+      <span>Research</span>
+      <span>Machine Learning</span>
+      <span>Python</span>
+      <span>Real-time</span>
+    </div>
+  </div>
+
+  <div class="project-sep">
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+  </div>
+
+  <!-- Project 05 -->
+  <div class="project-credit">
+    <div class="project-credit__year">2024</div>
+    <div class="project-credit__title">AudioQ</div>
+    <div class="project-credit__role">Plugin Developer</div>
+    <div class="project-credit__desc">Sampler plugin built from scratch in JUCE. Load any audio file and mess with it &mdash; granular synthesis, hand-coded tremolo with per-sample LFO, zero-delay TPT filters, compressor. Full DAW automation through APVTS.</div>
+    <div class="project-credit__tags">
+      <span>VST Plugin</span>
+      <span>C++</span>
+      <span>JUCE</span>
+      <span>DSP</span>
+    </div>
+  </div>
+
+  <div class="project-sep">
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+  </div>
+
+  <!-- Project 06 -->
+  <div class="project-credit">
+    <div class="project-credit__year">2024</div>
+    <div class="project-credit__title">Amorak</div>
+    <div class="project-credit__role">Sound Designer</div>
+    <div class="project-credit__desc">Sound design for a 90-second horror animation. Creature roar layered from lion, elephant, tiger, hippo recordings. 15+ vocal variations, binaural 3D spatial mix. Delivered 48kHz/24-bit at -16 LUFS.</div>
+    <div class="project-credit__tags">
+      <span>Sound Design</span>
+      <span>Horror</span>
+      <span>Creature Design</span>
+      <span>Spatial Audio</span>
+    </div>
+  </div>
+
+  <div class="project-sep">
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+  </div>
+
+  <!-- Project 07 -->
+  <div class="project-credit">
+    <div class="project-credit__year">2024</div>
+    <div class="project-credit__title">Akantilado</div>
+    <div class="project-credit__role">Sound Designer &amp; Mix Engineer</div>
+    <div class="project-credit__desc">Two cats chase a golden orb through the jungle. One falls off a cliff. All foley, ambience, and 5.1 surround mix. 200+ custom samples, 5-layer spatial ambience that shifts with camera position.</div>
+    <div class="project-credit__tags">
+      <span>Foley</span>
+      <span>5.1 Surround</span>
+      <span>Animation</span>
+      <span>Reaper</span>
+    </div>
+  </div>
+
+  <div class="project-sep">
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+  </div>
+
+  <!-- Project 08 -->
+  <div class="project-credit">
+    <div class="project-credit__year">2024</div>
+    <div class="project-credit__title">Pause &amp; Deserve</div>
+    <div class="project-credit__role">Sound Designer &amp; Audio Programmer</div>
+    <div class="project-credit__desc">Psychological horror where pausing costs you. Audio state machine in Unity &mdash; soundscape shifts based on hesitation. Sub-bass you feel more than hear, strategic silences, false footsteps for misdirection.</div>
+    <div class="project-credit__tags">
+      <span>Horror</span>
+      <span>Wwise</span>
+      <span>Unity</span>
+      <span>Adaptive Audio</span>
+    </div>
+  </div>
+
+  <div class="project-sep">
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+  </div>
+
+  <!-- Project 09 -->
+  <div class="project-credit">
+    <div class="project-credit__year">2024</div>
+    <div class="project-credit__title">Richter</div>
+    <div class="project-credit__role">Composer &amp; Sound Designer</div>
+    <div class="project-credit__desc">Student earthquake film. No commercial libraries allowed &mdash; Zoom H6 field recordings on every surface. Earthquake from synthesized drones pitched way down with granular-stretched foley on top. Full day of EQ automation to keep dialogue above the rumble.</div>
+    <div class="project-credit__tags">
+      <span>Film Score</span>
+      <span>Field Recording</span>
+      <span>Orchestral</span>
+    </div>
+  </div>
+
+  <div class="project-sep">
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+  </div>
+
+  <!-- Project 10 -->
+  <div class="project-credit">
+    <div class="project-credit__year">2024</div>
+    <div class="project-credit__title">Ray Animation</div>
+    <div class="project-credit__role">Composer</div>
+    <div class="project-credit__desc">Disco-funk score for a graduation film. The original composer dropped out &mdash; 8 days to write, sync, and deliver. Standing ovation at the cinema screening.</div>
+    <div class="project-credit__tags">
+      <span>Music Composition</span>
+      <span>Animation</span>
+      <span>Funk</span>
+    </div>
+  </div>
+
+  <div class="project-sep">
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+  </div>
+
+  <!-- Project 11 -->
+  <div class="project-credit">
+    <div class="project-credit__year">2024</div>
+    <div class="project-credit__title">Wwise Unreal Engine Fixer</div>
+    <div class="project-credit__role">Tool Developer</div>
+    <div class="project-credit__desc">Fixes broken Wwise integration after Perforce pulls. Scans binaries, finds broken refs, restores them. One click instead of hours of troubleshooting.</div>
+    <div class="project-credit__tags">
+      <span>Dev Tool</span>
+      <span>Python</span>
+      <span>Wwise</span>
+      <span>Automation</span>
+    </div>
+  </div>
+
+  <div class="project-sep">
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+    <div class="project-sep__dot"></div>
+  </div>
+
+  <!-- Project 12 -->
+  <div class="project-credit">
+    <div class="project-credit__year">2024</div>
+    <div class="project-credit__title">Unreal Engine Rebuilder</div>
+    <div class="project-credit__role">Tool Developer</div>
+    <div class="project-credit__desc">Cleans cache, regenerates project files, recompiles. One click does what normally takes 15 minutes of manual cleanup.</div>
+    <div class="project-credit__tags">
+      <span>Dev Tool</span>
+      <span>Automation</span>
+      <span>Unreal Engine</span>
+    </div>
+  </div>
+
+  <!-- ===== DIVIDER ===== -->
+  <div class="divider">
+    <div class="divider__line"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__line"></div>
+  </div>
+
+  <!-- ===== SKILLS / DEPARTMENTS ===== -->
+  <div class="credit-section-title">Departments</div>
+
+  <div class="department">
+    <div class="department__name">Sound Department</div>
+    <ul class="department__list">
+      <li>Interactive Music Systems</li>
+      <li>Wwise &amp; FMOD Integration</li>
+      <li>Unity &amp; Unreal Engine</li>
+      <li>Adaptive Soundscapes</li>
+      <li>MetaSounds (UE5)</li>
+      <li>Spatial Audio / 3D Audio</li>
+      <li>Voice Management &amp; Optimization</li>
+      <li>Memory Budget Management</li>
+    </ul>
+  </div>
+
+  <div class="department">
+    <div class="department__name">Music Department</div>
+    <ul class="department__list">
+      <li>Music Composition</li>
+      <li>Sound Design</li>
+      <li>Mixing &amp; Mastering</li>
+      <li>Field Recording</li>
+      <li>Foley Work</li>
+      <li>5.1 Surround Mixing</li>
+      <li>Horror Sound Design</li>
+    </ul>
+  </div>
+
+  <div class="department">
+    <div class="department__name">Technical Department</div>
+    <ul class="department__list">
+      <li>Real-time DSP</li>
+      <li>Python Audio Tools</li>
+      <li>C# Scripting (Unity)</li>
+      <li>C++ (JUCE Framework)</li>
+      <li>Audio Plugins (VST)</li>
+      <li>Machine Learning for Audio</li>
+      <li>Blueprint Scripting (UE5)</li>
+    </ul>
+  </div>
+
+  <!-- ===== DIVIDER ===== -->
+  <div class="divider">
+    <div class="divider__line"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__line"></div>
+  </div>
+
+  <!-- ===== TOOLS / EQUIPMENT ===== -->
+  <div class="credit-section-title">Equipment &amp; Software</div>
+
+  <div class="tools-grid">
+    <div class="tool-credit">
+      <span class="tool-credit__name">Wwise</span>
+      <span class="tool-credit__level">Advanced</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">FMOD</span>
+      <span class="tool-credit__level">Advanced</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">MetaSounds</span>
+      <span class="tool-credit__level">Advanced</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">Unreal Engine 5</span>
+      <span class="tool-credit__level">Advanced</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">Unity</span>
+      <span class="tool-credit__level">Proficient</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">Reaper</span>
+      <span class="tool-credit__level">Expert</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">Pro Tools</span>
+      <span class="tool-credit__level">Advanced</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">Logic Pro</span>
+      <span class="tool-credit__level">Advanced</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">Python</span>
+      <span class="tool-credit__level">Advanced</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">C#</span>
+      <span class="tool-credit__level">Proficient</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">Blueprints</span>
+      <span class="tool-credit__level">Advanced</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">C++</span>
+      <span class="tool-credit__level">Intermediate</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">Max/MSP</span>
+      <span class="tool-credit__level">Proficient</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">iZotope RX</span>
+      <span class="tool-credit__level">Advanced</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">FabFilter Suite</span>
+      <span class="tool-credit__level">Advanced</span>
+    </div>
+    <div class="tool-credit">
+      <span class="tool-credit__name">JUCE</span>
+      <span class="tool-credit__level">Intermediate</span>
+    </div>
+  </div>
+
+  <!-- ===== DIVIDER ===== -->
+  <div class="divider">
+    <div class="divider__line"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__line"></div>
+  </div>
+
+  <!-- ===== APPROACH / DIRECTOR'S NOTES ===== -->
+  <div class="credit-section-title">Director's Notes</div>
+
+  <div class="directors-note">
+    <div class="directors-note__title">Mix Hierarchy</div>
+    <div class="directors-note__text">In Shadow Frames, the pub ambience kept drowning out enemy footsteps. Instead of just pulling the volume down, I built a sidechain system that ducks the environment whenever an enemy moves. The threat always cuts through.</div>
+  </div>
+
+  <div class="divider divider--small">
+    <div class="divider__line"></div>
+    <div class="divider__line"></div>
+  </div>
+
+  <div class="directors-note">
+    <div class="directors-note__title">Budgets &amp; Constraints</div>
+    <div class="directors-note__text">Not Today Darling had 4 players on a shared screen with a tight budget. Voice count was blowing up. I got ruthless &mdash; aggressive priority culling, forced mono on anything non-critical. We shipped a clean mix that ran smooth.</div>
+  </div>
+
+  <div class="divider divider--small">
+    <div class="divider__line"></div>
+    <div class="divider__line"></div>
+  </div>
+
+  <div class="directors-note">
+    <div class="directors-note__title">Parametric Sound Design</div>
+    <div class="directors-note__text">I hate doing the same work twice. Instead of making 20 unique engine sounds, I built one MetaSound graph that morphs based on speed and RPM. It covers walking, running, and sprinting from a single asset.</div>
+  </div>
+
+  <div class="divider divider--small">
+    <div class="divider__line"></div>
+    <div class="divider__line"></div>
+  </div>
+
+  <div class="directors-note">
+    <div class="directors-note__title">Playtest-Driven Audio</div>
+    <div class="directors-note__text">Designers should not have to ask me to tweak a volume slider. In Shadow Frames, I exposed all key audio variables as DataAssets so the team could adjust tension curves and footstep volumes right in the editor. I focus on the code.</div>
+  </div>
+
+  <!-- ===== DIVIDER ===== -->
+  <div class="divider">
+    <div class="divider__line"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__line"></div>
+  </div>
+
+  <!-- ===== CONTACT / SPECIAL THANKS ===== -->
+  <div class="credit-section-title">Special Thanks</div>
+
+  <div class="special-thanks">
+    <div class="special-thanks__cta">Let's<br>Talk<br>Audio</div>
+
+    <ul class="special-thanks__links">
+      <li><a href="mailto:igorszuniewiczwork@gmail.com">igorszuniewiczwork@gmail.com</a></li>
+      <li><a href="https://www.linkedin.com/in/igorszuniewicz">LinkedIn &mdash; /in/igorszuniewicz</a></li>
+      <li><a href="https://github.com/Szunias">GitHub &mdash; Szunias</a></li>
+      <li><a href="https://igorszuniewicz.itch.io">itch.io &mdash; igorszuniewicz</a></li>
+      <li><a href="https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6">Spotify &mdash; Igor Szuniewicz</a></li>
+      <li><a href="https://igorszuniewicz.com">igorszuniewicz.com</a></li>
+    </ul>
+
+    <div class="availability-box">
+      <div class="availability-box__title">Currently Available</div>
+      <div class="availability-box__details">
+        Looking for internship<br>
+        January &ndash; June 2026<br>
+        3&ndash;6 months duration<br>
+        EU passport &mdash; can relocate<br>
+        Remote work OK<br>
+        <br>
+        EN (fluent) / PL (native) / NL (proficient)
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== END CARD ===== -->
+  <div class="divider">
+    <div class="divider__line"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__dot"></div>
+    <div class="divider__line"></div>
+  </div>
+
+  <footer class="end-card">
+    <div class="end-card__copyright">Igor Szuniewicz &copy; 2025</div>
+    <div class="end-card__tagline">No templates were harmed in the making of this portfolio</div>
+    <div class="end-card__fin">Fin</div>
+  </footer>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Igor Szuniewicz — Game Audio Designer</title>
+<style>
+  /* =========================================
+     RESET & BASE
+     ========================================= */
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --cream: #faf8f5;
+    --white: #ffffff;
+    --black: #1a1a1a;
+    --accent: #c0542e;
+    --accent-light: #f3ebe6;
+    --grey: #5e5e5e;
+    --grey-light: #929292;
+    --border: #e8e4df;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    --sans: system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --radius: 8px;
+    --gap: 12px;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--white);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--black);
+    line-height: 1.6;
+    font-size: 15px;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  a:hover {
+    opacity: 0.8;
+  }
+
+  /* =========================================
+     LAYOUT WRAPPER
+     ========================================= */
+  .bento-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px 48px;
+  }
+
+  /* =========================================
+     CARD BASE
+     ========================================= */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+
+  .card--interactive:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+
+  .card__label {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    margin-bottom: 10px;
+    display: block;
+    font-weight: 600;
+  }
+
+  /* =========================================
+     BENTO GRID — Main Layout
+     ========================================= */
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--gap);
+  }
+
+  /* =========================================
+     ROW 1: Hero (8col) + Stats (4col)
+     ========================================= */
+  .card--hero {
+    grid-column: span 8;
+    padding: 40px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 180px;
+  }
+
+  .hero__name {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+
+  .hero__tagline {
+    font-size: 16px;
+    color: var(--grey);
+    margin-bottom: 16px;
+    font-weight: 400;
+  }
+
+  .hero__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+
+  .hero__dot {
+    width: 7px;
+    height: 7px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .card--stats {
+    grid-column: span 4;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .stat {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .stat:nth-child(1) { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .stat:nth-child(2) { border-bottom: 1px solid var(--border); }
+  .stat:nth-child(3) { border-right: 1px solid var(--border); }
+
+  .stat__number {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--black);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat__label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    font-weight: 500;
+  }
+
+  /* =========================================
+     ROW 2: About (5col) + Skills (4col) + Tools (3col)
+     ========================================= */
+  .card--about {
+    grid-column: span 5;
+  }
+
+  .about__text {
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--grey);
+  }
+
+  .about__text p + p {
+    margin-top: 10px;
+  }
+
+  .about__meta {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .about__meta-item {
+    font-size: 12px;
+    color: var(--grey-light);
+  }
+
+  .about__meta-item strong {
+    color: var(--black);
+    font-weight: 600;
+  }
+
+  .card--skills {
+    grid-column: span 4;
+  }
+
+  .skills-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .pill {
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: var(--accent-light);
+    color: var(--black);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .pill--accent {
+    background: var(--accent);
+    color: var(--white);
+  }
+
+  .card--tools {
+    grid-column: span 3;
+  }
+
+  .tool-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 13px;
+  }
+
+  .tool-row + .tool-row {
+    border-top: 1px solid var(--accent-light);
+  }
+
+  .tool-row__name {
+    font-weight: 500;
+    color: var(--black);
+  }
+
+  .tool-row__dots {
+    display: flex;
+    gap: 3px;
+  }
+
+  .tool-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .tool-dot--filled {
+    background: var(--accent);
+  }
+
+  /* =========================================
+     ROW 3: Projects — Featured row
+     ========================================= */
+  .card--project {
+    padding: 20px 24px;
+  }
+
+  .project__category {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .cat--game-audio { color: var(--accent); }
+  .cat--ml-audio { color: #5a7fa6; }
+  .cat--sound-design { color: #b89a5a; }
+  .cat--dev-tool { color: #6a9a6e; }
+  .cat--film { color: #8a6ea0; }
+  .cat--plugin { color: #5a8a8a; }
+
+  .project__title {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  .project__desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--grey);
+  }
+
+  .project__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 10px;
+  }
+
+  .project__tags span {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    background: var(--cream);
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-weight: 500;
+  }
+
+  .project__year {
+    font-size: 11px;
+    color: var(--grey-light);
+    margin-top: 10px;
+    font-weight: 500;
+  }
+
+  /* Featured projects: large cards */
+  .card--project-lg {
+    grid-column: span 4;
+  }
+
+  /* Medium project cards */
+  .card--project-md {
+    grid-column: span 4;
+  }
+
+  /* Small project cards */
+  .card--project-sm {
+    grid-column: span 3;
+  }
+
+  /* =========================================
+     ROW: Tools Full Grid
+     ========================================= */
+  .card--tools-full {
+    grid-column: span 12;
+    padding: 24px;
+  }
+
+  .tools-full-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+
+  .tool-cell {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--accent-light);
+    border-right: 1px solid var(--accent-light);
+  }
+
+  .tool-cell:nth-child(4n) {
+    border-right: none;
+  }
+
+  .tool-cell:nth-last-child(-n+4) {
+    border-bottom: none;
+  }
+
+  .tool-cell__name {
+    font-weight: 500;
+    color: var(--black);
+  }
+
+  .tool-cell__level {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  /* =========================================
+     ROW: Approach (How I Work)
+     ========================================= */
+  .card--approach {
+    grid-column: span 3;
+  }
+
+  .approach__title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .approach__text {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--grey);
+  }
+
+  /* =========================================
+     ROW: Contact
+     ========================================= */
+  .card--contact {
+    grid-column: span 5;
+  }
+
+  .contact__heading {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin-bottom: 16px;
+  }
+
+  .contact__heading em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .contact__links {
+    list-style: none;
+    font-size: 13px;
+    line-height: 2.2;
+  }
+
+  .contact__links a {
+    font-weight: 500;
+  }
+
+  .card--availability {
+    grid-column: span 4;
+    background: var(--accent);
+    color: var(--white);
+    border-color: var(--accent);
+  }
+
+  .avail__label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 8px;
+  }
+
+  .avail__title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+
+  .avail__details {
+    font-size: 13px;
+    line-height: 2;
+    opacity: 0.9;
+  }
+
+  .card--languages {
+    grid-column: span 3;
+  }
+
+  .lang-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 14px;
+  }
+
+  .lang-item + .lang-item {
+    border-top: 1px solid var(--border);
+  }
+
+  .lang-item__name {
+    font-weight: 500;
+  }
+
+  .lang-item__level {
+    font-size: 11px;
+    color: var(--grey-light);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* =========================================
+     FOOTER
+     ========================================= */
+  .footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--grey-light);
+    padding: 24px;
+  }
+
+  /* =========================================
+     RESPONSIVE — Tablet
+     ========================================= */
+  @media (max-width: 960px) {
+    .bento-grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+
+    .card--hero { grid-column: span 6; }
+    .card--stats { grid-column: span 6; grid-template-columns: repeat(4, 1fr); }
+    .stat:nth-child(1) { border-bottom: none; }
+    .stat:nth-child(2) { border-bottom: none; border-right: 1px solid var(--border); }
+    .stat:nth-child(3) { border-right: 1px solid var(--border); }
+
+    .card--about { grid-column: span 6; }
+    .card--skills { grid-column: span 3; }
+    .card--tools { grid-column: span 3; }
+
+    .card--project-lg { grid-column: span 3; }
+    .card--project-md { grid-column: span 3; }
+    .card--project-sm { grid-column: span 3; }
+
+    .card--tools-full { grid-column: span 6; }
+    .tools-full-grid { grid-template-columns: repeat(2, 1fr); }
+    .tool-cell:nth-child(2n) { border-right: none; }
+    .tool-cell:nth-child(4n) { border-right: none; }
+
+    .card--approach { grid-column: span 3; }
+
+    .card--contact { grid-column: span 6; }
+    .card--availability { grid-column: span 3; }
+    .card--languages { grid-column: span 3; }
+  }
+
+  /* =========================================
+     RESPONSIVE — Mobile
+     ========================================= */
+  @media (max-width: 600px) {
+    :root {
+      --gap: 10px;
+    }
+
+    .bento-wrapper {
+      padding: 16px 12px 32px;
+    }
+
+    .bento-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .card--hero,
+    .card--stats,
+    .card--about,
+    .card--skills,
+    .card--tools,
+    .card--project-lg,
+    .card--project-md,
+    .card--project-sm,
+    .card--tools-full,
+    .card--approach,
+    .card--contact,
+    .card--availability,
+    .card--languages {
+      grid-column: span 1;
+    }
+
+    .card--stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat:nth-child(2) { border-right: none; }
+    .stat:nth-child(3) { border-right: none; }
+
+    .card--hero {
+      padding: 28px 20px;
+    }
+
+    .tools-full-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .tool-cell {
+      border-right: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="bento-wrapper">
+<div class="bento-grid">
+
+  <!-- ==========================================
+       ROW 1: Hero + Stats
+       ========================================== -->
+  <div class="card card--hero">
+    <h1 class="hero__name">Igor Szuniewicz</h1>
+    <p class="hero__tagline">Game Audio Designer &middot; Kortrijk, Belgium</p>
+    <div class="hero__status">
+      <span class="hero__dot"></span>
+      Seeking Internship &mdash; Jan&ndash;Jun 2026
+    </div>
+  </div>
+
+  <div class="card card--stats">
+    <div class="stat">
+      <span class="stat__number">12</span>
+      <span class="stat__label">Projects</span>
+    </div>
+    <div class="stat">
+      <span class="stat__number">12</span>
+      <span class="stat__label">Yrs Piano</span>
+    </div>
+    <div class="stat">
+      <span class="stat__number">3</span>
+      <span class="stat__label">Languages</span>
+    </div>
+    <div class="stat">
+      <span class="stat__number">16</span>
+      <span class="stat__label">Tools</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       ROW 2: About + Skills + Tools Quick
+       ========================================== -->
+  <div class="card card--about">
+    <span class="card__label">About</span>
+    <div class="about__text">
+      <p>12 years of classical piano taught me how sound works. That curiosity took me through physics and maths into game audio. Now I design sounds and write the C++ and Python tools that make them run in real-time.</p>
+      <p>Studying at Howest DAE in Belgium, specializing in sound integration &mdash; Wwise, FMOD, Unreal Engine, the whole pipeline.</p>
+    </div>
+    <div class="about__meta">
+      <span class="about__meta-item"><strong>Education</strong> Howest DAE</span>
+      <span class="about__meta-item"><strong>Background</strong> Classical Piano</span>
+      <span class="about__meta-item"><strong>Previous</strong> Math &amp; Physics</span>
+    </div>
+  </div>
+
+  <div class="card card--skills">
+    <span class="card__label">Skills</span>
+    <div class="skills-pills">
+      <span class="pill pill--accent">Wwise</span>
+      <span class="pill pill--accent">FMOD</span>
+      <span class="pill pill--accent">Unreal Engine</span>
+      <span class="pill">MetaSounds</span>
+      <span class="pill">Spatial Audio</span>
+      <span class="pill">Unity</span>
+      <span class="pill">Sound Design</span>
+      <span class="pill">Music Composition</span>
+      <span class="pill">Real-time DSP</span>
+      <span class="pill">C++</span>
+      <span class="pill">Python</span>
+      <span class="pill">Field Recording</span>
+      <span class="pill">Mixing</span>
+      <span class="pill">Machine Learning</span>
+      <span class="pill">5.1 Surround</span>
+      <span class="pill">Adaptive Audio</span>
+      <span class="pill">VST Plugins</span>
+      <span class="pill">Horror Sound Design</span>
+    </div>
+  </div>
+
+  <div class="card card--tools">
+    <span class="card__label">Top Tools</span>
+    <div class="tool-row">
+      <span class="tool-row__name">Reaper</span>
+      <span class="tool-row__dots">
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+      </span>
+    </div>
+    <div class="tool-row">
+      <span class="tool-row__name">Wwise</span>
+      <span class="tool-row__dots">
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot"></span>
+      </span>
+    </div>
+    <div class="tool-row">
+      <span class="tool-row__name">UE5</span>
+      <span class="tool-row__dots">
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot"></span>
+      </span>
+    </div>
+    <div class="tool-row">
+      <span class="tool-row__name">Pro Tools</span>
+      <span class="tool-row__dots">
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot"></span>
+      </span>
+    </div>
+    <div class="tool-row">
+      <span class="tool-row__name">Python</span>
+      <span class="tool-row__dots">
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot"></span>
+      </span>
+    </div>
+    <div class="tool-row">
+      <span class="tool-row__name">FMOD</span>
+      <span class="tool-row__dots">
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot"></span>
+      </span>
+    </div>
+    <div class="tool-row">
+      <span class="tool-row__name">C++</span>
+      <span class="tool-row__dots">
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot tool-dot--filled"></span>
+        <span class="tool-dot"></span>
+        <span class="tool-dot"></span>
+      </span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       ROW 3: Featured Projects (3 large)
+       ========================================== -->
+  <div class="card card--interactive card--project card--project-lg">
+    <span class="project__category cat--game-audio">Game Audio</span>
+    <h3 class="project__title">Shadow Frames</h3>
+    <p class="project__desc">Psychological horror in a 1960s Irish pub. You find anomalies by listening, not looking. C++ audio systems, Wwise integration, enemy proximity tracking.</p>
+    <div class="project__tags">
+      <span>Horror</span>
+      <span>Wwise</span>
+      <span>UE5 C++</span>
+      <span>Spatial Audio</span>
+    </div>
+    <div class="project__year">2025</div>
+  </div>
+
+  <div class="card card--interactive card--project card--project-lg">
+    <span class="project__category cat--game-audio">Game Audio</span>
+    <h3 class="project__title">Not Today, Darling!</h3>
+    <p class="project__desc">Solo audio on a 4-player shared-screen racer. Procedural MetaSounds engine audio, 150ms surface crossfades, voice priority culling. 160MB down to under 2MB per player.</p>
+    <div class="project__tags">
+      <span>MetaSounds</span>
+      <span>Unreal Engine</span>
+      <span>Multiplayer</span>
+      <span>Racing</span>
+    </div>
+    <div class="project__year">2025</div>
+  </div>
+
+  <div class="card card--interactive card--project card--project-lg">
+    <span class="project__category cat--ml-audio">ML Audio</span>
+    <h3 class="project__title">Transientica: AudioLab</h3>
+    <p class="project__desc">Beatbox into your mic, play a rhythm game. Real-time ML recognition &mdash; 92% accuracy, 45ms latency. Python/scikit-learn for ML, Unity for gameplay.</p>
+    <div class="project__tags">
+      <span>Machine Learning</span>
+      <span>Python</span>
+      <span>Unity</span>
+      <span>DSP</span>
+    </div>
+    <div class="project__year">2025</div>
+  </div>
+
+  <!-- ==========================================
+       ROW 4: 3 Medium Projects
+       ========================================== -->
+  <div class="card card--interactive card--project card--project-md">
+    <span class="project__category cat--ml-audio">Research</span>
+    <h3 class="project__title">AI Audio Research</h3>
+    <p class="project__desc">Can AI generate audio fast enough for games? 5.02ms processing latency, 2253 generations/second. Hybrid system approach.</p>
+    <div class="project__tags">
+      <span>Research</span>
+      <span>ML</span>
+      <span>Python</span>
+      <span>Real-time</span>
+    </div>
+    <div class="project__year">2025</div>
+  </div>
+
+  <div class="card card--interactive card--project card--project-md">
+    <span class="project__category cat--plugin">VST Plugin</span>
+    <h3 class="project__title">AudioQ</h3>
+    <p class="project__desc">Sampler plugin built from scratch in JUCE. Granular synthesis, hand-coded tremolo, zero-delay TPT filters, compressor. Full DAW automation.</p>
+    <div class="project__tags">
+      <span>VST</span>
+      <span>C++</span>
+      <span>JUCE</span>
+      <span>DSP</span>
+    </div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <div class="card card--interactive card--project card--project-md">
+    <span class="project__category cat--sound-design">Sound Design</span>
+    <h3 class="project__title">Amorak</h3>
+    <p class="project__desc">Sound design for a 90-second horror animation. Creature roar layered from lion, elephant, tiger, hippo recordings. Binaural 3D spatial mix.</p>
+    <div class="project__tags">
+      <span>Creature Design</span>
+      <span>Horror</span>
+      <span>Spatial Audio</span>
+    </div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <!-- ==========================================
+       ROW 5: 4 Small Projects
+       ========================================== -->
+  <div class="card card--interactive card--project card--project-sm">
+    <span class="project__category cat--film">Animation</span>
+    <h3 class="project__title">Akantilado</h3>
+    <p class="project__desc">Two cats in the jungle. All foley, ambience, and 5.1 surround mix. 200+ custom samples.</p>
+    <div class="project__tags">
+      <span>Foley</span>
+      <span>5.1 Surround</span>
+    </div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <div class="card card--interactive card--project card--project-sm">
+    <span class="project__category cat--game-audio">Horror Game</span>
+    <h3 class="project__title">Pause &amp; Deserve</h3>
+    <p class="project__desc">Psychological horror where pausing costs you. Audio state machine &mdash; soundscape shifts based on hesitation.</p>
+    <div class="project__tags">
+      <span>Wwise</span>
+      <span>Unity</span>
+      <span>Adaptive</span>
+    </div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <div class="card card--interactive card--project card--project-sm">
+    <span class="project__category cat--film">Film Score</span>
+    <h3 class="project__title">Richter</h3>
+    <p class="project__desc">Earthquake film. Zoom H6 field recordings only. Synthesized drones with granular-stretched foley.</p>
+    <div class="project__tags">
+      <span>Field Recording</span>
+      <span>Orchestral</span>
+    </div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <div class="card card--interactive card--project card--project-sm">
+    <span class="project__category cat--film">Animation</span>
+    <h3 class="project__title">Ray Animation</h3>
+    <p class="project__desc">Disco-funk score for a graduation film. 8 days to write, sync, and deliver. Standing ovation at screening.</p>
+    <div class="project__tags">
+      <span>Composition</span>
+      <span>Funk</span>
+    </div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <!-- ==========================================
+       ROW 6: 2 Dev Tools (small) + Tools Full Grid
+       ========================================== -->
+  <div class="card card--interactive card--project card--project-sm" style="grid-column: span 3;">
+    <span class="project__category cat--dev-tool">Dev Tool</span>
+    <h3 class="project__title">Wwise UE Fixer</h3>
+    <p class="project__desc">Fixes broken Wwise integration after Perforce pulls. One click instead of hours.</p>
+    <div class="project__tags">
+      <span>Python</span>
+      <span>Wwise</span>
+      <span>Automation</span>
+    </div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <div class="card card--interactive card--project card--project-sm" style="grid-column: span 3;">
+    <span class="project__category cat--dev-tool">Dev Tool</span>
+    <h3 class="project__title">UE Rebuilder</h3>
+    <p class="project__desc">Cleans cache, regenerates project files, recompiles. One click does what takes 15 minutes manually.</p>
+    <div class="project__tags">
+      <span>Automation</span>
+      <span>Unreal Engine</span>
+    </div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <div class="card card--tools-full" style="grid-column: span 6;">
+    <span class="card__label">All Tools</span>
+    <div class="tools-full-grid">
+      <div class="tool-cell">
+        <span class="tool-cell__name">Wwise</span>
+        <span class="tool-cell__level">Advanced</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">FMOD</span>
+        <span class="tool-cell__level">Advanced</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">MetaSounds</span>
+        <span class="tool-cell__level">Advanced</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">Unreal Engine 5</span>
+        <span class="tool-cell__level">Advanced</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">Unity</span>
+        <span class="tool-cell__level">Proficient</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">Reaper</span>
+        <span class="tool-cell__level">Expert</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">Pro Tools</span>
+        <span class="tool-cell__level">Advanced</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">Logic Pro</span>
+        <span class="tool-cell__level">Advanced</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">Python</span>
+        <span class="tool-cell__level">Advanced</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">C#</span>
+        <span class="tool-cell__level">Proficient</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">Blueprints</span>
+        <span class="tool-cell__level">Advanced</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">C++</span>
+        <span class="tool-cell__level">Intermediate</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">Max/MSP</span>
+        <span class="tool-cell__level">Proficient</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">iZotope RX</span>
+        <span class="tool-cell__level">Advanced</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">FabFilter Suite</span>
+        <span class="tool-cell__level">Advanced</span>
+      </div>
+      <div class="tool-cell">
+        <span class="tool-cell__name">JUCE</span>
+        <span class="tool-cell__level">Intermediate</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       ROW 7: How I Work (4 cards)
+       ========================================== -->
+  <div class="card card--approach">
+    <span class="card__label">Approach</span>
+    <h3 class="approach__title">Mix Hierarchy</h3>
+    <p class="approach__text">In Shadow Frames, pub ambience kept drowning enemy footsteps. Built a sidechain system that ducks environment whenever an enemy moves. The threat always cuts through.</p>
+  </div>
+
+  <div class="card card--approach">
+    <span class="card__label">Approach</span>
+    <h3 class="approach__title">Budgets &amp; Constraints</h3>
+    <p class="approach__text">Not Today Darling had 4 players on shared screen. Voice count was blowing up. Aggressive priority culling, forced mono on non-critical sounds. Clean mix, smooth performance.</p>
+  </div>
+
+  <div class="card card--approach">
+    <span class="card__label">Approach</span>
+    <h3 class="approach__title">Parametric Sound</h3>
+    <p class="approach__text">Instead of 20 unique engine sounds, one MetaSound graph that morphs based on speed and RPM. Covers walking, running, sprinting from a single asset.</p>
+  </div>
+
+  <div class="card card--approach">
+    <span class="card__label">Approach</span>
+    <h3 class="approach__title">Playtest-Driven</h3>
+    <p class="approach__text">Designers shouldn't need to ask me to tweak volume. Exposed key audio variables as DataAssets so the team adjusts tension curves right in the editor.</p>
+  </div>
+
+  <!-- ==========================================
+       ROW 8: Contact + Availability + Languages
+       ========================================== -->
+  <div class="card card--contact">
+    <span class="card__label">Contact</span>
+    <p class="contact__heading">Looking for an internship where I can <em>make games sound right.</em></p>
+    <ul class="contact__links">
+      <li><a href="mailto:igorszuniewiczwork@gmail.com">igorszuniewiczwork@gmail.com</a></li>
+      <li><a href="https://www.linkedin.com/in/igorszuniewicz">LinkedIn &mdash; /in/igorszuniewicz</a></li>
+      <li><a href="https://github.com/Szunias">GitHub &mdash; Szunias</a></li>
+      <li><a href="https://igorszuniewicz.itch.io">itch.io &mdash; igorszuniewicz</a></li>
+      <li><a href="https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6">Spotify &mdash; Igor Szuniewicz</a></li>
+      <li><a href="https://igorszuniewicz.com">igorszuniewicz.com</a></li>
+    </ul>
+  </div>
+
+  <div class="card card--availability">
+    <div class="avail__label">Looking for</div>
+    <h3 class="avail__title">Internship<br>Jan&ndash;Jun 2026</h3>
+    <div class="avail__details">
+      3&ndash;6 months duration<br>
+      EU passport &mdash; can relocate<br>
+      Remote work OK
+    </div>
+  </div>
+
+  <div class="card card--languages">
+    <span class="card__label">Languages</span>
+    <div class="lang-item">
+      <span class="lang-item__name">English</span>
+      <span class="lang-item__level">Fluent</span>
+    </div>
+    <div class="lang-item">
+      <span class="lang-item__name">Polish</span>
+      <span class="lang-item__level">Native</span>
+    </div>
+    <div class="lang-item">
+      <span class="lang-item__name">Dutch</span>
+      <span class="lang-item__level">Proficient</span>
+    </div>
+  </div>
+
+</div><!-- /bento-grid -->
+</div><!-- /bento-wrapper -->
+
+<footer class="footer">
+  Igor Szuniewicz &copy; 2025
+</footer>
+
+</body>
+</html>

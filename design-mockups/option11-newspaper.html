@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Audio Gazette — Igor Szuniewicz Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background-color: #e8e0d4;
+            color: #1A1A1A;
+            font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+            line-height: 1.55;
+            padding: 24px 16px;
+        }
+
+        /* Paper grain texture via SVG noise */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 256px 256px;
+        }
+
+        /* ============================================
+           NEWSPAPER CONTAINER
+           ============================================ */
+        .newspaper {
+            max-width: 1100px;
+            margin: 0 auto;
+            background-color: #FDF8F0;
+            box-shadow:
+                0 1px 3px rgba(0,0,0,0.08),
+                0 8px 30px rgba(0,0,0,0.06),
+                inset 0 0 80px rgba(0,0,0,0.015);
+            position: relative;
+        }
+
+        /* Subtle aged edge effect */
+        .newspaper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            box-shadow: inset 0 0 60px rgba(139, 119, 90, 0.08);
+        }
+
+        .newspaper-inner {
+            padding: 40px 48px 32px;
+            position: relative;
+        }
+
+        /* ============================================
+           RULES — Thick and Thin Lines
+           ============================================ */
+        .rule-thick {
+            border: none;
+            border-top: 3px solid #1A1A1A;
+            margin: 0;
+        }
+
+        .rule-thin {
+            border: none;
+            border-top: 1px solid #1A1A1A;
+            margin: 0;
+        }
+
+        .rule-double {
+            border: none;
+            border-top: 3px double #1A1A1A;
+            margin: 0;
+        }
+
+        .rule-thick-thin {
+            border: none;
+            height: 5px;
+            background: linear-gradient(to bottom,
+                #1A1A1A 0%, #1A1A1A 3px,
+                transparent 3px, transparent 4px,
+                #1A1A1A 4px, #1A1A1A 5px
+            );
+            margin: 0;
+        }
+
+        .rule-ornamental {
+            border: none;
+            height: 7px;
+            background: linear-gradient(to bottom,
+                #1A1A1A 0%, #1A1A1A 2px,
+                transparent 2px, transparent 3px,
+                #1A1A1A 3px, transparent 3px,
+                transparent 5px,
+                #1A1A1A 5px, #1A1A1A 7px
+            );
+            margin: 0;
+        }
+
+        /* ============================================
+           MASTHEAD
+           ============================================ */
+        .masthead {
+            text-align: center;
+            padding: 12px 0 0;
+        }
+
+        .masthead-top-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Source Serif 4', serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #555;
+            padding: 0 0 8px;
+        }
+
+        .masthead-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 4.5rem;
+            letter-spacing: 0.04em;
+            line-height: 1;
+            text-transform: uppercase;
+            padding: 14px 0 6px;
+            position: relative;
+        }
+
+        .masthead-title span {
+            display: inline-block;
+        }
+
+        /* Small flourish between "THE" and "GAZETTE" */
+        .masthead-subtitle-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 0.85rem;
+            color: #444;
+            padding: 2px 0 10px;
+            letter-spacing: 0.06em;
+        }
+
+        .masthead-subtitle-bar .flourish {
+            width: 40px;
+            height: 1px;
+            background: #888;
+            display: inline-block;
+        }
+
+        .masthead-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Source Serif 4', serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.05em;
+            color: #555;
+            padding: 8px 0 6px;
+        }
+
+        .masthead-info-center {
+            text-align: center;
+        }
+
+        .weather-box {
+            font-family: 'Source Serif 4', serif;
+            font-size: 0.68rem;
+            text-align: right;
+            color: #555;
+        }
+
+        /* ============================================
+           ABOVE THE FOLD — Headline + Sidebar
+           ============================================ */
+        .above-fold {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 0;
+            margin-top: 16px;
+        }
+
+        .main-story {
+            padding-right: 24px;
+            border-right: 1px solid #1A1A1A;
+        }
+
+        .sidebar-stories {
+            padding-left: 24px;
+        }
+
+        /* ============================================
+           HEADLINES & ARTICLE TYPOGRAPHY
+           ============================================ */
+        .headline-primary {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 2.4rem;
+            line-height: 1.12;
+            letter-spacing: -0.01em;
+            margin-bottom: 8px;
+        }
+
+        .headline-primary a {
+            color: #1A1A1A;
+            text-decoration: none;
+            transition: text-decoration-color 0.15s;
+        }
+
+        .headline-primary a:hover {
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 3px;
+        }
+
+        .subheadline {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 400;
+            font-size: 1.1rem;
+            line-height: 1.35;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .byline {
+            font-family: 'Source Serif 4', serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #555;
+            margin-bottom: 14px;
+        }
+
+        .article-body {
+            column-count: 2;
+            column-gap: 24px;
+            column-rule: 1px solid #ddd;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        .article-body p {
+            margin-bottom: 10px;
+            text-indent: 1.5em;
+        }
+
+        .article-body p:first-child {
+            text-indent: 0;
+        }
+
+        /* Drop cap */
+        .drop-cap::first-letter {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            float: left;
+            font-size: 4.2em;
+            line-height: 0.75;
+            padding-right: 8px;
+            padding-top: 6px;
+            color: #1A1A1A;
+        }
+
+        .continued {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 0.82rem;
+            color: #666;
+            text-align: right;
+            margin-top: 6px;
+        }
+
+        .continued a {
+            color: #444;
+            text-decoration: none;
+            border-bottom: 1px dotted #888;
+        }
+
+        .continued a:hover {
+            color: #1A1A1A;
+            border-bottom-style: solid;
+        }
+
+        /* Photo placeholder */
+        .photo-placeholder {
+            background: #d8d0c4;
+            width: 100%;
+            aspect-ratio: 16/10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 16px 0 6px;
+            position: relative;
+            break-inside: avoid;
+        }
+
+        .photo-placeholder-text {
+            font-family: 'Source Serif 4', serif;
+            font-size: 0.75rem;
+            color: #888;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .photo-caption {
+            font-family: 'Source Serif 4', serif;
+            font-size: 0.73rem;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 14px;
+            line-height: 1.4;
+        }
+
+        /* ============================================
+           SIDEBAR ARTICLES
+           ============================================ */
+        .sidebar-article {
+            margin-bottom: 20px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .sidebar-article:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .headline-secondary {
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+
+        .headline-secondary a {
+            color: #1A1A1A;
+            text-decoration: none;
+        }
+
+        .headline-secondary a:hover {
+            text-decoration: underline;
+            text-decoration-thickness: 1.5px;
+            text-underline-offset: 2px;
+        }
+
+        .sidebar-body {
+            font-size: 0.85rem;
+            line-height: 1.55;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        .sidebar-body p {
+            margin-bottom: 6px;
+        }
+
+        .sidebar-byline {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #777;
+            margin-bottom: 8px;
+        }
+
+        /* Pull quote */
+        .pull-quote {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.15rem;
+            line-height: 1.4;
+            text-align: center;
+            padding: 16px 12px;
+            margin: 14px 0;
+            border-top: 2px solid #1A1A1A;
+            border-bottom: 2px solid #1A1A1A;
+            color: #222;
+        }
+
+        /* ============================================
+           MIDDLE SECTION — Portfolio Below the Fold
+           ============================================ */
+        .section-break {
+            margin-top: 28px;
+            margin-bottom: 4px;
+        }
+
+        .section-header {
+            text-align: center;
+            padding: 6px 0;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+        }
+
+        .portfolio-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0;
+            margin-top: 14px;
+        }
+
+        .portfolio-item {
+            padding: 0 20px;
+            border-right: 1px solid #ccc;
+        }
+
+        .portfolio-item:first-child {
+            padding-left: 0;
+        }
+
+        .portfolio-item:last-child {
+            padding-right: 0;
+            border-right: none;
+        }
+
+        .headline-tertiary {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+
+        .headline-tertiary a {
+            color: #1A1A1A;
+            text-decoration: none;
+        }
+
+        .headline-tertiary a:hover {
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .portfolio-body {
+            font-size: 0.84rem;
+            line-height: 1.5;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        .portfolio-body p {
+            margin-bottom: 6px;
+            text-indent: 1em;
+        }
+
+        .portfolio-body p:first-child {
+            text-indent: 0;
+        }
+
+        .portfolio-byline {
+            font-size: 0.68rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #777;
+            margin-bottom: 6px;
+        }
+
+        /* ============================================
+           BREAKING NEWS TICKER
+           ============================================ */
+        .breaking {
+            background: #1A1A1A;
+            color: #FDF8F0;
+            display: flex;
+            align-items: center;
+            padding: 6px 16px;
+            margin-top: 16px;
+            gap: 14px;
+        }
+
+        .breaking-label {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 0.72rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #cc2a2a;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .breaking-text {
+            font-family: 'Source Serif 4', serif;
+            font-size: 0.78rem;
+            letter-spacing: 0.02em;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .breaking-text-inner {
+            display: inline-block;
+            animation: ticker 28s linear infinite;
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* ============================================
+           OPINIONS / EDITORIAL SECTION
+           ============================================ */
+        .editorial-section {
+            margin-top: 24px;
+        }
+
+        .editorial-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            margin-top: 14px;
+        }
+
+        .editorial-item {
+            padding: 0 20px;
+        }
+
+        .editorial-item:first-child {
+            padding-left: 0;
+            border-right: 1px solid #ccc;
+        }
+
+        .editorial-item:last-child {
+            padding-right: 0;
+        }
+
+        .editorial-label {
+            font-family: 'Source Serif 4', serif;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .headline-editorial {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+
+        .editorial-body {
+            font-size: 0.84rem;
+            line-height: 1.5;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        .editorial-body p {
+            margin-bottom: 6px;
+        }
+
+        /* ============================================
+           CLASSIFIEDS
+           ============================================ */
+        .classifieds-section {
+            margin-top: 28px;
+        }
+
+        .classifieds-header {
+            text-align: center;
+            padding: 6px 0;
+        }
+
+        .classifieds-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 1.2rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+        }
+
+        .classifieds-box {
+            border: 2px solid #1A1A1A;
+            padding: 20px 24px;
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .classified-ad {
+            font-family: 'Courier Prime', 'Courier New', monospace;
+            font-size: 0.78rem;
+            line-height: 1.5;
+        }
+
+        .classified-ad strong {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .classified-ad a {
+            color: #1A1A1A;
+            text-decoration: none;
+            border-bottom: 1px dotted #888;
+            transition: background 0.15s;
+        }
+
+        .classified-ad a:hover {
+            background: #f0e8d8;
+        }
+
+        .classified-separator {
+            width: 30px;
+            height: 1px;
+            background: #999;
+            margin: 8px 0;
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .newspaper-footer {
+            text-align: center;
+            padding: 18px 0 12px;
+            margin-top: 24px;
+            font-family: 'Source Serif 4', serif;
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        /* ============================================
+           EDITION BADGE
+           ============================================ */
+        .edition-badge {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.55rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #999;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+
+        /* ============================================
+           DATELINE STYLE
+           ============================================ */
+        .dateline {
+            font-family: 'Source Serif 4', serif;
+            font-weight: 600;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        /* ============================================
+           SMALL DETAIL: EM DASHES
+           ============================================ */
+        .emdash {
+            margin: 0 0.15em;
+        }
+
+        /* ============================================
+           RESPONSIVE — TABLET
+           ============================================ */
+        @media (max-width: 900px) {
+            .newspaper-inner {
+                padding: 28px 28px 24px;
+            }
+
+            .masthead-title {
+                font-size: 3.2rem;
+            }
+
+            .above-fold {
+                grid-template-columns: 1fr;
+            }
+
+            .main-story {
+                padding-right: 0;
+                border-right: none;
+                padding-bottom: 20px;
+                border-bottom: 1px solid #ccc;
+                margin-bottom: 16px;
+            }
+
+            .sidebar-stories {
+                padding-left: 0;
+            }
+
+            .article-body {
+                column-count: 2;
+            }
+
+            .portfolio-columns {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .portfolio-item:nth-child(2) {
+                border-right: none;
+            }
+
+            .portfolio-item:nth-child(3) {
+                grid-column: 1 / -1;
+                border-right: none;
+                border-top: 1px solid #ccc;
+                padding: 14px 0 0;
+                margin-top: 14px;
+            }
+
+            .classifieds-box {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .editorial-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .editorial-item:first-child {
+                border-right: none;
+                border-bottom: 1px solid #ccc;
+                padding: 0 0 14px 0;
+                margin-bottom: 14px;
+            }
+
+            .editorial-item:last-child {
+                padding-left: 0;
+            }
+        }
+
+        /* ============================================
+           RESPONSIVE — MOBILE
+           ============================================ */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px 6px;
+            }
+
+            .newspaper-inner {
+                padding: 18px 16px 16px;
+            }
+
+            .masthead-title {
+                font-size: 2.2rem;
+                letter-spacing: 0.02em;
+            }
+
+            .masthead-top-line {
+                flex-direction: column;
+                gap: 2px;
+                font-size: 0.62rem;
+            }
+
+            .masthead-info {
+                flex-direction: column;
+                gap: 2px;
+                font-size: 0.64rem;
+            }
+
+            .weather-box {
+                text-align: center;
+            }
+
+            .headline-primary {
+                font-size: 1.7rem;
+            }
+
+            .article-body {
+                column-count: 1;
+            }
+
+            .portfolio-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .portfolio-item {
+                padding: 0 0 14px;
+                border-right: none;
+                border-bottom: 1px solid #ccc;
+                margin-bottom: 14px;
+            }
+
+            .portfolio-item:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+
+            .classifieds-box {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .edition-badge {
+                display: none;
+            }
+
+            .breaking {
+                padding: 5px 10px;
+            }
+
+            .breaking-label {
+                font-size: 0.65rem;
+            }
+
+            .breaking-text {
+                font-size: 0.7rem;
+            }
+
+            .masthead-subtitle-bar {
+                font-size: 0.75rem;
+            }
+
+            .headline-secondary {
+                font-size: 1.05rem;
+            }
+        }
+
+        /* ============================================
+           PRINT STYLE (because it IS a newspaper)
+           ============================================ */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .newspaper {
+                box-shadow: none;
+            }
+
+            .breaking-text-inner {
+                animation: none;
+                transform: none;
+            }
+
+            body::before {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<article class="newspaper">
+    <div class="newspaper-inner">
+
+        <div class="edition-badge">First Edition</div>
+
+        <!-- ============================
+             MASTHEAD
+             ============================ -->
+        <header class="masthead">
+            <div class="masthead-top-line">
+                <span>Est. 2024</span>
+                <span>Independent &middot; Impartial &middot; Interactive</span>
+                <span>Price: Free</span>
+            </div>
+
+            <hr class="rule-ornamental">
+
+            <h1 class="masthead-title">The Audio Gazette</h1>
+
+            <div class="masthead-subtitle-bar">
+                <span class="flourish"></span>
+                All the Sound That&rsquo;s Fit to Print
+                <span class="flourish"></span>
+            </div>
+
+            <hr class="rule-thick-thin">
+
+            <div class="masthead-info">
+                <span>Kortrijk, Belgium</span>
+                <span class="masthead-info-center">Saturday, March 21, 2026 &nbsp;&middot;&nbsp; Vol. I, No. 1 &nbsp;&middot;&nbsp; igorszuniewicz.com</span>
+                <span class="weather-box">Partly cloudy, 11&deg;C<br>Winds SW at 14 km/h</span>
+            </div>
+
+            <hr class="rule-thin">
+        </header>
+
+        <!-- ============================
+             BREAKING NEWS TICKER
+             ============================ -->
+        <div class="breaking">
+            <span class="breaking-label">&#9632; Breaking</span>
+            <span class="breaking-text">
+                <span class="breaking-text-inner">
+                    AUDIO DESIGN STUDENT COMPLETES FIFTH MAJOR PROJECT IN TWO YEARS &nbsp;&mdash;&nbsp;
+                    ML-POWERED TRANSIENT CLASSIFIER HITS 92% ACCURACY &nbsp;&mdash;&nbsp;
+                    WWISE OPTIMIZATION TOOLKIT SAVES TEAMS "HOURS OF DEBUGGING" &nbsp;&mdash;&nbsp;
+                    GRADUATION FILM SCORE COMPOSED IN JUST 8 DAYS AFTER COMPOSER DROPS OUT &nbsp;&mdash;&nbsp;
+                    SHADOW FRAMES SELECTED FOR PUBLIC SHOWCASE AT DAE
+                </span>
+            </span>
+        </div>
+
+        <!-- ============================
+             ABOVE THE FOLD
+             ============================ -->
+        <div class="above-fold">
+
+            <!-- MAIN STORY -->
+            <div class="main-story">
+                <h2 class="headline-primary" style="margin-top: 18px;">
+                    <a href="#">Local Student Builds Audio System Where Sound Is the Only Weapon</a>
+                </h2>
+                <p class="subheadline">Shadow Frames project earns praise; players navigate horror game using ears alone</p>
+                <p class="byline">By Igor Szuniewicz, Audio Lead &nbsp;&middot;&nbsp; Shadow Frames Team</p>
+
+                <div class="article-body">
+                    <p class="drop-cap"><span class="dateline">Kortrijk</span>&ensp;&mdash;&ensp;A 21-year-old game audio student at Howest Digital Arts &amp; Entertainment has built an audio-first horror game in which the player carries no weapons, no map, and no HUD. The only tool for survival is listening. The project, titled <em>Shadow Frames</em>, has been in development since September 2025 by a small team of students, with Igor Szuniewicz serving as sole audio designer and implementer.</p>
+
+                    <p>The system, constructed in Wwise and Unreal Engine 5, drives over 120 audio events that respond dynamically to player proximity, room acoustics, and creature behavior. Szuniewicz designed a spatial audio pipeline where every sound in the environment carries gameplay information&mdash;footstep textures change with surface type, ambient drones shift with threat level, and enemies emit distinct audio signatures that the player must learn to decode.</p>
+
+                    <div class="photo-placeholder">
+                        <span class="photo-placeholder-text">&#9744; Photograph</span>
+                    </div>
+                    <p class="photo-caption">The Shadow Frames team at work in the Howest studio. Szuniewicz is second from left. &mdash; <em>Photo: DAE Howest</em></p>
+
+                    <p>&ldquo;There are no UI markers,&rdquo; Szuniewicz explained in a recent interview. &ldquo;Players find anomalies by listening. If you hear a low rumble on your left, that is the creature. If you hear glass cracking under your feet, you are in the wrong corridor. Every sound is a signal.&rdquo;</p>
+
+                    <p>The technical challenge was considerable. With no visual cues to fall back on, the audio mix had to be precise enough that players could make split-second decisions based on spatial information alone. Szuniewicz implemented a hysteresis-based state machine for creature audio&mdash;preventing the jarring on-off switching that typically plagues proximity-triggered sound events&mdash;and used Wwise RTPCs to create smooth, continuous transitions between ambient states.</p>
+
+                    <p>Memory management proved equally demanding. The team&rsquo;s target platform imposed strict voice count limits: no more than 32 simultaneous voices. Szuniewicz prioritized voices using a custom system that ranks sounds by gameplay relevance, ensuring that critical audio&mdash;creature proximity cues, surface warnings, puzzle feedback&mdash;always takes precedence over atmospheric fill.</p>
+
+                    <p>The project represents a growing trend in independent game development: games that treat audio not as accompaniment but as a core mechanic. Szuniewicz noted that the constraints forced creative solutions. &ldquo;When sound <em>is</em> the gameplay, you cannot afford a single wasted voice or a misleading reverb tail.&rdquo;</p>
+                </div>
+
+                <p class="continued"><em>Continued on page 3</em> &nbsp;<a href="#">&#8594;</a></p>
+            </div>
+
+            <!-- SIDEBAR STORIES -->
+            <aside class="sidebar-stories">
+
+                <div class="sidebar-article" style="margin-top: 18px;">
+                    <h3 class="headline-secondary">
+                        <a href="#">ML Classifier Achieves 92% Accuracy in 45ms</a>
+                    </h3>
+                    <p class="sidebar-byline">Transientica Project &middot; Solo Developer</p>
+                    <div class="sidebar-body">
+                        <p><span class="dateline">Kortrijk</span>&ensp;&mdash;&ensp;A real-time audio classification tool built by Szuniewicz can identify transient sounds&mdash;kicks, snares, hi-hats, claps&mdash;with 92% accuracy and a processing latency of just 45 milliseconds.</p>
+                        <p>The tool, called <em>Transientica</em>, uses a Support Vector Machine trained on spectral features extracted via FFT analysis. Szuniewicz chose SVM over neural network approaches after benchmarking showed the lighter model met accuracy targets while running comfortably within the 50ms latency budget required for real-time audio workflows.</p>
+                        <p>Built in Python with a custom GUI, the system processes incoming audio, classifies the transient type, and outputs results&mdash;all within a single buffer cycle. The training dataset comprised over 3,000 labeled samples across four percussion categories.</p>
+                    </div>
+                    <p class="continued"><em>Continued on page 5</em> &nbsp;<a href="#">&#8594;</a></p>
+                </div>
+
+                <div class="sidebar-article">
+                    <h3 class="headline-secondary">
+                        <a href="#">One-Man Audio Dept. Ships 70 Wwise Events for Cozy Horror Title</a>
+                    </h3>
+                    <p class="sidebar-byline">Not Today, Darling! &middot; Solo Audio Designer</p>
+                    <div class="sidebar-body">
+                        <p><span class="dateline">Kortrijk</span>&ensp;&mdash;&ensp;As the sole audio designer on <em>Not Today, Darling!</em>, a cozy horror game set in a haunted flower shop, Szuniewicz built and shipped a complete audio pipeline&mdash;70 Wwise events, 200+ sound assets, all within a 180MB memory budget.</p>
+                        <p>The 32-voice limit forced aggressive optimization. Szuniewicz used MetaSounds in Unreal Engine 5 for procedural ambient generation, replacing what would have been dozens of static audio files with a handful of node graphs that produce infinite variation at near-zero memory cost.</p>
+                    </div>
+                    <p class="continued"><em>Page 7</em> &nbsp;<a href="#">&#8594;</a></p>
+                </div>
+
+                <div class="pull-quote">
+                    &ldquo;When sound <em>is</em> the gameplay, you cannot afford a single wasted voice.&rdquo;
+                </div>
+
+            </aside>
+        </div>
+
+        <!-- ============================
+             BELOW THE FOLD — PORTFOLIO
+             ============================ -->
+        <div class="section-break">
+            <hr class="rule-ornamental">
+            <div class="section-header">
+                <h2>Portfolio</h2>
+            </div>
+            <hr class="rule-thick-thin">
+        </div>
+
+        <div class="portfolio-columns">
+
+            <div class="portfolio-item">
+                <h3 class="headline-tertiary"><a href="#">AudioQ: Student Builds VST Sampler From Scratch Using JUCE</a></h3>
+                <p class="portfolio-byline">Audio Programming &middot; Solo Project</p>
+                <div class="portfolio-body">
+                    <p>In a feat of low-level audio programming, Szuniewicz developed a fully functional VST3/AU sampler plugin using the JUCE framework and C++. The plugin, AudioQ, features multi-sample layering, ADSR envelope shaping, and real-time filter modulation.</p>
+                    <p>The project required writing a custom audio engine from scratch&mdash;no templates, no starter kits. &ldquo;I wanted to understand every sample that passes through the buffer,&rdquo; Szuniewicz said. The result is a lightweight instrument that loads in under 200ms in major DAWs including Ableton Live, Reaper, and Logic Pro.</p>
+                </div>
+                <p class="continued"><em>Page 9</em> &nbsp;<a href="#">&#8594;</a></p>
+            </div>
+
+            <div class="portfolio-item">
+                <h3 class="headline-tertiary"><a href="#">8-Day Score Saves Graduation Film After Composer Drops Out</a></h3>
+                <p class="portfolio-byline">Ray Animation &middot; Emergency Composer</p>
+                <div class="portfolio-body">
+                    <p>When the original composer for the student animation film <em>Ray</em> withdrew just eight days before the deadline, Szuniewicz stepped in to write, record, and deliver the entire score. The result: a complete orchestral soundtrack synchronized to a four-minute animated short.</p>
+                    <p>Working 14-hour days, he composed six distinct cues, mixing live-recorded guitar and piano with orchestral sample libraries. Sync points were hit frame-by-frame using Reaper&rsquo;s tempo mapping tools. The film screened on schedule.</p>
+                </div>
+                <p class="continued"><em>Page 11</em> &nbsp;<a href="#">&#8594;</a></p>
+            </div>
+
+            <div class="portfolio-item">
+                <h3 class="headline-tertiary"><a href="#">Creature Design Goes Binaural in Amorak VR Prototype</a></h3>
+                <p class="portfolio-byline">Amorak &middot; Sound Designer</p>
+                <div class="portfolio-body">
+                    <p>For the VR game prototype <em>Amorak</em>, Szuniewicz designed a creature audio system using binaural spatialization to place monster sounds precisely in 3D space around the player&rsquo;s head. The system was built in Wwise with Unreal Engine integration.</p>
+                    <p>Each creature type received a distinct sonic identity built from layered synthesis and processed field recordings. The result: players could identify creature type, distance, and direction with eyes closed&mdash;a critical design goal for a horror VR experience where looking at the monster has consequences.</p>
+                </div>
+                <p class="continued"><em>Page 12</em> &nbsp;<a href="#">&#8594;</a></p>
+            </div>
+
+        </div>
+
+        <!-- ============================
+             EDITORIAL / OPINIONS
+             ============================ -->
+        <div class="editorial-section">
+            <hr class="rule-ornamental" style="margin-top: 24px;">
+            <div class="section-header">
+                <h2>Opinion &amp; Editorial</h2>
+            </div>
+            <hr class="rule-thin">
+
+            <div class="editorial-grid">
+                <div class="editorial-item">
+                    <p class="editorial-label">Tools of the Trade</p>
+                    <h3 class="headline-editorial">A Complete Inventory of the Audio Arsenal</h3>
+                    <div class="editorial-body">
+                        <p><strong>Middleware:</strong> Wwise, FMOD Studio. <strong>Engines:</strong> Unreal Engine 5 (Blueprints, MetaSounds, C++), Unity. <strong>DAWs:</strong> Reaper, Ableton Live, Logic Pro. <strong>Programming:</strong> C++, Python, JUCE framework. <strong>Recording:</strong> Field recording, foley, studio voice direction. <strong>Languages:</strong> English (fluent), Polish (native), Dutch (conversational).</p>
+                    </div>
+                </div>
+                <div class="editorial-item">
+                    <p class="editorial-label">Editor&rsquo;s Note</p>
+                    <h3 class="headline-editorial">On Building Tools That Fix Your Own Problems</h3>
+                    <div class="editorial-body">
+                        <p>Szuniewicz has developed two internal tools for Unreal Engine audio workflows: <em>Wwise Unreal Fixer</em>, which automates the resolution of common Wwise-UE integration bugs, and <em>UE Rebuilder</em>, a build pipeline tool that cuts iteration time. Both emerged from production frustrations. &ldquo;If I spend 20 minutes debugging the same issue twice, I write a tool,&rdquo; he noted. Both tools are now used by teammates on current projects.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================
+             CLASSIFIEDS
+             ============================ -->
+        <div class="classifieds-section">
+            <hr class="rule-ornamental" style="margin-top: 24px;">
+            <div class="classifieds-header">
+                <h2>Classifieds &amp; Notices</h2>
+            </div>
+            <hr class="rule-thin">
+
+            <div class="classifieds-box">
+
+                <div class="classified-ad">
+                    <strong>Seeking Internship</strong>
+                    <div class="classified-separator"></div>
+                    Game audio student, 21, available for internship starting 2026. Proficient in Wwise, FMOD, Unreal Engine 5, C++, Python, JUCE. Can relocate within Europe. Willing to work on-site or remote. Serious inquiries only.
+                    <br><br>
+                    Contact:<br>
+                    <a href="mailto:igorszuniewiczwork@gmail.com">igorszuniewiczwork@gmail.com</a>
+                </div>
+
+                <div class="classified-ad">
+                    <strong>Skills Offered</strong>
+                    <div class="classified-separator"></div>
+                    Sound design &middot; Audio implementation &middot; Middleware optimization &middot; Music composition &middot; Field recording &middot; Interactive audio systems &middot; Tool development
+                    <br><br>
+                    EN/PL/NL speaker.
+                    <br>
+                    Available for freelance &amp; contract work.
+                </div>
+
+                <div class="classified-ad">
+                    <strong>Connect</strong>
+                    <div class="classified-separator"></div>
+                    GitHub:<br>
+                    <a href="https://github.com/Szunias">github.com/Szunias</a>
+                    <br><br>
+                    LinkedIn:<br>
+                    <a href="https://linkedin.com/in/igorszuniewicz">linkedin.com/in/igorszuniewicz</a>
+                    <br><br>
+                    Spotify:<br>
+                    <a href="https://open.spotify.com/artist/5n24MRrnapSDJFCOIvVkFI">Listen on Spotify</a>
+                    <br><br>
+                    Portfolio:<br>
+                    <a href="https://igorszuniewicz.com">igorszuniewicz.com</a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ============================
+             FOOTER
+             ============================ -->
+        <hr class="rule-ornamental" style="margin-top: 28px;">
+        <footer class="newspaper-footer">
+            &copy; 2026 The Audio Gazette &nbsp;&middot;&nbsp; All Rights Reserved &nbsp;&middot;&nbsp; Printed in Belgium
+            <br>
+            <span style="font-size: 0.58rem; letter-spacing: 0.06em; color: #aaa;">A portfolio by Igor Szuniewicz &nbsp;&middot;&nbsp; This is not a real newspaper</span>
+        </footer>
+
+    </div>
+</article>
+
+</body>
+</html>

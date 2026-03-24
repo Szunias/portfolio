@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Igor Szuniewicz — Game Audio Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ========================================
+   RESET & BASE
+   ======================================== */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-deep: #060B18;
+  --bg-primary: #0A0F1E;
+  --bg-card: #0E1428;
+  --bg-card-hover: #131A32;
+  --text-primary: #E0E0E0;
+  --text-secondary: #777;
+  --text-dim: #444;
+  --accent: #4ECDC4;
+  --accent-dim: rgba(78, 205, 196, 0.15);
+  --accent-glow: rgba(78, 205, 196, 0.4);
+  --font-heading: 'Rajdhani', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg-deep);
+}
+
+/* ========================================
+   HERO / GAME MENU SCREEN
+   ======================================== */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+/* Atmospheric gradient layers */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 50%, rgba(78, 205, 196, 0.03) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 80% at 80% 30%, rgba(30, 40, 80, 0.4) 0%, transparent 60%),
+    linear-gradient(180deg, #0A0F1E 0%, #070C1A 40%, #050916 100%);
+  z-index: 0;
+}
+
+/* Vignette overlay */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 70% at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.6) 100%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ========================================
+   PARTICLES
+   ======================================== */
+.particles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 50%;
+  opacity: 0;
+  animation: particleFloat linear infinite;
+}
+
+.particle.large {
+  width: 3px;
+  height: 3px;
+}
+
+@keyframes particleFloat {
+  0% {
+    opacity: 0;
+    transform: translateY(0) translateX(0);
+  }
+  10% {
+    opacity: var(--p-opacity, 0.15);
+  }
+  90% {
+    opacity: var(--p-opacity, 0.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(var(--p-travel, -200px)) translateX(var(--p-drift, 20px));
+  }
+}
+
+/* ========================================
+   HERO CONTENT LAYOUT
+   ======================================== */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 60px;
+}
+
+/* ========================================
+   LEFT SIDE — MENU
+   ======================================== */
+.menu-side {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 40px;
+}
+
+.menu-identity {
+  margin-bottom: 40px;
+}
+
+.menu-name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 2.4rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.menu-title {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+.menu-separator {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  margin-top: 16px;
+}
+
+/* Menu items */
+.menu-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0 10px 0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.menu-item:hover {
+  transform: translateX(4px);
+}
+
+.menu-number {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  min-width: 22px;
+  letter-spacing: 0.05em;
+  transition: color 0.25s ease;
+}
+
+.menu-arrow {
+  font-size: 0.85rem;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: all 0.2s ease;
+  min-width: 14px;
+}
+
+.menu-item:hover .menu-arrow,
+.menu-item.active .menu-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.menu-label {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.35rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  transition: all 0.25s ease;
+}
+
+.menu-item:hover .menu-label,
+.menu-item.active .menu-label {
+  color: var(--accent);
+  text-shadow: 0 0 20px var(--accent-glow);
+}
+
+.menu-item:hover .menu-number {
+  color: var(--accent);
+}
+
+.menu-item.primary .menu-label {
+  font-size: 1.55rem;
+}
+
+.menu-cv {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.menu-cv .menu-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+/* ========================================
+   RIGHT SIDE — PREVIEW PANEL
+   ======================================== */
+.preview-side {
+  width: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding-left: 40px;
+}
+
+.preview-panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform: translateY(8px);
+  pointer-events: none;
+  padding: 60px 20px;
+}
+
+.preview-panel.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Default state — ambient */
+.preview-default {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 20px;
+}
+
+.preview-default-text {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  animation: defaultPulse 3s ease-in-out infinite;
+}
+
+@keyframes defaultPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+.preview-default-name {
+  font-family: var(--font-heading);
+  font-size: 3.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(224, 224, 224, 0.06);
+  line-height: 1;
+}
+
+/* Showreel preview */
+.preview-showreel {
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reel-container {
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 16 / 9;
+  background: var(--bg-card);
+  border: 1px solid rgba(78, 205, 196, 0.1);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.reel-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(78, 205, 196, 0.05) 0%, transparent 50%),
+    linear-gradient(225deg, rgba(78, 205, 196, 0.03) 0%, transparent 50%);
+}
+
+.play-button {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.play-button:hover {
+  background: var(--accent-dim);
+  transform: scale(1.08);
+}
+
+.play-triangle {
+  width: 0;
+  height: 0;
+  border-left: 20px solid var(--accent);
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  margin-left: 4px;
+}
+
+.reel-label {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* Projects preview */
+.preview-projects {
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.project-thumb {
+  aspect-ratio: 16 / 10;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: border-color 0.3s ease;
+  cursor: pointer;
+}
+
+.project-thumb:hover {
+  border-color: var(--accent);
+}
+
+.project-thumb::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 30%, rgba(0, 0, 0, 0.7) 100%);
+}
+
+.project-thumb:nth-child(1) { background: linear-gradient(135deg, #1a1e3a, #0d1225); }
+.project-thumb:nth-child(2) { background: linear-gradient(135deg, #1e2a1a, #0d1910); }
+.project-thumb:nth-child(3) { background: linear-gradient(135deg, #2a1a1e, #190d10); }
+.project-thumb:nth-child(4) { background: linear-gradient(135deg, #1a2a2a, #0d1919); }
+
+.project-thumb-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  position: relative;
+  z-index: 1;
+}
+
+.project-thumb-tag {
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  position: relative;
+  z-index: 1;
+  margin-top: 2px;
+}
+
+.projects-label {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* About preview */
+.preview-about {
+  flex-direction: column;
+  gap: 20px;
+  max-width: 440px;
+}
+
+.about-bio {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.about-bio strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.about-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.about-detail {
+  display: flex;
+  gap: 12px;
+  font-size: 0.85rem;
+}
+
+.about-detail-label {
+  color: var(--text-dim);
+  min-width: 80px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-heading);
+  font-weight: 500;
+}
+
+.about-detail-value {
+  color: var(--text-secondary);
+}
+
+.about-detail-value .accent {
+  color: var(--accent);
+}
+
+/* Contact preview */
+.preview-contact {
+  flex-direction: column;
+  gap: 20px;
+  max-width: 400px;
+}
+
+.contact-email {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: text-shadow 0.3s ease;
+}
+
+.contact-email:hover {
+  text-shadow: 0 0 20px var(--accent-glow);
+}
+
+.contact-links {
+  display: flex;
+  gap: 20px;
+}
+
+.contact-link {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 8px 0;
+  border-bottom: 1px solid transparent;
+  transition: all 0.25s ease;
+}
+
+.contact-link:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.contact-note {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* ========================================
+   HERO FOOTER / HUD
+   ======================================== */
+.hero-footer {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 60px;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.hero-footer a {
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.hero-footer a:hover {
+  color: var(--accent);
+}
+
+.lang-switch {
+  display: flex;
+  gap: 8px;
+}
+
+.lang-switch span {
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.lang-switch span:hover,
+.lang-switch span.active {
+  color: var(--accent);
+}
+
+.lang-divider {
+  color: var(--text-dim);
+  opacity: 0.3;
+}
+
+/* Scroll hint */
+.scroll-hint {
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: scrollHintPulse 2.5s ease-in-out infinite;
+}
+
+.scroll-hint-text {
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.scroll-hint-line {
+  width: 1px;
+  height: 24px;
+  background: linear-gradient(180deg, var(--text-dim), transparent);
+}
+
+@keyframes scrollHintPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/* ========================================
+   BELOW-THE-FOLD SECTIONS
+   ======================================== */
+.section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 100px 60px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.section-number {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent);
+}
+
+/* Divider between sections */
+.section-divider {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 60px;
+}
+
+.section-divider-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.1), transparent);
+}
+
+/* ========================================
+   SHOWREEL SECTION
+   ======================================== */
+.showreel-embed {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.showreel-embed::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(78, 205, 196, 0.03) 0%, transparent 40%);
+}
+
+.showreel-play {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.showreel-play:hover {
+  background: var(--accent-dim);
+  transform: scale(1.08);
+}
+
+.showreel-play-tri {
+  width: 0;
+  height: 0;
+  border-left: 24px solid var(--accent);
+  border-top: 14px solid transparent;
+  border-bottom: 14px solid transparent;
+  margin-left: 6px;
+}
+
+.showreel-caption {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ========================================
+   PROJECTS SECTION
+   ======================================== */
+.project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.project-card {
+  display: flex;
+  gap: 24px;
+  padding: 28px;
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.project-card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(78, 205, 196, 0.15);
+  transform: translateY(-2px);
+}
+
+.project-card-image {
+  width: 180px;
+  min-height: 110px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.project-card-image:nth-child(1) { background: linear-gradient(135deg, #1a1e3a, #0d1225); }
+
+.pci-1 { background: linear-gradient(135deg, #1a1e3a, #0d1225) !important; }
+.pci-2 { background: linear-gradient(135deg, #1e2a1a, #0d1910) !important; }
+.pci-3 { background: linear-gradient(135deg, #2a1a1e, #190d10) !important; }
+.pci-4 { background: linear-gradient(135deg, #1a2a2a, #0d1919) !important; }
+.pci-5 { background: linear-gradient(135deg, #2a2a1a, #19190d) !important; }
+.pci-6 { background: linear-gradient(135deg, #1a1a2a, #0d0d19) !important; }
+
+.project-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.project-card-title {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.project-card-role {
+  font-size: 0.78rem;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-family: var(--font-heading);
+  font-weight: 500;
+}
+
+.project-card-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.project-card-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.tech-tag {
+  font-size: 0.7rem;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 3px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+}
+
+/* ========================================
+   ABOUT SECTION
+   ======================================== */
+.about-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+
+.about-text p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.about-text strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.about-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.about-stat {
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+}
+
+.about-stat-label {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.about-stat-value {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.about-stat-value .accent {
+  color: var(--accent);
+}
+
+/* ========================================
+   CONTACT SECTION
+   ======================================== */
+.contact-content {
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.contact-heading {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.contact-sub {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  line-height: 1.7;
+}
+
+.contact-email-main {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  margin-bottom: 32px;
+  transition: text-shadow 0.3s ease;
+}
+
+.contact-email-main:hover {
+  text-shadow: 0 0 24px var(--accent-glow);
+}
+
+.contact-socials {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.contact-social {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 10px 0;
+  border-bottom: 1px solid transparent;
+  transition: all 0.25s ease;
+}
+
+.contact-social:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+.site-footer {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.footer-back {
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.25s ease;
+  cursor: pointer;
+}
+
+.footer-back:hover {
+  color: var(--accent);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 900px) {
+  .hero-content {
+    flex-direction: column;
+    padding: 0 32px;
+  }
+
+  .menu-side {
+    width: 100%;
+    padding: 80px 0 40px;
+    justify-content: flex-start;
+  }
+
+  .preview-side {
+    display: none;
+  }
+
+  .hero {
+    height: auto;
+    min-height: auto;
+  }
+
+  .hero-footer {
+    padding: 20px 32px;
+  }
+
+  .scroll-hint {
+    display: none;
+  }
+
+  .section {
+    padding: 60px 32px;
+  }
+
+  .section-divider {
+    padding: 0 32px;
+  }
+
+  .about-content {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .project-card {
+    flex-direction: column;
+  }
+
+  .project-card-image {
+    width: 100%;
+    min-height: 140px;
+  }
+
+  .site-footer {
+    padding: 32px;
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-content {
+    padding: 0 20px;
+  }
+
+  .menu-name {
+    font-size: 1.8rem;
+  }
+
+  .menu-label {
+    font-size: 1.1rem;
+  }
+
+  .menu-item.primary .menu-label {
+    font-size: 1.25rem;
+  }
+
+  .hero-footer {
+    padding: 16px 20px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .section {
+    padding: 48px 20px;
+  }
+
+  .section-divider {
+    padding: 0 20px;
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+  }
+
+  .contact-email-main {
+    font-size: 1.1rem;
+  }
+
+  .contact-socials {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ==========================================
+     HERO — GAME MAIN MENU
+     ========================================== -->
+<section class="hero" id="top">
+  <!-- Particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Main content -->
+  <div class="hero-content">
+    <!-- LEFT: Menu -->
+    <div class="menu-side">
+      <div class="menu-identity">
+        <div class="menu-name">Igor Szuniewicz</div>
+        <div class="menu-title">Game Audio Designer</div>
+        <div class="menu-separator"></div>
+      </div>
+
+      <ul class="menu-list">
+        <li class="menu-item primary" data-preview="showreel" onclick="scrollToSection('showreel')">
+          <span class="menu-number">01</span>
+          <span class="menu-arrow">&#9654;</span>
+          <span class="menu-label">Showreel</span>
+        </li>
+        <li class="menu-item" data-preview="projects" onclick="scrollToSection('projects')">
+          <span class="menu-number">02</span>
+          <span class="menu-arrow">&#9654;</span>
+          <span class="menu-label">Projects</span>
+        </li>
+        <li class="menu-item" data-preview="about" onclick="scrollToSection('about')">
+          <span class="menu-number">03</span>
+          <span class="menu-arrow">&#9654;</span>
+          <span class="menu-label">About</span>
+        </li>
+        <li class="menu-item" data-preview="contact" onclick="scrollToSection('contact')">
+          <span class="menu-number">04</span>
+          <span class="menu-arrow">&#9654;</span>
+          <span class="menu-label">Contact</span>
+        </li>
+        <li class="menu-item menu-cv" data-preview="none">
+          <span class="menu-number">05</span>
+          <span class="menu-arrow">&#9654;</span>
+          <span class="menu-label">Resume / CV</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- RIGHT: Preview panels -->
+    <div class="preview-side">
+      <!-- Default -->
+      <div class="preview-panel visible" id="preview-default">
+        <div class="preview-default">
+          <div class="preview-default-text">Select an option</div>
+          <div class="preview-default-name">Igor<br>Szuniewicz</div>
+        </div>
+      </div>
+
+      <!-- Showreel -->
+      <div class="preview-panel" id="preview-showreel">
+        <div class="preview-showreel">
+          <div class="reel-container">
+            <div class="play-button">
+              <div class="play-triangle"></div>
+            </div>
+          </div>
+          <div class="reel-label">Game Audio Showreel 2026</div>
+        </div>
+      </div>
+
+      <!-- Projects -->
+      <div class="preview-panel" id="preview-projects">
+        <div class="preview-projects">
+          <div class="projects-grid">
+            <div class="project-thumb">
+              <span class="project-thumb-title">Shadow Frames</span>
+              <span class="project-thumb-tag">Horror / Wwise / Unreal</span>
+            </div>
+            <div class="project-thumb">
+              <span class="project-thumb-title">Transientica</span>
+              <span class="project-thumb-tag">ML Audio / Python / JUCE</span>
+            </div>
+            <div class="project-thumb">
+              <span class="project-thumb-title">Not Today, Darling!</span>
+              <span class="project-thumb-tag">Unreal / MetaSounds</span>
+            </div>
+            <div class="project-thumb">
+              <span class="project-thumb-title">Richter</span>
+              <span class="project-thumb-tag">Sound Design / Field Recording</span>
+            </div>
+          </div>
+          <div class="projects-label">6 projects total</div>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="preview-panel" id="preview-about">
+        <div class="preview-about">
+          <p class="about-bio">
+            <strong>21-year-old game audio student</strong> at Howest Digital Arts & Entertainment in Belgium. I build audio systems, design sounds, and write tools that make game audio work better.
+          </p>
+          <div class="about-details">
+            <div class="about-detail">
+              <span class="about-detail-label">Location</span>
+              <span class="about-detail-value">Kortrijk, Belgium</span>
+            </div>
+            <div class="about-detail">
+              <span class="about-detail-label">Study</span>
+              <span class="about-detail-value">Howest DAE</span>
+            </div>
+            <div class="about-detail">
+              <span class="about-detail-label">Status</span>
+              <span class="about-detail-value"><span class="accent">Open to internships</span></span>
+            </div>
+            <div class="about-detail">
+              <span class="about-detail-label">Focus</span>
+              <span class="about-detail-value">Wwise, FMOD, Unreal, C++</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div class="preview-panel" id="preview-contact">
+        <div class="preview-contact">
+          <a href="mailto:igor@example.com" class="contact-email">igor@example.com</a>
+          <div class="contact-links">
+            <a href="#" class="contact-link">LinkedIn</a>
+            <a href="#" class="contact-link">GitHub</a>
+            <a href="#" class="contact-link">SoundCloud</a>
+          </div>
+          <p class="contact-note">Open to internships, game jams, and freelance sound design work.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll hint -->
+  <div class="scroll-hint">
+    <span class="scroll-hint-text">Scroll</span>
+    <div class="scroll-hint-line"></div>
+  </div>
+
+  <!-- HUD footer -->
+  <div class="hero-footer">
+    <span>&copy; 2026 Igor Szuniewicz</span>
+    <span>Howest DAE &middot; Belgium</span>
+    <div class="lang-switch">
+      <span class="active">EN</span>
+      <span class="lang-divider">/</span>
+      <span>PL</span>
+      <span class="lang-divider">/</span>
+      <span>NL</span>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
+     SHOWREEL
+     ========================================== -->
+<section class="section" id="showreel">
+  <div class="section-header">
+    <span class="section-number">01</span>
+    <h2 class="section-title">Showreel</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="showreel-embed">
+    <div class="showreel-play">
+      <div class="showreel-play-tri"></div>
+    </div>
+  </div>
+  <p class="showreel-caption">Game Audio Showreel 2026 &mdash; Sound design, implementation, and interactive audio systems</p>
+</section>
+
+<div class="section-divider"><div class="section-divider-line"></div></div>
+
+<!-- ==========================================
+     PROJECTS
+     ========================================== -->
+<section class="section" id="projects">
+  <div class="section-header">
+    <span class="section-number">02</span>
+    <h2 class="section-title">Projects</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="project-list">
+    <div class="project-card">
+      <div class="project-card-image pci-1"></div>
+      <div class="project-card-body">
+        <div class="project-card-title">Shadow Frames</div>
+        <div class="project-card-role">Solo Audio Designer &mdash; Unreal Engine 5</div>
+        <p class="project-card-desc">Horror game where players navigate anomalies using only audio cues. Built a hysteresis-based detection system, procedural ambient engine in MetaSounds, and a 5-zone spatial audio mix.</p>
+        <div class="project-card-tech">
+          <span class="tech-tag">Wwise</span>
+          <span class="tech-tag">Unreal 5</span>
+          <span class="tech-tag">MetaSounds</span>
+          <span class="tech-tag">C++</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-card-image pci-2"></div>
+      <div class="project-card-body">
+        <div class="project-card-title">Transientica</div>
+        <div class="project-card-role">Audio Programmer &mdash; Python / JUCE</div>
+        <p class="project-card-desc">Real-time instrument classifier that hits 92% accuracy at 45ms latency. SVM-based transient detection with FFT feature extraction, built as a JUCE plugin with Python training pipeline.</p>
+        <div class="project-card-tech">
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">JUCE</span>
+          <span class="tech-tag">SVM</span>
+          <span class="tech-tag">FFT</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-card-image pci-3"></div>
+      <div class="project-card-body">
+        <div class="project-card-title">Not Today, Darling!</div>
+        <div class="project-card-role">Solo Audio &mdash; Unreal Engine 5</div>
+        <p class="project-card-desc">Only audio person on an 8-person team. Built 70+ Wwise events, optimized from 180MB to under 2MB with procedural MetaSounds, managed a 32-voice budget across all gameplay states.</p>
+        <div class="project-card-tech">
+          <span class="tech-tag">Wwise</span>
+          <span class="tech-tag">MetaSounds</span>
+          <span class="tech-tag">Unreal 5</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-card-image pci-4"></div>
+      <div class="project-card-body">
+        <div class="project-card-title">Richter</div>
+        <div class="project-card-role">Sound Designer &mdash; Field Recording</div>
+        <p class="project-card-desc">Seismic-themed sound design project built from original field recordings. Processed geological source material through granular synthesis and convolution to create tectonic audio textures.</p>
+        <div class="project-card-tech">
+          <span class="tech-tag">Reaper</span>
+          <span class="tech-tag">Field Recording</span>
+          <span class="tech-tag">Granular Synthesis</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-card-image pci-5"></div>
+      <div class="project-card-body">
+        <div class="project-card-title">Wwise Unreal Fixer</div>
+        <div class="project-card-role">Tool Developer &mdash; Python</div>
+        <p class="project-card-desc">Diagnostic tool that auto-detects and fixes common Wwise-Unreal integration issues. Scans project files for broken references, missing banks, and misconfigured spatial settings.</p>
+        <div class="project-card-tech">
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">Wwise</span>
+          <span class="tech-tag">Unreal</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-card-image pci-6"></div>
+      <div class="project-card-body">
+        <div class="project-card-title">Ray Animation</div>
+        <div class="project-card-role">Composer / Sound Designer &mdash; 8-day deadline</div>
+        <p class="project-card-desc">Scored and sound-designed a short animation in 8 days after the original composer dropped out. Wrote the full orchestral score, synced all SFX to picture, and mixed in 5.1 surround.</p>
+        <div class="project-card-tech">
+          <span class="tech-tag">Reaper</span>
+          <span class="tech-tag">5.1 Surround</span>
+          <span class="tech-tag">Orchestral</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"><div class="section-divider-line"></div></div>
+
+<!-- ==========================================
+     ABOUT
+     ========================================== -->
+<section class="section" id="about">
+  <div class="section-header">
+    <span class="section-number">03</span>
+    <h2 class="section-title">About</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-content">
+    <div class="about-text">
+      <p>I am a <strong>21-year-old game audio student</strong> at Howest Digital Arts & Entertainment in Kortrijk, Belgium. I build audio systems, design sounds, and write tools that make game audio work better.</p>
+      <p>I work across the full pipeline: recording and synthesis, middleware implementation in <strong>Wwise and FMOD</strong>, engine integration in <strong>Unreal (C++ and Blueprints)</strong>, and optimization for real-time constraints.</p>
+      <p>When I am not working on game audio, I make music, break audio plugins to see how they work, and occasionally fix them.</p>
+    </div>
+    <div class="about-stats">
+      <div class="about-stat">
+        <div class="about-stat-label">Education</div>
+        <div class="about-stat-value">Howest DAE <span class="accent">&middot;</span> Belgium</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-label">Focus Areas</div>
+        <div class="about-stat-value">Wwise <span class="accent">&middot;</span> FMOD <span class="accent">&middot;</span> Unreal <span class="accent">&middot;</span> C++</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-label">Languages</div>
+        <div class="about-stat-value">Polish <span class="accent">&middot;</span> English <span class="accent">&middot;</span> Dutch</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-label">Status</div>
+        <div class="about-stat-value"><span class="accent">Open to internships</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"><div class="section-divider-line"></div></div>
+
+<!-- ==========================================
+     CONTACT
+     ========================================== -->
+<section class="section" id="contact">
+  <div class="section-header">
+    <span class="section-number">04</span>
+    <h2 class="section-title">Contact</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="contact-content">
+    <h3 class="contact-heading">Get in Touch</h3>
+    <p class="contact-sub">Open to internships, game jams, freelance sound design, and interesting audio problems to solve.</p>
+    <a href="mailto:igor@example.com" class="contact-email-main">igor@example.com</a>
+    <div class="contact-socials">
+      <a href="#" class="contact-social">LinkedIn</a>
+      <a href="#" class="contact-social">GitHub</a>
+      <a href="#" class="contact-social">SoundCloud</a>
+      <a href="#" class="contact-social">YouTube</a>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
+     FOOTER
+     ========================================== -->
+<footer class="site-footer">
+  <span>&copy; 2026 Igor Szuniewicz</span>
+  <span class="footer-back" onclick="scrollToSection('top')">Back to top &#8593;</span>
+  <span>Howest DAE &middot; Belgium</span>
+</footer>
+
+<!-- ==========================================
+     JAVASCRIPT
+     ========================================== -->
+<script>
+(function() {
+  // ==========================================
+  // PARTICLES
+  // ==========================================
+  const particlesContainer = document.getElementById('particles');
+  const particleCount = 20;
+
+  for (let i = 0; i < particleCount; i++) {
+    const p = document.createElement('div');
+    p.classList.add('particle');
+    if (Math.random() > 0.7) p.classList.add('large');
+
+    const left = Math.random() * 100;
+    const startY = 60 + Math.random() * 40; // start from lower portion
+    const duration = 8 + Math.random() * 14;
+    const delay = Math.random() * duration * -1; // stagger start
+    const opacity = 0.08 + Math.random() * 0.18;
+    const travel = -(150 + Math.random() * 250);
+    const drift = (Math.random() - 0.5) * 60;
+
+    p.style.left = left + '%';
+    p.style.top = startY + '%';
+    p.style.animationDuration = duration + 's';
+    p.style.animationDelay = delay + 's';
+    p.style.setProperty('--p-opacity', opacity);
+    p.style.setProperty('--p-travel', travel + 'px');
+    p.style.setProperty('--p-drift', drift + 'px');
+
+    particlesContainer.appendChild(p);
+  }
+
+  // ==========================================
+  // MENU HOVER -> PREVIEW PANEL
+  // ==========================================
+  const menuItems = document.querySelectorAll('.menu-item[data-preview]');
+  const panels = document.querySelectorAll('.preview-panel');
+  let currentPreview = 'default';
+  let hoverTimeout = null;
+
+  function showPanel(id) {
+    if (id === currentPreview) return;
+    currentPreview = id;
+
+    panels.forEach(panel => {
+      if (panel.id === 'preview-' + id) {
+        panel.classList.add('visible');
+      } else {
+        panel.classList.remove('visible');
+      }
+    });
+  }
+
+  menuItems.forEach(item => {
+    const preview = item.getAttribute('data-preview');
+
+    item.addEventListener('mouseenter', function() {
+      clearTimeout(hoverTimeout);
+      if (preview && preview !== 'none') {
+        showPanel(preview);
+      }
+    });
+
+    item.addEventListener('mouseleave', function() {
+      hoverTimeout = setTimeout(function() {
+        showPanel('default');
+      }, 200);
+    });
+  });
+
+  // Keep panel visible when mouse moves between items quickly
+  const menuSide = document.querySelector('.menu-side');
+  menuSide.addEventListener('mouseleave', function() {
+    clearTimeout(hoverTimeout);
+    hoverTimeout = setTimeout(function() {
+      showPanel('default');
+    }, 300);
+  });
+
+  // ==========================================
+  // SCROLL TO SECTION
+  // ==========================================
+  window.scrollToSection = function(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // ==========================================
+  // HIDE SCROLL HINT ON SCROLL
+  // ==========================================
+  const scrollHint = document.querySelector('.scroll-hint');
+  let scrollHintHidden = false;
+
+  window.addEventListener('scroll', function() {
+    if (!scrollHintHidden && window.scrollY > 80) {
+      scrollHint.style.transition = 'opacity 0.5s ease';
+      scrollHint.style.opacity = '0';
+      scrollHintHidden = true;
+    }
+  }, { passive: true });
+
+  // ==========================================
+  // LANGUAGE SWITCH (visual only)
+  // ==========================================
+  const langSpans = document.querySelectorAll('.lang-switch span:not(.lang-divider)');
+  langSpans.forEach(span => {
+    span.addEventListener('click', function() {
+      langSpans.forEach(s => s.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+})();
+</script>
+</body>
+</html>

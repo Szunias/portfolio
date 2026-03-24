@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>shadow frames — igor szuniewicz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ── Noise texture background ── */
+    html, body { height: 100%; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #2B2B2B;
+      color: #1E1E1E;
+      min-height: 100vh;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+    }
+
+    /* ── Layout ── */
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: relative;
+      z-index: 1;
+      background: #FFFEF2;
+      border-bottom: 1px solid #e0dfd4;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+    .nav-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #1E1E1E;
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .nav-links a {
+      color: #555;
+      text-decoration: none;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1.5px;
+      background: #1E1E1E;
+      transition: width 0.25s ease;
+    }
+    .nav-links a:hover { color: #1E1E1E; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active {
+      color: #1E1E1E;
+      font-weight: 600;
+    }
+    .nav-links a.active::after { width: 100%; }
+    .nav-sep { color: #ccc; user-select: none; }
+
+    /* ── Back Link ── */
+    .back-link {
+      display: inline-block;
+      margin-top: 28px;
+      font-size: 0.85rem;
+      color: #aaa;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #FFFEF2; }
+
+    /* ── Header Section ── */
+    .detail-header {
+      margin-top: 20px;
+      position: relative;
+    }
+    .detail-header .sticky-label {
+      display: inline-block;
+      background: #F4D03F;
+      padding: 4px 14px;
+      font-family: 'Caveat', cursive;
+      font-size: 1rem;
+      color: #1E1E1E;
+      transform: rotate(-1deg);
+      box-shadow: 1px 2px 4px rgba(0,0,0,0.12);
+      margin-bottom: 12px;
+    }
+    .detail-header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 2.6rem;
+      letter-spacing: -0.03em;
+      color: #FFFEF2;
+      line-height: 1.15;
+    }
+    .detail-meta {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: #999;
+      letter-spacing: 0.01em;
+    }
+    .detail-meta span {
+      margin: 0 4px;
+      color: #666;
+    }
+
+    /* ── Hero Polaroid ── */
+    .hero-polaroid {
+      margin-top: 32px;
+      background: #fff;
+      padding: 8px 8px 36px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.22), 0 0 1px rgba(0,0,0,0.08);
+      position: relative;
+    }
+    .hero-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #1a0808 0%, #5c1515 30%, #3d1111 60%, #1E1E1E 100%);
+      border-radius: 1px;
+    }
+    .hero-label {
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem;
+      color: #999;
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    /* Tape on hero */
+    .hero-wrap { position: relative; }
+    .hero-tape {
+      position: absolute;
+      width: 60px;
+      height: 18px;
+      background: rgba(200, 195, 170, 0.45);
+      z-index: 3;
+      pointer-events: none;
+    }
+    .hero-tape-1 { top: -8px; left: 32px; transform: rotate(-2deg); }
+    .hero-tape-2 { top: -8px; right: 28px; transform: rotate(4deg); }
+
+    /* ── Stats Row ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 24px;
+    }
+    .stat-card {
+      background: #FFFEF2;
+      padding: 18px 14px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      border-radius: 2px;
+    }
+    .stat-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #1E1E1E;
+      letter-spacing: -0.02em;
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      color: #888;
+      margin-top: 4px;
+      text-transform: lowercase;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Article Content Cards ── */
+    .content-card {
+      background: #FFFEF2;
+      border-radius: 3px;
+      padding: 32px 36px;
+      margin-top: 24px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    }
+    .content-card h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 1.3rem;
+      letter-spacing: -0.02em;
+      color: #1E1E1E;
+      margin-bottom: 14px;
+    }
+    .content-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #333;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+    .content-card h3:first-of-type {
+      margin-top: 0;
+    }
+    .content-card p {
+      font-size: 0.92rem;
+      line-height: 1.7;
+      color: #444;
+      margin-bottom: 10px;
+    }
+    .content-card p:last-child { margin-bottom: 0; }
+
+    /* ── Tech Tags ── */
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+      justify-content: center;
+    }
+    .tech-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      background: #FFFEF2;
+      color: #555;
+      padding: 5px 12px;
+      border-radius: 2px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Challenge Cards (notebook lines) ── */
+    .challenges-section {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .challenge-card {
+      background: #FFFEF2;
+      border-radius: 3px;
+      padding: 28px 32px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+      position: relative;
+      /* Notebook lines */
+      background-image: repeating-linear-gradient(
+        transparent,
+        transparent 27px,
+        #e8e4d8 27px,
+        #e8e4d8 28px
+      );
+      background-position: 0 28px;
+    }
+    .challenge-card::before {
+      content: '';
+      position: absolute;
+      left: 28px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: #d4a0a0;
+      opacity: 0.35;
+    }
+    .challenge-label {
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem;
+      color: #CC3333;
+      margin-bottom: 12px;
+    }
+    .challenge-card h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 12px;
+      margin-bottom: 4px;
+    }
+    .challenge-card h4:first-of-type { margin-top: 0; }
+    .challenge-card p {
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: #444;
+      padding-left: 12px;
+    }
+    .result-highlight {
+      background: #F4D03F;
+      padding: 2px 8px;
+      display: inline;
+      font-weight: 500;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    /* ── Prev/Next ── */
+    .prev-next {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+      padding-bottom: 8px;
+    }
+    .prev-next a {
+      font-size: 0.88rem;
+      color: #aaa;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .prev-next a:hover { color: #FFFEF2; }
+    .prev-next .pn-label {
+      font-size: 0.72rem;
+      color: #666;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .prev-next .pn-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 500;
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      margin-top: 48px;
+      padding: 18px 0;
+      text-align: center;
+      font-size: 0.78rem;
+      color: #777;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .detail-header h1 { font-size: 1.9rem; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .content-card { padding: 24px 20px; }
+      .challenge-card { padding: 24px 20px; }
+      .challenge-card::before { left: 16px; }
+      .nav-inner { padding: 14px 16px; }
+      .nav-links { gap: 16px; font-size: 0.82rem; }
+      .prev-next { flex-direction: column; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-name">igor szuniewicz</a>
+      <div class="nav-links">
+        <a href="collage-projects.html" class="active">projects</a>
+        <span class="nav-sep">·</span>
+        <a href="#">about</a>
+        <span class="nav-sep">·</span>
+        <a href="#">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+
+    <!-- Back Link -->
+    <a href="collage-projects.html" class="back-link">&larr; back to projects</a>
+
+    <!-- Header -->
+    <div class="detail-header">
+      <div class="sticky-label">game audio</div>
+      <h1>shadow frames</h1>
+      <div class="detail-meta">
+        2025 <span>&middot;</span> audio lead <span>&middot;</span> 8 person team <span>&middot;</span> unreal engine 5
+      </div>
+    </div>
+
+    <!-- Hero Polaroid -->
+    <div class="hero-wrap">
+      <div class="hero-tape hero-tape-1"></div>
+      <div class="hero-tape hero-tape-2"></div>
+      <div class="hero-polaroid">
+        <div class="hero-thumb"></div>
+        <div class="hero-label">screenshot</div>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-number">120+</div>
+        <div class="stat-label">wwise events</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">32</div>
+        <div class="stat-label">voice limit</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">&lt;50ms</div>
+        <div class="stat-label">latency</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">5.1</div>
+        <div class="stat-label">surround</div>
+      </div>
+    </div>
+
+    <!-- The Concept -->
+    <div class="content-card">
+      <h2>the concept</h2>
+      <p>Shadow Frames is a first-person horror game where audio is the only weapon. There are no UI markers, no health bars, no minimap. Players navigate a procedurally shifting environment using only what they can hear.</p>
+      <p>Every threat has a distinct sonic signature. Every room tells a story through its ambient sound bed. The player's survival depends entirely on listening — identifying what's nearby, gauging distance, and deciding whether to move or stay still.</p>
+      <p>I was the audio lead on an 8-person team. I designed the full audio pipeline from recording through implementation, built the core gameplay systems in Wwise and Unreal, and managed the mix across 5.1 surround.</p>
+    </div>
+
+    <!-- What I Built -->
+    <div class="content-card">
+      <h2>what i built</h2>
+
+      <h3>threat detection system</h3>
+      <p>Each enemy type has a layered sound profile — footsteps, breathing, ambient hum — controlled by distance-based RTPCs in Wwise. As threats approach, frequency content shifts from low rumble to mid-range detail, giving the player precise spatial information without any visual cue. I built a hysteresis state machine so audio transitions don't flicker when enemies hover at threshold distances.</p>
+
+      <h3>environmental storytelling</h3>
+      <p>Every room has a unique ambient bed built from 3-5 layered loops: mechanical hum, wind, water drip, electrical buzz, distant voices. I recorded most source material myself — metal scrapes, concrete impacts, HVAC recordings from campus buildings. The beds shift based on room state, so a room you've already cleared sounds different from one with an active threat.</p>
+
+      <h3>adaptive music</h3>
+      <p>The score is driven by a Wwise state machine with four intensity levels: explore, tension, chase, and aftermath. Transitions use musical stingers timed to bar boundaries so they never feel jarring. I composed the stems in Reaper, targeting a dark ambient palette — low drones, granular textures, sparse piano hits. The chase state layers in percussive elements that sync to the player's movement speed.</p>
+    </div>
+
+    <!-- Tech Tags -->
+    <div class="tech-tags">
+      <span class="tech-tag">wwise</span>
+      <span class="tech-tag">unreal 5</span>
+      <span class="tech-tag">c++</span>
+      <span class="tech-tag">blueprints</span>
+      <span class="tech-tag">reaper</span>
+    </div>
+
+    <!-- Challenges -->
+    <div class="challenges-section">
+
+      <div class="challenge-card">
+        <div class="challenge-label">challenge #1</div>
+        <h4>problem</h4>
+        <p>With 120+ Wwise events firing in a dense horror environment, we regularly hit our 32-voice limit. Rooms with multiple threats and ambient layers would cause audible voice stealing — critical gameplay audio would cut out at the worst moments.</p>
+        <h4>solution</h4>
+        <p>I built a priority system using Wwise voice management with custom C++ hooks. Threat-related sounds always take priority over ambient. I added distance-based culling so off-screen ambient layers auto-duck when the voice budget gets tight. Environmental loops use virtual voices that resume seamlessly.</p>
+        <h4>result</h4>
+        <p><span class="result-highlight">Zero audible voice stealing in playtests. Threat audio never drops, even in worst-case 4-enemy scenarios.</span></p>
+      </div>
+
+      <div class="challenge-card">
+        <div class="challenge-label">challenge #2</div>
+        <h4>problem</h4>
+        <p>Early playtests showed 80-120ms audio latency on threat proximity changes. Players couldn't react in time — the game felt sluggish and unfair. The delay came from Wwise RTPC smoothing combined with Blueprint tick overhead.</p>
+        <h4>solution</h4>
+        <p>I moved distance calculations to C++ (bypassing Blueprint tick), reduced RTPC interpolation time for critical game states, and added a fast-path for sudden proximity changes that skips smoothing entirely. For the chase state specifically, I pre-loaded all stems into memory so there's zero streaming delay on transitions.</p>
+        <h4>result</h4>
+        <p><span class="result-highlight">Latency dropped from 80-120ms to under 50ms. Playtesters described the audio as "instant" and threat detection accuracy improved across the board.</span></p>
+      </div>
+
+    </div>
+
+    <!-- Prev / Next -->
+    <div class="prev-next">
+      <a href="#">
+        <span class="pn-label">&larr; previous</span>
+        <span class="pn-title">amorak</span>
+      </a>
+      <a href="#" style="text-align: right;">
+        <span class="pn-label">next &rarr;</span>
+        <span class="pn-title">transientica</span>
+      </a>
+    </div>
+
+  </div><!-- /page-wrap -->
+
+  <!-- Footer -->
+  <footer>
+    &copy; 2026 igor szuniewicz
+  </footer>
+
+</body>
+</html>

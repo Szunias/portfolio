@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Igor Szuniewicz — Game Audio Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --accent: #FF6B35;
+      --black: #111111;
+      --grey-dark: #333333;
+      --grey-mid: #666666;
+      --grey-light: #999999;
+      --bg: #FAFAFA;
+      --white: #FFFFFF;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: var(--white);
+    }
+
+    /* --- NAV --- */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1.25rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s, backdrop-filter 0.3s;
+    }
+
+    nav.scrolled {
+      border-bottom-color: #e0e0e0;
+      background: rgba(250, 250, 250, 0.9);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-name {
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--grey-mid);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.875rem;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      position: relative;
+      transition: color 0.25s;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--black);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* --- HERO --- */
+    .hero {
+      padding: 10rem 3rem 6rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .hero-heading {
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      margin-bottom: 2.5rem;
+      max-width: 900px;
+    }
+
+    .hero-heading .accent {
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      display: flex;
+      gap: 4rem;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .hero-identity {
+      flex: 0 0 auto;
+    }
+
+    .hero-name {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .hero-role {
+      font-size: 0.9375rem;
+      font-weight: 300;
+      color: var(--grey-mid);
+    }
+
+    .hero-bio {
+      flex: 1;
+      min-width: 280px;
+      max-width: 480px;
+      font-weight: 300;
+      font-size: 1.0625rem;
+      color: var(--grey-dark);
+      line-height: 1.7;
+    }
+
+    .hero-status {
+      margin-top: 2.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--grey-mid);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-status .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* --- DIVIDER --- */
+    .divider {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 3rem;
+    }
+
+    .divider hr {
+      border: none;
+      height: 3px;
+      background: var(--black);
+    }
+
+    .divider-thin hr {
+      height: 1px;
+      background: #ddd;
+    }
+
+    /* --- PROJECTS --- */
+    .projects {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 3rem;
+    }
+
+    .projects-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--grey-light);
+      margin-bottom: 3rem;
+    }
+
+    .project {
+      padding: 3rem 0;
+      border-bottom: 3px solid var(--black);
+      cursor: pointer;
+      transition: padding-left 0.4s ease;
+    }
+
+    .project:first-of-type {
+      border-top: 3px solid var(--black);
+    }
+
+    .project:hover {
+      padding-left: 1rem;
+    }
+
+    .project:hover .project-title {
+      color: var(--accent);
+    }
+
+    .project:hover .project-arrow {
+      transform: translateX(8px);
+      opacity: 1;
+    }
+
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .project-title {
+      font-size: clamp(2rem, 4vw, 3.25rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      transition: color 0.3s;
+    }
+
+    .project-year {
+      font-size: 0.875rem;
+      font-weight: 300;
+      color: var(--grey-light);
+      flex-shrink: 0;
+      margin-top: 0.5rem;
+    }
+
+    .project-arrow {
+      font-size: 1.5rem;
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 0.5rem;
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    .project-desc {
+      font-weight: 300;
+      font-size: 1.0625rem;
+      color: var(--grey-dark);
+      max-width: 700px;
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.3rem 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 2px;
+      color: var(--grey-mid);
+      letter-spacing: 0.02em;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .project:hover .tag {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .project-stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-right: 1.5rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--grey-mid);
+    }
+
+    .project-stat strong {
+      font-weight: 800;
+      color: var(--black);
+      font-size: 1rem;
+    }
+
+    /* --- ABOUT --- */
+    .about {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 6rem 3rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+
+    .about-heading {
+      font-size: clamp(2rem, 4vw, 3.25rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-text {
+      font-weight: 300;
+      font-size: 1.0625rem;
+      color: var(--grey-dark);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    .toolkit {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .toolkit li {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      padding: 0.4rem 0.9rem;
+      background: var(--white);
+      border: 1px solid #ddd;
+      border-radius: 2px;
+      color: var(--grey-dark);
+    }
+
+    /* --- CONTACT --- */
+    .contact {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 6rem 3rem 8rem;
+    }
+
+    .contact-heading {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 2rem;
+    }
+
+    .contact-heading .accent {
+      color: var(--accent);
+    }
+
+    .contact-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .contact-link {
+      font-size: 1.0625rem;
+      font-weight: 500;
+      color: var(--black);
+      text-decoration: none;
+      position: relative;
+      padding-bottom: 2px;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.25s, color 0.25s;
+    }
+
+    .contact-link:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* --- FOOTER --- */
+    footer {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 3rem;
+      border-top: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8125rem;
+      font-weight: 300;
+      color: var(--grey-light);
+    }
+
+    /* --- MOBILE --- */
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    .mobile-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--black);
+      margin: 5px 0;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 1rem 1.5rem;
+      }
+
+      .mobile-toggle {
+        display: block;
+      }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background: var(--bg);
+        padding: 1.5rem;
+        gap: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .hero {
+        padding: 7rem 1.5rem 4rem;
+      }
+
+      .hero-sub {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .projects {
+        padding: 3rem 1.5rem;
+      }
+
+      .project {
+        padding: 2rem 0;
+      }
+
+      .project:hover {
+        padding-left: 0;
+      }
+
+      .project-header {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .project-arrow {
+        display: none;
+      }
+
+      .about {
+        grid-template-columns: 1fr;
+        padding: 4rem 1.5rem;
+        gap: 2rem;
+      }
+
+      .contact {
+        padding: 4rem 1.5rem 6rem;
+      }
+
+      .divider {
+        padding: 0 1.5rem;
+      }
+
+      footer {
+        padding: 2rem 1.5rem;
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="nav-name">Igor Szuniewicz</div>
+    <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1 class="hero-heading">
+      I make games<br>sound <span class="accent">alive.</span>
+    </h1>
+    <div class="hero-sub">
+      <div class="hero-identity">
+        <div class="hero-name">Igor Szuniewicz</div>
+        <div class="hero-role">Game Audio Designer &amp; Programmer</div>
+        <div class="hero-role">Howest DAE, Belgium</div>
+        <div class="hero-status">
+          <span class="dot"></span>
+          Looking for internship &mdash; Jan&ndash;Jun 2026
+        </div>
+      </div>
+      <p class="hero-bio">
+        I design and implement audio systems for games. Wwise, FMOD, Unreal,
+        C++, machine learning&mdash;whatever the project needs. I've shipped
+        horror soundscapes, built ML classifiers, and optimized middleware for
+        real-time playback. I care about audio that works in the mix, not just
+        in isolation.
+      </p>
+    </div>
+  </section>
+
+  <div class="divider"><hr></div>
+
+  <!-- PROJECTS -->
+  <section class="projects" id="projects">
+    <div class="projects-label">Selected Projects</div>
+
+    <article class="project">
+      <div class="project-header">
+        <div>
+          <h2 class="project-title">Shadow Frames</h2>
+        </div>
+        <span class="project-year">2025</span>
+        <span class="project-arrow">&rarr;</span>
+      </div>
+      <div>
+        <span class="project-stat"><strong>200+</strong> custom foley samples</span>
+        <span class="project-stat"><strong>5.1</strong> surround mix</span>
+        <span class="project-stat"><strong>32</strong> concurrent voices</span>
+      </div>
+      <p class="project-desc">
+        Horror game where audio is the only weapon. Players find and fight
+        anomalies by listening&mdash;no HUD, no markers. I built the spatial
+        audio system in Wwise, designed creature sounds from processed field
+        recordings, and wrote C++ integration for Unreal.
+      </p>
+      <div class="project-tags">
+        <span class="tag">Wwise</span>
+        <span class="tag">Unreal Engine</span>
+        <span class="tag">C++</span>
+        <span class="tag">Sound Design</span>
+        <span class="tag">Spatial Audio</span>
+      </div>
+    </article>
+
+    <article class="project">
+      <div class="project-header">
+        <div>
+          <h2 class="project-title">Transientica</h2>
+        </div>
+        <span class="project-year">2025</span>
+        <span class="project-arrow">&rarr;</span>
+      </div>
+      <div>
+        <span class="project-stat"><strong>92%</strong> accuracy</span>
+        <span class="project-stat"><strong>45ms</strong> latency</span>
+        <span class="project-stat"><strong>SVM</strong> classifier</span>
+      </div>
+      <p class="project-desc">
+        Real-time ML audio classifier that detects transient types in under 50ms.
+        Trained an SVM on spectral features extracted with Python. Hit 92% accuracy
+        on the test set while keeping inference fast enough for live audio processing.
+        Chose SVM over neural nets for the latency budget.
+      </p>
+      <div class="project-tags">
+        <span class="tag">Python</span>
+        <span class="tag">SVM</span>
+        <span class="tag">Machine Learning</span>
+        <span class="tag">FFT</span>
+        <span class="tag">Real-time Audio</span>
+      </div>
+    </article>
+
+    <article class="project">
+      <div class="project-header">
+        <div>
+          <h2 class="project-title">Not Today, Darling!</h2>
+        </div>
+        <span class="project-year">2025</span>
+        <span class="project-arrow">&rarr;</span>
+      </div>
+      <div>
+        <span class="project-stat"><strong>70</strong> Wwise events</span>
+        <span class="project-stat"><strong>180MB</strong> audio budget</span>
+        <span class="project-stat"><strong>Solo</strong> audio designer</span>
+      </div>
+      <p class="project-desc">
+        Solo audio designer on a student game project. Built and implemented 70
+        Wwise events, designed all SFX and ambiences, and used MetaSounds for
+        procedural elements to stay within the 180MB memory budget. Managed 32
+        concurrent voice limit with priority system.
+      </p>
+      <div class="project-tags">
+        <span class="tag">Wwise</span>
+        <span class="tag">MetaSounds</span>
+        <span class="tag">Unreal Engine</span>
+        <span class="tag">Sound Design</span>
+      </div>
+    </article>
+
+    <article class="project">
+      <div class="project-header">
+        <div>
+          <h2 class="project-title">AudioQ</h2>
+        </div>
+        <span class="project-year">2024</span>
+        <span class="project-arrow">&rarr;</span>
+      </div>
+      <div>
+        <span class="project-stat"><strong>VST3</strong> plugin</span>
+        <span class="project-stat"><strong>JUCE</strong> framework</span>
+        <span class="project-stat"><strong>C++</strong> from scratch</span>
+      </div>
+      <p class="project-desc">
+        VST sampler plugin built from scratch in JUCE/C++. Multi-layer sample
+        playback with velocity mapping, ADSR envelopes, and a built-in filter.
+        Designed the DSP chain and UI, learned JUCE's audio processor architecture
+        by building something real.
+      </p>
+      <div class="project-tags">
+        <span class="tag">JUCE</span>
+        <span class="tag">C++</span>
+        <span class="tag">VST3</span>
+        <span class="tag">DSP</span>
+        <span class="tag">Audio Plugin</span>
+      </div>
+    </article>
+  </section>
+
+  <div class="divider divider-thin"><hr></div>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div>
+      <h2 class="about-heading">About</h2>
+      <p class="about-text">
+        I'm a 21-year-old game audio student at Howest Digital Arts &amp;
+        Entertainment in Belgium. I focus on the space where sound design meets
+        programming&mdash;building systems that make audio reactive, efficient,
+        and integrated into gameplay.
+      </p>
+      <p class="about-text">
+        I'm looking for an internship from January to June 2026 where I can
+        contribute to real production audio work. I'm comfortable with
+        middleware, engine integration, and writing code when the project
+        needs it.
+      </p>
+    </div>
+    <div>
+      <h3 style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--grey-light); margin-bottom: 1rem;">Toolkit</h3>
+      <ul class="toolkit">
+        <li>Wwise</li>
+        <li>FMOD</li>
+        <li>Unreal Engine</li>
+        <li>MetaSounds</li>
+        <li>C++</li>
+        <li>C#</li>
+        <li>Python</li>
+        <li>JUCE</li>
+        <li>Reaper</li>
+        <li>Pro Tools</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="divider"><hr></div>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <h2 class="contact-heading">
+      Let's <span class="accent">talk.</span>
+    </h2>
+    <div class="contact-links">
+      <a href="mailto:igor@example.com" class="contact-link">igor@example.com</a>
+      <a href="#" class="contact-link">LinkedIn</a>
+      <a href="#" class="contact-link">GitHub</a>
+      <a href="#" class="contact-link">SoundCloud</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>&copy; 2025 Igor Szuniewicz</span>
+    <span>Howest DAE, Belgium</span>
+  </footer>
+
+  <script>
+    // Nav scroll effect
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Close mobile menu on link click
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>

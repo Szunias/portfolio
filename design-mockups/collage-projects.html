@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>projects — igor szuniewicz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ── Noise texture background ── */
+    html, body { height: 100%; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #2B2B2B;
+      color: #1E1E1E;
+      min-height: 100vh;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+    }
+
+    /* ── Layout wrapper ── */
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: relative;
+      z-index: 1;
+      background: #FFFEF2;
+      border-bottom: 1px solid #e0dfd4;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+    .nav-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #1E1E1E;
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .nav-links a {
+      color: #555;
+      text-decoration: none;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1.5px;
+      background: #1E1E1E;
+      transition: width 0.25s ease;
+    }
+    .nav-links a:hover { color: #1E1E1E; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active {
+      color: #1E1E1E;
+      font-weight: 600;
+    }
+    .nav-links a.active::after { width: 100%; }
+    .nav-sep { color: #ccc; user-select: none; }
+
+    /* ── Page Header ── */
+    .page-header {
+      background: #FFFEF2;
+      border-radius: 4px;
+      padding: 40px 36px 36px;
+      margin-top: 32px;
+      position: relative;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    }
+    .page-header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 2.4rem;
+      letter-spacing: -0.03em;
+      color: #1E1E1E;
+    }
+    .page-header .subtitle {
+      font-size: 1rem;
+      color: #777;
+      margin-top: 6px;
+    }
+    .sticky-note {
+      position: absolute;
+      top: 16px;
+      right: 24px;
+      background: #F4D03F;
+      padding: 6px 14px;
+      font-family: 'Caveat', cursive;
+      font-size: 1.05rem;
+      color: #1E1E1E;
+      transform: rotate(2deg);
+      box-shadow: 1px 2px 4px rgba(0,0,0,0.15);
+      z-index: 2;
+    }
+
+    /* ── Filter Row ── */
+    .filter-row {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 20px;
+      align-items: center;
+    }
+    .filter-btn {
+      background: none;
+      border: none;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      color: #888;
+      cursor: pointer;
+      padding: 4px 0;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .filter-btn:hover { color: #1E1E1E; }
+    .filter-btn.active {
+      color: #1E1E1E;
+      font-weight: 600;
+    }
+    .filter-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 1.5px;
+      background: #1E1E1E;
+    }
+    .filter-sep {
+      color: #ccc;
+      user-select: none;
+      font-size: 0.85rem;
+    }
+
+    /* ── Project Grid ── */
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+      margin-top: 32px;
+    }
+
+    /* ── Polaroid Card ── */
+    .polaroid {
+      background: #fff;
+      padding: 8px 8px 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18), 0 0 1px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .polaroid:hover {
+      transform: translateY(-3px) rotate(0deg) !important;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+    }
+    .polaroid-thumb {
+      width: 100%;
+      aspect-ratio: 16/10;
+      border-radius: 1px;
+    }
+    .polaroid-label {
+      font-family: 'Caveat', cursive;
+      font-size: 1.35rem;
+      margin-top: 10px;
+      padding: 0 4px;
+      color: #1E1E1E;
+    }
+    .polaroid-meta {
+      font-size: 0.78rem;
+      color: #888;
+      margin-top: 2px;
+      padding: 0 4px;
+      line-height: 1.5;
+    }
+    .polaroid-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+      padding: 0 4px;
+    }
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      background: #f0efe6;
+      color: #666;
+      padding: 2px 7px;
+      border-radius: 2px;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Tape decoration ── */
+    .tape {
+      position: absolute;
+      width: 56px;
+      height: 18px;
+      background: rgba(200, 195, 170, 0.45);
+      z-index: 3;
+      pointer-events: none;
+    }
+    .tape-1 {
+      top: -8px;
+      left: 28px;
+      transform: rotate(-3deg);
+    }
+    .tape-2 {
+      top: -8px;
+      right: 20px;
+      transform: rotate(5deg);
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      margin-top: 56px;
+      padding: 18px 0;
+      text-align: center;
+      font-size: 0.78rem;
+      color: #777;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .project-grid { grid-template-columns: 1fr; gap: 24px; }
+      .page-header h1 { font-size: 1.8rem; }
+      .page-header { padding: 28px 24px 24px; }
+      .nav-inner { padding: 14px 16px; }
+      .nav-links { gap: 16px; font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-name">igor szuniewicz</a>
+      <div class="nav-links">
+        <a href="#" class="active">projects</a>
+        <span class="nav-sep">·</span>
+        <a href="#">about</a>
+        <span class="nav-sep">·</span>
+        <a href="#">contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="sticky-note">13+ total</div>
+      <h1>projects</h1>
+      <p class="subtitle">games, tools, and experiments.</p>
+
+      <!-- Filter Row -->
+      <div class="filter-row">
+        <button class="filter-btn active" data-filter="all">all</button>
+        <span class="filter-sep">·</span>
+        <button class="filter-btn" data-filter="game-audio">game audio</button>
+        <span class="filter-sep">·</span>
+        <button class="filter-btn" data-filter="sound-design">sound design</button>
+        <span class="filter-sep">·</span>
+        <button class="filter-btn" data-filter="dev-tools">dev tools</button>
+        <span class="filter-sep">·</span>
+        <button class="filter-btn" data-filter="ml-audio">ml/audio</button>
+      </div>
+    </div>
+
+    <!-- Project Grid -->
+    <div class="project-grid" id="projectGrid">
+
+      <!-- Shadow Frames -->
+      <a href="collage-project-detail.html"
+         class="polaroid"
+         style="transform: rotate(-0.5deg);"
+         data-categories="game-audio">
+        <div class="polaroid-thumb" style="background: linear-gradient(135deg, #1a0a0a 0%, #3d1111 40%, #1E1E1E 100%);"></div>
+        <div class="polaroid-label">shadow frames</div>
+        <div class="polaroid-meta">2025 · horror audio-only game</div>
+        <div class="polaroid-tags">
+          <span class="tag">wwise</span>
+          <span class="tag">unreal</span>
+          <span class="tag">c++</span>
+        </div>
+      </a>
+
+      <!-- Transientica -->
+      <a href="#"
+         class="polaroid"
+         style="transform: rotate(0.5deg);"
+         data-categories="ml-audio">
+        <div class="polaroid-thumb" style="background: linear-gradient(135deg, #0a1a2a 0%, #1a3355 50%, #0d0d1a 100%);"></div>
+        <div class="polaroid-label">transientica</div>
+        <div class="polaroid-meta">2025 · ml audio classifier, 92% accuracy</div>
+        <div class="polaroid-tags">
+          <span class="tag">python</span>
+          <span class="tag">svm</span>
+        </div>
+      </a>
+
+      <!-- Not Today, Darling! -->
+      <a href="#"
+         class="polaroid"
+         style="transform: rotate(0.3deg);"
+         data-categories="game-audio">
+        <div class="polaroid-thumb" style="background: linear-gradient(135deg, #2a1a2a 0%, #4d2244 50%, #1a0a1a 100%);"></div>
+        <div class="polaroid-label">not today, darling!</div>
+        <div class="polaroid-meta">2025 · solo audio, 70 wwise events</div>
+        <div class="polaroid-tags">
+          <span class="tag">wwise</span>
+          <span class="tag">metasounds</span>
+        </div>
+      </a>
+
+      <!-- AudioQ -->
+      <a href="#"
+         class="polaroid"
+         style="transform: rotate(-0.4deg);"
+         data-categories="dev-tools">
+        <div class="polaroid-thumb" style="background: linear-gradient(135deg, #1a1a0a 0%, #333322 50%, #1E1E1E 100%);"></div>
+        <div class="polaroid-label">audioq</div>
+        <div class="polaroid-meta">2024 · vst sampler plugin</div>
+        <div class="polaroid-tags">
+          <span class="tag">juce</span>
+          <span class="tag">c++</span>
+        </div>
+      </a>
+
+      <!-- Ray Animation -->
+      <a href="#"
+         class="polaroid"
+         style="transform: rotate(0.5deg);"
+         data-categories="sound-design">
+        <div class="polaroid-thumb" style="background: linear-gradient(135deg, #2a1a0a 0%, #554422 50%, #1a1000 100%);"></div>
+        <div class="polaroid-label">ray animation</div>
+        <div class="polaroid-meta">2024 · disco-funk score in 8 days</div>
+        <div class="polaroid-tags">
+          <span class="tag">reaper</span>
+        </div>
+      </a>
+
+      <!-- Amorak -->
+      <a href="#"
+         class="polaroid"
+         style="transform: rotate(-0.3deg);"
+         data-categories="sound-design">
+        <div class="polaroid-thumb" style="background: linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 50%, #0d1a0d 100%);"></div>
+        <div class="polaroid-label">amorak</div>
+        <div class="polaroid-meta">2024 · creature sound design</div>
+        <div class="polaroid-tags">
+          <span class="tag">pro tools</span>
+          <span class="tag">reaper</span>
+        </div>
+      </a>
+
+    </div><!-- /project-grid -->
+
+  </div><!-- /page-wrap -->
+
+  <!-- Footer -->
+  <footer>
+    &copy; 2026 igor szuniewicz
+  </footer>
+
+  <!-- Tape decorations (sparingly) -->
+  <style>
+    /* Add two tapes on the page header */
+    .page-header { position: relative; overflow: visible; }
+    .page-header .tape { position: absolute; }
+    .page-header .tape-1 { top: -8px; left: 40px; transform: rotate(-2deg); }
+  </style>
+  <script>
+    // Add tape to header
+    (function() {
+      const header = document.querySelector('.page-header');
+      const tape = document.createElement('div');
+      tape.className = 'tape tape-1';
+      header.appendChild(tape);
+    })();
+  </script>
+
+  <!-- Filter Logic -->
+  <script>
+    (function() {
+      const buttons = document.querySelectorAll('.filter-btn');
+      const cards = document.querySelectorAll('.polaroid');
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          // Update active state
+          buttons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+
+          const filter = this.dataset.filter;
+
+          cards.forEach(card => {
+            if (filter === 'all') {
+              card.style.display = 'block';
+            } else {
+              const cats = card.dataset.categories || '';
+              if (cats.includes(filter)) {
+                card.style.display = 'block';
+              } else {
+                card.style.display = 'none';
+              }
+            }
+          });
+        });
+      });
+    })();
+  </script>
+
+</body>
+</html>

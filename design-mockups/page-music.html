@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music — Igor Szuniewicz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FAFAF8;
+            --bg-alt: #F2F1EE;
+            --text: #1A1A1A;
+            --text-secondary: #6B6B6B;
+            --text-tertiary: #9B9B97;
+            --accent: #1a1a1a;
+            --accent-subtle: rgba(26, 26, 26, 0.06);
+            --border: #E5E5E3;
+            --border-light: #EDEDEB;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(250, 250, 248, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        nav.scrolled { border-bottom-color: var(--border); }
+
+        .nav-logo {
+            font-family: 'Newsreader', serif;
+            font-size: 1.125rem;
+            font-weight: 400;
+            font-style: italic;
+            letter-spacing: -0.01em;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+        .nav-links a {
+            font-size: 0.8125rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            text-decoration: none;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--text);
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover { color: var(--text); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a.active { color: var(--text); }
+        .nav-links a.active::after { width: 100%; }
+
+        /* ── PAGE HEADER ── */
+        .page-header {
+            padding: 10rem 3rem 4rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .page-header h1 {
+            font-family: 'Newsreader', serif;
+            font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+            font-weight: 300;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            margin-bottom: 1.25rem;
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards 0.2s;
+        }
+
+        .page-header .subtitle {
+            font-size: 1.125rem;
+            font-weight: 300;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            max-width: 480px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards 0.4s;
+        }
+
+        /* ── FEATURED EMBED ── */
+        .featured-section {
+            padding: 0 3rem 4rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .spotify-embed-placeholder {
+            width: 100%;
+            aspect-ratio: 21 / 9;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .spotify-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spotify-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--bg);
+        }
+
+        .spotify-embed-placeholder span {
+            font-size: 0.8125rem;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+        }
+
+        /* ── TRACK LIST ── */
+        .tracks-section {
+            padding: 2rem 3rem 5rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-label {
+            font-size: 0.6875rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+        }
+
+        .section-count {
+            font-family: 'Newsreader', serif;
+            font-size: 0.875rem;
+            font-style: italic;
+            color: var(--text-tertiary);
+        }
+
+        .track-list {
+            list-style: none;
+        }
+
+        .track-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            align-items: baseline;
+            gap: 2rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border-light);
+            transition: padding-left 0.3s ease;
+        }
+
+        .track-row:hover {
+            padding-left: 0.5rem;
+        }
+
+        .track-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .track-title {
+            font-family: 'Newsreader', serif;
+            font-size: 1.25rem;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            color: var(--text);
+        }
+
+        .track-desc {
+            font-size: 0.875rem;
+            font-weight: 300;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .track-year {
+            font-size: 0.8125rem;
+            color: var(--text-tertiary);
+            white-space: nowrap;
+        }
+
+        .track-link {
+            font-size: 0.8125rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+        .track-link:hover {
+            color: var(--text);
+        }
+
+        /* ── SPOTIFY CTA ── */
+        .spotify-cta {
+            padding: 0 3rem 6rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .spotify-cta a {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 2px;
+            transition: all 0.2s;
+        }
+        .spotify-cta a:hover {
+            color: var(--text);
+            border-bottom-color: var(--text);
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            padding: 3rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            font-size: 0.8125rem;
+            color: var(--text-tertiary);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+        .footer-links a {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--text); }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            nav { padding: 1.25rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .nav-links a { font-size: 0.75rem; }
+            .page-header { padding: 8rem 1.5rem 3rem; }
+            .page-header h1 { font-size: 2.5rem; }
+            .featured-section { padding: 0 1.5rem 3rem; }
+            .tracks-section { padding: 1.5rem 1.5rem 4rem; }
+            .spotify-cta { padding: 0 1.5rem 4rem; }
+            .track-row {
+                grid-template-columns: 1fr auto;
+                gap: 1rem;
+            }
+            .track-year { display: none; }
+            .spotify-embed-placeholder { aspect-ratio: 16 / 9; }
+            footer { padding: 2rem 1.5rem; flex-direction: column; gap: 1.5rem; text-align: center; }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links { gap: 1rem; }
+            .page-header h1 { font-size: 2rem; }
+            .track-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            .track-link { justify-self: start; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav id="nav">
+        <a href="#" class="nav-logo">Igor Szuniewicz</a>
+        <ul class="nav-links">
+            <li><a href="#">Projects</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <header class="page-header">
+        <h1>Music</h1>
+        <p class="subtitle">Original compositions, scores, and sound experiments.</p>
+    </header>
+
+    <!-- FEATURED SPOTIFY EMBED -->
+    <section class="featured-section reveal">
+        <div class="spotify-embed-placeholder">
+            <div class="spotify-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                </svg>
+            </div>
+            <span>Spotify Player</span>
+        </div>
+    </section>
+
+    <!-- TRACK LIST -->
+    <section class="tracks-section">
+        <div class="section-header reveal">
+            <span class="section-label">Releases</span>
+            <span class="section-count">4 tracks</span>
+        </div>
+
+        <ul class="track-list">
+            <li class="track-row reveal" style="transition-delay: 0.05s;">
+                <div class="track-info">
+                    <span class="track-title">Ray Animation Score</span>
+                    <span class="track-desc">Disco-funk original score for animated short</span>
+                </div>
+                <span class="track-year">2024</span>
+                <a href="#" class="track-link">Listen &rarr;</a>
+            </li>
+            <li class="track-row reveal" style="transition-delay: 0.1s;">
+                <div class="track-info">
+                    <span class="track-title">Amorak Soundscape</span>
+                    <span class="track-desc">Dark ambient creature design</span>
+                </div>
+                <span class="track-year">2024</span>
+                <a href="#" class="track-link">Listen &rarr;</a>
+            </li>
+            <li class="track-row reveal" style="transition-delay: 0.15s;">
+                <div class="track-info">
+                    <span class="track-title">Electronic Experiments</span>
+                    <span class="track-desc">Synthesizer explorations</span>
+                </div>
+                <span class="track-year">2023</span>
+                <a href="#" class="track-link">Listen &rarr;</a>
+            </li>
+            <li class="track-row reveal" style="transition-delay: 0.2s;">
+                <div class="track-info">
+                    <span class="track-title">Piano Works</span>
+                    <span class="track-desc">Classical and contemporary piano</span>
+                </div>
+                <span class="track-year">2022</span>
+                <a href="#" class="track-link">Listen &rarr;</a>
+            </li>
+        </ul>
+    </section>
+
+    <!-- SPOTIFY CTA -->
+    <div class="spotify-cta reveal">
+        <a href="#">Find me on Spotify &rarr;</a>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <span class="footer-left">&copy; 2026 Igor Szuniewicz</span>
+        <div class="footer-links">
+            <a href="mailto:igorszuniewiczwork@gmail.com">Email</a>
+            <a href="#">GitHub</a>
+            <a href="#">LinkedIn</a>
+            <a href="#">Spotify</a>
+        </div>
+    </footer>
+
+    <script>
+        // Nav scroll effect
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 40);
+        });
+
+        // Reveal on scroll
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            },
+            { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+        );
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Igor Szuniewicz — Game Audio Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --sidebar-w: 260px;
+      --text-dark: #2D2A3E;
+      --text-mid: #5E5A72;
+      --text-light: #8A86A0;
+      --white: #FFFFFF;
+      --section-intro: #EDE8F5;
+      --section-projects: #FFFFFF;
+      --section-about: #E8F5F0;
+      --section-contact: #F5EDE8;
+      --accent-purple: #8B7EC8;
+      --accent-pink: #E8A0BF;
+      --accent-blue: #A0C4E8;
+      --accent-violet: #B8A0E8;
+      --accent-mint: #A0E8C4;
+      --border-color: #E8E4F0;
+      --card-shadow: rgba(139, 126, 200, 0.08);
+      --card-shadow-hover: rgba(139, 126, 200, 0.18);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: var(--text-dark);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      background: var(--section-intro);
+    }
+
+    ::selection {
+      background: var(--accent-purple);
+      color: var(--white);
+    }
+
+    /* --- SIDEBAR --- */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--white);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2.5rem 1.75rem;
+      z-index: 100;
+    }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    .sidebar-name {
+      font-size: 1.125rem;
+      font-weight: 800;
+      line-height: 1.3;
+      color: var(--text-dark);
+    }
+
+    .sidebar-role {
+      font-size: 0.8125rem;
+      font-weight: 400;
+      color: var(--text-light);
+      margin-top: 0.25rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .sidebar-nav a {
+      display: block;
+      padding: 0.55rem 0.9rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-light);
+      transition: background 0.25s, color 0.25s, transform 0.2s;
+    }
+
+    .sidebar-nav a:hover {
+      background: #F3F0FA;
+      color: var(--accent-purple);
+      transform: translateX(2px);
+    }
+
+    .sidebar-nav a.active {
+      background: var(--accent-purple);
+      color: var(--white);
+    }
+
+    .sidebar-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .sidebar-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-light);
+    }
+
+    .sidebar-status .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-mint);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .sidebar-social {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .sidebar-social a {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+
+    .sidebar-social a:hover {
+      color: var(--accent-purple);
+    }
+
+    /* --- MOBILE TOP NAV --- */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.875rem 1.25rem;
+    }
+
+    .mobile-nav-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mobile-nav-name {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--text-dark);
+    }
+
+    .mobile-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    .mobile-toggle span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text-dark);
+      margin: 5px 0;
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    .mobile-nav-links {
+      display: none;
+      padding-top: 0.75rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .mobile-nav-links.open {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .mobile-nav-links a {
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: background 0.25s, color 0.25s;
+    }
+
+    .mobile-nav-links a.active {
+      background: var(--accent-purple);
+      color: var(--white);
+    }
+
+    /* --- MAIN CONTENT --- */
+    .main {
+      margin-left: var(--sidebar-w);
+    }
+
+    /* --- SECTIONS --- */
+    .section {
+      min-height: 100vh;
+      padding: 6rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .section-inner {
+      max-width: 900px;
+      width: 100%;
+    }
+
+    /* INTRO */
+    .section-intro {
+      background: var(--section-intro);
+    }
+
+    .intro-name {
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--text-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .intro-title {
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: var(--accent-purple);
+      margin-bottom: 2rem;
+    }
+
+    .intro-desc {
+      font-size: 1.0625rem;
+      font-weight: 400;
+      color: var(--text-mid);
+      line-height: 1.8;
+      max-width: 560px;
+      margin-bottom: 2.5rem;
+    }
+
+    .intro-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--white);
+      background: var(--accent-purple);
+      padding: 0.7rem 1.5rem;
+      border-radius: 999px;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+      box-shadow: 0 2px 12px rgba(139, 126, 200, 0.3);
+    }
+
+    .intro-cta:hover {
+      background: #7A6DB8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(139, 126, 200, 0.4);
+    }
+
+    .intro-cta .arrow {
+      transition: transform 0.3s;
+      font-size: 1.1em;
+    }
+
+    .intro-cta:hover .arrow {
+      transform: translateY(2px);
+    }
+
+    /* PROJECTS */
+    .section-projects {
+      background: var(--section-projects);
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-light);
+      margin-bottom: 2.5rem;
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .project-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 1.75rem;
+      border-left: 4px solid;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      box-shadow: 0 2px 12px var(--card-shadow);
+    }
+
+    .project-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 36px var(--card-shadow-hover);
+    }
+
+    .project-card.shadow-frames { border-left-color: var(--accent-pink); }
+    .project-card.transientica { border-left-color: var(--accent-blue); }
+    .project-card.ntd { border-left-color: var(--accent-violet); }
+    .project-card.audioq { border-left-color: var(--accent-mint); }
+
+    .project-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+
+    .project-card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .project-card .year {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-light);
+      background: #F5F3FA;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      margin-top: 0.1rem;
+    }
+
+    .project-card p {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--text-mid);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    .project-card-stats {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .project-card-stat {
+      font-size: 0.75rem;
+      color: var(--text-light);
+    }
+
+    .project-card-stat strong {
+      display: block;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .project-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.375rem;
+    }
+
+    .project-card-tag {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: #F5F3FA;
+      color: var(--accent-purple);
+    }
+
+    /* Per-card tag tinting */
+    .project-card.shadow-frames .project-card-tag {
+      background: #FDF0F6;
+      color: #C07A9E;
+    }
+    .project-card.transientica .project-card-tag {
+      background: #EFF6FC;
+      color: #6A9CC4;
+    }
+    .project-card.ntd .project-card-tag {
+      background: #F3EFFC;
+      color: #9480C8;
+    }
+    .project-card.audioq .project-card-tag {
+      background: #EEF9F3;
+      color: #6AB89A;
+    }
+
+    /* ABOUT */
+    .section-about {
+      background: var(--section-about);
+    }
+
+    .about-content {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .about-text {
+      font-size: 1.0625rem;
+      font-weight: 400;
+      color: var(--text-mid);
+      line-height: 1.8;
+      margin-bottom: 1.25rem;
+    }
+
+    .about-toolkit-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-light);
+      margin-bottom: 0.75rem;
+    }
+
+    .about-toolkit {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+    }
+
+    .about-toolkit li {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--text-mid);
+      padding: 0.55rem 0.85rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.6);
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .about-toolkit li:hover {
+      background: rgba(255, 255, 255, 0.9);
+      transform: translateX(3px);
+    }
+
+    .about-education {
+      margin-top: 2rem;
+    }
+
+    .about-education h4 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-light);
+      margin-bottom: 0.75rem;
+    }
+
+    .about-education p {
+      font-size: 0.9375rem;
+      font-weight: 400;
+      color: var(--text-mid);
+      line-height: 1.7;
+    }
+
+    .about-education .school {
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    /* CONTACT */
+    .section-contact {
+      background: var(--section-contact);
+    }
+
+    .contact-heading {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-sub {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text-mid);
+      margin-bottom: 2.5rem;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.0625rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      text-decoration: none;
+      padding: 0.85rem 1.2rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.55);
+      transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+      max-width: 400px;
+    }
+
+    .contact-link:hover {
+      background: rgba(255, 255, 255, 0.9);
+      transform: translateX(4px);
+      box-shadow: 0 4px 16px rgba(139, 126, 200, 0.1);
+    }
+
+    .contact-link-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-light);
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 1024px) {
+      .section {
+        padding: 4rem 3rem;
+      }
+
+      .about-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+
+      .mobile-nav {
+        display: block;
+      }
+
+      .main {
+        margin-left: 0;
+        padding-top: 56px;
+      }
+
+      .section {
+        padding: 3.5rem 1.25rem;
+        min-height: auto;
+      }
+
+      .section-intro {
+        min-height: 80vh;
+      }
+
+      .project-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .about-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR (Desktop) -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div>
+        <div class="sidebar-name">Igor<br>Szuniewicz</div>
+        <div class="sidebar-role">Game Audio Designer</div>
+      </div>
+      <ul class="sidebar-nav" id="sidebarNav">
+        <li><a href="#intro" class="active" data-section="intro">Home</a></li>
+        <li><a href="#projects" data-section="projects">Projects</a></li>
+        <li><a href="#about" data-section="about">About</a></li>
+        <li><a href="#contact" data-section="contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="sidebar-status">
+        <span class="dot"></span>
+        Internship &mdash; Jan&ndash;Jun 2026
+      </div>
+      <div class="sidebar-social">
+        <a href="#">LinkedIn</a>
+        <a href="#">GitHub</a>
+        <a href="#">SoundCloud</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MOBILE NAV -->
+  <div class="mobile-nav">
+    <div class="mobile-nav-top">
+      <span class="mobile-nav-name">Igor Szuniewicz</span>
+      <button class="mobile-toggle" onclick="document.querySelector('.mobile-nav-links').classList.toggle('open')" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-nav-links" id="mobileNavLinks">
+      <a href="#intro" class="active" data-section="intro">Home</a>
+      <a href="#projects" data-section="projects">Projects</a>
+      <a href="#about" data-section="about">About</a>
+      <a href="#contact" data-section="contact">Contact</a>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- INTRO -->
+    <section class="section section-intro" id="intro" data-section="intro">
+      <div class="section-inner">
+        <h1 class="intro-name">Igor Szuniewicz</h1>
+        <p class="intro-title">Game Audio Designer &amp; Programmer</p>
+        <p class="intro-desc">
+          I make sound for games. From spatial audio systems in horror to
+          ML-powered classifiers, I build audio that reacts to gameplay and
+          ships under real constraints. 21, studying at Howest DAE in Belgium.
+        </p>
+        <a href="#projects" class="intro-cta">
+          View projects <span class="arrow">&darr;</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="section section-projects" id="projects" data-section="projects">
+      <div class="section-inner">
+        <div class="section-label">Selected Projects</div>
+        <div class="project-grid">
+
+          <div class="project-card shadow-frames">
+            <div class="project-card-header">
+              <h3>Shadow Frames</h3>
+              <span class="year">2025</span>
+            </div>
+            <p>
+              Horror game where audio is the only weapon. I built the spatial
+              audio system in Wwise, designed 200+ foley samples, and wrote C++
+              integration for Unreal Engine 5.
+            </p>
+            <div class="project-card-stats">
+              <div class="project-card-stat"><strong>200+</strong>samples</div>
+              <div class="project-card-stat"><strong>5.1</strong>surround</div>
+              <div class="project-card-stat"><strong>32</strong>voices</div>
+            </div>
+            <div class="project-card-tags">
+              <span class="project-card-tag">Wwise</span>
+              <span class="project-card-tag">UE5</span>
+              <span class="project-card-tag">C++</span>
+              <span class="project-card-tag">Spatial Audio</span>
+            </div>
+          </div>
+
+          <div class="project-card transientica">
+            <div class="project-card-header">
+              <h3>Transientica</h3>
+              <span class="year">2025</span>
+            </div>
+            <p>
+              Real-time ML audio classifier. Trained an SVM on spectral features,
+              hit 92% accuracy at 45ms latency. Chose SVM over neural nets for the
+              latency budget.
+            </p>
+            <div class="project-card-stats">
+              <div class="project-card-stat"><strong>92%</strong>accuracy</div>
+              <div class="project-card-stat"><strong>45ms</strong>latency</div>
+              <div class="project-card-stat"><strong>SVM</strong>model</div>
+            </div>
+            <div class="project-card-tags">
+              <span class="project-card-tag">Python</span>
+              <span class="project-card-tag">SVM</span>
+              <span class="project-card-tag">ML</span>
+              <span class="project-card-tag">FFT</span>
+            </div>
+          </div>
+
+          <div class="project-card ntd">
+            <div class="project-card-header">
+              <h3>Not Today, Darling!</h3>
+              <span class="year">2025</span>
+            </div>
+            <p>
+              Solo audio designer on a student game. 70 Wwise events, all SFX and
+              ambiences, MetaSounds procedural elements. Stayed within 180MB memory
+              budget.
+            </p>
+            <div class="project-card-stats">
+              <div class="project-card-stat"><strong>70</strong>events</div>
+              <div class="project-card-stat"><strong>180MB</strong>budget</div>
+              <div class="project-card-stat"><strong>Solo</strong>role</div>
+            </div>
+            <div class="project-card-tags">
+              <span class="project-card-tag">Wwise</span>
+              <span class="project-card-tag">MetaSounds</span>
+              <span class="project-card-tag">UE5</span>
+            </div>
+          </div>
+
+          <div class="project-card audioq">
+            <div class="project-card-header">
+              <h3>AudioQ</h3>
+              <span class="year">2024</span>
+            </div>
+            <p>
+              VST sampler plugin built from scratch. Multi-layer sample playback
+              with velocity mapping, ADSR envelopes, and built-in filter. JUCE
+              framework, C++ core.
+            </p>
+            <div class="project-card-stats">
+              <div class="project-card-stat"><strong>VST3</strong>format</div>
+              <div class="project-card-stat"><strong>JUCE</strong>framework</div>
+              <div class="project-card-stat"><strong>C++</strong>core</div>
+            </div>
+            <div class="project-card-tags">
+              <span class="project-card-tag">JUCE</span>
+              <span class="project-card-tag">C++</span>
+              <span class="project-card-tag">VST3</span>
+              <span class="project-card-tag">DSP</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section section-about" id="about" data-section="about">
+      <div class="section-inner">
+        <div class="section-label">About Me</div>
+        <div class="about-content">
+          <div>
+            <p class="about-text">
+              I'm a 21-year-old game audio student at Howest DAE in Belgium.
+              I focus on the intersection of sound design and programming&mdash;building
+              audio systems that are reactive, efficient, and tightly coupled to
+              gameplay.
+            </p>
+            <p class="about-text">
+              I've worked with Wwise, FMOD, Unreal, MetaSounds, JUCE, and Python
+              for ML. I care about audio that works in the mix and under real
+              production constraints&mdash;not just demos that sound good in isolation.
+            </p>
+            <p class="about-text">
+              I'm looking for an internship from January to June 2026 where I
+              can contribute to production audio on a real team.
+            </p>
+          </div>
+          <div>
+            <div class="about-toolkit-label">Toolkit</div>
+            <ul class="about-toolkit">
+              <li>Wwise</li>
+              <li>FMOD</li>
+              <li>Unreal Engine / MetaSounds</li>
+              <li>C++ / C#</li>
+              <li>Python (ML/DSP)</li>
+              <li>JUCE</li>
+              <li>Reaper / Pro Tools</li>
+            </ul>
+            <div class="about-education">
+              <h4>Education</h4>
+              <p>
+                <span class="school">Howest &mdash; Digital Arts &amp; Entertainment</span><br>
+                Kortrijk, Belgium<br>
+                Game Audio &amp; Programming
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section section-contact" id="contact" data-section="contact">
+      <div class="section-inner">
+        <h2 class="contact-heading">Get in touch</h2>
+        <p class="contact-sub">
+          Open for internship opportunities, January&ndash;June 2026.
+        </p>
+        <div class="contact-links">
+          <a href="mailto:igor@example.com" class="contact-link">
+            <span>
+              <span class="contact-link-label">Email</span><br>
+              igor@example.com
+            </span>
+          </a>
+          <a href="#" class="contact-link">
+            <span>
+              <span class="contact-link-label">LinkedIn</span><br>
+              /in/igorszuniewicz
+            </span>
+          </a>
+          <a href="#" class="contact-link">
+            <span>
+              <span class="contact-link-label">GitHub</span><br>
+              @igorszuniewicz
+            </span>
+          </a>
+          <a href="#" class="contact-link">
+            <span>
+              <span class="contact-link-label">SoundCloud</span><br>
+              igorszuniewicz
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // Scroll spy for sidebar and mobile nav
+    const sections = document.querySelectorAll('.section[data-section]');
+    const sidebarLinks = document.querySelectorAll('#sidebarNav a[data-section]');
+    const mobileLinks = document.querySelectorAll('#mobileNavLinks a[data-section]');
+
+    function updateActiveSection() {
+      let current = 'intro';
+      const scrollY = window.scrollY;
+
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 200;
+        if (scrollY >= sectionTop) {
+          current = section.dataset.section;
+        }
+      });
+
+      sidebarLinks.forEach(link => {
+        link.classList.toggle('active', link.dataset.section === current);
+      });
+
+      mobileLinks.forEach(link => {
+        link.classList.toggle('active', link.dataset.section === current);
+      });
+    }
+
+    window.addEventListener('scroll', updateActiveSection);
+    updateActiveSection();
+
+    // Close mobile menu on link click
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        document.querySelector('.mobile-nav-links').classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>

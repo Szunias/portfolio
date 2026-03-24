@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Igor Szuniewicz — Game Audio Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ── Reset ── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    font-weight: 400;
+    line-height: 1.65;
+    color: #333;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: #E05D36;
+    color: #fff;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ── Navigation ── */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    transition: background 0.4s ease, box-shadow 0.4s ease, padding 0.3s ease;
+  }
+
+  .nav.scrolled {
+    background: rgba(17, 17, 17, 0.97);
+    box-shadow: 0 1px 20px rgba(0,0,0,0.25);
+    padding: 14px 48px;
+  }
+
+  .nav-logo {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.6);
+    transition: color 0.25s ease;
+    letter-spacing: 0.02em;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: #fff;
+  }
+
+  /* ── Sections ── */
+  .section-dark {
+    background: #111111;
+    color: #fff;
+  }
+
+  .section-light {
+    background: #F5F3EE;
+    color: #222;
+  }
+
+  .section-accent {
+    background: #E05D36;
+    color: #fff;
+  }
+
+  /* ── Reveal animation ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stagger children */
+  .stagger > .reveal:nth-child(1) { transition-delay: 0s; }
+  .stagger > .reveal:nth-child(2) { transition-delay: 0.1s; }
+  .stagger > .reveal:nth-child(3) { transition-delay: 0.2s; }
+  .stagger > .reveal:nth-child(4) { transition-delay: 0.3s; }
+  .stagger > .reveal:nth-child(5) { transition-delay: 0.4s; }
+  .stagger > .reveal:nth-child(6) { transition-delay: 0.5s; }
+
+  /* ══════════════════════════
+     SECTION 1 — HERO
+     ══════════════════════════ */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px;
+    position: relative;
+  }
+
+  .hero-name {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+
+  .hero-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #E05D36;
+    margin-bottom: 24px;
+    letter-spacing: 0.01em;
+  }
+
+  .hero-tagline {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    max-width: 420px;
+  }
+
+  .scroll-arrow {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: bounce 2s ease infinite;
+  }
+
+  .scroll-arrow svg {
+    width: 28px;
+    height: 28px;
+    stroke: rgba(255,255,255,0.3);
+    stroke-width: 2;
+    fill: none;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40% { transform: translateX(-50%) translateY(-10px); }
+    60% { transform: translateX(-50%) translateY(-5px); }
+  }
+
+  /* ══════════════════════════
+     SECTION 2 — ABOUT
+     ══════════════════════════ */
+  .about {
+    padding: 140px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .about-text {
+    font-size: 1.35rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: #333;
+  }
+
+  .about-details {
+    padding-top: 8px;
+  }
+
+  .about-details dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px 24px;
+  }
+
+  .about-details dt {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #999;
+    padding-top: 2px;
+  }
+
+  .about-details dd {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: #333;
+  }
+
+  /* ══════════════════════════
+     SECTION 3 — SHOWREEL
+     ══════════════════════════ */
+  .showreel {
+    padding: 140px 48px;
+    text-align: center;
+  }
+
+  .showreel-heading {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 40px;
+  }
+
+  .showreel-container {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .showreel-embed {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 */
+    background: #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .showreel-embed-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.2);
+  }
+
+  .showreel-embed-inner svg {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.4;
+  }
+
+  .showreel-sub {
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.4);
+    margin-top: 28px;
+  }
+
+  /* ══════════════════════════
+     SECTION 4 — PROJECTS
+     ══════════════════════════ */
+  .projects {
+    padding: 140px 48px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .projects-heading {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #999;
+    margin-bottom: 64px;
+  }
+
+  .project-item {
+    padding-bottom: 48px;
+    margin-bottom: 48px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+
+  .project-item:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .project-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .project-name {
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #111;
+  }
+
+  .project-year {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #aaa;
+  }
+
+  .project-desc {
+    font-size: 0.95rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: #555;
+    margin-bottom: 16px;
+    max-width: 680px;
+  }
+
+  .project-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .project-tech span {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 3px;
+    color: #777;
+  }
+
+  .projects-link {
+    display: inline-block;
+    margin-top: 56px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+    padding-bottom: 2px;
+    transition: color 0.25s ease, border-color 0.25s ease;
+  }
+
+  .projects-link:hover {
+    color: #E05D36;
+    border-color: #E05D36;
+  }
+
+  /* ══════════════════════════
+     SECTION 5 — TOOLS
+     ══════════════════════════ */
+  .tools {
+    padding: 140px 48px;
+    text-align: center;
+  }
+
+  .tools-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 32px;
+  }
+
+  .tools-list {
+    font-size: 1.3rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.02em;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+
+  .tools-separator {
+    margin: 0 6px;
+    color: rgba(255,255,255,0.2);
+  }
+
+  /* ══════════════════════════
+     SECTION 6 — CONTACT
+     ══════════════════════════ */
+  .contact {
+    padding: 160px 48px;
+    text-align: center;
+  }
+
+  .contact-heading {
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 18px;
+    line-height: 1.15;
+  }
+
+  .contact-sub {
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 40px;
+  }
+
+  .contact-email {
+    display: inline-block;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #fff;
+    border-bottom: 2px solid rgba(255,255,255,0.5);
+    padding-bottom: 3px;
+    margin-bottom: 40px;
+    transition: border-color 0.25s ease;
+  }
+
+  .contact-email:hover {
+    border-color: #fff;
+  }
+
+  .contact-socials {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+  }
+
+  .contact-socials a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    transition: background 0.25s ease, transform 0.2s ease;
+  }
+
+  .contact-socials a:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-2px);
+  }
+
+  .contact-socials svg {
+    width: 20px;
+    height: 20px;
+    fill: #fff;
+  }
+
+  /* ══════════════════════════
+     SECTION 7 — FOOTER
+     ══════════════════════════ */
+  .footer {
+    padding: 40px 48px;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 0.03em;
+  }
+
+  /* ══════════════════════════
+     RESPONSIVE
+     ══════════════════════════ */
+  @media (max-width: 768px) {
+    .nav {
+      padding: 16px 24px;
+    }
+
+    .nav.scrolled {
+      padding: 12px 24px;
+    }
+
+    .nav-links {
+      gap: 20px;
+    }
+
+    .nav-links a {
+      font-size: 0.8rem;
+    }
+
+    .hero-name {
+      font-size: 2.2rem;
+    }
+
+    .hero-title {
+      font-size: 1.05rem;
+    }
+
+    .hero-tagline {
+      font-size: 0.95rem;
+    }
+
+    .about {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      padding: 100px 24px;
+    }
+
+    .about-text {
+      font-size: 1.15rem;
+    }
+
+    .showreel {
+      padding: 100px 24px;
+    }
+
+    .projects {
+      padding: 100px 24px;
+    }
+
+    .project-name {
+      font-size: 1.15rem;
+    }
+
+    .tools {
+      padding: 100px 24px;
+    }
+
+    .tools-list {
+      font-size: 1.05rem;
+    }
+
+    .contact {
+      padding: 100px 24px;
+    }
+
+    .contact-heading {
+      font-size: 2rem;
+    }
+
+    .footer {
+      padding: 30px 24px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .nav-logo {
+      font-size: 0.85rem;
+    }
+
+    .nav-links {
+      gap: 14px;
+    }
+
+    .nav-links a {
+      font-size: 0.75rem;
+    }
+
+    .hero-name {
+      font-size: 1.8rem;
+    }
+
+    .about-text {
+      font-size: 1rem;
+    }
+
+    .project-header {
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .contact-heading {
+      font-size: 1.6rem;
+    }
+
+    .contact-socials {
+      gap: 16px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════ NAV ════════════ -->
+<nav class="nav" id="nav">
+  <div class="nav-logo">Igor Szuniewicz</div>
+  <ul class="nav-links">
+    <li><a href="#work" data-section="projects">Work</a></li>
+    <li><a href="#about" data-section="about">About</a></li>
+    <li><a href="#contact" data-section="contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ════════════ SECTION 1 — HERO ════════════ -->
+<section class="section-dark hero" id="hero">
+  <div class="stagger">
+    <h1 class="hero-name reveal">Igor Szuniewicz</h1>
+    <p class="hero-title reveal">Game Audio Designer</p>
+    <p class="hero-tagline reveal">I make the sounds you hear when you play.</p>
+  </div>
+  <div class="scroll-arrow" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><polyline points="6 10 12 16 18 10"></polyline></svg>
+  </div>
+</section>
+
+<!-- ════════════ SECTION 2 — ABOUT ════════════ -->
+<section class="section-light" id="about">
+  <div class="about">
+    <p class="about-text reveal">I'm a 21-year-old from Poland studying game audio at Howest DAE in Belgium. I work with Wwise, Unreal, and whatever gets the job done.</p>
+    <div class="about-details reveal">
+      <dl>
+        <dt>Location</dt>
+        <dd>Kortrijk, Belgium</dd>
+        <dt>Education</dt>
+        <dd>Howest DAE — Game Audio</dd>
+        <dt>Status</dt>
+        <dd>Looking for internship</dd>
+        <dt>Languages</dt>
+        <dd>Polish, English, Dutch</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ SECTION 3 — SHOWREEL ════════════ -->
+<section class="section-dark showreel" id="reel">
+  <p class="showreel-heading reveal">Demo Reel</p>
+  <div class="showreel-container reveal">
+    <div class="showreel-embed">
+      <div class="showreel-embed-inner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none" opacity="0.3"></polygon>
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+        <span style="font-size: 0.85rem;">Demo Reel — 16:9 embed</span>
+      </div>
+    </div>
+  </div>
+  <p class="showreel-sub reveal">Watch my work in 3 minutes.</p>
+</section>
+
+<!-- ════════════ SECTION 4 — PROJECTS ════════════ -->
+<section class="section-light" id="work">
+  <div class="projects">
+    <p class="projects-heading reveal">Selected Work</p>
+
+    <div class="project-item reveal">
+      <div class="project-header">
+        <h3 class="project-name">Shadow Frames</h3>
+        <span class="project-year">2025</span>
+      </div>
+      <p class="project-desc">Horror game where audio is the only weapon. I built a machine-learning system that classifies player microphone input to drive gameplay — scream to stun enemies, whisper to hide. 92% classification accuracy with 45ms latency using SVM over FFT features.</p>
+      <div class="project-tech">
+        <span>Wwise</span>
+        <span>Unreal Engine 5</span>
+        <span>C++</span>
+        <span>Python</span>
+        <span>SVM</span>
+      </div>
+    </div>
+
+    <div class="project-item reveal">
+      <div class="project-header">
+        <h3 class="project-name">Transientica</h3>
+        <span class="project-year">2025</span>
+      </div>
+      <p class="project-desc">Audio-driven puzzle game where players find anomalies by listening — no UI markers. I designed a procedural audio system that encodes puzzle state into spatial sound cues. Built 200+ custom foley samples and implemented dynamic mixing for 4-player co-op clarity.</p>
+      <div class="project-tech">
+        <span>Wwise</span>
+        <span>Unreal Engine 5</span>
+        <span>Reaper</span>
+      </div>
+    </div>
+
+    <div class="project-item reveal">
+      <div class="project-header">
+        <h3 class="project-name">Not Today, Darling!</h3>
+        <span class="project-year">2024</span>
+      </div>
+      <p class="project-desc">Solo audio designer on a 12-person student team. 70 Wwise events, 180MB audio budget, 32-voice polyphony limit. I built the entire audio pipeline from recording to final mix, optimized MetaSounds graphs to cut memory from 160MB to 2MB per cue.</p>
+      <div class="project-tech">
+        <span>Wwise</span>
+        <span>MetaSounds</span>
+        <span>Unreal Engine 5</span>
+      </div>
+    </div>
+
+    <div class="project-item reveal">
+      <div class="project-header">
+        <h3 class="project-name">AudioQ</h3>
+        <span class="project-year">2024</span>
+      </div>
+      <p class="project-desc">Real-time audio analysis tool built with JUCE and C++. Visualizes frequency spectrum, transient detection, and loudness metering. Designed for sound designers who need fast feedback during iteration.</p>
+      <div class="project-tech">
+        <span>JUCE</span>
+        <span>C++</span>
+        <span>DSP</span>
+      </div>
+    </div>
+
+    <a href="#" class="projects-link reveal">View all 13 projects &rarr;</a>
+  </div>
+</section>
+
+<!-- ════════════ SECTION 5 — TOOLS ════════════ -->
+<section class="section-dark tools" id="tools">
+  <p class="tools-label reveal">Tools &amp; Technologies</p>
+  <p class="tools-list reveal">
+    Wwise <span class="tools-separator">&middot;</span>
+    FMOD <span class="tools-separator">&middot;</span>
+    Unreal Engine <span class="tools-separator">&middot;</span>
+    C++ <span class="tools-separator">&middot;</span>
+    Python <span class="tools-separator">&middot;</span>
+    Reaper <span class="tools-separator">&middot;</span>
+    JUCE <span class="tools-separator">&middot;</span>
+    MetaSounds
+  </p>
+</section>
+
+<!-- ════════════ SECTION 6 — CONTACT ════════════ -->
+<section class="section-accent contact" id="contact">
+  <div class="stagger">
+    <h2 class="contact-heading reveal">Let's work together.</h2>
+    <p class="contact-sub reveal">I'm looking for an internship, Jan&ndash;Jun 2026.</p>
+    <div class="reveal">
+      <a href="mailto:igor@szuniewicz.com" class="contact-email">igor@szuniewicz.com</a>
+    </div>
+    <div class="contact-socials reveal">
+      <!-- LinkedIn -->
+      <a href="#" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <!-- GitHub -->
+      <a href="#" aria-label="GitHub">
+        <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
+      <!-- SoundCloud -->
+      <a href="#" aria-label="SoundCloud">
+        <svg viewBox="0 0 24 24"><path d="M1.175 12.225c-.051 0-.094.046-.101.1l-.233 2.154.233 2.105c.007.058.05.098.101.098.05 0 .09-.04.099-.098l.255-2.105-.27-2.154c-.009-.057-.05-.1-.1-.1m-.899.828c-.06 0-.091.038-.098.098L0 15.479l.178 2.281c.007.06.038.098.098.098.058 0 .09-.038.098-.098l.2-2.281-.2-2.328c-.008-.06-.04-.098-.098-.098m1.774-.795c-.06 0-.105.047-.113.107l-.217 2.114.217 2.154c.008.06.053.107.113.107.058 0 .103-.047.113-.107l.248-2.154-.248-2.114c-.01-.06-.055-.107-.113-.107m.897-.395c-.07 0-.12.055-.127.12l-.195 2.52.195 2.188c.008.068.058.12.127.12.068 0 .12-.052.127-.12l.225-2.188-.225-2.52c-.008-.068-.06-.12-.127-.12m.9-.367c-.08 0-.135.063-.143.135l-.18 2.887.18 2.198c.008.075.064.135.143.135.08 0 .135-.06.143-.135l.203-2.198-.203-2.887c-.008-.072-.064-.135-.143-.135m.9-.263c-.088 0-.15.07-.157.15l-.163 3.15.163 2.203c.008.082.07.15.157.15.088 0 .15-.068.157-.15l.188-2.203-.188-3.15c-.008-.08-.07-.15-.157-.15m.952-.188c-.097 0-.165.075-.172.165l-.15 3.338.15 2.203c.008.09.075.165.172.165.098 0 .165-.075.173-.165l.172-2.203-.172-3.338c-.008-.09-.075-.165-.173-.165m.953-.127c-.105 0-.18.083-.188.18l-.135 3.465.135 2.198c.008.098.083.18.188.18.105 0 .18-.082.188-.18l.153-2.198-.153-3.465c-.008-.097-.083-.18-.188-.18m.952-.06c-.113 0-.195.09-.203.195l-.12 3.525.12 2.19c.008.105.09.195.203.195.112 0 .195-.09.203-.195l.135-2.19-.135-3.525c-.008-.105-.09-.195-.203-.195m1.065-.112c-.12 0-.21.097-.217.21l-.105 3.637.105 2.183c.008.112.098.21.217.21.12 0 .21-.098.218-.21l.12-2.183-.12-3.637c-.008-.113-.098-.21-.218-.21m.96.015c-.128 0-.225.105-.233.225l-.09 3.622.09 2.175c.008.12.105.225.233.225.127 0 .225-.105.232-.225l.105-2.175-.105-3.622c-.007-.12-.105-.225-.232-.225m1.073-.188c-.135 0-.24.113-.248.24l-.075 3.81.075 2.168c.008.128.113.24.248.24.135 0 .24-.112.248-.24l.083-2.168-.083-3.81c-.008-.127-.113-.24-.248-.24m1.067-.135c-.143 0-.255.12-.263.255l-.06 3.945.06 2.16c.008.135.12.255.263.255.142 0 .255-.12.262-.255l.068-2.16-.068-3.945c-.007-.135-.12-.255-.262-.255m1.065-.09c-.15 0-.27.127-.278.27l-.045 4.035.045 2.153c.008.142.128.27.278.27.15 0 .27-.128.277-.27l.053-2.153-.053-4.035c-.007-.143-.127-.27-.277-.27m1.065.135c-.158 0-.285.135-.293.285l-.03 3.9.03 2.145c.008.15.135.285.293.285.158 0 .285-.135.292-.285l.038-2.145-.038-3.9c-.007-.15-.134-.285-.292-.285m1.12-.405c-.165 0-.3.142-.307.3l-.015 4.305.015 2.138c.008.157.142.3.307.3.165 0 .3-.143.308-.3l.022-2.138-.022-4.305c-.008-.158-.143-.3-.308-.3m1.455-.585c-.06-.03-.127-.045-.195-.045-.067 0-.135.015-.195.045-.12.06-.21.18-.21.315l-.008 4.59.008 2.123c0 .135.09.255.21.315.06.03.128.045.195.045.068 0 .135-.015.195-.045.12-.06.21-.18.21-.315l.015-2.123-.015-4.59c0-.135-.09-.255-.21-.315m1.08.39c-.375 0-.675.3-.675.675l-.008 4.53.008 2.115c0 .375.3.675.675.675.998 0 4.065-.225 5.79-2.04.63-.66.99-1.485.99-2.415 0-3.06-2.895-3.54-6.78-3.54"/></svg>
+      </a>
+      <!-- YouTube -->
+      <a href="#" aria-label="YouTube">
+        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ SECTION 7 — FOOTER ════════════ -->
+<footer class="section-dark footer">
+  &copy; 2026 Igor Szuniewicz &middot; Kortrijk, Belgium
+</footer>
+
+<script>
+  // ── Scroll reveal (IntersectionObserver) ──
+  const revealElements = document.querySelectorAll('.reveal');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  revealElements.forEach(el => observer.observe(el));
+
+  // ── Nav background on scroll ──
+  const nav = document.getElementById('nav');
+  const hero = document.getElementById('hero');
+
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+  }, {
+    threshold: 0,
+    rootMargin: '-60px 0px 0px 0px'
+  });
+
+  navObserver.observe(hero);
+
+  // ── Scroll spy ──
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a[data-section]');
+
+  const spyObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navLinks.forEach(link => {
+          if (link.dataset.section === id) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }
+    });
+  }, {
+    threshold: 0.3,
+    rootMargin: '-80px 0px -40% 0px'
+  });
+
+  sections.forEach(section => {
+    if (section.id) spyObserver.observe(section);
+  });
+
+  // ── Make hero elements visible immediately (above fold) ──
+  window.addEventListener('DOMContentLoaded', () => {
+    const heroReveals = document.querySelectorAll('.hero .reveal');
+    heroReveals.forEach((el, i) => {
+      setTimeout(() => {
+        el.classList.add('visible');
+      }, 200 + (i * 150));
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGOR SZUNIEWICZ — GAME AUDIO</title>
+<style>
+  /* RESET — KILL EVERYTHING */
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --black: #000000;
+    --white: #ffffff;
+    --accent: #ff3300;
+    --grey: #888888;
+    --border: 3px solid var(--black);
+    --border-thin: 1px solid var(--black);
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--white);
+  }
+
+  html {
+    scroll-behavior: auto; /* no smooth scroll — brutalist */
+  }
+
+  body {
+    font-family: 'Courier New', Courier, monospace;
+    background: var(--white);
+    color: var(--black);
+    line-height: 1.4;
+    font-size: 15px;
+    cursor: crosshair;
+    overflow-x: hidden;
+  }
+
+  a {
+    color: var(--black);
+    text-decoration: none;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  a:hover {
+    background: var(--black);
+    color: var(--white);
+  }
+
+  /* =========================================
+     HEADER — MASSIVE, IN YOUR FACE
+     ========================================= */
+
+  .header {
+    border-bottom: var(--border);
+    padding: 20px;
+    position: relative;
+  }
+
+  .header__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .header__name {
+    font-size: clamp(48px, 10vw, 120px);
+    font-weight: 900;
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+  }
+
+  .header__name span {
+    display: block;
+  }
+
+  .header__role {
+    font-size: clamp(14px, 2vw, 18px);
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    border: var(--border);
+    padding: 8px 14px;
+    display: inline-block;
+    margin-top: 10px;
+    background: var(--accent);
+    color: var(--white);
+  }
+
+  .header__status {
+    text-align: right;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    line-height: 1.8;
+  }
+
+  .header__status strong {
+    background: var(--black);
+    color: var(--white);
+    padding: 1px 6px;
+  }
+
+  /* NAV — RAW LINKS */
+
+  .nav {
+    border-bottom: var(--border);
+    padding: 10px 20px;
+    display: flex;
+    gap: 0;
+    flex-wrap: wrap;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+
+  .nav a {
+    padding: 6px 14px;
+    border: none;
+    border-right: var(--border-thin);
+  }
+
+  .nav a:first-child {
+    padding-left: 0;
+  }
+
+  .nav a:last-child {
+    border-right: none;
+  }
+
+  .nav a:hover {
+    background: var(--accent);
+    color: var(--white);
+  }
+
+  /* =========================================
+     MARQUEE — BECAUSE WHY NOT
+     ========================================= */
+
+  .ticker {
+    border-bottom: var(--border);
+    padding: 8px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--grey);
+  }
+
+  .ticker__inner {
+    display: inline-block;
+    animation: ticker 25s linear infinite;
+  }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* =========================================
+     SECTION HEADERS
+     ========================================= */
+
+  .section-header {
+    font-size: clamp(28px, 5vw, 60px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    border-bottom: var(--border);
+    padding: 20px;
+    position: relative;
+  }
+
+  .section-header::before {
+    content: attr(data-num);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    display: block;
+    margin-bottom: 4px;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  /* =========================================
+     BIO — SPLIT LAYOUT
+     ========================================= */
+
+  .bio {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: var(--border);
+  }
+
+  .bio__left {
+    padding: 30px 20px;
+    border-right: var(--border);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .bio__left p + p {
+    margin-top: 16px;
+  }
+
+  .bio__right {
+    padding: 30px 20px;
+    font-size: 13px;
+  }
+
+  .bio__philosophy {
+    border: var(--border);
+    padding: 20px;
+    margin-top: 20px;
+    position: relative;
+  }
+
+  .bio__philosophy::before {
+    content: '!!!';
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background: var(--white);
+    padding: 0 6px;
+    font-weight: 900;
+    color: var(--accent);
+    font-size: 14px;
+  }
+
+  .bio__fact {
+    margin-bottom: 12px;
+  }
+
+  .bio__fact-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--grey);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .bio__fact-value {
+    font-weight: 700;
+  }
+
+  /* =========================================
+     PROJECTS — THE CATALOG
+     ========================================= */
+
+  .project-list {
+    border-bottom: var(--border);
+  }
+
+  .project {
+    display: grid;
+    grid-template-columns: 60px 1fr 200px 120px;
+    border-bottom: var(--border-thin);
+    align-items: start;
+    gap: 0;
+  }
+
+  .project:hover {
+    background: var(--black);
+    color: var(--white);
+  }
+
+  .project:hover .project__category {
+    color: var(--white);
+  }
+
+  .project:hover .project__tags span {
+    border-color: var(--white);
+    color: var(--white);
+  }
+
+  .project__num {
+    padding: 14px 10px;
+    font-size: 12px;
+    color: var(--grey);
+    text-align: center;
+    border-right: var(--border-thin);
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .project__info {
+    padding: 14px 16px;
+    border-right: var(--border-thin);
+  }
+
+  .project__title {
+    font-size: 18px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+
+  .project__desc {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--grey);
+    max-width: 600px;
+  }
+
+  .project:hover .project__desc {
+    color: #ccc;
+  }
+
+  .project__category {
+    padding: 14px 16px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--grey);
+    border-right: var(--border-thin);
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+  }
+
+  .project__year {
+    padding: 14px 16px;
+    font-size: 24px;
+    font-weight: 900;
+    text-align: right;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .project__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  .project__tags span {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: 1px solid var(--grey);
+    padding: 2px 6px;
+    color: var(--grey);
+  }
+
+  /* =========================================
+     SKILLS — RAW DUMP
+     ========================================= */
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: var(--border);
+  }
+
+  .skills-col {
+    padding: 20px;
+    border-right: var(--border-thin);
+  }
+
+  .skills-col:last-child {
+    border-right: none;
+  }
+
+  .skills-col__title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    font-weight: 900;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  .skills-col ul {
+    list-style: none;
+    font-size: 13px;
+    line-height: 2;
+  }
+
+  .skills-col li::before {
+    content: '> ';
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* =========================================
+     TOOLS — TERMINAL STYLE
+     ========================================= */
+
+  .tools {
+    border-bottom: var(--border);
+    padding: 20px;
+    background: var(--black);
+    color: #00ff00;
+    font-size: 13px;
+  }
+
+  .tools__title {
+    margin-bottom: 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+  }
+
+  .tools__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 2px;
+  }
+
+  .tools__item {
+    padding: 6px 10px;
+    border: 1px solid #333;
+  }
+
+  .tools__item-name {
+    color: #00ff00;
+    font-weight: 700;
+  }
+
+  .tools__item-level {
+    color: #666;
+    font-size: 11px;
+    float: right;
+  }
+
+  /* =========================================
+     NUMBERS — STATS BAR
+     ========================================= */
+
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-bottom: var(--border);
+    text-align: center;
+  }
+
+  .stat {
+    padding: 20px 10px;
+    border-right: var(--border-thin);
+  }
+
+  .stat:last-child {
+    border-right: none;
+  }
+
+  .stat__number {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .stat__label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--grey);
+    margin-top: 6px;
+  }
+
+  /* =========================================
+     PRINCIPLES — OVERLAPPING CHAOS
+     ========================================= */
+
+  .principles {
+    border-bottom: var(--border);
+    padding: 30px 20px;
+    position: relative;
+  }
+
+  .principle {
+    border: var(--border);
+    padding: 20px;
+    margin-bottom: -1px;
+    position: relative;
+  }
+
+  .principle:nth-child(even) {
+    margin-left: 40px;
+    background: var(--white);
+  }
+
+  .principle:nth-child(odd) {
+    margin-right: 40px;
+  }
+
+  .principle__title {
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .principle__text {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* =========================================
+     CONTACT — BOTTOM
+     ========================================= */
+
+  .contact {
+    border-bottom: var(--border);
+    padding: 30px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .contact__title {
+    font-size: clamp(32px, 5vw, 64px);
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 0.9;
+    margin-bottom: 20px;
+  }
+
+  .contact__links {
+    list-style: none;
+    font-size: 14px;
+    line-height: 2.4;
+  }
+
+  .contact__links a {
+    border-bottom-width: 3px;
+    font-weight: 700;
+  }
+
+  .contact__availability {
+    border: var(--border);
+    padding: 20px;
+    background: var(--accent);
+    color: var(--white);
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .contact__availability strong {
+    display: block;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  /* =========================================
+     FOOTER — MINIMAL
+     ========================================= */
+
+  .footer {
+    padding: 14px 20px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--grey);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* =========================================
+     GLITCH OVERLAY — DECORATION
+     ========================================= */
+
+  .glitch-line {
+    height: 3px;
+    background: var(--accent);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glitch-line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--accent) 0px,
+      var(--accent) 20px,
+      var(--black) 20px,
+      var(--black) 25px
+    );
+    animation: glitch-slide 3s linear infinite;
+  }
+
+  @keyframes glitch-slide {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-45px); }
+  }
+
+  /* =========================================
+     OVERSIZED WATERMARK
+     ========================================= */
+
+  .watermark {
+    position: fixed;
+    bottom: -20px;
+    right: -10px;
+    font-size: 180px;
+    font-weight: 900;
+    color: rgba(0,0,0,0.03);
+    text-transform: uppercase;
+    line-height: 0.8;
+    pointer-events: none;
+    z-index: -1;
+    letter-spacing: -0.05em;
+  }
+
+  /* =========================================
+     RESPONSIVE — JUST STACK IT
+     ========================================= */
+
+  @media (max-width: 800px) {
+    .bio {
+      grid-template-columns: 1fr;
+    }
+
+    .bio__left {
+      border-right: none;
+      border-bottom: var(--border);
+    }
+
+    .project {
+      grid-template-columns: 40px 1fr;
+      grid-template-rows: auto auto;
+    }
+
+    .project__category,
+    .project__year {
+      display: none;
+    }
+
+    .skills-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .skills-col {
+      border-right: none;
+      border-bottom: var(--border-thin);
+    }
+
+    .stats-bar {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .stat:nth-child(4),
+    .stat:nth-child(5) {
+      grid-column: span 1;
+    }
+
+    .contact {
+      grid-template-columns: 1fr;
+    }
+
+    .principle:nth-child(even) {
+      margin-left: 0;
+    }
+
+    .principle:nth-child(odd) {
+      margin-right: 0;
+    }
+
+    .header__status {
+      text-align: left;
+      margin-top: 10px;
+    }
+
+    .watermark {
+      font-size: 80px;
+    }
+  }
+
+  @media (max-width: 500px) {
+    .stats-bar {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .header__name {
+      font-size: 40px;
+    }
+
+    .tools__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- WATERMARK -->
+<div class="watermark">AUDIO</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header__top">
+    <div>
+      <h1 class="header__name">
+        <span>Igor</span>
+        <span>Szuniewicz</span>
+      </h1>
+      <div class="header__role">Game Audio Designer</div>
+    </div>
+    <div class="header__status">
+      <strong>STATUS: SEEKING INTERNSHIP</strong><br>
+      JAN&ndash;JUN 2026<br>
+      KORTRIJK, BELGIUM<br>
+      EU PASSPORT / CAN RELOCATE<br>
+      REMOTE OK
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#bio">BIO</a>
+  <a href="#work">WORK</a>
+  <a href="#skills">SKILLS</a>
+  <a href="#tools">TOOLS</a>
+  <a href="#principles">APPROACH</a>
+  <a href="#contact">CONTACT</a>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__inner">
+    WWISE &mdash; FMOD &mdash; UNREAL ENGINE 5 &mdash; METASOUNDS &mdash; C++ &mdash; PYTHON &mdash; REAPER &mdash; PRO TOOLS &mdash; JUCE &mdash; SPATIAL AUDIO &mdash; DSP &mdash; UNITY &mdash; BLUEPRINTS &mdash; MAX/MSP &mdash; IZOTOPE RX &mdash; FIELD RECORDING &mdash; FOLEY &mdash; 5.1 SURROUND &mdash; MACHINE LEARNING &mdash; OSC &mdash;&nbsp;&nbsp;&nbsp;&nbsp;WWISE &mdash; FMOD &mdash; UNREAL ENGINE 5 &mdash; METASOUNDS &mdash; C++ &mdash; PYTHON &mdash; REAPER &mdash; PRO TOOLS &mdash; JUCE &mdash; SPATIAL AUDIO &mdash; DSP &mdash; UNITY &mdash; BLUEPRINTS &mdash; MAX/MSP &mdash; IZOTOPE RX &mdash; FIELD RECORDING &mdash; FOLEY &mdash; 5.1 SURROUND &mdash; MACHINE LEARNING &mdash; OSC &mdash;&nbsp;&nbsp;&nbsp;&nbsp;
+  </div>
+</div>
+
+<div class="glitch-line"></div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat__number">10+</div>
+    <div class="stat__label">Years in Music</div>
+  </div>
+  <div class="stat">
+    <div class="stat__number">12+</div>
+    <div class="stat__label">Projects Shipped</div>
+  </div>
+  <div class="stat">
+    <div class="stat__number">5+</div>
+    <div class="stat__label">Tools Built</div>
+  </div>
+  <div class="stat">
+    <div class="stat__number">3</div>
+    <div class="stat__label">Languages Fluent</div>
+  </div>
+  <div class="stat">
+    <div class="stat__number">&lt;45ms</div>
+    <div class="stat__label">ML Audio Latency</div>
+  </div>
+</div>
+
+<!-- BIO -->
+<div class="section-header" data-num="001 &mdash; ABOUT" id="bio">WHO IS THIS</div>
+
+<section class="bio">
+  <div class="bio__left">
+    <p>I spent 12 years studying classical piano, but I was always more curious about <em>why</em> sound works than how to perform it. That curiosity took me from music school through physics and maths, and eventually into game audio.</p>
+    <p>Now I design sounds and write the C++ and Python tools that make them run in real-time. I study at Howest DAE in Belgium, specializing in sound integration &mdash; Wwise, FMOD, Unreal Engine, the whole pipeline.</p>
+    <p>I design and implement game audio &mdash; Wwise integration, C++ audio systems, and Unreal Engine.</p>
+  </div>
+  <div class="bio__right">
+    <div class="bio__fact">
+      <span class="bio__fact-label">Education</span>
+      <span class="bio__fact-value">Howest DAE &mdash; Sound Integration</span>
+    </div>
+    <div class="bio__fact">
+      <span class="bio__fact-label">Background</span>
+      <span class="bio__fact-value">Classical Piano (12 years)</span>
+    </div>
+    <div class="bio__fact">
+      <span class="bio__fact-label">Location</span>
+      <span class="bio__fact-value">Kortrijk, Belgium</span>
+    </div>
+    <div class="bio__fact">
+      <span class="bio__fact-label">Languages</span>
+      <span class="bio__fact-value">English, Polish (native), Dutch</span>
+    </div>
+    <div class="bio__fact">
+      <span class="bio__fact-label">Previous</span>
+      <span class="bio__fact-value">Bilingual HS &mdash; Math &amp; Physics</span>
+    </div>
+
+    <div class="bio__philosophy">
+      A gunshot that sounds amazing but causes a frame drop is a bad sound. Audio has to work within CPU and memory budgets &mdash; that's non-negotiable.
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<div class="section-header" data-num="002 &mdash; CATALOG" id="work">WORK</div>
+
+<section class="project-list">
+
+  <div class="project">
+    <div class="project__num">01</div>
+    <div class="project__info">
+      <div class="project__title">Shadow Frames</div>
+      <div class="project__desc">Psychological horror in a 1960s Irish pub &mdash; black and white, sound-driven. You find anomalies by listening, not looking. C++ audio systems, Wwise integration, enemy proximity tracking, 3-stage anomaly detection. Cross-institutional collab with RITCS writers and KASK composers.</div>
+      <div class="project__tags">
+        <span>Horror</span>
+        <span>Wwise</span>
+        <span>UE5 C++</span>
+        <span>Spatial Audio</span>
+      </div>
+    </div>
+    <div class="project__category">Game Audio</div>
+    <div class="project__year">2025</div>
+  </div>
+
+  <div class="project">
+    <div class="project__num">02</div>
+    <div class="project__info">
+      <div class="project__title">Not Today, Darling!</div>
+      <div class="project__desc">Solo audio on a 4-player shared-screen racer. No room for subtle stereo tricks &mdash; fighting for every decibel of headroom and byte of RAM. Procedural MetaSounds engine audio, 150ms surface crossfades, voice priority culling. 160MB down to under 2MB per player.</div>
+      <div class="project__tags">
+        <span>MetaSounds</span>
+        <span>Unreal Engine</span>
+        <span>Multiplayer</span>
+        <span>Racing</span>
+      </div>
+    </div>
+    <div class="project__category">Game Audio</div>
+    <div class="project__year">2025</div>
+  </div>
+
+  <div class="project">
+    <div class="project__num">03</div>
+    <div class="project__info">
+      <div class="project__title">Transientica: AudioLab</div>
+      <div class="project__desc">Beatbox into your mic, play a rhythm game. Real-time ML recognition &mdash; 92% accuracy, 45ms latency (down from 180ms). Python/scikit-learn for the ML, Unity for gameplay, UDP/OSC bridge. Lock-free ringbuffer, audio pinned to high-priority thread.</div>
+      <div class="project__tags">
+        <span>Machine Learning</span>
+        <span>Python</span>
+        <span>Unity</span>
+        <span>DSP</span>
+        <span>Research</span>
+      </div>
+    </div>
+    <div class="project__category">ML Audio</div>
+    <div class="project__year">2025</div>
+  </div>
+
+  <div class="project">
+    <div class="project__num">04</div>
+    <div class="project__info">
+      <div class="project__title">AI Audio Research</div>
+      <div class="project__desc">Can AI generate audio fast enough for games? I tested the limits. 5.02ms processing latency, 2253 generations/second. Hybrid system approach.</div>
+      <div class="project__tags">
+        <span>Research</span>
+        <span>Machine Learning</span>
+        <span>Python</span>
+        <span>Real-time</span>
+      </div>
+    </div>
+    <div class="project__category">Research</div>
+    <div class="project__year">2025</div>
+  </div>
+
+  <div class="project">
+    <div class="project__num">05</div>
+    <div class="project__info">
+      <div class="project__title">AudioQ</div>
+      <div class="project__desc">Sampler plugin built from scratch in JUCE. Load any audio file and mess with it &mdash; granular synthesis, hand-coded tremolo with per-sample LFO, zero-delay TPT filters, compressor. Full DAW automation through APVTS.</div>
+      <div class="project__tags">
+        <span>VST Plugin</span>
+        <span>C++</span>
+        <span>JUCE</span>
+        <span>DSP</span>
+      </div>
+    </div>
+    <div class="project__category">VST Plugin</div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <div class="project">
+    <div class="project__num">06</div>
+    <div class="project__info">
+      <div class="project__title">Amorak</div>
+      <div class="project__desc">Sound design for a 90-second horror animation. Creature roar layered from lion, elephant, tiger, hippo recordings. 15+ vocal variations, binaural 3D spatial mix. Delivered 48kHz/24-bit at -16 LUFS.</div>
+      <div class="project__tags">
+        <span>Sound Design</span>
+        <span>Horror</span>
+        <span>Creature Design</span>
+        <span>Spatial Audio</span>
+      </div>
+    </div>
+    <div class="project__category">Sound Design</div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <div class="project">
+    <div class="project__num">07</div>
+    <div class="project__info">
+      <div class="project__title">Akantilado</div>
+      <div class="project__desc">Two cats chase a golden orb through the jungle. One falls off a cliff. All foley, ambience, and 5.1 surround mix. 200+ custom samples, 5-layer spatial ambience that shifts with camera position.</div>
+      <div class="project__tags">
+        <span>Foley</span>
+        <span>5.1 Surround</span>
+        <span>Animation</span>
+        <span>Reaper</span>
+      </div>
+    </div>
+    <div class="project__category">Animation</div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <div class="project">
+    <div class="project__num">08</div>
+    <div class="project__info">
+      <div class="project__title">Pause &amp; Deserve</div>
+      <div class="project__desc">Psychological horror where pausing costs you. Audio state machine in Unity &mdash; soundscape shifts based on hesitation. Sub-bass you feel more than hear, strategic silences, false footsteps for misdirection.</div>
+      <div class="project__tags">
+        <span>Horror</span>
+        <span>Wwise</span>
+        <span>Unity</span>
+        <span>Adaptive Audio</span>
+      </div>
+    </div>
+    <div class="project__category">Horror Game</div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <div class="project">
+    <div class="project__num">09</div>
+    <div class="project__info">
+      <div class="project__title">Richter</div>
+      <div class="project__desc">Student earthquake film. No commercial libraries allowed &mdash; Zoom H6 field recordings on every surface. Earthquake from synthesized drones pitched way down with granular-stretched foley on top. Full day of EQ automation to keep dialogue above the rumble.</div>
+      <div class="project__tags">
+        <span>Film Score</span>
+        <span>Field Recording</span>
+        <span>Orchestral</span>
+      </div>
+    </div>
+    <div class="project__category">Film Score</div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <div class="project">
+    <div class="project__num">10</div>
+    <div class="project__info">
+      <div class="project__title">Ray Animation</div>
+      <div class="project__desc">Disco-funk score for a graduation film. The original composer dropped out &mdash; 8 days to write, sync, and deliver. Standing ovation at the cinema screening.</div>
+      <div class="project__tags">
+        <span>Music Composition</span>
+        <span>Animation</span>
+        <span>Funk</span>
+      </div>
+    </div>
+    <div class="project__category">Animation</div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <div class="project">
+    <div class="project__num">11</div>
+    <div class="project__info">
+      <div class="project__title">Wwise Unreal Engine Fixer</div>
+      <div class="project__desc">Fixes broken Wwise integration after Perforce pulls. Scans binaries, finds broken refs, restores them. One click instead of hours of troubleshooting.</div>
+      <div class="project__tags">
+        <span>Dev Tool</span>
+        <span>Python</span>
+        <span>Wwise</span>
+        <span>Automation</span>
+      </div>
+    </div>
+    <div class="project__category">Dev Tool</div>
+    <div class="project__year">2024</div>
+  </div>
+
+  <div class="project">
+    <div class="project__num">12</div>
+    <div class="project__info">
+      <div class="project__title">Unreal Engine Rebuilder</div>
+      <div class="project__desc">Cleans cache, regenerates project files, recompiles. One click does what normally takes 15 minutes of manual cleanup.</div>
+      <div class="project__tags">
+        <span>Dev Tool</span>
+        <span>Automation</span>
+        <span>Unreal Engine</span>
+      </div>
+    </div>
+    <div class="project__category">Dev Tool</div>
+    <div class="project__year">2024</div>
+  </div>
+
+</section>
+
+<div class="glitch-line"></div>
+
+<!-- SKILLS -->
+<div class="section-header" data-num="003 &mdash; CAPABILITIES" id="skills">SKILLS</div>
+
+<section class="skills-grid">
+  <div class="skills-col">
+    <div class="skills-col__title">Game Audio</div>
+    <ul>
+      <li>Interactive music systems</li>
+      <li>Wwise &amp; FMOD integration</li>
+      <li>Unity &amp; Unreal Engine</li>
+      <li>Adaptive soundscapes</li>
+      <li>MetaSounds (UE5)</li>
+      <li>Spatial audio / 3D audio</li>
+      <li>Voice management &amp; optimization</li>
+      <li>Memory budget management</li>
+    </ul>
+  </div>
+  <div class="skills-col">
+    <div class="skills-col__title">Production</div>
+    <ul>
+      <li>Music composition</li>
+      <li>Sound design</li>
+      <li>Mixing &amp; mastering</li>
+      <li>Field recording</li>
+      <li>Foley work</li>
+      <li>5.1 surround mixing</li>
+      <li>Horror sound design</li>
+    </ul>
+  </div>
+  <div class="skills-col">
+    <div class="skills-col__title">Development</div>
+    <ul>
+      <li>Real-time DSP</li>
+      <li>Python audio tools</li>
+      <li>C# scripting (Unity)</li>
+      <li>C++ (JUCE framework)</li>
+      <li>Audio plugins (VST)</li>
+      <li>Machine Learning for audio</li>
+      <li>Blueprint scripting (UE5)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- TOOLS — TERMINAL -->
+<div class="section-header" data-num="004 &mdash; ARSENAL" id="tools">TOOLS</div>
+
+<section class="tools">
+  <div class="tools__title">$ cat /etc/toolchain.conf</div>
+  <div class="tools__grid">
+    <div class="tools__item">
+      <span class="tools__item-name">Wwise</span>
+      <span class="tools__item-level">ADVANCED</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">FMOD</span>
+      <span class="tools__item-level">ADVANCED</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">MetaSounds</span>
+      <span class="tools__item-level">ADVANCED</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">Unreal Engine 5</span>
+      <span class="tools__item-level">ADVANCED</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">Unity</span>
+      <span class="tools__item-level">PROFICIENT</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">Reaper</span>
+      <span class="tools__item-level">EXPERT</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">Pro Tools</span>
+      <span class="tools__item-level">ADVANCED</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">Logic Pro</span>
+      <span class="tools__item-level">ADVANCED</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">Python</span>
+      <span class="tools__item-level">ADVANCED</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">C#</span>
+      <span class="tools__item-level">PROFICIENT</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">Blueprints</span>
+      <span class="tools__item-level">ADVANCED</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">C++</span>
+      <span class="tools__item-level">INTERMEDIATE</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">Max/MSP</span>
+      <span class="tools__item-level">PROFICIENT</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">iZotope RX</span>
+      <span class="tools__item-level">ADVANCED</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">FabFilter Suite</span>
+      <span class="tools__item-level">ADVANCED</span>
+    </div>
+    <div class="tools__item">
+      <span class="tools__item-name">JUCE</span>
+      <span class="tools__item-level">INTERMEDIATE</span>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPLES -->
+<div class="section-header" data-num="005 &mdash; HOW I WORK" id="principles">APPROACH</div>
+
+<section class="principles">
+  <div class="principle">
+    <div class="principle__title">Mix Hierarchy</div>
+    <div class="principle__text">In Shadow Frames, the pub ambience kept drowning out enemy footsteps. Instead of just pulling the volume down, I built a sidechain system that ducks the environment whenever an enemy moves. The threat always cuts through.</div>
+  </div>
+  <div class="principle">
+    <div class="principle__title">Budgets &amp; Constraints</div>
+    <div class="principle__text">Not Today Darling had 4 players on a shared screen with a tight budget. Voice count was blowing up. I got ruthless &mdash; aggressive priority culling, forced mono on anything non-critical. We shipped a clean mix that ran smooth.</div>
+  </div>
+  <div class="principle">
+    <div class="principle__title">Parametric Sound Design</div>
+    <div class="principle__text">I hate doing the same work twice. Instead of making 20 unique engine sounds, I built one MetaSound graph that morphs based on speed and RPM. It covers walking, running, and sprinting from a single asset.</div>
+  </div>
+  <div class="principle">
+    <div class="principle__title">Playtest-Driven Audio</div>
+    <div class="principle__text">Designers should not have to ask me to tweak a volume slider. In Shadow Frames, I exposed all key audio variables as DataAssets so the team could adjust tension curves and footstep volumes right in the editor. I focus on the code.</div>
+  </div>
+</section>
+
+<div class="glitch-line"></div>
+
+<!-- CONTACT -->
+<div class="section-header" data-num="006 &mdash; REACH OUT" id="contact">CONTACT</div>
+
+<section class="contact">
+  <div>
+    <div class="contact__title">LET'S<br>TALK<br>AUDIO</div>
+    <ul class="contact__links">
+      <li><a href="mailto:igorszuniewiczwork@gmail.com">igorszuniewiczwork@gmail.com</a></li>
+      <li><a href="https://www.linkedin.com/in/igorszuniewicz">LinkedIn &mdash; /in/igorszuniewicz</a></li>
+      <li><a href="https://github.com/Szunias">GitHub &mdash; Szunias</a></li>
+      <li><a href="https://igorszuniewicz.itch.io">itch.io &mdash; igorszuniewicz</a></li>
+      <li><a href="https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6">Spotify &mdash; Igor Szuniewicz</a></li>
+      <li><a href="https://igorszuniewicz.com">igorszuniewicz.com</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="contact__availability">
+      <strong>CURRENTLY AVAILABLE</strong>
+      Looking for internship<br>
+      January &ndash; June 2026<br>
+      3&ndash;6 months duration<br>
+      EU passport &mdash; can relocate<br>
+      Remote work OK<br>
+      <br>
+      EN (fluent) / PL (native) / NL (proficient)
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <span>IGOR SZUNIEWICZ &copy; 2025</span>
+  <span>BUILT WITH RAW HTML AND STUBBORNNESS</span>
+  <span>NO TEMPLATES WERE HARMED</span>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Igor Szuniewicz — Game Audio Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ============ RESET ============ */
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: #F0EDE5;
+    color: #1A1A1A;
+    font-family: 'IBM Plex Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* ============ GRID ============ */
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows:
+      minmax(340px, auto)   /* row 1: name + projects count */
+      auto                  /* row 2: location, tagline, availability */
+      minmax(260px, auto)   /* row 3: transientica + shadow frames */
+      minmax(220px, auto)   /* row 4: wwise, ntd, skills */
+      auto                  /* row 5: bio + links */
+      48px;                 /* row 6: footer */
+    gap: 2px;
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  /* ============ CARD BASE ============ */
+  .card {
+    border: 1px solid #1A1A1A;
+    padding: 28px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translate(1px, -2px);
+  }
+
+  /* ---- color variants ---- */
+  .card--white {
+    background: #FFFFFF;
+    color: #1A1A1A;
+  }
+
+  .card--black {
+    background: #1A1A1A;
+    color: #FFFFFF;
+    border-color: #1A1A1A;
+  }
+
+  .card--red {
+    background: #E8503F;
+    color: #FFFFFF;
+    border-color: #E8503F;
+  }
+
+  .card--ghost {
+    background: #F0EDE5;
+    color: #1A1A1A;
+    border-color: #1A1A1A;
+  }
+
+  /* ============ ROW 1 ============ */
+  .card-name {
+    grid-column: 1 / 4;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 36px 44px;
+  }
+
+  .card-name__first {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 11rem;
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    user-select: none;
+  }
+
+  .card-name__last {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 4.2rem;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .card-name__role {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-top: 24px;
+    opacity: 0.6;
+  }
+
+  .card-projects-count {
+    grid-column: 4;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .card-projects-count__number {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 5.5rem;
+    line-height: 1;
+  }
+
+  .card-projects-count__label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 8px;
+    opacity: 0.8;
+  }
+
+  /* ============ ROW 2 ============ */
+  .card-location {
+    grid-column: 1;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px 16px;
+    text-align: center;
+  }
+
+  .card-location__pin {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+  }
+
+  .card-location__text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-transform: lowercase;
+    letter-spacing: 0.06em;
+  }
+
+  .card-tagline {
+    grid-column: 2 / 4;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+    padding: 28px 36px;
+  }
+
+  .card-tagline__text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.88rem;
+    line-height: 1.65;
+    font-weight: 400;
+  }
+
+  .card-availability {
+    grid-column: 4;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px 16px;
+  }
+
+  .card-availability__status {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .card-availability__dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #E8503F;
+    border-radius: 50%;
+    margin-right: 6px;
+    animation: pulse-dot 2s ease infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .card-availability__dates {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    margin-top: 8px;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+    text-transform: lowercase;
+  }
+
+  /* ============ ROW 3 ============ */
+  .card-transientica {
+    grid-column: 1 / 3;
+    grid-row: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 32px 36px;
+    cursor: pointer;
+  }
+
+  .card-transientica:hover {
+    background: #2a2a2a;
+    transform: translate(1px, -2px);
+  }
+
+  .card-transientica__label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  .card-transientica__title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.6rem;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    margin-top: 12px;
+  }
+
+  .card-transientica__stats {
+    display: flex;
+    gap: 32px;
+    margin-top: 16px;
+  }
+
+  .card-transientica__stat-value {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.8rem;
+  }
+
+  .card-transientica__stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin-top: 2px;
+  }
+
+  .card-transientica__tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: auto;
+    padding-top: 16px;
+  }
+
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid currentColor;
+    opacity: 0.6;
+  }
+
+  .card-shadowframes {
+    grid-column: 3 / 5;
+    grid-row: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 32px 36px;
+    background: #1A1A1A;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .card-shadowframes::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background: #E8503F;
+    opacity: 0.07;
+    pointer-events: none;
+  }
+
+  .card-shadowframes:hover {
+    background: #2a2a2a;
+    transform: translate(1px, -2px);
+  }
+
+  .card-shadowframes__label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  .card-shadowframes__title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.6rem;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    margin-top: 12px;
+  }
+
+  .card-shadowframes__hook {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    font-style: italic;
+    margin-top: 12px;
+    opacity: 0.75;
+  }
+
+  .card-shadowframes__detail {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    margin-top: auto;
+    padding-top: 16px;
+    opacity: 0.45;
+    text-transform: uppercase;
+  }
+
+  /* ============ ROW 4 ============ */
+  .card-wwise {
+    grid-column: 1;
+    grid-row: 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow: hidden;
+  }
+
+  .card-wwise__text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 4rem;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    color: #FFFFFF;
+  }
+
+  .card-ntd {
+    grid-column: 2;
+    grid-row: 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px 28px;
+    cursor: pointer;
+  }
+
+  .card-ntd:hover {
+    background: #FFFFFF;
+    color: #1A1A1A;
+    transform: translate(1px, -2px);
+  }
+
+  .card-ntd__title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.25;
+  }
+
+  .card-ntd__divider {
+    width: 24px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.3;
+    margin: 14px 0;
+  }
+
+  .card-ntd__detail {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    line-height: 1.7;
+    opacity: 0.7;
+  }
+
+  .card-skills {
+    grid-column: 3 / 5;
+    grid-row: 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 28px 36px;
+  }
+
+  .card-skills__label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin-bottom: 20px;
+  }
+
+  .card-skills__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+
+  .card-skills__item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 10px 0;
+    border-top: 1px solid rgba(26, 26, 26, 0.1);
+    text-transform: lowercase;
+  }
+
+  .card-skills__item:nth-child(-n+4) {
+    border-top: none;
+  }
+
+  .card-skills__item--highlight {
+    color: #E8503F;
+    font-weight: 600;
+  }
+
+  /* ============ ROW 5 ============ */
+  .card-bio {
+    grid-column: 1 / 4;
+    grid-row: 5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 32px 44px;
+  }
+
+  .card-bio__text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.84rem;
+    line-height: 1.75;
+    font-weight: 400;
+    max-width: 640px;
+  }
+
+  .card-bio__text em {
+    font-style: normal;
+    color: #E8503F;
+  }
+
+  .card-links {
+    grid-column: 4;
+    grid-row: 5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px 28px;
+  }
+
+  .card-links__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.12);
+    text-transform: lowercase;
+    cursor: pointer;
+    transition: color 0.15s ease, padding-left 0.15s ease;
+  }
+
+  .card-links__item:last-child {
+    border-bottom: none;
+  }
+
+  .card-links__item:hover {
+    color: #E8503F;
+    padding-left: 4px;
+  }
+
+  .card-links__arrow {
+    font-size: 0.9rem;
+    transition: transform 0.15s ease;
+  }
+
+  .card-links__item:hover .card-links__arrow {
+    transform: translateX(3px);
+  }
+
+  /* ============ ROW 6: FOOTER ============ */
+  .card-footer {
+    grid-column: 1 / 5;
+    grid-row: 6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32px;
+    border: 1px solid #1A1A1A;
+    border-top: none;
+    background: #F0EDE5;
+  }
+
+  .card-footer__text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.4;
+  }
+
+  /* ============ HOVER: INVERT CARDS ============ */
+  .card-projects-count:hover {
+    background: #FFFFFF;
+    color: #E8503F;
+    border-color: #E8503F;
+  }
+
+  .card-location:hover {
+    background: #1A1A1A;
+    color: #FFFFFF;
+  }
+
+  .card-availability:hover .card-availability__status {
+    color: #E8503F;
+  }
+
+  /* ============ RESPONSIVE: TABLET / 2-col ============ */
+  @media (max-width: 1024px) {
+    .card-name__first {
+      font-size: 7rem;
+    }
+    .card-name__last {
+      font-size: 2.8rem;
+    }
+    .card-transientica__title,
+    .card-shadowframes__title {
+      font-size: 2rem;
+    }
+    .card-transientica__stat-value {
+      font-size: 1.4rem;
+    }
+    .card-projects-count__number {
+      font-size: 4rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .bento {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows:
+        minmax(260px, auto)  /* name */
+        auto                 /* projects count + location */
+        auto                 /* tagline */
+        auto                 /* availability (hidden on very small) */
+        minmax(200px, auto)  /* transientica */
+        minmax(200px, auto)  /* shadow frames */
+        minmax(180px, auto)  /* ntd + wwise */
+        auto                 /* skills */
+        auto                 /* bio */
+        auto                 /* links */
+        40px;                /* footer */
+    }
+
+    /* Row 1: Name spans full */
+    .card-name {
+      grid-column: 1 / 3;
+      grid-row: 1;
+      padding: 24px 28px;
+    }
+    .card-name__first {
+      font-size: 5rem;
+    }
+    .card-name__last {
+      font-size: 2rem;
+    }
+
+    /* Row 2: projects count + location */
+    .card-projects-count {
+      grid-column: 1;
+      grid-row: 2;
+    }
+    .card-projects-count__number {
+      font-size: 3.5rem;
+    }
+
+    .card-location {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    /* Row 3: tagline spans full */
+    .card-tagline {
+      grid-column: 1 / 3;
+      grid-row: 3;
+      padding: 20px 24px;
+    }
+
+    /* Row 4: availability spans full */
+    .card-availability {
+      grid-column: 1 / 3;
+      grid-row: 4;
+      flex-direction: row;
+      gap: 12px;
+      padding: 14px 24px;
+    }
+
+    /* Row 5: transientica spans full */
+    .card-transientica {
+      grid-column: 1 / 3;
+      grid-row: 5;
+      padding: 24px 28px;
+    }
+    .card-transientica__title {
+      font-size: 1.8rem;
+    }
+
+    /* Row 6: shadow frames spans full */
+    .card-shadowframes {
+      grid-column: 1 / 3;
+      grid-row: 6;
+      padding: 24px 28px;
+    }
+    .card-shadowframes__title {
+      font-size: 1.8rem;
+    }
+
+    /* Row 7: wwise + ntd */
+    .card-wwise {
+      grid-column: 1;
+      grid-row: 7;
+    }
+    .card-wwise__text {
+      font-size: 2.8rem;
+    }
+
+    .card-ntd {
+      grid-column: 2;
+      grid-row: 7;
+      padding: 20px 24px;
+    }
+
+    /* Row 8: skills spans full */
+    .card-skills {
+      grid-column: 1 / 3;
+      grid-row: 8;
+      padding: 24px 28px;
+    }
+    .card-skills__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .card-skills__item:nth-child(-n+4) {
+      border-top: 1px solid rgba(26, 26, 26, 0.1);
+    }
+    .card-skills__item:nth-child(-n+2) {
+      border-top: none;
+    }
+
+    /* Row 9: bio spans full */
+    .card-bio {
+      grid-column: 1 / 3;
+      grid-row: 9;
+      padding: 24px 28px;
+    }
+
+    /* Row 10: links spans full */
+    .card-links {
+      grid-column: 1 / 3;
+      grid-row: 10;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0;
+      padding: 16px 28px;
+    }
+    .card-links__item {
+      width: 50%;
+    }
+
+    /* Row 11: footer */
+    .card-footer {
+      grid-column: 1 / 3;
+      grid-row: 11;
+      padding: 0 24px;
+    }
+  }
+
+  /* ============ RESPONSIVE: PHONE / 1-col ============ */
+  @media (max-width: 480px) {
+    .bento {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
+
+    .card-name {
+      grid-column: 1;
+      grid-row: auto;
+      min-height: 220px;
+    }
+    .card-name__first {
+      font-size: 3.5rem;
+    }
+    .card-name__last {
+      font-size: 1.5rem;
+      letter-spacing: 0.06em;
+    }
+
+    .card-projects-count {
+      grid-column: 1;
+      grid-row: auto;
+      padding: 20px;
+    }
+    .card-projects-count__number {
+      font-size: 3rem;
+    }
+
+    .card-location {
+      grid-column: 1;
+      grid-row: auto;
+    }
+
+    .card-tagline {
+      grid-column: 1;
+      grid-row: auto;
+      padding: 20px;
+    }
+    .card-tagline__text {
+      font-size: 0.8rem;
+    }
+
+    .card-availability {
+      grid-column: 1;
+      grid-row: auto;
+      flex-direction: column;
+      padding: 16px 20px;
+    }
+
+    .card-transientica {
+      grid-column: 1;
+      grid-row: auto;
+      padding: 20px 24px;
+    }
+    .card-transientica__title {
+      font-size: 1.5rem;
+    }
+    .card-transientica__stats {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-shadowframes {
+      grid-column: 1;
+      grid-row: auto;
+      padding: 20px 24px;
+    }
+    .card-shadowframes__title {
+      font-size: 1.5rem;
+    }
+
+    .card-wwise {
+      grid-column: 1;
+      grid-row: auto;
+      min-height: 100px;
+    }
+    .card-wwise__text {
+      writing-mode: horizontal-tb;
+      transform: none;
+      font-size: 3rem;
+    }
+
+    .card-ntd {
+      grid-column: 1;
+      grid-row: auto;
+      padding: 20px;
+    }
+
+    .card-skills {
+      grid-column: 1;
+      grid-row: auto;
+      padding: 20px;
+    }
+    .card-skills__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card-bio {
+      grid-column: 1;
+      grid-row: auto;
+      padding: 20px 24px;
+    }
+    .card-bio__text {
+      font-size: 0.78rem;
+    }
+
+    .card-links {
+      grid-column: 1;
+      grid-row: auto;
+      flex-direction: column;
+      padding: 16px 20px;
+    }
+    .card-links__item {
+      width: 100%;
+    }
+
+    .card-footer {
+      grid-column: 1;
+      grid-row: auto;
+      padding: 0 20px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="bento">
+
+  <!-- ==================== ROW 1 ==================== -->
+
+  <!-- Name card: 3 cols, black -->
+  <div class="card card--black card-name">
+    <span class="card-name__first">IGOR</span>
+    <span class="card-name__last">SZUNIEWICZ</span>
+    <span class="card-name__role">game audio designer</span>
+  </div>
+
+  <!-- Projects count: 1 col, red -->
+  <div class="card card--red card-projects-count">
+    <span class="card-projects-count__number">13+</span>
+    <span class="card-projects-count__label">projects completed</span>
+  </div>
+
+  <!-- ==================== ROW 2 ==================== -->
+
+  <!-- Location -->
+  <div class="card card--white card-location">
+    <span class="card-location__pin">&#x1F4CD;</span>
+    <span class="card-location__text">kortrijk, be</span>
+  </div>
+
+  <!-- Tagline: 2 cols -->
+  <div class="card card--ghost card-tagline">
+    <p class="card-tagline__text">i make sound for games &mdash; footsteps, ambience, combat, UI. if it plays in-game, i built it.</p>
+  </div>
+
+  <!-- Availability -->
+  <div class="card card--ghost card-availability">
+    <span class="card-availability__status"><span class="card-availability__dot"></span>open to work</span>
+    <span class="card-availability__dates">jan &ndash; jun 2026</span>
+  </div>
+
+  <!-- ==================== ROW 3 ==================== -->
+
+  <!-- Transientica: 2 cols, dark -->
+  <div class="card card--black card-transientica">
+    <span class="card-transientica__label">featured project</span>
+    <span class="card-transientica__title">Transientica</span>
+    <div class="card-transientica__stats">
+      <div>
+        <div class="card-transientica__stat-value">92%</div>
+        <div class="card-transientica__stat-label">accuracy</div>
+      </div>
+      <div>
+        <div class="card-transientica__stat-value">45ms</div>
+        <div class="card-transientica__stat-label">latency</div>
+      </div>
+      <div>
+        <div class="card-transientica__stat-value">SVM</div>
+        <div class="card-transientica__stat-label">classifier</div>
+      </div>
+    </div>
+    <div class="card-transientica__tags">
+      <span class="tag">python</span>
+      <span class="tag">juce</span>
+      <span class="tag">real-time</span>
+      <span class="tag">ml</span>
+    </div>
+  </div>
+
+  <!-- Shadow Frames: 2 cols, dark w/ red tint -->
+  <div class="card card--black card-shadowframes">
+    <span class="card-shadowframes__label">featured project</span>
+    <span class="card-shadowframes__title">Shadow Frames</span>
+    <p class="card-shadowframes__hook">"audio is the only weapon &mdash; no UI markers, no visual hints. you find anomalies by listening."</p>
+    <span class="card-shadowframes__detail">unreal engine &middot; metasounds &middot; wwise</span>
+  </div>
+
+  <!-- ==================== ROW 4 ==================== -->
+
+  <!-- Wwise rotated text -->
+  <div class="card card--black card-wwise">
+    <span class="card-wwise__text">WWISE</span>
+  </div>
+
+  <!-- Not Today, Darling -->
+  <div class="card card--black card-ntd">
+    <span class="card-ntd__title">Not Today, Darling!</span>
+    <div class="card-ntd__divider"></div>
+    <span class="card-ntd__detail">solo audio designer<br>70 wwise events<br>32 voice limit<br>180mb &rarr; optimized</span>
+  </div>
+
+  <!-- Skills grid: 2 cols -->
+  <div class="card card--white card-skills">
+    <span class="card-skills__label">tools &amp; tech</span>
+    <div class="card-skills__grid">
+      <span class="card-skills__item card-skills__item--highlight">wwise</span>
+      <span class="card-skills__item card-skills__item--highlight">fmod</span>
+      <span class="card-skills__item">unreal engine</span>
+      <span class="card-skills__item">unity</span>
+      <span class="card-skills__item">c++</span>
+      <span class="card-skills__item">python</span>
+      <span class="card-skills__item">reaper</span>
+      <span class="card-skills__item">juce</span>
+      <span class="card-skills__item card-skills__item--highlight">metasounds</span>
+      <span class="card-skills__item">blueprints</span>
+      <span class="card-skills__item">c#</span>
+      <span class="card-skills__item">ableton</span>
+    </div>
+  </div>
+
+  <!-- ==================== ROW 5 ==================== -->
+
+  <!-- Bio: 3 cols -->
+  <div class="card card--ghost card-bio">
+    <p class="card-bio__text">
+      21, polish, studying <em>digital arts &amp; entertainment</em> in kortrijk, belgium.
+      piano + trumpet background. started making game audio because
+      i kept muting cutscenes and wondering why nobody fixed the mix.
+      now i fix the mix.
+    </p>
+  </div>
+
+  <!-- Links: 1 col -->
+  <div class="card card--white card-links">
+    <a href="#" class="card-links__item">
+      <span>github</span>
+      <span class="card-links__arrow">&rarr;</span>
+    </a>
+    <a href="#" class="card-links__item">
+      <span>linkedin</span>
+      <span class="card-links__arrow">&rarr;</span>
+    </a>
+    <a href="#" class="card-links__item">
+      <span>email</span>
+      <span class="card-links__arrow">&rarr;</span>
+    </a>
+    <a href="#" class="card-links__item">
+      <span>spotify</span>
+      <span class="card-links__arrow">&rarr;</span>
+    </a>
+  </div>
+
+  <!-- ==================== ROW 6: FOOTER ==================== -->
+
+  <div class="card-footer">
+    <span class="card-footer__text">&copy; 2026</span>
+    <span class="card-footer__text">built by a human</span>
+  </div>
+
+</div>
+
+</body>
+</html>

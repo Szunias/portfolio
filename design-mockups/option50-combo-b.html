@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGOR SZUNIEWICZ - Game Audio Designer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
+  /* =========================================
+     RESET & BASE
+     ========================================= */
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --cream: #faf8f5;
+    --white: #ffffff;
+    --black: #1a1a1a;
+    --accent: #c0542e;
+    --accent-light: #f3ebe6;
+    --grey: #5e5e5e;
+    --grey-light: #717171;
+    --grey-rule: #d8d4cf;
+    --dark-section: #1c1c26;
+    --serif: Georgia, 'Times New Roman', Times, serif;
+    --sans: system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --brand-secondary: 'DM Sans', sans-serif;
+    --page-max: 1280px;
+    --gutter: 60px;
+    --margin: 80px;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--white);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--black);
+    line-height: 1.75;
+    font-size: 19px;
+    overflow-x: hidden;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  a:hover {
+    color: var(--black);
+    border-color: var(--black);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* =========================================
+     HERO -Option B asymmetric name layout
+     ========================================= */
+  .hero {
+    position: relative;
+    width: 100%;
+    min-height: auto;
+    background: var(--cream);
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    overflow: hidden;
+    padding: 10vh 8% 8vh;
+  }
+
+  .hero__composition {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    width: 100%;
+  }
+
+  .hero__igor {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(5rem, 12vw, 11rem);
+    color: var(--black);
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+  }
+
+  .hero__right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 0;
+  }
+
+  .hero__szuniewicz {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(3.5rem, 9vw, 8.5rem);
+    color: var(--black);
+    line-height: 0.88;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+  }
+
+  /* ---- Letter-by-letter stroke drawing animation ---- */
+  .letter {
+    display: inline-block;
+    clip-path: inset(0 100% 0 0);
+    animation:
+      letter-reveal 0.18s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--delay)) forwards,
+      letter-wobble 0.25s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--delay)) forwards;
+  }
+
+  @keyframes letter-reveal {
+    0%   { clip-path: inset(0 100% 0 0); }
+    100% { clip-path: inset(0 0% 0 0); }
+  }
+
+  @keyframes letter-wobble {
+    0%   { transform: rotate(var(--wobble, 0deg)) scaleX(0.85); }
+    50%  { transform: rotate(calc(var(--wobble, 0deg) * -0.5)) scaleX(1.02); }
+    100% { transform: rotate(0deg) scaleX(1); }
+  }
+
+  /* Delay and wobble are set via inline style --delay and --wobble on each .letter span */
+
+  .hero__tagline,
+  .hero__subtitle {
+    opacity: 0;
+    animation: fade-up 0.6s ease 1.8s forwards;
+  }
+
+  .hero__nav {
+    opacity: 0;
+    animation: fade-up 0.6s ease 2.1s forwards;
+  }
+
+  @keyframes fade-up {
+    0% {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hero__tagline {
+    font-family: var(--brand-secondary);
+    font-weight: 400;
+    font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+    color: var(--grey-light);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 1.8rem;
+  }
+
+  .hero__subtitle {
+    font-family: var(--brand-secondary);
+    font-weight: 500;
+    font-size: clamp(0.7rem, 0.9vw, 0.75rem);
+    color: var(--accent);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-top: 0.6rem;
+  }
+
+  .hero__nav {
+    display: flex;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    margin-top: 2.5rem;
+  }
+
+  .hero__nav a {
+    font-family: var(--brand-secondary);
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    border: none;
+    padding: 8px 4px;
+    transition: color 0.3s ease;
+  }
+
+  .hero__nav a:hover {
+    color: var(--accent);
+  }
+
+  .hero__actions {
+    margin-top: 2rem;
+    opacity: 0;
+    animation: fade-up 0.6s ease 2.25s forwards;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .hero__cv-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 24px;
+    border: 1px solid var(--grey-rule);
+    border-radius: 0;
+    font-family: var(--brand-secondary);
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--grey);
+    background: none;
+    transition: color 0.25s ease, border-color 0.25s ease;
+  }
+
+  .hero__cv-button::after {
+    content: '\2193';
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+  .hero__cv-button:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    border-bottom-color: var(--accent);
+    background: none;
+  }
+
+  .hero__cv-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .nav-strip a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .hero__accent-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--grey-rule) 20%, var(--grey-rule) 80%, transparent);
+  }
+
+  .hero__location {
+    position: absolute;
+    bottom: 2.5rem;
+    right: 5%;
+    font-family: var(--brand-secondary);
+    font-weight: 400;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  .hero__scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--brand-secondary);
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    animation: gentle-bounce 2.5s ease-in-out infinite;
+  }
+
+  .hero__scroll-hint::after {
+    content: '';
+    width: 1px;
+    height: 24px;
+    background: var(--grey-rule);
+  }
+
+  @keyframes gentle-bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(5px); }
+  }
+
+  /* =========================================
+     SECTION HEADERS
+     ========================================= */
+  .section-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .section-rule {
+    width: 60px;
+    height: 2px;
+    background: var(--accent);
+    margin-bottom: 50px;
+  }
+
+  /* =========================================
+     BIO -Article opener with drop cap
+     ========================================= */
+  .article-opener {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 80px var(--margin) 60px;
+  }
+
+  .article-opener__layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: var(--gutter);
+  }
+
+  .article-opener__body {
+    font-size: 19px;
+    line-height: 1.8;
+  }
+
+  .article-opener__body p + p {
+    margin-top: 18px;
+  }
+
+  .article-opener__body strong {
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .drop-cap::first-letter {
+    font-family: var(--serif);
+    float: left;
+    font-size: 82px;
+    line-height: 0.72;
+    padding-right: 12px;
+    padding-top: 8px;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  .sidebar {
+    padding-left: 30px;
+    border-left: 1px solid var(--grey-rule);
+  }
+
+  .sidebar__fact {
+    margin-bottom: 28px;
+  }
+
+  .sidebar__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .sidebar__value {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .sidebar__fact--logos {
+    grid-column: 1 / -1;
+    padding-top: 20px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .sidebar__logos {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .sidebar__logo-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sidebar__logo-wrap img {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+    opacity: 0.45;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .sidebar__logo-wrap:hover img {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+
+  .sidebar__logo-wrap img[alt="Royal Military Academy logo"] { height: 40px; }
+  .sidebar__logo-wrap img[alt="XR Labs logo"] { height: 36px; }
+
+  .sidebar__logo-name {
+    font-family: var(--brand-secondary);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    color: var(--grey-light);
+    margin-top: 6px;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .sidebar__logo-wrap:hover .sidebar__logo-name {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* =========================================
+     PROJECTS
+     ========================================= */
+  .projects-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 96px var(--margin) 28px;
+  }
+
+  .projects-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  @media (min-width: 1000px) {
+    .project-card--featured {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .project-card--featured .project-card__image {
+      height: 340px;
+    }
+  }
+
+  .project-card {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+    padding: 26px 0;
+    border-top: 1px solid var(--grey-rule);
+    transition: transform 0.2s ease;
+    color: inherit;
+    border-bottom: none;
+    cursor: pointer;
+  }
+
+  @media (hover: hover) {
+    .project-card:hover {
+      transform: translateX(6px);
+    }
+  }
+
+  .project-card__image {
+    width: 100%;
+    height: 165px;
+    position: relative;
+    overflow: hidden;
+    background-color: #d8d4cf;
+    border-radius: 2px;
+  }
+
+  .project-card__image::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 45%;
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.24));
+    pointer-events: none;
+  }
+
+  .project-card__image video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .project-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-top: 0;
+  }
+
+  .project-card__meta {
+    padding: 0 0 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    border-bottom: none;
+  }
+
+  .project-card__tag {
+    font-family: var(--brand-secondary);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .project-card__tag--blue { color: #5a7fa6; }
+  .project-card__tag--gold { color: #b89a5a; }
+  .project-card__tag--green { color: #6a9a6e; }
+  .project-card__tag--purple { color: #8a6ea0; }
+  .project-card__tag--teal { color: #5a8a8a; }
+
+  .project-card__year {
+    font-family: var(--brand-secondary);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    line-height: 1.2;
+  }
+
+  .project-card__body {
+    padding: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .project-card__title {
+    font-family: var(--serif);
+    font-size: clamp(26px, 2.3vw, 38px);
+    font-weight: 400;
+    line-height: 1.02;
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+  }
+
+  .project-card__desc {
+    font-family: var(--brand-secondary);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--grey);
+    flex: 1;
+    max-width: 60ch;
+  }
+
+  .project-card__techs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .project-card__techs span {
+    font-family: var(--brand-secondary);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    border: 1px solid var(--grey-rule);
+    padding: 5px 8px 4px;
+  }
+
+  .project-card--featured {
+    padding-top: 0;
+    border-top: none;
+    margin-bottom: 18px;
+  }
+
+  .project-card--featured .project-card__image {
+    height: 360px;
+  }
+
+  .project-card--featured .project-card__meta {
+    padding-top: 8px;
+  }
+
+  .project-card--featured .project-card__title {
+    font-size: clamp(36px, 4.5vw, 64px);
+    margin-bottom: 14px;
+  }
+
+  .project-card--featured .project-card__desc {
+    font-size: 16px;
+    max-width: 40ch;
+  }
+
+  .project-card--featured .project-card__techs {
+    margin-top: 22px;
+  }
+
+  /* Gradient placeholders per project */
+  .project-card__image--shadow-frames {
+    background: linear-gradient(135deg, #2a2a3a, #3d4050, #252535);
+  }
+  .project-card__image--not-today {
+    background: linear-gradient(135deg, #c7842d, #e8a94a, #d4943b);
+  }
+  .project-card__image--transientica {
+    background: linear-gradient(135deg, #5a3d7a, #3a6b7a, #6b4e8a);
+  }
+  .project-card__image--ai-audio {
+    background: linear-gradient(135deg, #3a6b8a, #4a8aaa, #2d5a7a);
+  }
+  .project-card__image--audioq {
+    background: linear-gradient(135deg, #3a7a4a, #5a9a5a, #4a8a5a);
+  }
+  .project-card__image--amorak {
+    background: linear-gradient(135deg, #5a2020, #7a3030, #4a1a1a);
+  }
+  .project-card__image--akantilado {
+    background: linear-gradient(135deg, #2a6a5a, #3a8a6a, #2d7a5d);
+  }
+  .project-card__image--pause-deserve {
+    background: linear-gradient(135deg, #3a2a5a, #4a3a6a, #2d2050);
+  }
+  .project-card__image--richter {
+    background: linear-gradient(135deg, #6a5030, #8a6a3a, #5a4020);
+  }
+  .project-card__image--ray {
+    background: linear-gradient(135deg, #c06a5a, #e89060, #d07a5a);
+  }
+  .project-card__image--wwise-fixer {
+    background: linear-gradient(135deg, #4a5a6a, #5a6a7a, #3d4d5d);
+  }
+  .project-card__image--ue-rebuilder {
+    background: linear-gradient(135deg, #4a5a4a, #5a6a5a, #3d4d3d);
+  }
+
+  /* =========================================
+     SKILLS
+     ========================================= */
+  .skills-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 80px var(--margin) 40px;
+  }
+
+  .skills-columns {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr 1px 1fr;
+    gap: 0;
+    margin-top: 10px;
+  }
+
+  .column-rule {
+    background: var(--grey-rule);
+    width: 1px;
+  }
+
+  .skills-column {
+    padding: 0 30px;
+  }
+
+  .skills-column:first-child {
+    padding-left: 0;
+  }
+
+  .skills-column:last-child {
+    padding-right: 0;
+  }
+
+  .skills-column__title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    font-style: italic;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  .skills-column ul {
+    list-style: none;
+    font-size: 15px;
+    line-height: 2.4;
+    color: var(--black);
+  }
+
+  .skills-column li {
+    border-bottom: 1px solid var(--accent-light);
+    padding: 2px 0;
+  }
+
+  .skills-column li:last-child {
+    border-bottom: none;
+  }
+
+  /* =========================================
+     TOOLS -Dark section
+     ========================================= */
+  .tools-section-wrap {
+    background: var(--dark-section);
+    color: var(--white);
+  }
+
+  .tools-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 80px var(--margin) 60px;
+  }
+
+  .tools-section .section-label {
+    color: var(--accent);
+  }
+
+  .tools-section .section-title {
+    color: var(--white);
+  }
+
+  .tools-section .section-rule {
+    background: var(--accent);
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid rgba(255,255,255,0.1);
+    margin-top: 10px;
+  }
+
+  .tool-item {
+    padding: 22px 20px;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: background 0.2s;
+  }
+
+  .tool-item:nth-child(4n) {
+    border-right: none;
+  }
+
+  .tool-item:nth-last-child(-n+4) {
+    border-bottom: none;
+  }
+
+  .tool-item:hover {
+    background: rgba(255,255,255,0.06);
+  }
+
+  .tool-item__icon {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tool-item__icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .tool-item__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .tool-item__name {
+    font-family: var(--brand-secondary);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--white);
+    line-height: 1.2;
+  }
+
+  .tool-item__level {
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    line-height: 1;
+  }
+
+  /* =========================================
+     CONTACT
+     ========================================= */
+  .contact-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 80px var(--margin) 80px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gutter);
+    margin-top: 10px;
+  }
+
+  .contact-headline {
+    font-family: var(--serif);
+    font-size: clamp(40px, 7vw, 80px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 40px;
+  }
+
+  .contact-headline em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .contact-links {
+    list-style: none;
+    font-size: 16px;
+    line-height: 2.8;
+  }
+
+  .contact-links a {
+    font-weight: 400;
+  }
+
+  .availability-card {
+    background: var(--accent);
+    color: var(--white);
+    padding: 40px;
+    position: relative;
+  }
+
+  .availability-card::before {
+    content: 'NOW ACCEPTING';
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+
+  .availability-card__title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+
+  .availability-card__details {
+    font-size: 15px;
+    line-height: 2;
+    opacity: 0.9;
+  }
+
+  .availability-card a {
+    color: var(--white);
+    border-color: rgba(255,255,255,0.4);
+  }
+
+  .availability-card a:hover {
+    border-color: var(--white);
+    color: var(--white);
+  }
+
+  /* =========================================
+     FOOTER
+     ========================================= */
+  .colophon {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 24px var(--margin);
+    border-top: 3px solid var(--black);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  /* =========================================
+     RESPONSIVE
+     ========================================= */
+  @media (max-width: 1000px) {
+    :root {
+      --margin: 40px;
+      --gutter: 40px;
+    }
+
+    .article-opener__layout {
+      grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+      padding-left: 0;
+      border-left: none;
+      border-top: 1px solid var(--grey-rule);
+      padding-top: 30px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .skills-columns {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .column-rule {
+      display: none;
+    }
+
+    .skills-column {
+      padding: 0;
+      border-bottom: 1px solid var(--grey-rule);
+      padding-bottom: 30px;
+    }
+
+    .skills-column:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .projects-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .tools-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .contact-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 850px) {
+    .project-card {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+  }
+
+  @media (max-width: 650px) {
+    :root {
+      --margin: 24px;
+      --gutter: 24px;
+    }
+
+    body {
+      font-size: 17px;
+    }
+
+    /* Hero mobile: stack vertically */
+    .hero {
+      min-height: auto;
+      padding: 100px 7% 80px;
+    }
+
+    .hero__composition {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.3rem;
+    }
+
+    .hero__igor {
+      writing-mode: horizontal-tb;
+      transform: none;
+      font-size: clamp(3.5rem, 16vw, 5rem);
+    }
+
+    .hero__szuniewicz {
+      font-size: clamp(2.8rem, 13vw, 4rem);
+    }
+
+    .hero__nav {
+      flex-wrap: wrap;
+      gap: 0.8rem 1.2rem;
+    }
+
+    .hero__scroll-hint {
+      display: none;
+    }
+
+    .hero__location {
+      display: none;
+    }
+
+    .projects-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .project-card,
+    .project-card--featured {
+      grid-template-columns: 1fr;
+      gap: 14px;
+      transform: none;
+    }
+
+    .project-card__image {
+      height: 220px;
+    }
+
+    .project-card--featured .project-card__image {
+      height: 260px;
+    }
+
+    .sidebar {
+      grid-template-columns: 1fr;
+    }
+
+    .tools-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .drop-cap::first-letter {
+      font-size: 60px;
+    }
+
+  }
+
+  @media (max-width: 400px) {
+    .tools-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .hero__scroll-hint {
+      animation: none;
+    }
+    .project-card__image video {
+      display: none;
+    }
+  }
+</style>
+</head>
+<body>
+<a href="#bio" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Skip to main content</a>
+
+<!-- Page numbers removed -->
+
+<!-- =========================================
+     HERO -Option B asymmetric name treatment
+     ========================================= -->
+<header class="hero">
+  <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Igor Szuniewicz - Game Audio Designer</h1>
+  <div class="hero__composition">
+    <div class="hero__igor"><span class="letter" style="--delay:0.20s;--wobble:-2.5deg">I</span><span class="letter" style="--delay:0.30s;--wobble:3deg">G</span><span class="letter" style="--delay:0.40s;--wobble:-1.8deg">O</span><span class="letter" style="--delay:0.50s;--wobble:2.2deg">R</span></div>
+    <div class="hero__right">
+      <div class="hero__szuniewicz"><span class="letter" style="--delay:0.55s;--wobble:2deg">S</span><span class="letter" style="--delay:0.61s;--wobble:-2.8deg">Z</span><span class="letter" style="--delay:0.67s;--wobble:1.5deg">U</span><span class="letter" style="--delay:0.73s;--wobble:-1.2deg">N</span><span class="letter" style="--delay:0.79s;--wobble:2.5deg">I</span><span class="letter" style="--delay:0.85s;--wobble:-3deg">E</span><br><span class="letter" style="--delay:0.91s;--wobble:1.8deg">W</span><span class="letter" style="--delay:0.97s;--wobble:-2deg">I</span><span class="letter" style="--delay:1.03s;--wobble:2.8deg">C</span><span class="letter" style="--delay:1.09s;--wobble:-1.5deg">Z</span></div>
+      <div class="hero__tagline">Game Audio Designer</div>
+      <div class="hero__subtitle">Sound Integrator &bull; Technical Artist</div>
+      <nav class="hero__nav" aria-label="Main navigation">
+        <a href="#bio">About</a>
+        <a href="#work">Projects</a>
+        <a href="option50-music.html">Music</a>
+        <a href="#skills">Skills</a>
+        <a href="#tools">Tools</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="hero__actions">
+        <a class="hero__cv-button" href="../old/public/cv/Igor_Szuniewicz_CV.pdf" download="Igor_Szuniewicz_CV.pdf">CV / Resume</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero__accent-line"></div>
+  <div class="hero__location">Kortrijk, Belgium</div>
+</header>
+
+
+<!-- =========================================
+     BIO -Article opener with drop cap
+     ========================================= -->
+<section class="article-opener" id="bio" aria-labelledby="bio-title">
+  <h2 class="section-title" id="bio-title">About</h2>
+  <div class="section-rule"></div>
+
+  <div class="article-opener__layout">
+    <div class="article-opener__body">
+      <p>Hi! My name is Igor and I'm currently studying and expanding my knowledge in audio and coding.</p>
+      <p>I'm finishing my studies at <strong>Digital Arts and Entertainment</strong> in Belgium with a degree in <strong>Game Sound Integration</strong>, combining the creative process of sound design with the technical side of implementation.</p>
+      <p>On one hand, the program focuses on working in <strong>DAWs</strong>, finding the right audio, editing and implementing it. On the other, the technical side: working with game engines (<strong>Unity</strong>, <strong>Unreal</strong>), middleware (<strong>FMOD</strong>, <strong>Wwise</strong>), understanding the physics of audio (reflections, occlusion, transmission, raycasting) and integrating audio using code (<strong>C#</strong>, <strong>C++</strong>) or via <strong>Blueprints</strong>.</p>
+      <p>Currently I'm also working at <strong>XR Labs</strong>, where I lead technical sound design for <strong>VR/AR training simulations</strong> - police, military, customs. People who need the audio to feel real, because they're training for situations that are.</p>
+    </div>
+    <div class="sidebar">
+      <div class="sidebar__fact">
+        <span class="sidebar__label">Education</span>
+        <span class="sidebar__value">Howest DAE - Sound Integration</span>
+      </div>
+      <div class="sidebar__fact">
+        <span class="sidebar__label">Background</span>
+        <span class="sidebar__value">Classical Piano (12 years)</span>
+      </div>
+      <div class="sidebar__fact">
+        <span class="sidebar__label">Location</span>
+        <span class="sidebar__value">Kortrijk, Belgium</span>
+      </div>
+      <div class="sidebar__fact">
+        <span class="sidebar__label">Languages</span>
+        <span class="sidebar__value">English, Polish (native)</span>
+      </div>
+      <div class="sidebar__fact">
+        <span class="sidebar__label">Previous</span>
+        <span class="sidebar__value">Bilingual HS - Math &amp; Physics</span>
+      </div>
+      <div class="sidebar__fact">
+        <span class="sidebar__label">Status</span>
+        <span class="sidebar__value">Open to new opportunities</span>
+      </div>
+      <div class="sidebar__fact sidebar__fact--logos">
+        <span class="sidebar__label">Affiliated with</span>
+        <div class="sidebar__logos">
+          <div class="sidebar__logo-wrap">
+            <img src="../old/public/assets/images/affiliations/dae-official-light.svg" alt="Digital Arts & Entertainment logo">
+            <span class="sidebar__logo-name">DAE</span>
+          </div>
+          <div class="sidebar__logo-wrap">
+            <img src="../old/public/assets/images/affiliations/howest-official-light.svg" alt="Howest University of Applied Sciences logo">
+            <span class="sidebar__logo-name">Howest</span>
+          </div>
+          <div class="sidebar__logo-wrap">
+            <img src="../old/public/assets/images/affiliations/rma-bmu.png" alt="Royal Military Academy logo">
+            <span class="sidebar__logo-name">Royal Military Academy</span>
+          </div>
+          <div class="sidebar__logo-wrap">
+            <img src="../old/public/assets/images/affiliations/xralbs-cropped.png" alt="XR Labs logo">
+            <span class="sidebar__logo-name">XR Labs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================
+     PROJECTS
+     ========================================= -->
+<section class="projects-section" id="work" aria-labelledby="work-title">
+  <h2 class="section-title" id="work-title">Projects</h2>
+  <div class="section-rule"></div>
+
+  <div class="projects-grid">
+
+    <!-- Shadow Frames -->
+    <a class="project-card" href="option50-shadowframes.html">
+      <div class="project-card__image project-card__image--shadow-frames"><video src="../old/public/assets/images/projects-shadowframes/Menugif.mp4" autoplay loop muted playsinline aria-hidden="true"></video></div>
+      <div class="project-card__content">
+        <div class="project-card__meta">
+          <span class="project-card__tag">Game Audio</span>
+          <span class="project-card__year">2025</span>
+        </div>
+        <div class="project-card__body">
+          <h3 class="project-card__title">Shadow Frames</h3>
+          <p class="project-card__desc">Psychological horror in a 1960s Irish pub. Sound-driven anomaly detection with C++ audio systems, Wwise integration, and enemy proximity tracking.</p>
+          <div class="project-card__techs">
+            <span>Horror</span>
+            <span>Wwise</span>
+            <span>UE5 C++</span>
+            <span>Spatial Audio</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Not Today, Darling! -->
+    <a class="project-card" href="#">
+      <div class="project-card__image project-card__image--not-today"><video src="../old/public/assets/images/projects/NotTodayGIF.mp4" autoplay loop muted playsinline aria-hidden="true"></video></div>
+      <div class="project-card__content">
+        <div class="project-card__meta">
+          <span class="project-card__tag">Game Audio</span>
+          <span class="project-card__year">2025</span>
+        </div>
+        <div class="project-card__body">
+          <h3 class="project-card__title">Not Today, Darling!</h3>
+          <p class="project-card__desc">Solo audio for a 4-player shared-screen racer. Procedural MetaSounds engine audio, surface crossfades, and voice priority culling. 160MB down to under 2MB per player.</p>
+          <div class="project-card__techs">
+            <span>MetaSounds</span>
+            <span>Unreal Engine</span>
+            <span>Multiplayer</span>
+            <span>Racing</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Transientica -->
+    <a class="project-card" href="#">
+      <div class="project-card__image project-card__image--transientica"><video src="../old/public/assets/videos/AudioLab_preview.webm" autoplay loop muted playsinline aria-hidden="true"></video></div>
+      <div class="project-card__content">
+        <div class="project-card__meta">
+          <span class="project-card__tag project-card__tag--blue">ML Audio</span>
+          <span class="project-card__year">2025</span>
+        </div>
+        <div class="project-card__body">
+          <h3 class="project-card__title">Transientica: AudioLab</h3>
+          <p class="project-card__desc">Beatbox-driven rhythm game with real-time ML recognition. 92% accuracy at 45ms latency. Python/scikit-learn ML, Unity gameplay, UDP/OSC bridge.</p>
+          <div class="project-card__techs">
+            <span>Machine Learning</span>
+            <span>Python</span>
+            <span>Unity</span>
+            <span>DSP</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- AI Audio Research -->
+    <a class="project-card" href="#">
+      <div class="project-card__image project-card__image--ai-audio" style="background-image: url('../old/public/assets/images/projects-gradwork/image/aiaudiogradwork.png'); background-size: cover; background-position: center;"></div>
+      <div class="project-card__content">
+        <div class="project-card__meta">
+          <span class="project-card__tag project-card__tag--blue">Research</span>
+          <span class="project-card__year">2025</span>
+        </div>
+        <div class="project-card__body">
+          <h3 class="project-card__title">AI Audio Research</h3>
+          <p class="project-card__desc">Can AI generate audio fast enough for games? Tested the limits: 5.02ms processing latency, 2253 generations/second. Hybrid system approach.</p>
+          <div class="project-card__techs">
+            <span>Research</span>
+            <span>Machine Learning</span>
+            <span>Python</span>
+            <span>Real-time</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- AudioQ -->
+    <a class="project-card" href="#">
+      <div class="project-card__image project-card__image--audioq"><video src="../old/public/assets/images/projects-audioq/AudioQ-Showcase.mp4" autoplay loop muted playsinline aria-hidden="true"></video></div>
+      <div class="project-card__content">
+        <div class="project-card__meta">
+          <span class="project-card__tag project-card__tag--teal">VST Plugin</span>
+          <span class="project-card__year">2024</span>
+        </div>
+        <div class="project-card__body">
+          <h3 class="project-card__title">AudioQ</h3>
+          <p class="project-card__desc">Sampler plugin built from scratch in JUCE. Granular synthesis, per-sample LFO tremolo, zero-delay TPT filters, and full DAW automation.</p>
+          <div class="project-card__techs">
+            <span>VST Plugin</span>
+            <span>C++</span>
+            <span>JUCE</span>
+            <span>DSP</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Amorak -->
+    <a class="project-card" href="#">
+      <div class="project-card__image project-card__image--amorak"><video src="../old/public/assets/images/projects/AmorakGIF.mp4" autoplay loop muted playsinline aria-hidden="true"></video></div>
+      <div class="project-card__content">
+        <div class="project-card__meta">
+          <span class="project-card__tag project-card__tag--gold">Sound Design</span>
+          <span class="project-card__year">2024</span>
+        </div>
+        <div class="project-card__body">
+          <h3 class="project-card__title">Amorak</h3>
+          <p class="project-card__desc">Creature sound design for a horror animation. Roar layered from lion, elephant, tiger, hippo recordings. 15+ vocal variations with binaural 3D spatial mix.</p>
+          <div class="project-card__techs">
+            <span>Sound Design</span>
+            <span>Horror</span>
+            <span>Creature Design</span>
+            <span>Spatial Audio</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Akantilado -->
+    <a class="project-card" href="#">
+      <div class="project-card__image project-card__image--akantilado"><video src="../old/public/assets/images/projects/AkantiladoGIF.mp4" autoplay loop muted playsinline aria-hidden="true"></video></div>
+      <div class="project-card__content">
+        <div class="project-card__meta">
+          <span class="project-card__tag project-card__tag--purple">Animation</span>
+          <span class="project-card__year">2024</span>
+        </div>
+        <div class="project-card__body">
+          <h3 class="project-card__title">Akantilado</h3>
+          <p class="project-card__desc">Two cats chase a golden orb through the jungle. All foley, ambience, and 5.1 surround mix. 200+ custom samples with 5-layer spatial ambience.</p>
+          <div class="project-card__techs">
+            <span>Foley</span>
+            <span>5.1 Surround</span>
+            <span>Animation</span>
+            <span>Reaper</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Pause & Deserve -->
+    <a class="project-card" href="#">
+      <div class="project-card__image project-card__image--pause-deserve"><video src="../old/public/assets/images/projects-pausedeserve/pausedeservegif.mp4" autoplay loop muted playsinline aria-hidden="true"></video></div>
+      <div class="project-card__content">
+        <div class="project-card__meta">
+          <span class="project-card__tag">Horror Game</span>
+          <span class="project-card__year">2024</span>
+        </div>
+        <div class="project-card__body">
+          <h3 class="project-card__title">Pause &amp; Deserve</h3>
+          <p class="project-card__desc">Psychological horror where pausing costs you. Audio state machine in Unity -- soundscape shifts based on hesitation, with strategic silences and false footsteps.</p>
+          <div class="project-card__techs">
+            <span>Horror</span>
+            <span>Wwise</span>
+            <span>Unity</span>
+            <span>Adaptive Audio</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Richter -->
+    <a class="project-card" href="#">
+      <div class="project-card__image project-card__image--richter" style="background-image: url('../old/public/assets/images/projects/richter.webp'); background-size: cover; background-position: center;"></div>
+      <div class="project-card__content">
+        <div class="project-card__meta">
+          <span class="project-card__tag project-card__tag--purple">Film Score</span>
+          <span class="project-card__year">2024</span>
+        </div>
+        <div class="project-card__body">
+          <h3 class="project-card__title">Richter</h3>
+          <p class="project-card__desc">Earthquake film scored entirely from Zoom H6 field recordings. Synthesized drones with granular-stretched foley and full EQ automation for dialogue clarity.</p>
+          <div class="project-card__techs">
+            <span>Film Score</span>
+            <span>Field Recording</span>
+            <span>Orchestral</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Ray Animation -->
+    <a class="project-card" href="#">
+      <div class="project-card__image project-card__image--ray"><video src="../old/public/assets/images/projects/RayGIF.mp4" autoplay loop muted playsinline aria-hidden="true"></video></div>
+      <div class="project-card__content">
+        <div class="project-card__meta">
+          <span class="project-card__tag project-card__tag--purple">Animation</span>
+          <span class="project-card__year">2024</span>
+        </div>
+        <div class="project-card__body">
+          <h3 class="project-card__title">Ray Animation</h3>
+          <p class="project-card__desc">Disco-funk score for a graduation film. Written, synced, and delivered in 8 days after the original composer dropped out. Standing ovation at the screening.</p>
+          <div class="project-card__techs">
+            <span>Music Composition</span>
+            <span>Animation</span>
+            <span>Funk</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Wwise UE Fixer -->
+    <a class="project-card" href="#">
+      <div class="project-card__image project-card__image--wwise-fixer" style="background-image: url('../old/public/assets/images/projects-wwisefixer/wwisefixerlogo.jpeg'); background-size: cover; background-position: center;"></div>
+      <div class="project-card__content">
+        <div class="project-card__meta">
+          <span class="project-card__tag project-card__tag--green">Dev Tool</span>
+          <span class="project-card__year">2024</span>
+        </div>
+        <div class="project-card__body">
+          <h3 class="project-card__title">Wwise Unreal Engine Fixer</h3>
+          <p class="project-card__desc">Fixes broken Wwise integration after Perforce pulls. Scans binaries, finds broken refs, and restores them in one click.</p>
+          <div class="project-card__techs">
+            <span>Dev Tool</span>
+            <span>Python</span>
+            <span>Wwise</span>
+            <span>Automation</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- UE Rebuilder -->
+    <a class="project-card" href="#">
+      <div class="project-card__image project-card__image--ue-rebuilder" style="background-image: url('../old/public/assets/images/projects-unrealrebuilder/UnrealRebuilderlogo.jpeg'); background-size: cover; background-position: center;"></div>
+      <div class="project-card__content">
+        <div class="project-card__meta">
+          <span class="project-card__tag project-card__tag--green">Dev Tool</span>
+          <span class="project-card__year">2024</span>
+        </div>
+        <div class="project-card__body">
+          <h3 class="project-card__title">Unreal Engine Rebuilder</h3>
+          <p class="project-card__desc">One-click cache cleanup, project file regeneration, and recompilation. Replaces 15 minutes of manual cleanup.</p>
+          <div class="project-card__techs">
+            <span>Dev Tool</span>
+            <span>Automation</span>
+            <span>Unreal Engine</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+
+<!-- =========================================
+     SKILLS
+     ========================================= -->
+<section class="skills-section" id="skills" aria-labelledby="skills-title">
+  <h2 class="section-title" id="skills-title">Skills</h2>
+  <div class="section-rule"></div>
+
+  <div class="skills-columns">
+    <div class="skills-column">
+      <div class="skills-column__title">Game Audio</div>
+      <ul>
+        <li>Interactive music systems</li>
+        <li>Wwise &amp; FMOD integration</li>
+        <li>Unity &amp; Unreal Engine</li>
+        <li>Adaptive soundscapes</li>
+        <li>MetaSounds (UE5)</li>
+        <li>Spatial audio / 3D audio</li>
+        <li>Voice management &amp; optimization</li>
+        <li>Memory budget management</li>
+      </ul>
+    </div>
+    <div class="column-rule"></div>
+    <div class="skills-column">
+      <div class="skills-column__title">Production</div>
+      <ul>
+        <li>Music composition</li>
+        <li>Sound design</li>
+        <li>Mixing &amp; mastering</li>
+        <li>Field recording</li>
+        <li>Foley work</li>
+        <li>5.1 surround mixing</li>
+        <li>Horror sound design</li>
+      </ul>
+    </div>
+    <div class="column-rule"></div>
+    <div class="skills-column">
+      <div class="skills-column__title">Development</div>
+      <ul>
+        <li>Real-time DSP</li>
+        <li>Python audio tools</li>
+        <li>C# scripting (Unity)</li>
+        <li>C++ (JUCE framework)</li>
+        <li>Audio plugins (VST)</li>
+        <li>Machine Learning for audio</li>
+        <li>Blueprint scripting (UE5)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================
+     TOOLS -Dark section
+     ========================================= -->
+<div class="tools-section-wrap">
+  <section class="tools-section" id="tools" aria-labelledby="tools-title">
+    <h2 class="section-title" id="tools-title">Tools</h2>
+    <div class="section-rule"></div>
+
+    <div class="tools-grid">
+      <!-- Wwise (Simple Icons) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="#c0542e"><path d="M6 12c0 .7644-.6193 1.3846-1.3846 1.3846-.7645 0-1.3847-.6202-1.3847-1.3846 0-.765.6202-1.3846 1.3847-1.3846C5.3807 10.6154 6 11.2351 6 12m7.8462-5.5384c0 1.0191-.826 1.8461-1.8463 1.8461-1.0188 0-1.8461-.827-1.8461-1.8461 0-1.0197.8273-1.8462 1.8461-1.8462 1.0203 0 1.8463.8265 1.8463 1.8462M1.8462 12a.923.923 0 0 1-.9231.923C.4143 12.923 0 12.5096 0 12c0-.5102.4142-.923.923-.923.51 0 .923.4128.923.923M24 12c0 .5095-.4133.923-.923.923-.5089 0-.9231-.4135-.9231-.923 0-.5102.4142-.923.923-.923.5098 0 .923.4128.923.923m-3.2306 0c0 .7644-.6195 1.3846-1.3847 1.3846C18.6203 13.3846 18 12.7644 18 12c0-.765.6203-1.3846 1.3846-1.3846.7652 0 1.3847.6197 1.3847 1.3846m-8.2252 2.8356c.0034.535.2557 1.0139.6581 1.3139.4006.3332.6584.8409.6584 1.4048 0 1.0139-.8192 1.8303-1.8295 1.8303H12c-1.0116 0-1.8317-.8164-1.8317-1.8303 0-.564.2596-1.0716.6606-1.4048.3999-.3.6615-.7788.6577-1.314v-.1283c-.004-.5395-.2578-1.0183-.6577-1.3154-.401-.336-.6606-.8423-.6606-1.4077 0-1.0125.8201-1.8302 1.8317-1.8302h.0312c1.0103 0 1.8295.8177 1.8295 1.8302 0 .5654-.2578 1.0717-.6584 1.4077a1.6166 1.6166 0 0 0-.658 1.3154v.1284m3.6922-2.7692c.0033.535.2557 1.0139.658 1.3139.4007.3332.6585.8409.6585 1.4048 0 1.0139-.8192 1.8302-1.8295 1.8302h-.031c-1.0118 0-1.8318-.8163-1.8318-1.8302 0-.564.2597-1.0716.6606-1.4048.3999-.3.6614-.7788.6577-1.314v-.1283c-.004-.5395-.2578-1.0183-.6577-1.3154-.401-.336-.6606-.8423-.6606-1.4077 0-1.0125.82-1.8302 1.8318-1.8302h.031c1.0103 0 1.8295.8177 1.8295 1.8302 0 .5654-.2578 1.0717-.6584 1.4077a1.6166 1.6166 0 0 0-.658 1.3154v.1284m-7.3848 0c.0035.535.2559 1.0139.6582 1.3139a1.828 1.828 0 0 1 .6583 1.4048c0 1.0139-.8193 1.8302-1.8294 1.8302h-.0312c-1.0116 0-1.8317-.8163-1.8317-1.8302 0-.564.2596-1.0716.6606-1.4048.3999-.3.6615-.7788.6577-1.314v-.1283c-.004-.5395-.2578-1.0183-.6577-1.3154-.401-.336-.6606-.8423-.6606-1.4077 0-1.0125.8201-1.8302 1.8317-1.8302h.0312c1.0101 0 1.8294.8177 1.8294 1.8302 0 .5654-.2578 1.0717-.6583 1.4077a1.617 1.617 0 0 0-.6582 1.3154v.1284"/></svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">Wwise</span>
+          <span class="tool-item__level">Advanced</span>
+        </div>
+      </div>
+      <!-- FMOD (Simple Icons) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="#c0542e"><path d="M3.3522 10.17a.903.903 0 0 0-.903.903v4.0696H1.127v-2.8134H0v-1.318h1.1284a2.2252 2.2252 0 0 1 2.2238-2.1703H4.673v1.3222zm7.3257 1.8403a.2501.2501 0 0 0-.2378.1732l-.532 1.8348a1.564 1.564 0 0 1-3.0016 0l-.532-1.8348a.2515.2515 0 0 0-.4769 0l-.5319 1.8348a1.5723 1.5723 0 0 1-1.5118 1.123h-.3684v-1.3195h.3739a.2474.2474 0 0 0 .235-.1732l.5319-1.8348a1.5696 1.5696 0 0 1 3.0086 0l.536 1.8376a.246.246 0 0 0 .4714 0l.532-1.8349a1.5696 1.5696 0 0 1 3.0086 0l.5319 1.8349a.2474.2474 0 0 0 .235.1731h.3738v1.3195h-.3683a1.571 1.571 0 0 1-1.5119-1.123l-.5319-1.8348a.2515.2515 0 0 0-.2336-.1759zm2.6897.9058a2.2252 2.2252 0 1 1 2.2252 2.2251 2.2252 2.2252 0 0 1-2.2252-2.2251zm3.1282 0a.903.903 0 1 0-.903.903.903.903 0 0 0 .903-.903zm4.6744.4604a.962.962 0 0 0 .0673-.1237.6707.6707 0 0 1 1.2659.3079.6542.6542 0 0 1-.055.2625l-.0192.0398a2.2678 2.2678 0 0 1-2.0342 1.2755 2.2252 2.2252 0 0 1 0-4.4504h.0976a2.25 2.25 0 0 1 1.0143.2914V8.8409h1.3222v3.01a.7422.7422 0 0 1-.712.7215 1.5902 1.5902 0 0 1-1.0692-.3738.9016.9016 0 0 0-.5498-.191h-.0976a.903.903 0 1 0 .7752 1.3661z"/></svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">FMOD</span>
+          <span class="tool-item__level">Advanced</span>
+        </div>
+      </div>
+      <!-- MetaSounds (UE node audio) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 1L22 12L12 23L2 12L12 1zm0 2.5L4.5 12L12 20.5L19.5 12L12 3.5z" fill="#c0542e" opacity="0.25"/>
+            <path d="M7.5 12l1.5-3.5 1.5 4.5 1.5-5.5 1.5 6 1.5-4 1.5 2.5" fill="none" stroke="#c0542e" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">MetaSounds</span>
+          <span class="tool-item__level">Advanced</span>
+        </div>
+      </div>
+      <!-- Unreal Engine (Simple Icons) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="#c0542e"><path d="M12 0a12 12 0 1012 12A12 12 0 0012 0zm0 23.52A11.52 11.52 0 1123.52 12 11.52 11.52 0 0112 23.52zm7.13-9.791c-.206.997-1.126 3.557-4.06 4.942l-1.179-1.325-1.988 2a7.338 7.338 0 01-5.804-2.978 2.859 2.859 0 00.65.123c.326.006.678-.114.678-.66v-5.394a.89.89 0 00-1.116-.89c-.92.212-1.656 2.509-1.656 2.509a7.304 7.304 0 012.528-5.597 7.408 7.408 0 013.73-1.721c-1.006.573-1.57 1.507-1.57 2.29 0 1.262.76 1.109.984.923v7.28a1.157 1.157 0 00.148.256 1.075 1.075 0 00.88.445c.76 0 1.747-.868 1.747-.868V9.172c0-.6-.452-1.324-.905-1.572 0 0 .838-.149 1.484.346a5.537 5.537 0 01.387-.425c1.508-1.48 2.929-1.902 4.112-2.112 0 0-2.151 1.69-2.151 3.96 0 1.687.043 5.801.043 5.801.799.771 1.986-.342 3.059-1.441Z"/></svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">Unreal Engine 5</span>
+          <span class="tool-item__level">Advanced</span>
+        </div>
+      </div>
+      <!-- Unity (Simple Icons) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="#c0542e"><path d="m12.9288 4.2939 3.7997 2.1929c.1366.077.1415.2905 0 .3675l-4.515 2.6076a.4192.4192 0 0 1-.4246 0L7.274 6.8543c-.139-.0745-.1415-.293 0-.3675l3.7972-2.193V0L1.3758 5.5977V16.793l3.7177-2.1456v-4.3858c-.0025-.1565.1813-.2682.318-.1838l4.5148 2.6076a.4252.4252 0 0 1 .2136.3676v5.2127c.0025.1565-.1813.2682-.3179.1838l-3.7996-2.1929-3.7178 2.1457L12 24l9.6954-5.5977-3.7178-2.1457-3.7996 2.1929c-.1341.082-.3229-.0248-.3179-.1838V13.053c0-.1565.087-.2956.2136-.3676l4.5149-2.6076c.134-.082.3228.0224.3179.1838v4.3858l3.7177 2.1456V5.5977L12.9288 0Z"/></svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">Unity</span>
+          <span class="tool-item__level">Proficient</span>
+        </div>
+      </div>
+      <!-- Reaper (custom - waveform in circle) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="11" stroke="#c0542e" stroke-width="1.5"/>
+            <path d="M6 12h2l1-4 1.5 8 1.5-10 1.5 10 1.5-8 1 4h2" stroke="#c0542e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">Reaper</span>
+          <span class="tool-item__level">Expert</span>
+        </div>
+      </div>
+      <!-- Pro Tools (Simple Icons) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="#c0542e"><path d="M.505 15.452Q.27 14.63.14 13.762.01 12.891.01 12q0-2.49.94-4.673.94-2.184 2.572-3.804Q5.155 1.902 7.339.938 9.523 0 12.012 0q2.465 0 4.65.94 2.183.962 3.815 2.583 1.633 1.62 2.572 3.804.94 2.184.94 4.673 0 .869-.118 1.714-.118.846-.352 1.644.21.047.34.07l.13.024-1.363 3.429-.188-.012-.54-.106Q21.1 19.937 20.02 20.9q-1.057.987-2.325 1.668-1.268.68-2.724 1.056-1.433.376-2.96.376-1.55 0-3.005-.376-1.433-.375-2.7-1.068-1.269-.693-2.35-1.656-1.08-.963-1.878-2.16-.282.094-.434.117l-.153.024-1.48-3.382.118.012.376-.059zM22.744 12q0-2.23-.846-4.18-.845-1.95-2.301-3.405-1.456-1.456-3.429-2.301-1.949-.846-4.156-.846-2.231 0-4.18.846-1.973.845-3.429 2.3Q2.947 5.872 2.102 7.82 1.256 9.77 1.256 12q0 .751.106 1.491.106.74.317 1.444.892-.516 2.02-1.972 1.127-1.456 1.808-2.912.352-.728.916-1.597.54-.869 1.338-1.632.799-.763 1.855-1.256 1.057-.517 2.396-.517 1.315 0 2.419.587 1.103.587 1.913 1.35.81.764 1.304 1.492.516.727.657.986.165.282.47.94.329.633.728 1.361.4.728.822 1.433.423.68.798 1.033.259.258.564.446.305.188.61.329.212-.728.33-1.48.117-.751.117-1.526zM12.012 22.732q1.338 0 2.583-.305 1.268-.33 2.383-.916 1.116-.587 2.055-1.41.94-.821 1.668-1.83-.94-.494-2.173-1.645-1.233-1.15-2.5-3.358-.142-.235-.494-.94-.352-.704-.857-1.455-.505-.752-1.115-1.339t-1.268-.587q-.681 0-1.386.634-.704.61-1.303 1.386-.6.775-1.022 1.503-.423.704-.54.916-1.174 2.066-2.477 3.205-1.304 1.139-2.29 1.656.728 1.01 1.667 1.831.963.846 2.079 1.433 1.115.587 2.36.892 1.268.329 2.63.329z"/></svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">Pro Tools</span>
+          <span class="tool-item__level">Advanced</span>
+        </div>
+      </div>
+      <!-- Logic Pro (custom - sine wave in rounded rect) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="20" height="20" rx="4.5" stroke="#c0542e" stroke-width="1.5"/>
+            <path d="M5 12c1.5 0 2-4 3.5-4s2 8 3.5 8 2-8 3.5-8 2 4 3.5 4" stroke="#c0542e" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">Logic Pro</span>
+          <span class="tool-item__level">Advanced</span>
+        </div>
+      </div>
+      <!-- Python (Simple Icons) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="#c0542e"><path d="M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95l.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25l-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08z"/></svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">Python</span>
+          <span class="tool-item__level">Advanced</span>
+        </div>
+      </div>
+      <!-- C# (Simple Icons) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="#c0542e"><path d="M1.194 7.543v8.913c0 1.103.588 2.122 1.544 2.674l7.718 4.456a3.086 3.086 0 0 0 3.088 0l7.718-4.456a3.087 3.087 0 0 0 1.544-2.674V7.543a3.084 3.084 0 0 0-1.544-2.673L13.544.414a3.086 3.086 0 0 0-3.088 0L2.738 4.87a3.085 3.085 0 0 0-1.544 2.673Zm5.403 2.914v3.087a.77.77 0 0 0 .772.772.773.773 0 0 0 .772-.772.773.773 0 0 1 1.317-.546.775.775 0 0 1 .226.546 2.314 2.314 0 1 1-4.631 0v-3.087c0-.615.244-1.203.679-1.637a2.312 2.312 0 0 1 3.274 0c.434.434.678 1.023.678 1.637a.769.769 0 0 1-.226.545.767.767 0 0 1-1.091 0 .77.77 0 0 1-.226-.545.77.77 0 0 0-.772-.772.771.771 0 0 0-.772.772Zm12.35 3.087a.77.77 0 0 1-.772.772h-.772v.772a.773.773 0 0 1-1.544 0v-.772h-1.544v.772a.773.773 0 0 1-1.317.546.775.775 0 0 1-.226-.546v-.772H12a.771.771 0 1 1 0-1.544h.772v-1.543H12a.77.77 0 1 1 0-1.544h.772v-.772a.773.773 0 0 1 1.317-.546.775.775 0 0 1 .226.546v.772h1.544v-.772a.773.773 0 0 1 1.544 0v.772h.772a.772.772 0 0 1 0 1.544h-.772v1.543h.772a.776.776 0 0 1 .772.772Zm-3.088-2.315h-1.544v1.543h1.544v-1.543Z"/></svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">C#</span>
+          <span class="tool-item__level">Proficient</span>
+        </div>
+      </div>
+      <!-- Blueprints (custom - UE node graph) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="3" width="9" height="7" rx="1.5" stroke="#c0542e" stroke-width="1.4"/>
+            <rect x="14" y="14" width="9" height="7" rx="1.5" stroke="#c0542e" stroke-width="1.4"/>
+            <circle cx="10" cy="6.5" r="1.2" fill="#c0542e"/>
+            <circle cx="14" cy="17.5" r="1.2" fill="#c0542e"/>
+            <path d="M11.2 6.5C12.5 6.5 12.5 17.5 12.8 17.5" stroke="#c0542e" stroke-width="1.4"/>
+            <circle cx="3.5" cy="5" r=".8" fill="#c0542e"/><circle cx="3.5" cy="8" r=".8" fill="#c0542e"/>
+            <circle cx="21.5" cy="16" r=".8" fill="#c0542e"/><circle cx="21.5" cy="19" r=".8" fill="#c0542e"/>
+          </svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">Blueprints</span>
+          <span class="tool-item__level">Advanced</span>
+        </div>
+      </div>
+      <!-- C++ (Simple Icons) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="#c0542e"><path d="M22.394 6c-.167-.29-.398-.543-.652-.69L12.926.22c-.509-.294-1.34-.294-1.848 0L2.26 5.31c-.508.293-.923 1.013-.923 1.6v10.18c0 .294.104.62.271.91.167.29.398.543.652.69l8.816 5.09c.508.293 1.34.293 1.848 0l8.816-5.09c.254-.147.485-.4.652-.69.167-.29.27-.616.27-.91V6.91c.003-.294-.1-.62-.268-.91zM12 19.11c-3.92 0-7.109-3.19-7.109-7.11 0-3.92 3.19-7.11 7.11-7.11a7.133 7.133 0 016.156 3.553l-3.076 1.78a3.567 3.567 0 00-3.08-1.78A3.56 3.56 0 008.444 12 3.56 3.56 0 0012 15.555a3.57 3.57 0 003.08-1.778l3.078 1.78A7.135 7.135 0 0112 19.11zm7.11-6.715h-.79v.79h-.79v-.79h-.79v-.79h.79v-.79h.79v.79h.79zm2.962 0h-.79v.79h-.79v-.79h-.79v-.79h.79v-.79h.79v.79h.79z"/></svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">C++</span>
+          <span class="tool-item__level">Intermediate</span>
+        </div>
+      </div>
+      <!-- Max/MSP - Cycling '74 (Simple Icons) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="#c0542e"><path d="M5.283 9.033c-.042-.354.425-.74.87-1.057.636-.453 1.682-.82 2.892-.962 1.093-.127 2.099-.045 2.816.189.632.206 1.263.503 1.31.906.046.4-.496.836-1.06 1.182-.644.394-1.606.708-2.703.837-1.206.14-2.306.025-3.03-.267-.509-.206-1.053-.473-1.095-.828zm16.77-1.542c.365-.022.742.614 1.05 1.216.438.861.772 2.244.87 3.818.087 1.422-.038 2.715-.307 3.62-.236.798-.566 1.586-.981 1.61-.413.026-.837-.712-1.169-1.47-.379-.867-.662-2.137-.75-3.563-.096-1.57.066-2.98.395-3.89.23-.639.527-1.319.893-1.341zm-8.16 6.443c-.022-.336.362-.674.726-.948.522-.391 1.367-.677 2.335-.74.874-.055 1.674.082 2.238.345.496.233.989.552 1.014.935.024.382-.422.762-.882 1.055-.525.336-1.302.576-2.179.632-.966.063-1.839-.111-2.406-.43-.399-.225-.824-.51-.846-.849zM18.16 6.41c.288.177.343.685.357 1.14.02.65-.233 1.503-.74 2.327-.457.745-1.028 1.317-1.568 1.624-.476.271-1.02.488-1.347.287-.327-.2-.38-.782-.355-1.326.028-.622.279-1.392.737-2.14.505-.822 1.149-1.434 1.736-1.71.413-.196.89-.379 1.18-.202zM.382 6.211c.294-.168.771.04 1.183.257.588.31 1.228.967 1.722 1.834.447.784.685 1.582.704 2.219.015.56-.048 1.155-.382 1.345-.333.19-.876-.056-1.349-.353-.54-.34-1.107-.952-1.555-1.738C.211 8.91-.028 8.027.003 7.363c.021-.467.085-.984.38-1.152zm11.85 4.283c.32.188.341.828.32 1.406-.032.827-.398 1.948-1.054 3.066-.593 1.01-1.305 1.814-1.958 2.277-.575.407-1.225.756-1.589.542-.362-.212-.375-.948-.301-1.645.084-.797.44-1.813 1.036-2.826.655-1.115 1.453-1.979 2.159-2.41.496-.303 1.066-.598 1.387-.41Z"/></svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">Max/MSP</span>
+          <span class="tool-item__level">Proficient</span>
+        </div>
+      </div>
+      <!-- iZotope RX (custom - spectral display) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1.5" y="1.5" width="21" height="21" rx="3" stroke="#c0542e" stroke-width="1.4"/>
+            <g stroke="#c0542e" stroke-width="1.3" stroke-linecap="round">
+              <line x1="5" y1="16" x2="5" y2="11"/><line x1="7.5" y1="17" x2="7.5" y2="9"/>
+              <line x1="10" y1="16" x2="10" y2="6"/><line x1="12.5" y1="18" x2="12.5" y2="5"/>
+              <line x1="15" y1="17" x2="15" y2="7"/><line x1="17.5" y1="15" x2="17.5" y2="10"/>
+              <line x1="20" y1="14" x2="20" y2="11.5"/>
+            </g>
+          </svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">iZotope RX</span>
+          <span class="tool-item__level">Advanced</span>
+        </div>
+      </div>
+      <!-- FabFilter (custom - EQ curve) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1.5" y="4" width="21" height="16" rx="3" stroke="#c0542e" stroke-width="1.4"/>
+            <path d="M3.5 14C5.5 14 6 8 8.5 8S11 14 12 14s1.5-8 3-8 2 7 3.5 7 1.5-2 2-3" stroke="#c0542e" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="8.5" cy="8" r="1.2" fill="#c0542e"/><circle cx="15" cy="6" r="1.2" fill="#c0542e"/>
+          </svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">FabFilter Suite</span>
+          <span class="tool-item__level">Advanced</span>
+        </div>
+      </div>
+      <!-- JUCE (Simple Icons) -->
+      <div class="tool-item">
+        <div class="tool-item__icon">
+          <svg viewBox="0 0 24 24" fill="#c0542e"><path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm0 22.402c-5.744 0-10.417-4.667-10.417-10.404S6.256 1.595 12 1.595s10.417 4.666 10.417 10.403S17.744 22.402 12 22.402zm8.097-5.04a9.77 9.77 0 0 1-2.5 2.572 1.23 1.23 0 0 1-1.787-.42c-.97-1.794-1.75-3.59-2.468-5.391a.504.504 0 0 1 .669-.648c1.729.749 3.503 1.46 5.414 2.04a1.227 1.227 0 0 1 .672 1.847zm1.615-5.36c0 .596-.053 1.179-.156 1.746a1.235 1.235 0 0 1-1.559.97c-2.01-.583-3.87-1.324-5.687-2.111l.002.001a.503.503 0 0 1 .013-.93c1.802-.713 3.606-1.48 5.416-2.437.727-.385 1.62.04 1.782.846.124.619.19 1.26.19 1.915zm-6.847 7.713c.383.726-.04 1.61-.842 1.78a9.67 9.67 0 0 1-2.021.212 9.702 9.702 0 0 1-1.607-.132 1.233 1.233 0 0 1-.98-1.56c.583-2.003 1.322-3.854 2.107-5.666a.503.503 0 0 1 .93.014h.002c.704 1.78 1.468 3.565 2.411 5.352zM9.181 4.276a1.232 1.232 0 0 1 .844-1.782 9.745 9.745 0 0 1 3.692-.05c.722.129 1.176.852.973 1.557-.585 2.028-1.33 3.9-2.125 5.73a.503.503 0 0 1-.93-.013h-.001c-.715-1.81-1.49-3.623-2.453-5.442zm-5.374 2.51a9.759 9.759 0 0 1 2.635-2.747 1.233 1.233 0 0 1 1.787.42c1.021 1.88 1.83 3.763 2.578 5.65a.504.504 0 0 1-.668.648c-1.802-.783-3.644-1.53-5.64-2.13a1.234 1.234 0 0 1-.692-1.842zm6.864 7.223c-.763 1.753-1.486 3.55-2.072 5.488a1.23 1.23 0 0 1-1.838.679 9.77 9.77 0 0 1-2.662-2.53 1.23 1.23 0 0 1 .414-1.794c1.834-.99 3.67-1.783 5.51-2.513a.504.504 0 0 1 .648.668v.002zm2.72-3.872c.775-1.777 1.51-3.6 2.103-5.57a1.23 1.23 0 0 1 1.85-.672A9.791 9.791 0 0 1 20 6.497a1.23 1.23 0 0 1-.425 1.779c-1.842.998-3.688 1.796-5.538 2.53a.504.504 0 0 1-.648-.67zm-9.098 4.78a1.229 1.229 0 0 1-1.773-.81 9.735 9.735 0 0 1-.103-3.683 1.234 1.234 0 0 1 1.56-.981c2.02.584 3.888 1.328 5.713 2.119a.503.503 0 0 1-.014.93c-1.79.71-3.585 1.474-5.383 2.425z"/></svg>
+        </div>
+        <div class="tool-item__text">
+          <span class="tool-item__name">JUCE</span>
+          <span class="tool-item__level">Intermediate</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+
+<!-- =========================================
+     CONTACT
+     ========================================= -->
+<section class="contact-section" id="contact" aria-labelledby="contact-title">
+  <h2 class="section-title" id="contact-title">Contact</h2>
+  <div class="section-rule"></div>
+
+  <div class="contact-layout">
+    <div>
+      <div class="contact-headline">Ready to<br>make games<br><em>sound right.</em></div>
+      <ul class="contact-links">
+        <li><a href="mailto:igorszuniewiczwork@gmail.com">igorszuniewiczwork@gmail.com</a></li>
+        <li><a href="https://www.linkedin.com/in/igorszuniewicz">LinkedIn - /in/igorszuniewicz</a></li>
+        <li><a href="https://github.com/Szunias">GitHub - Szunias</a></li>
+        <li><a href="https://igorszuniewicz.itch.io">itch.io - igorszuniewicz</a></li>
+        <li><a href="https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6">Spotify - Igor Szuniewicz</a></li>
+        <li><a href="https://igorszuniewicz.com">igorszuniewicz.com</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="availability-card">
+        <h3 class="availability-card__title">Open to opportunities</h3>
+        <div class="availability-card__details">
+          Currently at XR Labs<br>
+          EU passport - can relocate<br>
+          Remote work OK<br>
+          <br>
+          EN (fluent) / PL (native)
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER / COLOPHON -->
+<footer class="colophon">
+  <span>Igor Szuniewicz &copy; 2026</span>
+  <span>Designed with care, set in Outfit, Georgia &amp; System UI</span>
+  <span>No templates were harmed</span>
+</footer>
+
+</body>
+</html>

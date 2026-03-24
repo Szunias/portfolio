@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — Igor Szuniewicz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FAFAF8;
+            --bg-alt: #F2F1EE;
+            --text: #1A1A1A;
+            --text-secondary: #6B6B6B;
+            --text-tertiary: #9B9B97;
+            --accent: #1a1a1a;
+            --accent-subtle: rgba(26, 26, 26, 0.06);
+            --border: #E5E5E3;
+            --border-light: #EDEDEB;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* -- NAV -- */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(250, 250, 248, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        nav.scrolled { border-bottom-color: var(--border); }
+
+        .nav-logo {
+            font-family: 'Newsreader', serif;
+            font-size: 1.125rem;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+        .nav-links a {
+            font-size: 0.8125rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            text-decoration: none;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--text);
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover { color: var(--text); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a.active { color: var(--text); }
+        .nav-links a.active::after { width: 100%; }
+
+        /* -- PAGE HEADER -- */
+        .page-header {
+            padding: 10rem 3rem 4rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .page-header h1 {
+            font-family: 'Newsreader', serif;
+            font-size: clamp(3rem, 6vw, 4.5rem);
+            font-weight: 300;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards 0.2s;
+        }
+
+        .page-header .subtitle {
+            font-size: 1.25rem;
+            font-weight: 300;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards 0.4s;
+        }
+
+        /* -- INTRO SECTION -- */
+        .intro-section {
+            padding: 3rem 3rem 5rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .intro-inner {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 4rem;
+            align-items: start;
+            padding-top: 3rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .intro-bio p {
+            font-size: 1.0625rem;
+            line-height: 1.85;
+            color: var(--text-secondary);
+            margin-bottom: 1.25rem;
+        }
+
+        .intro-bio p:last-child {
+            margin-bottom: 0;
+        }
+
+        .intro-details {
+            padding-top: 0.25rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .detail-row:first-child {
+            padding-top: 0;
+        }
+        .detail-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+        }
+        .detail-value {
+            font-size: 0.9375rem;
+            color: var(--text);
+            text-align: right;
+        }
+
+        /* -- SECTION SHARED -- */
+        .content-section {
+            padding: 5rem 3rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .content-section h2 {
+            font-family: 'Newsreader', serif;
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* -- TOOLKIT -- */
+        .toolkit-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .toolkit-row {
+            display: flex;
+            align-items: baseline;
+            padding: 1.125rem 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .toolkit-row:nth-child(odd) {
+            padding-right: 2.5rem;
+            border-right: 1px solid var(--border-light);
+        }
+
+        .toolkit-row:nth-child(even) {
+            padding-left: 2.5rem;
+        }
+
+        .toolkit-category {
+            font-size: 0.6875rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            width: 120px;
+            flex-shrink: 0;
+        }
+
+        .toolkit-items {
+            font-size: 0.9375rem;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        /* -- EDUCATION -- */
+        .education-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .education-entry {
+            padding: 1.75rem 0;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 2rem;
+        }
+
+        .education-entry:first-child {
+            padding-top: 0;
+        }
+
+        .education-name {
+            font-family: 'Newsreader', serif;
+            font-size: 1.25rem;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.35rem;
+        }
+
+        .education-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .education-status {
+            font-size: 0.6875rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* -- PRINCIPLES -- */
+        .principles-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem 3rem;
+        }
+
+        .principle {
+            padding: 0;
+        }
+
+        .principle-title {
+            font-family: 'Newsreader', serif;
+            font-size: 1.1875rem;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.625rem;
+            color: var(--text);
+        }
+
+        .principle-desc {
+            font-size: 0.9375rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        /* -- CTA STRIP -- */
+        .cta-strip {
+            padding: 5rem 3rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .cta-inner {
+            background: var(--bg-alt);
+            padding: 3.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .cta-text h3 {
+            font-family: 'Newsreader', serif;
+            font-size: 1.75rem;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-text p {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+        }
+
+        .cta-text a {
+            color: var(--text-secondary);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color 0.2s;
+        }
+        .cta-text a:hover {
+            color: var(--text);
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 2rem;
+            background: var(--text);
+            color: var(--bg);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .btn-primary:hover {
+            background: #333;
+            transform: translateY(-1px);
+        }
+
+        /* -- FOOTER -- */
+        footer {
+            padding: 3rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            font-size: 0.8125rem;
+            color: var(--text-tertiary);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+        .footer-links a {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--text); }
+
+        /* -- ANIMATIONS -- */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* -- RESPONSIVE -- */
+        @media (max-width: 1024px) {
+            .intro-inner {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .principles-grid {
+                gap: 2rem;
+            }
+            .toolkit-row:nth-child(odd) {
+                padding-right: 1.5rem;
+            }
+            .toolkit-row:nth-child(even) {
+                padding-left: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 1.25rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .nav-links a { font-size: 0.75rem; }
+
+            .page-header {
+                padding: 8rem 1.5rem 3rem;
+            }
+            .page-header h1 {
+                font-size: 2.75rem;
+            }
+
+            .intro-section {
+                padding: 2rem 1.5rem 4rem;
+            }
+            .intro-inner {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .content-section {
+                padding: 3.5rem 1.5rem;
+            }
+
+            .toolkit-grid {
+                grid-template-columns: 1fr;
+            }
+            .toolkit-row:nth-child(odd) {
+                padding-right: 0;
+                border-right: none;
+            }
+            .toolkit-row:nth-child(even) {
+                padding-left: 0;
+            }
+
+            .principles-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .education-entry {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .cta-strip {
+                padding: 3.5rem 1.5rem;
+            }
+            .cta-inner {
+                flex-direction: column;
+                text-align: center;
+                padding: 2.5rem 2rem;
+            }
+
+            footer {
+                padding: 2rem 1.5rem;
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links { gap: 1rem; }
+            .page-header h1 { font-size: 2.25rem; }
+            .toolkit-category { width: 100px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav id="nav">
+        <a href="#" class="nav-logo">Igor Szuniewicz</a>
+        <ul class="nav-links">
+            <li><a href="#">Projects</a></li>
+            <li><a href="#" class="active">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <header class="page-header">
+        <h1>About</h1>
+        <p class="subtitle">Sound designer, programmer, problem solver.</p>
+    </header>
+
+    <!-- INTRO: BIO + DETAILS -->
+    <section class="intro-section">
+        <div class="intro-inner reveal">
+            <div class="intro-bio">
+                <p>
+                    I'm Igor Szuniewicz, a game audio student at Howest DAE in Belgium.
+                    I work the full audio pipeline&hairsp;&mdash;&hairsp;from recording foley and designing sounds
+                    to implementing them in Wwise, FMOD, and Unreal Engine.
+                </p>
+                <p>
+                    I got into game audio because I wanted to make the sounds people hear
+                    when they play. Not music (though I do that too)&hairsp;&mdash;&hairsp;the footsteps,
+                    the ambient hum of a spaceship, the click of a menu button. The stuff
+                    that makes a game feel real.
+                </p>
+                <p>
+                    Before Belgium, I studied at a bilingual high school in Poland and
+                    attended music school. I speak English, Polish, and Dutch.
+                </p>
+            </div>
+            <div class="intro-details">
+                <div class="detail-row">
+                    <span class="detail-label">Location</span>
+                    <span class="detail-value">Kortrijk, Belgium</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Education</span>
+                    <span class="detail-value">Howest DAE</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Focus</span>
+                    <span class="detail-value">Sound Integration</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value">Looking for internship</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Period</span>
+                    <span class="detail-value">Jan&ndash;Jun 2026</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Languages</span>
+                    <span class="detail-value">EN, PL, NL</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TOOLKIT -->
+    <section class="content-section">
+        <h2 class="reveal">Toolkit</h2>
+        <div class="toolkit-grid reveal" style="transition-delay: 0.1s">
+            <div class="toolkit-row">
+                <span class="toolkit-category">Middleware</span>
+                <span class="toolkit-items">Wwise, FMOD</span>
+            </div>
+            <div class="toolkit-row">
+                <span class="toolkit-category">Engines</span>
+                <span class="toolkit-items">Unreal Engine 5, Unity</span>
+            </div>
+            <div class="toolkit-row">
+                <span class="toolkit-category">DAWs</span>
+                <span class="toolkit-items">Reaper, Pro Tools</span>
+            </div>
+            <div class="toolkit-row">
+                <span class="toolkit-category">Programming</span>
+                <span class="toolkit-items">C++, Python, C#, Blueprints</span>
+            </div>
+            <div class="toolkit-row">
+                <span class="toolkit-category">Frameworks</span>
+                <span class="toolkit-items">JUCE, MetaSounds</span>
+            </div>
+            <div class="toolkit-row">
+                <span class="toolkit-category">Other</span>
+                <span class="toolkit-items">Git, Perforce</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section class="content-section">
+        <h2 class="reveal">Education</h2>
+        <div class="education-list reveal" style="transition-delay: 0.1s">
+            <div class="education-entry">
+                <div>
+                    <div class="education-name">Howest DAE</div>
+                    <div class="education-desc">Digital Arts and Entertainment, Game Development: Sound Integration</div>
+                </div>
+                <span class="education-status">Ongoing</span>
+            </div>
+            <div class="education-entry">
+                <div>
+                    <div class="education-name">Nicolaus Copernicus High School</div>
+                    <div class="education-desc">Bilingual, Mathematics &amp; Physics</div>
+                </div>
+                <span class="education-status">Graduated</span>
+            </div>
+            <div class="education-entry">
+                <div>
+                    <div class="education-name">First Degree State Music School</div>
+                    <div class="education-desc">Piano &amp; Trumpet</div>
+                </div>
+                <span class="education-status">Graduated</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRINCIPLES -->
+    <section class="content-section">
+        <h2 class="reveal">How I Work</h2>
+        <div class="principles-grid reveal" style="transition-delay: 0.1s">
+            <div class="principle">
+                <div class="principle-title">Mix Hierarchy</div>
+                <p class="principle-desc">Every sound has a priority. I build mixes where the most important thing is always clear.</p>
+            </div>
+            <div class="principle">
+                <div class="principle-title">Budget Awareness</div>
+                <p class="principle-desc">Voice counts, memory limits, CPU. I design audio that ships, not audio that demos.</p>
+            </div>
+            <div class="principle">
+                <div class="principle-title">Parametric Sound</div>
+                <p class="principle-desc">One asset, many variations. RTPCs, randomization, and procedural generation over brute-force samples.</p>
+            </div>
+            <div class="principle">
+                <div class="principle-title">Collaboration</div>
+                <p class="principle-desc">Audio touches everything. I work closely with designers, programmers, and artists.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA STRIP -->
+    <section class="cta-strip">
+        <div class="cta-inner reveal">
+            <div class="cta-text">
+                <h3>Want to work together?</h3>
+                <p>Reach me at <a href="mailto:igorszuniewiczwork@gmail.com">igorszuniewiczwork@gmail.com</a></p>
+            </div>
+            <a href="mailto:igorszuniewiczwork@gmail.com" class="btn-primary">Get in touch &rarr;</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact">
+        <span class="footer-left">&copy; 2026 Igor Szuniewicz</span>
+        <div class="footer-links">
+            <a href="mailto:igorszuniewiczwork@gmail.com">Email</a>
+            <a href="#">GitHub</a>
+            <a href="#">LinkedIn</a>
+            <a href="#">Spotify</a>
+        </div>
+    </footer>
+
+    <script>
+        // Nav scroll effect
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 40);
+        });
+
+        // Reveal on scroll
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            },
+            { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+        );
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

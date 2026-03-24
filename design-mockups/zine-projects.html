@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>projects — igor szuniewicz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        /* ── RESET & BASE ── */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background: #F7F5F0;
+            color: #1A1A1A;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Paper grain texture via noise SVG overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+        }
+
+        /* Secondary grain layer */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.02;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(180, 160, 120, 0.15) 2px,
+                rgba(180, 160, 120, 0.15) 3px
+            );
+        }
+
+        /* ── VARS ── */
+        :root {
+            --pink: #FF3366;
+            --blue: #3366FF;
+            --yellow: #FFD600;
+            --bg: #F7F5F0;
+            --text: #1A1A1A;
+            --text-light: #5A5650;
+            --mono: 'Space Mono', monospace;
+            --serif: 'Instrument Serif', serif;
+        }
+
+        a { color: inherit; }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(247, 245, 240, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 2px dashed #D0CBC2;
+        }
+
+        .nav-name {
+            font-family: var(--mono);
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-star {
+            display: inline-block;
+            font-size: 1rem;
+            color: var(--pink);
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.75rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: var(--mono);
+            font-size: 0.8125rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--pink);
+        }
+
+        .nav-links a::before {
+            content: '[';
+            opacity: 0;
+            transition: opacity 0.2s;
+            margin-right: 2px;
+        }
+        .nav-links a::after {
+            content: ']';
+            opacity: 0;
+            transition: opacity 0.2s;
+            margin-left: 2px;
+        }
+        .nav-links a:hover::before,
+        .nav-links a:hover::after {
+            opacity: 1;
+        }
+
+        .nav-links a.nav-active {
+            color: var(--pink);
+            font-weight: 700;
+        }
+        .nav-links a.nav-active::before {
+            opacity: 1;
+        }
+        .nav-links a.nav-active::after {
+            opacity: 1;
+        }
+
+        /* ── PAGE HEADER ── */
+        .page-header {
+            padding: 9rem 2rem 2.5rem;
+            max-width: 1060px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .page-badge {
+            display: inline-block;
+            font-family: var(--mono);
+            font-size: 0.6875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            background: var(--yellow);
+            color: var(--text);
+            padding: 0.3rem 0.75rem;
+            border-radius: 3px;
+            transform: rotate(2deg);
+            box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.25rem;
+        }
+
+        .page-title {
+            font-family: var(--serif);
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            font-family: var(--mono);
+            font-size: 0.9375rem;
+            color: var(--text-light);
+            line-height: 1.6;
+            max-width: 560px;
+            padding-bottom: 2rem;
+            border-bottom: 2px dashed #D0CBC2;
+        }
+
+        /* Decorative doodles on page header */
+        .doodle {
+            position: absolute;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .doodle-star-1 {
+            top: 8.5rem;
+            right: 3rem;
+            font-size: 1.75rem;
+            color: var(--pink);
+            animation: spin 5s linear infinite;
+        }
+
+        .doodle-circle {
+            top: 10rem;
+            right: 8rem;
+            width: 50px;
+            height: 50px;
+            border: 3px dashed var(--blue);
+            border-radius: 50%;
+            opacity: 0.2;
+            animation: spin 10s linear infinite reverse;
+        }
+
+        .doodle-zigzag {
+            bottom: 1.5rem;
+            right: 2rem;
+            font-size: 1.5rem;
+            color: var(--yellow);
+            opacity: 0.5;
+            transform: rotate(12deg);
+        }
+
+        /* ── FILTER BAR ── */
+        .filter-bar {
+            padding: 0 2rem 2.5rem;
+            max-width: 1060px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.65rem;
+        }
+
+        .filter-pill {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.4rem 0.85rem;
+            border-radius: 3px;
+            cursor: pointer;
+            border: 2px dashed var(--text-light);
+            background: transparent;
+            color: var(--text-light);
+            letter-spacing: 0.02em;
+            transition: all 0.2s;
+            box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.08);
+            line-height: 1;
+        }
+
+        .filter-pill:hover {
+            border-color: var(--pink);
+            color: var(--pink);
+        }
+
+        .filter-pill.active {
+            background: var(--pink);
+            color: white;
+            border-color: var(--pink);
+            border-style: solid;
+            box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Slight rotations on each pill */
+        .filter-pill:nth-child(1) { transform: rotate(-1deg); }
+        .filter-pill:nth-child(2) { transform: rotate(1.5deg); }
+        .filter-pill:nth-child(3) { transform: rotate(-2deg); }
+        .filter-pill:nth-child(4) { transform: rotate(1deg); }
+        .filter-pill:nth-child(5) { transform: rotate(-1.5deg); }
+        .filter-pill:nth-child(6) { transform: rotate(2deg); }
+
+        /* Keep rotation on hover/active */
+        .filter-pill:nth-child(1):hover, .filter-pill:nth-child(1).active { transform: rotate(-1deg) scale(1.03); }
+        .filter-pill:nth-child(2):hover, .filter-pill:nth-child(2).active { transform: rotate(1.5deg) scale(1.03); }
+        .filter-pill:nth-child(3):hover, .filter-pill:nth-child(3).active { transform: rotate(-2deg) scale(1.03); }
+        .filter-pill:nth-child(4):hover, .filter-pill:nth-child(4).active { transform: rotate(1deg) scale(1.03); }
+        .filter-pill:nth-child(5):hover, .filter-pill:nth-child(5).active { transform: rotate(-1.5deg) scale(1.03); }
+        .filter-pill:nth-child(6):hover, .filter-pill:nth-child(6).active { transform: rotate(2deg) scale(1.03); }
+
+        /* ── MASONRY GRID ── */
+        .projects-masonry {
+            max-width: 1060px;
+            margin: 0 auto;
+            padding: 0 2rem 3rem;
+            columns: 2;
+            column-gap: 1.5rem;
+        }
+
+        .project-card {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+            border-radius: 6px;
+            overflow: hidden;
+            text-decoration: none;
+            display: block;
+            position: relative;
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Individual card hover tilts — alternating directions */
+        .project-card:nth-child(odd):hover {
+            transform: rotate(-1deg) translateY(-4px);
+        }
+        .project-card:nth-child(even):hover {
+            transform: rotate(1deg) translateY(-4px);
+        }
+
+        /* Card thumbnail area */
+        .card-thumb {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-thumb-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--serif);
+            font-size: 3rem;
+            opacity: 0.15;
+            color: white;
+        }
+
+        /* Card body */
+        .card-body {
+            padding: 1.5rem 1.5rem 1.75rem;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-number {
+            font-family: var(--mono);
+            font-size: 0.6875rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .card-year {
+            font-family: var(--mono);
+            font-size: 0.6875rem;
+            letter-spacing: 0.04em;
+        }
+
+        .card-title {
+            font-family: var(--serif);
+            font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-desc {
+            font-family: var(--mono);
+            font-size: 0.8125rem;
+            line-height: 1.55;
+            margin-bottom: 1.1rem;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+        }
+
+        .card-arrow {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            z-index: 2;
+        }
+
+        .project-card:hover .card-arrow {
+            transform: translate(3px, -3px);
+        }
+
+        /* ── STICKERS (from option4) ── */
+        .sticker {
+            font-family: var(--mono);
+            font-size: 0.6875rem;
+            font-weight: 700;
+            padding: 0.25rem 0.55rem;
+            border-radius: 3px;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            line-height: 1;
+            box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .sticker-pink {
+            background: var(--pink);
+            color: white;
+            transform: rotate(-2deg);
+        }
+        .sticker-blue {
+            background: var(--blue);
+            color: white;
+            transform: rotate(1.5deg);
+        }
+        .sticker-yellow {
+            background: var(--yellow);
+            color: #1A1A1A;
+            transform: rotate(-1deg);
+        }
+        .sticker-green {
+            background: #00CC66;
+            color: white;
+            transform: rotate(2deg);
+        }
+        .sticker-orange {
+            background: #FF6B2B;
+            color: white;
+            transform: rotate(-1.5deg);
+        }
+        .sticker-purple {
+            background: #9B59B6;
+            color: white;
+            transform: rotate(1deg);
+        }
+        .sticker-teal {
+            background: #0D9488;
+            color: white;
+            transform: rotate(-1deg);
+        }
+
+        /* ── DARK CARD THEME ── */
+        .card-dark .card-number {
+            color: rgba(255, 255, 255, 0.35);
+        }
+        .card-dark .card-year {
+            color: rgba(255, 255, 255, 0.35);
+        }
+        .card-dark .card-title {
+            color: #FFFFFF;
+        }
+        .card-dark .card-desc {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .card-dark .card-arrow {
+            color: rgba(255, 255, 255, 0.2);
+        }
+        .card-dark:hover .card-arrow {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ── LIGHT CARD THEME (dashed border) ── */
+        .card-light {
+            border: 2px dashed #C8C3BA;
+            background: #FFFFFF;
+        }
+        .card-light .card-thumb {
+            border-bottom: 2px dashed #C8C3BA;
+        }
+        .card-light .card-number {
+            color: var(--text-light);
+        }
+        .card-light .card-year {
+            color: var(--text-light);
+        }
+        .card-light .card-title {
+            color: var(--text);
+        }
+        .card-light .card-desc {
+            color: var(--text-light);
+        }
+        .card-light .card-arrow {
+            color: rgba(0, 0, 0, 0.15);
+        }
+        .card-light:hover .card-arrow {
+            color: var(--pink);
+        }
+        .card-light .card-thumb-inner {
+            color: var(--text);
+        }
+
+        /* Tape decoration */
+        .tape {
+            position: absolute;
+            width: 72px;
+            height: 22px;
+            background: rgba(255, 214, 0, 0.35);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .tape-tl {
+            top: -5px;
+            left: 18px;
+            transform: rotate(-8deg);
+        }
+
+        .tape-tr {
+            top: -5px;
+            right: 18px;
+            transform: rotate(5deg);
+        }
+
+        .tape-bl {
+            bottom: -5px;
+            left: 22px;
+            transform: rotate(4deg);
+        }
+
+        /* ── CARD-SPECIFIC BACKGROUNDS ── */
+        .card-shadow-frames {
+            background: #3A0A0A;
+            border: 2px solid #5C1B1B;
+        }
+        .card-shadow-frames .card-thumb {
+            background: linear-gradient(135deg, #2A0808 0%, #4A1010 50%, #2A0808 100%);
+            aspect-ratio: 4 / 3;
+        }
+
+        .card-ntd {
+            background: #1F0A2E;
+            border: 2px solid #3D1B5C;
+        }
+        .card-ntd .card-thumb {
+            background: linear-gradient(135deg, #180722 0%, #2E1045 50%, #180722 100%);
+            aspect-ratio: 1 / 1;
+        }
+
+        .card-transientica {
+            background: #0D1B2A;
+            border: 2px solid #1B3A5C;
+        }
+        .card-transientica .card-thumb {
+            background: linear-gradient(135deg, #091420 0%, #122640 50%, #091420 100%);
+            aspect-ratio: 4 / 3;
+        }
+
+        .card-audioq .card-thumb {
+            background: linear-gradient(135deg, #EDEBE6 0%, #D8D4CC 50%, #EDEBE6 100%);
+            aspect-ratio: 1 / 1;
+        }
+
+        .card-ray {
+            background: #3D2200;
+            border: 2px solid #5C3A0A;
+        }
+        .card-ray .card-thumb {
+            background: linear-gradient(135deg, #2E1A00 0%, #4A2F08 50%, #2E1A00 100%);
+            aspect-ratio: 4 / 3;
+        }
+
+        .card-amorak {
+            background: #0A2A12;
+            border: 2px solid #1B5C2A;
+        }
+        .card-amorak .card-thumb {
+            background: linear-gradient(135deg, #071E0C 0%, #123820 50%, #071E0C 100%);
+            aspect-ratio: 1 / 1;
+        }
+
+        /* ── BOTTOM TEXT ── */
+        .bottom-text {
+            max-width: 1060px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem 3.5rem;
+            border-top: 2px dashed #D0CBC2;
+        }
+
+        .bottom-text p {
+            font-family: var(--mono);
+            font-size: 0.875rem;
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        .bottom-text a {
+            color: var(--blue);
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s;
+        }
+
+        .bottom-text a:hover {
+            color: var(--pink);
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px dashed #D0CBC2;
+            margin-top: 0;
+        }
+
+        .footer-text {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--text-light);
+            letter-spacing: 0.02em;
+        }
+
+        .footer-text a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-text a:hover {
+            color: var(--pink);
+        }
+
+        .footer-text .sep {
+            margin: 0 0.5rem;
+            opacity: 0.4;
+        }
+
+        /* ── FILTERING ANIMATION ── */
+        .project-card.hiding {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+            position: absolute;
+            visibility: hidden;
+        }
+
+        .project-card.showing {
+            opacity: 1;
+            transform: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        /* ── EMPTY STATE ── */
+        .no-results {
+            display: none;
+            font-family: var(--mono);
+            font-size: 0.9375rem;
+            color: var(--text-light);
+            text-align: center;
+            padding: 4rem 2rem;
+            line-height: 1.7;
+        }
+
+        .no-results.visible {
+            display: block;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 1.25rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-links a {
+                font-size: 0.75rem;
+            }
+
+            .page-header {
+                padding: 8rem 1.5rem 2rem;
+            }
+
+            .page-title {
+                font-size: 2.25rem;
+            }
+
+            .page-subtitle {
+                font-size: 0.875rem;
+            }
+
+            .filter-bar {
+                padding: 0 1.5rem 2rem;
+                gap: 0.5rem;
+            }
+
+            .filter-pill {
+                font-size: 0.6875rem;
+                padding: 0.35rem 0.7rem;
+            }
+
+            .projects-masonry {
+                columns: 1;
+                padding: 0 1.25rem 2.5rem;
+            }
+
+            .card-body {
+                padding: 1.25rem 1.25rem 1.5rem;
+            }
+
+            .bottom-text {
+                padding: 1.25rem 1.25rem 3rem;
+            }
+
+            .doodle-star-1,
+            .doodle-circle {
+                display: none;
+            }
+
+            footer {
+                padding: 2rem 1.25rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-name {
+                font-size: 0.75rem;
+            }
+
+            .nav-links {
+                gap: 0.75rem;
+            }
+
+            .nav-links a {
+                font-size: 0.6875rem;
+            }
+
+            .page-header {
+                padding: 7rem 1.25rem 1.75rem;
+            }
+
+            .page-title {
+                font-size: 1.875rem;
+            }
+
+            .filter-bar {
+                padding: 0 1.25rem 1.75rem;
+            }
+
+            .card-title {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── NAV ── -->
+    <nav>
+        <a href="option4-indie-zine.html" class="nav-name">
+            <span class="nav-star">&#10038;</span>
+            igor szuniewicz
+        </a>
+        <ul class="nav-links">
+            <li><a href="#" class="nav-active">projects</a></li>
+            <li><a href="#">about</a></li>
+            <li><a href="#">contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- ── PAGE HEADER ── -->
+    <section class="page-header">
+        <!-- Doodles -->
+        <div class="doodle doodle-star-1">&#10038;</div>
+        <div class="doodle doodle-circle"></div>
+        <div class="doodle doodle-zigzag">&#12336;&#12336;&#12336;</div>
+
+        <span class="page-badge">portfolio</span>
+        <h1 class="page-title">stuff i've made</h1>
+        <p class="page-subtitle">games, tools, weird experiments, and the occasional score.</p>
+    </section>
+
+    <!-- ── FILTER BAR ── -->
+    <div class="filter-bar">
+        <button class="filter-pill active" data-filter="all">all</button>
+        <button class="filter-pill" data-filter="game-audio">game audio</button>
+        <button class="filter-pill" data-filter="sound-design">sound design</button>
+        <button class="filter-pill" data-filter="dev-tools">dev tools</button>
+        <button class="filter-pill" data-filter="ml-audio">ml / audio</button>
+        <button class="filter-pill" data-filter="music">music</button>
+    </div>
+
+    <!-- ── PROJECTS MASONRY ── -->
+    <div class="projects-masonry" id="projects-grid">
+
+        <!-- Card 1 — Shadow Frames -->
+        <a href="#" class="project-card card-dark card-shadow-frames showing" data-category="game-audio">
+            <div class="tape tape-tl"></div>
+            <span class="card-arrow">&#8599;</span>
+            <div class="card-thumb">
+                <div class="card-thumb-inner">&#9760;</div>
+            </div>
+            <div class="card-body">
+                <div class="card-meta">
+                    <span class="card-number">01</span>
+                    <span class="card-year">2025</span>
+                </div>
+                <h3 class="card-title">shadow frames</h3>
+                <p class="card-desc">horror game. audio is your only weapon.</p>
+                <div class="card-tags">
+                    <span class="sticker sticker-orange">wwise</span>
+                    <span class="sticker sticker-blue">unreal</span>
+                    <span class="sticker sticker-green">c++</span>
+                </div>
+            </div>
+        </a>
+
+        <!-- Card 2 — Not Today, Darling! -->
+        <a href="#" class="project-card card-dark card-ntd showing" data-category="game-audio">
+            <span class="card-arrow">&#8599;</span>
+            <div class="card-thumb">
+                <div class="card-thumb-inner">&#9829;</div>
+            </div>
+            <div class="card-body">
+                <div class="card-meta">
+                    <span class="card-number">02</span>
+                    <span class="card-year">2025</span>
+                </div>
+                <h3 class="card-title">not today, darling!</h3>
+                <p class="card-desc">solo audio designer. 70 wwise events.</p>
+                <div class="card-tags">
+                    <span class="sticker sticker-orange">wwise</span>
+                    <span class="sticker sticker-purple">metasounds</span>
+                </div>
+            </div>
+        </a>
+
+        <!-- Card 3 — Transientica -->
+        <a href="#" class="project-card card-dark card-transientica showing" data-category="ml-audio">
+            <div class="tape tape-tr"></div>
+            <span class="card-arrow">&#8599;</span>
+            <div class="card-thumb">
+                <div class="card-thumb-inner">&#9041;</div>
+            </div>
+            <div class="card-body">
+                <div class="card-meta">
+                    <span class="card-number">03</span>
+                    <span class="card-year">2025</span>
+                </div>
+                <h3 class="card-title">transientica</h3>
+                <p class="card-desc">ml audio classifier &mdash; 92% accuracy, 45ms</p>
+                <div class="card-tags">
+                    <span class="sticker sticker-yellow">python</span>
+                    <span class="sticker sticker-pink">svm</span>
+                </div>
+            </div>
+        </a>
+
+        <!-- Card 4 — AudioQ -->
+        <a href="#" class="project-card card-light card-audioq showing" data-category="dev-tools">
+            <span class="card-arrow">&#8599;</span>
+            <div class="card-thumb">
+                <div class="card-thumb-inner">&#9835;</div>
+            </div>
+            <div class="card-body">
+                <div class="card-meta">
+                    <span class="card-number">04</span>
+                    <span class="card-year">2024</span>
+                </div>
+                <h3 class="card-title">audioq</h3>
+                <p class="card-desc">vst sampler plugin built from scratch</p>
+                <div class="card-tags">
+                    <span class="sticker sticker-teal">juce</span>
+                    <span class="sticker sticker-green">c++</span>
+                </div>
+            </div>
+        </a>
+
+        <!-- Card 5 — Ray Animation -->
+        <a href="#" class="project-card card-dark card-ray showing" data-category="music">
+            <div class="tape tape-bl"></div>
+            <span class="card-arrow">&#8599;</span>
+            <div class="card-thumb">
+                <div class="card-thumb-inner">&#9836;</div>
+            </div>
+            <div class="card-body">
+                <div class="card-meta">
+                    <span class="card-number">05</span>
+                    <span class="card-year">2024</span>
+                </div>
+                <h3 class="card-title">ray animation</h3>
+                <p class="card-desc">disco-funk score in 8 days. composer dropped out.</p>
+                <div class="card-tags">
+                    <span class="sticker sticker-pink">reaper</span>
+                    <span class="sticker sticker-blue">orchestral</span>
+                </div>
+            </div>
+        </a>
+
+        <!-- Card 6 — Amorak -->
+        <a href="#" class="project-card card-dark card-amorak showing" data-category="sound-design">
+            <span class="card-arrow">&#8599;</span>
+            <div class="card-thumb">
+                <div class="card-thumb-inner">&#9763;</div>
+            </div>
+            <div class="card-body">
+                <div class="card-meta">
+                    <span class="card-number">06</span>
+                    <span class="card-year">2024</span>
+                </div>
+                <h3 class="card-title">amorak</h3>
+                <p class="card-desc">creature sound design for horror animation</p>
+                <div class="card-tags">
+                    <span class="sticker sticker-yellow">pro tools</span>
+                    <span class="sticker sticker-pink">reaper</span>
+                </div>
+            </div>
+        </a>
+
+    </div>
+
+    <!-- ── NO RESULTS (hidden by default) ── -->
+    <div class="no-results" id="no-results">
+        nothing here yet &mdash; try another filter?
+    </div>
+
+    <!-- ── BOTTOM TEXT ── -->
+    <div class="bottom-text">
+        <p>that's not everything &mdash; i've done 13+ projects total. <a href="#">see the full list &#8594;</a></p>
+    </div>
+
+    <!-- ── FOOTER ── -->
+    <footer>
+        <p class="footer-text">
+            &copy; 2026 igor szuniewicz
+            <span class="sep">/</span>
+            <a href="#">github</a>
+            <span class="sep">/</span>
+            <a href="#">linkedin</a>
+            <span class="sep">/</span>
+            <a href="#">email</a>
+            <span class="sep">/</span>
+            <a href="#">showreel</a>
+        </p>
+    </footer>
+
+    <!-- ── FILTER JS ── -->
+    <script>
+        (function () {
+            const pills = document.querySelectorAll('.filter-pill');
+            const cards = document.querySelectorAll('.project-card');
+            const grid = document.getElementById('projects-grid');
+            const noResults = document.getElementById('no-results');
+
+            pills.forEach(function (pill) {
+                pill.addEventListener('click', function () {
+                    // Update active pill
+                    pills.forEach(function (p) { p.classList.remove('active'); });
+                    pill.classList.add('active');
+
+                    const filter = pill.getAttribute('data-filter');
+                    let visibleCount = 0;
+
+                    cards.forEach(function (card) {
+                        const category = card.getAttribute('data-category');
+                        if (filter === 'all' || category === filter) {
+                            card.classList.remove('hiding');
+                            card.classList.add('showing');
+                            card.style.display = '';
+                            visibleCount++;
+                        } else {
+                            card.classList.remove('showing');
+                            card.classList.add('hiding');
+                            // Use a timeout so the CSS transition can play before hiding
+                            setTimeout(function () {
+                                if (card.classList.contains('hiding')) {
+                                    card.style.display = 'none';
+                                }
+                            }, 300);
+                        }
+                    });
+
+                    // Show/hide empty state
+                    if (visibleCount === 0) {
+                        noResults.classList.add('visible');
+                    } else {
+                        noResults.classList.remove('visible');
+                    }
+                });
+            });
+        })();
+    </script>
+
+</body>
+</html>
