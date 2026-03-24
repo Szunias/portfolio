@@ -741,11 +741,11 @@
 
   <div class="concept-layout">
     <div class="concept-body">
-      <p class="drop-cap">The idea was stupid-simple: what if your voice was the controller? Beatbox a kick, snare, or hi-hat into your laptop mic, and a rhythm game responds like you're hitting real pads.</p>
+      <p class="drop-cap">Dead simple idea: what if your voice was the controller? Beatbox a kick, snare, or hi-hat into your laptop mic, and a rhythm game responds like you're hitting real pads.</p>
 
-      <p>The first version was terrible. 180ms of lag. Try clapping on a beat that responds almost a fifth of a second late. You can't. So the whole project became an obsession with one number: how low can the latency go?</p>
+      <p>The first version was terrible. 180ms of lag. Try clapping on a beat that responds almost a fifth of a second late - it's unplayable. So I spent the rest of the project trying to get that number down.</p>
 
-      <p>Answer: 45ms. Fast enough that your brain doesn't notice the gap. The system trains on your voice specifically - give it 30 examples of each sound and it learns how you beatbox. Different person, different mic, it recalibrates. My kick sounds nothing like yours, and it doesn't have to.</p>
+      <p>Answer: 45ms. Fast enough that it feels instant. The system trains on your voice specifically - give it 30 examples of each sound and it learns how you beatbox. Different person, different mic - just retrain it and it adjusts. My kick sounds nothing like yours, and that's fine - the model adapts.</p>
     </div>
 
     <aside class="concept-sidebar reveal-stagger">
@@ -803,7 +803,7 @@
       <div class="system-item__title-wrap">
         <h3 class="system-item__title">Hear the Sound, Classify It, Respond</h3>
       </div>
-      <p class="system-item__desc">Mic audio hits a 512-sample FFT window (11ms of sound). Spectral centroid, zero-crossing rate, and envelope shape get extracted. SVM classifies the hit in 2ms. Result flies to Unity over UDP. Total time from mouth to game: under 45ms. A neural net would have taken 15ms just on inference - that's why I picked SVM.</p>
+      <p class="system-item__desc">Mic audio hits a 512-sample FFT window (11ms of sound). Spectral centroid, zero-crossing rate, and envelope shape get extracted. SVM classifies the hit in 2ms. Result gets sent to Unity over UDP. Total time from mouth to game: under 45ms. A neural net would have taken 15ms just on inference - that's why I picked SVM.</p>
     </div>
 
     <div class="system-item">
@@ -817,7 +817,7 @@
       <div class="system-item__title-wrap">
         <h3 class="system-item__title">Two Processes, One Game</h3>
       </div>
-      <p class="system-item__desc">Python does the audio math. Unity runs the game. They talk over OSC on localhost. This sounds like overengineering, but it saved me constantly. I could tweak the classifier, retrain it, and test it without restarting Unity. And when the game crashed (often), the audio pipeline just kept running.</p>
+      <p class="system-item__desc">Python does the audio math. Unity runs the game. They talk over OSC on localhost. Seems like overkill, but it was worth it. I could tweak the classifier, retrain it, and test it without restarting Unity. And when the game crashed (often), the audio pipeline just kept running.</p>
     </div>
   </div>
 </section>
@@ -832,9 +832,9 @@
     <div class="challenge-card">
       <h3 class="challenge-card__title">180ms of Lag (Four Times Too Slow)</h3>
       <span class="challenge-card__label">What Was Hard</span>
-      <p class="challenge-card__text">The first working prototype recognized sounds. It just did it 180ms late. Try tapping a rhythm and hearing the response a fifth of a second later. Your brain rejects it immediately.</p>
+      <p class="challenge-card__text">The first working prototype recognized sounds. It just did it 180ms late. Try tapping a rhythm when the response comes 180ms late. It feels completely off.</p>
       <span class="challenge-card__label">What I Did</span>
-      <p class="challenge-card__text">Shaved time everywhere. Smaller FFT window. Circular buffer to kill I/O blocking. SVM instead of neural net (2ms inference vs 15ms). UDP instead of TCP. Each change saved 20-40ms. Final result: 45ms at 92% accuracy.</p>
+      <p class="challenge-card__text">I cut latency at every step. Smaller FFT window. Circular buffer to kill I/O blocking. SVM instead of neural net (2ms inference vs 15ms). UDP instead of TCP. Each change saved 20-40ms. Final result: 45ms at 92% accuracy.</p>
     </div>
 
     <div class="challenge-card">
@@ -865,8 +865,8 @@
 <!-- FOOTER -->
 <footer class="colophon">
   <span>Igor Szuniewicz &copy; 2026</span>
-  <span>Designed with care, set in DM Sans, Georgia &amp; System UI</span>
-  <span>No templates were harmed</span>
+  <span>Set in DM Sans, Georgia &amp; System UI</span>
+  <span>Built from scratch</span>
 </footer>
 
 <script>
