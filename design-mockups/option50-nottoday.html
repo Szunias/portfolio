@@ -1207,7 +1207,7 @@
       <span class="challenge-card__label">What Was Hard</span>
       <p class="challenge-card__text">First playtest with all 4 players: total chaos. 4 engines, power-ups firing, collisions, granny screams. Nobody could tell what was happening to their own kart. The audio was a wall of noise. I'd never mixed anything with this many simultaneous sources before.</p>
       <span class="challenge-card__label">What I Did</span>
-      <p class="challenge-card__text">Sound Class hierarchy with priority levels. Your kart always sits on top of the mix. Distant karts get attenuated and ducked. Power-ups and collisions run through concurrency limits - only the most relevant ones play. After the fix, playtesters stopped complaining about audio. They started complaining about each other. That's when I knew it worked.</p>
+      <p class="challenge-card__text">Built the Sound Class hierarchy described above, but the real lesson was figuring out the priority order. First attempt: equal priority for all karts. Disaster. Second attempt: your kart at max, others at half. Better, but power-ups still drowned everything out. Final version: three priority tiers with concurrency limits per tier. After the fix, playtesters stopped complaining about audio. They started complaining about each other. That's when I knew it worked.</p>
     </div>
 
     <div class="challenge-card">
@@ -1215,7 +1215,7 @@
       <span class="challenge-card__label">What Was Hard</span>
       <p class="challenge-card__text">I'd never touched MetaSounds before this project. Procedural engine sound is tricky - it can easily sound like a vacuum cleaner instead of a go-kart. The engine had to respond instantly to throttle changes and feel like it's actually powering something with wheels.</p>
       <span class="challenge-card__label">What I Did</span>
-      <p class="challenge-card__text">Mapped RPM, throttle position, and load directly to MetaSounds parameters. The big fix was pitch smoothing - without it, sudden input changes made the engine sound like a broken synthesizer. With it, the engine tracks player input frame by frame. Not perfect, but it sounds like a go-kart, not a robot.</p>
+      <p class="challenge-card__text">The parameter mapping was straightforward. The hard part was pitch smoothing - without it, sudden throttle changes made the engine jump between frequencies like a broken synthesizer. I added interpolation so the pitch ramps up and down instead of snapping. Small change, big difference. Not perfect, but close your eyes and you hear a go-kart, not a robot.</p>
     </div>
   </div>
 </section>

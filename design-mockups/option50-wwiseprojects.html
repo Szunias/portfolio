@@ -721,7 +721,7 @@
 
   <div class="concept-layout">
     <div class="concept-body">
-      <p class="drop-cap">This is where I actually learned Wwise. Not from tutorials, but from hitting walls. 256 voices blew up in a zombie shooter. Zone transitions sounded wrong in a platformer. An Android phone with 2 GB RAM told me my audio was too big.</p>
+      <p class="drop-cap">Tutorials teach you where the buttons are. Breaking things teaches you what the buttons actually do. 256 voices blew up in a zombie shooter. Zone transitions sounded wrong in a platformer. An Android phone with 2 GB RAM told me my audio was too big.</p>
 
       <p>Three solo school projects at DAE, spread across 2021-2024. None of them shipped. But I tracked memory, fought platform limits, and wrote real integration code. Each project broke something different, and each one taught me something I still use.</p>
 
@@ -800,25 +800,25 @@
     <div class="challenge-card">
       <h3 class="challenge-card__title">256 Voices Wasn't Enough</h3>
       <span class="challenge-card__label">What Was Hard</span>
-      <p class="challenge-card__text">Boney Boogaloo. Zombie wave shooter. Every gunshot, spawn sound, and death scream ate a voice. Hit the 256 voice limit within minutes of the first real playtest. Sounds were cutting out mid-play. I had no idea voice limits were even a thing before this.</p>
+      <p class="challenge-card__text">Sounds were cutting out mid-play. Gunshots would just vanish. I had no idea voice limits were even a thing before this. Took me an hour of debugging to realize the problem wasn't my code, it was Wwise running out of voices to assign.</p>
       <span class="challenge-card__label">What I Did</span>
-      <p class="challenge-card__text">Built 9 random containers so sounds vary without stacking identical instances. Trimmed silence off every file so voices release faster. Switched to ADPCM compression across the board. 44 sounds total, and the voice count finally stayed under the limit. First real lesson in "just because you can play it doesn't mean you should."</p>
+      <p class="challenge-card__text">The random containers handle variation, but the real fix was understanding voice priority. Gunshots need to play. A zombie grunt 30 meters away does not. I set up priority so close, loud sounds always win. Trimming silence off files was the other half - voices were being held open on dead air. First real lesson in "just because you can play it doesn't mean you should."</p>
     </div>
 
     <div class="challenge-card">
       <h3 class="challenge-card__title">Zone Transitions That Don't Sound Like a Hard Cut</h3>
       <span class="challenge-card__label">What Was Hard</span>
-      <p class="challenge-card__text">Ellen. Walking between areas sounded awful - the ambient audio just snapped from one mood to another. Forest to cave, silence to waterfall. It felt like someone flipped a switch instead of the player actually moving through a space.</p>
+      <p class="challenge-card__text">Walking between areas sounded awful. Forest to cave, silence to waterfall. It felt like someone flipped a switch instead of the player actually moving through a space. A 2-second fade wasn't enough either - it just sounded like a bad DJ crossfade.</p>
       <span class="challenge-card__label">What I Did</span>
-      <p class="challenge-card__text">Wwise State groups with 6.5-second crossfades between zones. The old ambient fades out while the new one fades in. Combined with 4 reverb buses tuned to room size, so the acoustic space changes smoothly too. Walk from a big cave into a tight corridor and you hear it shrink around you. No hard cuts anywhere.</p>
+      <p class="challenge-card__text">6.5 seconds was the sweet spot for the crossfade. Shorter felt rushed, longer felt laggy. But the crossfade alone wasn't enough - the reverb also had to change. Walk from a big cave into a tight corridor and you hear it shrink around you. Matching reverb to room size was what made it feel like a real space instead of two audio tracks fighting.</p>
     </div>
 
     <div class="challenge-card challenge-card--full">
       <h3 class="challenge-card__title">2 GB RAM and Every Kilobyte Counts</h3>
       <span class="challenge-card__label">What Was Hard</span>
-      <p class="challenge-card__text">Stomach Aches targeted cheap Android phones. 2 GB RAM shared between the game, the OS, and everything else. Loading all audio at once was out of the question. I needed the full Wwise toolkit - SoundBanks, silence substitution, zone streaming - just to fit.</p>
+      <p class="challenge-card__text">The first build crashed on load. All audio in memory at once - the phone just gave up. I had to rethink the entire loading strategy. You cannot treat a 2 GB Android phone like a PC with 16 GB.</p>
       <span class="challenge-card__label">What I Did</span>
-      <p class="challenge-card__text">Zone-based SoundBank loading: only the current zone lives in memory. Brain zone is 670 KB, Mouth is 384 KB, Stomach is 2.8 MB. The Wwise Silence plugin replaced actual audio files for quiet moments - that one trick alone saved 80% memory. The waterfall uses 3 distance layers driven by RTPC so it sounds right at every distance without loading three separate files at full quality. Cheap phone, full audio. It worked.</p>
+      <p class="challenge-card__text">The Wwise Silence plugin was the biggest win. Replacing actual WAV files with generated silence for quiet moments cut memory by 80% in one move. Zone-based SoundBank loading handles the rest - unload the previous zone before loading the next one. The waterfall was a special case: 3 RTPC-driven distance layers so it sounds right up close and far away without keeping three full-quality files resident. Total audio footprint per zone never exceeds 3 MB.</p>
     </div>
   </div>
 </section>
