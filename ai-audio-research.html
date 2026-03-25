@@ -596,83 +596,55 @@
   }
 
   /* =========================================
-     BEFORE / AFTER
+     CHALLENGES
      ========================================= */
-  .comparison-section {
+  .challenges-section {
     max-width: var(--page-max);
     margin: 0 auto;
     padding: 60px var(--margin) 60px;
     border-top: 1px solid var(--grey-rule);
   }
 
-  .comparison-grid {
+  .challenges-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-top: 10px;
+    gap: 32px;
   }
 
-  .comparison-card {
-    padding: 40px 32px;
-    text-align: center;
+  .challenge-card {
+    border-left: 3px solid var(--accent);
+    padding: 28px 32px;
+    background: var(--accent-light);
   }
 
-  .comparison-card--before {
-    border: 2px solid var(--red);
-    background: rgba(196, 60, 60, 0.04);
-  }
-
-  .comparison-card--after {
-    border: 2px solid var(--green);
-    background: rgba(58, 138, 74, 0.04);
-  }
-
-  .comparison-card__label {
-    font-family: var(--brand-secondary);
-    font-size: 10px;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    font-weight: 600;
-    margin-bottom: 16px;
-  }
-
-  .comparison-card--before .comparison-card__label {
-    color: var(--red);
-  }
-
-  .comparison-card--after .comparison-card__label {
-    color: var(--green);
-  }
-
-  .comparison-card__number {
+  .challenge-card__title {
     font-family: var(--serif);
-    font-size: clamp(36px, 5vw, 52px);
+    font-size: 22px;
     font-weight: 400;
-    line-height: 1;
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+
+  .challenge-card__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    display: block;
     margin-bottom: 8px;
   }
 
-  .comparison-card--before .comparison-card__number {
-    color: var(--red);
+  .challenge-card__text {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--grey);
+    margin-bottom: 20px;
   }
 
-  .comparison-card--after .comparison-card__number {
-    color: var(--green);
-  }
-
-  .comparison-card__unit {
-    font-family: var(--serif);
-    font-size: 18px;
-    font-weight: 400;
-  }
-
-  .comparison-card__verdict {
-    font-family: var(--brand-secondary);
-    font-size: 12px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--grey-light);
-    margin-top: 12px;
+  .challenge-card__text:last-child {
+    margin-bottom: 0;
   }
 
   /* =========================================
@@ -726,56 +698,6 @@
     color: var(--grey);
   }
 
-  /* =========================================
-     CACHE TABLE
-     ========================================= */
-  .table-section {
-    max-width: var(--page-max);
-    margin: 0 auto;
-    padding: 0 var(--margin) 60px;
-  }
-
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 15px;
-  }
-
-  .data-table th {
-    font-family: var(--brand-secondary);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--grey-light);
-    text-align: left;
-    padding: 12px 16px;
-    border-bottom: 2px solid var(--grey-rule);
-    font-weight: 500;
-  }
-
-  .data-table td {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--grey-rule);
-    font-family: var(--sans);
-    font-size: 15px;
-  }
-
-  .data-table tr:last-child td {
-    border-bottom: none;
-  }
-
-  .data-table .fast {
-    color: var(--green);
-    font-weight: 600;
-  }
-
-  .data-table .slow {
-    color: var(--red);
-  }
-
-  .data-table .mid {
-    color: var(--amber);
-  }
 
   /* =========================================
      CALLOUT
@@ -1003,6 +925,10 @@
     .video-grid {
       grid-template-columns: 1fr;
     }
+
+    .challenges-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   @media (max-width: 650px) {
@@ -1021,10 +947,6 @@
 
     .project-hero__meta {
       gap: 20px;
-    }
-
-    .comparison-grid {
-      grid-template-columns: 1fr;
     }
 
     .flow-grid {
@@ -1064,14 +986,6 @@
       gap: 12px;
     }
 
-    .data-table {
-      font-size: 13px;
-    }
-
-    .data-table th,
-    .data-table td {
-      padding: 10px 8px;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1251,7 +1165,7 @@
 <!-- MODEL RESULTS -->
 <section class="systems-section reveal" id="results" aria-labelledby="results-title">
   <span class="section-label">Results</span>
-  <h2 class="section-title" id="results-title">Measured Latency</h2>
+  <h2 class="section-title" id="results-title">Every Model Failed</h2>
   <div class="section-rule"></div>
 
   <div class="systems-grid">
@@ -1300,97 +1214,38 @@
       <p class="system-item__desc">Sounds the best by a clear margin. Sharp transients, clean output - the only model where the result sometimes sounds like a real recording. But the latency is a coin flip: 1.8 seconds on a good day, 3.5 on a bad one. No GPU needed, but you need internet. Best for stuff you can pre-generate overnight: cutscene effects, signature weapon sounds, trailer audio.</p>
     </div>
 
-    <div class="system-item">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">With Caching</h3>
-        <div class="system-item__latency system-item__latency--fast">35 - 90ms delivery</div>
-        <div class="system-item__quality">95 - 98% latency reduction</div>
-      </div>
-      <p class="system-item__desc">This is what made the whole project work. Every generated sound gets stored in memory, keyed by a SHA-256 hash of the prompt. Same request next time? Instant. Then client-side DSP (pitch shift, volume, reverb, filtering) turns one cached sample into 10+ variations. One gunshot becomes a whole magazine of different-sounding shots.</p>
-    </div>
   </div>
 </section>
 
-<!-- CACHE IMPACT TABLE -->
-<section class="table-section reveal" aria-labelledby="cache-table-title">
-  <span class="section-label">Data</span>
-  <h2 class="section-title" id="cache-table-title">Cache Impact by Scenario</h2>
+<!-- THEN I LOOKED AT THE CACHE LOGS -->
+<section class="closing-section reveal" aria-labelledby="cache-insight-title">
+  <span class="section-label">The Turning Point</span>
+  <h2 class="section-title" id="cache-insight-title">Then I Looked at the Cache Logs</h2>
   <div class="section-rule"></div>
 
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>Scenario</th>
-        <th>Cache Miss</th>
-        <th>Cache Hit</th>
-        <th>Pre-Generated</th>
-        <th>Perceived</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Footstep (first time)</td>
-        <td class="slow">2,400ms</td>
-        <td>-</td>
-        <td>-</td>
-        <td>Unacceptable</td>
-      </tr>
-      <tr>
-        <td>Footstep (repeat)</td>
-        <td>-</td>
-        <td class="fast">45ms</td>
-        <td>-</td>
-        <td>Excellent</td>
-      </tr>
-      <tr>
-        <td>Footstep (predicted)</td>
-        <td>-</td>
-        <td>-</td>
-        <td class="fast">&lt;10ms</td>
-        <td>Perfect</td>
-      </tr>
-      <tr>
-        <td>Ambience enter</td>
-        <td class="slow">3,200ms</td>
-        <td class="fast">120ms</td>
-        <td class="fast">&lt;20ms</td>
-        <td>Good</td>
-      </tr>
-      <tr>
-        <td>UI click</td>
-        <td class="slow">1,800ms</td>
-        <td class="fast">35ms</td>
-        <td class="fast">&lt;10ms</td>
-        <td>Excellent</td>
-      </tr>
-    </tbody>
-  </table>
-</section>
+  <div class="closing-body">
+    <p>Every model failed the speed test. The fastest local model (MMAudio Small) still needed 1,400ms. That's 85x slower than a single game frame. I'd added caching early on just to stop regenerating the same sound over and over. Then I looked at the delivery times in the logs: <strong>35-90ms</strong>. Wait. That's fast enough.</p>
 
-<!-- BEFORE / AFTER -->
-<section class="comparison-section reveal" aria-labelledby="comparison-title">
-  <span class="section-label">The Difference</span>
-  <h2 class="section-title" id="comparison-title">Before &amp; After Caching</h2>
-  <div class="section-rule"></div>
+    <p>A footstep that takes 2,400ms to generate? Unplayable. That same footstep served from cache? 45ms. Predicted before the player moves? Under 10ms from the engine buffer. A UI click drops from 1,800ms to 35ms. Ambience goes from 3,200ms down to 120ms on cache hit. Without caching: 1,400-3,500ms. With it: 35-90ms. A 95-98% reduction. The models weren't the answer. The cache was.</p>
 
-  <div class="comparison-grid reveal-stagger">
-    <div class="comparison-card comparison-card--before">
-      <div class="comparison-card__label">Without cache</div>
-      <div class="comparison-card__number">1,400 - 3,500 <span class="comparison-card__unit">ms</span></div>
-      <div class="comparison-card__verdict">Unplayable</div>
-    </div>
-    <div class="comparison-card comparison-card--after">
-      <div class="comparison-card__label">With cache</div>
-      <div class="comparison-card__number">35 - 90 <span class="comparison-card__unit">ms</span></div>
-      <div class="comparison-card__verdict">Within interactive budget</div>
-    </div>
+    <p>So I stopped trying to make AI faster and started asking a different question: <em>when</em> should you generate? Loading screens. Zone transitions. Quiet moments when the player is in a menu. Generate the footsteps before the player starts walking. By the time they move, the sound is already in memory. Nobody notices.</p>
+  </div>
+
+  <blockquote class="closing-pullquote">
+    The fastest model was still 85x slower than a game frame. Caching made it irrelevant.
+  </blockquote>
+
+  <div class="closing-body">
+    <p>Every generated sound gets stored in memory, keyed by a SHA-256 hash of the prompt. Same request next time? Instant. Then client-side DSP (pitch shift, volume, reverb, filtering) turns one cached sample into 10+ variations. One gunshot becomes a whole magazine of different-sounding shots.</p>
+
+    <p>Right now this works for prototyping, ambient audio, and slower-paced games where you can predict what the player will hear next. It does not work for competitive shooters where every millisecond matters. And it does not work on mobile - no GPU, no inference.</p>
   </div>
 </section>
 
 <!-- CACHE FLOW -->
 <section class="flow-section reveal" aria-labelledby="flow-title">
-  <span class="section-label">How It Works</span>
-  <h2 class="section-title" id="flow-title">The Caching Strategy</h2>
+  <span class="section-label">The Solution</span>
+  <h2 class="section-title" id="flow-title">How Caching Works</h2>
   <div class="section-rule"></div>
 
   <div class="flow-grid reveal-stagger">
@@ -1418,60 +1273,43 @@
 </section>
 
 <!-- ENGINEERING CHALLENGES -->
-<section class="systems-section reveal" aria-labelledby="challenges-title">
+<section class="challenges-section reveal" id="challenges" aria-labelledby="challenges-title">
   <span class="section-label">Engineering</span>
-  <h2 class="section-title" id="challenges-title">Problems I Solved</h2>
+  <h2 class="section-title" id="challenges-title">What I Had to Solve</h2>
   <div class="section-rule"></div>
 
-  <div class="systems-grid">
-    <div class="system-item">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Game Thread Bottleneck</h3>
-      </div>
-      <p class="system-item__desc">Unreal only lets you create USoundWave on the Game Thread. WebSocket callbacks arrive on a background thread. Try to create a SoundWave from the callback? Instant crash. No error, no warning, just gone. I used FFunctionGraphTask to push PCM data to the Game Thread. Tested with 50+ sounds arriving at once - no crashes.</p>
+  <div class="challenges-grid">
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">Game Thread Bottleneck</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">Unreal only lets you create USoundWave on the Game Thread. WebSocket callbacks arrive on a background thread. Try to create a SoundWave from the callback? Instant crash. No error, no warning, just gone.</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">Used FFunctionGraphTask to push PCM data to the Game Thread. Tested with 50+ sounds arriving at once - no crashes.</p>
     </div>
 
-    <div class="system-item">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">VRAM Budget Management</h3>
-      </div>
-      <p class="system-item__desc">8GB of VRAM. UE5 takes 4-5GB just for rendering. That leaves maybe 3GB for AI. Only AudioGen + MMAudio Small fit together - everything else needs swapping. Built a VRAM manager that checks free memory via NVML, kicks out whoever hasn't been used recently, and loads what you need. Swap takes 2-4 seconds. For frequently used models, "sticky mode" keeps them resident.</p>
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">VRAM Budget Management</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">8GB of VRAM. UE5 takes 4-5GB just for rendering. That leaves maybe 3GB for AI. Only AudioGen + MMAudio Small fit together - everything else needs swapping.</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">Built a VRAM manager that checks free memory via NVML, kicks out whoever hasn't been used recently, and loads what you need. Swap takes 2-4 seconds. For frequently used models, "sticky mode" keeps them resident.</p>
     </div>
 
-    <div class="system-item">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Failure Handling</h3>
-      </div>
-      <p class="system-item__desc">These models fail 5-14% of the time. Sometimes the output is silence. Sometimes CUDA runs out of memory mid-generation and everything dies. A game can't freeze when that happens. My fallback chain: retry with a different seed, try a different model, play procedural DSP, or skip the sound entirely. A bad sound right now beats a perfect sound 3 seconds from now.</p>
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">Failure Handling</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">These models fail 5-14% of the time. Sometimes the output is silence. Sometimes CUDA runs out of memory mid-generation and everything dies. A game can't freeze when that happens.</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">Built a fallback chain: retry with a different seed, try a different model, play procedural DSP, or skip the sound entirely. A bad sound right now beats a perfect sound 3 seconds from now.</p>
     </div>
 
-    <div class="system-item">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">The Bleeding Edge Penalty</h3>
-      </div>
-      <p class="system-item__desc">TangoFlux was supposed to be the fast one. It didn't even start. PyTorch 2.4 with CUDA 12.4 had no compiled kernels for the RTX 5070's Blackwell chip (sm_120). Tried building from source. Hit Windows toolchain issues. Two days gone. The lesson: if you're making a game, don't use models released last month. Bleeding-edge research code breaks on real hardware.</p>
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">The Bleeding Edge Penalty</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">TangoFlux was supposed to be the fast one. It didn't even start. PyTorch 2.4 with CUDA 12.4 had no compiled kernels for the RTX 5070's Blackwell chip (sm_120).</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">Tried building from source. Hit Windows toolchain issues. Two days gone. The lesson: if you're making a game, don't use models released last month. Bleeding-edge research code breaks on real hardware.</p>
     </div>
-  </div>
-</section>
-
-<!-- SOLUTION PROSE -->
-<section class="closing-section reveal" aria-labelledby="solution-prose-title">
-  <span class="section-label">The Insight</span>
-  <h2 class="section-title" id="solution-prose-title">It's Not About Speed</h2>
-  <div class="section-rule"></div>
-
-  <div class="closing-body">
-    <p>Every model failed the speed test. The fastest local model (MMAudio Small) still needed 1.4 seconds. That's 85x slower than a single game frame. I'd added caching early on just to stop regenerating the same sound. Then I looked at the cache delivery times in the logs: 35-90ms. Wait. That's fast enough.</p>
-
-    <p>So I stopped trying to make AI faster and started asking a different question: <em>when</em> should you generate? Loading screens. Zone transitions. Quiet moments when the player is in a menu. Generate the footsteps before the player starts walking. By the time they move, the sound is already in memory. Nobody notices.</p>
-  </div>
-
-  <blockquote class="closing-pullquote">
-    The fastest model was still 85x slower than a game frame. Caching made it irrelevant.
-  </blockquote>
-
-  <div class="closing-body">
-    <p>Right now this works for prototyping, ambient audio, and slower-paced games where you can predict what the player will hear next. It does not work for competitive shooters where every millisecond matters. And it does not work on mobile - no GPU, no inference.</p>
   </div>
 </section>
 
