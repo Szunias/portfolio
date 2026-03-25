@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XR Labs - Igor Szuniewicz</title>
+<meta name="description" content="XR Labs Belgium: technical sound design for VR/AR training simulations used by defence, police, and customs services.">
+<meta name="author" content="Igor Szuniewicz">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://igorszuniewicz.com/xrlabs.html">
+<meta property="og:title" content="XR Labs - Igor Szuniewicz">
+<meta property="og:description" content="XR Labs Belgium: technical sound design for VR/AR training simulations used by defence, police, and customs services.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://igorszuniewicz.com/xrlabs.html">
+<meta property="og:image" content="https://igorszuniewicz.com/old/public/assets/images/about-grid/xrlabssoldiers.png">
+<meta property="og:site_name" content="Igor Szuniewicz">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="XR Labs - Igor Szuniewicz">
+<meta name="twitter:description" content="XR Labs Belgium: technical sound design for VR/AR training simulations used by defence, police, and customs services.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --cream: #1a1a1a;
+    --white: #222;
+    --black: #f0ece6;
+    --accent: #c0542e;
+    --accent-light: #2a1f1a;
+    --grey: #b0b0b0;
+    --grey-light: #999;
+    --grey-rule: #333;
+    --dark-section: #111;
+    --serif: Georgia, 'Times New Roman', Times, serif;
+    --sans: system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --brand-secondary: 'DM Sans', sans-serif;
+    --page-max: 1280px;
+    --gutter: 60px;
+    --margin: 80px;
+  }
+
+  [data-theme="light"] {
+    --cream: #faf8f5;
+    --white: #ffffff;
+    --black: #1a1a1a;
+    --accent-light: #f3ebe6;
+    --grey: #5e5e5e;
+    --grey-light: #717171;
+    --grey-rule: #d8d4cf;
+    --dark-section: #1c1c26;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-width: thin;
+    scrollbar-color: var(--grey-rule) transparent;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--grey-rule); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--black);
+    line-height: 1.75;
+    font-size: 19px;
+    overflow-x: hidden;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  a:hover {
+    color: var(--black);
+    border-color: var(--black);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* =========================================
+     SCROLL PROGRESS BAR
+     ========================================= */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent);
+    width: 0%;
+    z-index: 1000;
+    transition: none;
+  }
+
+  /* =========================================
+     SCROLL REVEAL
+     ========================================= */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .reveal-stagger.visible > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0s; }
+  .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.1s; }
+  .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.2s; }
+  .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.3s; }
+
+  /* =========================================
+     BACK NAV
+     ========================================= */
+  .back-nav {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 28px var(--margin) 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--grey-rule);
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    color: var(--black);
+    font-size: 14px;
+    line-height: 1;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .back-nav a {
+    font-family: var(--brand-secondary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    border: none;
+    transition: color 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+
+  .back-nav a:hover {
+    color: var(--accent);
+    transform: translateX(-4px);
+  }
+
+  .back-nav a::before {
+    content: '\2190\00a0\00a0';
+  }
+
+  /* =========================================
+     PROJECT HERO
+     ========================================= */
+  .project-hero {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 48px var(--margin) 0;
+  }
+
+  .project-hero__title {
+    font-family: var(--serif);
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: hero-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+  }
+
+  .project-hero__subtitle {
+    font-family: var(--serif);
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--grey);
+    line-height: 1.4;
+    max-width: 40ch;
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: hero-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
+  }
+
+  .project-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    padding: 20px 0;
+    border-top: 1px solid var(--grey-rule);
+    border-bottom: 1px solid var(--grey-rule);
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: hero-in 0.6s ease 0.55s forwards;
+  }
+
+  .project-hero__techs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 20px 0 0;
+    opacity: 0;
+    animation: hero-in 0.6s ease 0.7s forwards;
+  }
+
+  @keyframes hero-in {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-item__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  .meta-item__value {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .tech-pill {
+    font-family: var(--brand-secondary);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    border: 1px solid var(--grey-rule);
+    padding: 6px 12px 5px;
+    transition: border-color 0.25s, color 0.25s, background 0.25s;
+    cursor: default;
+  }
+
+  .tech-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  /* =========================================
+     HERO IMAGE
+     ========================================= */
+  .hero-image-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 48px var(--margin) 0;
+  }
+
+  .hero-image-wrap {
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--dark-section);
+  }
+
+  .hero-image-wrap img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .hero-image-wrap:hover img {
+    transform: scale(1.02);
+  }
+
+  /* =========================================
+     SECTION HEADERS
+     ========================================= */
+  .section-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .section-rule {
+    width: 60px;
+    height: 2px;
+    background: var(--accent);
+    margin-bottom: 40px;
+    transition: width 0.6s ease;
+  }
+
+  .reveal.visible .section-rule {
+    width: 60px;
+  }
+
+  .reveal .section-rule {
+    width: 0;
+  }
+
+  /* =========================================
+     CONCEPT
+     ========================================= */
+  .concept-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 64px var(--margin) 40px;
+  }
+
+  .concept-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: var(--gutter);
+    margin-top: 10px;
+  }
+
+  .concept-body {
+    font-size: 19px;
+    line-height: 1.8;
+  }
+
+  .concept-body p + p {
+    margin-top: 18px;
+  }
+
+  .concept-body strong {
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .drop-cap::first-letter {
+    font-family: var(--serif);
+    float: left;
+    font-size: 82px;
+    line-height: 0.72;
+    padding-right: 12px;
+    padding-top: 8px;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  .concept-sidebar {
+    padding-left: 30px;
+    border-left: 1px solid var(--grey-rule);
+    align-self: start;
+  }
+
+  .concept-sidebar__fact {
+    margin-bottom: 24px;
+  }
+
+  .concept-sidebar__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .concept-sidebar__value {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* =========================================
+     VIDEO
+     ========================================= */
+  .video-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 20px var(--margin) 60px;
+  }
+
+  .video-wrap {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    background: var(--dark-section);
+    border-radius: 2px;
+  }
+
+  .video-wrap iframe,
+  .video-wrap video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .video-caption {
+    font-family: var(--brand-secondary);
+    font-size: 13px;
+    color: var(--grey-light);
+    margin-top: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  .video-thumbnail-link {
+    display: block;
+    border: none;
+  }
+
+  .video-thumbnail {
+    position: relative;
+    overflow: hidden;
+    background: var(--dark-section);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .video-thumbnail img {
+    width: 100%;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), filter 0.3s ease;
+  }
+
+  .video-thumbnail:hover img {
+    transform: scale(1.03);
+    filter: brightness(0.75);
+  }
+
+  .video-thumbnail__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.85;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .video-thumbnail:hover .video-thumbnail__play {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  /* =========================================
+     LINKS & NEXT PROJECT
+     ========================================= */
+  .links-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 40px var(--margin) 60px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .links-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .links-list {
+    list-style: none;
+    display: flex;
+    gap: 28px;
+    font-size: 15px;
+  }
+
+  .next-project-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border: 1px solid var(--black);
+    font-family: var(--brand-secondary);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: none;
+    transition: background 0.25s, color 0.25s, border-color 0.25s, gap 0.25s;
+  }
+
+  .next-project-btn:hover {
+    background: var(--black);
+    color: var(--cream);
+    border-color: var(--black);
+    gap: 16px;
+  }
+
+  .next-project-btn::after {
+    content: '\2192';
+    font-size: 0.85rem;
+    transition: transform 0.25s;
+  }
+
+  .next-project-btn:hover::after {
+    transform: translateX(4px);
+  }
+
+  /* =========================================
+     FOOTER
+     ========================================= */
+  .colophon {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 24px var(--margin);
+    border-top: 3px solid var(--black);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  /* =========================================
+     RESPONSIVE
+     ========================================= */
+  @media (max-width: 1000px) {
+    :root {
+      --margin: 40px;
+      --gutter: 40px;
+    }
+
+    .concept-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .concept-sidebar {
+      padding-left: 0;
+      border-left: none;
+      border-top: 1px solid var(--grey-rule);
+      padding-top: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 650px) {
+    :root {
+      --margin: 24px;
+      --gutter: 24px;
+    }
+
+    body {
+      font-size: 17px;
+    }
+
+    .project-hero__title {
+      font-size: clamp(40px, 12vw, 64px);
+    }
+
+    .project-hero__meta {
+      gap: 20px;
+    }
+
+    .concept-sidebar {
+      grid-template-columns: 1fr;
+    }
+
+    .drop-cap::first-letter {
+      font-size: 60px;
+    }
+
+    .links-layout {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .links-list {
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+    .reveal-stagger > * { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProgress"></div>
+<a href="#about" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Skip to main content</a>
+
+<!-- BACK NAV -->
+<nav class="back-nav" aria-label="Breadcrumb">
+  <a href="index.html">Back to Projects</a>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+</nav>
+
+<main>
+
+<!-- PROJECT HERO -->
+<header class="project-hero">
+  <h1 class="project-hero__title">XR Labs</h1>
+  <p class="project-hero__subtitle">Technical sound design for VR/AR training simulations. Defence, police, customs.</p>
+
+  <div class="project-hero__meta">
+    <div class="meta-item">
+      <span class="meta-item__label">Role</span>
+      <span class="meta-item__value">Lead Technical Sound Designer</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Company</span>
+      <span class="meta-item__value">XR Labs Belgium</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Domain</span>
+      <span class="meta-item__value">Defence & Public Safety</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Year</span>
+      <span class="meta-item__value">2025 - Present</span>
+    </div>
+  </div>
+
+  <div class="project-hero__techs">
+    <span class="tech-pill">Unity</span>
+    <span class="tech-pill">Steam Audio</span>
+    <span class="tech-pill">VR / AR</span>
+    <span class="tech-pill">Spatial Audio</span>
+    <span class="tech-pill">Perforce</span>
+  </div>
+</header>
+
+<!-- HERO IMAGE -->
+<section class="hero-image-section reveal" aria-label="XR Labs training facility">
+  <div class="hero-image-wrap">
+    <img src="old/public/assets/images/about-grid/xrlabssoldiers.png" alt="Soldiers training in the XR Labs VR facility" loading="lazy">
+  </div>
+</section>
+
+<!-- VIDEO -->
+<section class="video-section reveal" aria-label="Training demo video">
+  <div class="video-wrap">
+    <video controls preload="metadata">
+      <source src="old/public/assets/videos/xrlabs-training-dsu.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+  <p class="video-caption">Training DSU - XR Labs Belgium</p>
+</section>
+
+<!-- ABOUT THE WORK -->
+<section class="concept-section reveal" id="about" aria-labelledby="about-title">
+  <span class="section-label">The Work</span>
+  <h2 class="section-title" id="about-title">What I Do Here</h2>
+  <div class="section-rule"></div>
+
+  <div class="concept-layout">
+    <div class="concept-body">
+      <p class="drop-cap">XR Labs is a Belgian initiative where defence, federal police, and customs build VR/AR training simulations together. I lead the technical sound design - building audio systems that make virtual training scenarios feel real enough to be useful.</p>
+
+      <p>The people using these simulations are training for situations where audio matters. Footsteps behind a door, radio chatter, weapon handling sounds, environmental cues - if it doesn't sound right, the training doesn't work. My job is making sure the spatial audio is accurate enough that trainees react the same way they would in the field.</p>
+
+      <p>I work with Unity and Steam Audio, building real-time audio systems that respond to player actions and environment changes. Everything runs locally. The specifics of what we build are confidential, but the core challenge is the same one I face in every project: <strong>make the audio invisible</strong>. When nobody notices the sound, it means everyone trusts it.</p>
+    </div>
+
+    <aside class="concept-sidebar reveal-stagger">
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Focus</span>
+        <span class="concept-sidebar__value">Spatial audio for VR training environments</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">End Users</span>
+        <span class="concept-sidebar__value">Belgian Defence, Federal Police, Customs</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Pipeline</span>
+        <span class="concept-sidebar__value">Unity + Steam Audio, version-controlled with Perforce</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Why It Matters</span>
+        <span class="concept-sidebar__value">If the audio is wrong, trainees don't react naturally. The simulation fails.</span>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- LINKS & NEXT PROJECT -->
+<nav class="links-section" aria-label="Project links and navigation">
+  <div class="links-layout">
+    <ul class="links-list">
+      <li><a href="https://www.youtube.com/watch?v=VWOk_6-lF2I" target="_blank" rel="noopener">Watch on YouTube</a></li>
+    </ul>
+    <a class="next-project-btn" href="shadowframes.html">Next Project</a>
+  </div>
+</nav>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="colophon">
+  <span>Igor Szuniewicz &copy; 2026</span>
+  <span>Set in DM Sans, Georgia &amp; System UI</span>
+  <span>Built from scratch</span>
+</footer>
+
+<script>
+// Scroll progress bar
+const progress = document.getElementById('scrollProgress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+  progress.style.width = pct + '%';
+}, { passive: true });
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal, .reveal-stagger');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => observer.observe(el));
+
+// Theme toggle
+const themeToggle = document.getElementById('themeToggle');
+try { const savedTheme = localStorage.getItem('theme'); if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme); } catch(e) {}
+function updateToggle() {
+  themeToggle.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '\u263D' : '\u2600';
+}
+updateToggle();
+themeToggle.addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('theme', next); } catch(e) {}
+  updateToggle();
+});
+</script>
+</body>
+</html>
