@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Not Today, Darling! - Igor Szuniewicz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --cream: #1a1a1a;
+    --white: #222;
+    --black: #f0ece6;
+    --accent: #c0542e;
+    --accent-light: #2a1f1a;
+    --grey: #b0b0b0;
+    --grey-light: #999;
+    --grey-rule: #333;
+    --dark-section: #111;
+    --serif: Georgia, 'Times New Roman', Times, serif;
+    --sans: system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --brand-secondary: 'DM Sans', sans-serif;
+    --page-max: 1280px;
+    --gutter: 60px;
+    --margin: 80px;
+  }
+
+  [data-theme="light"] {
+    --cream: #faf8f5;
+    --white: #ffffff;
+    --black: #1a1a1a;
+    --accent-light: #f3ebe6;
+    --grey: #5e5e5e;
+    --grey-light: #717171;
+    --grey-rule: #d8d4cf;
+    --dark-section: #1c1c26;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-width: thin;
+    scrollbar-color: var(--grey-rule) transparent;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--grey-rule); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--black);
+    line-height: 1.75;
+    font-size: 19px;
+    overflow-x: hidden;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  a:hover {
+    color: var(--black);
+    border-color: var(--black);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* =========================================
+     SCROLL PROGRESS BAR
+     ========================================= */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent);
+    width: 0%;
+    z-index: 1000;
+    transition: none;
+  }
+
+  /* =========================================
+     SCROLL REVEAL
+     ========================================= */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .reveal-stagger.visible > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0s; }
+  .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.1s; }
+  .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.2s; }
+  .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.3s; }
+  .reveal-stagger.visible > *:nth-child(5) { transition-delay: 0.4s; }
+  .reveal-stagger.visible > *:nth-child(6) { transition-delay: 0.5s; }
+
+  /* =========================================
+     BACK NAV
+     ========================================= */
+  .back-nav {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 28px var(--margin) 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .back-nav a {
+    font-family: var(--brand-secondary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    border: none;
+    transition: color 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+
+  .back-nav a:hover {
+    color: var(--accent);
+    transform: translateX(-4px);
+  }
+
+  .back-nav a::before {
+    content: '\2190\00a0\00a0';
+  }
+
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--grey-rule);
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    color: var(--black);
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  /* =========================================
+     PROJECT HERO
+     ========================================= */
+  .project-hero {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 48px var(--margin) 0;
+  }
+
+  .project-hero__title {
+    font-family: var(--serif);
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: hero-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+  }
+
+  .project-hero__subtitle {
+    font-family: var(--serif);
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--grey);
+    line-height: 1.4;
+    max-width: 40ch;
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: hero-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
+  }
+
+  .project-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    padding: 20px 0;
+    border-top: 1px solid var(--grey-rule);
+    border-bottom: 1px solid var(--grey-rule);
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: hero-in 0.6s ease 0.55s forwards;
+  }
+
+  .project-hero__techs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 20px 0 0;
+    opacity: 0;
+    animation: hero-in 0.6s ease 0.7s forwards;
+  }
+
+  @keyframes hero-in {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-item__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  .meta-item__value {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .tech-pill {
+    font-family: var(--brand-secondary);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    border: 1px solid var(--grey-rule);
+    padding: 6px 12px 5px;
+    transition: border-color 0.25s, color 0.25s, background 0.25s;
+    cursor: default;
+  }
+
+  .tech-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  /* =========================================
+     GAME SCREENSHOTS
+     ========================================= */
+  .screenshots-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 48px var(--margin) 0;
+  }
+
+  .screenshots-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 12px;
+  }
+
+  .screenshot--wide {
+    grid-row: 1 / 3;
+  }
+
+  .screenshot {
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--dark-section);
+    position: relative;
+  }
+
+  .screenshot img,
+  .screenshot video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .screenshot:hover img,
+  .screenshot:hover video {
+    transform: scale(1.04);
+  }
+
+  /* =========================================
+     SECTION HEADERS
+     ========================================= */
+  .section-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .section-rule {
+    width: 60px;
+    height: 2px;
+    background: var(--accent);
+    margin-bottom: 40px;
+    transition: width 0.6s ease;
+  }
+
+  .reveal.visible .section-rule {
+    width: 60px;
+  }
+
+  .reveal .section-rule {
+    width: 0;
+  }
+
+  /* =========================================
+     CONCEPT
+     ========================================= */
+  .concept-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 64px var(--margin) 40px;
+  }
+
+  .concept-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: var(--gutter);
+    margin-top: 10px;
+  }
+
+  .concept-body {
+    font-size: 19px;
+    line-height: 1.8;
+  }
+
+  .concept-body p + p {
+    margin-top: 18px;
+  }
+
+  .concept-body strong {
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .drop-cap::first-letter {
+    font-family: var(--serif);
+    float: left;
+    font-size: 82px;
+    line-height: 0.72;
+    padding-right: 12px;
+    padding-top: 8px;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  .concept-sidebar {
+    padding-left: 30px;
+    border-left: 1px solid var(--grey-rule);
+    align-self: start;
+  }
+
+  .concept-sidebar__fact {
+    margin-bottom: 24px;
+  }
+
+  .concept-sidebar__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .concept-sidebar__value {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* =========================================
+     VIDEO
+     ========================================= */
+  .video-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 20px var(--margin) 60px;
+  }
+
+  .video-wrap {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    background: var(--dark-section);
+    border-radius: 2px;
+  }
+
+  .video-wrap iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .video-caption {
+    font-family: var(--brand-secondary);
+    font-size: 13px;
+    color: var(--grey-light);
+    margin-top: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  /* =========================================
+     AUDIO SYSTEMS
+     ========================================= */
+  .systems-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 60px var(--margin) 40px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .systems-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .system-item {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 30px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--grey-rule);
+    align-items: start;
+    transition: transform 0.25s ease, background 0.25s ease;
+  }
+
+  .system-item:last-child {
+    border-bottom: none;
+  }
+
+  .system-item:hover {
+    transform: translateX(6px);
+  }
+
+  .system-item__title-wrap {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .system-item__title-wrap::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 0;
+    background: var(--accent);
+    transition: height 0.5s ease;
+  }
+
+  .reveal.visible .system-item__title-wrap::before {
+    height: 100%;
+  }
+
+  .system-item__title {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .system-item__desc {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--grey);
+  }
+
+  /* =========================================
+     GALLERY
+     ========================================= */
+  .gallery-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 60px var(--margin) 60px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .gallery-item {
+    position: relative;
+    overflow: hidden;
+    background: var(--dark-section);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    object-position: top left;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
+  }
+
+  .gallery-item:hover img {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+  }
+
+  .gallery-item__caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    font-family: var(--brand-secondary);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.85);
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .gallery-item:hover .gallery-item__caption {
+    transform: translateY(0);
+  }
+
+  .gallery-item__zoom {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .gallery-item:hover .gallery-item__zoom {
+    opacity: 1;
+  }
+
+  .gallery-item__zoom svg {
+    width: 16px;
+    height: 16px;
+    stroke: white;
+    fill: none;
+    stroke-width: 2;
+  }
+
+  /* =========================================
+     LIGHTBOX
+     ========================================= */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+  }
+
+  .lightbox.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .lightbox img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 2px;
+    transform: scale(0.92);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .lightbox.active img {
+    transform: scale(1);
+  }
+
+  .lightbox__caption {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--brand-secondary);
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .lightbox__close {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    font-size: 32px;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    transition: color 0.2s;
+    font-family: var(--sans);
+    line-height: 1;
+    border: none;
+    background: none;
+  }
+
+  .lightbox__close:hover {
+    color: white;
+  }
+
+  .lightbox__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 36px;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: color 0.2s;
+    font-family: var(--sans);
+    line-height: 1;
+    border: none;
+    background: none;
+    padding: 16px;
+    user-select: none;
+  }
+
+  .lightbox__nav:hover {
+    color: white;
+  }
+
+  .lightbox__nav--prev { left: 16px; }
+  .lightbox__nav--next { right: 16px; }
+
+  /* =========================================
+     CHALLENGES
+     ========================================= */
+  .challenges-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 60px var(--margin) 60px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .challenges-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .challenge-card {
+    border-left: 3px solid var(--accent);
+    padding: 28px 32px;
+    background: var(--accent-light);
+  }
+
+  .challenge-card__title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+
+  .challenge-card__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .challenge-card__text {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--grey);
+    margin-bottom: 20px;
+  }
+
+  .challenge-card__text:last-child {
+    margin-bottom: 0;
+  }
+
+  /* =========================================
+     LINKS & NEXT PROJECT
+     ========================================= */
+  .links-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 40px var(--margin) 60px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .links-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .links-list {
+    list-style: none;
+    display: flex;
+    gap: 28px;
+    font-size: 15px;
+  }
+
+  .next-project-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border: 1px solid var(--black);
+    font-family: var(--brand-secondary);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: none;
+    transition: background 0.25s, color 0.25s, border-color 0.25s, gap 0.25s;
+  }
+
+  .next-project-btn:hover {
+    background: var(--black);
+    color: var(--cream);
+    border-color: var(--black);
+    gap: 16px;
+  }
+
+  .next-project-btn::after {
+    content: '\2192';
+    font-size: 0.85rem;
+    transition: transform 0.25s;
+  }
+
+  .next-project-btn:hover::after {
+    transform: translateX(4px);
+  }
+
+  /* =========================================
+     CALLOUT CARD
+     ========================================= */
+  .callout-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--margin) 60px;
+  }
+
+  .callout-card {
+    background: var(--accent);
+    color: #fff;
+    padding: 40px 48px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .callout-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(192, 84, 46, 0.25);
+  }
+
+  .callout-card__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 8px;
+  }
+
+  .callout-card__title {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 400;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .callout-card__desc {
+    font-size: 15px;
+    line-height: 1.7;
+    opacity: 0.9;
+    max-width: 50ch;
+  }
+
+  .callout-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border: 1px solid rgba(255,255,255,0.4);
+    font-family: var(--brand-secondary);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #fff;
+    background: none;
+    transition: border-color 0.2s, background 0.2s;
+    white-space: nowrap;
+  }
+
+  .callout-card__link:hover {
+    border-color: #fff;
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .callout-card__link::after {
+    content: '\2197';
+    font-size: 0.85rem;
+  }
+
+  /* =========================================
+     FOOTER
+     ========================================= */
+  .colophon {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 24px var(--margin);
+    border-top: 3px solid var(--black);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  /* =========================================
+     RESPONSIVE
+     ========================================= */
+  @media (max-width: 1000px) {
+    :root {
+      --margin: 40px;
+      --gutter: 40px;
+    }
+
+    .concept-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .concept-sidebar {
+      padding-left: 0;
+      border-left: none;
+      border-top: 1px solid var(--grey-rule);
+      padding-top: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .system-item {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .callout-card {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .challenges-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 650px) {
+    :root {
+      --margin: 24px;
+      --gutter: 24px;
+    }
+
+    body {
+      font-size: 17px;
+    }
+
+    .project-hero__title {
+      font-size: clamp(40px, 12vw, 64px);
+    }
+
+    .project-hero__meta {
+      gap: 20px;
+    }
+
+    .screenshots-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
+
+    .screenshot--wide {
+      grid-row: auto;
+    }
+
+    .screenshot img,
+    .screenshot video {
+      height: 220px;
+    }
+
+    .gallery-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .gallery-item img {
+      height: 200px;
+    }
+
+    .concept-sidebar {
+      grid-template-columns: 1fr;
+    }
+
+    .drop-cap::first-letter {
+      font-size: 60px;
+    }
+
+    .links-layout {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .links-list {
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+    .reveal-stagger > * { opacity: 1; transform: none; }
+    .gallery-item__caption { transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProgress"></div>
+<a href="#concept" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Skip to main content</a>
+
+<!-- BACK NAV -->
+<nav class="back-nav" aria-label="Breadcrumb">
+  <a href="index.html">Back to Projects</a>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#9728;</button>
+</nav>
+
+<main>
+
+<!-- PROJECT HERO -->
+<header class="project-hero">
+  <h1 class="project-hero__title">Not Today, Darling!</h1>
+  <p class="project-hero__subtitle">Solo audio on a 5-person team. 11 weeks. I learned more about people than about sound.</p>
+
+  <div class="project-hero__meta">
+    <div class="meta-item">
+      <span class="meta-item__label">Role</span>
+      <span class="meta-item__value">Solo Audio Designer</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Team</span>
+      <span class="meta-item__value">5-person team</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Duration</span>
+      <span class="meta-item__value">11 weeks</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Engine</span>
+      <span class="meta-item__value">Unreal Engine 5</span>
+    </div>
+  </div>
+
+  <div class="project-hero__techs">
+    <span class="tech-pill">MetaSounds</span>
+    <span class="tech-pill">UE5</span>
+    <span class="tech-pill">Blueprints</span>
+    <span class="tech-pill">Reaper</span>
+  </div>
+</header>
+
+<!-- GAME SCREENSHOTS -->
+<section class="screenshots-section reveal" aria-label="Game screenshots">
+  <div class="screenshots-grid">
+    <div class="screenshot screenshot--wide">
+      <img src="old/public/assets/images/projects/NotTodayPic1.png" alt="Not Today, Darling! - granny go-kart racing gameplay" loading="lazy">
+    </div>
+    <div class="screenshot">
+      <img src="old/public/assets/images/projects/NotTodayPic2.png" alt="Not Today, Darling! - 4-player split view" loading="lazy">
+    </div>
+    <div class="screenshot">
+      <img src="old/public/assets/images/projects-nottoday/SoundClasses.png" alt="Not Today, Darling! - Sound Class hierarchy in Unreal Engine" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- THE PROJECT -->
+<section class="concept-section reveal" id="concept" aria-labelledby="concept-title">
+  <span class="section-label">The Project</span>
+  <h2 class="section-title" id="concept-title">Grannies on Go-Karts</h2>
+  <div class="section-rule"></div>
+
+  <div class="concept-layout">
+    <div class="concept-body">
+      <p class="drop-cap">I thought this would be about making a game. It turned out to be a life lesson.</p>
+
+      <p>Not Today, Darling! is a chaotic 4-player side-scrolling racer where grannies smash their way to victory on go-karts. We had 11 weeks and total creative freedom - everyone pitched ideas on a whiteboard, we circled what excited us, and built from there. I was the only audio person, handling everything from the procedural engine sound to the final mix.</p>
+
+      <p>This was my first time working with animators, developers, and artists on something real. There were arguments. Conflicts of interest. People wanting different things. Before this, nobody at DAE had ever questioned my work - suddenly everything was up for debate. It sucked at first, but I got it. I learned how collaboration actually works: you fight, you compromise, and you can't miss a deadline because four other people are waiting on your stuff.</p>
+
+      <p>At the very end, I recorded everyone from the team doing granny voices - reactions to collisions, power-ups, overtakes. Pick a character color and you're hearing one of us. A little keepsake from a project that taught me more than any class did. It was about learning to finish something as a group. <strong>And it's the reason I was ready for Shadow Frames.</strong></p>
+    </div>
+
+    <aside class="concept-sidebar reveal-stagger">
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Genre</span>
+        <span class="concept-sidebar__value">4-player side-scrolling racer</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Audio Role</span>
+        <span class="concept-sidebar__value">Only audio person on the team</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Character Voices</span>
+        <span class="concept-sidebar__value">Recorded by the actual dev team</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Audio Events</span>
+        <span class="concept-sidebar__value">~70 in total</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Voice Limit</span>
+        <span class="concept-sidebar__value">32 simultaneous (4 players racing)</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Engine Sound</span>
+        <span class="concept-sidebar__value">Fully procedural via MetaSounds</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Source Files</span>
+        <span class="concept-sidebar__value">~450 processed</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">What I Learned</span>
+        <span class="concept-sidebar__value">How to ship with a team that disagrees</span>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- TRAILER -->
+<section class="video-section reveal" aria-label="Project trailer">
+  <div class="video-wrap">
+    <iframe
+      src="https://www.youtube.com/embed/6lFEvyicea0"
+      title="Not Today, Darling! Trailer"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+      loading="lazy"
+    ></iframe>
+  </div>
+  <p class="video-caption">Yes, those are real granny voices. Yes, they're us.</p>
+</section>
+
+<!-- AUDIO SYSTEMS -->
+<section class="systems-section reveal" id="systems" aria-labelledby="systems-title">
+  <span class="section-label">Technical</span>
+  <h2 class="section-title" id="systems-title">What I Built</h2>
+  <div class="section-rule"></div>
+
+  <div class="systems-grid">
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Procedural Go-Kart Engine</h3>
+      </div>
+      <p class="system-item__desc">My first serious MetaSounds project. RPM, throttle, and load drive the engine sound in real-time - no baked loops. The whole thing responds to player input frame by frame. I was learning MetaSounds as I went, so the graph wasn't pretty, but close your eyes and you know when the kart is accelerating, braking, or sliding. That's what matters.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Stopping 4 Players from Sounding Like a Mess</h3>
+      </div>
+      <p class="system-item__desc">4 players means 4 engines, 4 sets of power-ups, collisions, and granny screams all at once. Without structure, it was noise. I built a Sound Class hierarchy where your own kart always sits on top. Distant karts get attenuated and ducked. Power-ups and collisions run through concurrency limits - only the most relevant ones actually play. First time managing a mix this dense. It worked.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Team Voices as Granny Characters</h3>
+      </div>
+      <p class="system-item__desc">Last week of the project. I set up a mic and recorded every team member doing their best angry granny - reactions to getting hit, picking up power-ups, overtaking someone. Each character color is a different person from the team. Randomized Sound Cues with cooldown timers so they don't repeat. Pick the red granny and that's our programmer yelling at you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery-section reveal" id="gallery" aria-labelledby="gallery-title">
+  <span class="section-label">Pipeline</span>
+  <h2 class="section-title" id="gallery-title">Under the Hood</h2>
+  <div class="section-rule"></div>
+
+  <div class="gallery-grid reveal-stagger">
+    <div class="gallery-item" data-index="0" tabindex="0" role="button">
+      <img src="old/public/assets/images/projects-nottoday/MS_Pickup.png" alt="MetaSounds Pickup System in Unreal Engine" loading="lazy">
+      <span class="gallery-item__caption">MetaSounds Pickup System</span>
+      <span class="gallery-item__zoom"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="22" y2="22"/></svg></span>
+    </div>
+    <div class="gallery-item" data-index="1" tabindex="0" role="button">
+      <img src="old/public/assets/images/projects-nottoday/SoundClasses.png" alt="Sound Class Hierarchy in Unreal Engine" loading="lazy">
+      <span class="gallery-item__caption">Sound Class Hierarchy</span>
+      <span class="gallery-item__zoom"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="22" y2="22"/></svg></span>
+    </div>
+  </div>
+</section>
+
+<!-- CHALLENGES -->
+<section class="challenges-section reveal" id="challenges" aria-labelledby="challenges-title">
+  <span class="section-label">Challenges</span>
+  <h2 class="section-title" id="challenges-title">What Went Wrong &amp; How I Fixed It</h2>
+  <div class="section-rule"></div>
+
+  <div class="challenges-grid">
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">"I Can't Hear My Own Kart"</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">First playtest with all 4 players: total chaos. 4 engines, power-ups firing, collisions, granny screams. Nobody could tell what was happening to their own kart. The audio was just mush. I'd never mixed anything with this many simultaneous sources before.</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">Built the Sound Class hierarchy described above, but the real lesson was figuring out the priority order. First attempt: equal priority for all karts. Disaster. Second attempt: your kart at max, others at half. Better, but power-ups still drowned everything out. Final version: three priority tiers with concurrency limits per tier. After the fix, nobody mentioned audio anymore. They were too busy arguing about who rammed who. Good sign.</p>
+    </div>
+
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">Making a Synth Engine Not Sound Like a Synth</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">I'd never touched MetaSounds before this project. Procedural engine sound is tricky - it can easily sound like a vacuum cleaner instead of a go-kart. The engine had to respond instantly to throttle changes and feel like it's actually powering something with wheels.</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">The parameter mapping was straightforward. The hard part was pitch smoothing - without it, sudden throttle changes made the engine jump between frequencies like a broken synthesizer. I added interpolation so the pitch ramps up and down instead of snapping. Small change, big difference. Not perfect, but it sounds like a go-kart instead of a broken synthesizer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- LINKS & NEXT PROJECT -->
+<nav class="links-section" aria-label="Project links and navigation">
+  <div class="links-layout">
+    <ul class="links-list">
+      <li><a href="https://www.youtube.com/watch?v=6lFEvyicea0" target="_blank" rel="noopener">Watch Trailer on YouTube</a></li>
+      <li><a href="https://freyaspes.itch.io/not-today-darling" target="_blank" rel="noopener">Download on itch.io</a></li>
+    </ul>
+    <a class="next-project-btn" href="transientica.html">Next Project</a>
+  </div>
+</nav>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="colophon">
+  <span>Igor Szuniewicz &copy; 2026</span>
+  <span>Set in DM Sans, Georgia &amp; System UI</span>
+  <span>Built from scratch</span>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox__close" aria-label="Close">&times;</button>
+  <button class="lightbox__nav lightbox__nav--prev" aria-label="Previous">&lsaquo;</button>
+  <button class="lightbox__nav lightbox__nav--next" aria-label="Next">&rsaquo;</button>
+  <img src="" alt="">
+  <span class="lightbox__caption"></span>
+</div>
+
+<script>
+// Scroll progress bar
+const progress = document.getElementById('scrollProgress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+  progress.style.width = pct + '%';
+}, { passive: true });
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal, .reveal-stagger');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => observer.observe(el));
+
+// Lightbox
+const lightbox = document.getElementById('lightbox');
+const lbImg = lightbox.querySelector('img');
+const lbCaption = lightbox.querySelector('.lightbox__caption');
+const galleryItems = document.querySelectorAll('.gallery-item');
+let currentIndex = 0;
+
+const images = Array.from(galleryItems).map(item => ({
+  src: item.querySelector('img').src,
+  alt: item.querySelector('img').alt,
+  caption: item.querySelector('.gallery-item__caption').textContent
+}));
+
+function openLightbox(index) {
+  currentIndex = index;
+  lbImg.src = images[index].src;
+  lbImg.alt = images[index].alt;
+  lbCaption.textContent = images[index].caption;
+  lightbox.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function navigate(dir) {
+  currentIndex = (currentIndex + dir + images.length) % images.length;
+  lbImg.src = images[currentIndex].src;
+  lbImg.alt = images[currentIndex].alt;
+  lbCaption.textContent = images[currentIndex].caption;
+}
+
+galleryItems.forEach((item, i) => {
+  item.addEventListener('click', () => openLightbox(i));
+  item.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      item.click();
+    }
+  });
+});
+
+lightbox.querySelector('.lightbox__close').addEventListener('click', closeLightbox);
+lightbox.querySelector('.lightbox__nav--prev').addEventListener('click', (e) => { e.stopPropagation(); navigate(-1); });
+lightbox.querySelector('.lightbox__nav--next').addEventListener('click', (e) => { e.stopPropagation(); navigate(1); });
+lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+
+document.addEventListener('keydown', (e) => {
+  if (!lightbox.classList.contains('active')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') navigate(-1);
+  if (e.key === 'ArrowRight') navigate(1);
+});
+
+// Theme toggle
+const themeToggle = document.getElementById('themeToggle');
+try { const saved = localStorage.getItem('theme'); if (saved) document.documentElement.setAttribute('data-theme', saved); } catch(e) {}
+function updateToggle() {
+  themeToggle.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '\u263D' : '\u2600';
+}
+updateToggle();
+themeToggle.addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('theme', next); } catch(e) {}
+  updateToggle();
+});
+</script>
+</body>
+</html>
