@@ -4,9 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Audio Research - Igor Szuniewicz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
-
   *, *::before, *::after {
     margin: 0;
     padding: 0;
@@ -14,15 +15,15 @@
   }
 
   :root {
-    --cream: #faf8f5;
-    --white: #ffffff;
-    --black: #1a1a1a;
+    --cream: #1a1a1a;
+    --white: #222;
+    --black: #f0ece6;
     --accent: #c0542e;
-    --accent-light: #f3ebe6;
-    --grey: #5e5e5e;
-    --grey-light: #717171;
-    --grey-rule: #d8d4cf;
-    --dark-section: #1c1c26;
+    --accent-light: #2a1f1a;
+    --grey: #b0b0b0;
+    --grey-light: #999;
+    --grey-rule: #333;
+    --dark-section: #111;
     --serif: Georgia, 'Times New Roman', Times, serif;
     --sans: system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     --brand-secondary: 'DM Sans', sans-serif;
@@ -32,6 +33,17 @@
     --red: #c43c3c;
     --green: #3a8a4a;
     --amber: #b8860b;
+  }
+
+  [data-theme="light"] {
+    --cream: #faf8f5;
+    --white: #ffffff;
+    --black: #1a1a1a;
+    --accent-light: #f3ebe6;
+    --grey: #5e5e5e;
+    --grey-light: #717171;
+    --grey-rule: #d8d4cf;
+    --dark-section: #1c1c26;
   }
 
   ::selection {
@@ -130,6 +142,26 @@
     max-width: var(--page-max);
     margin: 0 auto;
     padding: 28px var(--margin) 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--grey-rule);
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    color: var(--black);
+    font-size: 14px;
+    line-height: 1;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .back-nav a {
@@ -1049,7 +1081,10 @@
 <!-- BACK NAV -->
 <nav class="back-nav" aria-label="Breadcrumb">
   <a href="option50-combo-b.html">Back to Projects</a>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#9728;</button>
 </nav>
+
+<main>
 
 <!-- PROJECT HERO -->
 <header class="project-hero">
@@ -1464,9 +1499,11 @@
       <li><a href="../GW2526_Szuniewicz_Igor_EN_Paper (4).pdf" target="_blank" rel="noopener">Read Paper (PDF)</a></li>
       <li><a href="../GW2526_Szuniewicz_Igor_EN_Presentation.pptx" target="_blank" rel="noopener">Presentation (PPTX)</a></li>
     </ul>
-    <a class="next-project-btn" href="#">Next Project</a>
+    <a class="next-project-btn" href="option50-audioq.html">Next Project</a>
   </div>
 </nav>
+
+</main>
 
 <!-- FOOTER -->
 <footer class="colophon">
@@ -1495,6 +1532,18 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 reveals.forEach(el => observer.observe(el));
+
+// Theme toggle
+const themeToggle = document.getElementById('themeToggle');
+try { const saved = localStorage.getItem('theme'); if (saved) document.documentElement.setAttribute('data-theme', saved); } catch(e) {}
+function updateToggle() { themeToggle.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '\u263D' : '\u2600'; }
+updateToggle();
+themeToggle.addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('theme', next); } catch(e) {}
+  updateToggle();
+});
 </script>
 </body>
 </html>
