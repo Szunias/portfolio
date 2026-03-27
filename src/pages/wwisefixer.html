@@ -1,0 +1,149 @@
+
+
+<!-- PROJECT HERO -->
+<header class="project-hero">
+  <h1 class="project-hero__title">Wwise UE Fixer</h1>
+  <p class="project-hero__subtitle">Every Perforce pull broke our audio. I got sick of fixing it by hand, so I automated the whole thing.</p>
+
+  <div class="project-hero__meta">
+    <div class="meta-item">
+      <span class="meta-item__label">Role</span>
+      <span class="meta-item__value">Tool Developer</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Type</span>
+      <span class="meta-item__value">Dev Tool</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Year</span>
+      <span class="meta-item__value">2024</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Stack</span>
+      <span class="meta-item__value">Batch Script, Python</span>
+    </div>
+  </div>
+
+  <div class="project-hero__techs">
+    <span class="tech-pill">Python</span>
+    <span class="tech-pill">Batch Script</span>
+    <span class="tech-pill">Wwise</span>
+    <span class="tech-pill">Unreal Engine</span>
+    <span class="tech-pill">Perforce</span>
+  </div>
+</header>
+
+<!-- CONCEPT -->
+<section class="concept-section reveal" id="concept" aria-labelledby="concept-title">
+  <span class="section-label">The Problem</span>
+  <h2 class="section-title" id="concept-title">Why This Exists</h2>
+  <div class="section-rule"></div>
+
+  <div class="concept-layout">
+    <div class="concept-body">
+      <p class="drop-cap">Every Perforce pull on Shadow Frames was the same ritual. Sync, open the project, silence. Wwise paths broken, actors mute, plugin settings gone. Then 20 minutes of manually reconnecting things before anyone could hear a single sound.</p>
+
+      <p>After the third morning in a row doing this, I wrote a script. It scans your .uasset and config files, finds every Wwise reference that points to nothing, restores the plugin settings, and rebuilds the configs. One click. It timestamps a backup of your project first, because I learned the hard way what happens when you don't.</p>
+
+      <p>The whole Shadow Frames team ran it after every Perforce sync. What used to eat 20 minutes became a 10-second button press. Nobody asked me to build it. I just couldn't stand doing the same thing by hand one more time.</p>
+    </div>
+
+    <aside class="concept-sidebar reveal-stagger">
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Time Saved</span>
+        <span class="concept-sidebar__value">20 min down to 10 seconds</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Used Daily By</span>
+        <span class="concept-sidebar__value">Entire Shadow Frames team</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Scans</span>
+        <span class="concept-sidebar__value">.uasset + config files</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Safety Net</span>
+        <span class="concept-sidebar__value">Backs up before touching anything</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Origin</span>
+        <span class="concept-sidebar__value">Built out of frustration</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Stack</span>
+        <span class="concept-sidebar__value">Batch core, Python GUI</span>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="systems-section reveal" id="systems" aria-labelledby="systems-title">
+  <span class="section-label">Technical</span>
+  <h2 class="section-title" id="systems-title">How It Works</h2>
+  <div class="section-rule"></div>
+
+  <div class="systems-grid">
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Finds the Broken Stuff</h3>
+      </div>
+      <p class="system-item__desc">Walks through every .uasset and config file in the project. If a Wwise reference points to nothing, it flags it. Finds the dead links and lists them all.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Puts It Back Together</h3>
+      </div>
+      <p class="system-item__desc">Restores plugin settings, updates configs, rebuilds every broken asset reference. The same 15-step manual process you were doing by hand, except it takes seconds.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Backs Up First</h3>
+      </div>
+      <p class="system-item__desc">Timestamps a full backup of your project before changing a single file. I added this after a bad experience. If anything goes wrong, you just roll back.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="systems-section reveal" id="features" aria-labelledby="features-title">
+  <span class="section-label">Details</span>
+  <h2 class="section-title" id="features-title">Features</h2>
+  <div class="section-rule"></div>
+
+  <div class="systems-grid">
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Every Change Logged</h3>
+      </div>
+      <p class="system-item__desc">Every file it touches gets logged with a reason. When someone asks "what did your tool do to my project?" you can show them line by line.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Won't Touch Your Other Stuff</h3>
+      </div>
+      <p class="system-item__desc">Only modifies Wwise-related files. Your Blueprints, meshes, levels, materials - all exactly where you left them.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Used on a Real Project</h3>
+      </div>
+      <p class="system-item__desc">Ran daily on Shadow Frames for months. Full team pulling from Perforce constantly. It never broke a project. That's what mattered most.</p>
+    </div>
+  </div>
+</section>
+
+<!-- LINKS & NEXT PROJECT -->
+<nav class="links-section" aria-label="Project links and navigation">
+  <div class="links-layout">
+    <ul class="links-list">
+      <li><a href="https://github.com/Szunias/WwiseUnrealEngineFixer" target="_blank" rel="noopener">Source Code on GitHub</a></li>
+    </ul>
+    <a class="next-project-btn" href="unrealrebuilder.html">Next Project</a>
+  </div>
+</nav>
+

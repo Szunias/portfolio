@@ -1,0 +1,167 @@
+
+<!-- PROJECT HERO -->
+<header class="project-hero">
+  <h1 class="project-hero__title">Transientica: AudioLab</h1>
+  <p class="project-hero__subtitle">You beatbox into a mic. The game turns it into drums. 45 milliseconds, no MIDI controller, just your mouth.</p>
+
+  <div class="project-hero__meta">
+    <div class="meta-item">
+      <span class="meta-item__label">Role</span>
+      <span class="meta-item__value">Audio Programmer &amp; Designer</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Type</span>
+      <span class="meta-item__value">Research Project</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Duration</span>
+      <span class="meta-item__value">5 months</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Engine</span>
+      <span class="meta-item__value">Python + Unity</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Year</span>
+      <span class="meta-item__value">2025</span>
+    </div>
+  </div>
+
+  <div class="project-hero__techs">
+    <span class="tech-pill">Python</span>
+    <span class="tech-pill">SVM</span>
+    <span class="tech-pill">LibROSA</span>
+    <span class="tech-pill">OSC</span>
+    <span class="tech-pill">Unity</span>
+    <span class="tech-pill">scikit-learn</span>
+  </div>
+</header>
+
+<!-- THE PROJECT -->
+<section class="concept-section reveal" id="concept" aria-labelledby="concept-title">
+  <span class="section-label">The Project</span>
+  <h2 class="section-title" id="concept-title">The Concept</h2>
+  <div class="section-rule"></div>
+
+  <div class="concept-layout">
+    <div class="concept-body">
+      <p class="drop-cap">Dead simple idea: what if your voice was the controller? Beatbox a kick, snare, or hi-hat into your laptop mic, and a rhythm game responds like you're hitting real pads.</p>
+
+      <p>The first version was terrible. 180ms of lag. Try clapping on a beat that responds almost a fifth of a second late - it's unplayable. So I spent the rest of the project trying to get that number down.</p>
+
+      <p>Answer: 45ms. Fast enough that it feels instant. The system trains on your voice specifically - give it 30 examples of each sound and it learns how you beatbox. Different person, different mic - just retrain it and it adjusts. My kick sounds nothing like yours, and that's fine - the model adapts.</p>
+    </div>
+
+    <aside class="concept-sidebar reveal-stagger">
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Latency</span>
+        <span class="concept-sidebar__value">&lt;45ms (started at 180ms)</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Accuracy</span>
+        <span class="concept-sidebar__value">92% (up from 78%)</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Sounds Recognized</span>
+        <span class="concept-sidebar__value">Kick, Snare, Hi-Hat</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Training</span>
+        <span class="concept-sidebar__value">30 examples per sound, then play</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Classification Speed</span>
+        <span class="concept-sidebar__value">2ms (SVM vs 15ms neural net)</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Tested On</span>
+        <span class="concept-sidebar__value">2000+ samples</span>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- DEMO VIDEO -->
+<section class="video-section reveal" aria-label="Project demo video">
+  <div class="video-wrap">
+    <video
+      controls
+      preload="metadata"
+    >
+      <source src="old/public/assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+  <p class="video-caption">Live demo - beatboxing into the mic, game responding in real time</p>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="systems-section reveal" id="systems" aria-labelledby="systems-title">
+  <span class="section-label">Under the Hood</span>
+  <h2 class="section-title" id="systems-title">How It Works</h2>
+  <div class="section-rule"></div>
+
+  <div class="systems-grid">
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Hear the Sound, Classify It, Respond</h3>
+      </div>
+      <p class="system-item__desc">Mic audio hits a 512-sample FFT window (11ms of sound). Spectral centroid, zero-crossing rate, and envelope shape get extracted. SVM classifies the hit in 2ms. Result gets sent to Unity over UDP. Total time from mouth to game: under 45ms. A neural net would have taken 15ms just on inference - that's why I picked SVM.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Why Kicks and Snares Are Hard</h3>
+      </div>
+      <p class="system-item__desc">Both are sharp transients with broadband noise. To a basic classifier, they look almost identical. The difference is where the energy lives: kicks sit in the low end, snares are mostly noise spread across the spectrum. Spectral centroid is what finally let the system tell them apart. That single feature took accuracy from 78% to the low 90s.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Two Processes, One Game</h3>
+      </div>
+      <p class="system-item__desc">Python does the audio math. Unity runs the game. They talk over OSC on localhost. Seems like overkill, but it was worth it. I could tweak the classifier, retrain it, and test it without restarting Unity. And when the game crashed (often), the audio pipeline just kept running.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CHALLENGES -->
+<section class="challenges-section reveal" id="challenges" aria-labelledby="challenges-title">
+  <span class="section-label">Challenges</span>
+  <h2 class="section-title" id="challenges-title">What Went Wrong &amp; How I Fixed It</h2>
+  <div class="section-rule"></div>
+
+  <div class="challenges-grid">
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">180ms of Lag (Four Times Too Slow)</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">The first working prototype recognized sounds. It just did it 180ms late. Try tapping a rhythm when the response comes 180ms late. It feels completely off.</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">I cut latency at every step. Smaller FFT window. Circular buffer to kill I/O blocking. SVM instead of neural net (2ms inference vs 15ms). UDP instead of TCP. Each change saved 20-40ms. Final result: 45ms at 92% accuracy.</p>
+    </div>
+
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">The Classifier Thought Every Sound Was a Kick</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">Kicks and snares both hit hard and fast. To a naive classifier looking at amplitude and timing, they're basically the same sound. Accuracy was stuck at 78%.</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">Stopped looking at volume. Started looking at where the energy lives. Spectral centroid (low = kick, high = snare), zero-crossing rate, envelope shape. Also built separate models for solo hits vs rapid patterns. 78% became 92%.</p>
+    </div>
+
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">Audio Would Just... Stop</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">On slower machines, the ML inference would hog the CPU. The audio buffer would underrun. No error, no warning - just silence in the middle of playing.</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">Lock-free ringbuffer between threads. Audio capture runs on its own thread and never waits for ML. If classification is slow, audio keeps flowing and the next hit still gets captured. Zero dropouts after the fix.</p>
+    </div>
+  </div>
+</section>
+
+<!-- LINKS & NEXT PROJECT -->
+<nav class="links-section" aria-label="Project navigation">
+  <div class="links-layout">
+    <a class="next-project-btn" href="ai-audio-research.html">Next Project</a>
+  </div>
+</nav>
+
