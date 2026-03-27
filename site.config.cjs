@@ -114,8 +114,8 @@ module.exports = {
       layout: 'project',
       css: 'project',
       js: ['scroll-progress', 'scroll-reveal', 'theme-toggle'],
-      title: 'Transientica: AudioLab - Igor Szuniewicz',
-      description: 'Transientica AudioLab: beatbox into a mic, play a rhythm game. Voice-controlled drums with 45ms latency and 92% detection accuracy using SVM and FFT in Python.',
+      title: 'Transientica - Igor Szuniewicz',
+      description: 'Transientica: a beatbox rhythm game built in Unity. KNN classifier recognizes kick, snare, and hi-hat from your mic in real time. Pure C#, zero-allocation audio pipeline, no external ML frameworks.',
       canonical: `${SITE}/transientica.html`,
     },
     {
