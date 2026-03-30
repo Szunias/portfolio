@@ -156,6 +156,17 @@ function main() {
     }
   }
 
+  // Copy favicon assets
+  const faviconDir = path.join(DIST, 'assets');
+  ensureDir(faviconDir);
+  for (const f of ['favicon.svg', 'favicon.ico']) {
+    const src = path.join(SRC, 'assets', f);
+    if (fs.existsSync(src)) {
+      fs.copyFileSync(src, path.join(faviconDir, f));
+      console.log(`  → assets/${f} (copied)`);
+    }
+  }
+
   console.log(`\nDone: ${built} pages built, ${copied} files copied → dist/`);
 }
 
