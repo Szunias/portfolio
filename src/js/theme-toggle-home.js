@@ -5,4 +5,4 @@ toggle.addEventListener('click', () => {
   document.documentElement.setAttribute('data-theme', next);
   try { localStorage.setItem('theme', next); } catch(e) {}
 });
-try { const saved = localStorage.getItem('theme'); document.documentElement.setAttribute('data-theme', saved || 'light'); } catch(e) {}
+try { const saved = localStorage.getItem('theme'); document.documentElement.setAttribute('data-theme', saved || 'dark'); } catch(e) {}
