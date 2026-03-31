@@ -37,22 +37,20 @@
 <!-- CONCEPT -->
 <section class="concept-section reveal" id="concept" aria-labelledby="concept-title">
   <span class="section-label">The Story</span>
-  <h2 class="section-title" id="concept-title">Learning by Hitting Walls</h2>
+  <h2 class="section-title" id="concept-title">Three Projects, Three Problems</h2>
   <div class="section-rule"></div>
 
   <div class="concept-layout">
     <div class="concept-body">
-      <p class="drop-cap">Tutorials show you where everything is, but I didn't really understand Wwise until stuff started breaking. 256 voices blew up in a zombie shooter. Zone transitions sounded wrong in a platformer. An Android phone with 2 GB RAM told me my audio was too big.</p>
+      <p class="drop-cap">Three solo school projects at DAE, 2021-2024. A zombie shooter where I hit the 256 voice limit on day one. A platformer where zone transitions sounded like someone flipping a switch. An Android game that crashed on load because all audio was in memory at once.</p>
 
-      <p>Three solo school projects at DAE, spread across 2021-2024. None of them shipped. But I tracked memory, fought platform limits, and wrote real integration code. Each project broke something different, and each one taught me something I still use.</p>
-
-      <p>The zombie shooter taught me voice management. The platformer taught me spatial audio. The Android game taught me that memory is not free. <strong>That's where I actually got better.</strong></p>
+      <p>None of them shipped, but each one broke something I had to actually fix — sounds cutting out, transitions that sounded awful, a phone that crashed on load.</p>
     </div>
 
     <aside class="concept-sidebar reveal-stagger">
       <div class="concept-sidebar__fact">
         <span class="concept-sidebar__label">Projects</span>
-        <span class="concept-sidebar__value">3 games, each with a different wall</span>
+        <span class="concept-sidebar__value">3 solo projects at DAE</span>
       </div>
       <div class="concept-sidebar__fact">
         <span class="concept-sidebar__label">Boney Voice Limit</span>
@@ -60,7 +58,7 @@
       </div>
       <div class="concept-sidebar__fact">
         <span class="concept-sidebar__label">Ellen Spatial</span>
-        <span class="concept-sidebar__value">10 attenuation curves, 4 reverb buses</span>
+        <span class="concept-sidebar__value">Every sound falls off differently</span>
       </div>
       <div class="concept-sidebar__fact">
         <span class="concept-sidebar__label">Stomach Aches Target</span>
@@ -72,7 +70,7 @@
       </div>
       <div class="concept-sidebar__fact">
         <span class="concept-sidebar__label">Biggest Lesson</span>
-        <span class="concept-sidebar__value">Tutorials don't teach you what breaking things does</span>
+        <span class="concept-sidebar__value">Fix it when it breaks, not before</span>
       </div>
     </aside>
   </div>
@@ -90,7 +88,7 @@
         <h3 class="system-item__title">Boney Boogaloo</h3>
         <span class="system-item__genre">Zombie Wave Shooter</span>
       </div>
-      <p class="system-item__desc">My first Wwise project and I immediately ran into the 256 voice limit. Every gunshot, every zombie spawn, every death scream was eating a voice. I built random containers (6 shot variants, 6 spawn variations, plus death screams) so each sound plays differently without stacking. Trimmed silence off every file, switched to ADPCM compression. 44 sounds total, and the voice count finally behaved.</p>
+      <p class="system-item__desc">My first Wwise project. Wwise can only play 256 sounds at once, and in a zombie shooter that fills up fast — every gunshot, every spawn, every death scream takes a slot. I gave each sound 6 variations so it never repeats the same way twice, then set priorities so nearby gunshots always win over a zombie groaning in the distance. 44 sounds total, and nothing cuts out anymore.</p>
       <div class="system-item__video">
         <div class="video-wrap">
           <video controls preload="metadata" poster="old/public/wwiseprojectsinfo/images/BoneyBoogaloo.png">
@@ -105,7 +103,7 @@
         <h3 class="system-item__title">Ellen</h3>
         <span class="system-item__genre">Platformer</span>
       </div>
-      <p class="system-item__desc">Platformer where I got to dig into spatial audio. Wrote 10 separate attenuation curves because a waterfall and a footstep shouldn't fall off the same way. Footsteps swap per surface using a raycast. The zone transitions were the tricky part: ambient crossfades between areas over 6.5 seconds through Wwise State groups, so you never hear a hard cut. 4 reverb buses to make small rooms sound small and big rooms sound big.</p>
+      <p class="system-item__desc">Platformer where I focused on making spaces sound real. A waterfall stays loud from far away, but footsteps disappear after a few meters — each sound type has its own distance curve. Footsteps change depending on the surface you walk on. The tricky part was zone transitions: walking from forest to cave crossfades over 6.5 seconds, and the reverb changes with it — big rooms sound big, tight corridors sound tight. No hard cuts.</p>
       <div class="system-item__video">
         <div class="vimeo-wrap">
           <iframe src="https://player.vimeo.com/video/1135151616?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Ellen - Wwise Integration"></iframe>
@@ -118,7 +116,7 @@
         <h3 class="system-item__title">Stomach Aches</h3>
         <span class="system-item__genre">FPS Platformer - Android</span>
       </div>
-      <p class="system-item__desc">FPS platformer set inside a human body. The target was cheap Android phones with 2 GB RAM, so every kilobyte counted. I set up zone-based loading: only the current zone lives in memory (Brain 670 KB, Mouth 384 KB, Stomach 2.8 MB). The Wwise Silence plugin replaced actual audio files for quiet moments, which alone saved 80% memory. The waterfall has 3 distance layers driven by RTPC, so it sounds different at 5 meters vs. 30.</p>
+      <p class="system-item__desc">FPS platformer set inside a human body, targeting cheap Android phones with 2 GB RAM. The first build crashed because all audio loaded at once. I split it so only the current zone stays in memory — Brain takes 670 KB, Mouth 384 KB, Stomach 2.8 MB. For quiet moments I replaced real audio files with generated silence, which cut memory use by 80%. The waterfall has 3 layers that change based on how far you are — sounds different at 5 meters vs. 30.</p>
       <div class="system-item__video">
         <div class="video-wrap">
           <video controls preload="metadata" poster="old/public/wwiseprojectsinfo/images/StomachAches.png">
@@ -142,7 +140,7 @@
       <span class="challenge-card__label">What Was Hard</span>
       <p class="challenge-card__text">Sounds were cutting out mid-play. Gunshots would just vanish. I had no idea voice limits were even a thing before this. Took me an hour of debugging to realize the problem wasn't my code, it was Wwise running out of voices to assign.</p>
       <span class="challenge-card__label">What I Did</span>
-      <p class="challenge-card__text">The random containers handle variation, but the real fix was understanding voice priority. Gunshots need to play. A zombie grunt 30 meters away does not. I set up priority so close, loud sounds always win. Trimming silence off files was the other half - voices were being held open on dead air. That was when I realized not every sound needs to play - some can just be dropped and nobody notices.</p>
+      <p class="challenge-card__text">Gunshots need to play. A zombie grunt 30 meters away does not. I set priorities so close, loud sounds always win. The other fix was trimming silence off files — sounds were holding their slot open on dead air. Not every sound needs to play. Some can just be dropped and nobody notices.</p>
     </div>
 
     <div class="challenge-card">
@@ -158,7 +156,7 @@
       <span class="challenge-card__label">What Was Hard</span>
       <p class="challenge-card__text">The first build crashed on load. All audio in memory at once - the phone just gave up. I had to rethink the entire loading strategy. You cannot treat a 2 GB Android phone like a PC with 16 GB.</p>
       <span class="challenge-card__label">What I Did</span>
-      <p class="challenge-card__text">The Wwise Silence plugin was the biggest win. Replacing actual WAV files with generated silence for quiet moments cut memory by 80% in one move. Zone-based SoundBank loading handles the rest - unload the previous zone before loading the next one. The waterfall was a special case: 3 RTPC-driven distance layers so it sounds right up close and far away without keeping three full-quality files resident. Total audio footprint per zone never exceeds 3 MB.</p>
+      <p class="challenge-card__text">Biggest win: replacing real audio files with generated silence for quiet moments — 80% memory saved in one move. Then I split audio into zones so only the current area stays loaded. Walk into a new zone, the old one unloads. The waterfall needed 3 distance layers so it sounds right both up close and far away. Total audio per zone never exceeds 3 MB.</p>
     </div>
   </div>
 </section>
