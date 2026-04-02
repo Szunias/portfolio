@@ -1,5 +1,5 @@
 /* =========================================
-   RESET & BASE
+   RESET & BASE — matches home.css
    ========================================= */
 *, *::before, *::after {
   margin: 0;
@@ -19,7 +19,6 @@
   --dark-section: #111;
   --serif: Georgia, 'Times New Roman', Times, serif;
   --sans: system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  --brand: 'Outfit', sans-serif;
   --brand-secondary: 'DM Sans', sans-serif;
   --page-max: 1280px;
   --gutter: 60px;
@@ -33,21 +32,28 @@
   --black: #1a1a1a;
   --accent-light: #f3ebe6;
   --grey: #5e5e5e;
-  --grey-light: #929292;
+  --grey-light: #717171;
   --grey-rule: #d8d4cf;
   --dark-section: #1c1c26;
 }
 
 ::selection {
   background: var(--accent);
-  color: var(--white);
+  color: #fff;
 }
 
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scrollbar-width: thin;
+  scrollbar-color: var(--grey-rule) transparent;
 }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--grey-rule); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
 body {
   font-family: var(--sans);
@@ -68,43 +74,18 @@ a {
 
 a:hover {
   color: var(--black);
-  border-color: var(--black);
+  border-bottom-color: var(--black);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* =========================================
-   SECTION HEADERS - from option50
+   BACK BAR — matches project pages
    ========================================= */
-.section-label {
-  font-family: var(--sans);
-  font-size: 10px;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: var(--accent);
-  font-weight: 600;
-  margin-bottom: 12px;
-  display: block;
-}
-
-.section-title {
-  font-family: var(--serif);
-  font-size: clamp(36px, 6vw, 72px);
-  font-weight: 400;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  margin-bottom: 16px;
-}
-
-.section-rule {
-  width: 60px;
-  height: 2px;
-  background: var(--accent);
-  margin-bottom: 50px;
-}
-
-/* =========================================
-   TOP NAV BAR
-   ========================================= */
-.top-bar {
+.back-bar {
   max-width: var(--page-max);
   margin: 0 auto;
   padding: 0 var(--margin);
@@ -115,29 +96,7 @@ a:hover {
   border-bottom: 1px solid var(--grey-rule);
 }
 
-.top-bar__name {
-  font-family: var(--brand);
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-  color: var(--black);
-  border: none;
-  transition: color 0.2s;
-}
-
-.top-bar__name:hover {
-  color: var(--accent);
-  border: none;
-}
-
-.top-bar__nav {
-  display: flex;
-  align-items: center;
-  gap: 0;
-}
-
-.top-bar__nav a {
+.back-bar__link {
   font-family: var(--brand-secondary);
   font-weight: 500;
   font-size: 12px;
@@ -145,40 +104,81 @@ a:hover {
   text-transform: uppercase;
   color: var(--grey);
   border: none;
-  padding: 20px 18px;
   transition: color 0.2s;
 }
 
-.top-bar__nav a:hover,
-.top-bar__nav a.active {
+.back-bar__link:hover {
   color: var(--accent);
   border: none;
 }
 
-.top-bar__nav-dot {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--grey-rule);
+/* ---- Theme Toggle (from home.css) ---- */
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--grey-rule);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
 }
 
+.theme-toggle:hover {
+  border-color: var(--accent);
+}
+
+.theme-toggle svg {
+  fill: none;
+  stroke: var(--grey);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.3s ease;
+}
+
+.theme-toggle:hover svg {
+  stroke: var(--accent);
+}
+
+.theme-toggle__moon { display: none; }
+.theme-toggle__sun { display: block; }
+[data-theme="light"] .theme-toggle__sun { display: none; }
+[data-theme="light"] .theme-toggle__moon { display: block; }
+
 /* =========================================
-   PAGE HEADER
+   MUSIC HERO
    ========================================= */
-.page-header {
+.music-hero {
   max-width: var(--page-max);
   margin: 0 auto;
   padding: 80px var(--margin) 0;
 }
 
-.page-header__subtitle {
+.music-hero__title {
+  font-family: var(--serif);
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 16px;
+}
+
+.music-hero__rule {
+  width: 60px;
+  height: 2px;
+  background: var(--accent);
+  margin-bottom: 24px;
+}
+
+.music-hero__subtitle {
   font-family: var(--brand-secondary);
   font-weight: 400;
-  font-size: 17px;
+  font-size: 15px;
   color: var(--grey);
   line-height: 1.6;
-  max-width: 540px;
-  margin-top: -30px;
+  max-width: 500px;
   margin-bottom: 50px;
 }
 
@@ -197,14 +197,13 @@ a:hover {
 .filter-btn {
   font-family: var(--brand-secondary);
   font-weight: 500;
-  font-size: 12px;
-  letter-spacing: 0.12em;
+  font-size: 11px;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--grey);
   background: none;
   border: 1px solid var(--grey-rule);
   padding: 8px 20px;
-  border-radius: 2px;
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
@@ -215,7 +214,7 @@ a:hover {
 }
 
 .filter-btn.active {
-  color: var(--white);
+  color: #fff;
   background: var(--accent);
   border-color: var(--accent);
 }
@@ -231,7 +230,7 @@ a:hover {
 
 .tracks-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
 }
 
@@ -241,9 +240,8 @@ a:hover {
 .track-card {
   background: var(--white);
   border: 1px solid var(--grey-rule);
-  border-radius: 4px;
   overflow: hidden;
-  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, opacity 0.35s ease;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
   display: flex;
   flex-direction: column;
   cursor: pointer;
@@ -251,8 +249,11 @@ a:hover {
 
 .track-card:hover {
   transform: translateY(-4px);
-  border-color: #bbb;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+}
+
+.track-card.active {
+  border-color: var(--accent);
 }
 
 .track-card.hidden {
@@ -269,6 +270,11 @@ a:hover {
 .track-card__gradient {
   width: 100%;
   height: 100%;
+  transition: transform 0.4s ease;
+}
+
+.track-card:hover .track-card__gradient {
+  transform: scale(1.05);
 }
 
 .track-card__play-overlay {
@@ -277,7 +283,7 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.35);
   opacity: 0;
   transition: opacity 0.25s ease;
 }
@@ -304,7 +310,7 @@ a:hover {
 .track-card__play-btn svg {
   width: 20px;
   height: 20px;
-  fill: var(--white);
+  fill: #fff;
   margin-left: 3px;
 }
 
@@ -342,9 +348,10 @@ a:hover {
 }
 
 .track-card__artist {
-  font-family: var(--sans);
-  font-size: 13px;
+  font-family: var(--brand-secondary);
+  font-size: 12px;
   color: var(--grey-light);
+  letter-spacing: 0.05em;
   margin-bottom: 6px;
 }
 
@@ -363,10 +370,10 @@ a:hover {
   color: var(--grey);
   flex: 1;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .track-card__tags {
@@ -377,18 +384,17 @@ a:hover {
 }
 
 .track-card__tag {
-  font-family: var(--sans);
+  font-family: var(--brand-secondary);
   font-size: 10px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--grey-light);
   border: 1px solid var(--grey-rule);
-  padding: 2px 7px;
-  border-radius: 2px;
+  padding: 2px 8px;
 }
 
 /* =========================================
-   AUDIO PLAYER BAR
+   PLAYER BAR — always dark, theme-independent
    ========================================= */
 .player-bar {
   position: fixed;
@@ -396,14 +402,13 @@ a:hover {
   left: 0;
   right: 0;
   height: var(--player-height);
-  background: var(--black);
-  color: var(--white);
+  background: #141414;
+  border-top: 1px solid #2a2a2a;
   z-index: 200;
   display: flex;
   align-items: center;
   padding: 0 24px;
   gap: 20px;
-  box-shadow: 0 -2px 20px rgba(0,0,0,0.15);
 }
 
 .player-bar__left {
@@ -432,7 +437,7 @@ a:hover {
   font-family: var(--brand-secondary);
   font-size: 14px;
   font-weight: 500;
-  color: var(--white);
+  color: #f0ece6;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -441,7 +446,7 @@ a:hover {
 .player-bar__artist {
   font-family: var(--sans);
   font-size: 11px;
-  color: rgba(255,255,255,0.45);
+  color: rgba(240,236,230,0.45);
 }
 
 .player-bar__center {
@@ -473,12 +478,12 @@ a:hover {
 .player-bar__ctrl-btn svg {
   width: 16px;
   height: 16px;
-  fill: rgba(255,255,255,0.5);
+  fill: rgba(240,236,230,0.5);
   transition: fill 0.2s;
 }
 
 .player-bar__ctrl-btn:hover svg {
-  fill: var(--white);
+  fill: #f0ece6;
 }
 
 .player-bar__play-pause {
@@ -501,7 +506,7 @@ a:hover {
 .player-bar__play-pause svg {
   width: 14px;
   height: 14px;
-  fill: var(--white);
+  fill: #fff;
   margin-left: 2px;
 }
 
@@ -515,7 +520,7 @@ a:hover {
 .player-bar__time {
   font-family: var(--brand-secondary);
   font-size: 11px;
-  color: rgba(255,255,255,0.4);
+  color: rgba(240,236,230,0.4);
   min-width: 36px;
   text-align: center;
 }
@@ -523,7 +528,7 @@ a:hover {
 .player-bar__progress {
   flex: 1;
   height: 4px;
-  background: rgba(255,255,255,0.12);
+  background: rgba(240,236,230,0.12);
   border-radius: 2px;
   overflow: hidden;
   cursor: pointer;
@@ -532,7 +537,7 @@ a:hover {
 
 .player-bar__progress-fill {
   height: 100%;
-  width: 35%;
+  width: 0%;
   background: var(--accent);
   border-radius: 2px;
   transition: width 0.1s linear;
@@ -555,13 +560,13 @@ a:hover {
 .player-bar__vol-icon svg {
   width: 16px;
   height: 16px;
-  fill: rgba(255,255,255,0.45);
+  fill: rgba(240,236,230,0.45);
 }
 
 .player-bar__volume {
   width: 80px;
   height: 4px;
-  background: rgba(255,255,255,0.12);
+  background: rgba(240,236,230,0.12);
   border-radius: 2px;
   overflow: hidden;
   cursor: pointer;
@@ -571,7 +576,7 @@ a:hover {
 .player-bar__volume-fill {
   height: 100%;
   width: 70%;
-  background: rgba(255,255,255,0.4);
+  background: rgba(240,236,230,0.4);
   border-radius: 2px;
 }
 
@@ -604,7 +609,7 @@ a:hover {
   }
 
   .tracks-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -618,25 +623,17 @@ a:hover {
     font-size: 17px;
   }
 
-  .top-bar {
+  .back-bar {
     height: auto;
-    flex-direction: column;
     padding: 14px var(--margin);
-    gap: 8px;
-    align-items: flex-start;
   }
 
-  .top-bar__nav {
-    gap: 0;
-  }
-
-  .top-bar__nav a {
-    padding: 8px 12px 8px 0;
-    font-size: 11px;
-  }
-
-  .page-header {
+  .music-hero {
     padding-top: 50px;
+  }
+
+  .music-hero__title {
+    font-size: clamp(40px, 12vw, 64px);
   }
 
   .filters {
@@ -644,7 +641,7 @@ a:hover {
   }
 
   .filter-btn {
-    font-size: 11px;
+    font-size: 10px;
     padding: 6px 14px;
   }
 

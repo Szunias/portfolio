@@ -1,7 +1,26 @@
+// =========================================
+// THEME TOGGLE
+// =========================================
 (function() {
-  // =========================================
-  // FILTER LOGIC
-  // =========================================
+  var toggle = document.getElementById('themeToggle');
+  if (toggle) {
+    toggle.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme');
+      var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch(e) {}
+    });
+  }
+  try {
+    var saved = localStorage.getItem('theme');
+    document.documentElement.setAttribute('data-theme', saved || 'dark');
+  } catch(e) {}
+})();
+
+// =========================================
+// FILTER & AUDIO PLAYER
+// =========================================
+(function() {
   var filterBtns = document.querySelectorAll('.filter-btn');
   var trackCards = document.querySelectorAll('.track-card');
 
@@ -75,14 +94,12 @@
   checkMobile();
   window.addEventListener('resize', checkMobile);
 
-  // Helper: decode HTML entities in a string
   function decodeEntities(str) {
     var temp = document.createElement('div');
     temp.innerHTML = str;
     return temp.textContent;
   }
 
-  // Helper: format seconds as m:ss
   function formatTime(secs) {
     var m = Math.floor(secs / 60);
     var s = Math.floor(secs % 60);
@@ -110,18 +127,10 @@
       ] : []
     });
 
-    navigator.mediaSession.setActionHandler('play', function() {
-      audio.play();
-    });
-    navigator.mediaSession.setActionHandler('pause', function() {
-      audio.pause();
-    });
-    navigator.mediaSession.setActionHandler('previoustrack', function() {
-      prevBtn.click();
-    });
-    navigator.mediaSession.setActionHandler('nexttrack', function() {
-      nextBtn.click();
-    });
+    navigator.mediaSession.setActionHandler('play', function() { audio.play(); });
+    navigator.mediaSession.setActionHandler('pause', function() { audio.pause(); });
+    navigator.mediaSession.setActionHandler('previoustrack', function() { prevBtn.click(); });
+    navigator.mediaSession.setActionHandler('nexttrack', function() { nextBtn.click(); });
   }
 
   // =========================================
@@ -140,37 +149,29 @@
     currentTimeEl.textContent = '0:00';
     progressFill.style.width = '0%';
 
-    // Set cover: use actual image if available, fallback to gradient
     if (coverUrl) {
       playerCover.style.background = "url('" + coverUrl + "') center/cover no-repeat, " + gradient;
     } else {
       playerCover.style.background = gradient;
     }
 
-    // Find index among all cards
     var allCards = Array.from(trackCards);
     currentTrackIndex = allCards.indexOf(card);
 
-    // Load and play real audio
     audio.src = src;
-    audio.play().catch(function() {
-      // Autoplay may be blocked; user can click play
-    });
+    audio.play().catch(function() {});
 
-    // Update browser tab title
     document.title = title + ' - Igor Szuniewicz | Music';
 
-    // Update MediaSession
     updateMediaSession(card);
 
     // Highlight active card
-    trackCards.forEach(function(c) { c.style.outline = 'none'; });
-    card.style.outline = '2px solid var(--accent)';
-    card.style.outlineOffset = '-2px';
+    trackCards.forEach(function(c) { c.classList.remove('active'); });
+    card.classList.add('active');
   }
 
   // =========================================
-  // AUDIO ELEMENT EVENTS
+  // AUDIO EVENTS
   // =========================================
   audio.addEventListener('play', function() {
     isPlaying = true;
@@ -192,7 +193,6 @@
     isPlaying = false;
     updatePlayIcon();
     document.title = originalTitle;
-    // Auto-advance to next track
     nextBtn.click();
   });
 
@@ -220,15 +220,12 @@
   // =========================================
   // CLICK HANDLERS
   // =========================================
-
-  // Click on track cards
   trackCards.forEach(function(card) {
     card.addEventListener('click', function() {
       selectTrack(card);
     });
   });
 
-  // Play/pause toggle
   function togglePlay() {
     if (currentTrackIndex === -1) {
       var visible = visibleCards();
@@ -245,7 +242,6 @@
   playPauseBtn.addEventListener('click', togglePlay);
   mobilePlayBtn.addEventListener('click', togglePlay);
 
-  // Prev/next
   prevBtn.addEventListener('click', function() {
     var visible = visibleCards();
     if (visible.length === 0) return;
@@ -268,7 +264,6 @@
     selectTrack(visible[newIndex]);
   });
 
-  // Click on progress bar to seek
   document.getElementById('progressBar').addEventListener('click', function(e) {
     if (currentTrackIndex === -1 || !audio.duration) return;
     var rect = this.getBoundingClientRect();
@@ -276,7 +271,6 @@
     audio.currentTime = pct * audio.duration;
   });
 
-  // Click on volume bar
   document.getElementById('volumeBar').addEventListener('click', function(e) {
     var rect = this.getBoundingClientRect();
     var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
