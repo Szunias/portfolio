@@ -26,6 +26,10 @@ function ensureDir(dir) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
+function cleanDir(dir) {
+  if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
+}
+
 /** Escape only characters that break HTML attribute values. */
 function escAttr(str) {
   return str.replace(/"/g, '&quot;');
@@ -82,10 +86,18 @@ function getJS(name) {
 
 function buildPage(page) {
   // 1. Read layout
-  let html = read(path.join(SRC, 'layouts', `${page.layout}.html`));
+  const layoutPath = path.join(SRC, 'layouts', `${page.layout}.html`);
+  if (!fs.existsSync(layoutPath)) {
+    throw new Error(`Layout not found: src/layouts/${page.layout}.html (required by ${page.slug})`);
+  }
+  let html = read(layoutPath);
 
   // 2. Read page content
-  const content = read(path.join(SRC, 'pages', `${page.slug}.html`));
+  const pagePath = path.join(SRC, 'pages', `${page.slug}.html`);
+  if (!fs.existsSync(pagePath)) {
+    throw new Error(`Page content not found: src/pages/${page.slug}.html`);
+  }
+  const content = read(pagePath);
 
   // 3. Assemble CSS (single file per layout type)
   const css = getCSS(page.css);
@@ -126,17 +138,25 @@ function buildPage(page) {
 // ─── Main ───────────────────────────────────────────────────────
 
 function main() {
+  // Clean dist to avoid stale output (e.g. hero-*.html from old configs)
+  cleanDir(DIST);
   ensureDir(DIST);
 
   let built = 0;
+  const failed = [];
 
   // Build templated pages
   for (const page of config.pages) {
-    const html = buildPage(page);
-    const outPath = path.join(DIST, `${page.slug}.html`);
-    fs.writeFileSync(outPath, html, 'utf8');
-    built++;
-    console.log(`  ✓ ${page.slug}.html`);
+    try {
+      const html = buildPage(page);
+      const outPath = path.join(DIST, `${page.slug}.html`);
+      fs.writeFileSync(outPath, html, 'utf8');
+      built++;
+      console.log(`  ✓ ${page.slug}.html`);
+    } catch (err) {
+      failed.push({ slug: page.slug, error: err.message });
+      console.error(`  ✗ ${page.slug}.html — ${err.message}`);
+    }
   }
 
   // Copy static files (external pages not using the layout system)
@@ -167,7 +187,35 @@ function main() {
     }
   }
 
+  // Copy root-level assets referenced by pages (useful for local preview;
+  // CI also copies these + old/ via the deploy workflow).
+  const rootAssets = [
+    'audioqscreenshot.png',
+    'transienticascreenshot.webm',
+    'UnrealEngineDemo.mp4',
+    'PythonPrototypeDemo.mp4',
+    'szuniewicz-ai-audio-thesis-2026.pdf',
+    'Igor_Szuniewicz_CV.pdf',
+  ];
+  for (const f of rootAssets) {
+    const src = path.join(__dirname, f);
+    if (fs.existsSync(src)) {
+      fs.copyFileSync(src, path.join(DIST, f));
+    }
+  }
+
   console.log(`\nDone: ${built} pages built, ${copied} files copied → dist/`);
+
+  if (failed.length) {
+    console.error(`\n${failed.length} page(s) failed:`);
+    for (const f of failed) console.error(`  - ${f.slug}: ${f.error}`);
+    process.exit(1);
+  }
 }
 
-main();
+try {
+  main();
+} catch (err) {
+  console.error(`\nBuild failed: ${err.message}`);
+  process.exit(1);
+}

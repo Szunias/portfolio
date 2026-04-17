@@ -2,19 +2,20 @@
 // THEME TOGGLE
 // =========================================
 (function() {
-  var toggle = document.getElementById('themeToggle');
-  if (toggle) {
-    toggle.addEventListener('click', function() {
-      var current = document.documentElement.getAttribute('data-theme');
-      var next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      try { localStorage.setItem('theme', next); } catch(e) {}
-    });
-  }
+  // Apply saved theme immediately to avoid flash
   try {
     var saved = localStorage.getItem('theme');
-    document.documentElement.setAttribute('data-theme', saved || 'dark');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
   } catch(e) {}
+
+  var toggle = document.getElementById('themeToggle');
+  if (!toggle) return;
+  toggle.addEventListener('click', function() {
+    var current = document.documentElement.getAttribute('data-theme');
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch(e) {}
+  });
 })();
 
 // =========================================
@@ -23,6 +24,9 @@
 (function() {
   var filterBtns = document.querySelectorAll('.filter-btn');
   var trackCards = document.querySelectorAll('.track-card');
+
+  // Guard: only run on music page
+  if (!trackCards.length) return;
 
   filterBtns.forEach(function(btn) {
     btn.addEventListener('click', function() {
@@ -58,6 +62,25 @@
   // =========================================
   // AUDIO PLAYER
   // =========================================
+  var playerTitle = document.getElementById('playerTitle');
+  var playerArtist = document.getElementById('playerArtist');
+  var playerCover = document.getElementById('playerCover');
+  var playPauseBtn = document.getElementById('playPauseBtn');
+  var playPauseIcon = document.getElementById('playPauseIcon');
+  var currentTimeEl = document.getElementById('currentTime');
+  var totalTimeEl = document.getElementById('totalTime');
+  var progressFill = document.getElementById('progressFill');
+  var progressBar = document.getElementById('progressBar');
+  var volumeBar = document.getElementById('volumeBar');
+  var volumeFill = document.getElementById('volumeFill');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var mobilePlayBtn = document.getElementById('mobilePlayBtn');
+  var mobilePlayIcon = document.getElementById('mobilePlayIcon');
+
+  // Guard: player bar must be present
+  if (!playerTitle || !playPauseBtn || !progressBar || !prevBtn || !nextBtn) return;
+
   var audio = new Audio();
   audio.preload = 'metadata';
   audio.volume = 0.7;
@@ -70,21 +93,9 @@
     return Array.from(trackCards).filter(function(c) { return !c.classList.contains('hidden'); });
   };
 
-  var playerTitle = document.getElementById('playerTitle');
-  var playerArtist = document.getElementById('playerArtist');
-  var playerCover = document.getElementById('playerCover');
-  var playPauseBtn = document.getElementById('playPauseBtn');
-  var playPauseIcon = document.getElementById('playPauseIcon');
-  var currentTimeEl = document.getElementById('currentTime');
-  var totalTimeEl = document.getElementById('totalTime');
-  var progressFill = document.getElementById('progressFill');
-  var prevBtn = document.getElementById('prevBtn');
-  var nextBtn = document.getElementById('nextBtn');
-  var mobilePlayBtn = document.getElementById('mobilePlayBtn');
-  var mobilePlayIcon = document.getElementById('mobilePlayIcon');
-
   // Show mobile play button on small screens
   function checkMobile() {
+    if (!mobilePlayBtn) return;
     if (window.innerWidth <= 650) {
       mobilePlayBtn.style.display = 'flex';
     } else {
@@ -207,14 +218,20 @@
     totalTimeEl.textContent = formatTime(audio.duration);
   });
 
+  audio.addEventListener('error', function() {
+    isPlaying = false;
+    updatePlayIcon();
+    document.title = originalTitle;
+  });
+
   // =========================================
   // PLAY/PAUSE ICON
   // =========================================
   function updatePlayIcon() {
     var playPath = '<polygon points="6,3 20,12 6,21"/>';
     var pausePath = '<rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/>';
-    playPauseIcon.innerHTML = isPlaying ? pausePath : playPath;
-    mobilePlayIcon.innerHTML = isPlaying ? pausePath : playPath;
+    if (playPauseIcon) playPauseIcon.innerHTML = isPlaying ? pausePath : playPath;
+    if (mobilePlayIcon) mobilePlayIcon.innerHTML = isPlaying ? pausePath : playPath;
   }
 
   // =========================================
@@ -240,7 +257,7 @@
   }
 
   playPauseBtn.addEventListener('click', togglePlay);
-  mobilePlayBtn.addEventListener('click', togglePlay);
+  if (mobilePlayBtn) mobilePlayBtn.addEventListener('click', togglePlay);
 
   prevBtn.addEventListener('click', function() {
     var visible = visibleCards();
@@ -264,18 +281,20 @@
     selectTrack(visible[newIndex]);
   });
 
-  document.getElementById('progressBar').addEventListener('click', function(e) {
+  progressBar.addEventListener('click', function(e) {
     if (currentTrackIndex === -1 || !audio.duration) return;
     var rect = this.getBoundingClientRect();
     var pct = (e.clientX - rect.left) / rect.width;
     audio.currentTime = pct * audio.duration;
   });
 
-  document.getElementById('volumeBar').addEventListener('click', function(e) {
-    var rect = this.getBoundingClientRect();
-    var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    audio.volume = pct;
-    document.getElementById('volumeFill').style.width = (pct * 100) + '%';
-  });
+  if (volumeBar) {
+    volumeBar.addEventListener('click', function(e) {
+      var rect = this.getBoundingClientRect();
+      var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      audio.volume = pct;
+      if (volumeFill) volumeFill.style.width = (pct * 100) + '%';
+    });
+  }
 
 })();

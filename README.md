@@ -1,57 +1,53 @@
 # Igor Szuniewicz - Portfolio
 
-Personal portfolio site for Igor Szuniewicz, a game audio designer and developer specializing in sound design, middleware integration, and interactive audio systems.
+Personal portfolio site for Igor Szuniewicz — game audio designer and audio programmer.
+Sound design, middleware integration (Wwise / FMOD), and interactive audio systems.
 
-## Tech Stack
+Live: https://igorszuniewicz.com
 
-- **Framework:** React 18 + TypeScript
-- **Build:** Vite
-- **Styling:** Tailwind CSS 3, Framer Motion
-- **i18n:** react-i18next with EN / PL / NL (per-page namespace lazy loading)
-- **Audio:** Custom audio player with playlist support
-- **Deployment:** GitHub Pages
+## Stack
 
-## Getting Started
+Static HTML, built from small templates by a single Node script. Zero npm dependencies, zero framework.
+
+- **Source:** `src/pages/*.html` (content) + `src/layouts/*.html` (shell) + `src/partials/*.html` (lightbox, player bar) + `src/css/*.css` + `src/js/*.js`
+- **Build:** `build.cjs` inlines CSS/JS into each layout and emits static HTML to `dist/`
+- **Config:** `site.config.cjs` defines every page (slug, layout, title, OG meta, etc.)
+- **Deployment:** GitHub Pages via `.github/workflows/deploy.yml`
+
+## Build
 
 ```bash
-npm install
-npm run dev       # Start dev server
-npm run build     # Type-check + production build
-npm run preview   # Preview production build locally
+node build.cjs
 ```
+
+Outputs to `dist/`. The script clears `dist/` on each run, so there is no stale output.
+
+For local preview, serve `dist/` with any static server (e.g. `npx serve dist`).
 
 ## Project Structure
 
 ```
+build.cjs              # Build script (Node, zero deps)
+site.config.cjs        # Page definitions (slug, layout, meta)
 src/
-  components/
-    features/     # Domain components (AudioPlayer, Showreel, ContactForm, etc.)
-    home/         # Home page sections (Hero, Skills)
-    layout/       # Layout shell (Navbar, Footer, SEO)
-    ui/           # Reusable primitives (Button, ErrorBoundary)
-  constants/      # Route definitions
-  context/        # AudioContext provider
-  data/           # Portfolio data JSON + tracks
-  hooks/          # usePortfolioData, useProjectFilter
-  pages/          # Route-level page components
-  types/          # TypeScript type definitions
-  utils/          # Shared utility functions
-public/
-  locales/        # i18n translation files (en/, pl/, nl/)
-  assets/         # Images, videos, fonts
+  layouts/             # home.html, project.html, music.html
+  partials/            # lightbox, player-bar
+  pages/               # page content (one .html per page)
+  css/                 # home.css, project.css, music.css
+  js/                  # theme-toggle, lightbox, scroll-progress, scroll-reveal, music
+  assets/              # favicon
+old/                   # legacy assets (images, videos, audio, CV) — referenced by pages
+archive/               # static archive pages (dae-page.html, nuonsoft-becpp.html)
+dist/                  # build output (gitignored)
+.github/workflows/     # GitHub Pages deploy
 ```
 
-## Available Scripts
+## Adding a new project page
 
-| Script | Description |
-|---|---|
-| `npm run dev` | Start Vite dev server |
-| `npm run build` | TypeScript check + Vite production build |
-| `npm run preview` | Preview the production build |
-| `npm run lint` | Run ESLint |
-| `npm run test` | Run Vitest |
-| `npm run deploy` | Build and deploy to GitHub Pages |
+1. Create `src/pages/<slug>.html` (content only — no `<html>`, `<head>`, or `<body>`).
+2. Add an entry to `site.config.cjs` under `pages`.
+3. Run `node build.cjs` to verify it builds.
 
-## Deployment
+## Writing project descriptions
 
-The site is deployed to GitHub Pages via the `gh-pages` package. Running `npm run deploy` builds the project and pushes the `dist/` directory to the `gh-pages` branch.
+See `CLAUDE.md` for the project description writing guidelines used across this portfolio.

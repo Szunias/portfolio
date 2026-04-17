@@ -29,15 +29,21 @@ jobs:
       - name: Build pages
         run: node build.cjs
 
-      - name: Copy built pages to root
+      - name: Copy assets to dist
         run: |
-          cp dist/*.html .
-          cp -r dist/assets/ assets/
+          # Legacy assets referenced by HTML via relative paths
+          cp -r old dist/old
+          # Root-level assets referenced directly
+          for f in audioqscreenshot.png transienticascreenshot.webm transienticascreenshot.png transienticascreenshtogif.gif UnrealEngineDemo.mp4 PythonPrototypeDemo.mp4 szuniewicz-ai-audio-thesis-2026.pdf shadowframes.png shadowframes-page.png shadowframes-page-16s.png aithesiscover.png audioqscreenshot.png rayaloneinthecave.png sounddesignreel.png xrlabssoldiers.png "belgian military university.png" Igor_Szuniewicz_CV.pdf; do
+            if [ -f "$f" ]; then
+              cp "$f" dist/
+            fi
+          done
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: dist
 
   deploy:
     environment:
