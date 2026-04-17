@@ -119,6 +119,7 @@ module.exports = {
       title: 'Transientica - Igor Szuniewicz',
       description: 'Transientica: a beatbox rhythm game built in Unity. KNN classifier recognizes kick, snare, and hi-hat from your mic in real time. Pure C#, zero-allocation audio pipeline, no external ML frameworks.',
       canonical: `${SITE}/transientica.html`,
+      ogImage: `${SITE}/transienticascreenshot.png`,
     },
     {
       slug: 'ai-audio-research',
@@ -128,6 +129,7 @@ module.exports = {
       title: 'AI Audio Research - Igor Szuniewicz',
       description: 'Can AI generate game sounds in real time? Research testing three AI models for on-the-fly audio generation. Latency benchmarks, caching strategies, and practical results.',
       canonical: `${SITE}/ai-audio-research.html`,
+      ogImage: `${SITE}/aithesiscover.png`,
     },
     {
       slug: 'audioq',
@@ -167,6 +169,7 @@ module.exports = {
       title: 'Richter - Igor Szuniewicz',
       description: 'Richter: sound design for a student earthquake short film. No sample libraries allowed — every sound was field-recorded or synthesized from scratch with free plugins.',
       canonical: `${SITE}/richter.html`,
+      ogImage: `${SITE}/old/public/assets/images/projects-daw2/vlcsnap-2025-09-28-00h05m42s119.png`,
     },
     {
       slug: 'wwisefixer',
@@ -176,6 +179,7 @@ module.exports = {
       title: 'Wwise Unreal Engine Fixer - Igor Szuniewicz',
       description: 'Wwise UE Fixer: a tool that automates Wwise-Unreal reconnection after Perforce syncs. Fixes broken paths, mute actors, and plugin settings in one click instead of 20 minutes.',
       canonical: `${SITE}/wwisefixer.html`,
+      ogImage: `${SITE}/old/public/assets/images/projects-wwisefixer/wwisefixerlogo.jpeg`,
     },
     {
       slug: 'unrealrebuilder',
@@ -195,6 +199,7 @@ module.exports = {
       title: 'Sound Design Reel - Igor Szuniewicz',
       description: 'Sound design reel by Igor Szuniewicz. Original audio stripped, everything rebuilt from scratch — no sound libraries. Redesigns of God of War, Baldur\'s Gate 3, and more.',
       canonical: `${SITE}/sounddesign.html`,
+      ogImage: `${SITE}/old/public/assets/images/projects-sounddesign/sounddesignprojectcover.png`,
     },
     {
       slug: 'wwiseprojects',
@@ -204,6 +209,7 @@ module.exports = {
       title: 'Wwise Projects Portfolio - Igor Szuniewicz',
       description: 'Three Wwise school projects where things kept breaking. Middleware implementation, event systems, and real problems solved while learning Audiokinetic Wwise from scratch.',
       canonical: `${SITE}/wwiseprojects.html`,
+      ogImage: `${SITE}/old/public/wwiseprojectsinfo/images/StomachAches.png`,
     },
     {
       slug: 'gradwork',
@@ -213,6 +219,7 @@ module.exports = {
       title: 'Graduation Work - Igor Szuniewicz',
       description: 'AI audio generation graduation research at Howest DAE. Tested real-time sound synthesis models, measured latency, and built a caching system for game audio pipelines.',
       canonical: `${SITE}/gradwork.html`,
+      ogImage: `${SITE}/aithesiscover.png`,
     },
     {
       slug: 'xrlabs',

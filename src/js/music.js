@@ -28,6 +28,10 @@
   // Guard: only run on music page
   if (!trackCards.length) return;
 
+  // Per-card hide timer so rapid filter switches don't leave stale timers
+  // hiding cards that should now be visible.
+  var hideTimers = new WeakMap();
+
   filterBtns.forEach(function(btn) {
     btn.addEventListener('click', function() {
       filterBtns.forEach(function(b) {
@@ -40,6 +44,13 @@
       var filter = btn.getAttribute('data-filter');
 
       trackCards.forEach(function(card) {
+        // Cancel any pending hide from a previous filter click
+        var pending = hideTimers.get(card);
+        if (pending) {
+          clearTimeout(pending);
+          hideTimers.delete(card);
+        }
+
         var tags = card.getAttribute('data-tags') || '';
         if (filter === 'all' || tags.indexOf(filter) !== -1) {
           card.classList.remove('hidden');
@@ -55,9 +66,11 @@
         } else {
           card.style.transition = 'opacity 0.2s ease';
           card.style.opacity = '0';
-          setTimeout(function() {
+          var t = setTimeout(function() {
             card.classList.add('hidden');
+            hideTimers.delete(card);
           }, 200);
+          hideTimers.set(card, t);
         }
       });
     });
@@ -242,11 +255,21 @@
   }
 
   // =========================================
-  // CLICK HANDLERS
+  // CLICK / KEYBOARD HANDLERS
   // =========================================
   trackCards.forEach(function(card) {
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    var title = card.getAttribute('data-title') || 'track';
+    card.setAttribute('aria-label', 'Play ' + title);
     card.addEventListener('click', function() {
       selectTrack(card);
+    });
+    card.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        selectTrack(card);
+      }
     });
   });
 

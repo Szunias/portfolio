@@ -11,6 +11,7 @@
   if (!lbImg || !galleryItems.length) return;
 
   let currentIndex = 0;
+  let lastTrigger = null;
 
   const images = Array.from(galleryItems).map(item => {
     const img = item.querySelector('img');
@@ -29,17 +30,29 @@
     if (lbCaption) lbCaption.textContent = images[index].caption;
   }
 
-  function openLightbox(index) {
+  function getFocusable() {
+    return [prevBtn, nextBtn, closeBtn].filter(Boolean);
+  }
+
+  function openLightbox(index, trigger) {
+    lastTrigger = trigger || document.activeElement;
     render(index);
     lightbox.classList.add('active');
     lightbox.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    // Move focus into the modal
+    if (closeBtn) closeBtn.focus();
   }
 
   function closeLightbox() {
     lightbox.classList.remove('active');
     lightbox.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    // Return focus to the element that opened the lightbox
+    if (lastTrigger && typeof lastTrigger.focus === 'function') {
+      lastTrigger.focus();
+    }
+    lastTrigger = null;
   }
 
   function navigate(dir) {
@@ -49,11 +62,11 @@
   galleryItems.forEach((item, i) => {
     item.setAttribute('role', 'button');
     item.setAttribute('tabindex', '0');
-    item.addEventListener('click', () => openLightbox(i));
+    item.addEventListener('click', () => openLightbox(i, item));
     item.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        openLightbox(i);
+        openLightbox(i, item);
       }
     });
   });
@@ -65,8 +78,29 @@
 
   document.addEventListener('keydown', (e) => {
     if (!lightbox.classList.contains('active')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft') navigate(-1);
-    if (e.key === 'ArrowRight') navigate(1);
+    if (e.key === 'Escape') {
+      closeLightbox();
+      return;
+    }
+    if (e.key === 'ArrowLeft') { navigate(-1); return; }
+    if (e.key === 'ArrowRight') { navigate(1); return; }
+    // Focus trap on Tab
+    if (e.key === 'Tab') {
+      const focusable = getFocusable();
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      } else if (!focusable.includes(active)) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
   });
 })();

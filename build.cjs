@@ -10,8 +10,19 @@
 
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 const config = require('./site.config.cjs');
+
+/** Git mtime (ISO date) for a file, or null if unavailable/untracked. */
+function gitMtime(filePath) {
+  try {
+    const iso = execSync(`git log -1 --format=%cI -- "${filePath}"`, {
+      cwd: __dirname, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+    return iso || null;
+  } catch (_) { return null; }
+}
 
 const SRC    = path.join(__dirname, 'src');
 const DIST   = path.join(__dirname, 'dist');
@@ -187,12 +198,14 @@ function main() {
     }
   }
 
-  // Generate sitemap.xml
+  // Generate sitemap.xml — lastmod per page from git log of its source file
   const SITE_ORIGIN = new URL(config.pages[0].canonical).origin;
   const today = new Date().toISOString().slice(0, 10);
   const urls = config.pages.map(p => {
     const priority = p.slug === 'index' ? '1.0' : '0.8';
-    return `  <url>\n    <loc>${p.canonical}</loc>\n    <lastmod>${today}</lastmod>\n    <priority>${priority}</priority>\n  </url>`;
+    const pageGitDate = gitMtime(path.join('src', 'pages', `${p.slug}.html`));
+    const lastmod = (pageGitDate || today + 'T00:00:00Z').slice(0, 10);
+    return `  <url>\n    <loc>${p.canonical}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <priority>${priority}</priority>\n  </url>`;
   }).join('\n');
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
   fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap, 'utf8');
