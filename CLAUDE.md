@@ -1,5 +1,25 @@
 # Project Guidelines
 
+## Current Architecture (READ FIRST)
+
+**The live site is a static HTML build.** Source of truth:
+
+- `src/pages/*.html` — page content (no `<html>`/`<head>`/`<body>`)
+- `src/layouts/*.html` — shells (home, project, music)
+- `src/partials/*.html` — lightbox, player-bar
+- `src/css/*.css`, `src/js/*.js` — inlined by the build
+- `site.config.cjs` — page registry (slug, layout, meta)
+- `build.cjs` — zero-dep Node build → `dist/`
+- `.github/workflows/deploy.yml` — GitHub Pages deploy
+
+**Legacy / backup (do NOT edit as part of the live site):**
+
+- `old/` — legacy React/Vite/TypeScript project. Kept for its `public/assets/` (images, videos, audio, CV) which the current HTML pages still reference via `old/public/assets/...`. The React app itself is no longer deployed.
+- `archive/` — static archive HTML pages (`dae-page.html`, `nuonsoft-becpp.html`) copied verbatim by the build via `staticCopy`.
+- `v2/`, `new-portfolio/`, `design-mockups/` — older experiments. Not deployed, not referenced.
+
+When working on the live site, edit only `src/`, `build.cjs`, `site.config.cjs`, or `.github/workflows/`. Touching `old/` should be limited to adding/removing assets under `old/public/assets/`.
+
 ## Project Description Writing Guidelines
 
 These guidelines apply when writing or editing project descriptions for Igor's game audio portfolio. They were compiled from research on portfolio best practices, game audio industry expectations, storytelling frameworks, and an audit of the current project descriptions.

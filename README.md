@@ -5,6 +5,9 @@ Sound design, middleware integration (Wwise / FMOD), and interactive audio syste
 
 Live: https://igorszuniewicz.com
 
+> **Current version: static HTML (`src/` + `build.cjs`).**
+> The `old/`, `v2/`, `new-portfolio/`, and `design-mockups/` directories are earlier iterations kept as backup — they are **not** the live site. See [Legacy / backup](#legacy--backup) below.
+
 ## Stack
 
 Static HTML, built from small templates by a single Node script. Zero npm dependencies, zero framework.
@@ -51,3 +54,17 @@ dist/                  # build output (gitignored)
 ## Writing project descriptions
 
 See `CLAUDE.md` for the project description writing guidelines used across this portfolio.
+
+## Legacy / backup
+
+The following directories are **not** part of the live site. They are kept in the repo as reference / asset source only:
+
+| Directory | What it is | Why it's still here |
+|---|---|---|
+| `old/` | Previous portfolio built with React 18 + TypeScript + Vite + Tailwind + react-i18next | Its `old/public/assets/` (images, videos, audio tracks, CV PDFs) is still referenced by the current HTML pages. The React app itself is no longer deployed. |
+| `archive/` | Standalone HTML pages (`dae-page.html`, `nuonsoft-becpp.html`) | Copied verbatim into `dist/` by the build via `site.config.cjs` `staticCopy`. |
+| `v2/` | Earlier experimental rebuild | Not deployed, not referenced. |
+| `new-portfolio/` | Another earlier experiment | Not deployed, not referenced. |
+| `design-mockups/` | HTML/PNG mockups used to explore layouts | Not deployed, not referenced. |
+
+**When editing the live site, touch only `src/`, `build.cjs`, `site.config.cjs`, and `.github/workflows/`.** Interacting with `old/` should be limited to adding or removing asset files under `old/public/assets/`.
