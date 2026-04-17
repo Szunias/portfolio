@@ -2,6 +2,11 @@
 (function(){
   const reveals = document.querySelectorAll('.reveal, .reveal-stagger');
   if (!reveals.length) return;
+  if (!('IntersectionObserver' in window)) {
+    // Fallback: reveal everything at once
+    reveals.forEach(el => el.classList.add('visible'));
+    return;
+  }
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {

@@ -187,6 +187,22 @@ function main() {
     }
   }
 
+  // Generate sitemap.xml
+  const SITE_ORIGIN = new URL(config.pages[0].canonical).origin;
+  const today = new Date().toISOString().slice(0, 10);
+  const urls = config.pages.map(p => {
+    const priority = p.slug === 'index' ? '1.0' : '0.8';
+    return `  <url>\n    <loc>${p.canonical}</loc>\n    <lastmod>${today}</lastmod>\n    <priority>${priority}</priority>\n  </url>`;
+  }).join('\n');
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
+  fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap, 'utf8');
+  console.log('  → sitemap.xml');
+
+  // Generate robots.txt
+  const robots = `User-agent: *\nAllow: /\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`;
+  fs.writeFileSync(path.join(DIST, 'robots.txt'), robots, 'utf8');
+  console.log('  → robots.txt');
+
   // Copy root-level assets referenced by pages (useful for local preview;
   // CI also copies these + old/ via the deploy workflow).
   const rootAssets = [

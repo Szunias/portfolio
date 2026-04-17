@@ -30,8 +30,12 @@
 
   filterBtns.forEach(function(btn) {
     btn.addEventListener('click', function() {
-      filterBtns.forEach(function(b) { b.classList.remove('active'); });
+      filterBtns.forEach(function(b) {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
       btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
 
       var filter = btn.getAttribute('data-filter');
 
@@ -122,41 +126,44 @@
   // =========================================
   function updateMediaSession(card) {
     if (!('mediaSession' in navigator)) return;
+    try {
+      var title = decodeEntities(card.getAttribute('data-title') || '');
+      var artist = card.getAttribute('data-artist') || '';
+      var coverUrl = card.getAttribute('data-cover');
+      var tags = (card.getAttribute('data-tags') || '').split(',');
+      var album = tags[0] ? tags[0].charAt(0).toUpperCase() + tags[0].slice(1) : 'Music';
 
-    var title = decodeEntities(card.getAttribute('data-title'));
-    var artist = card.getAttribute('data-artist');
-    var coverUrl = card.getAttribute('data-cover');
-    var tags = (card.getAttribute('data-tags') || '').split(',');
-    var album = tags[0] ? tags[0].charAt(0).toUpperCase() + tags[0].slice(1) : 'Music';
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: title,
+        artist: artist,
+        album: album,
+        artwork: coverUrl ? [
+          { src: coverUrl, sizes: '512x512', type: 'image/jpeg' }
+        ] : []
+      });
 
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: title,
-      artist: artist,
-      album: album,
-      artwork: coverUrl ? [
-        { src: coverUrl, sizes: '512x512', type: 'image/jpeg' }
-      ] : []
-    });
-
-    navigator.mediaSession.setActionHandler('play', function() { audio.play(); });
-    navigator.mediaSession.setActionHandler('pause', function() { audio.pause(); });
-    navigator.mediaSession.setActionHandler('previoustrack', function() { prevBtn.click(); });
-    navigator.mediaSession.setActionHandler('nexttrack', function() { nextBtn.click(); });
+      navigator.mediaSession.setActionHandler('play', function() { audio.play(); });
+      navigator.mediaSession.setActionHandler('pause', function() { audio.pause(); });
+      navigator.mediaSession.setActionHandler('previoustrack', function() { prevBtn.click(); });
+      navigator.mediaSession.setActionHandler('nexttrack', function() { nextBtn.click(); });
+    } catch(e) { /* MediaSession not fully supported in this browser */ }
   }
 
   // =========================================
   // SELECT & PLAY TRACK
   // =========================================
   function selectTrack(card) {
-    var title = decodeEntities(card.getAttribute('data-title'));
-    var artist = card.getAttribute('data-artist');
-    var gradient = card.getAttribute('data-gradient');
     var src = card.getAttribute('data-src');
+    if (!src) return;
+
+    var title = decodeEntities(card.getAttribute('data-title') || '');
+    var artist = card.getAttribute('data-artist') || '';
+    var gradient = card.getAttribute('data-gradient') || '';
     var coverUrl = card.getAttribute('data-cover');
 
     playerTitle.textContent = title;
     playerArtist.textContent = artist;
-    totalTimeEl.textContent = card.getAttribute('data-duration');
+    totalTimeEl.textContent = card.getAttribute('data-duration') || '0:00';
     currentTimeEl.textContent = '0:00';
     progressFill.style.width = '0%';
 
@@ -284,13 +291,15 @@
   progressBar.addEventListener('click', function(e) {
     if (currentTrackIndex === -1 || !audio.duration) return;
     var rect = this.getBoundingClientRect();
-    var pct = (e.clientX - rect.left) / rect.width;
+    if (!rect.width) return;
+    var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     audio.currentTime = pct * audio.duration;
   });
 
   if (volumeBar) {
     volumeBar.addEventListener('click', function(e) {
       var rect = this.getBoundingClientRect();
+      if (!rect.width) return;
       var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
       audio.volume = pct;
       if (volumeFill) volumeFill.style.width = (pct * 100) + '%';

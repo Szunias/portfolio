@@ -48,6 +48,7 @@ module.exports = {
       ogTitle: 'Igor Szuniewicz - Game Audio Designer',
       description: 'Igor Szuniewicz — game audio designer and programmer. Portfolio featuring Wwise, FMOD, Unreal Engine 5, and C++ projects. Sound design, spatial audio, and AI audio research.',
       canonical: `${SITE}/`,
+      ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
       schema: SCHEMA_HOME,
     },
 
@@ -60,6 +61,7 @@ module.exports = {
       title: 'Music - Igor Szuniewicz',
       description: 'Original music by Igor Szuniewicz — game scores, film compositions, and personal tracks. Listen to the full catalog on Spotify, or stream directly from the portfolio.',
       canonical: `${SITE}/music.html`,
+      ogImage: `${SITE}/old/public/assets/audio/covers/Cage.jpg`,
     },
 
     // ─── PROJECTS (with lightbox) ───────────────────────────────
