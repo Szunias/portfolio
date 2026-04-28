@@ -41,9 +41,13 @@ function cleanDir(dir) {
   if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
 }
 
-/** Escape only characters that break HTML attribute values. */
+/** Escape characters that break HTML attribute values. Order matters: & first. */
 function escAttr(str) {
-  return str.replace(/"/g, '&quot;');
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 /** Generate OG + Twitter meta tags from page config. */
@@ -148,7 +152,25 @@ function buildPage(page) {
 
 // ─── Main ───────────────────────────────────────────────────────
 
+function validateConfig(cfg) {
+  const seen = new Set();
+  for (const page of cfg.pages) {
+    if (seen.has(page.slug)) throw new Error(`Duplicate slug: ${page.slug}`);
+    seen.add(page.slug);
+    if (!fs.existsSync(path.join(SRC, 'css', `${page.css}.css`))) {
+      throw new Error(`CSS not found: src/css/${page.css}.css (required by ${page.slug})`);
+    }
+    for (const jsName of page.js) {
+      if (!fs.existsSync(path.join(SRC, 'js', `${jsName}.js`))) {
+        throw new Error(`JS not found: src/js/${jsName}.js (required by ${page.slug})`);
+      }
+    }
+  }
+}
+
 function main() {
+  validateConfig(config);
+
   // Clean dist to avoid stale output (e.g. hero-*.html from old configs)
   cleanDir(DIST);
   ensureDir(DIST);
@@ -216,20 +238,25 @@ function main() {
   fs.writeFileSync(path.join(DIST, 'robots.txt'), robots, 'utf8');
   console.log('  → robots.txt');
 
-  // Copy root-level assets referenced by pages (useful for local preview;
-  // CI also copies these + old/ via the deploy workflow).
+  // Single source of truth for root-level assets referenced by pages or ogImage.
+  // The deploy workflow no longer copies these separately — it relies on this list.
   const rootAssets = [
     'audioqscreenshot.png',
     'transienticascreenshot.webm',
+    'transienticascreenshot.png',
     'UnrealEngineDemo.mp4',
     'PythonPrototypeDemo.mp4',
     'szuniewicz-ai-audio-thesis-2026.pdf',
     'Igor_Szuniewicz_CV.pdf',
+    'aithesiscover.png',
+    'sounddesignreel.png',
   ];
   for (const f of rootAssets) {
     const src = path.join(__dirname, f);
     if (fs.existsSync(src)) {
       fs.copyFileSync(src, path.join(DIST, f));
+    } else {
+      console.warn(`  ⚠ root asset ${f} not found, skipping`);
     }
   }
 

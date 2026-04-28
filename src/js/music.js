@@ -1,24 +1,4 @@
 // =========================================
-// THEME TOGGLE
-// =========================================
-(function() {
-  // Apply saved theme immediately to avoid flash
-  try {
-    var saved = localStorage.getItem('theme');
-    if (saved) document.documentElement.setAttribute('data-theme', saved);
-  } catch(e) {}
-
-  var toggle = document.getElementById('themeToggle');
-  if (!toggle) return;
-  toggle.addEventListener('click', function() {
-    var current = document.documentElement.getAttribute('data-theme');
-    var next = current === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('theme', next); } catch(e) {}
-  });
-})();
-
-// =========================================
 // FILTER & AUDIO PLAYER
 // =========================================
 (function() {
@@ -120,7 +100,7 @@
     }
   }
   checkMobile();
-  window.addEventListener('resize', checkMobile);
+  window.addEventListener('resize', checkMobile, { passive: true });
 
   function decodeEntities(str) {
     var temp = document.createElement('div');

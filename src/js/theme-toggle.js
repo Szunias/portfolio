@@ -1,23 +1,26 @@
-// Theme toggle (project pages)
+// Theme toggle (universal — works with SVG icons or text emoji buttons)
 (function(){
-  // Apply saved theme immediately to avoid flash
   try {
     const saved = localStorage.getItem('theme');
     if (saved) document.documentElement.setAttribute('data-theme', saved);
   } catch(e) {}
 
-  const themeToggle = document.getElementById('themeToggle');
-  if (!themeToggle) return;
+  const toggle = document.getElementById('themeToggle');
+  if (!toggle) return;
 
-  function updateToggle() {
-    themeToggle.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '☽' : '☀';
+  const useText = !toggle.querySelector('svg');
+
+  function updateLabel() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (useText) toggle.textContent = isLight ? '☽' : '☀';
+    toggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
   }
-  updateToggle();
+  updateLabel();
 
-  themeToggle.addEventListener('click', () => {
+  toggle.addEventListener('click', () => {
     const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', next);
     try { localStorage.setItem('theme', next); } catch(e) {}
-    updateToggle();
+    updateLabel();
   });
 })();
