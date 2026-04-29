@@ -212,16 +212,6 @@ module.exports = {
       ogImage: `${SITE}/old/public/wwiseprojectsinfo/images/StomachAches.png`,
     },
     {
-      slug: 'gradwork',
-      layout: 'project',
-      css: 'project',
-      js: ['scroll-progress', 'scroll-reveal', 'theme-toggle'],
-      title: 'Graduation Work - Igor Szuniewicz',
-      description: 'AI audio generation graduation research at Howest DAE. Tested real-time sound synthesis models, measured latency, and built a caching system for game audio pipelines.',
-      canonical: `${SITE}/gradwork.html`,
-      ogImage: `${SITE}/aithesiscover.png`,
-    },
-    {
       slug: 'xrlabs',
       layout: 'project',
       css: 'project',
