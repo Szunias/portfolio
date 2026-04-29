@@ -223,12 +223,20 @@ function main() {
   // Generate sitemap.xml — lastmod per page from git log of its source file
   const SITE_ORIGIN = new URL(config.pages[0].canonical).origin;
   const today = new Date().toISOString().slice(0, 10);
-  const urls = config.pages.map(p => {
+  const pageUrls = config.pages.map(p => {
     const priority = p.slug === 'index' ? '1.0' : '0.8';
     const pageGitDate = gitMtime(path.join('src', 'pages', `${p.slug}.html`));
     const lastmod = (pageGitDate || today + 'T00:00:00Z').slice(0, 10);
     return `  <url>\n    <loc>${escAttr(p.canonical)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <priority>${priority}</priority>\n  </url>`;
-  }).join('\n');
+  });
+  const staticUrls = (config.staticCopy || []).map(file => {
+    const outName = path.basename(file);
+    const loc = `${SITE_ORIGIN}/${outName}`;
+    const gitDate = gitMtime(file);
+    const lastmod = (gitDate || today + 'T00:00:00Z').slice(0, 10);
+    return `  <url>\n    <loc>${escAttr(loc)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <priority>0.5</priority>\n  </url>`;
+  });
+  const urls = pageUrls.concat(staticUrls).join('\n');
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
   fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap, 'utf8');
   console.log('  → sitemap.xml');
