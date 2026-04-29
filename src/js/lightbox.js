@@ -39,16 +39,16 @@
     render(index);
     lightbox.classList.add('active');
     lightbox.setAttribute('aria-hidden', 'false');
+    lightbox.setAttribute('aria-modal', 'true');
     document.body.style.overflow = 'hidden';
-    // Move focus into the modal
     if (closeBtn) closeBtn.focus();
   }
 
   function closeLightbox() {
     lightbox.classList.remove('active');
     lightbox.setAttribute('aria-hidden', 'true');
+    lightbox.removeAttribute('aria-modal');
     document.body.style.overflow = '';
-    // Return focus to the element that opened the lightbox
     if (lastTrigger && typeof lastTrigger.focus === 'function') {
       lastTrigger.focus();
     }

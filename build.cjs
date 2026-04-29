@@ -121,9 +121,9 @@ function buildPage(page) {
   const js = page.js.map(name => getJS(name)).join('\n\n');
 
   // 5. Replace placeholders
-  html = html.replace('<!-- TITLE -->', page.title);
+  html = html.replace('<!-- TITLE -->', escAttr(page.title));
   html = html.replace('<!-- DESCRIPTION -->', escAttr(page.description));
-  html = html.replace('<!-- CANONICAL -->', page.canonical);
+  html = html.replace('<!-- CANONICAL -->', escAttr(page.canonical));
   html = html.replace('<!-- OG_TAGS -->', ogTags(page));
   html = html.replace('<!-- CSS -->', css);
   html = html.replace('<!-- CONTENT -->', content);
@@ -227,7 +227,7 @@ function main() {
     const priority = p.slug === 'index' ? '1.0' : '0.8';
     const pageGitDate = gitMtime(path.join('src', 'pages', `${p.slug}.html`));
     const lastmod = (pageGitDate || today + 'T00:00:00Z').slice(0, 10);
-    return `  <url>\n    <loc>${p.canonical}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <priority>${priority}</priority>\n  </url>`;
+    return `  <url>\n    <loc>${escAttr(p.canonical)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <priority>${priority}</priority>\n  </url>`;
   }).join('\n');
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
   fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap, 'utf8');

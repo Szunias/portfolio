@@ -212,6 +212,7 @@
     var pct = (audio.currentTime / audio.duration) * 100;
     progressFill.style.width = pct + '%';
     currentTimeEl.textContent = formatTime(audio.currentTime);
+    progressBar.setAttribute('aria-valuenow', Math.round(pct));
   });
 
   audio.addEventListener('loadedmetadata', function() {
@@ -222,6 +223,8 @@
     isPlaying = false;
     updatePlayIcon();
     document.title = originalTitle;
+    playerTitle.textContent = 'Error loading track';
+    trackCards.forEach(function(c) { c.classList.remove('active'); });
   });
 
   // =========================================
@@ -232,6 +235,14 @@
     var pausePath = '<rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/>';
     if (playPauseIcon) playPauseIcon.innerHTML = isPlaying ? pausePath : playPath;
     if (mobilePlayIcon) mobilePlayIcon.innerHTML = isPlaying ? pausePath : playPath;
+    if (playPauseBtn) {
+      playPauseBtn.setAttribute('title', isPlaying ? 'Pause' : 'Play');
+      playPauseBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+    }
+    if (mobilePlayBtn) {
+      mobilePlayBtn.setAttribute('title', isPlaying ? 'Pause' : 'Play');
+      mobilePlayBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+    }
   }
 
   // =========================================
@@ -291,12 +302,40 @@
     selectTrack(visible[newIndex]);
   });
 
+  progressBar.setAttribute('role', 'slider');
+  progressBar.setAttribute('aria-label', 'Seek');
+  progressBar.setAttribute('aria-valuemin', '0');
+  progressBar.setAttribute('aria-valuemax', '100');
+  progressBar.setAttribute('aria-valuenow', '0');
+  progressBar.setAttribute('tabindex', '0');
+
+  if (volumeBar) {
+    volumeBar.setAttribute('role', 'slider');
+    volumeBar.setAttribute('aria-label', 'Volume');
+    volumeBar.setAttribute('aria-valuemin', '0');
+    volumeBar.setAttribute('aria-valuemax', '100');
+    volumeBar.setAttribute('aria-valuenow', '70');
+    volumeBar.setAttribute('tabindex', '0');
+  }
+
   progressBar.addEventListener('click', function(e) {
     if (currentTrackIndex === -1 || !audio.duration) return;
     var rect = this.getBoundingClientRect();
     if (!rect.width) return;
     var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     audio.currentTime = pct * audio.duration;
+  });
+
+  progressBar.addEventListener('keydown', function(e) {
+    if (currentTrackIndex === -1 || !audio.duration) return;
+    var step = 5;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      audio.currentTime = Math.min(audio.duration, audio.currentTime + step);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      audio.currentTime = Math.max(0, audio.currentTime - step);
+    }
   });
 
   if (volumeBar) {
@@ -306,6 +345,20 @@
       var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
       audio.volume = pct;
       if (volumeFill) volumeFill.style.width = (pct * 100) + '%';
+      volumeBar.setAttribute('aria-valuenow', Math.round(pct * 100));
+    });
+
+    volumeBar.addEventListener('keydown', function(e) {
+      var step = 0.05;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        audio.volume = Math.min(1, audio.volume + step);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        audio.volume = Math.max(0, audio.volume - step);
+      }
+      if (volumeFill) volumeFill.style.width = (audio.volume * 100) + '%';
+      volumeBar.setAttribute('aria-valuenow', Math.round(audio.volume * 100));
     });
   }
 
