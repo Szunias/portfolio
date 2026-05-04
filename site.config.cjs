@@ -34,8 +34,16 @@ const SCHEMA_HOME = `<script type="application/ld+json">
 </script>`;
 
 module.exports = {
-  /** Files to copy as-is to dist/ (external pages, not built with layout system) */
-  staticCopy: ['archive/dae-page.html', 'archive/nuonsoft-becpp.html'],
+  /** External archive pages copied to dist/. Keep noindex pages out of sitemap. */
+  staticCopy: [
+    {
+      file: 'archive/dae-page.html',
+      sitemap: false,
+      rewriteRootRelativeTo: 'https://www.howest.be',
+      ensureIds: ['main-content'],
+    },
+    { file: 'archive/nuonsoft-becpp.html', sitemap: false },
+  ],
 
   pages: [
     // ─── HOME ───────────────────────────────────────────────────
@@ -117,7 +125,7 @@ module.exports = {
       css: 'project',
       js: ['scroll-progress', 'scroll-reveal', 'theme-toggle'],
       title: 'Transientica - Igor Szuniewicz',
-      description: 'Transientica: a beatbox rhythm game built in Unity. KNN classifier recognizes kick, snare, and hi-hat from your mic in real time. Pure C#, zero-allocation audio pipeline, no external ML frameworks.',
+      description: 'Transientica: a Unity beatbox rhythm game. KNN recognizes kick, snare, and hi-hat from your mic in 45ms using pure C# and a zero-allocation audio pipeline.',
       canonical: `${SITE}/transientica.html`,
       ogImage: `${SITE}/transienticascreenshot.png`,
     },

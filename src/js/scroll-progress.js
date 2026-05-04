@@ -9,7 +9,10 @@
   progress.setAttribute('aria-valuenow', '0');
   progress.setAttribute('aria-label', 'Scroll progress');
 
+  let frame = null;
+
   function update() {
+    frame = null;
     const h = document.documentElement;
     const max = h.scrollHeight - h.clientHeight;
     const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
@@ -17,9 +20,21 @@
     progress.setAttribute('aria-valuenow', Math.round(pct));
   }
 
+  function scheduleUpdate() {
+    if (frame) return;
+    frame = requestAnimationFrame(update);
+  }
+
   // Initial sync — handles anchor jumps, BFCache restore, page reload mid-scroll
   update();
-  window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', update, { passive: true });
-  window.addEventListener('pageshow', update);
+  window.addEventListener('scroll', scheduleUpdate, { passive: true });
+  window.addEventListener('resize', scheduleUpdate, { passive: true });
+  window.addEventListener('pageshow', scheduleUpdate);
+  window.addEventListener('load', scheduleUpdate);
+
+  if ('ResizeObserver' in window) {
+    const observer = new ResizeObserver(scheduleUpdate);
+    observer.observe(document.documentElement);
+    if (document.body) observer.observe(document.body);
+  }
 })();

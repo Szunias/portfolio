@@ -12,6 +12,9 @@
 
   let currentIndex = 0;
   let lastTrigger = null;
+  let closeTimer = null;
+  let openFrame = null;
+  let isOpen = false;
 
   const images = Array.from(galleryItems).map(item => {
     const img = item.querySelector('img');
@@ -31,28 +34,62 @@
   }
 
   function getFocusable() {
-    return [prevBtn, nextBtn, closeBtn].filter(Boolean);
+    return [closeBtn, prevBtn, nextBtn].filter(Boolean);
+  }
+
+  function setControlsEnabled(enabled) {
+    getFocusable().forEach(el => {
+      if (enabled) {
+        el.removeAttribute('tabindex');
+      } else {
+        el.setAttribute('tabindex', '-1');
+      }
+    });
+    if ('inert' in lightbox) lightbox.inert = !enabled;
   }
 
   function openLightbox(index, trigger) {
+    isOpen = true;
     lastTrigger = trigger || document.activeElement;
     render(index);
-    lightbox.classList.add('active');
+    if (closeTimer) {
+      clearTimeout(closeTimer);
+      closeTimer = null;
+    }
+    if (openFrame) cancelAnimationFrame(openFrame);
+    lightbox.hidden = false;
+    setControlsEnabled(true);
     lightbox.setAttribute('aria-hidden', 'false');
     lightbox.setAttribute('aria-modal', 'true');
+    openFrame = requestAnimationFrame(() => {
+      openFrame = null;
+      if (isOpen && lightbox.getAttribute('aria-hidden') === 'false') {
+        lightbox.classList.add('active');
+      }
+    });
     document.body.style.overflow = 'hidden';
     if (closeBtn) closeBtn.focus();
   }
 
   function closeLightbox() {
+    isOpen = false;
+    if (openFrame) {
+      cancelAnimationFrame(openFrame);
+      openFrame = null;
+    }
     lightbox.classList.remove('active');
     lightbox.setAttribute('aria-hidden', 'true');
     lightbox.removeAttribute('aria-modal');
+    setControlsEnabled(false);
     document.body.style.overflow = '';
     if (lastTrigger && typeof lastTrigger.focus === 'function') {
       lastTrigger.focus();
     }
     lastTrigger = null;
+    closeTimer = setTimeout(() => {
+      if (!lightbox.classList.contains('active')) lightbox.hidden = true;
+      closeTimer = null;
+    }, 300);
   }
 
   function navigate(dir) {

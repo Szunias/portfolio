@@ -4,6 +4,7 @@
 (function() {
   var filterBtns = document.querySelectorAll('.filter-btn');
   var trackCards = document.querySelectorAll('.track-card');
+  var tracksGrid = document.getElementById('tracks-grid');
 
   // Guard: only run on music page
   if (!trackCards.length) return;
@@ -11,17 +12,46 @@
   // Per-card hide timer so rapid filter switches don't leave stale timers
   // hiding cards that should now be visible.
   var hideTimers = new WeakMap();
+  var filterGeneration = 0;
+
+  function cardMatchesFilter(card, filter) {
+    var tags = card.getAttribute('data-tags') || '';
+    return filter === 'all' || tags.indexOf(filter) !== -1;
+  }
+
+  function setCardAvailable(card, available) {
+    if (available) {
+      card.removeAttribute('data-filtered-out');
+      card.setAttribute('aria-hidden', 'false');
+      card.setAttribute('tabindex', '0');
+    } else {
+      card.setAttribute('data-filtered-out', 'true');
+      card.setAttribute('aria-hidden', 'true');
+      card.setAttribute('tabindex', '-1');
+    }
+  }
+
+  function activateFilter(btn, focus) {
+    filterBtns.forEach(function(b) {
+      var selected = b === btn;
+      b.classList.toggle('active', selected);
+      b.setAttribute('aria-selected', selected ? 'true' : 'false');
+      b.setAttribute('tabindex', selected ? '0' : '-1');
+    });
+    if (tracksGrid && btn.id) {
+      tracksGrid.setAttribute('aria-labelledby', btn.id);
+    }
+    if (focus) btn.focus();
+  }
 
   filterBtns.forEach(function(btn) {
+    btn.setAttribute('tabindex', btn.classList.contains('active') ? '0' : '-1');
+
     btn.addEventListener('click', function() {
-      filterBtns.forEach(function(b) {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
+      activateFilter(btn, false);
 
       var filter = btn.getAttribute('data-filter');
+      var run = ++filterGeneration;
 
       trackCards.forEach(function(card) {
         // Cancel any pending hide from a previous filter click
@@ -31,28 +61,64 @@
           hideTimers.delete(card);
         }
 
-        var tags = card.getAttribute('data-tags') || '';
-        if (filter === 'all' || tags.indexOf(filter) !== -1) {
+        if (cardMatchesFilter(card, filter)) {
+          setCardAvailable(card, true);
           card.classList.remove('hidden');
           card.style.opacity = '0';
           card.style.transform = 'translateY(12px)';
           requestAnimationFrame(function() {
             requestAnimationFrame(function() {
+              if (run !== filterGeneration || card.hasAttribute('data-filtered-out')) return;
               card.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
               card.style.opacity = '1';
               card.style.transform = 'translateY(0)';
+              if (Array.from(trackCards).indexOf(card) === currentTrackIndex) {
+                card.classList.add('active');
+              }
             });
           });
         } else {
+          setCardAvailable(card, false);
+          card.classList.remove('active');
           card.style.transition = 'opacity 0.2s ease';
           card.style.opacity = '0';
           var t = setTimeout(function() {
+            if (run !== filterGeneration || !card.hasAttribute('data-filtered-out')) return;
             card.classList.add('hidden');
             hideTimers.delete(card);
           }, 200);
           hideTimers.set(card, t);
         }
       });
+
+      if (currentTrackIndex >= 0) {
+        var activeCard = trackCards[currentTrackIndex];
+        if (activeCard && activeCard.hasAttribute('data-filtered-out')) {
+          activeCard.classList.remove('active');
+        }
+      }
+    });
+
+    btn.addEventListener('keydown', function(e) {
+      var keys = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'];
+      if (keys.indexOf(e.key) === -1) return;
+      e.preventDefault();
+      var buttons = Array.from(filterBtns);
+      var index = buttons.indexOf(btn);
+      if (e.key === 'Home') {
+        buttons[0].click();
+        activateFilter(buttons[0], true);
+        return;
+      }
+      if (e.key === 'End') {
+        buttons[buttons.length - 1].click();
+        activateFilter(buttons[buttons.length - 1], true);
+        return;
+      }
+      var dir = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 : -1;
+      var next = buttons[(index + dir + buttons.length) % buttons.length];
+      next.click();
+      activateFilter(next, true);
     });
   });
 
@@ -76,7 +142,7 @@
   var mobilePlayIcon = document.getElementById('mobilePlayIcon');
 
   // Guard: player bar must be present
-  if (!playerTitle || !playPauseBtn || !progressBar || !prevBtn || !nextBtn) return;
+  if (!playerTitle || !playerArtist || !playerCover || !playPauseBtn || !progressBar || !progressFill || !prevBtn || !nextBtn || !currentTimeEl || !totalTimeEl) return;
 
   var audio = new Audio();
   audio.preload = 'metadata';
@@ -87,7 +153,9 @@
   var originalTitle = document.title;
 
   var visibleCards = function() {
-    return Array.from(trackCards).filter(function(c) { return !c.classList.contains('hidden'); });
+    return Array.from(trackCards).filter(function(c) {
+      return !c.hasAttribute('data-filtered-out');
+    });
   };
 
   // Show mobile play button on small screens
@@ -109,9 +177,28 @@
   }
 
   function formatTime(secs) {
+    if (!Number.isFinite(secs) || secs < 0) secs = 0;
     var m = Math.floor(secs / 60);
     var s = Math.floor(secs % 60);
     return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+  function updateSeekAria() {
+    var duration = Number.isFinite(audio.duration) ? audio.duration : 0;
+    var current = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
+    var pct = duration > 0 ? (current / duration) * 100 : 0;
+    progressBar.setAttribute('aria-valuenow', Math.round(pct));
+    progressBar.setAttribute('aria-valuetext', formatTime(current) + ' of ' + formatTime(duration));
+  }
+
+  function setVolume(value) {
+    var pct = Math.max(0, Math.min(1, value));
+    audio.volume = pct;
+    if (volumeFill) volumeFill.style.width = (pct * 100) + '%';
+    if (volumeBar) {
+      volumeBar.setAttribute('aria-valuenow', Math.round(pct * 100));
+      volumeBar.setAttribute('aria-valuetext', Math.round(pct * 100) + '%');
+    }
   }
 
   // =========================================
@@ -135,11 +222,29 @@
         ] : []
       });
 
-      navigator.mediaSession.setActionHandler('play', function() { audio.play(); });
+      navigator.mediaSession.setActionHandler('play', function() { playAudio(); });
       navigator.mediaSession.setActionHandler('pause', function() { audio.pause(); });
       navigator.mediaSession.setActionHandler('previoustrack', function() { prevBtn.click(); });
       navigator.mediaSession.setActionHandler('nexttrack', function() { nextBtn.click(); });
     } catch(e) { /* MediaSession not fully supported in this browser */ }
+  }
+
+  function showPlaybackError() {
+    isPlaying = false;
+    updatePlayIcon();
+    document.title = originalTitle;
+    playerTitle.textContent = 'Error loading track';
+    trackCards.forEach(function(c) { c.classList.remove('active'); });
+  }
+
+  function playAudio() {
+    var playPromise = audio.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(function(err) {
+        if (err && err.name === 'AbortError') return;
+        showPlaybackError();
+      });
+    }
   }
 
   // =========================================
@@ -159,6 +264,7 @@
     totalTimeEl.textContent = card.getAttribute('data-duration') || '0:00';
     currentTimeEl.textContent = '0:00';
     progressFill.style.width = '0%';
+    updateSeekAria();
 
     if (coverUrl) {
       playerCover.style.background = "url('" + coverUrl + "') center/cover no-repeat, " + gradient;
@@ -170,7 +276,7 @@
     currentTrackIndex = allCards.indexOf(card);
 
     audio.src = src;
-    audio.play().catch(function() {});
+    playAudio();
 
     document.title = title + ' - Igor Szuniewicz | Music';
 
@@ -212,19 +318,16 @@
     var pct = (audio.currentTime / audio.duration) * 100;
     progressFill.style.width = pct + '%';
     currentTimeEl.textContent = formatTime(audio.currentTime);
-    progressBar.setAttribute('aria-valuenow', Math.round(pct));
+    updateSeekAria();
   });
 
   audio.addEventListener('loadedmetadata', function() {
     totalTimeEl.textContent = formatTime(audio.duration);
+    updateSeekAria();
   });
 
   audio.addEventListener('error', function() {
-    isPlaying = false;
-    updatePlayIcon();
-    document.title = originalTitle;
-    playerTitle.textContent = 'Error loading track';
-    trackCards.forEach(function(c) { c.classList.remove('active'); });
+    showPlaybackError();
   });
 
   // =========================================
@@ -237,10 +340,12 @@
     if (mobilePlayIcon) mobilePlayIcon.innerHTML = isPlaying ? pausePath : playPath;
     if (playPauseBtn) {
       playPauseBtn.setAttribute('title', isPlaying ? 'Pause' : 'Play');
+      playPauseBtn.setAttribute('aria-label', isPlaying ? 'Pause track' : 'Play track');
       playPauseBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
     }
     if (mobilePlayBtn) {
       mobilePlayBtn.setAttribute('title', isPlaying ? 'Pause' : 'Play');
+      mobilePlayBtn.setAttribute('aria-label', isPlaying ? 'Pause track' : 'Play track');
       mobilePlayBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
     }
   }
@@ -250,7 +355,7 @@
   // =========================================
   trackCards.forEach(function(card) {
     card.setAttribute('role', 'button');
-    card.setAttribute('tabindex', '0');
+    setCardAvailable(card, !card.hasAttribute('data-filtered-out'));
     var title = card.getAttribute('data-title') || 'track';
     card.setAttribute('aria-label', 'Play ' + title);
     card.addEventListener('click', function() {
@@ -273,7 +378,7 @@
     if (isPlaying) {
       audio.pause();
     } else {
-      audio.play();
+      playAudio();
     }
   }
 
@@ -307,6 +412,7 @@
   progressBar.setAttribute('aria-valuemin', '0');
   progressBar.setAttribute('aria-valuemax', '100');
   progressBar.setAttribute('aria-valuenow', '0');
+  progressBar.setAttribute('aria-valuetext', '0:00 of 0:00');
   progressBar.setAttribute('tabindex', '0');
 
   if (volumeBar) {
@@ -315,6 +421,7 @@
     volumeBar.setAttribute('aria-valuemin', '0');
     volumeBar.setAttribute('aria-valuemax', '100');
     volumeBar.setAttribute('aria-valuenow', '70');
+    volumeBar.setAttribute('aria-valuetext', '70%');
     volumeBar.setAttribute('tabindex', '0');
   }
 
@@ -335,7 +442,20 @@
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
       e.preventDefault();
       audio.currentTime = Math.max(0, audio.currentTime - step);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      audio.currentTime = 0;
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      audio.currentTime = audio.duration;
+    } else if (e.key === 'PageUp') {
+      e.preventDefault();
+      audio.currentTime = Math.min(audio.duration, audio.currentTime + 30);
+    } else if (e.key === 'PageDown') {
+      e.preventDefault();
+      audio.currentTime = Math.max(0, audio.currentTime - 30);
     }
+    updateSeekAria();
   });
 
   if (volumeBar) {
@@ -343,22 +463,30 @@
       var rect = this.getBoundingClientRect();
       if (!rect.width) return;
       var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      audio.volume = pct;
-      if (volumeFill) volumeFill.style.width = (pct * 100) + '%';
-      volumeBar.setAttribute('aria-valuenow', Math.round(pct * 100));
+      setVolume(pct);
     });
 
     volumeBar.addEventListener('keydown', function(e) {
       var step = 0.05;
       if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
         e.preventDefault();
-        audio.volume = Math.min(1, audio.volume + step);
+        setVolume(audio.volume + step);
       } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
         e.preventDefault();
-        audio.volume = Math.max(0, audio.volume - step);
+        setVolume(audio.volume - step);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        setVolume(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        setVolume(1);
+      } else if (e.key === 'PageUp') {
+        e.preventDefault();
+        setVolume(audio.volume + 0.2);
+      } else if (e.key === 'PageDown') {
+        e.preventDefault();
+        setVolume(audio.volume - 0.2);
       }
-      if (volumeFill) volumeFill.style.width = (audio.volume * 100) + '%';
-      volumeBar.setAttribute('aria-valuenow', Math.round(audio.volume * 100));
     });
   }
 

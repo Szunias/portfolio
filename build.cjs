@@ -41,6 +41,53 @@ function cleanDir(dir) {
   if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
 }
 
+function copyDir(src, dest) {
+  if (fs.existsSync(src)) {
+    fs.cpSync(src, dest, { recursive: true });
+  }
+}
+
+function isGitIgnored(filePath) {
+  try {
+    execSync(`git check-ignore -q -- "${filePath}"`, {
+      cwd: __dirname, stdio: 'ignore',
+    });
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+function copyDirFiltered(src, dest, options = {}) {
+  const skipExtensions = new Set(options.skipExtensions || []);
+  const skipped = [];
+
+  function walk(from, to) {
+    ensureDir(to);
+    for (const entry of fs.readdirSync(from, { withFileTypes: true })) {
+      const srcPath = path.join(from, entry.name);
+      const destPath = path.join(to, entry.name);
+      const rel = path.relative(__dirname, srcPath).replace(/\\/g, '/');
+
+      if (options.skipIgnored && isGitIgnored(rel)) {
+        skipped.push(rel);
+        continue;
+      }
+
+      if (entry.isDirectory()) {
+        walk(srcPath, destPath);
+      } else if (!skipExtensions.has(path.extname(entry.name).toLowerCase())) {
+        fs.copyFileSync(srcPath, destPath);
+      } else {
+        skipped.push(rel);
+      }
+    }
+  }
+
+  if (fs.existsSync(src)) walk(src, dest);
+  return skipped;
+}
+
 /** Escape characters that break HTML attribute values. Order matters: & first. */
 function escAttr(str) {
   return String(str)
@@ -65,8 +112,82 @@ function ogTags(page) {
   ];
   if (page.ogImage) {
     lines.splice(4, 0, `<meta property="og:image" content="${escAttr(page.ogImage)}">`);
+    lines.push(`<meta name="twitter:image" content="${escAttr(page.ogImage)}">`);
   }
   return lines.join('\n');
+}
+
+function stripTags(html) {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function videoLabelFromContext(prefix) {
+  const headings = [...prefix.matchAll(/<h[23]\b[^>]*>([\s\S]*?)<\/h[23]>/gi)];
+  if (headings.length) {
+    const text = stripTags(headings[headings.length - 1][1]);
+    if (text) return `Video: ${text}`;
+  }
+  return 'Project video';
+}
+
+function enhanceVideoAccessibility(html) {
+  let counter = 0;
+  let output = html.replace(
+    /(<video\b(?=[^>]*\bcontrols\b)(?![^>]*\baria-describedby=)([^>]*)>[\s\S]*?<\/video>)(\s*<\/div>\s*<p\s+class="video-caption")([^>]*>)/gi,
+    (match, videoHtml, attrs, captionStart, captionAttrs) => {
+      counter++;
+      const id = `video-caption-${counter}`;
+      const describedVideo = videoHtml.replace(/<video\b/i, `<video aria-describedby="${id}"`);
+      const describedCaptionStart = /\bid=/.test(captionAttrs)
+        ? captionStart
+        : `${captionStart} id="${id}"`;
+      return describedVideo + describedCaptionStart + captionAttrs;
+    }
+  );
+
+  output = output.replace(/<video\b(?=[^>]*\bcontrols\b)(?![^>]*\baria-label=)(?![^>]*\baria-labelledby=)(?![^>]*\baria-describedby=)([^>]*)>/gi, (match, attrs, offset) => {
+    const context = output.slice(Math.max(0, offset - 2500), offset);
+    return `<video aria-label="${escAttr(videoLabelFromContext(context))}"${attrs}>`;
+  });
+
+  return output;
+}
+
+function staticCopyEntries(cfg) {
+  return (cfg.staticCopy || []).map(entry => (
+    typeof entry === 'string' ? { file: entry, sitemap: true } : entry
+  ));
+}
+
+function rewriteRootRelativeUrls(html, origin) {
+  const cleanOrigin = origin.replace(/\/$/, '');
+  return html
+    .replace(/\b(href|src|poster|action)=(["'])\/(?!\/)([^"']*)\2/gi, `$1=$2${cleanOrigin}/$3$2`)
+    .replace(/\b(srcset)=(["'])([^"']*)\2/gi, (match, attr, quote, value) => {
+      const rewritten = value.split(',').map(part => {
+        const trimmed = part.trim();
+        if (!trimmed.startsWith('/')) return part;
+        return part.replace(/^\s*\/(?!\/)/, `${cleanOrigin}/`);
+      }).join(',');
+      return `${attr}=${quote}${rewritten}${quote}`;
+    })
+    .replace(/url\((["']?)\/(?!\/)([^)"']+)\1\)/gi, `url($1${cleanOrigin}/$2$1)`);
+}
+
+function ensureFragmentTargets(html, ids) {
+  let output = html;
+  for (const id of ids || []) {
+    const hasTarget = new RegExp(`\\bid=(["'])${id}\\1`, 'i').test(output);
+    if (!hasTarget) {
+      output = output.replace(/<body\b([^>]*)>/i, `$&\n<div id="${escAttr(id)}" tabindex="-1"></div>`);
+    }
+  }
+  return output;
 }
 
 // ─── Cache partials ─────────────────────────────────────────────
@@ -147,6 +268,8 @@ function buildPage(page) {
     html = html.replace('<!-- SCHEMA -->', '');
   }
 
+  html = enhanceVideoAccessibility(html);
+
   return html;
 }
 
@@ -164,6 +287,12 @@ function validateConfig(cfg) {
       if (!fs.existsSync(path.join(SRC, 'js', `${jsName}.js`))) {
         throw new Error(`JS not found: src/js/${jsName}.js (required by ${page.slug})`);
       }
+    }
+  }
+  for (const entry of staticCopyEntries(cfg)) {
+    if (!entry.file) throw new Error('staticCopy entry is missing file');
+    if (!fs.existsSync(path.join(__dirname, entry.file))) {
+      throw new Error(`Static copy not found: ${entry.file}`);
     }
   }
 }
@@ -194,17 +323,29 @@ function main() {
 
   // Copy static files (external pages not using the layout system)
   let copied = 0;
-  if (config.staticCopy) {
-    for (const file of config.staticCopy) {
-      const src = path.join(__dirname, file);
-      const outName = path.basename(file);
+  const copiedStatic = [];
+  const staticEntries = staticCopyEntries(config);
+  if (staticEntries.length) {
+    for (const entry of staticEntries) {
+      const src = path.join(__dirname, entry.file);
+      const outName = path.basename(entry.file);
       const dest = path.join(DIST, outName);
       if (fs.existsSync(src)) {
-        fs.copyFileSync(src, dest);
+        if (entry.rewriteRootRelativeTo || entry.ensureIds) {
+          let html = read(src);
+          if (entry.rewriteRootRelativeTo) {
+            html = rewriteRootRelativeUrls(html, entry.rewriteRootRelativeTo);
+          }
+          html = ensureFragmentTargets(html, entry.ensureIds);
+          fs.writeFileSync(dest, html, 'utf8');
+        } else {
+          fs.copyFileSync(src, dest);
+        }
         copied++;
+        copiedStatic.push({ ...entry, outName });
         console.log(`  → ${outName} (copied)`);
       } else {
-        console.warn(`  ⚠ ${file} not found, skipping`);
+        throw new Error(`Static copy not found: ${entry.file}`);
       }
     }
   }
@@ -229,10 +370,10 @@ function main() {
     const lastmod = (pageGitDate || today + 'T00:00:00Z').slice(0, 10);
     return `  <url>\n    <loc>${escAttr(p.canonical)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <priority>${priority}</priority>\n  </url>`;
   });
-  const staticUrls = (config.staticCopy || []).map(file => {
-    const outName = path.basename(file);
+  const staticUrls = copiedStatic.filter(entry => entry.sitemap !== false).map(entry => {
+    const outName = entry.outName;
     const loc = `${SITE_ORIGIN}/${outName}`;
-    const gitDate = gitMtime(file);
+    const gitDate = gitMtime(entry.file);
     const lastmod = (gitDate || today + 'T00:00:00Z').slice(0, 10);
     return `  <url>\n    <loc>${escAttr(loc)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <priority>0.5</priority>\n  </url>`;
   });
@@ -264,9 +405,30 @@ function main() {
     if (fs.existsSync(src)) {
       fs.copyFileSync(src, path.join(DIST, f));
     } else {
-      console.warn(`  ⚠ root asset ${f} not found, skipping`);
+      throw new Error(`Root asset not found: ${f}`);
     }
   }
+
+  const legacyPublic = path.join(__dirname, 'old', 'public');
+  if (fs.existsSync(legacyPublic)) {
+    const legacyDest = path.join(DIST, 'old', 'public');
+    const skipped = copyDirFiltered(legacyPublic, legacyDest, {
+      skipExtensions: ['.html'],
+      skipIgnored: true,
+    });
+    console.log('  → old/public (copied, excluding HTML and ignored files)');
+    if (skipped.length) {
+      console.log(`  → old/public skipped ${skipped.length} non-deployable file(s)`);
+    }
+  }
+
+  const cnameHost = new URL(config.pages[0].canonical).hostname;
+  if (cnameHost && !cnameHost.endsWith('.github.io')) {
+    fs.writeFileSync(path.join(DIST, 'CNAME'), cnameHost + '\n', 'utf8');
+    console.log('  → CNAME');
+  }
+  fs.writeFileSync(path.join(DIST, '.nojekyll'), '', 'utf8');
+  console.log('  → .nojekyll');
 
   console.log(`\nDone: ${built} pages built, ${copied} files copied → dist/`);
 
