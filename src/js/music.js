@@ -269,12 +269,14 @@
       var tags = (card.getAttribute('data-tags') || '').split(',');
       var album = tags[0] ? tags[0].charAt(0).toUpperCase() + tags[0].slice(1) : 'Music';
 
+      var coverType = /\.png(?:[?#]|$)/i.test(coverUrl || '') ? 'image/png' : 'image/jpeg';
+
       navigator.mediaSession.metadata = new MediaMetadata({
         title: title,
         artist: artist,
         album: album,
         artwork: coverUrl ? [
-          { src: coverUrl, sizes: '512x512', type: 'image/jpeg' }
+          { src: coverUrl, sizes: '512x512', type: coverType }
         ] : []
       });
 
