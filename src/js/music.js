@@ -265,13 +265,18 @@
     }
   }
 
-  function centerTrackCard(card) {
+  function bringTrackCardIntoView(card) {
     if (!card || !card.scrollIntoView) return;
+    var rect = card.getBoundingClientRect();
+    var bottomLimit = window.innerHeight - (playerBar ? playerBar.offsetHeight + 32 : 32);
+    var alreadyComfortable = rect.top >= 88 && rect.bottom <= bottomLimit;
+    if (alreadyComfortable) return;
+
     var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.requestAnimationFrame(function() {
       card.scrollIntoView({
         behavior: prefersReducedMotion ? 'auto' : 'smooth',
-        block: 'center',
+        block: 'nearest',
         inline: 'nearest'
       });
     });
@@ -508,6 +513,9 @@
     var src = card.getAttribute('data-src');
     if (!src) return;
     options = options || {};
+    var preserveScroll = !options.reveal;
+    var savedScrollX = window.scrollX || window.pageXOffset || 0;
+    var savedScrollY = window.scrollY || window.pageYOffset || 0;
 
     syncFeaturedTrack(card, true);
 
@@ -544,7 +552,16 @@
     // Highlight active card
     trackCards.forEach(function(c) { c.classList.remove('active'); });
     card.classList.add('active');
-    if (options.center !== false) centerTrackCard(card);
+    if (options.reveal) {
+      bringTrackCardIntoView(card);
+    } else if (preserveScroll) {
+      window.requestAnimationFrame(function() {
+        window.scrollTo(savedScrollX, savedScrollY);
+        window.setTimeout(function() {
+          window.scrollTo(savedScrollX, savedScrollY);
+        }, 80);
+      });
+    }
   }
 
   // =========================================
@@ -698,13 +715,13 @@
       while (randomIndex === currentInVisible) {
         randomIndex = Math.floor(Math.random() * visible.length);
       }
-      selectTrack(visible[randomIndex]);
+      selectTrack(visible[randomIndex], { reveal: true });
       return;
     }
     var newIndex = currentInVisible < 0
       ? 0
       : (currentInVisible + direction + visible.length) % visible.length;
-    selectTrack(visible[newIndex]);
+    selectTrack(visible[newIndex], { reveal: true });
   }
 
   function playNextTrack() {
