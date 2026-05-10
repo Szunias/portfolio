@@ -121,17 +121,23 @@
   // =========================================
   var playerTitle = document.getElementById('playerTitle');
   var playerArtist = document.getElementById('playerArtist');
+  var playerStatus = document.getElementById('playerStatus');
   var playerCover = document.getElementById('playerCover');
+  var playerBar = document.getElementById('playerBar');
   var playPauseBtn = document.getElementById('playPauseBtn');
   var playPauseIcon = document.getElementById('playPauseIcon');
   var currentTimeEl = document.getElementById('currentTime');
   var totalTimeEl = document.getElementById('totalTime');
   var progressFill = document.getElementById('progressFill');
+  var progressBuffer = document.getElementById('progressBuffer');
   var progressBar = document.getElementById('progressBar');
   var volumeBar = document.getElementById('volumeBar');
   var volumeFill = document.getElementById('volumeFill');
   var prevBtn = document.getElementById('prevBtn');
   var nextBtn = document.getElementById('nextBtn');
+  var shuffleBtn = document.getElementById('shuffleBtn');
+  var repeatBtn = document.getElementById('repeatBtn');
+  var muteBtn = document.getElementById('muteBtn');
   var mobilePlayBtn = document.getElementById('mobilePlayBtn');
   var mobilePlayIcon = document.getElementById('mobilePlayIcon');
 
@@ -145,6 +151,9 @@
   var isPlaying = false;
   var currentTrackIndex = -1;
   var originalTitle = document.title;
+  var shuffleEnabled = false;
+  var repeatOne = false;
+  var lastVolume = audio.volume;
 
   var visibleCards = function() {
     return Array.from(trackCards).filter(function(c) {
@@ -184,11 +193,68 @@
   function setVolume(value) {
     var pct = Math.max(0, Math.min(1, value));
     audio.volume = pct;
+    if (pct > 0) {
+      lastVolume = pct;
+      audio.muted = false;
+    }
     if (volumeFill) volumeFill.style.width = (pct * 100) + '%';
     if (volumeBar) {
       volumeBar.setAttribute('aria-valuenow', Math.round(pct * 100));
       volumeBar.setAttribute('aria-valuetext', Math.round(pct * 100) + '%');
     }
+    updateMuteButton();
+  }
+
+  function currentLufsText() {
+    if (currentTrackIndex < 0) return 'Normalized playback';
+    var card = trackCards[currentTrackIndex];
+    var lufs = card ? card.getAttribute('data-lufs') : '';
+    return lufs ? 'Normalized ' + lufs + ' LUFS' : 'Normalized playback';
+  }
+
+  function setPlayerStatus(text, loading) {
+    if (playerStatus) playerStatus.textContent = text || currentLufsText();
+    if (playerBar) playerBar.classList.toggle('is-loading', !!loading);
+  }
+
+  function updatePlayerStateClasses() {
+    if (!playerBar) return;
+    playerBar.classList.toggle('is-playing', isPlaying);
+    playerBar.classList.toggle('has-track', currentTrackIndex >= 0);
+  }
+
+  function updateModeButtons() {
+    if (shuffleBtn) {
+      shuffleBtn.setAttribute('aria-pressed', shuffleEnabled ? 'true' : 'false');
+      shuffleBtn.setAttribute('aria-label', shuffleEnabled ? 'Shuffle on' : 'Shuffle off');
+      shuffleBtn.setAttribute('title', shuffleEnabled ? 'Shuffle on' : 'Shuffle');
+    }
+    if (repeatBtn) {
+      repeatBtn.setAttribute('aria-pressed', repeatOne ? 'true' : 'false');
+      repeatBtn.setAttribute('aria-label', repeatOne ? 'Repeat one on' : 'Repeat one off');
+      repeatBtn.setAttribute('title', repeatOne ? 'Repeat one on' : 'Repeat one');
+    }
+  }
+
+  function updateMuteButton() {
+    if (!muteBtn) return;
+    var muted = audio.muted || audio.volume === 0;
+    var volumePath = '<polygon points="11,5 6,9 2,9 2,15 6,15 11,19 11,5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>';
+    var mutedPath = '<polygon points="11,5 6,9 2,9 2,15 6,15 11,19 11,5"/><path d="M16 9l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>';
+    var icon = muteBtn.querySelector('svg');
+    if (icon) icon.innerHTML = muted ? mutedPath : volumePath;
+    muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
+    muteBtn.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
+    muteBtn.setAttribute('title', muted ? 'Unmute' : 'Mute');
+  }
+
+  function updateBufferedProgress() {
+    if (!progressBuffer || !audio.duration || !audio.buffered || audio.buffered.length === 0) {
+      if (progressBuffer) progressBuffer.style.width = '0%';
+      return;
+    }
+    var end = audio.buffered.end(audio.buffered.length - 1);
+    progressBuffer.style.width = Math.min(100, (end / audio.duration) * 100) + '%';
   }
 
   // =========================================
@@ -222,12 +288,15 @@
   function showPlaybackError() {
     isPlaying = false;
     updatePlayIcon();
+    updatePlayerStateClasses();
+    setPlayerStatus('Could not load track', false);
     document.title = originalTitle;
     playerTitle.textContent = 'Error loading track';
     trackCards.forEach(function(c) { c.classList.remove('active'); });
   }
 
   function playAudio() {
+    setPlayerStatus(currentLufsText(), true);
     var playPromise = audio.play();
     if (playPromise && typeof playPromise.catch === 'function') {
       playPromise.catch(function(err) {
@@ -254,6 +323,7 @@
     totalTimeEl.textContent = card.getAttribute('data-duration') || '0:00';
     currentTimeEl.textContent = '0:00';
     progressFill.style.width = '0%';
+    if (progressBuffer) progressBuffer.style.width = '0%';
     updateSeekAria();
 
     if (coverUrl) {
@@ -266,6 +336,8 @@
     currentTrackIndex = allCards.indexOf(card);
 
     audio.src = src;
+    setPlayerStatus('Loading - ' + currentLufsText(), true);
+    updatePlayerStateClasses();
     playAudio();
 
     document.title = title + ' - Igor Szuniewicz | Music';
@@ -283,6 +355,8 @@
   audio.addEventListener('play', function() {
     isPlaying = true;
     updatePlayIcon();
+    updatePlayerStateClasses();
+    setPlayerStatus('Playing - ' + currentLufsText(), false);
     if (currentTrackIndex >= 0) {
       var card = trackCards[currentTrackIndex];
       var title = decodeEntities(card.getAttribute('data-title'));
@@ -293,6 +367,8 @@
   audio.addEventListener('pause', function() {
     isPlaying = false;
     updatePlayIcon();
+    updatePlayerStateClasses();
+    if (currentTrackIndex >= 0 && !audio.ended) setPlayerStatus('Paused - ' + currentLufsText(), false);
     document.title = originalTitle;
   });
 
@@ -300,7 +376,12 @@
     isPlaying = false;
     updatePlayIcon();
     document.title = originalTitle;
-    nextBtn.click();
+    if (repeatOne) {
+      audio.currentTime = 0;
+      playAudio();
+      return;
+    }
+    playNextTrack();
   });
 
   audio.addEventListener('timeupdate', function() {
@@ -309,11 +390,23 @@
     progressFill.style.width = pct + '%';
     currentTimeEl.textContent = formatTime(audio.currentTime);
     updateSeekAria();
+    updateBufferedProgress();
   });
 
   audio.addEventListener('loadedmetadata', function() {
     totalTimeEl.textContent = formatTime(audio.duration);
     updateSeekAria();
+    updateBufferedProgress();
+  });
+
+  audio.addEventListener('progress', updateBufferedProgress);
+
+  audio.addEventListener('waiting', function() {
+    if (currentTrackIndex >= 0) setPlayerStatus('Buffering - ' + currentLufsText(), true);
+  });
+
+  audio.addEventListener('canplay', function() {
+    if (currentTrackIndex >= 0) setPlayerStatus((isPlaying ? 'Playing - ' : '') + currentLufsText(), false);
   });
 
   audio.addEventListener('error', function() {
@@ -372,30 +465,72 @@
     }
   }
 
+  function selectRelativeTrack(direction) {
+    var visible = visibleCards();
+    if (visible.length === 0) return;
+    var currentInVisible = -1;
+    if (currentTrackIndex >= 0) {
+      currentInVisible = visible.indexOf(trackCards[currentTrackIndex]);
+    }
+    if (shuffleEnabled && visible.length > 1) {
+      var randomIndex = currentInVisible;
+      while (randomIndex === currentInVisible) {
+        randomIndex = Math.floor(Math.random() * visible.length);
+      }
+      selectTrack(visible[randomIndex]);
+      return;
+    }
+    var newIndex = currentInVisible < 0
+      ? 0
+      : (currentInVisible + direction + visible.length) % visible.length;
+    selectTrack(visible[newIndex]);
+  }
+
+  function playNextTrack() {
+    selectRelativeTrack(1);
+  }
+
   playPauseBtn.addEventListener('click', togglePlay);
   if (mobilePlayBtn) mobilePlayBtn.addEventListener('click', togglePlay);
 
   prevBtn.addEventListener('click', function() {
-    var visible = visibleCards();
-    if (visible.length === 0) return;
-    var currentInVisible = -1;
-    if (currentTrackIndex >= 0) {
-      currentInVisible = visible.indexOf(trackCards[currentTrackIndex]);
+    if (currentTrackIndex >= 0 && audio.currentTime > 5) {
+      audio.currentTime = 0;
+      return;
     }
-    var newIndex = currentInVisible <= 0 ? visible.length - 1 : currentInVisible - 1;
-    selectTrack(visible[newIndex]);
+    selectRelativeTrack(-1);
   });
 
   nextBtn.addEventListener('click', function() {
-    var visible = visibleCards();
-    if (visible.length === 0) return;
-    var currentInVisible = -1;
-    if (currentTrackIndex >= 0) {
-      currentInVisible = visible.indexOf(trackCards[currentTrackIndex]);
-    }
-    var newIndex = currentInVisible >= visible.length - 1 ? 0 : currentInVisible + 1;
-    selectTrack(visible[newIndex]);
+    playNextTrack();
   });
+
+  if (shuffleBtn) {
+    shuffleBtn.addEventListener('click', function() {
+      shuffleEnabled = !shuffleEnabled;
+      updateModeButtons();
+    });
+  }
+
+  if (repeatBtn) {
+    repeatBtn.addEventListener('click', function() {
+      repeatOne = !repeatOne;
+      updateModeButtons();
+    });
+  }
+
+  if (muteBtn) {
+    muteBtn.addEventListener('click', function() {
+      if (audio.muted || audio.volume === 0) {
+        audio.muted = false;
+        setVolume(lastVolume || 0.7);
+      } else {
+        lastVolume = audio.volume || lastVolume || 0.7;
+        audio.muted = true;
+        updateMuteButton();
+      }
+    });
+  }
 
   progressBar.setAttribute('role', 'slider');
   progressBar.setAttribute('aria-label', 'Seek');
@@ -479,5 +614,10 @@
       }
     });
   }
+
+  updateModeButtons();
+  updateMuteButton();
+  updatePlayerStateClasses();
+  setPlayerStatus('Normalized playback', false);
 
 })();
