@@ -90,6 +90,11 @@
           activeCard.classList.remove('active');
         }
       }
+
+      if (!galleryCurrentCard || galleryCurrentCard.hasAttribute('data-filtered-out')) {
+        var nextFeatured = visibleCards()[0];
+        if (nextFeatured) syncFeaturedTrack(nextFeatured, true);
+      }
     });
 
     btn.addEventListener('keydown', function(e) {
@@ -139,6 +144,15 @@
   var muteBtn = document.getElementById('muteBtn');
   var mobilePlayBtn = document.getElementById('mobilePlayBtn');
   var mobilePlayIcon = document.getElementById('mobilePlayIcon');
+  var musicGallery = document.getElementById('musicGallery');
+  var galleryCover = document.getElementById('galleryCover');
+  var galleryCategory = document.getElementById('galleryCategory');
+  var galleryTitle = document.getElementById('galleryTitle');
+  var galleryArtist = document.getElementById('galleryArtist');
+  var galleryMeta = document.getElementById('galleryMeta');
+  var galleryDescription = document.getElementById('galleryDescription');
+  var galleryTags = document.getElementById('galleryTags');
+  var galleryPlay = document.getElementById('galleryPlay');
 
   // Guard: player bar must be present
   if (!playerTitle || !playerArtist || !playerCover || !playPauseBtn || !progressBar || !progressFill || !prevBtn || !nextBtn || !currentTimeEl || !totalTimeEl) return;
@@ -154,6 +168,8 @@
   var repeatOne = false;
   var lastVolume = audio.volume;
   var playRequested = false;
+  var galleryCurrentCard = null;
+  var galleryAnimationTimer = 0;
 
   var visibleCards = function() {
     return Array.from(trackCards).filter(function(c) {
@@ -173,6 +189,80 @@
     var temp = document.createElement('div');
     temp.innerHTML = str;
     return temp.textContent;
+  }
+
+  function cssUrl(value) {
+    return 'url("' + String(value || '').replace(/"/g, '%22') + '")';
+  }
+
+  function getCardAccent(card) {
+    if (!card || !window.getComputedStyle) return '#d4612f';
+    return getComputedStyle(card).getPropertyValue('--card-accent').trim() || '#d4612f';
+  }
+
+  function syncFeaturedTrack(card, animate) {
+    if (!musicGallery || !galleryCover || !card) return;
+
+    var changed = galleryCurrentCard !== card;
+    var title = decodeEntities(card.getAttribute('data-title') || '');
+    var displayTitle = card.querySelector('.track-card__title');
+    var artist = card.getAttribute('data-artist') || '';
+    var coverUrl = card.getAttribute('data-cover') || '';
+    var gradient = card.getAttribute('data-gradient') || 'linear-gradient(135deg, #1a1a1a, #3a2a24)';
+    var description = card.querySelector('.track-card__desc');
+    var year = card.querySelector('.track-card__year');
+    var duration = card.getAttribute('data-duration') || '';
+    var lufs = card.getAttribute('data-lufs') || '';
+    var firstTag = card.querySelector('.track-card__tag');
+
+    galleryCurrentCard = card;
+    musicGallery.style.setProperty('--gallery-accent', getCardAccent(card));
+    musicGallery.style.setProperty('--gallery-cover', coverUrl ? cssUrl(coverUrl) : gradient);
+    galleryCover.style.background = coverUrl
+      ? "url('" + coverUrl + "') center/cover no-repeat, " + gradient
+      : gradient;
+    galleryCover.setAttribute('aria-label', (displayTitle ? displayTitle.textContent : title) + ' album cover');
+
+    if (galleryCategory) galleryCategory.textContent = firstTag ? firstTag.textContent + ' selection' : 'Selected track';
+    if (galleryTitle) galleryTitle.textContent = displayTitle ? displayTitle.textContent : title;
+    if (galleryArtist) galleryArtist.textContent = artist;
+    if (galleryDescription) galleryDescription.textContent = description ? description.textContent : '';
+
+    if (galleryMeta) {
+      galleryMeta.innerHTML = '';
+      [
+        year ? year.textContent : '',
+        duration,
+        lufs ? lufs + ' LUFS' : ''
+      ].filter(Boolean).forEach(function(item) {
+        var span = document.createElement('span');
+        span.textContent = item;
+        galleryMeta.appendChild(span);
+      });
+    }
+
+    if (galleryTags) {
+      galleryTags.innerHTML = '';
+      card.querySelectorAll('.track-card__tag').forEach(function(tag) {
+        var span = document.createElement('span');
+        span.textContent = tag.textContent;
+        galleryTags.appendChild(span);
+      });
+    }
+
+    if (galleryPlay) {
+      galleryPlay.setAttribute('aria-label', 'Play ' + (displayTitle ? displayTitle.textContent : title));
+    }
+
+    if (animate && changed) {
+      musicGallery.classList.remove('is-switching');
+      window.clearTimeout(galleryAnimationTimer);
+      void musicGallery.offsetWidth;
+      musicGallery.classList.add('is-switching');
+      galleryAnimationTimer = window.setTimeout(function() {
+        musicGallery.classList.remove('is-switching');
+      }, 640);
+    }
   }
 
   function formatTime(secs) {
@@ -406,6 +496,8 @@
     var src = card.getAttribute('data-src');
     if (!src) return;
 
+    syncFeaturedTrack(card, true);
+
     var title = decodeEntities(card.getAttribute('data-title') || '');
     var artist = card.getAttribute('data-artist') || '';
     var gradient = card.getAttribute('data-gradient') || '';
@@ -559,6 +651,12 @@
     card.addEventListener('click', function() {
       selectTrack(card);
     });
+    card.addEventListener('mouseenter', function() {
+      syncFeaturedTrack(card, true);
+    });
+    card.addEventListener('focus', function() {
+      syncFeaturedTrack(card, true);
+    });
     card.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
@@ -607,6 +705,12 @@
 
   playPauseBtn.addEventListener('click', togglePlay);
   if (mobilePlayBtn) mobilePlayBtn.addEventListener('click', togglePlay);
+  if (galleryPlay) {
+    galleryPlay.addEventListener('click', function() {
+      var card = galleryCurrentCard || visibleCards()[0];
+      if (card) selectTrack(card);
+    });
+  }
 
   prevBtn.addEventListener('click', function() {
     if (currentTrackIndex >= 0 && audio.currentTime > 5) {
@@ -769,6 +873,9 @@
       }
     });
   }
+
+  var initialFeatured = visibleCards()[0] || trackCards[0];
+  if (initialFeatured) syncFeaturedTrack(initialFeatured, false);
 
   updateModeButtons();
   updateMuteButton();
