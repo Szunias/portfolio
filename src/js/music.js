@@ -4,7 +4,6 @@
 (function() {
   var filterBtns = document.querySelectorAll('.filter-btn');
   var trackCards = document.querySelectorAll('.track-card');
-  var tracksGrid = document.getElementById('tracks-grid');
 
   // Guard: only run on music page
   if (!trackCards.length) return;

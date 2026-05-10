@@ -42,53 +42,6 @@ function cleanDir(dir) {
   if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
 }
 
-function copyDir(src, dest) {
-  if (fs.existsSync(src)) {
-    fs.cpSync(src, dest, { recursive: true });
-  }
-}
-
-function isGitIgnored(filePath) {
-  try {
-    execSync(`git check-ignore -q -- "${filePath}"`, {
-      cwd: __dirname, stdio: 'ignore',
-    });
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
-
-function copyDirFiltered(src, dest, options = {}) {
-  const skipExtensions = new Set(options.skipExtensions || []);
-  const skipped = [];
-
-  function walk(from, to) {
-    ensureDir(to);
-    for (const entry of fs.readdirSync(from, { withFileTypes: true })) {
-      const srcPath = path.join(from, entry.name);
-      const destPath = path.join(to, entry.name);
-      const rel = path.relative(__dirname, srcPath).replace(/\\/g, '/');
-
-      if (options.skipIgnored && isGitIgnored(rel)) {
-        skipped.push(rel);
-        continue;
-      }
-
-      if (entry.isDirectory()) {
-        walk(srcPath, destPath);
-      } else if (!skipExtensions.has(path.extname(entry.name).toLowerCase())) {
-        fs.copyFileSync(srcPath, destPath);
-      } else {
-        skipped.push(rel);
-      }
-    }
-  }
-
-  if (fs.existsSync(src)) walk(src, dest);
-  return skipped;
-}
-
 /** Escape characters that break HTML attribute values. Order matters: & first. */
 function escAttr(str) {
   return String(str)
@@ -290,7 +243,9 @@ function validateLocalRefsInDist(htmlFiles, siteOrigin) {
 
 function staticCopyEntries(cfg) {
   return (cfg.staticCopy || []).map(entry => (
-    typeof entry === 'string' ? { file: entry, sitemap: true } : entry
+    typeof entry === 'string'
+      ? { file: entry, outName: path.basename(entry), sitemap: true }
+      : { ...entry, outName: entry.outName || path.basename(entry.file) }
   ));
 }
 
@@ -356,14 +311,17 @@ function buildPage(page) {
   if (!fs.existsSync(layoutPath)) {
     throw new Error(`Layout not found: src/layouts/${page.layout}.html (required by ${page.slug})`);
   }
-  let html = read(layoutPath);
+  let html = enhanceInlineSvgAccessibility(read(layoutPath));
 
   // 2. Read page content
   const pagePath = path.join(SRC, 'pages', `${page.slug}.html`);
   if (!fs.existsSync(pagePath)) {
     throw new Error(`Page content not found: src/pages/${page.slug}.html`);
   }
-  const content = read(pagePath);
+  let content = read(pagePath);
+  content = enhanceVideoAccessibility(content, page.slug);
+  content = enhanceIframeLoading(content);
+  content = enhanceInlineSvgAccessibility(content);
 
   // 3. Assemble CSS (single file per layout type)
   const css = getCSS(page.css);
@@ -382,13 +340,13 @@ function buildPage(page) {
 
   // 6. Optional partials
   if (page.lightbox) {
-    html = html.replace('<!-- LIGHTBOX -->', '<!-- LIGHTBOX -->\n' + getPartial('lightbox'));
+    html = html.replace('<!-- LIGHTBOX -->', '<!-- LIGHTBOX -->\n' + enhanceInlineSvgAccessibility(getPartial('lightbox')));
   } else {
     html = html.replace('<!-- LIGHTBOX -->', '');
   }
 
   if (page.layout === 'music') {
-    html = html.replace('<!-- PLAYER -->', getPartial('player-bar'));
+    html = html.replace('<!-- PLAYER -->', enhanceInlineSvgAccessibility(getPartial('player-bar')));
   }
 
   // 7. Schema (home page)
@@ -397,10 +355,6 @@ function buildPage(page) {
   } else {
     html = html.replace('<!-- SCHEMA -->', '');
   }
-
-  html = enhanceVideoAccessibility(html, page.slug);
-  html = enhanceIframeLoading(html);
-  html = enhanceInlineSvgAccessibility(html);
 
   return html;
 }
@@ -421,11 +375,16 @@ function validateConfig(cfg) {
       }
     }
   }
+  const staticOutNames = new Map();
   for (const entry of staticCopyEntries(cfg)) {
     if (!entry.file) throw new Error('staticCopy entry is missing file');
     if (!fs.existsSync(path.join(__dirname, entry.file))) {
       throw new Error(`Static copy not found: ${entry.file}`);
     }
+    if (staticOutNames.has(entry.outName)) {
+      throw new Error(`Duplicate staticCopy output "${entry.outName}" for ${staticOutNames.get(entry.outName)} and ${entry.file}`);
+    }
+    staticOutNames.set(entry.outName, entry.file);
   }
 }
 
@@ -462,7 +421,7 @@ function main() {
   if (staticEntries.length) {
     for (const entry of staticEntries) {
       const src = path.join(__dirname, entry.file);
-      const outName = path.basename(entry.file);
+      const outName = entry.outName;
       const dest = path.join(DIST, outName);
       if (fs.existsSync(src)) {
         if (entry.rewriteRootRelativeTo || entry.ensureIds || path.extname(entry.file).toLowerCase() === '.html') {
@@ -546,11 +505,7 @@ function main() {
   ];
   for (const f of rootAssets) {
     const src = path.join(__dirname, f);
-    if (fs.existsSync(src)) {
-      fs.copyFileSync(src, path.join(DIST, f));
-    } else {
-      throw new Error(`Root asset not found: ${f}`);
-    }
+    if (!fs.existsSync(src)) throw new Error(`Root asset not found: ${f}`);
   }
 
   if (generatedDescriptionTracks.length) {
