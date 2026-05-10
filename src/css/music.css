@@ -278,11 +278,9 @@ a:focus-visible {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  background: linear-gradient(180deg, rgba(14,14,14,0.96), rgba(14,14,14,0.78) 72%, transparent);
-  backdrop-filter: blur(12px);
+  position: relative;
+  z-index: 20;
+  background: linear-gradient(180deg, rgba(14,14,14,0.9), rgba(14,14,14,0.58) 72%, transparent);
 }
 
 .filter-btn {
@@ -330,6 +328,7 @@ a:focus-visible {
   padding: 0 var(--margin) 38px;
   position: relative;
   isolation: isolate;
+  transform: translateZ(0);
 }
 
 .music-gallery__orb {
@@ -337,13 +336,12 @@ a:focus-visible {
   inset: 22px var(--margin) 52px;
   z-index: -2;
   pointer-events: none;
-  opacity: 0.42;
-  background-image: var(--gallery-cover);
-  background-position: center;
-  background-size: cover;
-  filter: blur(56px) saturate(1.15);
+  opacity: 0.36;
+  background:
+    radial-gradient(circle at 40% 54%, color-mix(in srgb, var(--gallery-accent) 48%, transparent), transparent 58%);
+  filter: blur(34px);
   transform: scale(0.92);
-  transition: background-image 0.35s ease, opacity 0.35s ease, transform 0.35s ease;
+  transition: opacity 0.35s ease, transform 0.35s ease, background 0.35s ease;
 }
 
 .music-gallery::before {
@@ -387,6 +385,7 @@ a:focus-visible {
   aspect-ratio: 1;
   transform-style: preserve-3d;
   transition: transform 0.38s ease, filter 0.38s ease;
+  will-change: transform;
 }
 
 .music-gallery__aura {
@@ -399,8 +398,8 @@ a:focus-visible {
   background-size: cover;
   background-position: center;
   border-radius: 50%;
-  filter: blur(30px) saturate(1.2);
-  opacity: 0.62;
+  filter: blur(22px) saturate(1.15);
+  opacity: 0.5;
   transform: translateZ(-1px);
   transition: background 0.35s ease, opacity 0.35s ease, transform 0.35s ease;
 }
@@ -589,6 +588,7 @@ a:focus-visible {
   cursor: pointer;
   counter-increment: track;
   box-shadow: 0 18px 44px rgba(0,0,0,0.18);
+  scroll-margin-block: 120px;
 }
 
 .track-card::before {
@@ -632,8 +632,60 @@ a:focus-visible {
 }
 
 .track-card.active {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: minmax(190px, 0.64fr) minmax(0, 1.2fr);
+  align-items: stretch;
+  transform: translateY(-4px);
+  background:
+    radial-gradient(circle at 22% 44%, color-mix(in srgb, var(--card-accent) 24%, transparent), transparent 42%),
+    linear-gradient(180deg, rgba(240,236,230,0.082), rgba(240,236,230,0.03)),
+    rgba(8,8,6,0.97);
   border-color: var(--card-accent);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--card-accent) 55%, transparent), 0 18px 48px rgba(0,0,0,0.34);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--card-accent) 55%, transparent),
+    0 26px 70px rgba(0,0,0,0.4);
+}
+
+.track-card.active .track-card__cover {
+  height: 100%;
+  min-height: 280px;
+  aspect-ratio: auto;
+}
+
+.track-card.active .track-card__body {
+  min-height: 100%;
+  justify-content: center;
+  border-top: 0;
+  border-left: 1px solid rgba(240,236,230,0.12);
+  background:
+    linear-gradient(120deg, rgba(8,8,6,0.24), rgba(8,8,6,0.04)),
+    color-mix(in srgb, var(--card-accent) 7%, transparent);
+}
+
+.track-card.active .track-card__title {
+  font-family: var(--serif);
+  font-size: clamp(28px, 3.4vw, 44px);
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  line-height: 1;
+  text-transform: none;
+  overflow-wrap: normal;
+}
+
+.track-card.active .track-card__top-row {
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.track-card.active .track-card__desc {
+  max-width: 520px;
+  font-size: 15px;
+}
+
+.track-card.active .track-card__tag {
+  border-color: color-mix(in srgb, var(--card-accent) 42%, rgba(240,236,230,0.2));
+  color: rgba(240,236,230,0.78);
 }
 
 .track-card.active.is-playing .track-card__cover::after {
@@ -1305,6 +1357,14 @@ a:focus-visible {
   border-top-color: rgba(26,26,26,0.1);
 }
 
+[data-theme="light"] .track-card.active .track-card__body {
+  border-top-color: rgba(26,26,26,0.1);
+  border-left-color: rgba(26,26,26,0.1);
+  background:
+    linear-gradient(120deg, rgba(255,255,255,0.68), rgba(255,255,255,0.24)),
+    color-mix(in srgb, var(--card-accent) 8%, transparent);
+}
+
 [data-theme="light"] .track-card__artist,
 [data-theme="light"] .track-card__desc,
 [data-theme="light"] .track-card__tag {
@@ -1460,6 +1520,15 @@ a:focus-visible {
   .track-card:nth-child(n) {
     transform: none;
   }
+
+  .track-card.active {
+    grid-column: span 2;
+    grid-template-columns: minmax(180px, 0.62fr) minmax(0, 1.12fr);
+  }
+
+  .track-card.active .track-card__cover {
+    min-height: 280px;
+  }
 }
 
 @media (max-width: 650px) {
@@ -1518,7 +1587,7 @@ a:focus-visible {
 
   .music-gallery__orb {
     inset: 28px var(--margin) 48px;
-    filter: blur(38px) saturate(1.12);
+    filter: blur(26px);
   }
 
   .music-gallery__stage {
@@ -1551,6 +1620,27 @@ a:focus-visible {
   .tracks-grid {
     grid-template-columns: 1fr;
     gap: 18px;
+  }
+
+  .track-card.active {
+    grid-column: auto;
+    display: flex;
+    transform: none;
+  }
+
+  .track-card.active .track-card__cover {
+    min-height: 0;
+    aspect-ratio: 1 / 1;
+  }
+
+  .track-card.active .track-card__body {
+    min-height: auto;
+    border-top: 1px solid rgba(240,236,230,0.1);
+    border-left: 0;
+  }
+
+  .track-card.active .track-card__title {
+    font-size: clamp(28px, 9vw, 42px);
   }
 
   .track-card__body {

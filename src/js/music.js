@@ -265,6 +265,18 @@
     }
   }
 
+  function centerTrackCard(card) {
+    if (!card || !card.scrollIntoView) return;
+    var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.requestAnimationFrame(function() {
+      card.scrollIntoView({
+        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+        block: 'center',
+        inline: 'nearest'
+      });
+    });
+  }
+
   function formatTime(secs) {
     if (!Number.isFinite(secs) || secs < 0) secs = 0;
     var m = Math.floor(secs / 60);
@@ -492,9 +504,10 @@
   // =========================================
   // SELECT & PLAY TRACK
   // =========================================
-  function selectTrack(card) {
+  function selectTrack(card, options) {
     var src = card.getAttribute('data-src');
     if (!src) return;
+    options = options || {};
 
     syncFeaturedTrack(card, true);
 
@@ -531,6 +544,7 @@
     // Highlight active card
     trackCards.forEach(function(c) { c.classList.remove('active'); });
     card.classList.add('active');
+    if (options.center !== false) centerTrackCard(card);
   }
 
   // =========================================
@@ -650,12 +664,6 @@
     card.setAttribute('aria-label', 'Play ' + title);
     card.addEventListener('click', function() {
       selectTrack(card);
-    });
-    card.addEventListener('mouseenter', function() {
-      syncFeaturedTrack(card, true);
-    });
-    card.addEventListener('focus', function() {
-      syncFeaturedTrack(card, true);
     });
     card.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' || e.key === ' ') {
