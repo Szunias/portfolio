@@ -26,7 +26,7 @@ function gitMtime(filePath) {
 
 const SRC    = path.join(__dirname, 'src');
 const DIST   = path.join(__dirname, 'dist');
-const generatedCaptionTracks = [];
+const generatedDescriptionTracks = [];
 
 // ─── Helpers ────────────────────────────────────────────────────
 
@@ -144,17 +144,17 @@ function vttEscape(text) {
     .trim();
 }
 
-function addGeneratedCaptionTracks(html, pageSlug) {
+function addGeneratedDescriptionTracks(html, pageSlug) {
   let counter = 0;
   return html.replace(/<video\b(?=[^>]*\bcontrols\b)([^>]*)>([\s\S]*?)<\/video>/gi, (match, attrs, inner, offset) => {
-    if (/<track\b(?=[^>]*\bkind=(["'])captions\1)/i.test(inner)) return match;
+    if (/<track\b(?=[^>]*\bkind=(["'])(captions|descriptions)\1)/i.test(inner)) return match;
     counter++;
     const context = html.slice(Math.max(0, offset - 2500), offset);
     const label = videoLabelFromContext(context).replace(/^Video:\s*/i, '');
-    const file = `captions/${pageSlug}-${counter}.vtt`;
-    const text = `Audio summary: ${label}. The surrounding page text describes the sound design, implementation choices, and result shown in this video.`;
-    generatedCaptionTracks.push({ file, text });
-    const track = `<track kind="captions" src="${file}" srclang="en" label="English audio summary">`;
+    const file = `descriptions/${pageSlug}-${counter}.vtt`;
+    const text = `Audio description summary: ${label}. The surrounding page text describes the sound design, implementation choices, and result shown in this video.`;
+    generatedDescriptionTracks.push({ file, text });
+    const track = `<track kind="descriptions" src="${file}" srclang="en" label="English audio description summary">`;
     if (/<source\b/i.test(inner)) {
       return `<video${attrs}>${inner.replace(/((?:\s*<source\b[^>]*>\s*)+)/i, `$1      ${track}\n`)}</video>`;
     }
@@ -182,7 +182,7 @@ function enhanceVideoAccessibility(html, pageSlug) {
     return `<video aria-label="${escAttr(videoLabelFromContext(context))}"${attrs}>`;
   });
 
-  return addGeneratedCaptionTracks(output, pageSlug);
+  return addGeneratedDescriptionTracks(output, pageSlug);
 }
 
 function enhanceIframeLoading(html) {
@@ -191,6 +191,16 @@ function enhanceIframeLoading(html) {
 
 function enhanceInlineSvgAccessibility(html) {
   return html.replace(/<svg\b(?![^>]*\baria-hidden=)(?![^>]*\brole=)([^>]*)>/gi, '<svg aria-hidden="true" focusable="false"$1>');
+}
+
+function ensureNoindex(html) {
+  if (/<meta\b(?=[^>]*\bname=["']robots["'])/i.test(html)) {
+    return html.replace(/<meta\b(?=[^>]*\bname=["']robots["'])[^>]*>/i, '<meta name="robots" content="noindex, nofollow">');
+  }
+  if (/<\/head>/i.test(html)) {
+    return html.replace(/<\/head>/i, '  <meta name="robots" content="noindex, nofollow">\n</head>');
+  }
+  return html;
 }
 
 function decodeHtmlAttr(value) {
@@ -220,10 +230,15 @@ function urlPathname(value, siteOrigin) {
 function collectLocalRefsFromHtml(html, siteOrigin) {
   const refs = new Set();
   const attrRe = /\b(?:href|src|poster|action|data-src|data-cover)=["']([^"']+)["']/gi;
+  const metaImageRe = /<meta\b(?=[^>]*(?:property|name)=["'](?:og:image|twitter:image)["'])[^>]*\bcontent=["']([^"']+)["'][^>]*>/gi;
   const urlRe = /url\((["']?)([^)"']+)\1\)/gi;
   const srcsetRe = /\bsrcset=["']([^"']+)["']/gi;
 
   for (const match of html.matchAll(attrRe)) {
+    const ref = urlPathname(match[1], siteOrigin);
+    if (ref) refs.add(ref);
+  }
+  for (const match of html.matchAll(metaImageRe)) {
     const ref = urlPathname(match[1], siteOrigin);
     if (ref) refs.add(ref);
   }
@@ -458,6 +473,9 @@ function main() {
           html = ensureFragmentTargets(html, entry.ensureIds);
           html = enhanceIframeLoading(html);
           html = enhanceInlineSvgAccessibility(html);
+          if (entry.noindex || entry.sitemap === false) {
+            html = ensureNoindex(html);
+          }
           fs.writeFileSync(dest, html, 'utf8');
         } else {
           fs.copyFileSync(src, dest);
@@ -505,7 +523,11 @@ function main() {
   console.log('  → sitemap.xml');
 
   // Generate robots.txt
-  const robots = `User-agent: *\nAllow: /\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`;
+  const disallows = copiedStatic
+    .filter(entry => entry.noindex || entry.sitemap === false)
+    .map(entry => `Disallow: /${entry.outName}`)
+    .join('\n');
+  const robots = `User-agent: *\nAllow: /\n${disallows ? `${disallows}\n` : ''}\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`;
   fs.writeFileSync(path.join(DIST, 'robots.txt'), robots, 'utf8');
   console.log('  → robots.txt');
 
@@ -531,17 +553,17 @@ function main() {
     }
   }
 
-  if (generatedCaptionTracks.length) {
-    const captionDir = path.join(DIST, 'captions');
-    ensureDir(captionDir);
-    const seenCaptions = new Set();
-    for (const track of generatedCaptionTracks) {
-      if (seenCaptions.has(track.file)) continue;
-      seenCaptions.add(track.file);
+  if (generatedDescriptionTracks.length) {
+    const descriptionDir = path.join(DIST, 'descriptions');
+    ensureDir(descriptionDir);
+    const seenDescriptions = new Set();
+    for (const track of generatedDescriptionTracks) {
+      if (seenDescriptions.has(track.file)) continue;
+      seenDescriptions.add(track.file);
       const body = `WEBVTT\n\n00:00:00.000 --> 99:59:59.000\n${vttEscape(track.text)}\n`;
       fs.writeFileSync(path.join(DIST, track.file), body, 'utf8');
     }
-    console.log(`  → captions (${seenCaptions.size} generated)`);
+    console.log(`  → video descriptions (${seenDescriptions.size} generated)`);
   }
 
   const localRefs = new Set();
@@ -550,6 +572,11 @@ function main() {
     for (const ref of collectLocalRefsFromHtml(html, SITE_ORIGIN)) localRefs.add(ref);
   }
   for (const f of rootAssets) localRefs.add(f);
+  for (const page of config.pages) {
+    if (!page.ogImage) continue;
+    const ref = urlPathname(page.ogImage, SITE_ORIGIN);
+    if (ref) localRefs.add(ref);
+  }
   const copiedAssets = copyReferencedAssets(localRefs);
   console.log(`  → referenced assets (${copiedAssets.length} copied)`);
 

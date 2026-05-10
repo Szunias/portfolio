@@ -15,6 +15,7 @@
   let closeTimer = null;
   let openFrame = null;
   let isOpen = false;
+  const backgroundState = new WeakMap();
 
   const images = Array.from(galleryItems).map(item => {
     const img = item.querySelector('img');
@@ -48,6 +49,32 @@
     if ('inert' in lightbox) lightbox.inert = !enabled;
   }
 
+  function setBackgroundInert(enabled) {
+    Array.from(document.body.children).forEach(el => {
+      if (el === lightbox || el.tagName === 'SCRIPT') return;
+      if (enabled) {
+        if (!backgroundState.has(el)) {
+          backgroundState.set(el, {
+            ariaHidden: el.getAttribute('aria-hidden'),
+            inert: el.inert
+          });
+        }
+        el.setAttribute('aria-hidden', 'true');
+        if ('inert' in el) el.inert = true;
+      } else {
+        const previous = backgroundState.get(el);
+        if (!previous) return;
+        if (previous.ariaHidden === null) {
+          el.removeAttribute('aria-hidden');
+        } else {
+          el.setAttribute('aria-hidden', previous.ariaHidden);
+        }
+        if ('inert' in el) el.inert = previous.inert;
+        backgroundState.delete(el);
+      }
+    });
+  }
+
   function openLightbox(index, trigger) {
     isOpen = true;
     lastTrigger = trigger || document.activeElement;
@@ -59,6 +86,7 @@
     if (openFrame) cancelAnimationFrame(openFrame);
     lightbox.hidden = false;
     setControlsEnabled(true);
+    setBackgroundInert(true);
     lightbox.setAttribute('aria-hidden', 'false');
     lightbox.setAttribute('aria-modal', 'true');
     openFrame = requestAnimationFrame(() => {
@@ -81,6 +109,7 @@
     lightbox.setAttribute('aria-hidden', 'true');
     lightbox.removeAttribute('aria-modal');
     setControlsEnabled(false);
+    setBackgroundInert(false);
     document.body.style.overflow = '';
     if (lastTrigger && typeof lastTrigger.focus === 'function') {
       lastTrigger.focus();

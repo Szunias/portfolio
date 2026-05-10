@@ -36,14 +36,11 @@
       var selected = b === btn;
       b.classList.toggle('active', selected);
       b.setAttribute('aria-pressed', selected ? 'true' : 'false');
-      b.setAttribute('tabindex', selected ? '0' : '-1');
     });
     if (focus) btn.focus();
   }
 
   filterBtns.forEach(function(btn) {
-    btn.setAttribute('tabindex', btn.classList.contains('active') ? '0' : '-1');
-
     btn.addEventListener('click', function() {
       activateFilter(btn, false);
 

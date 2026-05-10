@@ -1,5 +1,6 @@
 // Scroll reveal
 (function(){
+  document.documentElement.classList.add('js');
   const reveals = document.querySelectorAll('.reveal, .reveal-stagger');
   if (!reveals.length) return;
   if (!('IntersectionObserver' in window)) {

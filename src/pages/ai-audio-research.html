@@ -211,9 +211,9 @@
   <div class="section-rule"></div>
 
   <div class="closing-body">
-    <p>Every model failed the speed test. The fastest local model (MMAudio Small) still needed 1,400ms. That's 85x slower than a single game frame. I'd added caching early on just to stop regenerating the same sound over and over. Then I looked at the delivery times in the logs: <strong>35-90ms</strong>. Wait. That's fast enough.</p>
+    <p>Every model failed the speed test. The fastest local model (MMAudio Small) still needed 1,400ms. That's 85x slower than a single game frame. I'd added caching early on just to stop regenerating the same sound over and over. Then I looked at the delivery times in the logs: <strong>35-120ms</strong>. Wait. That's fast enough.</p>
 
-    <p>A footstep that takes 2,400ms to generate? Unplayable. That same footstep served from cache? 45ms. Predicted before the player moves? Under 10ms from the engine buffer. A UI click drops from 1,800ms to 35ms. Ambience goes from 3,200ms down to 120ms on cache hit. Without caching: 1,400-3,500ms. With it: 35-90ms. A 95-98% reduction. The models weren't the answer. The cache was.</p>
+    <p>A footstep that takes 2,400ms to generate? Unplayable. That same footstep served from cache? 45ms. Predicted before the player moves? Under 10ms from the engine buffer. A UI click drops from 1,800ms to 35ms. Ambience goes from 3,200ms down to 120ms on cache hit. Without caching: 1,400-3,500ms. With it: 35-120ms depending on clip length. A 95-98% reduction. The models weren't the answer. The cache was.</p>
 
     <p>So I stopped trying to make AI faster and started asking a different question: <em>when</em> should you generate? Loading screens. Zone transitions. Quiet moments when the player is in a menu. Generate the footsteps before the player starts walking. By the time they move, the sound is already in memory. Nobody notices.</p>
   </div>
@@ -249,7 +249,7 @@
     <div class="flow-step">
       <span class="flow-step__number">03</span>
       <h3 class="flow-step__title">Cache Hit</h3>
-      <p class="flow-step__desc">Sound plays from PCM cache in 35-90ms. Client-side DSP adds variation: pitch shift, filtering, reverb, volume randomization.</p>
+      <p class="flow-step__desc">Sound plays from PCM cache in 35-120ms depending on clip length. Client-side DSP adds variation: pitch shift, filtering, reverb, volume randomization.</p>
     </div>
     <div class="flow-step">
       <span class="flow-step__number">04</span>
@@ -321,7 +321,7 @@
   <div class="closing-body">
     <p><strong>Raw AI:</strong> No. Every model exceeds 150ms on first generation. Most take seconds.</p>
 
-    <p><strong>With caching:</strong> Yes. Cache hits land at 35-90ms. Players don't notice.</p>
+    <p><strong>With caching:</strong> Yes. Cache hits land at 35-120ms depending on clip length. Players don't notice.</p>
 
     <p><strong>With prediction:</strong> Yes. If you know the sound before the player needs it, delivery is under 10ms from the engine buffer. Feels instant.</p>
 
@@ -338,4 +338,3 @@
     <a class="next-project-btn" href="audioq.html">Next Project</a>
   </div>
 </nav>
-

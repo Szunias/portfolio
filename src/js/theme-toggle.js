@@ -5,6 +5,14 @@
     if (saved) document.documentElement.setAttribute('data-theme', saved);
   } catch(e) {}
 
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduceMotion && reduceMotion.matches) {
+    document.querySelectorAll('video[autoplay]').forEach(video => {
+      video.removeAttribute('autoplay');
+      video.pause();
+    });
+  }
+
   const toggle = document.getElementById('themeToggle');
   if (!toggle) return;
 
