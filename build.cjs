@@ -54,6 +54,41 @@ function cleanDir(dir) {
   if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
 }
 
+function byteSizeLabel(bytes) {
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+function collectFileSizes(dir, base = dir) {
+  if (!fs.existsSync(dir)) return [];
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...collectFileSizes(fullPath, base));
+    } else if (entry.isFile()) {
+      const size = fs.statSync(fullPath).size;
+      files.push({ path: path.relative(base, fullPath).replace(/\\/g, '/'), size });
+    }
+  }
+  return files;
+}
+
+function enforceDistBudget() {
+  const files = collectFileSizes(DIST);
+  const total = files.reduce((sum, file) => sum + file.size, 0);
+  const maxTotal = 850 * 1024 * 1024;
+  const maxFile = 90 * 1024 * 1024;
+  const largest = files.slice().sort((a, b) => b.size - a.size)[0];
+  if (total > maxTotal) {
+    throw new Error(`dist is ${byteSizeLabel(total)}, above the ${byteSizeLabel(maxTotal)} deploy budget`);
+  }
+  if (largest && largest.size > maxFile) {
+    throw new Error(`${largest.path} is ${byteSizeLabel(largest.size)}, above the ${byteSizeLabel(maxFile)} single-file budget`);
+  }
+  console.log(`  → deploy size budget OK (${files.length} files, ${byteSizeLabel(total)}${largest ? `, largest ${byteSizeLabel(largest.size)}` : ''})`);
+}
+
 /** Escape characters that break HTML attribute values. Order matters: & first. */
 function escAttr(str) {
   return String(str)
@@ -663,6 +698,8 @@ function main() {
   }
   fs.writeFileSync(path.join(DIST, '.nojekyll'), '', 'utf8');
   console.log('  → .nojekyll');
+
+  enforceDistBudget();
 
   console.log(`\nDone: ${built} pages built, ${copied} files copied → dist/`);
 

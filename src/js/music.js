@@ -3,10 +3,24 @@
 // =========================================
 (function() {
   var filterBtns = document.querySelectorAll('.filter-btn');
-  var trackCards = document.querySelectorAll('.track-card');
+  var tracksGrid = document.getElementById('tracks-grid');
+  var trackCards = Array.from(document.querySelectorAll('.track-card'));
 
   // Guard: only run on music page
   if (!trackCards.length) return;
+
+  function trackOrder(card) {
+    return Number(card.getAttribute('data-order')) || 999;
+  }
+
+  trackCards.sort(function(a, b) {
+    return trackOrder(a) - trackOrder(b);
+  });
+  if (tracksGrid) {
+    trackCards.forEach(function(card) {
+      tracksGrid.appendChild(card);
+    });
+  }
 
   // Per-card hide timer so rapid filter switches don't leave stale timers
   // hiding cards that should now be visible.
@@ -14,7 +28,9 @@
   var filterGeneration = 0;
 
   function cardMatchesFilter(card, filter) {
-    var tags = card.getAttribute('data-tags') || '';
+    var tags = (card.getAttribute('data-tags') || '').split(',').map(function(tag) {
+      return tag.trim();
+    });
     return filter === 'all' || tags.indexOf(filter) !== -1;
   }
 
@@ -65,7 +81,7 @@
               card.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
               card.style.opacity = '1';
               card.style.transform = 'translateY(0)';
-              if (Array.from(trackCards).indexOf(card) === currentTrackIndex) {
+              if (trackCards.indexOf(card) === currentTrackIndex) {
                 card.classList.add('active');
               }
             });
@@ -89,9 +105,8 @@
         if (activeCard && activeCard.hasAttribute('data-filtered-out')) {
           activeCard.classList.remove('active');
         }
-      }
-
-      if (!galleryCurrentCard || galleryCurrentCard.hasAttribute('data-filtered-out')) {
+        if (activeCard) syncFeaturedTrack(activeCard, false);
+      } else if (!galleryCurrentCard || galleryCurrentCard.hasAttribute('data-filtered-out')) {
         var nextFeatured = visibleCards()[0];
         if (nextFeatured) syncFeaturedTrack(nextFeatured, true);
       }
@@ -172,7 +187,7 @@
   var galleryAnimationTimer = 0;
 
   var visibleCards = function() {
-    return Array.from(trackCards).filter(function(c) {
+    return trackCards.filter(function(c) {
       return !c.hasAttribute('data-filtered-out');
     });
   };
@@ -293,6 +308,8 @@
     var duration = Number.isFinite(audio.duration) ? audio.duration : 0;
     var current = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
     var pct = duration > 0 ? (current / duration) * 100 : 0;
+    var canSeek = currentTrackIndex >= 0 && duration > 0;
+    progressBar.setAttribute('aria-disabled', canSeek ? 'false' : 'true');
     progressBar.setAttribute('aria-valuenow', Math.round(pct));
     progressBar.setAttribute('aria-valuetext', formatTime(current) + ' of ' + formatTime(duration));
   }
@@ -330,8 +347,16 @@
     playerBar.classList.toggle('has-track', currentTrackIndex >= 0);
     trackCards.forEach(function(card, index) {
       var active = index === currentTrackIndex && !card.hasAttribute('data-filtered-out');
+      var labelTitle = card.getAttribute('data-title') || 'track';
       card.classList.toggle('active', active);
       card.classList.toggle('is-playing', active && isPlaying);
+      if (active) {
+        card.setAttribute('aria-current', 'true');
+        card.setAttribute('aria-label', (isPlaying ? 'Playing ' : 'Selected ') + labelTitle);
+      } else {
+        card.removeAttribute('aria-current');
+        card.setAttribute('aria-label', 'Play ' + labelTitle);
+      }
     });
   }
 
@@ -501,6 +526,15 @@
     if (playPromise && typeof playPromise.catch === 'function') {
       playPromise.catch(function(err) {
         if (err && err.name === 'AbortError') return;
+        if (err && err.name === 'NotAllowedError') {
+          isPlaying = false;
+          playRequested = false;
+          updatePlayIcon();
+          updatePlayerStateClasses();
+          setPlayerStatus('Tap play to start', false);
+          setMediaPlaybackState('paused');
+          return;
+        }
         showPlaybackError();
       });
     }
@@ -538,8 +572,7 @@
       playerCover.style.background = gradient;
     }
 
-    var allCards = Array.from(trackCards);
-    currentTrackIndex = allCards.indexOf(card);
+    currentTrackIndex = trackCards.indexOf(card);
 
     audio.src = src;
     setPlayerStatus('Loading - ' + currentLufsText(), true);
@@ -782,6 +815,7 @@
   progressBar.setAttribute('aria-valuemax', '100');
   progressBar.setAttribute('aria-valuenow', '0');
   progressBar.setAttribute('aria-valuetext', '0:00 of 0:00');
+  progressBar.setAttribute('aria-disabled', 'true');
   progressBar.setAttribute('tabindex', '0');
 
   if (volumeBar) {
