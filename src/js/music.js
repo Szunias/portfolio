@@ -221,6 +221,11 @@
     if (!playerBar) return;
     playerBar.classList.toggle('is-playing', isPlaying);
     playerBar.classList.toggle('has-track', currentTrackIndex >= 0);
+    trackCards.forEach(function(card, index) {
+      var active = index === currentTrackIndex && !card.hasAttribute('data-filtered-out');
+      card.classList.toggle('active', active);
+      card.classList.toggle('is-playing', active && isPlaying);
+    });
   }
 
   function updateModeButtons() {
@@ -260,6 +265,59 @@
   // =========================================
   // MEDIA SESSION
   // =========================================
+  function absoluteUrl(value) {
+    if (!value) return '';
+    var link = document.createElement('a');
+    link.href = value;
+    return link.href || value;
+  }
+
+  function mediaMimeFromUrl(value) {
+    if (/\.png(?:[?#]|$)/i.test(value || '')) return 'image/png';
+    if (/\.webp(?:[?#]|$)/i.test(value || '')) return 'image/webp';
+    return 'image/jpeg';
+  }
+
+  function setMediaPlaybackState(state) {
+    if (!('mediaSession' in navigator)) return;
+    try {
+      navigator.mediaSession.playbackState = state;
+    } catch(e) { /* Some browsers expose MediaSession without playbackState. */ }
+  }
+
+  function updateMediaPositionState() {
+    if (!('mediaSession' in navigator) || !navigator.mediaSession.setPositionState) return;
+    if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+    try {
+      navigator.mediaSession.setPositionState({
+        duration: audio.duration,
+        playbackRate: audio.playbackRate || 1,
+        position: Math.min(audio.duration, Math.max(0, audio.currentTime || 0))
+      });
+    } catch(e) { /* Invalid media state; safe to ignore. */ }
+  }
+
+  function setMediaAction(action, handler) {
+    if (!('mediaSession' in navigator)) return;
+    try {
+      navigator.mediaSession.setActionHandler(action, handler);
+    } catch(e) { /* Unsupported action in this browser. */ }
+  }
+
+  function seekBy(seconds) {
+    if (currentTrackIndex === -1 || !Number.isFinite(audio.duration)) return;
+    audio.currentTime = Math.min(audio.duration, Math.max(0, audio.currentTime + seconds));
+    updateSeekAria();
+    updateMediaPositionState();
+  }
+
+  function seekTo(seconds) {
+    if (currentTrackIndex === -1 || !Number.isFinite(audio.duration)) return;
+    audio.currentTime = Math.min(audio.duration, Math.max(0, seconds));
+    updateSeekAria();
+    updateMediaPositionState();
+  }
+
   function updateMediaSession(card) {
     if (!('mediaSession' in navigator)) return;
     try {
@@ -268,23 +326,43 @@
       var coverUrl = card.getAttribute('data-cover');
       var tags = (card.getAttribute('data-tags') || '').split(',');
       var album = tags[0] ? tags[0].charAt(0).toUpperCase() + tags[0].slice(1) : 'Music';
-
-      var coverType = /\.png(?:[?#]|$)/i.test(coverUrl || '') ? 'image/png' : 'image/jpeg';
+      var coverSrc = absoluteUrl(coverUrl);
 
       navigator.mediaSession.metadata = new MediaMetadata({
         title: title,
         artist: artist,
         album: album,
-        artwork: coverUrl ? [
-          { src: coverUrl, sizes: '512x512', type: coverType }
+        artwork: coverSrc ? [
+          { src: coverSrc, sizes: '512x512', type: mediaMimeFromUrl(coverSrc) }
         ] : []
       });
-
-      navigator.mediaSession.setActionHandler('play', function() { playAudio(); });
-      navigator.mediaSession.setActionHandler('pause', function() { audio.pause(); });
-      navigator.mediaSession.setActionHandler('previoustrack', function() { prevBtn.click(); });
-      navigator.mediaSession.setActionHandler('nexttrack', function() { nextBtn.click(); });
     } catch(e) { /* MediaSession not fully supported in this browser */ }
+
+    setMediaAction('play', function() { playAudio(); });
+    setMediaAction('pause', function() { audio.pause(); });
+    setMediaAction('previoustrack', function() { prevBtn.click(); });
+    setMediaAction('nexttrack', function() { nextBtn.click(); });
+    setMediaAction('seekbackward', function(details) { seekBy(-((details && details.seekOffset) || 10)); });
+    setMediaAction('seekforward', function(details) { seekBy((details && details.seekOffset) || 10); });
+    setMediaAction('seekto', function(details) {
+      if (!details || typeof details.seekTime !== 'number') return;
+      if (details.fastSeek && audio.fastSeek) {
+        try {
+          audio.fastSeek(details.seekTime);
+          updateSeekAria();
+          updateMediaPositionState();
+          return;
+        } catch(e) {}
+      }
+      seekTo(details.seekTime);
+    });
+    setMediaAction('stop', function() {
+      audio.pause();
+      seekTo(0);
+      setMediaPlaybackState('paused');
+    });
+    setMediaPlaybackState(isPlaying ? 'playing' : 'paused');
+    updateMediaPositionState();
   }
 
   function showPlaybackError() {
@@ -306,6 +384,7 @@
     playerCover.style.background = 'linear-gradient(135deg, #3a3a4a, #5a5a6a)';
     trackCards.forEach(function(c) { c.classList.remove('active'); });
     updateSeekAria();
+    setMediaPlaybackState('none');
   }
 
   function playAudio() {
@@ -352,11 +431,10 @@
     audio.src = src;
     setPlayerStatus('Loading - ' + currentLufsText(), true);
     updatePlayerStateClasses();
+    updateMediaSession(card);
     playAudio();
 
     document.title = title + ' - Igor Szuniewicz | Music';
-
-    updateMediaSession(card);
 
     // Highlight active card
     trackCards.forEach(function(c) { c.classList.remove('active'); });
@@ -372,6 +450,8 @@
     updatePlayIcon();
     updatePlayerStateClasses();
     setPlayerStatus('Playing - ' + currentLufsText(), false);
+    setMediaPlaybackState('playing');
+    updateMediaPositionState();
     if (currentTrackIndex >= 0) {
       var card = trackCards[currentTrackIndex];
       var title = decodeEntities(card.getAttribute('data-title'));
@@ -386,6 +466,8 @@
     updatePlayerStateClasses();
     if (currentTrackIndex >= 0 && !audio.ended) setPlayerStatus('Paused - ' + currentLufsText(), false);
     document.title = originalTitle;
+    setMediaPlaybackState('paused');
+    updateMediaPositionState();
   });
 
   audio.addEventListener('ended', function() {
@@ -393,6 +475,8 @@
     playRequested = false;
     updatePlayIcon();
     document.title = originalTitle;
+    setMediaPlaybackState('paused');
+    updateMediaPositionState();
     if (repeatOne) {
       audio.currentTime = 0;
       playAudio();
@@ -420,12 +504,14 @@
     currentTimeEl.textContent = formatTime(audio.currentTime);
     updateSeekAria();
     updateBufferedProgress();
+    updateMediaPositionState();
   });
 
   audio.addEventListener('loadedmetadata', function() {
     totalTimeEl.textContent = formatTime(audio.duration);
     updateSeekAria();
     updateBufferedProgress();
+    updateMediaPositionState();
   });
 
   audio.addEventListener('progress', updateBufferedProgress);

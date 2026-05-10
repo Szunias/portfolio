@@ -300,6 +300,29 @@ a:focus-visible {
 
 .track-card.active {
   border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(212,97,47,0.38), 0 16px 38px rgba(0,0,0,0.18);
+}
+
+.track-card.active.is-playing .track-card__cover::after {
+  content: '';
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2;
+  width: 28px;
+  height: 22px;
+  border-radius: 7px;
+  background:
+    linear-gradient(to top, #fff 35%, transparent 35%) 6px 50% / 4px 14px no-repeat,
+    linear-gradient(to top, #fff 72%, transparent 72%) 13px 50% / 4px 14px no-repeat,
+    linear-gradient(to top, #fff 50%, transparent 50%) 20px 50% / 4px 14px no-repeat,
+    rgba(0,0,0,0.58);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.32);
+}
+
+.track-card.active.is-playing .track-card__play-overlay {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .track-card:focus-visible {
@@ -477,15 +500,41 @@ a:focus-visible {
   height: 52px;
   border-radius: 6px;
   flex-shrink: 0;
+  position: relative;
   box-shadow: 0 8px 24px rgba(0,0,0,0.34);
   overflow: hidden;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   background: linear-gradient(135deg, #3a3a4a, #5a5a6a);
 }
 
+.player-bar__cover::after {
+  content: '';
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 18px;
+  height: 14px;
+  border-radius: 5px;
+  background:
+    linear-gradient(to top, #fff 35%, transparent 35%) 3px 50% / 3px 10px no-repeat,
+    linear-gradient(to top, #fff 65%, transparent 65%) 8px 50% / 3px 10px no-repeat,
+    linear-gradient(to top, #fff 48%, transparent 48%) 13px 50% / 3px 10px no-repeat,
+    rgba(0,0,0,0.55);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.34);
+  opacity: 0;
+  transform: translateY(2px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
 .player-bar.is-playing .player-bar__cover {
   transform: translateY(-1px);
   box-shadow: 0 12px 30px rgba(0,0,0,0.42);
+}
+
+.player-bar.is-playing .player-bar__cover::after {
+  opacity: 1;
+  transform: translateY(0);
+  animation: playerBars 0.75s steps(3, end) infinite;
 }
 
 .player-bar__info {
@@ -520,6 +569,31 @@ a:focus-visible {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  position: relative;
+  padding-left: 12px;
+  min-width: 0;
+}
+
+.player-bar__status::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(240,236,230,0.32);
+  transform: translateY(-50%);
+}
+
+.player-bar.is-loading .player-bar__status::before,
+.player-bar.is-playing .player-bar__status::before {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgba(212,97,47,0.14), 0 0 12px rgba(212,97,47,0.45);
+}
+
+.player-bar.is-playing .player-bar__status::before {
+  animation: playerStatusPulse 1.2s ease-in-out infinite;
 }
 
 .player-bar__center {
@@ -752,6 +826,10 @@ a:focus-visible {
   color: rgba(26,26,26,0.54);
 }
 
+[data-theme="light"] .player-bar__status::before {
+  background: rgba(26,26,26,0.28);
+}
+
 [data-theme="light"] .player-bar__ctrl-btn svg {
   fill: rgba(26,26,26,0.55);
 }
@@ -793,6 +871,35 @@ a:focus-visible {
 @keyframes playerLoad {
   from { transform: translateX(-100%); }
   to { transform: translateX(100%); }
+}
+
+@keyframes playerStatusPulse {
+  0%, 100% { transform: translateY(-50%) scale(0.9); opacity: 0.75; }
+  50% { transform: translateY(-50%) scale(1.18); opacity: 1; }
+}
+
+@keyframes playerBars {
+  0% {
+    background:
+      linear-gradient(to top, #fff 35%, transparent 35%) 3px 50% / 3px 10px no-repeat,
+      linear-gradient(to top, #fff 65%, transparent 65%) 8px 50% / 3px 10px no-repeat,
+      linear-gradient(to top, #fff 48%, transparent 48%) 13px 50% / 3px 10px no-repeat,
+      rgba(0,0,0,0.55);
+  }
+  50% {
+    background:
+      linear-gradient(to top, #fff 70%, transparent 70%) 3px 50% / 3px 10px no-repeat,
+      linear-gradient(to top, #fff 38%, transparent 38%) 8px 50% / 3px 10px no-repeat,
+      linear-gradient(to top, #fff 82%, transparent 82%) 13px 50% / 3px 10px no-repeat,
+      rgba(0,0,0,0.55);
+  }
+  100% {
+    background:
+      linear-gradient(to top, #fff 45%, transparent 45%) 3px 50% / 3px 10px no-repeat,
+      linear-gradient(to top, #fff 78%, transparent 78%) 8px 50% / 3px 10px no-repeat,
+      linear-gradient(to top, #fff 36%, transparent 36%) 13px 50% / 3px 10px no-repeat,
+      rgba(0,0,0,0.55);
+  }
 }
 
 /* =========================================
@@ -867,16 +974,20 @@ a:focus-visible {
   }
 
   .player-bar {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) 44px;
+    grid-template-rows: 52px 44px 20px;
     height: calc(var(--player-height) + env(safe-area-inset-bottom));
     padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
     gap: 8px 12px;
-    flex-wrap: wrap;
+    align-content: center;
   }
 
   .player-bar__left {
-    flex: 1 1 auto;
+    grid-column: 1 / 3;
+    grid-row: 1;
+    width: 100%;
     min-width: 0;
-    flex-shrink: 1;
   }
 
   .player-bar__info {
@@ -885,14 +996,18 @@ a:focus-visible {
   }
 
   .player-bar__center {
-    display: flex;
-    order: 3;
-    flex: 0 0 100%;
+    grid-column: 1 / 4;
+    grid-row: 2 / 4;
+    display: grid;
+    grid-template-rows: 44px 20px;
+    width: 100%;
     max-width: none;
     gap: 5px;
   }
 
   .player-bar__controls {
+    grid-row: 1;
+    justify-content: center;
     gap: 10px;
   }
 
@@ -903,11 +1018,14 @@ a:focus-visible {
   }
 
   .player-bar__progress-row {
+    grid-row: 2;
     gap: 8px;
   }
 
   .player-bar__right {
-    flex: 0 0 auto;
+    grid-column: 3;
+    grid-row: 1;
+    width: 44px;
     min-width: 0;
   }
 
