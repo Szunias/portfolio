@@ -24,6 +24,18 @@ function gitMtime(filePath) {
   } catch (_) { return null; }
 }
 
+function maxGitMtime(files) {
+  const times = files
+    .map(gitMtime)
+    .filter(Boolean)
+    .sort();
+  return times.length ? times[times.length - 1] : null;
+}
+
+function relPath(...parts) {
+  return parts.join('/');
+}
+
 const SRC    = path.join(__dirname, 'src');
 const DIST   = path.join(__dirname, 'dist');
 const generatedDescriptionTracks = [];
@@ -54,10 +66,11 @@ function escAttr(str) {
 /** Generate OG + Twitter meta tags from page config. */
 function ogTags(page) {
   const ogTitle = page.ogTitle || page.title;
+  const imageAlt = page.ogImageAlt || `${ogTitle} preview image`;
   const lines = [
     `<meta property="og:title" content="${escAttr(ogTitle)}">`,
     `<meta property="og:description" content="${escAttr(page.description)}">`,
-    `<meta property="og:type" content="website">`,
+    `<meta property="og:type" content="${escAttr(page.ogType || (page.slug === 'index' ? 'website' : 'article'))}">`,
     `<meta property="og:url" content="${escAttr(page.canonical)}">`,
     `<meta property="og:site_name" content="Igor Szuniewicz">`,
     `<meta name="twitter:card" content="summary_large_image">`,
@@ -66,9 +79,95 @@ function ogTags(page) {
   ];
   if (page.ogImage) {
     lines.splice(4, 0, `<meta property="og:image" content="${escAttr(page.ogImage)}">`);
+    lines.splice(5, 0, `<meta property="og:image:alt" content="${escAttr(imageAlt)}">`);
     lines.push(`<meta name="twitter:image" content="${escAttr(page.ogImage)}">`);
+    lines.push(`<meta name="twitter:image:alt" content="${escAttr(imageAlt)}">`);
   }
   return lines.join('\n');
+}
+
+function jsonLdTag(graph) {
+  return `<script type="application/ld+json">\n${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }, null, 2)}\n</script>`;
+}
+
+function schemaTags(page) {
+  const siteOrigin = new URL(config.pages[0].canonical).origin;
+  const siteId = `${siteOrigin}/#website`;
+  const personId = `${siteOrigin}/#igor`;
+  const pageId = `${page.canonical}#webpage`;
+  const pageName = page.ogTitle || page.title;
+  const person = {
+    '@type': 'Person',
+    '@id': personId,
+    name: 'Igor Szuniewicz',
+    url: `${siteOrigin}/`,
+    jobTitle: 'Game Audio & Technical Sound Designer',
+    description: 'Game audio designer and programmer focused on Wwise, FMOD, Unreal Engine, Unity, spatial audio, sound design, and C++ audio tools.',
+    knowsAbout: [
+      'Game audio',
+      'Technical sound design',
+      'Wwise',
+      'FMOD',
+      'Unreal Engine',
+      'Unity',
+      'MetaSounds',
+      'Spatial audio',
+      'C++ audio tools',
+      'JUCE'
+    ],
+    sameAs: [
+      'https://www.linkedin.com/in/igorszuniewicz',
+      'https://github.com/Szunias',
+      'https://igorszuniewicz.itch.io',
+      'https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6'
+    ]
+  };
+  const website = {
+    '@type': 'WebSite',
+    '@id': siteId,
+    url: `${siteOrigin}/`,
+    name: 'Igor Szuniewicz',
+    description: 'Game audio and technical sound design portfolio by Igor Szuniewicz.',
+    publisher: { '@id': personId }
+  };
+  const webPage = {
+    '@type': page.slug === 'index' ? 'ProfilePage' : (page.layout === 'music' ? 'CollectionPage' : 'CreativeWork'),
+    '@id': pageId,
+    url: page.canonical,
+    name: pageName,
+    description: page.description,
+    isPartOf: { '@id': siteId }
+  };
+  if (page.ogImage) webPage.image = page.ogImage;
+  if (page.slug === 'index') {
+    webPage.mainEntity = { '@id': personId };
+  } else {
+    webPage.author = { '@id': personId };
+    webPage.creator = { '@id': personId };
+    webPage.mainEntityOfPage = page.canonical;
+  }
+  const graph = [person, website, webPage];
+  if (page.slug !== 'index') {
+    graph.push({
+      '@type': 'BreadcrumbList',
+      '@id': `${page.canonical}#breadcrumb`,
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: `${siteOrigin}/`
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: pageName.replace(/\s+\|\s+.*$/, '').replace(/\s+-\s+Igor Szuniewicz$/, ''),
+          item: page.canonical
+        }
+      ]
+    });
+  }
+  return jsonLdTag(graph);
 }
 
 function stripTags(html) {
@@ -147,13 +246,11 @@ function enhanceInlineSvgAccessibility(html) {
 }
 
 function ensureNoindex(html) {
-  if (/<meta\b(?=[^>]*\bname=["']robots["'])/i.test(html)) {
-    return html.replace(/<meta\b(?=[^>]*\bname=["']robots["'])[^>]*>/i, '<meta name="robots" content="noindex, nofollow">');
-  }
+  const cleaned = html.replace(/<meta\b(?=[^>]*\bname=["']robots["'])[^>]*>\s*/gi, '');
   if (/<\/head>/i.test(html)) {
-    return html.replace(/<\/head>/i, '  <meta name="robots" content="noindex, nofollow">\n</head>');
+    return cleaned.replace(/<\/head>/i, '  <meta name="robots" content="noindex, nofollow">\n</head>');
   }
-  return html;
+  return cleaned;
 }
 
 function decodeHtmlAttr(value) {
@@ -247,6 +344,30 @@ function staticCopyEntries(cfg) {
       ? { file: entry, outName: path.basename(entry), sitemap: true }
       : { ...entry, outName: entry.outName || path.basename(entry.file) }
   ));
+}
+
+function pageBuildInputs(page) {
+  const inputs = [
+    relPath('src', 'pages', `${page.slug}.html`),
+    relPath('src', 'layouts', `${page.layout}.html`),
+    relPath('src', 'css', `${page.css}.css`),
+    'site.config.cjs',
+    'build.cjs'
+  ];
+  for (const jsName of page.js) inputs.push(relPath('src', 'js', `${jsName}.js`));
+  if (page.lightbox) inputs.push(relPath('src', 'partials', 'lightbox.html'));
+  if (page.layout === 'music') inputs.push(relPath('src', 'partials', 'player-bar.html'));
+  return inputs;
+}
+
+function sitemapUrl(loc, lastmod, priority) {
+  return [
+    '  <url>',
+    `    <loc>${escAttr(loc)}</loc>`,
+    lastmod ? `    <lastmod>${lastmod.slice(0, 10)}</lastmod>` : null,
+    `    <priority>${priority}</priority>`,
+    '  </url>'
+  ].filter(Boolean).join('\n');
 }
 
 function rewriteRootRelativeUrls(html, origin) {
@@ -350,11 +471,8 @@ function buildPage(page) {
   }
 
   // 7. Schema (home page)
-  if (page.schema) {
-    html = html.replace('<!-- SCHEMA -->', page.schema);
-  } else {
-    html = html.replace('<!-- SCHEMA -->', '');
-  }
+  const schema = [schemaTags(page), page.schema || ''].filter(Boolean).join('\n');
+  html = html.replace('<!-- SCHEMA -->', schema);
 
   return html;
 }
@@ -363,9 +481,14 @@ function buildPage(page) {
 
 function validateConfig(cfg) {
   const seen = new Set();
+  const siteOrigin = new URL(cfg.pages[0].canonical).origin;
   for (const page of cfg.pages) {
     if (seen.has(page.slug)) throw new Error(`Duplicate slug: ${page.slug}`);
     seen.add(page.slug);
+    const expectedCanonical = page.slug === 'index' ? `${siteOrigin}/` : `${siteOrigin}/${page.slug}.html`;
+    if (page.canonical !== expectedCanonical) {
+      throw new Error(`Canonical mismatch for ${page.slug}: expected ${expectedCanonical}, got ${page.canonical}`);
+    }
     if (!fs.existsSync(path.join(SRC, 'css', `${page.css}.css`))) {
       throw new Error(`CSS not found: src/css/${page.css}.css (required by ${page.slug})`);
     }
@@ -432,7 +555,7 @@ function main() {
           html = ensureFragmentTargets(html, entry.ensureIds);
           html = enhanceIframeLoading(html);
           html = enhanceInlineSvgAccessibility(html);
-          if (entry.noindex || entry.sitemap === false) {
+          if (entry.noindex) {
             html = ensureNoindex(html);
           }
           fs.writeFileSync(dest, html, 'utf8');
@@ -460,21 +583,16 @@ function main() {
     }
   }
 
-  // Generate sitemap.xml — lastmod per page from git log of its source file
+  // Generate sitemap.xml — lastmod from the page plus shared build inputs.
   const SITE_ORIGIN = new URL(config.pages[0].canonical).origin;
-  const today = new Date().toISOString().slice(0, 10);
   const pageUrls = config.pages.map(p => {
     const priority = p.slug === 'index' ? '1.0' : '0.8';
-    const pageGitDate = gitMtime(path.join('src', 'pages', `${p.slug}.html`));
-    const lastmod = (pageGitDate || today + 'T00:00:00Z').slice(0, 10);
-    return `  <url>\n    <loc>${escAttr(p.canonical)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <priority>${priority}</priority>\n  </url>`;
+    return sitemapUrl(p.canonical, maxGitMtime(pageBuildInputs(p)), priority);
   });
   const staticUrls = copiedStatic.filter(entry => entry.sitemap !== false).map(entry => {
     const outName = entry.outName;
     const loc = `${SITE_ORIGIN}/${outName}`;
-    const gitDate = gitMtime(entry.file);
-    const lastmod = (gitDate || today + 'T00:00:00Z').slice(0, 10);
-    return `  <url>\n    <loc>${escAttr(loc)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <priority>0.5</priority>\n  </url>`;
+    return sitemapUrl(loc, maxGitMtime([entry.file, 'site.config.cjs', 'build.cjs']), '0.5');
   });
   const urls = pageUrls.concat(staticUrls).join('\n');
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
@@ -483,7 +601,7 @@ function main() {
 
   // Generate robots.txt
   const disallows = copiedStatic
-    .filter(entry => entry.noindex || entry.sitemap === false)
+    .filter(entry => entry.robotsDisallow === true)
     .map(entry => `Disallow: /${entry.outName}`)
     .join('\n');
   const robots = `User-agent: *\nAllow: /\n${disallows ? `${disallows}\n` : ''}\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`;
