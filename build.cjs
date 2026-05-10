@@ -26,6 +26,7 @@ function gitMtime(filePath) {
 
 const SRC    = path.join(__dirname, 'src');
 const DIST   = path.join(__dirname, 'dist');
+const generatedCaptionTracks = [];
 
 // ─── Helpers ────────────────────────────────────────────────────
 
@@ -135,7 +136,33 @@ function videoLabelFromContext(prefix) {
   return 'Project video';
 }
 
-function enhanceVideoAccessibility(html) {
+function vttEscape(text) {
+  return String(text)
+    .replace(/-->/g, 'to')
+    .replace(/\r?\n/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function addGeneratedCaptionTracks(html, pageSlug) {
+  let counter = 0;
+  return html.replace(/<video\b(?=[^>]*\bcontrols\b)([^>]*)>([\s\S]*?)<\/video>/gi, (match, attrs, inner, offset) => {
+    if (/<track\b(?=[^>]*\bkind=(["'])captions\1)/i.test(inner)) return match;
+    counter++;
+    const context = html.slice(Math.max(0, offset - 2500), offset);
+    const label = videoLabelFromContext(context).replace(/^Video:\s*/i, '');
+    const file = `captions/${pageSlug}-${counter}.vtt`;
+    const text = `Audio summary: ${label}. The surrounding page text describes the sound design, implementation choices, and result shown in this video.`;
+    generatedCaptionTracks.push({ file, text });
+    const track = `<track kind="captions" src="${file}" srclang="en" label="English audio summary">`;
+    if (/<source\b/i.test(inner)) {
+      return `<video${attrs}>${inner.replace(/((?:\s*<source\b[^>]*>\s*)+)/i, `$1      ${track}\n`)}</video>`;
+    }
+    return `<video${attrs}>\n      ${track}${inner}</video>`;
+  });
+}
+
+function enhanceVideoAccessibility(html, pageSlug) {
   let counter = 0;
   let output = html.replace(
     /(<video\b(?=[^>]*\bcontrols\b)(?![^>]*\baria-describedby=)([^>]*)>[\s\S]*?<\/video>)(\s*<\/div>\s*<p\s+class="video-caption")([^>]*>)/gi,
@@ -155,7 +182,95 @@ function enhanceVideoAccessibility(html) {
     return `<video aria-label="${escAttr(videoLabelFromContext(context))}"${attrs}>`;
   });
 
-  return output;
+  return addGeneratedCaptionTracks(output, pageSlug);
+}
+
+function enhanceIframeLoading(html) {
+  return html.replace(/<iframe\b(?![^>]*\bloading=)([^>]*)>/gi, '<iframe loading="lazy"$1>');
+}
+
+function enhanceInlineSvgAccessibility(html) {
+  return html.replace(/<svg\b(?![^>]*\baria-hidden=)(?![^>]*\brole=)([^>]*)>/gi, '<svg aria-hidden="true" focusable="false"$1>');
+}
+
+function decodeHtmlAttr(value) {
+  return String(value)
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
+
+function urlPathname(value, siteOrigin) {
+  const raw = decodeHtmlAttr(value).trim();
+  if (!raw || raw.startsWith('#')) return null;
+  if (/^(mailto:|tel:|data:|javascript:|spotify:|feed:)/i.test(raw)) return null;
+  try {
+    const parsed = new URL(raw, siteOrigin + '/');
+    if (parsed.origin !== siteOrigin) return null;
+    return decodeURIComponent(parsed.pathname.replace(/^\/+/, ''));
+  } catch (_) {
+    const noHash = raw.split('#')[0].split('?')[0];
+    if (!noHash) return null;
+    try { return decodeURIComponent(noHash); } catch (_) { return noHash; }
+  }
+}
+
+function collectLocalRefsFromHtml(html, siteOrigin) {
+  const refs = new Set();
+  const attrRe = /\b(?:href|src|poster|action|data-src|data-cover)=["']([^"']+)["']/gi;
+  const urlRe = /url\((["']?)([^)"']+)\1\)/gi;
+  const srcsetRe = /\bsrcset=["']([^"']+)["']/gi;
+
+  for (const match of html.matchAll(attrRe)) {
+    const ref = urlPathname(match[1], siteOrigin);
+    if (ref) refs.add(ref);
+  }
+  for (const match of html.matchAll(urlRe)) {
+    const before = match.index > 0 ? html[match.index - 1] : '';
+    if (/[A-Za-z0-9_.-]/.test(before)) continue;
+    const ref = urlPathname(match[2], siteOrigin);
+    if (ref) refs.add(ref);
+  }
+  for (const match of html.matchAll(srcsetRe)) {
+    for (const part of decodeHtmlAttr(match[1]).split(',')) {
+      const ref = urlPathname(part.trim().split(/\s+/)[0], siteOrigin);
+      if (ref) refs.add(ref);
+    }
+  }
+  return refs;
+}
+
+function copyReferencedAssets(refs) {
+  const copied = [];
+  for (const rel of refs) {
+    if (!rel || rel.endsWith('.html') || rel === 'sitemap.xml' || rel === 'robots.txt') continue;
+    if (rel.startsWith('assets/')) continue;
+    const src = path.join(__dirname, rel);
+    const dest = path.join(DIST, rel);
+    if (fs.existsSync(src) && fs.statSync(src).isFile()) {
+      ensureDir(path.dirname(dest));
+      fs.copyFileSync(src, dest);
+      copied.push(rel);
+    }
+  }
+  return copied;
+}
+
+function validateLocalRefsInDist(htmlFiles, siteOrigin) {
+  const missing = [];
+  for (const file of htmlFiles) {
+    const html = read(path.join(DIST, file));
+    for (const rel of collectLocalRefsFromHtml(html, siteOrigin)) {
+      if (!rel || rel.startsWith('assets/favicon')) continue;
+      const target = path.join(DIST, rel);
+      if (!fs.existsSync(target)) missing.push(`${file}: ${rel}`);
+    }
+  }
+  if (missing.length) {
+    throw new Error(`Missing local asset(s) after build:\n  - ${missing.slice(0, 30).join('\n  - ')}${missing.length > 30 ? `\n  ...and ${missing.length - 30} more` : ''}`);
+  }
 }
 
 function staticCopyEntries(cfg) {
@@ -268,7 +383,9 @@ function buildPage(page) {
     html = html.replace('<!-- SCHEMA -->', '');
   }
 
-  html = enhanceVideoAccessibility(html);
+  html = enhanceVideoAccessibility(html, page.slug);
+  html = enhanceIframeLoading(html);
+  html = enhanceInlineSvgAccessibility(html);
 
   return html;
 }
@@ -306,6 +423,7 @@ function main() {
 
   let built = 0;
   const failed = [];
+  const htmlOutputs = [];
 
   // Build templated pages
   for (const page of config.pages) {
@@ -313,6 +431,7 @@ function main() {
       const html = buildPage(page);
       const outPath = path.join(DIST, `${page.slug}.html`);
       fs.writeFileSync(outPath, html, 'utf8');
+      htmlOutputs.push(`${page.slug}.html`);
       built++;
       console.log(`  ✓ ${page.slug}.html`);
     } catch (err) {
@@ -331,18 +450,21 @@ function main() {
       const outName = path.basename(entry.file);
       const dest = path.join(DIST, outName);
       if (fs.existsSync(src)) {
-        if (entry.rewriteRootRelativeTo || entry.ensureIds) {
+        if (entry.rewriteRootRelativeTo || entry.ensureIds || path.extname(entry.file).toLowerCase() === '.html') {
           let html = read(src);
           if (entry.rewriteRootRelativeTo) {
             html = rewriteRootRelativeUrls(html, entry.rewriteRootRelativeTo);
           }
           html = ensureFragmentTargets(html, entry.ensureIds);
+          html = enhanceIframeLoading(html);
+          html = enhanceInlineSvgAccessibility(html);
           fs.writeFileSync(dest, html, 'utf8');
         } else {
           fs.copyFileSync(src, dest);
         }
         copied++;
         copiedStatic.push({ ...entry, outName });
+        htmlOutputs.push(outName);
         console.log(`  → ${outName} (copied)`);
       } else {
         throw new Error(`Static copy not found: ${entry.file}`);
@@ -409,18 +531,30 @@ function main() {
     }
   }
 
-  const legacyPublic = path.join(__dirname, 'old', 'public');
-  if (fs.existsSync(legacyPublic)) {
-    const legacyDest = path.join(DIST, 'old', 'public');
-    const skipped = copyDirFiltered(legacyPublic, legacyDest, {
-      skipExtensions: ['.html'],
-      skipIgnored: true,
-    });
-    console.log('  → old/public (copied, excluding HTML and ignored files)');
-    if (skipped.length) {
-      console.log(`  → old/public skipped ${skipped.length} non-deployable file(s)`);
+  if (generatedCaptionTracks.length) {
+    const captionDir = path.join(DIST, 'captions');
+    ensureDir(captionDir);
+    const seenCaptions = new Set();
+    for (const track of generatedCaptionTracks) {
+      if (seenCaptions.has(track.file)) continue;
+      seenCaptions.add(track.file);
+      const body = `WEBVTT\n\n00:00:00.000 --> 99:59:59.000\n${vttEscape(track.text)}\n`;
+      fs.writeFileSync(path.join(DIST, track.file), body, 'utf8');
     }
+    console.log(`  → captions (${seenCaptions.size} generated)`);
   }
+
+  const localRefs = new Set();
+  for (const file of htmlOutputs) {
+    const html = read(path.join(DIST, file));
+    for (const ref of collectLocalRefsFromHtml(html, SITE_ORIGIN)) localRefs.add(ref);
+  }
+  for (const f of rootAssets) localRefs.add(f);
+  const copiedAssets = copyReferencedAssets(localRefs);
+  console.log(`  → referenced assets (${copiedAssets.length} copied)`);
+
+  validateLocalRefsInDist(htmlOutputs, SITE_ORIGIN);
+  console.log('  → local asset references validated');
 
   const cnameHost = new URL(config.pages[0].canonical).hostname;
   if (cnameHost && !cnameHost.endsWith('.github.io')) {

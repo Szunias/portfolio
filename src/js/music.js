@@ -35,12 +35,9 @@
     filterBtns.forEach(function(b) {
       var selected = b === btn;
       b.classList.toggle('active', selected);
-      b.setAttribute('aria-selected', selected ? 'true' : 'false');
+      b.setAttribute('aria-pressed', selected ? 'true' : 'false');
       b.setAttribute('tabindex', selected ? '0' : '-1');
     });
-    if (tracksGrid && btn.id) {
-      tracksGrid.setAttribute('aria-labelledby', btn.id);
-    }
     if (focus) btn.focus();
   }
 
@@ -158,14 +155,10 @@
     });
   };
 
-  // Show mobile play button on small screens
+  // The full player controls stay available on small screens, so this fallback stays hidden.
   function checkMobile() {
     if (!mobilePlayBtn) return;
-    if (window.innerWidth <= 650) {
-      mobilePlayBtn.style.display = 'flex';
-    } else {
-      mobilePlayBtn.style.display = 'none';
-    }
+    mobilePlayBtn.style.display = 'none';
   }
   checkMobile();
   window.addEventListener('resize', checkMobile, { passive: true });

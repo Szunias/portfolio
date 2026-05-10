@@ -30,7 +30,7 @@
     currentIndex = index;
     lbImg.src = images[index].src;
     lbImg.alt = images[index].alt;
-    if (lbCaption) lbCaption.textContent = images[index].caption;
+    if (lbCaption) lbCaption.textContent = images[index].caption || images[index].alt;
   }
 
   function getFocusable() {
