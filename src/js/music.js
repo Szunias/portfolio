@@ -154,6 +154,7 @@
   var shuffleEnabled = false;
   var repeatOne = false;
   var lastVolume = audio.volume;
+  var playRequested = false;
 
   var visibleCards = function() {
     return Array.from(trackCards).filter(function(c) {
@@ -287,15 +288,27 @@
 
   function showPlaybackError() {
     isPlaying = false;
+    playRequested = false;
+    currentTrackIndex = -1;
+    audio.removeAttribute('src');
+    audio.load();
+    currentTimeEl.textContent = '0:00';
+    totalTimeEl.textContent = '0:00';
+    progressFill.style.width = '0%';
+    if (progressBuffer) progressBuffer.style.width = '0%';
     updatePlayIcon();
     updatePlayerStateClasses();
     setPlayerStatus('Could not load track', false);
     document.title = originalTitle;
     playerTitle.textContent = 'Error loading track';
+    playerArtist.textContent = 'Igor Szuniewicz';
+    playerCover.style.background = 'linear-gradient(135deg, #3a3a4a, #5a5a6a)';
     trackCards.forEach(function(c) { c.classList.remove('active'); });
+    updateSeekAria();
   }
 
   function playAudio() {
+    playRequested = true;
     setPlayerStatus(currentLufsText(), true);
     var playPromise = audio.play();
     if (playPromise && typeof playPromise.catch === 'function') {
@@ -354,6 +367,7 @@
   // =========================================
   audio.addEventListener('play', function() {
     isPlaying = true;
+    playRequested = true;
     updatePlayIcon();
     updatePlayerStateClasses();
     setPlayerStatus('Playing - ' + currentLufsText(), false);
@@ -366,6 +380,7 @@
 
   audio.addEventListener('pause', function() {
     isPlaying = false;
+    playRequested = false;
     updatePlayIcon();
     updatePlayerStateClasses();
     if (currentTrackIndex >= 0 && !audio.ended) setPlayerStatus('Paused - ' + currentLufsText(), false);
@@ -374,6 +389,7 @@
 
   audio.addEventListener('ended', function() {
     isPlaying = false;
+    playRequested = false;
     updatePlayIcon();
     document.title = originalTitle;
     if (repeatOne) {
@@ -381,7 +397,19 @@
       playAudio();
       return;
     }
-    playNextTrack();
+    var visible = visibleCards();
+    var currentInVisible = currentTrackIndex >= 0 ? visible.indexOf(trackCards[currentTrackIndex]) : -1;
+    if (shuffleEnabled && visible.length > 1) {
+      playNextTrack();
+      return;
+    }
+    if (currentInVisible >= 0 && currentInVisible < visible.length - 1) {
+      playNextTrack();
+      return;
+    }
+    setPlayerStatus('Finished - ' + currentLufsText(), false);
+    updatePlayerStateClasses();
+    updateSeekAria();
   });
 
   audio.addEventListener('timeupdate', function() {
@@ -406,7 +434,7 @@
   });
 
   audio.addEventListener('canplay', function() {
-    if (currentTrackIndex >= 0) setPlayerStatus((isPlaying ? 'Playing - ' : '') + currentLufsText(), false);
+    if (currentTrackIndex >= 0) setPlayerStatus((isPlaying || playRequested ? 'Playing - ' : 'Paused - ') + currentLufsText(), false);
   });
 
   audio.addEventListener('error', function() {
@@ -552,10 +580,44 @@
 
   progressBar.addEventListener('click', function(e) {
     if (currentTrackIndex === -1 || !audio.duration) return;
-    var rect = this.getBoundingClientRect();
+    seekToClientX(e.clientX);
+  });
+
+  function seekToClientX(clientX) {
+    if (currentTrackIndex === -1 || !audio.duration) return;
+    var rect = progressBar.getBoundingClientRect();
     if (!rect.width) return;
-    var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    var pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
     audio.currentTime = pct * audio.duration;
+    updateSeekAria();
+  }
+
+  function bindPointerSlider(el, onMove, canStart) {
+    if (!el || !window.PointerEvent) return;
+    var dragging = false;
+    el.addEventListener('pointerdown', function(e) {
+      if (canStart && !canStart()) return;
+      dragging = true;
+      el.setPointerCapture(e.pointerId);
+      e.preventDefault();
+      onMove(e.clientX);
+    });
+    el.addEventListener('pointermove', function(e) {
+      if (!dragging) return;
+      e.preventDefault();
+      onMove(e.clientX);
+    });
+    function stop(e) {
+      if (!dragging) return;
+      dragging = false;
+      try { el.releasePointerCapture(e.pointerId); } catch(err) {}
+    }
+    el.addEventListener('pointerup', stop);
+    el.addEventListener('pointercancel', stop);
+  }
+
+  bindPointerSlider(progressBar, seekToClientX, function() {
+    return currentTrackIndex !== -1 && !!audio.duration;
   });
 
   progressBar.addEventListener('keydown', function(e) {
@@ -585,11 +647,17 @@
 
   if (volumeBar) {
     volumeBar.addEventListener('click', function(e) {
-      var rect = this.getBoundingClientRect();
-      if (!rect.width) return;
-      var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      setVolume(pct);
+      setVolumeFromClientX(e.clientX);
     });
+
+    function setVolumeFromClientX(clientX) {
+      var rect = volumeBar.getBoundingClientRect();
+      if (!rect.width) return;
+      var pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      setVolume(pct);
+    }
+
+    bindPointerSlider(volumeBar, setVolumeFromClientX);
 
     volumeBar.addEventListener('keydown', function(e) {
       var step = 0.05;

@@ -147,7 +147,7 @@ function vttEscape(text) {
 function addGeneratedDescriptionTracks(html, pageSlug) {
   let counter = 0;
   return html.replace(/<video\b(?=[^>]*\bcontrols\b)([^>]*)>([\s\S]*?)<\/video>/gi, (match, attrs, inner, offset) => {
-    if (/<track\b(?=[^>]*\bkind=(["'])(captions|descriptions)\1)/i.test(inner)) return match;
+    if (/<track\b(?=[^>]*\bkind=(["'])descriptions\1)/i.test(inner)) return match;
     counter++;
     const context = html.slice(Math.max(0, offset - 2500), offset);
     const label = videoLabelFromContext(context).replace(/^Video:\s*/i, '');

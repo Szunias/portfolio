@@ -145,11 +145,12 @@
   document.addEventListener('keydown', (e) => {
     if (!lightbox.classList.contains('active')) return;
     if (e.key === 'Escape') {
+      e.preventDefault();
       closeLightbox();
       return;
     }
-    if (e.key === 'ArrowLeft') { navigate(-1); return; }
-    if (e.key === 'ArrowRight') { navigate(1); return; }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); e.stopPropagation(); navigate(-1); return; }
+    if (e.key === 'ArrowRight') { e.preventDefault(); e.stopPropagation(); navigate(1); return; }
     // Focus trap on Tab
     if (e.key === 'Tab') {
       const focusable = getFocusable();

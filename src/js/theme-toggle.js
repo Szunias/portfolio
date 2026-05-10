@@ -6,11 +6,23 @@
   } catch(e) {}
 
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (reduceMotion && reduceMotion.matches) {
+  function applyMotionPreference() {
+    if (!reduceMotion) return;
     document.querySelectorAll('video[autoplay]').forEach(video => {
-      video.removeAttribute('autoplay');
-      video.pause();
+      if (reduceMotion.matches) {
+        video.dataset.autoplayPaused = 'true';
+        video.pause();
+      } else if (video.dataset.autoplayPaused === 'true') {
+        video.play().catch(() => {});
+        delete video.dataset.autoplayPaused;
+      }
     });
+  }
+  applyMotionPreference();
+  if (reduceMotion && typeof reduceMotion.addEventListener === 'function') {
+    reduceMotion.addEventListener('change', applyMotionPreference);
+  } else if (reduceMotion && typeof reduceMotion.addListener === 'function') {
+    reduceMotion.addListener(applyMotionPreference);
   }
 
   const toggle = document.getElementById('themeToggle');
