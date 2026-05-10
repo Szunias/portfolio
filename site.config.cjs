@@ -69,7 +69,7 @@ module.exports = {
       title: 'Music - Igor Szuniewicz',
       description: 'Original music by Igor Szuniewicz — game scores, film compositions, and personal tracks. Listen to the full catalog on Spotify, or stream directly from the portfolio.',
       canonical: `${SITE}/music.html`,
-      ogImage: `${SITE}/old/public/assets/audio/covers/Cage.jpg`,
+      ogImage: `${SITE}/old/public/assets/audio/covers/Cage.png`,
     },
 
     // ─── PROJECTS (with lightbox) ───────────────────────────────
