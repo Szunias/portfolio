@@ -2,7 +2,7 @@
 <!-- PROJECT HERO -->
 <header class="project-hero">
   <h1 class="project-hero__title">AI Audio Research</h1>
-  <p class="project-hero__subtitle">Every game sound is a WAV file somebody recorded. What if AI made them on the fly instead? I built a prototype. Every model was too slow. Then caching changed the question.</p>
+  <p class="project-hero__subtitle">Most shipped game SFX are prerecorded assets. What if AI made them on the fly instead? I built a prototype. Raw generation was too slow, then caching changed the question.</p>
 
   <div class="project-hero__meta">
     <div class="meta-item">
@@ -52,9 +52,9 @@
 
   <div class="concept-layout">
     <div class="concept-body">
-      <p class="drop-cap">Here's the thing about game audio: every gunshot, footstep, and explosion is a WAV file somebody recorded. A big game ships with thousands of them. Gigabytes of "sword hits metal." What if AI could generate these on the fly? Every hit would sound different. No more shipping audio banks the size of a movie. That's the dream. The problem is timing. Games run at 60fps - 16.7ms per frame. If a gunshot arrives 100ms after you pull the trigger, players feel it. I wanted to measure exactly how far off we are.</p>
+      <p class="drop-cap">Most shipped game SFX are prerecorded assets: gunshots, footsteps, impacts, UI clicks, and ambience loops prepared before the player ever presses a button. A large game can ship with thousands of them. What if AI could generate those sounds on demand? Every hit could vary, but the timing problem is brutal. Games run at 60fps - 16.7ms per frame. If a gunshot arrives 100ms after input, players feel it. I wanted to measure exactly how far off we are.</p>
 
-      <p><strong>Unreal Engine 5</strong> talks to a <strong>Python backend</strong> over WebSocket. Python loads the AI models, juggles VRAM on an 8GB GPU, and sends back raw PCM audio. I tested five approaches: <strong>procedural DSP</strong> (just math, instant but sounds like a ringtone), <strong>AudioGen</strong> (Meta's text-to-audio), <strong>MMAudio</strong> in two sizes (a video-to-audio model I hacked to accept text prompts), and <strong>ElevenLabs</strong> (cloud API, sounds great, latency is a lottery). I also tried TangoFlux - it wouldn't even start. Missing CUDA kernels for my RTX 5070's Blackwell chip. Wasted two days on that.</p>
+      <p><strong>Unreal Engine 5</strong> talks to a <strong>Python backend</strong> over WebSocket. Python loads the AI models, juggles VRAM on an 8GB GPU, and sends back raw PCM audio. I tested five approaches: <strong>procedural DSP</strong> (just math, instant but sounds like a ringtone), <strong>AudioGen</strong> (Meta's text-to-audio), <strong>MMAudio</strong> in two sizes (a video-to-audio model I hacked to accept text prompts), and <strong>ElevenLabs</strong> (cloud API with the highest subjective quality score, but network latency varied from 1.8-3.5s). I also tried TangoFlux - it would not start because the CUDA kernels did not support my RTX 5070's Blackwell chip.</p>
 
       <p>24 prompts. 5 sound categories - footsteps, impacts, UI clicks, ambience, music. Every prompt tested with all 5 methods, repeated 5 times. 600 generations total. Then 500 stress-test attempts per method to see how often things just break.</p>
     </div>
@@ -62,7 +62,7 @@
     <aside class="concept-sidebar reveal-stagger">
       <div class="concept-sidebar__fact">
         <span class="concept-sidebar__label">Research Question</span>
-        <span class="concept-sidebar__value">Can AI make game sounds fast enough that nobody notices they weren't pre-recorded?</span>
+        <span class="concept-sidebar__value">Can AI make game sounds fast enough to hit a 100-150ms interactive SFX budget?</span>
       </div>
       <div class="concept-sidebar__fact">
         <span class="concept-sidebar__label">Models Tested</span>
@@ -152,8 +152,9 @@
 <!-- MODEL RESULTS -->
 <section class="systems-section reveal" id="results" aria-labelledby="results-title">
   <span class="section-label">Results</span>
-  <h2 class="section-title" id="results-title">Every Model Failed</h2>
+  <h2 class="section-title" id="results-title">Raw Generation Missed the Target</h2>
   <div class="section-rule"></div>
+  <p class="video-note">Quality scores are my 1-5 evaluation across the 600 generated samples, judged for prompt match, clarity, transient detail, and usefulness in-game.</p>
 
   <div class="systems-grid">
     <div class="system-item">
@@ -162,7 +163,7 @@
         <div class="system-item__latency system-item__latency--fast">15 - 25ms end-to-end</div>
         <div class="system-item__quality">Quality: 2.4/5 &middot; 0% failure rate</div>
       </div>
-      <p class="system-item__desc">No GPU, no network, just math. The only method that actually hits the latency target. Sounds like a 2005 Flash game, but it never fails and never lags. That reliability is why it's the fallback - when AI models crash or get busy, procedural DSP keeps the game from going silent.</p>
+      <p class="system-item__desc">No GPU, no network, just math. The only method that actually hits the latency target. Sounds like a 2005 Flash game, but it stayed under target with a 0% failure rate in my tests. That reliability is why it's the fallback - when AI models crash or get busy, procedural DSP keeps the game from going silent.</p>
     </div>
 
     <div class="system-item">
@@ -180,7 +181,7 @@
         <div class="system-item__latency">2,600 - 3,400ms end-to-end</div>
         <div class="system-item__quality">Quality: 3.9/5 &middot; 3.1GB VRAM &middot; 13.8% failure rate</div>
       </div>
-      <p class="system-item__desc">Best sounding of everything I ran locally. Good textures, less synthetic than AudioGen. But it eats 3.1GB of VRAM - nothing else fits alongside it. Every model swap costs 2-4 seconds. And the duration control is broken: ask for 1 second, sometimes get 3. Worth the hassle for impacts and cinematic moments where quality matters more than speed.</p>
+      <p class="system-item__desc">Highest local quality score in the test. Good textures, less synthetic than AudioGen. But it eats 3.1GB of VRAM - nothing else fits alongside it. Every model swap costs 2-4 seconds. And the duration control is broken: ask for 1 second, sometimes get 3. Worth the hassle for impacts and cinematic moments where quality matters more than speed.</p>
     </div>
 
     <div class="system-item">
@@ -198,7 +199,7 @@
         <div class="system-item__latency">1,800 - 3,500ms end-to-end</div>
         <div class="system-item__quality">Quality: 4.3/5 &middot; 0GB VRAM &middot; 4.8% failure rate</div>
       </div>
-      <p class="system-item__desc">Sounds the best by a clear margin. Sharp transients, clean output - the only model where the result sometimes sounds like a real recording. But the latency is a coin flip: 1.8 seconds on a good day, 3.5 on a bad one. No GPU needed, but you need internet. Best for stuff you can pre-generate overnight: cutscene effects, signature weapon sounds, trailer audio.</p>
+      <p class="system-item__desc">Highest subjective quality score in the test. Sharp transients, clean output - the only model where the result sometimes sounds like a real recording. But network latency varied from 1.8 to 3.5 seconds. No GPU needed, but you need internet. Best for stuff you can pre-generate overnight: cutscene effects, signature weapon sounds, trailer audio.</p>
     </div>
 
   </div>
@@ -211,11 +212,11 @@
   <div class="section-rule"></div>
 
   <div class="closing-body">
-    <p>Every model failed the speed test. The fastest local model (MMAudio Small) still needed 1,400ms. That's 85x slower than a single game frame. I'd added caching early on just to stop regenerating the same sound over and over. Then I looked at the delivery times in the logs: <strong>35-120ms</strong>. Wait. That's fast enough.</p>
+    <p>Every generative model failed the first-playback speed test. The fastest local model (MMAudio Small) still needed 1,400ms. That's 85x slower than a single game frame. I'd added caching early on just to stop regenerating the same sound over and over. Then I looked at the delivery times in the logs: <strong>35-120ms</strong>, inside the interactive budget.</p>
 
     <p>A footstep that takes 2,400ms to generate? Unplayable. That same footstep served from cache? 45ms. Predicted before the player moves? Under 10ms from the engine buffer. A UI click drops from 1,800ms to 35ms. Ambience goes from 3,200ms down to 120ms on cache hit. Without caching: 1,400-3,500ms. With it: 35-120ms depending on clip length. A 95-98% reduction. The models weren't the answer. The cache was.</p>
 
-    <p>So I stopped trying to make AI faster and started asking a different question: <em>when</em> should you generate? Loading screens. Zone transitions. Quiet moments when the player is in a menu. Generate the footsteps before the player starts walking. By the time they move, the sound is already in memory. Nobody notices.</p>
+    <p>So I stopped trying to make AI faster and started asking a different question: <em>when</em> should you generate? Loading screens. Zone transitions. Quiet moments when the player is in a menu. Generate the footsteps before the player starts walking. By the time they move, the sound is already in memory before input needs it.</p>
   </div>
 
   <blockquote class="closing-pullquote">
@@ -321,11 +322,11 @@
   <div class="closing-body">
     <p><strong>Raw AI:</strong> No. Every model exceeds 150ms on first generation. Most take seconds.</p>
 
-    <p><strong>With caching:</strong> Yes. Cache hits land at 35-120ms depending on clip length. Players don't notice.</p>
+    <p><strong>With caching:</strong> Yes. Cache hits land at 35-120ms depending on clip length, inside the 100-150ms target.</p>
 
     <p><strong>With prediction:</strong> Yes. If you know the sound before the player needs it, delivery is under 10ms from the engine buffer. Feels instant.</p>
 
-    <p>No single model wins. Procedural DSP is fast but sounds fake. ElevenLabs sounds great but the latency is a dice roll. The real answer: mix them. Right model for the right sound. Cache everything. Always have a fallback ready for when things break - because they will.</p>
+    <p>No single model wins. Procedural DSP is fast but sounds fake. ElevenLabs scored highest subjectively, but network latency varied too much for first-playback SFX. The real answer: mix them. Right model for the right sound. Cache everything. Always have a fallback ready for when things break - because they will.</p>
   </div>
 </section>
 

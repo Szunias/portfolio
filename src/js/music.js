@@ -330,10 +330,10 @@
   }
 
   function currentLufsText() {
-    if (currentTrackIndex < 0) return 'Normalized playback';
+    if (currentTrackIndex < 0) return 'Ready to play';
     var card = trackCards[currentTrackIndex];
     var lufs = card ? card.getAttribute('data-lufs') : '';
-    return lufs ? 'Normalized ' + lufs + ' LUFS' : 'Normalized playback';
+    return lufs ? 'Normalized ' + lufs + ' LUFS' : 'Ready to play';
   }
 
   function setPlayerStatus(text, loading) {
@@ -939,6 +939,6 @@
   updateModeButtons();
   updateMuteButton();
   updatePlayerStateClasses();
-  setPlayerStatus('Normalized playback', false);
+  setPlayerStatus('Ready to play', false);
 
 })();
