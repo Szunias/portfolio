@@ -77,8 +77,8 @@ function collectFileSizes(dir, base = dir) {
 function enforceDistBudget() {
   const files = collectFileSizes(DIST);
   const total = files.reduce((sum, file) => sum + file.size, 0);
-  const maxTotal = 850 * 1024 * 1024;
-  const maxFile = 90 * 1024 * 1024;
+  const maxTotal = 650 * 1024 * 1024;
+  const maxFile = 65 * 1024 * 1024;
   const largest = files.slice().sort((a, b) => b.size - a.size)[0];
   if (total > maxTotal) {
     throw new Error(`dist is ${byteSizeLabel(total)}, above the ${byteSizeLabel(maxTotal)} deploy budget`);
@@ -395,6 +395,10 @@ function pageBuildInputs(page) {
   return inputs;
 }
 
+function pageContentInputs(page) {
+  return [relPath('src', 'pages', `${page.slug}.html`)];
+}
+
 function sitemapUrl(loc, lastmod, priority) {
   return [
     '  <url>',
@@ -618,16 +622,16 @@ function main() {
     }
   }
 
-  // Generate sitemap.xml — lastmod from the page plus shared build inputs.
+  // Generate sitemap.xml — lastmod follows content files, not every shared build/config change.
   const SITE_ORIGIN = new URL(config.pages[0].canonical).origin;
   const pageUrls = config.pages.map(p => {
     const priority = p.slug === 'index' ? '1.0' : '0.8';
-    return sitemapUrl(p.canonical, maxGitMtime(pageBuildInputs(p)), priority);
+    return sitemapUrl(p.canonical, maxGitMtime(pageContentInputs(p)), priority);
   });
   const staticUrls = copiedStatic.filter(entry => entry.sitemap !== false).map(entry => {
     const outName = entry.outName;
     const loc = `${SITE_ORIGIN}/${outName}`;
-    return sitemapUrl(loc, maxGitMtime([entry.file, 'site.config.cjs', 'build.cjs']), '0.5');
+    return sitemapUrl(loc, maxGitMtime([entry.file]), '0.5');
   });
   const urls = pageUrls.concat(staticUrls).join('\n');
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;

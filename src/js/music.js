@@ -55,6 +55,13 @@
     if (focus) btn.focus();
   }
 
+  function announceFilterResult() {
+    var status = document.getElementById('filterStatus');
+    if (!status) return;
+    var count = visibleCards().length;
+    status.textContent = count + (count === 1 ? ' track shown' : ' tracks shown');
+  }
+
   filterBtns.forEach(function(btn) {
     btn.addEventListener('click', function() {
       activateFilter(btn, false);
@@ -104,12 +111,16 @@
         var activeCard = trackCards[currentTrackIndex];
         if (activeCard && activeCard.hasAttribute('data-filtered-out')) {
           activeCard.classList.remove('active');
+          var visibleFeatured = visibleCards()[0];
+          if (visibleFeatured) syncFeaturedTrack(visibleFeatured, true);
+        } else if (activeCard) {
+          syncFeaturedTrack(activeCard, false);
         }
-        if (activeCard) syncFeaturedTrack(activeCard, false);
       } else if (!galleryCurrentCard || galleryCurrentCard.hasAttribute('data-filtered-out')) {
         var nextFeatured = visibleCards()[0];
         if (nextFeatured) syncFeaturedTrack(nextFeatured, true);
       }
+      announceFilterResult();
     });
 
     btn.addEventListener('keydown', function(e) {
@@ -310,6 +321,7 @@
     var pct = duration > 0 ? (current / duration) * 100 : 0;
     var canSeek = currentTrackIndex >= 0 && duration > 0;
     progressBar.setAttribute('aria-disabled', canSeek ? 'false' : 'true');
+    progressBar.setAttribute('tabindex', canSeek ? '0' : '-1');
     progressBar.setAttribute('aria-valuenow', Math.round(pct));
     progressBar.setAttribute('aria-valuetext', formatTime(current) + ' of ' + formatTime(duration));
   }
@@ -816,7 +828,7 @@
   progressBar.setAttribute('aria-valuenow', '0');
   progressBar.setAttribute('aria-valuetext', '0:00 of 0:00');
   progressBar.setAttribute('aria-disabled', 'true');
-  progressBar.setAttribute('tabindex', '0');
+  progressBar.setAttribute('tabindex', '-1');
 
   if (volumeBar) {
     volumeBar.setAttribute('role', 'slider');
@@ -935,6 +947,7 @@
 
   var initialFeatured = visibleCards()[0] || trackCards[0];
   if (initialFeatured) syncFeaturedTrack(initialFeatured, false);
+  announceFilterResult();
 
   updateModeButtons();
   updateMuteButton();

@@ -23,11 +23,11 @@
     </div>
     <div class="meta-item">
       <span class="meta-item__label">Supervisor</span>
-      <span class="meta-item__value">De Meulemeester Roel</span>
+      <span class="meta-item__value">Roel De Meulemeester</span>
     </div>
     <div class="meta-item">
       <span class="meta-item__label">Coach</span>
-      <span class="meta-item__value">Van der Kelen Cedric</span>
+      <span class="meta-item__value">Cedric Van der Kelen</span>
     </div>
   </div>
 
@@ -190,7 +190,7 @@
         <div class="system-item__latency">1,400 - 1,900ms end-to-end</div>
         <div class="system-item__quality">Quality: 3.5/5 &middot; 1.8GB VRAM &middot; 7.2% failure rate</div>
       </div>
-      <p class="system-item__desc">The sweet spot. Faster than Large, still sounds decent. At 1.8GB it actually shares VRAM with AudioGen - no swapping. The real trick: it's the only model that generates faster than playback for 10-second clips (RTF &lt; 1.0). That means it can stream ambient audio in real time. If I had to ship a game with one model, this is the one.</p>
+      <p class="system-item__desc">The sweet spot. Faster than Large, still sounds decent. At 1.8GB it actually shares VRAM with AudioGen - no swapping. The real trick: it's the only model that generates faster than playback for 10-second clips (RTF &lt; 1.0). That makes it useful for preloading or background ambience after startup. If I had to ship a game with one model, this is the one.</p>
     </div>
 
     <div class="system-item">
@@ -296,7 +296,7 @@
       <span class="challenge-card__label">What Was Hard</span>
       <p class="challenge-card__text">TangoFlux was supposed to be the fast one. It didn't even start. PyTorch 2.4 with CUDA 12.4 had no compiled kernels for the RTX 5070's Blackwell chip (sm_120).</p>
       <span class="challenge-card__label">What I Did</span>
-      <p class="challenge-card__text">Tried building from source. Hit Windows toolchain issues. Two days gone. The lesson: if you're making a game, don't use models released last month. Bleeding-edge research code breaks on real hardware.</p>
+      <p class="challenge-card__text">Tried building from source. Hit Windows toolchain issues. Two days gone. The lesson: be careful with newly released research models, especially when hardware support is still catching up. Bleeding-edge research code breaks on real hardware.</p>
     </div>
   </div>
 </section>
@@ -322,7 +322,7 @@
   <div class="closing-body">
     <p><strong>Raw AI:</strong> No. Every model exceeds 150ms on first generation. Most take seconds.</p>
 
-    <p><strong>With caching:</strong> Yes. Cache hits land at 35-120ms depending on clip length, inside the 100-150ms target.</p>
+    <p><strong>With caching:</strong> Runtime playback can hit 35-120ms depending on clip length, inside the 100-150ms target, but only after sounds have already been generated or predicted ahead of time.</p>
 
     <p><strong>With prediction:</strong> Yes. If you know the sound before the player needs it, delivery is under 10ms from the engine buffer. Feels instant.</p>
 
