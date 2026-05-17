@@ -70,7 +70,7 @@
       </div>
       <div class="concept-sidebar__fact">
         <span class="concept-sidebar__label">Biggest Lesson</span>
-        <span class="concept-sidebar__value">Fix it when it breaks, not before</span>
+        <span class="concept-sidebar__value">Profile first, then optimize the bottleneck</span>
       </div>
     </aside>
   </div>
@@ -91,7 +91,7 @@
       <p class="system-item__desc">My first Wwise project hit a 256-voice playback limit, and in a zombie shooter that fills up fast - every gunshot, spawn, and death scream takes a slot. I used 44 source files total, with key sounds using up to 6 variations, then set priorities so nearby gunshots always win over a zombie groaning in the distance. Nothing important cuts out anymore.</p>
       <div class="system-item__video">
         <div class="video-wrap">
-          <video controls preload="metadata" poster="old/public/wwiseprojectsinfo/images/BoneyBoogaloo.png">
+          <video controls preload="none" poster="old/public/wwiseprojectsinfo/images/BoneyBoogaloo.png">
             <source src="old/public/wwiseprojectsinfo/videos/boneyboogaloo/optboo.mp4" type="video/mp4">
             Your browser does not support the video tag.
           </video>
@@ -121,7 +121,7 @@
       <p class="system-item__desc">FPS platformer set inside a human body, targeting cheap Android phones with 2 GB RAM. The first build crashed because all audio loaded at once. I split it so only the current zone stays in memory — Brain takes 670 KB, Mouth 384 KB, Stomach 2.8 MB. For quiet moments I replaced real audio files with generated silence, which cut memory use by 80%. The waterfall has 3 layers that change based on how far you are — sounds different at 5 meters vs. 30.</p>
       <div class="system-item__video">
         <div class="video-wrap">
-          <video controls preload="metadata" poster="old/public/wwiseprojectsinfo/images/StomachAches.png">
+          <video controls preload="none" poster="old/public/wwiseprojectsinfo/images/StomachAches.png">
             <source src="old/public/wwiseprojectsinfo/videos/stomachaches/optstomachaches.mp4" type="video/mp4">
             Your browser does not support the video tag.
           </video>
@@ -144,6 +144,8 @@
       <p class="challenge-card__text">Sounds were cutting out mid-play. Gunshots would just vanish. I had no idea voice limits were even a thing before this. Took me an hour of debugging to realize the problem wasn't my code, it was Wwise running out of voices to assign.</p>
       <span class="challenge-card__label">What I Did</span>
       <p class="challenge-card__text">Gunshots need to play. A zombie grunt 30 meters away does not. I set priorities so close, loud sounds win voice allocation. The other fix was trimming silence off files — sounds were holding their slot open on dead air. Not every sound needs to play; some can be dropped without hurting combat readability.</p>
+      <span class="challenge-card__label">What Happened</span>
+      <p class="challenge-card__text">The important gunshots stopped disappearing, and the mix stayed readable because distant low-priority sounds could safely lose their voices first.</p>
     </div>
 
     <div class="challenge-card">
@@ -151,7 +153,9 @@
       <span class="challenge-card__label">What Was Hard</span>
       <p class="challenge-card__text">Walking between areas sounded awful. Forest to cave, silence to waterfall. It felt like someone flipped a switch instead of the player actually moving through a space. A 2-second fade wasn't enough either - it just sounded like a bad DJ crossfade.</p>
       <span class="challenge-card__label">What I Did</span>
-      <p class="challenge-card__text">6.5 seconds was the sweet spot for the crossfade. Shorter felt rushed, longer felt laggy. But the crossfade alone wasn't enough - the reverb also had to change. Walk from a big cave into a tight corridor and you hear it shrink around you. Once the reverb matched the room, it actually felt like walking through a real place instead of hearing two tracks crossfade.</p>
+      <p class="challenge-card__text">A 6.5-second crossfade gave the transition enough time without making the player wait. Shorter felt rushed, longer felt laggy. But the crossfade alone wasn't enough - the reverb also had to change. Walk from a big cave into a tight corridor and you hear it shrink around you. Once the reverb matched the room, it actually felt like walking through a real place instead of hearing two tracks crossfade.</p>
+      <span class="challenge-card__label">What Happened</span>
+      <p class="challenge-card__text">The room change became legible instead of abrupt: ambience and reverb moved together, so the player heard the space narrow or open up during traversal.</p>
     </div>
 
     <div class="challenge-card challenge-card--full">
@@ -160,6 +164,8 @@
       <p class="challenge-card__text">The first build crashed on load. All audio in memory at once - the phone just gave up. I had to rethink the entire loading strategy. You cannot treat a 2 GB Android phone like a PC with 16 GB.</p>
       <span class="challenge-card__label">What I Did</span>
       <p class="challenge-card__text">Biggest win: replacing quiet placeholder audio files with Wwise Silence, which cut those assets by 80% in one move. Then I split audio into zones so only the current area stays loaded. Walk into a new zone, the old one unloads. The waterfall needed 3 distance layers so it sounds right both up close and far away. Total audio per zone never exceeds 3 MB.</p>
+      <span class="challenge-card__label">What Happened</span>
+      <p class="challenge-card__text">The Android build stayed within a 3 MB audio budget per zone, and the 80% placeholder reduction removed the worst memory waste without changing gameplay audio coverage.</p>
     </div>
   </div>
 </section>
@@ -168,6 +174,6 @@
 <nav class="links-section" aria-label="Project links and navigation">
   <div class="links-layout">
     <div></div>
-    <a class="next-project-btn" href="xrlabs.html">Next Project: XR Labs</a>
+    <a class="next-project-btn" href="shadowframes.html">Next Project: Shadow Frames</a>
   </div>
 </nav>

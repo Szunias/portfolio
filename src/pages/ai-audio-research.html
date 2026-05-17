@@ -1,9 +1,9 @@
 <!-- PROJECT HERO -->
 <header class="project-hero ai-hero ai-lab-hero">
   <div class="ai-hero__copy">
-    <p class="ai-hero__eyebrow">Bachelor thesis / UE5 + Python / 600 generated samples</p>
-    <h1 class="project-hero__title">Prompt sent. Sound arrived late.</h1>
-    <p class="project-hero__subtitle">I built a UE5 prototype to test the dream version of AI game audio: no giant banks of repeated footsteps, just sounds made when the game needs them. The result was blunt. The models sounded usable, but they arrived after the moment had already passed. The useful discovery was not faster generation. It was caching.</p>
+    <p class="ai-hero__eyebrow">Bachelor thesis / UE5 + Python / 600 generations + 2,500 stress tests</p>
+    <h1 class="project-hero__title">AI Audio Research</h1>
+    <p class="project-hero__subtitle">AI audio arrived late. I built a UE5 prototype to test a runtime version of AI game audio: no giant banks of repeated footsteps, just sounds made when the game needs them. The result was blunt. The models sounded usable, but they arrived after the moment had already passed. The useful discovery was not faster generation. It was caching.</p>
   </div>
 
   <aside class="ai-lab-console" aria-label="Runtime audio request log">
@@ -93,7 +93,7 @@
     <span class="section-label">01 / The failed assumption</span>
     <h2 class="section-title" id="ai-failure-title">I started with the wrong verb: generate.</h2>
     <p class="drop-cap">Here is the thing about game audio: most of it is still files. Somebody records or designs a footstep, gunshot, UI click, or explosion, exports it, names it, and ships it. A big game can carry thousands of these files. Gigabytes of “sword hits metal.”</p>
-    <p>The AI version sounds seductive: a player steps on gravel, the game sends “short gravel footstep,” the model makes a fresh variation, Unreal plays it. No huge audio bank. No repeated footsteps. Nice idea. The problem is timing. If a gunshot arrives 100ms after input, players feel it. My fastest local model still needed 1.4 seconds on first playback.</p>
+    <p>The AI version sounds tempting: a player steps on gravel, the game sends “short gravel footstep,” the model makes a fresh variation, Unreal plays it. No huge audio bank. No repeated footsteps. Nice idea. The problem is timing. If a gunshot arrives 100ms after input, players feel it. My fastest local model still needed 1.4 seconds on first playback.</p>
   </div>
 
   <div class="ai-deadline-visual" aria-label="Timeline showing gameplay deadline missed by AI generation">
@@ -126,7 +126,7 @@
     <div class="ai-test-row__number">test 02</div>
     <div class="ai-test-row__copy">
       <h3>Stop listening emotionally. Measure the wait.</h3>
-      <p>I tested 24 prompts across footsteps, impacts, UI clicks, ambience, and music. Five methods, five repeats, 600 generations. Then 500 stress-test attempts per method to see how often things just break. The quality scores were useful, but latency made the decision.</p>
+      <p>I tested 24 prompts across footsteps, impacts, UI clicks, ambience, and music. Five methods, five repeats, 600 benchmark generations. Then 500 stress-test attempts per method to see how often things break. The quality scores were useful, but latency made the decision.</p>
     </div>
     <div class="ai-mini-bars" aria-label="Latency comparison chart">
       <div><span>DSP</span><i style="--w: 5%;"></i><strong>15-25ms</strong></div>
@@ -154,14 +154,14 @@
 <section class="ai-evidence-section reveal" id="ai-videos" aria-labelledby="ai-videos-title">
   <div class="ai-section-head">
     <span class="section-label">02 / Evidence</span>
-    <h2 class="section-title" id="ai-videos-title">The prototype is the proof, not the copy.</h2>
+    <h2 class="section-title" id="ai-videos-title">The prototype records the implementation evidence.</h2>
     <p>Two recordings: the UE5 side where footsteps and ambient sounds are requested by gameplay, and the Python side where the uncomfortable details show up: model loading, VRAM juggling, cache hits, cache misses, retries, and failures.</p>
   </div>
 
   <div class="video-grid ai-video-grid">
     <div>
       <div class="video-item">
-        <video controls preload="metadata">
+        <video controls preload="none">
           <source src="UnrealEngineDemo.mp4" type="video/mp4">
           Your browser does not support the video element.
         </video>
@@ -170,7 +170,7 @@
     </div>
     <div>
       <div class="video-item">
-        <video controls preload="metadata">
+        <video controls preload="none">
           <source src="PythonPrototypeDemo.mp4" type="video/mp4">
           Your browser does not support the video element.
         </video>
@@ -207,13 +207,13 @@
         <span>Fallback</span>
         <h3>Procedural DSP</h3>
         <strong>15-25ms / quality 2.4/5 / 0% failure</strong>
-        <p>No GPU, no network, just math. It sounds like a 2005 Flash game, but it never lags and never goes silent. That reliability is why it belongs in the fallback chain.</p>
+        <p>No GPU, no network, just math. It sounds simple and low-fidelity, but it never lags and never goes silent. That reliability is why it belongs in the fallback chain.</p>
       </article>
       <article class="ai-model-panel panel-audiogen">
         <span>Local ambience</span>
         <h3>AudioGen</h3>
         <strong>2.1-2.8s / quality 3.6/5 / 9.2% failure</strong>
-        <p>Meta's text-to-audio model. The most stable local option in my tests: useful for wind, rain, and ambient beds, but plain on sharp transient sounds and too slow for first-playback feedback.</p>
+        <p>Meta's text-to-audio model. The most predictable local ambience option in my tests: useful for wind, rain, and ambient beds, but plain on sharp transient sounds and too slow for first-playback feedback.</p>
       </article>
       <article class="ai-model-panel panel-mmaudio-large">
         <span>Local texture</span>
@@ -225,13 +225,13 @@
         <span>Best local tradeoff</span>
         <h3>MMAudio Small</h3>
         <strong>1.4-1.9s / quality 3.5/5 / 7.2% failure</strong>
-        <p>The sweet spot. Faster than Large, still decent, and at 1.8GB it can share VRAM with AudioGen. It was the only local model that made sense for predicted ambience or cached content.</p>
+        <p>The lowest local median latency. Faster than Large, still decent, and at 1.8GB it can share VRAM with AudioGen. It was the only local model that made sense for predicted ambience or cached content.</p>
       </article>
       <article class="ai-model-panel panel-eleven">
         <span>Cloud quality</span>
         <h3>ElevenLabs</h3>
         <strong>1.8-3.5s / quality 4.3/5 / 4.8% failure</strong>
-        <p>Best subjective output by a clear margin: sharper transients, cleaner results, sometimes close to a real recording. But latency is a dice roll. Great for pre-generation, dangerous for immediate gameplay feedback.</p>
+        <p>Best subjective output by a clear margin: sharper transients, cleaner results, sometimes close to a real recording. But latency varied from 1.8 to 3.5 seconds, outside the first-playback budget. Great for pre-generation, wrong for immediate gameplay feedback.</p>
       </article>
     </div>
   </div>
@@ -240,7 +240,7 @@
 <section class="ai-failure-grid reveal" aria-labelledby="ai-failure-grid-title">
   <div class="ai-section-head">
     <span class="section-label">04 / Production problems</span>
-    <h2 class="section-title" id="ai-failure-grid-title">The hard parts were not glamorous.</h2>
+    <h2 class="section-title" id="ai-failure-grid-title">The production problems were the real test.</h2>
   </div>
 
   <details open>

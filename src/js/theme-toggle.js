@@ -33,7 +33,8 @@
   function updateLabel() {
     const isLight = document.documentElement.getAttribute('data-theme') === 'light';
     if (useText) toggle.textContent = isLight ? '\u263D' : '\u2600';
-    toggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+    toggle.setAttribute('aria-label', isLight ? 'Switch to dark theme' : 'Switch to light theme');
+    toggle.setAttribute('title', isLight ? 'Switch to dark theme' : 'Switch to light theme');
     toggle.setAttribute('aria-pressed', isLight ? 'true' : 'false');
   }
   updateLabel();

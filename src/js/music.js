@@ -112,7 +112,9 @@
         if (activeCard && activeCard.hasAttribute('data-filtered-out')) {
           activeCard.classList.remove('active');
           var visibleFeatured = visibleCards()[0];
-          if (visibleFeatured) syncFeaturedTrack(visibleFeatured, true);
+          if (visibleFeatured) {
+            selectTrack(visibleFeatured, { reveal: false, autoplay: isPlaying || playRequested });
+          }
         } else if (activeCard) {
           syncFeaturedTrack(activeCard, false);
         }
@@ -590,9 +592,18 @@
     setPlayerStatus('Loading - ' + currentLufsText(), true);
     updatePlayerStateClasses();
     updateMediaSession(card);
-    playAudio();
+    if (options.autoplay === false) {
+      isPlaying = false;
+      playRequested = false;
+      audio.load();
+      setPlayerStatus(currentLufsText(), false);
+      updatePlayIcon();
+      setMediaPlaybackState('paused');
+    } else {
+      playAudio();
+    }
 
-    document.title = title + ' - Igor Szuniewicz | Music';
+    document.title = options.autoplay === false ? originalTitle : title + ' - Igor Szuniewicz | Music';
 
     // Highlight active card
     trackCards.forEach(function(c) { c.classList.remove('active'); });

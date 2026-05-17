@@ -39,7 +39,7 @@ module.exports = {
       js: ['theme-toggle'],
       title: 'Igor Szuniewicz | Game Audio & Technical Sound Designer',
       ogTitle: 'Igor Szuniewicz | Game Audio & Technical Sound Designer',
-      description: 'Game audio portfolio by Igor Szuniewicz: technical sound design, Wwise/FMOD, Unreal/Unity, spatial audio, C++ tools, and a sound design reel.',
+      description: 'Game audio portfolio by Igor Szuniewicz: technical sound design, Wwise, Unreal/Unity, spatial audio, C++ tools, and a sound design reel.',
       canonical: `${SITE}/`,
       ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
       ogImageAlt: 'Shadow Frames horror game screenshot from Igor Szuniewicz game audio portfolio',
