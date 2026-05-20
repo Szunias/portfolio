@@ -1,8 +1,8 @@
 // Theme toggle (universal — works with SVG icons or text emoji buttons)
 (function(){
   try {
-    const saved = localStorage.getItem('theme');
-    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    const saved = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
   } catch(e) {}
 
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -41,8 +41,14 @@
 
   toggle.addEventListener('click', () => {
     const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    document.documentElement.classList.remove('theme-switching');
+    void document.documentElement.offsetWidth;
+    document.documentElement.classList.add('theme-switching');
     document.documentElement.setAttribute('data-theme', next);
     try { localStorage.setItem('theme', next); } catch(e) {}
     updateLabel();
+    window.setTimeout(() => {
+      document.documentElement.classList.remove('theme-switching');
+    }, 760);
   });
 })();

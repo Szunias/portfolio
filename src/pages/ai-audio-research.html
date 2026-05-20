@@ -6,23 +6,30 @@
     <p class="project-hero__subtitle">AI audio arrived late. I built a UE5 prototype to test a runtime version of AI game audio: no giant banks of repeated footsteps, just sounds made when the game needs them. The result was blunt. The models sounded usable, but they arrived after the moment had already passed. The useful discovery was not faster generation. It was caching.</p>
   </div>
 
-  <aside class="ai-lab-console" aria-label="Runtime audio request log">
-    <div class="ai-console__top">
-      <span></span>
-      <span></span>
-      <span></span>
-      <strong>runtime_sfx_test.log</strong>
+  <aside class="ai-outcome-panel" aria-label="Research outcome summary">
+    <div class="ai-outcome-panel__top">
+      <span>Research question</span>
+      <strong>Can AI generate game SFX at runtime?</strong>
     </div>
-    <ol class="ai-console__lines">
-      <li><span>00.000</span> player requests impact_sfx</li>
-      <li><span>00.016</span> frame already advanced</li>
-      <li><span>00.150</span> interaction budget missed</li>
-      <li><span>01.487</span> model returns PCM buffer</li>
-      <li><span>01.492</span> verdict: good sound, wrong moment</li>
-    </ol>
-    <div class="ai-waveform" aria-hidden="true">
-      <i style="--h: 18%;"></i><i style="--h: 64%;"></i><i style="--h: 36%;"></i><i style="--h: 86%;"></i><i style="--h: 42%;"></i><i style="--h: 72%;"></i><i style="--h: 28%;"></i><i style="--h: 90%;"></i><i style="--h: 52%;"></i><i style="--h: 22%;"></i><i style="--h: 74%;"></i><i style="--h: 38%;"></i><i style="--h: 96%;"></i><i style="--h: 44%;"></i><i style="--h: 68%;"></i><i style="--h: 30%;"></i>
+    <div class="ai-outcome-panel__answer">
+      <span>Short answer</span>
+      <strong>No, not on the first hit.</strong>
+      <p>Every generative model missed the moment. The usable system was not live generation; it was prediction, caching, and fallback playback.</p>
     </div>
+    <dl class="ai-outcome-panel__proof">
+      <div>
+        <dt>Raw generation</dt>
+        <dd>1.4-3.5s</dd>
+      </div>
+      <div>
+        <dt>Gameplay budget</dt>
+        <dd>100-150ms</dd>
+      </div>
+      <div>
+        <dt>Cached playback</dt>
+        <dd>35-120ms</dd>
+      </div>
+    </dl>
   </aside>
 
   <div class="project-hero__meta ai-hero__meta">
@@ -77,6 +84,21 @@
     <span>Cached playback</span>
     <strong>35-120ms</strong>
     <p>Fast enough because the sound already exists.</p>
+  </div>
+</section>
+
+<section class="ai-case-brief reveal" aria-label="AI audio research narrative summary">
+  <div>
+    <span>Problem</span>
+    <p>Game audio has to land with input, collision, animation, and player expectation. A late sound is not “high quality”; it is wrong.</p>
+  </div>
+  <div>
+    <span>Experiment</span>
+    <p>I built a UE5 client and Python backend, then benchmarked 600 generations plus 2,500 stress-test attempts across DSP, local models, and cloud generation.</p>
+  </div>
+  <div>
+    <span>Result</span>
+    <p>The strongest production pattern was a hybrid one: predict likely sounds, generate them off the critical path, cache them, and keep procedural DSP as a fallback.</p>
   </div>
 </section>
 

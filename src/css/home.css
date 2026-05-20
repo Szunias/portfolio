@@ -2037,3 +2037,91 @@ a {
     font-size: clamp(2.8rem, 15vw, 4.7rem);
   }
 }
+
+/* Floating theme toggle and smooth color change. */
+html,
+body,
+.hero,
+.project-card,
+.tools-section-wrap,
+.contact-section,
+.theme-toggle {
+  transition:
+    background-color 0.42s ease,
+    color 0.42s ease,
+    border-color 0.42s ease,
+    box-shadow 0.42s ease;
+}
+
+html.theme-switching::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0;
+  animation: theme-flash 0.72s ease;
+}
+
+html[data-theme="light"].theme-switching::before {
+  background: radial-gradient(circle at calc(100% - 52px) 52px, rgba(255,255,255,0.74), transparent 36%),
+    rgba(244,239,231,0.24);
+}
+
+html[data-theme="dark"].theme-switching::before {
+  background: radial-gradient(circle at calc(100% - 52px) 52px, rgba(8,10,12,0.74), transparent 36%),
+    rgba(8,10,12,0.24);
+}
+
+@keyframes theme-flash {
+  0% { opacity: 0; }
+  32% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.theme-toggle,
+.hero .theme-toggle,
+[data-theme="light"] .hero .theme-toggle {
+  position: fixed !important;
+  top: 18px !important;
+  right: 22px !important;
+  z-index: 9999 !important;
+  width: 58px !important;
+  height: 58px !important;
+  min-width: 58px;
+  min-height: 58px;
+  border: 1px solid color-mix(in srgb, var(--black) 22%, transparent) !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--cream) 82%, transparent) !important;
+  color: var(--black) !important;
+  box-shadow: 0 14px 42px rgba(0,0,0,0.16), inset 0 0 0 1px color-mix(in srgb, var(--white) 52%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.theme-toggle:hover,
+.hero .theme-toggle:hover,
+[data-theme="light"] .hero .theme-toggle:hover {
+  transform: translateY(-2px) scale(1.03);
+  border-color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent) 12%, var(--cream)) !important;
+  color: var(--black) !important;
+}
+
+.theme-toggle svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.4;
+}
+
+@media (max-width: 650px) {
+  .theme-toggle,
+  .hero .theme-toggle,
+  [data-theme="light"] .hero .theme-toggle {
+    top: 14px !important;
+    right: 14px !important;
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px;
+    min-height: 52px;
+  }
+}

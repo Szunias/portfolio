@@ -3267,3 +3267,320 @@ body * {
 .next-project-btn:hover {
   gap: 10px;
 }
+
+/* Final visual pass: light-first theme, stronger floating toggle, calmer callouts. */
+html,
+body,
+.project-hero,
+.back-nav,
+.ai-story-nav,
+.callout-card,
+.meta-item,
+.video-wrap,
+.gallery-item,
+.system-item,
+.challenge-card {
+  transition:
+    background-color 0.42s ease,
+    color 0.42s ease,
+    border-color 0.42s ease,
+    box-shadow 0.42s ease;
+}
+
+html.theme-switching::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0;
+  animation: theme-flash 0.72s ease;
+}
+
+html[data-theme="light"].theme-switching::before {
+  background: radial-gradient(circle at calc(100% - 52px) 52px, rgba(255,255,255,0.74), transparent 36%),
+    rgba(244,239,231,0.24);
+}
+
+html[data-theme="dark"].theme-switching::before {
+  background: radial-gradient(circle at calc(100% - 52px) 52px, rgba(8,10,12,0.74), transparent 36%),
+    rgba(8,10,12,0.24);
+}
+
+@keyframes theme-flash {
+  0% { opacity: 0; }
+  32% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.theme-toggle {
+  position: fixed !important;
+  top: 18px !important;
+  right: 22px !important;
+  z-index: 9999 !important;
+  width: 58px !important;
+  height: 58px !important;
+  min-width: 58px;
+  min-height: 58px;
+  border: 1px solid color-mix(in srgb, var(--black) 22%, transparent) !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--cream) 82%, transparent) !important;
+  color: var(--black) !important;
+  box-shadow: 0 14px 42px rgba(0,0,0,0.16), inset 0 0 0 1px color-mix(in srgb, var(--white) 52%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px) scale(1.03);
+  border-color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent) 12%, var(--cream)) !important;
+}
+
+.theme-toggle svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.4;
+}
+
+.back-nav {
+  padding-right: 108px;
+}
+
+.callout-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+  border: 1px solid var(--grey-rule);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent 42%),
+    color-mix(in srgb, var(--white) 78%, transparent);
+  color: var(--black);
+  box-shadow: none;
+}
+
+.callout-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 48px rgba(0,0,0,0.1);
+}
+
+.callout-card__label {
+  color: var(--accent);
+  opacity: 1;
+}
+
+.callout-card__title {
+  color: var(--black);
+  font-family: var(--brand-secondary);
+  font-weight: 800;
+}
+
+.callout-card__desc {
+  color: var(--grey);
+  opacity: 1;
+}
+
+.callout-card__link {
+  min-height: 48px;
+  border-color: var(--grey-rule);
+  color: var(--black);
+  background: color-mix(in srgb, var(--cream) 72%, transparent);
+}
+
+.callout-card__link:hover {
+  border-color: var(--accent);
+  color: var(--black);
+  background: color-mix(in srgb, var(--accent) 10%, var(--cream));
+}
+
+/* AI Audio Research: make the first screen read like a case study, not a fake terminal. */
+.ai-lab-hero {
+  min-height: auto;
+  padding-top: clamp(82px, 10vw, 132px);
+}
+
+.ai-lab-hero::before {
+  background: var(--grey-rule);
+}
+
+.ai-outcome-panel {
+  position: sticky;
+  top: 102px;
+  min-width: 0;
+  border: 1px solid var(--grey-rule);
+  background: color-mix(in srgb, var(--white) 78%, transparent);
+  box-shadow: 0 22px 70px rgba(0,0,0,0.08);
+}
+
+.ai-outcome-panel__top,
+.ai-outcome-panel__answer,
+.ai-outcome-panel__proof div {
+  padding: 22px;
+  border-bottom: 1px solid var(--grey-rule);
+}
+
+.ai-outcome-panel__top span,
+.ai-outcome-panel__answer span,
+.ai-outcome-panel__proof dt,
+.ai-case-brief span {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--accent);
+  font-family: var(--brand-secondary);
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.ai-outcome-panel__top strong,
+.ai-outcome-panel__answer strong,
+.ai-outcome-panel__proof dd {
+  color: var(--black);
+  font-family: var(--brand-secondary);
+  font-weight: 800;
+  line-height: 1.04;
+}
+
+.ai-outcome-panel__top strong {
+  font-size: clamp(1.35rem, 2.2vw, 2rem);
+}
+
+.ai-outcome-panel__answer strong {
+  display: block;
+  max-width: 9ch;
+  margin-bottom: 14px;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+}
+
+.ai-outcome-panel__answer p {
+  color: var(--grey);
+  line-height: 1.58;
+}
+
+.ai-outcome-panel__proof {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ai-outcome-panel__proof div {
+  border-right: 1px solid var(--grey-rule);
+  border-bottom: none;
+}
+
+.ai-outcome-panel__proof div:last-child {
+  border-right: none;
+}
+
+.ai-outcome-panel__proof dd {
+  margin: 0;
+  font-size: clamp(1.15rem, 2vw, 1.7rem);
+}
+
+.ai-case-brief {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: clamp(26px, 4vw, 38px) var(--margin);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-block: 1px solid var(--grey-rule);
+  background: color-mix(in srgb, var(--white) 58%, transparent);
+}
+
+.ai-case-brief div {
+  padding: 0 clamp(18px, 3vw, 34px);
+  border-right: 1px solid var(--grey-rule);
+}
+
+.ai-case-brief div:first-child {
+  padding-left: 0;
+}
+
+.ai-case-brief div:last-child {
+  padding-right: 0;
+  border-right: none;
+}
+
+.ai-case-brief p {
+  color: var(--grey);
+  line-height: 1.58;
+}
+
+.ai-verdict-wall {
+  background: color-mix(in srgb, var(--white) 42%, transparent);
+}
+
+.ai-verdict-card.is-fail,
+.ai-verdict-card.is-pass {
+  background: transparent;
+}
+
+.ai-verdict-card.is-fail strong {
+  color: var(--accent);
+}
+
+.ai-verdict-card.is-pass strong {
+  color: var(--signal);
+}
+
+@media (max-width: 1000px) {
+  .ai-outcome-panel {
+    position: relative;
+    top: auto;
+  }
+
+  .ai-case-brief {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-case-brief div {
+    padding: 20px 0;
+    border-right: none;
+    border-bottom: 1px solid var(--grey-rule);
+  }
+
+  .ai-case-brief div:first-child {
+    padding-top: 0;
+  }
+
+  .ai-case-brief div:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 650px) {
+  .theme-toggle {
+    top: 14px !important;
+    right: 14px !important;
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px;
+    min-height: 52px;
+  }
+
+  .back-nav {
+    padding-right: 82px;
+  }
+
+  .callout-card {
+    grid-template-columns: 1fr;
+    padding: 28px;
+  }
+
+  .callout-card__link {
+    justify-content: center;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .ai-outcome-panel__proof {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-outcome-panel__proof div {
+    border-right: none;
+    border-bottom: 1px solid var(--grey-rule);
+  }
+
+  .ai-outcome-panel__proof div:last-child {
+    border-bottom: none;
+  }
+}
