@@ -1,183 +1,178 @@
 <!-- PROJECT HERO -->
-<header class="project-hero ai-hero ai-lab-hero">
-  <div class="ai-hero__copy">
-    <p class="ai-hero__eyebrow">Bachelor thesis / UE5 + Python / 600 generations + 2,500 stress tests</p>
+<header class="project-hero ai-hero ai-case-hero">
+  <div class="ai-case-hero__copy">
+    <p class="ai-hero__eyebrow">Bachelor thesis / UE5 + Python</p>
     <h1 class="project-hero__title">AI Audio Research</h1>
-    <p class="project-hero__subtitle">AI audio arrived late. I built a UE5 prototype to test a runtime version of AI game audio: no giant banks of repeated footsteps, just sounds made when the game needs them. The result was blunt. The models sounded usable, but they arrived after the moment had already passed. The useful discovery was not faster generation. It was caching.</p>
+    <p class="project-hero__subtitle">I tested whether AI sound effects can react fast enough inside a playable game.</p>
+    <p class="ai-case-hero__note">Short answer: raw generation was too late. The useful version prepares sound before the player needs it.</p>
   </div>
 
-  <aside class="ai-outcome-panel" aria-label="Research outcome summary">
-    <div class="ai-outcome-panel__top">
-      <span>Research question</span>
-      <strong>Can AI generate game SFX at runtime?</strong>
+  <aside class="ai-case-card ai-latency-demo" data-ai-latency-demo aria-label="Interactive AI audio latency demo">
+    <div class="ai-latency-demo__head">
+      <span class="ai-case-kicker">Interactive demo</span>
+      <strong>Click once. Watch the sound arrive late.</strong>
     </div>
-    <div class="ai-outcome-panel__answer">
-      <span>Short answer</span>
-      <strong>No, not on the first hit.</strong>
-      <p>Every generative model missed the moment. The usable system was not live generation; it was prediction, caching, and fallback playback.</p>
+
+    <button class="ai-demo-trigger" type="button" data-ai-demo-trigger aria-describedby="ai-demo-status">
+      <span class="ai-demo-trigger__icon" aria-hidden="true">
+        <span class="ai-hit-icon"></span>
+      </span>
+      <span class="ai-demo-trigger__copy">
+        <span>Trigger SFX</span>
+        <em>metal door hit</em>
+      </span>
+    </button>
+
+    <div class="ai-demo-stage" aria-hidden="true">
+      <div class="ai-signal-field">
+        <span class="ai-signal-node is-engine"><i></i><strong>engine</strong></span>
+        <span class="ai-signal-node is-model"><i></i><strong>model</strong></span>
+        <span class="ai-signal-node is-output"><i></i><strong>sound</strong></span>
+        <span class="ai-signal-beam"></span>
+        <span class="ai-signal-pulse"></span>
+        <span class="ai-signal-ghost is-one"></span>
+        <span class="ai-signal-ghost is-two"></span>
+      </div>
+      <div class="ai-demo-timeline">
+        <span class="ai-demo-timeline__budget"></span>
+        <span class="ai-demo-timeline__progress"></span>
+        <span class="ai-demo-marker is-now">0ms</span>
+        <span class="ai-demo-marker is-budget">150ms</span>
+        <span class="ai-demo-marker is-late">3.0s</span>
+      </div>
     </div>
-    <dl class="ai-outcome-panel__proof">
-      <div>
-        <dt>Raw generation</dt>
-        <dd>1.4-3.5s</dd>
-      </div>
-      <div>
-        <dt>Gameplay budget</dt>
-        <dd>100-150ms</dd>
-      </div>
-      <div>
-        <dt>Cached playback</dt>
-        <dd>35-120ms</dd>
-      </div>
-    </dl>
+
+    <p class="ai-demo-status" id="ai-demo-status" data-ai-demo-status aria-live="polite">Ready. Press the event to see the delay.</p>
   </aside>
 
-  <div class="project-hero__meta ai-hero__meta">
-    <div class="meta-item">
-      <span class="meta-item__label">Role</span>
-      <span class="meta-item__value">Solo researcher + implementer</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-item__label">Built</span>
-      <span class="meta-item__value">UE5 client, Python server, cache, benchmark rig</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-item__label">Target</span>
-      <span class="meta-item__value">100 - 150ms interactive SFX</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-item__label">Result</span>
-      <span class="meta-item__value">Raw AI failed, cached playback worked</span>
-    </div>
-  </div>
-
-  <div class="project-hero__techs">
-    <span class="tech-pill">Unreal Engine 5</span>
-    <span class="tech-pill">C++</span>
-    <span class="tech-pill">Python</span>
-    <span class="tech-pill">PyTorch</span>
-    <span class="tech-pill">WebSocket</span>
-    <span class="tech-pill">AudioGen</span>
-    <span class="tech-pill">MMAudio</span>
-    <span class="tech-pill">ElevenLabs API</span>
-    <span class="tech-pill">CUDA</span>
-  </div>
+  <figure class="ai-hero-visual" aria-label="Unreal Engine prototype and Python audio server">
+    <img src="old/public/assets/images/projects-ai-audio-research/presentation/images/unreal-demo.png" alt="Unreal Engine AI audio prototype with Python audio server running">
+    <figcaption>
+      <span>Prototype</span>
+      <strong>Unreal sends gameplay requests to a Python audio server.</strong>
+    </figcaption>
+  </figure>
 </header>
 
-<section class="ai-verdict-wall reveal" aria-label="Research result in four measurements">
-  <div class="ai-verdict-card">
-    <span>Frame</span>
-    <strong>16.7ms</strong>
-    <p>At 60fps, the game has already moved on.</p>
+<section class="ai-clean-section reveal" aria-labelledby="ai-story-title">
+  <div class="ai-clean-copy">
+    <span class="section-label">What I made</span>
+    <h2 class="section-title" id="ai-story-title">A playable prototype, not a fake AI demo.</h2>
+    <p>I built a UE5 client that asks a Python backend for sound during gameplay. The backend loads models, checks cache, returns PCM, and Unreal plays the result.</p>
   </div>
-  <div class="ai-verdict-card">
-    <span>Playable SFX window</span>
-    <strong>100-150ms</strong>
-    <p>After that, a click, hit, or footstep starts to feel detached.</p>
+
+  <figure class="ai-clean-media">
+    <img src="old/public/assets/images/projects-ai-audio-research/presentation/images/python-prototype.png" alt="Python AI audio prototype terminal">
+    <figcaption>First prototype: type a request, generate sound, log the timing.</figcaption>
+  </figure>
+</section>
+
+<section class="ai-clean-section ai-clean-section--dark reveal" aria-labelledby="ai-result-title">
+  <div class="ai-clean-copy">
+    <span class="section-label">What broke</span>
+    <h2 class="section-title" id="ai-result-title">The sound could be good and still be wrong.</h2>
+    <p>For gameplay feedback, timing matters more than polish. If the sound arrives after the input, the player hears the delay first.</p>
   </div>
-  <div class="ai-verdict-card is-fail">
-    <span>First AI generation</span>
-    <strong>1.4-3.5s</strong>
-    <p>Best case: interesting sound. Still late.</p>
-  </div>
-  <div class="ai-verdict-card is-pass">
-    <span>Cached playback</span>
-    <strong>35-120ms</strong>
-    <p>Fast enough because the sound already exists.</p>
+
+  <div class="ai-simple-proof" aria-label="Main latency result">
+    <div>
+      <span>Playable window</span>
+      <strong>100-150ms</strong>
+    </div>
+    <div>
+      <span>Raw AI generation</span>
+      <strong>1.4-3.5s</strong>
+    </div>
   </div>
 </section>
 
-<section class="ai-case-brief reveal" aria-label="AI audio research narrative summary">
-  <div>
-    <span>Problem</span>
-    <p>Game audio has to land with input, collision, animation, and player expectation. A late sound is not “high quality”; it is wrong.</p>
+<section class="ai-clean-section reveal" aria-labelledby="ai-answer-title">
+  <div class="ai-clean-copy">
+    <span class="section-label">What worked</span>
+    <h2 class="section-title" id="ai-answer-title">Prepare the sound before gameplay needs it.</h2>
+    <p>The practical system is simple: predict likely sounds, generate them off the critical path, cache the useful results, and keep procedural DSP ready as fallback.</p>
   </div>
-  <div>
-    <span>Experiment</span>
-    <p>I built a UE5 client and Python backend, then benchmarked 600 generations plus 2,500 stress-test attempts across DSP, local models, and cloud generation.</p>
-  </div>
-  <div>
-    <span>Result</span>
-    <p>The strongest production pattern was a hybrid one: predict likely sounds, generate them off the critical path, cache them, and keep procedural DSP as a fallback.</p>
+
+  <div class="ai-simple-answer" aria-label="Production pattern">
+    <span>predict</span>
+    <span>generate early</span>
+    <span>cache</span>
+    <span>play instantly</span>
   </div>
 </section>
 
-<nav class="ai-story-nav reveal" aria-label="AI audio research story sections">
-  <a href="#ai-failure">Failure</a>
-  <a href="#ai-cache">Cache</a>
-  <a href="#ai-videos">Evidence</a>
-  <a href="#ai-models">Models</a>
-  <a href="#ai-answer">Answer</a>
-</nav>
-
-<section class="ai-lab-split reveal" id="ai-failure" aria-labelledby="ai-failure-title">
-  <div class="ai-lab-split__copy">
-    <span class="section-label">01 / The failed assumption</span>
-    <h2 class="section-title" id="ai-failure-title">I started with the wrong verb: generate.</h2>
-    <p class="drop-cap">Here is the thing about game audio: most of it is still files. Somebody records or designs a footstep, gunshot, UI click, or explosion, exports it, names it, and ships it. A big game can carry thousands of these files. Gigabytes of “sword hits metal.”</p>
-    <p>The AI version sounds tempting: a player steps on gravel, the game sends “short gravel footstep,” the model makes a fresh variation, Unreal plays it. No huge audio bank. No repeated footsteps. Nice idea. The problem is timing. If a gunshot arrives 100ms after input, players feel it. My fastest local model still needed 1.4 seconds on first playback.</p>
+<section class="ai-clean-section ai-samples-section reveal" id="ai-samples" aria-labelledby="ai-samples-title">
+  <div class="ai-clean-copy">
+    <span class="section-label">Listen</span>
+    <h2 class="section-title" id="ai-samples-title">Same prompt, different method.</h2>
+    <p>These samples come from the presentation deck. Use them as listening evidence, not as another data table.</p>
   </div>
 
-  <div class="ai-deadline-visual" aria-label="Timeline showing gameplay deadline missed by AI generation">
-    <div class="ai-deadline">
-      <span class="ai-deadline__marker is-input">input</span>
-      <span class="ai-deadline__marker is-budget">150ms</span>
-      <span class="ai-deadline__marker is-model">1.4s+</span>
-      <div class="ai-deadline__track">
-        <i class="is-budget"></i>
-        <i class="is-model"></i>
+  <div class="ai-sample-browser" data-ai-sample-browser>
+    <div class="ai-sample-prompts" role="tablist" aria-label="Audio prompt selector">
+      <button type="button" data-ai-sample-prompt="footstep" aria-pressed="true">Footstep</button>
+      <button type="button" data-ai-sample-prompt="machine">Machine gun</button>
+      <button type="button" data-ai-sample-prompt="cat">Cat meow</button>
+      <button type="button" data-ai-sample-prompt="door">Door slam</button>
+    </div>
+
+    <div class="ai-sample-stage">
+      <figure class="ai-sample-visual">
+        <img data-ai-sample-image src="old/public/assets/images/projects-ai-audio-research/presentation/images/procedural-dsp.png" alt="Procedural DSP presentation visual">
+        <figcaption data-ai-sample-caption>Procedural DSP: fast, synthetic, useful as fallback.</figcaption>
+      </figure>
+
+      <div class="ai-sample-console">
+        <div class="ai-sample-models" aria-label="Model selector">
+          <button type="button" data-ai-sample-model="dsp" aria-pressed="true">DSP</button>
+          <button type="button" data-ai-sample-model="audiogen">AudioGen</button>
+          <button type="button" data-ai-sample-model="mmaudio">MMAudio</button>
+          <button type="button" data-ai-sample-model="elevenlabs">ElevenLabs</button>
+        </div>
+
+        <div class="ai-sample-now">
+          <span data-ai-sample-model-label>Procedural DSP</span>
+          <strong data-ai-sample-title>Heavy footstep on wet stone</strong>
+          <p data-ai-sample-note>Low latency, but clearly synthetic.</p>
+        </div>
+
+        <button class="ai-sample-play" type="button" data-ai-sample-play>
+          <span aria-hidden="true"></span>
+          <strong>Play sample</strong>
+        </button>
+
+        <div class="ai-sample-wave" data-ai-sample-wave aria-hidden="true"></div>
+        <audio data-ai-sample-audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-footstep.wav"></audio>
       </div>
     </div>
-    <p>For first-playback SFX, “better quality later” loses to “rough sound now.”</p>
+
+    <div class="ai-sample-assets" hidden aria-hidden="true">
+      <img src="old/public/assets/images/projects-ai-audio-research/presentation/images/audiogen.png" alt="">
+      <img src="old/public/assets/images/projects-ai-audio-research/presentation/images/mmaudio.png" alt="">
+      <img src="old/public/assets/images/projects-ai-audio-research/presentation/images/elevenlabs.png" alt="">
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-machine-gun.wav"></audio>
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-cat.wav"></audio>
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-door.wav"></audio>
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/audiogen-footstep.wav"></audio>
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/audiogen-machine-gun.wav"></audio>
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/audiogen-cat.wav"></audio>
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/audiogen-door.wav"></audio>
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/mmaudio-footstep.wav"></audio>
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/mmaudio-machine-gun.wav"></audio>
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/mmaudio-cat.wav"></audio>
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/mmaudio-door.mp3"></audio>
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/elevenlabs-footstep.wav"></audio>
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/elevenlabs-machine-gun.wav"></audio>
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/elevenlabs-cat.wav"></audio>
+      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/elevenlabs-door.wav"></audio>
+    </div>
   </div>
 </section>
 
-<section class="ai-scroll-lab" aria-label="Scroll story through the prototype">
-  <article class="ai-test-row reveal">
-    <div class="ai-test-row__number">test 01</div>
-    <div class="ai-test-row__copy">
-      <h3>Wire UE5 to a generation server.</h3>
-      <p>Unreal talks to a Python backend over WebSocket. Python loads the models, juggles VRAM on an 8GB GPU, creates raw PCM, and sends it back to the engine. This is where the clean research question turned into thread ownership, model warmup, cache misses, and requests arriving in bursts.</p>
-    </div>
-    <div class="ai-packet-flow" aria-hidden="true">
-      <span>UE5</span><b></b><span>Queue</span><b></b><span>Model</span><b></b><span>PCM</span>
-    </div>
-  </article>
-
-  <article class="ai-test-row reveal">
-    <div class="ai-test-row__number">test 02</div>
-    <div class="ai-test-row__copy">
-      <h3>Stop listening emotionally. Measure the wait.</h3>
-      <p>I tested 24 prompts across footsteps, impacts, UI clicks, ambience, and music. Five methods, five repeats, 600 benchmark generations. Then 500 stress-test attempts per method to see how often things break. The quality scores were useful, but latency made the decision.</p>
-    </div>
-    <div class="ai-mini-bars" aria-label="Latency comparison chart">
-      <div><span>DSP</span><i style="--w: 5%;"></i><strong>15-25ms</strong></div>
-      <div><span>MMAudio Small</span><i style="--w: 48%;"></i><strong>1.4-1.9s</strong></div>
-      <div><span>AudioGen</span><i style="--w: 68%;"></i><strong>2.1-2.8s</strong></div>
-      <div><span>ElevenLabs</span><i style="--w: 96%;"></i><strong>1.8-3.5s</strong></div>
-    </div>
-  </article>
-
-  <article class="ai-test-row reveal" id="ai-cache">
-    <div class="ai-test-row__number">test 03</div>
-    <div class="ai-test-row__copy">
-      <h3>Then I looked at the cache logs.</h3>
-      <p>Every model failed the speed test. MMAudio Small still needed 1,400ms. That is roughly 85 game frames. I had added caching just to stop regenerating the same prompt. Then the logs showed cache hits landing inside the interactive window. Wait. That was the first useful result.</p>
-    </div>
-    <div class="ai-cache-machine" aria-label="Cache workflow">
-      <div><span>predict</span><strong>surface, zone, enemy, weather</strong></div>
-      <div><span>generate</span><strong>while nobody waits</strong></div>
-      <div><span>cache</span><strong>SHA-256 key, memory + disk</strong></div>
-      <div><span>play</span><strong>35-120ms, depending on clip length</strong></div>
-    </div>
-  </article>
-</section>
-
-<section class="ai-evidence-section reveal" id="ai-videos" aria-labelledby="ai-videos-title">
-  <div class="ai-section-head">
-    <span class="section-label">02 / Evidence</span>
-    <h2 class="section-title" id="ai-videos-title">The prototype records the implementation evidence.</h2>
-    <p>Two recordings: the UE5 side where footsteps and ambient sounds are requested by gameplay, and the Python side where the uncomfortable details show up: model loading, VRAM juggling, cache hits, cache misses, retries, and failures.</p>
+<section class="ai-evidence-section ai-clean-section reveal" id="ai-evidence" aria-labelledby="ai-evidence-title">
+  <div class="ai-clean-copy">
+    <span class="section-label">Evidence</span>
+    <h2 class="section-title" id="ai-evidence-title">Two recordings, if someone wants the proof.</h2>
   </div>
 
   <div class="video-grid ai-video-grid">
@@ -188,7 +183,7 @@
           Your browser does not support the video element.
         </video>
       </div>
-      <p class="video-caption">UE5 client: gameplay requests footsteps and ambience, then plays generated or cached PCM.</p>
+      <p class="video-caption">Unreal client: gameplay requests and playback.</p>
     </div>
     <div>
       <div class="video-item">
@@ -197,103 +192,8 @@
           Your browser does not support the video element.
         </video>
       </div>
-      <p class="video-caption">Python backend: model load times, cache hits, VRAM checks, retries, and failures while the prototype runs.</p>
+      <p class="video-caption">Python backend: model load, cache hits, retries.</p>
     </div>
-  </div>
-</section>
-
-<section class="ai-model-lab reveal" id="ai-models" aria-labelledby="ai-models-title">
-  <div class="ai-section-head">
-    <span class="section-label">03 / Model bench</span>
-    <h2 class="section-title" id="ai-models-title">Click through the methods. None of them wins alone.</h2>
-    <p>Quality scores are my 1-5 evaluation across prompt match, clarity, transient detail, and usefulness in-game. The point is not “which model is best.” The point is which job each method can safely do.</p>
-  </div>
-
-  <div class="ai-model-tabs">
-    <input checked type="radio" name="ai-model" id="model-dsp">
-    <input type="radio" name="ai-model" id="model-audiogen">
-    <input type="radio" name="ai-model" id="model-mmaudio-large">
-    <input type="radio" name="ai-model" id="model-mmaudio-small">
-    <input type="radio" name="ai-model" id="model-eleven">
-
-    <div class="ai-model-tablist" role="tablist" aria-label="Model benchmark selector">
-      <label for="model-dsp">DSP</label>
-      <label for="model-audiogen">AudioGen</label>
-      <label for="model-mmaudio-large">MMAudio Large</label>
-      <label for="model-mmaudio-small">MMAudio Small</label>
-      <label for="model-eleven">ElevenLabs</label>
-    </div>
-
-    <div class="ai-model-panels">
-      <article class="ai-model-panel panel-dsp">
-        <span>Fallback</span>
-        <h3>Procedural DSP</h3>
-        <strong>15-25ms / quality 2.4/5 / 0% failure</strong>
-        <p>No GPU, no network, just math. It sounds simple and low-fidelity, but it never lags and never goes silent. That reliability is why it belongs in the fallback chain.</p>
-      </article>
-      <article class="ai-model-panel panel-audiogen">
-        <span>Local ambience</span>
-        <h3>AudioGen</h3>
-        <strong>2.1-2.8s / quality 3.6/5 / 9.2% failure</strong>
-        <p>Meta's text-to-audio model. The most predictable local ambience option in my tests: useful for wind, rain, and ambient beds, but plain on sharp transient sounds and too slow for first-playback feedback.</p>
-      </article>
-      <article class="ai-model-panel panel-mmaudio-large">
-        <span>Local texture</span>
-        <h3>MMAudio Large</h3>
-        <strong>2.6-3.4s / quality 3.9/5 / 13.8% failure</strong>
-        <p>Best sounding local model. Good textures, less synthetic than AudioGen, but 3.1GB of VRAM means almost nothing else fits beside it. Model swaps cost 2-4 seconds, and short duration control was unreliable.</p>
-      </article>
-      <article class="ai-model-panel panel-mmaudio-small">
-        <span>Best local tradeoff</span>
-        <h3>MMAudio Small</h3>
-        <strong>1.4-1.9s / quality 3.5/5 / 7.2% failure</strong>
-        <p>The lowest local median latency. Faster than Large, still decent, and at 1.8GB it can share VRAM with AudioGen. It was the only local model that made sense for predicted ambience or cached content.</p>
-      </article>
-      <article class="ai-model-panel panel-eleven">
-        <span>Cloud quality</span>
-        <h3>ElevenLabs</h3>
-        <strong>1.8-3.5s / quality 4.3/5 / 4.8% failure</strong>
-        <p>Best subjective output by a clear margin: sharper transients, cleaner results, sometimes close to a real recording. But latency varied from 1.8 to 3.5 seconds, outside the first-playback budget. Great for pre-generation, wrong for immediate gameplay feedback.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section class="ai-failure-grid reveal" aria-labelledby="ai-failure-grid-title">
-  <div class="ai-section-head">
-    <span class="section-label">04 / Production problems</span>
-    <h2 class="section-title" id="ai-failure-grid-title">The production problems were the real test.</h2>
-  </div>
-
-  <details open>
-    <summary>Unreal thread ownership</summary>
-    <p>USoundWave creation has to happen on the Game Thread. I used FFunctionGraphTask so PCM creation did not sit inside the WebSocket callback path, then tested 50+ sounds arriving at once.</p>
-  </details>
-  <details>
-    <summary>VRAM budget</summary>
-    <p>UE5 rendering left roughly 3GB for AI on an 8GB GPU. The backend checks free memory with NVML, unloads cold models, and keeps frequently used models resident in sticky mode.</p>
-  </details>
-  <details>
-    <summary>Failure handling</summary>
-    <p>Models failed 5-14% of the time. The fallback chain retries with a new seed, tries another model, plays procedural DSP, or skips the sound instead of freezing the game.</p>
-  </details>
-  <details>
-    <summary>Bleeding-edge hardware support</summary>
-    <p>TangoFlux would not start because PyTorch 2.4 / CUDA 12.4 had no compiled kernels for the RTX 5070's Blackwell chip. That was a useful warning about building on fresh research code.</p>
-  </details>
-</section>
-
-<section class="ai-answer-section reveal" id="ai-answer" aria-labelledby="ai-answer-title">
-  <div class="ai-answer-copy">
-    <span class="section-label">05 / Answer</span>
-    <h2 class="section-title" id="ai-answer-title">I would not ship “AI generates every SFX instantly.” I would ship a preparation system.</h2>
-    <p>Raw AI: no. Every model exceeds the first-playback budget. With caching: yes, if the sound already exists. With prediction: yes, if the game knows what it will need before the player needs it. The real answer is not one model. It is the right method for the right sound, cache everything useful, and always have a fallback ready for when things break.</p>
-  </div>
-  <div class="ai-ship-rules" aria-label="Shipping rules">
-    <div><span>Do</span><strong>Generate before the player needs it.</strong></div>
-    <div><span>Do</span><strong>Cache every useful result.</strong></div>
-    <div><span>Do</span><strong>Keep procedural fallback ready.</strong></div>
-    <div><span>Do not</span><strong>Block gameplay on a model response.</strong></div>
   </div>
 </section>
 
@@ -303,7 +203,7 @@
     <div>
       <div class="callout-card__label">Bachelor Thesis &middot; 68 Pages</div>
       <h3 class="callout-card__title">Read the Full Paper</h3>
-      <p class="callout-card__desc">Full benchmarks, failure rates, cache design, Unreal implementation notes, and what I would change next.</p>
+      <p class="callout-card__desc">Benchmarks, cache design, Unreal implementation notes, and failure handling.</p>
     </div>
     <a class="callout-card__link" href="szuniewicz-ai-audio-thesis-2026.pdf" target="_blank" rel="noopener noreferrer">Read AI Audio Research Paper</a>
   </div>

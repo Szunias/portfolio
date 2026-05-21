@@ -124,7 +124,7 @@ module.exports = {
       slug: 'ai-audio-research',
       layout: 'project',
       css: 'project',
-      js: ['scroll-progress', 'scroll-reveal', 'theme-toggle'],
+      js: ['scroll-progress', 'scroll-reveal', 'theme-toggle', 'ai-audio-demo'],
       title: 'AI Audio Research | Real-Time Game Sound Generation',
       description: 'Research on real-time AI game sound generation: procedural DSP, generative models, 600 generations, latency benchmarks, and caching.',
       canonical: `${SITE}/ai-audio-research.html`,
