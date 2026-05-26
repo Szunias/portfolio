@@ -20,10 +20,19 @@ Static HTML, built from small templates by a single Node script. Zero npm depend
 ## Build
 
 ```bash
-node build.cjs
+npm run build
 ```
 
-Outputs to `dist/`. The script clears `dist/` on each run, so there is no stale output.
+Outputs to `dist/`. The script clears `dist/` on each run, so there is no stale output. `npm run check` runs the same build and validation gate used by GitHub Pages.
+
+The build also validates the live site before deploy:
+
+- every `src/pages/*.html` file is registered in `site.config.cjs`
+- project cards and "Next Project" links cover every project exactly once
+- local assets, local page links, and same-page fragments resolve in `dist/`
+- generated HTML has required document basics, accessible buttons/iframes/videos, and no unresolved build placeholders
+- page metadata has canonical URLs, social images, alt text, and reasonable title/description lengths
+- deploy output stays within the configured total and single-file size budgets
 
 For local preview, serve `dist/` with any static server (e.g. `npx serve dist`).
 
@@ -49,7 +58,8 @@ dist/                  # build output (gitignored)
 
 1. Create `src/pages/<slug>.html` (content only — no `<html>`, `<head>`, or `<body>`).
 2. Add an entry to `site.config.cjs` under `pages`.
-3. Run `node build.cjs` to verify it builds.
+3. Add a homepage project card and a `next-project-btn` link that keeps the project cycle complete.
+4. Run `npm run check` to verify the page, metadata, assets, links, and generated HTML.
 
 ## Writing project descriptions
 

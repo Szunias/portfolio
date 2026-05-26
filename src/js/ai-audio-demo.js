@@ -10,7 +10,7 @@
   let audioContext = null;
   let isRunning = false;
   let signalTimer = 0;
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReducedMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const arrivalDelay = prefersReducedMotion ? 900 : 3000;
 
   function clearTimers() {
@@ -211,6 +211,12 @@
   let currentPrompt = 'footstep';
   let currentModel = 'dsp';
 
+  function setPlayLabel(text) {
+    if (!play) return;
+    const label = play.querySelector('strong');
+    if (label) label.textContent = text;
+  }
+
   function makeWave(seed) {
     if (!wave) return;
     wave.innerHTML = '';
@@ -229,7 +235,7 @@
     audio.pause();
     audio.currentTime = 0;
     browser.classList.remove('is-playing');
-    if (play) play.querySelector('strong').textContent = 'Play sample';
+    setPlayLabel('Play sample');
   }
 
   function setPressed(buttons, key, attr) {
@@ -283,17 +289,17 @@
       const promise = audio.play();
       if (promise && promise.catch) {
         promise.catch(() => {
-          play.querySelector('strong').textContent = 'Tap to retry';
+          setPlayLabel('Tap to retry');
         });
       }
     });
     audio.addEventListener('play', () => {
       browser.classList.add('is-playing');
-      play.querySelector('strong').textContent = 'Stop sample';
+      setPlayLabel('Stop sample');
     });
     audio.addEventListener('pause', () => {
       browser.classList.remove('is-playing');
-      play.querySelector('strong').textContent = 'Play sample';
+      setPlayLabel('Play sample');
     });
     audio.addEventListener('ended', stopAudio);
   }

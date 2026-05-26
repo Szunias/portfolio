@@ -31,6 +31,7 @@
     currentIndex = index;
     lbImg.src = images[index].src;
     lbImg.alt = images[index].alt;
+    lbImg.removeAttribute('aria-hidden');
     if (lbCaption) lbCaption.textContent = images[index].caption || images[index].alt;
   }
 
@@ -116,7 +117,11 @@
     }
     lastTrigger = null;
     closeTimer = setTimeout(() => {
-      if (!lightbox.classList.contains('active')) lightbox.hidden = true;
+      if (!lightbox.classList.contains('active')) {
+        lightbox.hidden = true;
+        lbImg.setAttribute('aria-hidden', 'true');
+        lbImg.removeAttribute('src');
+      }
       closeTimer = null;
     }, 300);
   }

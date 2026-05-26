@@ -214,9 +214,7 @@
   window.addEventListener('resize', checkMobile, { passive: true });
 
   function decodeEntities(str) {
-    var temp = document.createElement('div');
-    temp.innerHTML = str;
-    return temp.textContent;
+    return String(str || '');
   }
 
   function cssUrl(value) {

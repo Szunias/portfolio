@@ -1,7 +1,8 @@
 // Theme toggle (universal — works with SVG icons or text emoji buttons)
 (function(){
   try {
-    const saved = localStorage.getItem('theme') || 'light';
+    const stored = localStorage.getItem('theme');
+    const saved = stored === 'dark' || stored === 'light' ? stored : 'light';
     document.documentElement.setAttribute('data-theme', saved);
   } catch(e) {}
 
