@@ -2,7 +2,7 @@
 (function(){
   try {
     const stored = localStorage.getItem('theme');
-    const saved = stored === 'dark' || stored === 'light' ? stored : 'light';
+    const saved = stored === 'dark' || stored === 'light' ? stored : 'dark';
     document.documentElement.setAttribute('data-theme', saved);
   } catch(e) {}
 
