@@ -170,8 +170,6 @@
   var shuffleBtn = document.getElementById('shuffleBtn');
   var repeatBtn = document.getElementById('repeatBtn');
   var muteBtn = document.getElementById('muteBtn');
-  var mobilePlayBtn = document.getElementById('mobilePlayBtn');
-  var mobilePlayIcon = document.getElementById('mobilePlayIcon');
   var musicGallery = document.getElementById('musicGallery');
   var galleryCover = document.getElementById('galleryCover');
   var galleryCategory = document.getElementById('galleryCategory');
@@ -205,20 +203,16 @@
     });
   };
 
-  // The full player controls stay available on small screens, so this fallback stays hidden.
-  function checkMobile() {
-    if (!mobilePlayBtn) return;
-    mobilePlayBtn.style.display = 'none';
-  }
-  checkMobile();
-  window.addEventListener('resize', checkMobile, { passive: true });
-
-  function decodeEntities(str) {
-    return String(str || '');
+  function toText(value) {
+    return String(value || '');
   }
 
   function cssUrl(value) {
-    return 'url("' + String(value || '').replace(/"/g, '%22') + '")';
+    return 'url("' + toText(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '")';
+  }
+
+  function coverBackground(coverUrl, fallback) {
+    return coverUrl ? cssUrl(coverUrl) + ' center/cover no-repeat, ' + fallback : fallback;
   }
 
   function getCardAccent(card) {
@@ -230,7 +224,7 @@
     if (!musicGallery || !galleryCover || !card) return;
 
     var changed = galleryCurrentCard !== card;
-    var title = decodeEntities(card.getAttribute('data-title') || '');
+    var title = toText(card.getAttribute('data-title'));
     var displayTitle = card.querySelector('.track-card__title');
     var artist = card.getAttribute('data-artist') || '';
     var coverUrl = card.getAttribute('data-cover') || '';
@@ -244,9 +238,7 @@
     galleryCurrentCard = card;
     musicGallery.style.setProperty('--gallery-accent', getCardAccent(card));
     musicGallery.style.setProperty('--gallery-cover', coverUrl ? cssUrl(coverUrl) : gradient);
-    galleryCover.style.background = coverUrl
-      ? "url('" + coverUrl + "') center/cover no-repeat, " + gradient
-      : gradient;
+    galleryCover.style.background = coverBackground(coverUrl, gradient);
     galleryCover.setAttribute('aria-label', (displayTitle ? displayTitle.textContent : title) + ' album cover');
 
     if (galleryCategory) galleryCategory.textContent = firstTag ? firstTag.textContent + ' selection' : 'Selected track';
@@ -474,7 +466,7 @@
   function updateMediaSession(card) {
     if (!('mediaSession' in navigator)) return;
     try {
-      var title = decodeEntities(card.getAttribute('data-title') || '');
+      var title = toText(card.getAttribute('data-title'));
       var artist = card.getAttribute('data-artist') || '';
       var coverUrl = card.getAttribute('data-cover');
       var tags = (card.getAttribute('data-tags') || '').split(',');
@@ -574,7 +566,7 @@
 
     syncFeaturedTrack(card, true);
 
-    var title = decodeEntities(card.getAttribute('data-title') || '');
+    var title = toText(card.getAttribute('data-title'));
     var artist = card.getAttribute('data-artist') || '';
     var gradient = card.getAttribute('data-gradient') || '';
     var coverUrl = card.getAttribute('data-cover');
@@ -587,11 +579,7 @@
     if (progressBuffer) progressBuffer.style.width = '0%';
     updateSeekAria();
 
-    if (coverUrl) {
-      playerCover.style.background = "url('" + coverUrl + "') center/cover no-repeat, " + gradient;
-    } else {
-      playerCover.style.background = gradient;
-    }
+    playerCover.style.background = coverBackground(coverUrl, gradient);
 
     currentTrackIndex = trackCards.indexOf(card);
 
@@ -640,7 +628,7 @@
     updateMediaPositionState();
     if (currentTrackIndex >= 0) {
       var card = trackCards[currentTrackIndex];
-      var title = decodeEntities(card.getAttribute('data-title'));
+      var title = toText(card.getAttribute('data-title'));
       document.title = title + ' - Igor Szuniewicz | Music';
     }
   });
@@ -721,16 +709,10 @@
     var playPath = '<polygon points="6,3 20,12 6,21"/>';
     var pausePath = '<rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/>';
     if (playPauseIcon) playPauseIcon.innerHTML = isPlaying ? pausePath : playPath;
-    if (mobilePlayIcon) mobilePlayIcon.innerHTML = isPlaying ? pausePath : playPath;
     if (playPauseBtn) {
       playPauseBtn.setAttribute('title', isPlaying ? 'Pause' : 'Play');
       playPauseBtn.setAttribute('aria-label', isPlaying ? 'Pause track' : 'Play track');
       playPauseBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
-    }
-    if (mobilePlayBtn) {
-      mobilePlayBtn.setAttribute('title', isPlaying ? 'Pause' : 'Play');
-      mobilePlayBtn.setAttribute('aria-label', isPlaying ? 'Pause track' : 'Play track');
-      mobilePlayBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
     }
   }
 
@@ -792,7 +774,6 @@
   }
 
   playPauseBtn.addEventListener('click', togglePlay);
-  if (mobilePlayBtn) mobilePlayBtn.addEventListener('click', togglePlay);
   if (galleryPlay) {
     galleryPlay.addEventListener('click', function() {
       var card = galleryCurrentCard || visibleCards()[0];

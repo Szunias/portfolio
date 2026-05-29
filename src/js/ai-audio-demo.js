@@ -85,11 +85,12 @@
     }, 33);
   }
 
-  function runDemo() {
+  function runDemo(event) {
     if (isRunning) return;
+    const allowAudio = !event || event.isTrusted;
     isRunning = true;
     clearTimers();
-    primeAudio();
+    if (allowAudio) primeAudio();
     demo.setAttribute('data-state', 'idle');
     setSignalProgress(0);
     demo.offsetHeight;
@@ -112,7 +113,7 @@
       setStatus(prefersReducedMotion
         ? 'Delayed sound arrives, but the moment is gone.'
         : '3.0s: the sound finally lands, but the action already happened.');
-      playArrivalTone();
+      if (allowAudio) playArrivalTone();
     }, arrivalDelay));
   }
 

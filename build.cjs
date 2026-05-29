@@ -114,6 +114,12 @@ function escAttr(str) {
     .replace(/>/g, '&gt;');
 }
 
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+const EMPTY_INLINE_SCRIPT_PATTERN = String.raw`<script\b(?![^>]*\ssrc\s*=)[^>]*>\s*<\/script>`;
+
 /** Generate OG + Twitter meta tags from page config. */
 function ogTags(page) {
   const ogTitle = page.ogTitle || page.title;
@@ -252,7 +258,7 @@ function videoLabelFromContext(prefix) {
   return 'Project video';
 }
 
-function enhanceVideoAccessibility(html, pageSlug) {
+function enhanceVideoAccessibility(html) {
   let counter = 0;
   let output = html.replace(
     /(<video\b(?=[^>]*\bcontrols\b)(?![^>]*\baria-describedby=)([^>]*)>[\s\S]*?<\/video>)(\s*<\/div>\s*<p\s+class="video-caption")([^>]*>)/gi,
@@ -299,14 +305,21 @@ function enhanceIframeAccessibility(html) {
 }
 
 function enhanceImageAccessibility(html) {
-  return html.replace(/<img\b([^>]*)>/gi, (match, attrs) => (
-    hasAttr(attrs, 'alt') ? match : `<img alt=""${attrs}>`
-  ));
+  let imageIndex = 0;
+  return html.replace(/<img\b([^>]*)>/gi, (match, attrs) => {
+    let next = attrs;
+    const isFirstImage = imageIndex === 0;
+    imageIndex += 1;
+    if (!hasAttr(next, 'alt')) next = ` alt=""${next}`;
+    if (!hasAttr(next, 'decoding')) next = ` decoding="async"${next}`;
+    if (!isFirstImage && !hasAttr(next, 'loading')) next = ` loading="lazy"${next}`;
+    return `<img${next}>`;
+  });
 }
 
 function enhanceDocumentBasics(html) {
   let output = html;
-  output = output.replace(/<script\b((?:(?!\bsrc\s*=)[^>])*)>\s*<\/script>/gi, '');
+  output = output.replace(new RegExp(EMPTY_INLINE_SCRIPT_PATTERN, 'gi'), '');
   output = output.replace(/<html\b([^>]*)>/i, (match, attrs) => (
     hasAttr(attrs, 'lang') ? match : `<html lang="en"${attrs}>`
   ));
@@ -363,7 +376,7 @@ function urlPathname(value, siteOrigin) {
 
 function collectLocalRefsFromHtml(html, siteOrigin) {
   const refs = new Set();
-  const attrRe = /\b(?:href|src|poster|action|data-src|data-cover)=["']([^"']+)["']/gi;
+  const attrRe = /\b(?:href|src|poster|action|data-src|data-cover|data-autoplay-src)=["']([^"']+)["']/gi;
   const metaImageRe = /<meta\b(?=[^>]*(?:property|name)=["'](?:og:image|twitter:image)["'])[^>]*\bcontent=["']([^"']+)["'][^>]*>/gi;
   const urlRe = /url\((["']?)([^)"']+)\1\)/gi;
   const srcsetRe = /\bsrcset=["']([^"']+)["']/gi;
@@ -411,11 +424,21 @@ function safeRepoPath(rel) {
 }
 
 function safeDistPath(rel) {
+  if (typeof rel !== 'string') return null;
   const normalized = rel.replace(/\\/g, '/');
+  if (normalized.includes('\0')) return null;
   const resolved = path.resolve(DIST, normalized);
   const distRoot = path.resolve(DIST);
   if (resolved !== distRoot && !resolved.startsWith(distRoot + path.sep)) return null;
   return resolved;
+}
+
+function distOutputKey(dest) {
+  return path.relative(DIST, dest).replace(/\\/g, '/');
+}
+
+function isReservedDistOutput(outKey, reservedOutputs) {
+  return [...reservedOutputs].some(reserved => outKey === reserved || outKey.startsWith(`${reserved}/`));
 }
 
 function copyReferencedAssets(refs) {
@@ -464,7 +487,7 @@ function validateGeneratedHtml(htmlFiles) {
     const html = read(path.join(DIST, file));
     if (!/<html\b[^>]*\blang=(["'])[^"']+\1/i.test(html)) issues.push(`${file}: html missing lang`);
     if (!/<meta\b(?=[^>]*\bname=(["'])viewport\1)/i.test(html)) issues.push(`${file}: missing viewport meta`);
-    if (/<script\b((?:(?!\bsrc\s*=)[^>])*)>\s*<\/script>/i.test(html)) issues.push(`${file}: empty inline script block`);
+    if (new RegExp(EMPTY_INLINE_SCRIPT_PATTERN, 'i').test(html)) issues.push(`${file}: empty inline script block`);
     if (/<!--\s*(?:TITLE|DESCRIPTION|CANONICAL|OG_TAGS|CSS|CONTENT|JS|SCHEMA|PLAYER|LIGHTBOX)\s*-->/.test(html)) {
       issues.push(`${file}: unresolved build placeholder`);
     }
@@ -558,6 +581,9 @@ function validateGeneratedHtml(htmlFiles) {
     for (const match of html.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/gi)) {
       const tag = match[0];
       const text = stripTags(match[1]);
+      if (!/\btype=(["'])(?:button|submit|reset)\1/i.test(tag)) {
+        issues.push(`${file}: button missing explicit type`);
+      }
       if (!text && !/\baria-label=(["'])[^"']+\1/i.test(tag) && !/\btitle=(["'])[^"']+\1/i.test(tag)) {
         issues.push(`${file}: button missing accessible name`);
       }
@@ -646,7 +672,7 @@ function validateSupportFiles(siteOrigin, copiedStatic) {
   if (missingLocs.length) issues.push(`sitemap.xml missing URL(s): ${missingLocs.join(', ')}`);
   if (extraLocs.length) issues.push(`sitemap.xml has unexpected URL(s): ${extraLocs.join(', ')}`);
 
-  if (robots && !new RegExp(`^Sitemap:\\s*${siteOrigin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\/sitemap\\.xml\\s*$`, 'm').test(robots)) {
+  if (robots && !new RegExp(`^Sitemap:\\s*${escapeRegExp(siteOrigin)}\\/sitemap\\.xml\\s*$`, 'm').test(robots)) {
     issues.push('robots.txt missing canonical sitemap URL');
   }
 
@@ -666,7 +692,7 @@ function staticCopyEntries(cfg) {
   return (cfg.staticCopy || []).map(entry => (
     typeof entry === 'string'
       ? { file: entry, outName: path.basename(entry), sitemap: true }
-      : { ...entry, outName: entry.outName || path.basename(entry.file) }
+      : { ...entry, outName: entry.outName || (entry.file ? path.basename(entry.file) : '') }
   ));
 }
 
@@ -702,7 +728,7 @@ function rewriteRootRelativeUrls(html, origin) {
 function ensureFragmentTargets(html, ids) {
   let output = html;
   for (const id of ids || []) {
-    const hasTarget = new RegExp(`\\bid=(["'])${id}\\1`, 'i').test(output);
+    const hasTarget = new RegExp(`\\bid=(["'])${escapeRegExp(id)}\\1`, 'i').test(output);
     if (!hasTarget) {
       output = output.replace(/<body\b([^>]*)>/i, `$&\n<div id="${escAttr(id)}" tabindex="-1"></div>`);
     }
@@ -754,7 +780,7 @@ function buildPage(page) {
     throw new Error(`Page content not found: src/pages/${page.slug}.html`);
   }
   let content = read(pagePath);
-  content = enhanceVideoAccessibility(content, page.slug);
+  content = enhanceVideoAccessibility(content);
   content = enhanceExternalLinkSafety(content);
   content = enhanceIframeAccessibility(content);
   content = enhanceImageAccessibility(content);
@@ -923,15 +949,37 @@ function validateConfig(cfg) {
     throw new Error(`Next-project links must form one complete cycle from ${projectSlugs[0]}. Missed: ${missedByCycle.join(', ') || 'none'}; ended at: ${cursor || 'missing'}`);
   }
   const staticOutNames = new Map();
+  const reservedOutputs = new Set(cfg.pages.map(page => `${page.slug}.html`).concat([
+    'assets',
+    'sitemap.xml',
+    'robots.txt',
+    'CNAME',
+    '.nojekyll'
+  ]));
   for (const entry of staticCopyEntries(cfg)) {
     if (!entry.file) throw new Error('staticCopy entry is missing file');
-    if (!fs.existsSync(path.join(__dirname, entry.file))) {
+    const src = safeRepoPath(entry.file);
+    if (!src) {
+      throw new Error(`Unsafe staticCopy source path: ${entry.file}`);
+    }
+    const dest = safeDistPath(entry.outName);
+    if (!dest) {
+      throw new Error(`Unsafe staticCopy output path: ${entry.outName || '(missing)'}`);
+    }
+    const outKey = distOutputKey(dest);
+    if (!outKey) {
+      throw new Error(`staticCopy output "${entry.outName || '(missing)'}" must name a file or directory inside dist`);
+    }
+    if (isReservedDistOutput(outKey, reservedOutputs) || outKey.startsWith('assets/')) {
+      throw new Error(`staticCopy output "${entry.outName}" conflicts with generated output ${outKey}`);
+    }
+    if (!fs.existsSync(src)) {
       throw new Error(`Static copy not found: ${entry.file}`);
     }
-    if (staticOutNames.has(entry.outName)) {
-      throw new Error(`Duplicate staticCopy output "${entry.outName}" for ${staticOutNames.get(entry.outName)} and ${entry.file}`);
+    if (staticOutNames.has(outKey)) {
+      throw new Error(`Duplicate staticCopy output "${outKey}" for ${staticOutNames.get(outKey)} and ${entry.file}`);
     }
-    staticOutNames.set(entry.outName, entry.file);
+    staticOutNames.set(outKey, entry.file);
   }
 }
 
@@ -967,10 +1015,18 @@ function main() {
   const staticEntries = staticCopyEntries(config);
   if (staticEntries.length) {
     for (const entry of staticEntries) {
-      const src = path.join(__dirname, entry.file);
       const outName = entry.outName;
-      const dest = path.join(DIST, outName);
+      const src = safeRepoPath(entry.file);
+      const dest = safeDistPath(outName);
+      if (!src || !dest) {
+        throw new Error(`Unsafe static copy path: ${entry.file} -> ${outName}`);
+      }
+      const outKey = distOutputKey(dest);
+      if (!outKey) {
+        throw new Error(`staticCopy output "${outName || '(missing)'}" must name a file or directory inside dist`);
+      }
       if (fs.existsSync(src)) {
+        ensureDir(path.dirname(dest));
         if (entry.rewriteRootRelativeTo || entry.ensureIds || path.extname(entry.file).toLowerCase() === '.html') {
           let html = read(src);
           if (entry.rewriteRootRelativeTo) {
@@ -991,9 +1047,9 @@ function main() {
           fs.copyFileSync(src, dest);
         }
         copied++;
-        copiedStatic.push({ ...entry, outName });
-        htmlOutputs.push(outName);
-        console.log(`  → ${outName} (copied)`);
+        copiedStatic.push({ ...entry, outName: outKey });
+        if (path.extname(outKey).toLowerCase() === '.html') htmlOutputs.push(outKey);
+        console.log(`  → ${outKey} (copied)`);
       } else {
         throw new Error(`Static copy not found: ${entry.file}`);
       }
