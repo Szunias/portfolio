@@ -38,7 +38,6 @@ function relPath(...parts) {
 
 const SRC    = path.join(__dirname, 'src');
 const DIST   = path.join(__dirname, 'dist');
-const generatedDescriptionTracks = [];
 
 // ─── Helpers ────────────────────────────────────────────────────
 
@@ -253,32 +252,6 @@ function videoLabelFromContext(prefix) {
   return 'Project video';
 }
 
-function vttEscape(text) {
-  return String(text)
-    .replace(/-->/g, 'to')
-    .replace(/\r?\n/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function addGeneratedDescriptionTracks(html, pageSlug) {
-  let counter = 0;
-  return html.replace(/<video\b(?=[^>]*\bcontrols\b)([^>]*)>([\s\S]*?)<\/video>/gi, (match, attrs, inner, offset) => {
-    if (/<track\b(?=[^>]*\bkind=(["'])descriptions\1)/i.test(inner)) return match;
-    counter++;
-    const context = html.slice(Math.max(0, offset - 2500), offset);
-    const label = videoLabelFromContext(context).replace(/^Video:\s*/i, '');
-    const file = `descriptions/${pageSlug}-${counter}.vtt`;
-    const text = `Audio description summary: ${label}. The surrounding page text describes the sound design, implementation choices, and result shown in this video.`;
-    generatedDescriptionTracks.push({ file, text });
-    const track = `<track kind="descriptions" src="${file}" srclang="en" label="English audio description summary">`;
-    if (/<source\b/i.test(inner)) {
-      return `<video${attrs}>${inner.replace(/((?:\s*<source\b[^>]*>\s*)+)/i, `$1      ${track}\n`)}</video>`;
-    }
-    return `<video${attrs}>\n      ${track}${inner}</video>`;
-  });
-}
-
 function enhanceVideoAccessibility(html, pageSlug) {
   let counter = 0;
   let output = html.replace(
@@ -299,7 +272,7 @@ function enhanceVideoAccessibility(html, pageSlug) {
     return `<video aria-label="${escAttr(videoLabelFromContext(context))}"${attrs}>`;
   });
 
-  return addGeneratedDescriptionTracks(output, pageSlug);
+  return output;
 }
 
 function enhanceExternalLinkSafety(html) {
@@ -333,7 +306,7 @@ function enhanceImageAccessibility(html) {
 
 function enhanceDocumentBasics(html) {
   let output = html;
-  output = output.replace(/<script\b([^>]*)>\s*<\/script>/gi, '');
+  output = output.replace(/<script\b((?:(?!\bsrc\s*=)[^>])*)>\s*<\/script>/gi, '');
   output = output.replace(/<html\b([^>]*)>/i, (match, attrs) => (
     hasAttr(attrs, 'lang') ? match : `<html lang="en"${attrs}>`
   ));
@@ -491,7 +464,7 @@ function validateGeneratedHtml(htmlFiles) {
     const html = read(path.join(DIST, file));
     if (!/<html\b[^>]*\blang=(["'])[^"']+\1/i.test(html)) issues.push(`${file}: html missing lang`);
     if (!/<meta\b(?=[^>]*\bname=(["'])viewport\1)/i.test(html)) issues.push(`${file}: missing viewport meta`);
-    if (/<script\b[^>]*>\s*<\/script>/i.test(html)) issues.push(`${file}: empty script block`);
+    if (/<script\b((?:(?!\bsrc\s*=)[^>])*)>\s*<\/script>/i.test(html)) issues.push(`${file}: empty inline script block`);
     if (/<!--\s*(?:TITLE|DESCRIPTION|CANONICAL|OG_TAGS|CSS|CONTENT|JS|SCHEMA|PLAYER|LIGHTBOX)\s*-->/.test(html)) {
       issues.push(`${file}: unresolved build placeholder`);
     }
@@ -629,9 +602,6 @@ function validateGeneratedHtml(htmlFiles) {
       }
       if (!/\baria-(?:label|labelledby|describedby)=/i.test(tag)) {
         issues.push(`${file}: controls video missing accessible label or description`);
-      }
-      if (!/<track\b[^>]*\bkind=(["'])descriptions\1/i.test(tag)) {
-        issues.push(`${file}: controls video missing descriptions track`);
       }
     }
 
@@ -1075,19 +1045,6 @@ function main() {
   for (const f of rootAssets) {
     const src = path.join(__dirname, f);
     if (!fs.existsSync(src)) throw new Error(`Root asset not found: ${f}`);
-  }
-
-  if (generatedDescriptionTracks.length) {
-    const descriptionDir = path.join(DIST, 'descriptions');
-    ensureDir(descriptionDir);
-    const seenDescriptions = new Set();
-    for (const track of generatedDescriptionTracks) {
-      if (seenDescriptions.has(track.file)) continue;
-      seenDescriptions.add(track.file);
-      const body = `WEBVTT\n\n00:00:00.000 --> 99:59:59.000\n${vttEscape(track.text)}\n`;
-      fs.writeFileSync(path.join(DIST, track.file), body, 'utf8');
-    }
-    console.log(`  → video descriptions (${seenDescriptions.size} generated)`);
   }
 
   const localRefs = new Set();

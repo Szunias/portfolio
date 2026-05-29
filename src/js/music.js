@@ -334,11 +334,15 @@
       audio.muted = false;
     }
     if (volumeFill) volumeFill.style.width = (pct * 100) + '%';
-    if (volumeBar) {
-      volumeBar.setAttribute('aria-valuenow', Math.round(pct * 100));
-      volumeBar.setAttribute('aria-valuetext', Math.round(pct * 100) + '%');
-    }
+    updateVolumeAria();
     updateMuteButton();
+  }
+
+  function updateVolumeAria() {
+    if (!volumeBar) return;
+    var pct = Math.round(audio.volume * 100);
+    volumeBar.setAttribute('aria-valuenow', audio.muted ? '0' : String(pct));
+    volumeBar.setAttribute('aria-valuetext', audio.muted ? 'Muted, previous volume ' + pct + '%' : pct + '%');
   }
 
   function currentLufsText() {
@@ -395,6 +399,7 @@
     muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
     muteBtn.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
     muteBtn.setAttribute('title', muted ? 'Unmute' : 'Mute');
+    updateVolumeAria();
   }
 
   function updateBufferedProgress() {
@@ -402,8 +407,12 @@
       if (progressBuffer) progressBuffer.style.width = '0%';
       return;
     }
-    var end = audio.buffered.end(audio.buffered.length - 1);
-    progressBuffer.style.width = Math.min(100, (end / audio.duration) * 100) + '%';
+    try {
+      var end = audio.buffered.end(audio.buffered.length - 1);
+      progressBuffer.style.width = Math.min(100, (end / audio.duration) * 100) + '%';
+    } catch(e) {
+      progressBuffer.style.width = '0%';
+    }
   }
 
   // =========================================
@@ -869,7 +878,9 @@
     el.addEventListener('pointerdown', function(e) {
       if (canStart && !canStart()) return;
       dragging = true;
-      el.setPointerCapture(e.pointerId);
+      if (el.setPointerCapture) {
+        try { el.setPointerCapture(e.pointerId); } catch(err) {}
+      }
       e.preventDefault();
       onMove(e.clientX);
     });

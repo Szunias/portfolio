@@ -95,6 +95,7 @@
     demo.offsetHeight;
     demo.setAttribute('data-state', 'running');
     trigger.setAttribute('aria-disabled', 'true');
+    trigger.disabled = true;
     animateSignal();
     setStatus('0ms: UE5 sends the request. The signal starts moving through the audio path.');
 
@@ -106,6 +107,7 @@
       demo.setAttribute('data-state', 'arrived');
       setSignalProgress(1);
       trigger.removeAttribute('aria-disabled');
+      trigger.disabled = false;
       isRunning = false;
       setStatus(prefersReducedMotion
         ? 'Delayed sound arrives, but the moment is gone.'

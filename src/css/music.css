@@ -375,6 +375,7 @@ a:focus-visible {
   width: min(460px, 100%);
   justify-self: center;
   aspect-ratio: 1;
+  overflow: clip;
   transform-style: preserve-3d;
   transition: transform 0.38s ease, filter 0.38s ease;
   will-change: transform;
@@ -382,7 +383,7 @@ a:focus-visible {
 
 .music-gallery__aura {
   position: absolute;
-  inset: -11%;
+  inset: 0;
   z-index: -1;
   background:
     radial-gradient(circle, color-mix(in srgb, var(--gallery-accent) 58%, transparent), transparent 58%),
@@ -392,7 +393,7 @@ a:focus-visible {
   border-radius: 50%;
   filter: blur(22px) saturate(1.15);
   opacity: 0.5;
-  transform: translateZ(-1px);
+  transform: translateZ(-1px) scale(1.22);
   transition: background 0.35s ease, opacity 0.35s ease, transform 0.35s ease;
 }
 
@@ -1561,6 +1562,21 @@ a:focus-visible {
     width: 100%;
   }
 
+  @media (max-width: 360px) {
+    .music-gallery__stage {
+      padding: 18px;
+      gap: 18px;
+    }
+
+    .music-gallery__cover-frame {
+      width: min(100%, 244px);
+    }
+
+    .music-gallery__aura {
+      transform: translateZ(-1px) scale(1.12);
+    }
+  }
+
   .tracks-grid {
     grid-template-columns: 1fr;
     gap: 18px;
@@ -1963,7 +1979,7 @@ body * {
 
 @media (max-width: 650px) {
   :root {
-    --player-height: 108px;
+    --player-height: 132px;
   }
 
   .filter-btn {
@@ -1973,7 +1989,7 @@ body * {
 
   .player-bar {
     grid-template-columns: 44px minmax(0, 1fr) 44px;
-    grid-template-rows: 44px 44px;
+    grid-template-rows: 44px 44px 18px;
     padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
     gap: 4px 10px;
     align-content: start;
@@ -2013,12 +2029,11 @@ body * {
   }
 
   .player-bar__progress-row {
-    position: absolute;
-    top: 0;
-    left: 12px;
-    right: 12px;
-    width: auto;
-    height: 44px;
+    position: static;
+    grid-column: 1 / 4;
+    grid-row: 3;
+    width: 100%;
+    height: 18px;
     gap: 0;
   }
 
@@ -2027,7 +2042,7 @@ body * {
   }
 
   .player-bar__progress {
-    height: 44px;
+    height: 18px;
   }
 
   .player-bar__progress::before,
@@ -2077,6 +2092,10 @@ body * {
   .player-bar__vol-icon {
     width: 44px;
     height: 44px;
+  }
+
+  .player-bar__progress-row {
+    display: none;
   }
 
   .player-bar__right {
