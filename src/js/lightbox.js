@@ -87,9 +87,10 @@
     if (openFrame) cancelAnimationFrame(openFrame);
     lightbox.hidden = false;
     setControlsEnabled(true);
-    setBackgroundInert(true);
     lightbox.setAttribute('aria-hidden', 'false');
     lightbox.setAttribute('aria-modal', 'true');
+    if (closeBtn) closeBtn.focus();
+    setBackgroundInert(true);
     openFrame = requestAnimationFrame(() => {
       openFrame = null;
       if (isOpen && lightbox.getAttribute('aria-hidden') === 'false') {
@@ -97,7 +98,6 @@
       }
     });
     document.body.style.overflow = 'hidden';
-    if (closeBtn) closeBtn.focus();
   }
 
   function closeLightbox() {
@@ -131,8 +131,10 @@
   }
 
   galleryItems.forEach((item, i) => {
-    item.setAttribute('role', 'button');
-    item.setAttribute('tabindex', '0');
+    if (item.tagName !== 'BUTTON') {
+      item.setAttribute('role', 'button');
+      item.setAttribute('tabindex', '0');
+    }
     item.addEventListener('click', () => openLightbox(i, item));
     item.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {

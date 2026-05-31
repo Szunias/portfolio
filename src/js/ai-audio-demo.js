@@ -31,7 +31,12 @@
       const Ctx = window.AudioContext || window.webkitAudioContext;
       if (!Ctx) return;
       audioContext = audioContext || new Ctx();
-      if (audioContext.state === 'suspended') audioContext.resume();
+      if (audioContext.state === 'suspended') {
+        const resumePromise = audioContext.resume();
+        if (resumePromise && typeof resumePromise.catch === 'function') {
+          resumePromise.catch(() => {});
+        }
+      }
       const now = audioContext.currentTime;
       const osc = audioContext.createOscillator();
       const gain = audioContext.createGain();
@@ -53,7 +58,12 @@
       const Ctx = window.AudioContext || window.webkitAudioContext;
       if (!Ctx) return;
       audioContext = audioContext || new Ctx();
-      if (audioContext.state === 'suspended') audioContext.resume();
+      if (audioContext.state === 'suspended') {
+        const resumePromise = audioContext.resume();
+        if (resumePromise && typeof resumePromise.catch === 'function') {
+          resumePromise.catch(() => {});
+        }
+      }
     } catch (_) {}
   }
 

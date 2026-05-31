@@ -18,7 +18,10 @@
     video.dataset.autoplayLoaded = 'true';
     if (shouldAutoplay) {
       video.autoplay = true;
-      video.play().catch(() => {});
+      const playPromise = video.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {});
+      }
     } else {
       video.autoplay = false;
       video.removeAttribute('autoplay');
@@ -51,7 +54,10 @@
         video.pause();
       } else if (video.dataset.autoplayPaused === 'true') {
         video.autoplay = true;
-        video.play().catch(() => {});
+        const playPromise = video.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+          playPromise.catch(() => {});
+        }
         delete video.dataset.autoplayPaused;
       }
     });

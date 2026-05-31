@@ -854,29 +854,82 @@
   }
 
   function bindPointerSlider(el, onMove, canStart) {
-    if (!el || !window.PointerEvent) return;
+    if (!el) return;
     var dragging = false;
-    el.addEventListener('pointerdown', function(e) {
+
+    function canDrag() {
       if (canStart && !canStart()) return;
-      dragging = true;
-      if (el.setPointerCapture) {
-        try { el.setPointerCapture(e.pointerId); } catch(err) {}
+      return true;
+    }
+
+    function clientXFromTouch(e) {
+      var touch = e.touches && e.touches[0] ? e.touches[0] : (e.changedTouches && e.changedTouches[0]);
+      return touch ? touch.clientX : null;
+    }
+
+    if (window.PointerEvent) {
+      el.addEventListener('pointerdown', function(e) {
+        if (!canDrag()) return;
+        dragging = true;
+        if (el.setPointerCapture) {
+          try { el.setPointerCapture(e.pointerId); } catch(err) {}
+        }
+        e.preventDefault();
+        onMove(e.clientX);
+      });
+      el.addEventListener('pointermove', function(e) {
+        if (!dragging) return;
+        e.preventDefault();
+        onMove(e.clientX);
+      });
+      function stopPointer(e) {
+        if (!dragging) return;
+        dragging = false;
+        try { el.releasePointerCapture(e.pointerId); } catch(err) {}
       }
+      el.addEventListener('pointerup', stopPointer);
+      el.addEventListener('pointercancel', stopPointer);
+      return;
+    }
+
+    el.addEventListener('mousedown', function(e) {
+      if (!canDrag()) return;
+      dragging = true;
       e.preventDefault();
       onMove(e.clientX);
     });
-    el.addEventListener('pointermove', function(e) {
+    document.addEventListener('mousemove', function(e) {
       if (!dragging) return;
       e.preventDefault();
       onMove(e.clientX);
     });
-    function stop(e) {
+    document.addEventListener('mouseup', function() {
       if (!dragging) return;
       dragging = false;
-      try { el.releasePointerCapture(e.pointerId); } catch(err) {}
-    }
-    el.addEventListener('pointerup', stop);
-    el.addEventListener('pointercancel', stop);
+    });
+    el.addEventListener('touchstart', function(e) {
+      if (!canDrag()) return;
+      var x = clientXFromTouch(e);
+      if (x === null) return;
+      dragging = true;
+      e.preventDefault();
+      onMove(x);
+    }, { passive: false });
+    document.addEventListener('touchmove', function(e) {
+      if (!dragging) return;
+      var x = clientXFromTouch(e);
+      if (x === null) return;
+      e.preventDefault();
+      onMove(x);
+    }, { passive: false });
+    document.addEventListener('touchend', function() {
+      if (!dragging) return;
+      dragging = false;
+    });
+    document.addEventListener('touchcancel', function() {
+      if (!dragging) return;
+      dragging = false;
+    });
   }
 
   bindPointerSlider(progressBar, seekToClientX, function() {

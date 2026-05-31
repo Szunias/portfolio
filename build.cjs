@@ -95,7 +95,8 @@ function enforceDistBudget() {
   const total = files.reduce((sum, file) => sum + file.size, 0);
   const maxTotal = 650 * 1024 * 1024;
   const maxFile = 65 * 1024 * 1024;
-  const largest = files.slice().sort((a, b) => b.size - a.size)[0];
+  const largestFiles = files.slice().sort((a, b) => b.size - a.size);
+  const largest = largestFiles[0];
   if (total > maxTotal) {
     throw new Error(`dist is ${byteSizeLabel(total)}, above the ${byteSizeLabel(maxTotal)} deploy budget`);
   }
@@ -103,6 +104,12 @@ function enforceDistBudget() {
     throw new Error(`${largest.path} is ${byteSizeLabel(largest.size)}, above the ${byteSizeLabel(maxFile)} single-file budget`);
   }
   console.log(`  → deploy size budget OK (${files.length} files, ${byteSizeLabel(total)}${largest ? `, largest ${byteSizeLabel(largest.size)}` : ''})`);
+  const heavyFiles = largestFiles
+    .filter(file => file.size >= 20 * 1024 * 1024)
+    .slice(0, 5);
+  if (heavyFiles.length) {
+    console.log(`  → largest assets: ${heavyFiles.map(file => `${file.path} ${byteSizeLabel(file.size)}`).join('; ')}`);
+  }
 }
 
 /** Escape characters that break HTML attribute values. Order matters: & first. */
@@ -258,6 +265,14 @@ function videoLabelFromContext(prefix) {
   return 'Project video';
 }
 
+function videoDescriptionFromContext(prefix) {
+  const paragraphs = [...prefix.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
+    .map(match => stripTags(match[1]))
+    .filter(Boolean);
+  const text = paragraphs.length ? paragraphs[paragraphs.length - 1] : videoLabelFromContext(prefix);
+  return text.length > 420 ? `${text.slice(0, 417).trim()}...` : text;
+}
+
 function enhanceVideoAccessibility(html) {
   let counter = 0;
   let output = html.replace(
@@ -278,7 +293,33 @@ function enhanceVideoAccessibility(html) {
     return `<video aria-label="${escAttr(videoLabelFromContext(context))}"${attrs}>`;
   });
 
+  output = output.replace(
+    /(<div\s+class=(["'])video-wrap\2[^>]*>\s*<video\b(?=[\s\S]*?\bcontrols\b)[\s\S]*?<\/video>\s*<\/div>)(\s*<p\s+class=(["'])video-caption\4[^>]*>[\s\S]*?<\/p>)?(?!\s*<details\s+class=(["'])video-transcript\5)/gi,
+    (match, videoWrap, _wrapQuote, captionHtml, _captionQuote, _detailsQuote, offset) => {
+      counter++;
+      const context = output.slice(Math.max(0, offset - 3000), offset);
+      const label = videoLabelFromContext(context).replace(/^Video:\s*/i, '');
+      const description = videoDescriptionFromContext(context);
+      const transcript = [
+        '<details class="video-transcript">',
+        '<summary>Audio notes</summary>',
+        `<p><strong>${escAttr(label)}</strong>. ${escAttr(description)}</p>`,
+        '</details>'
+      ].join('');
+      return `${videoWrap}${captionHtml || ''}\n  ${transcript}`;
+    }
+  );
+
   return output;
+}
+
+function enhanceGalleryItemButtons(html) {
+  return html.replace(/<div\b([^>]*\bclass=(["'])[^"']*\bgallery-item\b[^"']*\2[^>]*)>([\s\S]*?)<\/div>/gi, (match, attrs, quote, inner) => {
+    const buttonAttrs = attrs
+      .replace(/\s+role=(["'])button\1/gi, '')
+      .replace(/\s+tabindex=(["'])0\1/gi, '');
+    return `<button type="button"${buttonAttrs}>${inner}</button>`;
+  });
 }
 
 function enhanceExternalLinkSafety(html) {
@@ -327,6 +368,15 @@ function enhanceDocumentBasics(html) {
     output = output.replace(/<\/head>/i, '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n</head>');
   }
   return output;
+}
+
+function sanitizeStaticSnapshot(html) {
+  return html
+    .replace(/<script\b[\s\S]*?<\/script>/gi, '')
+    .replace(/<noscript\b[\s\S]*?<\/noscript>/gi, '')
+    .replace(/<form\b[\s\S]*?<\/form>/gi, '')
+    .replace(/\s+on[a-z]+\s*=\s*(["'])[\s\S]*?\1/gi, '')
+    .replace(/\s+on[a-z]+\s*=\s*[^\s>]+/gi, '');
 }
 
 function enhanceInlineSvgAccessibility(html) {
@@ -444,7 +494,7 @@ function isReservedDistOutput(outKey, reservedOutputs) {
 function copyReferencedAssets(refs) {
   const copied = [];
   for (const rel of refs) {
-    if (!rel || rel.endsWith('.html') || rel === 'sitemap.xml' || rel === 'robots.txt') continue;
+    if (!rel || rel.endsWith('.html') || rel === 'sitemap.xml' || rel === 'robots.txt' || rel === 'CNAME') continue;
     if (rel.startsWith('assets/')) continue;
     const src = safeRepoPath(rel);
     const dest = safeDistPath(rel);
@@ -455,6 +505,8 @@ function copyReferencedAssets(refs) {
       ensureDir(path.dirname(dest));
       fs.copyFileSync(src, dest);
       copied.push(rel);
+    } else {
+      throw new Error(`Referenced asset not found: ${rel}`);
     }
   }
   return copied;
@@ -465,7 +517,7 @@ function validateLocalRefsInDist(htmlFiles, siteOrigin) {
   for (const file of htmlFiles) {
     const html = read(path.join(DIST, file));
     for (const rel of collectLocalRefsFromHtml(html, siteOrigin)) {
-      if (!rel || rel.startsWith('assets/favicon')) continue;
+      if (!rel) continue;
       const target = safeDistPath(rel);
       if (!target) {
         missing.push(`${file}: unsafe path ${rel}`);
@@ -697,7 +749,17 @@ function staticCopyEntries(cfg) {
 }
 
 function pageContentInputs(page) {
-  return [relPath('src', 'pages', `${page.slug}.html`)];
+  const inputs = [
+    'site.config.cjs',
+    'build.cjs',
+    relPath('src', 'pages', `${page.slug}.html`),
+    relPath('src', 'layouts', `${page.layout}.html`),
+    relPath('src', 'css', `${page.css}.css`),
+    ...page.js.map(name => relPath('src', 'js', `${name}.js`)),
+  ];
+  if (page.lightbox) inputs.push(relPath('src', 'partials', 'lightbox.html'));
+  if (page.layout === 'music') inputs.push(relPath('src', 'partials', 'player-bar.html'));
+  return inputs;
 }
 
 function sitemapUrl(loc, lastmod, priority) {
@@ -785,6 +847,7 @@ function buildPage(page) {
   content = enhanceIframeAccessibility(content);
   content = enhanceImageAccessibility(content);
   content = enhanceInlineSvgAccessibility(content);
+  content = enhanceGalleryItemButtons(content);
 
   // 3. Assemble CSS (single file per layout type)
   const css = getCSS(page.css);
@@ -853,6 +916,9 @@ function validateConfig(cfg) {
     }
     if (!Array.isArray(page.js)) {
       throw new Error(`JS list for ${page.slug} must be an array`);
+    }
+    if (page.assets && !Array.isArray(page.assets)) {
+      throw new Error(`Asset list for ${page.slug} must be an array`);
     }
     const duplicateJs = page.js.find((name, index) => page.js.indexOf(name) !== index);
     if (duplicateJs) {
@@ -1029,6 +1095,9 @@ function main() {
         ensureDir(path.dirname(dest));
         if (entry.rewriteRootRelativeTo || entry.ensureIds || path.extname(entry.file).toLowerCase() === '.html') {
           let html = read(src);
+          if (entry.sanitize) {
+            html = sanitizeStaticSnapshot(html);
+          }
           if (entry.rewriteRootRelativeTo) {
             html = rewriteRootRelativeUrls(html, entry.rewriteRootRelativeTo);
           }
@@ -1110,9 +1179,11 @@ function main() {
   }
   for (const f of rootAssets) localRefs.add(f);
   for (const page of config.pages) {
-    if (!page.ogImage) continue;
-    const ref = urlPathname(page.ogImage, SITE_ORIGIN);
-    if (ref) localRefs.add(ref);
+    if (page.ogImage) {
+      const ref = urlPathname(page.ogImage, SITE_ORIGIN);
+      if (ref) localRefs.add(ref);
+    }
+    for (const asset of page.assets || []) localRefs.add(asset);
   }
   const copiedAssets = copyReferencedAssets(localRefs);
   console.log(`  → referenced assets (${copiedAssets.length} copied)`);
