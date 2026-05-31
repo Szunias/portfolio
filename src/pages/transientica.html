@@ -56,7 +56,7 @@
     <div class="concept-body">
       <p class="drop-cap">This started as a school research project in Python. Beatbox into a mic, classify the sound with SVM, send results to Unity over OSC. It worked, barely. Two processes running, 180ms latency at first, got it down to 45ms after weeks of optimization. But it was still a prototype, not a game.</p>
 
-      <p>So I rebuilt the whole thing in Unity from scratch. Threw out Python, OSC, scikit-learn, everything. Wrote the FFT, feature extraction, and classifier in plain C#. No external ML frameworks, no dependencies I don't control. Switched from SVM to KNN because it trains instantly and I can retrain between rounds without the player waiting.</p>
+      <p>So I rebuilt the Unity version from scratch. Threw out Python, OSC, and scikit-learn. Wrote the FFT, feature extraction, and classifier in plain C#. No external ML frameworks. Switched from SVM to KNN because it trains fast enough to retrain between rounds without the player waiting.</p>
 
       <p>Now it's an actual rhythm game. Notes scroll toward you, you beatbox the right sound at the right time, the game judges your timing. Combos, scoring, grades. The classifier trains on your voice specifically - 10 samples per sound, takes a few seconds, and it learns how you do a kick vs how I do a kick.</p>
     </div>
@@ -84,7 +84,7 @@
       </div>
       <div class="concept-sidebar__fact">
         <span class="concept-sidebar__label">Allocations</span>
-        <span class="concept-sidebar__value">Zero on the audio path (pre-allocated buffers)</span>
+        <span class="concept-sidebar__value">Pre-allocated buffers on the audio path</span>
       </div>
     </aside>
   </div>
@@ -108,7 +108,7 @@
       <div class="system-item__title-wrap">
         <h3 class="system-item__title">Training</h3>
       </div>
-      <p class="system-item__desc">You record 10+ examples of each sound - kick, snare, hi-hat. The game runs onset detection and feature extraction on each one automatically. KNN stores the samples, computes normalization bounds, and does leave-one-out cross-validation to check if the model is any good. If accuracy is above 70%, you're set. If not, record cleaner samples. The whole thing saves to a JSON file and loads next time you open the game. If there's no trained model at all, a heuristic fallback uses spectral rules so the game is still playable.</p>
+      <p class="system-item__desc">You record 10+ examples of each sound - kick, snare, hi-hat. The game runs onset detection and feature extraction on each one automatically. KNN stores the samples, computes normalization bounds, and does leave-one-out cross-validation to check if the model is any good. If accuracy is above 70%, you're set. If not, record cleaner samples. The model saves to a JSON file and loads next time you open the game. If there's no trained model at all, a heuristic fallback uses spectral rules so the game is still playable.</p>
     </div>
 
     <div class="system-item">
@@ -132,15 +132,15 @@
       <span class="challenge-card__label">Why</span>
       <p class="challenge-card__text">The original had Python doing audio analysis and Unity running the game - two separate processes talking over OSC on localhost. It worked but it was fragile. If Python crashed, the game went deaf. Debugging across two runtimes was painful. Building a standalone .exe meant shipping a Python install alongside Unity.</p>
       <span class="challenge-card__label">Now</span>
-      <p class="challenge-card__text">Everything is C#, everything is in Unity. The FFT, feature extraction, KNN - all written from scratch. No Python, no OSC, no external ML packages. One process, one build, one thing to debug.</p>
+      <p class="challenge-card__text">The rebuild is C# inside Unity. The FFT, feature extraction, KNN - all written from scratch. No Python, no OSC, no external ML packages. One process, one build, one thing to debug.</p>
     </div>
 
     <div class="challenge-card">
       <h3 class="challenge-card__title">SVM &rarr; KNN</h3>
       <span class="challenge-card__label">Why</span>
-      <p class="challenge-card__text">SVM was great for accuracy in the prototype (92% with scikit-learn). But retraining took seconds, needed a Python call, and the model format didn't play well with Unity serialization. I needed something that trains instantly and is trivial to implement in C#.</p>
+      <p class="challenge-card__text">SVM was great for accuracy in the prototype (92% with scikit-learn). But retraining took seconds, needed a Python call, and the model format didn't play well with Unity serialization. I needed something fast enough to retrain between rounds and simple to implement in C#.</p>
       <span class="challenge-card__label">Now</span>
-      <p class="challenge-card__text">KNN with K=5 and inverse-distance weighting. Training is just "store the samples" - it's instant. Cross-validation runs in milliseconds. The whole trained model is a JSON file with feature vectors and normalization bounds. Easy to save, easy to load, easy to debug.</p>
+      <p class="challenge-card__text">KNN with K=5 and inverse-distance weighting. Training mostly stores the samples, so it runs fast enough to retrain between rounds. Cross-validation runs in milliseconds. The trained model is a JSON file with feature vectors and normalization bounds. Easy to save, easy to load, easy to debug.</p>
     </div>
 
     <div class="challenge-card">
@@ -148,7 +148,7 @@
       <span class="challenge-card__label">Before</span>
       <p class="challenge-card__text">The prototype was a tech demo. You could beatbox and see it classified. There was a basic rhythm element but no real game loop - no scoring, no progression, no reason to keep playing.</p>
       <span class="challenge-card__label">Now</span>
-      <p class="challenge-card__text">Beatmapped songs, scrolling notes with approach animations, combo system, letter grades, high score tracking. Full game flow: menu, training, song select, gameplay, results. Object pooling on notes (20 per type) so nothing allocates during gameplay. All UI built at runtime in code - no prefabs, no TextMeshPro, just legacy Text and a color theme class.</p>
+      <p class="challenge-card__text">Beatmapped songs, scrolling notes with approach animations, combo system, letter grades, high score tracking. Full game flow: menu, training, song select, gameplay, results. Object pooling on notes (20 per type) so note spawning does not allocate during gameplay. All UI built at runtime in code - no prefabs, no TextMeshPro, just legacy Text and a color theme class.</p>
     </div>
   </div>
 </section>

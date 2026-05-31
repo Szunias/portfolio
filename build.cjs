@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build.cjs — Assembles static HTML pages from layouts, partials, CSS, JS, and page content.
+ * build.cjs - Assembles static HTML pages from layouts, partials, CSS, JS, and page content.
  *
  * Usage:  node build.cjs
  * Output: dist/*.html
@@ -39,7 +39,7 @@ function relPath(...parts) {
 const SRC    = path.join(__dirname, 'src');
 const DIST   = path.join(__dirname, 'dist');
 
-// ─── Helpers ────────────────────────────────────────────────────
+// Helpers
 
 function read(filePath) {
   return fs.readFileSync(filePath, 'utf8');
@@ -372,6 +372,8 @@ function enhanceDocumentBasics(html) {
 
 function sanitizeStaticSnapshot(html) {
   return html
+    .replace(/[\u2014\u2013]/g, '-')
+    .replace(/\u2500/g, '-')
     .replace(/<script\b[\s\S]*?<\/script>/gi, '')
     .replace(/<noscript\b[\s\S]*?<\/noscript>/gi, '')
     .replace(/<form\b[\s\S]*?<\/form>/gi, '')
@@ -798,7 +800,7 @@ function ensureFragmentTargets(html, ids) {
   return output;
 }
 
-// ─── Cache partials ─────────────────────────────────────────────
+// Cache partials
 
 const partials = {};
 function getPartial(name) {
@@ -808,7 +810,7 @@ function getPartial(name) {
   return partials[name];
 }
 
-// ─── Cache CSS / JS ─────────────────────────────────────────────
+// Cache CSS / JS
 
 const cssCache = {};
 function getCSS(name) {
@@ -826,7 +828,7 @@ function getJS(name) {
   return jsCache[name];
 }
 
-// ─── Build ──────────────────────────────────────────────────────
+// Build
 
 function buildPage(page) {
   // 1. Read layout
@@ -882,7 +884,7 @@ function buildPage(page) {
   return html;
 }
 
-// ─── Main ───────────────────────────────────────────────────────
+// Main
 
 function validateConfig(cfg) {
   if (!cfg.pages || !Array.isArray(cfg.pages) || !cfg.pages.length) {
@@ -1071,7 +1073,7 @@ function main() {
       console.log(`  ✓ ${page.slug}.html`);
     } catch (err) {
       failed.push({ slug: page.slug, error: err.message });
-      console.error(`  ✗ ${page.slug}.html — ${err.message}`);
+      console.error(`  ✗ ${page.slug}.html - ${err.message}`);
     }
   }
 
@@ -1129,7 +1131,7 @@ function main() {
   const copiedSrcAssets = copyDirContents(path.join(SRC, 'assets'), path.join(DIST, 'assets'));
   console.log(`  → assets/ (${copiedSrcAssets} copied)`);
 
-  // Generate sitemap.xml — lastmod follows content files, not every shared build/config change.
+  // Generate sitemap.xml - lastmod follows content files, not every shared build/config change.
   const SITE_ORIGIN = new URL(config.pages[0].canonical).origin;
   const pageUrls = config.pages.map(p => {
     const priority = p.slug === 'index' ? '1.0' : '0.8';
@@ -1155,7 +1157,7 @@ function main() {
   console.log('  → robots.txt');
 
   // Single source of truth for root-level assets referenced by pages or ogImage.
-  // The deploy workflow no longer copies these separately — it relies on this list.
+  // The deploy workflow no longer copies these separately - it relies on this list.
   const rootAssets = [
     'audioqscreenshot.png',
     'transienticascreenshot.webm',

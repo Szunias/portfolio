@@ -1,4 +1,4 @@
-// Theme toggle (universal — works with SVG icons or text emoji buttons)
+// Theme toggle (universal - works with SVG icons or text emoji buttons)
 (function(){
   try {
     const stored = localStorage.getItem('theme');

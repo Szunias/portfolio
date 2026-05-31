@@ -20,7 +20,7 @@
     frame = requestAnimationFrame(update);
   }
 
-  // Initial sync — handles anchor jumps, BFCache restore, page reload mid-scroll
+  // Initial sync - handles anchor jumps, BFCache restore, page reload mid-scroll
   update();
   window.addEventListener('scroll', scheduleUpdate, { passive: true });
   window.addEventListener('resize', scheduleUpdate, { passive: true });

@@ -1,18 +1,18 @@
 /**
- * Site configuration — page definitions for the build script.
+ * Site configuration - page definitions for the build script.
  *
  * Each entry specifies:
- *   slug       – output filename (without .html)
- *   layout     – which layout template to use (home | project | music)
- *   css        – CSS file to inline (one per layout type)
- *   js         – JS files to concatenate and inline
- *   title      – <title> tag content
- *   description– meta description
- *   canonical  – canonical URL
- *   ogTitle    – override OG/Twitter title (defaults to title)
- *   ogImage    – og:image URL (optional)
- *   lightbox   – true to inject lightbox partial (project pages with galleries)
- *   ogImageAlt – accessible text for social preview images (optional)
+ *   slug       - output filename (without .html)
+ *   layout     - which layout template to use (home | project | music)
+ *   css        - CSS file to inline (one per layout type)
+ *   js         - JS files to concatenate and inline
+ *   title      - <title> tag content
+ *   description- meta description
+ *   canonical  - canonical URL
+ *   ogTitle    - override OG/Twitter title (defaults to title)
+ *   ogImage    - og:image URL (optional)
+ *   lightbox   - true to inject lightbox partial (project pages with galleries)
+ *   ogImageAlt - accessible text for social preview images (optional)
  */
 
 const SITE = 'https://igorszuniewicz.com';
@@ -32,7 +32,7 @@ module.exports = {
   ],
 
   pages: [
-    // ─── HOME ───────────────────────────────────────────────────
+    // Home
     {
       slug: 'index',
       layout: 'home',
@@ -46,7 +46,7 @@ module.exports = {
       ogImageAlt: 'Shadow Frames horror game screenshot from Igor Szuniewicz game audio portfolio',
     },
 
-    // ─── MUSIC ──────────────────────────────────────────────────
+    // Music
     {
       slug: 'music',
       layout: 'music',
@@ -59,7 +59,7 @@ module.exports = {
       ogImageAlt: 'Album cover artwork for music by Igor Szuniewicz',
     },
 
-    // ─── PROJECTS (with lightbox) ───────────────────────────────
+    // Projects with lightbox
     {
       slug: 'shadowframes',
       layout: 'project',
@@ -109,14 +109,14 @@ module.exports = {
       lightbox: true,
     },
 
-    // ─── PROJECTS (no lightbox) ─────────────────────────────────
+    // Projects without lightbox
     {
       slug: 'transientica',
       layout: 'project',
       css: 'project',
       js: ['scroll-progress', 'scroll-reveal', 'theme-toggle'],
       title: 'Transientica | Unity Beatbox Rhythm Game & Audio ML',
-      description: 'Unity rhythm game audio ML case study: 45ms Python/SVM prototype, 92% accuracy, C# KNN rebuild, and zero-allocation audio pipeline.',
+      description: 'Unity rhythm game audio ML case study: 45ms Python/SVM prototype, 92% accuracy, C# KNN rebuild, and a pre-allocated audio path.',
       canonical: `${SITE}/transientica.html`,
       ogImage: `${SITE}/transienticascreenshot.png`,
       ogImageAlt: 'Transientica Unity beatbox rhythm game interface screenshot',
@@ -126,8 +126,8 @@ module.exports = {
       layout: 'project',
       css: 'project',
       js: ['scroll-progress', 'scroll-reveal', 'theme-toggle', 'ai-audio-demo'],
-      title: 'AI Audio Research | Real-Time Game Sound Generation',
-      description: 'Research on real-time AI game sound generation: procedural DSP, generative models, 600 generations, latency benchmarks, and caching.',
+      title: 'AI Audio Research | Game Sound Generation Latency',
+      description: 'Research on generated game sound latency: procedural DSP, generative models, 600 generations, latency benchmarks, and caching.',
       canonical: `${SITE}/ai-audio-research.html`,
       ogImage: `${SITE}/aithesiscover.png`,
       ogImageAlt: 'AI audio research thesis cover about real-time game sound generation',

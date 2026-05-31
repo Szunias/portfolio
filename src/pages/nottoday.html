@@ -60,7 +60,7 @@
     <div class="concept-body">
       <p class="drop-cap">Four grandmas race for inheritance in a chaotic 4-player side-scrolling kart game. I was the only audio person on a 5-person team, with 11 weeks to build readable engines, crashes, power-ups, and character voices.</p>
 
-      <p>The audio problem was density. Four players can accelerate, collide, trigger power-ups, and shout over each other in the same moment. I built roughly 70 UE audio events, kept the mix under a 32-source limit, and used MetaSounds for engine layers that could react without swallowing the whole scene.</p>
+      <p>The audio problem was density. Four players can accelerate, collide, trigger power-ups, and shout over each other in the same moment. I built roughly 70 UE audio events, kept the mix under a 32-source limit, and used MetaSounds for engine layers that respond to RPM and throttle while leaving room for impacts, power-ups, and VO.</p>
 
       <p>This was my first time working with animators, developers, and artists on a shared production schedule. Audio decisions had to survive feedback from people with different priorities: animation timing, gameplay readability, level pacing, and deadline pressure. I learned to defend the mix when it mattered, compromise when the game needed it, and ship because four other people were waiting on my work.</p>
 
@@ -126,14 +126,14 @@
       <div class="system-item__title-wrap">
         <h3 class="system-item__title">Procedural Go-Kart Engine</h3>
       </div>
-      <p class="system-item__desc">My first serious MetaSounds project. RPM, throttle, and load drive the engine sound in real-time - no baked loops. The whole thing responds to player input frame by frame. I was learning MetaSounds as I went, so the graph was messy, but the state changes were readable: acceleration, braking, and sliding each had their own movement and pitch behavior.</p>
+      <p class="system-item__desc">My first serious MetaSounds project. RPM, throttle, and load drive the engine sound in real-time - no baked loops. The engine layer responds continuously to player input. I was learning MetaSounds as I went, so the graph was messy, but the state changes were readable: acceleration, braking, and sliding each had their own movement and pitch behavior.</p>
     </div>
 
     <div class="system-item">
       <div class="system-item__title-wrap">
         <h3 class="system-item__title">Stopping 4 Players from Sounding Like a Mess</h3>
       </div>
-      <p class="system-item__desc">4 players means 4 engines, 4 sets of power-ups, collisions, and granny screams all at once. Without structure, it was noise. I built a Sound Class hierarchy where your own kart always sits on top. Distant karts get attenuated and ducked. Power-ups and collisions run through concurrency limits, so the mix keeps the local player readable instead of playing every event at full weight.</p>
+      <p class="system-item__desc">4 players means 4 engines, 4 sets of power-ups, collisions, and granny screams all at once. Without structure, it was noise. I built a Sound Class hierarchy where the local player's kart stays prioritized in the mix. Distant karts get attenuated and ducked. Power-ups and collisions run through concurrency limits, so the mix keeps the local player readable instead of playing low-priority events at full weight.</p>
     </div>
 
     <div class="system-item">
@@ -175,15 +175,15 @@
     <div class="challenge-card">
       <h3 class="challenge-card__title">"I Can't Hear My Own Kart"</h3>
       <span class="challenge-card__label">What Was Hard</span>
-      <p class="challenge-card__text">First playtest with all 4 players: total chaos. 4 engines, power-ups firing, collisions, granny screams. Players struggled to tell what was happening to their own kart. The audio was just mush. I'd never mixed anything with this many simultaneous sources before.</p>
+      <p class="challenge-card__text">First playtest with all 4 players: engines, power-ups, collisions, and VO overlapped until players struggled to track their own kart. I'd never mixed anything with this many simultaneous sources before.</p>
       <span class="challenge-card__label">What I Did</span>
-      <p class="challenge-card__text">Built the Sound Class hierarchy described above, but the real lesson was figuring out the priority order. First attempt: equal priority for all karts. Second attempt: your kart at max, others at half. Final version: three priority tiers with concurrency limits per tier, so players could still read their own kart, power-ups, and collision cues during 4-player pileups. In later playtests, players could follow their own kart even when all four racers collided in the same camera view.</p>
+      <p class="challenge-card__text">Built the Sound Class hierarchy described above, but the real lesson was figuring out the priority order. First attempt: equal priority for all karts. Second attempt: your kart at max, others at half. Final version: three priority tiers with concurrency limits per tier, so the local kart, power-ups, and collision cues stayed audible during 4-player pileups.</p>
     </div>
 
     <div class="challenge-card">
       <h3 class="challenge-card__title">Making a Synth Engine Not Sound Like a Synth</h3>
       <span class="challenge-card__label">What Was Hard</span>
-      <p class="challenge-card__text">I'd never touched MetaSounds before this project. Procedural engine sound is tricky - it can easily sound like a vacuum cleaner instead of a go-kart. The engine had to respond instantly to throttle changes and feel like it's actually powering something with wheels.</p>
+      <p class="challenge-card__text">I'd never touched MetaSounds before this project. Procedural engine sound is tricky - it can easily sound like a vacuum cleaner instead of a go-kart. The engine had to respond quickly to throttle changes and feel like it's actually powering something with wheels.</p>
       <span class="challenge-card__label">What I Did</span>
       <p class="challenge-card__text">The parameter mapping was straightforward. The hard part was pitch smoothing - without it, sudden throttle changes made the engine jump between frequencies like a broken synthesizer. I added interpolation so the pitch ramps up and down instead of snapping. The result was a responsive engine layer that stayed readable during 4-player races without adding extra looped audio assets.</p>
     </div>
