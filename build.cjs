@@ -131,10 +131,11 @@ const EMPTY_INLINE_SCRIPT_PATTERN = String.raw`<script\b(?![^>]*\ssrc\s*=)[^>]*>
 function ogTags(page) {
   const ogTitle = page.ogTitle || page.title;
   const imageAlt = page.ogImageAlt || `${ogTitle} preview image`;
+  const defaultOgType = page.slug === 'index' || page.layout === 'music' ? 'website' : 'article';
   const lines = [
     `<meta property="og:title" content="${escAttr(ogTitle)}">`,
     `<meta property="og:description" content="${escAttr(page.description)}">`,
-    `<meta property="og:type" content="${escAttr(page.ogType || (page.slug === 'index' ? 'website' : 'article'))}">`,
+    `<meta property="og:type" content="${escAttr(page.ogType || defaultOgType)}">`,
     `<meta property="og:url" content="${escAttr(page.canonical)}">`,
     `<meta property="og:site_name" content="Igor Szuniewicz">`,
     `<meta name="twitter:card" content="summary_large_image">`,
@@ -151,7 +152,9 @@ function ogTags(page) {
 }
 
 function jsonLdTag(graph) {
-  return `<script type="application/ld+json">\n${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }, null, 2)}\n</script>`;
+  const json = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }, null, 2)
+    .replace(/</g, '\\u003c');
+  return `<script type="application/ld+json">\n${json}\n</script>`;
 }
 
 function schemaTags(page) {
@@ -313,7 +316,32 @@ function enhanceVideoAccessibility(html) {
   return output;
 }
 
+function assertGalleryItemMarkup(html) {
+  const stack = [];
+  const tagPattern = /<\/?div\b[^>]*>/gi;
+  let match;
+  while ((match = tagPattern.exec(html))) {
+    const tag = match[0];
+    const isClosing = /^<\//.test(tag);
+    if (isClosing) {
+      stack.pop();
+      continue;
+    }
+
+    const className = decodeHtmlAttr(attrValue(tag, 'class'));
+    const isGalleryItem = /\bgallery-item\b/.test(className);
+    const parentGalleryItem = stack.find(entry => entry.isGalleryItem);
+    if (parentGalleryItem) {
+      throw new Error(
+        `gallery-item markup must not contain nested <div> elements; use span/figure-safe inline markup near offset ${match.index}`
+      );
+    }
+    stack.push({ isGalleryItem });
+  }
+}
+
 function enhanceGalleryItemButtons(html) {
+  assertGalleryItemMarkup(html);
   return html.replace(/<div\b([^>]*\bclass=(["'])[^"']*\bgallery-item\b[^"']*\2[^>]*)>([\s\S]*?)<\/div>/gi, (match, attrs, quote, inner) => {
     const buttonAttrs = attrs
       .replace(/\s+role=(["'])button\1/gi, '')
@@ -533,12 +561,31 @@ function validateLocalRefsInDist(htmlFiles, siteOrigin) {
   }
 }
 
+function collectFragmentTargets(html) {
+  const ids = [...html.matchAll(/\bid=(["'])(.*?)\1/gi)].map(match => match[2]);
+  return new Set(ids.concat(
+    [...html.matchAll(/\bname=(["'])(.*?)\1/gi)].map(match => match[2])
+  ));
+}
+
+function decodeFragment(fragment) {
+  try {
+    return decodeURIComponent(fragment);
+  } catch (_) {
+    return fragment;
+  }
+}
+
 function validateGeneratedHtml(htmlFiles) {
   const issues = [];
   const htmlFileSet = new Set(htmlFiles);
   const pageByFile = new Map(config.pages.map(page => [`${page.slug}.html`, page]));
+  const htmlByFile = new Map(htmlFiles.map(file => [file, read(path.join(DIST, file))]));
+  const fragmentTargetsByFile = new Map(
+    [...htmlByFile.entries()].map(([file, html]) => [file, collectFragmentTargets(html)])
+  );
   for (const file of htmlFiles) {
-    const html = read(path.join(DIST, file));
+    const html = htmlByFile.get(file);
     if (!/<html\b[^>]*\blang=(["'])[^"']+\1/i.test(html)) issues.push(`${file}: html missing lang`);
     if (!/<meta\b(?=[^>]*\bname=(["'])viewport\1)/i.test(html)) issues.push(`${file}: missing viewport meta`);
     if (new RegExp(EMPTY_INLINE_SCRIPT_PATTERN, 'i').test(html)) issues.push(`${file}: empty inline script block`);
@@ -559,9 +606,7 @@ function validateGeneratedHtml(htmlFiles) {
       }
     }
     const ids = [...html.matchAll(/\bid=(["'])(.*?)\1/gi)].map(match => match[2]);
-    const fragmentTargets = new Set(ids.concat(
-      [...html.matchAll(/\bname=(["'])(.*?)\1/gi)].map(match => match[2])
-    ));
+    const fragmentTargets = fragmentTargetsByFile.get(file);
     const duplicateId = ids.find((id, index) => ids.indexOf(id) !== index);
     if (duplicateId) issues.push(`${file}: duplicate id "${duplicateId}"`);
     const isNoindex = /<meta\b(?=[^>]*\bname=(["'])robots\1)(?=[^>]*\bcontent=(["'])[^"']*\bnoindex\b[^"']*\2)/i.test(html);
@@ -620,8 +665,16 @@ function validateGeneratedHtml(htmlFiles) {
       if (localFile.endsWith('.html') && !htmlFileSet.has(localFile)) {
         issues.push(`${file}: broken local page link ${href}`);
       }
-      if (hash && (!localFile || localFile === file) && !fragmentTargets.has(decodeURIComponent(hash))) {
-        issues.push(`${file}: missing same-page fragment ${href}`);
+      if (hash) {
+        const targetId = decodeFragment(hash);
+        if ((!localFile || localFile === file) && !fragmentTargets.has(targetId)) {
+          issues.push(`${file}: missing same-page fragment ${href}`);
+        } else if (localFile.endsWith('.html') && htmlFileSet.has(localFile)) {
+          const targetFragments = fragmentTargetsByFile.get(localFile);
+          if (targetFragments && !targetFragments.has(targetId)) {
+            issues.push(`${file}: missing cross-page fragment ${href}`);
+          }
+        }
       }
     }
 
@@ -813,9 +866,17 @@ function getPartial(name) {
 // Cache CSS / JS
 
 const cssCache = {};
+function assertInlineBlockSafe(kind, name, content) {
+  const closingTag = kind === 'css' ? 'style' : 'script';
+  if (new RegExp(`</\\s*${closingTag}\\b`, 'i').test(content)) {
+    throw new Error(`Unsafe closing </${closingTag}> sequence in ${kind.toUpperCase()} asset: ${name}`);
+  }
+}
+
 function getCSS(name) {
   if (!cssCache[name]) {
     cssCache[name] = read(path.join(SRC, 'css', `${name}.css`));
+    assertInlineBlockSafe('css', `src/css/${name}.css`, cssCache[name]);
   }
   return cssCache[name];
 }
@@ -824,6 +885,7 @@ const jsCache = {};
 function getJS(name) {
   if (!jsCache[name]) {
     jsCache[name] = read(path.join(SRC, 'js', `${name}.js`));
+    assertInlineBlockSafe('js', `src/js/${name}.js`, jsCache[name]);
   }
   return jsCache[name];
 }
