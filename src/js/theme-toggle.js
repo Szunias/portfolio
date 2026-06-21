@@ -1,10 +1,8 @@
 // Theme toggle (universal - works with SVG icons or text emoji buttons)
 (function(){
-  try {
-    const stored = localStorage.getItem('theme');
-    const saved = stored === 'dark' || stored === 'light' ? stored : 'dark';
-    document.documentElement.setAttribute('data-theme', saved);
-  } catch(e) {}
+  // Dark theme only.
+  document.documentElement.setAttribute('data-theme', 'dark');
+  try { localStorage.setItem('theme', 'dark'); } catch(e) {}
 
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
   const lazyAutoplayVideos = Array.from(document.querySelectorAll('video[data-autoplay-src]'));
@@ -70,30 +68,7 @@
     reduceMotion.addListener(applyMotionPreference);
   }
 
+  // Theme toggle removed: site is dark-only. Hide any leftover toggle button.
   const toggle = document.getElementById('themeToggle');
-  if (!toggle) return;
-
-  const useText = !toggle.querySelector('svg');
-
-  function updateLabel() {
-    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-    if (useText) toggle.textContent = isLight ? '\u263D' : '\u2600';
-    toggle.setAttribute('aria-label', isLight ? 'Switch to dark theme' : 'Switch to light theme');
-    toggle.setAttribute('title', isLight ? 'Switch to dark theme' : 'Switch to light theme');
-    toggle.setAttribute('aria-pressed', isLight ? 'true' : 'false');
-  }
-  updateLabel();
-
-  toggle.addEventListener('click', () => {
-    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-    document.documentElement.classList.remove('theme-switching');
-    void document.documentElement.offsetWidth;
-    document.documentElement.classList.add('theme-switching');
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('theme', next); } catch(e) {}
-    updateLabel();
-    window.setTimeout(() => {
-      document.documentElement.classList.remove('theme-switching');
-    }, 760);
-  });
+  if (toggle) toggle.remove();
 })();
