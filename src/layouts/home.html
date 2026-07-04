@@ -2,7 +2,6 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<script>try{var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='light'||t==='dark'?t:'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><!-- TITLE --></title>
 <meta name="description" content="<!-- DESCRIPTION -->">
@@ -14,7 +13,7 @@
 <!-- OG_TAGS -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Cormorant+Garamond:wght@300;400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
 <!-- CSS -->
 </style>
@@ -23,19 +22,271 @@
 <body>
 <a class="skip-link" href="#main-content">Skip to main content</a>
 
-<main id="main-content">
+<canvas id="stage" aria-hidden="true"></canvas>
+
+<header class="top">
+  <span class="top__name">IGOR SZUNIEWICZ</span>
+  <nav aria-label="Main navigation">
+    <a href="#work">WORK</a>
+    <a href="#about">ABOUT</a>
+    <a href="music.html">MUSIC</a>
+    <a href="#contact">CONTACT</a>
+  </nav>
+</header>
+
+<main id="main-content" class="content">
 <!-- CONTENT -->
 </main>
 
 <!-- FOOTER / COLOPHON -->
 <footer class="colophon">
   <span>Igor Szuniewicz &copy; 2026</span>
-  <span>Set in DM Sans, Cormorant Garamond &amp; Georgia</span>
+  <span>Set in Inter Tight, Inter &amp; IBM Plex Mono</span>
   <span>Static HTML build</span>
 </footer>
 
 <script>
 <!-- JS -->
+</script>
+
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.min.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from './vendor/RoomEnvironment.js';
+
+try {
+
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const canvas = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+
+const scene = new THREE.Scene();
+scene.environment = new THREE.PMREMGenerator(renderer)
+  .fromScene(new RoomEnvironment(), 0.04).texture;
+
+const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 60);
+camera.position.set(0, 0, 9);
+
+// The centrepiece: brushed-metal studio headphones in a particle field
+const rig = new THREE.Group();
+scene.add(rig);
+
+const metal = new THREE.MeshPhysicalMaterial({
+  color: 0xc9ced4, metalness: 1.0, roughness: 0.22,
+  clearcoat: 0.6, clearcoatRoughness: 0.3
+});
+const dark = new THREE.MeshPhysicalMaterial({
+  color: 0x3a4148, metalness: 0.9, roughness: 0.35
+});
+
+// Particle field: a loose cylinder of tiny ice-blue points around the object
+const P = 460;
+const pPos = new Float32Array(P * 3);
+for (let i = 0; i < P; i++) {
+  const r = 1.5 + Math.random() * 3.2;
+  const th = Math.random() * Math.PI * 2;
+  pPos[i * 3]     = Math.cos(th) * r;
+  pPos[i * 3 + 1] = (Math.random() - 0.5) * 5.2;
+  pPos[i * 3 + 2] = Math.sin(th) * r;
+}
+const pGeo = new THREE.BufferGeometry();
+pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
+  color: 0xaac6de, size: 0.035, transparent: true, opacity: 0.45,
+  sizeAttenuation: true, depthWrite: false, blending: THREE.AdditiveBlending
+}));
+rig.add(particles);
+
+// Studio headphones: strap-profile band, telescoping sliders,
+// fork gimbals, layered cups, a cable.
+const phones = new THREE.Group();
+phones.rotation.z = -0.1;
+phones.rotation.x = 0.16;
+phones.position.y = 0.15;
+rig.add(phones);
+
+const soft = new THREE.MeshPhysicalMaterial({ color: 0x22262c, metalness: 0.15, roughness: 0.85 });
+const glowMat = new THREE.MeshPhysicalMaterial({ color: 0xe8ecf0, metalness: 0.2,
+  roughness: 0.1, emissive: 0xaac6de, emissiveIntensity: 0.55 });
+
+// Headband: flattened metal strap + soft cushion hugging its underside
+const band = new THREE.Mesh(new THREE.TorusGeometry(1.52, 0.075, 24, 140, Math.PI), metal);
+band.scale.set(0.8, 1.02, 2.1);
+phones.add(band);
+// Cushion is embedded into the strap's underside so they visibly touch
+const cushion = new THREE.Mesh(new THREE.TorusGeometry(1.46, 0.06, 16, 110, Math.PI * 0.64), soft);
+cushion.scale.set(0.8, 1.01, 1.7);
+cushion.rotation.z = Math.PI * 0.18;
+phones.add(cushion);
+
+[-1, 1].forEach(side => {
+  // Telescoping slider block + stem dropping from the band end
+  const slider = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.5, 0.24), dark);
+  slider.position.set(side * 1.22, -0.18, 0);
+  phones.add(slider);
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.34, 12), metal);
+  stem.position.set(side * 1.22, -0.36, 0);
+  phones.add(stem);
+
+  const cup = new THREE.Group();
+  cup.position.set(side * 1.22, -1.0, 0);
+  cup.rotation.z = side * -0.08;
+  phones.add(cup);
+
+  // Fork gimbal: arcs over the cup, pivot pins at front and back
+  const fork = new THREE.Mesh(new THREE.TorusGeometry(0.70, 0.026, 12, 80, Math.PI), metal);
+  fork.rotation.y = Math.PI / 2;
+  cup.add(fork);
+  [-1, 1].forEach(fz => {
+    const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.038, 0.2, 12), metal);
+    pin.rotation.x = Math.PI / 2;
+    pin.position.set(0, 0, fz * 0.64);
+    cup.add(pin);
+  });
+
+  // Drum shell + domed outer cap with groove ring and centre disc
+  const shell = new THREE.Mesh(new THREE.CylinderGeometry(0.60, 0.60, 0.30, 64), dark);
+  shell.rotation.z = Math.PI / 2;
+  cup.add(shell);
+  const domeCap = new THREE.Mesh(new THREE.SphereGeometry(0.56, 48, 24), metal);
+  domeCap.scale.set(0.4, 1, 1);
+  domeCap.position.x = side * 0.12;
+  cup.add(domeCap);
+  const groove = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.012, 10, 64), dark);
+  groove.rotation.y = Math.PI / 2;
+  groove.position.x = side * 0.30;
+  cup.add(groove);
+  const logoDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.02, 32), dark);
+  logoDisc.rotation.z = Math.PI / 2;
+  logoDisc.position.x = side * 0.35;
+  cup.add(logoDisc);
+
+  // Inner face: thick pad ring, dark baffle, glowing driver
+  const padRing = new THREE.Mesh(new THREE.TorusGeometry(0.47, 0.15, 20, 64), soft);
+  padRing.rotation.y = Math.PI / 2;
+  padRing.position.x = -side * 0.20;
+  cup.add(padRing);
+  const baffle = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.46, 0.03, 48), soft);
+  baffle.rotation.z = Math.PI / 2;
+  baffle.position.x = -side * 0.16;
+  cup.add(baffle);
+  // Dark driver disc with a thin glowing ring (a solid white disc read as
+  // a mirror of the outer cap and looked wrong)
+  const driver = new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.27, 0.04, 48), dark);
+  driver.rotation.z = Math.PI / 2;
+  driver.position.x = -side * 0.19;
+  cup.add(driver);
+  const glowRing = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.014, 12, 64), glowMat);
+  glowRing.rotation.y = Math.PI / 2;
+  glowRing.position.x = -side * 0.195;
+  cup.add(glowRing);
+});
+
+// Cable: exits the left cup, curls down out of frame
+const connector = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.04, 0.18, 16), dark);
+connector.position.set(-1.22, -1.66, 0);
+phones.add(connector);
+const cable = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-1.22, -1.72, 0),
+  new THREE.Vector3(-1.34, -2.35, 0.18),
+  new THREE.Vector3(-1.14, -3.10, 0.10),
+  new THREE.Vector3(-1.32, -4.00, -0.15)
+]), 48, 0.028, 10), soft);
+phones.add(cable);
+
+// Rim + fill lights (environment does most of the work)
+const rimLight = new THREE.DirectionalLight(0xd8e6f2, 2.2);
+rimLight.position.set(-4, 3, -3);
+scene.add(rimLight);
+scene.add(new THREE.AmbientLight(0x30343a, 0.8));
+
+// Layout: object sits right of the text on wide screens
+let baseY = 0;
+function layout() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  rig.position.x = w > 820 ? 2.5 : 0;
+  baseY = w > 820 ? 0 : 1.4;
+  const s = w > 820 ? 1.0 : 0.68;
+  rig.scale.setScalar(s);
+}
+addEventListener('resize', layout);
+layout();
+
+// Scroll drives rotation; the object bows out before the work panel arrives
+let targetScroll = 0, smooth = 0, heroFade = 1, fadeS = 1;
+function onScroll() {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  targetScroll = max > 0 ? scrollY / max : 0;
+  const start = innerHeight * 0.2, end = innerHeight * 0.85;
+  heroFade = scrollY <= start ? 1
+    : Math.max(0, 1 - (scrollY - start) / (end - start));
+  canvas.style.opacity = heroFade;
+}
+addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+// Mouse parallax + click-and-hold drag rotation.
+// Drag starts anywhere except links/buttons/text, so selection still works.
+let mx = 0, my = 0;
+let dragging = false, dragRX = 0, dragRY = 0, lastX = 0, lastY = 0;
+addEventListener('pointerdown', e => {
+  if (e.button !== 0) return;
+  if (fadeS < 0.35) return;
+  if (e.target.closest('a, button, input, textarea, select, h1, h2, h3, p, dl')) return;
+  dragging = true; lastX = e.clientX; lastY = e.clientY;
+  document.body.classList.add('is-dragging');
+});
+addEventListener('pointermove', e => {
+  mx = (e.clientX / innerWidth - 0.5);
+  my = (e.clientY / innerHeight - 0.5);
+  if (!dragging) return;
+  dragRY += (e.clientX - lastX) * 0.006;
+  dragRX += (e.clientY - lastY) * 0.006;
+  dragRX = Math.max(-1.1, Math.min(1.1, dragRX));
+  lastX = e.clientX; lastY = e.clientY;
+});
+function endDrag() { dragging = false; document.body.classList.remove('is-dragging'); }
+addEventListener('pointerup', endDrag);
+addEventListener('pointercancel', endDrag);
+
+const clock = new THREE.Clock();
+let spinY = 0, idleY = 0;
+renderer.setAnimationLoop(() => {
+  const dt = Math.min(clock.getDelta(), 0.05);
+  const t = clock.elapsedTime;
+  smooth += (targetScroll - smooth) * 0.06;
+  fadeS += (heroFade - fadeS) * 0.08;
+  if (fadeS <= 0.004) return; // fully faded: skip the GPU work
+
+  // Idle spin pauses while the user is dragging, so it never fights the hand
+  if (!reduceMotion && !dragging) {
+    idleY += dt * 0.05;
+    spinY += dt * 0.14;
+  }
+  rig.rotation.y = smooth * Math.PI * 3 + idleY + mx * 0.25 + dragRY;
+  rig.rotation.x = smooth * Math.PI * 0.8 + my * 0.15 + dragRX;
+  rig.position.y = baseY - (1 - fadeS) * 1.4; // sinks away as it fades
+
+  if (!reduceMotion) {
+    particles.rotation.y = t * 0.045;
+    phones.rotation.y = spinY;
+    glowMat.emissiveIntensity = 0.55 + Math.sin(t * 1.4) * 0.15;
+  }
+  renderer.render(scene, camera);
+});
+
+} catch (err) {
+  // WebGL unavailable: the page works without the 3D hero
+  console.warn('3D hero disabled:', err);
+}
 </script>
 
 </body>

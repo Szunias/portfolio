@@ -1029,14 +1029,16 @@ function validateConfig(cfg) {
       }
     }
     const css = read(path.join(SRC, 'css', `${page.css}.css`));
-    const viewportFontSize = css.match(/font-size\s*:[^;]*(?:vw|vh|vmin|vmax)[^;]*;/i);
+    // Viewport units in font-size are only allowed inside clamp() (rem bounds keep zoom working).
+    const viewportFontSize = css.match(/font-size\s*:(?![^;]*clamp\()[^;]*(?:vw|vh|vmin|vmax)[^;]*;/i);
     if (viewportFontSize) {
-      throw new Error(`Viewport-based font-size is not allowed in src/css/${page.css}.css: ${viewportFontSize[0]}`);
+      throw new Error(`Viewport-based font-size outside clamp() is not allowed in src/css/${page.css}.css: ${viewportFontSize[0]}`);
     }
+    // Tracking must be 0 or a relative em value (design uses em tracking on mono labels/display type).
     for (const match of css.matchAll(/letter-spacing\s*:\s*([^;]+);/gi)) {
       const value = match[1].replace(/\s*!important/i, '').trim();
-      if (value !== '0') {
-        throw new Error(`letter-spacing must be 0 in src/css/${page.css}.css: ${match[0]}`);
+      if (value !== '0' && !/^-?(?:\d+)?\.?\d+em$/.test(value)) {
+        throw new Error(`letter-spacing must be 0 or an em value in src/css/${page.css}.css: ${match[0]}`);
       }
     }
     for (const jsName of page.js) {
@@ -1050,7 +1052,7 @@ function validateConfig(cfg) {
     .map(page => page.slug);
   const projectSlugSet = new Set(projectSlugs);
   const homeSource = read(path.join(SRC, 'pages', 'index.html'));
-  const cardSlugs = [...homeSource.matchAll(/<a\b(?=[^>]*\bclass=(["'])[^"']*\bproject-card\b[^"']*\1)[^>]*>/gi)]
+  const cardSlugs = [...homeSource.matchAll(/<a\b(?=[^>]*\bclass=(["'])[^"']*\b(?:project-card|prow)\b[^"']*\1)[^>]*>/gi)]
     .map(match => htmlFileSlug(attrValue(match[0], 'href')))
     .filter(Boolean);
   const duplicateCard = cardSlugs.find((slug, index) => cardSlugs.indexOf(slug) !== index);

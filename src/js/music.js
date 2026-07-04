@@ -231,8 +231,8 @@
   }
 
   function getCardAccent(card) {
-    if (!card || !window.getComputedStyle) return '#d4612f';
-    return getComputedStyle(card).getPropertyValue('--card-accent').trim() || '#d4612f';
+    if (!card || !window.getComputedStyle) return '#aac6de';
+    return getComputedStyle(card).getPropertyValue('--card-accent').trim() || '#aac6de';
   }
 
   function syncFeaturedTrack(card, animate) {

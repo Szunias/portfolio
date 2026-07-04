@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Igor Szuniewicz [REDESIGN MOCKUP: 3D]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   MOCKUP — "GYRO" (headphones edition)
+   A clean 3D-rendered scene: brushed-metal studio
+   headphones with glowing drivers float in a dark studio
+   and rotate as you scroll. No waveforms. The 3D object is
+   the page's only spectacle; everything else stays quiet.
+   ========================================================= */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:     #0f1013;
+  --ink:    #eceef0;
+  --muted:  #9aa0a8;
+  --faint:  #5c626b;
+  --rule:   rgba(236,238,240,0.1);
+  --rule-h: rgba(236,238,240,0.28);
+  --ice:    #aac6de;
+  --panel:  rgba(22,24,28,0.72);
+  --display:'Inter Tight', system-ui, sans-serif;
+  --body:   'Inter', system-ui, sans-serif;
+  --mono:   'IBM Plex Mono', ui-monospace, monospace;
+}
+
+html { scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior:auto; }
+  *, *::before, *::after { transition:none !important; animation:none !important; }
+}
+
+body {
+  background:var(--bg); color:var(--ink);
+  font-family:var(--body); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+a { color:inherit; text-decoration:none; }
+a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
+
+/* ---------- 3D canvas ---------- */
+#stage {
+  position:fixed; inset:0; z-index:0;
+  transition:opacity .4s;
+}
+
+/* ---------- Chrome ---------- */
+.top {
+  position:fixed; top:0; left:0; right:0; z-index:20;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:22px 40px;
+  background:linear-gradient(180deg, rgba(15,16,19,0.85), rgba(15,16,19,0));
+}
+.top__name { font-family:var(--mono); font-size:.74rem; color:var(--muted); letter-spacing:.06em; }
+.top nav { display:flex; gap:26px; font-family:var(--mono); font-size:.7rem; }
+.top nav a { color:var(--muted); transition:color .15s; }
+.top nav a:hover { color:var(--ink); }
+
+.content { position:relative; z-index:10; }
+.wrap { max-width:1160px; margin:0 auto; padding:0 40px; }
+
+/* ---------- Hero ---------- */
+.hero { min-height:100svh; display:flex; flex-direction:column; justify-content:center; }
+.hero__kicker {
+  font-family:var(--mono); font-size:.72rem; color:var(--ice);
+  letter-spacing:.14em; margin-bottom:22px;
+}
+.hero h1 {
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(3rem, 7vw, 5.8rem);
+  letter-spacing:-.035em; line-height:1.0;
+  max-width:12ch;
+}
+.hero__sub {
+  margin-top:28px; max-width:46ch; color:var(--muted); font-size:1.08rem;
+}
+.hero__cta { margin-top:44px; display:flex; gap:14px; flex-wrap:wrap; }
+.hero__cta a {
+  font-family:var(--mono); font-size:.72rem; padding:13px 24px; border-radius:999px;
+  transition:background .15s, border-color .15s, color .15s;
+}
+.hero__cta a.primary { background:var(--ink); color:var(--bg); }
+.hero__cta a.primary:hover { background:#fff; }
+.hero__cta a.ghost { border:1px solid var(--rule-h); color:var(--muted); }
+.hero__cta a.ghost:hover { color:var(--ink); border-color:var(--ink); }
+.hero__scroll {
+  position:absolute; bottom:30px; left:50%; transform:translateX(-50%);
+  font-family:var(--mono); font-size:.62rem; color:var(--faint); letter-spacing:.2em;
+}
+
+/* ---------- Sections ---------- */
+section { padding:130px 0; }
+.sec-kicker {
+  font-family:var(--mono); font-size:.7rem; color:var(--ice);
+  letter-spacing:.14em; margin-bottom:14px;
+}
+.sec-title {
+  font-family:var(--display); font-weight:600; font-size:2.6rem;
+  letter-spacing:-.025em; margin-bottom:48px;
+}
+
+/* ---------- Work panel: near-black slab, typography does the work ---------- */
+section.panel { padding:0; }
+.panel {
+  width:100vw; margin-left:calc(50% - 50vw);
+  background:#0b0e14;
+  border-top:1px solid rgba(170,198,222,0.22);
+}
+.panel__inner { max-width:1160px; margin:0 auto; padding:110px 40px 140px; }
+
+/* ---------- Project list ---------- */
+.plist { border-top:1px solid var(--rule); }
+.prow {
+  display:grid; grid-template-columns:56px 1fr 200px 190px;
+  gap:30px; align-items:center;
+  padding:32px 6px;
+  border-bottom:1px solid var(--rule);
+  transition:background .18s;
+}
+.prow:hover { background:rgba(236,242,248,0.03); }
+.prow__idx { font-family:var(--mono); font-size:.66rem; color:var(--faint); }
+.prow h3 {
+  font-family:var(--display); font-weight:600; font-size:1.9rem;
+  letter-spacing:-.02em; line-height:1.15;
+  transition:color .15s;
+}
+.prow:hover h3 { color:var(--ice); }
+.prow p { color:var(--muted); font-size:.9rem; margin-top:7px; max-width:52ch; }
+.prow__meta {
+  font-family:var(--mono); font-size:.62rem; color:var(--faint);
+  letter-spacing:.05em; line-height:1.9;
+}
+.prow__thumb { aspect-ratio:16/10; border-radius:10px; overflow:hidden; }
+.prow__thumb img {
+  width:100%; height:100%; object-fit:cover; display:block;
+  filter:saturate(.6) brightness(.75);
+  transition:filter .25s;
+}
+.prow:hover .prow__thumb img { filter:none; }
+.more {
+  display:inline-block; margin-top:36px;
+  font-family:var(--mono); font-size:.72rem; color:var(--muted);
+  border-bottom:1px solid var(--rule-h); padding-bottom:3px;
+  transition:color .15s, border-color .15s;
+}
+.more:hover { color:var(--ink); border-color:var(--ink); }
+
+/* ---------- About ---------- */
+.about-panel {
+  background:var(--panel); border:1px solid var(--rule); border-radius:14px;
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  padding:46px 48px;
+  display:grid; grid-template-columns:1.6fr 1fr; gap:52px;
+}
+.about-panel p { color:var(--muted); margin-bottom:16px; max-width:60ch; }
+.about-panel p strong { color:var(--ink); font-weight:500; }
+.facts div {
+  display:flex; justify-content:space-between; gap:16px;
+  padding:10px 0; border-bottom:1px solid var(--rule); font-size:.88rem;
+}
+.facts div:last-child { border-bottom:none; }
+.facts dt { font-family:var(--mono); font-size:.64rem; color:var(--faint); padding-top:4px; }
+.facts dd { text-align:right; color:var(--muted); }
+.facts dd.ok { color:var(--ice); }
+
+/* ---------- Contact ---------- */
+.contact { text-align:center; padding-bottom:160px; }
+.contact__mail {
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(1.8rem, 5vw, 3.8rem); letter-spacing:-.03em;
+  border-bottom:2px solid var(--rule-h);
+  transition:border-color .15s;
+}
+.contact__mail:hover { border-color:var(--ice); }
+.contact__row {
+  margin-top:44px; display:flex; justify-content:center; gap:30px;
+  font-family:var(--mono); font-size:.72rem;
+}
+.contact__row a { color:var(--muted); transition:color .15s; }
+.contact__row a:hover { color:var(--ink); }
+
+/* ---------- Scroll reveals (last: must win over .card/.more transitions) ---------- */
+.reveal {
+  opacity:0; transform:translateY(46px);
+  transition:opacity .8s cubic-bezier(.16,1,.3,1),
+             transform .8s cubic-bezier(.16,1,.3,1),
+             border-color .18s, color .15s, background .18s;
+}
+.panel.reveal { transform:translateY(90px); }
+.reveal.in { opacity:1; transform:none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity:1 !important; transform:none !important; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 820px) {
+  .top { padding:16px 20px; }
+  .top nav { gap:14px; }
+  .wrap { padding:0 20px; }
+  .prow { grid-template-columns:32px 1fr; gap:16px; padding:26px 2px; }
+  .prow__meta, .prow__thumb { display:none; }
+  .prow h3 { font-size:1.4rem; }
+  .about-panel { grid-template-columns:1fr; padding:30px 26px; gap:32px; }
+  section { padding:90px 0; }
+  .panel__inner { padding:70px 20px 100px; }
+  section.panel { padding:0; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="stage" aria-hidden="true"></canvas>
+
+<header class="top">
+  <span class="top__name">IGOR SZUNIEWICZ</span>
+  <nav aria-label="Main navigation">
+    <a href="#work">WORK</a>
+    <a href="#about">ABOUT</a>
+    <a href="music.html">MUSIC</a>
+    <a href="#contact">CONTACT</a>
+  </nav>
+</header>
+
+<div class="content">
+  <div class="wrap">
+
+    <section class="hero">
+      <div class="hero__kicker">GAME AUDIO · VR · AUDIO TOOLS</div>
+      <h1>Technical sound design for games and VR.</h1>
+      <p class="hero__sub">Spatial audio, occlusion, adaptive music, audio tools. Wwise, FMOD, UE5, Unity, C++.</p>
+      <div class="hero__cta">
+        <a class="primary" href="#work">SEE THE WORK</a>
+        <a class="ghost" href="Igor_Szuniewicz_CV.pdf" download>CV / RESUME ↓</a>
+      </div>
+      <div class="hero__scroll">SCROLL ↓</div>
+    </section>
+
+    <section id="work" class="panel reveal" aria-labelledby="work-title">
+      <div class="panel__inner">
+      <div class="sec-kicker">SELECTED WORK</div>
+      <h2 class="sec-title" id="work-title">Projects</h2>
+      <div class="plist">
+
+        <a class="prow reveal" href="shadowframes.html">
+          <span class="prow__idx">01</span>
+          <div>
+            <h3>Shadow Frames</h3>
+            <p>Solo audio on a UE5 horror game built around listening. No HUD markers, players find anomalies by ear. 32-source spatial budget and a 49-page Sound Bible.</p>
+          </div>
+          <span class="prow__meta">2025<br>WWISE · UE5 C++</span>
+          <div class="prow__thumb"><img src="old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg" alt=""></div>
+        </a>
+
+        <a class="prow reveal" href="xrlabs.html">
+          <span class="prow__idx">02</span>
+          <div>
+            <h3>XR Labs</h3>
+            <p>Sole audio designer on Unity VR and AR training sims for defence and public safety. Spatial audio, occlusion, Perforce delivery.</p>
+          </div>
+          <span class="prow__meta">2025<br>UNITY · STEAM AUDIO</span>
+          <div class="prow__thumb"><img src="old/public/assets/images/about-grid/xrlabssoldiers.png" alt=""></div>
+        </a>
+
+        <a class="prow reveal" href="transientica.html">
+          <span class="prow__idx">03</span>
+          <div>
+            <h3>Transientica</h3>
+            <p>A rhythm game you play with your mouth. 45 ms latency at 92% accuracy in the SVM prototype, pure C# KNN in the Unity rebuild.</p>
+          </div>
+          <span class="prow__meta">2025<br>ML · DSP · UNITY</span>
+          <div class="prow__thumb"><img src="transienticascreenshot.png" alt=""></div>
+        </a>
+
+        <a class="prow reveal" href="nottoday.html">
+          <span class="prow__idx">04</span>
+          <div>
+            <h3>Not Today, Darling!</h3>
+            <p>Only audio person on a 4-player split-screen racer. Procedural MetaSounds engines and a 32-voice mix that keeps every kart readable.</p>
+          </div>
+          <span class="prow__meta">2025<br>METASOUNDS · UE5</span>
+          <div class="prow__thumb"><img src="old/public/assets/images/projects/NotTodayPic1.png" alt=""></div>
+        </a>
+
+        <a class="prow reveal" href="audioq.html">
+          <span class="prow__idx">05</span>
+          <div>
+            <h3>AudioQ</h3>
+            <p>C++ sampler plugin built with JUCE: granular mode, filters, compressor, stutter. 18 automatable parameters, open source.</p>
+          </div>
+          <span class="prow__meta">2024<br>VST3 · JUCE 8</span>
+          <div class="prow__thumb"><img src="audioqscreenshot.png" alt=""></div>
+        </a>
+
+      </div>
+      <a class="more reveal" href="#work">ALL 14 PROJECTS →</a>
+      </div>
+    </section>
+
+    <section id="about" aria-labelledby="about-title">
+      <div class="sec-kicker">PROFILE</div>
+      <h2 class="sec-title" id="about-title">About</h2>
+      <div class="about-panel reveal">
+        <div>
+          <p>My <strong>Game Sound Integration</strong> studies at <strong>Digital Arts and Entertainment</strong> cover both production (DAWs, recording, mixing) and implementation: <strong>Wwise, FMOD, C++, Blueprints</strong> in Unreal and Unity. Most of my work lives in the overlap: occlusion, raycasting, spatial audio.</p>
+          <p>At <strong>XR Labs</strong> I do technical sound design for VR/AR training simulations used in defence and public-safety contexts. The job is practical: if a threat is behind a wall, the audio has to sound filtered, distant, and correctly placed.</p>
+        </div>
+        <dl class="facts">
+          <div><dt>EDUCATION</dt><dd>Howest DAE, Sound Integration</dd></div>
+          <div><dt>NOW</dt><dd>XR Labs, VR/AR training</dd></div>
+          <div><dt>BACKGROUND</dt><dd>Classical piano, 12 years</dd></div>
+          <div><dt>LOCATION</dt><dd>Kortrijk, Belgium</dd></div>
+          <div><dt>STATUS</dt><dd class="ok">Open to work</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section id="contact" class="contact" aria-labelledby="contact-title">
+      <div class="sec-kicker">CONTACT</div>
+      <h2 class="sec-title" id="contact-title">Let's talk</h2>
+      <a class="contact__mail" href="mailto:igorszuniewiczwork@gmail.com">igorszuniewiczwork@gmail.com</a>
+      <div class="contact__row">
+        <a href="#">LINKEDIN</a>
+        <a href="#">GITHUB</a>
+        <a href="Igor_Szuniewicz_CV.pdf" download>CV / RESUME ↓</a>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+// Slide-up reveals: panel + cards enter as they scroll into view.
+// Cards get a staggered delay (inline, cleared after the entrance so
+// hover transitions stay instant).
+(function () {
+  var els = document.querySelectorAll('.reveal');
+  document.querySelectorAll('.plist').forEach(function (g) {
+    Array.prototype.forEach.call(g.children, function (c, i) {
+      if (c.classList.contains('reveal')) c.style.transitionDelay = (i * 0.07) + 's';
+    });
+  });
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(function (el) { el.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      var el = e.target;
+      if (!e.isIntersecting) return;
+      el.classList.add('in');
+      io.unobserve(el);
+      if (el.style.transitionDelay) {
+        setTimeout(function () { el.style.transitionDelay = ''; }, 1400);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
+  els.forEach(function (el) { io.observe(el); });
+})();
+</script>
+
+<script type="importmap">
+{ "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const canvas = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+
+const scene = new THREE.Scene();
+scene.environment = new THREE.PMREMGenerator(renderer)
+  .fromScene(new RoomEnvironment(), 0.04).texture;
+
+const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 60);
+camera.position.set(0, 0, 9);
+
+// --- The centrepiece: brushed-metal studio headphones in a particle field ---
+const rig = new THREE.Group();
+scene.add(rig);
+
+const metal = new THREE.MeshPhysicalMaterial({
+  color: 0xc9ced4, metalness: 1.0, roughness: 0.22,
+  clearcoat: 0.6, clearcoatRoughness: 0.3
+});
+const dark = new THREE.MeshPhysicalMaterial({
+  color: 0x3a4148, metalness: 0.9, roughness: 0.35
+});
+
+// Particle field — sound hanging in the air of a dark studio.
+// A loose cylinder of tiny ice-blue points drifting around the object.
+const P = 460;
+const pPos = new Float32Array(P * 3);
+for (let i = 0; i < P; i++) {
+  const r = 1.5 + Math.random() * 3.2;
+  const th = Math.random() * Math.PI * 2;
+  pPos[i * 3]     = Math.cos(th) * r;
+  pPos[i * 3 + 1] = (Math.random() - 0.5) * 5.2;
+  pPos[i * 3 + 2] = Math.sin(th) * r;
+}
+const pGeo = new THREE.BufferGeometry();
+pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
+  color: 0xaac6de, size: 0.035, transparent: true, opacity: 0.65,
+  sizeAttenuation: true, depthWrite: false, blending: THREE.AdditiveBlending
+}));
+rig.add(particles);
+
+// Studio headphones — the sound designer's daily tool, done properly:
+// strap-profile band, telescoping sliders, fork gimbals, layered cups, a cable.
+const phones = new THREE.Group();
+phones.rotation.z = -0.1;
+phones.rotation.x = 0.16;   // slight forward tilt shows the cup interiors
+phones.position.y = 0.15;
+rig.add(phones);
+
+const soft = new THREE.MeshPhysicalMaterial({ color: 0x22262c, metalness: 0.15, roughness: 0.85 });
+const glowMat = new THREE.MeshPhysicalMaterial({ color: 0xe8ecf0, metalness: 0.2,
+  roughness: 0.1, emissive: 0xaac6de, emissiveIntensity: 0.55 });
+
+// Headband: flattened metal strap + soft cushion hugging its underside.
+// Squashed horizontally so the span matches real headphone proportions.
+const band = new THREE.Mesh(new THREE.TorusGeometry(1.52, 0.075, 24, 140, Math.PI), metal);
+band.scale.set(0.8, 1.02, 2.1);           // narrow ellipse, flat strap tube
+phones.add(band);
+const cushion = new THREE.Mesh(new THREE.TorusGeometry(1.43, 0.055, 16, 110, Math.PI * 0.64), soft);
+cushion.scale.set(0.8, 1, 1.7);
+cushion.rotation.z = Math.PI * 0.18;      // centre the shorter arc on top
+phones.add(cushion);
+
+[-1, 1].forEach(side => {
+  // Telescoping slider block + stem dropping from the band end
+  const slider = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.5, 0.24), dark);
+  slider.position.set(side * 1.22, -0.18, 0);
+  phones.add(slider);
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.34, 12), metal);
+  stem.position.set(side * 1.22, -0.36, 0);
+  phones.add(stem);
+
+  const cup = new THREE.Group();
+  cup.position.set(side * 1.22, -1.0, 0);
+  cup.rotation.z = side * -0.08;   // cups angle slightly inward, as if worn
+  phones.add(cup);
+
+  // Fork gimbal: arcs over the cup, pivot pins at front and back
+  const fork = new THREE.Mesh(new THREE.TorusGeometry(0.70, 0.026, 12, 80, Math.PI), metal);
+  fork.rotation.y = Math.PI / 2;
+  cup.add(fork);
+  [-1, 1].forEach(fz => {
+    const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.038, 0.2, 12), metal);
+    pin.rotation.x = Math.PI / 2;
+    pin.position.set(0, 0, fz * 0.64);
+    cup.add(pin);
+  });
+
+  // Drum shell + domed outer cap with groove ring and centre disc
+  const shell = new THREE.Mesh(new THREE.CylinderGeometry(0.60, 0.60, 0.30, 64), dark);
+  shell.rotation.z = Math.PI / 2;
+  cup.add(shell);
+  const domeCap = new THREE.Mesh(new THREE.SphereGeometry(0.56, 48, 24), metal);
+  domeCap.scale.set(0.4, 1, 1);
+  domeCap.position.x = side * 0.12;
+  cup.add(domeCap);
+  const groove = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.012, 10, 64), dark);
+  groove.rotation.y = Math.PI / 2;
+  groove.position.x = side * 0.30;
+  cup.add(groove);
+  const logoDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.02, 32), dark);
+  logoDisc.rotation.z = Math.PI / 2;
+  logoDisc.position.x = side * 0.35;
+  cup.add(logoDisc);
+
+  // Inner face: thick pad ring, dark baffle, glowing driver
+  const padRing = new THREE.Mesh(new THREE.TorusGeometry(0.47, 0.15, 20, 64), soft);
+  padRing.rotation.y = Math.PI / 2;
+  padRing.position.x = -side * 0.20;
+  cup.add(padRing);
+  const baffle = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.46, 0.03, 48), soft);
+  baffle.rotation.z = Math.PI / 2;
+  baffle.position.x = -side * 0.16;
+  cup.add(baffle);
+  const driver = new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.27, 0.04, 48), glowMat);
+  driver.rotation.z = Math.PI / 2;
+  driver.position.x = -side * 0.19;
+  cup.add(driver);
+});
+
+// Cable: exits the left cup, curls down out of frame
+const connector = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.04, 0.18, 16), dark);
+connector.position.set(-1.22, -1.66, 0);
+phones.add(connector);
+const cable = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-1.22, -1.72, 0),
+  new THREE.Vector3(-1.34, -2.35, 0.18),
+  new THREE.Vector3(-1.14, -3.10, 0.10),
+  new THREE.Vector3(-1.32, -4.00, -0.15)
+]), 48, 0.028, 10), soft);
+phones.add(cable);
+
+// Rim + fill lights (environment does most of the work)
+const rim = new THREE.DirectionalLight(0xd8e6f2, 2.2);
+rim.position.set(-4, 3, -3);
+scene.add(rim);
+scene.add(new THREE.AmbientLight(0x30343a, 0.8));
+
+// --- Layout: object sits right of the text on wide screens ---
+let baseY = 0;
+function layout() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  rig.position.x = w > 820 ? 2.5 : 0;
+  baseY = w > 820 ? 0 : 1.4;
+  const s = w > 820 ? 1.0 : 0.68;   // phones are wide — keep them in frame
+  rig.scale.setScalar(s);
+}
+addEventListener('resize', layout);
+layout();
+
+// --- Scroll drives rotation; the object bows out before the work panel arrives ---
+let targetScroll = 0, smooth = 0, heroFade = 1, fadeS = 1;
+function onScroll() {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  targetScroll = max > 0 ? scrollY / max : 0;
+  const start = innerHeight * 0.2, end = innerHeight * 0.85;
+  heroFade = scrollY <= start ? 1
+    : Math.max(0, 1 - (scrollY - start) / (end - start));
+  canvas.style.opacity = heroFade;
+}
+addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+let mx = 0, my = 0;
+addEventListener('pointermove', e => {
+  mx = (e.clientX / innerWidth - 0.5);
+  my = (e.clientY / innerHeight - 0.5);
+});
+
+const clock = new THREE.Clock();
+renderer.setAnimationLoop(() => {
+  const t = clock.getElapsedTime();
+  smooth += (targetScroll - smooth) * 0.06;          // buttery scroll coupling
+  fadeS += (heroFade - fadeS) * 0.08;
+  if (fadeS <= 0.004) return;                        // fully faded — skip the GPU work
+
+  rig.rotation.y = smooth * Math.PI * 3 + (reduceMotion ? 0 : t * 0.05) + mx * 0.25;
+  rig.rotation.x = smooth * Math.PI * 0.8 + my * 0.15;
+  rig.position.y = baseY - (1 - fadeS) * 1.4;        // sinks away as it fades
+
+  if (!reduceMotion) {
+    particles.rotation.y = t * 0.045;                   // the air slowly circulates
+    phones.rotation.y = t * 0.14;                       // slow spin shows every angle
+    glowMat.emissiveIntensity = 0.55 + Math.sin(t * 1.4) * 0.15; // slow breath, not a beat
+  }
+  renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>

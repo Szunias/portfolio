@@ -37,7 +37,11 @@ module.exports = {
       slug: 'index',
       layout: 'home',
       css: 'home',
-      js: ['theme-toggle'],
+      js: ['home-list'],
+      assets: [
+        'vendor/three.module.min.js',
+        'vendor/RoomEnvironment.js',
+      ],
       title: 'Igor Szuniewicz | Game Audio & Technical Sound Designer',
       ogTitle: 'Igor Szuniewicz | Game Audio & Technical Sound Designer',
       description: 'Game audio portfolio by Igor Szuniewicz: readable gameplay mixes, Wwise/Unreal/Unity implementation, spatial audio, C++ tools, and sound design case studies.',
