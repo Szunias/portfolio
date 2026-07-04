@@ -93,7 +93,9 @@ function collectFileSizes(dir, base = dir) {
 function enforceDistBudget() {
   const files = collectFileSizes(DIST);
   const total = files.reduce((sum, file) => sum + file.size, 0);
-  const maxTotal = 650 * 1024 * 1024;
+  // GitHub Pages hard limit is 1 GB; 700 MB keeps ~300 MB headroom
+  // (raised from 650 MB when the 54-track Evolution section landed).
+  const maxTotal = 700 * 1024 * 1024;
   const maxFile = 65 * 1024 * 1024;
   const largestFiles = files.slice().sort((a, b) => b.size - a.size);
   const largest = largestFiles[0];

@@ -16,9 +16,11 @@
   trackCards.sort(function(a, b) {
     return trackOrder(a) - trackOrder(b);
   });
+  // Only re-append cards that already belong to #tracks-grid.
+  // Evolution cards live in their own #evolution-grid and must stay there.
   if (tracksGrid) {
     trackCards.forEach(function(card) {
-      tracksGrid.appendChild(card);
+      if (card.parentNode === tracksGrid) tracksGrid.appendChild(card);
     });
   }
 
@@ -31,7 +33,19 @@
     var tags = (card.getAttribute('data-tags') || '').split(',').map(function(tag) {
       return tag.trim();
     });
-    return filter === 'all' || tags.indexOf(filter) !== -1;
+    var isEvolution = tags.indexOf('evolution') !== -1;
+    // "All" means the curated main grid, not the raw evolution demos.
+    if (filter === 'all') return !isEvolution;
+    return tags.indexOf(filter) !== -1;
+  }
+
+  var evolutionSection = document.querySelector('.evolution-section');
+  var tracksSection = document.querySelector('.tracks-section');
+
+  function syncSectionVisibility(filter) {
+    var showEvolution = filter === 'evolution';
+    if (evolutionSection) evolutionSection.hidden = !showEvolution;
+    if (tracksSection) tracksSection.hidden = showEvolution;
   }
 
   function setCardAvailable(card, available) {
@@ -67,6 +81,7 @@
       activateFilter(btn, false);
 
       var filter = btn.getAttribute('data-filter');
+      syncSectionVisibility(filter);
       var run = ++filterGeneration;
 
       trackCards.forEach(function(card) {
@@ -998,6 +1013,16 @@
       }
     });
   }
+
+  // Default filter is "All" — hide evolution demos and the evolution section
+  // so the curated 15-track grid is what the visitor sees first.
+  trackCards.forEach(function(card) {
+    if ((card.getAttribute('data-tags') || '').split(',').map(function(t) { return t.trim(); }).indexOf('evolution') !== -1) {
+      setCardAvailable(card, false);
+      card.classList.add('hidden');
+    }
+  });
+  syncSectionVisibility('all');
 
   var initialFeatured = visibleCards()[0] || trackCards[0];
   if (initialFeatured) syncFeaturedTrack(initialFeatured, false);
