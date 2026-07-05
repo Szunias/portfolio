@@ -233,18 +233,19 @@ function onScroll() {
 addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
-// Mouse parallax + click-and-hold drag rotation.
-// Drag starts anywhere except links/buttons/text, so selection still works.
+// Mouse parallax + click-and-hold drag rotation (desktop mouse only —
+// touch pointerdown must never hijack finger-scrolling on mobile).
 let mx = 0, my = 0;
 let dragging = false, dragRX = 0, dragRY = 0, lastX = 0, lastY = 0;
 addEventListener('pointerdown', e => {
-  if (e.button !== 0) return;
+  if (e.pointerType !== 'mouse' || e.button !== 0) return;
   if (fadeS < 0.35) return;
   if (e.target.closest('a, button, input, textarea, select, h1, h2, h3, p, dl')) return;
   dragging = true; lastX = e.clientX; lastY = e.clientY;
   document.body.classList.add('is-dragging');
 });
 addEventListener('pointermove', e => {
+  if (e.pointerType && e.pointerType !== 'mouse') return;
   mx = (e.clientX / innerWidth - 0.5);
   my = (e.clientY / innerHeight - 0.5);
   if (!dragging) return;
