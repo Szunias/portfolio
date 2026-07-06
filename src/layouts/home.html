@@ -118,10 +118,14 @@ const glowMat = new THREE.MeshPhysicalMaterial({ color: 0xe8ecf0, metalness: 0.2
 const band = new THREE.Mesh(new THREE.TorusGeometry(1.52, 0.075, 24, 140, Math.PI), metal);
 band.scale.set(0.8, 1.02, 2.1);
 phones.add(band);
-// Cushion is embedded into the strap's underside so they visibly touch
-const cushion = new THREE.Mesh(new THREE.TorusGeometry(1.46, 0.06, 16, 110, Math.PI * 0.64), soft);
+// Cushion is embedded into the strap's underside so they visibly touch.
+// The arc is centred at geometry level (not via mesh rotation): rotating
+// the mesh after its non-uniform scale would tilt the cushion's ellipse
+// away from the band's, leaving the cushion floating outside the model.
+const cushionGeo = new THREE.TorusGeometry(1.46, 0.06, 16, 110, Math.PI * 0.64);
+cushionGeo.rotateZ(Math.PI * 0.18);
+const cushion = new THREE.Mesh(cushionGeo, soft);
 cushion.scale.set(0.8, 1.01, 1.7);
-cushion.rotation.z = Math.PI * 0.18;
 phones.add(cushion);
 
 [-1, 1].forEach(side => {

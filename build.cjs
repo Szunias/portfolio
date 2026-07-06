@@ -921,29 +921,37 @@ function buildPage(page) {
   // 4. Assemble JS (concatenate files)
   const js = page.js.map(name => getJS(name)).join('\n\n');
 
-  // 5. Replace placeholders
-  html = html.replace('<!-- TITLE -->', escAttr(page.title));
-  html = html.replace('<!-- DESCRIPTION -->', escAttr(page.description));
-  html = html.replace('<!-- CANONICAL -->', escAttr(page.canonical));
-  html = html.replace('<!-- OG_TAGS -->', ogTags(page));
-  html = html.replace('<!-- CSS -->', css);
-  html = html.replace('<!-- CONTENT -->', content);
-  html = html.replace('<!-- JS -->', js);
+  // 5. Replace placeholders. Values are passed as replacer functions so that
+  //    literal "$" sequences in CSS/JS/content (e.g. $&, $', $`) are not
+  //    interpreted as String.replace special patterns and corrupted.
+  html = html.replace('<!-- TITLE -->', () => escAttr(page.title));
+  html = html.replace('<!-- DESCRIPTION -->', () => escAttr(page.description));
+  html = html.replace('<!-- CANONICAL -->', () => escAttr(page.canonical));
+  html = html.replace('<!-- OG_TAGS -->', () => ogTags(page));
+  html = html.replace('<!-- CSS -->', () => css);
+  html = html.replace('<!-- CONTENT -->', () => content);
+  if (js.trim()) {
+    html = html.replace('<!-- JS -->', () => js);
+  } else {
+    // A page with no JS would otherwise emit an empty inline script block,
+    // which the output validator rejects.
+    html = html.replace(/<script>\s*<!-- JS -->\s*<\/script>\s*/, '');
+  }
 
   // 6. Optional partials
   if (page.lightbox) {
-    html = html.replace('<!-- LIGHTBOX -->', enhanceInlineSvgAccessibility(getPartial('lightbox')));
+    html = html.replace('<!-- LIGHTBOX -->', () => enhanceInlineSvgAccessibility(getPartial('lightbox')));
   } else {
     html = html.replace('<!-- LIGHTBOX -->', '');
   }
 
   if (page.layout === 'music') {
-    html = html.replace('<!-- PLAYER -->', enhanceInlineSvgAccessibility(getPartial('player-bar')));
+    html = html.replace('<!-- PLAYER -->', () => enhanceInlineSvgAccessibility(getPartial('player-bar')));
   }
 
   // 7. Schema (home page)
   const schema = [schemaTags(page), page.schema || ''].filter(Boolean).join('\n');
-  html = html.replace('<!-- SCHEMA -->', schema);
+  html = html.replace('<!-- SCHEMA -->', () => schema);
 
   return html;
 }

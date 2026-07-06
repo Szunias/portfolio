@@ -37,7 +37,7 @@ module.exports = {
       slug: 'index',
       layout: 'home',
       css: 'home',
-      js: ['home-list'],
+      js: [],
       assets: [
         'vendor/three.module.min.js',
         'vendor/RoomEnvironment.js',
@@ -230,7 +230,7 @@ module.exports = {
       css: 'project',
       js: ['scroll-progress', 'scroll-reveal', 'theme-toggle'],
       title: 'Wwise UE Fixer | Unreal Audio Repair Tool',
-      description: 'Dev tool for repairing broken Wwise and Unreal audio references after Perforce syncs: backup-first workflow and repair time cut from about 20 minutes to 10 seconds.',
+      description: 'Dev tool for repairing broken Wwise and Unreal audio references after Perforce syncs: backup-first workflow and repair time cut from ~20 minutes to 10 seconds.',
       canonical: `${SITE}/wwisefixer.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-wwisefixer/wwisefixerlogo.jpeg`,
       ogImageAlt: 'Wwise UE Fixer tool logo for Unreal Engine audio repair workflow',

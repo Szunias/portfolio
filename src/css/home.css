@@ -143,26 +143,29 @@ section.panel { padding:0; }
   letter-spacing:-.03em; line-height:1.05;
   transition:color .15s;
 }
-.prow:hover h3 { color:var(--ice); }
+.prow:hover h3,
+.prow:focus-visible h3 { color:var(--ice); }
 .prow p { color:var(--muted); font-size:.9rem; margin-top:10px; max-width:56ch; }
 .prow__meta {
   font-family:var(--mono); font-size:.62rem; color:var(--faint);
   letter-spacing:.05em; line-height:1.9; text-align:right;
 }
-/* in-row thumbs stay in the DOM (asset pipeline reads src) but never render;
-   home-list.js lifts them into the floating cursor preview */
-.prow__thumb { display:none; }
-#work-preview {
-  position:fixed; left:0; top:0; z-index:40;
-  width:320px; aspect-ratio:16/10;
-  border-radius:12px; overflow:hidden; pointer-events:none;
-  border:1px solid rgba(170,198,222,0.25);
-  background:#0b0b0d;
-  box-shadow:0 22px 60px rgba(0,0,0,0.5);
-  opacity:0; transition:opacity .18s;
+/* Accordion drawer: hovering a row slides its thumbnail open beneath the
+   text; leaving the row closes it again. */
+.prow__thumb {
+  grid-column:1 / -1;
+  max-height:0; overflow:hidden; opacity:0;
+  transition:max-height .45s ease, opacity .3s ease;
 }
-#work-preview img { width:100%; height:100%; object-fit:cover; display:block; }
-#work-preview.on { opacity:1; }
+.prow__thumb img {
+  display:block; width:100%; height:260px; object-fit:cover;
+  margin-top:26px; border-radius:12px;
+  border:1px solid rgba(170,198,222,0.25);
+}
+.prow:hover .prow__thumb,
+.prow:focus-visible .prow__thumb {
+  max-height:300px; opacity:1;
+}
 .more {
   display:inline-block; margin-top:36px;
   font-family:var(--mono); font-size:.72rem; color:var(--muted);
@@ -201,8 +204,12 @@ section.panel { padding:0; }
   backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
 }
 .contact__mail {
+  display:inline-block; max-width:100%;
   font-family:var(--display); font-weight:700;
-  font-size:clamp(1.8rem, 5vw, 3.8rem); letter-spacing:-.03em;
+  /* capped at 3rem: any larger and the address grows wider than the card,
+     overflowing right instead of centring */
+  font-size:clamp(1.5rem, 4.2vw, 3rem); letter-spacing:-.03em;
+  overflow-wrap:anywhere;
   border-bottom:2px solid var(--rule-h);
   transition:border-color .15s;
 }
@@ -223,6 +230,16 @@ section.panel { padding:0; }
   font-family:var(--mono); font-size:.62rem; color:var(--faint); letter-spacing:.05em;
 }
 
+/* Glass fallback: where backdrop-filter is unsupported (older Firefox, some
+   mobile browsers) the translucent panels sit over the 3D canvas with no blur,
+   which hurts contrast. Give them a near-opaque background instead. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .top nav,
+  .hero__cta a.ghost,
+  .about-panel,
+  .contact__card { background:rgba(16,16,18,0.94); }
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 820px) {
   .top { padding:16px 20px; }
@@ -231,7 +248,7 @@ section.panel { padding:0; }
   .prow { grid-template-columns:36px 1fr; gap:16px; padding:26px 2px; }
   .prow__meta { display:none; }
   .prow h3 { font-size:1.55rem; }
-  #work-preview { display:none; }
+  .prow__thumb img { height:170px; margin-top:18px; }
   .about-panel { grid-template-columns:1fr; padding:30px 26px; gap:32px; }
   .contact__card { padding:44px 22px 40px; }
   section { padding:90px 0; }

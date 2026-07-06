@@ -31,22 +31,12 @@
   --player-height: 72px;
 }
 
-[data-theme="light"] {
-  --cream: #faf8f5;
-  --white: #ffffff;
-  --black: #1a1a1a;
-  --accent: #a84624;
-  --accent-light: #f3ebe6;
-  --grey: #5e5e5e;
-  --grey-light: #717171;
-  --grey-rule: #d8d4cf;
-  --dark-section: #1c1c26;
-}
-
 ::selection {
   background: var(--accent);
   color: #0f1013;
 }
+
+img { max-width: 100%; }
 
 html {
   scroll-behavior: smooth;
@@ -156,46 +146,6 @@ a:focus-visible {
   color: var(--accent);
   border: none;
 }
-
-/* ---- Theme Toggle (from home.css) ---- */
-.theme-toggle {
-  background: none;
-  border: 1px solid var(--grey-rule);
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: border-color 0.3s ease;
-}
-
-.theme-toggle:hover {
-  border-color: var(--accent);
-}
-
-.theme-toggle:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.theme-toggle svg {
-  fill: none;
-  stroke: var(--grey);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  transition: stroke 0.3s ease;
-}
-
-.theme-toggle:hover svg {
-  stroke: var(--accent);
-}
-
-.theme-toggle__moon { display: none; }
-.theme-toggle__sun { display: block; }
-[data-theme="light"] .theme-toggle__sun { display: none; }
-[data-theme="light"] .theme-toggle__moon { display: block; }
 
 /* =========================================
    MUSIC HERO
@@ -682,7 +632,7 @@ a:focus-visible {
   position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 0.45s ease, filter 0.45s ease;
+  transition: filter 0.45s ease;
 }
 
 .track-card__image {
@@ -693,7 +643,6 @@ a:focus-visible {
 }
 
 .track-card:hover .track-card__gradient {
-  transform: scale(1.06);
   filter: saturate(1.08) contrast(1.04);
 }
 
@@ -727,11 +676,6 @@ a:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease;
-}
-
-.track-card:hover .track-card__play-btn {
-  transform: scale(1.08);
 }
 
 .track-card__play-btn svg {
@@ -788,7 +732,10 @@ a:focus-visible {
 .track-card__year {
   font-family: var(--serif);
   font-size: 12px;
-  color: var(--card-accent);
+  /* Mixed toward the light foreground so every --card-accent order still
+     clears 4.5:1 on the card background (raw accent alone dipped to ~4.15:1
+     on the darkest orders). */
+  color: color-mix(in srgb, var(--card-accent) 45%, #f0ece6 55%);
   font-style: italic;
   margin-bottom: 10px;
 }
@@ -1183,145 +1130,12 @@ a:focus-visible {
   top: 50%;
   height: 10px;
   width: 70%;
-  background: rgba(240,236,230,0.4);
+  /* var(--signal) matches the seek progress-fill so both sliders read as
+     the same control; the prior translucent white gave only ~2.6:1 against
+     the unfilled track (needs 3:1 for a graphical UI component). */
+  background: var(--signal);
   border-radius: 999px;
   transform: translateY(-50%);
-}
-
-[data-theme="light"] .player-bar {
-  background: rgba(245,242,237,0.94);
-  border-top: 1px solid rgba(26,26,26,0.14);
-  box-shadow: 0 -18px 42px rgba(26,26,26,0.12);
-}
-
-[data-theme="light"] .player-bar__title {
-  color: #1a1a1a;
-}
-
-[data-theme="light"] .player-bar__artist {
-  color: rgba(26,26,26,0.72);
-}
-
-[data-theme="light"] .player-bar__status {
-  color: rgba(26,26,26,0.54);
-}
-
-[data-theme="light"] .player-bar__status::before {
-  background: rgba(26,26,26,0.28);
-}
-
-[data-theme="light"] .player-bar__ctrl-btn svg {
-  fill: rgba(26,26,26,0.55);
-}
-
-[data-theme="light"] .player-bar__ctrl-btn:hover svg {
-  fill: #1a1a1a;
-}
-
-[data-theme="light"] .player-bar__ctrl-btn:hover {
-  background: rgba(26,26,26,0.08);
-}
-
-[data-theme="light"] .player-bar__time {
-  color: rgba(26,26,26,0.72);
-}
-
-[data-theme="light"] .player-bar__progress::before,
-[data-theme="light"] .player-bar__volume::before {
-  background: rgba(26,26,26,0.12);
-}
-
-[data-theme="light"] .player-bar__vol-icon svg {
-  fill: rgba(26,26,26,0.55);
-  color: rgba(26,26,26,0.55);
-}
-
-[data-theme="light"] .player-bar__volume-fill {
-  background: rgba(26,26,26,0.45);
-}
-
-[data-theme="light"] .player-bar__progress-buffer {
-  background: rgba(26,26,26,0.18);
-}
-
-[data-theme="light"] .player-bar__vol-icon:hover {
-  background: rgba(26,26,26,0.08);
-}
-
-[data-theme="light"] body {
-  background:
-    linear-gradient(90deg, rgba(26,26,26,0.045) 1px, transparent 1px) 0 0 / 78px 78px,
-    linear-gradient(0deg, rgba(26,26,26,0.035) 1px, transparent 1px) 0 0 / 78px 78px,
-    radial-gradient(circle at 20% 8%, rgba(168,70,36,0.13), transparent 30%),
-    #faf8f5;
-}
-
-[data-theme="light"] .filters {
-  background: linear-gradient(180deg, rgba(250,248,245,0.96), rgba(250,248,245,0.78) 72%, transparent);
-}
-
-[data-theme="light"] .filter-btn {
-  color: rgba(26,26,26,0.68);
-  background: rgba(26,26,26,0.035);
-  border-color: rgba(26,26,26,0.16);
-}
-
-[data-theme="light"] .music-gallery::before {
-  border-color: rgba(26,26,26,0.12);
-  background:
-    radial-gradient(circle at 36% 48%, color-mix(in srgb, var(--gallery-accent) 22%, transparent), transparent 34%),
-    linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.66) 48%, rgba(250,248,245,0.78));
-  box-shadow: 0 34px 90px rgba(26,26,26,0.12);
-}
-
-[data-theme="light"] .music-gallery::after {
-  background:
-    linear-gradient(90deg, transparent 0 49.8%, rgba(26,26,26,0.12) 49.8% 50%, transparent 50%),
-    linear-gradient(0deg, transparent 0 49.8%, rgba(26,26,26,0.08) 49.8% 50%, transparent 50%);
-  mix-blend-mode: multiply;
-}
-
-[data-theme="light"] .music-gallery__title {
-  color: #1a1a1a;
-}
-
-[data-theme="light"] .music-gallery__artist,
-[data-theme="light"] .music-gallery__description,
-[data-theme="light"] .music-gallery__tags span {
-  color: rgba(26,26,26,0.68);
-}
-
-[data-theme="light"] .music-gallery__meta span {
-  background: rgba(255,255,255,0.58);
-  border-color: rgba(26,26,26,0.14);
-  color: rgba(26,26,26,0.68);
-}
-
-[data-theme="light"] .music-gallery__play {
-  background: #1a1a1a;
-  color: #fff;
-}
-
-[data-theme="light"] .track-card {
-  background: rgba(255,255,255,0.82);
-  border-color: rgba(26,26,26,0.12);
-  box-shadow: 0 18px 44px rgba(26,26,26,0.08);
-}
-
-[data-theme="light"] .track-card::before {
-  color: rgba(26,26,26,0.72);
-  background: rgba(250,248,245,0.72);
-  border-color: rgba(26,26,26,0.16);
-}
-
-[data-theme="light"] .track-card__body {
-  border-top-color: rgba(26,26,26,0.1);
-}
-
-[data-theme="light"] .track-card__artist,
-[data-theme="light"] .track-card__desc,
-[data-theme="light"] .track-card__tag {
-  color: rgba(26,26,26,0.66);
 }
 
 @keyframes playerLoad {
@@ -1615,7 +1429,6 @@ a:focus-visible {
   }
 
   .skip-link,
-  .theme-toggle,
   .player-bar {
     display: none !important;
   }
@@ -1646,18 +1459,6 @@ a:focus-visible {
   --dark-section: #0b0b0d;
 }
 
-[data-theme="light"] {
-  --cream: #f7f4ee;
-  --white: #ffffff;
-  --black: #15191d;
-  --accent: #a83a18;
-  --signal: #007f76;
-  --violet: #6054b8;
-  --paper: #15191d;
-  --grey: #4f5b5b;
-  --grey-light: #6c7472;
-  --grey-rule: rgba(21, 25, 29, 0.14);
-}
 
 body * {
   letter-spacing: 0 !important;
@@ -1768,36 +1569,6 @@ body * {
 
 .player-bar__ctrl-btn[aria-pressed="true"] svg {
   fill: var(--signal);
-}
-
-[data-theme="light"] .music-hero__subtitle {
-  color: rgba(21, 25, 29, 0.78);
-}
-
-[data-theme="light"] .music-gallery__meta span {
-  background: rgba(255,255,255,0.78);
-  border-color: rgba(21,25,29,0.24);
-  color: rgba(21,25,29,0.78);
-}
-
-[data-theme="light"] .track-card__duration,
-[data-theme="light"] .track-card__year {
-  color: rgba(21,25,29,0.74);
-}
-
-[data-theme="light"] .track-card__year {
-  color: var(--accent);
-  font-weight: 600;
-}
-
-[data-theme="light"] .track-card__tag {
-  background: rgba(21,25,29,0.035);
-  border-color: color-mix(in srgb, var(--card-accent) 38%, rgba(21,25,29,0.28));
-  color: rgba(21,25,29,0.74);
-}
-
-[data-theme="light"] .track-card.active .track-card__tag {
-  color: rgba(21,25,29,0.82);
 }
 
 @media (max-width: 760px) {
@@ -1995,91 +1766,18 @@ body * {
   box-shadow: none;
 }
 
-[data-theme="light"] .filter-btn:hover,
-[data-theme="light"] .filter-btn.active {
-  color: #15191d;
-  border-color: rgba(21,25,29,0.2);
-  background: rgba(255,255,255,0.72);
-}
-
-/* Floating theme toggle and smooth color change. */
+/* Smooth color transitions. */
 html,
 body,
 .music-hero,
 .music-gallery,
 .track-card,
-.player-bar,
-.theme-toggle {
+.player-bar {
   transition:
     background-color 0.42s ease,
     color 0.42s ease,
     border-color 0.42s ease,
     box-shadow 0.42s ease;
-}
-
-html.theme-switching::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 9998;
-  pointer-events: none;
-  opacity: 0;
-  animation: theme-flash 0.72s ease;
-}
-
-html[data-theme="light"].theme-switching::before {
-  background: radial-gradient(circle at calc(100% - 52px) 52px, rgba(255,255,255,0.74), transparent 36%),
-    rgba(244,239,231,0.24);
-}
-
-html[data-theme="dark"].theme-switching::before {
-  background: radial-gradient(circle at calc(100% - 52px) 52px, rgba(8,10,12,0.74), transparent 36%),
-    rgba(8,10,12,0.24);
-}
-
-@keyframes theme-flash {
-  0% { opacity: 0; }
-  32% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.theme-toggle {
-  position: fixed !important;
-  top: 18px !important;
-  right: 22px !important;
-  z-index: 9999 !important;
-  width: 58px !important;
-  height: 58px !important;
-  min-width: 58px;
-  min-height: 58px;
-  border: 1px solid color-mix(in srgb, var(--black) 22%, transparent) !important;
-  border-radius: 999px !important;
-  background: color-mix(in srgb, var(--cream) 82%, transparent) !important;
-  color: var(--black) !important;
-  box-shadow: 0 14px 42px rgba(0,0,0,0.16), inset 0 0 0 1px color-mix(in srgb, var(--white) 52%, transparent);
-  backdrop-filter: blur(18px);
-}
-
-.theme-toggle:hover {
-  border-color: var(--accent) !important;
-  background: color-mix(in srgb, var(--accent) 12%, var(--cream)) !important;
-}
-
-.theme-toggle svg {
-  width: 24px;
-  height: 24px;
-  stroke-width: 2.4;
-}
-
-@media (max-width: 650px) {
-  .theme-toggle {
-    top: 14px !important;
-    right: 14px !important;
-    width: 52px !important;
-    height: 52px !important;
-    min-width: 52px;
-    min-height: 52px;
-  }
 }
 
 /* =========================================
