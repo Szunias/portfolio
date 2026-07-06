@@ -217,8 +217,10 @@ function layout() {
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
   rig.position.x = w > 820 ? 2.5 : 0;
-  baseY = w > 820 ? 0 : 1.4;
-  const s = w > 820 ? 1.0 : 0.68;
+  // Narrow screens: the hero text is bottom-anchored (see CSS), so the
+  // phones shrink and sit in the free zone between the nav and the text.
+  baseY = w > 820 ? 0 : 1.8;
+  const s = w > 820 ? 1.0 : 0.5;
   rig.scale.setScalar(s);
 }
 addEventListener('resize', layout);
