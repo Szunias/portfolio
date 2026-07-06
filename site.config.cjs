@@ -37,7 +37,7 @@ module.exports = {
       slug: 'index',
       layout: 'home',
       css: 'home',
-      js: [],
+      js: ['home-list'],
       assets: [
         'vendor/three.module.min.js',
         'vendor/RoomEnvironment.js',
