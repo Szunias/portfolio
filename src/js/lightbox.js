@@ -120,7 +120,8 @@
       if (!lightbox.classList.contains('active')) {
         lightbox.hidden = true;
         lbImg.setAttribute('aria-hidden', 'true');
-        lbImg.removeAttribute('src');
+        // Reset to the transparent placeholder (img must always have a src)
+        lbImg.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
       }
       closeTimer = null;
     }, 300);

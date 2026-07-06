@@ -30,14 +30,16 @@
   split.appendChild(view);
 
   var imgs = [];
+  var srcs = [];
   var metas = [];
   rows.forEach(function (row) {
     var thumb = row.querySelector('.prow__thumb img');
     var img = document.createElement('img');
     img.alt = '';
     img.decoding = 'async';
-    img.loading = 'eager';
-    img.src = thumb ? (thumb.currentSrc || thumb.src) : '';
+    // src is assigned lazily in activate() so the page load doesn't pull
+    // all 15 full-size thumbs at once
+    srcs.push(thumb ? (thumb.currentSrc || thumb.src) : '');
     frame.appendChild(img);
     imgs.push(img);
 
@@ -53,6 +55,11 @@
   function activate(i) {
     if (i === current) return;
     if (current >= 0) imgs[current].classList.remove('on');
+    if (!imgs[i].src && srcs[i]) imgs[i].src = srcs[i];
+    // preload the neighbours so quick cursor sweeps don't flash empty frames
+    [i - 1, i + 1].forEach(function (j) {
+      if (imgs[j] && !imgs[j].src && srcs[j]) imgs[j].src = srcs[j];
+    });
     imgs[i].classList.add('on');
     capIdx.textContent = (i + 1 < 10 ? '0' : '') + (i + 1) + ' / ' + rows.length;
     capMeta.textContent = metas[i];
