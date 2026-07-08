@@ -50,6 +50,23 @@
     return value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
   }
 
+  // Audio URLs are lightly obfuscated in the markup to deter casual
+  // scraping / right-click downloads. This is deterrence, not DRM.
+  function cardSrc(card) {
+    var enc = card.getAttribute('data-src-e');
+    if (enc) {
+      try { return atob(enc); } catch (e) { return ''; }
+    }
+    return card.getAttribute('data-src') || '';
+  }
+
+  // Keep "Save audio as..." out of easy reach on cards and the player
+  document.addEventListener('contextmenu', function(e) {
+    if (e.target && e.target.closest && e.target.closest('.track-card, .player-bar')) {
+      e.preventDefault();
+    }
+  });
+
   // =========================================
   // TIMELINE BUILD
   // Lift cards out of the flat grids into year groups, newest first.
@@ -595,7 +612,7 @@
   }
 
   function selectTrack(card, options) {
-    var src = card.getAttribute('data-src');
+    var src = cardSrc(card);
     if (!src) return;
     options = options || {};
 

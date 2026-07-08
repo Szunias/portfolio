@@ -203,6 +203,17 @@ module.exports = {
       ogImageAlt: 'Richter earthquake short film frame from field-recorded sound design project',
     },
     {
+      slug: 'ifmc',
+      layout: 'project',
+      css: 'project',
+      js: ['scroll-progress', 'scroll-reveal', 'theme-toggle'],
+      title: 'Indie Film Music Contest | Juried Film Scores - Igor Szuniewicz',
+      description: 'Two juried film scores in the Indie Film Music Contest Winter 2025: Walter (48/60, 58th of 115) and When The Clapping Stops (47/60), with full written feedback from professional film composers.',
+      canonical: `${SITE}/ifmc.html`,
+      ogImage: 'https://i.ytimg.com/vi/PKJQqWPovuY/maxresdefault.jpg',
+      ogImageAlt: 'Walter animated short film scored by Igor Szuniewicz for the Indie Film Music Contest',
+    },
+    {
       slug: 'sounddesign',
       layout: 'project',
       css: 'project',
