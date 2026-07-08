@@ -38,6 +38,17 @@
     return Number.isFinite(year) ? year : 0;
   }
 
+  function cardHasFullDate(card) {
+    return /^\d{4}-\d{2}-\d{2}$/.test(cardDateText(card));
+  }
+
+  function cardSortDate(card) {
+    var text = cardDateText(card);
+    if (cardHasFullDate(card)) return text;
+    var year = cardYear(card);
+    return year ? year + '-12-31' : '0000-00-00';
+  }
+
   function primaryTag(card) {
     var tags = cardTags(card);
     for (var i = 0; i < tags.length; i++) {
@@ -70,8 +81,8 @@
   // =========================================
   // TIMELINE BUILD
   // Lift cards out of the flat grids into year groups, newest first.
-  // Releases keep their curated order inside a year; sketches sort
-  // by their full date, newest first.
+  // Releases with only a year keep their curated order at the top of that
+  // year; dated releases interleave chronologically with dated sketches.
   // =========================================
   var timeline = document.getElementById('timeline');
 
@@ -91,11 +102,19 @@
 
     var years = {};
     function bucket(year) {
-      if (!years[year]) years[year] = { releases: [], sketches: [] };
+      if (!years[year]) years[year] = { releases: [], sketches: [], items: [] };
       return years[year];
     }
-    releases.forEach(function(card) { bucket(cardYear(card)).releases.push(card); });
-    sketches.forEach(function(card) { bucket(cardYear(card)).sketches.push(card); });
+    releases.forEach(function(card) {
+      var yearBucket = bucket(cardYear(card));
+      yearBucket.releases.push(card);
+      yearBucket.items.push({ card: card, type: 'release' });
+    });
+    sketches.forEach(function(card) {
+      var yearBucket = bucket(cardYear(card));
+      yearBucket.sketches.push(card);
+      yearBucket.items.push({ card: card, type: 'sketch' });
+    });
 
     var yearKeys = Object.keys(years).map(Number).sort(function(a, b) { return b - a; });
 
@@ -128,24 +147,24 @@
       body.className = 'tl-year__body';
       group.appendChild(body);
 
-      years[year].releases.forEach(function(card) {
-        var entry = document.createElement('div');
-        entry.className = 'tl-entry tl-entry--release ' + (side === 0 ? 'tl-entry--a' : 'tl-entry--b');
-        side = 1 - side;
-        var node = document.createElement('span');
-        node.className = 'tl-node';
-        node.setAttribute('aria-hidden', 'true');
-        entry.appendChild(node);
-        card.classList.add('track-card--release');
-        card.setAttribute('data-genre', primaryTag(card));
-        entry.appendChild(card);
-        body.appendChild(entry);
-        ordered.push(card);
+      years[year].items.sort(function(a, b) {
+        var dateCompare = cardSortDate(b.card).localeCompare(cardSortDate(a.card));
+        if (dateCompare) return dateCompare;
+        if (a.type !== b.type) return a.type === 'release' ? -1 : 1;
+        return (Number(a.card.getAttribute('data-order')) || 999) - (Number(b.card.getAttribute('data-order')) || 999);
       });
 
-      years[year].sketches.forEach(function(card) {
+      years[year].items.forEach(function(item) {
+        var card = item.card;
         var entry = document.createElement('div');
-        entry.className = 'tl-entry tl-entry--sketch';
+        if (item.type === 'release') {
+          entry.className = 'tl-entry tl-entry--release ' + (side === 0 ? 'tl-entry--a' : 'tl-entry--b');
+          side = 1 - side;
+          card.classList.add('track-card--release');
+          card.setAttribute('data-genre', primaryTag(card));
+        } else {
+          entry.className = 'tl-entry tl-entry--sketch';
+        }
         var node = document.createElement('span');
         node.className = 'tl-node';
         node.setAttribute('aria-hidden', 'true');
