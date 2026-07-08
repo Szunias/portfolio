@@ -321,6 +321,9 @@
   var progressFill = document.getElementById('progressFill');
   var progressBuffer = document.getElementById('progressBuffer');
   var progressBar = document.getElementById('progressBar');
+  var waveformBase = document.getElementById('waveformBase');
+  var waveformPlayed = document.getElementById('waveformPlayed');
+  var waveformPlayedClip = document.getElementById('waveformPlayedClip');
   var volumeBar = document.getElementById('volumeBar');
   var volumeFill = document.getElementById('volumeFill');
   var prevBtn = document.getElementById('prevBtn');
@@ -343,6 +346,10 @@
   var repeatOne = false;
   var lastVolume = audio.volume;
   var playRequested = false;
+  var waveformCache = {};
+  var waveformAudioContext = null;
+  var waveformRequestId = 0;
+  var activeWaveformPeaks = null;
 
   function cssUrl(value) {
     return 'url("' + toText(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '")';
@@ -368,6 +375,7 @@
     progressBar.setAttribute('tabindex', canSeek ? '0' : '-1');
     progressBar.setAttribute('aria-valuenow', Math.round(pct));
     progressBar.setAttribute('aria-valuetext', formatTime(current) + ' of ' + formatTime(duration));
+    syncWaveformProgress();
   }
 
   function setVolume(value) {
@@ -463,6 +471,178 @@
       progressBuffer.style.width = '0%';
     }
   }
+
+  function clearCanvas(canvas) {
+    if (!canvas) return;
+    var dpr = window.devicePixelRatio || 1;
+    var width = Math.max(1, Math.floor((progressBar ? progressBar.clientWidth : 1) * dpr));
+    var height = Math.max(1, Math.floor((progressBar ? progressBar.clientHeight : 1) * dpr));
+    if (canvas.width !== width) canvas.width = width;
+    if (canvas.height !== height) canvas.height = height;
+    var ctx = canvas.getContext('2d');
+    if (ctx) ctx.clearRect(0, 0, width, height);
+  }
+
+  function resetWaveform() {
+    waveformRequestId++;
+    activeWaveformPeaks = null;
+    if (waveformPlayedClip) waveformPlayedClip.style.width = '0%';
+    clearCanvas(waveformBase);
+    clearCanvas(waveformPlayed);
+  }
+
+  function drawRoundedBar(ctx, x, y, width, height, radius) {
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(x, y, width, height, radius);
+      ctx.fill();
+      return;
+    }
+    ctx.fillRect(x, y, width, height);
+  }
+
+  function drawWaveform(canvas, peaks, mode) {
+    if (!canvas || !progressBar || !peaks || !peaks.length) return;
+    var dpr = window.devicePixelRatio || 1;
+    var cssWidth = Math.max(1, progressBar.clientWidth);
+    var cssHeight = Math.max(1, progressBar.clientHeight);
+    var width = Math.floor(cssWidth * dpr);
+    var height = Math.floor(cssHeight * dpr);
+    if (canvas.width !== width) canvas.width = width;
+    if (canvas.height !== height) canvas.height = height;
+    canvas.style.width = cssWidth + 'px';
+    canvas.style.height = cssHeight + 'px';
+
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+    var gap = cssWidth < 560 ? 1 : 2;
+    var barWidth = Math.max(1, (cssWidth - gap * (peaks.length - 1)) / peaks.length);
+    var maxBarHeight = cssHeight * 0.78;
+    var mid = cssHeight / 2;
+    var gradient = ctx.createLinearGradient(0, 0, cssWidth, 0);
+    if (mode === 'played') {
+      gradient.addColorStop(0, '#8fb8d4');
+      gradient.addColorStop(0.58, '#d8b46a');
+      gradient.addColorStop(1, '#94d8c8');
+    } else {
+      gradient.addColorStop(0, 'rgba(236,238,240,0.26)');
+      gradient.addColorStop(1, 'rgba(236,238,240,0.16)');
+    }
+    ctx.fillStyle = gradient;
+
+    for (var i = 0; i < peaks.length; i++) {
+      var amp = Math.max(0.07, Math.min(1, peaks[i]));
+      var h = Math.max(2, amp * maxBarHeight);
+      var x = i * (barWidth + gap);
+      drawRoundedBar(ctx, x, mid - h / 2, barWidth, h, Math.min(3, barWidth / 2));
+    }
+  }
+
+  function renderWaveform(peaks) {
+    activeWaveformPeaks = peaks;
+    drawWaveform(waveformBase, peaks, 'base');
+    drawWaveform(waveformPlayed, peaks, 'played');
+  }
+
+  function calculateWaveformPeaks(audioBuffer, targetBars) {
+    var bars = targetBars || 220;
+    var channels = audioBuffer.numberOfChannels || 1;
+    var length = audioBuffer.length;
+    var blockSize = Math.max(1, Math.floor(length / bars));
+    var peaks = new Array(bars);
+    var max = 0;
+
+    for (var i = 0; i < bars; i++) {
+      var start = i * blockSize;
+      var end = i === bars - 1 ? length : Math.min(length, start + blockSize);
+      var sum = 0;
+      var count = 0;
+
+      for (var ch = 0; ch < channels; ch++) {
+        var data = audioBuffer.getChannelData(ch);
+        for (var j = start; j < end; j++) {
+          var sample = data[j] || 0;
+          sum += sample * sample;
+          count++;
+        }
+      }
+
+      var rms = count ? Math.sqrt(sum / count) : 0;
+      peaks[i] = rms;
+      if (rms > max) max = rms;
+    }
+
+    if (max > 0) {
+      peaks = peaks.map(function(value) {
+        return Math.pow(value / max, 0.72);
+      });
+    }
+    return peaks;
+  }
+
+  function loadWaveform(src) {
+    if (!waveformBase || !waveformPlayed || !waveformPlayedClip || !window.fetch || !(window.AudioContext || window.webkitAudioContext)) {
+      return;
+    }
+
+    var requestId = ++waveformRequestId;
+    if (waveformCache[src]) {
+      renderWaveform(waveformCache[src]);
+      return;
+    }
+
+    clearCanvas(waveformBase);
+    clearCanvas(waveformPlayed);
+
+    fetch(src)
+      .then(function(response) {
+        if (!response.ok) throw new Error('waveform fetch failed');
+        return response.arrayBuffer();
+      })
+      .then(function(arrayBuffer) {
+        if (!waveformAudioContext) {
+          var AudioCtx = window.AudioContext || window.webkitAudioContext;
+          waveformAudioContext = new AudioCtx();
+        }
+        return waveformAudioContext.decodeAudioData(arrayBuffer);
+      })
+      .then(function(audioBuffer) {
+        if (requestId !== waveformRequestId) return;
+        var width = progressBar ? progressBar.clientWidth : 900;
+        var targetBars = Math.max(96, Math.min(360, Math.floor(width / 5)));
+        var peaks = calculateWaveformPeaks(audioBuffer, targetBars);
+        waveformCache[src] = peaks;
+        renderWaveform(peaks);
+      })
+      .catch(function() {
+        if (requestId !== waveformRequestId) return;
+        activeWaveformPeaks = null;
+        clearCanvas(waveformBase);
+        clearCanvas(waveformPlayed);
+      });
+  }
+
+  function syncWaveformProgress() {
+    if (!waveformPlayedClip) return;
+    var pct = 0;
+    if (audio.duration && Number.isFinite(audio.duration)) {
+      pct = Math.max(0, Math.min(100, (audio.currentTime / audio.duration) * 100));
+    }
+    waveformPlayedClip.style.width = pct + '%';
+  }
+
+  var resizeWaveformTimer = null;
+  window.addEventListener('resize', function() {
+    if (!activeWaveformPeaks) return;
+    window.clearTimeout(resizeWaveformTimer);
+    resizeWaveformTimer = window.setTimeout(function() {
+      renderWaveform(activeWaveformPeaks);
+      syncWaveformProgress();
+    }, 120);
+  });
 
   // =========================================
   // MEDIA SESSION
@@ -577,6 +757,7 @@
     totalTimeEl.textContent = '0:00';
     progressFill.style.width = '0%';
     if (progressBuffer) progressBuffer.style.width = '0%';
+    resetWaveform();
     updatePlayIcon();
     updatePlayerStateClasses();
     setPlayerStatus('Could not load track', false);
@@ -646,6 +827,7 @@
     currentTimeEl.textContent = '0:00';
     progressFill.style.width = '0%';
     if (progressBuffer) progressBuffer.style.width = '0%';
+    resetWaveform();
     updateSeekAria();
 
     playerCover.style.background = coverBackground(coverUrl, gradient);
@@ -653,6 +835,7 @@
     currentTrackIndex = trackCards.indexOf(card);
 
     audio.src = src;
+    loadWaveform(src);
     setPlayerStatus('Loading - ' + currentLufsText(), true);
     updatePlayerStateClasses();
     updateMediaSession(card);
@@ -734,6 +917,7 @@
     if (!audio.duration) return;
     var pct = (audio.currentTime / audio.duration) * 100;
     progressFill.style.width = pct + '%';
+    syncWaveformProgress();
     currentTimeEl.textContent = formatTime(audio.currentTime);
     updateSeekAria();
     updateBufferedProgress();
@@ -744,6 +928,7 @@
     totalTimeEl.textContent = formatTime(audio.duration);
     updateSeekAria();
     updateBufferedProgress();
+    syncWaveformProgress();
     updateMediaPositionState();
   });
 
