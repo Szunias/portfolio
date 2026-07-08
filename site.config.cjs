@@ -56,6 +56,10 @@ module.exports = {
       layout: 'music',
       css: 'music',
       js: ['theme-toggle', 'music'],
+      assets: [
+        'vendor/three.module.min.js',
+        'vendor/RoomEnvironment.js',
+      ],
       title: 'Game & Film Music | Igor Szuniewicz',
       description: 'Original game, film, electronic, metal, jazz, and cinematic tracks by Igor Szuniewicz, written for scoring, trailers, remixes, and releases.',
       canonical: `${SITE}/music.html`,

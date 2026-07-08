@@ -4,57 +4,62 @@
 </header>
 
 <!-- =========================================
-     MUSIC HERO
+     GALAXY HUD (overlay UI above the 3D map)
      ========================================= -->
-<section class="music-hero">
-  <div class="music-hero__copy">
-    <h1 class="music-hero__title">Music</h1>
-    <div class="music-hero__rule"></div>
-    <p class="music-hero__subtitle">Scores, covers, remixes, and personal tracks.</p>
+<section class="galaxy-hud" aria-label="Music galaxy">
+  <div class="galaxy-hud__copy">
+    <h1 class="galaxy-hud__title">Music</h1>
+    <p class="galaxy-hud__subtitle">A galaxy of scores, covers, remixes and demos. Every star is a track.</p>
   </div>
+
+  <aside class="track-panel" id="trackPanel" aria-live="polite" aria-atomic="false">
+    <div class="track-panel__cover" id="panelCover" role="img" aria-label="Album cover"></div>
+    <div class="track-panel__body">
+      <p class="track-panel__eyebrow" id="panelEyebrow">Selected track</p>
+      <h2 class="track-panel__title" id="panelTitle">Pick a star</h2>
+      <div class="track-panel__meta" id="panelMeta"></div>
+      <p class="track-panel__desc" id="panelDesc"></p>
+      <button class="track-panel__play" id="panelPlay" type="button">Play</button>
+    </div>
+  </aside>
+
+  <nav class="station-dock" id="stationDock" aria-label="Music stations">
+    <div class="station-dock__head">
+      <span class="station-dock__label">Station</span>
+      <span class="station-dock__count" id="stationCount">15 tracks</span>
+    </div>
+    <div class="station-dock__row">
+      <button class="station-dock__arrow" id="stationPrev" type="button" aria-label="Previous station">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <span class="station-dock__name" id="stationName" aria-live="polite">All tracks</span>
+      <button class="station-dock__arrow" id="stationNext" type="button" aria-label="Next station">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="station-dock__chips" role="group" aria-label="Choose station">
+      <button class="station-chip active" type="button" data-station="all" aria-pressed="true">All</button>
+      <button class="station-chip" type="button" data-station="electronic" aria-pressed="false">Electronic</button>
+      <button class="station-chip" type="button" data-station="film" aria-pressed="false">Film</button>
+      <button class="station-chip" type="button" data-station="jazz" aria-pressed="false">Jazz</button>
+      <button class="station-chip" type="button" data-station="metal" aria-pressed="false">Metal</button>
+      <button class="station-chip" type="button" data-station="remix" aria-pressed="false">Remix</button>
+      <button class="station-chip" type="button" data-station="single" aria-pressed="false">Singles</button>
+      <button class="station-chip" type="button" data-station="techno" aria-pressed="false">Techno</button>
+      <button class="station-chip station-chip--evo" type="button" data-station="evolution" aria-pressed="false">Evolution</button>
+    </div>
+  </nav>
+
+  <p class="galaxy-hint" aria-hidden="true">Drag to orbit &middot; Scroll to zoom &middot; Click a star to play</p>
+  <p class="sr-only" id="filterStatus" aria-live="polite" aria-atomic="true">15 tracks shown</p>
 </section>
 
 <!-- =========================================
-     FILTERS
+     TRACK DATA
+     Hidden source of truth for the galaxy and the audio player.
+     Shown as a plain list only when WebGL is unavailable (html.no-3d).
      ========================================= -->
-<div class="filters" role="group" aria-label="Filter tracks by genre">
-  <button class="filter-btn active" type="button" data-filter="all" id="filter-all" aria-pressed="true" aria-controls="tracks-grid">All</button>
-  <button class="filter-btn" type="button" data-filter="electronic" id="filter-electronic" aria-pressed="false" aria-controls="tracks-grid">Electronic</button>
-  <button class="filter-btn" type="button" data-filter="film" id="filter-film" aria-pressed="false" aria-controls="tracks-grid">Film</button>
-  <button class="filter-btn" type="button" data-filter="jazz" id="filter-jazz" aria-pressed="false" aria-controls="tracks-grid">Jazz</button>
-  <button class="filter-btn" type="button" data-filter="metal" id="filter-metal" aria-pressed="false" aria-controls="tracks-grid">Metal</button>
-  <button class="filter-btn" type="button" data-filter="remix" id="filter-remix" aria-pressed="false" aria-controls="tracks-grid">Remix</button>
-  <button class="filter-btn" type="button" data-filter="single" id="filter-single" aria-pressed="false" aria-controls="tracks-grid">Singles</button>
-  <button class="filter-btn" type="button" data-filter="techno" id="filter-techno" aria-pressed="false" aria-controls="tracks-grid">Techno</button>
-  <button class="filter-btn" type="button" data-filter="evolution" id="filter-evolution" aria-pressed="false" aria-controls="evolution-grid">Evolution</button>
-</div>
-<p class="sr-only" id="filterStatus" aria-live="polite" aria-atomic="true">15 tracks shown</p>
-
-<!-- =========================================
-     FEATURED TRACK GALLERY
-     ========================================= -->
-<section class="music-gallery" id="musicGallery" aria-labelledby="galleryTitle">
-  <div class="music-gallery__stage">
-    <div class="music-gallery__cover-frame">
-      <div class="music-gallery__aura" aria-hidden="true"></div>
-      <div class="music-gallery__cover" id="galleryCover" role="img" aria-label="Gnossienne No. 1 album cover"></div>
-    </div>
-    <div class="music-gallery__info">
-      <p class="music-gallery__eyebrow" id="galleryCategory">Selected track</p>
-      <h2 class="music-gallery__title" id="galleryTitle">Gnossienne No. 1</h2>
-      <p class="music-gallery__artist" id="galleryArtist">Igor Szuniewicz</p>
-      <div class="music-gallery__meta" id="galleryMeta"></div>
-      <p class="music-gallery__description" id="galleryDescription"></p>
-      <div class="music-gallery__tags" id="galleryTags"></div>
-      <button class="music-gallery__play" id="galleryPlay" type="button">Play selected</button>
-    </div>
-  </div>
-</section>
-
-<!-- =========================================
-     TRACK GRID
-     ========================================= -->
-<section class="tracks-section" aria-labelledby="tracks-title">
+<section class="track-data" id="trackData" aria-labelledby="tracks-title">
   <h2 class="sr-only" id="tracks-title">Tracks</h2>
   <div class="tracks-grid" id="tracks-grid">
 
@@ -432,17 +437,8 @@
     </div>
 
   </div>
-</section>
 
-<!-- =========================================
-     EVOLUTION (chronological sketches / demos)
-     ========================================= -->
-<section class="evolution-section" aria-labelledby="evolution-title">
-  <div class="evolution-head">
-    <h2 class="evolution-head__title" id="evolution-title">Evolution</h2>
-    <div class="music-hero__rule"></div>
-    <p class="evolution-head__subtitle">Raw tracks, sketches and demos in chronological order &mdash; how the sound developed over the years. No covers, just dates. 54 tracks.</p>
-  </div>
+  <h2 class="sr-only" id="evolution-title">Evolution &mdash; chronological demos</h2>
   <div class="tracks-grid" id="evolution-grid">
     <div class="track-card track-card--evo" data-order="01" data-tags="evolution" data-title="pumcikkk" data-artist="Igor Szuniewicz" data-duration="3:14" data-gradient="linear-gradient(135deg, hsl(101,38%,16%), hsl(129,44%,30%), hsl(101,40%,12%), hsl(151,42%,26%))" data-src="old/public/assets/audio/evolution/pumcikkk_2023-08-28.mp3">
       <div class="track-card__cover">

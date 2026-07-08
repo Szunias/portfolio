@@ -1,51 +1,69 @@
 // =========================================
-// FILTER & AUDIO PLAYER
+// MUSIC GALAXY - STATIONS & AUDIO PLAYER
+// The 3D galaxy (module script in the music layout) renders the stars;
+// this file owns the audio engine, the station switcher and the track panel.
+// Contract with the galaxy module:
+//   - it reads .track-card classes (active / is-playing) and
+//     [data-filtered-out] every frame,
+//   - it listens for the 'music:station' CustomEvent to fly the camera,
+//   - it calls window.musicApp.preview(card) on hover focus and
+//     card.click() to play a star.
 // =========================================
 (function() {
-  var filterBtns = document.querySelectorAll('.filter-btn');
-  var tracksGrid = document.getElementById('tracks-grid');
   var trackCards = Array.from(document.querySelectorAll('.track-card'));
 
   // Guard: only run on music page
   if (!trackCards.length) return;
 
+  function isEvoCard(card) {
+    return (card.getAttribute('data-tags') || '').indexOf('evolution') !== -1;
+  }
+
   function trackOrder(card) {
-    return Number(card.getAttribute('data-order')) || 999;
+    var order = Number(card.getAttribute('data-order')) || 999;
+    // Evolution demos queue after the curated tracks so data-order
+    // collisions between the two grids never interleave them.
+    return order + (isEvoCard(card) ? 1000 : 0);
   }
 
   trackCards.sort(function(a, b) {
     return trackOrder(a) - trackOrder(b);
   });
-  // Only re-append cards that already belong to #tracks-grid.
-  // Evolution cards live in their own #evolution-grid and must stay there.
-  if (tracksGrid) {
-    trackCards.forEach(function(card) {
-      if (card.parentNode === tracksGrid) tracksGrid.appendChild(card);
-    });
-  }
 
-  // Per-card hide timer so rapid filter switches don't leave stale timers
-  // hiding cards that should now be visible.
-  var hideTimers = new WeakMap();
-  var filterGeneration = 0;
+  // =========================================
+  // STATIONS
+  // =========================================
+  var STATIONS = [
+    { id: 'all', name: 'All tracks' },
+    { id: 'electronic', name: 'Electronic' },
+    { id: 'film', name: 'Film' },
+    { id: 'jazz', name: 'Jazz' },
+    { id: 'metal', name: 'Metal' },
+    { id: 'remix', name: 'Remix' },
+    { id: 'single', name: 'Singles' },
+    { id: 'techno', name: 'Techno' },
+    { id: 'evolution', name: 'Evolution' }
+  ];
+  var currentStationIndex = 0;
 
-  function cardMatchesFilter(card, filter) {
-    var tags = (card.getAttribute('data-tags') || '').split(',').map(function(tag) {
+  var stationChips = Array.from(document.querySelectorAll('.station-chip'));
+  var stationName = document.getElementById('stationName');
+  var stationCount = document.getElementById('stationCount');
+  var stationPrev = document.getElementById('stationPrev');
+  var stationNext = document.getElementById('stationNext');
+
+  function cardTags(card) {
+    return (card.getAttribute('data-tags') || '').split(',').map(function(tag) {
       return tag.trim();
     });
-    var isEvolution = tags.indexOf('evolution') !== -1;
-    // "All" means the curated main grid, not the raw evolution demos.
-    if (filter === 'all') return !isEvolution;
-    return tags.indexOf(filter) !== -1;
   }
 
-  var evolutionSection = document.querySelector('.evolution-section');
-  var tracksSection = document.querySelector('.tracks-section');
-
-  function syncSectionVisibility(filter) {
-    var showEvolution = filter === 'evolution';
-    if (evolutionSection) evolutionSection.hidden = !showEvolution;
-    if (tracksSection) tracksSection.hidden = showEvolution;
+  function cardMatchesStation(card, stationId) {
+    var tags = cardTags(card);
+    var isEvolution = tags.indexOf('evolution') !== -1;
+    // "All" means the curated tracks, not the 54 raw evolution demos.
+    if (stationId === 'all') return !isEvolution;
+    return tags.indexOf(stationId) !== -1;
   }
 
   function setCardAvailable(card, available) {
@@ -60,108 +78,91 @@
     }
   }
 
-  function activateFilter(btn, focus) {
-    filterBtns.forEach(function(b) {
-      var selected = b === btn;
-      b.classList.toggle('active', selected);
-      b.setAttribute('aria-pressed', selected ? 'true' : 'false');
+  var visibleCards = function() {
+    return trackCards.filter(function(c) {
+      return !c.hasAttribute('data-filtered-out');
     });
-    if (focus) btn.focus();
-  }
+  };
 
-  function announceFilterResult() {
+  function announceStation() {
     var status = document.getElementById('filterStatus');
-    if (!status) return;
     var count = visibleCards().length;
-    status.textContent = count + (count === 1 ? ' track shown' : ' tracks shown');
+    if (status) {
+      status.textContent = count + (count === 1 ? ' track' : ' tracks') +
+        ' on station ' + STATIONS[currentStationIndex].name;
+    }
+    if (stationCount) {
+      stationCount.textContent = count + (count === 1 ? ' track' : ' tracks');
+    }
   }
 
-  filterBtns.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      activateFilter(btn, false);
+  function setStation(index, options) {
+    options = options || {};
+    currentStationIndex = ((index % STATIONS.length) + STATIONS.length) % STATIONS.length;
+    var station = STATIONS[currentStationIndex];
 
-      var filter = btn.getAttribute('data-filter');
-      syncSectionVisibility(filter);
-      var run = ++filterGeneration;
-
-      trackCards.forEach(function(card) {
-        // Cancel any pending hide from a previous filter click
-        var pending = hideTimers.get(card);
-        if (pending) {
-          clearTimeout(pending);
-          hideTimers.delete(card);
-        }
-
-        if (cardMatchesFilter(card, filter)) {
-          setCardAvailable(card, true);
-          card.classList.remove('hidden');
-          card.style.opacity = '0';
-          card.style.transform = 'translateY(12px)';
-          requestAnimationFrame(function() {
-            requestAnimationFrame(function() {
-              if (run !== filterGeneration || card.hasAttribute('data-filtered-out')) return;
-              card.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
-              card.style.opacity = '1';
-              card.style.transform = 'translateY(0)';
-              if (trackCards.indexOf(card) === currentTrackIndex) {
-                card.classList.add('active');
-              }
-            });
-          });
-        } else {
-          setCardAvailable(card, false);
-          card.classList.remove('active');
-          card.style.transition = 'opacity 0.2s ease';
-          card.style.opacity = '0';
-          var t = setTimeout(function() {
-            if (run !== filterGeneration || !card.hasAttribute('data-filtered-out')) return;
-            card.classList.add('hidden');
-            hideTimers.delete(card);
-          }, 200);
-          hideTimers.set(card, t);
-        }
-      });
-
-      if (currentTrackIndex >= 0) {
-        var activeCard = trackCards[currentTrackIndex];
-        if (activeCard && activeCard.hasAttribute('data-filtered-out')) {
-          activeCard.classList.remove('active');
-          var visibleFeatured = visibleCards()[0];
-          if (visibleFeatured) {
-            selectTrack(visibleFeatured, { reveal: false, autoplay: isPlaying || playRequested });
-          }
-        } else if (activeCard) {
-          syncFeaturedTrack(activeCard, false);
-        }
-      } else if (!galleryCurrentCard || galleryCurrentCard.hasAttribute('data-filtered-out')) {
-        var nextFeatured = visibleCards()[0];
-        if (nextFeatured) syncFeaturedTrack(nextFeatured, true);
-      }
-      announceFilterResult();
+    stationChips.forEach(function(chip) {
+      var selected = chip.getAttribute('data-station') === station.id;
+      chip.classList.toggle('active', selected);
+      chip.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      if (selected && options.focusChip) chip.focus();
     });
+    if (stationName) stationName.textContent = station.name;
 
-    btn.addEventListener('keydown', function(e) {
+    trackCards.forEach(function(card) {
+      setCardAvailable(card, cardMatchesStation(card, station.id));
+    });
+    announceStation();
+
+    // Tell the galaxy to fly to this constellation
+    document.dispatchEvent(new CustomEvent('music:station', {
+      detail: { station: station.id, index: currentStationIndex }
+    }));
+
+    // Keep the queue coherent: if the current track left the station,
+    // tune into the station's first track (keep playing if we were playing).
+    if (currentTrackIndex >= 0) {
+      var activeCard = trackCards[currentTrackIndex];
+      if (activeCard && activeCard.hasAttribute('data-filtered-out')) {
+        activeCard.classList.remove('active');
+        var next = visibleCards()[0];
+        if (next) {
+          selectTrack(next, { autoplay: isPlaying || playRequested });
+        }
+      }
+    } else {
+      var preview = visibleCards()[0];
+      if (preview) syncPanel(preview, true);
+    }
+  }
+
+  stationChips.forEach(function(chip, chipIndex) {
+    chip.addEventListener('click', function() {
+      var id = chip.getAttribute('data-station');
+      var index = STATIONS.findIndex(function(s) { return s.id === id; });
+      setStation(index >= 0 ? index : 0);
+    });
+    chip.addEventListener('keydown', function(e) {
       var keys = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'];
       if (keys.indexOf(e.key) === -1) return;
       e.preventDefault();
-      var buttons = Array.from(filterBtns);
-      var index = buttons.indexOf(btn);
-      if (e.key === 'Home') {
-        buttons[0].click();
-        activateFilter(buttons[0], true);
-        return;
-      }
-      if (e.key === 'End') {
-        buttons[buttons.length - 1].click();
-        activateFilter(buttons[buttons.length - 1], true);
-        return;
-      }
+      if (e.key === 'Home') { setStation(0, { focusChip: true }); return; }
+      if (e.key === 'End') { setStation(STATIONS.length - 1, { focusChip: true }); return; }
       var dir = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 : -1;
-      var next = buttons[(index + dir + buttons.length) % buttons.length];
-      next.click();
-      activateFilter(next, true);
+      setStation(chipIndex + dir, { focusChip: true });
     });
   });
+
+  if (stationPrev) {
+    stationPrev.addEventListener('click', function() {
+      setStation(currentStationIndex - 1);
+    });
+  }
+  if (stationNext) {
+    stationNext.addEventListener('click', function() {
+      setStation(currentStationIndex + 1);
+    });
+  }
 
   // =========================================
   // AUDIO PLAYER
@@ -185,15 +186,15 @@
   var shuffleBtn = document.getElementById('shuffleBtn');
   var repeatBtn = document.getElementById('repeatBtn');
   var muteBtn = document.getElementById('muteBtn');
-  var musicGallery = document.getElementById('musicGallery');
-  var galleryCover = document.getElementById('galleryCover');
-  var galleryCategory = document.getElementById('galleryCategory');
-  var galleryTitle = document.getElementById('galleryTitle');
-  var galleryArtist = document.getElementById('galleryArtist');
-  var galleryMeta = document.getElementById('galleryMeta');
-  var galleryDescription = document.getElementById('galleryDescription');
-  var galleryTags = document.getElementById('galleryTags');
-  var galleryPlay = document.getElementById('galleryPlay');
+
+  // Track panel (galaxy HUD)
+  var trackPanel = document.getElementById('trackPanel');
+  var panelCover = document.getElementById('panelCover');
+  var panelEyebrow = document.getElementById('panelEyebrow');
+  var panelTitle = document.getElementById('panelTitle');
+  var panelMeta = document.getElementById('panelMeta');
+  var panelDesc = document.getElementById('panelDesc');
+  var panelPlay = document.getElementById('panelPlay');
 
   // Guard: player bar must be present
   if (!playerTitle || !playerArtist || !playerCover || !playPauseBtn || !progressBar || !progressFill || !prevBtn || !nextBtn || !currentTimeEl || !totalTimeEl) return;
@@ -209,14 +210,7 @@
   var repeatOne = false;
   var lastVolume = audio.volume;
   var playRequested = false;
-  var galleryCurrentCard = null;
-  var galleryAnimationTimer = 0;
-
-  var visibleCards = function() {
-    return trackCards.filter(function(c) {
-      return !c.hasAttribute('data-filtered-out');
-    });
-  };
+  var panelCard = null;
 
   function toText(value) {
     return String(value || '');
@@ -230,39 +224,46 @@
     return coverUrl ? cssUrl(coverUrl) + ' center/cover no-repeat, ' + fallback : fallback;
   }
 
-  function getCardAccent(card) {
-    if (!card || !window.getComputedStyle) return '#aac6de';
-    return getComputedStyle(card).getPropertyValue('--card-accent').trim() || '#aac6de';
+  // =========================================
+  // TRACK PANEL
+  // =========================================
+  function capitalize(value) {
+    return value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
   }
 
-  function syncFeaturedTrack(card, animate) {
-    if (!musicGallery || !galleryCover || !card) return;
+  function updatePanelPlayLabel() {
+    if (!panelPlay || !panelCard) return;
+    var isCurrent = currentTrackIndex >= 0 && trackCards[currentTrackIndex] === panelCard;
+    var title = toText(panelCard.getAttribute('data-title'));
+    panelPlay.textContent = isCurrent && isPlaying ? 'Pause' : 'Play';
+    panelPlay.setAttribute('aria-label', (isCurrent && isPlaying ? 'Pause ' : 'Play ') + title);
+  }
 
-    var changed = galleryCurrentCard !== card;
+  function syncPanel(card, animate) {
+    if (!trackPanel || !card) return;
+    var changed = panelCard !== card;
+    panelCard = card;
+
     var title = toText(card.getAttribute('data-title'));
     var displayTitle = card.querySelector('.track-card__title');
-    var artist = card.getAttribute('data-artist') || '';
     var coverUrl = card.getAttribute('data-cover') || '';
-    var gradient = card.getAttribute('data-gradient') || 'linear-gradient(135deg, #1a1a1a, #3a2a24)';
+    var gradient = card.getAttribute('data-gradient') || 'linear-gradient(135deg, #1a1a1a, #2a2a34)';
     var description = card.querySelector('.track-card__desc');
     var year = card.querySelector('.track-card__year');
     var duration = card.getAttribute('data-duration') || '';
     var lufs = card.getAttribute('data-lufs') || '';
-    var firstTag = card.querySelector('.track-card__tag');
+    var firstTag = cardTags(card)[0];
 
-    galleryCurrentCard = card;
-    musicGallery.style.setProperty('--gallery-accent', getCardAccent(card));
-    musicGallery.style.setProperty('--gallery-cover', coverUrl ? cssUrl(coverUrl) : gradient);
-    galleryCover.style.background = coverBackground(coverUrl, gradient);
-    galleryCover.setAttribute('aria-label', (displayTitle ? displayTitle.textContent : title) + ' album cover');
+    if (panelCover) {
+      panelCover.style.background = coverBackground(coverUrl, gradient);
+      panelCover.setAttribute('aria-label', (displayTitle ? displayTitle.textContent : title) + ' album cover');
+    }
+    if (panelEyebrow) panelEyebrow.textContent = firstTag ? capitalize(firstTag) + ' station' : 'Selected track';
+    if (panelTitle) panelTitle.textContent = displayTitle ? displayTitle.textContent : title;
+    if (panelDesc) panelDesc.textContent = description ? description.textContent : '';
 
-    if (galleryCategory) galleryCategory.textContent = firstTag ? firstTag.textContent + ' selection' : 'Selected track';
-    if (galleryTitle) galleryTitle.textContent = displayTitle ? displayTitle.textContent : title;
-    if (galleryArtist) galleryArtist.textContent = artist;
-    if (galleryDescription) galleryDescription.textContent = description ? description.textContent : '';
-
-    if (galleryMeta) {
-      galleryMeta.innerHTML = '';
+    if (panelMeta) {
+      panelMeta.innerHTML = '';
       [
         year ? year.textContent : '',
         duration,
@@ -270,48 +271,32 @@
       ].filter(Boolean).forEach(function(item) {
         var span = document.createElement('span');
         span.textContent = item;
-        galleryMeta.appendChild(span);
+        panelMeta.appendChild(span);
       });
     }
 
-    if (galleryTags) {
-      galleryTags.innerHTML = '';
-      card.querySelectorAll('.track-card__tag').forEach(function(tag) {
-        var span = document.createElement('span');
-        span.textContent = tag.textContent;
-        galleryTags.appendChild(span);
-      });
-    }
-
-    if (galleryPlay) {
-      galleryPlay.setAttribute('aria-label', 'Play ' + (displayTitle ? displayTitle.textContent : title));
-    }
+    updatePanelPlayLabel();
+    trackPanel.classList.add('on');
 
     if (animate && changed) {
-      musicGallery.classList.remove('is-switching');
-      window.clearTimeout(galleryAnimationTimer);
-      void musicGallery.offsetWidth;
-      musicGallery.classList.add('is-switching');
-      galleryAnimationTimer = window.setTimeout(function() {
-        musicGallery.classList.remove('is-switching');
-      }, 640);
+      trackPanel.classList.remove('is-switching');
+      void trackPanel.offsetWidth;
+      trackPanel.classList.add('is-switching');
     }
   }
 
-  function bringTrackCardIntoView(card) {
-    if (!card || !card.scrollIntoView) return;
-    var rect = card.getBoundingClientRect();
-    var bottomLimit = window.innerHeight - (playerBar ? playerBar.offsetHeight + 32 : 32);
-    var alreadyComfortable = rect.top >= 88 && rect.bottom <= bottomLimit;
-    if (alreadyComfortable) return;
-
-    var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.requestAnimationFrame(function() {
-      card.scrollIntoView({
-        behavior: prefersReducedMotion ? 'auto' : 'smooth',
-        block: 'nearest',
-        inline: 'nearest'
-      });
+  if (panelPlay) {
+    panelPlay.addEventListener('click', function() {
+      var card = panelCard || visibleCards()[0];
+      if (!card) return;
+      var isCurrent = currentTrackIndex >= 0 && trackCards[currentTrackIndex] === card;
+      if (isCurrent && isPlaying) {
+        audio.pause();
+      } else if (isCurrent) {
+        playAudio();
+      } else {
+        selectTrack(card);
+      }
     });
   }
 
@@ -381,6 +366,7 @@
         card.setAttribute('aria-label', 'Play ' + labelTitle);
       }
     });
+    updatePanelPlayLabel();
   }
 
   function updateModeButtons() {
@@ -484,8 +470,8 @@
       var title = toText(card.getAttribute('data-title'));
       var artist = card.getAttribute('data-artist') || '';
       var coverUrl = card.getAttribute('data-cover');
-      var tags = (card.getAttribute('data-tags') || '').split(',');
-      var album = tags[0] ? tags[0].charAt(0).toUpperCase() + tags[0].slice(1) : 'Music';
+      var tags = cardTags(card);
+      var album = tags[0] ? capitalize(tags[0]) : 'Music';
       var coverSrc = absoluteUrl(coverUrl);
 
       navigator.mediaSession.metadata = new MediaMetadata({
@@ -575,11 +561,8 @@
     var src = card.getAttribute('data-src');
     if (!src) return;
     options = options || {};
-    var preserveScroll = !options.reveal;
-    var savedScrollX = window.scrollX || window.pageXOffset || 0;
-    var savedScrollY = window.scrollY || window.pageYOffset || 0;
 
-    syncFeaturedTrack(card, true);
+    syncPanel(card, true);
 
     var title = toText(card.getAttribute('data-title'));
     var artist = card.getAttribute('data-artist') || '';
@@ -615,19 +598,8 @@
 
     document.title = options.autoplay === false ? originalTitle : title + ' - Igor Szuniewicz | Music';
 
-    // Highlight active card
     trackCards.forEach(function(c) { c.classList.remove('active'); });
     card.classList.add('active');
-    if (options.reveal) {
-      bringTrackCardIntoView(card);
-    } else if (preserveScroll) {
-      window.requestAnimationFrame(function() {
-        window.scrollTo(savedScrollX, savedScrollY);
-        window.setTimeout(function() {
-          window.scrollTo(savedScrollX, savedScrollY);
-        }, 80);
-      });
-    }
   }
 
   // =========================================
@@ -748,6 +720,10 @@
         selectTrack(card);
       }
     });
+    // Keyboard users tab through the hidden list; mirror focus in the panel
+    card.addEventListener('focus', function() {
+      syncPanel(card, true);
+    });
   });
 
   function togglePlay() {
@@ -775,13 +751,13 @@
       while (randomIndex === currentInVisible) {
         randomIndex = Math.floor(Math.random() * visible.length);
       }
-      selectTrack(visible[randomIndex], { reveal: true });
+      selectTrack(visible[randomIndex]);
       return;
     }
     var newIndex = currentInVisible < 0
       ? 0
       : (currentInVisible + direction + visible.length) % visible.length;
-    selectTrack(visible[newIndex], { reveal: true });
+    selectTrack(visible[newIndex]);
   }
 
   function playNextTrack() {
@@ -789,12 +765,6 @@
   }
 
   playPauseBtn.addEventListener('click', togglePlay);
-  if (galleryPlay) {
-    galleryPlay.addEventListener('click', function() {
-      var card = galleryCurrentCard || visibleCards()[0];
-      if (card) selectTrack(card);
-    });
-  }
 
   prevBtn.addEventListener('click', function() {
     if (currentTrackIndex >= 0 && audio.currentTime > 5) {
@@ -1014,23 +984,29 @@
     });
   }
 
-  // Default filter is "All" — hide evolution demos and the evolution section
-  // so the curated 15-track grid is what the visitor sees first.
+  // =========================================
+  // INIT
+  // =========================================
+  // Default station is "All": evolution demos start filtered out.
   trackCards.forEach(function(card) {
-    if ((card.getAttribute('data-tags') || '').split(',').map(function(t) { return t.trim(); }).indexOf('evolution') !== -1) {
-      setCardAvailable(card, false);
-      card.classList.add('hidden');
-    }
+    setCardAvailable(card, cardMatchesStation(card, 'all'));
   });
-  syncSectionVisibility('all');
+  announceStation();
 
   var initialFeatured = visibleCards()[0] || trackCards[0];
-  if (initialFeatured) syncFeaturedTrack(initialFeatured, false);
-  announceFilterResult();
+  if (initialFeatured) syncPanel(initialFeatured, false);
 
   updateModeButtons();
   updateMuteButton();
   updatePlayerStateClasses();
   setPlayerStatus('Ready to play', false);
+
+  // Small API for the galaxy module
+  window.musicApp = {
+    stations: STATIONS,
+    preview: function(card) { syncPanel(card, true); },
+    select: function(card) { selectTrack(card); },
+    getStationId: function() { return STATIONS[currentStationIndex].id; }
+  };
 
 })();
