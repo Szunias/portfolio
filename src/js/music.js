@@ -1,13 +1,9 @@
 // =========================================
-// MUSIC GALAXY - STATIONS & AUDIO PLAYER
-// The 3D galaxy (module script in the music layout) renders the stars;
-// this file owns the audio engine, the station switcher and the track panel.
-// Contract with the galaxy module:
-//   - it reads .track-card classes (active / is-playing) and
-//     [data-filtered-out] every frame,
-//   - it listens for the 'music:station' CustomEvent to fly the camera,
-//   - it calls window.musicApp.preview(card) on hover focus and
-//     card.click() to play a star.
+// MUSIC TIMELINE - chronological stream & audio player
+// music.js lifts the flat track-card grids into a year-by-year
+// timeline (newest first), wires the genre filters, and owns the
+// audio engine + player bar. Releases render as full cards,
+// sketches (evolution demos) as compact dated rows.
 // =========================================
 (function() {
   var trackCards = Array.from(document.querySelectorAll('.track-card'));
@@ -15,42 +11,12 @@
   // Guard: only run on music page
   if (!trackCards.length) return;
 
-  function isEvoCard(card) {
-    return (card.getAttribute('data-tags') || '').indexOf('evolution') !== -1;
-  }
-
-  function trackOrder(card) {
-    var order = Number(card.getAttribute('data-order')) || 999;
-    // Evolution demos queue after the curated tracks so data-order
-    // collisions between the two grids never interleave them.
-    return order + (isEvoCard(card) ? 1000 : 0);
-  }
-
-  trackCards.sort(function(a, b) {
-    return trackOrder(a) - trackOrder(b);
-  });
-
   // =========================================
-  // STATIONS
+  // HELPERS
   // =========================================
-  var STATIONS = [
-    { id: 'all', name: 'All tracks' },
-    { id: 'electronic', name: 'Electronic' },
-    { id: 'film', name: 'Film' },
-    { id: 'jazz', name: 'Jazz' },
-    { id: 'metal', name: 'Metal' },
-    { id: 'remix', name: 'Remix' },
-    { id: 'single', name: 'Singles' },
-    { id: 'techno', name: 'Techno' },
-    { id: 'evolution', name: 'Evolution' }
-  ];
-  var currentStationIndex = 0;
-
-  var stationChips = Array.from(document.querySelectorAll('.station-chip'));
-  var stationName = document.getElementById('stationName');
-  var stationCount = document.getElementById('stationCount');
-  var stationPrev = document.getElementById('stationPrev');
-  var stationNext = document.getElementById('stationNext');
+  function toText(value) {
+    return String(value || '');
+  }
 
   function cardTags(card) {
     return (card.getAttribute('data-tags') || '').split(',').map(function(tag) {
@@ -58,23 +24,184 @@
     });
   }
 
-  function cardMatchesStation(card, stationId) {
+  function isSketch(card) {
+    return cardTags(card).indexOf('evolution') !== -1;
+  }
+
+  function cardDateText(card) {
+    var el = card.querySelector('.track-card__year');
+    return el ? el.textContent.trim() : '';
+  }
+
+  function cardYear(card) {
+    var year = parseInt(cardDateText(card).slice(0, 4), 10);
+    return Number.isFinite(year) ? year : 0;
+  }
+
+  function primaryTag(card) {
     var tags = cardTags(card);
-    var isEvolution = tags.indexOf('evolution') !== -1;
-    // "All" means the curated tracks, not the 54 raw evolution demos.
-    if (stationId === 'all') return !isEvolution;
-    return tags.indexOf(stationId) !== -1;
+    for (var i = 0; i < tags.length; i++) {
+      if (tags[i] && tags[i] !== 'single' && tags[i] !== 'evolution') return tags[i];
+    }
+    return tags[0] || 'single';
+  }
+
+  function capitalize(value) {
+    return value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
+  }
+
+  // =========================================
+  // TIMELINE BUILD
+  // Lift cards out of the flat grids into year groups, newest first.
+  // Releases keep their curated order inside a year; sketches sort
+  // by their full date, newest first.
+  // =========================================
+  var timeline = document.getElementById('timeline');
+
+  function buildTimeline() {
+    if (!timeline) return;
+
+    var releases = Array.from(document.querySelectorAll('#tracks-grid .track-card'));
+    var sketches = Array.from(document.querySelectorAll('#evolution-grid .track-card'));
+
+    releases.sort(function(a, b) {
+      return (Number(a.getAttribute('data-order')) || 999) - (Number(b.getAttribute('data-order')) || 999);
+    });
+    sketches.sort(function(a, b) {
+      // ISO dates compare correctly as strings; newest first
+      return cardDateText(b) < cardDateText(a) ? -1 : 1;
+    });
+
+    var years = {};
+    function bucket(year) {
+      if (!years[year]) years[year] = { releases: [], sketches: [] };
+      return years[year];
+    }
+    releases.forEach(function(card) { bucket(cardYear(card)).releases.push(card); });
+    sketches.forEach(function(card) { bucket(cardYear(card)).sketches.push(card); });
+
+    var yearKeys = Object.keys(years).map(Number).sort(function(a, b) { return b - a; });
+
+    var ordered = [];
+    var side = 0;
+
+    yearKeys.forEach(function(year) {
+      var group = document.createElement('section');
+      group.className = 'tl-year';
+      group.setAttribute('data-year', year);
+
+      var head = document.createElement('header');
+      head.className = 'tl-year__head';
+      var num = document.createElement('h2');
+      num.className = 'tl-year__num';
+      num.textContent = year;
+      var meta = document.createElement('p');
+      meta.className = 'tl-year__meta';
+      var parts = [];
+      var relCount = years[year].releases.length;
+      var skCount = years[year].sketches.length;
+      if (relCount) parts.push(relCount + (relCount === 1 ? ' release' : ' releases'));
+      if (skCount) parts.push(skCount + (skCount === 1 ? ' sketch' : ' sketches'));
+      meta.textContent = parts.join(' · ');
+      head.appendChild(num);
+      head.appendChild(meta);
+      group.appendChild(head);
+
+      var body = document.createElement('div');
+      body.className = 'tl-year__body';
+      group.appendChild(body);
+
+      years[year].releases.forEach(function(card) {
+        var entry = document.createElement('div');
+        entry.className = 'tl-entry tl-entry--release ' + (side === 0 ? 'tl-entry--a' : 'tl-entry--b');
+        side = 1 - side;
+        var node = document.createElement('span');
+        node.className = 'tl-node';
+        node.setAttribute('aria-hidden', 'true');
+        entry.appendChild(node);
+        card.classList.add('track-card--release');
+        card.setAttribute('data-genre', primaryTag(card));
+        entry.appendChild(card);
+        body.appendChild(entry);
+        ordered.push(card);
+      });
+
+      years[year].sketches.forEach(function(card) {
+        var entry = document.createElement('div');
+        entry.className = 'tl-entry tl-entry--sketch';
+        var node = document.createElement('span');
+        node.className = 'tl-node';
+        node.setAttribute('aria-hidden', 'true');
+        entry.appendChild(node);
+        entry.appendChild(card);
+        body.appendChild(entry);
+        ordered.push(card);
+      });
+
+      timeline.appendChild(group);
+    });
+
+    // End cap: where it all started
+    var cap = document.createElement('p');
+    cap.className = 'tl-cap';
+    var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var oldestSketch = sketches.length ? cardDateText(sketches[sketches.length - 1]) : '';
+    var capDate = '';
+    if (oldestSketch && oldestSketch.length >= 7) {
+      var capMonth = MONTHS[parseInt(oldestSketch.slice(5, 7), 10) - 1] || '';
+      capDate = (capMonth ? capMonth + ' ' : '') + oldestSketch.slice(0, 4);
+    }
+    cap.textContent = capDate ? 'Where it started \u2014 ' + capDate : 'Where it started';
+    timeline.appendChild(cap);
+
+    trackCards = ordered;
+    document.documentElement.classList.add('has-timeline');
+  }
+
+  buildTimeline();
+
+  // Reveal entries as they scroll in
+  (function setupReveal() {
+    var entries = Array.from(document.querySelectorAll('.tl-entry, .tl-year__head'));
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      entries.forEach(function(el) { el.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(observed) {
+      observed.forEach(function(item) {
+        if (item.isIntersecting) {
+          item.target.classList.add('in');
+          io.unobserve(item.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    entries.forEach(function(el) { io.observe(el); });
+  })();
+
+  // =========================================
+  // FILTERS
+  // =========================================
+  var filterChips = Array.from(document.querySelectorAll('.filter-chip'));
+  var currentFilter = 'all';
+
+  function cardMatchesFilter(card, filter) {
+    if (filter === 'all') return true;
+    return cardTags(card).indexOf(filter) !== -1;
   }
 
   function setCardAvailable(card, available) {
+    var entry = card.closest('.tl-entry');
     if (available) {
       card.removeAttribute('data-filtered-out');
       card.setAttribute('aria-hidden', 'false');
       card.setAttribute('tabindex', '0');
+      if (entry) entry.classList.remove('hidden');
     } else {
       card.setAttribute('data-filtered-out', 'true');
       card.setAttribute('aria-hidden', 'true');
       card.setAttribute('tabindex', '-1');
+      if (entry) entry.classList.add('hidden');
     }
   }
 
@@ -84,85 +211,64 @@
     });
   };
 
-  function announceStation() {
-    var status = document.getElementById('filterStatus');
-    var count = visibleCards().length;
-    if (status) {
-      status.textContent = count + (count === 1 ? ' track' : ' tracks') +
-        ' on station ' + STATIONS[currentStationIndex].name;
-    }
-    if (stationCount) {
-      stationCount.textContent = count + (count === 1 ? ' track' : ' tracks');
-    }
+  function syncYearGroups() {
+    Array.from(document.querySelectorAll('.tl-year')).forEach(function(group) {
+      var any = group.querySelector('.tl-entry:not(.hidden)');
+      group.classList.toggle('hidden', !any);
+    });
   }
 
-  function setStation(index, options) {
-    options = options || {};
-    currentStationIndex = ((index % STATIONS.length) + STATIONS.length) % STATIONS.length;
-    var station = STATIONS[currentStationIndex];
+  function announceFilter() {
+    var status = document.getElementById('filterStatus');
+    if (!status) return;
+    var count = visibleCards().length;
+    status.textContent = count + (count === 1 ? ' track shown' : ' tracks shown');
+  }
 
-    stationChips.forEach(function(chip) {
-      var selected = chip.getAttribute('data-station') === station.id;
+  function applyFilter(filter, options) {
+    options = options || {};
+    currentFilter = filter;
+    filterChips.forEach(function(chip) {
+      var selected = chip.getAttribute('data-filter') === filter;
       chip.classList.toggle('active', selected);
       chip.setAttribute('aria-pressed', selected ? 'true' : 'false');
       if (selected && options.focusChip) chip.focus();
     });
-    if (stationName) stationName.textContent = station.name;
-
     trackCards.forEach(function(card) {
-      setCardAvailable(card, cardMatchesStation(card, station.id));
+      setCardAvailable(card, cardMatchesFilter(card, filter));
     });
-    announceStation();
+    syncYearGroups();
+    announceFilter();
 
-    // Tell the galaxy to fly to this constellation
-    document.dispatchEvent(new CustomEvent('music:station', {
-      detail: { station: station.id, index: currentStationIndex }
-    }));
-
-    // Keep the queue coherent: if the current track left the station,
-    // tune into the station's first track (keep playing if we were playing).
+    // Keep the queue coherent if the current track got filtered out
     if (currentTrackIndex >= 0) {
       var activeCard = trackCards[currentTrackIndex];
       if (activeCard && activeCard.hasAttribute('data-filtered-out')) {
         activeCard.classList.remove('active');
         var next = visibleCards()[0];
-        if (next) {
-          selectTrack(next, { autoplay: isPlaying || playRequested });
-        }
+        if (next) selectTrack(next, { autoplay: isPlaying || playRequested });
       }
-    } else {
-      var preview = visibleCards()[0];
-      if (preview) syncPanel(preview, true);
     }
   }
 
-  stationChips.forEach(function(chip, chipIndex) {
+  filterChips.forEach(function(chip, chipIndex) {
     chip.addEventListener('click', function() {
-      var id = chip.getAttribute('data-station');
-      var index = STATIONS.findIndex(function(s) { return s.id === id; });
-      setStation(index >= 0 ? index : 0);
+      applyFilter(chip.getAttribute('data-filter'));
     });
     chip.addEventListener('keydown', function(e) {
       var keys = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'];
       if (keys.indexOf(e.key) === -1) return;
       e.preventDefault();
-      if (e.key === 'Home') { setStation(0, { focusChip: true }); return; }
-      if (e.key === 'End') { setStation(STATIONS.length - 1, { focusChip: true }); return; }
-      var dir = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 : -1;
-      setStation(chipIndex + dir, { focusChip: true });
+      var target;
+      if (e.key === 'Home') target = 0;
+      else if (e.key === 'End') target = filterChips.length - 1;
+      else {
+        var dir = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 : -1;
+        target = (chipIndex + dir + filterChips.length) % filterChips.length;
+      }
+      applyFilter(filterChips[target].getAttribute('data-filter'), { focusChip: true });
     });
   });
-
-  if (stationPrev) {
-    stationPrev.addEventListener('click', function() {
-      setStation(currentStationIndex - 1);
-    });
-  }
-  if (stationNext) {
-    stationNext.addEventListener('click', function() {
-      setStation(currentStationIndex + 1);
-    });
-  }
 
   // =========================================
   // AUDIO PLAYER
@@ -187,15 +293,6 @@
   var repeatBtn = document.getElementById('repeatBtn');
   var muteBtn = document.getElementById('muteBtn');
 
-  // Track panel (galaxy HUD)
-  var trackPanel = document.getElementById('trackPanel');
-  var panelCover = document.getElementById('panelCover');
-  var panelEyebrow = document.getElementById('panelEyebrow');
-  var panelTitle = document.getElementById('panelTitle');
-  var panelMeta = document.getElementById('panelMeta');
-  var panelDesc = document.getElementById('panelDesc');
-  var panelPlay = document.getElementById('panelPlay');
-
   // Guard: player bar must be present
   if (!playerTitle || !playerArtist || !playerCover || !playPauseBtn || !progressBar || !progressFill || !prevBtn || !nextBtn || !currentTimeEl || !totalTimeEl) return;
 
@@ -210,11 +307,6 @@
   var repeatOne = false;
   var lastVolume = audio.volume;
   var playRequested = false;
-  var panelCard = null;
-
-  function toText(value) {
-    return String(value || '');
-  }
 
   function cssUrl(value) {
     return 'url("' + toText(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '")';
@@ -222,82 +314,6 @@
 
   function coverBackground(coverUrl, fallback) {
     return coverUrl ? cssUrl(coverUrl) + ' center/cover no-repeat, ' + fallback : fallback;
-  }
-
-  // =========================================
-  // TRACK PANEL
-  // =========================================
-  function capitalize(value) {
-    return value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
-  }
-
-  function updatePanelPlayLabel() {
-    if (!panelPlay || !panelCard) return;
-    var isCurrent = currentTrackIndex >= 0 && trackCards[currentTrackIndex] === panelCard;
-    var title = toText(panelCard.getAttribute('data-title'));
-    panelPlay.textContent = isCurrent && isPlaying ? 'Pause' : 'Play';
-    panelPlay.setAttribute('aria-label', (isCurrent && isPlaying ? 'Pause ' : 'Play ') + title);
-  }
-
-  function syncPanel(card, animate) {
-    if (!trackPanel || !card) return;
-    var changed = panelCard !== card;
-    panelCard = card;
-
-    var title = toText(card.getAttribute('data-title'));
-    var displayTitle = card.querySelector('.track-card__title');
-    var coverUrl = card.getAttribute('data-cover') || '';
-    var gradient = card.getAttribute('data-gradient') || 'linear-gradient(135deg, #1a1a1a, #2a2a34)';
-    var description = card.querySelector('.track-card__desc');
-    var year = card.querySelector('.track-card__year');
-    var duration = card.getAttribute('data-duration') || '';
-    var lufs = card.getAttribute('data-lufs') || '';
-    var firstTag = cardTags(card)[0];
-
-    if (panelCover) {
-      panelCover.style.background = coverBackground(coverUrl, gradient);
-      panelCover.setAttribute('aria-label', (displayTitle ? displayTitle.textContent : title) + ' album cover');
-    }
-    if (panelEyebrow) panelEyebrow.textContent = firstTag ? capitalize(firstTag) + ' station' : 'Selected track';
-    if (panelTitle) panelTitle.textContent = displayTitle ? displayTitle.textContent : title;
-    if (panelDesc) panelDesc.textContent = description ? description.textContent : '';
-
-    if (panelMeta) {
-      panelMeta.innerHTML = '';
-      [
-        year ? year.textContent : '',
-        duration,
-        lufs ? lufs + ' LUFS' : ''
-      ].filter(Boolean).forEach(function(item) {
-        var span = document.createElement('span');
-        span.textContent = item;
-        panelMeta.appendChild(span);
-      });
-    }
-
-    updatePanelPlayLabel();
-    trackPanel.classList.add('on');
-
-    if (animate && changed) {
-      trackPanel.classList.remove('is-switching');
-      void trackPanel.offsetWidth;
-      trackPanel.classList.add('is-switching');
-    }
-  }
-
-  if (panelPlay) {
-    panelPlay.addEventListener('click', function() {
-      var card = panelCard || visibleCards()[0];
-      if (!card) return;
-      var isCurrent = currentTrackIndex >= 0 && trackCards[currentTrackIndex] === card;
-      if (isCurrent && isPlaying) {
-        audio.pause();
-      } else if (isCurrent) {
-        playAudio();
-      } else {
-        selectTrack(card);
-      }
-    });
   }
 
   function formatTime(secs) {
@@ -358,6 +374,11 @@
       var labelTitle = card.getAttribute('data-title') || 'track';
       card.classList.toggle('active', active);
       card.classList.toggle('is-playing', active && isPlaying);
+      var entry = card.closest('.tl-entry');
+      if (entry) {
+        entry.classList.toggle('is-active', active);
+        entry.classList.toggle('is-playing', active && isPlaying);
+      }
       if (active) {
         card.setAttribute('aria-current', 'true');
         card.setAttribute('aria-label', (isPlaying ? 'Playing ' : 'Selected ') + labelTitle);
@@ -366,7 +387,6 @@
         card.setAttribute('aria-label', 'Play ' + labelTitle);
       }
     });
-    updatePanelPlayLabel();
   }
 
   function updateModeButtons() {
@@ -557,12 +577,27 @@
   // =========================================
   // SELECT & PLAY TRACK
   // =========================================
+  function bringTrackCardIntoView(card) {
+    if (!card || !card.scrollIntoView) return;
+    var rect = card.getBoundingClientRect();
+    var bottomLimit = window.innerHeight - (playerBar ? playerBar.offsetHeight + 32 : 32);
+    var alreadyComfortable = rect.top >= 88 && rect.bottom <= bottomLimit;
+    if (alreadyComfortable) return;
+
+    var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.requestAnimationFrame(function() {
+      card.scrollIntoView({
+        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+        block: 'center',
+        inline: 'nearest'
+      });
+    });
+  }
+
   function selectTrack(card, options) {
     var src = card.getAttribute('data-src');
     if (!src) return;
     options = options || {};
-
-    syncPanel(card, true);
 
     var title = toText(card.getAttribute('data-title'));
     var artist = card.getAttribute('data-artist') || '';
@@ -600,6 +635,7 @@
 
     trackCards.forEach(function(c) { c.classList.remove('active'); });
     card.classList.add('active');
+    if (options.reveal) bringTrackCardIntoView(card);
   }
 
   // =========================================
@@ -708,7 +744,7 @@
   // =========================================
   trackCards.forEach(function(card) {
     card.setAttribute('role', 'button');
-    setCardAvailable(card, !card.hasAttribute('data-filtered-out'));
+    setCardAvailable(card, true);
     var title = card.getAttribute('data-title') || 'track';
     card.setAttribute('aria-label', 'Play ' + title);
     card.addEventListener('click', function() {
@@ -719,10 +755,6 @@
         e.preventDefault();
         selectTrack(card);
       }
-    });
-    // Keyboard users tab through the hidden list; mirror focus in the panel
-    card.addEventListener('focus', function() {
-      syncPanel(card, true);
     });
   });
 
@@ -751,13 +783,13 @@
       while (randomIndex === currentInVisible) {
         randomIndex = Math.floor(Math.random() * visible.length);
       }
-      selectTrack(visible[randomIndex]);
+      selectTrack(visible[randomIndex], { reveal: true });
       return;
     }
     var newIndex = currentInVisible < 0
       ? 0
       : (currentInVisible + direction + visible.length) % visible.length;
-    selectTrack(visible[newIndex]);
+    selectTrack(visible[newIndex], { reveal: true });
   }
 
   function playNextTrack() {
@@ -987,26 +1019,10 @@
   // =========================================
   // INIT
   // =========================================
-  // Default station is "All": evolution demos start filtered out.
-  trackCards.forEach(function(card) {
-    setCardAvailable(card, cardMatchesStation(card, 'all'));
-  });
-  announceStation();
-
-  var initialFeatured = visibleCards()[0] || trackCards[0];
-  if (initialFeatured) syncPanel(initialFeatured, false);
-
+  announceFilter();
   updateModeButtons();
   updateMuteButton();
   updatePlayerStateClasses();
   setPlayerStatus('Ready to play', false);
-
-  // Small API for the galaxy module
-  window.musicApp = {
-    stations: STATIONS,
-    preview: function(card) { syncPanel(card, true); },
-    select: function(card) { selectTrack(card); },
-    getStationId: function() { return STATIONS[currentStationIndex].id; }
-  };
 
 })();

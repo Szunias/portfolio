@@ -1,64 +1,44 @@
 <header class="back-bar" aria-label="Music navigation">
   <a href="index.html" class="back-bar__link">&larr; Portfolio</a>
-  <span class="back-bar__current" aria-current="page">Music map</span>
+  <span class="back-bar__current" aria-current="page">Music timeline</span>
   <a href="https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6" class="back-bar__link" rel="noopener noreferrer">Spotify</a>
 </header>
 
 <!-- =========================================
-     GALAXY HUD (overlay UI above the 3D map)
+     MUSIC HERO
      ========================================= -->
-<section class="galaxy-hud" aria-label="Music galaxy">
-  <div class="galaxy-hud__copy">
-    <h1 class="galaxy-hud__title">Music</h1>
-    <p class="galaxy-hud__subtitle">A galaxy of scores, covers, remixes and demos. Every star is a track.</p>
-  </div>
-
-  <aside class="track-panel" id="trackPanel" aria-live="polite" aria-atomic="false">
-    <div class="track-panel__cover" id="panelCover" role="img" aria-label="Album cover"></div>
-    <div class="track-panel__body">
-      <p class="track-panel__eyebrow" id="panelEyebrow">Selected track</p>
-      <h2 class="track-panel__title" id="panelTitle">Pick a star</h2>
-      <div class="track-panel__meta" id="panelMeta"></div>
-      <p class="track-panel__desc" id="panelDesc"></p>
-      <button class="track-panel__play" id="panelPlay" type="button">Play</button>
-    </div>
-  </aside>
-
-  <nav class="station-dock" id="stationDock" aria-label="Browse tracks">
-    <div class="station-dock__head">
-      <span class="station-dock__label">Browse tracks</span>
-      <span class="station-dock__count" id="stationCount">15 tracks</span>
-    </div>
-    <div class="station-dock__row">
-      <button class="station-dock__arrow" id="stationPrev" type="button" aria-label="Previous station">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <span class="station-dock__name" id="stationName" aria-live="polite">All tracks</span>
-      <button class="station-dock__arrow" id="stationNext" type="button" aria-label="Next station">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-    </div>
-    <div class="station-dock__chips" role="group" aria-label="Choose station">
-      <button class="station-chip active" type="button" data-station="all" aria-pressed="true">All</button>
-      <button class="station-chip" type="button" data-station="electronic" aria-pressed="false">Electronic</button>
-      <button class="station-chip" type="button" data-station="film" aria-pressed="false">Film</button>
-      <button class="station-chip" type="button" data-station="jazz" aria-pressed="false">Jazz</button>
-      <button class="station-chip" type="button" data-station="metal" aria-pressed="false">Metal</button>
-      <button class="station-chip" type="button" data-station="remix" aria-pressed="false">Remix</button>
-      <button class="station-chip" type="button" data-station="single" aria-pressed="false">Singles</button>
-      <button class="station-chip" type="button" data-station="techno" aria-pressed="false">Techno</button>
-      <button class="station-chip station-chip--evo" type="button" data-station="evolution" aria-pressed="false">Evolution</button>
-    </div>
-  </nav>
-
-  <p class="galaxy-hint" aria-hidden="true">Drag to orbit &middot; Scroll to zoom &middot; Click a star to play</p>
-  <p class="sr-only" id="filterStatus" aria-live="polite" aria-atomic="true">15 tracks shown</p>
+<section class="music-hero">
+  <p class="music-hero__eyebrow">2023 &mdash; 2026 &middot; 15 releases &middot; 31 sketches</p>
+  <h1 class="music-hero__title">Music</h1>
+  <div class="music-hero__rule" aria-hidden="true"></div>
+  <p class="music-hero__subtitle">Every release and every rough sketch on one timeline, newest first. Scroll down to travel back to where it started.</p>
 </section>
 
 <!-- =========================================
+     FILTERS
+     ========================================= -->
+<nav class="filters" aria-label="Filter tracks by genre">
+  <button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">All</button>
+  <button class="filter-chip" type="button" data-filter="electronic" aria-pressed="false">Electronic</button>
+  <button class="filter-chip" type="button" data-filter="film" aria-pressed="false">Film</button>
+  <button class="filter-chip" type="button" data-filter="jazz" aria-pressed="false">Jazz</button>
+  <button class="filter-chip" type="button" data-filter="metal" aria-pressed="false">Metal</button>
+  <button class="filter-chip" type="button" data-filter="remix" aria-pressed="false">Remix</button>
+  <button class="filter-chip" type="button" data-filter="single" aria-pressed="false">Singles</button>
+  <button class="filter-chip" type="button" data-filter="techno" aria-pressed="false">Techno</button>
+  <button class="filter-chip filter-chip--sketch" type="button" data-filter="evolution" aria-pressed="false">Sketches</button>
+</nav>
+<p class="sr-only" id="filterStatus" aria-live="polite" aria-atomic="true">46 tracks shown</p>
+
+<!-- =========================================
+     TIMELINE (built by music.js from the track data below)
+     ========================================= -->
+<section class="timeline" id="timeline" aria-label="Tracks by year"></section>
+
+<!-- =========================================
      TRACK DATA
-     Hidden source of truth for the galaxy and the audio player.
-     Shown as a plain list only when WebGL is unavailable (html.no-3d).
+     Source of truth: music.js lifts these cards into the timeline.
+     Without JS the grids below render as a plain chronological list.
      ========================================= -->
 <section class="track-data" id="trackData" aria-labelledby="tracks-title">
   <h2 class="sr-only" id="tracks-title">Tracks</h2>
@@ -441,30 +421,6 @@
 
   <h2 class="sr-only" id="evolution-title">Evolution &mdash; chronological demos</h2>
   <div class="tracks-grid" id="evolution-grid">
-    <div class="track-card track-card--evo" data-order="01" data-tags="evolution" data-title="pumcikkk" data-artist="Igor Szuniewicz" data-duration="3:14" data-gradient="linear-gradient(135deg, hsl(101,38%,16%), hsl(129,44%,30%), hsl(101,40%,12%), hsl(151,42%,26%))" data-src="old/public/assets/audio/evolution/pumcikkk_2023-08-28.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(101,38%,16%), hsl(129,44%,30%), hsl(101,40%,12%), hsl(151,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">pumcikkk</h3><span class="track-card__duration">3:14</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2023-08-28</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="02" data-tags="evolution" data-title="tranc" data-artist="Igor Szuniewicz" data-duration="1:44" data-gradient="linear-gradient(135deg, hsl(272,38%,16%), hsl(300,44%,30%), hsl(272,40%,12%), hsl(322,42%,26%))" data-src="old/public/assets/audio/evolution/tranc_2023-10-18.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(272,38%,16%), hsl(300,44%,30%), hsl(272,40%,12%), hsl(322,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">tranc</h3><span class="track-card__duration">1:44</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2023-10-18</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
     <div class="track-card track-card--evo" data-order="03" data-tags="evolution" data-title="egipski" data-artist="Igor Szuniewicz" data-duration="3:30" data-gradient="linear-gradient(135deg, hsl(173,38%,16%), hsl(201,44%,30%), hsl(173,40%,12%), hsl(223,42%,26%))" data-src="old/public/assets/audio/evolution/egipski_2023-10-24.mp3">
       <div class="track-card__cover">
         <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(173,38%,16%), hsl(201,44%,30%), hsl(173,40%,12%), hsl(223,42%,26%));"></div>
@@ -489,18 +445,6 @@
         <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
       </div>
     </div>
-    <div class="track-card track-card--evo" data-order="05" data-tags="evolution" data-title="time2" data-artist="Igor Szuniewicz" data-duration="1:39" data-gradient="linear-gradient(135deg, hsl(325,38%,16%), hsl(353,44%,30%), hsl(325,40%,12%), hsl(15,42%,26%))" data-src="old/public/assets/audio/evolution/time2_2023-11-24.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(325,38%,16%), hsl(353,44%,30%), hsl(325,40%,12%), hsl(15,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">time2</h3><span class="track-card__duration">1:39</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2023-11-24</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
     <div class="track-card track-card--evo" data-order="06" data-tags="evolution" data-title="TIME" data-artist="Igor Szuniewicz" data-duration="1:44" data-gradient="linear-gradient(135deg, hsl(290,38%,16%), hsl(318,44%,30%), hsl(290,40%,12%), hsl(340,42%,26%))" data-src="old/public/assets/audio/evolution/TIME_2023-11-24.mp3">
       <div class="track-card__cover">
         <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(290,38%,16%), hsl(318,44%,30%), hsl(290,40%,12%), hsl(340,42%,26%));"></div>
@@ -510,42 +454,6 @@
         <div class="track-card__top-row"><h3 class="track-card__title">TIME</h3><span class="track-card__duration">1:44</span></div>
         <div class="track-card__artist">Igor Szuniewicz</div>
         <div class="track-card__year">2023-11-24</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="07" data-tags="evolution" data-title="metal full" data-artist="Igor Szuniewicz" data-duration="3:44" data-gradient="linear-gradient(135deg, hsl(143,38%,16%), hsl(171,44%,30%), hsl(143,40%,12%), hsl(193,42%,26%))" data-src="old/public/assets/audio/evolution/metal%20full_2023-11-25.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(143,38%,16%), hsl(171,44%,30%), hsl(143,40%,12%), hsl(193,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">metal full</h3><span class="track-card__duration">3:44</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2023-11-25</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="08" data-tags="evolution" data-title="metal3" data-artist="Igor Szuniewicz" data-duration="2:48" data-gradient="linear-gradient(135deg, hsl(341,38%,16%), hsl(9,44%,30%), hsl(341,40%,12%), hsl(31,42%,26%))" data-src="old/public/assets/audio/evolution/metal3_2023-11-25.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(341,38%,16%), hsl(9,44%,30%), hsl(341,40%,12%), hsl(31,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">metal3</h3><span class="track-card__duration">2:48</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2023-11-25</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="09" data-tags="evolution" data-title="metal" data-artist="Igor Szuniewicz" data-duration="0:45" data-gradient="linear-gradient(135deg, hsl(256,38%,16%), hsl(284,44%,30%), hsl(256,40%,12%), hsl(306,42%,26%))" data-src="old/public/assets/audio/evolution/metal_2023-11-25.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(256,38%,16%), hsl(284,44%,30%), hsl(256,40%,12%), hsl(306,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">metal</h3><span class="track-card__duration">0:45</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2023-11-25</div>
         <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
       </div>
     </div>
@@ -570,18 +478,6 @@
         <div class="track-card__top-row"><h3 class="track-card__title">metalzar2</h3><span class="track-card__duration">3:54</span></div>
         <div class="track-card__artist">Igor Szuniewicz</div>
         <div class="track-card__year">2023-11-28</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="12" data-tags="evolution" data-title="fajnyproh" data-artist="Igor Szuniewicz" data-duration="0:21" data-gradient="linear-gradient(135deg, hsl(320,38%,16%), hsl(348,44%,30%), hsl(320,40%,12%), hsl(10,42%,26%))" data-src="old/public/assets/audio/evolution/fajnyproh_2024-01-16.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(320,38%,16%), hsl(348,44%,30%), hsl(320,40%,12%), hsl(10,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">fajnyproh</h3><span class="track-card__duration">0:21</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2024-01-16</div>
         <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
       </div>
     </div>
@@ -657,18 +553,6 @@
         <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
       </div>
     </div>
-    <div class="track-card track-card--evo" data-order="19" data-tags="evolution" data-title="APDEJTTECHNIKwAV" data-artist="Igor Szuniewicz" data-duration="3:10" data-gradient="linear-gradient(135deg, hsl(309,38%,16%), hsl(337,44%,30%), hsl(309,40%,12%), hsl(359,42%,26%))" data-src="old/public/assets/audio/evolution/APDEJTTECHNIKwAV_2024-02-15.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(309,38%,16%), hsl(337,44%,30%), hsl(309,40%,12%), hsl(359,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">APDEJTTECHNIKwAV</h3><span class="track-card__duration">3:10</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2024-02-15</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
     <div class="track-card track-card--evo" data-order="20" data-tags="evolution" data-title="tecnorock" data-artist="Igor Szuniewicz" data-duration="3:10" data-gradient="linear-gradient(135deg, hsl(187,38%,16%), hsl(215,44%,30%), hsl(187,40%,12%), hsl(237,42%,26%))" data-src="old/public/assets/audio/evolution/tecnorock_2024-02-16.mp3">
       <div class="track-card__cover">
         <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(187,38%,16%), hsl(215,44%,30%), hsl(187,40%,12%), hsl(237,42%,26%));"></div>
@@ -678,78 +562,6 @@
         <div class="track-card__top-row"><h3 class="track-card__title">tecnorock</h3><span class="track-card__duration">3:10</span></div>
         <div class="track-card__artist">Igor Szuniewicz</div>
         <div class="track-card__year">2024-02-16</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="21" data-tags="evolution" data-title="darktech" data-artist="Igor Szuniewicz" data-duration="1:36" data-gradient="linear-gradient(135deg, hsl(169,38%,16%), hsl(197,44%,30%), hsl(169,40%,12%), hsl(219,42%,26%))" data-src="old/public/assets/audio/evolution/darktech_2024-02-20.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(169,38%,16%), hsl(197,44%,30%), hsl(169,40%,12%), hsl(219,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">darktech</h3><span class="track-card__duration">1:36</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2024-02-20</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="22" data-tags="evolution" data-title="techniczny darek" data-artist="Igor Szuniewicz" data-duration="2:05" data-gradient="linear-gradient(135deg, hsl(109,38%,16%), hsl(137,44%,30%), hsl(109,40%,12%), hsl(159,42%,26%))" data-src="old/public/assets/audio/evolution/techniczny%20darek_2024-02-20.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(109,38%,16%), hsl(137,44%,30%), hsl(109,40%,12%), hsl(159,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">techniczny darek</h3><span class="track-card__duration">2:05</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2024-02-20</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="23" data-tags="evolution" data-title="aktulny gotyk" data-artist="Igor Szuniewicz" data-duration="2:12" data-gradient="linear-gradient(135deg, hsl(118,38%,16%), hsl(146,44%,30%), hsl(118,40%,12%), hsl(168,42%,26%))" data-src="old/public/assets/audio/evolution/aktulny%20gotyk_2024-03-07.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(118,38%,16%), hsl(146,44%,30%), hsl(118,40%,12%), hsl(168,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">aktulny gotyk</h3><span class="track-card__duration">2:12</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2024-03-07</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="24" data-tags="evolution" data-title="gotka" data-artist="Igor Szuniewicz" data-duration="1:52" data-gradient="linear-gradient(135deg, hsl(133,38%,16%), hsl(161,44%,30%), hsl(133,40%,12%), hsl(183,42%,26%))" data-src="old/public/assets/audio/evolution/gotka_2024-03-07.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(133,38%,16%), hsl(161,44%,30%), hsl(133,40%,12%), hsl(183,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">gotka</h3><span class="track-card__duration">1:52</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2024-03-07</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="25" data-tags="evolution" data-title="gotyk nowy" data-artist="Igor Szuniewicz" data-duration="2:06" data-gradient="linear-gradient(135deg, hsl(316,38%,16%), hsl(344,44%,30%), hsl(316,40%,12%), hsl(6,42%,26%))" data-src="old/public/assets/audio/evolution/gotyk%20nowy_2024-03-07.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(316,38%,16%), hsl(344,44%,30%), hsl(316,40%,12%), hsl(6,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">gotyk nowy</h3><span class="track-card__duration">2:06</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2024-03-07</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="26" data-tags="evolution" data-title="popragotyk" data-artist="Igor Szuniewicz" data-duration="2:13" data-gradient="linear-gradient(135deg, hsl(135,38%,16%), hsl(163,44%,30%), hsl(135,40%,12%), hsl(185,42%,26%))" data-src="old/public/assets/audio/evolution/popragotyk_2024-03-07.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(135,38%,16%), hsl(163,44%,30%), hsl(135,40%,12%), hsl(185,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">popragotyk</h3><span class="track-card__duration">2:13</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2024-03-07</div>
         <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
       </div>
     </div>
@@ -837,18 +649,6 @@
         <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
       </div>
     </div>
-    <div class="track-card track-card--evo" data-order="34" data-tags="evolution" data-title="Nowakreacja2" data-artist="Igor Szuniewicz" data-duration="2:07" data-gradient="linear-gradient(135deg, hsl(101,38%,16%), hsl(129,44%,30%), hsl(101,40%,12%), hsl(151,42%,26%))" data-src="old/public/assets/audio/evolution/Nowakreacja2_2024-10-29.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(101,38%,16%), hsl(129,44%,30%), hsl(101,40%,12%), hsl(151,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">Nowakreacja2</h3><span class="track-card__duration">2:07</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2024-10-29</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
     <div class="track-card track-card--evo" data-order="35" data-tags="evolution" data-title="nowyrock5" data-artist="Igor Szuniewicz" data-duration="1:41" data-gradient="linear-gradient(135deg, hsl(218,38%,16%), hsl(246,44%,30%), hsl(218,40%,12%), hsl(268,42%,26%))" data-src="old/public/assets/audio/evolution/nowyrock5_2024-11-09.mp3">
       <div class="track-card__cover">
         <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(218,38%,16%), hsl(246,44%,30%), hsl(218,40%,12%), hsl(268,42%,26%));"></div>
@@ -885,42 +685,6 @@
         <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
       </div>
     </div>
-    <div class="track-card track-card--evo" data-order="38" data-tags="evolution" data-title="now6" data-artist="Igor Szuniewicz" data-duration="1:49" data-gradient="linear-gradient(135deg, hsl(24,38%,16%), hsl(52,44%,30%), hsl(24,40%,12%), hsl(74,42%,26%))" data-src="old/public/assets/audio/evolution/now6_2025-03-29.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(24,38%,16%), hsl(52,44%,30%), hsl(24,40%,12%), hsl(74,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">now6</h3><span class="track-card__duration">1:49</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2025-03-29</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="39" data-tags="evolution" data-title="nowy5" data-artist="Igor Szuniewicz" data-duration="1:49" data-gradient="linear-gradient(135deg, hsl(237,38%,16%), hsl(265,44%,30%), hsl(237,40%,12%), hsl(287,42%,26%))" data-src="old/public/assets/audio/evolution/nowy5_2025-03-29.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(237,38%,16%), hsl(265,44%,30%), hsl(237,40%,12%), hsl(287,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">nowy5</h3><span class="track-card__duration">1:49</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2025-03-29</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="40" data-tags="evolution" data-title="nowymix3" data-artist="Igor Szuniewicz" data-duration="1:49" data-gradient="linear-gradient(135deg, hsl(131,38%,16%), hsl(159,44%,30%), hsl(131,40%,12%), hsl(181,42%,26%))" data-src="old/public/assets/audio/evolution/nowymix3_2025-03-29.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(131,38%,16%), hsl(159,44%,30%), hsl(131,40%,12%), hsl(181,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">nowymix3</h3><span class="track-card__duration">1:49</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2025-03-29</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
     <div class="track-card track-card--evo" data-order="41" data-tags="evolution" data-title="nowymix4" data-artist="Igor Szuniewicz" data-duration="0:09" data-gradient="linear-gradient(135deg, hsl(42,38%,16%), hsl(70,44%,30%), hsl(42,40%,12%), hsl(92,42%,26%))" data-src="old/public/assets/audio/evolution/nowymix4_2025-03-29.mp3">
       <div class="track-card__cover">
         <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(42,38%,16%), hsl(70,44%,30%), hsl(42,40%,12%), hsl(92,42%,26%));"></div>
@@ -928,30 +692,6 @@
       </div>
       <div class="track-card__body">
         <div class="track-card__top-row"><h3 class="track-card__title">nowymix4</h3><span class="track-card__duration">0:09</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2025-03-29</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="42" data-tags="evolution" data-title="rnbszmix" data-artist="Igor Szuniewicz" data-duration="1:49" data-gradient="linear-gradient(135deg, hsl(41,38%,16%), hsl(69,44%,30%), hsl(41,40%,12%), hsl(91,42%,26%))" data-src="old/public/assets/audio/evolution/rnbszmix_2025-03-29.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(41,38%,16%), hsl(69,44%,30%), hsl(41,40%,12%), hsl(91,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">rnbszmix</h3><span class="track-card__duration">1:49</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2025-03-29</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="43" data-tags="evolution" data-title="won" data-artist="Igor Szuniewicz" data-duration="1:49" data-gradient="linear-gradient(135deg, hsl(165,38%,16%), hsl(193,44%,30%), hsl(165,40%,12%), hsl(215,42%,26%))" data-src="old/public/assets/audio/evolution/won_2025-03-29.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(165,38%,16%), hsl(193,44%,30%), hsl(165,40%,12%), hsl(215,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">won</h3><span class="track-card__duration">1:49</span></div>
         <div class="track-card__artist">Igor Szuniewicz</div>
         <div class="track-card__year">2025-03-29</div>
         <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
@@ -993,30 +733,6 @@
         <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
       </div>
     </div>
-    <div class="track-card track-card--evo" data-order="47" data-tags="evolution" data-title="utworki1" data-artist="Igor Szuniewicz" data-duration="2:00" data-gradient="linear-gradient(135deg, hsl(107,38%,16%), hsl(135,44%,30%), hsl(107,40%,12%), hsl(157,42%,26%))" data-src="old/public/assets/audio/evolution/utworki1_2025-07-30.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(107,38%,16%), hsl(135,44%,30%), hsl(107,40%,12%), hsl(157,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">utworki1</h3><span class="track-card__duration">2:00</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2025-07-30</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="48" data-tags="evolution" data-title="utworki2" data-artist="Igor Szuniewicz" data-duration="0:32" data-gradient="linear-gradient(135deg, hsl(141,38%,16%), hsl(169,44%,30%), hsl(141,40%,12%), hsl(191,42%,26%))" data-src="old/public/assets/audio/evolution/utworki2_2025-07-30.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(141,38%,16%), hsl(169,44%,30%), hsl(141,40%,12%), hsl(191,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">utworki2</h3><span class="track-card__duration">0:32</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2025-07-30</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
     <div class="track-card track-card--evo" data-order="49" data-tags="evolution" data-title="Mixdown(2)" data-artist="Igor Szuniewicz" data-duration="0:59" data-gradient="linear-gradient(135deg, hsl(137,38%,16%), hsl(165,44%,30%), hsl(137,40%,12%), hsl(187,42%,26%))" data-src="old/public/assets/audio/evolution/Mixdown%282%29_2026-04-05.mp3">
       <div class="track-card__cover">
         <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(137,38%,16%), hsl(165,44%,30%), hsl(137,40%,12%), hsl(187,42%,26%));"></div>
@@ -1026,18 +742,6 @@
         <div class="track-card__top-row"><h3 class="track-card__title">Mixdown(2)</h3><span class="track-card__duration">0:59</span></div>
         <div class="track-card__artist">Igor Szuniewicz</div>
         <div class="track-card__year">2026-04-05</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="50" data-tags="evolution" data-title="cekawoscrozwinieta(2)" data-artist="Igor Szuniewicz" data-duration="2:26" data-gradient="linear-gradient(135deg, hsl(30,38%,16%), hsl(58,44%,30%), hsl(30,40%,12%), hsl(80,42%,26%))" data-src="old/public/assets/audio/evolution/cekawoscrozwinieta%282%29_2026-05-01.mp3">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(30,38%,16%), hsl(58,44%,30%), hsl(30,40%,12%), hsl(80,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">cekawoscrozwinieta(2)</h3><span class="track-card__duration">2:26</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2026-05-01</div>
         <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
       </div>
     </div>
