@@ -456,15 +456,30 @@ function urlPathname(value, siteOrigin) {
   }
 }
 
+function decodeBase64Attr(value) {
+  const raw = decodeHtmlAttr(value).trim();
+  if (!raw) return '';
+  try {
+    return Buffer.from(raw, 'base64').toString('utf8');
+  } catch (_) {
+    return '';
+  }
+}
+
 function collectLocalRefsFromHtml(html, siteOrigin) {
   const refs = new Set();
   const attrRe = /\b(?:href|src|poster|action|data-src|data-cover|data-autoplay-src)=["']([^"']+)["']/gi;
+  const encodedAttrRe = /\bdata-src-e=["']([^"']+)["']/gi;
   const metaImageRe = /<meta\b(?=[^>]*(?:property|name)=["'](?:og:image|twitter:image)["'])[^>]*\bcontent=["']([^"']+)["'][^>]*>/gi;
   const urlRe = /url\((["']?)([^)"']+)\1\)/gi;
   const srcsetRe = /\bsrcset=["']([^"']+)["']/gi;
 
   for (const match of html.matchAll(attrRe)) {
     const ref = urlPathname(match[1], siteOrigin);
+    if (ref) refs.add(ref);
+  }
+  for (const match of html.matchAll(encodedAttrRe)) {
+    const ref = urlPathname(decodeBase64Attr(match[1]), siteOrigin);
     if (ref) refs.add(ref);
   }
   for (const match of html.matchAll(metaImageRe)) {
@@ -653,6 +668,12 @@ function validateGeneratedHtml(htmlFiles) {
       const value = decodeHtmlAttr(match[1]).trim();
       if (/^javascript:/i.test(value)) issues.push(`${file}: disallowed javascript: URL`);
       if (!isNoindex && /^http:\/\//i.test(value)) issues.push(`${file}: insecure http URL ${value}`);
+    }
+    for (const match of html.matchAll(/\bdata-src-e=["']([^"']+)["']/gi)) {
+      const value = decodeBase64Attr(match[1]).trim();
+      if (!value) issues.push(`${file}: invalid data-src-e value`);
+      if (/^javascript:/i.test(value)) issues.push(`${file}: disallowed encoded javascript: URL`);
+      if (!isNoindex && /^http:\/\//i.test(value)) issues.push(`${file}: insecure encoded http URL ${value}`);
     }
 
     for (const match of html.matchAll(/<a\b[^>]*\bhref=(["'])(.*?)\1[^>]*>/gi)) {
