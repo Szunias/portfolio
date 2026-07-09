@@ -187,7 +187,7 @@
       var capMonth = MONTHS[parseInt(oldestSketch.slice(5, 7), 10) - 1] || '';
       capDate = (capMonth ? capMonth + ' ' : '') + oldestSketch.slice(0, 4);
     }
-    cap.textContent = capDate ? 'Where it started \u2014 ' + capDate : 'Where it started';
+    cap.textContent = capDate ? 'Where it started: ' + capDate : 'Where it started';
     timeline.appendChild(cap);
 
     trackCards = ordered;

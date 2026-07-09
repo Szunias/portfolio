@@ -1,246 +1,369 @@
 
 
-<style>
-/* Scoped: IFMC score charts & feedback panels */
-.ifmc-films { display: grid; gap: 60px; max-width: 1100px; margin: 0 auto; padding: 0 32px 20px; }
-.ifmc-film { border: 1px solid rgba(236,238,240,0.13); border-radius: 16px; overflow: hidden; background: rgba(17,17,20,0.6); }
-.ifmc-film__video { position: relative; aspect-ratio: 16 / 9; background: #0a0a0c; }
-.ifmc-film__video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-.ifmc-film__body { padding: 26px 30px 30px; }
-.ifmc-film__title { font-family: var(--serif, 'Inter Tight', sans-serif); font-size: 27px; font-weight: 600; margin-bottom: 4px; }
-.ifmc-film__dir { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; text-transform: uppercase; opacity: 0.6; margin-bottom: 14px; }
-.ifmc-film__about { font-size: 14.5px; line-height: 1.65; opacity: 0.85; max-width: 70ch; margin-bottom: 24px; }
-.ifmc-scores { display: grid; gap: 10px; margin-bottom: 8px; }
-.ifmc-crit { display: grid; grid-template-columns: minmax(150px, 260px) 1fr 64px; align-items: center; gap: 14px; }
-.ifmc-crit__label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; opacity: 0.7; line-height: 1.4; }
-.ifmc-crit__bar { height: 8px; border-radius: 999px; background: rgba(236,238,240,0.1); overflow: hidden; }
-.ifmc-crit__bar > span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #6e879d, #8fb8d4); box-shadow: 0 0 10px rgba(143,184,212,0.35); }
-.ifmc-crit__val { font-family: 'IBM Plex Mono', monospace; font-size: 13px; text-align: right; }
-.ifmc-crit__val em { font-style: normal; opacity: 0.45; font-size: 11px; }
-.ifmc-totals { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0 26px; }
-.ifmc-totals__stat { flex: 1; min-width: 150px; border: 1px solid rgba(236,238,240,0.13); border-radius: 12px; padding: 12px 16px; }
-.ifmc-totals__num { display: block; font-family: var(--serif, 'Inter Tight', sans-serif); font-size: 26px; font-weight: 600; color: #8fb8d4; }
-.ifmc-totals__lbl { font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; opacity: 0.6; }
-.ifmc-quote { border-left: 2px solid #8fb8d4; padding: 4px 0 4px 18px; margin: 0 0 14px; font-size: 15px; line-height: 1.6; font-style: italic; opacity: 0.92; }
-.ifmc-quote cite { display: block; font-style: normal; font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; opacity: 0.55; margin-top: 6px; }
-.ifmc-feedback { margin-top: 8px; border: 1px solid rgba(236,238,240,0.13); border-radius: 12px; }
-.ifmc-feedback summary { cursor: pointer; padding: 13px 18px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; text-transform: uppercase; color: #8fb8d4; list-style: none; }
-.ifmc-feedback summary::before { content: '+ '; }
-.ifmc-feedback[open] summary::before { content: '\2212  '; }
-.ifmc-feedback__body { padding: 4px 20px 18px; font-size: 14px; line-height: 1.7; opacity: 0.85; }
-.ifmc-feedback__body p { margin-bottom: 12px; }
-.ifmc-pdf { display: inline-block; margin-top: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; text-transform: uppercase; }
-@media (max-width: 700px) {
-  .ifmc-films { padding: 0 18px 10px; gap: 40px; }
-  .ifmc-film__body { padding: 20px 18px 22px; }
-  .ifmc-crit { grid-template-columns: 1fr 60px; }
-  .ifmc-crit__label { grid-column: 1 / -1; }
-}
-</style>
-
-<!-- PROJECT HERO -->
-<header class="project-hero">
-  <h1 class="project-hero__title">Indie Film Music Contest</h1>
-  <p class="project-hero__subtitle">Two juried film scores, four criteria, and written spotting notes from professional film composers &mdash; Winter 2025 edition.</p>
-
-  <div class="project-hero__meta">
-    <div class="meta-item">
-      <span class="meta-item__label">Role</span>
-      <span class="meta-item__value">Composer (solo)</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-item__label">Type</span>
-      <span class="meta-item__value">Juried scoring competition</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-item__label">Edition</span>
-      <span class="meta-item__value">Winter 2025</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-item__label">Entries</span>
-      <span class="meta-item__value">2 films, both scored &amp; reviewed</span>
-    </div>
+<!-- ============ HERO: 3D clapperboard in a particle field ============ -->
+<header class="ifmc-hero">
+  <canvas id="ifmcStage" class="ifmc-hero__stage" aria-hidden="true"></canvas>
+  <div class="ifmc-hero__copy">
+    <p class="ifmc-hero__kicker">INDIE FILM MUSIC CONTEST &middot; WINTER 2025</p>
+    <h1 class="ifmc-hero__title">Scored<br>to picture.</h1>
+    <p class="ifmc-hero__sub">I scored two short films for the Winter 2025 edition. Professional film composers rate every entry on four criteria, and production quality doesn't count.</p>
   </div>
-
-  <div class="project-hero__techs">
-    <span class="tech-pill">Film Scoring</span>
-    <span class="tech-pill">Spotting</span>
-    <span class="tech-pill">Orchestration</span>
-    <span class="tech-pill">Strings &amp; Synths</span>
-    <span class="tech-pill">Scoring to Picture</span>
-  </div>
+  <div class="ifmc-hero__scroll" aria-hidden="true"><span></span></div>
 </header>
 
-<!-- CONCEPT -->
-<section class="concept-section reveal" id="concept" aria-labelledby="concept-title">
-  <span class="section-label">The Contest</span>
-  <h2 class="section-title" id="concept-title">Scored by Working Film Composers, on Creativity Only</h2>
-  <div class="section-rule"></div>
+<!-- ============ ENTRY 01 - WALTER ============ -->
+<section class="ifmc-entry" id="walter">
+  <header class="ifmc-entry__head io-reveal">
+    <p class="ifmc-entry__no">ENTRY 01 &middot; ANIMATION &middot; NO DIALOGUE</p>
+    <h2 class="ifmc-entry__title">Walter</h2>
+    <p class="ifmc-entry__dir">Animated short by Lorenzo Fresta. There is no dialogue, so the music tells the whole story.</p>
+  </header>
 
-  <div class="concept-layout">
-    <div class="concept-body">
-      <p class="drop-cap">The <a href="https://indiefilmmusiccontest.com/" target="_blank" rel="noopener noreferrer">Indie Film Music Contest</a> gives every composer the same short films and the same brief: score the picture. The judging is what makes it worth entering &mdash; professional film composers rate each entry on four criteria, and mixing, mastering, and sample-library quality explicitly do not count. A piano recorded on a phone competes on equal footing with a $10,000 orchestral template. Only the storytelling decides.</p>
-
-      <p>In the Winter 2025 edition I scored two very different films: <strong>Walter</strong>, a dialogue-free animated short where the music has to carry the whole emotional arc, and <strong>When The Clapping Stops</strong>, a live-action drama about a care worker, where the score has to stay out of the dialogue's way while building suspense across a fragmented edit.</p>
-
-      <p>Both entries came back with criteria scores and timestamped written notes from the jurors. That feedback &mdash; including the parts that sting &mdash; is below, unedited.</p>
+  <figure class="ifmc-screen io-reveal">
+    <div class="ifmc-screen__frame">
+      <iframe src="https://www.youtube-nocookie.com/embed/PKJQqWPovuY" title="Igor Szuniewicz - IFMC - Walter (film by Lorenzo Fresta)" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
     </div>
+  </figure>
 
-    <aside class="concept-sidebar reveal-stagger">
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Judging</span>
-        <span class="concept-sidebar__value">4 criteria, 15 points each</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">What counts</span>
-        <span class="concept-sidebar__value">Creative storytelling to picture</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">What doesn't</span>
-        <span class="concept-sidebar__value">Mix, master, library quality</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Walter</span>
-        <span class="concept-sidebar__value">48/60 &mdash; 58th of 115 entries</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">When The Clapping Stops</span>
-        <span class="concept-sidebar__value">47/60 &mdash; 15th of 30 entries</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Feedback</span>
-        <span class="concept-sidebar__value">Timestamped juror notes for both scores</span>
-      </div>
-    </aside>
+  <div class="ifmc-score io-reveal" data-score-block>
+    <div class="ifmc-score__total">
+      <span class="ifmc-score__big"><span data-count="48">0</span><em>/60</em></span>
+      <span class="ifmc-score__place">58<sup>th</sup> of 115 entries &middot; round 1</span>
+    </div>
+    <div class="ifmc-score__bars">
+      <div class="ifmc-bar"><span class="ifmc-bar__label">Spotting &amp; sync</span><span class="ifmc-bar__track"><span class="ifmc-bar__fill" data-w="73.3"></span></span><span class="ifmc-bar__val">11</span></div>
+      <div class="ifmc-bar"><span class="ifmc-bar__label">Mood of the story</span><span class="ifmc-bar__track"><span class="ifmc-bar__fill" data-w="86.7"></span></span><span class="ifmc-bar__val">13</span></div>
+      <div class="ifmc-bar"><span class="ifmc-bar__label">Harmony &amp; theme</span><span class="ifmc-bar__track"><span class="ifmc-bar__fill" data-w="73.3"></span></span><span class="ifmc-bar__val">11</span></div>
+      <div class="ifmc-bar"><span class="ifmc-bar__label">Unique voice</span><span class="ifmc-bar__track"><span class="ifmc-bar__fill" data-w="86.7"></span></span><span class="ifmc-bar__val">13</span></div>
+    </div>
   </div>
+
+  <blockquote class="ifmc-quote io-reveal">
+    <p>&ldquo;You connect the wind with the blooming of the plant which is <mark>VERY well done</mark>.&rdquo;</p>
+    <cite>juror&rsquo;s notes, Walter</cite>
+  </blockquote>
+
+  <details class="ifmc-notes io-reveal">
+    <summary>Full juror notes</summary>
+    <div>
+      <p>&ldquo;There are some great rich moments in this score that are really well done. I feel there was a lot of work put into the first half of this scene and I would have liked for the same approach in the ending. Nice opening, and I love how the first chord is on the plant. The music is very melancholy which works really well with Walter's concern and exhaustion. The music as the plant dies is subtle but so sad! Really touching. I love it. The synth touch over the strings is well done. I love how the progression starts again on the wind battering the window and then moves to the bloom. You connect the wind with the blooming of the plant which is VERY well done. I love the string movement as the plant blooms the seedball. I love how you start a musical idea that really feels like it comes into focus as we get that beautiful ceiling shot of all the seedballs. Great connection to picture. Also appreciate how the xylophone accents plants blooming.&rdquo;</p>
+      <p>&ldquo;I like the reducing of musical activity as they surround Walter. I feel like this is a funny moment though, and the humour could have been highlighted a little better, but the pause works well. The music starting back up as they follow him and he goes to open the window works so well. The whole progression to the lighthouse bursting and then through everything flying out is very powerful and the composition and orchestration matches the picture very well. Very satisfying to watch! The string sustain and harp as he is suspended in the sky and realises that he is OK and all is well, that works really well with picture. I love that we have then have the moving idea in the strings.&rdquo;</p>
+      <p>&ldquo;However, as he gets control and takes off over the town and we have that swoop in motion, the music is fading out. I don't really understand this choice. [&hellip;] There is some really great music in here. I am disappointed in the ending, but it is clear you have compositional skills and a good sensibility for working with picture. Keep composing.&rdquo;</p>
+    </div>
+  </details>
 </section>
 
-<!-- ENTRIES -->
-<section class="reveal" aria-label="Contest entries">
-  <div class="ifmc-films">
+<!-- ============ ENTRY 02 - WHEN THE CLAPPING STOPS ============ -->
+<section class="ifmc-entry ifmc-entry--alt" id="clapping">
+  <header class="ifmc-entry__head io-reveal">
+    <p class="ifmc-entry__no">ENTRY 02 &middot; DRAMA &middot; UK</p>
+    <h2 class="ifmc-entry__title">When The<br>Clapping Stops</h2>
+    <p class="ifmc-entry__dir">Short drama by Cameron Perry. The tension builds around constant dialogue, and I ended it in full silence.</p>
+  </header>
 
-    <!-- WALTER -->
-    <article class="ifmc-film" id="walter">
-      <div class="ifmc-film__video">
-        <iframe src="https://www.youtube-nocookie.com/embed/PKJQqWPovuY" title="Igor Szuniewicz - Indie Film Music Contest - Walter (film by Lorenzo Fresta)" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-      </div>
-      <div class="ifmc-film__body">
-        <h3 class="ifmc-film__title">Walter</h3>
-        <p class="ifmc-film__dir">Animated short by Lorenzo Fresta (CalArts, 2019) &middot; no dialogue</p>
-        <p class="ifmc-film__about">A lonely toad bikes across the desert to water his plant. Fresta &mdash; now a story artist at Pixar &mdash; made a film with no dialogue at all, so the score is the narration: exhaustion, the plant dying, the wind, the bloom, and the flight. I connected the wind motif to the blooming of the plant and accented each bloom with xylophone, then deliberately pulled the music away for the ending &mdash; a choice the juror pushed back on.</p>
+  <figure class="ifmc-screen io-reveal">
+    <div class="ifmc-screen__frame">
+      <iframe src="https://www.youtube-nocookie.com/embed/NCSAfGtpJX4" title="Igor Szuniewicz - IFMC - When The Clapping Stops (film by Cameron Perry)" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+  </figure>
 
-        <div class="ifmc-scores" aria-label="Juror scores for Walter">
-          <div class="ifmc-crit"><span class="ifmc-crit__label">Spotting &amp; sync to picture</span><span class="ifmc-crit__bar"><span style="width:73.3%"></span></span><span class="ifmc-crit__val">11<em> /15</em></span></div>
-          <div class="ifmc-crit"><span class="ifmc-crit__label">Mood of the story</span><span class="ifmc-crit__bar"><span style="width:86.7%"></span></span><span class="ifmc-crit__val">13<em> /15</em></span></div>
-          <div class="ifmc-crit"><span class="ifmc-crit__label">Harmony, theme &amp; composition</span><span class="ifmc-crit__bar"><span style="width:73.3%"></span></span><span class="ifmc-crit__val">11<em> /15</em></span></div>
-          <div class="ifmc-crit"><span class="ifmc-crit__label">Personal or unique voice</span><span class="ifmc-crit__bar"><span style="width:86.7%"></span></span><span class="ifmc-crit__val">13<em> /15</em></span></div>
-        </div>
-        <div class="ifmc-totals">
-          <div class="ifmc-totals__stat"><span class="ifmc-totals__num">48 / 60</span><span class="ifmc-totals__lbl">Round 1 total</span></div>
-          <div class="ifmc-totals__stat"><span class="ifmc-totals__num">58th / 115</span><span class="ifmc-totals__lbl">Placement</span></div>
-          <div class="ifmc-totals__stat"><span class="ifmc-totals__num">21.7%</span><span class="ifmc-totals__lbl">Of entries shared the top "unique voice" score of 13</span></div>
-        </div>
-
-        <blockquote class="ifmc-quote">"You connect the wind with the blooming of the plant which is VERY well done. [...] It is clear you have compositional skills and a good sensibility for working with picture."<cite>&mdash; IFMC juror, Walter notes</cite></blockquote>
-
-        <details class="ifmc-feedback">
-          <summary>Full juror notes &mdash; Walter</summary>
-          <div class="ifmc-feedback__body">
-            <p>"There are some great rich moments in this score that are really well done. I feel there was a lot of work put into the first half of this scene and I would have liked for the same approach in the ending. Nice opening, and I love how the first chord is on the plant. The music is very melancholy which works really well with Walter's concern and exhaustion. The music as the plant dies is subtle but so sad! Really touching. I love it. The synth touch over the strings is well done. I love how the progression starts again on the wind battering the window and then moves to the bloom. You connect the wind with the blooming of the plant which is VERY well done. I love the string movement as the plant blooms the seedball. I love how you start a musical idea that really feels like it comes into focus as we get that beautiful ceiling shot of all the seedballs. Great connection to picture. Also appreciate how the xylophone accents plants blooming."</p>
-            <p>"I like the reducing of musical activity as they surround Walter. I feel like this is a funny moment though, and the humour could have been highlighted a little better, but the pause works well. The music starting back up as they follow him and he goes to open the window works so well. The whole progression to the lighthouse bursting and then through everything flying out is very powerful and the composition and orchestration matches the picture very well. Very satisfying to watch! The string sustain and harp as he is suspended in the sky and realises that he is OK and all is well, that works really well with picture. I love that we have then have the moving idea in the strings."</p>
-            <p>"However, as he gets control and takes off over the town and we have that swoop in motion, the music is fading out. I don't really understand this choice. I know it is deliberate and intentional, but for me it doesn't work to picture at all. He is clearly enjoying flying and feels free and accomplished but the music isn't supporting that moment. The glockenspiel and single string at the end I know is an intentional choice, but again for me it doesn't work. There has been so many rich musical moments and I feel this warrants the same treatment. There is some really great music in here. I am disappointed in the ending, but it is clear you have compositional skills and a good sensibility for working with picture. Keep composing."</p>
-          </div>
-        </details>
-      </div>
-    </article>
-
-    <!-- WHEN THE CLAPPING STOPS -->
-    <article class="ifmc-film" id="clapping">
-      <div class="ifmc-film__video">
-        <iframe src="https://www.youtube-nocookie.com/embed/NCSAfGtpJX4" title="Igor Szuniewicz - Indie Film Music Contest - When The Clapping Stops (film by Cameron Perry)" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-      </div>
-      <div class="ifmc-film__body">
-        <h3 class="ifmc-film__title">When The Clapping Stops</h3>
-        <p class="ifmc-film__dir">Drama by Cameron Perry (UK, 2022) &middot; 1.4 Awards Gold &middot; Bolton IFF Official Selection</p>
-        <p class="ifmc-film__about">Matty, a young care worker, is torn between June &mdash; a client mid-seizure &mdash; and his own dying grandfather. The edit fragments into two parallel paths, and the score's job is to hold that tension together without trampling the dialogue. I went dark and heavy: low string bass, a brass-and-high-strings riff building through the montage, then total silence for the final hallway &mdash; the juror called that ending "a fantastic decision".</p>
-
-        <div class="ifmc-scores" aria-label="Juror scores for When The Clapping Stops">
-          <div class="ifmc-crit"><span class="ifmc-crit__label">Spotting &amp; sync to picture</span><span class="ifmc-crit__bar"><span style="width:86.7%"></span></span><span class="ifmc-crit__val">13<em> /15</em></span></div>
-          <div class="ifmc-crit"><span class="ifmc-crit__label">Mood of the story</span><span class="ifmc-crit__bar"><span style="width:66.7%"></span></span><span class="ifmc-crit__val">10<em> /15</em></span></div>
-          <div class="ifmc-crit"><span class="ifmc-crit__label">Harmony, theme &amp; composition</span><span class="ifmc-crit__bar"><span style="width:73.3%"></span></span><span class="ifmc-crit__val">11<em> /15</em></span></div>
-          <div class="ifmc-crit"><span class="ifmc-crit__label">Personal or unique voice</span><span class="ifmc-crit__bar"><span style="width:86.7%"></span></span><span class="ifmc-crit__val">13<em> /15</em></span></div>
-        </div>
-        <div class="ifmc-totals">
-          <div class="ifmc-totals__stat"><span class="ifmc-totals__num">47 / 60</span><span class="ifmc-totals__lbl">Round 1 total</span></div>
-          <div class="ifmc-totals__stat"><span class="ifmc-totals__num">15th / 30</span><span class="ifmc-totals__lbl">Placement</span></div>
-          <div class="ifmc-totals__stat"><span class="ifmc-totals__num">2 pages</span><span class="ifmc-totals__lbl">Of written, timestamped juror notes</span></div>
-        </div>
-
-        <blockquote class="ifmc-quote">"Continuing to build the tension all through his decision to leave and through the montage is a smart and unique choice. [...] Choosing to leave the final hallway scene dry is a really dramatic decision that works very well in the context of your score."<cite>&mdash; IFMC juror, written review #5834</cite></blockquote>
-
-        <details class="ifmc-feedback">
-          <summary>Key juror notes &mdash; When The Clapping Stops</summary>
-          <div class="ifmc-feedback__body">
-            <p>"The tone at the beginning struck me as a bit dark. [...] Spotting here puts a lot of extra weight on this moment and cues the audience that this film is about June, about her illness, but it is really about the impossible burden placed on home care professionals."</p>
-            <p>"Overall, I found the score feeling a bit heavy handed. When June starts her seizure, the score reacts as if it is a horrible emergency with an extreme shift and dark, heavy sound design. [...] In fact, Matty is calm, in control, and reacts in a steady and composed manner."</p>
-            <p>"Usually suspense is created with some kind of glue that holds the entire sequence together and grips the audience without letting go. A consistent pulse or a sustain can function this way. Once the energy is going, it feels like a train that cannot be stopped."</p>
-            <p>"I don't think there's any question that you successfully built and magnified the tension through the development of the score. The introduction of the heavy brass and high strings riff is really well done in the context of your score. It's a unique choice [...] which is unique and bold."</p>
-            <p>"Continuing to build the tension all through his decision to leave and through the montage is a smart and unique choice. It fuses this montage with his mental state as he's racing back to see his Grandad, and keeps our attention with Matty as one continuous sequence. Well done!"</p>
-            <p>"Choosing to leave the final hallway scene dry is a really dramatic decision that works very well in the context of your score. By building up as big as you do, as heavy and dark as you do, the release of that into a vacuum feels poignantly empty and still in a way that strongly reflects Matty's emotions. [...] I think this ending is a fantastic decision."</p>
-            <p><a class="ifmc-pdf" href="old/public/assets/docs/ifmc-when-the-clapping-stops-juror-notes.pdf" target="_blank" rel="noopener noreferrer">Read the full juror review (PDF) &rarr;</a></p>
-          </div>
-        </details>
-      </div>
-    </article>
-
+  <div class="ifmc-score io-reveal" data-score-block>
+    <div class="ifmc-score__total">
+      <span class="ifmc-score__big"><span data-count="47">0</span><em>/60</em></span>
+      <span class="ifmc-score__place">15<sup>th</sup> of 30 entries &middot; round 1</span>
+    </div>
+    <div class="ifmc-score__bars">
+      <div class="ifmc-bar"><span class="ifmc-bar__label">Spotting &amp; sync</span><span class="ifmc-bar__track"><span class="ifmc-bar__fill" data-w="86.7"></span></span><span class="ifmc-bar__val">13</span></div>
+      <div class="ifmc-bar"><span class="ifmc-bar__label">Mood of the story</span><span class="ifmc-bar__track"><span class="ifmc-bar__fill" data-w="66.7"></span></span><span class="ifmc-bar__val">10</span></div>
+      <div class="ifmc-bar"><span class="ifmc-bar__label">Harmony &amp; theme</span><span class="ifmc-bar__track"><span class="ifmc-bar__fill" data-w="73.3"></span></span><span class="ifmc-bar__val">11</span></div>
+      <div class="ifmc-bar"><span class="ifmc-bar__label">Unique voice</span><span class="ifmc-bar__track"><span class="ifmc-bar__fill" data-w="86.7"></span></span><span class="ifmc-bar__val">13</span></div>
+    </div>
   </div>
+
+  <blockquote class="ifmc-quote io-reveal">
+    <p>&ldquo;Choosing to leave the final hallway scene dry is a really dramatic decision that <mark>works very well</mark>. [&hellip;] I think this ending is a fantastic decision.&rdquo;</p>
+    <cite>juror&rsquo;s review #5834</cite>
+  </blockquote>
+
+  <details class="ifmc-notes io-reveal">
+    <summary>Key juror notes + full PDF</summary>
+    <div>
+      <p>&ldquo;Overall, I found the score feeling a bit heavy handed. When June starts her seizure, the score reacts as if it is a horrible emergency with an extreme shift and dark, heavy sound design. [&hellip;] In fact, Matty is calm, in control, and reacts in a steady and composed manner.&rdquo;</p>
+      <p>&ldquo;Usually suspense is created with some kind of glue that holds the entire sequence together and grips the audience without letting go. A consistent pulse or a sustain can function this way. Once the energy is going, it feels like a train that cannot be stopped.&rdquo;</p>
+      <p>&ldquo;I don't think there's any question that you successfully built and magnified the tension through the development of the score. The introduction of the heavy brass and high strings riff is really well done in the context of your score. It's a unique choice [&hellip;] which is unique and bold.&rdquo;</p>
+      <p>&ldquo;Continuing to build the tension all through his decision to leave and through the montage is a smart and unique choice. It fuses this montage with his mental state as he's racing back to see his Grandad, and keeps our attention with Matty as one continuous sequence. Well done!&rdquo;</p>
+      <p><a href="old/public/assets/docs/ifmc-when-the-clapping-stops-juror-notes.pdf" target="_blank" rel="noopener noreferrer">Full two-page review (PDF) &rarr;</a></p>
+    </div>
+  </details>
 </section>
 
-<!-- TAKEAWAYS -->
-<section class="systems-section reveal" id="takeaways" aria-labelledby="takeaways-title">
-  <span class="section-label">What I Took From It</span>
-  <h2 class="section-title" id="takeaways-title">Four Lessons From the Juror Notes</h2>
-  <div class="section-rule"></div>
-
-  <div class="systems-grid">
-    <div class="system-item">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Where the cue starts is a statement</h3>
-      </div>
-      <p class="system-item__desc">On Clapping, opening the score on June's stare told the audience the film is about her illness &mdash; but the film is about the care worker. Spotting decisions frame whose story it is before a single harmony lands.</p>
-    </div>
-
-    <div class="system-item">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Suspense needs glue</h3>
-      </div>
-      <p class="system-item__desc">Breaking the pulse at 2:04 to make room for a big hit let the audience off the hook. A consistent pulse or sustain holds a suspense sequence together like a train that cannot be stopped &mdash; contrast is only worth it when the picture earns it.</p>
-    </div>
-
-    <div class="system-item">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Silence must be earned</h3>
-      </div>
-      <p class="system-item__desc">The same instinct got opposite verdicts: the dry hallway ending on Clapping "works very well" because the build-up before it was massive; fading out under Walter's triumphant flight "doesn't work to picture at all" because the moment still needed support.</p>
-    </div>
-
-    <div class="system-item">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Connect motifs to picture logic</h3>
-      </div>
-      <p class="system-item__desc">The most praised idea in Walter was structural, not sonic: reusing the wind progression for the plant's bloom tied cause and effect together musically. Both entries scored 13/15 on "personal or unique voice" &mdash; the voice is there; the discipline around it is what the next entry gets.</p>
-    </div>
-  </div>
+<!-- ============ LESSONS ============ -->
+<section class="ifmc-lessons" id="lessons">
+  <p class="ifmc-lessons__kicker io-reveal">NOTES FOR NEXT TIME</p>
+  <ol>
+    <li class="io-reveal">The first cue decides whose story it is.</li>
+    <li class="io-reveal">Suspense needs a pulse that never lets go.</li>
+    <li class="io-reveal">Silence works only when the build-up earns it.</li>
+    <li class="io-reveal">Jurors praised structure, not sound.</li>
+  </ol>
 </section>
 
-<!-- LINKS & NEXT PROJECT -->
-<nav class="links-section" aria-label="Project links and navigation">
-  <div class="links-layout">
-    <ul class="links-list">
-      <li><a href="https://indiefilmmusiccontest.com/" target="_blank" rel="noopener noreferrer">Indie Film Music Contest &mdash; official site</a></li>
-      <li><a href="https://www.cameronperry.co.uk/when-the-clapping-stops" target="_blank" rel="noopener noreferrer">When The Clapping Stops &mdash; film page</a></li>
-      <li><a href="music.html">All music &mdash; the full timeline</a></li>
-    </ul>
-    <a class="next-project-btn" href="ray.html">Next Project: Ray Animation</a>
+<!-- ============ FOOT ============ -->
+<footer class="ifmc-foot">
+  <div class="ifmc-foot__links io-reveal">
+    <a href="https://indiefilmmusiccontest.com/" target="_blank" rel="noopener noreferrer">indiefilmmusiccontest.com</a>
+    <a href="https://www.cameronperry.co.uk/when-the-clapping-stops" target="_blank" rel="noopener noreferrer">the film</a>
+    <a href="music.html">all music</a>
   </div>
-</nav>
+  <a class="ifmc-foot__next next-project-btn io-reveal" href="ray.html">Next: Ray Animation</a>
+</footer>
+
+<script>
+// Reveal-on-scroll + score counters + bar fills (no libraries)
+(function() {
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function fillBars(block) {
+    block.querySelectorAll('.ifmc-bar__fill').forEach(function(el) {
+      el.style.width = el.getAttribute('data-w') + '%';
+    });
+  }
+
+  function runCounter(el) {
+    var target = parseInt(el.getAttribute('data-count'), 10) || 0;
+    if (reduceMotion) { el.textContent = target; return; }
+    var t0 = null;
+    function step(t) {
+      if (!t0) t0 = t;
+      var p = Math.min(1, (t - t0) / 900);
+      el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  var revealed = Array.prototype.slice.call(document.querySelectorAll('.io-reveal'));
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    revealed.forEach(function(el) { el.classList.add('in'); });
+    document.querySelectorAll('[data-score-block]').forEach(fillBars);
+    document.querySelectorAll('[data-count]').forEach(runCounter);
+    return;
+  }
+
+  var io = new IntersectionObserver(function(items) {
+    items.forEach(function(item) {
+      if (!item.isIntersecting) return;
+      item.target.classList.add('in');
+      if (item.target.hasAttribute('data-score-block')) {
+        fillBars(item.target);
+        item.target.querySelectorAll('[data-count]').forEach(runCounter);
+      }
+      io.unobserve(item.target);
+    });
+  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.2 });
+  revealed.forEach(function(el) { io.observe(el); });
+})();
+</script>
+
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.min.js" } }
+</script>
+<script type="module">
+// Hero: 3D clapperboard in a particle field - same material language
+// as the home page headphones (brushed metal + RoomEnvironment).
+import * as THREE from 'three';
+import { RoomEnvironment } from './vendor/RoomEnvironment.js';
+
+try {
+
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const canvas = document.getElementById('ifmcStage');
+const hero = canvas.parentElement;
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+pmrem.dispose();
+
+const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 60);
+camera.position.set(0, 0, 9);
+document.documentElement.classList.add('ifmc-3d');
+
+const rig = new THREE.Group();
+scene.add(rig);
+
+// ---------- Materials ----------
+const metal = new THREE.MeshPhysicalMaterial({
+  color: 0xb9c2cc, metalness: 0.92, roughness: 0.34,
+  clearcoat: 0.4, clearcoatRoughness: 0.25
+});
+const matte = new THREE.MeshPhysicalMaterial({
+  color: 0x141519, metalness: 0.25, roughness: 0.62
+});
+
+// Diagonal stripe texture for the clapper sticks.
+// flip mirrors the diagonal so the two sticks oppose each other,
+// like on a real slate.
+function stripeMaterial(flip) {
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 64;
+  const g = c.getContext('2d');
+  g.fillStyle = '#e8e4dc';
+  g.fillRect(0, 0, 512, 64);
+  if (flip) { g.translate(512, 0); g.scale(-1, 1); }
+  g.fillStyle = '#101014';
+  for (let x = -64; x < 512 + 64; x += 128) {
+    g.beginPath();
+    g.moveTo(x, 64); g.lineTo(x + 44, 0);
+    g.lineTo(x + 108, 0); g.lineTo(x + 64, 64);
+    g.closePath(); g.fill();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  return new THREE.MeshPhysicalMaterial({
+    map: tex, metalness: 0.15, roughness: 0.5
+  });
+}
+const stripesLow = stripeMaterial(false);
+const stripesTop = stripeMaterial(true);
+
+// ---------- Clapperboard ----------
+const clapper = new THREE.Group();
+
+// Slate body
+const board = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.7, 0.1), matte);
+board.position.y = -0.55;
+clapper.add(board);
+
+// Slate detail: three engraved metal strips (scene / take rows)
+[0.05, -0.35, -0.75].forEach(y => {
+  const strip = new THREE.Mesh(new THREE.BoxGeometry(2.28, 0.045, 0.02), metal);
+  strip.position.set(0, y - 0.35, 0.061);
+  clapper.add(strip);
+});
+
+// Fixed lower stick: spans y 0.30..0.58
+const stickLow = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.28, 0.12), stripesLow);
+stickLow.position.y = 0.44;
+clapper.add(stickLow);
+
+// Hinged upper stick: pivots at the left end, rests directly on the
+// lower stick (y 0.58..0.86) so the two never share the same space.
+const hinge = new THREE.Group();
+hinge.position.set(-1.3, 0.72, 0);
+const stickTop = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.28, 0.12), stripesTop);
+stickTop.position.set(1.3, 0, 0.001);
+hinge.add(stickTop);
+clapper.add(hinge);
+
+// Hinge pin capping the pivot
+const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.2, 24), metal);
+pin.rotation.x = Math.PI / 2;
+pin.position.set(-1.22, 0.72, 0);
+clapper.add(pin);
+
+clapper.rotation.set(0.12, -0.5, 0.02);
+rig.add(clapper);
+
+// ---------- Particle field (same vibe as home hero) ----------
+function cloud(n, rMin, rMax, size, opacity) {
+  const pos = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    const r = rMin + Math.random() * (rMax - rMin);
+    const th = Math.random() * Math.PI * 2;
+    const ph = Math.acos(2 * Math.random() - 1);
+    pos[i * 3] = r * Math.sin(ph) * Math.cos(th);
+    pos[i * 3 + 1] = r * Math.cos(ph) * 0.6;
+    pos[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  return new THREE.Points(geo, new THREE.PointsMaterial({
+    color: 0xc8d8ea, size, transparent: true, opacity,
+    sizeAttenuation: true, depthWrite: false, blending: THREE.AdditiveBlending
+  }));
+}
+const dustFar = cloud(900, 3.4, 10, 0.03, 0.5);
+const dustNear = cloud(240, 2.2, 5.5, 0.05, 0.65);
+rig.add(dustFar);
+rig.add(dustNear);
+
+const rim = new THREE.DirectionalLight(0xd8e6f2, 2.0);
+rim.position.set(-4, 3, -3);
+scene.add(rim);
+scene.add(new THREE.AmbientLight(0x30343a, 0.8));
+
+// ---------- Layout ----------
+function layout() {
+  const w = hero.clientWidth, h = hero.clientHeight;
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  if (w > 880) {
+    rig.position.x = 2.1;
+    rig.scale.setScalar(1);
+  } else {
+    rig.position.x = 0;
+    rig.position.y = 1.1;
+    rig.scale.setScalar(0.62);
+  }
+}
+let resizeTimer = 0;
+addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(layout, 120);
+});
+layout();
+
+canvas.addEventListener('webglcontextlost', e => e.preventDefault());
+canvas.addEventListener('webglcontextrestored', () => layout());
+
+// ---------- Motion ----------
+let mx = 0, my = 0;
+addEventListener('pointermove', e => {
+  mx = e.clientX / innerWidth - 0.5;
+  my = e.clientY / innerHeight - 0.5;
+}, { passive: true });
+
+// The clap: wind open slowly, snap shut, pause, repeat
+function clapAngle(t) {
+  const cycle = t % 7;
+  if (cycle < 2.2) return -0.62 * (cycle / 2.2);            // open
+  if (cycle < 2.34) return -0.62 * (1 - (cycle - 2.2) / 0.14); // snap!
+  return 0;                                                  // rest
+}
+
+const clock = new THREE.Clock();
+let heroVisible = true;
+new IntersectionObserver(items => {
+  heroVisible = items[0].isIntersecting;
+}, { threshold: 0.02 }).observe(hero);
+
+renderer.setAnimationLoop(() => {
+  if (!heroVisible) return;
+  const t = clock.getElapsedTime();
+
+  if (!reduceMotion) {
+    clapper.rotation.y = -0.5 + Math.sin(t * 0.24) * 0.16 + mx * 0.3;
+    clapper.rotation.x = 0.12 + Math.sin(t * 0.31) * 0.05 + my * 0.18;
+    clapper.position.y = Math.sin(t * 0.6) * 0.08;
+    hinge.rotation.z = -clapAngle(t);
+    dustFar.rotation.y = t * 0.012;
+    dustNear.rotation.y = -t * 0.02;
+  } else {
+    hinge.rotation.z = 0;
+  }
+
+  renderer.render(scene, camera);
+});
+
+} catch (err) {
+  document.documentElement.classList.add('ifmc-no-3d');
+  console.warn('IFMC hero 3D disabled:', err);
+}
+</script>

@@ -205,8 +205,12 @@ module.exports = {
     {
       slug: 'ifmc',
       layout: 'project',
-      css: 'project',
-      js: ['scroll-progress', 'scroll-reveal', 'theme-toggle'],
+      css: 'case',
+      js: ['scroll-progress', 'theme-toggle'],
+      assets: [
+        'vendor/three.module.min.js',
+        'vendor/RoomEnvironment.js',
+      ],
       title: 'Indie Film Music Contest | Juried Film Scores - Igor Szuniewicz',
       description: 'Two juried film scores in the Indie Film Music Contest Winter 2025: Walter (48/60, 58th of 115) and When The Clapping Stops (47/60), with full written feedback from professional film composers.',
       canonical: `${SITE}/ifmc.html`,
