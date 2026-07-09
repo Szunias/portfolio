@@ -55,7 +55,7 @@ module.exports = {
       slug: 'music',
       layout: 'music',
       css: 'music',
-      js: ['theme-toggle', 'music'],
+      js: ['theme-toggle', 'starfield', 'music'],
       title: 'Game & Film Music | Igor Szuniewicz',
       description: 'Original game, film, electronic, metal, jazz, and cinematic tracks by Igor Szuniewicz, written for scoring, trailers, remixes, and releases.',
       canonical: `${SITE}/music.html`,

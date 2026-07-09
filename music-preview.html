@@ -61,6 +61,7 @@
   --page-max: 1280px;
   --margin: 80px;
   --player-height: 74px;
+  --player-waveform-height: 28px;
 }
 
 ::selection {
@@ -85,19 +86,27 @@ html {
 
 body {
   font-family: var(--sans);
-  background:
-    radial-gradient(ellipse 70% 40% at 80% 0%, rgba(170, 198, 222, 0.06), transparent 60%),
-    radial-gradient(ellipse 50% 35% at 10% 30%, rgba(110, 135, 157, 0.05), transparent 55%),
-    linear-gradient(165deg, #08080a 0%, #0b0b0d 45%, #0d0d10 100%);
+  background: #101012;
   color: var(--black);
   line-height: 1.7;
   font-size: 17px;
   overflow-x: hidden;
-  padding-bottom: calc(var(--player-height) + env(safe-area-inset-bottom));
+  padding-bottom: calc(var(--player-height) + var(--player-waveform-height) + env(safe-area-inset-bottom));
 }
 
-body * {
-  letter-spacing: 0 !important;
+/* Background particles (same square dots as the home hero) */
+.bg-stars {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+main#main-content,
+.back-bar,
+.colophon {
+  position: relative;
+  z-index: 1;
 }
 
 .sr-only {
@@ -189,33 +198,35 @@ a:focus-visible {
    MUSIC HERO
    ========================================= */
 .music-hero {
-  max-width: 900px;
+  max-width: 1160px;
   margin: 0 auto;
-  padding: 72px 24px 30px;
-  text-align: center;
+  padding: 88px 40px 34px;
+  text-align: left;
 }
 
 .music-hero__eyebrow {
   font-family: var(--brand-secondary);
-  font-size: 12px;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 14px;
+  color: var(--grey);
+  margin-bottom: 18px;
 }
 
 .music-hero__title {
   font-family: var(--serif);
-  font-size: clamp(64px, 11vw, 128px);
-  font-weight: 500;
-  line-height: 0.92;
-  margin-bottom: 22px;
+  font-size: clamp(56px, 9vw, 112px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  margin-bottom: 24px;
 }
 
 .music-hero__rule {
-  width: min(280px, 50vw);
+  width: 100%;
   height: 1px;
-  margin: 0 auto 22px;
-  background: linear-gradient(90deg, transparent, var(--accent), var(--sketch), transparent);
+  margin: 0 0 24px;
+  background: var(--grey-rule);
 }
 
 .music-hero__subtitle {
@@ -223,18 +234,18 @@ a:focus-visible {
   font-size: 14px;
   color: color-mix(in srgb, var(--paper) 70%, transparent);
   line-height: 1.7;
-  max-width: 560px;
-  margin: 0 auto;
+  max-width: 58ch;
+  margin: 0;
 }
 
 .music-hero__tools {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  max-width: 640px;
-  margin: 22px auto 0;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 4px 0;
+  max-width: none;
+  margin: 24px 0 0;
 }
 
 .music-hero__tools-label {
@@ -242,8 +253,9 @@ a:focus-visible {
   font-family: var(--brand-secondary);
   font-size: 11px;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--paper) 52%, transparent);
-  margin-bottom: 3px;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--paper) 46%, transparent);
+  margin-bottom: 6px;
 }
 
 .music-hero__contest {
@@ -255,15 +267,17 @@ a:focus-visible {
   font-family: var(--brand-secondary);
   font-size: 12px;
   color: var(--paper);
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border: 1px solid rgba(236, 238, 240, 0.1);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  background: rgba(24, 24, 27, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   transition: border-color 0.2s, background 0.2s, transform 0.15s;
 }
 
 .music-hero__contest:hover {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border-color: rgba(236, 238, 240, 0.28);
+  background: rgba(24, 24, 27, 0.7);
   transform: translateY(-1px);
   color: var(--paper);
 }
@@ -281,12 +295,15 @@ a:focus-visible {
 
 .music-hero__tool {
   font-family: var(--brand-secondary);
-  font-size: 11px;
-  color: color-mix(in srgb, var(--paper) 78%, transparent);
-  border: 1px solid var(--glass-border);
-  border-radius: 999px;
-  padding: 5px 13px;
-  background: rgba(17, 17, 20, 0.5);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--paper) 74%, transparent);
+}
+
+.music-hero__tool:not(:first-of-type)::before {
+  content: '\00B7';
+  color: color-mix(in srgb, var(--paper) 32%, transparent);
+  margin: 0 10px;
 }
 
 /* =========================================
@@ -294,49 +311,54 @@ a:focus-visible {
    ========================================= */
 .filters {
   position: sticky;
-  top: 0;
+  top: 14px;
   z-index: 80;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 20px;
-  margin-top: 18px;
-  background: rgba(8, 8, 10, 0.82);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-top: 1px solid var(--grey-rule);
-  border-bottom: 1px solid var(--grey-rule);
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: 2px;
+  width: fit-content;
+  max-width: calc(100vw - 28px);
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 22px auto 0;
+  padding: 7px 9px;
+  border-radius: 999px;
+  background: rgba(24, 24, 27, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(236, 238, 240, 0.1);
 }
+
+.filters::-webkit-scrollbar { display: none; }
 
 .filter-chip {
   font-family: var(--brand-secondary);
   font-size: 11px;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  min-height: 38px;
-  padding: 0 16px;
-  border: 1px solid var(--glass-border);
+  min-height: 36px;
+  padding: 0 14px;
+  border: none;
   border-radius: 999px;
   background: none;
   color: var(--grey);
   cursor: pointer;
-  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  flex-shrink: 0;
+  transition: color 0.15s, background 0.2s;
 }
 
 .filter-chip:hover {
   color: var(--black);
-  border-color: var(--accent);
 }
 
 .filter-chip.active {
-  background: var(--signal);
-  border-color: var(--signal);
-  color: #071012;
+  background: var(--paper);
+  color: #101012;
 }
 
 .filter-chip--sketch.active {
   background: var(--sketch);
-  border-color: var(--sketch);
   color: #071207;
 }
 
@@ -384,11 +406,17 @@ a:focus-visible {
 .tl-year__head {
   position: relative;
   z-index: 2;
-  text-align: center;
+  width: calc(50% - 46px);
+  text-align: right;
   padding: 44px 0 10px;
   opacity: 0;
   transform: translateY(16px);
   transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.tl-year:nth-child(even) .tl-year__head {
+  margin-left: auto;
+  text-align: left;
 }
 
 .tl-year__head.in {
@@ -498,9 +526,9 @@ a:focus-visible {
 /* ---------- Release card ---------- */
 .track-card--release {
   display: block;
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  border-radius: 14px;
+  background: rgba(24, 24, 27, 0.66);
+  border: 1px solid rgba(236, 238, 240, 0.1);
+  border-radius: 6px;
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
@@ -508,8 +536,12 @@ a:focus-visible {
 
 .track-card--release:hover {
   transform: translateY(-3px);
-  border-color: color-mix(in srgb, var(--node-color) 60%, transparent);
+  border-color: rgba(236, 238, 240, 0.28);
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.4);
+}
+
+.track-card--release:hover .track-card__title {
+  color: var(--accent);
 }
 
 .track-card--release:focus-visible {
@@ -664,8 +696,10 @@ a:focus-visible {
   align-items: center;
   gap: 12px;
   padding: 8px 16px 8px 10px;
-  background: rgba(13, 13, 16, 0.86);
-  border: 1px solid var(--glass-border);
+  background: rgba(24, 24, 27, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(236, 238, 240, 0.1);
   border-radius: 999px;
   cursor: pointer;
   transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
@@ -873,18 +907,22 @@ html.has-timeline .track-data { display: none; }
   padding: 3px 20px env(safe-area-inset-bottom);
 }
 
-/* ---------- Seek line on the top edge ---------- */
+/* ---------- Waveform seek rail on the top edge ---------- */
 .player-bar__progress {
   position: absolute;
-  top: -1px;
+  top: calc(var(--player-waveform-height) * -1);
   left: 0;
   right: 0;
-  height: 3px;
-  background: rgba(236, 238, 240, 0.1);
+  height: var(--player-waveform-height);
+  background: rgba(7, 7, 10, 0.88);
+  border-top: 1px solid rgba(236, 238, 240, 0.08);
+  border-bottom: 1px solid rgba(236, 238, 240, 0.08);
+  box-shadow: 0 -12px 28px rgba(0, 0, 0, 0.34);
   cursor: pointer;
   touch-action: none;
   z-index: 3;
-  transition: height 0.15s ease;
+  overflow: hidden;
+  transition: height 0.15s ease, background 0.15s ease;
 }
 
 /* enlarged invisible hit area */
@@ -893,18 +931,42 @@ html.has-timeline .track-data { display: none; }
   position: absolute;
   left: 0;
   right: 0;
-  top: -10px;
+  top: -8px;
   bottom: -8px;
+  z-index: 6;
 }
 
 .player-bar__progress:hover,
 .player-bar__progress:focus-visible {
-  height: 6px;
+  background: rgba(9, 9, 13, 0.96);
 }
 
 .player-bar__progress:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
+}
+
+.player-bar__waveform,
+.player-bar__waveform-played {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.player-bar__waveform {
+  opacity: 0.78;
+}
+
+.player-bar__waveform-played {
+  width: 0%;
+  overflow: hidden;
+  z-index: 3;
+}
+
+.player-bar__waveform--played {
+  opacity: 1;
 }
 
 .player-bar__progress-buffer {
@@ -913,8 +975,9 @@ html.has-timeline .track-data { display: none; }
   top: 0;
   bottom: 0;
   width: 0%;
-  background: rgba(236, 238, 240, 0.16);
+  background: rgba(236, 238, 240, 0.07);
   transition: width 0.2s ease;
+  z-index: 2;
 }
 
 .player-bar__progress-fill {
@@ -923,19 +986,33 @@ html.has-timeline .track-data { display: none; }
   top: 0;
   bottom: 0;
   width: 0%;
-  background: linear-gradient(90deg, var(--violet), var(--signal));
-  box-shadow: 0 0 12px color-mix(in srgb, var(--signal) 45%, transparent);
+  background: none;
+  box-shadow: none;
   transition: width 0.1s linear;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.player-bar__progress-fill::before {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--signal), var(--accent));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--signal) 55%, transparent);
 }
 
 /* seek knob, revealed on hover/focus */
 .player-bar__progress-fill::after {
   content: '';
   position: absolute;
-  right: -5px;
+  right: -6px;
   top: 50%;
-  width: 11px;
-  height: 11px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: #f4f6f8;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
@@ -1340,6 +1417,8 @@ html.has-timeline .track-data { display: none; }
   }
 
   .tl-year__head {
+    width: auto;
+    margin-left: 0;
     text-align: left;
     padding-left: 56px;
   }
@@ -1583,11 +1662,13 @@ html.has-timeline .track-data { display: none; }
   <a href="https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6" class="back-bar__link" rel="noopener noreferrer">Spotify</a>
 </header>
 
+<canvas id="bgStars" class="bg-stars" aria-hidden="true"></canvas>
+
 <!-- =========================================
      MUSIC HERO
      ========================================= -->
 <section class="music-hero">
-  <p class="music-hero__eyebrow">2023 &mdash; 2026 &middot; 15 releases &middot; 30 sketches</p>
+  <p class="music-hero__eyebrow">2023 &rarr; 2026 &middot; 17 releases &middot; 27 sketches</p>
   <h1 class="music-hero__title">Music</h1>
   <div class="music-hero__rule" aria-hidden="true"></div>
   <p class="music-hero__subtitle">Every release and every rough sketch on one timeline, newest first. Scroll down to travel back to where it started.</p>
@@ -1616,7 +1697,7 @@ html.has-timeline .track-data { display: none; }
   <button class="filter-chip" type="button" data-filter="techno" aria-pressed="false">Techno</button>
   <button class="filter-chip filter-chip--sketch" type="button" data-filter="evolution" aria-pressed="false">Sketches</button>
 </nav>
-<p class="sr-only" id="filterStatus" aria-live="polite" aria-atomic="true">45 tracks shown</p>
+<p class="sr-only" id="filterStatus" aria-live="polite" aria-atomic="true">44 tracks shown</p>
 
 <!-- =========================================
      TIMELINE (built by music.js from the track data below)
@@ -1631,6 +1712,56 @@ html.has-timeline .track-data { display: none; }
 <section class="track-data" id="trackData" aria-labelledby="tracks-title">
   <h2 class="sr-only" id="tracks-title">Tracks</h2>
   <div class="tracks-grid" id="tracks-grid">
+
+    <!-- IFMC: Walter -->
+    <div class="track-card" data-order="00" data-tags="film" data-title="Walter - IFMC Winter 2025 Rescore" data-artist="Igor Szuniewicz" data-duration="3:47" data-gradient="linear-gradient(135deg, #d8b46f, #8d6336, #f0dfb8, #5b3a22)" data-src-e="b2xkL3B1YmxpYy9hc3NldHMvYXVkaW8vdHJhY2tzLW5vcm1hbGl6ZWQvSUZNQy1XYWx0ZXIubm9ybWFsaXplZC5tNGE=" data-lufs="-16.00" data-cover="old/public/assets/audio/covers/IFMC-Walter.png">
+      <div class="track-card__cover">
+        <div class="track-card__gradient" style="background: linear-gradient(135deg, #d8b46f, #8d6336, #f0dfb8, #5b3a22);"><img class="track-card__image" src="old/public/assets/audio/covers/thumbs/IFMC-Walter.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div>
+        <div class="track-card__play-overlay">
+          <div class="track-card__play-btn">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="track-card__body">
+        <div class="track-card__top-row">
+          <h3 class="track-card__title">Walter - IFMC Winter 2025 Rescore</h3>
+          <span class="track-card__duration">3:47</span>
+        </div>
+        <div class="track-card__artist">Igor Szuniewicz</div>
+        <div class="track-card__year">2026-02-05</div>
+        <p class="track-card__desc">Juried rescore for Lorenzo Fresta's dialogue-free animation, written for the Indie Film Music Contest Winter 2025 edition and published on February 5, 2026.</p>
+        <div class="track-card__tags">
+          <span class="track-card__tag">Film</span>
+          <span class="track-card__tag">IFMC</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- IFMC: When The Clapping Stops -->
+    <div class="track-card" data-order="00.5" data-tags="film" data-title="When The Clapping Stops - IFMC Winter 2025 Rescore" data-artist="Igor Szuniewicz" data-duration="3:11" data-gradient="linear-gradient(135deg, #0b1115, #1f2b2f, #5d4b2f, #050607)" data-src-e="b2xkL3B1YmxpYy9hc3NldHMvYXVkaW8vdHJhY2tzLW5vcm1hbGl6ZWQvSUZNQy1XaGVuLVRoZS1DbGFwcGluZy1TdG9wcy5ub3JtYWxpemVkLm00YQ==" data-lufs="-16.00" data-cover="old/public/assets/audio/covers/IFMC-When-The-Clapping-Stops.png">
+      <div class="track-card__cover">
+        <div class="track-card__gradient" style="background: linear-gradient(135deg, #0b1115, #1f2b2f, #5d4b2f, #050607);"><img class="track-card__image" src="old/public/assets/audio/covers/thumbs/IFMC-When-The-Clapping-Stops.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></div>
+        <div class="track-card__play-overlay">
+          <div class="track-card__play-btn">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="track-card__body">
+        <div class="track-card__top-row">
+          <h3 class="track-card__title">When The Clapping Stops - IFMC Winter 2025 Rescore</h3>
+          <span class="track-card__duration">3:11</span>
+        </div>
+        <div class="track-card__artist">Igor Szuniewicz</div>
+        <div class="track-card__year">2026-02-05</div>
+        <p class="track-card__desc">Dark orchestral rescore for Cameron Perry's live-action short, submitted to IFMC Winter 2025 and published on February 5, 2026.</p>
+        <div class="track-card__tags">
+          <span class="track-card__tag">Film</span>
+          <span class="track-card__tag">IFMC</span>
+        </div>
+      </div>
+    </div>
 
     <!-- 1. Gnossienne No. 1 -->
     <div class="track-card" data-order="01" data-tags="single,metal" data-title="Gnossienne No. 1 (Cover by Igor Szuniewicz)" data-artist="Igor Szuniewicz" data-duration="3:03" data-gradient="linear-gradient(135deg, #3a1010, #6a1a1a, #2a0808, #501515)" data-src-e="b2xkL3B1YmxpYy9hc3NldHMvYXVkaW8vdHJhY2tzLW5vcm1hbGl6ZWQvZ25vc2llbm5lMS5ub3JtYWxpemVkLm00YQ==" data-lufs="-16.05" data-cover="old/public/assets/audio/covers/GnosienneAlbumCover.png">
@@ -2129,18 +2260,6 @@ html.has-timeline .track-data { display: none; }
         <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
       </div>
     </div>
-    <div class="track-card track-card--evo" data-order="18" data-tags="evolution" data-title="phonker" data-artist="Igor Szuniewicz" data-duration="2:22" data-gradient="linear-gradient(135deg, hsl(302,38%,16%), hsl(330,44%,30%), hsl(302,40%,12%), hsl(352,42%,26%))" data-src-e="b2xkL3B1YmxpYy9hc3NldHMvYXVkaW8vZXZvbHV0aW9uL3Bob25rZXJfMjAyNC0wMi0xMS5tcDM=">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(302,38%,16%), hsl(330,44%,30%), hsl(302,40%,12%), hsl(352,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">phonker</h3><span class="track-card__duration">2:22</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2024-02-11</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
     <div class="track-card track-card--evo" data-order="20" data-tags="evolution" data-title="tecnorock" data-artist="Igor Szuniewicz" data-duration="3:10" data-gradient="linear-gradient(135deg, hsl(187,38%,16%), hsl(215,44%,30%), hsl(187,40%,12%), hsl(237,42%,26%))" data-src-e="b2xkL3B1YmxpYy9hc3NldHMvYXVkaW8vZXZvbHV0aW9uL3RlY25vcm9ja18yMDI0LTAyLTE2Lm1wMw==">
       <div class="track-card__cover">
         <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(187,38%,16%), hsl(215,44%,30%), hsl(187,40%,12%), hsl(237,42%,26%));"></div>
@@ -2198,30 +2317,6 @@ html.has-timeline .track-data { display: none; }
         <div class="track-card__top-row"><h3 class="track-card__title">horroruzyka</h3><span class="track-card__duration">1:25</span></div>
         <div class="track-card__artist">Igor Szuniewicz</div>
         <div class="track-card__year">2024-05-22</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="31" data-tags="evolution" data-title="testrtt" data-artist="Igor Szuniewicz" data-duration="0:30" data-gradient="linear-gradient(135deg, hsl(253,38%,16%), hsl(281,44%,30%), hsl(253,40%,12%), hsl(303,42%,26%))" data-src-e="b2xkL3B1YmxpYy9hc3NldHMvYXVkaW8vZXZvbHV0aW9uL3Rlc3RydHRfMjAyNC0wNy0xNC5tcDM=">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(253,38%,16%), hsl(281,44%,30%), hsl(253,40%,12%), hsl(303,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">testrtt</h3><span class="track-card__duration">0:30</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2024-07-14</div>
-        <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
-      </div>
-    </div>
-    <div class="track-card track-card--evo" data-order="32" data-tags="evolution" data-title="test1" data-artist="Igor Szuniewicz" data-duration="1:32" data-gradient="linear-gradient(135deg, hsl(50,38%,16%), hsl(78,44%,30%), hsl(50,40%,12%), hsl(100,42%,26%))" data-src-e="b2xkL3B1YmxpYy9hc3NldHMvYXVkaW8vZXZvbHV0aW9uL3Rlc3QxXzIwMjQtMDgtMjEubXAz">
-      <div class="track-card__cover">
-        <div class="track-card__gradient" style="background: linear-gradient(135deg, hsl(50,38%,16%), hsl(78,44%,30%), hsl(50,40%,12%), hsl(100,42%,26%));"></div>
-        <div class="track-card__play-overlay"><div class="track-card__play-btn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-      </div>
-      <div class="track-card__body">
-        <div class="track-card__top-row"><h3 class="track-card__title">test1</h3><span class="track-card__duration">1:32</span></div>
-        <div class="track-card__artist">Igor Szuniewicz</div>
-        <div class="track-card__year">2024-08-21</div>
         <div class="track-card__tags"><span class="track-card__tag">Evolution</span></div>
       </div>
     </div>
@@ -2383,7 +2478,11 @@ html.has-timeline .track-data { display: none; }
 
 <section class="player-bar" id="playerBar" aria-label="Audio player">
   <div class="player-bar__progress" id="progressBar" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0:00 of 0:00" aria-disabled="true" tabindex="-1">
+    <canvas class="player-bar__waveform player-bar__waveform--base" id="waveformBase" aria-hidden="true"></canvas>
     <div class="player-bar__progress-buffer" id="progressBuffer"></div>
+    <div class="player-bar__waveform-played" id="waveformPlayedClip" aria-hidden="true">
+      <canvas class="player-bar__waveform player-bar__waveform--played" id="waveformPlayed"></canvas>
+    </div>
     <div class="player-bar__progress-fill" id="progressFill"></div>
   </div>
 
@@ -2431,7 +2530,7 @@ html.has-timeline .track-data { display: none; }
     </div>
   </div>
 </section>
-                              
+
 
 <script>
 // Theme toggle (universal - works with SVG icons or text emoji buttons)
@@ -2510,6 +2609,76 @@ html.has-timeline .track-data { display: none; }
 })();
 
 
+// Background starfield - tiny square particles like the home hero,
+// drawn on a fixed 2D canvas. Slow drift + scroll parallax.
+(function() {
+  var canvas = document.getElementById('bgStars');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var stars = [], W = 0, H = 0;
+
+  function resize() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function seed() {
+    stars = [];
+    var n = Math.max(70, Math.min(190, Math.round(W * H / 15000)));
+    for (var i = 0; i < n; i++) {
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        z: 0.35 + Math.random() * 0.65,   // depth: parallax + brightness
+        s: Math.random() < 0.85 ? 1 : 2,  // mostly 1px squares
+        tw: Math.random() * Math.PI * 2   // twinkle phase
+      });
+    }
+  }
+
+  var t = 0, scroll = window.scrollY || 0;
+  window.addEventListener('scroll', function() { scroll = window.scrollY; }, { passive: true });
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      var x = (st.x + t * 2.2 * st.z) % W;
+      var y = (st.y - scroll * st.z * 0.18) % H;
+      if (y < 0) y += H;
+      var a = 0.22 + 0.4 * st.z * (0.7 + 0.3 * Math.sin(t * 0.8 + st.tw));
+      ctx.fillStyle = 'rgba(200, 216, 234, ' + a.toFixed(3) + ')';
+      ctx.fillRect(x, y, st.s, st.s);
+    }
+  }
+
+  function loop() {
+    t += 0.016;
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  resize();
+  seed();
+  var rt = 0;
+  window.addEventListener('resize', function() {
+    clearTimeout(rt);
+    rt = setTimeout(function() { resize(); seed(); draw(); }, 150);
+  });
+
+  if (reduce) { draw(); } else { loop(); }
+})();
+
+
 // =========================================
 // MUSIC TIMELINE - chronological stream & audio player
 // music.js lifts the flat track-card grids into a year-by-year
@@ -2550,6 +2719,17 @@ html.has-timeline .track-data { display: none; }
     return Number.isFinite(year) ? year : 0;
   }
 
+  function cardHasFullDate(card) {
+    return /^\d{4}-\d{2}-\d{2}$/.test(cardDateText(card));
+  }
+
+  function cardSortDate(card) {
+    var text = cardDateText(card);
+    if (cardHasFullDate(card)) return text;
+    var year = cardYear(card);
+    return year ? year + '-12-31' : '0000-00-00';
+  }
+
   function primaryTag(card) {
     var tags = cardTags(card);
     for (var i = 0; i < tags.length; i++) {
@@ -2582,8 +2762,8 @@ html.has-timeline .track-data { display: none; }
   // =========================================
   // TIMELINE BUILD
   // Lift cards out of the flat grids into year groups, newest first.
-  // Releases keep their curated order inside a year; sketches sort
-  // by their full date, newest first.
+  // Releases with only a year keep their curated order at the top of that
+  // year; dated releases interleave chronologically with dated sketches.
   // =========================================
   var timeline = document.getElementById('timeline');
 
@@ -2603,11 +2783,19 @@ html.has-timeline .track-data { display: none; }
 
     var years = {};
     function bucket(year) {
-      if (!years[year]) years[year] = { releases: [], sketches: [] };
+      if (!years[year]) years[year] = { releases: [], sketches: [], items: [] };
       return years[year];
     }
-    releases.forEach(function(card) { bucket(cardYear(card)).releases.push(card); });
-    sketches.forEach(function(card) { bucket(cardYear(card)).sketches.push(card); });
+    releases.forEach(function(card) {
+      var yearBucket = bucket(cardYear(card));
+      yearBucket.releases.push(card);
+      yearBucket.items.push({ card: card, type: 'release' });
+    });
+    sketches.forEach(function(card) {
+      var yearBucket = bucket(cardYear(card));
+      yearBucket.sketches.push(card);
+      yearBucket.items.push({ card: card, type: 'sketch' });
+    });
 
     var yearKeys = Object.keys(years).map(Number).sort(function(a, b) { return b - a; });
 
@@ -2640,24 +2828,24 @@ html.has-timeline .track-data { display: none; }
       body.className = 'tl-year__body';
       group.appendChild(body);
 
-      years[year].releases.forEach(function(card) {
-        var entry = document.createElement('div');
-        entry.className = 'tl-entry tl-entry--release ' + (side === 0 ? 'tl-entry--a' : 'tl-entry--b');
-        side = 1 - side;
-        var node = document.createElement('span');
-        node.className = 'tl-node';
-        node.setAttribute('aria-hidden', 'true');
-        entry.appendChild(node);
-        card.classList.add('track-card--release');
-        card.setAttribute('data-genre', primaryTag(card));
-        entry.appendChild(card);
-        body.appendChild(entry);
-        ordered.push(card);
+      years[year].items.sort(function(a, b) {
+        var dateCompare = cardSortDate(b.card).localeCompare(cardSortDate(a.card));
+        if (dateCompare) return dateCompare;
+        if (a.type !== b.type) return a.type === 'release' ? -1 : 1;
+        return (Number(a.card.getAttribute('data-order')) || 999) - (Number(b.card.getAttribute('data-order')) || 999);
       });
 
-      years[year].sketches.forEach(function(card) {
+      years[year].items.forEach(function(item) {
+        var card = item.card;
         var entry = document.createElement('div');
-        entry.className = 'tl-entry tl-entry--sketch';
+        if (item.type === 'release') {
+          entry.className = 'tl-entry tl-entry--release ' + (side === 0 ? 'tl-entry--a' : 'tl-entry--b');
+          side = 1 - side;
+          card.classList.add('track-card--release');
+          card.setAttribute('data-genre', primaryTag(card));
+        } else {
+          entry.className = 'tl-entry tl-entry--sketch';
+        }
         var node = document.createElement('span');
         node.className = 'tl-node';
         node.setAttribute('aria-hidden', 'true');
@@ -2680,7 +2868,7 @@ html.has-timeline .track-data { display: none; }
       var capMonth = MONTHS[parseInt(oldestSketch.slice(5, 7), 10) - 1] || '';
       capDate = (capMonth ? capMonth + ' ' : '') + oldestSketch.slice(0, 4);
     }
-    cap.textContent = capDate ? 'Where it started \u2014 ' + capDate : 'Where it started';
+    cap.textContent = capDate ? 'Where it started: ' + capDate : 'Where it started';
     timeline.appendChild(cap);
 
     trackCards = ordered;
@@ -2814,6 +3002,9 @@ html.has-timeline .track-data { display: none; }
   var progressFill = document.getElementById('progressFill');
   var progressBuffer = document.getElementById('progressBuffer');
   var progressBar = document.getElementById('progressBar');
+  var waveformBase = document.getElementById('waveformBase');
+  var waveformPlayed = document.getElementById('waveformPlayed');
+  var waveformPlayedClip = document.getElementById('waveformPlayedClip');
   var volumeBar = document.getElementById('volumeBar');
   var volumeFill = document.getElementById('volumeFill');
   var prevBtn = document.getElementById('prevBtn');
@@ -2836,6 +3027,10 @@ html.has-timeline .track-data { display: none; }
   var repeatOne = false;
   var lastVolume = audio.volume;
   var playRequested = false;
+  var waveformCache = {};
+  var waveformAudioContext = null;
+  var waveformRequestId = 0;
+  var activeWaveformPeaks = null;
 
   function cssUrl(value) {
     return 'url("' + toText(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '")';
@@ -2861,6 +3056,7 @@ html.has-timeline .track-data { display: none; }
     progressBar.setAttribute('tabindex', canSeek ? '0' : '-1');
     progressBar.setAttribute('aria-valuenow', Math.round(pct));
     progressBar.setAttribute('aria-valuetext', formatTime(current) + ' of ' + formatTime(duration));
+    syncWaveformProgress();
   }
 
   function setVolume(value) {
@@ -2956,6 +3152,178 @@ html.has-timeline .track-data { display: none; }
       progressBuffer.style.width = '0%';
     }
   }
+
+  function clearCanvas(canvas) {
+    if (!canvas) return;
+    var dpr = window.devicePixelRatio || 1;
+    var width = Math.max(1, Math.floor((progressBar ? progressBar.clientWidth : 1) * dpr));
+    var height = Math.max(1, Math.floor((progressBar ? progressBar.clientHeight : 1) * dpr));
+    if (canvas.width !== width) canvas.width = width;
+    if (canvas.height !== height) canvas.height = height;
+    var ctx = canvas.getContext('2d');
+    if (ctx) ctx.clearRect(0, 0, width, height);
+  }
+
+  function resetWaveform() {
+    waveformRequestId++;
+    activeWaveformPeaks = null;
+    if (waveformPlayedClip) waveformPlayedClip.style.width = '0%';
+    clearCanvas(waveformBase);
+    clearCanvas(waveformPlayed);
+  }
+
+  function drawRoundedBar(ctx, x, y, width, height, radius) {
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(x, y, width, height, radius);
+      ctx.fill();
+      return;
+    }
+    ctx.fillRect(x, y, width, height);
+  }
+
+  function drawWaveform(canvas, peaks, mode) {
+    if (!canvas || !progressBar || !peaks || !peaks.length) return;
+    var dpr = window.devicePixelRatio || 1;
+    var cssWidth = Math.max(1, progressBar.clientWidth);
+    var cssHeight = Math.max(1, progressBar.clientHeight);
+    var width = Math.floor(cssWidth * dpr);
+    var height = Math.floor(cssHeight * dpr);
+    if (canvas.width !== width) canvas.width = width;
+    if (canvas.height !== height) canvas.height = height;
+    canvas.style.width = cssWidth + 'px';
+    canvas.style.height = cssHeight + 'px';
+
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+    var gap = cssWidth < 560 ? 1 : 2;
+    var barWidth = Math.max(1, (cssWidth - gap * (peaks.length - 1)) / peaks.length);
+    var maxBarHeight = cssHeight * 0.78;
+    var mid = cssHeight / 2;
+    var gradient = ctx.createLinearGradient(0, 0, cssWidth, 0);
+    if (mode === 'played') {
+      gradient.addColorStop(0, '#8fb8d4');
+      gradient.addColorStop(0.58, '#d8b46a');
+      gradient.addColorStop(1, '#94d8c8');
+    } else {
+      gradient.addColorStop(0, 'rgba(236,238,240,0.26)');
+      gradient.addColorStop(1, 'rgba(236,238,240,0.16)');
+    }
+    ctx.fillStyle = gradient;
+
+    for (var i = 0; i < peaks.length; i++) {
+      var amp = Math.max(0.07, Math.min(1, peaks[i]));
+      var h = Math.max(2, amp * maxBarHeight);
+      var x = i * (barWidth + gap);
+      drawRoundedBar(ctx, x, mid - h / 2, barWidth, h, Math.min(3, barWidth / 2));
+    }
+  }
+
+  function renderWaveform(peaks) {
+    activeWaveformPeaks = peaks;
+    drawWaveform(waveformBase, peaks, 'base');
+    drawWaveform(waveformPlayed, peaks, 'played');
+  }
+
+  function calculateWaveformPeaks(audioBuffer, targetBars) {
+    var bars = targetBars || 220;
+    var channels = audioBuffer.numberOfChannels || 1;
+    var length = audioBuffer.length;
+    var blockSize = Math.max(1, Math.floor(length / bars));
+    var peaks = new Array(bars);
+    var max = 0;
+
+    for (var i = 0; i < bars; i++) {
+      var start = i * blockSize;
+      var end = i === bars - 1 ? length : Math.min(length, start + blockSize);
+      var sum = 0;
+      var count = 0;
+
+      for (var ch = 0; ch < channels; ch++) {
+        var data = audioBuffer.getChannelData(ch);
+        for (var j = start; j < end; j++) {
+          var sample = data[j] || 0;
+          sum += sample * sample;
+          count++;
+        }
+      }
+
+      var rms = count ? Math.sqrt(sum / count) : 0;
+      peaks[i] = rms;
+      if (rms > max) max = rms;
+    }
+
+    if (max > 0) {
+      peaks = peaks.map(function(value) {
+        return Math.pow(value / max, 0.72);
+      });
+    }
+    return peaks;
+  }
+
+  function loadWaveform(src) {
+    if (!waveformBase || !waveformPlayed || !waveformPlayedClip || !window.fetch || !(window.AudioContext || window.webkitAudioContext)) {
+      return;
+    }
+
+    var requestId = ++waveformRequestId;
+    if (waveformCache[src]) {
+      renderWaveform(waveformCache[src]);
+      return;
+    }
+
+    clearCanvas(waveformBase);
+    clearCanvas(waveformPlayed);
+
+    fetch(src)
+      .then(function(response) {
+        if (!response.ok) throw new Error('waveform fetch failed');
+        return response.arrayBuffer();
+      })
+      .then(function(arrayBuffer) {
+        if (!waveformAudioContext) {
+          var AudioCtx = window.AudioContext || window.webkitAudioContext;
+          waveformAudioContext = new AudioCtx();
+        }
+        return waveformAudioContext.decodeAudioData(arrayBuffer);
+      })
+      .then(function(audioBuffer) {
+        if (requestId !== waveformRequestId) return;
+        var width = progressBar ? progressBar.clientWidth : 900;
+        var targetBars = Math.max(96, Math.min(360, Math.floor(width / 5)));
+        var peaks = calculateWaveformPeaks(audioBuffer, targetBars);
+        waveformCache[src] = peaks;
+        renderWaveform(peaks);
+      })
+      .catch(function() {
+        if (requestId !== waveformRequestId) return;
+        activeWaveformPeaks = null;
+        clearCanvas(waveformBase);
+        clearCanvas(waveformPlayed);
+      });
+  }
+
+  function syncWaveformProgress() {
+    if (!waveformPlayedClip) return;
+    var pct = 0;
+    if (audio.duration && Number.isFinite(audio.duration)) {
+      pct = Math.max(0, Math.min(100, (audio.currentTime / audio.duration) * 100));
+    }
+    waveformPlayedClip.style.width = pct + '%';
+  }
+
+  var resizeWaveformTimer = null;
+  window.addEventListener('resize', function() {
+    if (!activeWaveformPeaks) return;
+    window.clearTimeout(resizeWaveformTimer);
+    resizeWaveformTimer = window.setTimeout(function() {
+      renderWaveform(activeWaveformPeaks);
+      syncWaveformProgress();
+    }, 120);
+  });
 
   // =========================================
   // MEDIA SESSION
@@ -3070,6 +3438,7 @@ html.has-timeline .track-data { display: none; }
     totalTimeEl.textContent = '0:00';
     progressFill.style.width = '0%';
     if (progressBuffer) progressBuffer.style.width = '0%';
+    resetWaveform();
     updatePlayIcon();
     updatePlayerStateClasses();
     setPlayerStatus('Could not load track', false);
@@ -3139,6 +3508,7 @@ html.has-timeline .track-data { display: none; }
     currentTimeEl.textContent = '0:00';
     progressFill.style.width = '0%';
     if (progressBuffer) progressBuffer.style.width = '0%';
+    resetWaveform();
     updateSeekAria();
 
     playerCover.style.background = coverBackground(coverUrl, gradient);
@@ -3146,6 +3516,7 @@ html.has-timeline .track-data { display: none; }
     currentTrackIndex = trackCards.indexOf(card);
 
     audio.src = src;
+    loadWaveform(src);
     setPlayerStatus('Loading - ' + currentLufsText(), true);
     updatePlayerStateClasses();
     updateMediaSession(card);
@@ -3227,6 +3598,7 @@ html.has-timeline .track-data { display: none; }
     if (!audio.duration) return;
     var pct = (audio.currentTime / audio.duration) * 100;
     progressFill.style.width = pct + '%';
+    syncWaveformProgress();
     currentTimeEl.textContent = formatTime(audio.currentTime);
     updateSeekAria();
     updateBufferedProgress();
@@ -3237,6 +3609,7 @@ html.has-timeline .track-data { display: none; }
     totalTimeEl.textContent = formatTime(audio.duration);
     updateSeekAria();
     updateBufferedProgress();
+    syncWaveformProgress();
     updateMediaPositionState();
   });
 
@@ -3555,7 +3928,7 @@ html.has-timeline .track-data { display: none; }
   setPlayerStatus('Ready to play', false);
 
 })();
-
+      
 </script>
 
 </body>
