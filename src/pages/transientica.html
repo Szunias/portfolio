@@ -1,153 +1,180 @@
 <canvas id="bgStars" class="bg-stars" aria-hidden="true"></canvas>
-<!-- PROJECT HERO -->
-<header class="case-hero">
-  <p class="case-hero__kicker">2025 - present</p>
-  <h1 class="case-hero__title">Transientica</h1>
-  <p class="case-hero__sub">Beatbox into a mic, play a rhythm game. No MIDI controller, no drum pad - just your mouth.</p>
-  <p class="case-hero__facts">Role: Solo Developer &middot; Status: In Development &middot; Engine: Unity 6 + C#</p>
-  <p class="case-hero__tools"><span class="case-hero__tool">Unity 6</span><span class="case-hero__tool">C#</span><span class="case-hero__tool">KNN</span><span class="case-hero__tool">FFT</span><span class="case-hero__tool">URP</span></p>
-</header>
 
-<!-- GAME DEMO -->
-<section class="case-screen io-reveal" aria-label="Game demo video">
-  <div class="video-wrap">
-    <iframe
-      src="https://www.youtube-nocookie.com/embed/r9IC7t0GPOU"
-      title="Transientica - Gameplay Demo"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen
-      loading="lazy"
-    ></iframe>
-  </div>
-  <p class="video-caption">Gameplay demo - beatboxing against beatmapped songs</p>
-</section>
+<div class="tr-page">
+  <!-- HERO -->
+  <header class="tr-hero">
+    <div class="tr-hero__media" aria-hidden="true">
+      <img src="transienticascreenshot.png" alt="" aria-hidden="true" fetchpriority="high" decoding="async">
+    </div>
+    <div class="tr-hero__shade" aria-hidden="true"></div>
+    <div class="tr-hero__content">
+      <p class="tr-kicker">2025 &ndash; Present &middot; Solo-developed rhythm game</p>
+      <h1>Transientica</h1>
+      <p class="tr-hero__lead">Beatbox into a microphone and play a rhythm game with your voice.</p>
+      <p class="tr-hero__summary">The game learns how you make a kick, snare and hi-hat, then listens for those sounds while notes move toward the timing line.</p>
+      <p class="tr-hero__role">Solo Developer &middot; Unity 6 + C# &middot; In development</p>
+      <div class="tr-hero__tools" aria-label="Core tools used">
+        <span>Unity 6</span><span>C#</span><span>KNN</span><span>FFT</span>
+      </div>
+      <div class="tr-hero__actions">
+        <a href="#gameplay">Watch gameplay <span aria-hidden="true">&darr;</span></a>
+        <a href="#rebuild">Why I rebuilt it <span aria-hidden="true">&darr;</span></a>
+      </div>
+    </div>
+  </header>
 
-<!-- THE PROJECT -->
-<section class="case-sec io-reveal" id="concept" aria-labelledby="concept-title">
-  <p class="case-sec__no">The Project</p>
-  <h2 class="case-sec__title" id="concept-title">From Prototype to Game</h2>
+  <!-- PROJECT SNAPSHOT -->
+  <section class="tr-snapshot io-reveal" aria-label="Transientica project highlights">
+    <p class="tr-snapshot__label">The short version</p>
+    <p>The player records <strong>10 examples of each beatbox sound</strong>. I turn every hit into <strong>7 audio features</strong>, classify it with a KNN model written in C#, and judge its timing against windows as tight as <strong>&plusmn;60 ms</strong>.</p>
+  </section>
 
-  <div class="concept-layout">
-    <div class="concept-body">
-      <p>This started as a school research project in Python. Beatbox into a mic, classify the sound with SVM, send results to Unity over OSC. It worked, barely. Two processes running, 180ms latency at first, got it down to 45ms after weeks of optimization. But it was still a prototype, not a game.</p>
-
-      <p>So I rebuilt the Unity version from scratch. Threw out Python, OSC, and scikit-learn. Wrote the FFT, feature extraction, and classifier in plain C#. No external ML frameworks. Switched from SVM to KNN because it trains fast enough to retrain between rounds without the player waiting.</p>
-
-      <p>Now it's an actual rhythm game. Notes scroll toward you, you beatbox the right sound at the right time, the game judges your timing. Combos, scoring, grades. The classifier trains on your voice specifically - 10 samples per sound, takes a few seconds, and it learns how you do a kick vs how I do a kick.</p>
+  <!-- THE GAME -->
+  <section class="tr-intro io-reveal" id="concept" aria-labelledby="tr-intro-title">
+    <div>
+      <p class="tr-kicker">The game</p>
+      <h2 id="tr-intro-title">A rhythm game that has to learn the player first</h2>
+    </div>
+    <div class="tr-intro__copy">
+      <p>Kick, snare and hi-hat do not sound the same from every person or microphone. A fixed set of rules would work for me and fail for somebody else, so Transientica begins with a short personal training session.</p>
+      <p>Once the model knows your sounds, the game can focus on the familiar rhythm-game questions: did you perform the right sound, and did it land close enough to the beat?</p>
     </div>
 
-    <aside class="concept-sidebar io-reveal">
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Classifier</span>
-        <span class="concept-sidebar__value">KNN (K=5), written from scratch in C#</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Sounds</span>
-        <span class="concept-sidebar__value">Kick, Snare, Hi-Hat</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Timing Windows</span>
-        <span class="concept-sidebar__value">Perfect &plusmn;60ms / Great &plusmn;130ms / Good &plusmn;200ms</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">FFT</span>
-        <span class="concept-sidebar__value">512-sample Hann window, radix-2</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Features</span>
-        <span class="concept-sidebar__value">7: centroid, rolloff, flux, ZCR, RMS, attack time, flatness</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Allocations</span>
-        <span class="concept-sidebar__value">Pre-allocated buffers on the audio path</span>
-      </div>
+    <aside class="tr-player-story" aria-label="What the player does">
+      <p class="tr-player-story__label">What the player actually does</p>
+      <p>You record a few kicks, snares and hi-hats. A song starts, notes approach the timing line and you perform the matching sound. The game identifies the hit, measures how early or late it was, then builds your score and combo.</p>
     </aside>
-  </div>
-</section>
+  </section>
 
-<!-- HOW IT WORKS -->
-<section class="case-sec io-reveal" id="systems" aria-labelledby="systems-title">
-  <p class="case-sec__no">Under the Hood</p>
-  <h2 class="case-sec__title" id="systems-title">How It Works</h2>
-
-  <div class="systems-grid">
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">The Audio Pipeline</h3>
+  <!-- CURRENT GAMEPLAY -->
+  <section class="tr-demo io-reveal" id="gameplay" aria-labelledby="tr-demo-title">
+    <header class="tr-section-head">
+      <div>
+        <p class="tr-kicker">Current build</p>
+        <h2 id="tr-demo-title">Beatboxing against a beatmapped song</h2>
       </div>
-      <p class="system-item__desc">Mic captures at 44.1 kHz into a lock-free ring buffer. When the onset detector picks up a hit (RMS threshold + derivative gate, adaptive noise floor from the first 40 buffers), it runs a 512-sample FFT and pulls out 7 spectral features. KNN classifies the sound. Onsets get backdated by ~5.8ms to account for the analysis window. All timing runs on AudioSettings.dspTime, not frame time. You need sub-frame precision for this to feel right.</p>
-    </div>
+      <p>The current Unity build includes training, song selection, scrolling notes, timing judgements, combos, grades and saved high scores.</p>
+    </header>
 
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Training</h3>
+    <div class="tr-video-frame">
+      <span class="tr-video-frame__label">Gameplay demo &middot; current rebuild</span>
+      <div class="video-wrap">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/r9IC7t0GPOU"
+          title="Transientica gameplay demo"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          loading="lazy"
+        ></iframe>
       </div>
-      <p class="system-item__desc">You record 10+ examples of each sound - kick, snare, hi-hat. The game runs onset detection and feature extraction on each one automatically. KNN stores the samples, computes normalization bounds, and does leave-one-out cross-validation to check if the model is any good. If accuracy is above 70%, you're set. If not, record cleaner samples. The model saves to a JSON file and loads next time you open the game. If there's no trained model at all, a heuristic fallback uses spectral rules so the game is still playable.</p>
     </div>
+  </section>
 
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Scoring</h3>
+  <!-- AUDIO PIPELINE -->
+  <section class="tr-pipeline io-reveal" id="systems" aria-labelledby="tr-pipeline-title">
+    <header class="tr-section-head">
+      <div>
+        <p class="tr-kicker">From microphone to judgement</p>
+        <h2 id="tr-pipeline-title">What happens after you make a sound</h2>
       </div>
-      <p class="system-item__desc">Each hit gets matched to the nearest note. &plusmn;60ms is Perfect (300 pts), &plusmn;130ms is Great (200), &plusmn;200ms is Good (100), anything else is a Miss. Combo multiplier goes from 1x to 8x as you chain hits. Letter grades from F to S. There's a latency calibration step: the game plays clicks at 100 BPM, you beatbox on beat, it measures the difference and stores your offset. You can also fine-tune it manually by &plusmn;1ms.</p>
+      <p>The entire path now runs inside Unity. There is no Python process, OSC connection or external machine-learning package between the microphone and the game.</p>
+    </header>
+
+    <div class="tr-pipeline-story">
+      <div class="tr-pipeline-story__copy">
+        <p class="tr-pipeline-story__lead">Imagine you perform a snare just as its note reaches the timing line.</p>
+        <p>The microphone writes continuously into a pre-allocated ring buffer. An onset detector looks for a sudden rise above the room's noise floor, then sends a 512-sample window through my FFT.</p>
+        <p>From that window I measure spectral centroid, rolloff, flux, zero-crossing rate, RMS, attack time and flatness. KNN compares those seven values with the examples recorded during training and returns the closest sound class.</p>
+        <p>Finally, the game matches the hit to the nearest note using Unity's audio clock. It backdates the onset by roughly 5.8 ms for the analysis window, then judges both the sound and its timing.</p>
+      </div>
+      <p class="tr-signal-path"><span>The full trip</span> Microphone &rarr; onset &rarr; 512-sample FFT &rarr; 7 features &rarr; KNN &rarr; nearest note &rarr; score.</p>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- WHAT CHANGED -->
-<section class="case-sec io-reveal" id="challenges" aria-labelledby="challenges-title">
-  <p class="case-sec__no">The Rebuild</p>
-  <h2 class="case-sec__title" id="challenges-title">What Changed From the Prototype</h2>
+  <!-- FAIR TIMING -->
+  <section class="tr-timing io-reveal" aria-labelledby="tr-timing-title">
+    <header class="tr-section-head">
+      <div>
+        <p class="tr-kicker">Making it feel fair</p>
+        <h2 id="tr-timing-title">Classification is only half the problem</h2>
+      </div>
+      <p>A correct snare still feels wrong if the game reacts late or judges microphone delay as a bad performance.</p>
+    </header>
 
-  <div class="challenges-grid">
-    <div class="challenge-card io-reveal">
-      <h3 class="challenge-card__title">Killed the Python Backend</h3>
-      <span class="challenge-card__label">Why</span>
-      <p class="challenge-card__text">The original had Python doing audio analysis and Unity running the game - two separate processes talking over OSC on localhost. It worked but it was fragile. If Python crashed, the game went deaf. Debugging across two runtimes was painful. Building a standalone .exe meant shipping a Python install alongside Unity.</p>
-      <span class="challenge-card__label">Now</span>
-      <p class="challenge-card__text">The rebuild is C# inside Unity. The FFT, feature extraction, KNN - all written from scratch. No Python, no OSC, no external ML packages. One process, one build, one thing to debug.</p>
+    <div class="tr-timing-story">
+      <p class="tr-timing-story__lead">Perfect is &plusmn;60 ms, Great is &plusmn;130 ms and Good is &plusmn;200 ms. Anything farther away becomes a miss.</p>
+      <div>
+        <p>Those windows run on <code>AudioSettings.dspTime</code>, not the visual frame rate, so the judgement is not limited by when Unity happens to draw the next frame.</p>
+        <p>Before playing, the user can beatbox along with calibration clicks at 100 BPM. The game measures the recurring offset and stores it; manual adjustment is available in 1 ms steps.</p>
+        <p>The combo multiplier grows from 1&times; to 8&times;, while the final result ranges from F to S. Notes are pooled ahead of time so spawning them does not allocate during the song.</p>
+      </div>
     </div>
+  </section>
 
-    <div class="challenge-card io-reveal">
-      <h3 class="challenge-card__title">SVM &rarr; KNN</h3>
-      <span class="challenge-card__label">Why</span>
-      <p class="challenge-card__text">SVM was great for accuracy in the prototype (92% with scikit-learn). But retraining took seconds, needed a Python call, and the model format didn't play well with Unity serialization. I needed something fast enough to retrain between rounds and simple to implement in C#.</p>
-      <span class="challenge-card__label">Now</span>
-      <p class="challenge-card__text">KNN with K=5 and inverse-distance weighting. Training mostly stores the samples, so it runs fast enough to retrain between rounds. Cross-validation runs in milliseconds. The trained model is a JSON file with feature vectors and normalization bounds. Easy to save, easy to load, easy to debug.</p>
+  <!-- THE REBUILD -->
+  <section class="tr-rebuild io-reveal" id="rebuild" aria-labelledby="tr-rebuild-title">
+    <header class="tr-section-head">
+      <div>
+        <p class="tr-kicker">The rebuild</p>
+        <h2 id="tr-rebuild-title">Why the research prototype was not enough</h2>
+      </div>
+      <p>The first version proved that beatbox classification could drive gameplay. Turning that proof into a standalone game required a different architecture.</p>
+    </header>
+
+    <div class="tr-chapters">
+      <article class="tr-chapter io-reveal">
+        <p class="tr-chapter__eyebrow">One process instead of two</p>
+        <h3>If Python stopped, Unity stopped hearing the player.</h3>
+        <div>
+          <p>The prototype analysed audio in Python and sent classifications to Unity over OSC. It worked, but debugging crossed two runtimes and a standalone build would also need a Python installation.</p>
+          <p>I rewrote the FFT, feature extraction and classifier in C#. The current game has one executable, one audio path and no local network connection that can silently fail.</p>
+        </div>
+      </article>
+
+      <article class="tr-chapter io-reveal">
+        <p class="tr-chapter__eyebrow">SVM to KNN</p>
+        <h3>The accurate prototype model was awkward to retrain inside the game.</h3>
+        <div>
+          <p>The Python SVM reached 92% accuracy, but training depended on scikit-learn and its saved model did not fit naturally into the Unity build.</p>
+          <p>I switched to inverse-distance KNN with K=5. Training mostly means storing normalized examples, so the player can retrain between rounds. The model saves as readable JSON and checks itself with leave-one-out cross-validation.</p>
+        </div>
+      </article>
+
+      <article class="tr-chapter io-reveal">
+        <p class="tr-chapter__eyebrow">Prototype to game</p>
+        <h3>Recognising beatbox sounds was interesting, but it was not yet something to play.</h3>
+        <div>
+          <p>The research build could display a classification and run a basic rhythm test. It had no complete loop, progression or reason to try another song.</p>
+          <p>The rebuild adds training, song selection, beatmaps, approach animations, scoring, combos, grades and results. A heuristic fallback keeps the game playable when no trained model exists yet.</p>
+        </div>
+      </article>
     </div>
+  </section>
 
-    <div class="challenge-card io-reveal">
-      <h3 class="challenge-card__title">Made It an Actual Game</h3>
-      <span class="challenge-card__label">Before</span>
-      <p class="challenge-card__text">The prototype was a tech demo. You could beatbox and see it classified. There was a basic rhythm element but no real game loop - no scoring, no progression, no reason to keep playing.</p>
-      <span class="challenge-card__label">Now</span>
-      <p class="challenge-card__text">Beatmapped songs, scrolling notes with approach animations, combo system, letter grades, high score tracking. Full game flow: menu, training, song select, gameplay, results. Object pooling on notes (20 per type) so note spawning does not allocate during gameplay. All UI built at runtime in code - no prefabs, no TextMeshPro, just legacy Text and a color theme class.</p>
+  <!-- ORIGINAL PROTOTYPE -->
+  <section class="tr-prototype io-reveal" aria-labelledby="tr-prototype-title">
+    <header class="tr-section-head">
+      <div>
+        <p class="tr-kicker">Where it started</p>
+        <h2 id="tr-prototype-title">The Python + Unity prototype</h2>
+      </div>
+      <p>The original research build started at roughly 180 ms of latency. After shrinking buffers and simplifying the pipeline, it reached 45 ms with 92% classification accuracy.</p>
+    </header>
+
+    <div class="tr-video-frame">
+      <span class="tr-video-frame__label">Original prototype &middot; SVM + OSC &middot; 2025</span>
+      <div class="video-wrap">
+        <video controls preload="none" poster="old/public/assets/images/video-posters/transientica-prototype.jpg">
+          <source src="old/public/assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ORIGINAL PROTOTYPE -->
-<section class="case-screen io-reveal" aria-label="Original prototype video">
-  <p class="case-sec__no">Where It Started</p>
-  <h2 class="case-sec__title">Original Prototype (2025)</h2>
-  <p class="video-note">The Python + Unity version. SVM classification, OSC messaging, 45ms latency after optimization. This is what the current build replaced.</p>
-  <div class="video-wrap">
-    <video
-      controls
-      preload="none"
-      poster="old/public/assets/images/video-posters/transientica-prototype.jpg"
-    >
-      <source src="old/public/assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-  </div>
-  <p class="video-caption">Prototype demo - Python backend, Unity frontend, OSC between them</p>
-</section>
-
-<!-- LINKS & NEXT PROJECT -->
-<footer class="ifmc-foot" aria-label="Project links and navigation">
-  <div class="ifmc-foot__links io-reveal">
-    
-  </div>
-  <a class="ifmc-foot__next next-project-btn io-reveal" href="nottoday.html">Next: Not Today, Darling!</a>
-</footer>
+  <!-- LINKS & NEXT PROJECT -->
+  <footer class="ifmc-foot" aria-label="Project links and navigation">
+    <div class="ifmc-foot__links io-reveal"></div>
+    <a class="ifmc-foot__next next-project-btn io-reveal" href="nottoday.html">Next: Not Today, Darling!</a>
+  </footer>
+</div>
