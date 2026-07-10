@@ -128,8 +128,8 @@ module.exports = {
     {
       slug: 'ai-audio-research',
       layout: 'project',
-      css: 'project',
-      js: ['scroll-progress', 'scroll-reveal', 'theme-toggle', 'ai-audio-demo'],
+      css: 'case',
+      js: ['scroll-progress', 'starfield', 'case-reveal', 'theme-toggle', 'ai-audio-demo'],
       title: 'AI Audio Research | Game Sound Generation Latency',
       description: 'Research on generated game sound latency: procedural DSP, generative models, 600 generations, latency benchmarks, and caching.',
       canonical: `${SITE}/ai-audio-research.html`,

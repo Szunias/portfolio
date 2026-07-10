@@ -1,224 +1,240 @@
-<!-- PROJECT HERO -->
-<header class="project-hero ai-hero ai-case-hero">
-  <div class="ai-case-hero__copy">
-    <p class="ai-hero__eyebrow">Bachelor thesis / UE5 + Python</p>
-    <h1 class="project-hero__title">AI Audio Research</h1>
-    <p class="project-hero__subtitle">I tested whether AI sound effects can react fast enough inside a playable game.</p>
-    <p class="ai-case-hero__note">Short answer: raw generation was too late. The useful version prepares sound before the player needs it.</p>
-  </div>
+<canvas id="bgStars" class="bg-stars" aria-hidden="true"></canvas>
 
-  <aside class="ai-case-card ai-latency-demo" data-ai-latency-demo aria-label="Interactive AI audio latency demo">
-    <div class="ai-latency-demo__head">
-      <span class="ai-case-kicker">Interactive demo</span>
-      <strong>Click once. Watch the sound arrive late.</strong>
+<div class="ai-page">
+  <!-- HERO -->
+  <header class="ai-hero">
+    <div class="ai-hero__content">
+      <p class="ai-kicker">2024&ndash;2025 &middot; Bachelor thesis &middot; Howest DAE</p>
+      <h1>Is AI audio in real time possible in games?</h1>
+      <p class="ai-hero__lead">I built a playable UE5 prototype to measure whether generated sound can keep up with gameplay.</p>
+      <p class="ai-hero__summary">A gameplay sound has roughly 150 milliseconds before the player hears it as late. Raw AI generation needed seconds. The version that works stops generating during gameplay and prepares sound before the player needs it.</p>
+      <p class="ai-hero__role">Solo research &middot; UE5 + Python prototype &middot; 600 timed generations &middot; 68-page thesis</p>
+      <div class="ai-hero__tools" aria-label="Core tools used">
+        <span>Unreal Engine 5</span><span>Python</span><span>AudioGen</span><span>MMAudio</span><span>ElevenLabs</span><span>Procedural DSP</span>
+      </div>
+      <div class="ai-hero__actions">
+        <a href="#delay">Hear the delay <span aria-hidden="true">&darr;</span></a>
+        <a href="szuniewicz-ai-audio-thesis-2026.pdf" target="_blank" rel="noopener noreferrer">Read the thesis <span aria-hidden="true">&nearr;</span></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- PROJECT SNAPSHOT -->
+  <section class="ai-snapshot io-reveal" aria-label="Research summary">
+    <p class="ai-snapshot__label">The short version</p>
+    <p>I benchmarked four ways of making the same game sound across <strong>600 timed generations</strong>. The playable window is <strong>100&ndash;150ms</strong>; raw AI generation took <strong>1.4&ndash;3.5 seconds</strong>. The system that works <strong>predicts, generates early and plays from cache</strong>, with procedural DSP as the instant fallback.</p>
+  </section>
+
+  <!-- THE EXPERIMENT -->
+  <section class="ai-intro io-reveal" id="story" aria-labelledby="ai-story-title">
+    <div>
+      <p class="ai-kicker">The experiment</p>
+      <h2 id="ai-story-title">A game that asks for its own sound effects</h2>
+    </div>
+    <div class="ai-intro__copy">
+      <p>The prototype is a small UE5 level that requests sound while you play it. When something happens in the game, the Unreal client sends a text description to a Python server over a websocket. The server loads the model, checks its cache, generates audio if it has to, and streams PCM back for Unreal to play.</p>
+      <p>That round trip is the whole thesis. Every request was timed from game event to first audible sample, across four generation methods: procedural DSP, AudioGen and MMAudio running locally, and ElevenLabs in the cloud.</p>
+      <p>I built both ends myself: the C++ client in Unreal, the Python server, the cache, the retry handling and the benchmark logging. The numbers below come from that setup, not from model spec sheets.</p>
     </div>
 
-    <button class="ai-demo-trigger" type="button" data-ai-demo-trigger aria-describedby="ai-demo-status">
-      <span class="ai-demo-trigger__icon" aria-hidden="true">
-        <span class="ai-hit-icon"></span>
-      </span>
-      <span class="ai-demo-trigger__copy">
+    <aside class="ai-player-story" aria-label="What the player experiences">
+      <p class="ai-player-story__label">What the player feels</p>
+      <p>You kick a door and the room stays silent. You are already two steps into the corridor when the bang finally lands behind you. The sound is good; the moment is gone.</p>
+    </aside>
+  </section>
+
+  <!-- LATENCY DEMO -->
+  <section class="ai-delay-section io-reveal" id="delay" aria-labelledby="ai-delay-title">
+    <header class="ai-section-head">
+      <div>
+        <p class="ai-kicker">Try it</p>
+        <h2 id="ai-delay-title">Click once. Wait for the sound.</h2>
+      </div>
+      <p>This is the raw-generation timing, recreated in your browser. The 150ms mark is where a game sound has to exist. Watch how much timeline is left after it.</p>
+    </header>
+
+    <div class="ai-delay" data-ai-latency-demo data-state="idle">
+      <button class="ai-delay__trigger" type="button" data-ai-demo-trigger aria-describedby="ai-demo-status">
         <span>Trigger SFX</span>
         <em>metal door hit</em>
-      </span>
-    </button>
+      </button>
 
-    <div class="ai-demo-stage" aria-hidden="true">
-      <div class="ai-signal-field">
-        <span class="ai-signal-node is-engine"><i></i><strong>engine</strong></span>
-        <span class="ai-signal-node is-model"><i></i><strong>model</strong></span>
-        <span class="ai-signal-node is-output"><i></i><strong>sound</strong></span>
-        <span class="ai-signal-beam"></span>
-        <span class="ai-signal-pulse"></span>
-        <span class="ai-signal-ghost is-one"></span>
-        <span class="ai-signal-ghost is-two"></span>
-      </div>
-      <div class="ai-demo-timeline">
-        <span class="ai-demo-timeline__budget"></span>
-        <span class="ai-demo-timeline__progress"></span>
-        <span class="ai-demo-marker is-now">0ms</span>
-        <span class="ai-demo-marker is-budget">150ms</span>
-        <span class="ai-demo-marker is-late">3.0s</span>
-      </div>
-    </div>
-
-    <p class="ai-demo-status" id="ai-demo-status" data-ai-demo-status aria-live="polite">Ready. Press the event to see the delay.</p>
-  </aside>
-
-  <figure class="ai-hero-visual" aria-label="Unreal Engine prototype and Python audio server">
-    <img src="old/public/assets/images/projects-ai-audio-research/presentation/images/unreal-demo.png" alt="Unreal Engine AI audio prototype with Python audio server running">
-    <figcaption>
-      <span>Prototype</span>
-      <strong>Unreal sends gameplay requests to a Python audio server.</strong>
-    </figcaption>
-  </figure>
-</header>
-
-<section class="ai-clean-section reveal" aria-labelledby="ai-story-title">
-  <div class="ai-clean-copy">
-    <span class="section-label">What I made</span>
-    <h2 class="section-title" id="ai-story-title">A playable UE5 prototype with a Python audio backend.</h2>
-    <p>I built a UE5 client that asks a Python backend for sound during gameplay. The backend loads models, checks cache, returns PCM, and Unreal plays the result.</p>
-  </div>
-
-  <figure class="ai-clean-media">
-    <img src="old/public/assets/images/projects-ai-audio-research/presentation/images/python-prototype.png" alt="Python AI audio prototype terminal">
-    <figcaption>First prototype: type a request, generate sound, log the timing.</figcaption>
-  </figure>
-</section>
-
-<section class="ai-clean-section ai-clean-section--dark reveal" aria-labelledby="ai-result-title">
-  <div class="ai-clean-copy">
-    <span class="section-label">What broke</span>
-    <h2 class="section-title" id="ai-result-title">Latency mattered more than audio quality</h2>
-    <p>For gameplay feedback, timing matters more than polish. If the sound arrives after the input, the player hears the delay first.</p>
-  </div>
-
-  <div class="ai-simple-proof" role="group" aria-label="Main latency result">
-    <div>
-      <span>Playable window</span>
-      <strong>100-150ms</strong>
-    </div>
-    <div>
-      <span>Raw AI generation</span>
-      <strong>1.4-3.5s</strong>
-    </div>
-  </div>
-</section>
-
-<section class="ai-clean-section reveal" aria-labelledby="ai-answer-title">
-  <div class="ai-clean-copy">
-    <span class="section-label">What worked</span>
-    <h2 class="section-title" id="ai-answer-title">Generate ahead of time, cache the results</h2>
-    <p>The practical system is simple: predict likely sounds, generate them off the critical path, cache the useful results, and keep procedural DSP ready as fallback.</p>
-  </div>
-
-  <div class="ai-simple-answer" role="group" aria-label="Production pattern">
-    <span>predict</span>
-    <span>generate early</span>
-    <span>cache</span>
-    <span>play from cache</span>
-  </div>
-</section>
-
-<section class="ai-clean-section ai-samples-section reveal" id="ai-samples" aria-labelledby="ai-samples-title">
-  <div class="ai-clean-copy">
-    <span class="section-label">Listen</span>
-    <h2 class="section-title" id="ai-samples-title">The same sound, four generation methods</h2>
-    <p>These samples come from the presentation deck. Use them as listening evidence, not as another data table.</p>
-  </div>
-
-  <div class="ai-sample-browser" data-ai-sample-browser>
-    <div class="ai-sample-prompts" role="group" aria-label="Audio prompt selector">
-      <button type="button" data-ai-sample-prompt="footstep" aria-pressed="true">Footstep</button>
-      <button type="button" data-ai-sample-prompt="machine">Machine gun</button>
-      <button type="button" data-ai-sample-prompt="cat">Cat meow</button>
-      <button type="button" data-ai-sample-prompt="door">Door slam</button>
-    </div>
-
-    <div class="ai-sample-stage">
-      <figure class="ai-sample-visual">
-        <img data-ai-sample-image src="old/public/assets/images/projects-ai-audio-research/presentation/images/procedural-dsp.png" alt="Procedural DSP presentation visual">
-        <figcaption data-ai-sample-caption>Procedural DSP: fast, synthetic, useful as fallback.</figcaption>
-      </figure>
-
-      <div class="ai-sample-console">
-        <div class="ai-sample-models" role="group" aria-label="Model selector">
-          <button type="button" data-ai-sample-model="dsp" aria-pressed="true">DSP</button>
-          <button type="button" data-ai-sample-model="audiogen">AudioGen</button>
-          <button type="button" data-ai-sample-model="mmaudio">MMAudio</button>
-          <button type="button" data-ai-sample-model="elevenlabs">ElevenLabs</button>
+      <div class="ai-delay__viz" aria-hidden="true">
+        <div class="ai-delay__nodes">
+          <span>engine</span>
+          <span>model</span>
+          <span>sound</span>
         </div>
-
-        <div class="ai-sample-now" aria-live="polite" aria-atomic="true">
-          <span data-ai-sample-model-label>Procedural DSP</span>
-          <strong data-ai-sample-title>Heavy footstep on wet stone</strong>
-          <p data-ai-sample-note>Low latency, but clearly synthetic.</p>
-          <div class="ai-sample-meta">
-            <span>Latency: <b data-ai-sample-latency>15-25ms</b></span>
-            <span>Use: <b data-ai-sample-use>Fallback</b></span>
-          </div>
+        <div class="ai-delay__track">
+          <span class="ai-delay__pulse"></span>
         </div>
+        <div class="ai-delay__timeline">
+          <span class="ai-delay__budget"></span>
+          <span class="ai-delay__progress"></span>
+          <b class="ai-delay__mark is-now">0ms</b>
+          <b class="ai-delay__mark is-budget">150ms</b>
+          <b class="ai-delay__mark is-late">3.0s</b>
+        </div>
+      </div>
 
-        <button class="ai-sample-play" type="button" data-ai-sample-play>
+      <p class="ai-delay__status" id="ai-demo-status" data-ai-demo-status aria-live="polite">Ready. Press the button and count along.</p>
+    </div>
+  </section>
+
+  <!-- THE NUMBERS -->
+  <section class="ai-numbers-section io-reveal" id="numbers" aria-labelledby="ai-numbers-title">
+    <header class="ai-section-head">
+      <div>
+        <p class="ai-kicker">The numbers</p>
+        <h2 id="ai-numbers-title">Every method, measured against one deadline</h2>
+      </div>
+      <p>Latency from game event to first audible sample, averaged across the 600-generation benchmark. Only one method fits inside the playable window.</p>
+    </header>
+
+    <div class="ai-numbers" role="group" aria-label="Latency results per method">
+      <div class="ai-numbers__budget">
+        <strong>100&ndash;150ms</strong>
+        <span>The playable window. Later than this, the player hears the delay before the sound.</span>
+      </div>
+      <div>
+        <strong>15&ndash;25ms</strong>
+        <span>Procedural DSP. Instant but synthetic; the fallback layer.</span>
+      </div>
+      <div>
+        <strong>1.4&ndash;3.4s</strong>
+        <span>MMAudio, local. The best texture-to-time trade-off when prepared ahead.</span>
+      </div>
+      <div>
+        <strong>2.1&ndash;2.8s</strong>
+        <span>AudioGen, local. Useful texture, seconds too late for first playback.</span>
+      </div>
+      <div>
+        <strong>1.8&ndash;3.5s</strong>
+        <span>ElevenLabs, cloud. Often the cleanest sample, never the fastest.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT WORKED -->
+  <section class="ai-answer io-reveal" id="answer" aria-labelledby="ai-answer-title">
+    <header class="ai-section-head">
+      <div>
+        <p class="ai-kicker">What worked</p>
+        <h2 id="ai-answer-title">Stop generating during gameplay</h2>
+      </div>
+      <p>The models never got faster. The system got smarter about when to ask them.</p>
+    </header>
+
+    <div class="ai-system-story">
+      <div class="ai-system-story__copy">
+        <p class="ai-system-story__lead">The version that works never generates a sound the moment the player needs it.</p>
+        <p>Instead, the server watches game state and predicts what is likely next: the player approaching a door queues door sounds, entering a forest queues ambience. Generation happens off the critical path, and the results land in a cache keyed by the request.</p>
+        <p>When the event fires, the sound is already there and plays instantly. If the prediction missed, procedural DSP covers the moment at 15&ndash;25ms while the real sample generates for next time. The player never waits on a model.</p>
+      </div>
+      <p class="ai-signal-path"><span>The pipeline</span> Predict what the player will need &rarr; generate off the critical path &rarr; cache the result &rarr; play instantly &rarr; DSP covers the misses.</p>
+    </div>
+  </section>
+
+  <!-- LISTEN -->
+  <section class="ai-samples io-reveal" id="samples" aria-labelledby="ai-samples-title">
+    <header class="ai-section-head">
+      <div>
+        <p class="ai-kicker">Listen</p>
+        <h2 id="ai-samples-title">The same sound, four ways</h2>
+      </div>
+      <p>Pick a prompt, then switch between methods. The quality differences are why caching is worth the effort, and the latency numbers are why it is required.</p>
+    </header>
+
+    <div class="ai-browser" data-ai-sample-browser>
+      <div class="ai-browser__prompts" role="group" aria-label="Sound prompt selector">
+        <button type="button" data-ai-sample-prompt="footstep" aria-pressed="true">Footstep</button>
+        <button type="button" data-ai-sample-prompt="machine">Machine gun</button>
+        <button type="button" data-ai-sample-prompt="cat">Cat meow</button>
+        <button type="button" data-ai-sample-prompt="door">Door slam</button>
+      </div>
+
+      <div class="ai-browser__models" role="group" aria-label="Generation method selector">
+        <button type="button" data-ai-sample-model="dsp" aria-pressed="true">DSP</button>
+        <button type="button" data-ai-sample-model="audiogen">AudioGen</button>
+        <button type="button" data-ai-sample-model="mmaudio">MMAudio</button>
+        <button type="button" data-ai-sample-model="elevenlabs">ElevenLabs</button>
+      </div>
+
+      <div class="ai-browser__now" aria-live="polite" aria-atomic="true">
+        <span data-ai-sample-model-label>Procedural DSP</span>
+        <strong data-ai-sample-title>Heavy footstep on wet stone</strong>
+        <p data-ai-sample-note>Low latency, but clearly synthetic.</p>
+        <div class="ai-browser__meta">
+          <span>Latency <b data-ai-sample-latency>15-25ms</b></span>
+          <span>Role <b data-ai-sample-use>Fallback</b></span>
+        </div>
+      </div>
+
+      <div class="ai-browser__deck">
+        <button class="ai-browser__play" type="button" data-ai-sample-play>
           <span aria-hidden="true"></span>
           <strong>Play sample</strong>
         </button>
+        <div class="ai-browser__wave" data-ai-sample-wave aria-hidden="true"></div>
+      </div>
 
-        <div class="ai-sample-wave" data-ai-sample-wave aria-hidden="true"></div>
-        <audio data-ai-sample-audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-footstep.wav"></audio>
+      <audio data-ai-sample-audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-footstep.wav"></audio>
+    </div>
+  </section>
+
+  <!-- RECORDINGS -->
+  <section class="ai-evidence io-reveal" id="evidence" aria-labelledby="ai-evidence-title">
+    <header class="ai-section-head">
+      <div>
+        <p class="ai-kicker">Recordings</p>
+        <h2 id="ai-evidence-title">Both ends of the pipeline, running</h2>
+      </div>
+      <p>The Unreal client requesting and playing sound in the level, and the Python server loading models, hitting the cache and logging every request.</p>
+    </header>
+
+    <div class="ai-video-grid">
+      <div class="ai-video-frame">
+        <div class="ai-video-frame__bar">
+          <span>Unreal client &middot; in-game requests</span>
+        </div>
+        <div class="video-wrap">
+          <video controls preload="none" poster="old/public/assets/images/video-posters/unreal-engine-demo.jpg">
+            <source src="UnrealEngineDemo.mp4" type="video/mp4">
+            Your browser does not support the video element.
+          </video>
+        </div>
+      </div>
+      <div class="ai-video-frame">
+        <div class="ai-video-frame__bar">
+          <span>Python server &middot; models, cache, retries</span>
+        </div>
+        <div class="video-wrap">
+          <video controls preload="none" poster="old/public/assets/images/video-posters/python-prototype-demo.jpg">
+            <source src="PythonPrototypeDemo.mp4" type="video/mp4">
+            Your browser does not support the video element.
+          </video>
+        </div>
       </div>
     </div>
+  </section>
 
-    <div class="ai-sample-assets" hidden aria-hidden="true">
-      <img src="old/public/assets/images/projects-ai-audio-research/presentation/images/audiogen.png" alt="" aria-hidden="true">
-      <img src="old/public/assets/images/projects-ai-audio-research/presentation/images/mmaudio.png" alt="" aria-hidden="true">
-      <img src="old/public/assets/images/projects-ai-audio-research/presentation/images/elevenlabs.png" alt="" aria-hidden="true">
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-machine-gun.wav"></audio>
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-cat.wav"></audio>
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-door.wav"></audio>
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/audiogen-footstep.wav"></audio>
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/audiogen-machine-gun.wav"></audio>
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/audiogen-cat.wav"></audio>
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/audiogen-door.wav"></audio>
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/mmaudio-footstep.wav"></audio>
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/mmaudio-machine-gun.wav"></audio>
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/mmaudio-cat.wav"></audio>
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/mmaudio-door.mp3"></audio>
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/elevenlabs-footstep.wav"></audio>
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/elevenlabs-machine-gun.wav"></audio>
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/elevenlabs-cat.wav"></audio>
-      <audio preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/elevenlabs-door.wav"></audio>
-    </div>
-  </div>
-</section>
-
-<section class="ai-evidence-section ai-clean-section reveal" id="ai-evidence" aria-labelledby="ai-evidence-title">
-  <div class="ai-clean-copy">
-    <span class="section-label">Evidence</span>
-    <h2 class="section-title" id="ai-evidence-title">Two recordings for context.</h2>
-  </div>
-
-  <div class="video-grid ai-video-grid">
+  <!-- THESIS -->
+  <section class="ai-thesis io-reveal" aria-labelledby="ai-thesis-title">
     <div>
-      <div class="video-item">
-        <video controls preload="none" poster="old/public/assets/images/video-posters/unreal-engine-demo.jpg">
-          <source src="UnrealEngineDemo.mp4" type="video/mp4">
-          Your browser does not support the video element.
-        </video>
-      </div>
-      <p class="video-caption">Unreal client: gameplay requests and playback.</p>
+      <p class="ai-kicker">Documentation</p>
+      <h2 id="ai-thesis-title">The thesis</h2>
     </div>
     <div>
-      <div class="video-item">
-        <video controls preload="none" poster="old/public/assets/images/video-posters/python-prototype-demo.jpg">
-          <source src="PythonPrototypeDemo.mp4" type="video/mp4">
-          Your browser does not support the video element.
-        </video>
-      </div>
-      <p class="video-caption">Python backend: model load, cache hits, retries.</p>
+      <p>68 pages covering the full benchmark data, the cache design, the Unreal and Python implementation, and how the system handles failed or late generations. Written so an audio team could decide whether this approach fits their production.</p>
+      <a href="szuniewicz-ai-audio-thesis-2026.pdf" target="_blank" rel="noopener noreferrer">Open the thesis (PDF) <span aria-hidden="true">&rarr;</span></a>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- THESIS CALLOUT -->
-<div class="callout-section reveal">
-  <div class="callout-card">
-    <div>
-      <div class="callout-card__label">Bachelor Thesis &middot; 68 Pages</div>
-      <h3 class="callout-card__title">Read the Full Paper</h3>
-      <p class="callout-card__desc">Benchmarks, cache design, Unreal implementation notes, and failure handling.</p>
+  <!-- LINKS & NEXT PROJECT -->
+  <footer class="ifmc-foot" aria-label="Project links and navigation">
+    <div class="ifmc-foot__links io-reveal">
+      <a href="szuniewicz-ai-audio-thesis-2026.pdf" target="_blank" rel="noopener noreferrer">AI Audio Research Paper (PDF)</a>
     </div>
-    <a class="callout-card__link" href="szuniewicz-ai-audio-thesis-2026.pdf" target="_blank" rel="noopener noreferrer">Read AI Audio Research Paper</a>
-  </div>
+    <a class="ifmc-foot__next next-project-btn io-reveal" href="audioq.html">Next: AudioQ</a>
+  </footer>
 </div>
-
-<!-- LINKS & NEXT PROJECT -->
-<nav class="links-section" aria-label="Project links and navigation">
-  <div class="links-layout">
-    <ul class="links-list">
-      <li><a href="szuniewicz-ai-audio-thesis-2026.pdf" target="_blank" rel="noopener noreferrer">Read AI Audio Research Paper (PDF)</a></li>
-    </ul>
-    <a class="next-project-btn" href="audioq.html">Next Project: AudioQ</a>
-  </div>
-</nav>
