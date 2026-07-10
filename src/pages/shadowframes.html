@@ -22,12 +22,10 @@
   </div>
 </header>
 
-<!-- FAST FACTS -->
-<section class="sf-stats io-reveal" aria-label="Project highlights">
-  <div class="sf-stat"><strong>10</strong><span>anomaly types with unique cues</span></div>
-  <div class="sf-stat"><strong>3 stages</strong><span>alert, direction, presence</span></div>
-  <div class="sf-stat"><strong>0</strong><span>on-screen markers &mdash; sound does the guiding</span></div>
-  <div class="sf-stat"><strong>49 pages</strong><span>of audio rules and handoff notes</span></div>
+<!-- PROJECT SNAPSHOT -->
+<section class="sf-project-snapshot io-reveal" aria-label="Project highlights">
+  <p class="sf-project-snapshot__label">The short version</p>
+  <p>Over four months, I designed distinct cues for <strong>10 types of anomaly</strong>, built a system that guides the player with <strong>no on-screen markers</strong>, and documented the audio rules in a <strong>49-page Sound Bible</strong> for the rest of the team.</p>
 </section>
 
 <!-- THE PROBLEM -->
@@ -38,15 +36,13 @@
   </div>
   <div class="sf-intro__copy">
     <p>An elderly man with dementia returns to a black-and-white pub where fragments of memory appear as moving glasses, turning chairs and wandering shadows. The player has to find each anomaly, photograph it and pin the image to an investigation board.</p>
-    <p>Nothing on screen points to the next objective. As the only audio designer, I had to make every critical cue easy to locate without making the horror predictable. I owned that path from source editing in Reaper to Wwise, UE5 integration, mix and weekly playtests.</p>
+    <p>Nothing on screen points to the next objective. As the only audio designer, I had to make every important cue easy to locate without making the horror predictable. I handled the whole process: editing sounds in Reaper, building them in Wwise, connecting them to UE5, mixing and running weekly playtests.</p>
   </div>
 
-  <ol class="sf-loop" aria-label="The core gameplay loop">
-    <li><span>01</span><strong>Hear</strong><small>an anomaly enter the pub</small></li>
-    <li><span>02</span><strong>Turn</strong><small>toward its directional cue</small></li>
-    <li><span>03</span><strong>Follow</strong><small>the presence loop to the object</small></li>
-    <li><span>04</span><strong>Capture</strong><small>the memory with the Polaroid</small></li>
-  </ol>
+  <aside class="sf-player-story" aria-label="What the player does">
+    <p class="sf-player-story__label">What the player actually does</p>
+    <p>A sound tells you that something in the pub has changed. You turn until the cue feels centred, follow it into the right room, then listen for the one object that does not belong. Once you find it, you take a Polaroid and add the recovered memory to the investigation board.</p>
+  </aside>
 </section>
 
 <!-- GAMEPLAY FIRST -->
@@ -77,35 +73,18 @@
   <header class="sf-section-head">
     <div>
       <p class="sf-kicker">The core system</p>
-      <h2 id="anomaly-title">How the anomaly cues work</h2>
+      <h2 id="anomaly-title">How a player finds something they cannot see</h2>
     </div>
-    <p>A single cue could not tell the player both that something happened and exactly where it was. Splitting the information into stages kept the player oriented without giving the answer away.</p>
+    <p>There is no objective arrow or glowing outline. The sound has to help without turning the search into an obvious checklist.</p>
   </header>
 
-  <div class="sf-anomaly__flow">
-    <article>
-      <span class="sf-anomaly__number">01</span>
-      <p class="sf-anomaly__label">Alert</p>
-      <h3>Signals that something changed</h3>
-      <p>A short stinger cuts through the ambience when an anomaly spawns. It asks the player to stop and listen, but does not reveal the object.</p>
-    </article>
-    <article>
-      <span class="sf-anomaly__number">02</span>
-      <p class="sf-anomaly__label">Direction</p>
-      <h3>Points to the room</h3>
-      <p>A spatial one-shot identifies the room: wood scraping, a glass moving behind the bar, or a whisper arriving from the corridor.</p>
-    </article>
-    <article>
-      <span class="sf-anomaly__number">03</span>
-      <p class="sf-anomaly__label">Presence</p>
-      <h3>Confirms the exact object</h3>
-      <p>A unique loop grows clearer on approach and stops after the photograph. The player gets confirmation without a marker or objective prompt.</p>
-    </article>
-  </div>
-
-  <div class="sf-anomaly__outcome">
-    <span>No marker required</span>
-    <p>The audio moves the player from a global alert to a room, then from the room to one exact object.</p>
+  <div class="sf-system-story">
+    <div class="sf-system-story__copy">
+      <p class="sf-system-story__lead">Imagine that a glass has started moving behind the bar while you are standing in another room.</p>
+      <p>A short stinger first cuts through the pub ambience. It tells you that something changed, but not what or where. When you stop and turn, the scrape of glass comes from the bar and gives you a direction to follow.</p>
+      <p>As you get closer, a repeating sound around that one glass becomes easier to place. It disappears after you take the photograph, so the game confirms the find through the same sense that led you there.</p>
+    </div>
+    <p class="sf-signal-path"><span>What you hear</span> A stinger in the pub &rarr; scraping from the bar &rarr; a loop around the glass &rarr; the camera confirms the shot.</p>
   </div>
 </section>
 
@@ -114,48 +93,36 @@
   <header class="sf-section-head">
     <div>
       <p class="sf-kicker">Challenges</p>
-      <h2 id="challenges-title">Three problems and how I fixed them</h2>
+      <h2 id="challenges-title">What broke in playtests, and what I changed</h2>
     </div>
-    <p>These were not polish tasks. Each one affected whether the player could trust what they heard.</p>
+    <p>The useful feedback was rarely “this sound is wrong.” It was usually a moment where the audio made the game harder to understand.</p>
   </header>
 
-  <div class="sf-challenges__list">
-    <article class="sf-challenge io-reveal">
-      <div class="sf-challenge__metric"><strong>Buffer zone</strong><span>instead of one hard line</span></div>
-      <div class="sf-challenge__problem">
-        <p class="sf-challenge__label">Problem</p>
-        <h3>The threat mix stuttered at one boundary.</h3>
-        <p>When the enemy hovered right at the edge of its danger range, the dread layer switched on and off several times a second. Instead of rising tension, players heard a broken switch.</p>
-      </div>
-      <div class="sf-challenge__solution">
-        <p class="sf-challenge__label">Decision &amp; result</p>
-        <p>I gave the system a buffer zone: the tension layer turns on when the enemy gets close, but only turns off once it has clearly backed away. The flicker disappeared, and the intensity itself rises and falls smoothly with distance instead of jumping.</p>
+  <div class="sf-chapters">
+    <article class="sf-chapter io-reveal">
+      <p class="sf-chapter__eyebrow">Enemy distance</p>
+      <h3>The tension kept flickering when the enemy stood at the edge of its range.</h3>
+      <div>
+        <p>The first version used one distance line to switch the threat layer on and off. If the enemy hovered around that line, the mix could change several times a second. Players heard a broken switch instead of rising tension.</p>
+        <p>I replaced that line with a buffer zone. The layer now starts when the enemy comes close, but only stops after it has clearly moved away. The flicker disappeared and the intensity can rise and fall smoothly with distance.</p>
       </div>
     </article>
 
-    <article class="sf-challenge io-reveal">
-      <div class="sf-challenge__metric"><strong>4 surfaces</strong><span>wood, tile, concrete, boards</span></div>
-      <div class="sf-challenge__problem">
-        <p class="sf-challenge__label">Problem</p>
-        <h3>Manual floor tags broke when the level changed.</h3>
-        <p>The pub used wood, tile, concrete and creaky boards. Tagging every surface by hand was slow, and every time the level changed, the tags had to be redone.</p>
-      </div>
-      <div class="sf-challenge__solution">
-        <p class="sf-challenge__label">Decision &amp; result</p>
-        <p>Now the game simply checks what material is under the player's feet and plays the right footstep on its own. Designers can add or change a surface in the editor without touching audio code.</p>
+    <article class="sf-chapter io-reveal">
+      <p class="sf-chapter__eyebrow">Footsteps</p>
+      <h3>Every level edit could break the floor sounds.</h3>
+      <div>
+        <p>The pub uses wood, tile, concrete and loose boards. Assigning audio tags by hand worked until a designer moved or replaced part of the floor, leaving the footsteps out of date.</p>
+        <p>I made the game read the physical material directly beneath the player. The correct footstep now follows the level automatically, and designers can change a surface without asking me to update audio code.</p>
       </div>
     </article>
 
-    <article class="sf-challenge io-reveal">
-      <div class="sf-challenge__metric"><strong>Muffled world</strong><span>when the camera is up</span></div>
-      <div class="sf-challenge__problem">
-        <p class="sf-challenge__label">Problem</p>
-        <h3>Raising the camera needed to feel risky.</h3>
-        <p>The Polaroid helps the player capture an anomaly, but narrows their awareness of the pub. A visual animation alone did not communicate that trade-off.</p>
-      </div>
-      <div class="sf-challenge__solution">
-        <p class="sf-challenge__label">Decision &amp; result</p>
-        <p>Raising the camera muffles the pub around you, pushes your own breathing forward and adds the close rustle of hands on the camera. A reversed whisper confirms a successful shot, so both the vulnerability and the success are audible.</p>
+    <article class="sf-chapter io-reveal">
+      <p class="sf-chapter__eyebrow">The Polaroid</p>
+      <h3>The camera looked risky, but it did not sound risky.</h3>
+      <div>
+        <p>Raising the Polaroid narrows the player's view, yet the unchanged mix made it feel as if they were still fully aware of the room. The animation alone did not sell the vulnerability.</p>
+        <p>Now the pub becomes muffled, breathing moves forward and the player's hands rustle close to the listener. A reversed whisper confirms a successful shot, so the danger and the reward are both audible.</p>
       </div>
     </article>
   </div>
@@ -168,7 +135,7 @@
       <p class="sf-kicker">Environment</p>
       <h2 id="gallery-title">The rooms of the pub</h2>
     </div>
-    <p>Rooms shared one visual language, so distance, material and reflections did the orientation work. Each caption points to the audio job behind the image.</p>
+    <p>The rooms look deliberately similar, so I used distance, floor material and reflections to help players tell them apart by ear. The captions explain what the audio is doing in each space.</p>
   </header>
 
   <div class="sf-gallery" data-sf-gallery>
@@ -198,27 +165,17 @@
   <header class="sf-section-head">
     <div>
       <p class="sf-kicker">Production</p>
-      <h2 id="tech-title">Working with the team</h2>
+      <h2 id="tech-title">Making the audio easy for the team to change</h2>
     </div>
-    <p>I put every audio setting where designers could reach it, kept the Wwise project organised around gameplay states and documented the rules as they changed.</p>
+    <p>The system was only useful if designers could work with it without waiting for the audio person.</p>
   </header>
 
-  <div class="sf-production-grid">
-    <article>
-      <span>01</span>
-      <h3>Designer-facing controls</h3>
-      <p>Surface, anomaly and enemy settings lived directly in the editor. Designers could tune values themselves without waiting for me to change code.</p>
-    </article>
-    <article>
-      <span>02</span>
-      <h3>Weekly in-engine tests</h3>
-      <p>Every week the team played a fresh build. Unclear cues went back to Reaper; timing and state bugs went back to Wwise or Unreal.</p>
-    </article>
-    <article>
-      <span>03</span>
-      <h3>Rules, not one-off fixes</h3>
-      <p>The mix reacts to what is happening in the game &mdash; enemy distance, camera state, anomaly activity &mdash; so intensity changes continuously instead of through scripted volume jumps.</p>
-    </article>
+  <div class="sf-team-story">
+    <p class="sf-team-story__lead">I put the surface, anomaly and enemy settings directly in Unreal, so designers could tune the game without asking me to change code.</p>
+    <div>
+      <p>We tested a fresh build every week. If a cue was hard to understand, I changed the source in Reaper. If its timing or behaviour was wrong, I fixed the Wwise or Unreal logic behind it.</p>
+      <p>I kept those decisions as reusable rules tied to enemy distance, camera state and anomaly activity. That made the mix respond to gameplay instead of relying on one-off volume changes placed around the level.</p>
+    </div>
   </div>
 
   <div class="gallery-grid io-reveal">
@@ -244,12 +201,9 @@
     </div>
   </div>
 
-  <aside class="sf-budget" aria-label="Audio performance targets">
-    <div>
-      <p class="sf-kicker">Priorities</p>
-      <h3>I decided which sounds were never allowed to drop out.</h3>
-    </div>
-    <p>Like every game, this one had a hard limit on how much audio could play at once. Music and long ambience could afford to be second-class citizens; the camera, anomaly and enemy cues always came first &mdash; if any of those arrived late, the whole find-it-by-ear mechanic fell apart.</p>
+  <aside class="sf-priority-story" aria-label="Audio performance priorities">
+    <p class="sf-priority-story__label">What could never go silent</p>
+    <p>The game could only play a limited number of sounds at once. Music and long ambience were allowed to give way first; camera, anomaly and enemy cues always kept priority. If one of those arrived late, the entire find-it-by-ear mechanic stopped being reliable.</p>
   </aside>
 </section>
 
