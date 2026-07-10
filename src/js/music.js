@@ -1,12 +1,13 @@
 // =========================================
-// MUSIC TIMELINE - chronological stream & audio player
+// MUSIC ARCHIVE - selected work, chronological releases & audio player
 // music.js lifts the flat track-card grids into a year-by-year
-// timeline (newest first), wires the genre filters, and owns the
-// audio engine + player bar. Releases render as full cards,
-// sketches (evolution demos) as compact dated rows.
+// archive (newest first), wires the genre filters, and owns the
+// audio engine + player bar. Finished releases stay prominent;
+// raw studio sketches stay visible in compact year groups.
 // =========================================
 (function() {
   var trackCards = Array.from(document.querySelectorAll('.track-card'));
+  var featuredButtons = Array.from(document.querySelectorAll('[data-featured-track]'));
 
   // Guard: only run on music page
   if (!trackCards.length) return;
@@ -49,6 +50,11 @@
     return year ? year + '-12-31' : '0000-00-00';
   }
 
+  function cardOrder(card) {
+    var order = Number(card.getAttribute('data-order'));
+    return Number.isFinite(order) ? order : 999;
+  }
+
   function primaryTag(card) {
     var tags = cardTags(card);
     for (var i = 0; i < tags.length; i++) {
@@ -79,10 +85,10 @@
   });
 
   // =========================================
-  // TIMELINE BUILD
+  // ARCHIVE BUILD
   // Lift cards out of the flat grids into year groups, newest first.
-  // Releases with only a year keep their curated order at the top of that
-  // year; dated releases interleave chronologically with dated sketches.
+  // Finished releases form the primary list. Raw studio sketches stay
+  // visible in a compact group directly beneath each year's releases.
   // =========================================
   var timeline = document.getElementById('timeline');
 
@@ -93,7 +99,7 @@
     var sketches = Array.from(document.querySelectorAll('#evolution-grid .track-card'));
 
     releases.sort(function(a, b) {
-      return (Number(a.getAttribute('data-order')) || 999) - (Number(b.getAttribute('data-order')) || 999);
+      return cardOrder(a) - cardOrder(b);
     });
     sketches.sort(function(a, b) {
       // ISO dates compare correctly as strings; newest first
@@ -102,24 +108,21 @@
 
     var years = {};
     function bucket(year) {
-      if (!years[year]) years[year] = { releases: [], sketches: [], items: [] };
+      if (!years[year]) years[year] = { releases: [], sketches: [] };
       return years[year];
     }
     releases.forEach(function(card) {
       var yearBucket = bucket(cardYear(card));
       yearBucket.releases.push(card);
-      yearBucket.items.push({ card: card, type: 'release' });
     });
     sketches.forEach(function(card) {
       var yearBucket = bucket(cardYear(card));
       yearBucket.sketches.push(card);
-      yearBucket.items.push({ card: card, type: 'sketch' });
     });
 
     var yearKeys = Object.keys(years).map(Number).sort(function(a, b) { return b - a; });
 
     var ordered = [];
-    var side = 0;
 
     yearKeys.forEach(function(year) {
       var group = document.createElement('section');
@@ -147,24 +150,17 @@
       body.className = 'tl-year__body';
       group.appendChild(body);
 
-      years[year].items.sort(function(a, b) {
-        var dateCompare = cardSortDate(b.card).localeCompare(cardSortDate(a.card));
+      years[year].releases.sort(function(a, b) {
+        var dateCompare = cardSortDate(b).localeCompare(cardSortDate(a));
         if (dateCompare) return dateCompare;
-        if (a.type !== b.type) return a.type === 'release' ? -1 : 1;
-        return (Number(a.card.getAttribute('data-order')) || 999) - (Number(b.card.getAttribute('data-order')) || 999);
+        return cardOrder(a) - cardOrder(b);
       });
 
-      years[year].items.forEach(function(item) {
-        var card = item.card;
+      years[year].releases.forEach(function(card) {
         var entry = document.createElement('div');
-        if (item.type === 'release') {
-          entry.className = 'tl-entry tl-entry--release ' + (side === 0 ? 'tl-entry--a' : 'tl-entry--b');
-          side = 1 - side;
-          card.classList.add('track-card--release');
-          card.setAttribute('data-genre', primaryTag(card));
-        } else {
-          entry.className = 'tl-entry tl-entry--sketch';
-        }
+        entry.className = 'tl-entry tl-entry--release';
+        card.classList.add('track-card--release');
+        card.setAttribute('data-genre', primaryTag(card));
         var node = document.createElement('span');
         node.className = 'tl-node';
         node.setAttribute('aria-hidden', 'true');
@@ -174,10 +170,45 @@
         ordered.push(card);
       });
 
+      if (years[year].sketches.length) {
+        years[year].sketches.sort(function(a, b) {
+          return cardDateText(b).localeCompare(cardDateText(a));
+        });
+
+        var sketchGroup = document.createElement('section');
+        sketchGroup.className = 'tl-sketches';
+        sketchGroup.setAttribute('aria-label', year + ' studio sketches');
+        var sketchHeader = document.createElement('header');
+        sketchHeader.className = 'tl-sketches__header';
+        var sketchTitle = document.createElement('h3');
+        sketchTitle.textContent = 'Studio sketches';
+        var sketchMeta = document.createElement('p');
+        sketchMeta.textContent = years[year].sketches.length + ' raw working ' + (years[year].sketches.length === 1 ? 'file' : 'files');
+        sketchHeader.appendChild(sketchTitle);
+        sketchHeader.appendChild(sketchMeta);
+        sketchGroup.appendChild(sketchHeader);
+
+        var sketchList = document.createElement('div');
+        sketchList.className = 'tl-sketches__list';
+        years[year].sketches.forEach(function(card) {
+          var entry = document.createElement('div');
+          entry.className = 'tl-entry tl-entry--sketch';
+          var node = document.createElement('span');
+          node.className = 'tl-node';
+          node.setAttribute('aria-hidden', 'true');
+          entry.appendChild(node);
+          entry.appendChild(card);
+          sketchList.appendChild(entry);
+          ordered.push(card);
+        });
+        sketchGroup.appendChild(sketchList);
+        body.appendChild(sketchGroup);
+      }
+
       timeline.appendChild(group);
     });
 
-    // End cap: where it all started
+    // End cap: where the archive starts
     var cap = document.createElement('p');
     cap.className = 'tl-cap';
     var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -223,6 +254,7 @@
 
   function cardMatchesFilter(card, filter) {
     if (filter === 'all') return true;
+    if (filter === 'release') return !isSketch(card);
     return cardTags(card).indexOf(filter) !== -1;
   }
 
@@ -254,6 +286,13 @@
     });
   }
 
+  function syncSketchGroups() {
+    Array.from(document.querySelectorAll('.tl-sketches')).forEach(function(group) {
+      var any = group.querySelector('.tl-entry--sketch:not(.hidden)');
+      group.hidden = !any;
+    });
+  }
+
   function announceFilter() {
     var status = document.getElementById('filterStatus');
     if (!status) return;
@@ -273,6 +312,7 @@
     trackCards.forEach(function(card) {
       setCardAvailable(card, cardMatchesFilter(card, filter));
     });
+    syncSketchGroups();
     syncYearGroups();
     announceFilter();
 
@@ -811,6 +851,16 @@
     });
   }
 
+  function syncFeaturedState(card) {
+    var selectedTitle = card ? card.getAttribute('data-title') : '';
+    featuredButtons.forEach(function(button) {
+      var selected = button.getAttribute('data-featured-track') === selectedTitle;
+      button.classList.toggle('active', selected);
+      button.classList.toggle('is-playing', selected && isPlaying);
+      button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    });
+  }
+
   function selectTrack(card, options) {
     var src = cardSrc(card);
     if (!src) return;
@@ -854,6 +904,7 @@
 
     trackCards.forEach(function(c) { c.classList.remove('active'); });
     card.classList.add('active');
+    syncFeaturedState(card);
     if (options.reveal) bringTrackCardIntoView(card);
   }
 
@@ -865,6 +916,7 @@
     playRequested = true;
     updatePlayIcon();
     updatePlayerStateClasses();
+    syncFeaturedState(currentTrackIndex >= 0 ? trackCards[currentTrackIndex] : null);
     setPlayerStatus('Playing - ' + currentLufsText(), false);
     setMediaPlaybackState('playing');
     updateMediaPositionState();
@@ -880,6 +932,7 @@
     playRequested = false;
     updatePlayIcon();
     updatePlayerStateClasses();
+    syncFeaturedState(currentTrackIndex >= 0 ? trackCards[currentTrackIndex] : null);
     if (currentTrackIndex >= 0 && !audio.ended) setPlayerStatus('Paused - ' + currentLufsText(), false);
     document.title = originalTitle;
     setMediaPlaybackState('paused');
@@ -976,6 +1029,21 @@
         e.preventDefault();
         selectTrack(card);
       }
+    });
+  });
+
+  featuredButtons.forEach(function(button) {
+    var title = button.getAttribute('data-featured-track');
+    var card = trackCards.find(function(candidate) {
+      return candidate.getAttribute('data-title') === title;
+    });
+    if (!card) {
+      button.disabled = true;
+      return;
+    }
+    button.setAttribute('aria-pressed', 'false');
+    button.addEventListener('click', function() {
+      selectTrack(card);
     });
   });
 
