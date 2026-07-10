@@ -68,7 +68,7 @@ module.exports = {
       slug: 'shadowframes',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'starfield', 'case-reveal', 'lightbox', 'theme-toggle'],
+      js: ['scroll-progress', 'starfield', 'case-reveal', 'shadowframes', 'lightbox', 'theme-toggle'],
       title: 'Shadow Frames Game Audio | Wwise UE5 Horror Sound Design',
       description: 'Horror game audio case study: Wwise spatial audio, UE5 implementation, 32-source spatial mix budget, and a 49-page Sound Bible for Shadow Frames.',
       canonical: `${SITE}/shadowframes.html`,
