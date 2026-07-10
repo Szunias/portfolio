@@ -10,7 +10,7 @@
     <div class="xr-hero__content">
       <p class="xr-kicker">2025 &ndash; Present &middot; Unity VR / AR training</p>
       <h1>XR Labs</h1>
-      <p class="xr-hero__lead">When visibility drops, sound has to tell the truth.</p>
+      <p class="xr-hero__lead">Spatial audio for VR and AR training simulations.</p>
       <p class="xr-hero__summary">I own spatial audio on selected defence and public-safety training simulations, where a voice, gunshot or movement cue has to arrive from the correct direction, distance and room.</p>
       <p class="xr-hero__role">Technical Sound Designer &middot; Sole audio owner on selected simulations &middot; XR Labs Belgium</p>
       <div class="xr-hero__tools" aria-label="Core tools used">
@@ -26,16 +26,16 @@
   <!-- FAST CONTEXT -->
   <section class="xr-facts io-reveal" aria-label="XR Labs project context">
     <div><strong>Sole audio</strong><span>on selected simulations</span></div>
-    <div><strong>Real geometry</strong><span>drives propagation and occlusion</span></div>
+    <div><strong>Real geometry</strong><span>walls and doors actually block sound</span></div>
     <div><strong>No marker</strong><span>for critical spatial cues</span></div>
-    <div><strong>Shared project</strong><span>Unity pipeline through Perforce</span></div>
+    <div><strong>Shared project</strong><span>one Unity project, many contributors</span></div>
   </section>
 
   <!-- THE PROBLEM -->
   <section class="xr-intro io-reveal" id="work" aria-labelledby="xr-intro-title">
     <div>
       <p class="xr-kicker">The requirement</p>
-      <h2 id="xr-intro-title">A sound behind a wall must stay behind the wall.</h2>
+      <h2 id="xr-intro-title">How the spatial audio works</h2>
     </div>
     <div class="xr-intro__copy">
       <p>In a training simulation, spatial audio is not decoration. The trainee may hear a threat before they can see it, so the mix has to communicate where it is, how far away it is and what stands between them.</p>
@@ -45,7 +45,7 @@
     <ol class="xr-path" aria-label="Spatial audio signal path">
       <li><span>01</span><strong>Source</strong><small>voice, gunshot or movement</small></li>
       <li><span>02</span><strong>Geometry</strong><small>wall, door, corner or open room</small></li>
-      <li><span>03</span><strong>Propagation</strong><small>direction, distance and occlusion</small></li>
+      <li><span>03</span><strong>Path</strong><small>direction, distance, what's in the way</small></li>
       <li><span>04</span><strong>Decision</strong><small>react before the threat is visible</small></li>
     </ol>
   </section>
@@ -55,7 +55,7 @@
     <header class="xr-section-head">
       <div>
         <p class="xr-kicker">Public footage</p>
-        <h2 id="xr-demo-title">The environment the audio has to survive.</h2>
+        <h2 id="xr-demo-title">The training facility</h2>
       </div>
       <p>This 45-second DSU training clip is public. It shows the physical facility and the multi-user simulation context; client scenarios and implementation details remain confidential.</p>
     </header>
@@ -79,7 +79,7 @@
     <header class="xr-section-head">
       <div>
         <p class="xr-kicker">What the trainee needs to hear</p>
-        <h2 id="xr-questions-title">One cue has to answer three questions.</h2>
+        <h2 id="xr-questions-title">Direction, distance and obstruction</h2>
       </div>
       <p>If any answer is wrong, the trainee builds the wrong picture of the room. I treat each as a functional part of the simulation, not a separate polish pass.</p>
     </header>
@@ -95,13 +95,13 @@
         <span class="xr-questions__number">02</span>
         <p class="xr-questions__label">Distance</p>
         <h3>How far away is it?</h3>
-        <p>Attenuation and reflections need to separate a nearby room from the far end of a corridor without flattening every cue into the same loudness.</p>
+        <p>A cue from the next room has to sound closer than one from the far end of a corridor &mdash; without every sound collapsing into the same loudness.</p>
       </article>
       <article>
         <span class="xr-questions__number">03</span>
         <p class="xr-questions__label">Obstruction</p>
         <h3>What is between us?</h3>
-        <p>A wall or closed door changes more than level. Filtering and propagation have to preserve the sense of separation from the source.</p>
+        <p>A wall or closed door changes more than loudness. The sound has to feel sealed off from you, the way it would through a real door.</p>
       </article>
     </div>
 
@@ -116,7 +116,7 @@
     <header class="xr-section-head">
       <div>
         <p class="xr-kicker">Engineering decisions</p>
-        <h2 id="xr-challenges-title">Three ways spatial audio can stop being trustworthy.</h2>
+        <h2 id="xr-challenges-title">Three implementation problems</h2>
       </div>
       <p>The hard part is not making a sound impressive in isolation. It is keeping its behaviour believable while rooms, scenarios and shared Unity scenes keep changing.</p>
     </header>
@@ -131,7 +131,7 @@
         </div>
         <div class="xr-challenge__solution">
           <p class="xr-challenge__label">Decision</p>
-          <p>I use Steam Audio propagation and occlusion against the actual virtual geometry, then tune the result in the scene. The obstacle changes the spectrum and path, not only the number on a volume control.</p>
+          <p>Steam Audio reads the actual room geometry, so a closed door muffles and redirects a voice the way a real door would. I then tune the result in the scene. The obstacle changes the character of the sound, not just a number on a fader.</p>
         </div>
       </article>
 
@@ -144,7 +144,7 @@
         </div>
         <div class="xr-challenge__solution">
           <p class="xr-challenge__label">Decision</p>
-          <p>I place and test voices, gunshots and movement cues against the room layout so direction and distance remain readable from the headset. The information stays diegetic.</p>
+          <p>I place and test voices, gunshots and movement cues against the room layout so direction and distance stay readable from the headset. Everything the trainee needs lives in the scene itself &mdash; nothing floats on the screen.</p>
         </div>
       </article>
 
@@ -152,12 +152,12 @@
         <div class="xr-challenge__signal"><strong>One project</strong><span>many contributors</span></div>
         <div class="xr-challenge__problem">
           <p class="xr-challenge__label">Problem</p>
-          <h3>Spatial behaviour had to survive the next sync.</h3>
+          <h3>Shared scenes could overwrite audio settings.</h3>
           <p>Audio settings and geometry live inside Unity scenes shared by designers and engineers. Unstructured changes are easy to lose or break in version control.</p>
         </div>
         <div class="xr-challenge__solution">
           <p class="xr-challenge__label">Decision</p>
-          <p>I keep the implementation and scene changes repeatable within the Perforce workflow, so the team can sync updates without silently replacing the spatial setup.</p>
+          <p>I keep audio changes structured and repeatable in version control, so the team can sync updates without silently wiping the spatial setup.</p>
         </div>
       </article>
     </div>
@@ -166,8 +166,8 @@
   <!-- CONFIDENTIALITY / CREDIBILITY -->
   <section class="xr-disclosure io-reveal" aria-labelledby="xr-disclosure-title">
     <div class="xr-disclosure__heading">
-      <p class="xr-kicker">A necessary boundary</p>
-      <h2 id="xr-disclosure-title">Public principle. Private scenario.</h2>
+      <p class="xr-kicker">Confidentiality</p>
+      <h2 id="xr-disclosure-title">What I can and cannot show</h2>
       <p>The strongest proof would be an in-headset A/B comparison inside a client simulation. That material cannot be published, so this page stays precise about the engineering work without inventing metrics or exposing a training scenario.</p>
     </div>
 

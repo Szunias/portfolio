@@ -9,14 +9,14 @@
   <div class="sf-hero__content">
     <p class="sf-kicker">2025 &middot; Audio-led psychological horror</p>
     <h1>Shadow Frames</h1>
-    <p class="sf-hero__lead">A horror game you cannot play on mute.</p>
+    <p class="sf-hero__lead">Solo audio design for a horror game navigated entirely by sound.</p>
     <p class="sf-hero__summary">No HUD markers. No minimap. The player finds every anomaly by following sound through an abandoned Irish pub.</p>
     <p class="sf-hero__role">Solo Audio Designer &middot; 4 months &middot; Howest DAE + RITCS + Royal Conservatory of Ghent</p>
     <div class="sf-hero__tools" aria-label="Core tools used">
       <span>Wwise</span><span>Unreal Engine 5</span><span>C++</span><span>Reaper</span>
     </div>
     <div class="sf-hero__actions">
-      <a href="#gameplay">Hear the gameplay <span aria-hidden="true">&darr;</span></a>
+      <a href="#gameplay">Gameplay video <span aria-hidden="true">&darr;</span></a>
       <a href="old/public/assets/images/projects-shadowframes/Sound_Grp22_ShadowFrames.pdf" target="_blank" rel="noopener noreferrer">Sound Bible <span aria-hidden="true">&nearr;</span></a>
     </div>
   </div>
@@ -26,15 +26,15 @@
 <section class="sf-stats io-reveal" aria-label="Project highlights">
   <div class="sf-stat"><strong>10</strong><span>anomaly types with unique cues</span></div>
   <div class="sf-stat"><strong>3 stages</strong><span>alert, direction, presence</span></div>
-  <div class="sf-stat"><strong>70 / 60%</strong><span>stable enemy proximity thresholds</span></div>
+  <div class="sf-stat"><strong>0</strong><span>on-screen markers &mdash; sound does the guiding</span></div>
   <div class="sf-stat"><strong>49 pages</strong><span>of audio rules and handoff notes</span></div>
 </section>
 
 <!-- THE PROBLEM -->
 <section class="sf-intro io-reveal" id="story" aria-labelledby="story-title">
   <div>
-    <p class="sf-kicker">The problem</p>
-    <h2 id="story-title">If the sound failed, the game stopped making sense.</h2>
+    <p class="sf-kicker">Overview</p>
+    <h2 id="story-title">The game and my role</h2>
   </div>
   <div class="sf-intro__copy">
     <p>An elderly man with dementia returns to a black-and-white pub where fragments of memory appear as moving glasses, turning chairs and wandering shadows. The player has to find each anomaly, photograph it and pin the image to an investigation board.</p>
@@ -53,8 +53,8 @@
 <section class="sf-screen io-reveal" id="gameplay" aria-labelledby="gameplay-title">
   <header class="sf-section-head sf-section-head--compact">
     <div>
-      <p class="sf-kicker">The proof</p>
-      <h2 id="gameplay-title">Hear the system before reading about it.</h2>
+      <p class="sf-kicker">Video</p>
+      <h2 id="gameplay-title">Gameplay with the full spatial mix</h2>
     </div>
     <p>Headphones recommended. Listen for surface changes underfoot, cues pulling you into another room and the mix narrowing when the camera comes up.</p>
   </header>
@@ -77,7 +77,7 @@
   <header class="sf-section-head">
     <div>
       <p class="sf-kicker">The core system</p>
-      <h2 id="anomaly-title">One anomaly. Three jobs for audio.</h2>
+      <h2 id="anomaly-title">How the anomaly cues work</h2>
     </div>
     <p>A single cue could not tell the player both that something happened and exactly where it was. Splitting the information into stages kept the player oriented without giving the answer away.</p>
   </header>
@@ -86,19 +86,19 @@
     <article>
       <span class="sf-anomaly__number">01</span>
       <p class="sf-anomaly__label">Alert</p>
-      <h3>Something changed.</h3>
+      <h3>Signals that something changed</h3>
       <p>A short stinger cuts through the ambience when an anomaly spawns. It asks the player to stop and listen, but does not reveal the object.</p>
     </article>
     <article>
       <span class="sf-anomaly__number">02</span>
       <p class="sf-anomaly__label">Direction</p>
-      <h3>It came from there.</h3>
+      <h3>Points to the room</h3>
       <p>A spatial one-shot identifies the room: wood scraping, a glass moving behind the bar, or a whisper arriving from the corridor.</p>
     </article>
     <article>
       <span class="sf-anomaly__number">03</span>
       <p class="sf-anomaly__label">Presence</p>
-      <h3>This is the object.</h3>
+      <h3>Confirms the exact object</h3>
       <p>A unique loop grows clearer on approach and stops after the photograph. The player gets confirmation without a marker or objective prompt.</p>
     </article>
   </div>
@@ -113,41 +113,41 @@
 <section class="sf-challenges io-reveal" aria-labelledby="challenges-title">
   <header class="sf-section-head">
     <div>
-      <p class="sf-kicker">Where it nearly broke</p>
-      <h2 id="challenges-title">Three problems the player would notice immediately.</h2>
+      <p class="sf-kicker">Challenges</p>
+      <h2 id="challenges-title">Three problems and how I fixed them</h2>
     </div>
     <p>These were not polish tasks. Each one affected whether the player could trust what they heard.</p>
   </header>
 
   <div class="sf-challenges__list">
     <article class="sf-challenge io-reveal">
-      <div class="sf-challenge__metric"><strong>70&rarr;60%</strong><span>enter / leave</span></div>
+      <div class="sf-challenge__metric"><strong>Buffer zone</strong><span>instead of one hard line</span></div>
       <div class="sf-challenge__problem">
         <p class="sf-challenge__label">Problem</p>
         <h3>The threat mix stuttered at one boundary.</h3>
-        <p>When the enemy hovered near the original proximity threshold, the dread layer toggled on and off every frame. Instead of rising tension, players heard a broken switch.</p>
+        <p>When the enemy hovered right at the edge of its danger range, the dread layer switched on and off several times a second. Instead of rising tension, players heard a broken switch.</p>
       </div>
       <div class="sf-challenge__solution">
         <p class="sf-challenge__label">Decision &amp; result</p>
-        <p>I replaced the single threshold with a hysteresis state machine: enter at 70%, leave at 60%. The 10% gap stopped the flicker, while a Wwise RTPC kept the intensity change smooth.</p>
+        <p>I gave the system a buffer zone: the tension layer turns on when the enemy gets close, but only turns off once it has clearly backed away. The flicker disappeared, and the intensity itself rises and falls smoothly with distance instead of jumping.</p>
       </div>
     </article>
 
     <article class="sf-challenge io-reveal">
-      <div class="sf-challenge__metric"><strong>4 surfaces</strong><span>physics trace &rarr; Wwise Switch</span></div>
+      <div class="sf-challenge__metric"><strong>4 surfaces</strong><span>wood, tile, concrete, boards</span></div>
       <div class="sf-challenge__problem">
         <p class="sf-challenge__label">Problem</p>
         <h3>Manual floor tags broke when the level changed.</h3>
-        <p>The pub used wood, tile, concrete and creaky boards. Tagging every surface by hand was slow, and moving geometry meant maintaining the setup again.</p>
+        <p>The pub used wood, tile, concrete and creaky boards. Tagging every surface by hand was slow, and every time the level changed, the tags had to be redone.</p>
       </div>
       <div class="sf-challenge__solution">
         <p class="sf-challenge__label">Decision &amp; result</p>
-        <p>A downward physics trace now reads Unreal's Physical Material and maps it to a Wwise Switch. Designers can add or tune a surface in the editor without touching audio code.</p>
+        <p>Now the game simply checks what material is under the player's feet and plays the right footstep on its own. Designers can add or change a surface in the editor without touching audio code.</p>
       </div>
     </article>
 
     <article class="sf-challenge io-reveal">
-      <div class="sf-challenge__metric"><strong>3 kHz</strong><span>observation filter</span></div>
+      <div class="sf-challenge__metric"><strong>Muffled world</strong><span>when the camera is up</span></div>
       <div class="sf-challenge__problem">
         <p class="sf-challenge__label">Problem</p>
         <h3>Raising the camera needed to feel risky.</h3>
@@ -155,7 +155,7 @@
       </div>
       <div class="sf-challenge__solution">
         <p class="sf-challenge__label">Decision &amp; result</p>
-        <p>Observation mode applies a 3 kHz low-pass, pushes breathing forward and adds close handling sounds. A reversed whisper confirms a successful shot, so both vulnerability and success are audible.</p>
+        <p>Raising the camera muffles the pub around you, pushes your own breathing forward and adds the close rustle of hands on the camera. A reversed whisper confirms a successful shot, so both the vulnerability and the success are audible.</p>
       </div>
     </article>
   </div>
@@ -165,8 +165,8 @@
 <section class="sf-gallery-section io-reveal" aria-labelledby="gallery-title">
   <header class="sf-section-head">
     <div>
-      <p class="sf-kicker">The listening space</p>
-      <h2 id="gallery-title">The pub had to become readable by ear.</h2>
+      <p class="sf-kicker">Environment</p>
+      <h2 id="gallery-title">The rooms of the pub</h2>
     </div>
     <p>Rooms shared one visual language, so distance, material and reflections did the orientation work. Each caption points to the audio job behind the image.</p>
   </header>
@@ -197,17 +197,17 @@
 <section class="gallery-section sf-tech io-reveal" id="wwise" aria-labelledby="tech-title">
   <header class="sf-section-head">
     <div>
-      <p class="sf-kicker">Built for production</p>
-      <h2 id="tech-title">The team could change the game without rebuilding the audio.</h2>
+      <p class="sf-kicker">Production</p>
+      <h2 id="tech-title">Working with the team</h2>
     </div>
-    <p>I exposed system settings through DataAssets, kept the Wwise project structured around gameplay states and documented the rules as they changed.</p>
+    <p>I put every audio setting where designers could reach it, kept the Wwise project organised around gameplay states and documented the rules as they changed.</p>
   </header>
 
   <div class="sf-production-grid">
     <article>
       <span>01</span>
       <h3>Designer-facing controls</h3>
-      <p>DataAssets kept surface, anomaly and enemy settings in the editor. Designers could tune values without waiting for a new C++ change.</p>
+      <p>Surface, anomaly and enemy settings lived directly in the editor. Designers could tune values themselves without waiting for me to change code.</p>
     </article>
     <article>
       <span>02</span>
@@ -217,7 +217,7 @@
     <article>
       <span>03</span>
       <h3>Rules, not one-off fixes</h3>
-      <p>RTPCs, States and Switches connected gameplay data to the mix, so intensity could respond continuously instead of through scripted volume jumps.</p>
+      <p>The mix reacts to what is happening in the game &mdash; enemy distance, camera state, anomaly activity &mdash; so intensity changes continuously instead of through scripted volume jumps.</p>
     </article>
   </div>
 
@@ -229,12 +229,12 @@
     </div>
     <div class="gallery-item gallery-item--contain" tabindex="0" role="button" aria-label="DataAsset Configurations">
       <img src="old/public/assets/images/projects-shadowframes/DataAssetConfigsList.png" alt="Unreal editor list of audio DataAsset configurations" loading="lazy">
-      <span class="gallery-item__caption">Designer-facing DataAssets</span>
+      <span class="gallery-item__caption">Designer-facing settings in Unreal</span>
       <span class="gallery-item__zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="22" y2="22"/></svg></span>
     </div>
     <div class="gallery-item gallery-item--contain" tabindex="0" role="button" aria-label="RTPC Curves and States">
       <img src="old/public/assets/images/projects-shadowframes/rtpcandstates.png" alt="RTPC curves and game states in Wwise" loading="lazy">
-      <span class="gallery-item__caption">RTPC Curves &amp; States</span>
+      <span class="gallery-item__caption">Mix rules reacting to game state</span>
       <span class="gallery-item__zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="22" y2="22"/></svg></span>
     </div>
     <div class="gallery-item gallery-item--contain" tabindex="0" role="button" aria-label="Wwise Event List">
@@ -246,18 +246,18 @@
 
   <aside class="sf-budget" aria-label="Audio performance targets">
     <div>
-      <p class="sf-kicker">Performance envelope</p>
-      <h3>I decided what could never be culled.</h3>
+      <p class="sf-kicker">Priorities</p>
+      <h3>I decided which sounds were never allowed to drop out.</h3>
     </div>
-    <p>The production target was 32 simultaneous voices with a 175 MB critical preloaded-memory ceiling. Music and long ambience streamed; camera, anomaly and enemy cues stayed preloaded and received higher priority because late playback would break the mechanic.</p>
+    <p>Like every game, this one had a hard limit on how much audio could play at once. Music and long ambience could afford to be second-class citizens; the camera, anomaly and enemy cues always came first &mdash; if any of those arrived late, the whole find-it-by-ear mechanic fell apart.</p>
   </aside>
 </section>
 
 <!-- DOCUMENTATION -->
 <section class="sf-bible io-reveal" aria-labelledby="bible-title">
   <div>
-    <p class="sf-kicker">The handoff</p>
-    <h2 id="bible-title">49 pages kept three schools on the same audio rules.</h2>
+    <p class="sf-kicker">Documentation</p>
+    <h2 id="bible-title">The Sound Bible</h2>
   </div>
   <div>
     <p>The Sound Bible records anomaly timing, camera feedback, enemy states, mix priorities, spatial rules and the dynamic music plan. It turned audio decisions into something the writer, composer, designers and programmers could inspect instead of guess.</p>
