@@ -42,39 +42,43 @@
           <div class="xr-diagram xr-direction-diagram" role="img" aria-label="A sound pulse travels from a source toward a listener and becomes indirect after crossing a wall.">
             <svg viewBox="0 0 720 420" aria-hidden="true">
               <defs>
-                <clipPath id="xr-direct-zone"><rect x="0" y="0" width="365" height="420"></rect></clipPath>
-                <clipPath id="xr-occluded-zone"><rect x="365" y="0" width="355" height="420"></rect></clipPath>
+                <linearGradient id="xr-route-gradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="#b9d8ef"></stop>
+                  <stop offset="0.48" stop-color="#b9d8ef"></stop>
+                  <stop offset="0.62" stop-color="#d2c09c"></stop>
+                  <stop offset="1" stop-color="#d2c09c"></stop>
+                </linearGradient>
               </defs>
+              <rect class="xr-floorplan-room" x="62" y="72" width="276" height="276" rx="7"></rect>
+              <rect class="xr-floorplan-room" x="382" y="72" width="276" height="276" rx="7"></rect>
 
-              <path class="xr-room" d="M68 286 205 215 350 215 214 286Z"></path>
-              <path class="xr-room" d="M385 286 522 215 660 215 528 286Z"></path>
-              <path class="xr-room xr-room--wall" d="M350 128 365 120 365 300 350 308Z"></path>
+              <path class="xr-floorplan-wall" d="M338 72V174M338 246V348"></path>
+              <path class="xr-floorplan-door" d="M338 246A72 72 0 0 1 410 174"></path>
+              <path class="xr-floorplan-door-leaf" d="M338 246 410 174"></path>
 
-              <g clip-path="url(#xr-direct-zone)">
-                <ellipse class="xr-wave xr-wave--direct xr-wave--one" cx="205" cy="250" rx="245" ry="118"></ellipse>
-                <ellipse class="xr-wave xr-wave--direct xr-wave--two" cx="205" cy="250" rx="245" ry="118"></ellipse>
-                <ellipse class="xr-wave xr-wave--direct xr-wave--three" cx="205" cy="250" rx="245" ry="118"></ellipse>
-              </g>
-              <g clip-path="url(#xr-occluded-zone)">
-                <ellipse class="xr-wave xr-wave--occluded xr-wave--one" cx="205" cy="250" rx="245" ry="118"></ellipse>
-                <ellipse class="xr-wave xr-wave--occluded xr-wave--two" cx="205" cy="250" rx="245" ry="118"></ellipse>
-                <ellipse class="xr-wave xr-wave--occluded xr-wave--three" cx="205" cy="250" rx="245" ry="118"></ellipse>
-              </g>
+              <path class="xr-sound-route xr-sound-route--direct" pathLength="100" d="M178 210C238 210 288 210 338 210"></path>
+              <path class="xr-sound-route xr-sound-route--indirect" pathLength="100" d="M338 210C392 210 425 154 474 154S548 176 563 210"></path>
+
+              <path class="xr-route-pulse xr-route-pulse--one" pathLength="100" d="M178 210C238 210 288 210 338 210C392 210 425 154 474 154S548 176 563 210"></path>
+              <path class="xr-route-pulse xr-route-pulse--two" pathLength="100" d="M178 210C238 210 288 210 338 210C392 210 425 154 474 154S548 176 563 210"></path>
+              <path class="xr-route-pulse xr-route-pulse--three" pathLength="100" d="M178 210C238 210 288 210 338 210C392 210 425 154 474 154S548 176 563 210"></path>
 
               <g class="xr-source-node">
-                <circle cx="205" cy="250" r="14"></circle>
-                <circle cx="205" cy="250" r="4"></circle>
+                <circle cx="178" cy="210" r="22"></circle>
+                <path d="M169 205H176L184 198V222L176 215H169Z"></path>
+                <path d="M188 204C194 208 194 212 188 216"></path>
               </g>
               <g class="xr-listener-node">
-                <circle cx="528" cy="250" r="18"></circle>
-                <path d="M528 224V235M528 265V276M502 250H513M543 250H554"></path>
+                <circle cx="563" cy="210" r="25"></circle>
+                <path d="M551 210A12 12 0 0 1 575 210V221M551 210V219M575 210V219"></path>
+                <path d="M551 219H556V226H551ZM570 219H575V226H570Z"></path>
               </g>
 
-              <text x="205" y="336" text-anchor="middle">SOURCE</text>
-              <text x="358" y="102" text-anchor="middle">WALL</text>
-              <text x="528" y="336" text-anchor="middle">LISTENER</text>
-              <text class="xr-signal-label" x="284" y="186" text-anchor="middle">DIRECT</text>
-              <text class="xr-signal-label xr-signal-label--warm" x="456" y="186" text-anchor="middle">OCCLUDED</text>
+              <text x="178" y="270" text-anchor="middle">SOURCE</text>
+              <text x="563" y="270" text-anchor="middle">LISTENER</text>
+              <text x="338" y="52" text-anchor="middle">WALL + OPEN DOOR</text>
+              <text class="xr-signal-label" x="260" y="192" text-anchor="middle">DIRECT</text>
+              <text class="xr-signal-label xr-signal-label--warm" x="460" y="126" text-anchor="middle">INDIRECT PATH</text>
             </svg>
           </div>
         </div>
@@ -95,9 +99,9 @@
                 <img src="old/public/assets/images/xrlabs/weapon-cutout.png" alt="" aria-hidden="true">
               </span>
               <span class="xr-weapon-muzzle"></span>
-              <span class="xr-weapon-shot-label">SHOT</span>
               <span class="xr-weapon-pulse xr-weapon-pulse--one"></span>
               <span class="xr-weapon-pulse xr-weapon-pulse--two"></span>
+              <span class="xr-weapon-pulse xr-weapon-pulse--three"></span>
               <span class="xr-weapon-track"></span>
               <span class="xr-weapon-tick xr-weapon-tick--near">NEAR</span>
               <span class="xr-weapon-tick xr-weapon-tick--mid">MID</span>
