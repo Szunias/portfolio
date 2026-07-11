@@ -1,59 +1,136 @@
 <canvas id="bgStars" class="bg-stars" aria-hidden="true"></canvas>
 
 <div class="xr-page">
-  <!-- HERO -->
   <header class="xr-hero">
     <div class="xr-hero__media" aria-hidden="true">
       <img src="old/public/assets/images/about-grid/xrlabssoldiers.png" alt="" aria-hidden="true" fetchpriority="high" decoding="async">
     </div>
     <div class="xr-hero__shade" aria-hidden="true"></div>
     <div class="xr-hero__content">
-      <p class="xr-kicker">2025 &ndash; Present &middot; Unity VR / AR training</p>
+      <p class="xr-kicker">2025 &ndash; Present &middot; XR Labs Belgium</p>
       <h1>XR Labs</h1>
-      <p class="xr-hero__lead">Spatial audio for VR and AR training simulations.</p>
-      <p class="xr-hero__summary">I design and implement spatial audio for selected defence and public-safety simulations, where a voice, gunshot or movement cue has to come from the correct direction, distance and room.</p>
-      <p class="xr-hero__role">Technical Sound Designer &middot; Sole audio owner on selected simulations &middot; XR Labs Belgium</p>
-      <div class="xr-hero__tools" aria-label="Core tools used">
-        <span>Unity</span><span>Steam Audio</span><span>VR / AR</span><span>Perforce</span>
-      </div>
-      <div class="xr-hero__actions">
-        <a href="#demo">Watch public footage <span aria-hidden="true">&darr;</span></a>
-        <a href="#work">See the audio system <span aria-hidden="true">&darr;</span></a>
+      <p class="xr-hero__lead">Spatial audio for VR and AR training.</p>
+      <p class="xr-hero__summary">At XR Labs Belgium, I design and implement audio for Unity-based training simulations. My work focuses on clear direction, distance and environmental response inside the headset.</p>
+      <p class="xr-hero__role">Technical Sound Designer &middot; Audio owner on selected simulations</p>
+
+      <div class="xr-hero__tools" aria-label="Unity, Steam Audio and Perforce">
+        <figure class="xr-tool" title="Unity">
+          <img src="old/public/assets/icons/toolkit-svg/unity.svg" alt="Unity">
+        </figure>
+        <figure class="xr-tool xr-tool--steam" title="Steam Audio">
+          <img src="old/public/assets/images/xrlabs/steam-audio.png" alt="Steam Audio">
+        </figure>
+        <figure class="xr-tool" title="Perforce">
+          <img src="old/public/assets/icons/toolkit-svg/perforce.svg" alt="Perforce">
+        </figure>
       </div>
     </div>
   </header>
 
-  <!-- PROJECT SNAPSHOT -->
-  <section class="xr-snapshot io-reveal" aria-label="XR Labs project context">
-    <p class="xr-snapshot__label">The short version</p>
-    <p>I handle audio on selected Unity simulations where trainees rely on <strong>direction, distance and the room itself</strong> to understand what is happening. Steam Audio uses the virtual walls and doors, and the important cues work <strong>without floating markers</strong>.</p>
+  <section class="xr-systems io-reveal" aria-labelledby="xr-systems-title">
+    <header class="xr-section-head">
+      <div>
+        <p class="xr-kicker">Concept diagrams</p>
+        <h2 id="xr-systems-title">How the audio behaves</h2>
+      </div>
+      <p>Independently recreated diagrams explain the principles behind my work. They contain no client assets, production values, project code or internal settings.</p>
+    </header>
+
+    <div class="xr-system-grid">
+      <figure class="xr-system-card io-reveal">
+        <div class="xr-system-card__media xr-system-card__media--dark">
+          <div class="xr-diagram xr-direction-diagram" role="img" aria-label="A sound pulse travels from a source toward a listener and becomes indirect after crossing a wall.">
+            <svg viewBox="0 0 720 420" aria-hidden="true">
+              <defs>
+                <clipPath id="xr-direct-zone"><rect x="0" y="0" width="365" height="420"></rect></clipPath>
+                <clipPath id="xr-occluded-zone"><rect x="365" y="0" width="355" height="420"></rect></clipPath>
+              </defs>
+
+              <path class="xr-room" d="M68 286 205 215 350 215 214 286Z"></path>
+              <path class="xr-room" d="M385 286 522 215 660 215 528 286Z"></path>
+              <path class="xr-room xr-room--wall" d="M350 128 365 120 365 300 350 308Z"></path>
+
+              <g clip-path="url(#xr-direct-zone)">
+                <ellipse class="xr-wave xr-wave--direct xr-wave--one" cx="205" cy="250" rx="245" ry="118"></ellipse>
+                <ellipse class="xr-wave xr-wave--direct xr-wave--two" cx="205" cy="250" rx="245" ry="118"></ellipse>
+                <ellipse class="xr-wave xr-wave--direct xr-wave--three" cx="205" cy="250" rx="245" ry="118"></ellipse>
+              </g>
+              <g clip-path="url(#xr-occluded-zone)">
+                <ellipse class="xr-wave xr-wave--occluded xr-wave--one" cx="205" cy="250" rx="245" ry="118"></ellipse>
+                <ellipse class="xr-wave xr-wave--occluded xr-wave--two" cx="205" cy="250" rx="245" ry="118"></ellipse>
+                <ellipse class="xr-wave xr-wave--occluded xr-wave--three" cx="205" cy="250" rx="245" ry="118"></ellipse>
+              </g>
+
+              <g class="xr-source-node">
+                <circle cx="205" cy="250" r="14"></circle>
+                <circle cx="205" cy="250" r="4"></circle>
+              </g>
+              <g class="xr-listener-node">
+                <circle cx="528" cy="250" r="18"></circle>
+                <path d="M528 224V235M528 265V276M502 250H513M543 250H554"></path>
+              </g>
+
+              <text x="205" y="336" text-anchor="middle">SOURCE</text>
+              <text x="358" y="102" text-anchor="middle">WALL</text>
+              <text x="528" y="336" text-anchor="middle">LISTENER</text>
+              <text class="xr-signal-label" x="284" y="186" text-anchor="middle">DIRECT</text>
+              <text class="xr-signal-label xr-signal-label--warm" x="456" y="186" text-anchor="middle">OCCLUDED</text>
+            </svg>
+          </div>
+        </div>
+        <figcaption>
+          <p class="xr-system-card__number">01</p>
+          <div>
+            <h3>Direction</h3>
+            <p>Instructor-triggered sounds stay anchored to the virtual room. Steam Audio handles direction and obstruction, so the trainee listens to the scene instead of following a UI marker.</p>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure class="xr-system-card io-reveal">
+        <div class="xr-system-card__media xr-system-card__media--dark">
+          <div class="xr-diagram xr-weapon-diagram" role="img" aria-label="As the listener moves away from the weapon source, the near layer decreases while the far layer increases.">
+            <div class="xr-weapon-stage" aria-hidden="true">
+              <span class="xr-weapon-source"><i></i></span>
+              <span class="xr-weapon-pulse xr-weapon-pulse--one"></span>
+              <span class="xr-weapon-pulse xr-weapon-pulse--two"></span>
+              <span class="xr-weapon-track"></span>
+              <span class="xr-weapon-tick xr-weapon-tick--near">NEAR</span>
+              <span class="xr-weapon-tick xr-weapon-tick--mid">MID</span>
+              <span class="xr-weapon-tick xr-weapon-tick--far">FAR</span>
+              <span class="xr-weapon-listener"><i></i></span>
+            </div>
+
+            <div class="xr-mix-bars" aria-hidden="true">
+              <div class="xr-mix-row xr-mix-row--near">
+                <div><span>NEAR LAYER</span><span>close detail</span></div>
+                <i><b></b></i>
+              </div>
+              <div class="xr-mix-row xr-mix-row--far">
+                <div><span>FAR LAYER</span><span>distance body</span></div>
+                <i><b></b></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption>
+          <p class="xr-system-card__number">02</p>
+          <div>
+            <h3>Weapon Audio System</h3>
+            <p>Near and far layers blend with distance, keeping weapon sounds clear and believable across the training space.</p>
+          </div>
+        </figcaption>
+      </figure>
+    </div>
   </section>
 
-  <!-- THE PROBLEM -->
-  <section class="xr-intro io-reveal" id="work" aria-labelledby="xr-intro-title">
-    <div>
-      <p class="xr-kicker">The job</p>
-      <h2 id="xr-intro-title">Sound that has to support a real decision</h2>
-    </div>
-    <div class="xr-intro__copy">
-      <p>In a training simulation, a trainee may hear a threat before they see it. The sound has to communicate where it came from, how far away it is and whether a wall or door stands between them.</p>
-      <p>I build that behaviour in Unity with Steam Audio. Instead of making every distant source simply quieter, I let voices, gunshots and movement react to the shape of the virtual facility.</p>
-    </div>
-
-    <aside class="xr-trainee-story" aria-label="What the trainee experiences">
-      <p class="xr-trainee-story__label">What the trainee experiences</p>
-      <p>You hear a voice somewhere beyond the room. When you turn your head, it stays fixed in place. As you move closer, the distance becomes easier to judge; when a door closes, the voice becomes muffled and indirect. You can react before the person comes into view.</p>
-    </aside>
-  </section>
-
-  <!-- PUBLIC DEMO -->
-  <section class="xr-demo io-reveal" id="demo" aria-labelledby="xr-demo-title">
+  <section class="xr-demo io-reveal" aria-labelledby="xr-demo-title">
     <header class="xr-section-head">
       <div>
         <p class="xr-kicker">Public footage</p>
-        <h2 id="xr-demo-title">The training facility</h2>
+        <h2 id="xr-demo-title">Training in context</h2>
       </div>
-      <p>This 45-second DSU training clip is public. It shows the physical facility and the multi-user simulation context; client scenarios and implementation details remain confidential.</p>
+      <p>A short public clip showing the physical facility and multi-user training environment.</p>
     </header>
 
     <div class="xr-video-frame">
@@ -70,81 +147,8 @@
     </div>
   </section>
 
-  <!-- SPATIAL SYSTEM -->
-  <section class="xr-questions io-reveal" aria-labelledby="xr-questions-title">
-    <header class="xr-section-head">
-      <div>
-        <p class="xr-kicker">Inside the headset</p>
-        <h2 id="xr-questions-title">What the room has to tell you</h2>
-      </div>
-      <p>A cue only works when its direction, distance and obstruction agree. If one feels wrong, the trainee builds the wrong picture of the space.</p>
-    </header>
+  <p class="xr-confidentiality io-reveal"><span>Confidentiality</span> Client scenarios, internal settings and operational training content are not shown.</p>
 
-    <div class="xr-spatial-story">
-      <div class="xr-spatial-story__copy">
-        <p class="xr-spatial-story__lead">Picture a gunshot at the far end of a corridor, followed by movement behind a closed door.</p>
-        <p>The gunshot must stay in the same position while the trainee turns or moves. Its reflections and level help separate the far end of the corridor from the next room.</p>
-        <p>The movement behind the door needs a different character: softer high frequencies, less direct sound and a path that feels blocked. A volume fade alone would still make it sound as if both sources were standing in the same open space.</p>
-      </div>
-      <p class="xr-listening-note"><span>What changes in the headset</span> The source stays fixed &rarr; distance changes the balance &rarr; walls and doors reshape the sound &rarr; the trainee decides where to look.</p>
-    </div>
-  </section>
-
-  <!-- PROBLEMS AND DECISIONS -->
-  <section class="xr-challenges io-reveal" aria-labelledby="xr-challenges-title">
-    <header class="xr-section-head">
-      <div>
-        <p class="xr-kicker">In production</p>
-        <h2 id="xr-challenges-title">What had to keep working as the project changed</h2>
-      </div>
-      <p>A convincing demo is not enough. The audio has to survive new rooms, changing scenarios and a Unity project shared by several disciplines.</p>
-    </header>
-
-    <div class="xr-chapters">
-      <article class="xr-chapter io-reveal">
-        <p class="xr-chapter__eyebrow">Doors and corners</p>
-        <h3>Making a voice quieter did not make it sound like it was in another room.</h3>
-        <div>
-          <p>The first shortcut was a simple volume reduction. It softened the voice, but the direct, clear sound still placed the speaker in the same room as the trainee.</p>
-          <p>I used Steam Audio to read the actual geometry, then tuned the result in the scene. A closed door now removes clarity and redirects the voice, while an open doorway allows a more direct path.</p>
-        </div>
-      </article>
-
-      <article class="xr-chapter io-reveal">
-        <p class="xr-chapter__eyebrow">No interface arrow</p>
-        <h3>Showing the answer on screen would defeat the exercise.</h3>
-        <div>
-          <p>When visibility is limited, a marker can reveal a threat before the trainee has interpreted the environment. That removes the listening decision the scenario is meant to test.</p>
-          <p>I place and test voices, gunshots and movement against the actual room layout until their direction and distance remain readable in the headset. The information stays inside the scene.</p>
-        </div>
-      </article>
-
-      <article class="xr-chapter io-reveal">
-        <p class="xr-chapter__eyebrow">Shared Unity scenes</p>
-        <h3>A scene update could quietly overwrite the spatial setup.</h3>
-        <div>
-          <p>Audio settings and geometry live in scenes touched by designers and engineers. Without a consistent structure, a normal sync or merge can remove part of the setup without an obvious error.</p>
-          <p>I keep the audio changes organised and repeatable in Perforce, so the team can update shared scenes without silently losing the spatial behaviour.</p>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <!-- CONFIDENTIALITY / CREDIBILITY -->
-  <section class="xr-disclosure io-reveal" aria-labelledby="xr-disclosure-title">
-    <div class="xr-disclosure__heading">
-      <p class="xr-kicker">Confidentiality</p>
-      <h2 id="xr-disclosure-title">What I can and cannot show</h2>
-      <p>I cannot publish client simulations, project settings or in-headset comparisons from operational scenarios. This page therefore shows the public facility footage and explains the parts of my audio work that can be discussed without exposing client material.</p>
-    </div>
-
-    <div class="xr-disclosure__copy">
-      <p><span>On this page</span> I can show the public facility footage, explain the Unity and Steam Audio pipeline, and describe my role and workflow.</p>
-      <p><span>Kept internal</span> Client scenario logic, project configurations, operational training content and evaluation data are not included.</p>
-    </div>
-  </section>
-
-  <!-- LINKS & NEXT PROJECT -->
   <footer class="ifmc-foot" aria-label="Project links and navigation">
     <div class="ifmc-foot__links io-reveal">
       <a href="https://www.youtube.com/watch?v=VWOk_6-lF2I" target="_blank" rel="noopener noreferrer">Public training footage on YouTube</a>
