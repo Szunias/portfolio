@@ -1,4 +1,4 @@
-# Igor Szuniewicz - Portfolio
+# Igor Szuniewicz — Portfolio
 
 Personal portfolio site for Igor Szuniewicz — game audio designer and audio programmer.
 Sound design, middleware integration (Wwise / FMOD), and interactive audio systems.
