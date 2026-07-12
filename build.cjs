@@ -39,6 +39,18 @@ function relPath(...parts) {
 const SRC    = path.join(__dirname, 'src');
 const DIST   = path.join(__dirname, 'dist');
 
+function currentBuildSha() {
+  try {
+    return execFileSync('git', ['rev-parse', 'HEAD'], {
+      cwd: __dirname, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch (_) {
+    return 'unknown';
+  }
+}
+
+const BUILD_SHA = currentBuildSha();
+
 // Helpers
 
 function read(filePath) {
@@ -170,7 +182,7 @@ function schemaTags(page) {
     '@id': personId,
     name: 'Igor Szuniewicz',
     url: `${siteOrigin}/`,
-    jobTitle: 'Game Audio & Technical Sound Designer',
+    jobTitle: 'Technical Sound Designer & Audio Programmer',
     description: 'Game audio designer and programmer focused on Wwise, FMOD, Unreal Engine, Unity, spatial audio, sound design, and C++ audio tools.',
     knowsAbout: [
       'Game audio',
@@ -948,6 +960,7 @@ function buildPage(page) {
   html = html.replace('<!-- TITLE -->', () => escAttr(page.title));
   html = html.replace('<!-- DESCRIPTION -->', () => escAttr(page.description));
   html = html.replace('<!-- CANONICAL -->', () => escAttr(page.canonical));
+  html = html.replace('<!-- BUILD_SHA -->', () => escAttr(BUILD_SHA));
   html = html.replace('<!-- OG_TAGS -->', () => ogTags(page));
   html = html.replace('<!-- CSS -->', () => css);
   html = html.replace('<!-- CONTENT -->', () => content);

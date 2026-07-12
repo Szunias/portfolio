@@ -21,7 +21,7 @@
   <section class="ai-intro io-reveal" id="story" aria-labelledby="ai-story-title">
     <div>
       <p class="ai-kicker">The experiment</p>
-      <h2 id="ai-story-title">A game that asks for its own sound effects</h2>
+      <h2 id="ai-story-title">Testing generated audio inside a running game</h2>
     </div>
     <div class="ai-intro__copy">
       <p>The prototype is a small UE5 level that requests sound while you play it. When something happens in the game, the Unreal client sends a text description to a Python server over a websocket. The server loads the model, checks its cache, generates audio if it has to, and streams PCM back for Unreal to play.</p>
@@ -110,7 +110,7 @@
         <p>Quality testing used 60 loudness-normalized samples across 12 prompts and five methods. Method names were hidden during rating, but one person rated the set, so those scores are directional rather than a multi-listener MOS study.</p>
         <p>The four samples in the player below are labeled examples chosen to make method differences easy to inspect. They are not presented as a random sample or a substitute for the full benchmark.</p>
       </div>
-      <p class="ai-signal-path"><span>Measurement</span> Gameplay event &rarr; request &rarr; generation or network &rarr; decode &rarr; first audible sample.</p>
+      <p>Latency was measured from the gameplay event through request, generation or network transfer and decoding to the first audible sample.</p>
     </div>
   </section>
 
@@ -126,7 +126,7 @@
 
     <div class="ai-system-story">
       <div class="ai-system-story__copy">
-        <p class="ai-system-story__lead">The version that works never generates a sound the moment the player needs it.</p>
+        <p class="ai-system-story__lead">The tested prototype strategy moves generation away from the moment of playback.</p>
         <p>Instead, the server watches game state and predicts what is likely next: the player approaching a door queues door sounds, entering a forest queues ambience. Generation happens off the critical path, and the results land in a cache keyed by the request.</p>
         <p>When the event fires, the sound is already there and plays instantly. If the prediction missed, procedural DSP covers the moment at 15&ndash;25ms while the real sample generates for next time.</p>
       </div>

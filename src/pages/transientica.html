@@ -2,9 +2,7 @@
   <!-- HERO -->
   <header class="tr-hero">
     <div class="tr-hero__media" aria-hidden="true">
-      <video autoplay muted loop playsinline preload="metadata" poster="transienticascreenshot.png" aria-hidden="true">
-        <source src="transienticascreenshot.webm" type="video/webm">
-      </video>
+      <video muted loop playsinline preload="none" poster="transienticascreenshot.png" data-autoplay-src="transienticascreenshot.webm" aria-hidden="true"></video>
     </div>
     <div class="tr-hero__shade" aria-hidden="true"></div>
     <div class="tr-hero__content">
@@ -34,10 +32,6 @@
       <p>Once the model knows your sounds, the game can focus on the familiar rhythm-game questions: did you perform the right sound, and did it land close enough to the beat?</p>
     </div>
 
-    <aside class="tr-player-story" aria-label="What the player does">
-      <p class="tr-player-story__label">What the player actually does</p>
-      <p>You record a few kicks, snares and hi-hats. A song starts, notes approach the timing line and you perform the matching sound. The game identifies the hit, measures how early or late it was, then builds your score and combo.</p>
-    </aside>
   </section>
 
   <!-- CURRENT GAMEPLAY -->
@@ -115,33 +109,10 @@
       <p>The first version proved that beatbox classification could drive gameplay. Turning that proof into a standalone game required a different architecture.</p>
     </header>
 
-    <div class="tr-chapters">
-      <article class="tr-chapter io-reveal">
-        <p class="tr-chapter__eyebrow">One process instead of two</p>
-        <h3>If Python stopped, Unity stopped hearing the player.</h3>
-        <div>
-          <p>The prototype analysed audio in Python and sent classifications to Unity over OSC. It worked, but debugging crossed two runtimes and a standalone build would also need a Python installation.</p>
-          <p>I rewrote the FFT, feature extraction and classifier in C#. The current game has one executable, one audio path and no local network connection that can silently fail.</p>
-        </div>
-      </article>
-
-      <article class="tr-chapter io-reveal">
-        <p class="tr-chapter__eyebrow">SVM to KNN</p>
-        <h3>The accurate prototype model was awkward to retrain inside the game.</h3>
-        <div>
-          <p>The Python SVM reached 92% accuracy, but training depended on scikit-learn and its saved model did not fit naturally into the Unity build.</p>
-          <p>I switched to inverse-distance KNN with K=5. Training mostly means storing normalized examples, so the player can retrain between rounds. The model saves as readable JSON and checks itself with leave-one-out cross-validation.</p>
-        </div>
-      </article>
-
-      <article class="tr-chapter io-reveal">
-        <p class="tr-chapter__eyebrow">Prototype to game</p>
-        <h3>Recognising beatbox sounds was interesting, but it was not yet something to play.</h3>
-        <div>
-          <p>The research build could display a classification and run a basic rhythm test. It had no complete loop, progression or reason to try another song.</p>
-          <p>The rebuild adds training, song selection, beatmaps, approach animations, scoring, combos, grades and results. A heuristic fallback keeps the game playable when no trained model exists yet.</p>
-        </div>
-      </article>
+    <div class="tr-rebuild-summary">
+      <h3>One executable, retrainable in the game</h3>
+      <p>The prototype analysed audio in Python, classified it with an SVM and sent results to Unity over OSC. I rewrote the FFT, feature extraction and classifier in C#, then replaced the SVM with inverse-distance KNN (K=5). Training now stores the player's normalized examples as readable JSON, so it can run between rounds without Python, scikit-learn or a local network connection.</p>
+      <p>The same rebuild added the missing game loop: song selection, beatmaps, approach animations, scoring, combos, grades and results. A heuristic fallback keeps the game playable before a personal model has been trained.</p>
     </div>
   </section>
 
