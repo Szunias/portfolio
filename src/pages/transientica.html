@@ -23,12 +23,6 @@
     </div>
   </header>
 
-  <!-- PROJECT SNAPSHOT -->
-  <section class="tr-snapshot io-reveal" aria-label="Transientica project highlights">
-    <p class="tr-snapshot__label">The short version</p>
-    <p>The player records <strong>10 examples of each beatbox sound</strong>. I turn every hit into <strong>7 audio features</strong>, classify it with a KNN model written in C#, and judge its timing against windows as tight as <strong>&plusmn;60 ms</strong>.</p>
-  </section>
-
   <!-- THE GAME -->
   <section class="tr-intro io-reveal" id="concept" aria-labelledby="tr-intro-title">
     <div>
@@ -36,7 +30,7 @@
       <h2 id="tr-intro-title">A rhythm game that has to learn the player first</h2>
     </div>
     <div class="tr-intro__copy">
-      <p>Kick, snare and hi-hat do not sound the same from every person or microphone. A fixed set of rules would work for me and fail for somebody else, so Transientica begins with a short personal training session.</p>
+      <p>Kick, snare and hi-hat do not sound the same from every person or microphone. A fixed set of rules would work for me and fail for somebody else, so Transientica begins with a short training session: ten recorded examples of each sound, from the player's own mouth and microphone.</p>
       <p>Once the model knows your sounds, the game can focus on the familiar rhythm-game questions: did you perform the right sound, and did it land close enough to the beat?</p>
     </div>
 
@@ -82,12 +76,12 @@
 
     <div class="tr-pipeline-story">
       <div class="tr-pipeline-story__copy">
-        <p class="tr-pipeline-story__lead">Imagine you perform a snare just as its note reaches the timing line.</p>
+        <p class="tr-pipeline-story__lead">Follow one snare hit from the microphone to the score.</p>
         <p>The microphone writes continuously into a pre-allocated ring buffer. An onset detector looks for a sudden rise above the room's noise floor, then sends a 512-sample window through my FFT.</p>
         <p>From that window I measure spectral centroid, rolloff, flux, zero-crossing rate, RMS, attack time and flatness. KNN compares those seven values with the examples recorded during training and returns the closest sound class.</p>
         <p>Finally, the game matches the hit to the nearest note using Unity's audio clock. It backdates the onset by roughly 5.8 ms for the analysis window, then judges both the sound and its timing.</p>
       </div>
-      <p class="tr-signal-path"><span>The full trip</span> Microphone &rarr; onset &rarr; 512-sample FFT &rarr; 7 features &rarr; KNN &rarr; nearest note &rarr; score.</p>
+      <p class="tr-signal-path"><span>Signal path</span> Microphone &rarr; onset &rarr; 512-sample FFT &rarr; 7 features &rarr; KNN &rarr; nearest note &rarr; score.</p>
     </div>
   </section>
 
@@ -148,6 +142,25 @@
           <p>The rebuild adds training, song selection, beatmaps, approach animations, scoring, combos, grades and results. A heuristic fallback keeps the game playable when no trained model exists yet.</p>
         </div>
       </article>
+    </div>
+  </section>
+
+  <section class="tr-rebuild io-reveal" aria-labelledby="tr-comparison-title">
+    <header class="tr-section-head">
+      <div>
+        <p class="tr-kicker">Prototype vs current build</p>
+        <h2 id="tr-comparison-title">The architecture changed; the old benchmark does not transfer</h2>
+      </div>
+      <p>The 45 ms and 92% figures belong to the Python SVM prototype. The current C# KNN build has not yet been measured with the same held-out dataset and end-to-end timing protocol.</p>
+    </header>
+    <div class="tr-compare" role="region" aria-label="Prototype and current build comparison" tabindex="0">
+      <table>
+        <thead><tr><th>Version</th><th>Model</th><th>Runtime</th><th>Accuracy</th><th>End-to-end latency</th></tr></thead>
+        <tbody>
+          <tr><th>2025 prototype</th><td>SVM</td><td>Python + OSC + Unity</td><td>92%</td><td>45 ms after optimization</td></tr>
+          <tr><th>Current rebuild</th><td>KNN, K=5</td><td>Pure C# in Unity 6</td><td>Pending like-for-like benchmark</td><td>Pending like-for-like benchmark</td></tr>
+        </tbody>
+      </table>
     </div>
   </section>
 

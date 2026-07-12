@@ -10,8 +10,8 @@
 
 <!-- CONCEPT -->
 <section class="case-sec io-reveal" id="concept" aria-labelledby="concept-title">
-  <p class="case-sec__no">The Story</p>
-  <h2 class="case-sec__title" id="concept-title">Three Projects, Three Problems</h2>
+  <p class="case-sec__no">Context</p>
+  <h2 class="case-sec__title" id="concept-title">Early Wwise Implementation Studies</h2>
 
   <div class="concept-layout">
     <div class="concept-body">
@@ -39,10 +39,10 @@
       </div>
       <div class="concept-sidebar__fact">
         <span class="concept-sidebar__label">Memory Saved</span>
-        <span class="concept-sidebar__value">80% via Wwise Silence plugin</span>
+        <span class="concept-sidebar__value">80% reduction for placeholder assets (Wwise Silence)</span>
       </div>
       <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Biggest Lesson</span>
+        <span class="concept-sidebar__label">Approach</span>
         <span class="concept-sidebar__value">Profile first, then optimize the bottleneck</span>
       </div>
     </aside>
@@ -105,37 +105,28 @@
 
 <!-- CHALLENGES -->
 <section class="case-sec io-reveal" id="challenges" aria-labelledby="challenges-title">
-  <p class="case-sec__no">Challenges</p>
+  <p class="case-sec__no">In Detail</p>
   <h2 class="case-sec__title" id="challenges-title">What Broke &amp; How I Fixed It</h2>
 
   <div class="challenges-grid">
     <div class="challenge-card io-reveal">
       <h3 class="challenge-card__title">256 Voices Wasn't Enough</h3>
-      <span class="challenge-card__label">What Was Hard</span>
       <p class="challenge-card__text">Sounds were cutting out mid-play. Gunshots would just vanish. I had no idea voice limits were even a thing before this. Took me an hour of debugging to realize the problem wasn't my code, it was Wwise running out of voices to assign.</p>
-      <span class="challenge-card__label">What I Did</span>
       <p class="challenge-card__text">Gunshots need to play. A zombie grunt 30 meters away does not. I set priorities so close, loud sounds win voice allocation. The other fix was trimming silence off files because sounds were holding their slot open on dead air. Not every sound needs to play; some can be dropped without hurting combat readability.</p>
-      <span class="challenge-card__label">What Happened</span>
       <p class="challenge-card__text">The important gunshots stopped disappearing, and the mix stayed readable because distant low-priority sounds could safely lose their voices first.</p>
     </div>
 
     <div class="challenge-card io-reveal">
       <h3 class="challenge-card__title">Zone Transitions That Don't Sound Like a Hard Cut</h3>
-      <span class="challenge-card__label">What Was Hard</span>
       <p class="challenge-card__text">Walking between areas sounded awful. Forest to cave, silence to waterfall. It felt like someone flipped a switch instead of the player actually moving through a space. A 2-second fade wasn't enough either - it just sounded like a bad DJ crossfade.</p>
-      <span class="challenge-card__label">What I Did</span>
       <p class="challenge-card__text">A 6.5-second crossfade gave the transition enough time without making the player wait. Shorter felt rushed, longer felt laggy. But the crossfade alone wasn't enough - the reverb also had to change. Walk from a big cave into a tight corridor and you hear it shrink around you. Once the reverb matched the room, it actually felt like walking through a real place instead of hearing two tracks crossfade.</p>
-      <span class="challenge-card__label">What Happened</span>
       <p class="challenge-card__text">The room change became legible instead of abrupt: ambience and reverb moved together, so the player heard the space narrow or open up during traversal.</p>
     </div>
 
     <div class="challenge-card challenge-card--full io-reveal">
       <h3 class="challenge-card__title">2 GB RAM and Tight Audio Budgets</h3>
-      <span class="challenge-card__label">What Was Hard</span>
       <p class="challenge-card__text">The first build crashed on load. All audio in memory at once - the phone just gave up. I had to rethink the entire loading strategy. You cannot treat a 2 GB Android phone like a PC with 16 GB.</p>
-      <span class="challenge-card__label">What I Did</span>
       <p class="challenge-card__text">Biggest win: replacing quiet placeholder audio files with Wwise Silence, which cut those assets by 80% in one move. Then I split audio into zones so only the current area stays loaded. Walk into a new zone, the old one unloads. The waterfall needed 3 distance layers so it sounds right both up close and far away. The listed zones stayed under 3 MB each.</p>
-      <span class="challenge-card__label">What Happened</span>
       <p class="challenge-card__text">The Android build stayed within a 3 MB audio budget per zone, and the 80% placeholder reduction removed the worst memory waste without changing gameplay audio coverage.</p>
     </div>
   </div>

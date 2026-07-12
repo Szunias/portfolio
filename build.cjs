@@ -1081,7 +1081,7 @@ function validateConfig(cfg) {
     .map(page => page.slug);
   const projectSlugSet = new Set(projectSlugs);
   const homeSource = read(path.join(SRC, 'pages', 'index.html'));
-  const cardSlugs = [...homeSource.matchAll(/<a\b(?=[^>]*\bclass=(["'])[^"']*\b(?:project-card|prow)\b[^"']*\1)[^>]*>/gi)]
+  const cardSlugs = [...homeSource.matchAll(/<a\b(?=[^>]*\bclass=(["'])[^"']*\b(?:project-card|prow|archive-project-link)\b[^"']*\1)[^>]*>/gi)]
     .map(match => htmlFileSlug(attrValue(match[0], 'href')))
     .filter(Boolean);
   const duplicateCard = cardSlugs.find((slug, index) => cardSlugs.indexOf(slug) !== index);

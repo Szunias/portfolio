@@ -5,7 +5,7 @@
   <header class="ai-hero">
     <div class="ai-hero__content">
       <p class="ai-kicker">Research 2024&ndash;2025 &middot; thesis published 2026 &middot; Howest DAE</p>
-      <h1>Is AI audio in real time possible in games?</h1>
+      <h1>Can generative audio meet a real-time game latency target?</h1>
       <p class="ai-hero__lead">I built a playable UE5 prototype to measure whether generated sound can keep up with gameplay.</p>
       <p class="ai-hero__summary">A gameplay sound has roughly 150 milliseconds before the player hears it as late. Raw AI generation needed seconds. The version that works stops generating during gameplay and prepares sound before the player needs it.</p>
       <p class="ai-hero__role">Solo research &middot; UE5 + Python prototype &middot; 600 timed generations &middot; 68-page thesis</p>
@@ -18,12 +18,6 @@
       </div>
     </div>
   </header>
-
-  <!-- PROJECT SNAPSHOT -->
-  <section class="ai-snapshot io-reveal" aria-label="Research summary">
-    <p class="ai-snapshot__label">The short version</p>
-    <p>I benchmarked four ways of making the same game sound across <strong>600 timed generations</strong>. The playable window is <strong>100&ndash;150ms</strong>; raw AI generation took <strong>1.4&ndash;3.5 seconds</strong>. The system that works <strong>predicts, generates early and plays from cache</strong>, with procedural DSP as the instant fallback.</p>
-  </section>
 
   <!-- THE EXPERIMENT -->
   <section class="ai-intro io-reveal" id="story" aria-labelledby="ai-story-title">
@@ -38,8 +32,8 @@
     </div>
 
     <aside class="ai-player-story" aria-label="What the player experiences">
-      <p class="ai-player-story__label">What the player feels</p>
-      <p>You kick a door and the room stays silent. You are already two steps into the corridor when the bang finally lands behind you. The sound is good; the moment is gone.</p>
+      <p class="ai-player-story__label">Why latency matters</p>
+      <p>You kick a door and the room stays silent. You are already two steps into the corridor when the bang finally lands behind you. In play, a correct sound that arrives late reads as a missing sound.</p>
     </aside>
   </section>
 
@@ -48,7 +42,7 @@
     <header class="ai-section-head">
       <div>
         <p class="ai-kicker">Try it</p>
-        <h2 id="ai-delay-title">Click once. Wait for the sound.</h2>
+        <h2 id="ai-delay-title">Trigger a sound and count the delay</h2>
       </div>
       <p>This is the raw-generation timing, recreated in your browser. The 150ms mark is where a game sound has to exist. Watch how much timeline is left after it.</p>
     </header>
@@ -88,7 +82,7 @@
         <p class="ai-kicker">The numbers</p>
         <h2 id="ai-numbers-title">Every method, measured against one deadline</h2>
       </div>
-      <p>Latency from game event to first audible sample, averaged across the 600-generation benchmark. Only one method fits inside the playable window.</p>
+      <p>End-to-end latency from game event to first audible sample. Ranges show the 5th&ndash;95th percentile across the benchmark, not an average.</p>
     </header>
 
     <div class="ai-numbers" role="group" aria-label="Latency results per method">
@@ -101,8 +95,12 @@
         <span>Procedural DSP. Instant but synthetic; the fallback layer.</span>
       </div>
       <div>
-        <strong>1.4&ndash;3.4s</strong>
-        <span>MMAudio, local. The best texture-to-time trade-off when prepared ahead.</span>
+        <strong>1.4&ndash;1.9s</strong>
+        <span>MMAudio Small, local. Fastest tested generator after warm-up.</span>
+      </div>
+      <div>
+        <strong>2.6&ndash;3.4s</strong>
+        <span>MMAudio Large, local. More VRAM and a longer wait for higher detail.</span>
       </div>
       <div>
         <strong>2.1&ndash;2.8s</strong>
@@ -115,6 +113,24 @@
     </div>
   </section>
 
+  <section class="ai-answer io-reveal" aria-labelledby="ai-method-title">
+    <header class="ai-section-head">
+      <div>
+        <p class="ai-kicker">Method and limits</p>
+        <h2 id="ai-method-title">Mid-tier hardware, warm and cold runs</h2>
+      </div>
+      <p>The test machine used an AMD Ryzen 9 7940HS, RTX 5070 Laptop GPU with 8 GB VRAM, 64 GB RAM, Unreal Engine 5.4.4 and Python 3.11.7.</p>
+    </header>
+    <div class="ai-system-story">
+      <div class="ai-system-story__copy">
+        <p>The 600 timed generations covered cold starts and warm inference for standardized 0.5&ndash;2.0 second clips. Local models ran on the same GPU; ElevenLabs included network time. The 100&ndash;150 ms line is the project's interaction target, grounded in the latency literature cited in the thesis.</p>
+        <p>Quality testing used 60 loudness-normalized samples across 12 prompts and five methods. Method names were hidden during rating, but one person rated the set, so those scores are directional rather than a multi-listener MOS study.</p>
+        <p>The four samples in the player below are labeled examples chosen to make method differences easy to inspect. They are not presented as a random sample or a substitute for the full benchmark.</p>
+      </div>
+      <p class="ai-signal-path"><span>Measurement</span> Gameplay event &rarr; request &rarr; generation or network &rarr; decode &rarr; first audible sample.</p>
+    </div>
+  </section>
+
   <!-- WHAT WORKED -->
   <section class="ai-answer io-reveal" id="answer" aria-labelledby="ai-answer-title">
     <header class="ai-section-head">
@@ -122,14 +138,14 @@
         <p class="ai-kicker">What worked</p>
         <h2 id="ai-answer-title">Stop generating during gameplay</h2>
       </div>
-      <p>The models never got faster. The system got smarter about when to ask them.</p>
+      <p>None of the tested models fit the playable window, so the pipeline moves generation off the critical path instead.</p>
     </header>
 
     <div class="ai-system-story">
       <div class="ai-system-story__copy">
         <p class="ai-system-story__lead">The version that works never generates a sound the moment the player needs it.</p>
         <p>Instead, the server watches game state and predicts what is likely next: the player approaching a door queues door sounds, entering a forest queues ambience. Generation happens off the critical path, and the results land in a cache keyed by the request.</p>
-        <p>When the event fires, the sound is already there and plays instantly. If the prediction missed, procedural DSP covers the moment at 15&ndash;25ms while the real sample generates for next time. The player never waits on a model.</p>
+        <p>When the event fires, the sound is already there and plays instantly. If the prediction missed, procedural DSP covers the moment at 15&ndash;25ms while the real sample generates for next time.</p>
       </div>
       <p class="ai-signal-path"><span>The pipeline</span> Predict what the player will need &rarr; generate off the critical path &rarr; cache the result &rarr; play instantly &rarr; DSP covers the misses.</p>
     </div>

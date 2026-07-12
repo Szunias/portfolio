@@ -141,7 +141,7 @@ section.panel { padding:0; }
   transition:opacity .25s;
 }
 /* hovering the list dims every row except the one under the cursor */
-.plist:hover .prow { opacity:.4; }
+.plist:hover .prow { opacity:.72; }
 .plist .prow:hover { opacity:1; }
 .prow__idx { font-family:var(--mono); font-size:.66rem; color:var(--faint); }
 .prow h3 {
@@ -161,6 +161,32 @@ section.panel { padding:0; }
    sticky .pview panel from the hidden in-row thumbs. Hovering a row
    crossfades the panel image; no layout ever shifts. */
 .prow__thumb { display:none; }
+
+.prow--featured {
+  min-height:150px;
+  align-items:center;
+}
+.prow--featured h3 { font-size:clamp(2.25rem, 3.6vw, 3.5rem); }
+.prow--tool {
+  min-height:0;
+  padding-block:22px;
+}
+.prow--tool h3 { font-size:clamp(1.45rem, 2.2vw, 2.05rem); }
+.prow--tool p { max-width:62ch; }
+.earlier-work { border-bottom:1px solid var(--rule); }
+.earlier-work summary {
+  display:flex; justify-content:space-between; gap:24px; align-items:center;
+  padding:28px 6px; cursor:pointer; list-style:none;
+  font-family:var(--display); font-size:clamp(1.35rem, 2.2vw, 2rem); font-weight:600;
+}
+.earlier-work summary::-webkit-details-marker { display:none; }
+.earlier-work summary::after { content:'+'; margin-left:auto; color:var(--ice); font-family:var(--mono); }
+.earlier-work[open] summary::after { content:'-'; }
+.earlier-work summary span { color:var(--faint); font-family:var(--mono); font-size:.66rem; font-weight:400; }
+.earlier-work nav { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); padding:0 6px 28px 6px; }
+.earlier-work nav a { padding:13px 0; border-top:1px solid var(--rule); color:var(--muted); }
+.earlier-work nav a:nth-child(odd) { margin-right:22px; }
+.earlier-work nav a:hover { color:var(--ink); }
 
 .work-split {
   display:grid; grid-template-columns:minmax(0,1fr) 380px;
@@ -310,12 +336,15 @@ section.panel { padding:0; }
   .panel__inner { padding:70px 20px 100px; }
   section.panel { padding:0; }
   .colophon { padding:24px 20px 32px; }
+  .earlier-work nav { grid-template-columns:1fr; }
+  .earlier-work nav a:nth-child(odd) { margin-right:0; }
 }
 
 @media (max-width: 480px) {
   .prow h3 { font-size:1.42rem; }
   .top { padding:14px 16px; }
-  .top__name { display:none; }
+  .top { align-items:flex-start; gap:10px; }
+  .top__name { display:block; max-width:9ch; line-height:1.25; }
   .top nav { gap:10px; padding:10px 16px; }
   .top nav a { font-size:.64rem; }
   .hero__cta a { padding:12px 18px; }

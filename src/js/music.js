@@ -77,13 +77,6 @@
     return card.getAttribute('data-src') || '';
   }
 
-  // Keep "Save audio as..." out of easy reach on cards and the player
-  document.addEventListener('contextmenu', function(e) {
-    if (e.target && e.target.closest && e.target.closest('.track-card, .player-bar')) {
-      e.preventDefault();
-    }
-  });
-
   // =========================================
   // ARCHIVE BUILD
   // Lift cards out of the flat grids into year groups, newest first.

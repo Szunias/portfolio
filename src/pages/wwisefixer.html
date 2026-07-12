@@ -3,49 +3,37 @@
 <header class="case-hero">
   <p class="case-hero__kicker">Dev Tool &middot; 2024-2025</p>
   <h1 class="case-hero__title">Wwise UE Fixer</h1>
-  <p class="case-hero__sub">Repeated Perforce syncs broke Wwise references in Unreal. I automated the repair path from manual reconnecting to a backup-first button press.</p>
+  <p class="case-hero__sub">Repeated Perforce syncs broke Wwise references in Unreal. I automated the scoped repair step and backed up the files it may modify.</p>
   <p class="case-hero__facts">Role: Tool Developer &middot; Stack: Batch Script, Python</p>
   <p class="case-hero__tools"><span class="case-hero__tool">Python</span><span class="case-hero__tool">Batch Script</span><span class="case-hero__tool">Wwise</span><span class="case-hero__tool">Unreal Engine</span><span class="case-hero__tool">Perforce</span></p>
 </header>
 
 <!-- CONCEPT -->
 <section class="case-sec io-reveal" id="concept" aria-labelledby="concept-title">
-  <p class="case-sec__no">The Problem</p>
-  <h2 class="case-sec__title" id="concept-title">Why This Exists</h2>
+  <p class="case-sec__no">The Failure</p>
+  <h2 class="case-sec__title" id="concept-title">Broken Audio After Every Sync</h2>
 
   <div class="concept-layout">
     <div class="concept-body">
-      <p>Repeated Perforce syncs on Shadow Frames followed the same pattern. Sync, open the project, silence. Wwise paths broken, actors muted, plugin settings missing. Then about 20 minutes of manually reconnecting things before anyone could hear a single sound.</p>
+      <p>Repeated Perforce syncs on Shadow Frames kept producing the same failure: broken Wwise paths, muted actors and missing plugin settings, followed by about 20 minutes of manually reconnecting things before anyone could hear a single sound.</p>
 
-      <p>After the third morning in a row doing this, I wrote a script. It checks Wwise-related project and config references, validates selected asset paths, restores plugin settings, and rebuilds the configs it can safely touch. One click. It timestamps a backup of your project first, because I learned the hard way what happens when you do not.</p>
+      <p>After the third morning in a row doing this, I wrote a script. It checks Wwise-related project and config references, validates selected asset paths, restores plugin settings, and rebuilds the configs it can safely touch. Before changing anything it timestamps copies of the <code>.uproject</code> file and <code>Config</code> directory it may modify.</p>
 
-      <p>The Shadow Frames team used it after Perforce syncs. In our daily workflow, a repair that took about 20 minutes by hand became a roughly 10-second button press. It started as a small internal tool, then became a faster way for the team to get audio working again after syncs.</p>
+      <p>The Shadow Frames team used it after Perforce syncs. The automated repair pass itself takes about 10 seconds, replacing the roughly 20 minutes of manual reconnecting; regenerating project files and restarting Unreal still happen as usual afterwards.</p>
     </div>
 
     <aside class="concept-sidebar io-reveal">
       <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Time Saved</span>
-        <span class="concept-sidebar__value">~20 min to ~10 sec</span>
+        <span class="concept-sidebar__label">Repair Pass</span>
+        <span class="concept-sidebar__value">~10 s automated, was ~20 min by hand</span>
       </div>
       <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Used Daily By</span>
-        <span class="concept-sidebar__value">Shadow Frames team</span>
+        <span class="concept-sidebar__label">Scope</span>
+        <span class="concept-sidebar__value">Wwise-related refs and config files only</span>
       </div>
       <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Checks</span>
-        <span class="concept-sidebar__value">Wwise refs + config files</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Safety Net</span>
-        <span class="concept-sidebar__value">Backs up before touching anything</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Origin</span>
-        <span class="concept-sidebar__value">Built after repeated sync fixes</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Stack</span>
-        <span class="concept-sidebar__value">Batch core, Python GUI</span>
+        <span class="concept-sidebar__label">Safety</span>
+        <span class="concept-sidebar__value"><code>.uproject</code> + <code>Config</code> before any change</span>
       </div>
     </aside>
   </div>
@@ -53,8 +41,8 @@
 
 <!-- HOW IT WORKS -->
 <section class="case-sec io-reveal" id="systems" aria-labelledby="systems-title">
-  <p class="case-sec__no">Technical</p>
-  <h2 class="case-sec__title" id="systems-title">How It Works</h2>
+  <p class="case-sec__no">Repair Path</p>
+  <h2 class="case-sec__title" id="systems-title">Detect, Back Up, Repair</h2>
 
   <div class="systems-grid">
     <div class="system-item io-reveal">
@@ -75,15 +63,15 @@
       <div class="system-item__title-wrap">
         <h3 class="system-item__title">Archives Before Changes</h3>
       </div>
-      <p class="system-item__desc">Timestamps a full backup of the project before changing a single file. If anything goes wrong, the team can roll back instead of guessing which config changed.</p>
+      <p class="system-item__desc">Timestamps copies of the <code>.uproject</code> file and <code>Config</code> directory before changing either. It does not claim to archive Content, Source or every project asset.</p>
     </div>
   </div>
 </section>
 
 <!-- FEATURES -->
 <section class="case-sec io-reveal" id="features" aria-labelledby="features-title">
-  <p class="case-sec__no">Details</p>
-  <h2 class="case-sec__title" id="features-title">Features</h2>
+  <p class="case-sec__no">Safeguards</p>
+  <h2 class="case-sec__title" id="features-title">What It Touches, What It Leaves Alone</h2>
 
   <div class="systems-grid">
     <div class="system-item io-reveal">
@@ -104,7 +92,7 @@
       <div class="system-item__title-wrap">
         <h3 class="system-item__title">Used on a Real Project</h3>
       </div>
-      <p class="system-item__desc">We used it daily on Shadow Frames while the full team pulled from Perforce. During production it stayed within Wwise-related files and backed up the project before changes, which mattered more than any feature list.</p>
+      <p class="system-item__desc">We used it on Shadow Frames after Perforce syncs. During production the repair stayed within Wwise-related references and config files, with the affected project and config files copied before changes.</p>
     </div>
   </div>
 </section>

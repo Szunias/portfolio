@@ -28,8 +28,8 @@
   <span class="top__name">IGOR SZUNIEWICZ</span>
   <nav aria-label="Main navigation">
     <a href="#work">WORK</a>
-    <a href="#about">ABOUT</a>
     <a href="music.html">MUSIC</a>
+    <a href="Igor_Szuniewicz_CV.pdf">CV</a>
     <a href="#contact">CONTACT</a>
   </nav>
 </header>
@@ -41,8 +41,7 @@
 <!-- FOOTER / COLOPHON -->
 <footer class="colophon">
   <span>Igor Szuniewicz &copy; 2026</span>
-  <span>Set in Inter Tight, Inter &amp; IBM Plex Mono</span>
-  <span>Static HTML build</span>
+  <span><a href="mailto:igorszuniewiczwork@gmail.com">Email</a> &middot; <a href="https://www.linkedin.com/in/igorszuniewicz">LinkedIn</a> &middot; <a href="https://github.com/Szunias">GitHub</a></span>
 </footer>
 
 <script>
@@ -253,8 +252,13 @@ addEventListener('resize', () => {
   if (now - lastResize > 150) {
     lastResize = now;
     layout();
+    if (reduceMotion) renderer.render(scene, camera);
   } else {
-    resizeTimer = setTimeout(() => { lastResize = performance.now(); layout(); }, 160);
+    resizeTimer = setTimeout(() => {
+      lastResize = performance.now();
+      layout();
+      if (reduceMotion) renderer.render(scene, camera);
+    }, 160);
   }
 });
 layout();
@@ -305,7 +309,7 @@ addEventListener('pointercancel', endDrag);
 
 const clock = new THREE.Clock();
 let spinY = 0, idleY = 0;
-renderer.setAnimationLoop(() => {
+function renderFrame() {
   const dt = Math.min(clock.getDelta(), 0.05);
   const t = clock.elapsedTime;
   smooth += (targetScroll - smooth) * 0.06;
@@ -327,7 +331,13 @@ renderer.setAnimationLoop(() => {
     glowMat.emissiveIntensity = 0.55 + Math.sin(t * 1.4) * 0.15;
   }
   renderer.render(scene, camera);
-});
+}
+
+if (reduceMotion) {
+  renderFrame();
+} else {
+  renderer.setAnimationLoop(renderFrame);
+}
 
 } catch (err) {
   // WebGL unavailable: the page works without the 3D hero
