@@ -176,7 +176,7 @@
         var sketchTitle = document.createElement('h3');
         sketchTitle.textContent = 'Studio sketches';
         var sketchMeta = document.createElement('p');
-        sketchMeta.textContent = years[year].sketches.length + ' raw working ' + (years[year].sketches.length === 1 ? 'file' : 'files');
+        sketchMeta.textContent = years[year].sketches.length + ' dated work-in-progress ' + (years[year].sketches.length === 1 ? 'track' : 'tracks');
         sketchHeader.appendChild(sketchTitle);
         sketchHeader.appendChild(sketchMeta);
         sketchGroup.appendChild(sketchHeader);
