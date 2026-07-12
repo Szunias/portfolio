@@ -38,10 +38,6 @@ module.exports = {
       layout: 'home',
       css: 'home',
       js: ['home-list'],
-      assets: [
-        'vendor/three.module.min.js',
-        'vendor/RoomEnvironment.js',
-      ],
       title: 'Igor Szuniewicz | Game Audio & Technical Sound Designer',
       ogTitle: 'Igor Szuniewicz | Game Audio & Technical Sound Designer',
       description: 'Game audio portfolio by Igor Szuniewicz: readable gameplay mixes, Wwise/Unreal/Unity implementation, spatial audio, C++ tools, and sound design case studies.',
@@ -123,7 +119,7 @@ module.exports = {
       description: 'Unity rhythm game audio ML case study: 45ms Python/SVM prototype, 92% accuracy, C# KNN rebuild, and a pre-allocated audio path.',
       canonical: `${SITE}/transientica.html`,
       ogImage: `${SITE}/transienticascreenshot.png`,
-      ogImageAlt: 'Transientica Unity beatbox rhythm game interface screenshot',
+      ogImageAlt: 'Transientica current Unity beatbox rhythm game gameplay',
     },
     {
       slug: 'ai-audio-research',

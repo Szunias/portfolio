@@ -1081,9 +1081,9 @@ function validateConfig(cfg) {
     .map(page => page.slug);
   const projectSlugSet = new Set(projectSlugs);
   const homeSource = read(path.join(SRC, 'pages', 'index.html'));
-  const cardSlugs = [...homeSource.matchAll(/<a\b(?=[^>]*\bclass=(["'])[^"']*\b(?:project-card|prow|archive-project-link)\b[^"']*\1)[^>]*>/gi)]
-    .map(match => htmlFileSlug(attrValue(match[0], 'href')))
-    .filter(Boolean);
+  const homeProjectTags = [...homeSource.matchAll(/<a\b(?=[^>]*\bclass=(["'])[^"']*\b(?:project-card|prow|archive-project-link)\b[^"']*\1)[^>]*>/gi)]
+    .map(match => match[0]);
+  const cardSlugs = homeProjectTags.map(tag => htmlFileSlug(attrValue(tag, 'href'))).filter(Boolean);
   const duplicateCard = cardSlugs.find((slug, index) => cardSlugs.indexOf(slug) !== index);
   const missingCards = projectSlugs.filter(slug => !cardSlugs.includes(slug));
   const deadCards = cardSlugs.filter(slug => !projectSlugSet.has(slug));
@@ -1100,16 +1100,35 @@ function validateConfig(cfg) {
     }
     nextProject.set(slug, nextSlug);
   }
-  const visited = [];
-  let cursor = projectSlugs[0];
-  for (let i = 0; i < projectSlugs.length + 1 && cursor; i++) {
-    if (visited.includes(cursor)) break;
-    visited.push(cursor);
-    cursor = nextProject.get(cursor);
+  const projectGroups = new Map([
+    ['featured', []],
+    ['tools', []],
+    ['archive', []],
+  ]);
+  for (const tag of homeProjectTags) {
+    const slug = htmlFileSlug(attrValue(tag, 'href'));
+    const classes = attrValue(tag, 'class').split(/\s+/);
+    const group = classes.includes('prow--featured') ? 'featured'
+      : classes.includes('prow--tool') ? 'tools'
+      : classes.includes('archive-project-link') ? 'archive'
+      : '';
+    if (!group) throw new Error(`Homepage project ${slug || '(missing slug)'} has no work group class`);
+    projectGroups.get(group).push(slug);
   }
-  const missedByCycle = projectSlugs.filter(slug => !visited.includes(slug));
-  if (missedByCycle.length || cursor !== projectSlugs[0]) {
-    throw new Error(`Next-project links must form one complete cycle from ${projectSlugs[0]}. Missed: ${missedByCycle.join(', ') || 'none'}; ended at: ${cursor || 'missing'}`);
+  for (const [group, slugs] of projectGroups) {
+    if (!slugs.length) throw new Error(`Homepage work group ${group} is empty`);
+    const visited = [];
+    let cursor = slugs[0];
+    for (let i = 0; i < slugs.length + 1 && cursor; i++) {
+      if (visited.includes(cursor)) break;
+      visited.push(cursor);
+      cursor = nextProject.get(cursor);
+    }
+    const missedByCycle = slugs.filter(slug => !visited.includes(slug));
+    const escaped = visited.filter(slug => !slugs.includes(slug));
+    if (missedByCycle.length || escaped.length || cursor !== slugs[0]) {
+      throw new Error(`Next-project links for ${group} must form one cycle from ${slugs[0]}. Missed: ${missedByCycle.join(', ') || 'none'}; escaped: ${escaped.join(', ') || 'none'}; ended at: ${cursor || 'missing'}`);
+    }
   }
   const staticOutNames = new Map();
   const reservedOutputs = new Set(cfg.pages.map(page => `${page.slug}.html`).concat([
