@@ -20,7 +20,22 @@
 
 When working on the live site, edit only `src/`, `build.cjs`, `site.config.cjs`, or `.github/workflows/`. Touching `old/` should be limited to adding/removing assets under `old/public/assets/`.
 
-## Project Description Writing Guidelines
+## Portfolio Copy Rules (Audit V4)
+
+The following rules replace any mandatory problem/solution/result template below when the two conflict:
+
+1. The first paragraph states what the project is, the exact role and one concrete contribution.
+2. Use a structure that fits the project. Never force every page into the same case-study template.
+3. Keep featured pages to 3–6 meaningful sections. Archive pages should be shorter.
+4. Do not use snapshots, stats grids, fact sidebars or challenge cards by default.
+5. State each metric once, with its version, scope and measurement context.
+6. Do not manufacture humanity with fragments, rhetorical questions, punchlines or casual filler.
+7. Put proof next to the claim: gameplay, profiler, diagram, code, before/after audio or a comparison table.
+8. Headings name the actual content. Avoid Overview, Challenges, Solution, Features, What I learned and The short version.
+9. Borders and backgrounds are for media, data, code, interaction or warnings, not ordinary prose.
+10. Describe limitations plainly and compare technical claims with public code, CV and the project page before publishing.
+
+## Legacy Project Description Guidelines
 
 These guidelines apply when writing or editing project descriptions for Igor's game audio portfolio. They were compiled from research on portfolio best practices, game audio industry expectations, storytelling frameworks, and an audit of the current project descriptions.
 

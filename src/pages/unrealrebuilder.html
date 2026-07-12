@@ -1,119 +1,31 @@
-<!-- PROJECT HERO -->
 <header class="case-hero">
-  <p class="case-hero__kicker">Dev Tool &middot; 2024</p>
-  <h1 class="case-hero__title">UE Rebuilder</h1>
-  <p class="case-hero__sub">Unreal project caches go stale often enough to slow down iteration. This tool runs the cleanup and rebuild path in one guided flow.</p>
-  <p class="case-hero__facts">Role: Tool Developer &middot; Stack: Batch Script, Python</p>
-  <p class="case-hero__tools"><span class="case-hero__tool">Batch Script</span><span class="case-hero__tool">Python</span><span class="case-hero__tool">Unreal Engine 4</span><span class="case-hero__tool">Unreal Engine 5</span></p>
+  <p class="case-hero__kicker">Windows 10/11 &middot; Unreal Engine 4.x/5.x</p>
+  <h1 class="case-hero__title">UE Rebuilder v7</h1>
+  <p class="case-hero__sub">A Windows utility for cleaning, rebuilding and diagnosing Unreal projects. Version 7 is a Python rewrite with build, packaging, health-check, plugin and backup tools.</p>
+  <p class="case-hero__facts">Tool developer &middot; Python application bundled as an executable</p>
 </header>
 
-<!-- SCREENSHOT -->
-<section class="screenshot-section io-reveal" aria-label="Application screenshot">
-  <img src="old/public/assets/images/projects-unrealrebuilder/appscreenshot.png" alt="UE Rebuilder Interface" loading="lazy">
-</section>
+<section class="screenshot-section io-reveal" aria-label="UE Rebuilder application"><img src="old/public/assets/images/projects-unrealrebuilder/appscreenshot.png" alt="UE Rebuilder application interface" loading="lazy"></section>
 
-<!-- CONCEPT -->
-<section class="case-sec io-reveal" id="concept" aria-labelledby="concept-title">
-  <p class="case-sec__no">The Failure</p>
-  <h2 class="case-sec__title" id="concept-title">Build Worked Yesterday, Fails Today</h2>
-
-  <div class="concept-layout">
-    <div class="concept-body">
-      <p>If you use Unreal long enough, you know the drill: unexpected linker errors and stale caches pretending to be real data. Generated folders go stale often enough to slow down iteration.</p>
-
-      <p>The repair path I kept repeating was the same: delete Binaries, Intermediate, Saved, regenerate the VS solution, recompile from scratch. It takes about 15 minutes of clicking through folders, so I turned the repeated cleanup path into one guided button flow.</p>
-
-      <p>It also does something I wish Unreal did natively: shows you how much disk space each folder is eating. The DerivedDataCache alone grows to gigabytes if you do not watch it. The tool finds it and cleans it. Works on both UE 4.x and 5.x installs it can detect.</p>
-    </div>
-
-    <aside class="concept-sidebar io-reveal" aria-label="Project facts">
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Time Saved</span>
-        <span class="concept-sidebar__value">~15 min folder cleanup compressed into one guided rebuild flow</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Engine Support</span>
-        <span class="concept-sidebar__value">UE 4.x and 5.x (auto-detected)</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">DDC Problem</span>
-        <span class="concept-sidebar__value">Grows to GBs silently - tool finds and clears it</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Deletes</span>
-        <span class="concept-sidebar__value">Binaries, Intermediate, Saved</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Backup Step</span>
-        <span class="concept-sidebar__value">Separate action: timestamped ZIP of Source, Config, Content, Plugins</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">License</span>
-        <span class="concept-sidebar__value">Public source repo on GitHub</span>
-      </div>
-    </aside>
+<section class="case-sec io-reveal" aria-labelledby="rebuilder-build-title">
+  <p class="case-sec__no">Build and cleanup</p>
+  <h2 class="case-sec__title" id="rebuilder-build-title">One interface for the repeated Unreal maintenance path</h2>
+  <div class="concept-body">
+    <p>Total Rebuild cleans generated folders, regenerates project files and rebuilds the project. Smart Clean previews folder sizes before removal. Packaging actions create development or shipping builds.</p>
+    <p>The application detects supported UE4 and UE5 installations and keeps a timestamped operation log, so cleanup, generation and build failures remain visible instead of disappearing behind a single button.</p>
   </div>
 </section>
 
-<!-- FEATURES -->
-<section class="case-sec io-reveal" id="features" aria-labelledby="features-title">
-  <p class="case-sec__no">What It Does</p>
-  <h2 class="case-sec__title" id="features-title">Cleanup, Backups, Logging</h2>
-
-  <div class="systems-grid">
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Clean Rebuild</h3>
-      </div>
-      <p class="system-item__desc">Deletes generated Binaries, Intermediate, and Saved folders. Regenerates the Visual Studio solution. Kicks off a full recompile. Full cleanup and rebuild, run from one guided flow.</p>
-    </div>
-
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Backups</h3>
-      </div>
-      <p class="system-item__desc">A separate backup action archives Source, Config, Content, and Plugins to a timestamped ZIP. Total Rebuild does not call it automatically; the user chooses it before cleanup when a new archive is needed.</p>
-    </div>
-
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Disk Cleanup</h3>
-      </div>
-      <p class="system-item__desc">Shows folder sizes before cleanup. The DerivedDataCache is usually the worst offender - it grows silently to gigabytes. One click clears it.</p>
-    </div>
-
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Auto-Detection</h3>
-      </div>
-      <p class="system-item__desc">Checks standard install locations and detects the UE 4.x/5.x versions it can find. Standard install locations work without manually pointing the tool at the engine.</p>
-    </div>
-
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Logging</h3>
-      </div>
-      <p class="system-item__desc">Timestamps every operation. If something goes sideways, you can read the log and see what happened, in order, with times.</p>
-    </div>
-
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Operation Log</h3>
-      </div>
-      <p class="system-item__desc">Clean interface with a live console. Each rebuild step is visible, so shader cleanup, project-file generation, and launch errors are easier to debug.</p>
-    </div>
+<section class="case-sec io-reveal" aria-labelledby="rebuilder-tools-title">
+  <p class="case-sec__no">Diagnostics and management</p>
+  <h2 class="case-sec__title" id="rebuilder-tools-title">Health checks, plugins and disk usage</h2>
+  <div class="concept-body">
+    <p>Health Check and Auto-Repair cover common project problems. The application also includes disk-usage inspection, a plugin manager, launch options, process cleanup and log access.</p>
+    <p>Create Backup is a separate, user-triggered action. Total Rebuild does not automatically create an archive, so the page keeps those actions distinct.</p>
   </div>
 </section>
 
-<!-- FOOTER NOTE -->
-<aside class="case-sec io-reveal" aria-label="Repository note">
-  <p class="footer-note">This page describes the 2024 release. The current repo version (7.0) is a Python rewrite with 12 features, including a health check, auto-repair and a plugin manager.</p>
-</aside>
-
-<!-- LINKS & NEXT PROJECT -->
 <footer class="ifmc-foot" aria-label="Project links and navigation">
-  <div class="ifmc-foot__links io-reveal">
-    <a href="https://github.com/Szunias/UnrealEngineRebuilder" target="_blank" rel="noopener noreferrer">Unreal Engine Rebuilder source code on GitHub</a>
-  </div>
-  <a class="ifmc-foot__next next-project-btn io-reveal" href="audioq.html">Next tool: AudioQ</a>
+  <div class="ifmc-foot__links"><a href="https://github.com/Szunias/UnrealEngineRebuilder" target="_blank" rel="noopener noreferrer">Source code on GitHub</a></div>
+  <a class="ifmc-foot__next next-project-btn" href="audioq.html">Next tool: AudioQ</a>
 </footer>

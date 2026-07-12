@@ -1,13 +1,11 @@
-<canvas id="bgStars" class="bg-stars" aria-hidden="true"></canvas>
-
 <div class="ai-page">
   <!-- HERO -->
   <header class="ai-hero">
     <div class="ai-hero__content">
       <p class="ai-kicker">Research 2024&ndash;2025 &middot; thesis published 2026 &middot; Howest DAE</p>
       <h1>Can generative audio meet a real-time game latency target?</h1>
-      <p class="ai-hero__lead">I built a playable UE5 prototype to measure whether generated sound can keep up with gameplay.</p>
-      <p class="ai-hero__summary">A gameplay sound has roughly 150 milliseconds before the player hears it as late. Raw AI generation needed seconds. The version that works stops generating during gameplay and prepares sound before the player needs it.</p>
+      <p class="ai-hero__lead">I measured event-to-first-sample latency across 600 generations in a UE5 and Python prototype.</p>
+      <p class="ai-hero__summary">The fastest tested generator reached 1.9 seconds at p95 against this project&rsquo;s 150 ms interaction target. The prototype avoids that delay by generating ahead, caching results and using procedural DSP when the cache misses.</p>
       <p class="ai-hero__role">Solo research &middot; UE5 + Python prototype &middot; 600 timed generations &middot; 68-page thesis</p>
       <div class="ai-hero__tools" aria-label="Core tools used">
         <span>Unreal Engine 5</span><span>Python</span><span>AudioGen</span><span>MMAudio</span><span>ElevenLabs</span><span>Procedural DSP</span>
@@ -15,11 +13,6 @@
       <div class="ai-hero__actions">
         <a href="#delay">Hear the delay <span aria-hidden="true">&darr;</span></a>
         <a href="szuniewicz-ai-audio-thesis-2026.pdf" target="_blank" rel="noopener noreferrer">Read the thesis <span aria-hidden="true">&nearr;</span></a>
-      </div>
-      <div class="ai-hero-result" aria-label="Headline latency result">
-        <div><strong>150 ms</strong><span>interaction target</span></div>
-        <div><strong>1.9 s</strong><span>fastest generator at p95</span></div>
-        <p>Raw generation missed the target by more than 12&times;; caching and DSP fallback move it off the gameplay path.</p>
       </div>
     </div>
   </header>
@@ -36,10 +29,6 @@
       <p>I built both ends myself: the C++ client in Unreal, the Python server, the cache, the retry handling and the benchmark logging. The numbers below come from that setup, not from model spec sheets.</p>
     </div>
 
-    <aside class="ai-player-story" aria-label="What the player experiences">
-      <p class="ai-player-story__label">Why latency matters</p>
-      <p>You kick a door and the room stays silent. You are already two steps into the corridor when the bang finally lands behind you. In play, a correct sound that arrives late reads as a missing sound.</p>
-    </aside>
   </section>
 
   <!-- LATENCY DEMO -->
@@ -49,7 +38,7 @@
         <p class="ai-kicker">Try it</p>
         <h2 id="ai-delay-title">Trigger a sound and count the delay</h2>
       </div>
-      <p>This is the raw-generation timing, recreated in your browser. The 150ms mark is where a game sound has to exist. Watch how much timeline is left after it.</p>
+      <p>This recreates the raw-generation timing in the browser. The 150 ms marker is this prototype&rsquo;s interaction target, not a universal perceptual threshold.</p>
     </header>
 
     <div class="ai-delay" data-ai-latency-demo data-state="idle">

@@ -1,105 +1,39 @@
-<!-- PROJECT HERO -->
 <header class="case-hero">
-  <p class="case-hero__kicker">Dev Tool &middot; 2024-2025</p>
+  <p class="case-hero__kicker">Python &middot; Unreal &middot; Wwise &middot; Perforce</p>
   <h1 class="case-hero__title">Wwise UE Fixer</h1>
-  <p class="case-hero__sub">Repeated Perforce syncs broke Wwise references in Unreal. I automated the scoped repair step and backed up the files it may modify.</p>
-  <p class="case-hero__facts">Role: Tool Developer &middot; Stack: Batch Script, Python</p>
-  <p class="case-hero__tools"><span class="case-hero__tool">Python</span><span class="case-hero__tool">Batch Script</span><span class="case-hero__tool">Wwise</span><span class="case-hero__tool">Unreal Engine</span><span class="case-hero__tool">Perforce</span></p>
+  <p class="case-hero__sub">After some Perforce syncs, Shadow Frames opened with broken Wwise configuration and silent audio. This Python utility diagnoses the integration and applies three scoped fixes.</p>
+  <p class="case-hero__facts">Tool developer &middot; Python &middot; .bat launcher</p>
 </header>
 
-<!-- CONCEPT -->
-<section class="case-sec io-reveal" id="concept" aria-labelledby="concept-title">
-  <p class="case-sec__no">The Failure</p>
-  <h2 class="case-sec__title" id="concept-title">Broken Audio After Every Sync</h2>
-
-  <div class="concept-layout">
-    <div class="concept-body">
-      <p>Repeated Perforce syncs on Shadow Frames kept producing the same failure: broken Wwise paths, muted actors and missing plugin settings, followed by about 20 minutes of manually reconnecting things before anyone could hear a single sound.</p>
-
-      <p>After the third morning in a row doing this, I wrote a script. It checks Wwise-related project and config references, validates selected asset paths, restores plugin settings, and rebuilds the configs it can safely touch. Before changing anything it timestamps copies of the <code>.uproject</code> file and <code>Config</code> directory it may modify.</p>
-
-      <p>The Shadow Frames team used it after Perforce syncs. The automated repair pass itself takes about 10 seconds, replacing the roughly 20 minutes of manual reconnecting; regenerating project files and restarting Unreal still happen as usual afterwards.</p>
-    </div>
-
-    <aside class="concept-sidebar io-reveal">
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Repair Pass</span>
-        <span class="concept-sidebar__value">~10 s automated, was ~20 min by hand</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Scope</span>
-        <span class="concept-sidebar__value">Wwise-related refs and config files only</span>
-      </div>
-      <div class="concept-sidebar__fact">
-        <span class="concept-sidebar__label">Safety</span>
-        <span class="concept-sidebar__value"><code>.uproject</code> + <code>Config</code> before any change</span>
-      </div>
-    </aside>
+<section class="case-sec io-reveal" aria-labelledby="fixer-checks-title">
+  <p class="case-sec__no">Diagnostics</p>
+  <h2 class="case-sec__title" id="fixer-checks-title">What it checks</h2>
+  <div class="concept-body">
+    <p>The tool checks the plugin entry and installation, SoundBank location, AkSettings, Wwise project presence, integration files, path consistency, Perforce configuration, generated banks and plugin-version information.</p>
+    <p>Most of those checks are diagnostic. They report what is missing or inconsistent without claiming that every detected problem can be repaired automatically.</p>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section class="case-sec io-reveal" id="systems" aria-labelledby="systems-title">
-  <p class="case-sec__no">Repair Path</p>
-  <h2 class="case-sec__title" id="systems-title">Detect, Back Up, Repair</h2>
-
-  <div class="systems-grid">
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Detects Broken References</h3>
-      </div>
-      <p class="system-item__desc">Walks Wwise-related project and config references, plus selected asset paths. If a Wwise reference points to nothing, it flags it and lists the dead links it can detect.</p>
-    </div>
-
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Rebuilds the Repair Path</h3>
-      </div>
-      <p class="system-item__desc">Restores plugin settings, updates configs, and rebuilds the broken Wwise references it detects. The same repeated manual repair path, except it takes seconds.</p>
-    </div>
-
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Archives Before Changes</h3>
-      </div>
-      <p class="system-item__desc">Timestamps copies of the <code>.uproject</code> file and <code>Config</code> directory before changing either. It does not claim to archive Content, Source or every project asset.</p>
-    </div>
+<section class="case-sec io-reveal" aria-labelledby="fixer-changes-title">
+  <p class="case-sec__no">Quick Fix</p>
+  <h2 class="case-sec__title" id="fixer-changes-title">The three changes it can apply</h2>
+  <div class="systems-list">
+    <div class="system-item"><div class="system-item__title-wrap"><h3 class="system-item__title"><code>.uproject</code> plugin entry</h3></div><p class="system-item__desc">Repairs the supported Wwise plugin entry in the Unreal project file.</p></div>
+    <div class="system-item"><div class="system-item__title-wrap"><h3 class="system-item__title">SoundBank directory</h3></div><p class="system-item__desc">Corrects the supported SoundBank path in <code>DefaultGame.ini</code>.</p></div>
+    <div class="system-item"><div class="system-item__title-wrap"><h3 class="system-item__title">AkSettings</h3></div><p class="system-item__desc">Applies the supported AkSettings section in <code>DefaultEngine.ini</code>.</p></div>
   </div>
 </section>
 
-<!-- FEATURES -->
-<section class="case-sec io-reveal" id="features" aria-labelledby="features-title">
-  <p class="case-sec__no">Safeguards</p>
-  <h2 class="case-sec__title" id="features-title">What It Touches, What It Leaves Alone</h2>
-
-  <div class="systems-grid">
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Change Log</h3>
-      </div>
-      <p class="system-item__desc">Files it touches get logged with a reason. When someone asks "what did your tool do to my project?" you can show them line by line.</p>
-    </div>
-
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Leaves Non-Audio Files Alone</h3>
-      </div>
-      <p class="system-item__desc">The repair path is scoped to Wwise-related files. Blueprints, meshes, levels, and materials stay outside that path.</p>
-    </div>
-
-    <div class="system-item io-reveal">
-      <div class="system-item__title-wrap">
-        <h3 class="system-item__title">Used on a Real Project</h3>
-      </div>
-      <p class="system-item__desc">We used it on Shadow Frames after Perforce syncs. During production the repair stayed within Wwise-related references and config files, with the affected project and config files copied before changes.</p>
-    </div>
+<section class="case-sec io-reveal" aria-labelledby="fixer-safety-title">
+  <p class="case-sec__no">Safety and scope</p>
+  <h2 class="case-sec__title" id="fixer-safety-title">Copies the files it may change</h2>
+  <div class="concept-body">
+    <p>Before Quick Fix runs, the tool copies the <code>.uproject</code> file and <code>Config</code> directory. It does not archive Content, Source or the full project.</p>
+    <p>In the Shadow Frames workflow, the automated repair pass took about ten seconds. Regenerating project files, restarting Unreal and testing audio still happened afterwards.</p>
   </div>
 </section>
 
-<!-- LINKS & NEXT PROJECT -->
 <footer class="ifmc-foot" aria-label="Project links and navigation">
-  <div class="ifmc-foot__links io-reveal">
-    <a href="https://github.com/Szunias/WwiseUnrealEngineFixer" target="_blank" rel="noopener noreferrer">Wwise UE Fixer source code on GitHub</a>
-  </div>
-  <a class="ifmc-foot__next next-project-btn io-reveal" href="unrealrebuilder.html">Next tool: UE Rebuilder</a>
+  <div class="ifmc-foot__links"><a href="https://github.com/Szunias/WwiseUnrealEngineFixer" target="_blank" rel="noopener noreferrer">Source code on GitHub</a></div>
+  <a class="ifmc-foot__next next-project-btn" href="unrealrebuilder.html">Next tool: UE Rebuilder</a>
 </footer>
