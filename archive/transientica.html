@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transientica: AudioLab - Igor Szuniewicz</title>
+<meta name="description" content="Transientica AudioLab: beatbox into a mic, play a rhythm game. Voice-controlled drums with 45ms latency and 92% detection accuracy using SVM and FFT in Python.">
+<meta name="author" content="Igor Szuniewicz">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://igorszuniewicz.com/transientica.html">
+<meta property="og:title" content="Transientica: AudioLab - Igor Szuniewicz">
+<meta property="og:description" content="Transientica AudioLab: beatbox into a mic, play a rhythm game. Voice-controlled drums with 45ms latency and 92% detection accuracy using SVM and FFT in Python.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://igorszuniewicz.com/transientica.html">
+<meta property="og:site_name" content="Igor Szuniewicz">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Transientica: AudioLab - Igor Szuniewicz">
+<meta name="twitter:description" content="Transientica AudioLab: beatbox into a mic, play a rhythm game. Voice-controlled drums with 45ms latency and 92% detection accuracy using SVM and FFT in Python.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --cream: #1a1a1a;
+    --white: #222;
+    --black: #f0ece6;
+    --accent: #c0542e;
+    --accent-light: #2a1f1a;
+    --grey: #b0b0b0;
+    --grey-light: #999;
+    --grey-rule: #333;
+    --dark-section: #111;
+    --serif: Georgia, 'Times New Roman', Times, serif;
+    --sans: system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --brand-secondary: 'DM Sans', sans-serif;
+    --page-max: 1280px;
+    --gutter: 60px;
+    --margin: 80px;
+  }
+
+  [data-theme="light"] {
+    --cream: #faf8f5;
+    --white: #ffffff;
+    --black: #1a1a1a;
+    --accent-light: #f3ebe6;
+    --grey: #5e5e5e;
+    --grey-light: #717171;
+    --grey-rule: #d8d4cf;
+    --dark-section: #1c1c26;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-width: thin;
+    scrollbar-color: var(--grey-rule) transparent;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--grey-rule); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--black);
+    line-height: 1.75;
+    font-size: 19px;
+    overflow-x: hidden;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  a:hover {
+    color: var(--black);
+    border-color: var(--black);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* =========================================
+     SCROLL PROGRESS BAR
+     ========================================= */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent);
+    width: 0%;
+    z-index: 1000;
+    transition: none;
+  }
+
+  /* =========================================
+     SCROLL REVEAL
+     ========================================= */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .reveal-stagger.visible > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0s; }
+  .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.1s; }
+  .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.2s; }
+  .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.3s; }
+  .reveal-stagger.visible > *:nth-child(5) { transition-delay: 0.4s; }
+  .reveal-stagger.visible > *:nth-child(6) { transition-delay: 0.5s; }
+
+  /* =========================================
+     BACK NAV
+     ========================================= */
+  .back-nav {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 28px var(--margin) 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .back-nav a {
+    font-family: var(--brand-secondary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    border: none;
+    transition: color 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+
+  .back-nav a:hover {
+    color: var(--accent);
+    transform: translateX(-4px);
+  }
+
+  .back-nav a::before {
+    content: '\2190\00a0\00a0';
+  }
+
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--grey-rule);
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    color: var(--black);
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  /* =========================================
+     PROJECT HERO
+     ========================================= */
+  .project-hero {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 48px var(--margin) 0;
+  }
+
+  .project-hero__title {
+    font-family: var(--serif);
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: hero-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+  }
+
+  .project-hero__subtitle {
+    font-family: var(--serif);
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--grey);
+    line-height: 1.4;
+    max-width: 50ch;
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: hero-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
+  }
+
+  .project-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    padding: 20px 0;
+    border-top: 1px solid var(--grey-rule);
+    border-bottom: 1px solid var(--grey-rule);
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: hero-in 0.6s ease 0.55s forwards;
+  }
+
+  .project-hero__techs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 20px 0 0;
+    opacity: 0;
+    animation: hero-in 0.6s ease 0.7s forwards;
+  }
+
+  @keyframes hero-in {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-item__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  .meta-item__value {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .tech-pill {
+    font-family: var(--brand-secondary);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    border: 1px solid var(--grey-rule);
+    padding: 6px 12px 5px;
+    transition: border-color 0.25s, color 0.25s, background 0.25s;
+    cursor: default;
+  }
+
+  .tech-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  /* =========================================
+     SECTION HEADERS
+     ========================================= */
+  .section-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .section-rule {
+    width: 60px;
+    height: 2px;
+    background: var(--accent);
+    margin-bottom: 40px;
+    transition: width 0.6s ease;
+  }
+
+  .reveal.visible .section-rule {
+    width: 60px;
+  }
+
+  .reveal .section-rule {
+    width: 0;
+  }
+
+  /* =========================================
+     CONCEPT
+     ========================================= */
+  .concept-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 64px var(--margin) 40px;
+  }
+
+  .concept-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: var(--gutter);
+    margin-top: 10px;
+  }
+
+  .concept-body {
+    font-size: 19px;
+    line-height: 1.8;
+  }
+
+  .concept-body p + p {
+    margin-top: 18px;
+  }
+
+  .concept-body strong {
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .drop-cap::first-letter {
+    font-family: var(--serif);
+    float: left;
+    font-size: 82px;
+    line-height: 0.72;
+    padding-right: 12px;
+    padding-top: 8px;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  .concept-sidebar {
+    padding-left: 30px;
+    border-left: 1px solid var(--grey-rule);
+    align-self: start;
+  }
+
+  .concept-sidebar__fact {
+    margin-bottom: 24px;
+  }
+
+  .concept-sidebar__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .concept-sidebar__value {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* =========================================
+     VIDEO
+     ========================================= */
+  .video-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 20px var(--margin) 60px;
+  }
+
+  .video-wrap {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    background: var(--dark-section);
+    border-radius: 2px;
+  }
+
+  .video-wrap video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    object-fit: contain;
+    background: var(--dark-section);
+  }
+
+  .video-caption {
+    font-family: var(--brand-secondary);
+    font-size: 13px;
+    color: var(--grey-light);
+    margin-top: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  /* =========================================
+     AUDIO SYSTEMS
+     ========================================= */
+  .systems-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 60px var(--margin) 40px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .systems-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .system-item {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 30px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--grey-rule);
+    align-items: start;
+    transition: transform 0.25s ease, background 0.25s ease;
+  }
+
+  .system-item:last-child {
+    border-bottom: none;
+  }
+
+  .system-item:hover {
+    transform: translateX(6px);
+  }
+
+  .system-item__title-wrap {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .system-item__title-wrap::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 0;
+    background: var(--accent);
+    transition: height 0.5s ease;
+  }
+
+  .reveal.visible .system-item__title-wrap::before {
+    height: 100%;
+  }
+
+  .system-item__title {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .system-item__desc {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--grey);
+  }
+
+  /* =========================================
+     CHALLENGES
+     ========================================= */
+  .challenges-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 60px var(--margin) 60px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .challenges-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .challenge-card {
+    border-left: 3px solid var(--accent);
+    padding: 28px 32px;
+    background: var(--accent-light);
+  }
+
+  .challenge-card__title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+
+  .challenge-card__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .challenge-card__text {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--grey);
+    margin-bottom: 20px;
+  }
+
+  .challenge-card__text:last-child {
+    margin-bottom: 0;
+  }
+
+  /* =========================================
+     LINKS & NEXT PROJECT
+     ========================================= */
+  .links-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 40px var(--margin) 60px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .links-layout {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .next-project-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border: 1px solid var(--black);
+    font-family: var(--brand-secondary);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: none;
+    transition: background 0.25s, color 0.25s, border-color 0.25s, gap 0.25s;
+  }
+
+  .next-project-btn:hover {
+    background: var(--black);
+    color: var(--cream);
+    border-color: var(--black);
+    gap: 16px;
+  }
+
+  .next-project-btn::after {
+    content: '\2192';
+    font-size: 0.85rem;
+    transition: transform 0.25s;
+  }
+
+  .next-project-btn:hover::after {
+    transform: translateX(4px);
+  }
+
+  /* =========================================
+     FOOTER
+     ========================================= */
+  .colophon {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 24px var(--margin);
+    border-top: 3px solid var(--black);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  /* =========================================
+     RESPONSIVE
+     ========================================= */
+  @media (max-width: 1000px) {
+    :root {
+      --margin: 40px;
+      --gutter: 40px;
+    }
+
+    .concept-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .concept-sidebar {
+      padding-left: 0;
+      border-left: none;
+      border-top: 1px solid var(--grey-rule);
+      padding-top: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .system-item {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  }
+
+  @media (max-width: 650px) {
+    :root {
+      --margin: 24px;
+      --gutter: 24px;
+    }
+
+    body {
+      font-size: 17px;
+    }
+
+    .project-hero__title {
+      font-size: clamp(40px, 12vw, 64px);
+    }
+
+    .project-hero__meta {
+      gap: 20px;
+    }
+
+    .concept-sidebar {
+      grid-template-columns: 1fr;
+    }
+
+    .drop-cap::first-letter {
+      font-size: 60px;
+    }
+
+    .links-layout {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+    .reveal-stagger > * { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProgress"></div>
+<a href="#concept" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Skip to main content</a>
+
+<!-- BACK NAV -->
+<nav class="back-nav" aria-label="Breadcrumb">
+  <a href="index.html">Back to Projects</a>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#9728;</button>
+</nav>
+
+<main>
+
+<!-- PROJECT HERO -->
+<header class="project-hero">
+  <h1 class="project-hero__title">Transientica: AudioLab</h1>
+  <p class="project-hero__subtitle">You beatbox into a mic. The game turns it into drums. 45 milliseconds, no MIDI controller, just your mouth.</p>
+
+  <div class="project-hero__meta">
+    <div class="meta-item">
+      <span class="meta-item__label">Role</span>
+      <span class="meta-item__value">Audio Programmer &amp; Designer</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Type</span>
+      <span class="meta-item__value">Research Project</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Duration</span>
+      <span class="meta-item__value">5 months</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Engine</span>
+      <span class="meta-item__value">Python + Unity</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Year</span>
+      <span class="meta-item__value">2025</span>
+    </div>
+  </div>
+
+  <div class="project-hero__techs">
+    <span class="tech-pill">Python</span>
+    <span class="tech-pill">SVM</span>
+    <span class="tech-pill">LibROSA</span>
+    <span class="tech-pill">OSC</span>
+    <span class="tech-pill">Unity</span>
+    <span class="tech-pill">scikit-learn</span>
+  </div>
+</header>
+
+<!-- THE PROJECT -->
+<section class="concept-section reveal" id="concept" aria-labelledby="concept-title">
+  <span class="section-label">The Project</span>
+  <h2 class="section-title" id="concept-title">The Concept</h2>
+  <div class="section-rule"></div>
+
+  <div class="concept-layout">
+    <div class="concept-body">
+      <p class="drop-cap">Dead simple idea: what if your voice was the controller? Beatbox a kick, snare, or hi-hat into your laptop mic, and a rhythm game responds like you're hitting real pads.</p>
+
+      <p>The first version was terrible. 180ms of lag. Try clapping on a beat that responds almost a fifth of a second late - it's unplayable. So I spent the rest of the project trying to get that number down.</p>
+
+      <p>Answer: 45ms. Fast enough that it feels instant. The system trains on your voice specifically - give it 30 examples of each sound and it learns how you beatbox. Different person, different mic - just retrain it and it adjusts. My kick sounds nothing like yours, and that's fine - the model adapts.</p>
+    </div>
+
+    <aside class="concept-sidebar reveal-stagger">
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Latency</span>
+        <span class="concept-sidebar__value">&lt;45ms (started at 180ms)</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Accuracy</span>
+        <span class="concept-sidebar__value">92% (up from 78%)</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Sounds Recognized</span>
+        <span class="concept-sidebar__value">Kick, Snare, Hi-Hat</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Training</span>
+        <span class="concept-sidebar__value">30 examples per sound, then play</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Classification Speed</span>
+        <span class="concept-sidebar__value">2ms (SVM vs 15ms neural net)</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Tested On</span>
+        <span class="concept-sidebar__value">2000+ samples</span>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- DEMO VIDEO -->
+<section class="video-section reveal" aria-label="Project demo video">
+  <div class="video-wrap">
+    <video
+      controls
+      preload="metadata"
+    >
+      <source src="old/public/assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+  <p class="video-caption">Live demo - beatboxing into the mic, game responding in real time</p>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="systems-section reveal" id="systems" aria-labelledby="systems-title">
+  <span class="section-label">Under the Hood</span>
+  <h2 class="section-title" id="systems-title">How It Works</h2>
+  <div class="section-rule"></div>
+
+  <div class="systems-grid">
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Hear the Sound, Classify It, Respond</h3>
+      </div>
+      <p class="system-item__desc">Mic audio hits a 512-sample FFT window (11ms of sound). Spectral centroid, zero-crossing rate, and envelope shape get extracted. SVM classifies the hit in 2ms. Result gets sent to Unity over UDP. Total time from mouth to game: under 45ms. A neural net would have taken 15ms just on inference - that's why I picked SVM.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Why Kicks and Snares Are Hard</h3>
+      </div>
+      <p class="system-item__desc">Both are sharp transients with broadband noise. To a basic classifier, they look almost identical. The difference is where the energy lives: kicks sit in the low end, snares are mostly noise spread across the spectrum. Spectral centroid is what finally let the system tell them apart. That single feature took accuracy from 78% to the low 90s.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Two Processes, One Game</h3>
+      </div>
+      <p class="system-item__desc">Python does the audio math. Unity runs the game. They talk over OSC on localhost. Seems like overkill, but it was worth it. I could tweak the classifier, retrain it, and test it without restarting Unity. And when the game crashed (often), the audio pipeline just kept running.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CHALLENGES -->
+<section class="challenges-section reveal" id="challenges" aria-labelledby="challenges-title">
+  <span class="section-label">Challenges</span>
+  <h2 class="section-title" id="challenges-title">What Went Wrong &amp; How I Fixed It</h2>
+  <div class="section-rule"></div>
+
+  <div class="challenges-grid">
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">180ms of Lag (Four Times Too Slow)</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">The first working prototype recognized sounds. It just did it 180ms late. Try tapping a rhythm when the response comes 180ms late. It feels completely off.</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">I cut latency at every step. Smaller FFT window. Circular buffer to kill I/O blocking. SVM instead of neural net (2ms inference vs 15ms). UDP instead of TCP. Each change saved 20-40ms. Final result: 45ms at 92% accuracy.</p>
+    </div>
+
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">The Classifier Thought Every Sound Was a Kick</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">Kicks and snares both hit hard and fast. To a naive classifier looking at amplitude and timing, they're basically the same sound. Accuracy was stuck at 78%.</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">Stopped looking at volume. Started looking at where the energy lives. Spectral centroid (low = kick, high = snare), zero-crossing rate, envelope shape. Also built separate models for solo hits vs rapid patterns. 78% became 92%.</p>
+    </div>
+
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">Audio Would Just... Stop</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">On slower machines, the ML inference would hog the CPU. The audio buffer would underrun. No error, no warning - just silence in the middle of playing.</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">Lock-free ringbuffer between threads. Audio capture runs on its own thread and never waits for ML. If classification is slow, audio keeps flowing and the next hit still gets captured. Zero dropouts after the fix.</p>
+    </div>
+  </div>
+</section>
+
+<!-- LINKS & NEXT PROJECT -->
+<nav class="links-section" aria-label="Project navigation">
+  <div class="links-layout">
+    <a class="next-project-btn" href="ai-audio-research.html">Next Project</a>
+  </div>
+</nav>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="colophon">
+  <span>Igor Szuniewicz &copy; 2026</span>
+  <span>Set in DM Sans, Georgia &amp; System UI</span>
+  <span>Built from scratch</span>
+</footer>
+
+<script>
+// Scroll progress bar
+const progress = document.getElementById('scrollProgress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+  progress.style.width = pct + '%';
+}, { passive: true });
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal, .reveal-stagger');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => observer.observe(el));
+
+// Theme toggle
+const themeToggle = document.getElementById('themeToggle');
+try { const saved = localStorage.getItem('theme'); if (saved) document.documentElement.setAttribute('data-theme', saved); } catch(e) {}
+function updateToggle() {
+  themeToggle.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '\u263D' : '\u2600';
+}
+updateToggle();
+themeToggle.addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('theme', next); } catch(e) {}
+  updateToggle();
+});
+</script>
+</body>
+</html>

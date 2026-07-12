@@ -1,0 +1,117 @@
+{
+  "back": "Powrót do projektów",
+  "seo": {
+    "title": "Badania Audio AI | Igor Szuniewicz",
+    "description": "Praca dyplomowa: Czy AI może generować efekty dźwiękowe w czasie rzeczywistym do gier?"
+  },
+  "header": {
+    "badge": "Praca licencjacka 2025",
+    "title": "Czy AI może generować dźwięki do gier w czasie rzeczywistym?",
+    "description": "W pracy licencjackiej próbowałem odpowiedzieć na jedno pytanie: czy AI potrafi generować efekty dźwiękowe wystarczająco szybko do gier? Zbudowałem prototyp w Unity, który gadał z modelami AI przez serwer w Pythonie. Krótka odpowiedź: jeszcze nie. Ale znalazłem obejście, które faktycznie działa.",
+    "read_paper": "Przeczytaj pracę",
+    "view_code": "Zobacz kod"
+  },
+  "setup": {
+    "title": "Co testowałem i dlaczego",
+    "intro": "Każdy strzał, krok i eksplozja w grze to nagrany wcześniej plik WAV. Setki takich plików na projekt. AI mogłoby generować je na bieżąco, więc każdy dźwięk byłby unikalny i dopasowany do sytuacji, bez gigabajtów plików wysyłanych z grą. Haczyk: latencja. Jeśli dźwięk przyjdzie choćby 100ms za późno, gracz to poczuje. To właśnie chciałem zmierzyć.",
+    "approach": "Zbudowałem prototyp. Unity wysyła żądania do serwera w Pythonie, który odpala model AI i streamuje audio z powrotem. Przetestowałem trzy modele: ElevenLabs (cloud API, najlepsza jakość, latencja skacze jak chce), MMAudio (model video-to-audio, który zhackowałem pod gry, działa lokalnie) i AudioGen (text-to-audio od Meta, najbardziej stabilny, ale wciąż za wolny).",
+    "architecture_title": "Jak to działa",
+    "arch_unity": "Unity",
+    "arch_unity_sub": "Silnik gry",
+    "arch_python": "Serwer Python",
+    "arch_python_sub": "WebSocket",
+    "arch_ai": "Model AI",
+    "arch_ai_sub": "Generowanie",
+    "arch_cache": "Cache",
+    "arch_cache_sub": "Przechowywanie"
+  },
+  "results": {
+    "title": "Zmierzona latencja",
+    "subtitle": "Czasy generowania dla każdego modelu vs. to, czego gry faktycznie potrzebują. Skala logarytmiczna, bo różnice są ogromne.",
+    "chart": {
+      "humanReaction": "Czas reakcji człowieka",
+      "acceptable": "Akceptowalne dla gier",
+      "gameFrame": "Klatka gry (60fps)",
+      "models": {
+        "elevenlabs": "ElevenLabs",
+        "mmaudio": "MMAudio",
+        "audiogen": "AudioGen"
+      },
+      "cached": "Z cachingiem",
+      "tooltip": {
+        "elevenlabs": "Cloud API. Najlepsza jakość, ale latencja skacze: od 1s do 12s tego samego dnia.",
+        "mmaudio": "Model video-to-audio zaadaptowany do gier. Działa lokalnie, 2-5s na dźwięk.",
+        "audiogen": "Text-to-audio od Meta. Najbardziej stabilny (~3s), ale to wciąż 3s za dużo.",
+        "cached": "Wygenerowane wcześniej dźwięki serwowane z pamięci. 21-55ms."
+      }
+    },
+    "summary_title": "Porównanie modeli",
+    "label_latency": "Latencja",
+    "label_quality": "Jakość",
+    "models": {
+      "elevenlabs": {
+        "latency": "1-12s",
+        "quality": "Świetna",
+        "note": "Chmura. Jakość zależy od obciążenia serwerów danego dnia."
+      },
+      "mmaudio": {
+        "latency": "2-5s",
+        "quality": "Dobra",
+        "note": "Działa lokalnie. Oryginalnie zrobiony pod ścieżki dźwiękowe filmów, nie gry."
+      },
+      "audiogen": {
+        "latency": "~3s",
+        "quality": "Przyzwoita",
+        "note": "Najbardziej stabilny z trójki. Wciąż 3 sekundy za wolno."
+      }
+    }
+  },
+  "solution": {
+    "title": "Cachowanie dźwięków z wyprzedzeniem",
+    "story": "Żaden model nie zbliżył się do real-time. Najszybszy miał ponad sekundę, jakieś 60x za wolno na strzał. Wcześniej dodałem prosty cache, żeby nie generować tego samego dźwięku dwa razy. Potem zerknąłem na czasy dostarczania w logach. 21-55ms. Wystarczająco szybko.",
+    "insight": "Przestałem próbować przyspieszać AI i zacząłem myśleć o tym, kiedy generować. Ekrany ładowania, spokojne momenty w grze, menu. Cachuj dźwięki. Gracz naciska spust, dostajesz dźwięk z cache natychmiast, a zamiennik generuje się w tle.",
+    "before_after_title": "Przed i po cachingu",
+    "without_cache": "Bez cache",
+    "with_cache": "Z cache",
+    "unacceptable": "Niegrywalne",
+    "acceptable": "Wydaje się natychmiastowe",
+    "flow_title": "Jak działa cache",
+    "steps": {
+      "loading": {
+        "label": "Ekran ładowania",
+        "description": "AI generuje dźwięki w tle, gdy gracz czeka"
+      },
+      "cache": {
+        "label": "Cache gotowy",
+        "description": "10 strzałów, 5 eksplozji, 8 kroków, wszystko czeka w pamięci"
+      },
+      "play": {
+        "label": "Gracz działa",
+        "description": "Dźwięk leci z cache. Poniżej 55ms."
+      },
+      "refill": {
+        "label": "Uzupełnianie w tle",
+        "description": "System po cichu generuje zamienniki na następny raz"
+      }
+    },
+    "usecases": "Działa najlepiej z przewidywalnymi dźwiękami: audio otoczenia, efekty w cutscenkach, broń z ograniczoną szybkostrzelnością. Pada przy krokach i innych bardzo częstych eventach, gdzie cache opróżnia się szybciej niż AI zdąży go napełnić."
+  },
+  "closing": {
+    "conclusion": "AI audio nie zastąpi tradycyjnego sound designu w grach. Jeszcze nie. Za wolne na real-time. Ale cachuj dźwięki z wyprzedzeniem i może dodać różnorodność i zmniejszyć rozmiary plików tam, gdzie ma to sens.",
+    "reflection": "Najciekawsze nie było to, który model wypadł najlepiej. Najciekawsze było uświadomienie sobie, że szybkość generowania nie ma znaczenia, jeśli trafisz z momentem. Nawet wolne AI działa, gdy nikt akurat nie słucha.",
+    "read_paper": "Przeczytaj pracę",
+    "view_code": "Zobacz kod",
+    "back_to_projects": "Powrót do projektów"
+  },
+  "footer": {
+    "status": "Praca licencjacka | 2025 | Igor Szuniewicz"
+  },
+  "session2": {
+    "title": "Lokalne AI (Porażka)",
+    "content": "Próbowałem odpalić MusicGen i AudioLDM2 na sprzęcie studenckim. Brak GPU. 4 do 10 sekund na dźwięk. Kompletnie nieużywalne do czegokolwiek wymagającego szybkiej reakcji. Czysto lokalna generacja to na takim sprzęcie ślepy zaułek."
+  },
+  "session4": {
+    "title": "Stress test podejścia hybrydowego",
+    "content": "Połączyłem proceduralne audio z cloud AI i obciążyłem to porządnie: 100 jednoczesnych requestów, wszystko obsłużone poniżej 200ms. Peak: 2253 generacji na sekundę. Ścieżka proceduralna: 5ms, cloud: 2-4s. Podejście hybrydowe wytrzymuje. Mogłoby wejść do produkcji."
+  }
+}

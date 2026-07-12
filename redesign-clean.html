@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Igor Szuniewicz — Game Audio & Technical Sound Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap">
+<style>
+/* ============================================================
+   QUIET — type does the talking
+   ============================================================ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #121110;
+  --ink: #eae6df;
+  --dim: #8f8a82;
+  --faint: #54514b;
+  --line: #262420;
+  --accent: #c4754d;
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Instrument Sans', system-ui, sans-serif;
+  --pad: clamp(24px, 6vw, 120px);
+}
+
+::selection { background: var(--accent); color: var(--bg); }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+a:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
+
+/* ============================================================
+   NAV — almost nothing
+   ============================================================ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px var(--pad);
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
+  mix-blend-mode: difference;
+}
+.nav__name { font-weight: 500; }
+.nav__links { display: flex; gap: 28px; }
+.nav__links a { color: var(--dim); transition: color 0.25s; }
+.nav__links a:hover { color: var(--ink); }
+@media (max-width: 640px) { .nav__links { gap: 18px; } .nav__links a:nth-child(n+4) { display: none; } }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px var(--pad) 80px;
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(44px, 7.2vw, 116px);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  max-width: 16ch;
+}
+.hero h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent);
+}
+.hero h1 .line {
+  display: block;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: rise 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.hero h1 .line:nth-child(2) { animation-delay: 0.12s; }
+.hero h1 .line:nth-child(3) { animation-delay: 0.24s; }
+
+@keyframes rise { to { opacity: 1; transform: none; } }
+
+.hero__foot {
+  margin-top: clamp(48px, 9vh, 110px);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: rise 1s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+}
+.hero__foot p {
+  font-size: 15px;
+  color: var(--dim);
+  max-width: 44ch;
+  line-height: 1.65;
+}
+.hero__foot .meta {
+  font-size: 13px;
+  color: var(--faint);
+  text-align: right;
+  line-height: 1.9;
+}
+.hero__foot .meta b { color: var(--dim); font-weight: 400; }
+
+/* ============================================================
+   SECTION CHROME
+   ============================================================ */
+section { padding: clamp(80px, 14vh, 160px) var(--pad) 0; }
+
+.kicker {
+  font-size: 12.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.kicker i { font-style: normal; color: var(--accent); }
+
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+.reveal.is-in { opacity: 1; transform: none; }
+
+/* ============================================================
+   ABOUT
+   ============================================================ */
+.about__body {
+  padding-top: clamp(36px, 6vh, 64px);
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
+  gap: clamp(40px, 6vw, 110px);
+}
+@media (max-width: 860px) { .about__body { grid-template-columns: 1fr; } }
+
+.about__text {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(22px, 2.5vw, 32px);
+  line-height: 1.5;
+  letter-spacing: 0.002em;
+}
+.about__text p + p { margin-top: 1em; }
+.about__text strong { font-weight: 500; color: var(--ink); }
+.about__text .quiet { font-size: 0.62em; font-family: var(--sans); color: var(--dim); line-height: 1.7; max-width: 56ch; }
+
+.about__facts { font-size: 14px; color: var(--dim); }
+.about__facts dl { display: grid; grid-template-columns: 1fr; gap: 0; }
+.about__facts div {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.about__facts div:first-child { padding-top: 0; }
+.about__facts dt { color: var(--faint); }
+.about__facts dd { text-align: right; color: var(--ink); }
+.about__facts .ok dd { color: var(--accent); }
+
+/* ============================================================
+   WORK — a list. that's it. but perfect.
+   ============================================================ */
+.work__list { padding-top: 12px; }
+
+.project {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(16px, 3vw, 40px);
+  padding: clamp(18px, 2.6vh, 26px) 0;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  transition: opacity 0.3s;
+}
+.work__list:hover .project:not(:hover) { opacity: 0.35; }
+
+.project__title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(26px, 3.4vw, 48px);
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  transition: font-style 0s;
+  white-space: nowrap;
+}
+.project:hover .project__title { font-style: italic; color: var(--accent); }
+
+.project__desc {
+  font-size: 14px;
+  color: var(--dim);
+  line-height: 1.55;
+  max-width: 48ch;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+@media (max-width: 900px) { .project__desc { display: none; } }
+
+.project__meta {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--faint);
+  white-space: nowrap;
+  text-align: right;
+  flex-shrink: 0;
+}
+.project__meta b { display: block; font-weight: 400; color: var(--dim); }
+
+/* floating thumbnail */
+.peek {
+  position: fixed;
+  z-index: 50;
+  width: 300px;
+  aspect-ratio: 16 / 10;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.peek.on { opacity: 1; }
+.peek img, .peek video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+@media (hover: none), (max-width: 900px) { .peek { display: none; } }
+
+/* ============================================================
+   CAPABILITIES
+   ============================================================ */
+.caps__grid {
+  padding-top: clamp(36px, 6vh, 64px);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(32px, 4vw, 80px);
+}
+@media (max-width: 860px) { .caps__grid { grid-template-columns: 1fr; gap: 40px; } }
+
+.caps__col h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: 21px;
+  margin-bottom: 18px;
+  color: var(--ink);
+}
+.caps__col ul { list-style: none; }
+.caps__col li {
+  font-size: 14.5px;
+  color: var(--dim);
+  padding: 7px 0;
+  transition: color 0.2s;
+}
+.caps__col li:hover { color: var(--ink); }
+
+.caps__tools {
+  margin-top: clamp(48px, 8vh, 80px);
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--faint);
+  line-height: 2.1;
+}
+.caps__tools b { color: var(--dim); font-weight: 400; }
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+.contact { padding-bottom: 0; }
+
+.contact__inner { padding-top: clamp(36px, 6vh, 72px); }
+
+.contact__headline {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(48px, 8.5vw, 140px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+}
+.contact__headline em { font-style: italic; color: var(--accent); font-weight: 400; }
+.contact__headline a { transition: opacity 0.25s; }
+.contact__headline a:hover { opacity: 0.7; }
+
+.contact__row {
+  margin-top: clamp(48px, 8vh, 90px);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding-bottom: 36px;
+}
+.contact__links { display: flex; gap: 26px; font-size: 14px; flex-wrap: wrap; }
+.contact__links a { color: var(--dim); transition: color 0.25s; }
+.contact__links a:hover { color: var(--accent); }
+.contact__note { font-size: 13px; color: var(--faint); }
+
+footer {
+  padding: 26px var(--pad) 32px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+  color: var(--faint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  html { scroll-behavior: auto; }
+  .hero h1 .line, .hero__foot { opacity: 1; transform: none; }
+  .reveal { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav__name" href="#">Igor Szuniewicz</a>
+  <div class="nav__links">
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#capabilities">Capabilities</a>
+    <a href="#contact">Contact</a>
+    <a href="https://igorszuniewicz.com/Igor_Szuniewicz_CV.pdf">CV</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <h1>
+    <span class="line">Sound that behaves</span>
+    <span class="line">like it belongs <em>in</em></span>
+    <span class="line">the world.</span>
+  </h1>
+  <div class="hero__foot">
+    <p>Igor Szuniewicz — game audio &amp; technical sound designer. Readable mixes, spatial cues, and the systems underneath them: Wwise, Unreal, Unity, C++.</p>
+    <div class="meta">
+      <b>Kortrijk, Belgium</b><br>
+      Currently at XR Labs<br>
+      Open to new opportunities
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="kicker reveal"><span>About</span><i>01</i></div>
+  <div class="about__body reveal">
+    <div class="about__text">
+      <p>I design and implement gameplay audio that stays readable under real constraints — voice limits, memory budgets, dense moment-to-moment mixes.</p>
+      <p class="quiet">My Game Sound Integration work at Digital Arts and Entertainment sits between production and implementation: DAWs, recording and mixing on one side; Wwise, FMOD, C++ and Blueprints on the other. At XR Labs I do technical sound design for VR/AR training simulations used in defence and public safety — if a threat is behind a wall, it has to sound filtered, distant, and correctly placed.</p>
+    </div>
+    <div class="about__facts">
+      <dl>
+        <div><dt>Education</dt><dd>Howest DAE — Sound Integration</dd></div>
+        <div><dt>Currently</dt><dd>XR Labs</dd></div>
+        <div><dt>Background</dt><dd>Classical piano, 12 years</dd></div>
+        <div><dt>Languages</dt><dd>English · Polish</dd></div>
+        <div><dt>Relocation</dt><dd>EU passport — anywhere</dd></div>
+        <div class="ok"><dt>Status</dt><dd>Open to opportunities</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="kicker reveal"><span>Selected work</span><i>02</i></div>
+  <div class="work__list" id="worklist"><!-- generated --></div>
+</section>
+
+<section id="capabilities">
+  <div class="kicker reveal"><span>Capabilities</span><i>03</i></div>
+  <div class="caps__grid reveal">
+    <div class="caps__col">
+      <h3>Game audio</h3>
+      <ul>
+        <li>Interactive music in Wwise</li>
+        <li>Middleware integration &amp; debugging</li>
+        <li>Adaptive audio</li>
+        <li>MetaSounds (UE5)</li>
+        <li>Spatial / 3D audio</li>
+        <li>Voice management &amp; optimization</li>
+        <li>Memory budget management</li>
+      </ul>
+    </div>
+    <div class="caps__col">
+      <h3>Production</h3>
+      <ul>
+        <li>Sound design</li>
+        <li>Music composition</li>
+        <li>Mixing &amp; mastering</li>
+        <li>Field recording &amp; foley</li>
+        <li>5.1 surround mixing</li>
+        <li>Horror sound design</li>
+      </ul>
+    </div>
+    <div class="caps__col">
+      <h3>Development</h3>
+      <ul>
+        <li>Real-time DSP</li>
+        <li>C++ (JUCE) audio plugins</li>
+        <li>Python audio tools</li>
+        <li>C# scripting (Unity)</li>
+        <li>Blueprint scripting (UE5)</li>
+        <li>Machine learning for audio</li>
+      </ul>
+    </div>
+  </div>
+  <p class="caps__tools reveal">
+    Daily drivers — <b>Wwise</b> · <b>Unreal Engine 5</b> · <b>Unity</b> · <b>Reaper</b> · <b>Pro Tools</b> · <b>Logic Pro</b> · <b>Python</b> · <b>C++ / JUCE</b> · <b>Max/MSP</b> · <b>iZotope RX</b> · <b>FabFilter</b>
+  </p>
+</section>
+
+<section class="contact" id="contact">
+  <div class="kicker reveal"><span>Contact</span><i>04</i></div>
+  <div class="contact__inner reveal">
+    <div class="contact__headline">
+      Let's make it<br>
+      <a href="mailto:igorszuniewiczwork@gmail.com"><em>sound right.</em></a>
+    </div>
+    <div class="contact__row">
+      <div class="contact__links">
+        <a href="mailto:igorszuniewiczwork@gmail.com">Email</a>
+        <a href="https://www.linkedin.com/in/igorszuniewicz" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://github.com/Szunias" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://igorszuniewicz.itch.io" target="_blank" rel="noopener noreferrer">itch.io</a>
+        <a href="https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6" target="_blank" rel="noopener noreferrer">Spotify</a>
+      </div>
+      <span class="contact__note">Usually replies within a day</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Igor Szuniewicz © 2026</span>
+  <span>Set in Fraunces &amp; Instrument Sans</span>
+</footer>
+
+<div class="peek" id="peek" aria-hidden="true"><img id="peekImg" alt=""><video id="peekVid" muted loop playsinline style="display:none"></video></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var P = [
+    { href: 'shadowframes.html', title: 'Shadow Frames', cat: 'Game audio — UE5 / Wwise', year: '2025—',
+      desc: 'Solo audio on a horror game with no HUD markers: anomaly cues, a 32-source spatial mix budget, a 49-page Sound Bible.',
+      vid: 'old/public/assets/images/projects-shadowframes/Menugif.mp4' },
+    { href: 'xrlabs.html', title: 'XR Labs', cat: 'Professional — Unity VR/AR', year: '2025—',
+      desc: 'Sole audio designer on VR/AR training simulations for defence and public-safety clients.',
+      img: 'old/public/assets/images/about-grid/xrlabssoldiers.png' },
+    { href: 'transientica.html', title: 'Transientica', cat: 'ML audio — Unity', year: '2025—',
+      desc: 'A rhythm game you play with your mouth. 45ms latency, 92% accuracy, pure C# KNN classifier.',
+      vid: 'transienticascreenshot.webm' },
+    { href: 'nottoday.html', title: 'Not Today, Darling!', cat: 'Game audio — MetaSounds', year: '2025',
+      desc: 'Only audio person on a 4-player racing game: procedural engines, readable 32-source split-screen mix.',
+      vid: 'old/public/assets/images/projects/NotTodayGIF.mp4' },
+    { href: 'audioq.html', title: 'AudioQ', cat: 'VST3 plugin — C++ / JUCE', year: '2024–25',
+      desc: 'Sampler plugin with granular, filters, compressor, bitcrusher, stutter, reverse — 18 automatable parameters. Open source.',
+      img: 'audioqscreenshot.png' },
+    { href: 'amorak.html', title: 'Amorak', cat: 'Sound design — binaural', year: '2024',
+      desc: 'Horror creature built from lion, elephant, tiger and hippo, mixed in binaural 3D.',
+      vid: 'old/public/assets/images/projects/AmorakGIF.mp4' },
+    { href: 'akantilado.html', title: 'Akantilado', cat: 'Animation — 5.1', year: '2024',
+      desc: '200+ custom foley samples, 5 ambience layers, stereo and 5.1 deliveries.',
+      vid: 'old/public/assets/images/projects/AkantiladoGIF.mp4' },
+    { href: 'pausedeserve.html', title: 'Pause & Deserve', cat: 'Horror game — UE5', year: '2024',
+      desc: 'Pausing freezes the enemy, then makes it permanently faster. Audio escalates with the threat.',
+      vid: 'old/public/assets/images/projects-pausedeserve/pausedeservegif.mp4' },
+    { href: 'richter.html', title: 'Richter', cat: 'Film sound', year: '2024',
+      desc: 'Earthquake film with zero commercial libraries — field recordings stretched into drones.' },
+    { href: 'ray.html', title: 'Ray', cat: 'Composition', year: '2024',
+      desc: 'Disco-funk score written from scratch in 8 days after the composer dropped out.',
+      vid: 'old/public/assets/images/projects/RayGIF.mp4' },
+    { href: 'sounddesign.html', title: 'Sound Design Reel', cat: 'Redesigns', year: '2024',
+      desc: 'God of War, Baldur’s Gate 3, weapons, sci-fi — rebuilt from recordings and synthesis.' },
+    { href: 'wwiseprojects.html', title: 'Wwise Projects', cat: 'Middleware', year: '2021–24',
+      desc: '256-voice prioritization, zone-based crossfades, 80% memory cut with Wwise Silence.',
+      img: 'old/public/wwiseprojectsinfo/images/Ellen.png' },
+    { href: 'wwisefixer.html', title: 'Wwise UE Fixer', cat: 'Tooling — Python', year: '2024–25',
+      desc: 'Cut a 20-minute manual Wwise/Unreal repair to a 10-second button press.' },
+    { href: 'unrealrebuilder.html', title: 'UE Rebuilder', cat: 'Tooling', year: '2024',
+      desc: 'One-click Unreal cleanup: archives sources, clears stale caches, regenerates project files.' }
+  ];
+
+  var list = document.getElementById('worklist');
+  var frag = document.createDocumentFragment();
+  P.forEach(function (p, i) {
+    var a = document.createElement('a');
+    a.className = 'project reveal';
+    a.href = 'https://igorszuniewicz.com/' + p.href;
+    a.dataset.idx = i;
+    a.innerHTML =
+      '<span class="project__title">' + p.title + '</span>' +
+      '<span class="project__desc">' + p.desc + '</span>' +
+      '<span class="project__meta"><b>' + p.cat + '</b>' + p.year + '</span>';
+    frag.appendChild(a);
+  });
+  list.appendChild(frag);
+
+  /* floating peek thumbnail */
+  var peek = document.getElementById('peek');
+  var peekImg = document.getElementById('peekImg');
+  var peekVid = document.getElementById('peekVid');
+  var px = 0, py = 0, tx = 0, ty = 0, active = false;
+
+  list.addEventListener('mousemove', function (e) {
+    tx = e.clientX + 28;
+    ty = e.clientY - 90;
+  });
+  list.addEventListener('mouseover', function (e) {
+    var row = e.target.closest('.project');
+    if (!row) return;
+    var p = P[+row.dataset.idx];
+    if (p.vid) {
+      peekImg.style.display = 'none';
+      peekVid.style.display = 'block';
+      if (peekVid.getAttribute('src') !== p.vid) peekVid.src = p.vid;
+      peekVid.play().catch(function () {});
+    } else if (p.img) {
+      peekVid.pause();
+      peekVid.style.display = 'none';
+      peekImg.style.display = 'block';
+      peekImg.src = p.img;
+    } else {
+      peek.classList.remove('on');
+      active = false;
+      return;
+    }
+    peek.classList.add('on');
+    active = true;
+  });
+  list.addEventListener('mouseleave', function () {
+    peek.classList.remove('on');
+    peekVid.pause();
+    active = false;
+  });
+
+  function loop() {
+    px += (tx - px) * 0.12;
+    py += (ty - py) * 0.12;
+    if (active || Math.abs(tx - px) > 0.5) {
+      peek.style.transform = 'translate(' + px + 'px,' + py + 'px)' + (peek.classList.contains('on') ? '' : ' scale(0.96)');
+    }
+    requestAnimationFrame(loop);
+  }
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(loop);
+
+  /* reveal on scroll */
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+})();
+</script>
+
+</body>
+</html>

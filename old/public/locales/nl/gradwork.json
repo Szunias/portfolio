@@ -1,0 +1,107 @@
+{
+  "back": "Terug naar projecten",
+  "seo": {
+    "title": "AI Audio Onderzoek | Igor Szuniewicz",
+    "description": "Afstudeerscriptie: Kan AI real-time geluidseffecten genereren voor games?"
+  },
+  "header": {
+    "badge": "Bachelorscriptie 2025",
+    "title": "Kan AI game-audio in real-time genereren?",
+    "description": "Voor mijn bachelorscriptie probeerde ik uit te zoeken of AI geluidseffecten snel genoeg kan genereren voor games. Ik bouwde een Unity-prototype dat met AI-modellen praat via een Python-server. Spoiler: het is nog niet klaar, maar ik vond een workaround.",
+    "read_paper": "Lees paper",
+    "view_code": "Bekijk code"
+  },
+  "setup": {
+    "title": "Wat ik testte en waarom",
+    "intro": "Games bevatten honderden vooraf opgenomen geluidsbestanden. Elk schot, elke voetstap, elke explosie is een WAV-bestand dat iemand in een studio opnam. AI zou deze on-the-fly kunnen genereren. Elk geluid zou uniek zijn, aangepast aan de situatie, zonder gigabytes aan bestanden. Het probleem: latentie. Als een geluid zelfs maar 100ms te laat komt, merken spelers het.",
+    "approach": "Ik bouwde een prototype. Unity stuurt aanvragen naar een Python-server, die een AI-model aanroept en de audio terugstreamt. Ik testte drie modellen: ElevenLabs (cloud API, beste kwaliteit maar de latentie springt), MMAudio (video-naar-audio model dat ik aanpaste voor games, draait lokaal), en AudioGen (Meta's tekst-naar-audio, meest consistent maar nog steeds traag).",
+    "architecture_title": "Hoe het werkt"
+  },
+  "results": {
+    "title": "Gemeten latentie",
+    "subtitle": "Generatietijden per model, vergeleken met wat games daadwerkelijk nodig hebben. Logaritmische schaal, want de verschillen zijn zo groot.",
+    "chart": {
+      "humanReaction": "Menselijke reactietijd",
+      "acceptable": "Acceptabel voor games",
+      "gameFrame": "Game frame (60fps)",
+      "models": {
+        "elevenlabs": "ElevenLabs",
+        "mmaudio": "MMAudio",
+        "audiogen": "AudioGen"
+      },
+      "cached": "Met caching",
+      "tooltip": {
+        "elevenlabs": "Cloud API. Beste kwaliteit, maar latentie varieert enorm, van 1s tot 12s op dezelfde dag.",
+        "mmaudio": "Video-naar-audio model aangepast voor games. Draait lokaal, 2-5s per geluid.",
+        "audiogen": "Meta's tekst-naar-audio. Meest consistent (~3s), maar nog steeds te traag voor real-time.",
+        "cached": "Vooraf gegenereerde geluiden uit geheugen. Levertijd 21-55ms."
+      }
+    },
+    "summary_title": "Modelvergelijking",
+    "models": {
+      "elevenlabs": {
+        "latency": "1-12s",
+        "quality": "Uitstekend",
+        "note": "Cloud-gebaseerd, kwaliteit hangt af van serverbelasting"
+      },
+      "mmaudio": {
+        "latency": "2-5s",
+        "quality": "Goed",
+        "note": "Lokaal, oorspronkelijk ontworpen voor videosoundtracks"
+      },
+      "audiogen": {
+        "latency": "~3s",
+        "quality": "Redelijk",
+        "note": "Meest consistent, maar 3s is nog steeds 3s te traag"
+      }
+    }
+  },
+  "solution": {
+    "title": "Geluiden van tevoren cachen",
+    "story": "Geen van de modellen kwam in de buurt van real-time. De snelste deed er nog meer dan een seconde over, ongeveer 60x te traag voor een schot. Ik had eerder een simpele cache toegevoegd om te voorkomen dat hetzelfde geluid twee keer werd gegenereerd. Toen zag ik de tijden in de logs: 21-55ms. Dat is snel genoeg.",
+    "insight": "Ik stopte met proberen AI sneller te maken en begon na te denken over timing. Genereer geluiden tijdens laadschermen of rustige momenten. Cache ze. Als een speler er een triggert, serveer het direct en queue een vervanging op de achtergrond.",
+    "before_after_title": "Voor & na caching",
+    "without_cache": "Zonder cache",
+    "with_cache": "Met cache",
+    "unacceptable": "Onspeelbaar",
+    "acceptable": "Voelt direct",
+    "flow_title": "Hoe de cache werkt",
+    "steps": {
+      "loading": {
+        "label": "Laadscherm",
+        "description": "AI genereert geluiden op de achtergrond terwijl de speler wacht"
+      },
+      "cache": {
+        "label": "Cache klaar",
+        "description": "10 schoten, 5 explosies, 8 voetstappen, allemaal vooraf gegenereerd"
+      },
+      "play": {
+        "label": "Speler handelt",
+        "description": "Geluid speelt af vanuit cache in minder dan 55ms"
+      },
+      "refill": {
+        "label": "Achtergrond-aanvulling",
+        "description": "Systeem genereert vervangende geluiden voor de volgende keer"
+      }
+    },
+    "usecases": "Dit werkt het best voor voorspelbare geluiden zoals omgevingsaudio, cutscene-effecten en schoten met beperkte vuursnelheid. Het faalt bij zeer frequente events zoals voetstappen, waar de cache sneller leegloopt dan AI kan aanvullen."
+  },
+  "closing": {
+    "conclusion": "AI-audio is niet klaar om traditioneel game-geluidsontwerp te vervangen. Het is te traag voor real-time gebruik. Maar als je geluiden van tevoren cachet, kan het variatie toevoegen en bestandsgroottes verkleinen voor bepaalde toepassingen.",
+    "reflection": "Het interessantste was niet welk model het beste werkte. Het was ontdekken dat snelheid niet uitmaakt als je op het juiste moment genereert. Zelfs trage AI werkt als je het aanroept wanneer niemand luistert.",
+    "read_paper": "Lees paper",
+    "view_code": "Bekijk code",
+    "back_to_projects": "Terug naar projecten"
+  },
+  "footer": {
+    "status": "Bachelorscriptie | 2025 | Igor Szuniewicz"
+  },
+  "session2": {
+    "title": "Lokale AI testen (Mislukt)",
+    "content": "Ik probeerde MusicGen en AudioLDM2 lokaal te draaien op studentenhardware. Geen GPU. 4 tot 10 seconden per geluid. Compleet onbruikbaar voor alles dat snelle feedback nodig heeft. Puur lokale generatie is een doodlopende weg op dit soort hardware."
+  },
+  "session4": {
+    "title": "Stresstest van het hybride systeem",
+    "content": "Ik combineerde procedurele audio met cloud AI en testte het flink: 100 gelijktijdige aanvragen, allemaal afgehandeld in minder dan 200ms. Piek: 2253 generaties per seconde. Het procedurele pad draait op 5ms, cloud op 2-4 seconden. De hybride aanpak houdt stand. Het zou in productie kunnen."
+  }
+}

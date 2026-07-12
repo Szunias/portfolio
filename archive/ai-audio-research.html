@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Audio Research - Igor Szuniewicz</title>
+<meta name="description" content="Can AI generate game sounds in real time? Research testing three AI models for on-the-fly audio generation. Latency benchmarks, caching strategies, and practical results.">
+<meta name="author" content="Igor Szuniewicz">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://igorszuniewicz.com/ai-audio-research.html">
+<meta property="og:title" content="AI Audio Research - Igor Szuniewicz">
+<meta property="og:description" content="Can AI generate game sounds in real time? Research testing three AI models for on-the-fly audio generation. Latency benchmarks, caching strategies, and practical results.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://igorszuniewicz.com/ai-audio-research.html">
+<meta property="og:site_name" content="Igor Szuniewicz">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Audio Research - Igor Szuniewicz">
+<meta name="twitter:description" content="Can AI generate game sounds in real time? Research testing three AI models for on-the-fly audio generation. Latency benchmarks, caching strategies, and practical results.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --cream: #1a1a1a;
+    --white: #222;
+    --black: #f0ece6;
+    --accent: #c0542e;
+    --accent-light: #2a1f1a;
+    --grey: #b0b0b0;
+    --grey-light: #999;
+    --grey-rule: #333;
+    --dark-section: #111;
+    --serif: Georgia, 'Times New Roman', Times, serif;
+    --sans: system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --brand-secondary: 'DM Sans', sans-serif;
+    --page-max: 1280px;
+    --gutter: 60px;
+    --margin: 80px;
+    --red: #c43c3c;
+    --green: #3a8a4a;
+    --amber: #b8860b;
+  }
+
+  [data-theme="light"] {
+    --cream: #faf8f5;
+    --white: #ffffff;
+    --black: #1a1a1a;
+    --accent-light: #f3ebe6;
+    --grey: #5e5e5e;
+    --grey-light: #717171;
+    --grey-rule: #d8d4cf;
+    --dark-section: #1c1c26;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--white);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--black);
+    line-height: 1.75;
+    font-size: 19px;
+    overflow-x: hidden;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  a:hover {
+    color: var(--black);
+    border-color: var(--black);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* =========================================
+     SCROLL PROGRESS BAR
+     ========================================= */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent);
+    width: 0%;
+    z-index: 1000;
+    transition: none;
+  }
+
+  /* =========================================
+     SCROLL REVEAL
+     ========================================= */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .reveal-stagger.visible > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0s; }
+  .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.1s; }
+  .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.15s; }
+  .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.2s; }
+  .reveal-stagger.visible > *:nth-child(5) { transition-delay: 0.25s; }
+  .reveal-stagger.visible > *:nth-child(6) { transition-delay: 0.3s; }
+
+  /* =========================================
+     BACK NAV
+     ========================================= */
+  .back-nav {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 28px var(--margin) 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--grey-rule);
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    color: var(--black);
+    font-size: 14px;
+    line-height: 1;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .back-nav a {
+    font-family: var(--brand-secondary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    border: none;
+    transition: color 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+
+  .back-nav a:hover {
+    color: var(--accent);
+    transform: translateX(-4px);
+  }
+
+  .back-nav a::before {
+    content: '\2190\00a0\00a0';
+  }
+
+  /* =========================================
+     PROJECT HERO
+     ========================================= */
+  .project-hero {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 48px var(--margin) 0;
+  }
+
+  .project-hero__title {
+    font-family: var(--serif);
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: hero-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+  }
+
+  .project-hero__subtitle {
+    font-family: var(--serif);
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--grey);
+    line-height: 1.4;
+    max-width: 46ch;
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: hero-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
+  }
+
+  .project-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    padding: 20px 0;
+    border-top: 1px solid var(--grey-rule);
+    border-bottom: 1px solid var(--grey-rule);
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: hero-in 0.6s ease 0.55s forwards;
+  }
+
+  .project-hero__techs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 20px 0 0;
+    opacity: 0;
+    animation: hero-in 0.6s ease 0.7s forwards;
+  }
+
+  @keyframes hero-in {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-item__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  .meta-item__value {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .tech-pill {
+    font-family: var(--brand-secondary);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    border: 1px solid var(--grey-rule);
+    padding: 6px 12px 5px;
+    transition: border-color 0.25s, color 0.25s, background 0.25s;
+    cursor: default;
+  }
+
+  .tech-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  /* =========================================
+     SECTION HEADERS
+     ========================================= */
+  .section-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .section-rule {
+    width: 60px;
+    height: 2px;
+    background: var(--accent);
+    margin-bottom: 40px;
+    transition: width 0.6s ease;
+  }
+
+  .reveal.visible .section-rule {
+    width: 60px;
+  }
+
+  .reveal .section-rule {
+    width: 0;
+  }
+
+  /* =========================================
+     CONCEPT
+     ========================================= */
+  .concept-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 64px var(--margin) 40px;
+  }
+
+  .concept-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: var(--gutter);
+    margin-top: 10px;
+  }
+
+  .concept-body {
+    font-size: 19px;
+    line-height: 1.8;
+  }
+
+  .concept-body p + p {
+    margin-top: 18px;
+  }
+
+  .concept-body strong {
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .drop-cap::first-letter {
+    font-family: var(--serif);
+    float: left;
+    font-size: 82px;
+    line-height: 0.72;
+    padding-right: 12px;
+    padding-top: 8px;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  .concept-sidebar {
+    padding-left: 30px;
+    border-left: 1px solid var(--grey-rule);
+    align-self: start;
+  }
+
+  .concept-sidebar__fact {
+    margin-bottom: 24px;
+  }
+
+  .concept-sidebar__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .concept-sidebar__value {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* =========================================
+     ARCHITECTURE FLOW
+     ========================================= */
+  .architecture-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 20px var(--margin) 60px;
+  }
+
+  .arch-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .arch-node {
+    flex: 1;
+    min-width: 140px;
+    max-width: 220px;
+    padding: 28px 24px;
+    text-align: center;
+    border: 1px solid var(--grey-rule);
+    background: var(--white);
+    transition: border-color 0.25s, transform 0.25s;
+  }
+
+  .arch-node:first-child {
+    border-left: 3px solid var(--accent);
+  }
+
+  .arch-node:last-child {
+    border-right: 3px solid var(--accent);
+  }
+
+  .arch-node:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+
+  .arch-node__title {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+
+  .arch-node__sub {
+    font-family: var(--brand-secondary);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  .arch-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    font-size: 20px;
+    color: var(--grey-light);
+  }
+
+  /* =========================================
+     VIDEO SECTION
+     ========================================= */
+  .video-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 20px var(--margin) 60px;
+  }
+
+  .video-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .video-item {
+    background: var(--dark-section);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .video-item video {
+    width: 100%;
+    display: block;
+  }
+
+  .video-caption {
+    font-family: var(--brand-secondary);
+    font-size: 13px;
+    color: var(--grey-light);
+    margin-top: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  /* =========================================
+     MODEL COMPARISON (SYSTEMS STYLE)
+     ========================================= */
+  .systems-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 60px var(--margin) 40px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .systems-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .system-item {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 30px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--grey-rule);
+    align-items: start;
+    transition: transform 0.25s ease;
+  }
+
+  .system-item:last-child {
+    border-bottom: none;
+  }
+
+  .system-item:hover {
+    transform: translateX(6px);
+  }
+
+  .system-item__title-wrap {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .system-item__title-wrap::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 0;
+    background: var(--accent);
+    transition: height 0.5s ease;
+  }
+
+  .reveal.visible .system-item__title-wrap::before {
+    height: 100%;
+  }
+
+  .system-item__title {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .system-item__latency {
+    font-family: var(--brand-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--red);
+    margin-top: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  .system-item__latency--fast {
+    color: var(--green);
+  }
+
+  .system-item__latency--amber {
+    color: var(--amber);
+  }
+
+  .system-item__quality {
+    font-family: var(--brand-secondary);
+    font-size: 11px;
+    color: var(--grey-light);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .system-item__desc {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--grey);
+  }
+
+  /* =========================================
+     CHALLENGES
+     ========================================= */
+  .challenges-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 60px var(--margin) 60px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .challenges-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .challenge-card {
+    border-left: 3px solid var(--accent);
+    padding: 28px 32px;
+    background: var(--accent-light);
+  }
+
+  .challenge-card__title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+
+  .challenge-card__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .challenge-card__text {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--grey);
+    margin-bottom: 20px;
+  }
+
+  .challenge-card__text:last-child {
+    margin-bottom: 0;
+  }
+
+  /* =========================================
+     CACHE FLOW STEPS
+     ========================================= */
+  .flow-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--margin) 60px;
+  }
+
+  .flow-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 10px;
+  }
+
+  .flow-step {
+    padding: 24px 20px;
+    border: 1px solid var(--grey-rule);
+    background: var(--white);
+    position: relative;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+
+  .flow-step:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+
+  .flow-step__number {
+    font-family: var(--brand-secondary);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--grey-light);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .flow-step__title {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+
+  .flow-step__desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--grey);
+  }
+
+
+  /* =========================================
+     CALLOUT
+     ========================================= */
+  .callout-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--margin) 60px;
+  }
+
+  .callout-card {
+    background: var(--accent);
+    color: var(--white);
+    padding: 40px 48px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .callout-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(192, 84, 46, 0.25);
+  }
+
+  .callout-card__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 8px;
+  }
+
+  .callout-card__title {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 400;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .callout-card__desc {
+    font-size: 15px;
+    line-height: 1.7;
+    opacity: 0.9;
+    max-width: 50ch;
+  }
+
+  .callout-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border: 1px solid rgba(255,255,255,0.4);
+    font-family: var(--brand-secondary);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white);
+    background: none;
+    transition: border-color 0.2s, background 0.2s;
+    white-space: nowrap;
+  }
+
+  .callout-card__link:hover {
+    border-color: var(--white);
+    color: var(--white);
+    background: rgba(255,255,255,0.1);
+  }
+
+  .callout-card__link::after {
+    content: '\2197';
+    font-size: 0.85rem;
+  }
+
+  /* =========================================
+     CLOSING
+     ========================================= */
+  .closing-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 60px var(--margin) 40px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .closing-body {
+    font-size: 19px;
+    line-height: 1.8;
+    max-width: 720px;
+  }
+
+  .closing-body p + p {
+    margin-top: 18px;
+  }
+
+  .closing-pullquote {
+    font-family: var(--serif);
+    font-size: clamp(22px, 3vw, 30px);
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--accent);
+    border-left: 3px solid var(--accent);
+    padding-left: 24px;
+    margin: 40px 0;
+    max-width: 600px;
+  }
+
+  /* =========================================
+     LINKS & NEXT PROJECT
+     ========================================= */
+  .links-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 40px var(--margin) 60px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .links-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .links-list {
+    list-style: none;
+    display: flex;
+    gap: 28px;
+    font-size: 15px;
+  }
+
+  .next-project-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border: 1px solid var(--black);
+    font-family: var(--brand-secondary);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: none;
+    transition: background 0.25s, color 0.25s, border-color 0.25s, gap 0.25s;
+  }
+
+  .next-project-btn:hover {
+    background: var(--black);
+    color: var(--cream);
+    border-color: var(--black);
+    gap: 16px;
+  }
+
+  .next-project-btn::after {
+    content: '\2192';
+    font-size: 0.85rem;
+    transition: transform 0.25s;
+  }
+
+  .next-project-btn:hover::after {
+    transform: translateX(4px);
+  }
+
+  /* =========================================
+     FOOTER
+     ========================================= */
+  .colophon {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 24px var(--margin);
+    border-top: 3px solid var(--black);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  /* =========================================
+     RESPONSIVE
+     ========================================= */
+  @media (max-width: 1000px) {
+    :root {
+      --margin: 40px;
+      --gutter: 40px;
+    }
+
+    .concept-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .concept-sidebar {
+      padding-left: 0;
+      border-left: none;
+      border-top: 1px solid var(--grey-rule);
+      padding-top: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .system-item {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .callout-card {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .flow-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .video-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .challenges-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 650px) {
+    :root {
+      --margin: 24px;
+      --gutter: 24px;
+    }
+
+    body {
+      font-size: 17px;
+    }
+
+    .project-hero__title {
+      font-size: clamp(40px, 12vw, 64px);
+    }
+
+    .project-hero__meta {
+      gap: 20px;
+    }
+
+    .flow-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .arch-flow {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .arch-arrow {
+      transform: rotate(90deg);
+      padding: 4px 0;
+    }
+
+    .arch-node {
+      max-width: 100%;
+      width: 100%;
+    }
+
+    .concept-sidebar {
+      grid-template-columns: 1fr;
+    }
+
+    .drop-cap::first-letter {
+      font-size: 60px;
+    }
+
+    .links-layout {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .links-list {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+    .reveal-stagger > * { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProgress"></div>
+<a href="#question" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Skip to main content</a>
+
+<!-- BACK NAV -->
+<nav class="back-nav" aria-label="Breadcrumb">
+  <a href="index.html">Back to Projects</a>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#9728;</button>
+</nav>
+
+<main>
+
+<!-- PROJECT HERO -->
+<header class="project-hero">
+  <h1 class="project-hero__title">AI Audio Research</h1>
+  <p class="project-hero__subtitle">Every game sound is a WAV file somebody recorded. What if AI made them on the fly instead? I built a prototype. Every model was too slow. Then caching changed the question.</p>
+
+  <div class="project-hero__meta">
+    <div class="meta-item">
+      <span class="meta-item__label">Role</span>
+      <span class="meta-item__value">Solo Researcher</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Type</span>
+      <span class="meta-item__value">Bachelor Thesis</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Year</span>
+      <span class="meta-item__value">2025 - 2026</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Institution</span>
+      <span class="meta-item__value">Howest DAE</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Supervisor</span>
+      <span class="meta-item__value">De Meulemeester Roel</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Coach</span>
+      <span class="meta-item__value">Van der Kelen Cedric</span>
+    </div>
+  </div>
+
+  <div class="project-hero__techs">
+    <span class="tech-pill">Unreal Engine 5</span>
+    <span class="tech-pill">C++</span>
+    <span class="tech-pill">Python</span>
+    <span class="tech-pill">PyTorch</span>
+    <span class="tech-pill">WebSocket</span>
+    <span class="tech-pill">AudioGen</span>
+    <span class="tech-pill">MMAudio</span>
+    <span class="tech-pill">ElevenLabs API</span>
+    <span class="tech-pill">CUDA</span>
+  </div>
+</header>
+
+<!-- THE RESEARCH -->
+<section class="concept-section reveal" id="question" aria-labelledby="question-title">
+  <span class="section-label">The Research</span>
+  <h2 class="section-title" id="question-title">What I Tested and Why</h2>
+  <div class="section-rule"></div>
+
+  <div class="concept-layout">
+    <div class="concept-body">
+      <p class="drop-cap">Here's the thing about game audio: every gunshot, footstep, and explosion is a WAV file somebody recorded. A big game ships with thousands of them. Gigabytes of "sword hits metal." What if AI could generate these on the fly? Every hit would sound different. No more shipping audio banks the size of a movie. That's the dream. The problem is timing. Games run at 60fps - 16.7ms per frame. If a gunshot arrives 100ms after you pull the trigger, players feel it. I wanted to measure exactly how far off we are.</p>
+
+      <p><strong>Unreal Engine 5</strong> talks to a <strong>Python backend</strong> over WebSocket. Python loads the AI models, juggles VRAM on an 8GB GPU, and sends back raw PCM audio. I tested five approaches: <strong>procedural DSP</strong> (just math, instant but sounds like a ringtone), <strong>AudioGen</strong> (Meta's text-to-audio), <strong>MMAudio</strong> in two sizes (a video-to-audio model I hacked to accept text prompts), and <strong>ElevenLabs</strong> (cloud API, sounds great, latency is a lottery). I also tried TangoFlux - it wouldn't even start. Missing CUDA kernels for my RTX 5070's Blackwell chip. Wasted two days on that.</p>
+
+      <p>24 prompts. 5 sound categories - footsteps, impacts, UI clicks, ambience, music. Every prompt tested with all 5 methods, repeated 5 times. 600 generations total. Then 500 stress-test attempts per method to see how often things just break.</p>
+    </div>
+
+    <aside class="concept-sidebar reveal-stagger">
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Research Question</span>
+        <span class="concept-sidebar__value">Can AI make game sounds fast enough that nobody notices they weren't pre-recorded?</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Models Tested</span>
+        <span class="concept-sidebar__value">AudioGen, MMAudio Large, MMAudio Small, ElevenLabs, Procedural DSP</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Failed Model</span>
+        <span class="concept-sidebar__value">TangoFlux (CUDA sm_120 incompatibility)</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Latency Target</span>
+        <span class="concept-sidebar__value">100 - 150ms (interactive SFX budget)</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Test Prompts</span>
+        <span class="concept-sidebar__value">24 prompts, 5 categories, 600 generations</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Stress Tests</span>
+        <span class="concept-sidebar__value">500 attempts per method (2,500 total)</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Hardware</span>
+        <span class="concept-sidebar__value">RTX 5070 Laptop (8GB VRAM), Ryzen 9 7940HS, 64GB RAM</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Deliverable</span>
+        <span class="concept-sidebar__value">68-page thesis + UE5 prototype + Python backend</span>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="architecture-section reveal" aria-label="System architecture">
+  <div class="arch-flow reveal-stagger">
+    <div class="arch-node">
+      <div class="arch-node__title">Unreal Engine 5</div>
+      <div class="arch-node__sub">C++ Client</div>
+    </div>
+    <div class="arch-arrow">&rarr;</div>
+    <div class="arch-node">
+      <div class="arch-node__title">Python Backend</div>
+      <div class="arch-node__sub">WebSocket + VRAM Manager</div>
+    </div>
+    <div class="arch-arrow">&rarr;</div>
+    <div class="arch-node">
+      <div class="arch-node__title">AI Models</div>
+      <div class="arch-node__sub">Local GPU + Cloud API</div>
+    </div>
+    <div class="arch-arrow">&rarr;</div>
+    <div class="arch-node">
+      <div class="arch-node__title">PCM Cache</div>
+      <div class="arch-node__sub">Memory + Disk (500MB)</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO VIDEOS -->
+<section class="video-section reveal" aria-label="Demo videos">
+  <span class="section-label">Demos</span>
+  <h2 class="section-title">Prototype in Action</h2>
+  <div class="section-rule"></div>
+
+  <div class="video-grid">
+    <div>
+      <div class="video-item">
+        <video controls preload="metadata">
+          <source src="UnrealEngineDemo.mp4" type="video/mp4">
+          Your browser does not support the video element.
+        </video>
+      </div>
+      <p class="video-caption">Walking around in UE5. Every footstep and ambient sound is AI-generated, served from cache.</p>
+    </div>
+    <div>
+      <div class="video-item">
+        <video controls preload="metadata">
+          <source src="PythonPrototypeDemo.mp4" type="video/mp4">
+          Your browser does not support the video element.
+        </video>
+      </div>
+      <p class="video-caption">The Python backend. Model loading, VRAM juggling, cache hits and misses in real time.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MODEL RESULTS -->
+<section class="systems-section reveal" id="results" aria-labelledby="results-title">
+  <span class="section-label">Results</span>
+  <h2 class="section-title" id="results-title">Every Model Failed</h2>
+  <div class="section-rule"></div>
+
+  <div class="systems-grid">
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Procedural DSP</h3>
+        <div class="system-item__latency system-item__latency--fast">15 - 25ms end-to-end</div>
+        <div class="system-item__quality">Quality: 2.4/5 &middot; 0% failure rate</div>
+      </div>
+      <p class="system-item__desc">No GPU, no network, just math. The only method that actually hits the latency target. Sounds like a 2005 Flash game, but it never fails and never lags. That reliability is why it's the fallback - when AI models crash or get busy, procedural DSP keeps the game from going silent.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">AudioGen</h3>
+        <div class="system-item__latency">2,100 - 2,800ms end-to-end</div>
+        <div class="system-item__quality">Quality: 3.6/5 &middot; 2.4GB VRAM &middot; 9.2% failure rate</div>
+      </div>
+      <p class="system-item__desc">Meta's text-to-audio model. Most reliable of the local models - generation times don't jump around much. Cold start adds another 1-2 seconds. The output is "reliable but plain" - fine for wind, rain, ambient stuff. Not great for anything with sharp transients. Good enough for prototyping, not good enough to ship.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">MMAudio Large</h3>
+        <div class="system-item__latency">2,600 - 3,400ms end-to-end</div>
+        <div class="system-item__quality">Quality: 3.9/5 &middot; 3.1GB VRAM &middot; 13.8% failure rate</div>
+      </div>
+      <p class="system-item__desc">Best sounding of everything I ran locally. Good textures, less synthetic than AudioGen. But it eats 3.1GB of VRAM - nothing else fits alongside it. Every model swap costs 2-4 seconds. And the duration control is broken: ask for 1 second, sometimes get 3. Worth the hassle for impacts and cinematic moments where quality matters more than speed.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">MMAudio Small</h3>
+        <div class="system-item__latency">1,400 - 1,900ms end-to-end</div>
+        <div class="system-item__quality">Quality: 3.5/5 &middot; 1.8GB VRAM &middot; 7.2% failure rate</div>
+      </div>
+      <p class="system-item__desc">The sweet spot. Faster than Large, still sounds decent. At 1.8GB it actually shares VRAM with AudioGen - no swapping. The real trick: it's the only model that generates faster than playback for 10-second clips (RTF &lt; 1.0). That means it can stream ambient audio in real time. If I had to ship a game with one model, this is the one.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">ElevenLabs Cloud</h3>
+        <div class="system-item__latency">1,800 - 3,500ms end-to-end</div>
+        <div class="system-item__quality">Quality: 4.3/5 &middot; 0GB VRAM &middot; 4.8% failure rate</div>
+      </div>
+      <p class="system-item__desc">Sounds the best by a clear margin. Sharp transients, clean output - the only model where the result sometimes sounds like a real recording. But the latency is a coin flip: 1.8 seconds on a good day, 3.5 on a bad one. No GPU needed, but you need internet. Best for stuff you can pre-generate overnight: cutscene effects, signature weapon sounds, trailer audio.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- THEN I LOOKED AT THE CACHE LOGS -->
+<section class="closing-section reveal" aria-labelledby="cache-insight-title">
+  <span class="section-label">The Turning Point</span>
+  <h2 class="section-title" id="cache-insight-title">Then I Looked at the Cache Logs</h2>
+  <div class="section-rule"></div>
+
+  <div class="closing-body">
+    <p>Every model failed the speed test. The fastest local model (MMAudio Small) still needed 1,400ms. That's 85x slower than a single game frame. I'd added caching early on just to stop regenerating the same sound over and over. Then I looked at the delivery times in the logs: <strong>35-90ms</strong>. Wait. That's fast enough.</p>
+
+    <p>A footstep that takes 2,400ms to generate? Unplayable. That same footstep served from cache? 45ms. Predicted before the player moves? Under 10ms from the engine buffer. A UI click drops from 1,800ms to 35ms. Ambience goes from 3,200ms down to 120ms on cache hit. Without caching: 1,400-3,500ms. With it: 35-90ms. A 95-98% reduction. The models weren't the answer. The cache was.</p>
+
+    <p>So I stopped trying to make AI faster and started asking a different question: <em>when</em> should you generate? Loading screens. Zone transitions. Quiet moments when the player is in a menu. Generate the footsteps before the player starts walking. By the time they move, the sound is already in memory. Nobody notices.</p>
+  </div>
+
+  <blockquote class="closing-pullquote">
+    The fastest model was still 85x slower than a game frame. Caching made it irrelevant.
+  </blockquote>
+
+  <div class="closing-body">
+    <p>Every generated sound gets stored in memory, keyed by a SHA-256 hash of the prompt. Same request next time? Instant. Then client-side DSP (pitch shift, volume, reverb, filtering) turns one cached sample into 10+ variations. One gunshot becomes a whole magazine of different-sounding shots.</p>
+
+    <p>Right now this works for prototyping, ambient audio, and slower-paced games where you can predict what the player will hear next. It does not work for competitive shooters where every millisecond matters. And it does not work on mobile - no GPU, no inference.</p>
+  </div>
+</section>
+
+<!-- CACHE FLOW -->
+<section class="flow-section reveal" aria-labelledby="flow-title">
+  <span class="section-label">The Solution</span>
+  <h2 class="section-title" id="flow-title">How Caching Works</h2>
+  <div class="section-rule"></div>
+
+  <div class="flow-grid reveal-stagger">
+    <div class="flow-step">
+      <span class="flow-step__number">01</span>
+      <h3 class="flow-step__title">Pre-Generation</h3>
+      <p class="flow-step__desc">Player hits a loading screen? Generate the sounds they'll need in the next area. Walking into a new zone? Same thing. Use the downtime.</p>
+    </div>
+    <div class="flow-step">
+      <span class="flow-step__number">02</span>
+      <h3 class="flow-step__title">Prompt Hashing</h3>
+      <p class="flow-step__desc">SHA-256 hash of normalized prompt + model + duration + sample rate. Same request always hits the same cache entry.</p>
+    </div>
+    <div class="flow-step">
+      <span class="flow-step__number">03</span>
+      <h3 class="flow-step__title">Cache Hit</h3>
+      <p class="flow-step__desc">Sound plays from PCM cache in 35-90ms. Client-side DSP adds variation: pitch shift, filtering, reverb, volume randomization.</p>
+    </div>
+    <div class="flow-step">
+      <span class="flow-step__number">04</span>
+      <h3 class="flow-step__title">Background Refill</h3>
+      <p class="flow-step__desc">After a sound plays, a new variation generates quietly in the background. Old entries get kicked when memory hits 500MB. Disk cache sticks around between sessions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ENGINEERING CHALLENGES -->
+<section class="challenges-section reveal" id="challenges" aria-labelledby="challenges-title">
+  <span class="section-label">Engineering</span>
+  <h2 class="section-title" id="challenges-title">What I Had to Solve</h2>
+  <div class="section-rule"></div>
+
+  <div class="challenges-grid">
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">Game Thread Bottleneck</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">Unreal only lets you create USoundWave on the Game Thread. WebSocket callbacks arrive on a background thread. Try to create a SoundWave from the callback? Instant crash. No error, no warning, just gone.</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">Used FFunctionGraphTask to push PCM data to the Game Thread. Tested with 50+ sounds arriving at once - no crashes.</p>
+    </div>
+
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">VRAM Budget Management</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">8GB of VRAM. UE5 takes 4-5GB just for rendering. That leaves maybe 3GB for AI. Only AudioGen + MMAudio Small fit together - everything else needs swapping.</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">Built a VRAM manager that checks free memory via NVML, kicks out whoever hasn't been used recently, and loads what you need. Swap takes 2-4 seconds. For frequently used models, "sticky mode" keeps them resident.</p>
+    </div>
+
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">Failure Handling</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">These models fail 5-14% of the time. Sometimes the output is silence. Sometimes CUDA runs out of memory mid-generation and everything dies. A game can't freeze when that happens.</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">Built a fallback chain: retry with a different seed, try a different model, play procedural DSP, or skip the sound entirely. A bad sound right now beats a perfect sound 3 seconds from now.</p>
+    </div>
+
+    <div class="challenge-card">
+      <h3 class="challenge-card__title">The Bleeding Edge Penalty</h3>
+      <span class="challenge-card__label">What Was Hard</span>
+      <p class="challenge-card__text">TangoFlux was supposed to be the fast one. It didn't even start. PyTorch 2.4 with CUDA 12.4 had no compiled kernels for the RTX 5070's Blackwell chip (sm_120).</p>
+      <span class="challenge-card__label">What I Did</span>
+      <p class="challenge-card__text">Tried building from source. Hit Windows toolchain issues. Two days gone. The lesson: if you're making a game, don't use models released last month. Bleeding-edge research code breaks on real hardware.</p>
+    </div>
+  </div>
+</section>
+
+<!-- THESIS CALLOUT -->
+<div class="callout-section reveal">
+  <div class="callout-card">
+    <div>
+      <div class="callout-card__label">Bachelor Thesis &middot; 68 Pages</div>
+      <h3 class="callout-card__title">Read the Full Paper</h3>
+      <p class="callout-card__desc">The full thesis - all the benchmarks, what failed, what worked, and what I'd do differently.</p>
+    </div>
+    <a class="callout-card__link" href="szuniewicz-ai-audio-thesis-2026.pdf" target="_blank" rel="noopener">Read Paper</a>
+  </div>
+</div>
+
+<!-- CONCLUSION -->
+<section class="closing-section reveal">
+  <span class="section-label">Conclusion</span>
+  <h2 class="section-title">The Short Answer</h2>
+  <div class="section-rule"></div>
+
+  <div class="closing-body">
+    <p><strong>Raw AI:</strong> No. Every model exceeds 150ms on first generation. Most take seconds.</p>
+
+    <p><strong>With caching:</strong> Yes. Cache hits land at 35-90ms. Players don't notice.</p>
+
+    <p><strong>With prediction:</strong> Yes. If you know the sound before the player needs it, delivery is under 10ms from the engine buffer. Feels instant.</p>
+
+    <p>No single model wins. Procedural DSP is fast but sounds fake. ElevenLabs sounds great but the latency is a dice roll. The real answer: mix them. Right model for the right sound. Cache everything. Always have a fallback ready for when things break - because they will.</p>
+  </div>
+</section>
+
+<!-- LINKS & NEXT PROJECT -->
+<nav class="links-section" aria-label="Project links and navigation">
+  <div class="links-layout">
+    <ul class="links-list">
+      <li><a href="szuniewicz-ai-audio-thesis-2026.pdf" target="_blank" rel="noopener">Read Paper (PDF)</a></li>
+    </ul>
+    <a class="next-project-btn" href="audioq.html">Next Project</a>
+  </div>
+</nav>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="colophon">
+  <span>Igor Szuniewicz &copy; 2026</span>
+  <span>Bachelor Thesis | 2025 - 2026 | Howest DAE</span>
+</footer>
+
+<script>
+// Scroll progress bar
+const progress = document.getElementById('scrollProgress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+  progress.style.width = pct + '%';
+}, { passive: true });
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal, .reveal-stagger');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => observer.observe(el));
+
+// Theme toggle
+const themeToggle = document.getElementById('themeToggle');
+try { const saved = localStorage.getItem('theme'); if (saved) document.documentElement.setAttribute('data-theme', saved); } catch(e) {}
+function updateToggle() { themeToggle.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '\u263D' : '\u2600'; }
+updateToggle();
+themeToggle.addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('theme', next); } catch(e) {}
+  updateToggle();
+});
+</script>
+</body>
+</html>

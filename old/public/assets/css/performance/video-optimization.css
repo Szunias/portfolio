@@ -1,0 +1,281 @@
+/* ====================================
+   VIDEO OPTIMIZATION STYLES
+   Replace GIFs with video for better performance
+   ==================================== */
+
+/* Video elements that replace GIF images */
+.gif-replacement-video {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #0c1218; /* Match site background while loading */
+}
+
+/* Project showcase videos */
+.project-video {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 6px;
+    box-shadow: 0 14px 26px rgba(0,0,0,0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-video:hover {
+    transform: scale(1.02);
+    box-shadow: 0 20px 40px rgba(24, 191, 239, 0.3);
+}
+
+/* Video container to prevent layout shift */
+.video-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+/* Aspect ratio containers */
+.video-container.ratio-16-9 {
+    aspect-ratio: 16 / 9;
+}
+
+.video-container.ratio-4-3 {
+    aspect-ratio: 4 / 3;
+}
+
+.video-container.ratio-1-1 {
+    aspect-ratio: 1 / 1;
+}
+
+/* Video fills container */
+.video-container video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Loading state */
+.video-container::before {
+    content: '';
+    display: block;
+    padding-bottom: 56.25%; /* 16:9 default */
+}
+
+.video-container.ratio-4-3::before {
+    padding-bottom: 75%; /* 4:3 */
+}
+
+.video-container.ratio-1-1::before {
+    padding-bottom: 100%; /* 1:1 */
+}
+
+/* Play button overlay (for videos that aren't autoplay) */
+.video-play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: rgba(24, 191, 239, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.video-container:hover .video-play-button {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.video-play-button::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 20px solid white;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    margin-left: 4px;
+}
+
+.video-play-button:hover {
+    background: rgba(24, 191, 239, 1);
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Slider videos */
+.slide video {
+    max-width: 100%;
+    max-height: 55vh;
+    object-fit: contain;
+    border-radius: 6px;
+    display: block;
+    margin-bottom: 10px;
+    box-shadow: 0 14px 26px rgba(0,0,0,0.25);
+}
+
+/* Image fit videos (in project cards) */
+.image.fit video {
+    width: 100%;
+    height: auto;
+    max-height: 280px;
+    display: block;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+/* FORCE aspect ratio for video containers using class */
+a.image.fit {
+    display: block;
+    position: relative;
+    width: 100%;
+}
+
+/* DISABLE any ::before on image.fit to prevent empty space */
+a.image.fit::before,
+#projects-list .project-card .image.fit::before,
+#projects-showcase .project-card .image.fit::before,
+.project-card .image.fit::before {
+    display: none !important;
+    content: none !important;
+    padding-top: 0 !important;
+}
+
+/* Video containers get aspect ratio */
+a.image.fit video {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: rgba(12, 18, 24, 0.8);
+}
+
+/* Regular images stay normal */
+a.image.fit img:not(.gif-fallback) {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Fallback for older browsers without aspect-ratio support */
+@supports not (aspect-ratio: 16 / 9) {
+    a.image.fit video {
+        height: 0;
+        padding-bottom: 56.25%;
+        position: relative;
+    }
+
+    a.image.fit video source {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+/* Ensure videos work in links */
+a .project-video,
+a .gif-replacement-video {
+    pointer-events: none; /* Let click pass through to link */
+}
+
+/* Video loading skeleton */
+.video-skeleton {
+    background: linear-gradient(
+        90deg,
+        rgba(24, 191, 239, 0.05) 0%,
+        rgba(24, 191, 239, 0.1) 50%,
+        rgba(24, 191, 239, 0.05) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Fallback for browsers without video support */
+.no-video .gif-replacement-video {
+    display: none;
+}
+
+.no-video .gif-fallback {
+    display: block;
+}
+
+.gif-fallback {
+    display: none;
+}
+
+/* Performance: Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .project-video {
+        transition: none;
+    }
+
+    .video-play-button {
+        transition: none;
+    }
+
+    .video-skeleton {
+        animation: none;
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .slide video {
+        max-height: 40vh;
+    }
+
+    .video-play-button {
+        width: 60px;
+        height: 60px;
+    }
+
+    .video-play-button::after {
+        border-left-width: 15px;
+        border-top-width: 9px;
+        border-bottom-width: 9px;
+    }
+}
+
+/* Tablet optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .slide video {
+        max-height: 48vh;
+    }
+}
+
+/* Large screens */
+@media (min-width: 1280px) {
+    .slide video {
+        max-height: calc(100% - 140px);
+    }
+}
+
+/* Print styles - show poster or fallback */
+@media print {
+    video {
+        display: none;
+    }
+
+    .gif-fallback {
+        display: block !important;
+    }
+}

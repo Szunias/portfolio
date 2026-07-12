@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ray Animation - Igor Szuniewicz</title>
+<meta name="description" content="Ray Animation: disco-funk score written from scratch in 8 days after the composer dropped out. Full music composition, sound design, and mix for a 3D animated short.">
+<meta name="author" content="Igor Szuniewicz">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://igorszuniewicz.com/ray.html">
+<meta property="og:title" content="Ray Animation - Igor Szuniewicz">
+<meta property="og:description" content="Ray Animation: disco-funk score written from scratch in 8 days after the composer dropped out. Full music composition, sound design, and mix for a 3D animated short.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://igorszuniewicz.com/ray.html">
+<meta property="og:image" content="https://igorszuniewicz.com/old/public/assets/images/projects-ray/rayinlight.png">
+<meta property="og:site_name" content="Igor Szuniewicz">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ray Animation - Igor Szuniewicz">
+<meta name="twitter:description" content="Ray Animation: disco-funk score written from scratch in 8 days after the composer dropped out. Full music composition, sound design, and mix for a 3D animated short.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --cream: #1a1a1a; --white: #222; --black: #f0ece6; --accent: #c0542e;
+    --accent-light: #2a1f1a; --grey: #b0b0b0; --grey-light: #999; --grey-rule: #333;
+    --dark-section: #111;
+    --serif: Georgia, 'Times New Roman', Times, serif;
+    --sans: system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --brand-secondary: 'DM Sans', sans-serif;
+    --page-max: 1280px; --gutter: 60px; --margin: 80px;
+  }
+
+  [data-theme="light"] {
+    --cream: #faf8f5; --white: #ffffff; --black: #1a1a1a;
+    --accent-light: #f3ebe6; --grey: #5e5e5e; --grey-light: #717171;
+    --grey-rule: #d8d4cf; --dark-section: #1c1c26;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-width: thin;
+    scrollbar-color: var(--grey-rule) transparent;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--grey-rule); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--black);
+    line-height: 1.75;
+    font-size: 19px;
+    overflow-x: hidden;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  a:hover {
+    color: var(--black);
+    border-color: var(--black);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* =========================================
+     SCROLL PROGRESS BAR
+     ========================================= */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent);
+    width: 0%;
+    z-index: 1000;
+    transition: none;
+  }
+
+  /* =========================================
+     SCROLL REVEAL
+     ========================================= */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .reveal-stagger.visible > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0s; }
+  .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.1s; }
+  .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.2s; }
+  .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.3s; }
+  .reveal-stagger.visible > *:nth-child(5) { transition-delay: 0.4s; }
+  .reveal-stagger.visible > *:nth-child(6) { transition-delay: 0.5s; }
+
+  /* =========================================
+     BACK NAV
+     ========================================= */
+  .back-nav {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 28px var(--margin) 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .back-nav a {
+    font-family: var(--brand-secondary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    border: none;
+    transition: color 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+
+  .back-nav a:hover {
+    color: var(--accent);
+    transform: translateX(-4px);
+  }
+
+  .back-nav a::before {
+    content: '\2190\00a0\00a0';
+  }
+
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--grey-rule);
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    color: var(--black);
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  /* =========================================
+     PROJECT HERO
+     ========================================= */
+  .project-hero {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 48px var(--margin) 0;
+  }
+
+  .project-hero__title {
+    font-family: var(--serif);
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: hero-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+  }
+
+  .project-hero__subtitle {
+    font-family: var(--serif);
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--grey);
+    line-height: 1.4;
+    max-width: 50ch;
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: hero-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
+  }
+
+  .project-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    padding: 20px 0;
+    border-top: 1px solid var(--grey-rule);
+    border-bottom: 1px solid var(--grey-rule);
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: hero-in 0.6s ease 0.55s forwards;
+  }
+
+  .project-hero__techs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 20px 0 0;
+    opacity: 0;
+    animation: hero-in 0.6s ease 0.7s forwards;
+  }
+
+  @keyframes hero-in {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-item__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  .meta-item__value {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .tech-pill {
+    font-family: var(--brand-secondary);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    border: 1px solid var(--grey-rule);
+    padding: 6px 12px 5px;
+    transition: border-color 0.25s, color 0.25s, background 0.25s;
+    cursor: default;
+  }
+
+  .tech-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  /* =========================================
+     GAME SCREENSHOTS
+     ========================================= */
+  .screenshots-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 48px var(--margin) 0;
+  }
+
+  .screenshots-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 12px;
+  }
+
+  .screenshot--wide {
+    grid-row: 1 / 3;
+  }
+
+  .screenshot {
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--dark-section);
+    position: relative;
+  }
+
+  .screenshot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .screenshot:hover img {
+    transform: scale(1.04);
+  }
+
+  /* =========================================
+     SECTION HEADERS
+     ========================================= */
+  .section-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .section-rule {
+    width: 60px;
+    height: 2px;
+    background: var(--accent);
+    margin-bottom: 40px;
+    transition: width 0.6s ease;
+  }
+
+  .reveal.visible .section-rule {
+    width: 60px;
+  }
+
+  .reveal .section-rule {
+    width: 0;
+  }
+
+  /* =========================================
+     CONCEPT
+     ========================================= */
+  .concept-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 64px var(--margin) 40px;
+  }
+
+  .concept-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: var(--gutter);
+    margin-top: 10px;
+  }
+
+  .concept-body {
+    font-size: 19px;
+    line-height: 1.8;
+  }
+
+  .concept-body p + p {
+    margin-top: 18px;
+  }
+
+  .concept-body strong {
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .drop-cap::first-letter {
+    font-family: var(--serif);
+    float: left;
+    font-size: 82px;
+    line-height: 0.72;
+    padding-right: 12px;
+    padding-top: 8px;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  .concept-sidebar {
+    padding-left: 30px;
+    border-left: 1px solid var(--grey-rule);
+    align-self: start;
+  }
+
+  .concept-sidebar__fact {
+    margin-bottom: 24px;
+  }
+
+  .concept-sidebar__label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .concept-sidebar__value {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* =========================================
+     VIDEO
+     ========================================= */
+  .video-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 20px var(--margin) 60px;
+  }
+
+  .video-wrap {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    background: var(--dark-section);
+    border-radius: 2px;
+  }
+
+  .video-wrap iframe,
+  .video-wrap video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .video-caption {
+    font-family: var(--brand-secondary);
+    font-size: 13px;
+    color: var(--grey-light);
+    margin-top: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  /* =========================================
+     AUDIO SYSTEMS
+     ========================================= */
+  .systems-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 60px var(--margin) 40px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .systems-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .system-item {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 30px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--grey-rule);
+    align-items: start;
+    transition: transform 0.25s ease, background 0.25s ease;
+  }
+
+  .system-item:last-child {
+    border-bottom: none;
+  }
+
+  .system-item:hover {
+    transform: translateX(6px);
+  }
+
+  .system-item__title-wrap {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .system-item__title-wrap::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 0;
+    background: var(--accent);
+    transition: height 0.5s ease;
+  }
+
+  .reveal.visible .system-item__title-wrap::before {
+    height: 100%;
+  }
+
+  .system-item__title {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .system-item__desc {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--grey);
+  }
+
+  /* =========================================
+     GALLERY
+     ========================================= */
+  .gallery-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 60px var(--margin) 60px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .gallery-item {
+    position: relative;
+    overflow: hidden;
+    background: var(--dark-section);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    object-position: top left;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
+  }
+
+  .gallery-item:hover img {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+  }
+
+  .gallery-item__caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    font-family: var(--brand-secondary);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.85);
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .gallery-item:hover .gallery-item__caption {
+    transform: translateY(0);
+  }
+
+  .gallery-item__zoom {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .gallery-item:hover .gallery-item__zoom {
+    opacity: 1;
+  }
+
+  .gallery-item__zoom svg {
+    width: 16px;
+    height: 16px;
+    stroke: white;
+    fill: none;
+    stroke-width: 2;
+  }
+
+  /* =========================================
+     LIGHTBOX
+     ========================================= */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+  }
+
+  .lightbox.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .lightbox img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 2px;
+    transform: scale(0.92);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .lightbox.active img {
+    transform: scale(1);
+  }
+
+  .lightbox__caption {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--brand-secondary);
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .lightbox__close {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    font-size: 32px;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    transition: color 0.2s;
+    font-family: var(--sans);
+    line-height: 1;
+    border: none;
+    background: none;
+  }
+
+  .lightbox__close:hover {
+    color: white;
+  }
+
+  .lightbox__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 36px;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: color 0.2s;
+    font-family: var(--sans);
+    line-height: 1;
+    border: none;
+    background: none;
+    padding: 16px;
+    user-select: none;
+  }
+
+  .lightbox__nav:hover {
+    color: white;
+  }
+
+  .lightbox__nav--prev { left: 16px; }
+  .lightbox__nav--next { right: 16px; }
+
+  /* =========================================
+     LINKS & NEXT PROJECT
+     ========================================= */
+  .links-section {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 40px var(--margin) 60px;
+    border-top: 1px solid var(--grey-rule);
+  }
+
+  .links-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .links-list {
+    list-style: none;
+    display: flex;
+    gap: 28px;
+    font-size: 15px;
+  }
+
+  .next-project-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border: 1px solid var(--black);
+    font-family: var(--brand-secondary);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: none;
+    transition: background 0.25s, color 0.25s, border-color 0.25s, gap 0.25s;
+  }
+
+  .next-project-btn:hover {
+    background: var(--black);
+    color: var(--cream);
+    border-color: var(--black);
+    gap: 16px;
+  }
+
+  .next-project-btn::after {
+    content: '\2192';
+    font-size: 0.85rem;
+    transition: transform 0.25s;
+  }
+
+  .next-project-btn:hover::after {
+    transform: translateX(4px);
+  }
+
+  /* =========================================
+     FOOTER
+     ========================================= */
+  .colophon {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 24px var(--margin);
+    border-top: 3px solid var(--black);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  /* =========================================
+     RESPONSIVE
+     ========================================= */
+  @media (max-width: 1000px) {
+    :root {
+      --margin: 40px;
+      --gutter: 40px;
+    }
+
+    .concept-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .concept-sidebar {
+      padding-left: 0;
+      border-left: none;
+      border-top: 1px solid var(--grey-rule);
+      padding-top: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .system-item {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  }
+
+  @media (max-width: 650px) {
+    :root {
+      --margin: 24px;
+      --gutter: 24px;
+    }
+
+    body {
+      font-size: 17px;
+    }
+
+    .project-hero__title {
+      font-size: clamp(40px, 12vw, 64px);
+    }
+
+    .project-hero__meta {
+      gap: 20px;
+    }
+
+    .screenshots-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
+
+    .screenshot--wide {
+      grid-row: auto;
+    }
+
+    .screenshot img {
+      height: 220px;
+    }
+
+    .gallery-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .gallery-item img {
+      height: 200px;
+    }
+
+    .concept-sidebar {
+      grid-template-columns: 1fr;
+    }
+
+    .drop-cap::first-letter {
+      font-size: 60px;
+    }
+
+    .links-layout {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .links-list {
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+    .reveal-stagger > * { opacity: 1; transform: none; }
+    .gallery-item__caption { transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProgress"></div>
+<a href="#concept" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Skip to main content</a>
+
+<!-- BACK NAV -->
+<nav class="back-nav" aria-label="Breadcrumb">
+  <a href="index.html">Back to Projects</a>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#9728;</button>
+</nav>
+
+<main>
+
+<!-- PROJECT HERO -->
+<header class="project-hero">
+  <h1 class="project-hero__title">Ray Animation</h1>
+  <p class="project-hero__subtitle">The composer quit 8 days before the screening. I wrote the whole disco-funk score from scratch. Standing ovation at the cinema.</p>
+
+  <div class="project-hero__meta">
+    <div class="meta-item">
+      <span class="meta-item__label">Role</span>
+      <span class="meta-item__value">Composer &amp; Sound Designer</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Type</span>
+      <span class="meta-item__value">Graduation Film</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Duration</span>
+      <span class="meta-item__value">8 days</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-item__label">Tools</span>
+      <span class="meta-item__value">Pro Tools, Logic Pro</span>
+    </div>
+  </div>
+
+  <div class="project-hero__techs">
+    <span class="tech-pill">Pro Tools</span>
+    <span class="tech-pill">Logic Pro</span>
+    <span class="tech-pill">Omnisphere</span>
+    <span class="tech-pill">Film Score</span>
+  </div>
+</header>
+
+<!-- SCREENSHOTS -->
+<section class="screenshots-section reveal" aria-label="Film screenshots">
+  <div class="screenshots-grid">
+    <div class="screenshot screenshot--wide">
+      <img src="old/public/assets/images/projects-ray/rayinlight.png" alt="Ray in the light" loading="lazy">
+    </div>
+    <div class="screenshot">
+      <img src="old/public/assets/images/projects-ray/rayaloneinthecave.png" alt="Ray alone in the cave" loading="lazy">
+    </div>
+    <div class="screenshot">
+      <img src="old/public/assets/images/projects-ray/raylightsincave.png" alt="Ray discovers lights in cave" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- CONCEPT -->
+<section class="concept-section reveal" id="concept" aria-labelledby="concept-title">
+  <span class="section-label">The Project</span>
+  <h2 class="section-title" id="concept-title">The Concept</h2>
+  <div class="section-rule"></div>
+
+  <div class="concept-layout">
+    <div class="concept-body">
+      <p class="drop-cap">A stone giant wakes up in a cave and discovers dance. That's the film. The original composer dropped out 8 days before the cinema screening - no material, no stems, no sketches. Just gone. I got the call and said yes.</p>
+
+      <p>Eight days. Full disco-funk score from scratch, all the sound design, final mix. I pulled the animatics into Pro Tools, placed sync markers by hand, and locked every musical hit to Ray's movements frame by frame. The tempo follows Ray's dancing, not a click track. Three rounds of feedback with the animation team, tightening the timing each pass. Then we screened it at the cinema.</p>
+    </div>
+
+    <aside class="concept-sidebar reveal-stagger">
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">The Situation</span>
+        <span class="concept-sidebar__value">Composer quit, 8 days to screening, zero material to start from</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">What I Delivered</span>
+        <span class="concept-sidebar__value">Full score + sound design + final mix</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Sync</span>
+        <span class="concept-sidebar__value">Tempo follows Ray's dancing, not a click</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">References</span>
+        <span class="concept-sidebar__value">Chic, Earth Wind &amp; Fire</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">Result</span>
+        <span class="concept-sidebar__value">Screened at DAE cinema</span>
+      </div>
+      <div class="concept-sidebar__fact">
+        <span class="concept-sidebar__label">School</span>
+        <span class="concept-sidebar__value">DAE Howest graduation film</span>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- VIDEO -->
+<section class="video-section reveal" aria-label="Project video">
+  <div class="video-wrap">
+    <video controls preload="metadata">
+      <source src="old/public/assets/videos/ray-animation.mp4" type="video/mp4">
+    </video>
+  </div>
+  <p class="video-caption">DAE Howest graduation film - full score, sound design, and mix in 8 days</p>
+</section>
+
+<!-- THE MUSIC -->
+<section class="systems-section reveal" id="music" aria-labelledby="music-title">
+  <span class="section-label">Composition</span>
+  <h2 class="section-title" id="music-title">The Music</h2>
+  <div class="section-rule"></div>
+
+  <div class="systems-grid">
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Bass &amp; Rhythm</h3>
+      </div>
+      <p class="system-item__desc">Slap bass and electric drums. Straight out of Chic and Earth Wind &amp; Fire. But here's the thing - every rhythmic hit is locked to Ray's dance moves. The music doesn't set the tempo. Ray does. When he stomps, the kick lands. When he grooves, the bass follows.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Brass, Sax &amp; Mix</h3>
+      </div>
+      <p class="system-item__desc">Brass carries the melody, sax fills out the warmth. DJ scratches between sections keep the energy moving. The whole mix runs through Waves J37 tape saturation for warmth.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Credits Version</h3>
+      </div>
+      <p class="system-item__desc">Same theme, but bigger. Gospel organs, live drums, Omnisphere synths stacked on top. Big, loud, full-band ending. The animation team approved it first listen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SYNC & PRODUCTION -->
+<section class="systems-section reveal" id="sync" aria-labelledby="sync-title">
+  <span class="section-label">Production</span>
+  <h2 class="section-title" id="sync-title">Sync &amp; Production</h2>
+  <div class="section-rule"></div>
+
+  <div class="systems-grid">
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">8-Day Deadline</h3>
+      </div>
+      <p class="system-item__desc">Day 1-2: theme sketches and sync markers. Day 3-5: full arrangement, all instruments tracked. Day 6-7: sound design and foley. Day 8: final mix and cinema delivery. No buffer days, no safety net.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Frame-by-Frame Sync</h3>
+      </div>
+      <p class="system-item__desc">Most film scores run on a click track and the picture editors deal with it. Not here. I placed markers by hand in Pro Tools and bent the tempo to match Ray's animation. When he speeds up, the music speeds up. So when you watch it, the music feels like part of Ray, not something pasted on top.</p>
+    </div>
+
+    <div class="system-item">
+      <div class="system-item__title-wrap">
+        <h3 class="system-item__title">Three Feedback Rounds</h3>
+      </div>
+      <p class="system-item__desc">Three rounds with the animation team, each one tightening the timing and arrangement. By the third pass we were adjusting individual frames. Then we screened it at the cinema.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery-section reveal" id="gallery" aria-labelledby="gallery-title">
+  <span class="section-label">Stills</span>
+  <h2 class="section-title" id="gallery-title">Gallery</h2>
+  <div class="section-rule"></div>
+
+  <div class="gallery-grid reveal-stagger">
+    <div class="gallery-item" data-index="0" tabindex="0" role="button">
+      <img src="old/public/assets/images/projects-ray/rayaloneinthecave.png" alt="Ray Alone in the Cave" loading="lazy">
+      <span class="gallery-item__caption">Ray Alone in the Cave</span>
+      <span class="gallery-item__zoom"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="22" y2="22"/></svg></span>
+    </div>
+    <div class="gallery-item" data-index="1" tabindex="0" role="button">
+      <img src="old/public/assets/images/projects-ray/raylightsincave.png" alt="Discovering Light" loading="lazy">
+      <span class="gallery-item__caption">Discovering Light</span>
+      <span class="gallery-item__zoom"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="22" y2="22"/></svg></span>
+    </div>
+    <div class="gallery-item" data-index="2" tabindex="0" role="button">
+      <img src="old/public/assets/images/projects-ray/rayinlight.png" alt="Ray in Full Light" loading="lazy">
+      <span class="gallery-item__caption">Ray in Full Light</span>
+      <span class="gallery-item__zoom"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="22" y2="22"/></svg></span>
+    </div>
+    <div class="gallery-item" data-index="3" tabindex="0" role="button">
+      <img src="old/public/assets/images/projects-ray/raycredits.png" alt="Credits Sequence" loading="lazy">
+      <span class="gallery-item__caption">Credits Sequence</span>
+      <span class="gallery-item__zoom"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="22" y2="22"/></svg></span>
+    </div>
+  </div>
+</section>
+
+<!-- LINKS & NEXT PROJECT -->
+<nav class="links-section" aria-label="Project links and navigation">
+  <div class="links-layout">
+    <ul class="links-list">
+      <li><a href="https://www.youtube.com/watch?v=NhH4dNcfxZg" target="_blank" rel="noopener">Watch on YouTube</a></li>
+    </ul>
+    <a class="next-project-btn" href="wwisefixer.html">Next Project</a>
+  </div>
+</nav>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="colophon">
+  <span>Igor Szuniewicz &copy; 2026</span>
+  <span>Set in DM Sans, Georgia &amp; System UI</span>
+  <span>Built from scratch</span>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox__close" aria-label="Close">&times;</button>
+  <button class="lightbox__nav lightbox__nav--prev" aria-label="Previous">&lsaquo;</button>
+  <button class="lightbox__nav lightbox__nav--next" aria-label="Next">&rsaquo;</button>
+  <img src="" alt="">
+  <span class="lightbox__caption"></span>
+</div>
+
+<script>
+// Scroll progress bar
+const progress = document.getElementById('scrollProgress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+  progress.style.width = pct + '%';
+}, { passive: true });
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal, .reveal-stagger');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => observer.observe(el));
+
+// Lightbox
+const lightbox = document.getElementById('lightbox');
+const lbImg = lightbox.querySelector('img');
+const lbCaption = lightbox.querySelector('.lightbox__caption');
+const galleryItems = document.querySelectorAll('.gallery-item');
+let currentIndex = 0;
+
+const images = Array.from(galleryItems).map(item => ({
+  src: item.querySelector('img').src,
+  alt: item.querySelector('img').alt,
+  caption: item.querySelector('.gallery-item__caption').textContent
+}));
+
+function openLightbox(index) {
+  currentIndex = index;
+  lbImg.src = images[index].src;
+  lbImg.alt = images[index].alt;
+  lbCaption.textContent = images[index].caption;
+  lightbox.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function navigate(dir) {
+  currentIndex = (currentIndex + dir + images.length) % images.length;
+  lbImg.src = images[currentIndex].src;
+  lbImg.alt = images[currentIndex].alt;
+  lbCaption.textContent = images[currentIndex].caption;
+}
+
+galleryItems.forEach((item, i) => {
+  item.addEventListener('click', () => openLightbox(i));
+  item.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      item.click();
+    }
+  });
+});
+
+lightbox.querySelector('.lightbox__close').addEventListener('click', closeLightbox);
+lightbox.querySelector('.lightbox__nav--prev').addEventListener('click', (e) => { e.stopPropagation(); navigate(-1); });
+lightbox.querySelector('.lightbox__nav--next').addEventListener('click', (e) => { e.stopPropagation(); navigate(1); });
+lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+
+document.addEventListener('keydown', (e) => {
+  if (!lightbox.classList.contains('active')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') navigate(-1);
+  if (e.key === 'ArrowRight') navigate(1);
+});
+
+// Theme toggle
+const themeToggle = document.getElementById('themeToggle');
+try { const saved = localStorage.getItem('theme'); if (saved) document.documentElement.setAttribute('data-theme', saved); } catch(e) {}
+function updateToggle() { themeToggle.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '\u263D' : '\u2600'; }
+updateToggle();
+themeToggle.addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('theme', next); } catch(e) {}
+  updateToggle();
+});
+</script>
+</body>
+</html>

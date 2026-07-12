@@ -1,0 +1,210 @@
+{
+  "Engine": "Engine",
+  "In Production": "In Production",
+  "Lead Audio Designer": "Audio Designer",
+  "MODULE_AUDIO": "MODULE: AUDIO",
+  "MODULE_DEV": "MODULE: DEV",
+  "MODULE_PROD": "MODULE: PROD",
+  "Multi-Institutional": "Multi-Institutional",
+  "Role": "Role",
+  "SYSTEM_ALL": "SYSTEM: ALL",
+  "Status": "Status",
+  "Team": "Team",
+  "UE5 + Wwise": "UE5 + Wwise",
+  "ann": {
+    "cache": {
+      "broadcast": {
+        "desc": "Multicast delegate notifies all listeners. Audio manager, UI, gameplay systems all subscribe. No direct dependencies—each system is separate.",
+        "label": "Event Broadcast"
+      },
+      "interval": {
+        "desc": "Only refreshes enemy list every N seconds, not every frame. GetAllActorsOfClass is expensive - caching prevents performance hits.",
+        "label": "Cache Refresh"
+      },
+      "normalize": {
+        "desc": "Converts raw distance to 0-100% range. Inverted: closer enemy = higher value. Audio systems work with normalized values, not world units.",
+        "label": "Normalize Distance"
+      },
+      "threshold": {
+        "desc": "Only broadcasts when proximity changes significantly. Prevents audio system spam from micro-movements. Typically 1-5% threshold.",
+        "label": "Change Threshold"
+      }
+    },
+    "foot": {
+      "cleanup": {
+        "desc": "Clears timer immediately when movement stops. No lingering footsteps after player halts. Clean state management.",
+        "label": "Timer Cleanup"
+      },
+      "physmat": {
+        "desc": "Critical flag: bReturnPhysicalMaterial must be true. Without it, PhysMaterial is always null - common Unreal audio gotcha.",
+        "label": "Physical Material"
+      },
+      "timer": {
+        "desc": "Only starts footstep timer when actually moving. Prevents phantom footsteps when standing still. Timer auto-repeats at configured interval.",
+        "label": "Smart Timer"
+      },
+      "trace": {
+        "desc": "Shoots ray downward to detect floor surface. Uses Visibility channel. Returns surface type for Wwise Switch selection.",
+        "label": "Line Trace"
+      }
+    },
+    "prox": {
+      "hysteresis": {
+        "desc": "Start threshold higher than stop threshold. Enemy at 25% triggers audio, but must drop to 15% to stop. Prevents rapid on/off flickering.",
+        "label": "Hysteresis Gap"
+      },
+      "postevent": {
+        "desc": "UAkGameplayStatics::PostEvent triggers audio on this actor. 3D positioned, respects attenuation curves set in Wwise project.",
+        "label": "Wwise PostEvent"
+      },
+      "rtpc": {
+        "desc": "Real-Time Parameter Control. Sends proximity value to Wwise continuously. Controls volume, filter, pitch - smooth modulation, no steps.",
+        "label": "RTPC Update"
+      },
+      "stopthresh": {
+        "desc": "Lower threshold for stopping audio. Creates hysteresis band that smooths transitions. No audio stutter when enemy hovers at boundary.",
+        "label": "Stop Threshold"
+      }
+    }
+  },
+  "code": {
+    "annotations": "annotations",
+    "explanation_title": "Code Explanation",
+    "file_tabs": "Code file tabs",
+    "hover_hint": "Click highlighted lines to see explanations",
+    "line": "Line",
+    "live_server": "LIVE SERVER",
+    "quick_reference": "Quick Reference",
+    "select_line": "Click a highlighted line to see what it does"
+  },
+  "details": {
+    "about": "About This Project",
+    "access": "Project Access",
+    "classification": "Classification",
+    "engine": "Engine",
+    "gallery": "Gallery",
+    "links": "Project Links",
+    "members": "Members",
+    "platforms": "Platforms",
+    "tags": "Tags",
+    "team": "Team",
+    "tech": "How It Works",
+    "technical_dive": "Under the Hood",
+    "technical_dive_hint": "C++ and Blueprint implementation details",
+    "technologies": "Technologies"
+  },
+  "img": {
+    "shadowframes": {
+      "anomaly_spawn": "Wwise Event setup for anomaly audio variations",
+      "data_assets": "Data Asset configurations for audio behavior parameters",
+      "enemy_presence": "Enemy Presence RTPC curves for proximity-based audio",
+      "mixer_hierarchy": "Master Mixer hierarchy - signal flow organization",
+      "music_config": "Adaptive gameplay music layering system",
+      "voiceline_switch": "Switch Container for dynamic voiceline selection"
+    }
+  },
+  "links": {
+    "demo": "Live Demo",
+    "docs": "Documentation",
+    "repo": "Source Code",
+    "video": "Watch Video"
+  },
+  "project": {
+    "achievements": "What Worked",
+    "audio_systems": "Audio Systems",
+    "challenges_title": "Problems I Hit",
+    "key_scenes": "Key Scenes",
+    "metrics": "Project Stats",
+    "problem": "Problem",
+    "responsibilities": "What I Did",
+    "solution": "Solution",
+    "tech_stack": "Tools Used"
+  },
+  "project_akantilado_full_desc": "I did the sound design for a student animation about two cats chasing a golden orb through a jungle. Built a 5-layer spatial ambience — canopy birds, mid-level rustling, ground water, wind, wildlife. Pulled all foley from libraries and synced everything frame-by-frame. Delivered two final mixes: stereo for the cinema screening, then 5.1 surround.",
+  "project_amorak_block1_content": "The creature needed to sound massive. I layered four animal recordings — lion, elephant, tiger, hippo — and pitched them down for weight. The hippo texture gave it that high-end rasp.",
+  "project_amorak_block1_title": "Building the Creature Roar",
+  "project_amorak_block2_content": "I designed the environment to follow the camera. Dripping water sits close and unsettling. Distant chains hint at something bigger. Binaural panning pins every sound to a specific spot around your head.",
+  "project_amorak_block2_title": "Making the Space Feel Real",
+  "project_amorak_block3_content": "The creature always wins in the mix. I set up dynamic ducking so the environment drops whenever the monster screams or the character breathes.",
+  "project_amorak_block3_title": "Mixing It Together",
+  "project_amorak_full_desc": "90-second horror teaser where I handled all the audio post-production.\n\nThe creature had to feel massive, so I layered four animal recordings — lion, elephant, tiger, hippo — and pitched them down. Built a binaural mix in Reaper with Dear VR Pro and IEM Suite. Delivered stereo binaural at 48kHz/24-bit, -16 LUFS. Took about 4 weeks.\n\nDynamics chain: CLA-76, LA-2A, LA-3A, C6 multiband.",
+  "project_audioq_full_desc": "A VST3/AU sampler plugin I built in JUCE and C++. You drag in any audio file and process it with granular synthesis, a hand-coded tremolo, TPT zero-delay filters, and a built-in compressor. Every parameter is DAW-automatable. I wrote the tremolo DSP from scratch — per-sample sine LFO for smooth modulation. Open source on GitHub.",
+  "project_gradwork_full_desc": "My bachelor thesis. I built a Unity game that talks to AI models through a Python server and tested whether they can generate sounds fast enough for real-time gameplay. Tried ElevenLabs, MMAudio, and AudioGen — none were fast enough. The quickest still took over a second. My workaround: cache sounds during loading screens and serve them under 55ms when needed.",
+  "project_not_today_darling_full_desc": "I was the only audio person on a 4-player shared-screen racer. No room for subtle stereo work — I was fighting for every decibel of headroom and byte of RAM. End result: loud, chaotic racing that never clips and runs smooth.",
+  "project_nottoday_block1_content": "A side-scrolling 1-4 player racing game. Chaotic, loud, and ridiculous. I handled everything audio: recording, sound design, music selection, and implementation.",
+  "project_nottoday_block1_title": "Project Overview",
+  "project_nottoday_block2_content": "I didn't want the engines to sound like looped MP3s, so I built a MetaSounds graph where pitch and rattle intensity change with speed. You can hear the difference when you drive from carpet to tiles — the sound reacts instantly.",
+  "project_nottoday_block2_title": "MetaSounds System",
+  "project_pause_and_deserve_full_desc": "A solo horror prototype I built in 8 weeks to learn Unreal Engine 5.\n\nPausing freezes the enemy, but each pause makes it permanently faster. Audio reacts to your hesitation — forest ambience shifts, breathing scales with proximity, a clock ticks during freeze. MetaSounds + Sound Cues, 100% Blueprints.",
+  "project_ray_animation_full_desc": "Disco-funk score for a DAE graduation film. The original composer dropped out 8 days before the screening, so I wrote the main track and credits music from scratch — brass, slap bass, DJ scratches, Waves J37 tape effects. Synced every hit to Ray's dance choreography. Got a standing ovation at the premiere.",
+  "project_richter_full_desc": "Sound design for a student earthquake film. No commercial sample libraries allowed — I recorded all foley from scratch with a Zoom H6 and basic gear. Footsteps on wood, concrete, carpet, door sounds, paper handling. Built tension drones in Vital and ReaSynth. Wrote a short orchestral score timed to scene cuts. The hardest part was keeping dialogue intelligible over the earthquake rumble — used EQ automation and sidechain ducking in Reaper.",
+  "project_shadow_frames_collab_desc": "Collaboration between RITCS (Story), KASK (Music), and Howest DAE (Game Dev).",
+  "project_shadow_frames_collab_title": "Multi-Institutional Collaboration",
+  "project_shadow_frames_full_desc": "A horror game where audio is the core mechanic — players hear anomalies before they see them.\n\nI built the audio systems: footstep surface detection, enemy proximity, anomaly audio, and Wwise integration. Working with RITCS (writers) and KASK (composers).",
+  "project_transientica_audiolab_full_desc": "A real-time beatbox recognition system — control rhythm games with your voice.\n\nI optimized audio buffers and the ML pipeline to stay under 60ms latency. Python handles audio analysis, Unity handles gameplay, and they talk over UDP/OSC.",
+  "project_transientica_block1_content": "The system listens to your microphone and classifies sounds in real-time using an SVM trained on 2000+ samples. You record 30 examples of each drum sound, the model trains in seconds, and you play.",
+  "project_transientica_block1_title": "How It Works",
+  "project_transientica_block2_content": "Built in Unity with a Python/scikit-learn pipeline. Uses spectral analysis and predictive buffering to hit under 45ms latency.",
+  "project_transientica_block2_title": "Technical Details",
+  "project_unreal_engine_rebuilder_full_desc": "A build automation tool for Unreal Engine.\n\nUnreal sometimes corrupts intermediate files and throws linker errors. This tool does a clean factory reset — clears cache, regenerates project files, and recompiles from scratch. Saves hours of manual cleanup.",
+  "project_wwise_unreal_fixer_full_desc": "A rescue tool for Wwise-Unreal integration.\n\nWhen you migrate Wwise projects or pull from Perforce, Unreal often loses asset paths — SoundBanks, Events, actors go silent. This tool fixes all broken references in one click.",
+  "sf": {
+    "block": {
+      "anomaly_desc": "10 anomaly types, each with its own audio. 3-stage detection driven by RTPC intensity. Directional audio guides the player to each anomaly.",
+      "anomaly_title": "Anomaly Audio System",
+      "dialogue_desc": "Player actions play the right sound through Blueprint delegates. Camera shot, zoom — each fires the right Wwise event.",
+      "dialogue_title": "Player Audio System",
+      "enemy_desc": "As the enemy gets closer, audio intensifies. Dread layers and stressed breathing stack up, driven by proximity RTPC with hysteresis thresholds.",
+      "enemy_title": "Enemy Presence Audio",
+      "mixer_desc": "Switch Containers paired with the RTPC system. The more photos you collect, the more ambient layers kick in.",
+      "mixer_title": "Wwise Setup"
+    },
+    "challenges_list": {
+      "c1_prob": "Sounds would rapidly toggle on/off when the player stood near trigger edges",
+      "c1_sol": "Added hysteresis with separate start/stop thresholds (Start at 70%, Stop at 60%)",
+      "c1_title": "Audio flickering at boundaries",
+      "c2_prob": "Calculating distance to every enemy each frame was too expensive",
+      "c2_sol": "Built a caching system that updates the closest enemy reference periodically instead of every frame",
+      "c2_title": "Expensive proximity checks"
+    },
+    "rich_details": {
+      "achievements": {
+        "data": "Exposed all audio parameters to designers through Unreal Data Assets",
+        "flicker": "Added hysteresis thresholds to prevent audio states from flickering on/off",
+        "opt": "Cut CPU load by caching enemy distances and switching to event-based updates"
+      },
+      "audio_systems": {
+        "enemy": "Proximity-driven tension with hysteresis to stop audio flickering",
+        "footsteps": "Physics-based surface detection via raycasting with velocity-based intervals",
+        "mixing": "Real-time RTPC modulation of breath and heartbeat based on threat level",
+        "spatial": "3D audio cues that guide players to hidden anomalies"
+      },
+      "responsibilities": {
+        "cpp": "C++ Audio Systems Programming",
+        "lead": "Audio Designer",
+        "spatial": "Spatial Audio Implementation",
+        "wwise": "Wwise Middleware Integration"
+      },
+      "stack": {
+        "daw_val": "Reaper",
+        "engine_val": "Unreal Engine 5.5",
+        "lang_val": "C++ / Blueprints",
+        "middleware_val": "Wwise 2024.1"
+      }
+    }
+  },
+  "stats": {
+    "latency": "Real-time Audio Latency",
+    "accuracy": "Accuracy",
+    "classes": "Sound Classes",
+    "dataset": "Training Samples",
+    "test_date": "Last Test",
+    "proc_latency": "Local Latency",
+    "throughput": "Throughput",
+    "status": "Current Status"
+  },
+  "projects": {
+    "legacy_trailer": "Previous Trailer",
+    "gameplay_preview": "Gameplay Preview"
+  }
+}

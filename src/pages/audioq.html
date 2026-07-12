@@ -1,0 +1,67 @@
+<div class="aq-page">
+  <header class="aq-hero">
+    <div class="aq-hero__media" aria-hidden="true"><img src="audioqscreenshot.png" alt="" aria-hidden="true" fetchpriority="high" decoding="async"></div>
+    <div class="aq-hero__shade" aria-hidden="true"></div>
+    <div class="aq-hero__content">
+      <p class="aq-kicker">2024&ndash;2025 &middot; VST3 and standalone</p>
+      <h1>AudioQ</h1>
+      <p class="aq-hero__lead">A sampler and effects chain built in C++ with JUCE 8.</p>
+      <p class="aq-hero__summary">AudioQ loads a sample, runs it through granular, filter, dynamics and glitch processing, and exposes 16 automatable parameters to the host.</p>
+      <p class="aq-hero__role">Solo developer &middot; C++17 &middot; JUCE 8 &middot; MIT</p>
+      <div class="aq-hero__actions">
+        <a href="#demo">Watch the demo <span aria-hidden="true">&darr;</span></a>
+        <a href="https://github.com/Szunias/AudioQ" target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">&nearr;</span></a>
+      </div>
+    </div>
+  </header>
+
+  <section class="aq-chain io-reveal" aria-labelledby="aq-chain-title">
+    <header class="aq-section-head">
+      <div><p class="aq-kicker">Signal path</p><h2 id="aq-chain-title">From loaded file to output</h2></div>
+      <p>Every processor has a fixed place in the chain, so saved state and host automation produce repeatable results.</p>
+    </header>
+    <div class="aq-system-story">
+      <div class="aq-system-story__copy">
+        <p class="aq-system-story__lead">Sample or loop region &rarr; granular playback &rarr; filters &rarr; compressor &rarr; tremolo &rarr; glitch effects &rarr; dry/wet blend.</p>
+        <p>WAV, AIFF and MP3 files load into a draggable waveform. The player can select a loop region, add an optional loop crossfade and use a manual 20&ndash;300 BPM resampling control.</p>
+        <p>The DSP uses JUCE StateVariableTPT low-pass and high-pass filters and a JUCE compressor. Custom processors provide tremolo, bitcrushing, stutter and chunk reverse.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="aq-screen io-reveal" id="demo" aria-labelledby="aq-demo-title">
+    <header class="aq-section-head">
+      <div><p class="aq-kicker">Demo</p><h2 id="aq-demo-title">The complete chain in one window</h2></div>
+      <p>The demo covers file loading, loop selection, granular playback, filters, glitch processing and DAW automation.</p>
+    </header>
+    <div class="aq-video-frame"><div class="video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/Q2hwWfisU4A" title="AudioQ demo" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></div>
+  </section>
+
+  <section class="aq-features io-reveal" aria-labelledby="aq-implementation-title">
+    <header class="aq-section-head">
+      <div><p class="aq-kicker">Implementation</p><h2 id="aq-implementation-title">Playback, DSP and host state</h2></div>
+      <p>Sixteen APVTS parameters provide automation and state saving in the VST3 build.</p>
+    </header>
+    <div class="aq-shot"><div class="aq-video-frame aq-video-frame--image"><img src="audioqscreenshot.png" alt="AudioQ interface with source waveform, output display and processing controls" loading="lazy" decoding="async"></div></div>
+    <div class="aq-features__list">
+      <div class="aq-feature"><span>01</span><div><h3>Input and playback</h3><p>File loading, draggable loop region, optional loop crossfade and manual resampling control.</p></div></div>
+      <div class="aq-feature"><span>02</span><div><h3>Processing</h3><p>Granular playback, StateVariableTPT filters, compressor, tremolo, bitcrusher, stutter and reverse.</p></div></div>
+      <div class="aq-feature"><span>03</span><div><h3>Host integration</h3><p>Sixteen APVTS parameters with automation and saved plugin state.</p></div></div>
+      <div class="aq-feature"><span>04</span><div><h3>Peak fail-safe</h3><p>Playback stops when the internal monitor exceeds 4.0 linear gain, roughly +12 dB. This is an additional fail-safe, not hearing protection.</p></div></div>
+    </div>
+  </section>
+
+  <section class="aq-challenges io-reveal" aria-labelledby="aq-engineering-title">
+    <header class="aq-section-head"><div><p class="aq-kicker">Engineering notes</p><h2 id="aq-engineering-title">Granular peaks and filter topology</h2></div></header>
+    <div class="aq-system-story"><div class="aq-system-story__copy">
+      <p><strong>Granular peaks.</strong> Overlapping grains can produce large level jumps. The compressor handles ordinary peaks and the separate monitor stops playback above the safety threshold.</p>
+      <p><strong>Filters.</strong> The filters use JUCE&rsquo;s StateVariableTPT implementation. The public source does not currently support a claim of explicit incoming-parameter smoothing.</p>
+      <p><strong>Compatibility.</strong> AudioQ is documented as VST3 and standalone. A verified OS, DAW, sample-rate and channel-layout matrix is still pending, so this page does not claim universal DAW support or host-tempo sync.</p>
+    </div></div>
+  </section>
+
+  <footer class="ifmc-foot" aria-label="Project links and navigation">
+    <div class="ifmc-foot__links"><a href="https://github.com/Szunias/AudioQ" target="_blank" rel="noopener noreferrer">Source code on GitHub</a><a href="https://www.youtube.com/watch?v=Q2hwWfisU4A" target="_blank" rel="noopener noreferrer">Demo on YouTube</a></div>
+    <a class="ifmc-foot__next next-project-btn" href="wwisefixer.html">Next tool: Wwise UE Fixer</a>
+  </footer>
+</div>
