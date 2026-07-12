@@ -61,6 +61,17 @@ module.exports = {
 
     // Projects with lightbox
     {
+      slug: 'sidar',
+      layout: 'project',
+      css: 'sidar',
+      js: ['theme-toggle', 'sidar'],
+      title: 'SIDAR 2.0 | Psychological Horror Teaser',
+      description: 'SIDAR 2.0 is an original psychological horror project created and developed by Igor Szuniewicz. Prototype in development.',
+      canonical: `${SITE}/sidar.html`,
+      ogImage: `${SITE}/old/public/assets/images/projects-sidar/sidar-null-poster.jpg`,
+      ogImageAlt: 'Red SIDAR NULL signal emerging from a black background',
+    },
+    {
       slug: 'shadowframes',
       layout: 'project',
       css: 'case',
