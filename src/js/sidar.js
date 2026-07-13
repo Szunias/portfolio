@@ -1,12 +1,10 @@
 (function () {
   const film = document.getElementById('sidarFilm');
   const sound = document.getElementById('sidarSound');
-  const replay = document.getElementById('sidarReplay');
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
 
   if (!film) return;
   if (sound) sound.hidden = false;
-  if (replay) replay.hidden = false;
 
   function ensureFilmLoaded() {
     if (film.dataset.autoplayLoaded === 'true') return;
@@ -36,14 +34,6 @@
       const enable = film.muted;
       setSound(enable);
       playFilm();
-    });
-  }
-
-  if (replay) {
-    replay.addEventListener('click', function () {
-      film.currentTime = 0;
-      playFilm();
-      window.scrollTo({ top: 0, behavior: reduceMotion && reduceMotion.matches ? 'auto' : 'smooth' });
     });
   }
 

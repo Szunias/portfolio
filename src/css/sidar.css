@@ -109,6 +109,14 @@ main { position: relative; }
 
 .sidar-nav__back:hover::before { transform: translateX(-4px); }
 
+.sidar-nav__meta {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 3vw, 34px);
+}
+
+.sidar-nav a:hover { color: var(--ash); }
+
 .sidar-hero {
   position: relative;
   isolation: isolate;
@@ -167,16 +175,27 @@ main { position: relative; }
   justify-content: space-between;
   align-items: end;
   gap: 28px;
-  color: rgba(201, 195, 188, .6);
-  font-family: var(--mono);
-  font-size: .65rem;
-  letter-spacing: .06em;
-  line-height: 1.7;
-  text-transform: uppercase;
+  color: rgba(201, 195, 188, .72);
 }
 
-.sidar-hero__foot p { margin: 0; }
-.sidar-hero__foot strong { color: rgba(201, 195, 188, .82); font-weight: 400; }
+.sidar-hero__identity { max-width: 680px; }
+
+.sidar-hero__identity h1 {
+  margin: 0;
+  color: #ddd6ce;
+  font-size: clamp(3rem, 7vw, 7rem);
+  font-weight: 500;
+  letter-spacing: -.055em;
+  line-height: .9;
+}
+
+.sidar-hero__identity p {
+  max-width: 58ch;
+  margin: 20px 0 0;
+  color: rgba(201, 195, 188, .74);
+  font-size: clamp(.95rem, 1.3vw, 1.08rem);
+  line-height: 1.55;
+}
 
 .sidar-hero__actions {
   display: flex;
@@ -219,97 +238,14 @@ main { position: relative; }
   animation: sidar-pulse 1.5s infinite;
 }
 
-.sidar-signal {
-  position: relative;
-  min-height: 82vh;
-  min-height: 82svh;
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 50px;
-  padding: clamp(92px, 15vw, 220px) clamp(20px, 8vw, 120px) clamp(70px, 9vw, 130px);
-  overflow: hidden;
-  border-top: 1px solid rgba(210,22,25,.13);
-  background:
-    radial-gradient(circle at 75% 35%, rgba(112, 5, 7, .18), transparent 28%),
-    radial-gradient(circle at 75% 35%, transparent 0 10%, rgba(210,22,25,.05) 10.2% 10.4%, transparent 10.6% 17%, rgba(210,22,25,.04) 17.2% 17.4%, transparent 17.6%),
-    #030303;
-}
-
-.sidar-signal::after {
-  content: "";
-  position: absolute;
-  top: 15%;
-  right: 7%;
-  width: min(40vw, 520px);
-  aspect-ratio: 1;
-  border: 1px solid rgba(210,22,25,.11);
-  border-radius: 50%;
-  box-shadow: 0 0 90px rgba(210,22,25,.04), inset 0 0 90px rgba(210,22,25,.03);
-  pointer-events: none;
-}
-
-.sidar-signal__copy { position: relative; z-index: 1; }
-
 .sidar-kicker {
-  margin: 0 0 clamp(28px, 5vw, 68px);
+  margin: 0 0 18px;
   color: var(--blood-text);
   font-family: var(--mono);
-  font-size: .66rem;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-}
-
-.sidar-signal h2 {
-  max-width: 980px;
-  margin: 0;
-  color: #d8d2cb;
-  font-size: clamp(2.4rem, 7.2vw, 7.2rem);
-  font-weight: 500;
-  letter-spacing: -.045em;
-  line-height: .98;
-}
-
-.sidar-status {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: clamp(34px, 5vw, 68px) 0 0;
-  color: var(--dim);
-  font-family: var(--mono);
-  font-size: .67rem;
+  font-size: 11px;
   letter-spacing: .12em;
   text-transform: uppercase;
 }
-
-.sidar-status span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--blood);
-  box-shadow: 0 0 12px var(--blood);
-  animation: sidar-blink 2.4s infinite;
-}
-
-.sidar-replay {
-  position: relative;
-  z-index: 2;
-  flex: 0 0 auto;
-  padding: 16px 0;
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  background: none;
-  color: var(--dim);
-  font-family: var(--mono);
-  font-size: .65rem;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: color .2s, border-color .2s;
-}
-
-.sidar-replay span { margin-left: 22px; color: var(--blood); }
-.sidar-replay:hover { color: #fff; border-color: var(--blood); }
 
 .sidar-prototype {
   padding: clamp(80px, 11vw, 160px) clamp(20px, 8vw, 120px);
@@ -324,8 +260,6 @@ main { position: relative; }
   margin-bottom: clamp(36px, 5vw, 64px);
 }
 
-.sidar-prototype__header .sidar-kicker { margin-bottom: 18px; }
-
 .sidar-prototype h2 {
   margin: 0;
   color: #d8d2cb;
@@ -336,14 +270,11 @@ main { position: relative; }
 }
 
 .sidar-prototype__header > p {
-  max-width: 36ch;
+  max-width: 52ch;
   margin: 0;
   color: var(--dim);
-  font-family: var(--mono);
-  font-size: .67rem;
-  letter-spacing: .06em;
-  line-height: 1.7;
-  text-transform: uppercase;
+  font-size: 1rem;
+  line-height: 1.65;
 }
 
 .sidar-prototype__video {
@@ -395,17 +326,10 @@ main { position: relative; }
   50% { box-shadow: inset 0 0 0 2px var(--void), 0 0 13px var(--blood); }
 }
 
-@keyframes sidar-blink {
-  0%, 12%, 100% { opacity: 1; }
-  13%, 20% { opacity: .2; }
-}
-
 @media (max-width: 760px) {
   .sidar-hero__film { object-fit: cover; }
   .sidar-hero__foot { align-items: flex-start; flex-direction: column; }
   .sidar-hero__actions { width: 100%; justify-content: space-between; }
-  .sidar-signal { min-height: 78svh; flex-direction: column; align-items: flex-start; justify-content: flex-end; }
-  .sidar-signal::after { top: 15%; right: -20%; width: 82vw; }
   .sidar-prototype__header { grid-template-columns: 1fr; }
   .sidar-credit { grid-template-columns: 1fr; }
   .sidar-credit p:nth-child(2),
@@ -413,9 +337,9 @@ main { position: relative; }
 }
 
 @media (max-width: 420px) {
-  .sidar-nav { font-size: .56rem; }
+  .sidar-nav { font-size: .62rem; }
+  .sidar-nav__meta > span { display: none; }
   .sidar-hero__actions { align-items: flex-start; flex-direction: column; gap: 18px; }
-  .sidar-signal h2 { font-size: clamp(2.25rem, 12vw, 3.5rem); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -432,27 +356,6 @@ main { position: relative; }
   min-height: min(82svh, 760px);
 }
 
-.sidar-signal {
-  min-height: 0;
-  align-items: flex-end;
-  padding-top: clamp(72px, 9vw, 112px);
-  padding-bottom: clamp(64px, 8vw, 104px);
-}
-
-.sidar-signal h2 {
-  max-width: 820px;
-  font-size: clamp(2.4rem, 5.8vw, 5.4rem);
-}
-
-.sidar-summary {
-  max-width: 62ch;
-  margin: clamp(28px, 4vw, 48px) 0 0;
-  color: var(--dim);
-  font-family: var(--mono);
-  font-size: .78rem;
-  line-height: 1.75;
-}
-
 .sidar-prototype {
   padding-top: clamp(64px, 8vw, 104px);
   padding-bottom: clamp(64px, 8vw, 104px);
@@ -460,5 +363,4 @@ main { position: relative; }
 
 @media (max-width: 760px) {
   .sidar-hero { min-height: 76svh; }
-  .sidar-signal { min-height: 0; }
 }

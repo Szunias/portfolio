@@ -2,16 +2,27 @@
   <p class="case-hero__kicker">Python &middot; Unreal &middot; Wwise &middot; Perforce</p>
   <h1 class="case-hero__title">Wwise UE Fixer</h1>
   <p class="case-hero__sub">A Python diagnostic and repair utility for Wwise integrations in Unreal after Perforce syncs. I built the checks, three scoped configuration repairs and the backup step.</p>
-  <p class="case-hero__facts">Solo tool developer &middot; Python &middot; .bat launcher</p>
+  <p class="case-hero__facts">Solo tool developer &middot; Python &middot; Windows 10/11 &middot; MIT</p>
 </header>
 
 <section class="case-sec" aria-labelledby="fixer-scope-title">
   <p class="case-sec__no">Tool scope</p>
   <h2 class="case-sec__title" id="fixer-scope-title">Diagnostics, three repairs and scoped backups</h2>
   <div class="concept-body">
-    <p>The diagnostic pass checks the plugin entry and installation, SoundBank location, AkSettings, Wwise project, integration files, path consistency, Perforce configuration, generated banks and plugin-version information. Checks that cannot be repaired automatically remain reports.</p>
-    <p>Quick Fix can repair the supported Wwise entry in the <code>.uproject</code> file, the SoundBank path in <code>DefaultGame.ini</code> and the AkSettings section in <code>DefaultEngine.ini</code>.</p>
-    <p>Before making those changes, the utility copies the <code>.uproject</code> file and the <code>Config</code> directory. It does not archive Content, Source or the full project. In the Shadow Frames workflow the automated pass took about ten seconds; project-file regeneration, an Unreal restart and an audio test still followed.</p>
+    <p>The diagnostic pass checks whether the Wwise plug-in, project paths, generated banks and Perforce settings agree. Issues outside the three supported repairs are reported without changing files.</p>
+  </div>
+  <table class="scope-table">
+    <caption>What Quick Fix can change</caption>
+    <thead><tr><th scope="col">Check</th><th scope="col">Action</th><th scope="col">File changed</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Wwise plug-in entry</th><td>Quick Fix</td><td><code>.uproject</code></td></tr>
+      <tr><th scope="row">SoundBank path</th><td>Quick Fix</td><td><code>DefaultGame.ini</code></td></tr>
+      <tr><th scope="row">AkSettings section</th><td>Quick Fix</td><td><code>DefaultEngine.ini</code></td></tr>
+      <tr><th scope="row">Other reported issues</th><td>Diagnostic only</td><td>No automatic change</td></tr>
+    </tbody>
+  </table>
+  <div class="concept-body scope-table__note">
+    <p>Before a supported repair, the utility copies the <code>.uproject</code> file and the <code>Config</code> directory. It does not archive Content, Source or the full project. In the Shadow Frames workflow the automated pass took about ten seconds; project-file regeneration, an Unreal restart and an audio test still followed.</p>
   </div>
 </section>
 

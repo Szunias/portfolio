@@ -153,12 +153,12 @@
       note: 'Better texture, but the response lands seconds late.'
     },
     mmaudio: {
-      label: 'MMAudio',
-      latency: '1.4-3.4s',
+      label: 'MMAudio sample',
+      latency: '1.4-3.4s across variants',
       use: 'Prepared content',
       image: `${base}/images/mmaudio.png`,
-      caption: 'MMAudio: stronger texture, still needs preparation.',
-      note: 'The best local trade-off when the sound is generated ahead of time.'
+      caption: 'MMAudio: one selected output from the quality set.',
+      note: 'The benchmark separates Small and Large; this selected sample is not used to compare them.'
     },
     elevenlabs: {
       label: 'ElevenLabs',
@@ -166,7 +166,7 @@
       use: 'Pregeneration',
       image: `${base}/images/elevenlabs.png`,
       caption: 'ElevenLabs: clean output, cloud latency.',
-      note: 'Often the cleanest sample, but not safe for instant gameplay response.'
+      note: 'Often the cleanest result in this sample set, but not safe for instant gameplay response.'
     }
   };
 
