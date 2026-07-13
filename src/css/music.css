@@ -2591,3 +2591,225 @@ body {
 }
 
 .featured-card:hover .featured-card__art { transform: none; }
+
+/* =========================================
+   PORTFOLIO COHESION PASS
+   Keep Music editorial and dark, while matching the shared navigation,
+   type scale, readable metadata and interaction targets used elsewhere.
+   ========================================= */
+:root {
+  --player-progress-height: 44px;
+}
+
+/* Shared header rhythm, with full-size keyboard and touch targets. */
+.site-header {
+  min-height: 56px;
+  padding: 6px clamp(20px, 5vw, 64px);
+}
+
+.site-header__name,
+.site-header nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.site-header__name:focus-visible,
+.site-header nav a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* The introduction should read as a portfolio page, not a display poster. */
+.music-hero__title {
+  font-size: clamp(56px, 7vw, 96px);
+  line-height: 0.94;
+}
+
+.music-hero__subtitle {
+  max-width: 60ch;
+  font-size: clamp(18px, 1.55vw, 20px);
+  line-height: 1.55;
+}
+
+.music-hero__primary,
+.music-hero__secondary,
+.featured__case-link {
+  min-height: 44px;
+  align-items: center;
+  font-size: 11px;
+}
+
+.featured-card__meta {
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.featured-card__description,
+.track-data .track-card__desc {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.featured-card:not(.featured-card--lead) strong {
+  font-size: clamp(20px, 2vw, 24px);
+}
+
+.featured-card--lead strong {
+  font-size: clamp(30px, 3.2vw, 40px);
+}
+
+.featured-card__play {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Every audio control keeps at least a 44px interaction area. */
+.player-bar__ctrl-btn,
+.player-bar__play-pause,
+.player-bar__vol-icon {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.player-bar__volume {
+  min-width: 88px;
+  height: 44px;
+  min-height: 44px;
+}
+
+/* Keep the seek target visible and inside the space reserved above the player. */
+.player-bar__progress {
+  top: calc(var(--player-progress-height) * -1);
+  height: var(--player-progress-height);
+  background: rgba(10, 10, 13, 0.94);
+  border-top: 1px solid rgba(236, 238, 240, 0.08);
+  border-bottom: 1px solid rgba(236, 238, 240, 0.08);
+  box-shadow: none;
+}
+
+.player-bar__progress::before {
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    transparent calc(50% - 2px),
+    rgba(236, 238, 240, 0.16) calc(50% - 2px),
+    rgba(236, 238, 240, 0.16) calc(50% + 2px),
+    transparent calc(50% + 2px)
+  );
+}
+
+.player-bar__progress:hover,
+.player-bar__progress:focus-visible {
+  background: rgba(13, 13, 17, 0.98);
+}
+
+.player-bar__progress-buffer,
+.player-bar__progress-fill {
+  top: 20px;
+  bottom: 20px;
+}
+
+.player-bar__progress-fill::before {
+  top: -3px;
+  bottom: -3px;
+}
+
+.player-bar__title {
+  font-size: 12px;
+}
+
+.player-bar__artist,
+.player-bar__status,
+.player-bar__time-group {
+  font-size: 11px;
+}
+
+.player-bar__ctrl-btn:focus-visible,
+.player-bar__play-pause:focus-visible,
+.player-bar__vol-icon:focus-visible,
+.player-bar__volume:focus-visible,
+.player-bar__progress:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Match the quieter portfolio colophon instead of shrinking it to a label. */
+.colophon {
+  align-items: center;
+  padding: 28px clamp(20px, 5vw, 64px) 40px;
+  font-family: var(--brand-secondary);
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+}
+
+.colophon a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+@media (max-width: 650px) {
+  .music-hero__title {
+    font-size: clamp(56px, 17vw, 64px);
+  }
+
+  .music-hero__subtitle {
+    font-size: 18px;
+  }
+
+  .featured-card__meta {
+    font-size: 11px;
+  }
+
+  .featured-card__description {
+    font-size: 14px;
+  }
+
+  .featured-card strong,
+  .featured-card--lead strong,
+  .featured-card:not(.featured-card--lead) strong {
+    font-size: 19px;
+    line-height: 1.2;
+  }
+
+  .featured-card--lead strong {
+    font-size: 21px;
+  }
+
+  .player-bar__ctrl-btn,
+  .player-bar__play-pause {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .colophon {
+    align-items: flex-start;
+    padding-inline: 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .site-header {
+    padding-inline: 20px;
+  }
+
+  .site-header nav {
+    gap: 8px;
+  }
+
+  .site-header__name,
+  .site-header nav a {
+    font-size: 11px;
+  }
+}

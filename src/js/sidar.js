@@ -100,22 +100,52 @@
   const prototypeLaunch = document.querySelector('[data-sidar-video-launch]');
 
   if (prototypeVideo && prototypeLaunch) {
+    const prototypeLaunchText = prototypeLaunch.querySelector('.sidar-prototype__play > span:last-child');
+    const prototypeLaunchLabel = prototypeLaunch.getAttribute('aria-label');
+    let prototypeLoading = false;
+
     prototypeLaunch.addEventListener('click', function () {
+      if (prototypeLoading) return;
+
       const videoId = prototypeVideo.getAttribute('data-video-id');
       if (!videoId || !/^[A-Za-z0-9_-]{11}$/.test(videoId)) return;
+
+      prototypeLoading = true;
+      prototypeLaunch.setAttribute('aria-busy', 'true');
+      prototypeLaunch.setAttribute('aria-label', 'Loading the SIDAR 2.0 prototype recording');
+      if (prototypeLaunchText) prototypeLaunchText.textContent = 'Loading recording';
 
       const iframe = document.createElement('iframe');
       iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId + '?autoplay=1&rel=0';
       iframe.title = 'SIDAR 2.0 prototyping week one';
       iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share';
       iframe.allowFullscreen = true;
+      iframe.tabIndex = 0;
       iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-      iframe.addEventListener('load', function () {
-        iframe.focus();
-      }, { once: true });
 
-      prototypeVideo.classList.add('is-playing');
-      prototypeVideo.replaceChildren(iframe);
+      let loadTimeout;
+      const restoreLaunch = function () {
+        if (!prototypeLoading) return;
+        prototypeLoading = false;
+        window.clearTimeout(loadTimeout);
+        iframe.remove();
+        prototypeLaunch.removeAttribute('aria-busy');
+        prototypeLaunch.setAttribute('aria-label', (prototypeLaunchLabel || 'Play the SIDAR 2.0 prototype recording') + '. Loading failed; retry');
+        if (prototypeLaunchText) prototypeLaunchText.textContent = 'Retry recording';
+        prototypeLaunch.focus();
+      };
+
+      iframe.addEventListener('load', function () {
+        if (!prototypeLoading) return;
+        prototypeLoading = false;
+        window.clearTimeout(loadTimeout);
+        iframe.focus();
+        prototypeLaunch.remove();
+      }, { once: true });
+      iframe.addEventListener('error', restoreLaunch, { once: true });
+
+      prototypeVideo.insertBefore(iframe, prototypeLaunch);
+      loadTimeout = window.setTimeout(restoreLaunch, 12000);
     });
   }
 })();

@@ -113,7 +113,7 @@
       const cardPlaying = selected && playing;
       card.classList.toggle('active', selected);
       card.classList.toggle('is-playing', cardPlaying);
-      card.setAttribute('aria-pressed', String(selected));
+      card.setAttribute('aria-pressed', String(cardPlaying));
       card.setAttribute('aria-label', `${cardPlaying ? 'Pause' : 'Play'} ${cardLabels.get(card)}`);
     });
   }
