@@ -36,8 +36,13 @@ function relPath(...parts) {
   return parts.join('/');
 }
 
-const SRC    = path.join(__dirname, 'src');
-const DIST   = path.join(__dirname, 'dist');
+const SRC = path.join(__dirname, 'src');
+const FINAL_DIST = path.join(__dirname, 'dist');
+const CHECK_ONLY = process.argv.slice(2).includes('--check');
+const BUILD_TOKEN = `${process.pid}-${Date.now()}`;
+const DIST = path.join(__dirname, `.dist-tmp-${BUILD_TOKEN}`);
+const DIST_BACKUP = path.join(__dirname, `.dist-backup-${BUILD_TOKEN}`);
+const SAFE_PAGE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function currentBuildSha() {
   try {
@@ -63,6 +68,34 @@ function ensureDir(dir) {
 
 function cleanDir(dir) {
   if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
+}
+
+function publishDist() {
+  const hadPreviousDist = fs.existsSync(FINAL_DIST);
+  if (hadPreviousDist) fs.renameSync(FINAL_DIST, DIST_BACKUP);
+
+  try {
+    fs.renameSync(DIST, FINAL_DIST);
+  } catch (publishError) {
+    if (hadPreviousDist && fs.existsSync(DIST_BACKUP) && !fs.existsSync(FINAL_DIST)) {
+      try {
+        fs.renameSync(DIST_BACKUP, FINAL_DIST);
+      } catch (restoreError) {
+        throw new Error(
+          `Could not publish the staged build (${publishError.message}) or restore the previous dist (${restoreError.message}); previous output remains at ${path.basename(DIST_BACKUP)}`
+        );
+      }
+    }
+    throw publishError;
+  }
+
+  if (hadPreviousDist) {
+    try {
+      cleanDir(DIST_BACKUP);
+    } catch (cleanupError) {
+      console.warn(`  ! published dist, but could not remove ${path.basename(DIST_BACKUP)}: ${cleanupError.message}`);
+    }
+  }
 }
 
 function copyDirContents(srcDir, destDir) {
@@ -172,6 +205,7 @@ function jsonLdTag(graph) {
 }
 
 function schemaTags(page) {
+  if (page.noindex) return '';
   const siteOrigin = new URL(config.pages[0].canonical).origin;
   const siteId = `${siteOrigin}/#website`;
   const personId = `${siteOrigin}/#igor`;
@@ -252,10 +286,10 @@ function schemaTags(page) {
 }
 
 function stripTags(html) {
-  return html
+  return decodeHtmlAttr(html
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/<[^>]+>/g, ' ')
+    .replace(/<[^>]+>/g, ' '))
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -282,14 +316,6 @@ function videoLabelFromContext(prefix) {
   return 'Project video';
 }
 
-function videoDescriptionFromContext(prefix) {
-  const paragraphs = [...prefix.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
-    .map(match => stripTags(match[1]))
-    .filter(Boolean);
-  const text = paragraphs.length ? paragraphs[paragraphs.length - 1] : videoLabelFromContext(prefix);
-  return text.length > 420 ? `${text.slice(0, 417).trim()}...` : text;
-}
-
 function enhanceVideoAccessibility(html) {
   let counter = 0;
   let output = html.replace(
@@ -309,23 +335,6 @@ function enhanceVideoAccessibility(html) {
     const context = output.slice(Math.max(0, offset - 2500), offset);
     return `<video aria-label="${escAttr(videoLabelFromContext(context))}"${attrs}>`;
   });
-
-  output = output.replace(
-    /(<div\s+class=(["'])video-wrap\2[^>]*>\s*<video\b(?=[\s\S]*?\bcontrols\b)[\s\S]*?<\/video>\s*<\/div>)(\s*<p\s+class=(["'])video-caption\4[^>]*>[\s\S]*?<\/p>)?(?!\s*<details\s+class=(["'])video-transcript\5)/gi,
-    (match, videoWrap, _wrapQuote, captionHtml, _captionQuote, _detailsQuote, offset) => {
-      counter++;
-      const context = output.slice(Math.max(0, offset - 3000), offset);
-      const label = videoLabelFromContext(context).replace(/^Video:\s*/i, '');
-      const description = videoDescriptionFromContext(context);
-      const transcript = [
-        '<details class="video-transcript">',
-        '<summary>Audio notes</summary>',
-        `<p><strong>${escAttr(label)}</strong>. ${escAttr(description)}</p>`,
-        '</details>'
-      ].join('');
-      return `${videoWrap}${captionHtml || ''}\n  ${transcript}`;
-    }
-  );
 
   return output;
 }
@@ -354,13 +363,16 @@ function assertGalleryItemMarkup(html) {
   }
 }
 
-function enhanceGalleryItemButtons(html) {
+function enhanceGalleryItemLinks(html) {
   assertGalleryItemMarkup(html);
   return html.replace(/<div\b([^>]*\bclass=(["'])[^"']*\bgallery-item\b[^"']*\2[^>]*)>([\s\S]*?)<\/div>/gi, (match, attrs, quote, inner) => {
-    const buttonAttrs = attrs
+    const linkAttrs = attrs
       .replace(/\s+role=(["'])button\1/gi, '')
       .replace(/\s+tabindex=(["'])0\1/gi, '');
-    return `<button type="button"${buttonAttrs}>${inner}</button>`;
+    const image = inner.match(/<img\b[^>]*>/i);
+    const href = image ? attrValue(image[0], 'src') : '';
+    if (!href) throw new Error('gallery-item is missing an image source');
+    return `<a${linkAttrs} href="${escAttr(href)}">${inner}</a>`;
   });
 }
 
@@ -446,11 +458,15 @@ function ensureNoindex(html) {
 
 function decodeHtmlAttr(value) {
   return String(value)
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>');
+    .replace(/&#(?:x([0-9a-f]+)|(\d+));/gi, (entity, hex, decimal) => {
+      const codePoint = Number.parseInt(hex || decimal, hex ? 16 : 10);
+      try { return String.fromCodePoint(codePoint); } catch (_) { return entity; }
+    })
+    .replace(/&(amp|quot|apos|lt|gt|nbsp|ndash|mdash|lsquo|rsquo|ldquo|rdquo|hellip|middot);/gi, (entity, name) => ({
+      amp: '&', quot: '"', apos: "'", lt: '<', gt: '>', nbsp: ' ',
+      ndash: '–', mdash: '—', lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”',
+      hellip: '…', middot: '·',
+    })[name.toLowerCase()] || entity);
 }
 
 function urlPathname(value, siteOrigin) {
@@ -642,7 +658,9 @@ function validateGeneratedHtml(htmlFiles) {
     const pageConfig = pageByFile.get(file);
 
     if (pageConfig) {
-      if (isNoindex) issues.push(`${file}: live page must not be noindex`);
+      if (Boolean(pageConfig.noindex) !== isNoindex) {
+        issues.push(`${file}: robots directive does not match site.config.cjs`);
+      }
       const titles = [...html.matchAll(/<title\b[^>]*>([\s\S]*?)<\/title>/gi)].map(match => stripTags(match[1]));
       if (titles.length !== 1 || !titles[0]) issues.push(`${file}: expected exactly one non-empty title`);
       const descriptions = [...html.matchAll(/<meta\b(?=[^>]*\bname=(["'])description\1)[^>]*>/gi)];
@@ -661,7 +679,7 @@ function validateGeneratedHtml(htmlFiles) {
       }
     }
 
-    if (!isNoindex) {
+    if (pageConfig || !isNoindex) {
       for (const match of html.matchAll(/<([a-z][\w:-]*)\b[^>]*>/gi)) {
         const tag = match[0];
         for (const attr of ['aria-labelledby', 'aria-describedby', 'aria-controls', 'aria-owns', 'aria-activedescendant', 'for']) {
@@ -679,13 +697,13 @@ function validateGeneratedHtml(htmlFiles) {
     for (const match of html.matchAll(/\b(?:href|src|poster|action|data-src|data-cover)=["']([^"']+)["']/gi)) {
       const value = decodeHtmlAttr(match[1]).trim();
       if (/^javascript:/i.test(value)) issues.push(`${file}: disallowed javascript: URL`);
-      if (!isNoindex && /^http:\/\//i.test(value)) issues.push(`${file}: insecure http URL ${value}`);
+      if ((pageConfig || !isNoindex) && /^http:\/\//i.test(value)) issues.push(`${file}: insecure http URL ${value}`);
     }
     for (const match of html.matchAll(/\bdata-src-e=["']([^"']+)["']/gi)) {
       const value = decodeBase64Attr(match[1]).trim();
       if (!value) issues.push(`${file}: invalid data-src-e value`);
       if (/^javascript:/i.test(value)) issues.push(`${file}: disallowed encoded javascript: URL`);
-      if (!isNoindex && /^http:\/\//i.test(value)) issues.push(`${file}: insecure encoded http URL ${value}`);
+      if ((pageConfig || !isNoindex) && /^http:\/\//i.test(value)) issues.push(`${file}: insecure encoded http URL ${value}`);
     }
 
     for (const match of html.matchAll(/<a\b[^>]*\bhref=(["'])(.*?)\1[^>]*>/gi)) {
@@ -731,7 +749,7 @@ function validateGeneratedHtml(htmlFiles) {
       }
     }
 
-    if (!isNoindex) {
+    if (pageConfig || !isNoindex) {
       for (const match of html.matchAll(/<img\b[^>]*>/gi)) {
         const tag = match[0];
         const isLightboxImage = /\bdata-lightbox-image\b/i.test(tag);
@@ -802,11 +820,14 @@ function validateSupportFiles(siteOrigin, copiedStatic) {
   }
 
   const sitemapLocs = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => decodeHtmlAttr(match[1]));
-  const expectedLocs = config.pages.map(page => page.canonical).concat(
-    copiedStatic
-      .filter(entry => entry.sitemap !== false)
-      .map(entry => `${siteOrigin}/${entry.outName}`)
-  );
+  const expectedLocs = config.pages
+    .filter(page => page.sitemap !== false && !page.noindex)
+    .map(page => page.canonical)
+    .concat(
+      copiedStatic
+        .filter(entry => entry.sitemap !== false)
+        .map(entry => `${siteOrigin}/${entry.outName}`)
+    );
   const duplicateLoc = sitemapLocs.find((loc, index) => sitemapLocs.indexOf(loc) !== index);
   const missingLocs = expectedLocs.filter(loc => !sitemapLocs.includes(loc));
   const extraLocs = sitemapLocs.filter(loc => !expectedLocs.includes(loc));
@@ -946,7 +967,7 @@ function buildPage(page) {
   content = enhanceIframeAccessibility(content);
   content = enhanceImageAccessibility(content);
   content = enhanceInlineSvgAccessibility(content);
-  content = enhanceGalleryItemButtons(content);
+  content = enhanceGalleryItemLinks(content);
 
   // 3. Assemble CSS (single file per layout type)
   const css = getCSS(page.css);
@@ -961,6 +982,10 @@ function buildPage(page) {
   html = html.replace('<!-- DESCRIPTION -->', () => escAttr(page.description));
   html = html.replace('<!-- CANONICAL -->', () => escAttr(page.canonical));
   html = html.replace('<!-- BUILD_SHA -->', () => escAttr(BUILD_SHA));
+  html = html.replace(
+    /<meta name="robots" content="index, follow">/,
+    `<meta name="robots" content="${page.noindex ? 'noindex, nofollow' : 'index, follow'}">`
+  );
   html = html.replace('<!-- OG_TAGS -->', () => ogTags(page));
   html = html.replace('<!-- CSS -->', () => css);
   html = html.replace('<!-- CONTENT -->', () => content);
@@ -1017,10 +1042,16 @@ function validateConfig(cfg) {
     if (duplicateId) throw new Error(`Duplicate id "${duplicateId}" in src/pages/${slug}.html`);
   }
   for (const page of cfg.pages) {
+    if (typeof page.slug !== 'string' || !SAFE_PAGE_SLUG.test(page.slug)) {
+      throw new Error(`Invalid page slug "${page.slug || ''}": use lowercase letters, numbers, and single hyphens only`);
+    }
     if (seen.has(page.slug)) throw new Error(`Duplicate slug: ${page.slug}`);
     seen.add(page.slug);
-    if (!['home', 'project', 'music'].includes(page.layout)) {
+    if (!['home', 'project', 'music', 'error'].includes(page.layout)) {
       throw new Error(`Unknown layout "${page.layout}" for ${page.slug}`);
+    }
+    if (page.noindex && page.sitemap !== false) {
+      throw new Error(`${page.slug} is noindex and must set sitemap: false`);
     }
     if (!Array.isArray(page.js)) {
       throw new Error(`JS list for ${page.slug} must be an array`);
@@ -1181,8 +1212,10 @@ function validateConfig(cfg) {
 function main() {
   validateConfig(config);
 
-  // Clean dist to avoid stale output (e.g. hero-*.html from old configs)
+  // Always assemble and validate away from dist. The last successful output is
+  // replaced only after every page, asset, and support file has passed.
   cleanDir(DIST);
+  cleanDir(DIST_BACKUP);
   ensureDir(DIST);
 
   let built = 0;
@@ -1193,7 +1226,8 @@ function main() {
   for (const page of config.pages) {
     try {
       const html = buildPage(page);
-      const outPath = path.join(DIST, `${page.slug}.html`);
+      const outPath = safeDistPath(`${page.slug}.html`);
+      if (!outPath) throw new Error(`Unsafe page output path for slug: ${page.slug}`);
       fs.writeFileSync(outPath, html, 'utf8');
       htmlOutputs.push(`${page.slug}.html`);
       built++;
@@ -1202,6 +1236,12 @@ function main() {
       failed.push({ slug: page.slug, error: err.message });
       console.error(`  ✗ ${page.slug}.html - ${err.message}`);
     }
+  }
+
+  if (failed.length) {
+    throw new Error(
+      `${failed.length} page(s) failed:\n  - ${failed.map(failure => `${failure.slug}: ${failure.error}`).join('\n  - ')}`
+    );
   }
 
   // Copy static files (external pages not using the layout system)
@@ -1260,7 +1300,7 @@ function main() {
 
   // Generate sitemap.xml - lastmod follows content files, not every shared build/config change.
   const SITE_ORIGIN = new URL(config.pages[0].canonical).origin;
-  const pageUrls = config.pages.map(p => {
+  const pageUrls = config.pages.filter(p => p.sitemap !== false && !p.noindex).map(p => {
     const priority = p.slug === 'index' ? '1.0' : '0.8';
     return sitemapUrl(p.canonical, maxGitMtime(pageContentInputs(p)), priority);
   });
@@ -1294,7 +1334,6 @@ function main() {
     'szuniewicz-ai-audio-thesis-2026.pdf',
     'Igor_Szuniewicz_CV.pdf',
     'aithesiscover.png',
-    'sounddesignreel.png',
   ];
   for (const f of rootAssets) {
     const src = path.join(__dirname, f);
@@ -1334,18 +1373,27 @@ function main() {
 
   enforceDistBudget();
 
-  console.log(`\nDone: ${built} pages built, ${copied} files copied → dist/`);
-
-  if (failed.length) {
-    console.error(`\n${failed.length} page(s) failed:`);
-    for (const f of failed) console.error(`  - ${f.slug}: ${f.error}`);
-    process.exit(1);
+  if (CHECK_ONLY) {
+    cleanDir(DIST);
+    console.log(`\nCheck passed: ${built} pages built, ${copied} files copied in staging; dist/ unchanged`);
+    return;
   }
+
+  publishDist();
+  console.log(`\nDone: ${built} pages built, ${copied} files copied → dist/`);
 }
 
 try {
   main();
 } catch (err) {
+  try {
+    cleanDir(DIST);
+    if (fs.existsSync(DIST_BACKUP) && !fs.existsSync(FINAL_DIST)) {
+      fs.renameSync(DIST_BACKUP, FINAL_DIST);
+    }
+  } catch (cleanupError) {
+    console.error(`\nBuild cleanup failed: ${cleanupError.message}`);
+  }
   console.error(`\nBuild failed: ${err.message}`);
-  process.exit(1);
+  process.exitCode = 1;
 }

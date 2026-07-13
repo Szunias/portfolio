@@ -23,7 +23,7 @@ Static HTML, built from small templates by a single Node script. Zero npm depend
 npm run build
 ```
 
-Outputs to `dist/`. The script clears `dist/` on each run, so there is no stale output. `npm run check` runs the same build and validation gate used by GitHub Pages.
+Outputs to `dist/`. The script validates a temporary build before replacing the last known-good output, so a failed build does not leave a partial site. `npm run check` runs the same validation gate without publishing the temporary output.
 
 The build also validates the live site before deploy:
 
@@ -42,14 +42,14 @@ For local preview, serve `dist/` with any static server (e.g. `npx serve dist`).
 build.cjs              # Build script (Node, zero deps)
 site.config.cjs        # Page definitions (slug, layout, meta)
 src/
-  layouts/             # home.html, project.html, music.html
+  layouts/             # home.html, project.html, music.html, error.html
   partials/            # lightbox, player-bar
   pages/               # page content (one .html per page)
-  css/                 # home.css, project.css, music.css
-  js/                  # theme-toggle, lightbox, scroll-progress, scroll-reveal, music
+  css/                 # page-specific stylesheets inlined by the build
+  js/                  # page-specific interactions inlined by the build
   assets/              # favicon
 old/                   # legacy assets (images, videos, audio, CV) — referenced by pages
-archive/               # static archive pages (dae-page.html, nuonsoft-becpp.html)
+archive/               # standalone legacy snapshots; not deployed
 dist/                  # build output (gitignored)
 .github/workflows/     # GitHub Pages deploy
 ```
@@ -72,7 +72,7 @@ The following directories are **not** part of the live site. They are kept in th
 | Directory | What it is | Why it's still here |
 |---|---|---|
 | `old/` | Previous portfolio built with React 18 + TypeScript + Vite + Tailwind + react-i18next | Its `old/public/assets/` (images, videos, audio tracks, CV PDFs) is still referenced by the current HTML pages. The React app itself is no longer deployed. |
-| `archive/` | Standalone HTML pages (`dae-page.html`, `nuonsoft-becpp.html`) | Copied verbatim into `dist/` by the build via `site.config.cjs` `staticCopy`. |
+| `archive/` | Standalone HTML pages (`dae-page.html`, `nuonsoft-becpp.html`) | Kept as historical reference only; not deployed. |
 | `v2/` | Earlier experimental rebuild | Not deployed, not referenced. |
 | `new-portfolio/` | Another earlier experiment | Not deployed, not referenced. |
 | `design-mockups/` | HTML/PNG mockups used to explore layouts | Not deployed, not referenced. |

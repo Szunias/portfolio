@@ -3,7 +3,7 @@
  *
  * Each entry specifies:
  *   slug       - output filename (without .html)
- *   layout     - which layout template to use (home | project | music)
+ *   layout     - which layout template to use (home | project | music | error)
  *   css        - CSS file to inline (one per layout type)
  *   js         - JS files to concatenate and inline
  *   title      - <title> tag content
@@ -18,18 +18,8 @@
 const SITE = 'https://igorszuniewicz.com';
 
 module.exports = {
-  /** External archive pages copied to dist/. Keep noindex pages out of sitemap. */
-  staticCopy: [
-    {
-      file: 'archive/dae-page.html',
-      sitemap: false,
-      noindex: true,
-      sanitize: true,
-      rewriteRootRelativeTo: 'https://www.howest.be',
-      ensureIds: ['main-content'],
-    },
-    { file: 'archive/nuonsoft-becpp.html', sitemap: false, noindex: true, sanitize: true },
-  ],
+  /** Historical snapshots stay in archive/ and are intentionally not deployed. */
+  staticCopy: [],
 
   pages: [
     // Home
@@ -44,6 +34,22 @@ module.exports = {
       canonical: `${SITE}/`,
       ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
       ogImageAlt: 'Shadow Frames horror game screenshot from Igor Szuniewicz game audio portfolio',
+    },
+
+    // Error page
+    {
+      slug: '404',
+      layout: 'error',
+      css: 'home',
+      js: [],
+      title: 'Page Not Found | Igor Szuniewicz',
+      description: 'The requested portfolio page could not be found. Return to Igor Szuniewicz’s game audio and audio programming work.',
+      canonical: `${SITE}/404.html`,
+      ogType: 'website',
+      ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
+      ogImageAlt: 'Shadow Frames horror game screenshot from Igor Szuniewicz game audio portfolio',
+      noindex: true,
+      sitemap: false,
     },
 
     // Music
@@ -75,7 +81,7 @@ module.exports = {
       slug: 'shadowframes',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'shadowframes', 'lightbox', 'theme-toggle'],
+      js: ['lightbox', 'theme-toggle'],
       title: 'Shadow Frames | Audio-Driven Horror in Wwise + UE5',
       description: 'Solo audio design for a horror game with no on-screen markers: players find every anomaly by ear. Wwise and Unreal Engine 5.',
       canonical: `${SITE}/shadowframes.html`,
@@ -87,7 +93,7 @@ module.exports = {
       slug: 'nottoday',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'lightbox', 'theme-toggle'],
+      js: ['lightbox', 'theme-toggle'],
       title: 'Not Today, Darling! | MetaSounds UE5 Game Audio',
       description: 'Sole audio design for an 11-week UE5 couch racer: procedural MetaSounds engines, a priority mix under a 32-source limit and team-recorded voices.',
       canonical: `${SITE}/nottoday.html`,
@@ -99,7 +105,7 @@ module.exports = {
       slug: 'ray',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'theme-toggle'],
+      js: ['theme-toggle'],
       title: 'Ray Animation - Igor Szuniewicz',
       description: 'Ray Animation: disco-funk score delivered eight days before the cinema screening, with full music, sound design, and final mix.',
       canonical: `${SITE}/ray.html`,
@@ -110,7 +116,7 @@ module.exports = {
       slug: 'akantilado',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'theme-toggle'],
+      js: ['theme-toggle'],
       title: 'Akantilado Sound Design | 5.1 Jungle Foley',
       description: 'Akantilado: 200+ hand-made sounds for a 3D jungle short film, with full sound design, foley, ambience, and final mix.',
       canonical: `${SITE}/akantilado.html`,
@@ -123,7 +129,7 @@ module.exports = {
       slug: 'transientica',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'theme-toggle'],
+      js: ['theme-toggle'],
       title: 'Transientica | Unity Beatbox Rhythm Game & Audio ML',
       description: 'Unity rhythm game audio ML case study: 45ms Python/SVM prototype, 92% accuracy, C# KNN rebuild, and a pre-allocated audio path.',
       canonical: `${SITE}/transientica.html`,
@@ -134,7 +140,7 @@ module.exports = {
       slug: 'ai-audio-research',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'theme-toggle', 'ai-audio-demo'],
+      js: ['theme-toggle', 'ai-audio-demo'],
       title: 'AI Audio Research | Game Sound Generation Latency',
       description: 'Research on generated game sound latency: procedural DSP, generative models, 600 generations, latency benchmarks, and caching.',
       canonical: `${SITE}/ai-audio-research.html`,
@@ -167,7 +173,7 @@ module.exports = {
       slug: 'audioq',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'theme-toggle'],
+      js: ['theme-toggle'],
       title: 'AudioQ VST3 Sampler Plugin | C++ JUCE',
       description: 'AudioQ is a VST3 and standalone sampler built in C++17 and JUCE 8, with granular, filter, dynamics and glitch processing.',
       canonical: `${SITE}/audioq.html`,
@@ -178,7 +184,7 @@ module.exports = {
       slug: 'amorak',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'theme-toggle'],
+      js: ['theme-toggle'],
       title: 'Amorak Binaural Horror Sound Design | Reaper',
       description: 'Amorak: binaural horror animation sound design in Reaper, Dear VR Pro, and IEM, with creature vocals and 3D basement ambience.',
       canonical: `${SITE}/amorak.html`,
@@ -189,7 +195,7 @@ module.exports = {
       slug: 'pausedeserve',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'theme-toggle'],
+      js: ['theme-toggle'],
       title: 'Pause & Deserve - Igor Szuniewicz',
       description: 'Pause and Deserve: solo-built UE5 horror game with code, audio, and level design, where pausing freezes the enemy but makes it faster.',
       canonical: `${SITE}/pausedeserve.html`,
@@ -200,7 +206,7 @@ module.exports = {
       slug: 'richter',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'theme-toggle'],
+      js: ['theme-toggle'],
       title: 'Richter Field Recording Sound Design | Earthquake Film',
       description: 'Richter earthquake short-film sound design with no commercial libraries: Zoom H6 field recordings, free synth rumble, foley texture, and dialogue-safe mixing.',
       canonical: `${SITE}/richter.html`,
@@ -211,19 +217,19 @@ module.exports = {
       slug: 'ifmc',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'theme-toggle'],
+      js: ['theme-toggle'],
       assets: [],
       title: 'Indie Film Music Contest | Juried Film Scores - Igor Szuniewicz',
-      description: 'Two juried film scores in the Indie Film Music Contest Winter 2025: Walter (48/60, 58th of 115) and When The Clapping Stops (47/60), with full written feedback from professional film composers.',
+      description: 'Two juried scores for the Indie Film Music Contest Winter 2025, with finished films, scoring decisions and written feedback from professional composers.',
       canonical: `${SITE}/ifmc.html`,
-      ogImage: 'https://i.ytimg.com/vi/PKJQqWPovuY/maxresdefault.jpg',
-      ogImageAlt: 'Walter animated short film scored by Igor Szuniewicz for the Indie Film Music Contest',
+      ogImage: `${SITE}/old/public/assets/audio/covers/ifmc-walter-og.jpg`,
+      ogImageAlt: 'Walter riding a bicycle in the animated short scored by Igor Szuniewicz for the Indie Film Music Contest',
     },
     {
       slug: 'sounddesign',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'theme-toggle'],
+      js: ['theme-toggle'],
       title: 'Game Audio Sound Design Archive - Igor Szuniewicz',
       description: 'Sound design archive of separate combat, spell, weapon, creature, and sci-fi redesign clips built from recordings, synthesis, foley, and Reaper edits.',
       canonical: `${SITE}/sounddesign.html`,
@@ -234,7 +240,7 @@ module.exports = {
       slug: 'wwiseprojects',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'theme-toggle'],
+      js: ['theme-toggle'],
       title: 'Wwise Audio Implementation Projects | Unity Optimization',
       description: 'Three Wwise implementation projects: 256-voice prioritization, zone-based spatial mixing, and Android memory optimization.',
       canonical: `${SITE}/wwiseprojects.html`,
@@ -245,7 +251,7 @@ module.exports = {
       slug: 'wwisefixer',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'theme-toggle'],
+      js: ['theme-toggle'],
       title: 'Wwise UE Fixer | Unreal Audio Repair Tool',
       description: 'Dev tool for repairing Wwise-related Unreal references after Perforce syncs, with scoped backups of the .uproject and Config files it may modify.',
       canonical: `${SITE}/wwisefixer.html`,
@@ -256,7 +262,7 @@ module.exports = {
       slug: 'unrealrebuilder',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'theme-toggle'],
+      js: ['theme-toggle'],
       title: 'UE Rebuilder v7 | Unreal Project Utility',
       description: 'Windows utility for Unreal cleanup, project-file regeneration, builds, packaging, diagnostics, plugin management and user-triggered backups.',
       canonical: `${SITE}/unrealrebuilder.html`,
@@ -267,9 +273,9 @@ module.exports = {
       slug: 'xrlabs',
       layout: 'project',
       css: 'case',
-      js: ['scroll-progress', 'case-reveal', 'theme-toggle'],
+      js: ['theme-toggle'],
       title: 'XR Labs | Spatial Audio for Unity VR Training',
-      description: 'Spatial audio for VR and AR training simulations: sounds that arrive from the right direction and distance, with walls and doors that actually block them. Unity and Steam Audio.',
+      description: 'Spatial audio for VR and AR training simulations in Unity and Steam Audio, with directional cues, distance modelling and wall and door occlusion.',
       canonical: `${SITE}/xrlabs.html`,
       ogImage: `${SITE}/old/public/assets/images/about-grid/xrlabssoldiers.png`,
       ogImageAlt: 'XR Labs VR training simulation scene with soldiers',

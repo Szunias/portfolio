@@ -5,6 +5,8 @@
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
 
   if (!film) return;
+  if (sound) sound.hidden = false;
+  if (replay) replay.hidden = false;
 
   function ensureFilmLoaded() {
     if (film.dataset.autoplayLoaded === 'true') return;

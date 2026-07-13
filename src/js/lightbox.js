@@ -132,13 +132,16 @@
   }
 
   galleryItems.forEach((item, i) => {
-    if (item.tagName !== 'BUTTON') {
+    if (item.tagName !== 'BUTTON' && item.tagName !== 'A') {
       item.setAttribute('role', 'button');
       item.setAttribute('tabindex', '0');
     }
-    item.addEventListener('click', () => openLightbox(i, item));
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      openLightbox(i, item);
+    });
     item.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
+      if (e.key === ' ' || (e.key === 'Enter' && item.tagName !== 'A')) {
         e.preventDefault();
         openLightbox(i, item);
       }

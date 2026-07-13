@@ -221,6 +221,10 @@
   const wave = browser.querySelector('[data-ai-sample-wave]');
   const promptButtons = Array.from(browser.querySelectorAll('[data-ai-sample-prompt]'));
   const modelButtons = Array.from(browser.querySelectorAll('[data-ai-sample-model]'));
+  if (!audio || !play || !promptButtons.length || !modelButtons.length) return;
+
+  audio.controls = false;
+  browser.classList.add('is-enhanced');
   let currentPrompt = 'footstep';
   let currentModel = 'dsp';
 

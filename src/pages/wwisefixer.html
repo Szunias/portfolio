@@ -1,35 +1,17 @@
 <header class="case-hero">
   <p class="case-hero__kicker">Python &middot; Unreal &middot; Wwise &middot; Perforce</p>
   <h1 class="case-hero__title">Wwise UE Fixer</h1>
-  <p class="case-hero__sub">After some Perforce syncs, Shadow Frames opened with broken Wwise configuration and silent audio. This Python utility diagnoses the integration and applies three scoped fixes.</p>
-  <p class="case-hero__facts">Tool developer &middot; Python &middot; .bat launcher</p>
+  <p class="case-hero__sub">A Python diagnostic and repair utility for Wwise integrations in Unreal after Perforce syncs. I built the checks, three scoped configuration repairs and the backup step.</p>
+  <p class="case-hero__facts">Solo tool developer &middot; Python &middot; .bat launcher</p>
 </header>
 
-<section class="case-sec io-reveal" aria-labelledby="fixer-checks-title">
-  <p class="case-sec__no">Diagnostics</p>
-  <h2 class="case-sec__title" id="fixer-checks-title">What it checks</h2>
+<section class="case-sec" aria-labelledby="fixer-scope-title">
+  <p class="case-sec__no">Tool scope</p>
+  <h2 class="case-sec__title" id="fixer-scope-title">Diagnostics, three repairs and scoped backups</h2>
   <div class="concept-body">
-    <p>The tool checks the plugin entry and installation, SoundBank location, AkSettings, Wwise project presence, integration files, path consistency, Perforce configuration, generated banks and plugin-version information.</p>
-    <p>Most of those checks are diagnostic. They report what is missing or inconsistent without claiming that every detected problem can be repaired automatically.</p>
-  </div>
-</section>
-
-<section class="case-sec io-reveal" aria-labelledby="fixer-changes-title">
-  <p class="case-sec__no">Quick Fix</p>
-  <h2 class="case-sec__title" id="fixer-changes-title">The three changes it can apply</h2>
-  <div class="systems-list">
-    <div class="system-item"><div class="system-item__title-wrap"><h3 class="system-item__title"><code>.uproject</code> plugin entry</h3></div><p class="system-item__desc">Repairs the supported Wwise plugin entry in the Unreal project file.</p></div>
-    <div class="system-item"><div class="system-item__title-wrap"><h3 class="system-item__title">SoundBank directory</h3></div><p class="system-item__desc">Corrects the supported SoundBank path in <code>DefaultGame.ini</code>.</p></div>
-    <div class="system-item"><div class="system-item__title-wrap"><h3 class="system-item__title">AkSettings</h3></div><p class="system-item__desc">Applies the supported AkSettings section in <code>DefaultEngine.ini</code>.</p></div>
-  </div>
-</section>
-
-<section class="case-sec io-reveal" aria-labelledby="fixer-safety-title">
-  <p class="case-sec__no">Safety and scope</p>
-  <h2 class="case-sec__title" id="fixer-safety-title">Copies the files it may change</h2>
-  <div class="concept-body">
-    <p>Before Quick Fix runs, the tool copies the <code>.uproject</code> file and <code>Config</code> directory. It does not archive Content, Source or the full project.</p>
-    <p>In the Shadow Frames workflow, the automated repair pass took about ten seconds. Regenerating project files, restarting Unreal and testing audio still happened afterwards.</p>
+    <p>The diagnostic pass checks the plugin entry and installation, SoundBank location, AkSettings, Wwise project, integration files, path consistency, Perforce configuration, generated banks and plugin-version information. Checks that cannot be repaired automatically remain reports.</p>
+    <p>Quick Fix can repair the supported Wwise entry in the <code>.uproject</code> file, the SoundBank path in <code>DefaultGame.ini</code> and the AkSettings section in <code>DefaultEngine.ini</code>.</p>
+    <p>Before making those changes, the utility copies the <code>.uproject</code> file and the <code>Config</code> directory. It does not archive Content, Source or the full project. In the Shadow Frames workflow the automated pass took about ten seconds; project-file regeneration, an Unreal restart and an audio test still followed.</p>
   </div>
 </section>
 
