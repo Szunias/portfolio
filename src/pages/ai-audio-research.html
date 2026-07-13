@@ -2,12 +2,12 @@
   <header class="ai-hero">
     <div class="ai-hero__content">
       <p class="ai-kicker">Research 2024&ndash;2025 &middot; thesis published 2026 &middot; Howest DAE</p>
-      <h1>Generated game audio latency in a running UE5 prototype</h1>
-      <p class="ai-hero__lead">I built and measured the Unreal client, Python server, cache and generation pipeline.</p>
-      <p class="ai-hero__summary">None of the tested generators met this project&rsquo;s interaction target. The prototype instead generates likely sounds ahead of time, caches them and uses procedural DSP when the cache misses.</p>
+      <h1>Testing whether AI-generated sound is fast enough for gameplay</h1>
+      <p class="ai-hero__lead">A thesis and working Unreal prototype that measures how long a generated sound takes to reach the player after an in-game event.</p>
+      <p class="ai-hero__summary">As the sole researcher and developer, I built and tested the complete system. The tested AI generators missed this prototype&rsquo;s timing target, so it prepares likely sounds early and plays a simple synthetic fallback when needed.</p>
       <p class="ai-hero__role">Solo researcher and prototype developer &middot; Unreal Engine 5 &middot; Python &middot; 68-page thesis</p>
       <div class="ai-hero__actions">
-        <a href="#results">See the benchmark <span aria-hidden="true">&darr;</span></a>
+        <a href="#results">See the timing test <span aria-hidden="true">&darr;</span></a>
         <a href="szuniewicz-ai-audio-thesis-2026.pdf" target="_blank" rel="noopener noreferrer">Read the thesis <span aria-hidden="true">&nearr;</span></a>
       </div>
     </div>
@@ -16,10 +16,10 @@
   <section class="ai-numbers-section" id="results" aria-labelledby="ai-results-title">
     <header class="ai-section-head">
       <div>
-        <p class="ai-kicker">Benchmark</p>
-        <h2 id="ai-results-title">Four generative configurations and a procedural DSP baseline</h2>
+        <p class="ai-kicker">Timing test</p>
+        <h2 id="ai-results-title">The tested AI generators took seconds, not milliseconds</h2>
       </div>
-      <p>For the latency benchmark, I measured cold start, warm generation and end-to-end Unreal playback for standardised 0.5&ndash;2.0-second clips. Separately, I ran a 600-attempt quality matrix across the same five methods.</p>
+      <p>I timed five methods from an in-game event to the first audible sample, using standardised clips lasting 0.5&ndash;2.0 seconds. I also ran 600 generation attempts to compare output quality.</p>
     </header>
 
     <figure class="ai-result-chart" aria-labelledby="ai-chart-caption">
@@ -33,12 +33,12 @@
         <div style="--bar:97.1%"><span>MMAudio Large</span><i></i><strong>3.4 s</strong></div>
         <div style="--bar:100%"><span>ElevenLabs</span><i></i><strong>3.5 s</strong></div>
       </div>
-      <figcaption id="ai-chart-caption">95th-percentile latency from the gameplay event to the first audible sample.</figcaption>
+      <figcaption id="ai-chart-caption">Time from the gameplay event to the first audible sample. These are 95th-percentile results: 95% of runs were this fast or faster.</figcaption>
     </figure>
 
     <div class="ai-method-copy">
       <p>The test machine used an AMD Ryzen 9 7940HS, an RTX 5070 Laptop GPU with 8 GB VRAM, 64 GB RAM, Unreal Engine 5.4.4 and Python 3.11.7.</p>
-      <p>The figures on this page follow the final protocol documented in the published thesis. The benchmark measures this prototype, not model speed in isolation: it includes the request, local generation or network transfer, decoding and playback.</p>
+      <p>The figures follow the final test method documented in the thesis. They cover the full wait experienced in the prototype&mdash;request, generation or transfer, decoding and playback&mdash;not only the model itself.</p>
     </div>
   </section>
 
@@ -46,17 +46,17 @@
     <header class="ai-section-head">
       <div>
         <p class="ai-kicker">Playback strategy</p>
-        <h2 id="ai-pipeline-title">Generate before the gameplay event</h2>
+        <h2 id="ai-pipeline-title">Prepare likely sounds before they are needed</h2>
       </div>
-      <p>The server watches game state and queues likely sounds before they are requested for playback.</p>
+      <p>Because live generation is too slow, the server watches the game state and prepares sounds that may be needed next.</p>
     </header>
 
     <div class="ai-system-story">
       <div class="ai-system-story__copy">
-        <p>Approaching a door can queue door sounds; entering a forest can queue ambience. Generated results are stored under the request key, so a later event can play them without waiting for the model.</p>
-        <p>If the prediction misses, procedural DSP covers the event while the generated sample is prepared for a later request.</p>
+        <p>Approaching a door can prepare door sounds; entering a forest can prepare ambience. The result is stored so the game can play it later without making the player wait.</p>
+        <p>If the prediction is wrong, the game plays a simple synthetic fallback while the generated sample is prepared for a later event.</p>
       </div>
-      <p class="ai-signal-path"><span>Pipeline</span> Predict &rarr; generate off the critical path &rarr; cache &rarr; play &rarr; use DSP on a miss.</p>
+      <p class="ai-signal-path"><span>Playback path</span> Predict the next sound &rarr; prepare it early &rarr; store it &rarr; play it when needed &rarr; use a synthetic fallback if it is missing.</p>
     </div>
   </section>
 
@@ -66,7 +66,7 @@
         <p class="ai-kicker">Evidence</p>
         <h2 id="ai-samples-title">Audio samples and the running prototype</h2>
       </div>
-      <p>The labeled samples make the methods easy to compare. They are selected examples, not a random sample or a replacement for the full study.</p>
+      <p>Use the same prompt across each method to hear the difference. These are selected examples; the full results and test method are in the thesis.</p>
     </header>
 
     <div class="ai-browser" data-ai-sample-browser>

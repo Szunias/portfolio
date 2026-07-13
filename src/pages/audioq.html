@@ -5,8 +5,8 @@
     <div class="aq-hero__content">
       <p class="aq-kicker">2024&ndash;2025 &middot; VST3 and standalone</p>
       <h1>AudioQ</h1>
-      <p class="aq-hero__lead">A sampler and effects chain built in C++ with JUCE 8.</p>
-      <p class="aq-hero__summary">I built the file player, granular playback, filters, dynamics, glitch effects and host state around 16 automatable parameters.</p>
+      <p class="aq-hero__lead">A desktop audio tool and VST3 plug-in for loading a recording, looping it and reshaping it with effects.</p>
+      <p class="aq-hero__summary">As the solo developer, I built the player, waveform editor and full processing chain in C++. Its 16 controls can be saved and automated inside music software.</p>
       <p class="aq-hero__role">Solo developer &middot; C++17 &middot; JUCE 8 &middot; MIT</p>
       <div class="aq-hero__actions">
         <a href="#demo">Watch the demo <span aria-hidden="true">&darr;</span></a>
@@ -17,23 +17,24 @@
 
   <section class="aq-screen" id="demo" aria-labelledby="aq-demo-title">
     <header class="aq-section-head">
-      <div><p class="aq-kicker">Demo</p><h2 id="aq-demo-title">File loading, processing and automation</h2></div>
-      <p>The demo covers loop selection, granular playback, filters, glitch processing and DAW automation.</p>
+      <div><p class="aq-kicker">Demo</p><h2 id="aq-demo-title">What AudioQ lets the user do</h2></div>
+      <p>The demo shows how to load a recording, select a loop, reshape it with effects and automate the controls in music software.</p>
     </header>
     <div class="aq-video-frame"><div class="video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/Q2hwWfisU4A" title="AudioQ demo" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></div>
   </section>
 
   <section class="aq-chain" aria-labelledby="aq-chain-title">
     <header class="aq-section-head">
-      <div><p class="aq-kicker">Implementation</p><h2 id="aq-chain-title">Sampler, effects and host state</h2></div>
-      <p>Sample or loop region &rarr; granular playback &rarr; filters &rarr; compressor &rarr; tremolo &rarr; glitch effects &rarr; dry/wet blend.</p>
+      <div><p class="aq-kicker">Implementation</p><h2 id="aq-chain-title">How a loaded sound is processed and saved</h2></div>
+      <p>Loaded sample or loop &rarr; small overlapping grains &rarr; filters &rarr; compressor &rarr; movement and glitch effects &rarr; original/effected blend.</p>
     </header>
 
     <div class="aq-system-story">
       <div class="aq-system-story__copy">
-        <p>WAV, AIFF and MP3 files load into a draggable waveform. The player supports a selectable loop region, an optional loop crossfade and manual 20&ndash;300 BPM resampling.</p>
-        <p>JUCE StateVariableTPT low-pass and high-pass filters and a JUCE compressor sit alongside custom tremolo, bitcrusher, stutter and chunk-reverse processors. APVTS stores plugin state and exposes the parameters to a VST3 host.</p>
-        <p>Overlapping grains can create large peaks. The compressor handles normal peaks; a separate monitor stops playback above 4.0 linear gain. That stop is a last-resort fail-safe, not hearing protection. Verified host, OS, sample-rate and channel-layout coverage is still pending.</p>
+        <p>Users can drop in a WAV, AIFF or MP3 file, drag across its waveform to choose a loop and smooth the join with a crossfade. They can also resample it between 20 and 300 BPM.</p>
+        <p>The sound passes through filters, a compressor, tremolo, bitcrusher, stutter and reverse effects. JUCE provides the filters and compressor; I wrote the remaining effects. The plug-in saves every control and exposes it to the host for automation.</p>
+        <p>Overlapping grains can cause sudden volume peaks. The compressor reduces normal peaks; if the signal still exceeds 4.0 linear gain, a separate fail-safe stops playback.</p>
+        <p>The stop is not certified hearing protection. Full host, operating-system, sample-rate and channel-layout testing is still pending.</p>
       </div>
     </div>
 

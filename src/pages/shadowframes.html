@@ -6,8 +6,8 @@
   <div class="sf-hero__content">
     <p class="sf-kicker">2025 &middot; Audio-led psychological horror</p>
     <h1>Shadow Frames</h1>
-    <p class="sf-hero__lead">Sole audio designer on a UE5 horror game where players locate ten anomalies by ear, without HUD markers.</p>
-    <p class="sf-hero__summary">I created the anomaly cues, edited the assets, built the Wwise and Unreal systems and mixed the game, which is set inside an abandoned Irish pub.</p>
+    <p class="sf-hero__lead">A UE5 horror game where players find ten changes inside an abandoned pub by listening instead of following screen markers.</p>
+    <p class="sf-hero__summary">As the sole audio designer, I created the sounds that announce each change and lead the player to it. I also implemented and mixed all audio in Wwise and Unreal.</p>
     <p class="sf-hero__role">4 months &middot; Wwise &middot; Unreal Engine 5 &middot; C++ &middot; Reaper &middot; Howest DAE + RITCS + Royal Conservatory of Ghent</p>
   </div>
 </header>
@@ -16,9 +16,9 @@
   <header class="sf-section-head">
     <div>
       <p class="sf-kicker">Gameplay</p>
-      <h2 id="gameplay-title">How each anomaly is announced, located and confirmed</h2>
+      <h2 id="gameplay-title">How sound leads the player to a changed object</h2>
     </div>
-    <p>An anomaly changes an object in the pub. A stinger announces the change, its spatial cue provides a direction and a close loop confirms the target before the player photographs it.</p>
+    <p>A short alert tells the player that something changed. The changed object then makes a directional sound, followed by a closer confirmation as the player approaches and photographs it.</p>
   </header>
   <div class="sf-video-frame">
     <span class="sf-video-frame__label">Gameplay &middot; spatial mix</span>
@@ -31,14 +31,14 @@
 <section class="sf-anomaly" id="systems" aria-labelledby="systems-title">
   <header class="sf-section-head">
     <div>
-      <p class="sf-kicker">Audio behaviour</p>
-      <h2 id="systems-title">Anomaly cues, enemy distance and camera state</h2>
+      <p class="sf-kicker">Playtest fixes</p>
+      <h2 id="systems-title">Fixing enemy cues, footsteps and the camera mix</h2>
     </div>
   </header>
   <div class="sf-system-story">
     <div class="sf-system-story__copy">
-      <p>Weekly playtests exposed three unreliable behaviours. The enemy layer flickered at a single distance threshold, footsteps broke when level geometry moved, and raising the Polaroid did not read clearly enough in the mix.</p>
-      <p>I added separate enter and exit distances for the enemy layer, changed footsteps to read the physical material under the player, and made the camera state muffle the pub while bringing breathing and hand movement forward. A reversed whisper confirms each photograph.</p>
+      <p>Weekly playtests exposed three problems: the enemy sound switched on and off near one distance, footsteps failed when parts of the level moved, and raising the Polaroid camera was easy to miss.</p>
+      <p>I stopped the enemy sound from flickering, made footsteps follow the actual floor material and changed the mix when the camera is raised: the pub becomes quieter while breathing and hand movement come forward. A reversed whisper confirms each photograph.</p>
     </div>
   </div>
 </section>
@@ -47,19 +47,19 @@
   <header class="sf-section-head">
     <div>
       <p class="sf-kicker">Implementation</p>
-      <h2 id="tech-title">Designer controls and mix priorities</h2>
+      <h2 id="tech-title">Controls for designers and rules for busy scenes</h2>
     </div>
-    <p>Surface, anomaly and enemy settings live in Unreal DataAssets. Designers could tune them without changing code.</p>
+    <p>I exposed floor, anomaly and enemy settings in Unreal so designers could tune them without changing code.</p>
   </header>
 
   <div class="sf-team-story">
-    <p>The mix reacts to enemy distance, camera state and anomaly activity. Under the voice limit, music and ambience yield before camera, anomaly and enemy cues.</p>
+    <p>The mix reacts to enemy distance, the raised camera and active anomalies. If too many sounds play at once, music and ambience drop out before the clues, camera and enemy sounds that affect play.</p>
   </div>
 
   <div class="gallery-grid">
     <div class="gallery-item gallery-item--contain" tabindex="0" role="button" aria-label="Master Mixer Hierarchy">
       <img src="old/public/assets/images/projects-shadowframes/MasterMixerHierarchy.png" alt="Master Mixer Hierarchy in Wwise" loading="lazy">
-      <span class="gallery-item__caption">Master Mixer Hierarchy</span>
+      <span class="gallery-item__caption">Which sounds take priority</span>
       <span class="gallery-item__zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="22" y2="22"/></svg></span>
     </div>
     <div class="gallery-item gallery-item--contain" tabindex="0" role="button" aria-label="DataAsset configurations">

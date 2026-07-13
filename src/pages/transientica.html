@@ -7,8 +7,8 @@
     <div class="tr-hero__content">
       <p class="tr-kicker">2025 &ndash; Present &middot; Solo-developed rhythm game</p>
       <h1>Transientica</h1>
-      <p class="tr-hero__lead">A Unity rhythm game controlled by beatboxing.</p>
-      <p class="tr-hero__summary">I built the microphone analysis, seven-feature classifier, timing calibration and game loop in C#. The game learns each player&rsquo;s kick, snare and hi-hat before a song starts.</p>
+      <p class="tr-hero__lead">A Unity rhythm game played by beatboxing into a microphone.</p>
+      <p class="tr-hero__summary">I built the game and its audio recognition in C#. Before a song starts, it learns how that player makes a kick, snare and hi-hat, then uses those live sounds to hit notes in time.</p>
       <p class="tr-hero__role">Unity 6 &middot; C# &middot; KNN &middot; FFT &middot; In development</p>
       <div class="tr-hero__actions">
         <a href="#gameplay">Watch gameplay <span aria-hidden="true">&darr;</span></a>
@@ -37,15 +37,15 @@
     <header class="tr-section-head">
       <div>
         <p class="tr-kicker">Audio path</p>
-        <h2 id="tr-pipeline-title">Microphone input to timing judgement</h2>
+        <h2 id="tr-pipeline-title">How a beatbox hit becomes a score</h2>
       </div>
-      <p>The current build runs entirely inside Unity, without Python, OSC or an external machine-learning package.</p>
+      <p>The current build listens, recognises the sound and judges its timing entirely inside Unity. It does not need Python or another application running beside the game.</p>
     </header>
 
     <div class="tr-pipeline-story">
       <div class="tr-pipeline-story__copy">
-        <p>The microphone writes into a pre-allocated ring buffer. An onset detector sends a 512-sample window through my FFT, then KNN compares spectral centroid, rolloff, flux, zero-crossing rate, RMS, attack time and flatness with the player&rsquo;s training examples.</p>
-        <p>The game matches the classified hit to the nearest note on <code>AudioSettings.dspTime</code>. It compensates for the analysis window and stores the recurring microphone offset measured during a 100 BPM calibration pass; manual adjustment is available in 1 ms steps.</p>
+        <p>When the microphone detects a hit, the game measures seven traits of the sound and compares them with the player&rsquo;s recordings. A KNN classifier uses that comparison to decide whether the hit was a kick, snare or hi-hat.</p>
+        <p>The game matches the recognised hit to the nearest note using Unity&rsquo;s audio clock. A short 100 BPM calibration measures the microphone delay, and the player can adjust the result in 1 ms steps.</p>
       </div>
       <p class="tr-signal-path"><span>Signal path</span> Microphone &rarr; onset &rarr; 512-sample FFT &rarr; seven features &rarr; KNN &rarr; nearest note &rarr; score.</p>
     </div>
@@ -54,10 +54,10 @@
   <section class="tr-rebuild" id="rebuild" aria-labelledby="tr-rebuild-title">
     <header class="tr-section-head">
       <div>
-        <p class="tr-kicker">Architecture</p>
-        <h2 id="tr-rebuild-title">Python prototype and current C# build</h2>
+        <p class="tr-kicker">Rebuild</p>
+        <h2 id="tr-rebuild-title">Why I rebuilt the prototype inside Unity</h2>
       </div>
-      <p>The first prototype used an SVM in Python and sent classifications to Unity over OSC. I replaced that path with an in-game FFT, feature extractor and inverse-distance KNN classifier.</p>
+      <p>The first version recognised sounds in a separate Python program and sent the result to Unity. I replaced it with a C# system that analyses and classifies each hit inside the game.</p>
     </header>
 
     <div class="tr-rebuild-summary">
