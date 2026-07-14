@@ -38,6 +38,14 @@
     return `${Number(match[3])} ${month} ${match[1]}`.trim();
   }
 
+  function displayCover(track) {
+    const cover = track.dataset.cover || '';
+    if (!cover) return '';
+    return cover
+      .replace('/covers/', '/covers/thumbs/')
+      .replace(/\.(?:png|jpe?g)$/i, '.webp');
+  }
+
   function appendCatalogTrack(track, list) {
     if (!list) return null;
     const item = document.createElement('li');
@@ -50,6 +58,14 @@
     button.setAttribute('aria-label', `Play ${trackTitle}, ${accessibleDate(track)}, ${kindText}`);
     button.setAttribute('aria-controls', 'playerBar');
     button.setAttribute('aria-pressed', 'false');
+
+    const art = document.createElement('span');
+    art.className = 'music-catalog__art';
+    art.setAttribute('aria-hidden', 'true');
+    const coverPath = displayCover(track);
+    art.style.backgroundImage = coverPath
+      ? `url("${coverPath.replace(/"/g, '%22')}")`
+      : (track.dataset.gradient || '');
 
     const date = document.createElement('time');
     date.className = 'music-catalog__date';
@@ -76,7 +92,7 @@
     action.textContent = 'Play';
     action.setAttribute('aria-hidden', 'true');
 
-    button.append(date, main, duration, action);
+    button.append(art, date, main, duration, action);
     item.append(button);
     list.append(item);
     return button;
@@ -448,8 +464,9 @@
     title.textContent = track.dataset.title || 'Untitled track';
     artist.textContent = track.dataset.artist || 'Igor Szuniewicz';
     totalTime.textContent = track.dataset.duration || '0:00';
-    cover.style.backgroundImage = track.dataset.cover
-      ? `url("${track.dataset.cover.replace(/"/g, '%22')}")`
+    const coverPath = displayCover(track);
+    cover.style.backgroundImage = coverPath
+      ? `url("${coverPath.replace(/"/g, '%22')}")`
       : (track.dataset.gradient || '');
     bar.classList.add('has-track');
     setStatus(autoplay ? 'Loading' : 'Ready to play', autoplay ? 'loading' : '');
