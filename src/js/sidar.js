@@ -121,12 +121,12 @@
 
       prototypeLoading = true;
       prototypeLaunch.setAttribute('aria-busy', 'true');
-      prototypeLaunch.setAttribute('aria-label', 'Loading the SIDAR 2.0 prototype recording');
+      prototypeLaunch.setAttribute('aria-label', 'Loading the SIDAR NULL prototype recording');
       if (prototypeLaunchText) prototypeLaunchText.textContent = 'Loading recording';
 
       const iframe = document.createElement('iframe');
       iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId + '?autoplay=1&rel=0';
-      iframe.title = 'SIDAR 2.0 prototyping week one';
+      iframe.title = 'SIDAR NULL prototyping week one';
       iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
       iframe.allowFullscreen = true;
       iframe.tabIndex = 0;
@@ -139,7 +139,7 @@
         window.clearTimeout(loadTimeout);
         iframe.remove();
         prototypeLaunch.removeAttribute('aria-busy');
-        prototypeLaunch.setAttribute('aria-label', (prototypeLaunchLabel || 'Play the SIDAR 2.0 prototype recording') + '. Loading failed; retry');
+        prototypeLaunch.setAttribute('aria-label', (prototypeLaunchLabel || 'Play the SIDAR NULL prototype recording') + '. Loading failed; retry');
         if (prototypeLaunchText) prototypeLaunchText.textContent = 'Retry recording';
         prototypeLaunch.focus();
       };

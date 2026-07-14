@@ -168,7 +168,8 @@ main { position: relative; }
 
 .sidar-hero h1 {
   display: flex;
-  gap: clamp(12px, 1.3vw, 22px);
+  flex-direction: column;
+  gap: 0;
   align-items: flex-start;
   margin: 0;
   color: var(--ash);
@@ -180,21 +181,32 @@ main { position: relative; }
 }
 
 .sidar-hero h1 span {
-  margin-top: .48em;
+  margin-top: -.02em;
   color: var(--blood);
-  font-family: var(--mono);
-  font-size: clamp(11px, .17em, 19px);
+  font-family: var(--display);
+  font-size: .72em;
   font-weight: 500;
-  letter-spacing: .08em;
-  line-height: 1;
+  letter-spacing: -.06em;
+  line-height: .9;
 }
 
-.sidar-hero__content > p:not(.sidar-kicker) {
+.sidar-hero__lead {
   max-width: 52ch;
   margin: clamp(30px, 3vw, 44px) 0 0;
   color: rgba(231, 225, 218, .72);
   font-size: clamp(1rem, 1.3vw, 1.16rem);
   line-height: 1.68;
+}
+
+.sidar-hero__role {
+  max-width: 58ch;
+  margin: 14px 0 0;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: .6875rem;
+  letter-spacing: .08em;
+  line-height: 1.65;
+  text-transform: uppercase;
 }
 
 .sidar-hero__jump {
@@ -348,6 +360,58 @@ main { position: relative; }
   color: var(--muted);
   font-family: var(--mono);
   font-size: .75rem;
+  text-transform: uppercase;
+}
+
+.sidar-concept {
+  padding: clamp(64px, 8vw, 112px) clamp(20px, 8vw, 120px);
+  border-top: 1px solid var(--line);
+  background: #070708;
+}
+
+.sidar-concept__inner {
+  display: grid;
+  grid-template-columns: minmax(260px, .8fr) minmax(320px, 1.2fr);
+  gap: clamp(44px, 8vw, 120px);
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.sidar-concept h2 {
+  max-width: 13ch;
+  margin: 0;
+  color: var(--ash);
+  font-family: var(--display);
+  font-size: clamp(2.25rem, 4vw, 3.6rem);
+  font-weight: 500;
+  letter-spacing: -.055em;
+  line-height: .98;
+}
+
+.sidar-concept__copy {
+  max-width: 64ch;
+  color: rgba(231, 225, 218, .72);
+  font-size: clamp(1rem, 1.15vw, 1.08rem);
+  line-height: 1.72;
+}
+
+.sidar-concept__copy p { margin: 0; }
+.sidar-concept__copy p + p { margin-top: 18px; }
+
+.sidar-concept__status {
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.sidar-concept__status span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--blood);
+  font-family: var(--mono);
+  font-size: .6875rem;
+  letter-spacing: .12em;
   text-transform: uppercase;
 }
 
@@ -573,6 +637,13 @@ main { position: relative; }
   .sidar-hero__content { max-width: 680px; }
   .sidar-hero__media { max-width: 880px; }
 
+  .sidar-concept__inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .sidar-concept h2 { max-width: 18ch; }
+
   .sidar-prototype__header {
     grid-template-columns: 1fr;
     gap: 32px;
@@ -603,10 +674,12 @@ main { position: relative; }
     font-size: clamp(3.5rem, 16vw, 4rem);
   }
 
-  .sidar-hero__content > p:not(.sidar-kicker) {
+  .sidar-hero__lead {
     font-size: 1rem;
     line-height: 1.62;
   }
+
+  .sidar-hero__role { line-height: 1.55; }
 
   .sidar-teaser::before { inset: 6px; }
 
@@ -633,6 +706,15 @@ main { position: relative; }
 
   .sidar-prototype {
     padding: 80px 20px 72px;
+  }
+
+  .sidar-concept {
+    padding: 64px 20px;
+  }
+
+  .sidar-concept h2 {
+    max-width: none;
+    font-size: clamp(2.25rem, 11vw, 3rem);
   }
 
   .sidar-prototype__header { margin-bottom: 36px; }
