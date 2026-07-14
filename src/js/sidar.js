@@ -107,54 +107,89 @@
 
   const prototypeVideo = document.querySelector('[data-sidar-video]');
   const prototypeLaunch = document.querySelector('[data-sidar-video-launch]');
+  const prototypeLoading = document.querySelector('[data-sidar-video-loading]');
+  const prototypeCancel = document.querySelector('[data-sidar-video-cancel]');
 
   if (prototypeVideo && prototypeLaunch) {
-    const prototypeLaunchText = prototypeLaunch.querySelector('.sidar-prototype__play > span:last-child');
-    const prototypeLaunchLabel = prototypeLaunch.getAttribute('aria-label');
-    let prototypeLoading = false;
+    const videoId = prototypeVideo.getAttribute('data-video-id');
+    const launchLabel = prototypeLaunch.getAttribute('aria-label') || 'Play the SIDAR NULL prototype recording';
+    const launchText = prototypeLaunch.querySelector('.sidar-prototype__play > span:last-child');
+    let state = 'idle';
+    let ytPlayer = null;
+    let loadTimeout = null;
+    let apiPromise = null;
 
-    prototypeLaunch.addEventListener('click', function () {
-      if (prototypeLoading) return;
+    function loadYouTubeApi() {
+      if (window.YT && window.YT.Player) return Promise.resolve(window.YT);
+      if (apiPromise) return apiPromise;
+      apiPromise = new Promise(function (resolve, reject) {
+        const previousReady = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = function () {
+          if (typeof previousReady === 'function') previousReady();
+          resolve(window.YT);
+        };
+        const script = document.createElement('script');
+        script.src = 'https://www.youtube.com/iframe_api';
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+      return apiPromise;
+    }
 
-      const videoId = prototypeVideo.getAttribute('data-video-id');
-      if (!videoId || !/^[A-Za-z0-9_-]{11}$/.test(videoId)) return;
+    function resetToLaunch(failed) {
+      state = 'idle';
+      window.clearTimeout(loadTimeout);
+      if (prototypeLoading) prototypeLoading.hidden = true;
+      if (ytPlayer) {
+        try { ytPlayer.destroy(); } catch (err) { /* player already gone */ }
+        ytPlayer = null;
+      }
+      const mount = prototypeVideo.querySelector('[data-sidar-player-mount]');
+      if (mount) mount.remove();
+      prototypeLaunch.hidden = false;
+      prototypeLaunch.removeAttribute('aria-busy');
+      prototypeLaunch.setAttribute('aria-label', failed ? launchLabel + '. Loading failed, retry' : launchLabel);
+      if (launchText) launchText.textContent = failed ? 'Retry recording' : 'Play recording';
+      if (failed) prototypeLaunch.focus();
+    }
 
-      prototypeLoading = true;
+    function startLoad() {
+      if (state !== 'idle' || !videoId || !/^[A-Za-z0-9_-]{11}$/.test(videoId)) return;
+      state = 'loading';
+      prototypeLaunch.hidden = true;
       prototypeLaunch.setAttribute('aria-busy', 'true');
-      prototypeLaunch.setAttribute('aria-label', 'Loading the SIDAR NULL prototype recording');
-      if (prototypeLaunchText) prototypeLaunchText.textContent = 'Loading recording';
+      if (prototypeLoading) prototypeLoading.hidden = false;
 
-      const iframe = document.createElement('iframe');
-      iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId + '?autoplay=1&rel=0';
-      iframe.title = 'SIDAR NULL prototyping week one';
-      iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
-      iframe.allowFullscreen = true;
-      iframe.tabIndex = 0;
-      iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+      const mount = document.createElement('div');
+      mount.setAttribute('data-sidar-player-mount', '');
+      mount.className = 'sidar-prototype__player';
+      prototypeVideo.insertBefore(mount, prototypeLoading || null);
 
-      let loadTimeout;
-      const restoreLaunch = function () {
-        if (!prototypeLoading) return;
-        prototypeLoading = false;
-        window.clearTimeout(loadTimeout);
-        iframe.remove();
-        prototypeLaunch.removeAttribute('aria-busy');
-        prototypeLaunch.setAttribute('aria-label', (prototypeLaunchLabel || 'Play the SIDAR NULL prototype recording') + '. Loading failed; retry');
-        if (prototypeLaunchText) prototypeLaunchText.textContent = 'Retry recording';
-        prototypeLaunch.focus();
-      };
+      loadTimeout = window.setTimeout(function () { resetToLaunch(true); }, 12000);
 
-      iframe.addEventListener('load', function () {
-        if (!prototypeLoading) return;
-        prototypeLoading = false;
-        window.clearTimeout(loadTimeout);
-        iframe.focus();
-        prototypeLaunch.remove();
-      }, { once: true });
-      iframe.addEventListener('error', restoreLaunch, { once: true });
+      loadYouTubeApi().then(function (YT) {
+        if (state !== 'loading') return;
+        ytPlayer = new YT.Player(mount, {
+          host: 'https://www.youtube-nocookie.com',
+          videoId: videoId,
+          playerVars: { autoplay: 1, rel: 0 },
+          events: {
+            onReady: function (event) {
+              if (state !== 'loading') return;
+              state = 'ready';
+              window.clearTimeout(loadTimeout);
+              if (prototypeLoading) prototypeLoading.hidden = true;
+              event.target.playVideo();
+            },
+            onError: function () { resetToLaunch(true); }
+          }
+        });
+      }).catch(function () { resetToLaunch(true); });
+    }
 
-      prototypeVideo.insertBefore(iframe, prototypeLaunch);
-      loadTimeout = window.setTimeout(restoreLaunch, 12000);
-    });
+    prototypeLaunch.addEventListener('click', startLoad);
+    if (prototypeCancel) {
+      prototypeCancel.addEventListener('click', function () { resetToLaunch(false); });
+    }
   }
 })();

@@ -576,6 +576,127 @@ main { position: relative; }
   border: 0;
 }
 
+.sidar-prototype__player {
+  position: absolute;
+  inset: 0;
+}
+
+.sidar-prototype__player iframe {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0;
+}
+
+.sidar-prototype__loading {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: #020303;
+}
+
+.sidar-prototype__loading[hidden] { display: none; }
+
+.sidar-prototype__loading::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .08;
+  background: repeating-linear-gradient(180deg, transparent 0, transparent 3px, rgba(255,255,255,.08) 4px);
+  animation: sidar-loading-scan 6s linear infinite;
+}
+
+.sidar-prototype__loading-ring {
+  position: relative;
+  z-index: 1;
+  width: clamp(46px, 5vw, 60px);
+  height: clamp(46px, 5vw, 60px);
+}
+
+.sidar-prototype__loading-ring::before,
+.sidar-prototype__loading-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(231, 225, 218, .16);
+}
+
+.sidar-prototype__loading-ring::after {
+  border-color: var(--blood) transparent transparent transparent;
+  animation: sidar-loading-spin .85s linear infinite;
+}
+
+.sidar-prototype__loading-label {
+  position: relative;
+  z-index: 1;
+  color: rgba(231, 225, 218, .7);
+  font-family: var(--mono);
+  font-size: .75rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.sidar-prototype__dots {
+  display: inline-flex;
+  gap: 3px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.sidar-prototype__dots i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--blood);
+  opacity: .25;
+  animation: sidar-dot-pulse 1.1s ease-in-out infinite;
+}
+
+.sidar-prototype__dots i:nth-child(2) { animation-delay: .15s; }
+.sidar-prototype__dots i:nth-child(3) { animation-delay: .3s; }
+
+.sidar-prototype__loading-cancel {
+  position: relative;
+  z-index: 1;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(231, 225, 218, .19);
+  background: rgba(4,4,5,.6);
+  color: rgba(231, 225, 218, .62);
+  font-family: var(--mono);
+  font-size: .6875rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color .2s ease, border-color .2s ease;
+}
+
+.sidar-prototype__loading-cancel:hover {
+  color: #fff;
+  border-color: rgba(231, 225, 218, .38);
+}
+
+@keyframes sidar-loading-scan {
+  from { background-position: 0 0; }
+  to { background-position: 0 160px; }
+}
+
+@keyframes sidar-loading-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sidar-dot-pulse {
+  0%, 80%, 100% { opacity: .25; }
+  40% { opacity: 1; }
+}
+
 .sidar-prototype__caption p { margin: 0; }
 
 .sidar-prototype__caption a {
