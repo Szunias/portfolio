@@ -1,36 +1,71 @@
 (function () {
-  const tracks = Array.from(document.querySelectorAll('#trackData .track-card'));
+  function sortDate(track) {
+    const value = track.dataset.year || '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+    if (/^\d{4}$/.test(value)) return value;
+    return '0000';
+  }
+
+  const tracks = Array.from(document.querySelectorAll('#trackData .track-card'))
+    .sort((a, b) => sortDate(b).localeCompare(sortDate(a)));
   const featuredCards = Array.from(document.querySelectorAll('[data-featured-track]'));
   const catalog = document.getElementById('music-catalog');
-  const finishedList = document.getElementById('finishedTrackList');
-  const sketchList = document.getElementById('sketchTrackList');
+  const timeline = document.getElementById('musicTimeline');
   const catalogOpen = document.querySelector('[data-catalog-open]');
   if (!tracks.length || !featuredCards.length) return;
 
-  function appendCatalogTrack(track, list, index) {
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  function trackYear(track) {
+    const match = (track.dataset.year || '').match(/^(\d{4})/);
+    return match ? match[1] : 'Date unknown';
+  }
+
+  function visibleDate(track) {
+    const value = track.dataset.year || '';
+    const match = value.match(/^\d{4}-(\d{2})-(\d{2})$/);
+    if (!match) return 'Year only';
+    const month = monthNames[Number(match[1]) - 1] || '';
+    return `${match[2]} ${month}`.trim();
+  }
+
+  function accessibleDate(track) {
+    const value = track.dataset.year || '';
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!match) return value || 'date unknown';
+    const month = monthNames[Number(match[2]) - 1] || '';
+    return `${Number(match[3])} ${month} ${match[1]}`.trim();
+  }
+
+  function appendCatalogTrack(track, list) {
     if (!list) return null;
     const item = document.createElement('li');
     const button = document.createElement('button');
     const trackTitle = track.dataset.title || 'Untitled track';
+    const kindText = track.dataset.kind === 'sketch' ? 'Sketch' : 'Finished';
     button.className = 'music-catalog__track';
     button.type = 'button';
     button.dataset.catalogTrack = trackTitle;
-    button.setAttribute('aria-label', `Play ${trackTitle}`);
+    button.setAttribute('aria-label', `Play ${trackTitle}, ${accessibleDate(track)}, ${kindText}`);
     button.setAttribute('aria-controls', 'playerBar');
     button.setAttribute('aria-pressed', 'false');
 
-    const number = document.createElement('span');
-    number.className = 'music-catalog__index';
-    number.textContent = String(index + 1).padStart(2, '0');
-    number.setAttribute('aria-hidden', 'true');
+    const date = document.createElement('time');
+    date.className = 'music-catalog__date';
+    date.dateTime = track.dataset.year || '';
+    date.textContent = visibleDate(track);
 
+    const main = document.createElement('span');
+    main.className = 'music-catalog__main';
     const name = document.createElement('span');
     name.className = 'music-catalog__name';
     name.textContent = trackTitle;
 
-    const year = document.createElement('span');
-    year.className = 'music-catalog__year';
-    year.textContent = track.dataset.year || '';
+    const kind = document.createElement('span');
+    kind.className = `music-catalog__kind music-catalog__kind--${track.dataset.kind === 'sketch' ? 'sketch' : 'finished'}`;
+    kind.textContent = kindText;
+    main.append(name, kind);
 
     const duration = document.createElement('span');
     duration.className = 'music-catalog__duration';
@@ -41,18 +76,55 @@
     action.textContent = 'Play';
     action.setAttribute('aria-hidden', 'true');
 
-    button.append(number, name, year, duration, action);
+    button.append(date, main, duration, action);
     item.append(button);
     list.append(item);
     return button;
   }
 
-  const finishedTracks = tracks.filter(track => track.dataset.kind !== 'sketch');
-  const sketchTracks = tracks.filter(track => track.dataset.kind === 'sketch');
-  const catalogCards = [
-    ...finishedTracks.map((track, index) => appendCatalogTrack(track, finishedList, index)),
-    ...sketchTracks.map((track, index) => appendCatalogTrack(track, sketchList, index))
-  ].filter(Boolean);
+  function buildTimeline() {
+    if (!timeline) return [];
+    const years = new Map();
+    tracks.forEach(track => {
+      const year = trackYear(track);
+      if (!years.has(year)) years.set(year, []);
+      years.get(year).push(track);
+    });
+
+    const buttons = [];
+    years.forEach((yearTracks, year) => {
+      const section = document.createElement('section');
+      section.className = 'music-timeline__year';
+      section.setAttribute('aria-labelledby', `music-year-${year.replace(/\s+/g, '-').toLowerCase()}`);
+
+      const heading = document.createElement('header');
+      heading.className = 'music-timeline__year-heading';
+      const title = document.createElement('h3');
+      title.id = `music-year-${year.replace(/\s+/g, '-').toLowerCase()}`;
+      title.textContent = year;
+      const finishedCount = yearTracks.filter(track => track.dataset.kind !== 'sketch').length;
+      const sketchCount = yearTracks.length - finishedCount;
+      const meta = document.createElement('p');
+      const parts = [];
+      if (finishedCount) parts.push(`${finishedCount} finished`);
+      if (sketchCount) parts.push(`${sketchCount} ${sketchCount === 1 ? 'sketch' : 'sketches'}`);
+      meta.textContent = parts.join(' · ');
+      heading.append(title, meta);
+
+      const list = document.createElement('ol');
+      list.className = 'music-timeline__list';
+      yearTracks.forEach(track => {
+        const button = appendCatalogTrack(track, list);
+        if (button) buttons.push(button);
+      });
+
+      section.append(heading, list);
+      timeline.append(section);
+    });
+    return buttons;
+  }
+
+  const catalogCards = buildTimeline();
   const cards = [...featuredCards, ...catalogCards];
 
   if (catalog && catalogOpen) {

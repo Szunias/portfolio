@@ -2935,46 +2935,94 @@ body {
   line-height: 1.7;
 }
 
-.music-catalog__columns {
+.music-catalog__timeline {
+  border-top: 1px solid var(--grey-rule);
+}
+
+.music-timeline__year {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(40px, 6vw, 80px);
-  align-items: start;
+  grid-template-columns: 136px minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 72px);
+  padding: clamp(30px, 4vw, 48px) 0;
+  border-bottom: 1px solid var(--grey-rule);
 }
 
-.music-catalog__group-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 20px;
-  padding-bottom: 14px;
+.music-timeline__year-heading {
+  position: sticky;
+  top: 76px;
+  align-self: start;
 }
 
-.music-catalog__group-heading h3 {
+.music-timeline__year-heading h3 {
   font-family: 'Inter Tight', var(--sans);
-  font-size: 20px;
+  font-size: clamp(42px, 5vw, 68px);
   font-weight: 500;
-  letter-spacing: -.02em;
+  letter-spacing: -.055em;
+  line-height: .9;
 }
 
-.music-catalog__group-heading span {
-  color: color-mix(in srgb, var(--paper) 46%, transparent);
+.music-timeline__year-heading p {
+  margin-top: 12px;
+  color: color-mix(in srgb, var(--paper) 48%, transparent);
   font-family: var(--brand-secondary);
   font-size: 10px;
+  letter-spacing: .03em;
+  line-height: 1.5;
+  text-transform: uppercase;
 }
 
-.music-catalog__list { margin: 0; padding: 0; list-style: none; }
-.music-catalog__list li { border-top: 1px solid var(--grey-rule); }
-.music-catalog__list li:last-child { border-bottom: 1px solid var(--grey-rule); }
+.music-timeline__list {
+  position: relative;
+  margin: 0;
+  padding: 0 0 0 32px;
+  list-style: none;
+}
+
+.music-timeline__list::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 7px;
+  width: 1px;
+  background: color-mix(in srgb, var(--accent) 34%, var(--grey-rule));
+}
+
+.music-timeline__list li {
+  position: relative;
+  border-top: 1px solid var(--grey-rule);
+}
+
+.music-timeline__list li:last-child { border-bottom: 1px solid var(--grey-rule); }
+
+.music-timeline__list li::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: -30px;
+  width: 11px;
+  height: 11px;
+  transform: translateY(-50%);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--paper) 48%, var(--ink));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--paper) 22%, transparent);
+}
+
+.music-timeline__list li:has(.music-catalog__track.active)::before {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent);
+}
 
 .music-catalog__track {
   width: 100%;
-  min-height: 58px;
+  min-height: 62px;
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr) 84px 42px 42px;
-  gap: 10px;
+  grid-template-columns: 72px minmax(0, 1fr) 42px 42px;
+  gap: 12px;
   align-items: center;
-  padding: 8px 4px;
+  padding: 9px 4px;
   border: 0;
   color: color-mix(in srgb, var(--paper) 72%, transparent);
   background: transparent;
@@ -2994,8 +3042,8 @@ body {
   outline-offset: -2px;
 }
 
-.music-catalog__index,
-.music-catalog__year,
+.music-catalog__date,
+.music-catalog__kind,
 .music-catalog__duration,
 .music-catalog__play {
   font-family: var(--brand-secondary);
@@ -3003,8 +3051,14 @@ body {
   letter-spacing: .03em;
 }
 
-.music-catalog__index,
-.music-catalog__year { color: color-mix(in srgb, var(--paper) 42%, transparent); }
+.music-catalog__date { color: color-mix(in srgb, var(--paper) 48%, transparent); }
+
+.music-catalog__main {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 12px;
+}
 
 .music-catalog__name {
   min-width: 0;
@@ -3016,9 +3070,16 @@ body {
   white-space: nowrap;
 }
 
+.music-catalog__kind {
+  flex: 0 0 auto;
+  color: color-mix(in srgb, var(--paper) 45%, transparent);
+  text-transform: uppercase;
+}
+
+.music-catalog__kind--sketch { color: color-mix(in srgb, var(--accent) 70%, var(--paper)); }
 .music-catalog__duration { color: color-mix(in srgb, var(--paper) 58%, transparent); }
 .music-catalog__play { color: var(--accent); text-align: right; }
-.music-catalog__track.active .music-catalog__index { color: var(--accent); }
+.music-catalog__track.active .music-catalog__date { color: var(--accent); }
 
 .music-catalog__spotify {
   display: inline-flex;
@@ -3050,34 +3111,45 @@ body {
 
   .music-catalog__arrow { grid-column: 2; grid-row: 1 / span 3; }
 
-  .music-catalog__intro,
-  .music-catalog__columns { grid-template-columns: 1fr; }
+  .music-catalog__intro { grid-template-columns: 1fr; }
 
   .music-catalog__intro { gap: 18px; }
   .music-catalog__intro h2 { max-width: 18ch; }
-  .music-catalog__columns { gap: 58px; }
+
+  .music-timeline__year {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .music-timeline__year-heading {
+    position: static;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .music-timeline__year-heading p { margin-top: 0; text-align: right; }
 }
 
 @media (max-width: 560px) {
+  .music-timeline__list { padding-left: 25px; }
+  .music-timeline__list::before { left: 5px; }
+  .music-timeline__list li::before { left: -24px; width: 9px; height: 9px; }
+
   .music-catalog__track {
-    grid-template-columns: 28px minmax(0, 1fr) 42px 42px;
+    grid-template-columns: minmax(0, 1fr) 42px 42px;
     grid-template-rows: auto auto;
     gap: 2px 8px;
-    min-height: 64px;
+    min-height: 68px;
   }
 
-  .music-catalog__index { grid-column: 1; grid-row: 1 / span 2; }
-  .music-catalog__name { grid-column: 2; grid-row: 1; }
-  .music-catalog__year { grid-column: 2; grid-row: 2; }
-  .music-catalog__duration { grid-column: 3; grid-row: 1 / span 2; }
-  .music-catalog__play { grid-column: 4; grid-row: 1 / span 2; }
-}
-
-@media (max-width: 380px) {
-  .music-catalog__track { grid-template-columns: minmax(0, 1fr) 42px 42px; }
-  .music-catalog__index { display: none; }
-  .music-catalog__name,
-  .music-catalog__year { grid-column: 1; }
+  .music-catalog__main { grid-column: 1; grid-row: 1; }
+  .music-catalog__date { grid-column: 1; grid-row: 2; }
   .music-catalog__duration { grid-column: 2; }
   .music-catalog__play { grid-column: 3; }
+  .music-catalog__duration,
+  .music-catalog__play { grid-row: 1 / span 2; }
+
+  .music-catalog__kind { font-size: 9px; }
 }
