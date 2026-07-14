@@ -199,6 +199,7 @@
       if (!event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
       activePointer = event.pointerId;
       event.preventDefault();
+      element.focus({ preventScroll: true });
       try { element.setPointerCapture(event.pointerId); } catch (_) {}
       update(event.clientX);
     });

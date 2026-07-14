@@ -10,6 +10,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const { execFileSync } = require('child_process');
 
 const config = require('./site.config.cjs');
@@ -70,9 +71,93 @@ function cleanDir(dir) {
   if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
 }
 
+function listRelativeFiles(root, current = root) {
+  if (!fs.existsSync(current)) return [];
+  const files = [];
+  for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+    const absolute = path.join(current, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...listRelativeFiles(root, absolute));
+    } else if (entry.isFile()) {
+      files.push(path.relative(root, absolute));
+    }
+  }
+  return files;
+}
+
+function pruneEmptyDirectories(root, current = root) {
+  if (!fs.existsSync(current)) return;
+  for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+    if (entry.isDirectory()) pruneEmptyDirectories(root, path.join(current, entry.name));
+  }
+  if (current !== root && fs.readdirSync(current).length === 0) fs.rmdirSync(current);
+}
+
+function filesHaveSameContent(left, right) {
+  if (!fs.existsSync(right)) return false;
+  const leftStat = fs.statSync(left);
+  const rightStat = fs.statSync(right);
+  if (!leftStat.isFile() || !rightStat.isFile() || leftStat.size !== rightStat.size) return false;
+
+  const chunkSize = 64 * 1024;
+  const leftBuffer = Buffer.allocUnsafe(chunkSize);
+  const rightBuffer = Buffer.allocUnsafe(chunkSize);
+  const leftFd = fs.openSync(left, 'r');
+  const rightFd = fs.openSync(right, 'r');
+  try {
+    let position = 0;
+    while (position < leftStat.size) {
+      const length = Math.min(chunkSize, leftStat.size - position);
+      const leftRead = fs.readSync(leftFd, leftBuffer, 0, length, position);
+      const rightRead = fs.readSync(rightFd, rightBuffer, 0, length, position);
+      if (leftRead === 0 || rightRead === 0) return false;
+      if (leftRead !== rightRead || Buffer.compare(leftBuffer.subarray(0, leftRead), rightBuffer.subarray(0, rightRead)) !== 0) return false;
+      position += leftRead;
+    }
+    return true;
+  } finally {
+    fs.closeSync(leftFd);
+    fs.closeSync(rightFd);
+  }
+}
+
+function publishDistInPlace() {
+  ensureDir(FINAL_DIST);
+  const stagedFiles = listRelativeFiles(DIST);
+  const isEntryPoint = rel => /(?:\.html|\.xml|\.txt)$/i.test(rel) || ['CNAME', '.nojekyll'].includes(rel);
+  stagedFiles.sort((left, right) => Number(isEntryPoint(left)) - Number(isEntryPoint(right)) || left.localeCompare(right));
+
+  // Assets are copied first and entry points last, so a failed copy leaves the
+  // previous HTML pointing at the previous, still-present assets.
+  for (const rel of stagedFiles) {
+    const source = path.join(DIST, rel);
+    const target = path.join(FINAL_DIST, rel);
+    ensureDir(path.dirname(target));
+    if (!filesHaveSameContent(source, target)) fs.copyFileSync(source, target);
+  }
+
+  const stagedSet = new Set(stagedFiles.map(rel => rel.replace(/\\/g, '/')));
+  for (const rel of listRelativeFiles(FINAL_DIST)) {
+    if (!stagedSet.has(rel.replace(/\\/g, '/'))) fs.rmSync(path.join(FINAL_DIST, rel), { force: true });
+  }
+  pruneEmptyDirectories(FINAL_DIST);
+  cleanDir(DIST);
+  console.warn('  ! dist directory was locked; published the validated build in place');
+}
+
 function publishDist() {
   const hadPreviousDist = fs.existsSync(FINAL_DIST);
-  if (hadPreviousDist) fs.renameSync(FINAL_DIST, DIST_BACKUP);
+  if (hadPreviousDist) {
+    try {
+      fs.renameSync(FINAL_DIST, DIST_BACKUP);
+    } catch (moveError) {
+      if (process.platform === 'win32' && ['EBUSY', 'EPERM', 'EACCES'].includes(moveError.code)) {
+        publishDistInPlace();
+        return;
+      }
+      throw moveError;
+    }
+  }
 
   try {
     fs.renameSync(DIST, FINAL_DIST);
@@ -192,6 +277,9 @@ function ogTags(page) {
   if (page.ogImage) {
     lines.splice(4, 0, `<meta property="og:image" content="${escAttr(page.ogImage)}">`);
     lines.splice(5, 0, `<meta property="og:image:alt" content="${escAttr(imageAlt)}">`);
+    if (page.ogImageWidth) lines.splice(6, 0, `<meta property="og:image:width" content="${escAttr(page.ogImageWidth)}">`);
+    if (page.ogImageHeight) lines.splice(7, 0, `<meta property="og:image:height" content="${escAttr(page.ogImageHeight)}">`);
+    if (page.ogImageType) lines.splice(8, 0, `<meta property="og:image:type" content="${escAttr(page.ogImageType)}">`);
     lines.push(`<meta name="twitter:image" content="${escAttr(page.ogImage)}">`);
     lines.push(`<meta name="twitter:image:alt" content="${escAttr(imageAlt)}">`);
   }
@@ -548,6 +636,15 @@ function safeRepoPath(rel) {
   return resolved;
 }
 
+function isPathInside(root, candidate) {
+  const relative = path.relative(root, candidate);
+  return relative === '' || (
+    relative !== '..' &&
+    !relative.startsWith(`..${path.sep}`) &&
+    !path.isAbsolute(relative)
+  );
+}
+
 function safeDistPath(rel) {
   if (typeof rel !== 'string') return null;
   const normalized = rel.replace(/\\/g, '/');
@@ -576,13 +673,21 @@ function copyReferencedAssets(refs) {
     if (!src || !dest) {
       throw new Error(`Unsafe local asset reference: ${rel}`);
     }
-    if (fs.existsSync(src) && fs.statSync(src).isFile()) {
-      ensureDir(path.dirname(dest));
-      fs.copyFileSync(src, dest);
-      copied.push(rel);
-    } else {
+    if (!fs.existsSync(src)) {
       throw new Error(`Referenced asset not found: ${rel}`);
     }
+    const lexicalStat = fs.lstatSync(src);
+    if (lexicalStat.isSymbolicLink()) {
+      throw new Error(`Referenced asset must not be a symbolic link: ${rel}`);
+    }
+    const realRoot = fs.realpathSync.native(__dirname);
+    const realSrc = fs.realpathSync.native(src);
+    if (!isPathInside(realRoot, realSrc) || !fs.statSync(realSrc).isFile()) {
+      throw new Error(`Referenced asset resolves outside the repository or is not a file: ${rel}`);
+    }
+    ensureDir(path.dirname(dest));
+    fs.copyFileSync(realSrc, dest);
+    copied.push(rel);
   }
   return copied;
 }
@@ -634,7 +739,7 @@ function validateGeneratedHtml(htmlFiles) {
     if (!/<html\b[^>]*\blang=(["'])[^"']+\1/i.test(html)) issues.push(`${file}: html missing lang`);
     if (!/<meta\b(?=[^>]*\bname=(["'])viewport\1)/i.test(html)) issues.push(`${file}: missing viewport meta`);
     if (new RegExp(EMPTY_INLINE_SCRIPT_PATTERN, 'i').test(html)) issues.push(`${file}: empty inline script block`);
-    if (/<!--\s*(?:TITLE|DESCRIPTION|CANONICAL|OG_TAGS|CSS|CONTENT|JS|SCHEMA|PLAYER|LIGHTBOX)\s*-->/.test(html)) {
+    if (/<!--\s*(?:TITLE|DESCRIPTION|CANONICAL|BUILD_SHA|OG_TAGS|CSS|CONTENT|JS|SCHEMA|PLAYER|LIGHTBOX|FOOTER)\s*-->/.test(html)) {
       issues.push(`${file}: unresolved build placeholder`);
     }
     for (const match of html.matchAll(/<script\b(?=[^>]*\btype=(["'])application\/ld\+json\1)[^>]*>([\s\S]*?)<\/script>/gi)) {
@@ -713,7 +818,10 @@ function validateGeneratedHtml(htmlFiles) {
         continue;
       }
       if (/^(https?:|mailto:|tel:|data:|feed:)/i.test(href) || href.startsWith('//')) continue;
-      const localFile = href.split('#')[0].split('?')[0];
+      const localPath = href.split('#')[0].split('?')[0];
+      const localFile = localPath === '/'
+        ? 'index.html'
+        : localPath.replace(/^\/+/, '');
       const hash = href.includes('#') ? href.split('#')[1] : '';
       if (localFile.endsWith('.html') && !htmlFileSet.has(localFile)) {
         issues.push(`${file}: broken local page link ${href}`);
@@ -860,17 +968,10 @@ function staticCopyEntries(cfg) {
 }
 
 function pageContentInputs(page) {
-  const inputs = [
-    'site.config.cjs',
-    'build.cjs',
+  return [
     relPath('src', 'pages', `${page.slug}.html`),
-    relPath('src', 'layouts', `${page.layout}.html`),
-    relPath('src', 'css', `${page.css}.css`),
-    ...page.js.map(name => relPath('src', 'js', `${name}.js`)),
+    ...(page.lastmodInputs || []),
   ];
-  if (page.lightbox) inputs.push(relPath('src', 'partials', 'lightbox.html'));
-  if (page.layout === 'music') inputs.push(relPath('src', 'partials', 'player-bar.html'));
-  return inputs;
 }
 
 function sitemapUrl(loc, lastmod, priority) {
@@ -919,20 +1020,12 @@ function getPartial(name) {
   return partials[name];
 }
 
-// Cache CSS / JS
+// Cache CSS / JS and emit immutable, content-hashed browser assets.
 
 const cssCache = {};
-function assertInlineBlockSafe(kind, name, content) {
-  const closingTag = kind === 'css' ? 'style' : 'script';
-  if (new RegExp(`</\\s*${closingTag}\\b`, 'i').test(content)) {
-    throw new Error(`Unsafe closing </${closingTag}> sequence in ${kind.toUpperCase()} asset: ${name}`);
-  }
-}
-
 function getCSS(name) {
   if (!cssCache[name]) {
     cssCache[name] = read(path.join(SRC, 'css', `${name}.css`));
-    assertInlineBlockSafe('css', `src/css/${name}.css`, cssCache[name]);
   }
   return cssCache[name];
 }
@@ -941,9 +1034,22 @@ const jsCache = {};
 function getJS(name) {
   if (!jsCache[name]) {
     jsCache[name] = read(path.join(SRC, 'js', `${name}.js`));
-    assertInlineBlockSafe('js', `src/js/${name}.js`, jsCache[name]);
   }
   return jsCache[name];
+}
+
+const emittedBrowserAssets = new Map();
+function emitBrowserAsset(kind, label, content) {
+  const hash = crypto.createHash('sha256').update(content).digest('hex').slice(0, 12);
+  const rel = `assets/${label}.${hash}.${kind}`;
+  if (!emittedBrowserAssets.has(rel)) {
+    const dest = safeDistPath(rel);
+    if (!dest) throw new Error(`Unsafe generated browser asset path: ${rel}`);
+    ensureDir(path.dirname(dest));
+    fs.writeFileSync(dest, content, 'utf8');
+    emittedBrowserAssets.set(rel, true);
+  }
+  return rel;
 }
 
 // Build
@@ -969,11 +1075,14 @@ function buildPage(page) {
   content = enhanceInlineSvgAccessibility(content);
   content = enhanceGalleryItemLinks(content);
 
-  // 3. Assemble CSS (single file per layout type)
+  // 3. Assemble shared, cacheable CSS and the page's progressive enhancement.
   const css = getCSS(page.css);
+  const cssHref = emitBrowserAsset('css', page.css, css);
+  const pageCssHref = page.layout === 'error' ? `/${cssHref}` : cssHref;
 
-  // 4. Assemble JS (concatenate files)
+  // 4. Assemble JS (concatenate files with the same composition into one asset)
   const js = page.js.map(name => getJS(name)).join('\n\n');
+  const jsSrc = js.trim() ? emitBrowserAsset('js', 'site', js) : null;
 
   // 5. Replace placeholders. Values are passed as replacer functions so that
   //    literal "$" sequences in CSS/JS/content (e.g. $&, $', $`) are not
@@ -984,18 +1093,14 @@ function buildPage(page) {
   html = html.replace('<!-- BUILD_SHA -->', () => escAttr(BUILD_SHA));
   html = html.replace(
     /<meta name="robots" content="index, follow">/,
-    `<meta name="robots" content="${page.noindex ? 'noindex, nofollow' : 'index, follow'}">`
+    `<meta name="robots" content="${page.noindex ? 'noindex, follow' : 'index, follow'}">`
   );
   html = html.replace('<!-- OG_TAGS -->', () => ogTags(page));
-  html = html.replace('<!-- CSS -->', () => css);
+  html = html.replace('<!-- CSS -->', () => `<link rel="stylesheet" href="${escAttr(pageCssHref)}">`);
   html = html.replace('<!-- CONTENT -->', () => content);
-  if (js.trim()) {
-    html = html.replace('<!-- JS -->', () => js);
-  } else {
-    // A page with no JS would otherwise emit an empty inline script block,
-    // which the output validator rejects.
-    html = html.replace(/<script>\s*<!-- JS -->\s*<\/script>\s*/, '');
-  }
+  html = html.replace('<!-- JS -->', () => jsSrc
+    ? `<script src="${escAttr(jsSrc)}" defer></script>`
+    : '');
 
   // 6. Optional partials
   if (page.lightbox) {

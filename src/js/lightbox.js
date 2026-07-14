@@ -137,6 +137,7 @@
       item.setAttribute('tabindex', '0');
     }
     item.addEventListener('click', (e) => {
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       e.preventDefault();
       openLightbox(i, item);
     });

@@ -6,6 +6,9 @@
 (function () {
   var list = document.querySelector('.plist');
   if (!list) return;
+  // The sticky preview only helps on a wide, precise-pointer layout. On touch
+  // devices every row keeps its own thumbnail and no hidden preview images load.
+  if (!window.matchMedia || !window.matchMedia('(min-width: 1025px) and (hover: hover) and (pointer: fine)').matches) return;
   var rows = [].slice.call(list.querySelectorAll('.prow'));
   if (!rows.length) return;
 
@@ -32,11 +35,14 @@
   var imgs = [];
   var srcs = [];
   var metas = [];
+  var transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
   rows.forEach(function (row) {
     var thumb = row.querySelector('.prow__thumb img');
     var img = document.createElement('img');
     img.alt = '';
     img.decoding = 'async';
+    img.src = transparentPixel;
+    img.dataset.loaded = 'false';
     // src is assigned lazily in activate() so the page load doesn't pull
     // all 15 full-size thumbs at once
     srcs.push(thumb ? (thumb.currentSrc || thumb.src) : '');
@@ -55,10 +61,16 @@
   function activate(i) {
     if (i === current) return;
     if (current >= 0) imgs[current].classList.remove('on');
-    if (!imgs[i].src && srcs[i]) imgs[i].src = srcs[i];
+    if (imgs[i].dataset.loaded !== 'true' && srcs[i]) {
+      imgs[i].src = srcs[i];
+      imgs[i].dataset.loaded = 'true';
+    }
     // preload the neighbours so quick cursor sweeps don't flash empty frames
     [i - 1, i + 1].forEach(function (j) {
-      if (imgs[j] && !imgs[j].src && srcs[j]) imgs[j].src = srcs[j];
+      if (imgs[j] && imgs[j].dataset.loaded !== 'true' && srcs[j]) {
+        imgs[j].src = srcs[j];
+        imgs[j].dataset.loaded = 'true';
+      }
     });
     imgs[i].classList.add('on');
     capIdx.textContent = (i + 1 < 10 ? '0' : '') + (i + 1) + ' / ' + rows.length;

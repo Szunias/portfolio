@@ -4,6 +4,8 @@
   const sound = document.getElementById('sidarSound');
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
   let pausedForVisibility = false;
+  let pausedForMotion = false;
+  let pausedByUser = false;
 
   function ensureFilmLoaded() {
     if (!film || film.dataset.autoplayLoaded === 'true') return;
@@ -59,8 +61,11 @@
       playback.addEventListener('click', function () {
         pausedForVisibility = false;
         if (film.paused) {
+          pausedByUser = false;
+          pausedForMotion = false;
           playFilm();
         } else {
+          pausedByUser = true;
           film.pause();
         }
       });
@@ -68,6 +73,8 @@
 
     if (sound) {
       sound.addEventListener('click', function () {
+        pausedByUser = false;
+        pausedForMotion = false;
         setSound(film.muted);
         playFilm();
       });
@@ -77,7 +84,7 @@
       if (document.hidden) {
         pausedForVisibility = !film.paused;
         if (pausedForVisibility) film.pause();
-      } else if (pausedForVisibility && (!reduceMotion || !reduceMotion.matches)) {
+      } else if (pausedForVisibility && !pausedByUser && (!reduceMotion || !reduceMotion.matches)) {
         pausedForVisibility = false;
         playFilm();
       }
@@ -86,8 +93,10 @@
     if (reduceMotion && typeof reduceMotion.addEventListener === 'function') {
       reduceMotion.addEventListener('change', function (event) {
         if (event.matches) {
-          film.pause();
-        } else {
+          pausedForMotion = !film.paused;
+          if (pausedForMotion) film.pause();
+        } else if (pausedForMotion && !pausedByUser) {
+          pausedForMotion = false;
           playFilm();
         }
       });
@@ -118,7 +127,7 @@
       const iframe = document.createElement('iframe');
       iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId + '?autoplay=1&rel=0';
       iframe.title = 'SIDAR 2.0 prototyping week one';
-      iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
       iframe.allowFullscreen = true;
       iframe.tabIndex = 0;
       iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
