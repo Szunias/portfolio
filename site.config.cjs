@@ -59,7 +59,7 @@ module.exports = {
       css: 'music',
       js: ['music-selected'],
       title: 'Game & Film Music | Igor Szuniewicz',
-      description: 'Six selected film scores, animation cues and releases by Igor Szuniewicz, with a link to the wider Spotify catalogue.',
+      description: 'Listen to 44 film scores, animation cues, releases and dated sketches by Igor Szuniewicz, with six selected pieces featured first.',
       canonical: `${SITE}/music.html`,
       ogImage: `${SITE}/old/public/assets/images/social/music-1200x630.webp`,
       ogImageAlt: 'Album cover artwork for music by Igor Szuniewicz',

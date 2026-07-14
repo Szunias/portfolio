@@ -1,7 +1,71 @@
 (function () {
   const tracks = Array.from(document.querySelectorAll('#trackData .track-card'));
-  const cards = Array.from(document.querySelectorAll('[data-featured-track]'));
-  if (!tracks.length || !cards.length) return;
+  const featuredCards = Array.from(document.querySelectorAll('[data-featured-track]'));
+  const catalog = document.getElementById('music-catalog');
+  const finishedList = document.getElementById('finishedTrackList');
+  const sketchList = document.getElementById('sketchTrackList');
+  const catalogOpen = document.querySelector('[data-catalog-open]');
+  if (!tracks.length || !featuredCards.length) return;
+
+  function appendCatalogTrack(track, list, index) {
+    if (!list) return null;
+    const item = document.createElement('li');
+    const button = document.createElement('button');
+    const trackTitle = track.dataset.title || 'Untitled track';
+    button.className = 'music-catalog__track';
+    button.type = 'button';
+    button.dataset.catalogTrack = trackTitle;
+    button.setAttribute('aria-label', `Play ${trackTitle}`);
+    button.setAttribute('aria-controls', 'playerBar');
+    button.setAttribute('aria-pressed', 'false');
+
+    const number = document.createElement('span');
+    number.className = 'music-catalog__index';
+    number.textContent = String(index + 1).padStart(2, '0');
+    number.setAttribute('aria-hidden', 'true');
+
+    const name = document.createElement('span');
+    name.className = 'music-catalog__name';
+    name.textContent = trackTitle;
+
+    const year = document.createElement('span');
+    year.className = 'music-catalog__year';
+    year.textContent = track.dataset.year || '';
+
+    const duration = document.createElement('span');
+    duration.className = 'music-catalog__duration';
+    duration.textContent = track.dataset.duration || '';
+
+    const action = document.createElement('span');
+    action.className = 'music-catalog__play';
+    action.textContent = 'Play';
+    action.setAttribute('aria-hidden', 'true');
+
+    button.append(number, name, year, duration, action);
+    item.append(button);
+    list.append(item);
+    return button;
+  }
+
+  const finishedTracks = tracks.filter(track => track.dataset.kind !== 'sketch');
+  const sketchTracks = tracks.filter(track => track.dataset.kind === 'sketch');
+  const catalogCards = [
+    ...finishedTracks.map((track, index) => appendCatalogTrack(track, finishedList, index)),
+    ...sketchTracks.map((track, index) => appendCatalogTrack(track, sketchList, index))
+  ].filter(Boolean);
+  const cards = [...featuredCards, ...catalogCards];
+
+  if (catalog && catalogOpen) {
+    const syncCatalogState = () => catalogOpen.setAttribute('aria-expanded', String(catalog.open));
+    catalog.addEventListener('toggle', syncCatalogState);
+    catalogOpen.addEventListener('click', event => {
+      event.preventDefault();
+      catalog.open = true;
+      syncCatalogState();
+      catalog.scrollIntoView({ block: 'start' });
+    });
+    syncCatalogState();
+  }
 
   const bar = document.getElementById('playerBar');
   const title = document.getElementById('playerTitle');
@@ -36,10 +100,14 @@
   const byTitle = new Map(tracks.map(track => [track.dataset.title, track]));
   const cardLabels = new WeakMap();
   cards.forEach(card => {
-    const fallback = card.dataset.featuredTrack || 'track';
+    const fallback = card.dataset.featuredTrack || card.dataset.catalogTrack || 'track';
     const label = card.getAttribute('aria-label') || `Play ${fallback}`;
     cardLabels.set(card, label.replace(/^Play\s+/i, ''));
   });
+
+  function cardTitle(card) {
+    return card.dataset.featuredTrack || card.dataset.catalogTrack || '';
+  }
 
   const audio = new Audio();
   audio.preload = 'metadata';
@@ -108,13 +176,15 @@
     play.setAttribute('aria-label', `${action} ${trackName}`);
 
     cards.forEach(card => {
-      const cardTrack = byTitle.get(card.dataset.featuredTrack);
+      const cardTrack = byTitle.get(cardTitle(card));
       const selected = !!track && cardTrack === track;
       const cardPlaying = selected && playing;
       card.classList.toggle('active', selected);
       card.classList.toggle('is-playing', cardPlaying);
       card.setAttribute('aria-pressed', String(cardPlaying));
       card.setAttribute('aria-label', `${cardPlaying ? 'Pause' : 'Play'} ${cardLabels.get(card)}`);
+      const catalogAction = card.querySelector('.music-catalog__play');
+      if (catalogAction) catalogAction.textContent = cardPlaying ? 'Pause' : 'Play';
     });
   }
 
@@ -306,7 +376,9 @@
     title.textContent = track.dataset.title || 'Untitled track';
     artist.textContent = track.dataset.artist || 'Igor Szuniewicz';
     totalTime.textContent = track.dataset.duration || '0:00';
-    cover.style.backgroundImage = track.dataset.cover ? `url("${track.dataset.cover.replace(/"/g, '%22')}")` : '';
+    cover.style.backgroundImage = track.dataset.cover
+      ? `url("${track.dataset.cover.replace(/"/g, '%22')}")`
+      : (track.dataset.gradient || '');
     bar.classList.add('has-track');
     setStatus(autoplay ? 'Loading' : 'Ready to play', autoplay ? 'loading' : '');
     audio.src = trackSource;
@@ -333,7 +405,7 @@
   }
 
   cards.forEach(card => card.addEventListener('click', () => {
-    const track = byTitle.get(card.dataset.featuredTrack);
+    const track = byTitle.get(cardTitle(card));
     const index = tracks.indexOf(track);
     if (!validIndex(index)) {
       setStatus('That track is not configured correctly.', 'error');
