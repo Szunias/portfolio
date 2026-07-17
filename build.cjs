@@ -310,7 +310,8 @@ function schemaTags(page) {
       'https://www.linkedin.com/in/igorszuniewicz',
       'https://github.com/Szunias',
       'https://igorszuniewicz.itch.io',
-      'https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6'
+      'https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6',
+      'https://www.therookies.co/u/szuniewiczigor'
     ]
   };
   const website = {
