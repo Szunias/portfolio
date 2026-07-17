@@ -45,18 +45,6 @@ const DIST = path.join(__dirname, `.dist-tmp-${BUILD_TOKEN}`);
 const DIST_BACKUP = path.join(__dirname, `.dist-backup-${BUILD_TOKEN}`);
 const SAFE_PAGE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-function currentBuildSha() {
-  try {
-    return execFileSync('git', ['rev-parse', 'HEAD'], {
-      cwd: __dirname, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
-    }).trim();
-  } catch (_) {
-    return 'unknown';
-  }
-}
-
-const BUILD_SHA = currentBuildSha();
-
 // Helpers
 
 function read(filePath) {
@@ -334,7 +322,7 @@ function schemaTags(page) {
     publisher: { '@id': personId }
   };
   const webPage = {
-    '@type': page.slug === 'index' ? 'ProfilePage' : (page.layout === 'music' ? 'CollectionPage' : 'CreativeWork'),
+    '@type': page.slug === 'index' ? 'ProfilePage' : (page.layout === 'music' ? 'CollectionPage' : (page.schemaType || 'CreativeWork')),
     '@id': pageId,
     url: page.canonical,
     name: pageName,
@@ -739,7 +727,7 @@ function validateGeneratedHtml(htmlFiles) {
     if (!/<html\b[^>]*\blang=(["'])[^"']+\1/i.test(html)) issues.push(`${file}: html missing lang`);
     if (!/<meta\b(?=[^>]*\bname=(["'])viewport\1)/i.test(html)) issues.push(`${file}: missing viewport meta`);
     if (new RegExp(EMPTY_INLINE_SCRIPT_PATTERN, 'i').test(html)) issues.push(`${file}: empty inline script block`);
-    if (/<!--\s*(?:TITLE|DESCRIPTION|CANONICAL|BUILD_SHA|OG_TAGS|CSS|CONTENT|JS|SCHEMA|PLAYER|LIGHTBOX|FOOTER)\s*-->/.test(html)) {
+    if (/<!--\s*(?:TITLE|DESCRIPTION|CANONICAL|OG_TAGS|CSS|CONTENT|JS|SCHEMA|PLAYER|LIGHTBOX|FOOTER)\s*-->/.test(html)) {
       issues.push(`${file}: unresolved build placeholder`);
     }
     for (const match of html.matchAll(/<script\b(?=[^>]*\btype=(["'])application\/ld\+json\1)[^>]*>([\s\S]*?)<\/script>/gi)) {
@@ -1090,7 +1078,6 @@ function buildPage(page) {
   html = html.replace('<!-- TITLE -->', () => escAttr(page.title));
   html = html.replace('<!-- DESCRIPTION -->', () => escAttr(page.description));
   html = html.replace('<!-- CANONICAL -->', () => escAttr(page.canonical));
-  html = html.replace('<!-- BUILD_SHA -->', () => escAttr(BUILD_SHA));
   html = html.replace(
     /<meta name="robots" content="index, follow">/,
     `<meta name="robots" content="${page.noindex ? 'noindex, follow' : 'index, follow'}">`
