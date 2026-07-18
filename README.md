@@ -13,7 +13,7 @@ Live: https://igorszuniewicz.com
 Static HTML, built from small templates by a single Node script. Zero npm dependencies, zero framework.
 
 - **Source:** `src/pages/*.html` (content) + `src/layouts/*.html` (shell) + `src/partials/*.html` (lightbox, player bar) + `src/css/*.css` + `src/js/*.js`
-- **Build:** `build.cjs` inlines CSS/JS into each layout and emits static HTML to `dist/`
+- **Build:** `build.cjs` bundles CSS/JS into content-hashed files under `dist/assets/` and emits static HTML to `dist/`
 - **Config:** `site.config.cjs` defines every page (slug, layout, title, OG meta, etc.)
 - **Deployment:** GitHub Pages via `.github/workflows/deploy.yml`
 
@@ -45,8 +45,8 @@ src/
   layouts/             # home.html, project.html, music.html, error.html
   partials/            # lightbox, player-bar
   pages/               # page content (one .html per page)
-  css/                 # page-specific stylesheets inlined by the build
-  js/                  # page-specific interactions inlined by the build
+  css/                 # page-specific stylesheets, bundled into hashed assets by the build
+  js/                  # page-specific interactions, bundled into hashed assets by the build
   assets/              # favicon
 old/                   # legacy assets (images, videos, audio, CV) — referenced by pages
 archive/               # standalone legacy snapshots; not deployed

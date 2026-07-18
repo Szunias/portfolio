@@ -8,7 +8,7 @@
   if (!list) return;
   // The sticky preview only helps on a wide, precise-pointer layout. On touch
   // devices every row keeps its own thumbnail and no hidden preview images load.
-  if (!window.matchMedia || !window.matchMedia('(min-width: 1025px) and (hover: hover) and (pointer: fine)').matches) return;
+  if (!window.matchMedia || !window.matchMedia('(min-width: 1180px) and (hover: hover) and (pointer: fine)').matches) return;
   var rows = [].slice.call(list.querySelectorAll('.prow'));
   if (!rows.length) return;
 

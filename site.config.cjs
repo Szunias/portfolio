@@ -4,8 +4,8 @@
  * Each entry specifies:
  *   slug       - output filename (without .html)
  *   layout     - which layout template to use (home | project | music | error)
- *   css        - CSS file to inline (one per layout type)
- *   js         - JS files to concatenate and inline
+ *   css        - CSS file bundled into a content-hashed asset (one per layout type)
+ *   js         - JS files concatenated into a content-hashed asset
  *   title      - <title> tag content
  *   description- meta description
  *   canonical  - canonical URL
