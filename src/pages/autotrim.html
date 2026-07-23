@@ -1,0 +1,116 @@
+<div class="mw-page at-page">
+  <header class="mw-hero at-hero">
+    <div class="mw-hero__copy">
+      <p class="mw-kicker">Sound asset delivery &middot; REAPER 7 &middot; Lua + ReaImGui</p>
+      <div class="mw-wordmark at-wordmark">
+        <h1>AutoTrim<br>Exporter</h1>
+      </div>
+      <p class="mw-hero__lead">AutoTrim Exporter turns layered REAPER selections into clean, consistently named audio files without repeating the render setup for every asset.</p>
+      <p class="mw-hero__summary">I am the solo designer and developer. I built the REAPER workflow, the rendered-signal trimming system, level preparation, safe file handling and the interface used to review each delivery.</p>
+      <p class="mw-hero__role">Solo designer and developer &middot; Lua ReaScript &middot; ReaImGui &middot; Windows, macOS and Linux</p>
+      <div class="mw-hero__actions">
+        <a class="mw-action mw-action--primary" href="https://github.com/Szunias/autotrim-exporter-releases/releases/latest" target="_blank" rel="noopener noreferrer">Get the current release <span aria-hidden="true">&nearr;</span></a>
+        <a class="mw-action" href="https://github.com/Szunias/autotrim-exporter-releases" target="_blank" rel="noopener noreferrer">Open the release hub <span aria-hidden="true">&nearr;</span></a>
+      </div>
+    </div>
+
+    <figure class="mw-hero__visual at-hero__visual">
+      <div class="mw-window at-window">
+        <div class="mw-window__bar" aria-hidden="true"><span></span><span></span><span></span><small>REAPER / ENGINE READY</small></div>
+        <img src="old/public/assets/images/projects-autotrim/autotrim-trim-tails.png" width="1560" height="1020" alt="AutoTrim Exporter Trim and Tails screen with presets and independent boundary controls" loading="eager" fetchpriority="high" decoding="async">
+      </div>
+      <figcaption>Trim &amp; Tails controls in the AutoTrim 3 interface</figcaption>
+    </figure>
+  </header>
+
+  <div class="mw-content">
+    <section class="mw-section" aria-labelledby="at-path-title">
+      <header class="mw-section__head">
+        <p class="mw-kicker">Export path</p>
+        <h2 id="at-path-title">Select the layers, then deliver the asset</h2>
+        <p>The tool keeps the important decisions visible while removing repeated selection, trimming, naming and render setup.</p>
+      </header>
+
+      <ol class="mw-path">
+        <li><span>01</span><strong>Anchor</strong><small>Select one timeline item</small></li>
+        <li><span>02</span><strong>Collect</strong><small>Find overlapping layers</small></li>
+        <li><span>03</span><strong>Prepare</strong><small>Trim, name and set level</small></li>
+        <li><span>04</span><strong>Deliver</strong><small>Render and verify the file</small></li>
+      </ol>
+
+      <div class="mw-copy-pair">
+        <p>Select across tracks starts from one timeline item and collects the layers that belong to the same sound. Long background material is kept out unless the user selected it deliberately.</p>
+        <p>AutoTrim can render the selection as one layered asset or create one file per item. Delivery formats are WAV, FLAC, OGG and MP3, while the analysis path stays lossless.</p>
+      </div>
+    </section>
+
+    <section class="mw-section" aria-labelledby="at-trim-title">
+      <header class="mw-section__head">
+        <p class="mw-kicker">Rendered-signal trimming</p>
+        <h2 id="at-trim-title">Measure the processed sound and keep its tail</h2>
+        <p>AutoTrim analyses an unnormalised REAPER render, so item and take processing affect the measured boundaries. It does not guess from the untouched source file.</p>
+      </header>
+
+      <dl class="mw-ledger at-ledger">
+        <div><dt>Start</dt><dd>A hard peak floor, local noise estimate and onset energy locate useful material without shaving off the attack.</dd></div>
+        <div><dt>Tail</dt><dd>A separate threshold, hysteresis and a decay-aware window keep reverb and effect tails from ending abruptly.</dd></div>
+        <div><dt>Padding</dt><dd>Pre-roll and extra tail remain explicit controls, with starting presets for one-shots, impacts and ambiences.</dd></div>
+        <div><dt>Protection</dt><dd>Material far longer than the intended sound set is excluded from automatic batch collection.</dd></div>
+      </dl>
+    </section>
+
+    <section class="mw-section mw-interface at-interface" aria-labelledby="at-interface-title">
+      <header class="mw-section__head">
+        <p class="mw-kicker">Level preparation</p>
+        <h2 id="at-interface-title">Keep the original level or choose one delivery target</h2>
+        <p>The loudness page puts LUFS-I, RMS, Peak and True Peak in the same place. The chosen measurement is applied before the final file is verified.</p>
+      </header>
+
+      <div class="mw-gallery at-gallery">
+        <div class="gallery-item mw-screen at-screen" tabindex="0" role="button" aria-label="Open AutoTrim loudness controls screenshot">
+          <img src="old/public/assets/images/projects-autotrim/autotrim-loudness.png" width="1560" height="1020" alt="AutoTrim Exporter Loudness screen with measurement choices and target controls" loading="eager" decoding="async">
+          <span class="gallery-item__caption">Loudness measurement and true-peak controls</span>
+          <span class="gallery-item__zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="22" y2="22"/></svg></span>
+        </div>
+      </div>
+      <p class="mw-gallery-note">The captures show only AutoTrim controls. No project paths, previous file names or export history are included.</p>
+    </section>
+
+    <section class="mw-section" aria-labelledby="at-safety-title">
+      <header class="mw-section__head">
+        <p class="mw-kicker">File safety</p>
+        <h2 id="at-safety-title">Check the render before it becomes a delivery</h2>
+        <p>AutoTrim separates analysis files from the destination and commits the final result only after its length and output path pass validation.</p>
+      </header>
+
+      <ol class="mw-command-list">
+        <li><span>01</span><p><strong>Analyse.</strong> One raw pass establishes the boundaries, with one optional extension pass when the tail needs more room.</p></li>
+        <li><span>02</span><p><strong>Render.</strong> The chosen format and level settings are applied once to the measured range.</p></li>
+        <li><span>03</span><p><strong>Commit.</strong> AutoTrim checks the file, records diagnostics and either creates a new version or replaces the requested delivery deliberately.</p></li>
+      </ol>
+
+      <aside class="mw-release-note at-release-note" aria-labelledby="at-release-title">
+        <div>
+          <p class="mw-kicker">Current stable release</p>
+          <h3 id="at-release-title">Version 3.1.1</h3>
+        </div>
+        <div class="mw-release-note__copy">
+          <p>The package requires REAPER 7 and ReaImGui 0.10.0.5 or newer in the 0.10 API series. SWS is optional. The public package supports Windows, macOS and Linux.</p>
+          <p>The development repository is private and the product uses a proprietary license. Because it is a Lua ReaScript, the distributed package necessarily contains the Lua text that REAPER runs.</p>
+          <div class="mw-release-note__actions">
+            <a href="https://github.com/Szunias/autotrim-exporter-releases/releases/download/v3.1.1/AutoTrim-Exporter-3.1.1.zip" target="_blank" rel="noopener noreferrer">Download the package <span aria-hidden="true">&nearr;</span></a>
+            <a href="https://github.com/Szunias/autotrim-exporter-releases/releases/download/v3.1.1/AutoTrim-Exporter-3.1.1.zip.sha256" target="_blank" rel="noopener noreferrer">SHA-256 checksum <span aria-hidden="true">&nearr;</span></a>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </div>
+
+  <footer class="ifmc-foot" aria-label="Project links and navigation">
+    <div class="ifmc-foot__links">
+      <a href="https://github.com/Szunias/autotrim-exporter-releases/releases" target="_blank" rel="noopener noreferrer">Releases on GitHub</a>
+      <a href="https://github.com/Szunias/autotrim-exporter-releases" target="_blank" rel="noopener noreferrer">Public release hub</a>
+    </div>
+    <a class="ifmc-foot__next next-project-btn" href="mowik.html">Next tool: Mówik</a>
+  </footer>
+</div>
