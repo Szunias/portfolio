@@ -8,32 +8,24 @@
       label: 'Procedural DSP',
       latency: '15-25ms',
       use: 'Fallback',
-      image: `${base}/images/procedural-dsp.png`,
-      caption: 'Procedural DSP: fast, synthetic, useful as fallback.',
       note: 'Low latency, but clearly synthetic.'
     },
     audiogen: {
       label: 'AudioGen',
       latency: '2.1-2.8s',
       use: 'Ambience',
-      image: `${base}/images/audiogen.png`,
-      caption: 'AudioGen: useful texture, too late for first playback.',
       note: 'Better texture, but the response lands seconds late.'
     },
     mmaudio: {
       label: 'MMAudio sample',
       latency: '1.4-3.4s across variants',
       use: 'Prepared content',
-      image: `${base}/images/mmaudio.png`,
-      caption: 'MMAudio: one selected output from the quality set.',
       note: 'The benchmark separates Small and Large; this selected sample is not used to compare them.'
     },
     elevenlabs: {
       label: 'ElevenLabs',
       latency: '1.8-3.5s',
       use: 'Pregeneration',
-      image: `${base}/images/elevenlabs.png`,
-      caption: 'ElevenLabs: clean output, cloud latency.',
       note: 'Often the cleanest result in this sample set, but not safe for instant gameplay response.'
     }
   };
@@ -79,8 +71,6 @@
 
   const audio = browser.querySelector('[data-ai-sample-audio]');
   const play = browser.querySelector('[data-ai-sample-play]');
-  const image = browser.querySelector('[data-ai-sample-image]');
-  const caption = browser.querySelector('[data-ai-sample-caption]');
   const modelLabel = browser.querySelector('[data-ai-sample-model-label]');
   const title = browser.querySelector('[data-ai-sample-title]');
   const note = browser.querySelector('[data-ai-sample-note]');
@@ -136,11 +126,6 @@
 
     stopAudio();
     if (audio) audio.src = prompt.files[currentModel];
-    if (image) {
-      image.src = model.image;
-      image.alt = `${model.label} presentation visual`;
-    }
-    if (caption) caption.textContent = model.caption;
     if (modelLabel) modelLabel.textContent = model.label;
     if (title) title.textContent = prompt.title;
     if (note) note.textContent = model.note;

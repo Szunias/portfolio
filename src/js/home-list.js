@@ -6,81 +6,114 @@
 (function () {
   var list = document.querySelector('.plist');
   if (!list) return;
-  // The sticky preview only helps on a wide, precise-pointer layout. On touch
-  // devices every row keeps its own thumbnail and no hidden preview images load.
-  if (!window.matchMedia || !window.matchMedia('(min-width: 1180px) and (hover: hover) and (pointer: fine)').matches) return;
   var rows = [].slice.call(list.querySelectorAll('.prow'));
   if (!rows.length) return;
 
-  var split = document.createElement('div');
-  split.className = 'work-split';
-  list.parentNode.insertBefore(split, list);
-  split.appendChild(list);
-
-  var view = document.createElement('aside');
-  view.className = 'pview';
-  view.setAttribute('aria-hidden', 'true');
-  var frame = document.createElement('div');
-  frame.className = 'pview__frame';
-  view.appendChild(frame);
-  var caption = document.createElement('div');
-  caption.className = 'pview__caption';
-  var capIdx = document.createElement('span');
-  var capMeta = document.createElement('span');
-  caption.appendChild(capIdx);
-  caption.appendChild(capMeta);
-  view.appendChild(caption);
-  split.appendChild(view);
-
-  var imgs = [];
-  var srcs = [];
-  var metas = [];
+  // The sticky preview only helps on a wide, precise-pointer layout. Keep it
+  // in sync when a window crosses the breakpoint or its input mode changes.
+  if (!window.matchMedia) return;
+  var previewQuery = window.matchMedia('(min-width: 1180px) and (hover: hover) and (pointer: fine)');
   var transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
-  rows.forEach(function (row) {
-    var thumb = row.querySelector('.prow__thumb img');
-    var img = document.createElement('img');
-    img.alt = '';
-    img.decoding = 'async';
-    img.src = transparentPixel;
-    img.dataset.loaded = 'false';
-    // src is assigned lazily in activate() so the page load doesn't pull
-    // all 15 full-size thumbs at once
-    srcs.push(thumb ? (thumb.currentSrc || thumb.src) : '');
-    frame.appendChild(img);
-    imgs.push(img);
+  var split = null;
+  var cleanups = [];
 
-    var metaEl = row.querySelector('.prow__meta');
-    metas.push(metaEl
-      ? metaEl.innerHTML.split(/<br\s*\/?>/i)
-          .map(function (s) { return s.replace(/<[^>]*>/g, '').trim(); })
-          .filter(Boolean).join(' · ')
-      : '');
-  });
+  function mountPreview() {
+    if (split) return;
 
-  var current = -1;
-  function activate(i) {
-    if (i === current) return;
-    if (current >= 0) imgs[current].classList.remove('on');
-    if (imgs[i].dataset.loaded !== 'true' && srcs[i]) {
-      imgs[i].src = srcs[i];
-      imgs[i].dataset.loaded = 'true';
-    }
-    // preload the neighbours so quick cursor sweeps don't flash empty frames
-    [i - 1, i + 1].forEach(function (j) {
-      if (imgs[j] && imgs[j].dataset.loaded !== 'true' && srcs[j]) {
-        imgs[j].src = srcs[j];
-        imgs[j].dataset.loaded = 'true';
-      }
+    split = document.createElement('div');
+    split.className = 'work-split';
+    list.parentNode.insertBefore(split, list);
+    split.appendChild(list);
+
+    var view = document.createElement('aside');
+    view.className = 'pview';
+    view.setAttribute('aria-hidden', 'true');
+    var frame = document.createElement('div');
+    frame.className = 'pview__frame';
+    view.appendChild(frame);
+    var caption = document.createElement('div');
+    caption.className = 'pview__caption';
+    var capIdx = document.createElement('span');
+    var capMeta = document.createElement('span');
+    caption.appendChild(capIdx);
+    caption.appendChild(capMeta);
+    view.appendChild(caption);
+    split.appendChild(view);
+
+    var imgs = [];
+    var srcs = [];
+    var metas = [];
+    rows.forEach(function (row) {
+      var thumb = row.querySelector('.prow__thumb img');
+      var img = document.createElement('img');
+      img.alt = '';
+      img.decoding = 'async';
+      img.src = transparentPixel;
+      img.dataset.loaded = 'false';
+      if (row.classList.contains('prow--tool')) img.className = 'pview__image--tool';
+      // src is assigned lazily in activate() so the page load doesn't pull
+      // all full-size thumbs at once
+      srcs.push(thumb ? (thumb.currentSrc || thumb.src) : '');
+      frame.appendChild(img);
+      imgs.push(img);
+
+      var metaEl = row.querySelector('.prow__meta');
+      metas.push(metaEl
+        ? metaEl.innerHTML.split(/<br\s*\/?>/i)
+            .map(function (s) { return s.replace(/<[^>]*>/g, '').trim(); })
+            .filter(Boolean).join(' · ')
+        : '');
     });
-    imgs[i].classList.add('on');
-    capIdx.textContent = (i + 1 < 10 ? '0' : '') + (i + 1) + ' / ' + rows.length;
-    capMeta.textContent = metas[i];
-    current = i;
+
+    var current = -1;
+    function activate(i) {
+      if (i === current) return;
+      if (current >= 0) imgs[current].classList.remove('on');
+      if (imgs[i].dataset.loaded !== 'true' && srcs[i]) {
+        imgs[i].src = srcs[i];
+        imgs[i].dataset.loaded = 'true';
+      }
+      // Preload the neighbours so quick cursor sweeps don't flash empty frames.
+      [i - 1, i + 1].forEach(function (j) {
+        if (imgs[j] && imgs[j].dataset.loaded !== 'true' && srcs[j]) {
+          imgs[j].src = srcs[j];
+          imgs[j].dataset.loaded = 'true';
+        }
+      });
+      imgs[i].classList.add('on');
+      capIdx.textContent = (i + 1 < 10 ? '0' : '') + (i + 1) + ' / ' + rows.length;
+      capMeta.textContent = metas[i];
+      current = i;
+    }
+
+    rows.forEach(function (row, i) {
+      var onEnter = function () { activate(i); };
+      var onFocus = function () { activate(i); };
+      row.addEventListener('mouseenter', onEnter);
+      row.addEventListener('focusin', onFocus);
+      cleanups.push(function () {
+        row.removeEventListener('mouseenter', onEnter);
+        row.removeEventListener('focusin', onFocus);
+      });
+    });
+    activate(0);
   }
 
-  rows.forEach(function (row, i) {
-    row.addEventListener('mouseenter', function () { activate(i); });
-    row.addEventListener('focusin', function () { activate(i); });
-  });
-  activate(0);
+  function unmountPreview() {
+    if (!split) return;
+    cleanups.forEach(function (cleanup) { cleanup(); });
+    cleanups = [];
+    split.parentNode.insertBefore(list, split);
+    split.remove();
+    split = null;
+  }
+
+  function syncPreview() {
+    if (previewQuery.matches) mountPreview();
+    else unmountPreview();
+  }
+
+  syncPreview();
+  if (previewQuery.addEventListener) previewQuery.addEventListener('change', syncPreview);
+  else previewQuery.addListener(syncPreview);
 })();

@@ -174,10 +174,6 @@ module.exports = {
       ogImage: `${SITE}/aithesiscover.png`,
       ogImageAlt: 'AI audio research thesis cover about real-time game sound generation',
       assets: [
-        'old/public/assets/images/projects-ai-audio-research/presentation/images/procedural-dsp.png',
-        'old/public/assets/images/projects-ai-audio-research/presentation/images/audiogen.png',
-        'old/public/assets/images/projects-ai-audio-research/presentation/images/mmaudio.png',
-        'old/public/assets/images/projects-ai-audio-research/presentation/images/elevenlabs.png',
         'old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-footstep.wav',
         'old/public/assets/images/projects-ai-audio-research/presentation/audio/audiogen-footstep.wav',
         'old/public/assets/images/projects-ai-audio-research/presentation/audio/mmaudio-footstep.wav',
