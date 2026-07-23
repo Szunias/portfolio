@@ -1,11 +1,11 @@
 <article class="tool-page tool-page--audioq">
   <header class="tool-hero">
     <div class="tool-hero__copy">
-      <p class="tool-kicker">Audio software · Standalone and VST3</p>
+        <p class="tool-kicker">Sampler plug-in · Windows VST3 release</p>
       <h1>AudioQ</h1>
-      <p class="tool-hero__lead">A desktop audio tool and plug-in for loading a recording, choosing a loop and reshaping it with effects.</p>
-      <p class="tool-hero__role">I am the solo developer. I built the player, waveform editor and processing chain in C++. All 16 controls are saved with the plug-in state and available to host automation.</p>
-      <p class="tool-meta">C++17 · JUCE 8 · Standalone and VST3 · MIT</p>
+      <p class="tool-hero__lead">AudioQ loads a sound, turns any part of it into a loop and reshapes the playback with granular mode and effects.</p>
+      <p class="tool-hero__role">I designed and built the plug-in as a solo C++ and JUCE project, including its waveform editor, playback engine and DSP chain.</p>
+      <p class="tool-meta">C++17 · JUCE 8 · Standalone builds from source · MIT</p>
       <nav class="tool-links" aria-label="AudioQ links">
         <a href="#demo">Watch the recorded demo <span aria-hidden="true">↓</span></a>
         <a href="https://github.com/Szunias/AudioQ" target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">↗</span></a>
@@ -13,9 +13,9 @@
     </div>
 
     <figure class="tool-hero__media">
-      <img src="audioqscreenshot.png" srcset="audioqscreenshot-640.webp 640w, audioqscreenshot-1400.webp 1400w" sizes="(max-width: 760px) calc(100vw - 40px), (max-width: 1440px) 62vw, 880px" width="2028" height="1389" alt="AudioQ v1.0 interface with a source waveform, live output display and processing controls" loading="eager" fetchpriority="high" decoding="async">
+      <img src="audioqscreenshot.png" srcset="audioqscreenshot-640.webp 640w, audioqscreenshot-1400.webp 1400w" sizes="(max-width: 760px) calc(100vw - 40px), (max-width: 1440px) 62vw, 880px" width="2028" height="1389" alt="AudioQ v1.0.0 interface with a source waveform, live output display and processing controls" loading="eager" fetchpriority="high" decoding="async">
       <figcaption class="tool-caption">
-        <span>AudioQ v1.0</span>
+        <span>AudioQ v1.0.0</span>
         <span>Current interface</span>
       </figcaption>
     </figure>
@@ -25,8 +25,8 @@
     <section class="tool-section aq-demo" id="demo" aria-labelledby="aq-demo-title">
       <header class="tool-section__heading aq-demo__heading">
         <p class="tool-kicker">Recorded demonstration</p>
-        <h2 id="aq-demo-title">Loop selection and effects in one recording</h2>
-        <p>The recording uses AudioQ&rsquo;s earlier interface. It shows a sound being loaded, looped and processed; the current v1.0 interface is shown above.</p>
+        <h2 id="aq-demo-title">Loading, looping and processing a sound</h2>
+        <p>This older recording shows the core workflow. The current v1.0.0 interface is shown above.</p>
       </header>
 
       <figure class="tool-video aq-demo__video">
@@ -41,30 +41,30 @@
     <section class="tool-section aq-processing" aria-labelledby="aq-chain-title">
       <header class="tool-section__heading aq-chain__heading">
         <p class="tool-kicker">Signal path</p>
-        <h2 id="aq-chain-title">One stateful chain</h2>
-        <p>The interface follows the order of the sound: select the material, shape the loop, process it and blend the result.</p>
+        <h2 id="aq-chain-title">From loop region to dry / wet output</h2>
+        <p>The controls follow the signal from the selected source material through playback and effects to the final blend.</p>
       </header>
 
       <ol class="aq-signal-path" aria-label="AudioQ signal path">
-        <li>File or loop</li>
-        <li>Source playback</li>
+        <li>Source file and loop region</li>
+        <li>Playback speed or granular mode</li>
         <li>Filters</li>
         <li>Compressor</li>
-        <li>Movement and glitch</li>
-        <li>Dry / wet blend</li>
+        <li>Tremolo, bitcrusher and glitch</li>
+        <li>Dry / wet output</li>
       </ol>
 
       <div class="aq-chain__columns">
         <div class="aq-chain__operation">
-          <h3>How it works</h3>
-          <p>AudioQ loads WAV, AIFF and MP3 files. The user drags across the waveform to choose a loop, smooths its join with a crossfade and can resample the material between 20 and 300 BPM.</p>
-          <p>The sound then passes through filters, a compressor, tremolo, bitcrusher, stutter and reverse effects. JUCE supplies the filters and compressor; I wrote the remaining effects.</p>
+          <h3>Loop and playback controls</h3>
+          <p>AudioQ loads WAV, AIFF and MP3 files. Dragging across the waveform sets the loop region, and a crossfade smooths its join. The 20–300 BPM control changes playback speed; it does not time-stretch the file to a detected tempo.</p>
+          <p>Granular mode changes the source playback before the sound reaches the filters, compressor, tremolo, bitcrusher, stutter and reverse effects. JUCE supplies the filters and compressor; I wrote the remaining effects.</p>
         </div>
 
         <aside class="aq-chain__limits" aria-labelledby="aq-limits-title">
           <h3 id="aq-limits-title">Current limits</h3>
           <p>The compressor handles normal peaks. If the signal still exceeds 4.0 linear gain, a separate fail-safe stops playback. It is a last stop, not certified hearing protection.</p>
-          <p>Full host, operating-system, sample-rate and channel-layout testing is still pending.</p>
+          <p>The public v1.0.0 download is a Windows VST3 build. The source also builds a standalone app, but broader testing across hosts, operating systems, sample rates and channel layouts is still pending.</p>
           <a href="https://github.com/Szunias/AudioQ" target="_blank" rel="noopener noreferrer">Inspect the public repository <span aria-hidden="true">↗</span></a>
         </aside>
       </div>

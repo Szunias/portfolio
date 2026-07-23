@@ -6,8 +6,8 @@
         <img src="old/public/assets/images/projects-mowik/mowik-logo.png" alt="" aria-hidden="true" width="72" height="72">
         <h1>Mówik</h1>
       </div>
-      <p class="tool-hero__lead">Hold the shortcut, speak and release. Mówik transcribes locally and inserts the result into the active window.</p>
-      <p class="tool-hero__role">I am the solo creator and developer. I built the Python desktop app, microphone buffer, local faster-whisper pipeline, bilingual settings interface, custom commands and Windows release process.</p>
+      <p class="tool-hero__lead">Mówik is a Windows push-to-talk dictation app that inserts transcribed speech into the active window.</p>
+      <p class="tool-hero__role">I designed and built the Python app, transcription pipeline, bilingual interface and Windows releases.</p>
       <p class="tool-meta">Python · Windows 10/11 x64 · MIT</p>
       <nav class="tool-links" aria-label="Mówik links">
         <a href="https://github.com/Szunias/Mowik/releases" target="_blank" rel="noopener noreferrer">Get Mówik <span aria-hidden="true">↗</span></a>
@@ -28,28 +28,27 @@
     <section class="tool-section mw-workflow" aria-labelledby="mw-workflow-title">
       <header class="tool-section__heading mw-workflow__heading">
         <p class="tool-kicker">Push-to-talk dictation</p>
-        <h2 id="mw-workflow-title">A shortcut turns speech into text without interrupting the current task</h2>
-        <p>F8 is the default shortcut. Releasing it starts recognition; the finished text goes to the active field, the clipboard or both.</p>
+        <h2 id="mw-workflow-title">Push-to-talk transcription and output</h2>
+        <p>F8 is the default shortcut, but it can be changed in Settings.</p>
       </header>
 
       <ol class="mw-flow">
-        <li><strong>Hold F8</strong><span>The open microphone keeps a short pre-roll in RAM.</span></li>
-        <li><strong>Speak</strong><span>Audio stays in memory while the shortcut is held.</span></li>
-        <li><strong>Release</strong><span>Local faster-whisper recognises the recording.</span></li>
-        <li><strong>Continue</strong><span>Text reaches the active field, clipboard or both.</span></li>
+        <li><strong>Hold F8</strong><span>A short RAM pre-roll helps retain the first syllable.</span></li>
+        <li><strong>Speak</strong><span>The recording stays in memory while the shortcut is held.</span></li>
+        <li><strong>Release</strong><span>faster-whisper transcribes the recording locally.</span></li>
+        <li><strong>Continue</strong><span>The text is typed, copied to the clipboard or both.</span></li>
       </ol>
 
       <div class="mw-workflow__notes">
-        <p>The pre-roll catches the first syllable. Mówik discards the audio after transcription and does not save it to disk.</p>
-        <p>The first model download needs internet. Recognition then uses NVIDIA CUDA in float16 when supported and falls back to CPU int8 automatically.</p>
+        <p>Optional sound cues mark the start of recording and the end of transcription.</p>
       </div>
     </section>
 
     <section class="tool-section mw-interface" aria-labelledby="mw-interface-title">
       <header class="tool-section__heading mw-interface__heading">
         <p class="tool-kicker">Interface and local boundary</p>
-        <h2 id="mw-interface-title">Daily controls stay close; model details remain out of the way</h2>
-        <p>The main settings expose the shortcut, microphone, language, quality profile and feedback. Model, device, speech detection and buffer controls remain under Advanced.</p>
+        <h2 id="mw-interface-title">Basic settings and advanced transcription controls</h2>
+        <p>The main screen contains the shortcut, microphone, language, quality profile and feedback settings. Model, device, speech detection and buffer controls are under Advanced.</p>
       </header>
 
       <div class="mw-interface__layout">
@@ -65,14 +64,14 @@
         </div>
 
         <aside class="mw-boundary" aria-labelledby="mw-boundary-title">
-          <p class="tool-kicker">Recognition boundary</p>
+          <p class="tool-kicker">Local processing</p>
           <h3 id="mw-boundary-title">Mówik does not upload audio or dictated text</h3>
-          <p>Recognition does not send recordings or dictated text to a remote speech service.</p>
+          <p>Speech recognition runs through faster-whisper on the computer instead of a remote speech service.</p>
           <dl class="mw-boundary__facts">
-            <div><dt>Audio</dt><dd>A short buffer lives in RAM and is never written to disk by Mówik.</dd></div>
+            <div><dt>Audio</dt><dd>It is kept temporarily in RAM, discarded after transcription and not saved to disk.</dd></div>
             <div><dt>Transcript</dt><dd>It is typed or copied, while technical logs omit the dictated text.</dd></div>
-            <div><dt>Model</dt><dd>The selected model is downloaded first, then faster-whisper runs it locally.</dd></div>
-            <div><dt>Optional correction</dt><dd>Local Ollama support is off by default and connects only to <code>127.0.0.1</code>.</dd></div>
+            <div><dt>Model</dt><dd>Internet is needed once to download it. Recognition then uses NVIDIA CUDA in float16 when available and automatically falls back to CPU int8 if CUDA cannot start.</dd></div>
+            <div><dt>Optional correction</dt><dd>Ollama support is off by default and uses a locally running instance when enabled.</dd></div>
           </dl>
           <p class="tool-note">These interface captures are from v2.6.0. Custom commands were added in v2.7; the release information below reflects v2.7.3.</p>
         </aside>
@@ -83,20 +82,19 @@
       <div class="mw-final__grid">
         <div class="mw-commands">
           <p class="tool-kicker">Custom commands · Since v2.7</p>
-          <h2 id="mw-commands-title">Terminal commands stop at the clipboard</h2>
-          <p>F7 is the default command shortcut. Commands require an exact phrase, and anything intended for a terminal is left as a draft for the user to review.</p>
+          <h2 id="mw-commands-title">Voice commands insert text, open targets or copy terminal commands</h2>
+          <p>F7 is the default shortcut. Each custom voice command pairs an exact spoken phrase with a preset action.</p>
           <ul class="mw-command-list">
-            <li><strong>Insert text.</strong> A command can place a predefined phrase in the active window.</li>
-            <li><strong>Open a trusted target.</strong> An app, file or HTTPS address requires confirmation.</li>
-            <li><strong>Draft a terminal command.</strong> The validated text is copied to the clipboard. Mówik does not execute it or press Enter.</li>
+            <li><strong>Insert text.</strong> Types a predefined phrase in the active window.</li>
+            <li><strong>Open a trusted target.</strong> Opens a configured app, file or HTTPS address after confirmation.</li>
+            <li><strong>Copy a terminal command.</strong> Copies validated text to the clipboard. Mówik does not execute it or press Enter.</li>
           </ul>
         </div>
 
         <aside class="tool-release mw-release" aria-labelledby="mw-release-title">
-          <p class="tool-kicker">Checked 14 July 2026</p>
+          <p class="tool-kicker">Checked 23 July 2026</p>
           <h3 id="mw-release-title">v2.7.3 · Windows x64</h3>
-          <p>The installer bundles the CPU and NVIDIA runtimes, so the download is about 1 GB. It supports Windows 10 version 1809 or newer and Windows 11.</p>
-          <p>The installer is not Authenticode-signed yet, so Windows may show <em>Unknown publisher</em> or SmartScreen. Do not disable protection; compare the published SHA-256 checksum before installing.</p>
+          <p>The roughly 1 GB installer bundles CPU and NVIDIA runtimes and supports Windows 10 version 1809 or newer and Windows 11. It is not Authenticode-signed, so Windows may show <em>Unknown publisher</em> or SmartScreen; a SHA-256 checksum is published with the release.</p>
           <div class="tool-release__links">
             <a href="https://github.com/Szunias/Mowik/releases/tag/v2.7.3" target="_blank" rel="noopener noreferrer">Release notes <span aria-hidden="true">↗</span></a>
             <a href="https://github.com/Szunias/Mowik/releases/download/v2.7.3/SHA256SUMS.txt" target="_blank" rel="noopener noreferrer">SHA-256 file <span aria-hidden="true">↗</span></a>

@@ -8,7 +8,7 @@
       <p class="tr-kicker">2025 &ndash; Present &middot; Solo-developed rhythm game</p>
       <h1>Transientica</h1>
       <p class="tr-hero__lead">A Unity rhythm game played by beatboxing into a microphone.</p>
-      <p class="tr-hero__summary">I built the game and its audio recognition in C#. Before a song starts, it learns how that player makes a kick, snare and hi-hat, then uses those live sounds to hit notes in time.</p>
+      <p class="tr-hero__summary">I built the game and its audio recognition in C#. Before a song starts, it learns how that player makes a kick, snare and hi-hat, then classifies each live hit against the notes in the beatmap.</p>
       <p class="tr-hero__role">Unity 6 &middot; C# &middot; KNN &middot; FFT &middot; In development</p>
       <div class="tr-hero__actions">
         <a href="#gameplay">Watch gameplay <span aria-hidden="true">&darr;</span></a>
@@ -45,7 +45,7 @@
     <div class="tr-pipeline-story">
       <div class="tr-pipeline-story__copy">
         <p>When the microphone detects a hit, the game measures seven traits of the sound and compares them with the player&rsquo;s recordings. A KNN classifier uses that comparison to decide whether the hit was a kick, snare or hi-hat.</p>
-        <p>The game matches the recognised hit to the nearest note using Unity&rsquo;s audio clock. A short 100 BPM calibration measures the microphone delay, and the player can adjust the result in 1 ms steps.</p>
+        <p>The game matches the recognised hit to the nearest note using Unity&rsquo;s audio clock. A short calibration estimates microphone delay, and the player can fine-tune the offset in 1 ms steps.</p>
       </div>
       <p class="tr-signal-path"><span>Signal path</span> Microphone &rarr; onset &rarr; 512-sample FFT &rarr; seven features &rarr; KNN &rarr; nearest note &rarr; score.</p>
     </div>
@@ -61,8 +61,8 @@
     </header>
 
     <div class="tr-rebuild-summary">
-      <p>Training data now stays in readable JSON and can be updated between rounds. The rebuild also added song selection, beatmaps, scoring, combos, grades and saved results.</p>
-      <p>The published accuracy and latency figures apply only to the Python SVM prototype. The C# KNN build still needs the same held-out dataset and end-to-end timing protocol before the two versions can be compared directly.</p>
+      <p>The rebuild turned the classifier demo into a playable loop with song selection, beatmaps, scoring and saved results. Training data stays in readable JSON and can be updated between rounds.</p>
+      <p>The 2025 figures below come from the player-specific SVM prototype. Accuracy means kick, snare and hi-hat classification after training on that player&rsquo;s recordings; latency covers the mouth-to-game path through Python, OSC and Unity. The current C# build has not yet been tested under the same protocol.</p>
     </div>
 
     <section class="tr-compare" aria-labelledby="tr-comparison-caption" tabindex="0">
@@ -71,7 +71,7 @@
         <caption class="sr-only" id="tr-comparison-caption">Prototype and current build comparison</caption>
         <thead><tr><th scope="col">Version</th><th scope="col">Model</th><th scope="col">Runtime</th><th scope="col">Accuracy</th><th scope="col">End-to-end latency</th></tr></thead>
         <tbody>
-          <tr><th scope="row">2025 prototype</th><td>SVM</td><td>Python + OSC + Unity</td><td>92%</td><td>45 ms after optimisation</td></tr>
+          <tr><th scope="row">2025 prototype</th><td>SVM</td><td>Python + OSC + Unity</td><td>92% classification accuracy</td><td>45 ms mouth-to-game</td></tr>
           <tr><th scope="row">Current rebuild</th><td>KNN, K=5</td><td>Pure C# in Unity 6</td><td>Pending like-for-like benchmark</td><td>Pending like-for-like benchmark</td></tr>
         </tbody>
       </table>

@@ -1,22 +1,22 @@
 <article class="tool-page tool-page--autotrim">
   <header class="tool-hero">
     <div class="tool-hero__copy">
-      <p class="tool-kicker">Audio software · REAPER</p>
+      <p class="tool-kicker">REAPER tool · Sound asset export</p>
       <h1>AutoTrim Exporter</h1>
-      <p class="tool-hero__lead">A REAPER tool that turns layered timeline selections into trimmed, named and verified audio assets.</p>
-      <p class="tool-hero__role">I designed and developed the selection workflow, rendered-signal analysis, level preparation, safe file handling and the interface used to review each delivery.</p>
+      <p class="tool-hero__lead">A REAPER tool for sound designers who need to turn layered timeline items into trimmed, named and ready-to-deliver SFX files.</p>
+      <p class="tool-hero__role">I designed and built the Lua/ReaImGui tool, including overlapping-layer selection, rendered-audio analysis and export checks.</p>
       <p class="tool-meta">Lua ReaScript · ReaImGui · Windows, macOS and Linux</p>
       <nav class="tool-links" aria-label="AutoTrim links">
-        <a href="https://github.com/Szunias/autotrim-exporter-releases/releases/latest" target="_blank" rel="noopener noreferrer">Current release <span aria-hidden="true">↗</span></a>
-        <a href="https://github.com/Szunias/autotrim-exporter-releases" target="_blank" rel="noopener noreferrer">Release hub <span aria-hidden="true">↗</span></a>
+        <a href="https://github.com/Szunias/autotrim-exporter-releases/releases/latest" target="_blank" rel="noopener noreferrer">Download the current release <span aria-hidden="true">↗</span></a>
+        <a href="https://github.com/Szunias/autotrim-exporter-releases" target="_blank" rel="noopener noreferrer">View the release hub <span aria-hidden="true">↗</span></a>
       </nav>
     </div>
 
     <figure class="tool-hero__media">
       <img src="old/public/assets/images/projects-autotrim/autotrim-export.png" width="1560" height="1020" alt="AutoTrim Exporter Export screen with output format, sample rate, render mode and naming controls" loading="eager" fetchpriority="high" decoding="async">
       <figcaption class="tool-caption">
-        <span>Export · UI 3.1.2</span>
-        <span>Format, sample rate, render mode and naming remain visible in one delivery view.</span>
+        <span>Export · development UI 3.1.2</span>
+        <span>Output format, sample rate, render mode and filename setup.</span>
       </figcaption>
     </figure>
   </header>
@@ -24,61 +24,61 @@
   <div class="tool-body">
     <section class="tool-section at-workflow" aria-labelledby="at-workflow-title">
       <header class="tool-section__heading">
-        <p class="tool-kicker">Selection to delivery</p>
-        <h2 id="at-workflow-title">One timeline selection carries the whole job</h2>
-        <p>AutoTrim removes repeated selection, trimming, naming and render setup while keeping the delivery decisions visible.</p>
+        <p class="tool-kicker">From selection to files</p>
+        <h2 id="at-workflow-title">Select the main item; AutoTrim collects its overlapping layers</h2>
+        <p>It measures the processed result, trims it, applies the chosen level and writes the requested files.</p>
       </header>
 
       <ul class="at-flow" aria-label="AutoTrim workflow">
         <li>
-          <strong>Anchor</strong>
-          <span>Choose one timeline item to define the sound and its initial range.</span>
+          <strong>Select the sound</strong>
+          <span>Choose the timeline item that defines the sound and its initial range.</span>
         </li>
         <li>
-          <strong>Collect</strong>
-          <span>Add its overlapping layers. Long background material stays out unless it was selected deliberately.</span>
+          <strong>Include its layers</strong>
+          <span>AutoTrim adds overlapping items. Long background material is included only when selected.</span>
         </li>
         <li>
-          <strong>Prepare</strong>
-          <span>Measure the processed signal, set its level and build the delivery name.</span>
+          <strong>Measure the render</strong>
+          <span>A temporary REAPER render captures item and take processing before trimming and level adjustment.</span>
         </li>
         <li>
-          <strong>Deliver</strong>
-          <span>Write one layered asset or one file per item, then verify the result.</span>
+          <strong>Write the files</strong>
+          <span>Create one layered file or one file per item, using the chosen name and format.</span>
         </li>
       </ul>
 
-      <p class="at-flow__note">Analysis stays lossless until delivery. Output can be WAV, FLAC, OGG or MP3.</p>
+      <p class="at-flow__note">Analysis uses an uncompressed intermediate render. Final output can be WAV, FLAC, OGG or MP3.</p>
     </section>
 
     <section class="tool-section at-analysis" aria-labelledby="at-analysis-title">
       <header class="tool-section__heading tool-section__heading--wide">
-        <p class="tool-kicker">Signal preparation</p>
-        <h2 id="at-analysis-title">The rendered sound sets its own boundaries and level</h2>
-        <p>Item and take processing affect the result, so AutoTrim measures an unnormalised REAPER render instead of inferring the cut from the untouched source file.</p>
+        <p class="tool-kicker">Rendered-audio analysis</p>
+        <h2 id="at-analysis-title">AutoTrim measures the processed result, not the source file</h2>
+        <p>Because item and take processing can change the sound, AutoTrim creates an unnormalised intermediate REAPER render before calculating trim points and level adjustment.</p>
       </header>
 
       <div class="at-duet">
         <article class="at-duet__item">
           <div class="gallery-item tool-shot" tabindex="0" role="button" aria-label="Open AutoTrim Trim and Tails screenshot">
             <img src="old/public/assets/images/projects-autotrim/autotrim-trim-tails.png" width="1560" height="1020" alt="AutoTrim Exporter Trim and Tails screen with presets, adaptive silence controls and tail settings" loading="lazy" decoding="async">
-            <span class="gallery-item__caption">Trim &amp; Tails · UI 3.1.2</span>
+            <span class="gallery-item__caption">Trim &amp; Tails · development UI 3.1.2</span>
           </div>
           <div class="at-duet__copy">
-            <h3>Trim without cutting the attack or tail</h3>
-            <p>A peak floor, local noise estimate and onset energy locate the start. A separate threshold, hysteresis and a decay-aware window preserve reverb and effect tails.</p>
-            <p>Pre-roll and extra tail remain explicit, with presets for one-shots, impacts and ambiences. Material far longer than the intended sound set is excluded from automatic batch collection.</p>
+            <h3>Find the boundaries without cutting the attack or tail</h3>
+            <p>AutoTrim estimates the local noise level and detects the onset, then uses separate tail detection to preserve reverb and effect decay.</p>
+            <p>Pre-roll and added tail remain user-controlled, with presets for one-shots, impacts and ambiences. Very long background items are excluded from automatic layer collection unless selected.</p>
           </div>
         </article>
 
         <article class="at-duet__item">
           <div class="gallery-item tool-shot" tabindex="0" role="button" aria-label="Open AutoTrim loudness controls screenshot">
             <img src="old/public/assets/images/projects-autotrim/autotrim-loudness.png" width="1560" height="1020" alt="AutoTrim Exporter Loudness screen with measurement choices, quick targets and true-peak controls" loading="lazy" decoding="async">
-            <span class="gallery-item__caption">Loudness · UI 3.1.2</span>
+            <span class="gallery-item__caption">Loudness · development UI 3.1.2</span>
           </div>
           <div class="at-duet__copy">
-            <h3>Prepare level before the final render</h3>
-            <p>The measurement method, target and true-peak ceiling stay together. AutoTrim writes the delivery only after the measured range and output path pass validation.</p>
+            <h3>Measure and adjust level before export</h3>
+            <p>Choose the measurement method, target and true-peak ceiling. AutoTrim validates the measured range and output path before writing the file.</p>
           </div>
         </article>
       </div>
@@ -87,19 +87,19 @@
     <section class="tool-section at-delivery" aria-labelledby="at-delivery-title">
       <div class="at-delivery__verification">
         <header class="tool-section__heading">
-          <p class="tool-kicker">History and verification</p>
-          <h2 id="at-delivery-title">The export is checked before it enters delivery history</h2>
+          <p class="tool-kicker">Export history</p>
+          <h2 id="at-delivery-title">Each completed export is checked and recorded</h2>
         </header>
 
         <div class="gallery-item tool-shot at-history" tabindex="0" role="button" aria-label="Open AutoTrim export history screenshot">
           <img src="old/public/assets/images/projects-autotrim/autotrim-history.png" width="1560" height="1020" alt="AutoTrim Exporter History screen listing completed deliveries and their output details" loading="lazy" decoding="async">
-          <span class="gallery-item__caption">History · UI 3.1.2</span>
+          <span class="gallery-item__caption">History · development UI 3.1.2</span>
         </div>
 
         <div class="at-checks">
-          <p><strong>Analyse.</strong> One raw pass establishes the boundaries, with an optional extension pass when the tail needs more room.</p>
-          <p><strong>Render.</strong> The chosen format and level settings are applied once to the measured range.</p>
-          <p><strong>Commit.</strong> AutoTrim checks the file, records diagnostics and either creates a new version or deliberately replaces the requested delivery.</p>
+          <p><strong>Output range.</strong> The initial analysis can extend once when the detected tail reaches beyond the first render.</p>
+          <p><strong>Written file.</strong> AutoTrim confirms that the requested output exists before recording the export.</p>
+          <p><strong>Versioning.</strong> History records diagnostics and whether the output created a new version or replaced an existing file.</p>
         </div>
       </div>
 
@@ -109,9 +109,9 @@
           <h3 id="at-release-title">REAPER 7 + ReaImGui</h3>
         </div>
         <div class="tool-release__body">
-          <p>The interface captures on this page are labelled 3.1.2. GitHub is the source of truth for the version currently available to download.</p>
-          <p>The package requires REAPER 7 and ReaImGui 0.10.0.5 or newer in the 0.10 API series. SWS is optional. Windows, macOS and Linux are supported.</p>
-          <p>The development repository is private and the product uses a proprietary license. The distributed Lua ReaScript necessarily contains the Lua text that REAPER runs.</p>
+          <p>The screenshots show development UI 3.1.2. The current public release is 3.1.1.</p>
+          <p>AutoTrim requires REAPER 7 (64-bit) and ReaImGui 0.10.0.5 or newer in the 0.10 API series. SWS is optional.</p>
+          <p>AutoTrim is proprietary software, and its development repository is private. Public releases support Windows, macOS and Linux.</p>
           <div class="tool-release__links">
             <a href="https://github.com/Szunias/autotrim-exporter-releases/releases/latest" target="_blank" rel="noopener noreferrer">Open the latest release <span aria-hidden="true">↗</span></a>
             <a href="https://github.com/Szunias/autotrim-exporter-releases/releases" target="_blank" rel="noopener noreferrer">Browse all releases <span aria-hidden="true">↗</span></a>
