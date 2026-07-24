@@ -298,7 +298,7 @@ module.exports = {
       description: 'A local Windows dictation app built in Python with faster-whisper and voice commands that insert preset text, open trusted targets or copy terminal commands for review.',
       canonical: `${SITE}/mowik.html`,
       ogImage: `${SITE}/old/public/assets/images/social/mowik-1200x630.webp`,
-      ogImageAlt: 'Mówik settings window showing local Polish speech-to-text controls',
+      ogImageAlt: 'Dark Mówik settings window showing local Polish speech-to-text controls',
       ogImageWidth: 1200,
       ogImageHeight: 630,
       ogImageType: 'image/webp',
