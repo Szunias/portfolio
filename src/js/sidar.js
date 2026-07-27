@@ -3,9 +3,22 @@
   const playback = document.getElementById('sidarPlayback');
   const sound = document.getElementById('sidarSound');
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+  const smallScreen = window.matchMedia && window.matchMedia('(max-width: 720px)');
   let pausedForVisibility = false;
   let pausedForMotion = false;
   let pausedByUser = false;
+
+  // The teaser is an 8.5 MB 1080p file. Autoplay downloads it, so skip the
+  // automatic start on phones, metered connections and slow links; the poster
+  // and the Play teaser button stay available.
+  function autoplayAllowed() {
+    if (reduceMotion && reduceMotion.matches) return false;
+    if (smallScreen && smallScreen.matches) return false;
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (!connection) return true;
+    if (connection.saveData) return false;
+    return !/(^|\b)(slow-2g|2g|3g)$/.test(connection.effectiveType || '');
+  }
 
   function ensureFilmLoaded() {
     if (!film || film.dataset.autoplayLoaded === 'true') return;
@@ -102,7 +115,24 @@
       });
     }
 
-    if (!reduceMotion || !reduceMotion.matches) playFilm();
+    startAutoplay();
+  }
+
+  function startAutoplay() {
+    if (!autoplayAllowed()) return;
+    if (typeof IntersectionObserver !== 'function') {
+      playFilm();
+      return;
+    }
+    const observer = new IntersectionObserver(function (entries) {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        observer.disconnect();
+        if (autoplayAllowed() && film.paused && !pausedByUser) playFilm();
+        return;
+      }
+    }, { rootMargin: '200px 0px' });
+    observer.observe(film);
   }
 
   const prototypeVideo = document.querySelector('[data-sidar-video]');
@@ -118,6 +148,7 @@
     let ytPlayer = null;
     let loadTimeout = null;
     let apiPromise = null;
+    let loadToken = 0;
 
     function loadYouTubeApi() {
       if (window.YT && window.YT.Player) return Promise.resolve(window.YT);
@@ -130,7 +161,14 @@
         };
         const script = document.createElement('script');
         script.src = 'https://www.youtube.com/iframe_api';
-        script.onerror = reject;
+        script.onerror = function () {
+          // Without this cleanup the rejected promise is cached and every later
+          // Retry recording click fails instantly on the same stale rejection.
+          script.remove();
+          apiPromise = null;
+          window.onYouTubeIframeAPIReady = previousReady;
+          reject(new Error('YouTube iframe API failed to load'));
+        };
         document.head.appendChild(script);
       });
       return apiPromise;
@@ -138,6 +176,11 @@
 
     function resetToLaunch(failed) {
       state = 'idle';
+      loadToken += 1;
+      // Read the focus owner before hiding anything: if focus sits on a control
+      // we are about to hide, it has to land on the launch button, not on body.
+      const active = document.activeElement;
+      const restoreFocus = !!active && active !== document.body && prototypeVideo.contains(active);
       window.clearTimeout(loadTimeout);
       if (prototypeLoading) prototypeLoading.hidden = true;
       if (ytPlayer) {
@@ -150,41 +193,55 @@
       prototypeLaunch.removeAttribute('aria-busy');
       prototypeLaunch.setAttribute('aria-label', failed ? launchLabel + '. Loading failed, retry' : launchLabel);
       if (launchText) launchText.textContent = failed ? 'Retry recording' : 'Play recording';
-      if (failed) prototypeLaunch.focus();
+      if (restoreFocus) prototypeLaunch.focus();
     }
 
     function startLoad() {
       if (state !== 'idle' || !videoId || !/^[A-Za-z0-9_-]{11}$/.test(videoId)) return;
       state = 'loading';
+      const token = ++loadToken;
+      const moveFocus = document.activeElement === prototypeLaunch;
       prototypeLaunch.hidden = true;
       prototypeLaunch.setAttribute('aria-busy', 'true');
       if (prototypeLoading) prototypeLoading.hidden = false;
+      if (moveFocus && prototypeCancel) prototypeCancel.focus();
 
       const mount = document.createElement('div');
       mount.setAttribute('data-sidar-player-mount', '');
       mount.className = 'sidar-prototype__player';
       prototypeVideo.insertBefore(mount, prototypeLoading || null);
 
-      loadTimeout = window.setTimeout(function () { resetToLaunch(true); }, 12000);
+      loadTimeout = window.setTimeout(function () {
+        if (token !== loadToken) return;
+        resetToLaunch(true);
+      }, 12000);
 
       loadYouTubeApi().then(function (YT) {
-        if (state !== 'loading') return;
+        // The token guard matters after a load timeout: a late-resolving API
+        // must not mount a player onto the mount node we already removed.
+        if (token !== loadToken || state !== 'loading') return;
         ytPlayer = new YT.Player(mount, {
           host: 'https://www.youtube-nocookie.com',
           videoId: videoId,
           playerVars: { autoplay: 1, rel: 0 },
           events: {
             onReady: function (event) {
-              if (state !== 'loading') return;
+              if (token !== loadToken || state !== 'loading') return;
               state = 'ready';
               window.clearTimeout(loadTimeout);
               if (prototypeLoading) prototypeLoading.hidden = true;
               event.target.playVideo();
             },
-            onError: function () { resetToLaunch(true); }
+            onError: function () {
+              if (token !== loadToken) return;
+              resetToLaunch(true);
+            }
           }
         });
-      }).catch(function () { resetToLaunch(true); });
+      }).catch(function () {
+        if (token !== loadToken) return;
+        resetToLaunch(true);
+      });
     }
 
     prototypeLaunch.addEventListener('click', startLoad);

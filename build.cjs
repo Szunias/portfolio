@@ -11,6 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const vm = require('vm');
 const { execFileSync } = require('child_process');
 
 const config = require('./site.config.cjs');
@@ -1019,10 +1020,24 @@ function getCSS(name) {
   return cssCache[name];
 }
 
+// Syntax gate for browser JS. The build only concatenates files, so without
+// this a syntax error ships to production and breaks the page at runtime.
+// Pages load classic scripts (no type="module"), so vm.Script is the matching
+// parser: it accepts exactly what the browser accepts here.
+function assertParsableJs(source, label) {
+  try {
+    new vm.Script(source, { filename: label });
+  } catch (err) {
+    throw new Error(`JavaScript syntax error in ${label}: ${err.message}`);
+  }
+}
+
 const jsCache = {};
 function getJS(name) {
   if (!jsCache[name]) {
-    jsCache[name] = read(path.join(SRC, 'js', `${name}.js`));
+    const source = read(path.join(SRC, 'js', `${name}.js`));
+    assertParsableJs(source, `src/js/${name}.js`);
+    jsCache[name] = source;
   }
   return jsCache[name];
 }
@@ -1039,6 +1054,32 @@ function emitBrowserAsset(kind, label, content) {
     emittedBrowserAssets.set(rel, true);
   }
   return rel;
+}
+
+// url() references inside the emitted CSS. Only HTML was scanned before, so a
+// cover added in CSS alone would 404 on a green build unless its path was also
+// duplicated by hand in site.config.cjs. Feeding these into localRefs makes the
+// build copy them and fail loudly when one is missing.
+function collectCssRefs(siteOrigin) {
+  const refs = new Set();
+  const urlRe = /url\((["']?)([^)"']+)\1\)/gi;
+  for (const rel of emittedBrowserAssets.keys()) {
+    if (!rel.endsWith('.css')) continue;
+    const css = read(path.join(DIST, rel));
+    const base = `${siteOrigin}/${path.posix.dirname(rel)}/`;
+    for (const match of css.matchAll(urlRe)) {
+      const raw = match[2].trim();
+      if (!raw || raw.startsWith('#') || /^(data:|https?:|\/\/)/i.test(raw)) continue;
+      try {
+        const parsed = new URL(raw, base);
+        if (parsed.origin !== siteOrigin) continue;
+        refs.add(decodeURIComponent(parsed.pathname.replace(/^\/+/, '')));
+      } catch (_) {
+        throw new Error(`Unparsable url() in ${rel}: ${raw}`);
+      }
+    }
+  }
+  return refs;
 }
 
 // Build
@@ -1071,6 +1112,7 @@ function buildPage(page) {
 
   // 4. Assemble JS (concatenate files with the same composition into one asset)
   const js = page.js.map(name => getJS(name)).join('\n\n');
+  if (js.trim()) assertParsableJs(js, `${page.slug} bundle [${page.js.join(', ')}]`);
   const jsSrc = js.trim() ? emitBrowserAsset('js', 'site', js) : null;
 
   // 5. Replace placeholders. Values are passed as replacer functions so that
@@ -1438,6 +1480,7 @@ function main() {
     const html = read(path.join(DIST, file));
     for (const ref of collectLocalRefsFromHtml(html, SITE_ORIGIN)) localRefs.add(ref);
   }
+  for (const ref of collectCssRefs(SITE_ORIGIN)) localRefs.add(ref);
   for (const f of rootAssets) localRefs.add(f);
   for (const page of config.pages) {
     if (page.ogImage) {
