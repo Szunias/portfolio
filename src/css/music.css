@@ -946,49 +946,36 @@ a { color: var(--paper); }
 
 .now-playing__seek { display: flex; flex-direction: column; gap: 8px; }
 
-.now-playing__rail {
+/* The loudness envelope doubles as the scrubber: tap the shape to jump to
+   that point. Baseline-anchored bars, never mirrored. */
+.now-playing__scrub {
   position: relative;
-  height: 6px;
-  border-radius: 3px;
-  background: rgba(236, 238, 240, 0.14);
+  height: 52px;
+  border-bottom: 1px solid var(--rule);
   cursor: pointer;
   touch-action: none;
 }
 
-.now-playing__rail::before {
+.now-playing__scrub::before {
   content: '';
   position: absolute;
   left: 0;
   right: 0;
-  top: -14px;
-  height: 34px;
+  top: -8px;
+  bottom: -8px;
 }
 
-.now-playing__rail[aria-disabled='true'] { cursor: default; }
+.now-playing__scrub[aria-disabled='true'] { cursor: default; }
 
-.now-playing__rail-buffer,
-.now-playing__rail-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
+.now-playing__scrub:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.now-playing__envelope {
+  display: block;
+  width: 100%;
   height: 100%;
-  width: 0;
-  border-radius: 3px;
-}
-
-.now-playing__rail-buffer { background: rgba(236, 238, 240, 0.18); }
-.now-playing__rail-fill { background: var(--accent); }
-
-.now-playing__rail-fill::after {
-  content: '';
-  position: absolute;
-  right: -6px;
-  top: 50%;
-  width: 13px;
-  height: 13px;
-  margin-top: -6.5px;
-  border-radius: 50%;
-  background: var(--accent);
 }
 
 .now-playing__times {

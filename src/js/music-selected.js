@@ -436,6 +436,7 @@
       el.setAttribute('aria-valuetext', format(audio.currentTime) + ' of ' + format(duration));
     });
     setSeekEnabled(hasDuration);
+    maybeDrawEnvelope();
   }
 
   function updateBuffered() {
@@ -449,6 +450,96 @@
       }
     }
     setStyle('progress-buffer', 'width', percent + '%');
+    maybeDrawEnvelope();
+  }
+
+  // ------------------------------------------------------- loudness envelope
+
+  // 120 levels per track, base36, written into data-peaks by npm run peaks.
+  // Bars grow from the baseline rather than mirroring around a centre line:
+  // this is meant to read as data about where the track gets loud, not as
+  // waveform decoration.
+  const envelopeCanvas = role('envelope');
+  let envelopeColors = null;
+
+  function decodePeaks(value) {
+    if (!value) return [];
+    const levels = new Array(value.length);
+    for (let i = 0; i < value.length; i++) {
+      const level = parseInt(value[i], 36);
+      levels[i] = Number.isFinite(level) ? level : 0;
+    }
+    return levels;
+  }
+
+  function paletteForEnvelope() {
+    if (envelopeColors) return envelopeColors;
+    const styles = getComputedStyle(document.documentElement);
+    const accent = (styles.getPropertyValue('--accent') || '').trim();
+    envelopeColors = {
+      played: accent || '#aac6de',
+      buffered: 'rgba(236, 238, 240, 0.32)',
+      rest: 'rgba(236, 238, 240, 0.16)'
+    };
+    return envelopeColors;
+  }
+
+  function drawEnvelope() {
+    if (!envelopeCanvas || typeof envelopeCanvas.getContext !== 'function') return;
+    const width = envelopeCanvas.clientWidth;
+    const height = envelopeCanvas.clientHeight;
+    if (!width || !height) return;
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const pixelWidth = Math.round(width * dpr);
+    const pixelHeight = Math.round(height * dpr);
+    if (envelopeCanvas.width !== pixelWidth) envelopeCanvas.width = pixelWidth;
+    if (envelopeCanvas.height !== pixelHeight) envelopeCanvas.height = pixelHeight;
+
+    const ctx = envelopeCanvas.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, pixelWidth, pixelHeight);
+
+    const track = selectedTrack();
+    const levels = track ? decodePeaks(track.dataset.peaks) : [];
+    if (!levels.length) return;
+
+    const duration = audio.duration;
+    const hasDuration = Number.isFinite(duration) && duration > 0;
+    const playedRatio = hasDuration ? clamp(audio.currentTime / duration, 0, 1) : 0;
+    let bufferedRatio = 0;
+    if (hasDuration && audio.buffered.length) {
+      try {
+        bufferedRatio = clamp(audio.buffered.end(audio.buffered.length - 1) / duration, 0, 1);
+      } catch (_) {
+        bufferedRatio = 0;
+      }
+    }
+
+    const colors = paletteForEnvelope();
+    const slot = pixelWidth / levels.length;
+    const barWidth = Math.max(dpr, slot * 0.62);
+    const inset = (slot - barWidth) / 2;
+    // Silent buckets keep a hairline so the track still reads as a full scrubber.
+    const minHeight = Math.max(dpr, pixelHeight * 0.05);
+
+    for (let i = 0; i < levels.length; i++) {
+      const position = (i + 0.5) / levels.length;
+      const barHeight = Math.max(minHeight, (levels[i] / 35) * pixelHeight);
+      ctx.fillStyle = position <= playedRatio
+        ? colors.played
+        : (position <= bufferedRatio ? colors.buffered : colors.rest);
+      ctx.fillRect(i * slot + inset, pixelHeight - barHeight, barWidth, barHeight);
+    }
+  }
+
+  // Drawing only matters while the sheet is on screen.
+  function maybeDrawEnvelope() {
+    if (sheet && sheet.open) drawEnvelope();
+  }
+
+  if (envelopeCanvas && typeof ResizeObserver === 'function') {
+    new ResizeObserver(() => maybeDrawEnvelope()).observe(envelopeCanvas);
   }
 
   function updateVolumeUI() {
@@ -789,6 +880,8 @@
     if (!canOpenSheet || sheet.open) return;
     sheet.showModal();
     syncSheetLock();
+    // The canvas has no measurable size until the dialog is laid out.
+    drawEnvelope();
   }
 
   function closeSheet() {
