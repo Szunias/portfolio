@@ -574,7 +574,7 @@ function decodeBase64Attr(value) {
 
 function collectLocalRefsFromHtml(html, siteOrigin) {
   const refs = new Set();
-  const attrRe = /\b(?:href|src|poster|action|data-src|data-cover|data-autoplay-src)=["']([^"']+)["']/gi;
+  const attrRe = /\b(?:href|src|poster|action|data-src|data-cover|data-thumb|data-art|data-autoplay-src)=["']([^"']+)["']/gi;
   const encodedAttrRe = /\bdata-src-e=["']([^"']+)["']/gi;
   const metaImageRe = /<meta\b(?=[^>]*(?:property|name)=["'](?:og:image|twitter:image)["'])[^>]*\bcontent=["']([^"']+)["'][^>]*>/gi;
   const urlRe = /url\((["']?)([^)"']+)\1\)/gi;
