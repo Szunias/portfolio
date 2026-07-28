@@ -75,6 +75,15 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
 .content { position:relative; z-index:10; display:block; }
 .wrap { max-width:1160px; margin:0 auto; padding:0 40px; }
 
+@media (min-width:1360px) {
+  /* At 1440 there were 188px of unused margin on each side. Spending some of
+     it lets the project list and its preview both keep a comfortable size.
+     The matching .work-split override lives next to that rule, further down:
+     placing it here would lose to the later base declaration. */
+  .wrap { max-width:1280px; }
+  .panel__inner { max-width:1280px; }
+}
+
 /* ---------- Hero ---------- */
 .hero {
   min-height:calc(100vh - 56px); min-height:calc(100svh - 56px);
@@ -225,10 +234,18 @@ section.panel { padding:0; }
      about 38 characters a line, which is too narrow to read comfortably. */
   display:grid; grid-template-columns:minmax(0,1fr) 340px;
   gap:0 48px; align-items:start;
+  /* On wide screens there is spare room on both sides, so the preview grows
+     back to its original size instead of taking it from the description. */
   border-top:1px solid var(--rule);
 }
 .work-split .plist { border-top:none; min-width:0; }
 .work-split .prow { grid-template-columns:44px minmax(0,1fr) 132px; gap:20px; }
+
+@media (min-width:1360px) {
+  /* Pairs with the wider .wrap above: the extra room goes to the preview so
+     it is not the description that pays for it. */
+  .work-split { grid-template-columns:minmax(0,1fr) 400px; }
+}
 .pview { position:sticky; top:104px; padding-top:34px; }
 .pview__frame {
   position:relative; aspect-ratio:16/11;
@@ -338,7 +355,9 @@ section.panel { padding:0; }
 }
 
 /* ---------- Contact ---------- */
-.contact { text-align:center; padding-bottom:160px; }
+/* 160px here plus the colophon's own padding made the page trail off; 130px
+   matches the section rhythm used everywhere else. */
+.contact { text-align:center; padding-bottom:130px; }
 .contact__mail {
   display:inline-block; max-width:100%;
   margin-top:32px;
