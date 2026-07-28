@@ -58,13 +58,15 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
 }
 .top__name {
   display:inline-flex; align-items:center; min-height:44px;
+  white-space:nowrap;
   font-family:var(--mono); font-size:.72rem; color:var(--muted); letter-spacing:.06em;
 }
 .top nav {
   display:flex; gap:clamp(8px,1.6vw,20px); font-family:var(--mono); font-size:.72rem;
 }
 .top nav a {
-  display:inline-flex; align-items:center; min-height:44px;
+  display:inline-flex; align-items:center; justify-content:center;
+  min-height:44px; min-width:24px; /* CV is only ~14px of text on its own */
   color:var(--muted); transition:color .15s;
 }
 .top nav a:hover,
@@ -219,12 +221,14 @@ section.panel { padding:0; }
 .archive-project-link:focus-visible .archive-project-link__desc { color:var(--muted); }
 
 .work-split {
-  display:grid; grid-template-columns:minmax(0,1fr) 380px;
-  gap:0 60px; align-items:start;
+  /* The preview and the meta column used to squeeze the description down to
+     about 38 characters a line, which is too narrow to read comfortably. */
+  display:grid; grid-template-columns:minmax(0,1fr) 340px;
+  gap:0 48px; align-items:start;
   border-top:1px solid var(--rule);
 }
 .work-split .plist { border-top:none; min-width:0; }
-.work-split .prow { grid-template-columns:48px minmax(0,1fr) 150px; gap:24px; }
+.work-split .prow { grid-template-columns:44px minmax(0,1fr) 132px; gap:20px; }
 .pview { position:sticky; top:104px; padding-top:34px; }
 .pview__frame {
   position:relative; aspect-ratio:16/11;
@@ -285,6 +289,15 @@ section.panel { padding:0; }
 .about-panel p { color:var(--muted); margin-bottom:16px; max-width:60ch; }
 .about-panel p strong { color:var(--ink); font-weight:500; }
 
+@media (min-width:900px) {
+  /* A 68ch column pinned to the left of a 1080px container left the right
+     half of the screen visibly empty. Centring the column keeps the reading
+     measure and matches the centred contact section that follows. */
+  #about .sec-kicker,
+  #about .sec-title { text-align:center; }
+  #about .about-panel { margin-inline:auto; }
+}
+
 /* ---------- Contact ---------- */
 .contact { text-align:center; padding-bottom:160px; }
 .contact__mail {
@@ -293,7 +306,9 @@ section.panel { padding:0; }
   font-family:var(--display); font-weight:700;
   /* capped at 3rem: any larger and the address grows wider than the card,
      overflowing right instead of centring */
-  font-size:clamp(1.5rem, 4.2vw, 3rem); letter-spacing:-.03em;
+  /* The lower bound is sized so the whole address still fits on one line at
+     320px; below that it may wrap, and it breaks after the @ when it does. */
+  font-size:clamp(1.15rem, 4.2vw, 3rem); letter-spacing:-.03em;
   overflow-wrap:anywhere;
   border-bottom:2px solid var(--rule-h);
   transition:border-color .15s;
@@ -331,7 +346,15 @@ section.panel { padding:0; }
   .pview { display:none; }
   .prow,
   .work-split .prow { grid-template-columns:40px minmax(0,1fr) 104px; gap:20px; align-items:center; }
-  .prow__meta { display:none; }
+  /* The year and toolset used to be dropped on mobile. They are the strongest
+     competence signal in the row, so keep them on a line of their own. */
+  .prow__meta {
+    grid-column:1 / -1;
+    margin-top:4px;
+    text-align:left;
+    line-height:1.5;
+    font-size:11px;
+  }
   .prow__thumb { display:block; }
   .prow__thumb img {
     width:104px; height:104px; object-fit:cover; display:block;
@@ -373,7 +396,9 @@ section.panel { padding:0; }
   .prow h3,
   .work-split .prow h3 { font-size:1.42rem; }
   .top { padding:6px 20px; align-items:center; gap:12px; }
-  .top__name { max-width:9ch; line-height:1.25; }
+  /* No max-width here: the name is set to nowrap, so capping the box would
+     push the text out over the navigation instead of wrapping it. */
+  .top__name { line-height:1.25; }
   .top nav { gap:8px; }
   .top nav a { font-size:.7rem; }
   .hero__cta a { padding:12px 18px; }
@@ -406,7 +431,10 @@ section.panel { padding:0; }
 }
 
 @media (max-width: 380px) {
-  .top nav a[href*="#contact"] { display:none; }
+  /* Contact used to be dropped here. There is room for it once the header
+     stops wrapping, and it is the one link a visitor is most likely to want. */
+  .top { gap:10px; padding-inline:16px; }
+  .top nav { gap:10px; }
 }
 
 /* Standalone 404 page, shared with the home shell to avoid another CSS payload. */

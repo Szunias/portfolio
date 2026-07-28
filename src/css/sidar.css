@@ -99,13 +99,18 @@ button:focus-visible {
 .site-header nav a {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: 44px;
+  white-space: nowrap;
   color: rgba(231, 225, 218, .62);
   font-family: var(--mono);
   font-size: .71875rem;
   letter-spacing: .06em;
   transition: color .2s ease;
 }
+
+/* CV is only ~14px of text, below the 24px minimum target on its own. */
+.site-header nav a { min-width: 24px; }
 
 .site-header nav {
   display: flex;
@@ -851,8 +856,9 @@ main { position: relative; }
 }
 
 @media (max-width: 480px) {
+  /* No max-width here: the name is set to nowrap, so capping the box would
+     push the text out over the navigation instead of wrapping it. */
   .site-header__name {
-    max-width: 9ch;
     line-height: 1.25;
   }
 
@@ -860,7 +866,10 @@ main { position: relative; }
 }
 
 @media (max-width: 380px) {
-  .site-header nav a[href*="#contact"] { display: none; }
+  /* Contact used to be dropped here. There is room for it once the header
+     stops wrapping, and it is the one link a visitor is most likely to want. */
+  .site-header { gap: 10px; }
+  .site-header nav { gap: 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

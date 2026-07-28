@@ -86,6 +86,10 @@
       current = i;
     }
 
+    // Pointer and scroll both drive the panel and the later event simply wins.
+    // An earlier version gated scrolling behind a "pointer is over the list"
+    // flag, but a stationary cursor sitting in the gap between two rows left
+    // that flag stuck on and froze the panel mid-list.
     rows.forEach(function (row, i) {
       var onEnter = function () { activate(i); };
       var onFocus = function () { activate(i); };
@@ -96,7 +100,42 @@
         row.removeEventListener('focusin', onFocus);
       });
     });
+
+    // Whichever row sits nearest the middle of the viewport becomes the active
+    // one, so the panel always matches what the reader is looking at.
+    // Deliberately a scroll listener rather than an IntersectionObserver: an
+    // observer only reports transitions, so a row already inside the trigger
+    // band produces no callback at all, and delivery is tied to frame
+    // production. Reading geometry once per animation frame is predictable and
+    // costs nine getBoundingClientRect calls.
+    var ticking = false;
+    var syncToScroll = function () {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function () {
+        ticking = false;
+        var mid = window.innerHeight / 2;
+        var best = -1;
+        var bestDist = Infinity;
+        for (var i = 0; i < rows.length; i++) {
+          var b = rows[i].getBoundingClientRect();
+          if (b.bottom < 0 || b.top > window.innerHeight) continue;
+          var dist = Math.abs((b.top + b.bottom) / 2 - mid);
+          if (dist < bestDist) { bestDist = dist; best = i; }
+        }
+        if (best >= 0) activate(best);
+      });
+    };
+
+    window.addEventListener('scroll', syncToScroll, { passive: true });
+    window.addEventListener('resize', syncToScroll);
+    cleanups.push(function () {
+      window.removeEventListener('scroll', syncToScroll);
+      window.removeEventListener('resize', syncToScroll);
+    });
+
     activate(0);
+    syncToScroll();
   }
 
   function unmountPreview() {

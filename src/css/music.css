@@ -114,6 +114,12 @@ a { color: var(--paper); }
 
 .site-header__name,
 .site-header nav a {
+  /* Matches case.css and sidar.css: the label is small, the tap target is not. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  white-space: nowrap;
   font-family: var(--mono);
   font-size: 0.72rem;
   letter-spacing: 0.06em;
@@ -121,7 +127,10 @@ a { color: var(--paper); }
   color: var(--text-muted);
 }
 
-.site-header nav { display: flex; gap: 24px; }
+.site-header nav { display: flex; gap: clamp(8px, 1.6vw, 24px); }
+
+/* CV is only ~14px of text, below the 24px minimum target on its own. */
+.site-header nav a { min-width: 24px; }
 
 .site-header__name:hover,
 .site-header nav a:hover,
@@ -363,7 +372,9 @@ a { color: var(--paper); }
 }
 
 .featured__case-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px; /* WCAG 2.5.8 minimum for a standalone link */
   margin: 32px clamp(20px, 5vw, 40px) 0;
   font-family: var(--mono);
   font-size: 12px;
@@ -541,7 +552,9 @@ a { color: var(--paper); }
 }
 
 .library__spotify {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px; /* WCAG 2.5.8 minimum for a standalone link */
   margin: 36px clamp(20px, 5vw, 40px) 0;
   font-family: var(--mono);
   font-size: 12px;
@@ -1143,6 +1156,20 @@ a { color: var(--paper); }
 
   .library-row__kind { display: none; }
 
+  /* Truncating to one line cut real information out of titles such as
+     "Walter - IFMC Winter 2025 Rescore". Two lines fit the whole thing. */
+  .library-row__name {
+    white-space: normal;
+    overflow: visible;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.3;
+  }
+
+  .library-row { align-items: center; min-height: 62px; }
+
   .now-playing {
     width: 100vw;
     height: 100dvh;
@@ -1160,7 +1187,10 @@ a { color: var(--paper); }
 }
 
 @media (max-width: 380px) {
-  .site-header nav a[href*='#contact'] { display: none; }
+  /* Contact used to be dropped here. There is room for it once the header
+     stops wrapping, and it is the one link a visitor is most likely to want. */
+  .site-header { gap: 8px; padding-inline: 14px; }
+  .site-header nav { gap: 8px; }
   .music-hero__action { width: 100%; justify-content: center; }
 }
 

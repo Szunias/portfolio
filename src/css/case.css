@@ -68,7 +68,10 @@ img { max-width: 100%; }
 }
 
 @media (max-width:380px) {
-  .site-header nav a[href*="#contact"] { display:none; }
+  /* Contact used to be dropped here. There is room for it once the header
+     stops wrapping, and it is the one link a visitor is most likely to want. */
+  .site-header { gap:10px; }
+  .site-header nav { gap:10px; }
 }
 
 html {
@@ -6256,8 +6259,13 @@ main#main-content { position: relative; z-index: 1; }
   display: inline-flex;
   min-height: var(--tap-target);
   align-items: center;
+  justify-content: center;
+  white-space: nowrap;
   font-size: 11.5px;
 }
+
+/* CV is only ~14px of text, below the 24px minimum target on its own. */
+.site-header nav a { min-width: 24px; }
 
 .site-header nav { gap: clamp(8px, 1.6vw, 20px); }
 
@@ -6513,8 +6521,9 @@ main#main-content { position: relative; z-index: 1; }
 }
 
 @media (max-width: 480px) {
+  /* No max-width here: the name is set to nowrap, so capping the box would
+     push the text out over the navigation instead of wrapping it. */
   .site-header__name {
-    max-width: 9ch;
     line-height: 1.25;
   }
 
@@ -6616,7 +6625,11 @@ main#main-content { position: relative; z-index: 1; }
   .tr-rebuild-summary, .ai-method-copy
 ) {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  /* At 340px a column held about 41 characters a line, which reads badly.
+     Requiring 430px means two columns only form where they actually fit; the
+     per-paragraph max-width in ch keeps the single-column case from running
+     too long. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr));
   gap: clamp(20px, 2.5vw, 28px);
   width: 100%;
   max-width: var(--editorial-reading-width);
@@ -6628,7 +6641,11 @@ main#main-content { position: relative; z-index: 1; }
   .ai-system-story__copy, .tr-pipeline-story__copy,
   .tr-rebuild-summary, .ai-method-copy
 ) > p:nth-child(n) {
-  max-width: none;
+  /* Was none, which was fine while these blocks were always two narrow
+     columns. Now that a column needs 430px, the single-column case would run
+     the full 800px (about 90 characters a line) without a cap. In the
+     two-column case the column is narrower than this anyway. */
+  max-width: 66ch;
   margin: 0;
   font-size: 16px;
   line-height: 1.72;
@@ -7368,7 +7385,9 @@ main#main-content { position: relative; z-index: 1; }
 
 .tool-hero {
   display: grid;
-  grid-template-columns: minmax(300px, 0.72fr) minmax(540px, 1.28fr);
+  /* The copy column used to be the smaller of the two, which left the hero
+     lead at about 25 characters a line. */
+  grid-template-columns: minmax(320px, 1fr) minmax(440px, 1.08fr);
   gap: clamp(42px, 6vw, 88px);
   align-items: center;
   width: min(1440px, 100%);
@@ -7720,15 +7739,18 @@ main#main-content { position: relative; z-index: 1; }
 
 .at-duet__copy {
   display: grid;
-  grid-template-columns: minmax(150px, 0.42fr) minmax(0, 0.58fr);
-  gap: 14px clamp(18px, 2vw, 30px);
+  /* These blocks already sit two-up on the page. Splitting the heading and the
+     prose side by side inside each one cut the text to about 36 characters a
+     line, so stack them instead and give the prose the full column. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
   margin-top: 20px;
   padding-top: 18px;
   border-top: 1px solid var(--tool-rule);
 }
 
 .at-duet__copy h3 {
-  grid-row: 1 / span 2;
+  grid-row: auto;
   margin: 0;
   font-family: var(--serif);
   font-size: clamp(20px, 2vw, 26px);
@@ -7772,7 +7794,9 @@ main#main-content { position: relative; z-index: 1; }
 
 .at-checks {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* Three fixed columns gave each note about 21 characters a line. These are
+     full sentences, so let the count drop to two when three will not fit. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr));
   border-top: 1px solid var(--tool-rule);
 }
 
