@@ -465,7 +465,7 @@ a { color: var(--paper); }
 
 .library-row {
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) 78px 52px 56px;
+  grid-template-columns: 40px minmax(0, 1fr) 0 78px 52px 56px;
   align-items: center;
   gap: 16px;
   width: 100%;
@@ -524,6 +524,19 @@ a { color: var(--paper); }
 }
 
 .library-row__kind--sketch { color: color-mix(in srgb, var(--sketch) 78%, var(--paper)); }
+
+/* Preview only, no interaction: the row is a single button, so seeking stays
+   in the bar and the sheet where there are real sliders. */
+.library-row__wave {
+  display: none;
+  width: 100%;
+  height: 22px;
+}
+
+@media (min-width: 1000px) {
+  .library-row { grid-template-columns: 40px minmax(0, 1fr) 116px 78px 52px 56px; }
+  .library-row__wave { display: block; }
+}
 
 .library-row__date,
 .library-row__duration,
@@ -721,6 +734,32 @@ a { color: var(--paper); }
 
 .player-bar__progress-buffer { background: rgba(236, 238, 240, 0.16); }
 .player-bar__progress-fill { background: var(--accent); }
+
+/* The bar carries the envelope too, so the shape of the track is on screen
+   without opening anything. Hidden on narrow screens, where the 3px rail and
+   the full-height sheet scrubber are the better use of the space. */
+.player-bar__envelope { display: none; }
+
+@media (min-width: 900px) {
+  .player-bar__progress {
+    height: 30px;
+    background: transparent;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .player-bar__progress::before { top: -6px; height: 42px; }
+
+  .player-bar__progress-buffer,
+  .player-bar__progress-fill { display: none; }
+
+  .player-bar__envelope {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .player-bar { padding-top: 34px; }
+}
 
 /* ---- now playing trigger ---- */
 

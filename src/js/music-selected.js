@@ -436,7 +436,7 @@
       el.setAttribute('aria-valuetext', format(audio.currentTime) + ' of ' + format(duration));
     });
     setSeekEnabled(hasDuration);
-    maybeDrawEnvelope();
+    drawScrubbers();
   }
 
   function updateBuffered() {
@@ -450,7 +450,7 @@
       }
     }
     setStyle('progress-buffer', 'width', percent + '%');
-    maybeDrawEnvelope();
+    drawScrubbers();
   }
 
   // ------------------------------------------------------- loudness envelope
@@ -459,7 +459,6 @@
   // Bars grow from the baseline rather than mirroring around a centre line:
   // this is meant to read as data about where the track gets loud, not as
   // waveform decoration.
-  const envelopeCanvas = role('envelope');
   let envelopeColors = null;
 
   function decodePeaks(value) {
@@ -484,62 +483,117 @@
     return envelopeColors;
   }
 
-  function drawEnvelope() {
-    if (!envelopeCanvas || typeof envelopeCanvas.getContext !== 'function') return;
-    const width = envelopeCanvas.clientWidth;
-    const height = envelopeCanvas.clientHeight;
-    if (!width || !height) return;
+  // Downsampling keeps the small previews legible: 120 bars in a 100px row
+  // would be under a pixel each.
+  function resample(levels, buckets) {
+    if (levels.length <= buckets) return levels;
+    const out = new Array(buckets);
+    for (let i = 0; i < buckets; i++) {
+      const from = Math.floor(i * levels.length / buckets);
+      const to = Math.max(from + 1, Math.floor((i + 1) * levels.length / buckets));
+      let peak = 0;
+      for (let j = from; j < to && j < levels.length; j++) peak = Math.max(peak, levels[j]);
+      out[i] = peak;
+    }
+    return out;
+  }
+
+  function paintEnvelope(canvas, levels, playedRatio, bufferedRatio, buckets) {
+    if (!canvas || typeof canvas.getContext !== 'function') return false;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    if (!width || !height) return false;
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const pixelWidth = Math.round(width * dpr);
     const pixelHeight = Math.round(height * dpr);
-    if (envelopeCanvas.width !== pixelWidth) envelopeCanvas.width = pixelWidth;
-    if (envelopeCanvas.height !== pixelHeight) envelopeCanvas.height = pixelHeight;
+    if (canvas.width !== pixelWidth) canvas.width = pixelWidth;
+    if (canvas.height !== pixelHeight) canvas.height = pixelHeight;
 
-    const ctx = envelopeCanvas.getContext('2d');
-    if (!ctx) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return false;
     ctx.clearRect(0, 0, pixelWidth, pixelHeight);
+    if (!levels.length) return true;
 
-    const track = selectedTrack();
-    const levels = track ? decodePeaks(track.dataset.peaks) : [];
-    if (!levels.length) return;
-
-    const duration = audio.duration;
-    const hasDuration = Number.isFinite(duration) && duration > 0;
-    const playedRatio = hasDuration ? clamp(audio.currentTime / duration, 0, 1) : 0;
-    let bufferedRatio = 0;
-    if (hasDuration && audio.buffered.length) {
-      try {
-        bufferedRatio = clamp(audio.buffered.end(audio.buffered.length - 1) / duration, 0, 1);
-      } catch (_) {
-        bufferedRatio = 0;
-      }
-    }
-
+    const bars = buckets ? resample(levels, buckets) : levels;
     const colors = paletteForEnvelope();
-    const slot = pixelWidth / levels.length;
+    const slot = pixelWidth / bars.length;
     const barWidth = Math.max(dpr, slot * 0.62);
     const inset = (slot - barWidth) / 2;
     // Silent buckets keep a hairline so the track still reads as a full scrubber.
-    const minHeight = Math.max(dpr, pixelHeight * 0.05);
+    const minHeight = Math.max(dpr, pixelHeight * 0.06);
 
-    for (let i = 0; i < levels.length; i++) {
-      const position = (i + 0.5) / levels.length;
-      const barHeight = Math.max(minHeight, (levels[i] / 35) * pixelHeight);
+    for (let i = 0; i < bars.length; i++) {
+      const position = (i + 0.5) / bars.length;
+      const barHeight = Math.max(minHeight, (bars[i] / 35) * pixelHeight);
       ctx.fillStyle = position <= playedRatio
         ? colors.played
         : (position <= bufferedRatio ? colors.buffered : colors.rest);
       ctx.fillRect(i * slot + inset, pixelHeight - barHeight, barWidth, barHeight);
     }
+    return true;
   }
 
-  // Drawing only matters while the sheet is on screen.
-  function maybeDrawEnvelope() {
-    if (sheet && sheet.open) drawEnvelope();
+  function playbackRatios() {
+    const duration = audio.duration;
+    const hasDuration = Number.isFinite(duration) && duration > 0;
+    const played = hasDuration ? clamp(audio.currentTime / duration, 0, 1) : 0;
+    let buffered = 0;
+    if (hasDuration && audio.buffered.length) {
+      try {
+        buffered = clamp(audio.buffered.end(audio.buffered.length - 1) / duration, 0, 1);
+      } catch (_) {
+        buffered = 0;
+      }
+    }
+    return { played: played, buffered: buffered };
   }
 
-  if (envelopeCanvas && typeof ResizeObserver === 'function') {
-    new ResizeObserver(() => maybeDrawEnvelope()).observe(envelopeCanvas);
+  // The scrubbers: one in the bar, one in the sheet. Both are always redrawn,
+  // because the bar one stays on screen while the sheet is closed.
+  function drawScrubbers() {
+    const track = selectedTrack();
+    const levels = track ? decodePeaks(track.dataset.peaks) : [];
+    const r = playbackRatios();
+    roleAll('envelope').forEach(canvas => {
+      if (canvas.closest('[hidden]')) return;
+      paintEnvelope(canvas, levels, r.played, r.buffered, 0);
+    });
+    drawActiveRowWave();
+  }
+
+  if (typeof ResizeObserver === 'function') {
+    const ro = new ResizeObserver(() => drawScrubbers());
+    roleAll('envelope').forEach(canvas => ro.observe(canvas));
+  }
+
+  // Every archive row carries its own shape, so the list shows where a track
+  // gets loud before you play it. These are previews only: the row is a button
+  // and must keep a single click target, so seeking happens in the bar and in
+  // the sheet, which are real sliders.
+  const rowWaves = new Map();
+
+  function drawRowWave(button, track, withProgress) {
+    const canvas = rowWaves.get(button);
+    if (!canvas) return;
+    const r = withProgress ? playbackRatios() : { played: 0, buffered: 0 };
+    paintEnvelope(canvas, decodePeaks(track.dataset.peaks), r.played, r.buffered, 44);
+  }
+
+  function drawAllRowWaves() {
+    const playing = selectedTrack();
+    libraryRows.forEach(button => {
+      const track = byTitle.get(cardTitle(button));
+      if (track) drawRowWave(button, track, track === playing);
+    });
+  }
+
+  function drawActiveRowWave() {
+    const track = selectedTrack();
+    if (!track || !libraryRows.length) return;
+    libraryRows.forEach(button => {
+      if (byTitle.get(cardTitle(button)) === track) drawRowWave(button, track, true);
+    });
   }
 
   function updateVolumeUI() {
@@ -777,6 +831,10 @@
         date.dateTime = track.dataset.year || '';
         date.textContent = visibleDate(track);
 
+        const wave = document.createElement('canvas');
+        wave.className = 'library-row__wave';
+        wave.setAttribute('aria-hidden', 'true');
+
         const duration = document.createElement('span');
         duration.className = 'library-row__duration';
         duration.textContent = track.dataset.duration || '';
@@ -786,9 +844,10 @@
         state.textContent = 'Play';
         state.setAttribute('aria-hidden', 'true');
 
-        button.append(art, main, date, duration, state);
+        button.append(art, main, wave, date, duration, state);
         item.append(button);
         list.append(item);
+        rowWaves.set(button, wave);
         rows.push(button);
       });
 
@@ -820,6 +879,8 @@
       if (filter === 'all' || (isSketch(track) ? 'sketch' : 'release') === filter) indices.push(index);
     });
     setPool(indices, true);
+    // Hidden rows have no measurable width, so the shown ones are repainted.
+    drawAllRowWaves();
     return visible;
   }
 
@@ -881,7 +942,7 @@
     sheet.showModal();
     syncSheetLock();
     // The canvas has no measurable size until the dialog is laid out.
-    drawEnvelope();
+    drawScrubbers();
   }
 
   function closeSheet() {
@@ -1215,4 +1276,15 @@
   updateVolumeUI();
   setSeekEnabled(false);
   setPlayState();
+  drawAllRowWaves();
+  drawScrubbers();
+
+  let repaintTimer = null;
+  window.addEventListener('resize', () => {
+    window.clearTimeout(repaintTimer);
+    repaintTimer = window.setTimeout(() => {
+      drawAllRowWaves();
+      drawScrubbers();
+    }, 140);
+  });
 })();
