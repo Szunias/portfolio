@@ -258,7 +258,7 @@ module.exports = {
       description: 'Three short clips where Igor removed the original audio and rebuilt combat, spells and weapons from recordings, foley and synthesis.',
       canonical: `${SITE}/sounddesign.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-sounddesign/sounddesignprojectcover.png`,
-      ogImageAlt: 'Sound design reel cover for game audio redesigns by Igor Szuniewicz',
+      ogImageAlt: 'Cover image for game audio sound redesigns by Igor Szuniewicz',
     },
     {
       slug: 'wwiseprojects',
@@ -294,7 +294,7 @@ module.exports = {
       js: [],
       schemaType: 'SoftwareApplication',
       title: 'XR Labs | Spatial Audio for Unity VR Training',
-      description: 'Igor designed and implemented sound for Unity VR training, so sounds come from the right place and weapons change with distance.',
+      description: 'Between February and June 2026 Igor designed and implemented sound for Unity VR training at XR Labs Belgium, so sounds come from the right place and weapons change with distance.',
       canonical: `${SITE}/xrlabs.html`,
       ogImage: `${SITE}/old/public/assets/images/social/xrlabs-1200x630.webp`,
       ogImageAlt: 'XR Labs VR training simulation scene with soldiers',
