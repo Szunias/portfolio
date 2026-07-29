@@ -138,6 +138,9 @@ a { color: var(--paper); }
 
 .colophon {
   display: flex;
+  /* The right span holds 44px inline-flex links and the left one is plain
+     text: with the default stretch the two sat on different baselines. */
+  align-items: center;
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 12px;
@@ -299,6 +302,11 @@ a { color: var(--paper); }
 .track-tile__art {
   display: block;
   width: 100%;
+  /* The img carries width/height attributes, and that presentational hint wins
+     over `aspect-ratio` unless height is set here. Without it the covers took
+     their attribute height: three different tile heights in one row, and the
+     titles stopped lining up across the grid. */
+  height: auto;
   aspect-ratio: 1;
   object-fit: cover;
   background: var(--surface-raised);

@@ -182,6 +182,10 @@ section { padding:130px 0; }
 }
 .sec-title {
   font-family:var(--display); font-weight:600; font-size:2.6rem;
+  /* Without this the title inherits the body's 1.6, so a two-line heading
+     reads as two separate lines of text. Every other page sets ~1.08 on its
+     section headings. */
+  line-height:1.1;
   letter-spacing:-.025em; margin-bottom:48px;
 }
 
@@ -283,7 +287,9 @@ section.panel { padding:0; }
   border-top:1px solid var(--rule);
 }
 .work-split .plist { border-top:none; min-width:0; }
-.work-split .prow { grid-template-columns:44px minmax(0,1fr) 132px; gap:20px; }
+/* 132px was one line short for the longest tool lists, so "UNITY · STEAM
+   AUDIO" and "REASCRIPT · REAIMGUI" broke mid-list rather than at the middot. */
+.work-split .prow { grid-template-columns:44px minmax(0,1fr) 164px; gap:20px; }
 
 @media (min-width:1360px) {
   /* Pairs with the wider .wrap above: the extra room goes to the preview so
@@ -426,7 +432,9 @@ section.panel { padding:0; }
 /* ---------- Colophon ---------- */
 .colophon {
   position:relative; z-index:10;
-  display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap;
+  /* The right span holds 44px inline-flex links and the left one is plain
+     text: with the default stretch the two sat on different baselines. */
+  display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
   max-width:1160px; margin:0 auto; padding:30px 40px 40px;
   border-top:1px solid var(--rule);
   font-family:var(--mono); font-size:11px; color:var(--faint); letter-spacing:.05em;
@@ -506,7 +514,9 @@ section.panel { padding:0; }
   .site-header nav { gap:8px; }
   .site-header nav a { font-size:.7rem; }
   .hero__cta a { padding:12px 18px; }
-  .colophon { flex-direction:column; gap:6px; }
+  /* align-items:flex-start because the centring that aligns the two spans on
+     one row would centre them horizontally once the axis turns vertical. */
+  .colophon { flex-direction:column; align-items:flex-start; gap:6px; }
 }
 /* Audit V4 — flat metadata and readable prose */
 .hero__meta {
