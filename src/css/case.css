@@ -8232,3 +8232,46 @@ main#main-content { position: relative; z-index: 1; }
     font-size: 10px;
   }
 }
+
+
+/* ---------- Header: shared geometry + type ----------
+   Identical in home.css, music.css, case.css and sidar.css on purpose. The bar
+   used to be defined four times with four different paddings, so it jumped
+   every time you switched pages. Change one, change all four.
+
+   padding-inline resolves to the same left edge as the 1160px content column
+   (1280px on wide screens) and collapses to a plain gutter below that.
+   Nav is Inter, not mono: mono stays on real data (years, tool lists). */
+.site-header {
+  padding-block: 14px;
+  padding-inline: max(20px, calc((100% - 1160px) / 2 + 40px));
+  min-height: 0;
+}
+@media (min-width:1360px) {
+  .site-header { padding-inline: max(20px, calc((100% - 1280px) / 2 + 40px)); }
+}
+.site-header__name,
+.site-header nav a {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px; white-space: nowrap; text-decoration: none;
+}
+.site-header nav { display: flex; align-items: center; gap: clamp(8px,1.6vw,24px); }
+.site-header__name {
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: .95rem; font-weight: 600; letter-spacing: .01em;
+  color: var(--paper);
+}
+.site-header nav a {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: .82rem; font-weight: 500; letter-spacing: .01em;
+  min-width: 24px; transition: color .15s;
+  color: var(--ink-70);
+}
+.site-header nav a:hover,
+.site-header nav a[aria-current='page'] { color: var(--paper); }
+.site-header nav a[aria-current='page'] { box-shadow: inset 0 -1px 0 0 var(--paper); }
+@media (max-width:640px) {
+  .site-header { padding-inline: 20px; }
+  .site-header__name { font-size: .85rem; }
+  .site-header nav a { font-size: .78rem; }
+}
