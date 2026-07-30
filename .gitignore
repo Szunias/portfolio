@@ -171,6 +171,39 @@ verify-output.txt
 music/
 old/public/assets/audio/samples/Shadow_Frame_Menu_Vibe_but_Louder_2026-01-06.wav
 
+# ---------------------------------------------------------------------------
+# Showreel
+#
+# Versioned (the reproducible source of truth): render.cjs, fetch-sources.cjs,
+# timeline.json, sources.json, the two markdown docs, the render inputs under
+# showreel/assets/branding and showreel/assets/fonts, plus the lightweight
+# delivery artefacts (poster.jpg, contact-sheet.jpg, render-report.json).
+#
+# Ignored: everything that `npm run showreel:render` can rebuild, every
+# multi-hundred-megabyte local source mirror, and the finished master itself.
+# ---------------------------------------------------------------------------
+
+# Rebuildable render intermediates (~3.3 GB).
+showreel/build/
+
+# High-resolution source mirrors kept locally only. Their public URLs and the
+# exact yt-dlp formats are versioned in showreel/sources.json, so
+# `npm run showreel:sources` restores them.
+showreel/assets/source/*.webm
+showreel/assets/source/*.mp4
+showreel/assets/source/*.mkv
+showreel/source-films/
+
+# Finished master (~66 MB). Too large for comfortable Git history, so it is
+# distributed outside the repo; `npm run showreel:render` recreates it byte-for-
+# byte from timeline.json and the sources above.
+showreel/output/*.mp4
+
+# REAPER peak cache and scratch/staging folders from editing sessions.
+showreel/output/peaks/
+showreel/_an/
+showreel/_to_delete/
+
 # Personal / working files — never publish
 *.b64
 akademiki-graz*
