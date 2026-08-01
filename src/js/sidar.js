@@ -3,17 +3,17 @@
   const playback = document.getElementById('sidarPlayback');
   const sound = document.getElementById('sidarSound');
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
-  const smallScreen = window.matchMedia && window.matchMedia('(max-width: 720px)');
+  const mobileLikeViewport = window.matchMedia && window.matchMedia('(max-width: 980px), (pointer: coarse)');
   let pausedForVisibility = false;
   let pausedForMotion = false;
   let pausedByUser = false;
 
   // The teaser is an 8.5 MB 1080p file. Autoplay downloads it, so skip the
-  // automatic start on phones, metered connections and slow links; the poster
-  // and the Play teaser button stay available.
+  // automatic start on phones, tablets, coarse pointers, metered connections
+  // and slow links; the poster and the Play teaser button stay available.
   function autoplayAllowed() {
     if (reduceMotion && reduceMotion.matches) return false;
-    if (smallScreen && smallScreen.matches) return false;
+    if (mobileLikeViewport && mobileLikeViewport.matches) return false;
     const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     if (!connection) return true;
     if (connection.saveData) return false;

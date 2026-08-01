@@ -282,6 +282,21 @@ function sourceVideoFilter(segment, settings) {
     'setpts=PTS-STARTPTS',
   ];
 
+  // Some sources are graded so dark that on a laptop they read as black. A small
+  // documented lift per segment is preferable to shipping a reel where two
+  // projects show nothing; it is deliberately mild and never applied globally.
+  if (segment.grade) {
+    const g = segment.grade;
+    const parts = [];
+    if (Number.isFinite(Number(g.brightness))) parts.push(`brightness=${ffNumber(g.brightness)}`);
+    if (Number.isFinite(Number(g.contrast))) parts.push(`contrast=${ffNumber(g.contrast)}`);
+    if (Number.isFinite(Number(g.saturation))) parts.push(`saturation=${ffNumber(g.saturation)}`);
+    if (Number.isFinite(Number(g.gamma))) parts.push(`gamma=${ffNumber(g.gamma)}`);
+    if (parts.length) {
+      common.push(`eq=${parts.join(':')}`);
+    }
+  }
+
   if (segment.crop) {
     const crop = segment.crop;
     const cropWidth = Number(crop.width);

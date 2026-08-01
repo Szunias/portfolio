@@ -176,6 +176,20 @@ in the `IntroWordmark` style renders `SZUNIEWICZ` 978 px wide; the constants at
 the top of `buildAss` depend on that. Changing the wordmark size or tracking
 means re-measuring the rule and scan extents alongside it.
 
+## Per-segment grade
+
+`segment.grade` accepts `brightness`, `contrast`, `saturation` and `gamma` and maps
+to a single `eq` filter. It exists for one honest reason: two sources in this reel
+are lit so far down that on a laptop they read as black, and a reel where a project
+shows nothing is worse than a reel that lifts that project slightly.
+
+Pause & Deserve is the case in point. It is lit only by a flashlight cone, so an
+additive `brightness` lift does almost nothing except raise the black floor into
+grey murk. A gamma lift is what actually recovers the vegetation. Measured on the
+current cut, `gamma: 2.0` with `contrast: 1.1` makes the bushes and ground readable;
+`gamma: 2.35` and above turns the blacks milky and the frame stops reading as an
+unlit game. The grade is deliberately per-segment and never global.
+
 ## Editing notes
 
 Change cuts, crops and copy in `timeline.json`. `transitionIn.duration` is

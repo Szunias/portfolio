@@ -163,15 +163,34 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
   background:#08080a;
 }
 .showreel figcaption {
-  display:flex;
-  justify-content:space-between;
-  gap:18px 32px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  align-items:center;
+  gap:14px 28px;
   padding-top:14px;
   font-family:var(--mono);
   font-size:11px;
   line-height:1.5;
   letter-spacing:.04em;
   color:var(--faint);
+}
+.showreel__spec { white-space:nowrap; }
+.showreel__next {
+  display:inline-flex;
+  min-height:44px;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:0 14px;
+  border:1px solid rgba(236,238,240,.16);
+  border-radius:999px;
+  color:var(--ink);
+  white-space:nowrap;
+  transition:border-color .18s, background .18s;
+}
+.showreel__next:hover {
+  border-color:rgba(236,238,240,.34);
+  background:rgba(236,238,240,.045);
 }
 
 /* ---------- Sections ---------- */
@@ -248,6 +267,7 @@ section.panel { padding:0; }
 .prow--tool h3,
 .work-split .prow--tool h3 { font-size:clamp(1.45rem, 2.2vw, 2.05rem); }
 .prow--tool p { max-width:62ch; }
+.work-contact-cta { display:none; }
 .earlier-work { border-bottom:1px solid var(--rule); }
 .earlier-work summary {
   display:flex; justify-content:space-between; gap:24px; align-items:center;
@@ -491,7 +511,8 @@ section.panel { padding:0; }
   .showreel { padding:72px 0 90px; }
   .showreel__head { grid-template-columns:1fr; gap:18px; margin-bottom:24px; }
   .showreel__head .sec-title { max-width:19ch; }
-  .showreel figcaption { flex-direction:column; gap:4px; }
+  .showreel figcaption { grid-template-columns:minmax(0,1fr) auto; }
+  .showreel__meta { grid-column:1 / -1; }
   .prow,
   .work-split .prow { grid-template-columns:30px minmax(0,1fr) 84px; gap:14px; padding:26px 2px; }
   .prow h3,
@@ -624,8 +645,8 @@ section.panel { padding:0; }
   color: var(--muted);
 }
 .site-header nav a:hover,
-.site-header nav a[aria-current='page'] { color: var(--ink); }
-.site-header nav a[aria-current='page'] { box-shadow: inset 0 -1px 0 0 var(--ink); }
+.site-header nav a[aria-current] { color: var(--ink); }
+.site-header nav a[aria-current] { box-shadow: inset 0 -1px 0 0 var(--ink); }
 @media (max-width:640px) {
   .site-header__name { font-size: .85rem; }
   .site-header nav a { font-size: .78rem; }
@@ -635,17 +656,15 @@ section.panel { padding:0; }
    sticky height on exactly the screens with the least of it. The pill strip
    below keeps one row down to 320px. */
 
-/* ---------- Header: mobile pill navigation ----------
-   Identical in home.css, music.css, case.css and sidar.css, like the block
-   above it. Change one, change all four.
+/* ---------- Header: mobile home navigation ----------
+   The home page keeps CV in two prominent places below, so its narrow header
+   can prioritize the three destinations used to move through the portfolio.
 
-   Below 820px the name and four links no longer fit on one comfortable line:
-   the last item ended up pressed against the screen edge and the type had to
-   shrink to .7rem to keep them apart. The links become pills in a horizontally
-   scrollable strip instead, so nothing hides behind a menu button, nothing is
-   squeezed, and a clipped pill at the right edge shows there is more to reach.
-   The active page is a filled pill rather than a 1px underline, which is
-   legible on a phone. */
+   Below 820px the full name and four links no longer fit on one comfortable
+   line. The visible brand becomes IGOR while its accessible name stays intact,
+   and the redundant CV link leaves the header because it remains available in
+   the hero and contact section. The three primary destinations then fit without
+   horizontal scrolling. */
 @media (max-width: 820px) {
   .site-header {
     gap: 10px;
@@ -656,36 +675,34 @@ section.panel { padding:0; }
   }
 
   .site-header__name {
-    min-height: 40px;
-    font-size: .82rem;
+    flex: 0 0 auto;
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 0;
     letter-spacing: .015em;
   }
 
-  .site-header nav {
-    min-width: 0;
-    gap: 6px;
-    padding: 3px 2px 3px 0;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+  .site-header__name::before {
+    content: 'IGOR';
+    content: 'IGOR' / '';
+    font-size: .82rem;
   }
 
-  .site-header nav::-webkit-scrollbar { display: none; }
-
-  /* Narrow enough that the strip always overflows: fading the trailing edge
-     reads as "there is more" instead of a pill sliced by the screen edge.
-     Above this width the four links fit and no fade is needed. */
-  @media (max-width: 560px) {
-    .site-header nav {
-      -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 22px), transparent);
-      mask-image: linear-gradient(90deg, #000 calc(100% - 22px), transparent);
-    }
+  .site-header nav {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: flex-end;
+    min-width: 0;
+    gap: 6px;
+    padding: 0;
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .site-header nav a {
     flex: 0 0 auto;
-    min-height: 38px;
+    min-height: 44px;
     padding: 0 13px;
     border: 1px solid rgba(236, 238, 240, 0.16);
     border-radius: 999px;
@@ -695,12 +712,14 @@ section.panel { padding:0; }
     box-shadow: none;
   }
 
+  .site-header nav a[href$='Igor_Szuniewicz_CV.pdf'] { display: none; }
+
   /* case.css resets the nav border to 0 on hover for its underlined links;
      without this the pill outline disappears on a narrow desktop window. */
   .site-header nav a:hover { border: 1px solid rgba(236, 238, 240, 0.3); }
 
-  .site-header nav a[aria-current='page'],
-  .site-header nav a[aria-current='page']:hover {
+  .site-header nav a[aria-current],
+  .site-header nav a[aria-current]:hover {
     border-color: transparent;
     background: #eceef0;
     color: #101012;
@@ -757,7 +776,7 @@ section.panel { padding:0; }
   /* ---- Hero ----
      120px of top padding was there to clear a header that is sticky, not
      fixed, so it only pushed the name of the site off the first screen. */
-  .hero { gap: 26px; padding: 60px 0 64px; }
+  .hero { min-height: 0; gap: 26px; padding: 60px 0 64px; }
   .hero__kicker {
     margin-bottom: 16px;
     font-size: .66rem;
@@ -770,7 +789,7 @@ section.panel { padding:0; }
     letter-spacing: -.04em;
   }
   .hero__sub { margin-top: 18px; font-size: 1.02rem; line-height: 1.55; }
-  .hero__meta { margin-top: 14px; font-size: 11px; line-height: 1.6; }
+  .hero__meta { margin-top: 14px; font-size: 12px; line-height: 1.6; }
   /* Three pills used to wrap 2 + 1 and leave a ragged edge. A two-column
      grid with the primary action across the top reads as one block. */
   .hero__cta {
@@ -786,13 +805,19 @@ section.panel { padding:0; }
     text-align: center;
   }
   .hero__cta a.primary { grid-column: 1 / -1; }
-  .hero-proof { border-radius: 16px; }
-  .hero-proof span { padding: 13px 15px; font-size: .8rem; line-height: 1.45; }
+  .hero-proof { display: none; }
 
   /* ---- Showreel ---- */
   .showreel { padding: 58px 0 74px; }
   .showreel__player { border-radius: 14px; }
-  .showreel figcaption { padding-top: 12px; font-size: 10.5px; }
+  .showreel figcaption {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    padding-top: 12px;
+    font-size: 12px;
+  }
+  .showreel__meta { grid-column: auto; }
+  .showreel__next { width: 100%; margin-top: 9px; }
 
   /* ---- Featured projects: image-led cards ----
      The row becomes a single column and the thumbnail leads it at the width
@@ -838,6 +863,61 @@ section.panel { padding:0; }
   }
   /* Touch has no hover, so the row needs a press state of its own. */
   .prow:active h3 { color: var(--ice); }
+
+  /* The first three projects keep the image-led treatment. Projects four to
+     six remain visible but switch to compact, text-led rows so the page reaches
+     the tools and contact path sooner on a phone. */
+  .prow--featured.prow--mobile-compact {
+    display: block;
+    min-height: 0;
+    padding: 19px 0 21px;
+  }
+  .prow--mobile-compact .prow__thumb { display: none; }
+  .prow--mobile-compact h3,
+  .work-split .prow--mobile-compact h3 {
+    font-size: clamp(1.32rem, 5.7vw, 1.65rem);
+    line-height: 1.08;
+  }
+  .prow--mobile-compact p {
+    display: -webkit-box;
+    margin-top: 7px;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: .88rem;
+    line-height: 1.48;
+  }
+  .prow--mobile-compact .prow__meta {
+    display: block;
+    margin-top: 9px;
+    text-align: left;
+  }
+
+  .work-contact-cta {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    min-height: 64px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
+    color: var(--muted);
+  }
+  .work-contact-cta > span {
+    max-width: 43ch;
+    font-size: .9rem;
+    line-height: 1.45;
+  }
+  .work-contact-cta strong {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: .75rem;
+    font-weight: 400;
+    color: var(--ink);
+  }
 
   /* ---- Tools: compact rows ----
      A REAPER script or a VST has no cinematic frame to show, so these keep a

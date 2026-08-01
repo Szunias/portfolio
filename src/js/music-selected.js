@@ -1,6 +1,7 @@
 (function () {
   const PLACEHOLDER = 'assets/track-placeholder.svg';
   const STORE_KEY = 'music-player-v2';
+  const DEFAULT_FILTER = 'release';
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -156,7 +157,7 @@
   let sourceVersion = 0;
   let changingTrack = false;
   let hasPlaybackError = false;
-  let activeFilter = 'all';
+  let activeFilter = DEFAULT_FILTER;
 
   audio.volume = lastVolume;
 
@@ -824,7 +825,11 @@
         const kind = document.createElement('span');
         kind.className = 'library-row__kind library-row__kind--' + (isSketch(track) ? 'sketch' : 'finished');
         kind.textContent = kindLabel(track);
-        main.append(name, kind);
+
+        const detail = document.createElement('span');
+        detail.className = 'library-row__detail';
+        detail.textContent = trackDetail(track);
+        main.append(name, kind, detail);
 
         const date = document.createElement('time');
         date.className = 'library-row__date';
@@ -1163,8 +1168,9 @@
     buildOrder(null);
     if (saved.title && byTitle.has(saved.title)) {
       const index = tracks.indexOf(byTitle.get(saved.title));
-      // Restore the selection only. Autoplay without a gesture is blocked anyway.
-      if (validIndex(index)) {
+      // Restore the selection only when it belongs to the active filter.
+      // Autoplay without a gesture is blocked anyway.
+      if (validIndex(index) && pool.indexOf(index) >= 0) {
         const at = order.indexOf(index);
         if (at >= 0) orderPos = at;
         select(index, false);
@@ -1270,7 +1276,7 @@
   document.querySelectorAll('[data-player-only]').forEach(el => { el.hidden = false; });
 
   registerMediaHandlers();
-  applyFilter('all');
+  applyFilter(DEFAULT_FILTER);
   restoreState();
   updateModeUI();
   updateVolumeUI();
