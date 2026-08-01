@@ -192,7 +192,7 @@ module.exports = {
       slug: 'audioq',
       layout: 'project',
       css: 'case',
-      js: [],
+      js: ['lightbox'],
       schemaType: 'SoftwareApplication',
       title: 'AudioQ Sampler & Sound-Mangling Plugin | C++ JUCE',
       description: 'A C++/JUCE sampler with loop editing, granular playback and effects. The public release is Windows VST3; the source also builds a standalone app.',
@@ -202,6 +202,7 @@ module.exports = {
       ogImageWidth: 1200,
       ogImageHeight: 630,
       ogImageType: 'image/webp',
+      lightbox: true,
     },
     {
       slug: 'amorak',

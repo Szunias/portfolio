@@ -15,7 +15,14 @@
   let closeTimer = null;
   let openFrame = null;
   let isOpen = false;
+  let touchStartX = null;
+  let touchStartY = null;
   const backgroundState = new WeakMap();
+
+  function resetTouch() {
+    touchStartX = null;
+    touchStartY = null;
+  }
 
   const images = Array.from(galleryItems).map(item => {
     const img = item.querySelector('img');
@@ -25,6 +32,11 @@
       alt: img ? img.alt : '',
       caption: cap ? cap.textContent : ''
     };
+  });
+  const hasMultipleImages = images.length > 1;
+
+  [prevBtn, nextBtn].filter(Boolean).forEach(btn => {
+    btn.hidden = !hasMultipleImages;
   });
 
   function render(index) {
@@ -36,7 +48,7 @@
   }
 
   function getFocusable() {
-    return [closeBtn, prevBtn, nextBtn].filter(Boolean);
+    return [closeBtn, prevBtn, nextBtn].filter(el => el && !el.hidden);
   }
 
   function setControlsEnabled(enabled) {
@@ -128,10 +140,13 @@
   }
 
   function navigate(dir) {
+    if (!hasMultipleImages) return;
     render((currentIndex + dir + images.length) % images.length);
   }
 
   galleryItems.forEach((item, i) => {
+    item.setAttribute('aria-haspopup', 'dialog');
+    item.setAttribute('aria-controls', 'lightbox');
     if (item.tagName !== 'BUTTON' && item.tagName !== 'A') {
       item.setAttribute('role', 'button');
       item.setAttribute('tabindex', '0');
@@ -153,6 +168,24 @@
   if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(-1); });
   if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(1); });
   lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+  lightbox.addEventListener('touchstart', (e) => {
+    resetTouch();
+    if (!isOpen || e.touches.length !== 1 || (e.target instanceof Element && e.target.closest('button'))) return;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  lightbox.addEventListener('touchend', (e) => {
+    if (touchStartX === null || touchStartY === null || e.changedTouches.length !== 1) {
+      resetTouch();
+      return;
+    }
+    const deltaX = e.changedTouches[0].clientX - touchStartX;
+    const deltaY = e.changedTouches[0].clientY - touchStartY;
+    resetTouch();
+    if (Math.abs(deltaX) < 50 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.2) return;
+    navigate(deltaX < 0 ? 1 : -1);
+  }, { passive: true });
+  lightbox.addEventListener('touchcancel', resetTouch, { passive: true });
 
   document.addEventListener('keydown', (e) => {
     if (!lightbox.classList.contains('active')) return;
