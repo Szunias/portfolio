@@ -179,7 +179,7 @@ module.exports = {
       slug: 'autotrim',
       layout: 'project',
       css: 'case',
-      js: ['lightbox'],
+      js: ['lightbox', 'autotrim-tour'],
       schemaType: 'SoftwareApplication',
       title: 'AutoTrim Exporter | REAPER Sound Asset Delivery',
       description: 'AutoTrim Exporter 3.4.3 is a REAPER delivery tool for collecting layered sounds, checking the render path and exporting trimmed, named and verified audio assets.',
