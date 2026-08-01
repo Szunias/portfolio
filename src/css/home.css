@@ -164,52 +164,36 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
   z-index:1;
   inset:0;
   display:none;
-  align-items:flex-end;
-  justify-content:flex-end;
+  align-items:center;
+  justify-content:center;
   width:100%;
-  padding:clamp(14px,2.3vw,24px);
+  padding:0;
   border:0;
   color:var(--ink);
   cursor:pointer;
-  background:linear-gradient(180deg, transparent 42%, rgba(4,7,10,.12) 72%, rgba(4,7,10,.58) 100%);
+  background:transparent;
 }
 .hero-reel__player.has-custom-cover .hero-reel__launch { display:flex; }
 .hero-reel__player.has-custom-cover.is-started .hero-reel__launch { display:none; }
-.hero-reel__launch-panel {
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:8px 14px 8px 8px;
-  border:1px solid rgba(236,238,240,.26);
-  border-radius:999px;
-  background:rgba(10,13,16,.76);
-  box-shadow:0 12px 35px rgba(0,0,0,.34);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  transition:transform .2s, border-color .2s, background .2s;
-}
 .hero-reel__launch-icon {
   display:grid;
   place-items:center;
-  width:42px;
-  height:42px;
-  flex:0 0 auto;
+  width:68px;
+  height:68px;
   border-radius:50%;
   color:#101012;
-  background:var(--ink);
+  background:rgba(246,247,248,.94);
+  box-shadow:0 10px 32px rgba(0,0,0,.42);
+  transition:transform .18s, background .18s;
 }
-.hero-reel__launch-icon svg { width:20px; height:20px; fill:currentColor; }
-.hero-reel__launch-copy { display:grid; gap:2px; text-align:left; }
-.hero-reel__launch-copy strong,
-.hero-reel__launch-copy small { font-family:var(--mono); font-weight:400; }
-.hero-reel__launch-copy strong { font-size:10px; letter-spacing:.12em; }
-.hero-reel__launch-copy small { color:var(--muted); font-size:8px; letter-spacing:.08em; }
-.hero-reel__launch:hover .hero-reel__launch-panel,
-.hero-reel__launch:focus-visible .hero-reel__launch-panel {
-  transform:translateY(-2px);
-  border-color:rgba(236,238,240,.48);
-  background:rgba(10,13,16,.9);
+.hero-reel__launch-icon svg {
+  width:30px;
+  height:30px;
+  fill:currentColor;
+  transform:translateX(2px);
 }
+.hero-reel__launch:hover .hero-reel__launch-icon,
+.hero-reel__launch:focus-visible .hero-reel__launch-icon { transform:scale(1.08); background:#fff; }
 .hero-reel__launch:focus-visible { outline:2px solid var(--ice); outline-offset:-4px; }
 .hero-reel figcaption {
   align-items:flex-start;
@@ -489,8 +473,7 @@ section.panel { padding:0; }
 /* Glass fallback for browsers without backdrop-filter support. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .site-header,
-  .hero__cta a.ghost,
-  .hero-reel__launch-panel { background:rgba(16,16,18,0.94); }
+  .hero__cta a.ghost { background:rgba(16,16,18,0.94); }
 }
 
 /* ---------- Responsive ---------- */
@@ -827,10 +810,8 @@ section.panel { padding:0; }
   .hero-reel__player { border-radius:12px; }
   .hero-reel__head,
   .hero-reel figcaption { font-size:10px; }
-  .hero-reel__launch { padding:12px; }
-  .hero-reel__launch-panel { gap:9px; padding:6px 11px 6px 6px; }
-  .hero-reel__launch-icon { width:38px; height:38px; }
-  .hero-reel__launch-copy small { font-size:9px; }
+  .hero-reel__launch-icon { width:58px; height:58px; }
+  .hero-reel__launch-icon svg { width:26px; height:26px; }
 
   /* ---- Featured projects: image-led cards ----
      The row becomes a single column and the thumbnail leads it at the width
