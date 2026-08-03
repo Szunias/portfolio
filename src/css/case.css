@@ -1128,6 +1128,28 @@ main#main-content { position: relative; z-index: 1; }
 
 .gallery-item--contain img { object-fit: contain; }
 
+/* Contained tiles hold UI captures, whose shapes range from 0.49 to 2.66.
+   Fitting those into a 16/10 tile shrank a tall Wwise panel to 107px of a
+   348px phone screen. The 16/10 tile exists to keep multi-column rows even,
+   which stops mattering once the grid is a single column, so there the
+   capture takes the full width at its own height. */
+@media (max-width: 620px) {
+  .gallery-item--contain img {
+    height: auto;
+    aspect-ratio: auto;
+  }
+
+  /* The caption is an overlay, which was harmless while it sat on the empty
+     band below a letterboxed capture. Now that the capture fills the tile it
+     would cover the bottom rows of a Wwise tree, so on a phone it drops below
+     the image instead. */
+  .gallery-item--contain .gallery-item__caption {
+    position: static;
+    padding: 9px 12px 11px;
+    background: rgba(5, 5, 7, 0.9);
+  }
+}
+
 .gallery-item:hover img { transform: scale(1.03); }
 
 .gallery-item:focus-visible {
