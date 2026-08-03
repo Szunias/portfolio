@@ -159,15 +159,18 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
   object-fit:contain;
   background:#08080a;
 }
+/* The button covers the whole frame, so the poster stays clickable edge to
+   edge. Only the visible disc moves: centred, it landed on the last letters
+   of the name burnt into the poster. The lower-right quadrant is empty. */
 .hero-reel__launch {
   position:absolute;
   z-index:1;
   inset:0;
   display:none;
-  align-items:center;
-  justify-content:center;
+  align-items:flex-end;
+  justify-content:flex-end;
   width:100%;
-  padding:0;
+  padding:0 clamp(16px,3.4vw,30px) clamp(16px,3.4vw,30px) 0;
   border:0;
   color:var(--ink);
   cursor:pointer;
@@ -224,7 +227,10 @@ section.panel { padding:0; }
   background:#0b0b0d;
   border-top:1px solid rgba(170,198,222,0.22);
 }
-.panel__inner { max-width:1160px; margin:0 auto; padding:110px 40px 140px; }
+/* The bottom padding used to be 140px. The music entry is the last thing in
+   the slab, so that much room below it read as an unfinished panel rather
+   than as breathing space. */
+.panel__inner { max-width:1160px; margin:0 auto; padding:110px 40px 92px; }
 
 /* ---------- Project list: big type index, cursor image preview ---------- */
 .plist { border-top:1px solid var(--rule); }
@@ -430,13 +436,25 @@ section.panel { padding:0; }
      measure and matches the centred contact section that follows. */
   #about .sec-kicker,
   #about .sec-title { text-align:center; }
-  #about .about-panel { margin-inline:auto; }
+  /* The panel has to match the 60ch measure its paragraphs already use.
+     Centring a 68ch box around 60ch of text pushed every line 44px left of
+     the heading above it, which read as a broken centre rather than a
+     deliberate one. */
+  #about .about-panel { max-width:60ch; margin-inline:auto; }
 }
 
 /* ---------- Contact ---------- */
 /* 160px here plus the colophon's own padding made the page trail off; 130px
    matches the section rhythm used everywhere else. */
 .contact { text-align:center; padding-bottom:130px; }
+/* About is two short paragraphs, so its 130px bottom padding met the contact
+   section's 130px top and left 276px of empty screen between the last line of
+   prose and the next kicker. Both sides give some of it back. Scoped to the
+   desktop rhythm: the phone layer already runs a tighter 68px scale. */
+@media (min-width:900px) {
+  #about { padding-bottom:84px; }
+  .contact { padding-top:96px; }
+}
 .contact__mail {
   display:inline-block; max-width:100%;
   margin-top:32px;
@@ -483,24 +501,37 @@ section.panel { padding:0; }
   .work-split { display:block; border-top:none; }
   .work-split .plist { border-top:1px solid var(--rule); }
   .pview { display:none; }
+  /* The thumbnail takes the third column instead of dropping under the text.
+     A 104px square used to sit alone below the row, cropping a 16:9 frame to
+     an unreadable stamp and leaving the right half of a tablet screen empty. */
   .prow,
-  .work-split .prow { grid-template-columns:40px minmax(0,1fr) 104px; gap:20px; align-items:center; }
+  .work-split .prow {
+    grid-template-columns:40px minmax(0,1fr) clamp(210px, 27vw, 300px);
+    gap:8px 24px;
+    align-items:start;
+  }
+  .prow__idx { grid-column:1; grid-row:1; }
   /* The year and toolset used to be dropped on mobile. They are the strongest
      competence signal in the row, so keep them on a line of their own. */
   .prow__meta {
-    grid-column:1 / -1;
-    margin-top:4px;
+    grid-column:2;
+    grid-row:2;
+    margin-top:6px;
     text-align:left;
     line-height:1.5;
     font-size:11px;
   }
-  .prow__thumb { display:block; }
+  .prow__thumb {
+    display:block;
+    grid-column:3;
+    grid-row:1 / span 2;
+    align-self:center;
+  }
   .prow__thumb img {
-    width:104px; height:104px; object-fit:cover; display:block;
+    width:100%; height:auto; aspect-ratio:16 / 9; object-fit:cover; display:block;
     border-radius:12px; border:1px solid rgba(170,198,222,0.18);
   }
   .prow--tool .prow__thumb img {
-    height:auto;
     aspect-ratio:16 / 11;
     object-fit:contain;
     padding:6px;
@@ -858,34 +889,11 @@ section.panel { padding:0; }
   /* Touch has no hover, so the row needs a press state of its own. */
   .prow:active h3 { color: var(--ice); }
 
-  /* The first three projects keep the image-led treatment. Projects four to
-     six remain visible but switch to compact, text-led rows so the page reaches
-     the tools and contact path sooner on a phone. */
-  .prow--featured.prow--mobile-compact {
-    display: block;
-    min-height: 0;
-    padding: 19px 0 21px;
-  }
-  .prow--mobile-compact .prow__thumb { display: none; }
-  .prow--mobile-compact h3,
-  .work-split .prow--mobile-compact h3 {
-    font-size: clamp(1.32rem, 5.7vw, 1.65rem);
-    line-height: 1.08;
-  }
-  .prow--mobile-compact p {
-    display: -webkit-box;
-    margin-top: 7px;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    font-size: .88rem;
-    line-height: 1.48;
-  }
-  .prow--mobile-compact .prow__meta {
-    display: block;
-    margin-top: 9px;
-    text-align: left;
-  }
+  /* Projects four to six used to drop their image and clamp the description
+     to two lines, which saved height but broke the list in half: the reader
+     met three image-led entries and then three text stubs under the same
+     heading. Every game project now uses the one treatment. The images are
+     the proof the section exists to show. */
 
   .work-contact-cta {
     display: grid;
