@@ -967,6 +967,93 @@ main#main-content { position: relative; z-index: 1; }
   border: 0;
 }
 
+/* Click-to-load YouTube facade. Paired with video-facade.js: the poster and
+   play control are real markup, so the block paints its frame immediately
+   instead of showing the black box a cold iframe leaves behind. */
+.yt-facade {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #050507;
+}
+
+.yt-facade iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.yt-facade__launch {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.yt-facade__launch img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.yt-facade__launch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .18), rgba(0, 0, 0, .46));
+  transition: background .18s;
+}
+
+.yt-facade__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(240, 242, 244, .94);
+  color: #101012;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, .42);
+  transition: transform .18s, background .18s;
+}
+
+.yt-facade__play svg {
+  width: 30px;
+  height: 30px;
+  fill: currentColor;
+  transform: translateX(2px);
+}
+
+.yt-facade__launch:hover .yt-facade__play,
+.yt-facade__launch:focus-visible .yt-facade__play {
+  transform: translate(-50%, -50%) scale(1.08);
+  background: #fff;
+}
+
+.yt-facade__launch:hover::after { background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .1), rgba(0, 0, 0, .38)); }
+.yt-facade__launch:focus-visible { outline: 2px solid var(--mw-cyan, #6fb7ff); outline-offset: -4px; }
+
+@media (max-width: 620px) {
+  .yt-facade__play { width: 56px; height: 56px; }
+  .yt-facade__play svg { width: 25px; height: 25px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .yt-facade__play,
+  .yt-facade__launch::after { transition: none; }
+}
+
 .video-intro {
   font-family: var(--mono);
   font-size: 12.5px;
@@ -7961,11 +8048,22 @@ main#main-content { position: relative; z-index: 1; }
   color: var(--ink-70);
 }
 
+/* The gallery used to sit in a 1.7fr column as two side-by-side thumbnails:
+   328px tall against a 772px column of text, leaving a 444px hole under it.
+   A single-column gallery in a narrower column runs to 798px against 560px,
+   so the mismatch drops to 238px and the UI captures render at roughly
+   520px instead of 390px, which is the difference between a readable
+   screenshot and a swatch. */
 .mw-interface__layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(290px, 0.7fr);
+  grid-template-columns: minmax(0, 0.85fr) minmax(290px, 1fr);
   gap: clamp(32px, 5vw, 64px);
   align-items: start;
+}
+
+.mw-interface__layout .mw-gallery,
+.tool-page .mw-interface__layout .mw-gallery {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .tool-page .mw-gallery {
@@ -8022,6 +8120,18 @@ main#main-content { position: relative; z-index: 1; }
   grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
   gap: clamp(40px, 8vw, 104px);
   align-items: start;
+}
+
+/* The release box is 309px against a 1096px column of commands, so it left
+   almost 800px of empty screen beside the text. Sticking it to the top keeps
+   the download details in view while the commands are read, and the column
+   is never empty. Below 920px the grid collapses to one column, where a
+   sticky box would only get in the way. */
+@media (min-width: 920.02px) {
+  .mw-final__grid .tool-release {
+    position: sticky;
+    top: 96px;
+  }
 }
 
 .mw-commands h2 {
