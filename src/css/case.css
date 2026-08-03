@@ -1088,10 +1088,15 @@ main#main-content { position: relative; z-index: 1; }
   gap: 14px;
 }
 
+/* height:auto is load-bearing. Without it the img keeps the height from its
+   HTML attribute, so both dimensions are resolved and aspect-ratio is
+   ignored: at 390px the box stayed 350x540 while the frame drew 350x197,
+   leaving 171px of black band above and below it. */
 .screenshot-section img,
 .hero-image-section > img {
   display:block;
   width:100%;
+  height:auto;
   aspect-ratio:16 / 9;
   object-fit:contain;
   border:1px solid var(--rule);
