@@ -396,15 +396,25 @@ a { color: var(--paper); }
 
 /* ============================== library ============================== */
 
+/* The archive box is narrower than the rest of the page so a track row stays
+   scannable. It shares the page container rather than centring on its own,
+   otherwise its left edge sits 80px inside the selected-work grid above it and
+   the two sections read as misaligned. */
 .library {
-  max-width: var(--archive-max);
+  max-width: var(--content-max);
   margin: 0 auto;
   padding: 0 0 clamp(72px, 9vw, 120px);
   border-top: 1px solid var(--rule);
   padding-top: clamp(56px, 7vw, 88px);
 }
 
-.library .section-heading { max-width: var(--archive-max); }
+.library .section-heading,
+.library__filters,
+.library__list,
+.library__noscript {
+  max-width: var(--archive-max);
+  margin-inline: 0;
+}
 
 .library__filters {
   display: flex;
@@ -1142,7 +1152,7 @@ a { color: var(--paper); }
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 899.98px) {
   .player-bar {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 8px;

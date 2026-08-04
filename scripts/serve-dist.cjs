@@ -18,16 +18,28 @@ const TYPES = {
   '.webp': 'image/webp',
   '.gif': 'image/gif',
   '.mp4': 'video/mp4',
+  '.m4a': 'audio/mp4',
+  '.webm': 'video/webm',
   '.mp3': 'audio/mpeg',
   '.wav': 'audio/wav',
   '.woff2': 'font/woff2',
   '.pdf': 'application/pdf',
+  '.xml': 'application/xml',
+  '.txt': 'text/plain; charset=utf-8',
+  '.ico': 'image/x-icon',
 };
 
 http.createServer((req, res) => {
-  const url = decodeURIComponent(req.url.split('?')[0]);
+  let url;
+  try {
+    url = decodeURIComponent(req.url.split('?')[0]);
+  } catch (_) {
+    res.writeHead(400).end('bad request');
+    return;
+  }
   let file = path.join(ROOT, url);
-  if (!file.startsWith(ROOT)) { res.writeHead(403).end('forbidden'); return; }
+  // Require a trailing separator so "../dist-other" cannot pass as inside ROOT.
+  if (file !== ROOT && !file.startsWith(ROOT + path.sep)) { res.writeHead(403).end('forbidden'); return; }
   if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
   if (!fs.existsSync(file) && fs.existsSync(file + '.html')) file += '.html';
   if (!fs.existsSync(file)) {

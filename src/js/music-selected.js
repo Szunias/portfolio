@@ -285,7 +285,9 @@
   function playTrackIndex(index) {
     if (!validIndex(index)) return;
     if (pool.indexOf(index) < 0) {
-      pool = tracks.map((_, i) => i);
+      // Widening the queue must also widen the visible filter, otherwise the
+      // filter chips and archive list would disagree with the actual queue.
+      applyFilter('all');
       buildOrder(index);
     }
     const at = order.indexOf(index);
@@ -895,6 +897,14 @@
     const list = role('queue');
     if (!list) return;
     const upcoming = order.slice(orderPos + 1, orderPos + 21);
+    // Rebuilding the list destroys the focused row, which would silently dump
+    // keyboard focus to the body inside the open dialog. Remember the slot so
+    // focus can land on the equivalent row afterwards.
+    const focused = document.activeElement;
+    const hadFocus = !!(focused && list.contains(focused));
+    const focusSlot = hadFocus
+      ? Array.from(list.querySelectorAll('.now-playing__queue-row')).indexOf(focused.closest('.now-playing__queue-row'))
+      : -1;
     list.textContent = '';
     if (!upcoming.length) {
       const empty = document.createElement('li');
@@ -903,6 +913,10 @@
         ? 'End of the queue. Repeat is on, so it starts over.'
         : 'End of the queue.';
       list.append(empty);
+      if (hadFocus) {
+        const closeButton = document.querySelector('[data-player="close-sheet"]');
+        if (closeButton) closeButton.focus();
+      }
       return;
     }
     upcoming.forEach((trackIndex, offset) => {
@@ -928,6 +942,11 @@
       item.append(button);
       list.append(item);
     });
+    if (hadFocus) {
+      const rows = list.querySelectorAll('.now-playing__queue-row');
+      const target = rows[Math.max(0, Math.min(focusSlot, rows.length - 1))];
+      if (target) target.focus();
+    }
   }
 
   // ------------------------------------------------------------------- sheet
@@ -1231,6 +1250,11 @@
     setPlayState();
   });
   audio.addEventListener('loadedmetadata', () => {
+    // With preload="metadata" some browsers (Safari/iOS) stop loading here and
+    // never fire canplay, which would leave a restored, non-autoplay selection
+    // stuck on "Loading" with aria-busy set. Metadata in hand while paused
+    // means the track is ready to start.
+    if (audio.paused && !hasPlaybackError && selectedTrack()) setStatus('Ready to play');
     updateProgress();
     updateBuffered();
     pushPositionState(true);

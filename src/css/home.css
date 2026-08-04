@@ -72,10 +72,10 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
 @media (min-width:1360px) {
   /* At 1440 there were 188px of unused margin on each side. Spending some of
      it lets the project list and its preview both keep a comfortable size.
-     The matching .work-split override lives next to that rule, further down:
-     placing it here would lose to the later base declaration. */
+     The matching .work-split and .panel__inner overrides live next to those
+     rules, further down: placing them here would lose to the later base
+     declarations. */
   .wrap { max-width:1280px; }
-  .panel__inner { max-width:1280px; }
 }
 
 /* ---------- Hero ---------- */
@@ -328,8 +328,10 @@ section.panel { padding:0; }
 
 @media (min-width:1360px) {
   /* Pairs with the wider .wrap above: the extra room goes to the preview so
-     it is not the description that pays for it. */
+     it is not the description that pays for it. The .panel__inner override
+     must also live after its base declaration (line ~233) to win. */
   .work-split { grid-template-columns:minmax(0,1fr) 400px; }
+  .panel__inner { max-width:1280px; }
 }
 .pview { position:sticky; top:104px; padding-top:34px; }
 .pview__frame {
@@ -429,6 +431,32 @@ section.panel { padding:0; }
 }
 .about-panel p { color:var(--muted); margin-bottom:16px; max-width:60ch; }
 .about-panel p strong { color:var(--ink); font-weight:500; }
+
+/* The prose says what I do; this says what with. A recruiter scanning for a
+   middleware or an engine should not have to read three project pages to find
+   it, so the toolkit sits once here rather than in a stats grid. */
+.about-facts {
+  margin-top:26px;
+  padding-top:20px;
+  border-top:1px solid var(--rule);
+  text-align:left;
+}
+.about-facts > div {
+  display:grid;
+  grid-template-columns:minmax(96px, 0.32fr) minmax(0, 1fr);
+  gap:6px 18px;
+  padding:9px 0;
+}
+.about-facts > div + div { border-top:1px solid var(--rule); }
+.about-facts dt {
+  font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--faint);
+}
+.about-facts dd { margin:0; color:var(--muted); font-size:.95rem; line-height:1.6; }
+
+@media (max-width:560px) {
+  .about-facts > div { grid-template-columns:1fr; gap:3px; }
+}
 
 @media (min-width:900px) {
   /* A 68ch column pinned to the left of a 1080px container left the right
@@ -646,6 +674,36 @@ section.panel { padding:0; }
 }
 
 .error-page__back:hover { border-color: var(--ice); }
+
+/* A single link back to the index turns a mistyped URL into two navigations.
+   The four destinations below are the whole site, so the page ends the detour
+   instead of extending it. */
+.error-page__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  margin-top: 34px;
+  padding-top: 26px;
+  border-top: 1px solid var(--rule);
+  width: 100%;
+  max-width: 54ch;
+}
+
+.error-page__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: .72rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.error-page__links a:hover { border-color: var(--ice); color: var(--ink); }
 
 @media (max-width: 620px) {
   .error-page { padding-right: 20px; padding-left: 20px; }
@@ -923,11 +981,16 @@ section.panel { padding:0; }
 
   /* ---- Tools: compact rows ----
      A REAPER script or a VST has no cinematic frame to show, so these keep a
-     small square mark and stay dense enough to scan. */
+     small square mark and stay dense enough to scan.
+
+     The mark crops to the top-left of the capture instead of fitting the whole
+     window into it. A 1680px application window scaled into a square reads as
+     an empty grey tile next to the full-width game stills above; its title bar
+     and first panel still identify the tool. */
   .prow--tool,
   .work-split .prow--tool {
     display: grid;
-    grid-template-columns: 62px minmax(0, 1fr);
+    grid-template-columns: 84px minmax(0, 1fr);
     gap: 6px 16px;
     align-items: start;
     padding: 20px 0 22px;
@@ -940,12 +1003,13 @@ section.panel { padding:0; }
   .prow--tool > div:not(.prow__thumb) { grid-column: 2; grid-row: 1; }
   .prow--tool .prow__meta { grid-column: 2; grid-row: 2; }
   .prow--tool .prow__thumb img {
-    width: 62px;
-    height: 62px;
+    width: 84px;
+    height: 84px;
     aspect-ratio: 1 / 1;
-    padding: 7px;
+    padding: 0;
     border-radius: 14px;
-    object-fit: contain;
+    object-fit: cover;
+    object-position: left top;
     background: #151517;
   }
   .prow--tool h3,
@@ -1019,6 +1083,6 @@ section.panel { padding:0; }
 
 @media (max-width: 400px) {
   .prow--tool,
-  .work-split .prow--tool { grid-template-columns: 54px minmax(0, 1fr); gap: 5px 13px; }
-  .prow--tool .prow__thumb img { width: 54px; height: 54px; }
+  .work-split .prow--tool { grid-template-columns: 72px minmax(0, 1fr); gap: 5px 13px; }
+  .prow--tool .prow__thumb img { width: 72px; height: 72px; }
 }

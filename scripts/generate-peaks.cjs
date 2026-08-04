@@ -95,7 +95,9 @@ function main() {
   }
 
   let html = fs.readFileSync(PAGE, 'utf8');
-  const cards = [...html.matchAll(/<div class="track-card"[^>]*><\/div>/g)].map(m => m[0]);
+  // Match on class containment so extra classes or attribute order don't
+  // silently exclude a card from processing.
+  const cards = [...html.matchAll(/<div\b[^>]*\bclass="[^"]*(?<![\w-])track-card(?![\w-])[^"]*"[^>]*><\/div>/g)].map(m => m[0]);
   if (!cards.length) {
     console.error('No track-card elements found in src/pages/music.html.');
     process.exit(1);
@@ -137,7 +139,9 @@ function main() {
       ? card.replace(/data-peaks="[^"]*"/, 'data-peaks="' + peaks + '"')
       : card.replace(/><\/div>$/, ' data-peaks="' + peaks + '"></div>');
 
-    html = html.replace(card, updated);
+    // Replacer function: a plain string here would expand $-sequences
+    // (e.g. a "$&" or "$'" inside a track title) and corrupt the page.
+    html = html.replace(card, () => updated);
     done += 1;
     process.stdout.write('  ✓ ' + title + '\n');
   });

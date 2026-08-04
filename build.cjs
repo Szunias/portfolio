@@ -27,10 +27,13 @@ function gitMtime(filePath) {
 }
 
 function maxGitMtime(files) {
+  // Compare chronologically (Date.parse), not lexicographically: ISO strings
+  // with mixed UTC offsets (local commits vs GitHub web-UI "Z" commits) do not
+  // sort correctly as plain strings.
   const times = files
     .map(gitMtime)
     .filter(Boolean)
-    .sort();
+    .sort((a, b) => Date.parse(a) - Date.parse(b));
   return times.length ? times[times.length - 1] : null;
 }
 
@@ -373,7 +376,8 @@ function stripTags(html) {
 }
 
 function attrValue(tag, name) {
-  const match = tag.match(new RegExp(`\\b${name}=(["'])(.*?)\\1`, 'i'));
+  // (?<![\w-]) keeps e.g. name="src" from matching data-src= (\b matches after "-").
+  const match = tag.match(new RegExp(`(?<![\\w-])${name}=(["'])(.*?)\\1`, 'i'));
   return match ? match[2] : '';
 }
 
@@ -402,7 +406,7 @@ function enhanceVideoAccessibility(html) {
       counter++;
       const id = `video-caption-${counter}`;
       const describedVideo = videoHtml.replace(/<video\b/i, `<video aria-describedby="${id}"`);
-      const describedCaptionStart = /\bid=/.test(captionAttrs)
+      const describedCaptionStart = /(?<![\w-])id=/.test(captionAttrs)
         ? captionStart
         : `${captionStart} id="${id}"`;
       return describedVideo + describedCaptionStart + captionAttrs;
@@ -490,13 +494,36 @@ function enhanceImageAccessibility(html) {
   });
 }
 
+/* Captures whose CSS clears the 16/10 tile ratio need their own ratio back, or
+   they occupy 2px until they load: the page shifts as they arrive and a fast
+   phone scroll can leave them blank, because a 2px box never stays in view long
+   enough to start the lazy load. Chrome derives no usable ratio from the width
+   and height attributes once a stylesheet sets aspect-ratio, and `revert` does
+   not restore it, so the ratio travels as a custom property the stylesheet
+   reads. Images without both attributes keep the per-component fallback. */
+function reserveImageAspectRatio(html) {
+  return html.replace(/<img\b([^>]*)>/gi, (match, attrs) => {
+    if (/--shot-ar\s*:/i.test(attrs)) return match;
+    const width = Number(attrValue(match, 'width'));
+    const height = Number(attrValue(match, 'height'));
+    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return match;
+    const ratio = `--shot-ar:${width}/${height}`;
+    if (hasAttr(attrs, 'style')) {
+      return `<img${attrs.replace(/\bstyle=(["'])([\s\S]*?)\1/i, (styleMatch, quote, value) => (
+        `style=${quote}${ratio};${value}${quote}`
+      ))}>`;
+    }
+    return `<img style="${ratio}"${attrs}>`;
+  });
+}
+
 function enhanceDocumentBasics(html) {
   let output = html;
   output = output.replace(new RegExp(EMPTY_INLINE_SCRIPT_PATTERN, 'gi'), '');
   output = output.replace(/<html\b([^>]*)>/i, (match, attrs) => (
     hasAttr(attrs, 'lang') ? match : `<html lang="en"${attrs}>`
   ));
-  if (!/<meta\b(?=[^>]*\bname=(["'])viewport\1)/i.test(output) && /<\/head>/i.test(output)) {
+  if (!/<meta\b(?=[^>]*(?<![\w-])name=(["'])viewport\1)/i.test(output) && /<\/head>/i.test(output)) {
     output = output.replace(/<\/head>/i, '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n</head>');
   }
   return output;
@@ -520,14 +547,14 @@ function enhanceInlineSvgAccessibility(html) {
 function neutralizeJavascriptHrefs(html) {
   if (!/\bhref=(["'])javascript:[^"']*\1/i.test(html)) return html;
   let output = html;
-  if (!/\bid=(["'])top\1/i.test(output)) {
+  if (!/(?<![\w-])id=(["'])top\1/i.test(output)) {
     output = output.replace(/<body\b[^>]*>/i, '$&\n<span id="top" hidden></span>');
   }
   return output.replace(/\bhref=(["'])javascript:[^"']*\1/gi, 'href="#top"');
 }
 
 function ensureNoindex(html) {
-  const cleaned = html.replace(/<meta\b(?=[^>]*\bname=["']robots["'])[^>]*>\s*/gi, '');
+  const cleaned = html.replace(/<meta\b(?=[^>]*(?<![\w-])name=["']robots["'])[^>]*>\s*/gi, '');
   if (/<\/head>/i.test(html)) {
     return cleaned.replace(/<\/head>/i, '  <meta name="robots" content="noindex, nofollow">\n</head>');
   }
@@ -702,9 +729,9 @@ function validateLocalRefsInDist(htmlFiles, siteOrigin) {
 }
 
 function collectFragmentTargets(html) {
-  const ids = [...html.matchAll(/\bid=(["'])(.*?)\1/gi)].map(match => match[2]);
+  const ids = [...html.matchAll(/(?<![\w-])id=(["'])(.*?)\1/gi)].map(match => match[2]);
   return new Set(ids.concat(
-    [...html.matchAll(/\bname=(["'])(.*?)\1/gi)].map(match => match[2])
+    [...html.matchAll(/(?<![\w-])name=(["'])(.*?)\1/gi)].map(match => match[2])
   ));
 }
 
@@ -727,7 +754,7 @@ function validateGeneratedHtml(htmlFiles) {
   for (const file of htmlFiles) {
     const html = htmlByFile.get(file);
     if (!/<html\b[^>]*\blang=(["'])[^"']+\1/i.test(html)) issues.push(`${file}: html missing lang`);
-    if (!/<meta\b(?=[^>]*\bname=(["'])viewport\1)/i.test(html)) issues.push(`${file}: missing viewport meta`);
+    if (!/<meta\b(?=[^>]*(?<![\w-])name=(["'])viewport\1)/i.test(html)) issues.push(`${file}: missing viewport meta`);
     if (new RegExp(EMPTY_INLINE_SCRIPT_PATTERN, 'i').test(html)) issues.push(`${file}: empty inline script block`);
     if (/<!--\s*(?:TITLE|DESCRIPTION|CANONICAL|OG_TAGS|CSS|CONTENT|JS|SCHEMA|PLAYER|LIGHTBOX|FOOTER)\s*-->/.test(html)) {
       issues.push(`${file}: unresolved build placeholder`);
@@ -745,11 +772,11 @@ function validateGeneratedHtml(htmlFiles) {
         issues.push(`${file}: invalid JSON-LD (${err.message})`);
       }
     }
-    const ids = [...html.matchAll(/\bid=(["'])(.*?)\1/gi)].map(match => match[2]);
+    const ids = [...html.matchAll(/(?<![\w-])id=(["'])(.*?)\1/gi)].map(match => match[2]);
     const fragmentTargets = fragmentTargetsByFile.get(file);
     const duplicateId = ids.find((id, index) => ids.indexOf(id) !== index);
     if (duplicateId) issues.push(`${file}: duplicate id "${duplicateId}"`);
-    const isNoindex = /<meta\b(?=[^>]*\bname=(["'])robots\1)(?=[^>]*\bcontent=(["'])[^"']*\bnoindex\b[^"']*\2)/i.test(html);
+    const isNoindex = /<meta\b(?=[^>]*(?<![\w-])name=(["'])robots\1)(?=[^>]*\bcontent=(["'])[^"']*\bnoindex\b[^"']*\2)/i.test(html);
     const pageConfig = pageByFile.get(file);
 
     if (pageConfig) {
@@ -758,7 +785,7 @@ function validateGeneratedHtml(htmlFiles) {
       }
       const titles = [...html.matchAll(/<title\b[^>]*>([\s\S]*?)<\/title>/gi)].map(match => stripTags(match[1]));
       if (titles.length !== 1 || !titles[0]) issues.push(`${file}: expected exactly one non-empty title`);
-      const descriptions = [...html.matchAll(/<meta\b(?=[^>]*\bname=(["'])description\1)[^>]*>/gi)];
+      const descriptions = [...html.matchAll(/<meta\b(?=[^>]*(?<![\w-])name=(["'])description\1)[^>]*>/gi)];
       if (descriptions.length !== 1 || !attrValue(descriptions[0][0], 'content')) {
         issues.push(`${file}: expected exactly one non-empty meta description`);
       }
@@ -992,7 +1019,7 @@ function rewriteRootRelativeUrls(html, origin) {
 function ensureFragmentTargets(html, ids) {
   let output = html;
   for (const id of ids || []) {
-    const hasTarget = new RegExp(`\\bid=(["'])${escapeRegExp(id)}\\1`, 'i').test(output);
+    const hasTarget = new RegExp(`(?<![\\w-])id=(["'])${escapeRegExp(id)}\\1`, 'i').test(output);
     if (!hasTarget) {
       output = output.replace(/<body\b([^>]*)>/i, `$&\n<div id="${escAttr(id)}" tabindex="-1"></div>`);
     }
@@ -1090,7 +1117,7 @@ function buildPage(page) {
   if (!fs.existsSync(layoutPath)) {
     throw new Error(`Layout not found: src/layouts/${page.layout}.html (required by ${page.slug})`);
   }
-  let html = enhanceInlineSvgAccessibility(enhanceImageAccessibility(read(layoutPath)));
+  let html = enhanceInlineSvgAccessibility(reserveImageAspectRatio(enhanceImageAccessibility(read(layoutPath))));
 
   // 2. Read page content
   const pagePath = path.join(SRC, 'pages', `${page.slug}.html`);
@@ -1102,6 +1129,7 @@ function buildPage(page) {
   content = enhanceExternalLinkSafety(content);
   content = enhanceIframeAccessibility(content);
   content = enhanceImageAccessibility(content);
+  content = reserveImageAspectRatio(content);
   content = enhanceInlineSvgAccessibility(content);
   content = enhanceGalleryItemLinks(content);
 
@@ -1172,7 +1200,7 @@ function validateConfig(cfg) {
     if (/<\/?(?:html|head|body)\b/i.test(source)) {
       throw new Error(`Page content must not include document shell tags: src/pages/${slug}.html`);
     }
-    const ids = [...source.matchAll(/\bid=(["'])(.*?)\1/gi)].map(match => match[2]);
+    const ids = [...source.matchAll(/(?<![\w-])id=(["'])(.*?)\1/gi)].map(match => match[2]);
     const duplicateId = ids.find((id, index) => ids.indexOf(id) !== index);
     if (duplicateId) throw new Error(`Duplicate id "${duplicateId}" in src/pages/${slug}.html`);
   }
