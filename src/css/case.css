@@ -1108,6 +1108,10 @@ main#main-content { position: relative; z-index: 1; }
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 14px;
+  /* Contained tiles keep their capture's own height, so a row holds tiles of
+     different heights. Stretching them would reopen the empty band under the
+     shorter capture that giving them their own shape just closed. */
+  align-items: start;
 }
 
 /* height:auto is load-bearing. Without it the img keeps the height from its
@@ -1171,9 +1175,11 @@ main#main-content { position: relative; z-index: 1; }
 
 /* Contained tiles hold UI captures, whose shapes range from 0.49 to 2.66.
    Fitting those into a 16/10 tile shrank a tall Wwise panel to 107px of a
-   348px phone screen. The 16/10 tile exists to keep multi-column rows even,
-   which stops mattering once the grid is a single column, so there the
-   capture takes the full width at its own height.
+   348px phone screen, and did the same on a desktop window: the RTPC and
+   states tree drew 162px wide inside a 527px tile, so 69% of the tile was
+   black and the parameter names were unreadable. The tile now takes the
+   capture's own shape at every width, which is what the phone layout already
+   did, so nothing is letterboxed.
 
    --shot-ar rather than `auto`: `auto` also drops the ratio the browser derives
    from the width and height attributes, so an unloaded lazy capture collapses
@@ -1181,11 +1187,22 @@ main#main-content { position: relative; z-index: 1; }
    on a fast phone scroll, because they never occupy enough of the viewport to
    trigger loading. build.cjs sets --shot-ar from the width and height
    attributes, which keeps the capture's own shape and reserves its space. */
-@media (max-width: 620px) {
-  .gallery-item--contain img {
-    height: auto;
-    aspect-ratio: var(--shot-ar, 16 / 10);
-  }
+.gallery-item--contain img {
+  height: auto;
+  aspect-ratio: var(--shot-ar, 16 / 10);
+}
+
+/* A 0.49 capture would otherwise stand 1070px tall in a 527px column and push
+   the rest of the section off the screen. Capping the height leaves some side
+   band on the tallest captures, but at 620px they still draw nearly four times
+   the area the 16/10 tile gave them.
+
+   The cap starts above the single-column breakpoint on purpose: a phone tile
+   is about 350px wide, so the same capture needs 715px of height to stay
+   edge to edge, and a 620px cap there would band a capture that currently
+   fills the screen width. */
+@media (min-width: 621px) {
+  .gallery-item--contain img { max-height: 620px; }
 }
 
 .gallery-item:hover img { transform: scale(1.03); }
@@ -1224,6 +1241,13 @@ main#main-content { position: relative; z-index: 1; }
 }
 
 .gallery-item:hover .gallery-item__zoom { opacity: 1; }
+
+/* Without hover the badge never appeared, so on a phone five pages carried
+   captures that open a lightbox with nothing to say so. It stays visible
+   there, dimmed enough not to compete with the capture underneath. */
+@media (hover: none) {
+  .gallery-item__zoom { opacity: 0.72; }
+}
 
 .gallery-item__zoom svg {
   width: 14px;

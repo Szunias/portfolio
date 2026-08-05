@@ -353,7 +353,15 @@ section.panel { padding:0; }
   .work-split { grid-template-columns:minmax(0,1fr) 400px; }
   .panel__inner { max-width:1280px; }
 }
-.pview { position:sticky; top:104px; padding-top:34px; }
+/* Pinned at 104px the panel sat against the header with about 450px of empty
+   column under it for the whole list. Centring it on the viewport puts the
+   preview beside the row the reader is actually on. The max() keeps it clear
+   of the header on a short window, where centring would tuck it underneath. */
+.pview {
+  position:sticky;
+  top:max(104px, calc(50svh - 175px));
+  padding-top:34px;
+}
 .pview__frame {
   position:relative; aspect-ratio:16/11;
   border-radius:14px; overflow:hidden;
