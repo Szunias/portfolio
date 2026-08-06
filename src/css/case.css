@@ -341,9 +341,14 @@ html.ifmc-no-3d .ifmc-hero__stage { display: none; }
 
 .ifmc-hero__copy a { pointer-events: auto; }
 
+/* Every other eyebrow on the site is tracked uppercase mono, including
+   .ifmc-entry__number two elements below this one. Without these two
+   declarations the hero kicker was the only mixed-case eyebrow anywhere. */
 .ifmc-hero__kicker {
   font-family: var(--mono);
   font-size: clamp(11px, 1.2vw, 13px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--signal);
   margin-bottom: 22px;
 }
@@ -6560,6 +6565,7 @@ main#main-content { position: relative; z-index: 1; }
   align-items: center;
 }
 
+
 :is(
   .xr-confidentiality span,
   .tr-snapshot__label,
@@ -8918,3 +8924,51 @@ main#main-content { position: relative; z-index: 1; }
   .lightbox__nav--prev { left: calc(50% - 62px); }
   .lightbox__nav--next { right: calc(50% - 62px); }
 }
+
+/* =========================================
+   UNDERLINES ON TALL LINKS
+   ========================================= */
+/* The base `a` rule draws its underline as a `border-bottom` on the link box.
+   That is correct for a link inside prose, where the box hugs the text, but
+   these links are inline-flex with min-height:44px so they stay tappable, and
+   their 10.5-12px text is centred in that box. The border therefore drew about
+   14px below the words and read as a stray rule rather than an underline.
+   text-decoration follows the text at any box height.
+
+   Deliberately absent: .back-nav a, .project-return a, .tool-footer__next and
+   .ifmc-foot__next already set border-bottom:0 because they carry no underline.
+
+   This block sits at the end of the file so it wins over .tool-links a, which
+   sets its own border-bottom several thousand lines above. */
+.colophon a,
+.ifmc-foot__links a,
+.tool-footer__links a,
+.tool-links a,
+.tool-release__links a,
+.aq-chain__limits a {
+  border-bottom: 0;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+/* Two accents are in play: the tool pages tint their links with --tool-accent,
+   everything else uses the site accent. Both keep the ratio the border had. */
+.colophon a,
+.ifmc-foot__links a,
+.tool-footer__links a {
+  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.tool-links a,
+.tool-release__links a,
+.aq-chain__limits a {
+  text-decoration-color: color-mix(in srgb, var(--tool-accent) 52%, transparent);
+}
+
+.colophon a:hover,
+.ifmc-foot__links a:hover,
+.tool-footer__links a:hover,
+.tool-links a:hover,
+.tool-release__links a:hover,
+.aq-chain__limits a:hover { text-decoration-color: var(--paper); }

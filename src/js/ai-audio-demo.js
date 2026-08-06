@@ -6,25 +6,25 @@
   const models = {
     dsp: {
       label: 'Procedural DSP',
-      latency: '15-25ms',
+      latency: '15–25 ms',
       use: 'Fallback',
       note: 'Low latency, but clearly synthetic.'
     },
     audiogen: {
       label: 'AudioGen',
-      latency: '2.1-2.8s',
+      latency: '2.1–2.8 s',
       use: 'Ambience',
       note: 'Better texture, but the response lands seconds late.'
     },
     mmaudio: {
-      label: 'MMAudio sample',
-      latency: '1.4-3.4s across variants',
+      label: 'MMAudio',
+      latency: '1.4–3.4 s across variants',
       use: 'Prepared content',
       note: 'The benchmark separates Small and Large; this selected sample is not used to compare them.'
     },
     elevenlabs: {
       label: 'ElevenLabs',
-      latency: '1.8-3.5s',
+      latency: '1.8–3.5 s',
       use: 'Pregeneration',
       note: 'Often the cleanest result in this sample set, but not safe for instant gameplay response.'
     }
@@ -125,7 +125,12 @@
     if (!model || !prompt) return;
 
     stopAudio();
-    if (audio) audio.src = prompt.files[currentModel];
+    if (audio) {
+      audio.src = prompt.files[currentModel];
+      // The static markup labels the first sample; keep the accessible name in
+      // step with whichever model/prompt combination is actually loaded.
+      audio.setAttribute('aria-label', `${model.label}: ${prompt.title}`);
+    }
     if (modelLabel) modelLabel.textContent = model.label;
     if (title) title.textContent = prompt.title;
     if (note) note.textContent = model.note;

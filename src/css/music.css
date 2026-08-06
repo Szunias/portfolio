@@ -174,7 +174,16 @@ a { color: var(--paper); }
   color: var(--text-muted);
 }
 
-.colophon a { color: var(--text-muted); text-decoration: none; }
+/* The comment above describes 44px links, but only home.css and case.css ever
+   set that up: here the six colophon links stayed inline and rendered 13px
+   tall, which is well under a usable tap target on a phone. */
+.colophon a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: var(--text-muted);
+  text-decoration: none;
+}
 .colophon a:hover { color: var(--paper); }
 
 /* ============================== headings ============================== */
@@ -472,6 +481,18 @@ a { color: var(--paper); }
 .filter-chip[aria-pressed='true'] .filter-chip__count { color: var(--accent); }
 
 .library__list { padding: 0 clamp(20px, 5vw, 40px); }
+
+/* Build-injected plain track index. Visible only until music-selected.js
+   mounts the interactive library (the script removes it), or permanently
+   for no-JS visitors and crawlers that skip script execution. */
+.music-static-index {
+  margin: 0;
+  padding-left: 1.4em;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 2;
+  color: var(--text-muted);
+}
 
 .library-group + .library-group { margin-top: 44px; }
 
@@ -1289,6 +1310,22 @@ a { color: var(--paper); }
   }
 
   .music-fallback li { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+
+  /* ---- Page foot ----
+     home.css and case.css both turn the colophon into a column here; this
+     layout relied on flex-wrap instead, which stacks the two spans but keeps
+     the row gap meant for a single line. */
+  .colophon {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* Six links and their separators came within a pixel of the available width
+     at 390px, so the row wrapped and left a separator dangling at the end of
+     the first line with Spotify orphaned below it. Tightening the tracking
+     here gives the row real room instead of a rounding margin. */
+  .colophon > span:last-child { letter-spacing: 0.01em; }
 }
 
 @media (max-width: 380px) {

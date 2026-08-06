@@ -772,6 +772,10 @@
 
   function buildLibrary() {
     if (!library) return [];
+    // The build injects a plain-text track index for crawlers and no-JS
+    // visitors; the interactive library replaces it.
+    const staticIndex = document.getElementById('musicStaticIndex');
+    if (staticIndex) staticIndex.remove();
     const years = new Map();
     tracks.forEach((track, index) => {
       const year = trackYear(track);

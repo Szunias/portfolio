@@ -34,6 +34,9 @@ module.exports = {
       canonical: `${SITE}/`,
       ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
       ogImageAlt: 'Shadow Frames horror game screenshot from Igor Szuniewicz game audio portfolio',
+      ogImageWidth: 1920,
+      ogImageHeight: 1080,
+      ogImageType: 'image/jpeg',
     },
 
     // Error page
@@ -48,6 +51,9 @@ module.exports = {
       ogType: 'website',
       ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
       ogImageAlt: 'Shadow Frames horror game screenshot from Igor Szuniewicz game audio portfolio',
+      ogImageWidth: 1920,
+      ogImageHeight: 1080,
+      ogImageType: 'image/jpeg',
       noindex: true,
       sitemap: false,
     },
@@ -82,6 +88,9 @@ module.exports = {
       canonical: `${SITE}/sidar.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-sidar/sidar-null-poster.jpg`,
       ogImageAlt: 'Red SIDAR NULL signal emerging from a black background',
+      ogImageWidth: 1600,
+      ogImageHeight: 900,
+      ogImageType: 'image/jpeg',
     },
     {
       slug: 'shadowframes',
@@ -94,6 +103,9 @@ module.exports = {
       canonical: `${SITE}/shadowframes.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
       ogImageAlt: 'Shadow Frames UE5 horror game scene with spatial audio implementation',
+      ogImageWidth: 1920,
+      ogImageHeight: 1080,
+      ogImageType: 'image/jpeg',
       lightbox: true,
     },
     {
@@ -107,6 +119,9 @@ module.exports = {
       canonical: `${SITE}/nottoday.html`,
       ogImage: `${SITE}/old/public/assets/images/projects/NotTodayPic1.png`,
       ogImageAlt: 'Not Today, Darling! go-kart racing game screenshot',
+      ogImageWidth: 1920,
+      ogImageHeight: 1080,
+      ogImageType: 'image/png',
       lightbox: true,
     },
     {
@@ -119,6 +134,9 @@ module.exports = {
       canonical: `${SITE}/ray.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-ray/rayinlight.png`,
       ogImageAlt: 'Ray animation still showing the character discovering light in a cave',
+      ogImageWidth: 1920,
+      ogImageHeight: 1080,
+      ogImageType: 'image/png',
     },
     {
       slug: 'akantilado',
@@ -130,6 +148,9 @@ module.exports = {
       canonical: `${SITE}/akantilado.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-akantilado/jungleviewfromtopshot.webp`,
       ogImageAlt: 'Akantilado jungle animation screenshot from sound design project',
+      ogImageWidth: 1920,
+      ogImageHeight: 1080,
+      ogImageType: 'image/webp',
     },
 
     // Projects without lightbox
@@ -144,6 +165,9 @@ module.exports = {
       canonical: `${SITE}/transientica.html`,
       ogImage: `${SITE}/transienticascreenshot.png`,
       ogImageAlt: 'Transientica current Unity beatbox rhythm game gameplay',
+      ogImageWidth: 2560,
+      ogImageHeight: 1440,
+      ogImageType: 'image/png',
     },
     {
       slug: 'ai-audio-research',
@@ -156,6 +180,9 @@ module.exports = {
       canonical: `${SITE}/ai-audio-research.html`,
       ogImage: `${SITE}/aithesiscover.png`,
       ogImageAlt: 'AI audio research thesis cover about real-time game sound generation',
+      ogImageWidth: 1167,
+      ogImageHeight: 733,
+      ogImageType: 'image/png',
       assets: [
         'old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-footstep.wav',
         'old/public/assets/images/projects-ai-audio-research/presentation/audio/audiogen-footstep.wav',
@@ -217,6 +244,9 @@ module.exports = {
       canonical: `${SITE}/amorak.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-amorak/basement.png`,
       ogImageAlt: 'Amorak horror animation basement scene used for binaural sound design',
+      ogImageWidth: 1920,
+      ogImageHeight: 1080,
+      ogImageType: 'image/png',
     },
     {
       slug: 'pausedeserve',
@@ -229,6 +259,9 @@ module.exports = {
       canonical: `${SITE}/pausedeserve.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-pausedeserve/redcorridor.png`,
       ogImageAlt: 'Pause and Deserve UE5 horror game red corridor screenshot',
+      ogImageWidth: 1920,
+      ogImageHeight: 1080,
+      ogImageType: 'image/png',
     },
     {
       slug: 'richter',
@@ -240,6 +273,9 @@ module.exports = {
       canonical: `${SITE}/richter.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-daw2/vlcsnap-2025-09-28-00h05m42s119.png`,
       ogImageAlt: 'Richter earthquake short film frame from field-recorded sound design project',
+      ogImageWidth: 1920,
+      ogImageHeight: 1080,
+      ogImageType: 'image/png',
     },
     {
       slug: 'ifmc',
@@ -252,6 +288,9 @@ module.exports = {
       canonical: `${SITE}/ifmc.html`,
       ogImage: `${SITE}/old/public/assets/audio/covers/ifmc-walter-og.jpg`,
       ogImageAlt: 'Walter riding a bicycle in the animated short scored by Igor Szuniewicz for the Indie Film Music Contest',
+      ogImageWidth: 1200,
+      ogImageHeight: 650,
+      ogImageType: 'image/jpeg',
     },
     {
       slug: 'sounddesign',
@@ -263,6 +302,9 @@ module.exports = {
       canonical: `${SITE}/sounddesign.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-sounddesign/sounddesignprojectcover.png`,
       ogImageAlt: 'Cover image for game audio sound redesigns by Igor Szuniewicz',
+      ogImageWidth: 2044,
+      ogImageHeight: 966,
+      ogImageType: 'image/png',
     },
     {
       slug: 'wwiseprojects',
@@ -274,6 +316,9 @@ module.exports = {
       canonical: `${SITE}/wwiseprojects.html`,
       ogImage: `${SITE}/old/public/wwiseprojectsinfo/images/StomachAches.png`,
       ogImageAlt: 'Wwise implementation project screenshot showing a Unity game audio exercise',
+      ogImageWidth: 1920,
+      ogImageHeight: 1080,
+      ogImageType: 'image/png',
     },
     {
       slug: 'mowik',

@@ -46,6 +46,25 @@
   var split = null;
   var cleanups = [];
 
+  // The panel is 400px wide, so the ~640w srcset candidate covers it on 1x
+  // and stays acceptable on 2x displays; anything larger is wasted transfer.
+  var PANEL_TARGET_WIDTH = 640 * Math.min(window.devicePixelRatio || 1, 2);
+
+  function pickPanelSrc(thumb) {
+    var srcset = thumb.getAttribute('srcset');
+    if (!srcset) return thumb.src;
+    var candidates = srcset.split(',').map(function (entry) {
+      var parts = entry.trim().split(/\s+/);
+      return { url: parts[0], width: parseInt(parts[1], 10) || 0 };
+    }).filter(function (c) { return c.url; });
+    if (!candidates.length) return thumb.src;
+    candidates.sort(function (a, b) { return a.width - b.width; });
+    for (var i = 0; i < candidates.length; i++) {
+      if (candidates[i].width >= PANEL_TARGET_WIDTH) return candidates[i].url;
+    }
+    return candidates[candidates.length - 1].url;
+  }
+
   function mountPreview() {
     if (split) return;
 
@@ -81,8 +100,10 @@
       img.dataset.loaded = 'false';
       if (row.classList.contains('prow--tool')) img.className = 'pview__image--tool';
       // src is assigned lazily in activate() so the page load doesn't pull
-      // all full-size thumbs at once
-      srcs.push(thumb ? (thumb.currentSrc || thumb.src) : '');
+      // all full-size thumbs at once. The thumbs are display:none at this
+      // width and lazy, so currentSrc is always empty here; the srcset has
+      // to be parsed by hand or the panel falls back to full-size originals.
+      srcs.push(thumb ? pickPanelSrc(thumb) : '');
       frame.appendChild(img);
       imgs.push(img);
 

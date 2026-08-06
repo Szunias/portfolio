@@ -262,6 +262,7 @@ function ogTags(page) {
     `<meta property="og:type" content="${escAttr(page.ogType || defaultOgType)}">`,
     `<meta property="og:url" content="${escAttr(page.canonical)}">`,
     `<meta property="og:site_name" content="Igor Szuniewicz">`,
+    `<meta property="og:locale" content="en_US">`,
     `<meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="${escAttr(ogTitle)}">`,
     `<meta name="twitter:description" content="${escAttr(page.description)}">`,
@@ -326,8 +327,11 @@ function schemaTags(page) {
     description: 'Game audio and technical sound design portfolio by Igor Szuniewicz.',
     publisher: { '@id': personId }
   };
+  // The page node is always a WebPage subtype; a typed work (VideoGame,
+  // SoftwareApplication, ScholarlyArticle) hangs off it as mainEntity rather
+  // than replacing it, so the graph stays valid for both kinds of consumers.
   const webPage = {
-    '@type': page.slug === 'index' ? 'ProfilePage' : (page.layout === 'music' ? 'CollectionPage' : (page.schemaType || 'CreativeWork')),
+    '@type': page.slug === 'index' ? 'ProfilePage' : (page.layout === 'music' ? 'CollectionPage' : 'WebPage'),
     '@id': pageId,
     url: page.canonical,
     name: pageName,
@@ -335,14 +339,28 @@ function schemaTags(page) {
     isPartOf: { '@id': siteId }
   };
   if (page.ogImage) webPage.image = page.ogImage;
+  const graph = [person, website, webPage];
   if (page.slug === 'index') {
     webPage.mainEntity = { '@id': personId };
   } else {
     webPage.author = { '@id': personId };
     webPage.creator = { '@id': personId };
-    webPage.mainEntityOfPage = page.canonical;
+    if (page.schemaType) {
+      const workId = `${page.canonical}#work`;
+      const work = {
+        '@type': page.schemaType,
+        '@id': workId,
+        name: pageName.replace(/\s+\|\s+.*$/, ''),
+        url: page.canonical,
+        description: page.description,
+        author: { '@id': personId },
+        mainEntityOfPage: { '@id': pageId }
+      };
+      if (page.ogImage) work.image = page.ogImage;
+      webPage.mainEntity = { '@id': workId };
+      graph.push(work);
+    }
   }
-  const graph = [person, website, webPage];
   if (page.slug !== 'index') {
     graph.push({
       '@type': 'BreadcrumbList',
@@ -364,6 +382,29 @@ function schemaTags(page) {
     });
   }
   return jsonLdTag(graph);
+}
+
+/**
+ * The interactive library is built entirely by music-selected.js from
+ * data-* attributes, so without this the initial HTML contains no track
+ * titles at all: crawlers that skip JS rendering see an empty page. The
+ * injected list mirrors the data attributes and is removed at runtime by
+ * buildLibrary() as soon as the real library mounts.
+ */
+function injectStaticTrackIndex(content) {
+  const cards = content.match(/<div class="track-card"[^>]*>/g) || [];
+  if (!cards.length) return content;
+  const items = cards.map(tag => {
+    const title = (tag.match(/data-title="([^"]*)"/) || [])[1];
+    if (!title) return '';
+    const year = ((tag.match(/data-year="([^"]*)"/) || [])[1] || '').slice(0, 4);
+    return `<li>${title}${year ? ` (${year})` : ''}</li>`;
+  }).filter(Boolean).join('');
+  if (!items) return content;
+  const list = `<ol class="music-static-index" id="musicStaticIndex" aria-label="All tracks in the archive">${items}</ol>`;
+  const replaced = content.replace(/(<div class="library__list" id="musicLibrary">)/, `$1${list}`);
+  if (replaced === content) throw new Error('music: #musicLibrary container not found for the static track index');
+  return replaced;
 }
 
 function stripTags(html) {
@@ -1047,6 +1088,58 @@ function getCSS(name) {
   return cssCache[name];
 }
 
+// Conservative CSS minifier: strips comments and collapses whitespace, but
+// leaves every other token untouched. It is string-aware so quoted content
+// (e.g. content: "*/") cannot be corrupted, and it never removes spaces
+// around ':' or inside calc(), where whitespace is syntactically meaningful.
+function minifyCss(source) {
+  let out = '';
+  let i = 0;
+  const n = source.length;
+  let quote = null;
+  const structural = '{};,>';
+  while (i < n) {
+    const ch = source[i];
+    if (quote) {
+      out += ch;
+      if (ch === '\\' && i + 1 < n) { out += source[i + 1]; i += 2; continue; }
+      if (ch === quote) quote = null;
+      i++;
+      continue;
+    }
+    if (ch === '"' || ch === "'") { quote = ch; out += ch; i++; continue; }
+    if (ch === '/' && source[i + 1] === '*') {
+      const end = source.indexOf('*/', i + 2);
+      i = end === -1 ? n : end + 2;
+      // A comment can separate two tokens; keep a single space when both
+      // neighbours are token characters so `a/**/b` cannot fuse into `ab`.
+      const prev = out[out.length - 1];
+      const next = source[i];
+      if (prev && next && !structural.includes(prev) && prev !== ' ' &&
+          !structural.includes(next) && !/\s/.test(next)) out += ' ';
+      continue;
+    }
+    if (/\s/.test(ch)) {
+      while (i < n && /\s/.test(source[i])) i++;
+      const prev = out[out.length - 1];
+      const next = source[i];
+      if (prev && next !== undefined && prev !== ' ' &&
+          !structural.includes(prev) && !structural.includes(next)) out += ' ';
+      continue;
+    }
+    if (ch === '}') {
+      while (out.endsWith(' ')) out = out.slice(0, -1);
+      if (out.endsWith(';')) out = out.slice(0, -1);
+      out += '}';
+      i++;
+      continue;
+    }
+    out += ch;
+    i++;
+  }
+  return out.trim();
+}
+
 // Syntax gate for browser JS. The build only concatenates files, so without
 // this a syntax error ships to production and breaks the page at runtime.
 // Pages load classic scripts (no type="module"), so vm.Script is the matching
@@ -1132,9 +1225,10 @@ function buildPage(page) {
   content = reserveImageAspectRatio(content);
   content = enhanceInlineSvgAccessibility(content);
   content = enhanceGalleryItemLinks(content);
+  if (page.layout === 'music') content = injectStaticTrackIndex(content);
 
   // 3. Assemble shared, cacheable CSS and the page's progressive enhancement.
-  const css = getCSS(page.css);
+  const css = minifyCss(getCSS(page.css));
   const cssHref = emitBrowserAsset('css', page.css, css);
   const pageCssHref = page.layout === 'error' ? `/${cssHref}` : cssHref;
 
@@ -1150,8 +1244,8 @@ function buildPage(page) {
   html = html.replace('<!-- DESCRIPTION -->', () => escAttr(page.description));
   html = html.replace('<!-- CANONICAL -->', () => escAttr(page.canonical));
   html = html.replace(
-    /<meta name="robots" content="index, follow">/,
-    `<meta name="robots" content="${page.noindex ? 'noindex, follow' : 'index, follow'}">`
+    /<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">/,
+    `<meta name="robots" content="${page.noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}">`
   );
   html = html.replace('<!-- OG_TAGS -->', () => ogTags(page));
   html = html.replace('<!-- CSS -->', () => `<link rel="stylesheet" href="${escAttr(pageCssHref)}">`);
@@ -1460,6 +1554,10 @@ function main() {
   // Copy first-party assets referenced as assets/... in layouts.
   const copiedSrcAssets = copyDirContents(path.join(SRC, 'assets'), path.join(DIST, 'assets'));
   console.log(`  → assets/ (${copiedSrcAssets} copied)`);
+
+  // Old crawlers and some tools request /favicon.ico unconditionally, so the
+  // mark also ships at the root even though every page links assets/ icons.
+  fs.copyFileSync(path.join(SRC, 'assets', 'favicon-mark.ico'), path.join(DIST, 'favicon.ico'));
 
   // Generate sitemap.xml - lastmod follows content files, not every shared build/config change.
   const SITE_ORIGIN = new URL(config.pages[0].canonical).origin;

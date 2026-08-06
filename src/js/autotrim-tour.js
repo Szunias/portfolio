@@ -39,7 +39,18 @@
     else video.pause();
   });
 
-  const saveData = connection && connection.saveData;
-  if (!(reduceMotion && reduceMotion.matches) && !saveData) playVideo();
+  // Same gates as lazy-video.js: the tour is 1.1 MB of decoration, so it only
+  // auto-starts on a wide precise-pointer layout with a fast connection. A
+  // click on the toggle is explicit intent and still loads it regardless.
+  function autostartAllowed() {
+    if (reduceMotion && reduceMotion.matches) return false;
+    const mobileLike = window.matchMedia && window.matchMedia('(max-width: 820px), (pointer: coarse)');
+    if (mobileLike && mobileLike.matches) return false;
+    if (!connection) return true;
+    if (connection.saveData) return false;
+    return !/(^|\b)(slow-2g|2g|3g)$/.test(connection.effectiveType || '');
+  }
+
+  if (autostartAllowed()) playVideo();
   updateToggle();
 })();
