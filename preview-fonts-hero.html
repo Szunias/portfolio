@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Font preview — hero variants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Inter+Tight:wght@500;600;700&family=IBM+Plex+Mono&family=Space+Grotesk:wght@500;600;700&family=Sora:wght@600;700&family=Archivo:wdth,wght@110,600..700&family=Chakra+Petch:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#101012; --ink:#eceef0; --muted:#9aa0a8; --faint:#7a808a;
+    --ice:#aac6de; --rule:rgba(236,238,240,.1);
+    --body:'Inter',system-ui,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);
+    font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .variant{border-bottom:1px solid var(--rule);padding:64px clamp(24px,6vw,96px) 72px}
+  .variant__tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ice);margin-bottom:6px}
+  .variant__note{font-size:13px;color:var(--faint);margin-bottom:44px;max-width:60ch}
+  .hero__kicker{font-family:var(--mono);font-size:.72rem;color:var(--ice);
+    letter-spacing:.14em;margin-bottom:22px;text-transform:uppercase}
+  .hero h1{font-weight:700;font-size:clamp(2.75rem,4.1vw,4rem);
+    letter-spacing:-.035em;line-height:1.0;max-width:14ch}
+  .hero__sub{margin-top:28px;max-width:46ch;color:var(--muted);font-size:1.08rem}
+  .hero__meta{font-family:var(--mono);font-size:.72rem;color:var(--ice);
+    letter-spacing:.1em;margin-top:26px;text-transform:uppercase}
+  .hero__cta{margin-top:40px;display:flex;gap:14px;flex-wrap:wrap}
+  .hero__cta a{display:inline-flex;align-items:center;min-height:44px;
+    font-family:var(--mono);font-size:.72rem;padding:13px 24px;border-radius:999px;
+    text-decoration:none;letter-spacing:.06em}
+  .hero__cta a.primary{background:var(--ink);color:var(--bg)}
+  .hero__cta a.ghost{border:1px solid rgba(236,238,240,.14);color:var(--muted);
+    background:rgba(24,24,27,.4)}
+  .sechead{margin-top:56px;padding-top:32px;border-top:1px solid var(--rule)}
+  .sechead .lbl{font-family:var(--mono);font-size:.7rem;color:var(--ice);letter-spacing:.12em}
+  .sechead h2{font-weight:600;font-size:2.2rem;letter-spacing:-.02em;margin-top:6px}
+
+  .v-inter h1,.v-inter .sechead h2{font-family:'Inter Tight',sans-serif}
+  .v-space h1,.v-space .sechead h2{font-family:'Space Grotesk',sans-serif;letter-spacing:-.025em}
+  .v-sora h1,.v-sora .sechead h2{font-family:'Sora',sans-serif;letter-spacing:-.03em}
+  .v-archivo h1,.v-archivo .sechead h2{font-family:'Archivo',sans-serif;font-stretch:110%;letter-spacing:-.02em}
+  .v-chakra h1,.v-chakra .sechead h2{font-family:'Chakra Petch',sans-serif;letter-spacing:-.01em}
+</style>
+</head>
+<body>
+
+<script>
+  const HERO = (cls) => `
+  <section class="variant ${cls.v}">
+    <div class="variant__tag">${cls.tag}</div>
+    <p class="variant__note">${cls.note}</p>
+    <div class="hero">
+      <div class="hero__kicker">Technical Sound Design &middot; Audio Programming &middot; VR</div>
+      <h1>Technical Sound Designer &amp; Audio Programmer</h1>
+      <p class="hero__sub">I design and implement interactive audio for games and VR.
+      In Wwise, Unreal and Unity, I build spatial sound, gameplay-driven mixes
+      and tools for audio production.</p>
+      <div class="hero__meta">Kortrijk, Belgium &middot; Howest DAE &middot; Previously XR Labs Belgium</div>
+      <div class="hero__cta">
+        <a class="primary" href="#">Selected Work</a>
+        <a class="ghost" href="#">CV / Resume &darr;</a>
+      </div>
+      <div class="sechead">
+        <div class="lbl">01 / SELECTED WORK</div>
+        <h2>Not Today, Darling!</h2>
+      </div>
+    </div>
+  </section>`;
+
+  document.body.innerHTML = [
+    {v:'v-inter', tag:'A — obecny: Inter Tight', note:'Baseline. Czysty i bezpieczny, ale anonimowy — ten sam krój co w tysiącach portfolio i landing page.'},
+    {v:'v-space', tag:'B — Space Grotesk', note:'Geometryczny grotesk z charakterem w detalach (G, R, a). Techniczny, ale nie zimny — naturalnie gada z IBM Plex Mono, bo wyrósł z tej samej rodziny co Space Mono.'},
+    {v:'v-sora', tag:'C — Sora', note:'Bardziej surowy i przyszłościowy, szerokie proporcje. Mocna obecność w dużych rozmiarach, minimalna ornamentyka.'},
+    {v:'v-archivo', tag:'D — Archivo (110% width)', note:'Lekko rozszerzony grotesk — nagłówki robią się masywne i plakatowe. Dobrze trzyma klimat „control room".'},
+    {v:'v-chakra', tag:'E — Chakra Petch', note:'Najbardziej techniczny wariant — ścięte narożniki, wojskowo-HUD-owy klimat. Wyrazisty, ale najbliżej granicy „gadżeciarstwa".'}
+  ].map(HERO).join('');
+</script>
+
+</body>
+</html>

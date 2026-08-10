@@ -69,9 +69,9 @@ FAMILIES = [
     # size the layout was designed at) so the variable font keeps one axis.
     ("inter-latin", "ofl/inter/Inter[opsz,wght].ttf",
      {"opsz": 14, "wght": (400, 500)}, "Inter"),
-    # Display: Inter Tight at 500/600/700.
-    ("inter-tight-latin", "ofl/intertight/InterTight[wght].ttf",
-     {"wght": (500, 700)}, "Inter Tight"),
+    # Display: Space Grotesk at 500/600/700.
+    ("space-grotesk-latin", "ofl/spacegrotesk/SpaceGrotesk[wght].ttf",
+     {"wght": (500, 700)}, "Space Grotesk"),
     # Mono: static regular, nothing to instantiate.
     ("ibm-plex-mono-latin", "ofl/ibmplexmono/IBMPlexMono-Regular.ttf",
      None, "IBM Plex Mono"),
@@ -79,7 +79,7 @@ FAMILIES = [
 
 LICENCES = [
     ("OFL-Inter.txt", "ofl/inter/OFL.txt"),
-    ("OFL-InterTight.txt", "ofl/intertight/OFL.txt"),
+    ("OFL-SpaceGrotesk.txt", "ofl/spacegrotesk/OFL.txt"),
     ("OFL-IBMPlexMono.txt", "ofl/ibmplexmono/OFL.txt"),
 ]
 

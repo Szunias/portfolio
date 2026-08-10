@@ -17,7 +17,7 @@
   --rule-h: rgba(236,238,240,0.28);
   --ice:    #aac6de;
   --panel:  rgba(24,24,27,0.66);
-  --display:'Inter Tight', 'Inter Tight Fallback', system-ui, sans-serif;
+  --display:'Space Grotesk', 'Space Grotesk Fallback', system-ui, sans-serif;
   --body:   'Inter', 'Inter Fallback', system-ui, sans-serif;
   --mono:   'IBM Plex Mono', ui-monospace, monospace;
 }
@@ -253,11 +253,13 @@ section.panel { padding:0; }
   gap:30px; align-items:baseline;
   padding:34px 6px;
   border-bottom:1px solid var(--rule);
-  transition:opacity .25s;
+  transition:opacity .25s, background-color .25s;
 }
+.prow:hover,
+.prow:focus-visible { background:rgba(170,198,222,0.045); }
 /* The active row changes its heading colour below; other rows retain their
    full contrast while the pointer moves through the list. */
-.prow__idx { font-family:var(--mono); font-size:12px; color:var(--faint); }
+.prow__idx { font-family:var(--mono); font-size:13px; color:var(--ice); }
 .prow h3 {
   font-family:var(--display); font-weight:600;
   font-size:clamp(2rem, 3.4vw, 3.2rem);
@@ -322,7 +324,7 @@ section.panel { padding:0; }
 .work-split {
   /* The preview and the meta column used to squeeze the description down to
      about 38 characters a line, which is too narrow to read comfortably. */
-  display:grid; grid-template-columns:minmax(0,1fr) 340px;
+  display:grid; grid-template-columns:minmax(0,1fr) 380px;
   gap:0 48px; align-items:start;
   /* On wide screens there is spare room on both sides, so the preview grows
      back to its original size instead of taking it from the description. */
@@ -337,7 +339,7 @@ section.panel { padding:0; }
   /* Pairs with the wider .wrap above: the extra room goes to the preview so
      it is not the description that pays for it. The .panel__inner override
      must also live after its base declaration (line ~233) to win. */
-  .work-split { grid-template-columns:minmax(0,1fr) 400px; }
+  .work-split { grid-template-columns:minmax(0,1fr) 460px; }
   .panel__inner { max-width:1280px; }
 }
 /* Pinned at 104px the panel sat against the header with about 450px of empty
@@ -570,9 +572,14 @@ section.panel { padding:0; }
     grid-row:1 / span 2;
     align-self:center;
   }
+  .prow__thumb { overflow:hidden; border-radius:12px; }
   .prow__thumb img {
     width:100%; height:auto; aspect-ratio:16 / 9; object-fit:cover; display:block;
     border-radius:12px; border:1px solid rgba(170,198,222,0.18);
+    transition:transform .5s cubic-bezier(.2,.7,.2,1);
+  }
+  @media (hover: hover) {
+    .prow:hover .prow__thumb img { transform:scale(1.05); }
   }
   .prow--tool .prow__thumb img {
     aspect-ratio:16 / 11;
