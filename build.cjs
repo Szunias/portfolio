@@ -262,7 +262,7 @@ function ogTags(page) {
     `<meta property="og:type" content="${escAttr(page.ogType || defaultOgType)}">`,
     `<meta property="og:url" content="${escAttr(page.canonical)}">`,
     `<meta property="og:site_name" content="Igor Szuniewicz">`,
-    `<meta property="og:locale" content="en_US">`,
+    `<meta property="og:locale" content="en_GB">`,
     `<meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="${escAttr(ogTitle)}">`,
     `<meta name="twitter:description" content="${escAttr(page.description)}">`,
@@ -347,15 +347,21 @@ function schemaTags(page) {
     webPage.creator = { '@id': personId };
     if (page.schemaType) {
       const workId = `${page.canonical}#work`;
+      // On a team project Igor authored the audio, not the work itself, so the
+      // page declares contributor instead. Claiming author on a collaborative
+      // game contradicts the credits stated on the page.
       const work = {
         '@type': page.schemaType,
         '@id': workId,
         name: pageName.replace(/\s+\|\s+.*$/, ''),
         url: page.canonical,
         description: page.description,
-        author: { '@id': personId },
+        [page.schemaRole || 'author']: { '@id': personId },
         mainEntityOfPage: { '@id': pageId }
       };
+      if (page.schemaApplicationCategory) work.applicationCategory = page.schemaApplicationCategory;
+      if (page.schemaOperatingSystem) work.operatingSystem = page.schemaOperatingSystem;
+      if (page.schemaDatePublished) work.datePublished = page.schemaDatePublished;
       if (page.ogImage) work.image = page.ogImage;
       webPage.mainEntity = { '@id': workId };
       graph.push(work);
@@ -1078,6 +1084,46 @@ function getPartial(name) {
   return partials[name];
 }
 
+/**
+ * Partials with {{TOKEN}} holes. The document chrome (head, header, colophon)
+ * used to be pasted into all four layouts, and the copies had drifted: three
+ * different ways to shorten the wordmark, three different aria-labels on the
+ * same link, and nav pills that measured 69/99/102px on the same viewport.
+ * One source with tokens for the handful of genuine per-layout differences
+ * removes the drift and the class of bug that produced it.
+ *
+ * Throws on an unreplaced token so a typo cannot ship a literal {{ROOT}}.
+ */
+function renderPartial(name, tokens) {
+  let html = getPartial(name);
+  for (const [key, value] of Object.entries(tokens)) {
+    html = html.split(`{{${key}}}`).join(value);
+  }
+  const leftover = html.match(/\{\{[A-Z_]+\}\}/);
+  if (leftover) {
+    throw new Error(`Unreplaced token ${leftover[0]} in partial src/partials/${name}.html`);
+  }
+  return html;
+}
+
+/**
+ * Per-layout chrome tokens.
+ *   ROOT  - prefix for same-site asset paths. 404.html can be served from any
+ *           path, so it needs absolute ones; every other page is at the root.
+ *   HOME  - prefix for the in-page #work / #contact anchors. Empty on the home
+ *           page keeps them same-document fragment navigations; elsewhere they
+ *           have to travel to "/" first.
+ */
+function chromeTokens(page) {
+  const root = page.layout === 'error' ? '/' : '';
+  return {
+    ROOT: root,
+    HOME: page.slug === 'index' ? '' : '/',
+    CURRENT_MUSIC: page.layout === 'music' ? ' aria-current="page"' : '',
+    YEAR: String(new Date().getFullYear()),
+  };
+}
+
 // Cache CSS / JS and emit immutable, content-hashed browser assets.
 
 const cssCache = {};
@@ -1086,6 +1132,15 @@ function getCSS(name) {
     cssCache[name] = read(path.join(SRC, 'css', `${name}.css`));
   }
   return cssCache[name];
+}
+
+// Every page needs the same @font-face set, and the four layout stylesheets
+// have incompatible token vocabularies (home's --ink is light text, music's is
+// dark), so a shared base stylesheet is not on the table. @font-face is
+// order-independent and cannot interact with the cascade, so prepending just
+// that chunk is safe and keeps the faces defined exactly once in source.
+function pageStylesheet(names) {
+  return [getCSS('_fonts')].concat(names.map(getCSS)).join('\n');
 }
 
 // Conservative CSS minifier: strips comments and collapses whitespace, but
@@ -1210,7 +1265,23 @@ function buildPage(page) {
   if (!fs.existsSync(layoutPath)) {
     throw new Error(`Layout not found: src/layouts/${page.layout}.html (required by ${page.slug})`);
   }
-  let html = enhanceInlineSvgAccessibility(reserveImageAspectRatio(enhanceImageAccessibility(read(layoutPath))));
+  // Chrome partials go in first, so every later step (the robots rewrite, the
+  // OG/CSS/SCHEMA placeholders, the accessibility passes) sees one document
+  // rather than a layout with holes in it.
+  const tokens = chromeTokens(page);
+  let html = read(layoutPath);
+  for (const [marker, partial] of [
+    ['<!-- HEAD -->', 'head'],
+    ['<!-- SITE_HEADER -->', 'site-header'],
+    ['<!-- COLOPHON -->', 'colophon'],
+  ]) {
+    const occurrences = html.split(marker).length - 1;
+    if (occurrences !== 1) {
+      throw new Error(`Layout src/layouts/${page.layout}.html must contain ${marker} exactly once (found ${occurrences})`);
+    }
+    html = html.replace(marker, () => renderPartial(partial, tokens));
+  }
+  html = enhanceInlineSvgAccessibility(reserveImageAspectRatio(enhanceImageAccessibility(html)));
 
   // 2. Read page content
   const pagePath = path.join(SRC, 'pages', `${page.slug}.html`);
@@ -1228,8 +1299,12 @@ function buildPage(page) {
   if (page.layout === 'music') content = injectStaticTrackIndex(content);
 
   // 3. Assemble shared, cacheable CSS and the page's progressive enhancement.
-  const css = minifyCss(getCSS(page.css));
-  const cssHref = emitBrowserAsset('css', page.css, css);
+  //    `css` may be a single name or a list. The list form exists so project
+  //    pages load the shared case chrome plus only their own block, instead of
+  //    one 147 KB stylesheet holding every project's rules.
+  const cssNames = Array.isArray(page.css) ? page.css : [page.css];
+  const css = minifyCss(pageStylesheet(cssNames));
+  const cssHref = emitBrowserAsset('css', cssNames.join('-'), css);
   const pageCssHref = page.layout === 'error' ? `/${cssHref}` : cssHref;
 
   // 4. Assemble JS (concatenate files with the same composition into one asset)
@@ -1313,8 +1388,30 @@ function validateConfig(cfg) {
     if (!Array.isArray(page.js)) {
       throw new Error(`JS list for ${page.slug} must be an array`);
     }
+    const cssNames = Array.isArray(page.css) ? page.css : [page.css];
+    if (!cssNames.length || cssNames.some(name => typeof name !== 'string' || !name)) {
+      throw new Error(`CSS entry for ${page.slug} must be a stylesheet name or a non-empty array of names`);
+    }
+    for (const name of cssNames) {
+      if (name.startsWith('_')) {
+        throw new Error(`${page.slug} must not list the shared chunk "${name}": build.cjs prepends it already`);
+      }
+      if (!fs.existsSync(path.join(SRC, 'css', `${name}.css`))) {
+        throw new Error(`Stylesheet not found: src/css/${name}.css (required by ${page.slug})`);
+      }
+    }
+    const duplicateCss = cssNames.find((name, index) => cssNames.indexOf(name) !== index);
+    if (duplicateCss) {
+      throw new Error(`Duplicate CSS entry "${duplicateCss}" for ${page.slug}`);
+    }
     if (page.assets && !Array.isArray(page.assets)) {
       throw new Error(`Asset list for ${page.slug} must be an array`);
+    }
+    if (page.schemaRole && !['author', 'contributor'].includes(page.schemaRole)) {
+      throw new Error(`Unknown schemaRole "${page.schemaRole}" for ${page.slug}: use author or contributor`);
+    }
+    if (page.schemaRole && !page.schemaType) {
+      throw new Error(`${page.slug} sets schemaRole without schemaType, so it would have no effect`);
     }
     const duplicateJs = page.js.find((name, index) => page.js.indexOf(name) !== index);
     if (duplicateJs) {

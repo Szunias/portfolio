@@ -1,23 +1,6 @@
-/* Metric-matched fallbacks. The Google Fonts request uses font-display:
-   optional, so a slow first visit paints with these instead of swapping
-   mid-view; size-adjust and the overrides keep line lengths and heights
-   close to Inter / Inter Tight, so the layout does not jump either way. */
-@font-face {
-  font-family: 'Inter Fallback';
-  src: local('Arial'), local('Roboto'), local('Helvetica Neue');
-  size-adjust: 107%;
-  ascent-override: 90%;
-  descent-override: 22.5%;
-  line-gap-override: 0%;
-}
-@font-face {
-  font-family: 'Inter Tight Fallback';
-  src: local('Arial'), local('Roboto'), local('Helvetica Neue');
-  size-adjust: 102%;
-  ascent-override: 90%;
-  descent-override: 22.5%;
-  line-gap-override: 0%;
-}
+/* The @font-face declarations, including the metric-matched fallbacks that
+   used to live here, are in _fonts.css - build.cjs prepends it to every
+   emitted stylesheet so all four layouts get the same faces. */
 /* =========================================================
    HOME: editorial portfolio layout
    Project evidence carries the visual weight; typography and
@@ -242,10 +225,14 @@ section { padding:130px 0; }
 
 /* ---------- Work panel: near-black slab, typography does the work ---------- */
 section.panel { padding:0; }
+/* The slab is outside .wrap in index.html, so it spans the viewport. Both
+   rules are drawn: the top edge alone left the darker block trailing off into
+   the page background instead of closing. */
 .panel {
   width:100%; margin-left:0;
   background:#0b0b0d;
   border-top:1px solid rgba(170,198,222,0.22);
+  border-bottom:1px solid rgba(170,198,222,0.22);
 }
 /* The bottom padding used to be 140px. The music entry is the last thing in
    the slab, so that much room below it read as an unfinished panel rather
@@ -763,6 +750,11 @@ section.panel { padding:0; }
   letter-spacing: .01em;
   color: var(--ink);
 }
+/* The wordmark shortens to IGOR on narrow screens. Both labels are in the
+   markup and aria-hidden, with the accessible name on the link itself, so the
+   swap is a plain display toggle - the same mechanism music.css, case.css and
+   sidar.css use. */
+.site-header__name-short { display: none; }
 .site-header nav a {
   font-family: var(--body);
   font-size: .82rem;
@@ -804,41 +796,41 @@ section.panel { padding:0; }
     flex: 0 0 auto;
     min-width: 44px;
     min-height: 44px;
-    font-size: 0;
+    font-size: .82rem;
     letter-spacing: .015em;
   }
 
-  .site-header__name::before {
-    content: 'IGOR';
-    content: 'IGOR' / '';
-    font-size: .82rem;
-  }
+  .site-header__name-full { display: none; }
+  .site-header__name-short { display: inline; }
 
   .site-header nav {
     display: flex;
     flex: 1 1 auto;
-    justify-content: flex-end;
     min-width: 0;
-    gap: 6px;
+    gap: 4px;
     padding: 0;
     overflow: visible;
     -webkit-mask-image: none;
     mask-image: none;
   }
 
+  /* flex:1 1 0 rather than content-width pills: music.css and case.css already
+     size them this way, and the three copies used to disagree (69/99/102px for
+     the same link on the same viewport). */
   .site-header nav a {
-    flex: 0 0 auto;
+    flex: 1 1 0;
+    min-width: 44px;
     min-height: 44px;
-    padding: 0 13px;
+    padding: 0 clamp(5px, 1.8vw, 12px);
     border: 1px solid rgba(236, 238, 240, 0.16);
     border-radius: 999px;
     background: rgba(236, 238, 240, 0.035);
     font-size: .75rem;
-    letter-spacing: .015em;
+    letter-spacing: 0;
     box-shadow: none;
   }
 
-  .site-header nav a[href$='Igor_Szuniewicz_CV.pdf'] { display: none; }
+  .site-header .site-header__cv { display: none; }
 
   /* case.css resets the nav border to 0 on hover for its underlined links;
      without this the pill outline disappears on a narrow desktop window. */
