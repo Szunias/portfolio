@@ -45,6 +45,8 @@
     revealPlayer();
     setPlaying(true);
   });
-  video.addEventListener('pause', function () { setPlaying(false); });
+  // Pausing must NOT bring the headline back: the paused frame carries the
+  // reel's own titles, and the copy landing on top of them read as a glitch.
+  // The cover copy returns only once the reel has actually finished.
   video.addEventListener('ended', function () { setPlaying(false); });
 })();

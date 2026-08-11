@@ -235,6 +235,38 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
 @media (prefers-reduced-motion: reduce) {
   .hero__avail-dot { animation:none; }
 }
+/* Cursor light (created by cursor.js, so no-JS pages never carry the node).
+   The blend mode lets the same glow ride dark panels and stills alike; the
+   element is fixed and transform-driven, so it never causes layout work. */
+.cursor-light {
+  position:fixed; top:0; left:0; z-index:4000;
+  width:220px; height:220px;
+  margin:-110px 0 0 -110px;
+  border-radius:50%;
+  background:radial-gradient(circle,
+    color-mix(in srgb, var(--ice) 26%, transparent) 0%,
+    color-mix(in srgb, var(--ice) 10%, transparent) 34%,
+    transparent 68%);
+  mix-blend-mode:screen;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s var(--ease), scale .35s var(--ease);
+  will-change:transform;
+}
+.cursor-light.is-on { opacity:1; }
+.cursor-light.is-hot { scale:1.45; }
+.cursor-light__dot {
+  position:absolute; top:50%; left:50%;
+  width:5px; height:5px;
+  margin:-2.5px 0 0 -2.5px;
+  border-radius:50%;
+  background:color-mix(in srgb, var(--ice) 85%, #fff);
+  opacity:.9;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cursor-light { display:none; }
+}
+
 .hero__reelmeta {
   margin-top:var(--s-5);
   font-family:var(--mono); font-size:var(--t-m0); color:var(--faint);

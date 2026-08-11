@@ -27,7 +27,7 @@ module.exports = {
       slug: 'index',
       layout: 'home',
       css: 'home',
-      js: ['prefetch', 'home-list'],
+      js: ['prefetch', 'home-list', 'cursor'],
       title: 'Igor Szuniewicz | Technical Sound Designer & Audio Programmer',
       ogTitle: 'Igor Szuniewicz | Technical Sound Designer & Audio Programmer',
       description: 'Portfolio of Igor Szuniewicz: interactive audio for games and VR, plus audio tools built in C++, C#, Python and Lua.',
