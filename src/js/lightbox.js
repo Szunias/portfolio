@@ -31,6 +31,9 @@
     const cap = item.querySelector('.gallery-item__caption');
     return {
       src: img ? img.src : '',
+      // The gallery srcset lets a phone open the 1200px webp instead of the
+      // full-size original the src attribute points at.
+      srcset: img ? (img.getAttribute('srcset') || '') : '',
       alt: img ? img.alt : '',
       caption: cap ? cap.textContent : ''
     };
@@ -47,6 +50,13 @@
 
   function render(index) {
     currentIndex = index;
+    if (images[index].srcset) {
+      lbImg.srcset = images[index].srcset;
+      lbImg.sizes = '100vw';
+    } else {
+      lbImg.removeAttribute('srcset');
+      lbImg.removeAttribute('sizes');
+    }
     lbImg.src = images[index].src;
     lbImg.alt = images[index].alt;
     lbImg.removeAttribute('aria-hidden');
@@ -141,7 +151,10 @@
       if (!lightbox.classList.contains('active')) {
         lightbox.hidden = true;
         lbImg.setAttribute('aria-hidden', 'true');
-        // Reset to the transparent placeholder (img must always have a src)
+        // Reset to the transparent placeholder (img must always have a src).
+        // srcset has to go first, or the browser keeps showing its candidate.
+        lbImg.removeAttribute('srcset');
+        lbImg.removeAttribute('sizes');
         lbImg.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
       }
       closeTimer = null;

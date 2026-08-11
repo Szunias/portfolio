@@ -826,6 +826,12 @@ main#main-content { position: relative; z-index: 1; }
   pointer-events: none;
   transition: opacity var(--dur-slow) var(--ease);
   cursor: zoom-out;
+  /* iOS scrolls the page behind a fixed layer even with body overflow:hidden.
+     The overlay covers the viewport, so refusing pan gestures here is what
+     actually locks the background; swipe navigation reads raw touch events in
+     lightbox.js and keeps working. pinch-zoom stays allowed for magnification. */
+  touch-action: pinch-zoom;
+  overscroll-behavior: contain;
 }
 
 .lightbox[hidden] {
