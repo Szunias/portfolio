@@ -94,8 +94,10 @@ module.exports = {
       // Not an article: og:type defaults to article for every non-home page.
       ogType: 'website',
       schemaPageType: 'ContactPage',
-      ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
-      ogImageAlt: 'Shadow Frames horror game screenshot from Igor Szuniewicz game audio portfolio',
+      // The share card is the frame the page now opens on, so the preview
+      // and the first screen are the same image.
+      ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_04.jpg`,
+      ogImageAlt: 'Lit stage with a piano and instruments in the Shadow Frames pub, the still the contact page opens on',
       ogImageWidth: 1920,
       ogImageHeight: 1080,
       ogImageType: 'image/jpeg',

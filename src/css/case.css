@@ -6266,3 +6266,166 @@ main#main-content { position: relative; z-index: 1; }
 .tool-links a:hover,
 .tool-release__links a:hover,
 .aq-chain__limits a:hover { text-decoration-color: var(--paper); }
+
+/* =========================================================
+   PHONE AND TABLET PASS
+   Appended last so it settles the mobile layer above and the
+   type ladder before it.
+   ========================================================= */
+
+/* ---- Hero scrim ----
+   The vertical mobile scrim opened at 0.42 and was still only 0.36 a quarter
+   of the way down, which is where the kicker and the first line of the title
+   land once the copy clears the header. That is fine over the three heroes
+   that are dark photography, and it failed on the two that are game frames
+   with white type printed across them: Transientica prints "KICK" over the
+   whole frame and Not Today opens on "Start game!". Those two get a ramp that
+   reaches its working value before the text starts, and a deeper grade under
+   it. The other three keep the lighter ramp, which is the only reason their
+   photography is still visible at all behind the copy. */
+@media (max-width: 820px) {
+  .nt-hero__shade,
+  .tr-hero__shade {
+    background: linear-gradient(
+      180deg,
+      rgba(5, 6, 8, 0.42) 0%,
+      rgba(5, 6, 8, 0.76) 13%,
+      rgba(5, 6, 8, 0.88) 46%,
+      rgba(5, 6, 8, 0.96) 100%
+    );
+  }
+}
+
+@media (max-width: 620px) {
+  .nt-hero__media img,
+  .tr-hero__media video,
+  .tr-hero__media img {
+    filter: brightness(0.58) contrast(1.02) saturate(0.78);
+  }
+}
+
+/* ---- Two-column blocks that only work at desktop width ----
+   Both of these collapsed at 700px, so 768 got the desktop split with none
+   of the room it needs: the XR concept cards ran a 29-character measure in
+   a 238px column, and the wide tool heading left its deck 275px, seven lines
+   of six words. 900px is where the second column stops paying for itself. */
+@media (max-width: 900px) {
+  .xr-system-grid { grid-template-columns: minmax(0, 1fr); }
+
+  .tool-section__heading,
+  .aq-demo__heading { display: block; }
+
+  .tool-section__heading h2,
+  .tool-section__heading--wide h2,
+  .aq-demo__heading h2 { max-width: 22ch; }
+
+  .tool-section__heading > p:last-child,
+  .tool-section__heading--wide > p:last-child,
+  .aq-demo__heading > p:last-child {
+    max-width: 62ch;
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 560px) {
+  /* ---- Step lists ----
+     auto-fit at 46% still fits two tracks in a 350px column, so the four
+     AutoTrim steps ran 164px wide: a twelve-character measure under a
+     heading that broke as "Anchor the" / "sound". */
+  .at-flow,
+  .mw-flow { grid-template-columns: minmax(0, 1fr); }
+
+  /* ---- Hero actions ----
+     Two actions sharing a 350px row gave each about 168px, so whichever
+     label was longer wrapped inside its own box and the pair ended up
+     different heights. One target per line, both the same size. */
+  :is(
+    .sf-hero__actions, .xr-hero__actions, .nt-hero__actions,
+    .aq-hero__actions, .ai-hero__actions, .tr-hero__actions
+  ) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  :is(
+    .sf-hero__actions, .xr-hero__actions, .nt-hero__actions,
+    .aq-hero__actions, .ai-hero__actions, .tr-hero__actions
+  ) a {
+    width: 100%;
+    min-width: 0;
+    flex: none;
+  }
+
+  /* ---- The one h1 that needs a phone floor ----
+     Every other title fits the ladder's own clamp. This one is 62
+     characters: on the long rung's 44px floor it ran five lines at 390. */
+  .ai-hero h1 { font-size: clamp(36px, 9.4vw, 44px); }
+}
+
+/* ---- Mowik boundary facts ----
+   Whole sentences were set at 12px, the mono-label rung, while the prose
+   around them was 16.5px. They are captions to a mono label, so they sit on
+   the caption rung rather than the label one. */
+.mw-boundary__facts dd {
+  font-size: var(--t-s1);
+  line-height: 1.62;
+}
+
+/* ---- Footer ----
+   The agreed treatment is 11px mono; the project pages were the only ones
+   still at 12, which is also what pushed the six links onto a second line at
+   390 with a separator left hanging at the end of the first.
+
+   The links keep a 44px minimum height and no minimum width. They are inline
+   links inside a separated list, which is the case WCAG 2.5.5 exempts, and
+   the 44px box around a two-letter link (CV) opened a gap in the middle of
+   the row that read as a missing item. */
+.colophon { font-size: var(--t-m0); }
+
+/* ---- The comparison table ----
+   Five columns on a 720px table inside a 350px scroll container: it swipes,
+   and the hint that says so was only rendered below 620px. At 768 the table
+   is 29px wider than its container, so the last column is cut with nothing
+   to say why. The hint follows the scroll, not the phone. */
+@media (max-width: 820px) {
+  .tr-compare__hint {
+    position: sticky;
+    left: 0;
+    display: block;
+    width: max-content;
+    margin: 0;
+    padding: 11px 14px 0;
+    color: var(--ink-55);
+    font-family: var(--mono);
+    font-size: var(--t-m0);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  .tr-compare__hint span { color: var(--c-accent); }
+}
+
+/* ---- AudioQ signal path ----
+   Six steps in six columns is a desktop row. It folds to two columns below
+   700px, so 768 kept the desktop version at 90px a cell: "Playback speed or
+   granular mode" ran four lines and "Compressor" collided with the arrow
+   drawn before the next step. The tablet band takes the same two-column
+   treatment the phone already had. */
+@media (min-width: 700.02px) and (max-width: 820px) {
+  .aq-signal-path { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .aq-signal-path li {
+    min-height: 64px;
+    border-bottom: 1px solid var(--tool-rule-soft);
+  }
+
+  .aq-signal-path li:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .aq-signal-path li:nth-child(odd)::before { content: none; }
+
+  .aq-signal-path li:nth-last-child(-n + 2) { border-bottom: 0; }
+}

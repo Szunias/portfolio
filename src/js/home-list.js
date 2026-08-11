@@ -24,6 +24,15 @@
     video.controls = true;
   }
 
+  // The copy sits on top of the reel, and the reel carries its own titles and
+  // lower thirds, so while it plays the headline was covering the thing it was
+  // introducing. This state lets the CSS clear the copy out of the way and put
+  // the whole frame on screen, then bring it back when playback stops.
+  function setPlaying(on) {
+    frame.classList.toggle('is-playing', on);
+    scope.classList.toggle('is-playing', on);
+  }
+
   launch.addEventListener('click', function () {
     revealPlayer();
     var promise = video.play();
@@ -32,5 +41,10 @@
     }
   });
 
-  video.addEventListener('play', revealPlayer);
+  video.addEventListener('play', function () {
+    revealPlayer();
+    setPlaying(true);
+  });
+  video.addEventListener('pause', function () { setPlaying(false); });
+  video.addEventListener('ended', function () { setPlaying(false); });
 })();

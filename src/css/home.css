@@ -147,6 +147,25 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
   background:linear-gradient(180deg, rgba(11,11,13,.55) 0%, transparent 22%, transparent 70%, rgba(11,11,13,.8) 100%);
 }
 
+/* ---- Watching state ----
+   These rules must stay after the .is-started block so they win while the reel
+   is actually running.
+
+   Two things were wrong once playback began. The copy stayed on top of the
+   video, so the headline and the buttons covered the reel's own titles and
+   lower thirds. And object-fit:cover, which is right for a still backdrop,
+   cropped a 16:9 reel top and bottom inside a full-height section. While it
+   plays the frame is the content: nothing over it, nothing cut off, and the
+   grade as authored rather than lifted for a dark poster. */
+.hero.is-playing .hero__inner { opacity:0; }
+.hero.is-playing .hero__inner > * { pointer-events:none; }
+.hero.is-playing .hero__scrim { background:none; }
+.hero.is-playing .hero__media video {
+  object-fit:contain;
+  object-position:center;
+  filter:none;
+}
+
 /* The copy layer sits on top of a full-bleed <video controls>, and its padding
    box reached the bottom of the section - exactly where the native control bar
    is. That swallowed every click on it: without JS the reel could not be
@@ -162,6 +181,7 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
   padding-inline:var(--page-gutter);
   padding-block:var(--s-7) var(--s-6);
   pointer-events:none;
+  transition:opacity var(--dur-slow) var(--ease);
 }
 .hero__inner > * { pointer-events:auto; }
 
@@ -716,7 +736,10 @@ section.panel { padding:0; }
   letter-spacing:.08em; text-transform:uppercase;
 }
 .colophon a {
-  display:inline-flex; min-height:44px; min-width:44px;
+  /* No min-width: these are inline links in a separated list, the case WCAG
+     2.5.5 exempts, and a 44px box around "CV" opened a gap in the middle of
+     the row that read as a missing item. */
+  display:inline-flex; min-height:44px;
   align-items:center; justify-content:center;
   color:var(--ice);
   text-decoration:underline;
@@ -1136,4 +1159,55 @@ section.panel { padding:0; }
 
 @media (max-width: 400px) {
   .prow { grid-template-columns: 72px minmax(0, 1fr); gap: 5px 13px; }
+}
+
+/* =========================================================
+   PHONE AND TABLET PASS
+   Appended last so it settles the earlier narrow-screen
+   patches that touch the same elements.
+   ========================================================= */
+
+/* ---- The homepage title is a long title ----
+   The ladder has two h1 rungs: --t-d1 for short titles and --t-d2 for long
+   ones. "Technical Sound Designer & Audio Programmer" is 42 characters and
+   was set on the short rung, so at 390 it ran five lines and left
+   "Programmer" alone on the last. The long rung is the one it belongs on;
+   below 560px it takes it, leading and tracking included. */
+@media (max-width: 560px) {
+  .hero h1 {
+    font-size: var(--t-d2);
+    line-height: var(--lh-d2);
+    letter-spacing: var(--tr-d2);
+    max-width: 20ch;
+  }
+}
+
+/* ---- Tablet band: the hero actions are not full-width slabs ----
+   The phone layout stacks the three actions into one column, which is right
+   at 390 and produced three 700px pills with an 11px label centred in each
+   at 768. They keep their own width as soon as two of them fit on a line. */
+@media (min-width: 561px) and (max-width: 820px) {
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .hero__cta a,
+  .hero-reel__launch {
+    flex: 0 1 auto;
+    padding-inline: var(--s-4);
+  }
+}
+
+/* ---- Music entry ----
+   The link is a two-column grid, copy left and the meta line right. It only
+   stacked below 700px, so at 768 the copy was squeezed into a 300px column
+   with 400px of empty page beside it and the meta sat against the far right
+   edge, on an axis nothing else on the page uses. */
+@media (max-width: 900px) {
+  .music-cta__link {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+  .music-cta__meta { white-space: normal; }
 }
