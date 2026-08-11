@@ -48,6 +48,22 @@
   if (lbCount) lbCount.hidden = !hasMultipleImages;
   if (lbHint && !hasMultipleImages) lbHint.textContent = 'esc to close';
 
+  // Arrow and swipe navigation should land on a picture, not on a spinner:
+  // once an image is on screen, its two neighbours start loading behind it.
+  const warmedNeighbors = {};
+  function warmNeighbor(index) {
+    if (!hasMultipleImages) return;
+    const entry = images[(index + images.length) % images.length];
+    if (!entry || !entry.src || warmedNeighbors[entry.src]) return;
+    warmedNeighbors[entry.src] = true;
+    const img = new Image();
+    if (entry.srcset) {
+      img.srcset = entry.srcset;
+      img.sizes = '100vw';
+    }
+    img.src = entry.src;
+  }
+
   function render(index) {
     currentIndex = index;
     if (images[index].srcset) {
@@ -64,6 +80,8 @@
     // Without this there is no way to tell a three-image set from a ten-image
     // one, or where in it you are.
     if (lbCount) lbCount.textContent = (index + 1) + ' / ' + images.length;
+    warmNeighbor(index + 1);
+    warmNeighbor(index - 1);
   }
 
   function getFocusable() {

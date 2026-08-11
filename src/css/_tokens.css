@@ -185,6 +185,28 @@ html {
 }
 
 /* ---------------------------------------------------------
+   Cross-document view transitions. Every page shares the same
+   dark chrome, so a short cross-fade makes a page change read
+   as one surface updating instead of a white-flash reload.
+   Engines without the at-rule ignore all of this, and reduced
+   motion turns it back into an instant swap.
+   --------------------------------------------------------- */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 160ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
+
+/* ---------------------------------------------------------
    The colophon sits on the page frame, so its box is the
    content width plus two gutters. A border-top therefore ran
    64px past the text edge on each side at 1440 - the only rule
