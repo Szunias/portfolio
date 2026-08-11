@@ -1,27 +1,9 @@
-/* Metric-matched fallbacks. The Google Fonts request uses font-display:
-   optional, so a slow first visit paints with these instead of swapping
-   mid-view; size-adjust and the overrides keep line lengths and heights
-   close to Inter / Space Grotesk, so the layout does not jump either way. */
-@font-face {
-  font-family: 'Inter Fallback';
-  src: local('Arial'), local('Roboto'), local('Helvetica Neue');
-  size-adjust: 107%;
-  ascent-override: 90%;
-  descent-override: 22.5%;
-  line-gap-override: 0%;
-}
-@font-face {
-  font-family: 'Space Grotesk Fallback';
-  src: local('Arial'), local('Roboto'), local('Helvetica Neue');
-  size-adjust: 111%;
-  ascent-override: 88.5%;
-  descent-override: 26.3%;
-  line-gap-override: 0%;
-}
 /* =========================================
    MUSIC — selected work, full archive and player
    Dark only. Ice accent on neutral greys, no colour cast.
-   Tokens match home.css / case.css.
+
+   _fonts.css and _tokens.css are prepended by build.cjs, so the metric
+   fallbacks and the shared design tokens both arrive above this file.
    ========================================= */
 *, *::before, *::after {
   margin: 0;
@@ -29,28 +11,41 @@
   box-sizing: border-box;
 }
 
+/* This page's vocabulary, re-pointed at the shared tokens in one place.
+   Careful with two of these: --ink here is the DARK colour that sits on top
+   of an accent or paper fill, and --paper is the light text. They are the
+   opposite way round from home.css. */
 :root {
-  --page: #101012;
-  --surface: #151517;
-  --surface-raised: #18181b;
-  --paper: #eceef0;
-  --ink: #0b0b0c;
-  --accent: #aac6de;
-  --signal: #8fb8d4;
-  --sketch: #74c47a;
-  --rule: rgba(236, 238, 240, 0.12);
-  --rule-strong: rgba(236, 238, 240, 0.22);
-  --glass: rgba(16, 16, 18, 0.9);
-  --serif: 'Space Grotesk', 'Space Grotesk Fallback', system-ui, sans-serif;
-  --sans: 'Inter', 'Inter Fallback', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  --mono: 'IBM Plex Mono', ui-monospace, monospace;
-  --content-max: 1120px;
-  --archive-max: 960px;
-  --player-height: 68px;
+  --page: var(--c-bg-1);
+  --surface: var(--c-bg-2);
+  --surface-raised: var(--c-bg-3);
+  --paper: var(--c-ink);
+  --ink: var(--c-accent-ink);
+  --accent: var(--c-accent);
+  --accent-hi: var(--c-accent-hi);
+  --signal: var(--c-accent);
+  /* The sketch badge used to be mint. It only renders under the "all" filter,
+     where the word already says SKETCH, so the hue was carrying no information
+     that the label did not - and it was the only green on the site. */
+  --rule: var(--c-line-2);
+  --rule-strong: var(--c-line-3);
+  --glass: var(--c-glass);
+  --serif: var(--f-display);
+  --sans: var(--f-body);
+  --mono: var(--f-mono);
+  /* The archive used to cap at 960px inside a 1200px section, so its divider
+     rules ran 240px past the rows they separated and the right of every row
+     was dead space. It now sits on the same track as everything else. */
+  --archive-max: var(--page-max);
+  /* Inside the bar: seek row + a 48px control row + 8px + the border.
+     The idle bar has no seek row and no cover, so it is shorter. */
+  --player-height: 76px;
+  --player-height-idle: 63px;
+  --bar-pad: clamp(12px, 3vw, 24px);
   /* Every muted tone below sits at or above 4.5:1 on --page. */
-  --text-dim: color-mix(in srgb, var(--paper) 76%, transparent);
-  --text-muted: color-mix(in srgb, var(--paper) 62%, transparent);
-  --text-faint: color-mix(in srgb, var(--paper) 52%, transparent);
+  --text-dim: var(--c-ink-2);
+  --text-muted: var(--c-ink-3);
+  --text-faint: var(--c-ink-3);
 }
 
 html {
@@ -58,31 +53,24 @@ html {
   scroll-padding-top: 72px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(236, 238, 240, 0.18) transparent;
 }
 
 html.has-sheet-open { overflow: hidden; }
 
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(236, 238, 240, 0.18); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-
-::selection {
-  background: var(--accent);
-  color: var(--ink);
-}
-
 body {
   font-family: var(--sans);
-  font-size: 17px;
-  line-height: 1.6;
+  font-size: var(--t-b0);
+  line-height: var(--lh-b0);
   color: var(--paper);
-  background: var(--page);
+  background: var(--c-bg-1);
   overflow-x: hidden;
-  padding-bottom: calc(var(--player-height) + 28px + env(safe-area-inset-bottom));
+  padding-bottom: calc(var(--player-height) + var(--s-3) + env(safe-area-inset-bottom));
 }
+
+
+/* The substrate is a fixed, positioned layer, so page content needs a
+   stacking position of its own to sit above it. */
+main { position: relative; z-index: 1; }
 
 img { max-width: 100%; }
 
@@ -93,19 +81,15 @@ h1, h2, h3 {
 
 a { color: var(--paper); }
 
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
 .skip-link {
   position: absolute;
   left: -9999px;
   top: 0;
   z-index: 1200;
-  padding: 12px 18px;
+  padding: var(--s-2) var(--s-3);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--t-m1);
+  line-height: var(--lh-t3);
   color: var(--ink);
   background: var(--accent);
 }
@@ -113,6 +97,19 @@ a { color: var(--paper); }
 .skip-link:focus-visible {
   left: 12px;
   top: 12px;
+}
+
+/* ============================== page frame ==============================
+   One formula for every band on the page, so the first text edge lands on
+   the same x here as on the home and case pages: 120px at 1440. */
+.music-hero__inner,
+.featured,
+.library,
+.music-fallback,
+.colophon {
+  width: min(100%, calc(var(--page-max) + var(--page-gutter) * 2));
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
 }
 
 /* ============================== shared navigation ============================== */
@@ -124,37 +121,12 @@ a { color: var(--paper); }
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 24px;
-  padding: 14px clamp(20px, 5vw, 72px);
+  gap: var(--s-4);
   border-bottom: 1px solid var(--rule);
   background: var(--glass);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
 }
-
-.site-header__name,
-.site-header nav a {
-  /* Matches case.css and sidar.css: the label is small, the tap target is not. */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  white-space: nowrap;
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  text-decoration: none;
-  color: var(--text-muted);
-}
-
-.site-header nav { display: flex; gap: clamp(8px, 1.6vw, 24px); }
-
-/* CV is only ~14px of text, below the 24px minimum target on its own. */
-.site-header nav a { min-width: 24px; }
-
-.site-header__name:hover,
-.site-header nav a:hover,
-.site-header nav a[aria-current='page'] { color: var(--paper); }
 
 .colophon {
   display: flex;
@@ -163,124 +135,194 @@ a { color: var(--paper); }
   align-items: center;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 12px;
-  max-width: var(--content-max);
-  margin: 0 auto;
-  padding: 40px clamp(20px, 5vw, 40px) 72px;
-  border-top: 1px solid var(--rule);
+  gap: var(--s-2);
+  position: relative;
+  z-index: 1;
+  padding-block: var(--s-4) var(--s-5);
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
+  font-size: var(--t-m0);
+  line-height: var(--lh-t3);
+  letter-spacing: var(--tr-m);
+  text-transform: uppercase;
+  color: var(--text-faint);
 }
 
-/* The comment above describes 44px links, but only home.css and case.css ever
-   set that up: here the six colophon links stayed inline and rendered 13px
-   tall, which is well under a usable tap target on a phone. */
+/* Matches the case pages: accent links with a permanent hairline, and a tap
+   target that is 44px tall even though the label is 11px. */
 .colophon a {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  color: var(--text-muted);
-  text-decoration: none;
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
 }
-.colophon a:hover { color: var(--paper); }
+
+.colophon a:hover { text-decoration-color: var(--paper); }
 
 /* ============================== headings ============================== */
 
 .music-hero__eyebrow,
 .section-heading__eyebrow {
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  font-size: var(--t-m1);
+  line-height: var(--lh-t3);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--accent);
 }
 
 .section-heading {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
   align-items: end;
-  gap: 28px;
-  max-width: var(--content-max);
-  margin: 0 auto 40px;
-  padding: 0 clamp(20px, 5vw, 40px);
+  gap: var(--s-4);
+  margin: 0 0 var(--s-5);
 }
 
 .section-heading h2 {
   max-width: 22ch;
-  margin-top: 12px;
-  font-size: clamp(28px, 3.4vw, 44px);
-  line-height: 1.08;
-  letter-spacing: -0.02em;
+  margin-top: var(--s-2);
+  font-size: var(--t-t1);
+  line-height: var(--lh-t1);
+  letter-spacing: var(--tr-t1);
 }
 
 .section-heading > p {
   max-width: 54ch;
-  font-size: 15px;
-  line-height: 1.65;
+  font-size: var(--t-b0);
+  line-height: var(--lh-b1);
   color: var(--text-dim);
 }
 
-/* ============================== hero ============================== */
+/* ============================== hero ==============================
+   Full bleed, like home and like every project page: the image fills the
+   section, the copy sits on it behind a two-axis scrim, and a mono line
+   underneath names the frame. The old hero was a text block in the page
+   column, which is why this page did not look like the rest of the site.
 
+   The bed is capped at 680px rather than a full viewport: the fixed player
+   bar owns the bottom of the screen here, and a 100svh hero would have put
+   the actions underneath it on a short laptop. */
 .music-hero {
-  max-width: var(--content-max);
-  margin: 0 auto;
-  padding: clamp(48px, 7vw, 76px) clamp(20px, 5vw, 40px) clamp(56px, 7vw, 88px);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  min-height: min(calc(100svh - 72px), 680px);
+  background: var(--c-bg-0);
 }
 
-.music-hero__eyebrow { margin-bottom: 16px; }
+.music-hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* The still carries a column of festival laurels down its right 26%: gold,
+   magenta and green, which would be the only saturated colour on the site.
+   The element is 1/0.74 of the section wide with the frame pinned to its left
+   edge, so that column lands outside the section and is clipped rather than
+   scrimmed into a smear. At 1440 the picture renders 1947px from a 1920px
+   source, so nothing is meaningfully upscaled. */
+.music-hero__still {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 135.2%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: left center;
+  /* The frame is graded very dark. Lifting it here rather than shipping a
+     second file keeps one asset on disk. */
+  filter: brightness(1.14) contrast(1.03);
+}
+
+/* Two gradients, the same pair home uses: the horizontal pass protects the
+   copy column, the vertical pass keeps the sticky header readable and seats
+   the section against the band below it. */
+.music-hero__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg,
+      rgba(11, 11, 13, 0.90) 0%,
+      rgba(11, 11, 13, 0.74) 28%,
+      rgba(11, 11, 13, 0.34) 54%,
+      rgba(11, 11, 13, 0.10) 74%,
+      rgba(11, 11, 13, 0.28) 100%),
+    linear-gradient(180deg,
+      rgba(11, 11, 13, 0.72) 0%,
+      rgba(11, 11, 13, 0.06) 24%,
+      rgba(11, 11, 13, 0.10) 58%,
+      rgba(11, 11, 13, 0.90) 100%);
+}
+
+.music-hero__inner {
+  position: relative;
+  z-index: 2;
+  padding-block: var(--s-7) var(--s-6);
+}
+
+.music-hero__eyebrow { margin-bottom: var(--s-4); }
 
 .music-hero__title {
   margin: 0;
-  font-size: clamp(56px, 9vw, 108px);
-  line-height: 0.9;
-  letter-spacing: -0.045em;
+  font-size: var(--t-d1);
+  line-height: var(--lh-d1);
+  letter-spacing: var(--tr-d1);
+  /* Parts of the word can land on a mid grey once the frame lightens. Too
+     soft to read as an effect, enough to hold the type off the image. */
+  text-shadow: 0 2px 28px rgba(11, 11, 13, 0.55);
 }
 
 .music-hero__subtitle {
-  max-width: 56ch;
-  margin-top: 26px;
-  font-size: clamp(17px, 1.6vw, 21px);
-  line-height: 1.5;
-  color: var(--text-dim);
+  max-width: 52ch;
+  margin-top: var(--s-4);
+  font-size: var(--t-b1);
+  line-height: var(--lh-b1);
+  color: var(--paper);
+}
+
+/* Same job as the reel meta line on home: one mono row of fact under the
+   copy, naming the media the section is sitting on. */
+.music-hero__meta {
+  margin-top: var(--s-3);
+  font-family: var(--mono);
+  font-size: var(--t-m0);
+  line-height: var(--lh-t3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
 }
 
 .music-hero__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 32px;
+  gap: var(--s-2);
+  margin-top: var(--s-5);
 }
 
-.music-hero__action {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 48px;
-  padding: 0 20px;
-  border: 1px solid var(--rule-strong);
-  border-radius: 10px;
-  background: transparent;
-  color: var(--paper);
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  cursor: pointer;
+/* The ghost button sits on a photograph here, not on the page ground, so it
+   needs a ground of its own to stay legible over a light patch. */
+.music-hero__action.btn--ghost {
+  background: color-mix(in srgb, var(--c-bg-0) 62%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
-.music-hero__action:hover { border-color: var(--paper); }
-
-.music-hero__action--primary {
-  color: var(--ink);
-  background: var(--paper);
-  border-color: var(--paper);
-}
-
-.music-hero__action--primary:hover { background: #fff; border-color: #fff; }
-
+/* ============================== buttons ==============================
+   .btn in _tokens.css is now the one definition of pill geometry, colour,
+   hover and the disabled state. This file used to carry a byte-for-byte
+   second copy of it under .music-hero__action, .filter-chip; both elements
+   wear the shared class in the markup instead, and only their deltas live
+   here. The icon controls in the player keep their own round shape. */
 .music-hero__action-icon {
   display: inline-flex;
   width: 14px;
@@ -291,20 +333,16 @@ a { color: var(--paper); }
 
 /* ============================== selected work ============================== */
 
-.featured {
-  max-width: var(--content-max);
-  margin: 0 auto;
-  padding: 0 0 clamp(64px, 8vw, 104px);
-}
+.featured { padding-block: var(--section-pad) var(--s-6); }
 
 .featured__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
-  padding: 0 clamp(20px, 5vw, 40px);
+  gap: var(--s-4);
 }
 
 .track-tile {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -314,9 +352,9 @@ a { color: var(--paper); }
   color: var(--paper);
   background: var(--surface);
   border: 1px solid var(--rule);
-  border-radius: 14px;
+  border-radius: var(--r-m);
   cursor: pointer;
-  transition: border-color 0.18s ease, background 0.18s ease;
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
 }
 
 .track-tile:hover {
@@ -345,36 +383,37 @@ a { color: var(--paper); }
 .track-tile__body {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 18px 18px 20px;
+  gap: var(--s-1);
+  padding: var(--s-3) var(--s-3) var(--s-4);
 }
 
 .track-tile__meta {
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.05em;
+  font-size: var(--t-m0);
+  line-height: var(--lh-t3);
+  letter-spacing: var(--tr-m);
   text-transform: uppercase;
   color: var(--text-faint);
 }
 
 .track-tile__title {
   font-family: var(--serif);
-  font-size: 19px;
+  font-size: var(--t-t3);
   font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  line-height: var(--lh-t3);
+  letter-spacing: var(--tr-t3);
 }
 
 .track-tile__note {
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: var(--t-s1);
+  line-height: var(--lh-b1);
   color: var(--text-dim);
 }
 
 .track-tile__state {
   position: absolute;
-  right: 16px;
-  top: 16px;
+  right: var(--s-3);
+  top: var(--s-3);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -384,10 +423,8 @@ a { color: var(--paper); }
   color: var(--ink);
   background: var(--paper);
   opacity: 0;
-  transition: opacity 0.18s ease;
+  transition: opacity var(--dur) var(--ease);
 }
-
-.track-tile { position: relative; }
 
 .track-tile:hover .track-tile__state,
 .track-tile:focus-visible .track-tile__state,
@@ -408,33 +445,40 @@ a { color: var(--paper); }
   background: linear-gradient(to right, currentColor 0 4px, transparent 4px 7px, currentColor 7px 11px);
 }
 
-.featured__case-link {
+/* The two outbound links on the page. They used to be bare 12px mono with a
+   transparent bottom border, which read as a caption rather than a link. */
+.featured__case-link,
+.library__spotify {
   display: inline-flex;
   align-items: center;
-  min-height: 24px; /* WCAG 2.5.8 minimum for a standalone link */
-  margin: 32px clamp(20px, 5vw, 40px) 0;
+  min-height: 44px;
+  margin-top: var(--s-4);
   font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
+  font-size: var(--t-m1);
+  line-height: var(--lh-t3);
+  letter-spacing: var(--tr-m);
   color: var(--accent);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
-.featured__case-link:hover { border-bottom-color: var(--accent); }
+.featured__case-link:hover,
+.library__spotify:hover {
+  color: var(--accent-hi);
+  text-decoration-color: var(--accent-hi);
+}
 
 /* ============================== library ============================== */
 
 /* The archive box is narrower than the rest of the page so a track row stays
-   scannable. It shares the page container rather than centring on its own,
-   otherwise its left edge sits 80px inside the selected-work grid above it and
-   the two sections read as misaligned. */
+   scannable. It shares the page frame rather than centring on its own,
+   otherwise its left edge sits inside the selected-work grid above it and the
+   two sections read as misaligned. */
 .library {
-  max-width: var(--content-max);
-  margin: 0 auto;
-  padding: 0 0 clamp(72px, 9vw, 120px);
+  padding-block: var(--s-6) var(--section-pad);
   border-top: 1px solid var(--rule);
-  padding-top: clamp(56px, 7vw, 88px);
 }
 
 .library .section-heading,
@@ -448,39 +492,19 @@ a { color: var(--paper); }
 .library__filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 0 clamp(20px, 5vw, 40px) 28px;
+  gap: var(--s-1);
+  padding-bottom: var(--s-4);
 }
 
-.filter-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--text-dim);
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.filter-chip:hover { border-color: var(--rule-strong); color: var(--paper); }
+.filter-chip__count { color: var(--text-faint); }
 
 .filter-chip[aria-pressed='true'] {
   color: var(--paper);
   border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  background: var(--c-accent-weak);
 }
 
-.filter-chip__count { color: var(--text-faint); }
 .filter-chip[aria-pressed='true'] .filter-chip__count { color: var(--accent); }
-
-.library__list { padding: 0 clamp(20px, 5vw, 40px); }
 
 /* Build-injected plain track index. Visible only until music-selected.js
    mounts the interactive library (the script removes it), or permanently
@@ -489,34 +513,36 @@ a { color: var(--paper); }
   margin: 0;
   padding-left: 1.4em;
   font-family: var(--mono);
-  font-size: 13px;
-  line-height: 2;
+  font-size: var(--t-s1);
+  line-height: var(--lh-b0);
   color: var(--text-muted);
 }
 
-.library-group + .library-group { margin-top: 44px; }
+.library-group + .library-group { margin-top: var(--s-4); }
 
 .library-group__head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 10px;
+  gap: var(--s-3);
+  padding-bottom: var(--s-2);
   border-bottom: 1px solid var(--rule);
 }
 
 .library-group__head h3 {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--t-m1);
   font-weight: 400;
-  letter-spacing: 0.12em;
+  line-height: var(--lh-t3);
+  letter-spacing: var(--tr-m);
   color: var(--paper);
 }
 
 .library-group__head p {
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.04em;
+  font-size: var(--t-m0);
+  line-height: var(--lh-t3);
+  letter-spacing: var(--tr-m);
   color: var(--text-faint);
 }
 
@@ -524,31 +550,36 @@ a { color: var(--paper); }
 
 .library-row {
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) 0 78px 52px 56px;
+  grid-template-columns: 40px minmax(0, 1fr) 78px 52px 56px;
   align-items: center;
-  gap: 16px;
+  gap: var(--s-3);
   width: 100%;
-  min-height: 58px;
-  padding: 8px 10px 8px 8px;
+  min-height: 54px;
+  padding: var(--s-1) var(--s-2) var(--s-1) var(--s-1);
   border: 0;
-  border-bottom: 1px solid var(--rule);
-  border-radius: 8px;
+  border-bottom: 1px solid var(--c-line);
+  border-radius: var(--r-s);
   background: transparent;
   color: var(--paper);
   text-align: left;
   cursor: pointer;
 }
 
-.library-row:hover { background: rgba(236, 238, 240, 0.045); }
+.library-row:hover { background: color-mix(in srgb, var(--paper) 7%, transparent); }
 
+/* One playing row inside 44 needs more than a 9% wash to be findable again
+   after scrolling, so it also carries a bar on the leading edge. */
 .library-row.active {
-  background: color-mix(in srgb, var(--signal) 9%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  box-shadow: inset 2px 0 0 0 var(--accent);
 }
 
 .library-row__art {
   width: 40px;
   height: 40px;
-  border-radius: 6px;
+  border-radius: var(--r-s);
+  /* Dark covers have no edge of their own against the page. */
+  box-shadow: inset 0 0 0 1px var(--rule);
   background-color: var(--surface-raised);
   background-size: cover;
   background-position: center;
@@ -557,7 +588,7 @@ a { color: var(--paper); }
 .library-row__main {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--s-2);
   min-width: 0;
 }
 
@@ -565,53 +596,56 @@ a { color: var(--paper); }
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 15px;
+  font-size: var(--t-b0);
+  line-height: var(--lh-t3);
 }
 
 .library-row.active .library-row__name { color: var(--accent); }
 
+/* The badge only distinguishes anything in the "all" filter; under Finished or
+   Sketches it printed the same word on every row. When it is shown it is
+   pushed to the right edge of the title column so the badges form one line. */
 .library-row__kind {
+  display: none;
   flex: 0 0 auto;
+  margin-left: auto;
   padding: 2px 8px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.06em;
+  font-size: var(--t-m0);
+  line-height: var(--lh-t3);
+  letter-spacing: var(--tr-m);
   text-transform: uppercase;
   color: var(--text-faint);
 }
 
-.library-row__kind--sketch { color: color-mix(in srgb, var(--sketch) 78%, var(--paper)); }
+.library__list.is-all .library-row__kind {
+  display: inline-flex;
+  align-items: center;
+}
+
+.library-row__kind--sketch {
+  color: var(--text-faint);
+  border-color: var(--rule);
+}
 
 .library-row__detail {
   display: none;
   font-family: var(--mono);
-  font-size: 12px;
-  line-height: 1.35;
-  letter-spacing: 0.03em;
+  font-size: var(--t-m1);
+  line-height: var(--lh-t3);
+  letter-spacing: 0;
   color: var(--text-faint);
-}
-
-/* Preview only, no interaction: the row is a single button, so seeking stays
-   in the bar and the sheet where there are real sliders. */
-.library-row__wave {
-  display: none;
-  width: 100%;
-  height: 22px;
-}
-
-@media (min-width: 1000px) {
-  .library-row { grid-template-columns: 40px minmax(0, 1fr) 116px 78px 52px 56px; }
-  .library-row__wave { display: block; }
 }
 
 .library-row__date,
 .library-row__duration,
 .library-row__state {
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.03em;
+  font-size: var(--t-m0);
+  line-height: var(--lh-t3);
+  letter-spacing: 0;
   color: var(--text-faint);
 }
 
@@ -627,48 +661,26 @@ a { color: var(--paper); }
 .library-row:focus-visible .library-row__state,
 .library-row.active .library-row__state { opacity: 1; }
 
-.library__noscript {
-  padding: 0 clamp(20px, 5vw, 40px);
-  color: var(--text-dim);
-}
-
-.library__spotify {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px; /* WCAG 2.5.8 minimum for a standalone link */
-  margin: 36px clamp(20px, 5vw, 40px) 0;
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  color: var(--accent);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-}
-
-.library__spotify:hover { border-bottom-color: var(--accent); }
+.library__noscript { color: var(--text-dim); }
 
 /* ============================== noscript fallback ============================== */
 
-.music-fallback {
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 64px clamp(20px, 5vw, 24px) 120px;
-}
+.music-fallback { padding-block: var(--section-pad); }
 
-.music-fallback h2 { margin-bottom: 12px; }
+.music-fallback h2 { margin-bottom: var(--s-2); }
 .music-fallback > p { max-width: 58ch; color: var(--text-dim); }
-.music-fallback ol { margin: 36px 0 0; padding: 0; list-style: none; }
+.music-fallback ol { margin: var(--s-5) 0 0; padding: 0; list-style: none; }
 
 .music-fallback li {
   display: grid;
   grid-template-columns: minmax(180px, 0.65fr) minmax(260px, 1fr);
   align-items: center;
-  gap: 24px;
-  padding: 18px 0;
-  border-top: 1px solid var(--rule);
+  gap: var(--s-4);
+  padding: var(--s-3) 0;
+  border-top: 1px solid var(--c-line);
 }
 
-.music-fallback li:last-child { border-bottom: 1px solid var(--rule); }
+.music-fallback li:last-child { border-bottom: 1px solid var(--c-line); }
 .music-fallback li span { font-weight: 600; }
 .music-fallback audio { width: 100%; min-width: 0; }
 
@@ -716,7 +728,7 @@ a { color: var(--paper); }
   right: 5px;
   top: 5px;
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: var(--t-m0);
   line-height: 1;
   color: var(--accent);
   opacity: 0;
@@ -753,10 +765,10 @@ a { color: var(--paper); }
   z-index: 900;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
   align-items: center;
-  gap: 16px;
-  min-height: var(--player-height);
-  padding: 8px clamp(12px, 3vw, 24px);
+  column-gap: var(--s-3);
+  padding: 0 var(--bar-pad) 8px;
   padding-bottom: calc(8px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--rule);
   background: var(--glass);
@@ -764,29 +776,37 @@ a { color: var(--paper); }
   backdrop-filter: blur(18px);
 }
 
+.player-bar.has-track { min-height: var(--player-height); }
+
 .player-bar[hidden] { display: none !important; }
 
-/* ---- seek rail on the top edge ---- */
-
+/* ---- seek rail, first row of the bar ----
+   A real rail: a 4px track, an accent fill and a round playhead at the head of
+   the fill, so the position is readable at 2% as well as at 80%. It is a grid
+   row rather than an overlay, so nothing of it sits on top of page content. */
 .player-bar__progress {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 3px;
-  background: rgba(236, 238, 240, 0.1);
+  position: relative;
+  grid-area: 1 / 1 / 2 / -1;
+  height: 18px;
+  margin-inline: calc(-1 * var(--bar-pad));
   cursor: pointer;
-  touch-action: none;
+  /* Only a real drag locks the page: a swipe that starts here still scrolls. */
+  touch-action: pan-y;
+  background: linear-gradient(var(--rule), var(--rule)) center / 100% 4px no-repeat;
 }
 
-/* Enlarged hit area so the 3px rail is still reachable with a finger. */
+.player-bar__progress.is-scrubbing,
+.now-playing__scrub.is-scrubbing { touch-action: none; }
+
+/* 44px of hit area, all of it inside the bar. The controls below carry
+   z-index 1, so they keep their own taps. */
 .player-bar__progress::before {
   content: '';
   position: absolute;
   left: 0;
   right: 0;
-  top: -11px;
-  height: 25px;
+  top: 0;
+  height: 44px;
 }
 
 .player-bar__progress[aria-disabled='true'] { cursor: default; }
@@ -795,63 +815,64 @@ a { color: var(--paper); }
 .player-bar__progress-fill {
   position: absolute;
   left: 0;
-  top: 0;
-  height: 100%;
+  top: 50%;
+  height: 4px;
   width: 0;
+  margin-top: -2px;
+  border-radius: 2px;
 }
 
-.player-bar__progress-buffer { background: rgba(236, 238, 240, 0.16); }
+.player-bar__progress-buffer { background: var(--rule-strong); }
 .player-bar__progress-fill { background: var(--accent); }
 
-/* The bar carries the envelope too, so the shape of the track is on screen
-   without opening anything. Hidden on narrow screens, where the 3px rail and
-   the full-height sheet scrubber are the better use of the space. */
-.player-bar__envelope { display: none; }
-
-@media (min-width: 900px) {
-  .player-bar__progress {
-    height: 30px;
-    background: transparent;
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .player-bar__progress::before { top: -6px; height: 42px; }
-
-  .player-bar__progress-buffer,
-  .player-bar__progress-fill { display: none; }
-
-  .player-bar__envelope {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  .player-bar { padding-top: 34px; }
+.player-bar__progress-fill::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin-top: -5px;
+  border-radius: 50%;
+  background: var(--accent);
 }
 
+.player-bar__progress[aria-disabled='true'] .player-bar__progress-fill::after { display: none; }
+
 /* ---- now playing trigger ---- */
+
+.player-bar__now,
+.player-bar__controls,
+.player-bar__meters {
+  position: relative;
+  z-index: 1;
+  grid-row: 2;
+}
 
 .player-bar__now {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--s-2);
   min-width: 0;
-  padding: 4px 6px 4px 4px;
+  padding: 3px 6px 3px 3px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--r-s);
   background: transparent;
   color: var(--paper);
   text-align: left;
   cursor: pointer;
 }
 
-.player-bar__now:hover { background: rgba(236, 238, 240, 0.05); }
+.player-bar__now:hover { background: color-mix(in srgb, var(--paper) 5%, transparent); }
 
 .player-bar__cover {
   flex: 0 0 auto;
-  width: 46px;
-  height: 46px;
-  border-radius: 7px;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--r-s);
+  /* outline, not an inset shadow: an inset shadow paints under image content. */
+  outline: 1px solid var(--rule);
+  outline-offset: -1px;
   object-fit: cover;
   background: var(--surface-raised);
 }
@@ -862,23 +883,41 @@ a { color: var(--paper); }
   min-width: 0;
 }
 
-.player-bar__title,
-.player-bar__artist {
+.player-bar__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--t-s1);
+  line-height: var(--lh-t3);
+  font-weight: 500;
+}
+
+/* The status used to be absolutely positioned against the bottom edge of the
+   bar, 2px off the border and out of line with the block it describes. It is
+   the second half of the artist line instead. */
+.player-bar__line {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  min-width: 0;
+  font-family: var(--mono);
+  font-size: var(--t-m0);
+  line-height: var(--lh-t3);
+  letter-spacing: 0;
+  color: var(--text-faint);
+}
+
+.player-bar__artist,
+.player-bar__status {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.player-bar__title {
-  font-size: 14px;
-  font-weight: 500;
-}
+.player-bar__artist { flex: 0 1 auto; }
+.player-bar__status { flex: 0 0 auto; }
 
-.player-bar__artist {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text-faint);
-}
+.player-bar.has-error .player-bar__status { color: var(--c-warn); }
 
 .player-bar__expand {
   flex: 0 0 auto;
@@ -889,23 +928,6 @@ a { color: var(--paper); }
 }
 
 .player-bar__expand svg { width: 100%; height: 100%; }
-
-/* The 62px matches the cover art plus its gap, so the status reads as a third
-   line of the track block. Left on the bar's own inset it started under the
-   cover, 62px to the left of the title it belongs to. The narrow layer at the
-   end of this file indents it the same way. */
-.player-bar__status {
-  position: absolute;
-  left: calc(clamp(12px, 3vw, 24px) + 62px);
-  bottom: 2px;
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.04em;
-  color: var(--text-faint);
-  pointer-events: none;
-}
-
-.player-bar.has-error .player-bar__status { color: #e8a5a5; }
 
 .player-bar__controls {
   display: flex;
@@ -918,7 +940,7 @@ a { color: var(--paper); }
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 12px;
+  gap: var(--s-2);
 }
 
 .player-bar__time-group {
@@ -926,7 +948,9 @@ a { color: var(--paper); }
   align-items: center;
   gap: 5px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--t-m0);
+  line-height: var(--lh-t3);
+  letter-spacing: 0;
   color: var(--text-faint);
   font-variant-numeric: tabular-nums;
 }
@@ -934,15 +958,15 @@ a { color: var(--paper); }
 .player-bar__volume-group {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--s-1);
 }
 
 .player-bar__volume {
   position: relative;
   width: 84px;
-  height: 3px;
+  height: 4px;
   border-radius: 2px;
-  background: rgba(236, 238, 240, 0.16);
+  background: var(--rule);
   cursor: pointer;
   touch-action: none;
 }
@@ -953,7 +977,7 @@ a { color: var(--paper); }
   left: 0;
   right: 0;
   top: -12px;
-  height: 27px;
+  height: 28px;
 }
 
 .player-bar__volume-fill {
@@ -976,12 +1000,35 @@ a { color: var(--paper); }
   background: var(--paper);
 }
 
+/* ---- idle bar ----
+   Nothing has been selected yet, so there is nothing to seek, no artwork, no
+   times and no queue to shuffle. What is left is one line of text and the two
+   controls that start playback. */
+.player-bar:not(.has-track) {
+  min-height: var(--player-height-idle);
+  padding-top: 8px;
+}
+
+.player-bar:not(.has-track) .player-bar__progress,
+.player-bar:not(.has-track) .player-bar__cover,
+.player-bar:not(.has-track) .player-bar__expand,
+.player-bar:not(.has-track) .player-bar__artist,
+.player-bar:not(.has-track) .player-bar__sep,
+.player-bar:not(.has-track) .player-bar__meters,
+.player-bar:not(.has-track) .player-ctrl--mode,
+.player-bar:not(.has-track) [data-player='prev'] { display: none; }
+
+.player-bar:not(.has-track) .player-bar__now { cursor: default; }
+.player-bar:not(.has-track) .player-bar__now:hover { background: transparent; }
+
 /* ============================== now playing sheet ============================== */
 
 .now-playing {
-  width: min(560px, 100vw);
+  width: min(560px, calc(100vw - var(--s-5)));
   max-width: 100vw;
-  max-height: 100dvh;
+  /* The dialog used to be flush with both viewport edges at 900px tall, which
+     cut off its own corner radius. */
+  max-height: calc(100dvh - var(--s-5));
   margin: auto;
   border: 0;
   padding: 0;
@@ -999,26 +1046,28 @@ a { color: var(--paper); }
 .now-playing__inner {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  max-height: 100dvh;
-  padding: 20px clamp(20px, 5vw, 28px) calc(24px + env(safe-area-inset-bottom));
+  gap: var(--s-4);
+  max-height: calc(100dvh - var(--s-5));
+  padding: var(--s-4) var(--s-4) calc(var(--s-4) + env(safe-area-inset-bottom));
   overflow-y: auto;
   background: var(--surface);
   border: 1px solid var(--rule);
-  border-radius: 18px;
+  border-radius: var(--r-m);
+  box-shadow: var(--e-3);
 }
 
 .now-playing__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--s-3);
 }
 
 .now-playing__eyebrow {
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  font-size: var(--t-m0);
+  line-height: var(--lh-t3);
+  letter-spacing: var(--tr-m);
   text-transform: uppercase;
   color: var(--text-muted);
 }
@@ -1040,44 +1089,51 @@ a { color: var(--paper); }
 .now-playing__close:hover { color: var(--paper); }
 .now-playing__close svg { width: 20px; height: 20px; }
 
+/* Square art in a square box. width + aspect-ratio + max-height + contain used
+   to resolve to a 504x396 box around a square image, with a grey band down
+   each side. */
 .now-playing__art {
   display: block;
-  width: 100%;
-  max-height: 44dvh;
+  width: min(100%, 44dvh);
+  height: auto;
   aspect-ratio: 1;
-  object-fit: contain;
-  border-radius: 12px;
+  margin-inline: auto;
+  object-fit: cover;
+  border-radius: var(--r-m);
   background: var(--surface-raised);
 }
 
 .now-playing__meta { display: flex; flex-direction: column; gap: 4px; }
 
 .now-playing__title {
-  font-size: clamp(22px, 4vw, 28px);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  font-size: var(--t-t2);
+  line-height: var(--lh-t2);
+  letter-spacing: var(--tr-t2);
 }
 
-.now-playing__artist { font-size: 15px; color: var(--text-dim); }
+.now-playing__artist {
+  font-size: var(--t-b0);
+  line-height: var(--lh-b1);
+  color: var(--text-dim);
+}
 
 .now-playing__detail {
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.05em;
+  font-size: var(--t-m0);
+  line-height: var(--lh-t3);
+  letter-spacing: var(--tr-m);
   text-transform: uppercase;
   color: var(--text-faint);
 }
 
-.now-playing__seek { display: flex; flex-direction: column; gap: 8px; }
+.now-playing__seek { display: flex; flex-direction: column; gap: var(--s-1); }
 
-/* The loudness envelope doubles as the scrubber: tap the shape to jump to
-   that point. Baseline-anchored bars, never mirrored. */
 .now-playing__scrub {
   position: relative;
-  height: 52px;
-  border-bottom: 1px solid var(--rule);
+  height: 18px;
   cursor: pointer;
-  touch-action: none;
+  touch-action: pan-y;
+  background: linear-gradient(var(--rule), var(--rule)) center / 100% 4px no-repeat;
 }
 
 .now-playing__scrub::before {
@@ -1085,28 +1141,19 @@ a { color: var(--paper); }
   position: absolute;
   left: 0;
   right: 0;
-  top: -8px;
-  bottom: -8px;
+  top: -13px;
+  height: 44px;
 }
 
 .now-playing__scrub[aria-disabled='true'] { cursor: default; }
-
-.now-playing__scrub:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-.now-playing__envelope {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
 
 .now-playing__times {
   display: flex;
   justify-content: space-between;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--t-m0);
+  line-height: var(--lh-t3);
+  letter-spacing: 0;
   color: var(--text-faint);
   font-variant-numeric: tabular-nums;
 }
@@ -1119,27 +1166,29 @@ a { color: var(--paper); }
 }
 
 .now-playing__queue {
-  padding-top: 18px;
+  padding-top: var(--s-3);
   border-top: 1px solid var(--rule);
 }
 
 .now-playing__queue-title {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--t-m0);
   font-weight: 400;
-  letter-spacing: 0.1em;
+  line-height: var(--lh-t3);
+  letter-spacing: var(--tr-m);
   text-transform: uppercase;
   color: var(--text-muted);
 }
 
 .now-playing__queue-list {
-  margin-top: 10px;
+  margin-top: var(--s-2);
   list-style: none;
 }
 
 .now-playing__queue-empty {
-  padding: 12px 0;
-  font-size: 14px;
+  padding: var(--s-2) 0;
+  font-size: var(--t-s1);
+  line-height: var(--lh-b1);
   color: var(--text-faint);
 }
 
@@ -1147,24 +1196,25 @@ a { color: var(--paper); }
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 12px;
+  gap: var(--s-2);
   width: 100%;
   min-height: 48px;
   padding: 4px 6px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--r-s);
   background: transparent;
   color: var(--paper);
   text-align: left;
   cursor: pointer;
 }
 
-.now-playing__queue-row:hover { background: rgba(236, 238, 240, 0.05); }
+.now-playing__queue-row:hover { background: color-mix(in srgb, var(--paper) 5%, transparent); }
 
 .now-playing__queue-art {
   width: 34px;
   height: 34px;
-  border-radius: 5px;
+  border-radius: var(--r-s);
+  box-shadow: inset 0 0 0 1px var(--rule);
   background-color: var(--surface-raised);
   background-size: cover;
   background-position: center;
@@ -1174,12 +1224,15 @@ a { color: var(--paper); }
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 14px;
+  font-size: var(--t-s1);
+  line-height: var(--lh-t3);
 }
 
 .now-playing__queue-time {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--t-m0);
+  line-height: var(--lh-t3);
+  letter-spacing: 0;
   color: var(--text-faint);
 }
 
@@ -1193,28 +1246,27 @@ a { color: var(--paper); }
   .section-heading {
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
-    gap: 16px;
+    gap: var(--s-3);
   }
 }
 
 @media (max-width: 899.98px) {
   .player-bar {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 8px;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    column-gap: var(--s-2);
   }
 
+  /* The time readout stays. It used to disappear with the whole meters group,
+     which left a phone with no position feedback at all. */
   .player-bar__only-wide,
-  .player-bar__meters { display: none; }
+  .player-bar__volume-group { display: none; }
 
-  .player-bar__artist { display: none; }
+  .player-bar__artist,
+  .player-bar__sep { display: none; }
+}
 
-  .player-bar__status {
-    position: static;
-    grid-column: 1;
-    grid-row: 2;
-    margin-top: -6px;
-    padding-left: 62px;
-  }
+@media (max-width: 700px) {
+  .music-hero__still { object-position: 25% center; }
 }
 
 @media (max-width: 620px) {
@@ -1225,54 +1277,69 @@ a { color: var(--paper); }
   .track-tile {
     flex-direction: row;
     align-items: center;
-    gap: 14px;
-    padding: 12px 8px;
+    gap: var(--s-3);
+    padding: var(--s-2) 8px;
     border: 0;
-    border-bottom: 1px solid var(--rule);
-    border-radius: 8px;
+    border-bottom: 1px solid var(--c-line);
+    border-radius: var(--r-s);
     background: transparent;
   }
 
-  .track-tile:hover { background: rgba(236, 238, 240, 0.045); }
+  .track-tile:hover { background: color-mix(in srgb, var(--paper) 7%, transparent); }
 
   .track-tile__art {
     flex: 0 0 auto;
     width: 62px;
     height: 62px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--r-s);
+    outline: 1px solid var(--rule);
+    outline-offset: -1px;
   }
 
   .track-tile__body { gap: 3px; padding: 0; min-width: 0; }
+
+  /* In the row layout the card title is a list-row title, not a card heading. */
+  .track-tile__title { font-size: var(--t-b0); line-height: var(--lh-t3); }
   .track-tile__note {
     display: -webkit-box;
     overflow: hidden;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
-    font-size: 12px;
-    line-height: 1.4;
+    font-size: var(--t-m1);
+    line-height: var(--lh-t3);
   }
-  .track-tile__title { font-size: 16px; }
 
+  /* A bare outline triangle floating at the edge of a row reads as decoration.
+     The circle gives it a control shape, and playing fills it. */
   .track-tile__state {
     position: static;
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
     margin-left: auto;
     opacity: 1;
     color: var(--paper);
     background: transparent;
+    border: 1px solid var(--rule-strong);
+  }
+
+  .track-tile.is-playing .track-tile__state {
+    color: var(--ink);
+    background: var(--paper);
+    border-color: var(--paper);
   }
 
   .library-row {
     grid-template-columns: 40px minmax(0, 1fr) auto;
-    gap: 12px;
+    gap: var(--s-2);
+    align-items: center;
+    min-height: 62px;
   }
 
   .library-row__date,
   .library-row__state { display: none; }
 
-  .library-row__kind { display: none; }
+  .library__list.is-all .library-row__kind { display: none; }
 
   .library-row__main {
     flex-direction: column;
@@ -1291,10 +1358,9 @@ a { color: var(--paper); }
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    line-height: 1.3;
+    font-size: var(--t-s1);
+    line-height: var(--lh-t3);
   }
-
-  .library-row { align-items: center; min-height: 62px; }
 
   .now-playing {
     width: 100vw;
@@ -1305,11 +1371,12 @@ a { color: var(--paper); }
 
   .now-playing__inner {
     height: 100dvh;
+    max-height: 100dvh;
     border: 0;
     border-radius: 0;
   }
 
-  .music-fallback li { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .music-fallback li { grid-template-columns: minmax(0, 1fr); gap: var(--s-2); }
 
   /* ---- Page foot ----
      home.css and case.css both turn the colophon into a column here; this
@@ -1318,22 +1385,13 @@ a { color: var(--paper); }
   .colophon {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: var(--s-1);
   }
 
-  /* Six links and their separators came within a pixel of the available width
-     at 390px, so the row wrapped and left a separator dangling at the end of
-     the first line with Spotify orphaned below it. Tightening the tracking
-     here gives the row real room instead of a rounding margin. */
-  .colophon > span:last-child { letter-spacing: 0.01em; }
-}
-
-@media (max-width: 380px) {
-  /* Contact used to be dropped here. There is room for it once the header
-     stops wrapping, and it is the one link a visitor is most likely to want. */
-  .site-header { gap: 8px; padding-inline: 14px; }
-  .site-header nav { gap: 8px; }
-  .music-hero__action { width: 100%; justify-content: center; }
+  /* Six links plus their separators are 366px of uppercase mono at 0.08em and
+     the line box is 350px, so the row wrapped with a separator dangling at the
+     end of it and Spotify orphaned below. Zero tracking fits the whole row. */
+  .colophon > span:last-child { letter-spacing: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1361,16 +1419,13 @@ a { color: var(--paper); }
    used to be defined four times with four different paddings, so it jumped
    every time you switched pages. Change one, change all four.
 
-   padding-inline resolves to the same left edge as the 1160px content column
-   (1280px on wide screens) and collapses to a plain gutter below that.
+   padding-inline is the page frame formula: the wordmark lands on the same x
+   as the first text edge of the content column below it.
    Nav is Inter, not mono: mono stays on real data (years, tool lists). */
 .site-header {
   padding-block: 14px;
-  padding-inline: max(20px, calc((100% - 1160px) / 2 + 40px));
+  padding-inline: max(var(--page-gutter), calc((100% - var(--page-max)) / 2));
   min-height: 0;
-}
-@media (min-width:1360px) {
-  .site-header { padding-inline: max(20px, calc((100% - 1280px) / 2 + 40px)); }
 }
 .site-header__name,
 .site-header nav a {
@@ -1379,22 +1434,22 @@ a { color: var(--paper); }
 }
 .site-header nav { display: flex; align-items: center; gap: clamp(8px,1.6vw,24px); }
 .site-header__name {
-  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-family: var(--serif);
   font-size: .95rem; font-weight: 600; letter-spacing: .01em;
   color: var(--paper);
 }
 .site-header__name-short { display: none; }
 .site-header nav a {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--sans);
   font-size: .82rem; font-weight: 500; letter-spacing: .01em;
-  min-width: 24px; transition: color .15s;
+  min-width: 24px; transition: color var(--dur) var(--ease);
   color: var(--text-muted);
 }
+.site-header__name:hover,
 .site-header nav a:hover,
 .site-header nav a[aria-current='page'] { color: var(--paper); }
 .site-header nav a[aria-current='page'] { box-shadow: inset 0 -1px 0 0 var(--paper); }
 @media (max-width:640px) {
-  .site-header { padding-inline: 20px; }
   .site-header__name { font-size: .85rem; }
   .site-header nav a { font-size: .78rem; }
 }
@@ -1405,11 +1460,11 @@ a { color: var(--paper); }
    leaves enough room for 44px targets at the narrowest supported width. */
 @media (max-width: 820px) {
   .site-header {
-    gap: 6px;
+    gap: var(--s-1);
     padding-block: 6px;
     padding-inline:
-      max(10px, env(safe-area-inset-left))
-      max(10px, env(safe-area-inset-right));
+      max(var(--page-gutter), env(safe-area-inset-left))
+      max(var(--page-gutter), env(safe-area-inset-right));
   }
 
   .site-header__name {
@@ -1439,9 +1494,9 @@ a { color: var(--paper); }
     min-width: 44px;
     min-height: 44px;
     padding: 0 clamp(5px, 1.8vw, 12px);
-    border: 1px solid rgba(236, 238, 240, 0.16);
-    border-radius: 999px;
-    background: rgba(236, 238, 240, 0.035);
+    border: 1px solid var(--rule);
+    border-radius: var(--r-pill);
+    background: color-mix(in srgb, var(--paper) 3.5%, transparent);
     font-size: .75rem;
     letter-spacing: 0;
     box-shadow: none;
@@ -1449,13 +1504,13 @@ a { color: var(--paper); }
 
   /* case.css resets the nav border to 0 on hover for its underlined links;
      without this the pill outline disappears on a narrow desktop window. */
-  .site-header nav a:hover { border: 1px solid rgba(236, 238, 240, 0.3); }
+  .site-header nav a:hover { border: 1px solid var(--rule-strong); }
 
   .site-header nav a[aria-current='page'],
   .site-header nav a[aria-current='page']:hover {
     border-color: transparent;
-    background: #eceef0;
-    color: #101012;
+    background: var(--paper);
+    color: var(--page);
     box-shadow: none;
   }
 }
@@ -1467,35 +1522,57 @@ a { color: var(--paper); }
    hero buttons of different widths sitting ragged under it.
    ========================================================= */
 @media (max-width: 820px) {
-  .music-hero {
-    padding-top: 44px;
-    padding-bottom: 52px;
+  .music-hero { min-height: max(520px, min(calc(100svh - 64px), 620px)); }
+
+  /* The 135.2% width exists on desktop to push the festival laurels off the
+     right edge. In a 390x620 box that overscale compounded with cover on a 2:1
+     source and only ~31% of the frame survived, with the subject cropped out
+     entirely. At full width the box does the cropping and the position keeps
+     the figure, who sits about three quarters across the frame. */
+  .music-hero__still {
+    width: 100%;
+    /* Computed, not guessed: at 390x620 the 2:1 still scales to 1240px wide
+       with 850px of pan. 58% puts the figure (about 56% across the source) in
+       the middle of the window and stops its right edge at 889px, short of the
+       festival laurels that begin at 918px. Those are the gold, magenta and
+       green the palette excludes, which is why the desktop rule overscales to
+       push them out of frame in the first place. */
+    object-position: 58% center;
+    filter: brightness(1.24) contrast(1.03);
   }
 
+  .music-hero__scrim {
+    background: linear-gradient(180deg,
+      rgba(11, 11, 13, 0.62) 0%,
+      rgba(11, 11, 13, 0.10) 24%,
+      rgba(11, 11, 13, 0.55) 50%,
+      rgba(11, 11, 13, 0.92) 76%,
+      rgba(11, 11, 13, 0.96) 100%);
+  }
+  .music-hero__inner { padding-block: var(--s-6) var(--s-5); }
+
   .music-hero__subtitle {
-    margin-top: 20px;
-    font-size: 16.5px;
-    line-height: 1.55;
+    margin-top: var(--s-3);
+    font-size: var(--t-b0);
+    line-height: var(--lh-b1);
     text-wrap: pretty;
   }
 
-  .music-hero__actions { margin-top: 26px; gap: 9px; }
+  .music-hero__meta { margin-top: var(--s-3); }
 
-  .section-heading { margin-bottom: 28px; }
+  .music-hero__actions { margin-top: var(--s-4); gap: var(--s-1); }
+
+  .section-heading { margin-bottom: var(--s-4); }
   .section-heading h2 { text-wrap: balance; }
   .section-heading > p { text-wrap: pretty; }
-
-  /* 24px clears the WCAG minimum but is a thin thing to hit with a thumb;
-     these two are the only links between the long lists on this page. */
-  .featured__case-link,
-  .library__spotify { min-height: 44px; }
 }
 
 @media (max-width: 560px) {
   /* Two labels of different lengths made two buttons of different widths.
-     Full width reads as one control block and gives each a 48px target. */
+     Full width reads as one control block and gives each a full-row target. */
   .music-hero__action {
     width: 100%;
     justify-content: center;
   }
+
 }

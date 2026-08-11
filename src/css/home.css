@@ -8,18 +8,21 @@
    ========================================================= */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
+/* This stylesheet keeps its own vocabulary; the block below is the single
+   place where it meets the shared tokens in _tokens.css. Nothing under it
+   should re-declare a colour, a family or a spacing literal. */
 :root {
-  --bg:     #101012;
-  --ink:    #eceef0;
-  --muted:  #9aa0a8;
-  --faint:  #7a808a;
-  --rule:   rgba(236,238,240,0.1);
-  --rule-h: rgba(236,238,240,0.28);
-  --ice:    #aac6de;
-  --panel:  rgba(24,24,27,0.66);
-  --display:'Space Grotesk', 'Space Grotesk Fallback', system-ui, sans-serif;
-  --body:   'Inter', 'Inter Fallback', system-ui, sans-serif;
-  --mono:   'IBM Plex Mono', ui-monospace, monospace;
+  --bg:      var(--c-bg-1);
+  --ink:     var(--c-ink);
+  --muted:   var(--c-ink-2);
+  --faint:   var(--c-ink-3);
+  --rule:    var(--c-line-2);
+  --rule-h:  var(--c-line-3);
+  --ice:     var(--c-accent);
+  --panel:   var(--c-bg-2);
+  --display: var(--f-display);
+  --body:    var(--f-body);
+  --mono:    var(--f-mono);
 }
 
 html { scroll-behavior:smooth; scroll-padding-top:72px; }
@@ -29,7 +32,7 @@ html { scroll-behavior:smooth; scroll-padding-top:72px; }
 }
 
 body {
-  background:var(--bg); color:var(--ink);
+  background:var(--c-bg-1); color:var(--ink);
   font-family:var(--body); font-size:16px; line-height:1.6;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
@@ -40,12 +43,26 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
 
 .skip-link {
   position:fixed; top:16px; left:16px; z-index:3000;
-  padding:10px 14px; background:var(--ice); color:var(--bg);
-  font-family:var(--mono); font-size:.72rem;
-  border-radius:4px; transform:translateY(-240%);
-  transition:transform .2s ease;
+  display:inline-flex; align-items:center; min-height:44px;
+  padding:10px 14px; background:var(--ice); color:var(--c-accent-ink);
+  font-family:var(--mono); font-size:var(--t-m1);
+  border-radius:var(--r-s); transform:translateY(-240%);
+  transition:transform var(--dur) var(--ease);
 }
 .skip-link:focus-visible { transform:translateY(0); outline:2px solid var(--ink); outline-offset:2px; }
+
+/* ---------- The page frame ----------
+   One formula for every page-level box, so the first text edge lands on the
+   same x as it does on the project and music pages: 120px at 1440. The
+   header keeps its own variant because its bar has to stay full bleed. */
+.wrap,
+.panel__inner,
+.colophon,
+.error-page {
+  width:min(100%, calc(var(--page-max) + var(--page-gutter) * 2));
+  margin-inline:auto;
+  padding-inline:var(--page-gutter);
+}
 
 /* ---------- Chrome ---------- */
 /* Geometry is shared with music.css / case.css / sidar.css. */
@@ -53,9 +70,10 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
   position:sticky; top:0; left:0; right:0; z-index:1000;
   display:flex; justify-content:space-between; align-items:center;
   gap:24px;
-  padding:14px clamp(20px,5vw,72px);
-  border-bottom:1px solid rgba(236,238,240,.12);
-  background:rgba(11,11,13,.9);
+  padding-block:14px;
+  padding-inline:max(var(--page-gutter), calc((100% - var(--page-max)) / 2));
+  border-bottom:1px solid var(--c-line-2);
+  background:var(--c-glass);
   backdrop-filter:blur(16px);
   -webkit-backdrop-filter:blur(16px);
 }
@@ -67,160 +85,193 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
   text-decoration:none;
 }
 .site-header nav { display:flex; gap:clamp(8px,1.6vw,24px); align-items:center; }
-.site-header nav a { min-width:24px; transition:color .15s; }
+.site-header nav a { min-width:24px; transition:color var(--dur) var(--ease); }
 
 .content { position:relative; z-index:10; display:block; }
-.wrap { max-width:1160px; margin:0 auto; padding:0 40px; }
 
-@media (min-width:1360px) {
-  /* At 1440 there were 188px of unused margin on each side. Spending some of
-     it lets the project list and its preview both keep a comfortable size.
-     The matching .work-split and .panel__inner overrides live next to those
-     rules, further down: placing them here would lose to the later base
-     declarations. */
-  .wrap { max-width:1280px; }
-}
-
-/* ---------- Hero ---------- */
+/* ---------- Hero ----------
+   The reel is the hero, not a thumbnail beside it. The player fills the
+   section, the copy sits on it behind a scrim, and the first screen shows the
+   work instead of describing it - the same move the project heroes already
+   make. Before this the section was 1000px tall with the copy filling under
+   half of it and a 526px video stamp floating on the right. */
 .hero {
-  min-height:calc(100vh - 72px); min-height:calc(100svh - 72px);
-  display:grid; grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);
-  gap:clamp(36px,4vw,64px); align-items:center; position:relative;
-}
-.hero__copy { min-width:0; }
-.hero__copy { grid-column:1; grid-row:1; align-self:end; }
-.hero-reel { grid-column:2; grid-row:1 / span 2; align-self:center; }
-.hero > .hero__cta { grid-column:1; grid-row:2; align-self:start; margin-top:0; }
-.hero__kicker {
-  font-family:var(--mono); font-size:.72rem; color:var(--ice);
-  letter-spacing:.14em; margin-bottom:22px;
-}
-.hero h1 {
-  font-family:var(--display); font-weight:700;
-  font-size:clamp(2.75rem, 4.1vw, 4rem);
-  letter-spacing:-.035em; line-height:1.0;
-  max-width:14ch;
-}
-.hero__sub {
-  margin-top:28px; max-width:46ch; color:var(--muted); font-size:1.08rem;
-}
-.hero__cta { margin-top:44px; display:flex; gap:14px; flex-wrap:wrap; }
-.hero__cta a {
-  display:inline-flex; align-items:center; min-height:44px;
-  font-family:var(--mono); font-size:.72rem; padding:13px 24px; border-radius:999px;
-  transition:background .15s, border-color .15s, color .15s;
-}
-.hero__cta a.primary { background:var(--ink); color:var(--bg); }
-.hero__cta a.primary:hover { background:#fff; }
-.hero__cta a.ghost {
-  border:1px solid rgba(236,238,240,0.14); color:var(--muted);
-  background:rgba(24,24,27,0.4);
-  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-}
-.hero__cta a.ghost:hover { color:var(--ink); border-color:var(--ink); }
-.hero-reel {
-  min-width:0;
-  margin:0;
-  scroll-margin-top:88px;
-}
-.hero-reel__head,
-.hero-reel figcaption {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:18px;
-  font-family:var(--mono);
-  font-size:10px;
-  line-height:1.5;
-  letter-spacing:.09em;
-  text-transform:uppercase;
-}
-.hero-reel__head {
-  padding-bottom:11px;
-  color:var(--ice);
-}
-.hero-reel__head span:last-child { color:var(--faint); text-align:right; }
-.hero-reel__player {
   position:relative;
+  isolation:isolate;
   overflow:hidden;
-  aspect-ratio:16 / 9;
-  background:#08080a;
-  border:1px solid rgba(170,198,222,.24);
-  box-shadow:0 30px 80px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.015) inset;
+  min-height:calc(100vh - 72px);
+  min-height:calc(100svh - 72px);
+  display:flex;
+  align-items:flex-end;
+  padding:0;
+  background:var(--c-bg-0);
 }
-.hero-reel__player::after {
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  box-shadow:inset 0 0 70px rgba(0,0,0,.2);
-}
-.hero-reel__player video {
+
+.hero__media { position:absolute; inset:0; z-index:0; }
+.hero__media video {
   display:block;
   width:100%;
   height:100%;
-  object-fit:contain;
-  background:#08080a;
+  object-fit:cover;
+  background:var(--c-bg-0);
+  /* The reel grades dark. Lifting it here rather than re-encoding keeps the
+     poster and the video itself matched. */
+  filter:brightness(1.16) contrast(1.04);
 }
-/* The button covers the whole frame, so the poster stays clickable edge to
-   edge. Only the visible disc moves: centred, it landed on the last letters
-   of the name burnt into the poster. The lower-right quadrant is empty. */
-.hero-reel__launch {
+/* Once playback starts the native controls come back at the bottom of the
+   video. Shifting the framing keeps the subject clear of them; it does not
+   affect hit-testing, which is handled by pointer-events on .hero__inner. */
+.hero.is-started .hero__media video { object-position:center 42%; }
+
+/* Two gradients, not one: the horizontal pass protects the copy column, the
+   vertical pass seats the section against the slab below and keeps the header
+   readable over a bright frame. */
+.hero__scrim {
   position:absolute;
-  z-index:1;
   inset:0;
-  display:none;
-  align-items:flex-end;
-  justify-content:flex-end;
-  width:100%;
-  padding:0 clamp(16px,3.4vw,30px) clamp(16px,3.4vw,30px) 0;
-  border:0;
-  color:var(--ink);
-  cursor:pointer;
-  background:transparent;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg,
+      rgba(11,11,13,.90) 0%,
+      rgba(11,11,13,.74) 28%,
+      rgba(11,11,13,.34) 54%,
+      rgba(11,11,13,.10) 74%,
+      rgba(11,11,13,.28) 100%),
+    linear-gradient(180deg,
+      rgba(11,11,13,.72) 0%,
+      rgba(11,11,13,.06) 24%,
+      rgba(11,11,13,.10) 58%,
+      rgba(11,11,13,.90) 100%);
 }
-.hero-reel__player.has-custom-cover .hero-reel__launch { display:flex; }
-.hero-reel__player.has-custom-cover.is-started .hero-reel__launch { display:none; }
+.hero.is-started .hero__scrim {
+  background:linear-gradient(180deg, rgba(11,11,13,.55) 0%, transparent 22%, transparent 70%, rgba(11,11,13,.8) 100%);
+}
+
+/* The copy layer sits on top of a full-bleed <video controls>, and its padding
+   box reached the bottom of the section - exactly where the native control bar
+   is. That swallowed every click on it: without JS the reel could not be
+   started at all, and with JS it could not be paused, seeked or made
+   fullscreen. The container is transparent to the pointer and each child takes
+   its own hits back, so only the boxes that actually hold content block the
+   video, and the padding strip around them does not. */
+.hero__inner {
+  position:relative;
+  z-index:2;
+  width:min(100%, calc(var(--page-max) + var(--page-gutter) * 2));
+  margin-inline:auto;
+  padding-inline:var(--page-gutter);
+  padding-block:var(--s-7) var(--s-6);
+  pointer-events:none;
+}
+.hero__inner > * { pointer-events:auto; }
+
+.hero__copy { min-width:0; }
+.hero__kicker {
+  font-family:var(--mono); font-size:var(--t-m1); color:var(--ice);
+  letter-spacing:.08em; margin-bottom:20px;
+}
+/* The display step, same as a project h1. At 15ch the sentence sets three
+   lines and the block reads as one object. */
+.hero h1 {
+  font-family:var(--display); font-weight:700;
+  font-size:var(--t-d1);
+  line-height:var(--lh-d1);
+  letter-spacing:-.035em;
+  max-width:15ch;
+  text-wrap:balance;
+  /* The reel has bright frames, so parts of the line can land on mid grey.
+     Too soft to read as an effect, enough to hold the type off the image. */
+  text-shadow:0 2px 28px rgba(11,11,13,.55);
+}
+.hero__sub {
+  margin-top:var(--s-4); max-width:52ch;
+  color:var(--ink); font-size:var(--t-b1); line-height:var(--lh-b1);
+}
+.hero__meta {
+  margin-top:var(--s-3);
+  font-family:var(--mono); font-size:var(--t-m1); color:var(--muted);
+  letter-spacing:.08em;
+}
+.hero__reelmeta {
+  margin-top:var(--s-5);
+  font-family:var(--mono); font-size:var(--t-m0); color:var(--faint);
+  letter-spacing:.08em; text-transform:uppercase;
+}
+
+.hero__cta { margin-top:var(--s-5); display:flex; gap:12px; flex-wrap:wrap; }
+.hero__cta a,
+.hero-reel__launch {
+  display:inline-flex; align-items:center; gap:12px; min-height:48px;
+  font-family:var(--mono); font-size:var(--t-m1); letter-spacing:.08em;
+  padding:13px 24px; border-radius:var(--r-pill);
+  cursor:pointer;
+  transition:background var(--dur) var(--ease), border-color var(--dur) var(--ease),
+             color var(--dur) var(--ease), filter var(--dur) var(--ease),
+             box-shadow var(--dur) var(--ease);
+}
+.hero__cta a.primary { background:var(--ink); color:var(--c-accent-ink); }
+.hero__cta a.primary:hover { filter:brightness(1.08); }
+.hero__cta a.ghost,
+.hero-reel__launch {
+  border:1px solid var(--c-line-2); color:var(--muted);
+  background:color-mix(in srgb, var(--c-bg-0) 62%, transparent);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+}
+.hero__cta a.ghost:hover { color:var(--ink); border-color:var(--c-line-3); }
+
+/* The launch button is the reel's own affordance, so it leads the row and
+   carries the accent edge. */
+.hero-reel__launch {
+  padding-left:14px;
+  border-color:color-mix(in srgb, var(--ice) 42%, transparent);
+  color:var(--ink);
+}
+.hero-reel__launch:hover,
+.hero-reel__launch:focus-visible {
+  border-color:var(--ice);
+  background:color-mix(in srgb, var(--c-bg-0) 78%, transparent);
+}
+/* Without JS the video keeps its native controls and this button would be a
+   dead end, so it only appears once the script has taken them over. */
+.hero-reel__launch { display:none; }
+.hero.has-custom-cover .hero-reel__launch { display:inline-flex; }
+.hero.is-started .hero-reel__launch { display:none; }
 .hero-reel__launch-icon {
   display:grid;
   place-items:center;
-  width:68px;
-  height:68px;
-  border-radius:50%;
-  color:#101012;
-  background:rgba(246,247,248,.94);
-  box-shadow:0 10px 32px rgba(0,0,0,.42);
-  transition:transform .18s, background .18s;
-}
-.hero-reel__launch-icon svg {
   width:30px;
   height:30px;
-  fill:currentColor;
-  transform:translateX(2px);
+  border-radius:50%;
+  color:var(--c-accent-ink);
+  background:var(--ice);
+  transition:box-shadow var(--dur) var(--ease);
 }
+.hero-reel__launch-icon svg {
+  width:16px;
+  height:16px;
+  fill:currentColor;
+  transform:translateX(1px);
+}
+/* A ring, not a scale: the design excludes hover transforms. */
 .hero-reel__launch:hover .hero-reel__launch-icon,
-.hero-reel__launch:focus-visible .hero-reel__launch-icon { transform:scale(1.08); background:#fff; }
-.hero-reel__launch:focus-visible { outline:2px solid var(--ice); outline-offset:-4px; }
-.hero-reel figcaption {
-  align-items:flex-start;
-  padding-top:11px;
-  color:var(--muted);
-  letter-spacing:.045em;
+.hero-reel__launch:focus-visible .hero-reel__launch-icon {
+  box-shadow:0 0 0 5px color-mix(in srgb, var(--ice) 22%, transparent);
 }
 
 /* ---------- Sections ---------- */
-section { padding:130px 0; }
+/* All vertical rhythm comes off the shared --s-* steps. */
+section { padding:var(--s-7) 0; }
 .sec-kicker {
-  font-family:var(--mono); font-size:.7rem; color:var(--ice);
-  letter-spacing:.14em; margin-bottom:14px;
+  font-family:var(--mono); font-size:var(--t-m1); color:var(--ice);
+  letter-spacing:.08em; margin-bottom:14px;
 }
 .sec-title {
-  font-family:var(--display); font-weight:600; font-size:2.6rem;
+  font-family:var(--display); font-weight:600; font-size:var(--t-t1);
   /* Without this the title inherits the body's 1.6, so a two-line heading
      reads as two separate lines of text. Every other page sets ~1.08 on its
      section headings. */
-  line-height:1.1;
-  letter-spacing:-.025em; margin-bottom:48px;
+  line-height:var(--lh-t1);
+  letter-spacing:-.025em; margin-bottom:var(--s-5);
 }
 
 /* ---------- Work panel: near-black slab, typography does the work ---------- */
@@ -230,79 +281,263 @@ section.panel { padding:0; }
    the page background instead of closing. */
 .panel {
   width:100%; margin-left:0;
-  background:#0b0b0d;
-  border-top:1px solid rgba(170,198,222,0.22);
-  border-bottom:1px solid rgba(170,198,222,0.22);
+  background:var(--c-bg-0);
+  border-top:1px solid var(--c-line);
+  border-bottom:1px solid var(--c-line);
 }
-/* The bottom padding used to be 140px. The music entry is the last thing in
-   the slab, so that much room below it read as an unfinished panel rather
-   than as breathing space. */
-.panel__inner { max-width:1160px; margin:0 auto; padding:110px 40px 92px; }
+.panel__inner { padding-block:var(--s-6); }
 
-/* ---------- Project list: big type index, cursor image preview ---------- */
-.plist { border-top:1px solid var(--rule); }
-.plist__group {
-  font-family:var(--mono); font-size:12px; color:var(--ice);
-  letter-spacing:.14em;
-  padding:64px 6px 14px;
+/* ---------- Work section head ----------
+   Title left, an index note right, one hairline under both: the section
+   announces itself the way a contents page does. */
+.work-head {
+  display:flex; align-items:baseline; justify-content:space-between;
+  flex-wrap:wrap; gap:var(--s-2) var(--s-5);
+  padding-bottom:var(--s-3);
   border-bottom:1px solid var(--rule);
 }
-.plist__group:first-child { padding-top:30px; }
-.prow {
-  display:grid; grid-template-columns:64px minmax(0,1fr) 200px;
-  gap:30px; align-items:baseline;
-  padding:34px 6px;
+.work-head .sec-title { margin-bottom:0; }
+.work-head__note {
+  font-family:var(--mono); font-size:var(--t-m0); letter-spacing:.08em;
+  text-transform:uppercase; color:var(--faint);
+}
+
+/* ---------- Featured work: image-led grid ----------
+   This replaced a typographic index with a sticky preview panel. The panel
+   was portrait (460x575, ratio 0.80) while every source still is 16:9 or
+   wider, so object-fit:cover discarded more than half of each screenshot.
+   A 16:9 frame for a 16:9 source removes the crop at the root instead of
+   tuning it.
+
+   The border, the drop and the numbered chip belong to the media. The copy
+   under it is plain prose sitting on the page: nothing here wraps text in a
+   card. */
+.wgrid {
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:var(--s-5);
+  margin-top:var(--s-5);
+}
+.wcard {
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:var(--s-3);
+  align-content:start;
+  color:var(--ink);
+}
+.wcard__media {
+  position:relative;
+  aspect-ratio:16 / 9;
+  overflow:hidden;
+  border-radius:var(--r-m);
+  border:1px solid var(--c-line-2);
+  background:var(--c-bg-0);
+  box-shadow:var(--e-2);
+  transition:border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.wcard__media img {
+  display:block; width:100%; height:100%;
+  object-fit:cover;
+  /* Held one step under the interface at rest so the six stills read as one
+     set, released on the card the reader is on. A filter, never a transform. */
+  filter:brightness(.93) saturate(.94);
+  transition:filter var(--dur-slow) var(--ease);
+}
+/* Inner highlight plus a bottom vignette, so a bright still seats into the
+   surface instead of floating as a rectangle of light. */
+.wcard__media::after {
+  content:"";
+  position:absolute; inset:0;
+  pointer-events:none;
+  border-radius:inherit;
+  box-shadow:var(--e-1), inset 0 -70px 70px -58px rgba(11,11,13,.92);
+}
+/* 01..06 is part of the identity of this set. On the plate rather than in the
+   margin: the number belongs to the picture it labels. */
+.wcard__idx {
+  position:absolute; z-index:2; top:12px; left:12px;
+  display:inline-flex; align-items:center;
+  height:26px; padding:0 10px;
+  border:1px solid var(--c-line-2); border-radius:var(--r-pill);
+  background:color-mix(in srgb, var(--c-bg-0) 66%, transparent);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  font-family:var(--mono); font-size:var(--t-m0); letter-spacing:.08em;
+  color:var(--ice);
+  transition:border-color var(--dur) var(--ease);
+}
+.wcard__body { display:grid; gap:var(--s-2); align-content:start; min-width:0; }
+.wcard__meta {
+  font-family:var(--mono); font-size:var(--t-m0); letter-spacing:.08em;
+  text-transform:uppercase; color:var(--faint);
+  transition:color var(--dur) var(--ease);
+}
+.wcard__title {
+  font-family:var(--display); font-weight:600;
+  font-size:var(--t-t2); line-height:var(--lh-t2); letter-spacing:-.02em;
+  text-wrap:balance;
+  transition:color var(--dur) var(--ease);
+}
+.wcard--lead .wcard__title { font-size:var(--t-t1); line-height:var(--lh-t1); letter-spacing:-.03em; }
+.wcard__desc { max-width:56ch; color:var(--muted); font-size:var(--t-b0); line-height:var(--lh-b1); }
+.wcard--lead .wcard__desc { font-size:var(--t-b1); }
+.wcard__cue {
+  display:inline-flex; align-items:center; gap:8px; min-height:44px;
+  font-family:var(--mono); font-size:var(--t-m1); letter-spacing:.08em;
+  color:var(--ice);
+  transition:color var(--dur) var(--ease);
+}
+
+/* Colour, edge and brightness only: the design has no hover transforms. */
+.wcard:hover .wcard__media,
+.wcard:focus-visible .wcard__media {
+  border-color:color-mix(in srgb, var(--ice) 52%, transparent);
+  box-shadow:var(--e-3);
+}
+.wcard:hover .wcard__media img,
+.wcard:focus-visible .wcard__media img { filter:brightness(1.06) saturate(1); }
+.wcard:hover .wcard__idx,
+.wcard:focus-visible .wcard__idx { border-color:color-mix(in srgb, var(--ice) 52%, transparent); }
+.wcard:hover .wcard__title,
+.wcard:focus-visible .wcard__title { color:var(--ice); }
+.wcard:hover .wcard__meta,
+.wcard:focus-visible .wcard__meta { color:var(--muted); }
+.wcard:hover .wcard__cue,
+.wcard:focus-visible .wcard__cue { color:var(--c-accent-hi); }
+/* Touch has no hover, so the card needs a press state of its own. */
+.wcard:active .wcard__title { color:var(--ice); }
+
+/* Between a phone and the two-column grid there is a band where one stacked
+   card per row means a 690px still and a 6200px page. The card turns on its
+   side instead: same anatomy, same 16:9 frame, a third of the height. */
+@media (min-width:640px) and (max-width:999.98px) {
+  .wcard {
+    grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+    gap:0 var(--s-4);
+    align-items:center;
+  }
+  .wcard__body { align-content:center; }
+  .wcard__cue { min-height:36px; }
+}
+
+@media (min-width:1000px) {
+  .wgrid { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  /* Wide, two by two, wide. The set opens on the lead and steps down into the
+     software tier below rather than running as six identical boxes. */
+  .wcard--lead,
+  .wcard--closer { grid-column:1 / -1; align-items:center; }
+  .wcard--lead { grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:0 var(--s-6); }
+  .wcard--closer { grid-template-columns:minmax(0,400px) minmax(0,1fr); gap:0 var(--s-5); }
+  /* The closer runs the full width, so its copy would trail off into empty
+     column. The cue takes the far edge instead and the row reads as a bridge
+     into the software tier below it. */
+  .wcard--closer .wcard__body {
+    grid-template-columns:minmax(0,1fr) auto;
+    column-gap:var(--s-5);
+    align-items:center;
+  }
+  .wcard--closer .wcard__meta,
+  .wcard--closer .wcard__title,
+  .wcard--closer .wcard__desc { grid-column:1; }
+  .wcard--closer .wcard__cue { grid-column:2; grid-row:1 / span 3; justify-self:end; }
+}
+
+/* ---------- Software list: the quieter tier ----------
+   A REAPER script and a VST have no cinematic frame to show, so they keep a
+   small mark and a dense row. The contrast with the grid above is the point:
+   it tells the reader which tier they are in without a label doing it. */
+.plist { margin-top:var(--s-6); border-top:1px solid var(--rule); }
+
+.plist__group {
+  font-family:var(--mono); font-size:var(--t-m1); color:var(--ice);
+  letter-spacing:.08em;
+  padding:var(--s-4) var(--s-1) 14px;
   border-bottom:1px solid var(--rule);
-  transition:opacity .25s, background-color .25s;
+}
+.plist__group:first-child { padding-top:var(--s-4); }
+.prow {
+  position:relative;
+  display:grid;
+  grid-template-columns:34px 92px minmax(0,1fr) 172px;
+  gap:0 var(--s-4);
+  align-items:center;
+  padding:var(--s-3) var(--s-1);
+  border-bottom:1px solid var(--rule);
+  transition:background-color var(--dur) var(--ease);
+}
+.prow > * { grid-row:1; }
+/* A 1.5% wash was not nameable next to its neighbours, on a link to a full
+   case page. The rule is absolutely positioned so it costs no reflow, and it
+   is a rule rather than a shift because the design has no hover transforms. */
+.prow::before {
+  content:"";
+  position:absolute;
+  left:0; top:-1px; bottom:-1px;
+  width:2px;
+  background:var(--ice);
+  opacity:0;
+  transition:opacity var(--dur) var(--ease);
 }
 .prow:hover,
-.prow:focus-visible { background:rgba(170,198,222,0.045); }
-/* The active row changes its heading colour below; other rows retain their
-   full contrast while the pointer moves through the list. */
-.prow__idx { font-family:var(--mono); font-size:13px; color:var(--ice); }
+.prow:focus-visible { background:color-mix(in srgb, var(--ice) 6%, transparent); }
+.prow:hover::before,
+.prow:focus-visible::before { opacity:1; }
+.prow__idx { grid-column:1; font-family:var(--mono); font-size:var(--t-m1); letter-spacing:.08em; color:var(--ice); }
+/* Application captures crop to their top-left rather than being fitted whole:
+   a 1680px window scaled into a 92px square reads as an empty grey tile, while
+   its title bar and first panel still identify the tool. */
+.prow__thumb {
+  grid-column:2;
+  overflow:hidden;
+  aspect-ratio:1 / 1;
+  border-radius:var(--r-s);
+  border:1px solid var(--c-line-2);
+  background:var(--c-bg-2);
+  transition:border-color var(--dur) var(--ease);
+}
+.prow__thumb img {
+  display:block; width:100%; height:100%;
+  object-fit:cover; object-position:left top;
+  filter:brightness(.95);
+  transition:filter var(--dur) var(--ease);
+}
+.prow > div:not(.prow__thumb) { grid-column:3; min-width:0; }
 .prow h3 {
   font-family:var(--display); font-weight:600;
-  font-size:clamp(2rem, 3.4vw, 3.2rem);
-  letter-spacing:-.03em; line-height:1.05;
-  transition:color .15s;
+  font-size:var(--t-t3); line-height:var(--lh-t3); letter-spacing:-.015em;
+  transition:color var(--dur) var(--ease);
+}
+.prow p { max-width:68ch; margin-top:6px; color:var(--muted); font-size:var(--t-s1); line-height:1.5; }
+.prow__meta {
+  grid-column:4;
+  font-family:var(--mono); font-size:var(--t-m0); color:var(--faint);
+  letter-spacing:.08em; line-height:1.9; text-align:right;
+  transition:color var(--dur) var(--ease);
 }
 .prow:hover h3,
 .prow:focus-visible h3 { color:var(--ice); }
-.prow p { color:var(--muted); font-size:.9rem; margin-top:10px; max-width:56ch; }
-.prow__meta {
-  font-family:var(--mono); font-size:12px; color:var(--faint);
-  letter-spacing:.05em; line-height:1.9; text-align:right;
-}
-/* Split preview: home-list.js wraps the list in .work-split and builds the
-   sticky .pview panel from the hidden in-row thumbs. Hovering a row
-   crossfades the panel image; no layout ever shifts. */
-.prow__thumb { display:none; }
+.prow:hover .prow__meta,
+.prow:focus-visible .prow__meta { color:var(--muted); }
+.prow:hover .prow__thumb { border-color:var(--c-line-3); }
+.prow:hover .prow__thumb img { filter:brightness(1.08); }
+.prow:active h3 { color:var(--ice); }
 
-.prow--featured {
-  min-height:150px;
-  align-items:center;
-}
-.prow--featured h3,
-.work-split .prow--featured h3 { font-size:clamp(2rem, 2.8vw, 2.85rem); }
-.prow--tool {
-  min-height:0;
-  padding-block:22px;
-}
-.prow--tool h3,
-.work-split .prow--tool h3 { font-size:clamp(1.45rem, 2.2vw, 2.05rem); }
-.prow--tool p { max-width:62ch; }
-.work-contact-cta { display:none; }
 .earlier-work { border-bottom:1px solid var(--rule); }
+.earlier-work summary { padding-block:var(--s-4); }
 .earlier-work summary {
   display:flex; justify-content:space-between; gap:24px; align-items:center;
-  padding:28px 6px; cursor:pointer; list-style:none;
-  font-family:var(--display); font-size:clamp(1.35rem, 2.2vw, 2rem); font-weight:600;
+  padding:22px var(--s-1); cursor:pointer; list-style:none;
+  font-family:var(--display); font-size:var(--t-t3); font-weight:600;
+  /* Display type must not inherit the body's 1.6, or it floats in its row. */
+  line-height:var(--lh-t3);
 }
 .earlier-work summary::-webkit-details-marker { display:none; }
 .earlier-work summary::after { content:'+'; margin-left:auto; color:var(--ice); font-family:var(--mono); }
 .earlier-work[open] summary::after { content:'-'; }
-.earlier-work summary span { color:var(--faint); font-family:var(--mono); font-size:11px; font-weight:400; }
-.earlier-work nav { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); padding:0 6px 28px 6px; }
+.earlier-work summary span {
+  color:var(--faint); font-family:var(--mono);
+  font-size:var(--t-m0); letter-spacing:.08em; font-weight:400;
+}
+.earlier-work nav { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); padding:0 var(--s-1) 22px; }
 .earlier-work nav a {
   display:grid; gap:3px; align-content:center;
   min-height:68px; padding:11px 0;
@@ -315,97 +550,21 @@ section.panel { padding:0; }
   line-height:1.35;
 }
 .archive-project-link__desc {
-  max-width:44ch; color:var(--faint); font-size:.76rem; line-height:1.45;
-  transition:color .15s;
+  max-width:44ch; color:var(--faint); font-size:var(--t-s1); line-height:1.45;
+  transition:color var(--dur) var(--ease);
 }
 .archive-project-link:hover .archive-project-link__desc { color:var(--muted); }
 .archive-project-link:focus-visible .archive-project-link__desc { color:var(--muted); }
 
-.work-split {
-  /* The preview and the meta column used to squeeze the description down to
-     about 38 characters a line, which is too narrow to read comfortably. */
-  display:grid; grid-template-columns:minmax(0,1fr) 380px;
-  gap:0 48px; align-items:start;
-  /* On wide screens there is spare room on both sides, so the preview grows
-     back to its original size instead of taking it from the description. */
-  border-top:1px solid var(--rule);
-}
-.work-split .plist { border-top:none; min-width:0; }
-/* 132px was one line short for the longest tool lists, so "UNITY · STEAM
-   AUDIO" and "REASCRIPT · REAIMGUI" broke mid-list rather than at the middot. */
-.work-split .prow { grid-template-columns:44px minmax(0,1fr) 164px; gap:20px; }
-
-@media (min-width:1360px) {
-  /* Pairs with the wider .wrap above: the extra room goes to the preview so
-     it is not the description that pays for it. The .panel__inner override
-     must also live after its base declaration (line ~233) to win. */
-  .work-split { grid-template-columns:minmax(0,1fr) 460px; }
-  .panel__inner { max-width:1280px; }
-}
-/* Pinned at 104px the panel sat against the header with about 450px of empty
-   column under it for the whole list. Centring it on the viewport puts the
-   preview beside the row the reader is actually on. The max() keeps it clear
-   of the header on a short window, where centring would tuck it underneath. */
-.pview {
-  position:sticky;
-  top:max(104px, calc(50svh - 175px));
-  padding-top:34px;
-}
-.pview__frame {
-  position:relative; aspect-ratio:16/11;
-  border-radius:14px; overflow:hidden;
-  background:#0b0b0d;
-  border:1px solid rgba(170,198,222,0.22);
-  box-shadow:0 24px 70px rgba(0,0,0,0.45);
-}
-.pview__frame img {
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit:cover; opacity:0; transform:scale(1.07);
-  transition:opacity .35s ease, transform .35s ease;
-}
-/* Active image: quick fade in, then a slow drift so the panel feels alive */
-.pview__frame img.on {
-  opacity:1;
-  animation:pview-drift 9s ease-out forwards;
-}
-.pview__frame img.pview__image--tool {
-  object-fit:contain;
-  padding:14px;
-  background:#151517;
-  transform:scale(1);
-}
-.pview__frame img.pview__image--tool.on {
-  animation:none;
-  transform:scale(1);
-}
-@keyframes pview-drift {
-  from { transform:scale(1); }
-  to   { transform:scale(1.09); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .pview__frame img.on { transform:scale(1); }
-}
-.pview__caption {
-  display:flex; justify-content:space-between; gap:16px;
-  margin-top:14px;
-  font-family:var(--mono); font-size:12px; color:var(--faint);
-  letter-spacing:.05em;
-}
-.more {
-  display:inline-flex; min-height:44px; align-items:center; margin-top:36px;
-  font-family:var(--mono); font-size:.72rem; color:var(--muted);
-  border-bottom:1px solid var(--rule-h); padding-bottom:3px;
-  transition:color .15s, border-color .15s;
-}
-.more:hover { color:var(--ink); border-color:var(--ink); }
-
 /* ---------- Music entry ----------
    44 tracks used to sit behind a single small link at the end of the list,
    which read as a footnote rather than half of the portfolio. */
-.music-cta { margin-top:56px; padding-top:26px; border-top:1px solid var(--rule); }
+/* No rule of its own: the earlier-work block already closes the list, and a
+   second hairline 57px under the first read as an empty row. */
+.music-cta { margin-top:var(--s-6); }
 
 .music-cta__label {
-  font-family:var(--mono); font-size:.72rem; letter-spacing:.1em;
+  font-family:var(--mono); font-size:var(--t-m1); letter-spacing:.08em;
   text-transform:uppercase; color:var(--faint);
 }
 
@@ -420,8 +579,8 @@ section.panel { padding:0; }
 
 .music-cta__body strong {
   font-family:var(--display); font-weight:600;
-  font-size:clamp(1.5rem, 2.4vw, 2.05rem);
-  line-height:1.1; letter-spacing:-.02em;
+  font-size:var(--t-t2);
+  line-height:var(--lh-t2); letter-spacing:-.02em;
 }
 
 .music-cta__link:hover .music-cta__body strong { color:var(--ice); }
@@ -430,7 +589,7 @@ section.panel { padding:0; }
 
 .music-cta__meta {
   flex:0 0 auto; white-space:nowrap;
-  font-family:var(--mono); font-size:12px; letter-spacing:.04em; color:var(--faint);
+  font-family:var(--mono); font-size:var(--t-m0); letter-spacing:.08em; color:var(--faint);
 }
 
 @media (max-width:700px) {
@@ -439,11 +598,12 @@ section.panel { padding:0; }
 }
 
 /* ---------- About ---------- */
+#about { padding-block:var(--s-6); }
 .about-panel {
   max-width:68ch;
   background:transparent; border:0; border-radius:0;
   backdrop-filter:none; -webkit-backdrop-filter:none;
-  padding:24px 0 0;
+  padding:0;
   display:block;
 }
 .about-panel p { color:var(--muted); margin-bottom:16px; max-width:60ch; }
@@ -453,8 +613,8 @@ section.panel { padding:0; }
    middleware or an engine should not have to read three project pages to find
    it, so the toolkit sits once here rather than in a stats grid. */
 .about-facts {
-  margin-top:26px;
-  padding-top:20px;
+  margin-top:var(--s-4);
+  padding-top:var(--s-3);
   border-top:1px solid var(--rule);
   text-align:left;
 }
@@ -462,11 +622,11 @@ section.panel { padding:0; }
   display:grid;
   grid-template-columns:minmax(96px, 0.32fr) minmax(0, 1fr);
   gap:6px 18px;
-  padding:9px 0;
+  padding:6px 0;
 }
 .about-facts > div + div { border-top:1px solid var(--rule); }
 .about-facts dt {
-  font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+  font-family:var(--mono); font-size:var(--t-m0); letter-spacing:.08em;
   text-transform:uppercase; color:var(--faint);
 }
 .about-facts dd { margin:0; color:var(--muted); font-size:.95rem; line-height:1.6; }
@@ -475,151 +635,143 @@ section.panel { padding:0; }
   .about-facts > div { grid-template-columns:1fr; gap:3px; }
 }
 
-@media (min-width:900px) {
-  /* A 68ch column pinned to the left of a 1080px container left the right
-     half of the screen visibly empty. Centring the column keeps the reading
-     measure and matches the centred contact section that follows. */
-  #about .sec-kicker,
-  #about .sec-title { text-align:center; }
-  /* The panel has to match the 60ch measure its paragraphs already use.
-     Centring a 68ch box around 60ch of text pushed every line 44px left of
-     the heading above it, which read as a broken centre rather than a
-     deliberate one. */
-  #about .about-panel { max-width:60ch; margin-inline:auto; }
+/* The About column used to be centred on wide screens to fill the empty right
+   half, which cost the page its only structural idea: one left axis. It runs
+   as a two-column spread on that axis instead. index.html already nests the
+   prose and the toolkit in one wrapper, so no markup change is involved. */
+@media (min-width:1000px) {
+  .about-panel { max-width:none; }
+  .about-panel > div {
+    display:grid;
+    grid-template-columns:minmax(0, 60ch) minmax(0, 1fr);
+    grid-template-rows:auto auto;
+    gap:0 var(--s-6);
+    align-items:start;
+  }
+  .about-panel > div > p:nth-of-type(1) { grid-column:1; grid-row:1; }
+  .about-panel > div > p:nth-of-type(2) { grid-column:1; grid-row:2; }
+  .about-facts {
+    grid-column:2;
+    grid-row:1 / span 2;
+    max-width:30rem;
+    margin-top:0;
+  }
 }
 
-/* ---------- Contact ---------- */
-/* 160px here plus the colophon's own padding made the page trail off; 130px
-   matches the section rhythm used everywhere else. */
-.contact { text-align:center; padding-bottom:130px; }
-/* About is two short paragraphs, so its 130px bottom padding met the contact
-   section's 130px top and left 276px of empty screen between the last line of
-   prose and the next kicker. Both sides give some of it back. Scoped to the
-   desktop rhythm: the phone layer already runs a tighter 68px scale. */
-@media (min-width:900px) {
-  #about { padding-bottom:84px; }
-  .contact { padding-top:96px; }
+/* ---------- Closing band ----------
+   The full contact block is a page of its own now (contact.html). What stays
+   on the home page is one line, the address and the way through, on the same
+   left axis as everything above it. */
+.closing {
+  display:grid;
+  justify-items:start;
+  gap:var(--s-3);
+  padding-block:var(--s-5) var(--s-6);
+  border-top:1px solid var(--rule);
 }
-.contact__mail {
-  display:inline-block; max-width:100%;
-  margin-top:32px;
+.closing__line {
+  max-width:52ch;
+  color:var(--muted);
+  font-size:var(--t-b1); line-height:var(--lh-b1);
+}
+.closing__mail {
+  /* inline-flex, bottom-aligned: at 390 the address sets at 19px and an
+     inline box would be a 24px tap target. The spare height goes above the
+     text so the underline stays tight against the descenders. */
+  display:inline-flex; align-items:flex-end;
+  min-height:44px; max-width:100%;
   font-family:var(--display); font-weight:700;
-  /* capped at 3rem: any larger and the address grows wider than the card,
-     overflowing right instead of centring */
-  /* The lower bound is sized so the whole address still fits on one line at
-     320px; below that it may wrap, and it breaks after the @ when it does. */
+  /* capped at 3rem: any larger and the address grows wider than the column,
+     overflowing right instead of wrapping */
   font-size:clamp(1.15rem, 4.2vw, 3rem); letter-spacing:-.03em;
+  /* Without an explicit leading the address inherits the body's 1.6, so its
+     border sat about 14px clear of the descenders and read as a detached rule
+     rather than an underline. */
+  line-height:var(--lh-t1);
   overflow-wrap:anywhere;
   border-bottom:2px solid var(--rule-h);
-  transition:border-color .15s;
+  transition:border-color var(--dur) var(--ease);
 }
-.contact__mail:hover { border-color:var(--ice); }
-.contact__row {
-  margin-top:44px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap;
-  font-family:var(--mono); font-size:.72rem;
+.closing__mail:hover { border-color:var(--ice); }
+.closing__more {
+  display:inline-flex; align-items:center; gap:8px;
+  min-height:44px; padding-bottom:3px;
+  font-family:var(--mono); font-size:var(--t-m1); letter-spacing:.08em;
+  color:var(--muted);
+  box-shadow:inset 0 -1px 0 0 var(--rule-h);
+  transition:color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
-.contact__row a { display:inline-flex; min-height:44px; align-items:center; color:var(--muted); transition:color .15s; }
-.contact__row a:hover { color:var(--ink); }
+.closing__more:hover { color:var(--ink); box-shadow:inset 0 -1px 0 0 var(--ink); }
 
-/* ---------- Colophon ---------- */
+/* ---------- Colophon ----------
+   Matches the case pages: uppercase mono, underlined accent links. It is the
+   tightest of the three variants on a phone. */
 .colophon {
   position:relative; z-index:10;
   /* The right span holds 44px inline-flex links and the left one is plain
      text: with the default stretch the two sat on different baselines. */
   display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
-  max-width:1160px; margin:0 auto; padding:30px 40px 40px;
-  border-top:1px solid var(--rule);
-  font-family:var(--mono); font-size:11px; color:var(--faint); letter-spacing:.05em;
+  padding-block:26px var(--s-5);
+  font-family:var(--mono); font-size:var(--t-m0); color:var(--faint);
+  letter-spacing:.08em; text-transform:uppercase;
 }
-.colophon a { display:inline-flex; min-height:44px; align-items:center; }
+.colophon a {
+  display:inline-flex; min-height:44px; min-width:44px;
+  align-items:center; justify-content:center;
+  color:var(--ice);
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-underline-offset:4px;
+  text-decoration-color:color-mix(in srgb, var(--c-accent) 45%, transparent);
+  transition:color var(--dur) var(--ease), text-decoration-color var(--dur) var(--ease);
+}
+.colophon a:hover { color:var(--ink); text-decoration-color:var(--ink); }
 
 /* Glass fallback for browsers without backdrop-filter support. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .site-header,
-  .hero__cta a.ghost { background:rgba(16,16,18,0.94); }
+  .hero__cta a.ghost { background:color-mix(in srgb, var(--c-bg-1) 94%, transparent); }
 }
 
 /* ---------- Responsive ---------- */
-/* No hover / narrow screens: drop the sticky panel, give every row its own
-   inline thumbnail instead so images are always visible. */
-@media (max-width: 1179.98px), (hover: none), (pointer: coarse) {
-  .work-split { display:block; border-top:none; }
-  .work-split .plist { border-top:1px solid var(--rule); }
-  .pview { display:none; }
-  /* The thumbnail takes the third column instead of dropping under the text.
-     A 104px square used to sit alone below the row, cropping a 16:9 frame to
-     an unreadable stamp and leaving the right half of a tablet screen empty. */
-  .prow,
-  .work-split .prow {
-    grid-template-columns:40px minmax(0,1fr) clamp(210px, 27vw, 300px);
-    gap:8px 24px;
-    align-items:start;
-  }
-  .prow__idx { grid-column:1; grid-row:1; }
-  /* The year and toolset used to be dropped on mobile. They are the strongest
-     competence signal in the row, so keep them on a line of their own. */
-  .prow__meta {
-    grid-column:2;
-    grid-row:2;
+/* The 1180px band used to be where the sticky preview panel was dismounted
+   and every row grew its own inline thumbnail. The panel is gone, so the only
+   thing left to do between 1000px and 820px is narrow the software row. */
+@media (max-width: 1100px) {
+  .prow { grid-template-columns:30px 84px minmax(0,1fr) 150px; gap:0 var(--s-3); }
+}
+
+@media (max-width: 900px) and (min-width: 821px) {
+  /* Below this the meta cannot hold its own column without squeezing the
+     description under 40 characters a line, so it moves under the heading. */
+  .prow { grid-template-columns:30px 84px minmax(0,1fr); align-items:start; }
+  .prow > .prow__meta {
+    grid-column:3; grid-row:2;
     margin-top:6px;
-    text-align:left;
-    line-height:1.5;
-    font-size:11px;
+    text-align:left; line-height:1.5;
   }
-  .prow__thumb {
-    display:block;
-    grid-column:3;
-    grid-row:1 / span 2;
-    align-self:center;
-  }
-  .prow__thumb { overflow:hidden; border-radius:12px; }
-  .prow__thumb img {
-    width:100%; height:auto; aspect-ratio:16 / 9; object-fit:cover; display:block;
-    border-radius:12px; border:1px solid rgba(170,198,222,0.18);
-    transition:transform .5s cubic-bezier(.2,.7,.2,1);
-  }
-  @media (hover: hover) {
-    .prow:hover .prow__thumb img { transform:scale(1.05); }
-  }
-  .prow--tool .prow__thumb img {
-    aspect-ratio:16 / 11;
-    object-fit:contain;
-    padding:6px;
-    background:#151517;
-  }
+  .prow > .prow__thumb { grid-row:1 / span 2; align-self:start; }
+  .prow > div:not(.prow__thumb) { grid-row:1; }
 }
 
 @media (max-width: 820px) {
-  /* Keep the identity, reel and actions in a clear mobile sequence. */
-  .hero { display:flex; flex-direction:column; align-items:stretch; justify-content:flex-start; gap:32px; padding:120px 0 72px; }
-  .hero__copy { order:1; align-self:stretch; width:100%; }
-  .hero-reel { order:2; width:100%; }
-  .hero > .hero__cta { order:3; align-self:stretch; width:100%; }
-  .site-header { padding:10px 20px; gap:12px; }
+  /* The reel is the section background at every width now, so there is no
+     column order to manage: the copy simply sits on it. */
+  .hero__inner { width:100%; }
   .site-header nav { gap:8px; }
-  .wrap { padding:0 20px; }
-  .prow,
-  .work-split .prow { grid-template-columns:30px minmax(0,1fr) 84px; gap:14px; padding:26px 2px; }
-  .prow h3,
-  .work-split .prow h3 { font-size:clamp(1.55rem, 3.8vw, 2rem); overflow-wrap:break-word; }
-  .prow__thumb img { width:84px; height:84px; border-radius:10px; }
   .about-panel { padding:30px 0; }
-  section { padding:90px 0; }
-  .panel__inner { padding:70px 20px 100px; }
   section.panel { width:100%; margin-left:0; padding:0; }
-  .colophon { padding:24px 20px 32px; }
   .earlier-work nav { grid-template-columns:1fr; }
   .earlier-work nav a:nth-child(odd) { margin-right:0; }
 }
 
 @media (max-width: 480px) {
-  .site-header { padding:10px 20px; align-items:center; gap:12px; }
   /* No max-width here: the name is set to nowrap, so capping the box would
      push the text out over the navigation instead of wrapping it. */
   .site-header__name { line-height:1.25; }
   .site-header nav { gap:8px; }
-  .site-header nav a { font-size:.7rem; }
-  .hero__cta a { padding:12px 18px; }
+  .hero__cta a,
+  .hero-reel__launch { padding:13px 16px; }
   /* align-items:flex-start because the centring that aligns the two spans on
      one row would centre them horizontally once the axis turns vertical. */
   .colophon { flex-direction:column; align-items:flex-start; gap:6px; }
@@ -628,8 +780,8 @@ section.panel { padding:0; }
 .hero__meta {
   margin-top: 16px;
   font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: .04em;
+  font-size: var(--t-m1);
+  letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -639,43 +791,35 @@ section.panel { padding:0; }
    file replaces that layout entirely, and its `display: contents` on the row
    body silently disabled any later rule that addressed it. */
 
-@media (max-width: 380px) {
-  /* Contact used to be dropped here. There is room for it once the header
-     stops wrapping, and it is the one link a visitor is most likely to want. */
-  .site-header { gap:10px; padding-inline:16px; }
-  .site-header nav { gap:10px; }
-}
-
-/* Standalone 404 page, shared with the home shell to avoid another CSS payload. */
-/* 760px centred the block but its contents are left-aligned, so on a desktop
-   window the heading started 200px to the right of the colophon under it and
-   read as misplaced rather than centred. Matching the colophon's 1160px puts
-   both on the one left edge the rest of the site uses; the paragraph below
-   keeps its own 54ch measure. */
+/* Standalone 404 page, shared with the home shell to avoid another CSS payload.
+   It sits on the same frame as .wrap and .colophon, so its first text edge is
+   the site's one left edge instead of 60px right of it. */
 .error-page {
   min-height: calc(100svh - 150px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: clamp(130px, 18vh, 210px) 40px 90px;
+  padding-block: clamp(var(--s-8), 18vh, 210px) var(--s-7);
 }
 
 .error-page__code {
   margin: 0 0 18px;
   font-family: var(--mono);
-  font-size: .72rem;
-  letter-spacing: .12em;
+  font-size: var(--t-m1);
+  letter-spacing: .08em;
   color: var(--muted);
 }
 
+/* This was the only h1 on the site left in Inter: the error page inherits the
+   body face, and every other layout sets the display family on its own h1. */
 .error-page h1 {
   margin: 0;
-  font-size: clamp(3rem, 8vw, 6rem);
-  letter-spacing: -.055em;
-  line-height: .92;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: var(--t-d2);
+  letter-spacing: -.035em;
+  line-height: var(--lh-d2);
 }
 
 .error-page > p:not(.error-page__code) {
@@ -695,61 +839,21 @@ section.panel { padding:0; }
   padding: 8px 0;
   border-bottom: 1px solid var(--rule-h);
   font-family: var(--mono);
-  font-size: .76rem;
-  letter-spacing: .04em;
+  font-size: var(--t-m1);
+  letter-spacing: .08em;
   text-transform: uppercase;
+  transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
 }
 
-.error-page__back:hover { border-color: var(--ice); }
+.error-page__back:hover { border-color: var(--ice); color: var(--ice); }
 
-/* A single link back to the index turns a mistyped URL into two navigations.
-   The four destinations below are the whole site, so the page ends the detour
-   instead of extending it. */
-.error-page__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 12px;
-  margin-top: 34px;
-  padding-top: 26px;
-  border-top: 1px solid var(--rule);
-  width: 100%;
-  max-width: 54ch;
-}
-
-.error-page__links a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  font-family: var(--mono);
-  font-size: .72rem;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.error-page__links a:hover { border-color: var(--ice); color: var(--ink); }
-
-@media (max-width: 620px) {
-  .error-page { padding-right: 20px; padding-left: 20px; }
-}
+/* The pill strip that used to follow repeated WORK / MUSIC / CV / CONTACT
+   620px below a sticky header already offering exactly those four, on a page
+   with nine words of content. It is gone from 404.html. */
 
 /* ---------- Header: alignment + type ----------
-   The bar used to run full-bleed while every other element sat in the 1160px
-   column, so the name never lined up with the text underneath it. The padding
-   below resolves to the same left edge as .wrap and collapses to a plain
-   gutter once the viewport is narrower than the column.
-
    Nav is set in Inter, not mono. Mono stays on things that are actually data
    (years, tool lists); in navigation it only costs legibility. */
-.site-header {
-  padding-inline: max(20px, calc((100% - 1160px) / 2 + 40px));
-}
-@media (min-width:1360px) {
-  .site-header { padding-inline: max(20px, calc((100% - 1280px) / 2 + 40px)); }
-}
 .site-header__name {
   font-family: var(--display);
   font-size: .95rem;
@@ -777,10 +881,6 @@ section.panel { padding:0; }
   .site-header nav a { font-size: .78rem; }
 }
 
-/* The narrow-screen header used to wrap onto two rows, which cost 32px of
-   sticky height on exactly the screens with the least of it. The pill strip
-   below keeps one row down to 320px. */
-
 /* ---------- Header: mobile home navigation ----------
    The home page keeps CV in two prominent places below, so its narrow header
    can prioritize the three destinations used to move through the portfolio.
@@ -789,14 +889,15 @@ section.panel { padding:0; }
    line. The visible brand becomes IGOR while its accessible name stays intact,
    and the redundant CV link leaves the header because it remains available in
    the hero and contact section. The three primary destinations then fit without
-   horizontal scrolling. */
+   horizontal scrolling.
+
+   The inline padding is the shared frame formula, set once above: an
+   asymmetric max(16px, ...) / max(12px, ...) pair used to hang the wordmark
+   4px outside the column the rest of the page sits in. */
 @media (max-width: 820px) {
   .site-header {
     gap: 10px;
     padding-block: 7px;
-    padding-inline:
-      max(16px, env(safe-area-inset-left))
-      max(12px, env(safe-area-inset-right));
   }
 
   .site-header__name {
@@ -829,9 +930,9 @@ section.panel { padding:0; }
     min-width: 44px;
     min-height: 44px;
     padding: 0 clamp(5px, 1.8vw, 12px);
-    border: 1px solid rgba(236, 238, 240, 0.16);
-    border-radius: 999px;
-    background: rgba(236, 238, 240, 0.035);
+    border: 1px solid var(--c-line-2);
+    border-radius: var(--r-pill);
+    background: color-mix(in srgb, var(--c-ink) 4%, transparent);
     font-size: .75rem;
     letter-spacing: 0;
     box-shadow: none;
@@ -841,13 +942,13 @@ section.panel { padding:0; }
 
   /* case.css resets the nav border to 0 on hover for its underlined links;
      without this the pill outline disappears on a narrow desktop window. */
-  .site-header nav a:hover { border: 1px solid rgba(236, 238, 240, 0.3); }
+  .site-header nav a:hover { border: 1px solid var(--c-line-3); }
 
   .site-header nav a[aria-current],
   .site-header nav a[aria-current]:hover {
     border-color: transparent;
-    background: #eceef0;
-    color: #101012;
+    background: var(--c-ink);
+    color: var(--c-accent-ink);
     box-shadow: none;
   }
 }
@@ -860,24 +961,22 @@ section.panel { padding:0; }
    1180-820px band and only the phone layout changes here.
 
    Three problems it answers:
-   1. Section headings kept their desktop 2.6rem with the body
+   1. Section headings kept their desktop size with the body
       line-height of 1.6, so a two-line title on a phone read
       as two separate lines of text.
    2. Featured projects were a 2rem headline next to an 82px
       thumbnail. At that size the image proved nothing and the
       row looked like an unstyled list item.
-   3. Padding was tuned for a 1160px column, so a phone spent
+   3. Padding was tuned for a 1200px column, so a phone spent
       most of its screen on empty space between sections.
    ========================================================= */
 @media (max-width: 820px) {
-  /* ---- Rhythm ---- */
-  .wrap { padding-inline: clamp(18px, 5.2vw, 26px); }
-  section { padding: 68px 0; }
+  /* ---- Rhythm: the same --s-* steps, one notch down ---- */
+  section { padding: var(--s-6) 0; }
   section.panel { padding: 0; }
-  .panel__inner { padding: 58px clamp(18px, 5.2vw, 26px) 76px; }
+  .panel__inner { padding-block: var(--s-6); }
   .colophon {
-    padding: 24px clamp(18px, 5.2vw, 26px)
-             calc(32px + env(safe-area-inset-bottom));
+    padding-block: var(--s-4) calc(var(--s-5) + env(safe-area-inset-bottom));
   }
 
   /* ---- Type ---- */
@@ -890,8 +989,7 @@ section.panel { padding:0; }
   }
   .sec-kicker {
     margin-bottom: 10px;
-    font-size: .66rem;
-    letter-spacing: .16em;
+    font-size: var(--t-m0);
   }
   .hero__sub,
   .prow p,
@@ -901,117 +999,58 @@ section.panel { padding:0; }
   /* ---- Hero ----
      120px of top padding was there to clear a header that is sticky, not
      fixed, so it only pushed the name of the site off the first screen. */
-  .hero { min-height: 0; gap: 26px; padding: 60px 0 64px; }
+  /* Still a full-bleed reel, just not a full viewport: on a phone the list
+     below should start before the fold rather than after a whole screen. */
+  .hero { min-height: 84svh; }
+  .hero__inner { padding-block: var(--s-7) var(--s-5); }
   .hero__kicker {
     margin-bottom: 16px;
-    font-size: .66rem;
-    letter-spacing: .16em;
+    font-size: var(--t-m0);
   }
+  /* This override made the homepage h1 the smallest on the site at every
+     mobile width - 36.7px at 390 against 52px on music and every case page -
+     and put it off the ladder on leading and tracking too. The ladder's own
+     clamp already scales down; only the measure needs a mobile value. */
   .hero h1 {
     max-width: 18ch;
-    font-size: clamp(2.15rem, 9.4vw, 3rem);
-    line-height: 1.02;
-    letter-spacing: -.04em;
   }
   .hero__sub { margin-top: 18px; font-size: 1.02rem; line-height: 1.55; }
-  .hero__meta { margin-top: 14px; font-size: 12px; line-height: 1.6; }
-  /* The two actions stay aligned as one compact row. */
+  .hero__meta { margin-top: 14px; line-height: 1.6; }
+  /* Three actions on a 390px column: stacked full width, so no label wraps
+     inside its own pill and turns it into a blob. */
   .hero__cta {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 10px;
-    margin-top: 28px;
+    margin-top: 26px;
   }
-  .hero__cta a {
+  .hero__cta a,
+  .hero-reel__launch {
     justify-content: center;
-    padding: 14px 10px;
-    font-size: .7rem;
+    padding: 14px 16px;
+    font-size: var(--t-m0);
     text-align: center;
+    white-space: nowrap;
   }
-  .hero-reel__player { border-radius:12px; }
-  .hero-reel__head,
-  .hero-reel figcaption { font-size:10px; }
-  .hero-reel__launch-icon { width:58px; height:58px; }
-  .hero-reel__launch-icon svg { width:26px; height:26px; }
+  .hero__reelmeta { margin-top: var(--s-4); }
+  /* Three lines of mono under the actions is clutter on a phone; the runtime
+     and format are the part that earns its place. */
+  .hero__reelmeta-tail { display: none; }
 
-  /* ---- Featured projects: image-led cards ----
-     The row becomes a single column and the thumbnail leads it at the width
-     of the text. The reader sees the work before the description, and the
-     16:9 crop is the one the images were made for. */
-  .prow,
-  .work-split .prow {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 13px;
-    padding: 24px 0 30px;
-  }
-  .prow > div:not(.prow__thumb) { display: block; }
-  .prow__idx { display: none; }
-  .prow__thumb { order: -1; }
-  .prow__thumb img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
-    padding: 0;
-    border-radius: 14px;
-    border: 1px solid rgba(170, 198, 222, 0.16);
-    background: #0b0b0d;
-  }
-  .prow h3,
-  .work-split .prow h3 {
-    font-size: clamp(1.6rem, 6.6vw, 2.1rem);
-    line-height: 1.04;
-    letter-spacing: -.03em;
-    text-wrap: balance;
-  }
-  .prow p {
-    margin-top: 9px;
-    font-size: .95rem;
-    line-height: 1.55;
-  }
-  .prow__meta {
-    margin-top: 0;
-    font-size: 11px;
-    line-height: 1.6;
-    letter-spacing: .06em;
-  }
-  /* Touch has no hover, so the row needs a press state of its own. */
-  .prow:active h3 { color: var(--ice); }
+  /* ---- Featured work on a phone ----
+     One column, the still at the full width of the text, the copy under it.
+     Same anatomy as the desktop card, no second layout to maintain. */
+  .wgrid { gap: var(--s-5); margin-top: var(--s-4); }
+  .wcard { gap: 13px; }
+  .wcard__media { border-radius: 14px; }
+  .wcard__idx { top: 10px; left: 10px; height: 24px; }
+  .wcard__title { font-size: clamp(1.6rem, 6.4vw, 2.05rem); line-height: 1.06; letter-spacing: -.03em; }
+  .wcard--lead .wcard__title { font-size: clamp(1.75rem, 7.4vw, 2.35rem); line-height: 1.04; }
+  .wcard__desc,
+  .wcard--lead .wcard__desc { font-size: .95rem; line-height: 1.55; text-wrap: pretty; }
+  .wcard__cue { min-height: 40px; }
 
-  /* Projects four to six used to drop their image and clamp the description
-     to two lines, which saved height but broke the list in half: the reader
-     met three image-led entries and then three text stubs under the same
-     heading. Every game project now uses the one treatment. The images are
-     the proof the section exists to show. */
-
-  .work-contact-cta {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 14px;
-    min-height: 64px;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--rule);
-    color: var(--muted);
-  }
-  .work-contact-cta > span {
-    max-width: 43ch;
-    font-size: .9rem;
-    line-height: 1.45;
-  }
-  .work-contact-cta strong {
-    display: inline-flex;
-    min-height: 44px;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--mono);
-    font-size: .75rem;
-    font-weight: 400;
-    color: var(--ink);
-  }
-
-  /* ---- Tools: compact rows ----
+  /* ---- Software: compact rows ----
      A REAPER script or a VST has no cinematic frame to show, so these keep a
      small square mark and stay dense enough to scan.
 
@@ -1019,39 +1058,33 @@ section.panel { padding:0; }
      window into it. A 1680px application window scaled into a square reads as
      an empty grey tile next to the full-width game stills above; its title bar
      and first panel still identify the tool. */
-  .prow--tool,
-  .work-split .prow--tool {
-    display: grid;
+  .plist { margin-top: var(--s-5); }
+  .prow {
     grid-template-columns: 84px minmax(0, 1fr);
     gap: 6px 16px;
     align-items: start;
-    padding: 20px 0 22px;
+    padding: 18px 0 20px;
   }
-  .prow--tool .prow__thumb {
-    order: 0;
+  .prow__idx { display: none; }
+  .prow > .prow__thumb {
     grid-column: 1;
     grid-row: 1 / span 2;
-  }
-  .prow--tool > div:not(.prow__thumb) { grid-column: 2; grid-row: 1; }
-  .prow--tool .prow__meta { grid-column: 2; grid-row: 2; }
-  .prow--tool .prow__thumb img {
-    width: 84px;
-    height: 84px;
-    aspect-ratio: 1 / 1;
-    padding: 0;
+    align-self: start;
     border-radius: 14px;
-    object-fit: cover;
-    object-position: left top;
-    background: #151517;
   }
-  .prow--tool h3,
-  .work-split .prow--tool h3 { font-size: clamp(1.32rem, 5.2vw, 1.6rem); }
-  .prow--tool p { margin-top: 7px; font-size: .9rem; }
+  .prow > .prow__thumb img { border-radius: 14px; }
+  .prow > div:not(.prow__thumb) { grid-column: 2; grid-row: 1; }
+  .prow > .prow__meta {
+    grid-column: 2; grid-row: 2;
+    text-align: left; line-height: 1.6;
+  }
+  .prow h3 { font-size: clamp(1.32rem, 5.2vw, 1.6rem); line-height: 1.1; }
+  .prow p { margin-top: 7px; font-size: .9rem; }
+  .prow::before { display: none; }
 
   .plist__group {
-    padding: 44px 0 12px;
-    font-size: 11px;
-    letter-spacing: .16em;
+    padding: var(--s-5) 0 12px;
+    font-size: var(--t-m0);
   }
   .plist__group:first-child { padding-top: 20px; }
 
@@ -1070,7 +1103,6 @@ section.panel { padding:0; }
     grid-column: 1;
     grid-row: 2;
     white-space: nowrap;
-    letter-spacing: .08em;
   }
   .earlier-work summary::after {
     grid-column: 2;
@@ -1083,7 +1115,7 @@ section.panel { padding:0; }
   .earlier-work nav a { min-height: 62px; padding: 13px 0; }
 
   /* ---- Music entry ---- */
-  .music-cta { margin-top: 42px; padding-top: 24px; }
+  .music-cta { margin-top: var(--s-5); }
   .music-cta__body strong { font-size: clamp(1.45rem, 5.6vw, 1.8rem); }
   .music-cta__body span { font-size: .92rem; line-height: 1.55; }
 
@@ -1091,30 +1123,17 @@ section.panel { padding:0; }
   .about-panel { padding: 0; }
   .about-panel p { margin-bottom: 14px; }
 
-  /* ---- Contact ----
-     The address was clamped to 1.15rem on a phone, four times smaller than
-     the heading above it, even though it is the point of the section. */
-  .contact { padding-bottom: 86px; }
-  .contact__mail {
-    margin-top: 26px;
-    font-size: clamp(1.45rem, 6.6vw, 2.2rem);
+  /* ---- Closing band ----
+     The address used to break as "igorszuniewiczwork@" / "gmail.com" at 390px
+     with a 2.2rem cap and a 6.6vw slope. */
+  .closing { padding-block: var(--s-5); gap: var(--s-3); }
+  .closing__line { font-size: 1rem; text-wrap: pretty; }
+  .closing__mail {
+    font-size: clamp(1.1rem, 5vw, 2.2rem);
     line-height: 1.15;
-  }
-  .contact__row {
-    gap: 9px;
-    margin-top: 30px;
-    font-size: .7rem;
-  }
-  .contact__row a {
-    padding: 0 15px;
-    min-height: 42px;
-    border: 1px solid var(--rule);
-    border-radius: 999px;
   }
 }
 
 @media (max-width: 400px) {
-  .prow--tool,
-  .work-split .prow--tool { grid-template-columns: 72px minmax(0, 1fr); gap: 5px 13px; }
-  .prow--tool .prow__thumb img { width: 72px; height: 72px; }
+  .prow { grid-template-columns: 72px minmax(0, 1fr); gap: 5px 13px; }
 }

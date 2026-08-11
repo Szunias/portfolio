@@ -76,6 +76,31 @@ module.exports = {
       // and data-art attributes in the page, so they need no manual list here.
     },
 
+    // Contact
+    // Contact used to be the last section of the homepage. It is a destination
+    // of its own now, so the header links here instead of to a fragment.
+    {
+      slug: 'contact',
+      // build.cjs requires every layout:'project' page to appear in the homepage
+      // work index and to close a next-project cycle, which a contact page is
+      // not part of. The home layout renders the same header, main and
+      // colophon chrome without that constraint.
+      layout: 'home',
+      css: 'contact',
+      js: [],
+      title: 'Contact | Igor Szuniewicz',
+      description: 'Email Igor Szuniewicz at igorszuniewiczwork@gmail.com about game audio, spatial and VR sound, audio tools or music, with links to his LinkedIn, GitHub, itch.io, Spotify and CV.',
+      canonical: `${SITE}/contact.html`,
+      // Not an article: og:type defaults to article for every non-home page.
+      ogType: 'website',
+      schemaPageType: 'ContactPage',
+      ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
+      ogImageAlt: 'Shadow Frames horror game screenshot from Igor Szuniewicz game audio portfolio',
+      ogImageWidth: 1920,
+      ogImageHeight: 1080,
+      ogImageType: 'image/jpeg',
+    },
+
     // Projects with lightbox
     {
       slug: 'sidar',

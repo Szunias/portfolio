@@ -331,7 +331,10 @@ function schemaTags(page) {
   // SoftwareApplication, ScholarlyArticle) hangs off it as mainEntity rather
   // than replacing it, so the graph stays valid for both kinds of consumers.
   const webPage = {
-    '@type': page.slug === 'index' ? 'ProfilePage' : (page.layout === 'music' ? 'CollectionPage' : 'WebPage'),
+    // schemaPageType lets a page name its own WebPage subtype when neither the
+    // slug nor the layout implies one; contact uses it for ContactPage.
+    '@type': page.schemaPageType
+      || (page.slug === 'index' ? 'ProfilePage' : (page.layout === 'music' ? 'CollectionPage' : 'WebPage')),
     '@id': pageId,
     url: page.canonical,
     name: pageName,
@@ -554,13 +557,41 @@ function reserveImageAspectRatio(html) {
     const width = Number(attrValue(match, 'width'));
     const height = Number(attrValue(match, 'height'));
     if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return match;
-    const ratio = `--shot-ar:${width}/${height}`;
+    /* --shot-w is the same measurement in the other direction: a tile that
+       stretches a 379px capture to 527px invents detail the file never had.
+       The stylesheet caps max-width with it, so small captures sit at their
+       own size instead of being upscaled. */
+    const ratio = `--shot-ar:${width}/${height};--shot-w:${width}px`;
     if (hasAttr(attrs, 'style')) {
       return `<img${attrs.replace(/\bstyle=(["'])([\s\S]*?)\1/i, (styleMatch, quote, value) => (
         `style=${quote}${ratio};${value}${quote}`
       ))}>`;
     }
     return `<img style="${ratio}"${attrs}>`;
+  });
+}
+
+/* The click-to-load YouTube facade is a bare <div>: its poster is positioned
+   to fill it, so the box has no intrinsic ratio of its own and the stylesheet
+   had to hardcode 16/9. AudioQ's poster is 1280x848 (1.51), so the hardcoded
+   box cropped roughly 15% of its height with object-fit and the frame resized
+   the moment the real player mounted. Hand the facade the poster's own ratio
+   through the same custom property the image pass uses. */
+function reserveFacadeAspectRatio(html) {
+  return html.replace(/<div\b([^>]*\bdata-yt-facade\b[^>]*)>([\s\S]*?)(<img\b[^>]*>)/gi, (match, attrs, between, img) => {
+    if (/--shot-ar\s*:/i.test(attrs)) return match;
+    // The first image after the opening tag has to still be inside the facade.
+    if (/<\/div>|<div\b/i.test(between)) return match;
+    const width = Number(attrValue(img, 'width'));
+    const height = Number(attrValue(img, 'height'));
+    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return match;
+    const ratio = `--shot-ar:${width}/${height}`;
+    const nextAttrs = hasAttr(attrs, 'style')
+      ? attrs.replace(/\bstyle=(["'])([\s\S]*?)\1/i, (styleMatch, quote, value) => (
+        `style=${quote}${ratio};${value}${quote}`
+      ))
+      : ` style="${ratio}"${attrs}`;
+    return `<div${nextAttrs}>${between}${img}`;
   });
 }
 
@@ -1120,6 +1151,9 @@ function chromeTokens(page) {
     ROOT: root,
     HOME: page.slug === 'index' ? '' : '/',
     CURRENT_MUSIC: page.layout === 'music' ? ' aria-current="page"' : '',
+    // Contact is keyed off the slug rather than the layout: it shares the home
+    // layout, so a layout test would also mark the homepage.
+    CURRENT_CONTACT: page.slug === 'contact' ? ' aria-current="page"' : '',
     YEAR: String(new Date().getFullYear()),
   };
 }
@@ -1134,13 +1168,18 @@ function getCSS(name) {
   return cssCache[name];
 }
 
-// Every page needs the same @font-face set, and the four layout stylesheets
-// have incompatible token vocabularies (home's --ink is light text, music's is
-// dark), so a shared base stylesheet is not on the table. @font-face is
-// order-independent and cannot interact with the cascade, so prepending just
-// that chunk is safe and keeps the faces defined exactly once in source.
+// Every page needs the same @font-face set and the same design tokens.
+//
+// The four layout stylesheets have incompatible token vocabularies (home's
+// --ink is light text, music's is dark), so _tokens.css deliberately uses a
+// prefixed namespace that collides with none of them; each layout aliases its
+// own vocabulary onto those values in its :root. That keeps this prepend safe
+// while giving the site one palette, one type ladder and one spacing scale.
+//
+// _fonts first (order-independent, cannot interact with the cascade), then
+// _tokens, then the layout stylesheets which may override any token.
 function pageStylesheet(names) {
-  return [getCSS('_fonts')].concat(names.map(getCSS)).join('\n');
+  return [getCSS('_fonts'), getCSS('_tokens')].concat(names.map(getCSS)).join('\n');
 }
 
 // Conservative CSS minifier: strips comments and collapses whitespace, but
@@ -1294,6 +1333,7 @@ function buildPage(page) {
   content = enhanceIframeAccessibility(content);
   content = enhanceImageAccessibility(content);
   content = reserveImageAspectRatio(content);
+  content = reserveFacadeAspectRatio(content);
   content = enhanceInlineSvgAccessibility(content);
   content = enhanceGalleryItemLinks(content);
   if (page.layout === 'music') content = injectStaticTrackIndex(content);
@@ -1461,9 +1501,29 @@ function validateConfig(cfg) {
     if (viewportFontSize) {
       throw new Error(`Viewport-based font-size outside clamp() is not allowed in src/css/${page.css}.css: ${viewportFontSize[0]}`);
     }
-    // Tracking must be 0 or a relative em value (design uses em tracking on mono labels/display type).
+    // Tracking must be 0 or a relative em value (design uses em tracking on mono
+    // labels/display type). Since the shared ladder in _tokens.css now carries
+    // the tracking, a var() is allowed too, but only after the reference is
+    // resolved: the rule is about the value, not about the syntax, so an
+    // unresolvable name or a px token still fails here.
+    const trackingProps = new Map();
+    for (const source of [getCSS('_tokens'), css]) {
+      for (const decl of source.matchAll(/(--[\w-]+)\s*:\s*([^;{}]+);/g)) {
+        trackingProps.set(decl[1], decl[2].trim());
+      }
+    }
+    const resolveTracking = (raw, depth) => {
+      const value = raw.replace(/\s*!important/i, '').trim();
+      if (depth > 4) return value;
+      const reference = value.match(/^var\(\s*(--[\w-]+)\s*(?:,([\s\S]+))?\)$/);
+      if (!reference) return value;
+      const declared = trackingProps.get(reference[1]);
+      if (declared !== undefined) return resolveTracking(declared, depth + 1);
+      if (reference[2]) return resolveTracking(reference[2], depth + 1);
+      return value;
+    };
     for (const match of css.matchAll(/letter-spacing\s*:\s*([^;]+);/gi)) {
-      const value = match[1].replace(/\s*!important/i, '').trim();
+      const value = resolveTracking(match[1], 0);
       if (value !== '0' && !/^-?(?:\d+)?\.?\d+em$/.test(value)) {
         throw new Error(`letter-spacing must be 0 or an em value in src/css/${page.css}.css: ${match[0]}`);
       }

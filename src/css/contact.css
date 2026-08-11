@@ -1,0 +1,536 @@
+/* =========================================================
+   CONTACT
+
+   Self-contained page stylesheet: this is the only layout
+   sheet the page loads, so it carries the shared chrome
+   (skip link, header, colophon) as well as its own blocks.
+   Every value below comes from _tokens.css through the alias
+   block, which is the same migration the other four layouts
+   use, so the header geometry, the colophon treatment and
+   the 120px text edge match the rest of the site.
+   ========================================================= */
+
+:root {
+  --ink:     var(--c-ink);
+  --muted:   var(--c-ink-2);
+  --faint:   var(--c-ink-3);
+  --rule:    var(--c-line-2);
+  --rule-soft: var(--c-line);
+  --rule-hi: var(--c-line-3);
+  --ice:     var(--c-accent);
+  --display: var(--f-display);
+  --body:    var(--f-body);
+  --mono:    var(--f-mono);
+
+  /* The page frame formula, one place. */
+  --page-frame: min(100%, calc(var(--page-max) + var(--page-gutter) * 2));
+
+  /* The scope list and the profile list sit directly under one another, so
+     their label columns and their gutters are one declaration. Left to their
+     own fr maths they resolved 19px apart, which read as a broken column. */
+  --ct-label: clamp(150px, 21.8%, 262px);
+  --ct-gap: clamp(24px, 5vw, 64px);
+}
+
+* { box-sizing: border-box; }
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-padding-top: 84px;
+}
+
+body {
+  margin: 0;
+  background: var(--c-bg-1);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: var(--t-b0);
+  line-height: var(--lh-b0);
+  overflow-x: hidden;
+}
+
+
+img { max-width: 100%; }
+
+/* ---------- The page frame ----------
+   Content width plus two gutters, so the first text edge lands on 120px at
+   1440, the same x as home, the project pages and music. */
+.ct-frame {
+  width: var(--page-frame);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+
+/* ---------- Skip link ---------- */
+.skip-link {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 3000;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: var(--r-s);
+  background: var(--ice);
+  color: var(--c-accent-ink);
+  font-family: var(--mono);
+  font-size: var(--t-m1);
+  letter-spacing: .04em;
+  text-decoration: none;
+  transform: translateY(-240%);
+  transition: transform var(--dur) var(--ease);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* ---------- Header ----------
+   Geometry shared with home.css / case.css / music.css: full-bleed bar, its
+   contents on the page frame axis. */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-block: 14px;
+  padding-inline: max(var(--page-gutter), calc((100% - var(--page-max)) / 2));
+  border-bottom: 1px solid var(--rule);
+  background: var(--c-glass);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.site-header__name,
+.site-header nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  white-space: nowrap;
+  text-decoration: none;
+  letter-spacing: .01em;
+  transition: color var(--dur) var(--ease);
+}
+
+.site-header__name {
+  font-family: var(--display);
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.site-header__name-short { display: none; }
+
+.site-header nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1.6vw, 24px);
+}
+
+.site-header nav a {
+  min-width: 24px;
+  font-family: var(--body);
+  font-size: .82rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.site-header nav a:hover { color: var(--ink); }
+
+/* The contact link is the current page. build.cjs now emits aria-current on
+   it the same way it does for music, so the visual cue and the one a screen
+   reader gets come from the same attribute. */
+.site-header nav a[aria-current="page"] {
+  color: var(--ink);
+  box-shadow: inset 0 -1px 0 0 var(--ink);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .site-header { background: color-mix(in srgb, var(--c-bg-1) 94%, transparent); }
+}
+
+/* ---------- Content shell ---------- */
+.content {
+  position: relative;
+  z-index: 10;
+  display: block;
+}
+
+/* =========================================================
+   LEDE - the address is the page
+   ========================================================= */
+.ct-lede {
+  padding-block: clamp(56px, 11vh, 128px) clamp(40px, 6vh, 72px);
+}
+
+.ct-kicker {
+  margin: 0 0 14px;
+  font-family: var(--mono);
+  font-size: var(--t-m1);
+  line-height: 1.4;
+  letter-spacing: .08em;
+  color: var(--ice);
+}
+
+.ct-address {
+  margin: 0;
+  /* Off the shared ladder only in its lower bound: --t-d2 bottoms out at 44px,
+     which puts "igorszuniewiczwork@" past the 350px content width at 390. */
+  font-size: clamp(30px, 6.4vw, 76px);
+  font-family: var(--display);
+  font-weight: 600;
+  line-height: var(--lh-d2);
+  letter-spacing: -.032em;
+}
+
+/* A real target, not a styled paragraph: the box is the width of the address
+   and 44px tall at every size, and the hairline under it is the affordance. */
+.ct-address__link {
+  display: inline-block;
+  max-width: 100%;
+  padding-block: 2px 10px;
+  border-bottom: 2px solid var(--rule-hi);
+  color: var(--ink);
+  text-decoration: none;
+  overflow-wrap: break-word;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.ct-address__link:hover {
+  color: var(--ice);
+  border-bottom-color: var(--ice);
+}
+
+.ct-address__link:active { color: var(--c-accent-hi); }
+
+.ct-note {
+  margin: var(--s-4) 0 0;
+  max-width: var(--reading-max);
+  color: var(--muted);
+  font-size: var(--t-b1);
+  line-height: var(--lh-b1);
+}
+
+/* Three facts, so they are a data strip with rules rather than a sentence. */
+.ct-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 var(--s-5);
+  margin: var(--s-6) 0 0;
+  border-top: 1px solid var(--rule);
+}
+
+.ct-facts__row {
+  padding-block: var(--s-3) 0;
+}
+
+.ct-facts dt {
+  font-family: var(--mono);
+  font-size: var(--t-m0);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.ct-facts dd {
+  margin: 6px 0 0;
+  color: var(--ink);
+  font-size: var(--t-s1);
+  line-height: var(--lh-b1);
+}
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+.ct-sec {
+  padding-block: clamp(48px, 7vh, 88px) 0;
+}
+
+.ct-sec__title {
+  margin: 0 0 var(--s-5);
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: var(--t-t1);
+  line-height: var(--lh-t1);
+  letter-spacing: -.03em;
+}
+
+/* ---------- Scope list ----------
+   Label plus one sentence per row, on hairlines. Ordinary prose carries no
+   border of its own; the rules belong to the list structure. */
+.ct-scope {
+  margin: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.ct-scope__row {
+  display: grid;
+  grid-template-columns: var(--ct-label) minmax(0, 1fr);
+  gap: var(--s-3) var(--ct-gap);
+  padding-block: var(--s-4);
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.ct-scope dt {
+  font-family: var(--display);
+  font-size: var(--t-t3);
+  font-weight: 600;
+  line-height: var(--lh-t3);
+  letter-spacing: -.015em;
+  color: var(--ink);
+}
+
+.ct-scope dd {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--muted);
+  font-size: var(--t-b0);
+  line-height: var(--lh-b0);
+}
+
+/* ---------- Profile links ----------
+   Interaction, so it gets rules and a hover fill. Each row is a full-width
+   target well past 44px, with the destination shown rather than implied. */
+.ct-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.ct-links li { margin: 0; }
+
+.ct-links a {
+  display: grid;
+  grid-template-columns: var(--ct-label) minmax(0, 1fr) 16px;
+  align-items: baseline;
+  gap: 4px var(--ct-gap);
+  min-height: 64px;
+  padding-block: var(--s-3);
+  border-bottom: 1px solid var(--rule-soft);
+  color: var(--muted);
+  text-decoration: none;
+  transition: color var(--dur) var(--ease),
+              background var(--dur) var(--ease),
+              border-color var(--dur) var(--ease);
+}
+
+.ct-links a:hover {
+  background: var(--c-accent-weak);
+  border-bottom-color: var(--rule-hi);
+  color: var(--ink);
+}
+
+.ct-links a:hover .ct-links__go { color: var(--ice); }
+
+.ct-links a:active { background: rgba(170, 198, 222, .2); }
+
+.ct-links a:focus-visible { background: var(--c-accent-weak); }
+
+.ct-links__name {
+  font-family: var(--display);
+  font-size: var(--t-t3);
+  font-weight: 600;
+  line-height: var(--lh-t3);
+  letter-spacing: -.015em;
+  color: var(--ink);
+}
+
+.ct-links__dest {
+  font-family: var(--mono);
+  font-size: var(--t-m1);
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--faint);
+  overflow-wrap: anywhere;
+}
+
+.ct-links__go {
+  font-family: var(--mono);
+  font-size: var(--t-m1);
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--faint);
+  transition: color var(--dur) var(--ease);
+}
+
+/* ---------- Return row ---------- */
+.ct-return {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  position: relative;
+  z-index: 10;
+  padding-block: clamp(40px, 6vh, 72px) var(--s-4);
+}
+
+.ct-return a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--t-m1);
+  line-height: 1.4;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color var(--dur) var(--ease);
+}
+
+.ct-return a:hover { color: var(--ink); }
+
+/* ---------- Colophon ----------
+   The case-page treatment: uppercase mono, accent links, hairline underline. */
+.colophon {
+  position: relative;
+  z-index: 10;
+  width: var(--page-frame);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+  padding-block: 26px var(--s-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: var(--t-m0);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.colophon a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  color: var(--ice);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: color-mix(in srgb, var(--c-accent) 45%, transparent);
+  transition: color var(--dur) var(--ease), text-decoration-color var(--dur) var(--ease);
+}
+
+.colophon a:hover {
+  color: var(--ink);
+  text-decoration-color: var(--ink);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+/* The scope and link rows stop being two columns before the label column
+   would squeeze the sentence below a readable measure. */
+@media (max-width: 760px) {
+  .ct-scope__row,
+  .ct-links a {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ct-links a {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    row-gap: 2px;
+  }
+
+  .ct-links__name { grid-column: 1; }
+  .ct-links__dest { grid-column: 1; }
+
+  .ct-links__go {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+
+  .ct-facts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .ct-facts__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-4);
+    padding-block: 12px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .ct-facts dd { margin-top: 0; text-align: right; }
+}
+
+/* Header: the compact treatment the project pages use, so the four
+   destinations stay reachable and 44px tall on a phone. */
+@media (max-width: 820px) {
+  .site-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 6px;
+    padding-block: 7px;
+  }
+
+  .site-header__name {
+    min-height: 44px;
+    font-size: .82rem;
+    letter-spacing: .015em;
+  }
+
+  .site-header__name-full { display: none; }
+  .site-header__name-short { display: inline; }
+
+  .site-header nav {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .site-header .site-header__cv { display: none; }
+
+  .site-header nav a {
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 clamp(5px, 1.8vw, 10px);
+    border: 1px solid var(--rule);
+    border-radius: var(--r-pill);
+    background: rgba(236, 238, 240, 0.035);
+    font-size: .75rem;
+    letter-spacing: .015em;
+    box-shadow: none;
+  }
+
+  .site-header nav a:hover { border-color: var(--rule-hi); }
+
+  .site-header nav a[aria-current="page"],
+  .site-header nav a[aria-current="page"]:hover {
+    border-color: transparent;
+    background: var(--c-ink);
+    color: var(--c-accent-ink);
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .ct-return { flex-direction: column; align-items: flex-start; gap: 0; }
+  .colophon { flex-direction: column; align-items: flex-start; gap: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link { transition: none; }
+}

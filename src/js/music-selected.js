@@ -43,9 +43,13 @@
     return match ? match[1] : 'Date unknown';
   }
 
+  function hasExactDate(track) {
+    return /^\d{4}-\d{2}-\d{2}$/.test(track.dataset.year || '');
+  }
+
   function visibleDate(track) {
     const match = (track.dataset.year || '').match(/^\d{4}-(\d{2})-(\d{2})$/);
-    if (!match) return 'Year only';
+    if (!match) return '';
     return (match[2] + ' ' + (MONTHS[Number(match[1]) - 1] || '')).trim();
   }
 
@@ -64,8 +68,15 @@
     return isSketch(track) ? 'Sketch' : 'Finished';
   }
 
+  function rowDetail(track, filter) {
+    const parts = [];
+    if (filter === 'all') parts.push(kindLabel(track));
+    if (hasExactDate(track)) parts.push(visibleDate(track));
+    return parts.join(' \u00b7 ');
+  }
+
   function trackDetail(track) {
-    const date = visibleDate(track) === 'Year only' ? trackYear(track) : accessibleDate(track);
+    const date = hasExactDate(track) ? accessibleDate(track) : trackYear(track);
     return kindLabel(track) + ' · ' + date;
   }
 
@@ -390,7 +401,6 @@
   function setSeekEnabled(enabled) {
     roleAll('progress').forEach(el => {
       el.setAttribute('aria-disabled', String(!enabled));
-      el.setAttribute('tabindex', enabled ? '0' : '-1');
     });
   }
 
@@ -439,7 +449,6 @@
       el.setAttribute('aria-valuetext', format(audio.currentTime) + ' of ' + format(duration));
     });
     setSeekEnabled(hasDuration);
-    drawScrubbers();
   }
 
   function updateBuffered() {
@@ -453,150 +462,6 @@
       }
     }
     setStyle('progress-buffer', 'width', percent + '%');
-    drawScrubbers();
-  }
-
-  // ------------------------------------------------------- loudness envelope
-
-  // 120 levels per track, base36, written into data-peaks by npm run peaks.
-  // Bars grow from the baseline rather than mirroring around a centre line:
-  // this is meant to read as data about where the track gets loud, not as
-  // waveform decoration.
-  let envelopeColors = null;
-
-  function decodePeaks(value) {
-    if (!value) return [];
-    const levels = new Array(value.length);
-    for (let i = 0; i < value.length; i++) {
-      const level = parseInt(value[i], 36);
-      levels[i] = Number.isFinite(level) ? level : 0;
-    }
-    return levels;
-  }
-
-  function paletteForEnvelope() {
-    if (envelopeColors) return envelopeColors;
-    const styles = getComputedStyle(document.documentElement);
-    const accent = (styles.getPropertyValue('--accent') || '').trim();
-    envelopeColors = {
-      played: accent || '#aac6de',
-      buffered: 'rgba(236, 238, 240, 0.32)',
-      rest: 'rgba(236, 238, 240, 0.16)'
-    };
-    return envelopeColors;
-  }
-
-  // Downsampling keeps the small previews legible: 120 bars in a 100px row
-  // would be under a pixel each.
-  function resample(levels, buckets) {
-    if (levels.length <= buckets) return levels;
-    const out = new Array(buckets);
-    for (let i = 0; i < buckets; i++) {
-      const from = Math.floor(i * levels.length / buckets);
-      const to = Math.max(from + 1, Math.floor((i + 1) * levels.length / buckets));
-      let peak = 0;
-      for (let j = from; j < to && j < levels.length; j++) peak = Math.max(peak, levels[j]);
-      out[i] = peak;
-    }
-    return out;
-  }
-
-  function paintEnvelope(canvas, levels, playedRatio, bufferedRatio, buckets) {
-    if (!canvas || typeof canvas.getContext !== 'function') return false;
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
-    if (!width || !height) return false;
-
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const pixelWidth = Math.round(width * dpr);
-    const pixelHeight = Math.round(height * dpr);
-    if (canvas.width !== pixelWidth) canvas.width = pixelWidth;
-    if (canvas.height !== pixelHeight) canvas.height = pixelHeight;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return false;
-    ctx.clearRect(0, 0, pixelWidth, pixelHeight);
-    if (!levels.length) return true;
-
-    const bars = buckets ? resample(levels, buckets) : levels;
-    const colors = paletteForEnvelope();
-    const slot = pixelWidth / bars.length;
-    const barWidth = Math.max(dpr, slot * 0.62);
-    const inset = (slot - barWidth) / 2;
-    // Silent buckets keep a hairline so the track still reads as a full scrubber.
-    const minHeight = Math.max(dpr, pixelHeight * 0.06);
-
-    for (let i = 0; i < bars.length; i++) {
-      const position = (i + 0.5) / bars.length;
-      const barHeight = Math.max(minHeight, (bars[i] / 35) * pixelHeight);
-      ctx.fillStyle = position <= playedRatio
-        ? colors.played
-        : (position <= bufferedRatio ? colors.buffered : colors.rest);
-      ctx.fillRect(i * slot + inset, pixelHeight - barHeight, barWidth, barHeight);
-    }
-    return true;
-  }
-
-  function playbackRatios() {
-    const duration = audio.duration;
-    const hasDuration = Number.isFinite(duration) && duration > 0;
-    const played = hasDuration ? clamp(audio.currentTime / duration, 0, 1) : 0;
-    let buffered = 0;
-    if (hasDuration && audio.buffered.length) {
-      try {
-        buffered = clamp(audio.buffered.end(audio.buffered.length - 1) / duration, 0, 1);
-      } catch (_) {
-        buffered = 0;
-      }
-    }
-    return { played: played, buffered: buffered };
-  }
-
-  // The scrubbers: one in the bar, one in the sheet. Both are always redrawn,
-  // because the bar one stays on screen while the sheet is closed.
-  function drawScrubbers() {
-    const track = selectedTrack();
-    const levels = track ? decodePeaks(track.dataset.peaks) : [];
-    const r = playbackRatios();
-    roleAll('envelope').forEach(canvas => {
-      if (canvas.closest('[hidden]')) return;
-      paintEnvelope(canvas, levels, r.played, r.buffered, 0);
-    });
-    drawActiveRowWave();
-  }
-
-  if (typeof ResizeObserver === 'function') {
-    const ro = new ResizeObserver(() => drawScrubbers());
-    roleAll('envelope').forEach(canvas => ro.observe(canvas));
-  }
-
-  // Every archive row carries its own shape, so the list shows where a track
-  // gets loud before you play it. These are previews only: the row is a button
-  // and must keep a single click target, so seeking happens in the bar and in
-  // the sheet, which are real sliders.
-  const rowWaves = new Map();
-
-  function drawRowWave(button, track, withProgress) {
-    const canvas = rowWaves.get(button);
-    if (!canvas) return;
-    const r = withProgress ? playbackRatios() : { played: 0, buffered: 0 };
-    paintEnvelope(canvas, decodePeaks(track.dataset.peaks), r.played, r.buffered, 44);
-  }
-
-  function drawAllRowWaves() {
-    const playing = selectedTrack();
-    libraryRows.forEach(button => {
-      const track = byTitle.get(cardTitle(button));
-      if (track) drawRowWave(button, track, track === playing);
-    });
-  }
-
-  function drawActiveRowWave() {
-    const track = selectedTrack();
-    if (!track || !libraryRows.length) return;
-    libraryRows.forEach(button => {
-      if (byTitle.get(cardTitle(button)) === track) drawRowWave(button, track, true);
-    });
   }
 
   function updateVolumeUI() {
@@ -834,17 +699,18 @@
 
         const detail = document.createElement('span');
         detail.className = 'library-row__detail';
-        detail.textContent = trackDetail(track);
+        detail.textContent = rowDetail(track, activeFilter);
         main.append(name, kind, detail);
 
         const date = document.createElement('time');
         date.className = 'library-row__date';
         date.dateTime = track.dataset.year || '';
-        date.textContent = visibleDate(track);
-
-        const wave = document.createElement('canvas');
-        wave.className = 'library-row__wave';
-        wave.setAttribute('aria-hidden', 'true');
+        // A track with only a known year already sits under a heading that
+        // prints that year, so the cell stays empty instead of repeating it
+        // down the whole column.
+        date.textContent = hasExactDate(track)
+          ? visibleDate(track)
+          : (trackYear(track) === year ? '' : trackYear(track));
 
         const duration = document.createElement('span');
         duration.className = 'library-row__duration';
@@ -855,10 +721,9 @@
         state.textContent = 'Play';
         state.setAttribute('aria-hidden', 'true');
 
-        button.append(art, main, wave, date, duration, state);
+        button.append(art, main, date, duration, state);
         item.append(button);
         list.append(item);
-        rowWaves.set(button, wave);
         rows.push(button);
       });
 
@@ -875,6 +740,9 @@
       const match = filter === 'all' || row.dataset.kind === filter;
       row.closest('li').hidden = !match;
       if (match) visible += 1;
+      const rowTrack = byTitle.get(cardTitle(row));
+      const detail = row.querySelector('.library-row__detail');
+      if (rowTrack && detail) detail.textContent = rowDetail(rowTrack, filter);
     });
     Array.from(document.querySelectorAll('.library-group')).forEach(group => {
       const shown = Array.from(group.querySelectorAll('.library-row'))
@@ -890,8 +758,8 @@
       if (filter === 'all' || (isSketch(track) ? 'sketch' : 'release') === filter) indices.push(index);
     });
     setPool(indices, true);
-    // Hidden rows have no measurable width, so the shown ones are repainted.
-    drawAllRowWaves();
+    // The kind badge only says something when both kinds are on screen at once.
+    if (library) library.classList.toggle('is-all', filter === 'all');
     return visible;
   }
 
@@ -969,8 +837,6 @@
     if (!canOpenSheet || sheet.open) return;
     sheet.showModal();
     syncSheetLock();
-    // The canvas has no measurable size until the dialog is laid out.
-    drawScrubbers();
   }
 
   function closeSheet() {
@@ -1020,6 +886,9 @@
       if (!event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
       activePointer = event.pointerId;
       event.preventDefault();
+      // touch-action stays pan-y until here, so a swipe that starts on the rail
+      // scrolls the page instead of being swallowed by the slider.
+      element.classList.add('is-scrubbing');
       element.focus({ preventScroll: true });
       try { element.setPointerCapture(event.pointerId); } catch (_) {}
       update(element, event.clientX);
@@ -1034,13 +903,18 @@
       event.preventDefault();
       update(element, event.clientX);
       activePointer = null;
+      element.classList.remove('is-scrubbing');
       try { element.releasePointerCapture(event.pointerId); } catch (_) {}
     });
     element.addEventListener('pointercancel', event => {
-      if (event.pointerId === activePointer) activePointer = null;
+      if (event.pointerId !== activePointer) return;
+      activePointer = null;
+      element.classList.remove('is-scrubbing');
     });
     element.addEventListener('lostpointercapture', event => {
-      if (event.pointerId === activePointer) activePointer = null;
+      if (event.pointerId !== activePointer) return;
+      activePointer = null;
+      element.classList.remove('is-scrubbing');
     });
   }
 
@@ -1310,15 +1184,4 @@
   updateVolumeUI();
   setSeekEnabled(false);
   setPlayState();
-  drawAllRowWaves();
-  drawScrubbers();
-
-  let repaintTimer = null;
-  window.addEventListener('resize', () => {
-    window.clearTimeout(repaintTimer);
-    repaintTimer = window.setTimeout(() => {
-      drawAllRowWaves();
-      drawScrubbers();
-    }, 140);
-  });
 })();

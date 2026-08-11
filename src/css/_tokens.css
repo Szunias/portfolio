@@ -1,0 +1,256 @@
+/* =========================================================
+   SHARED DESIGN TOKENS
+
+   build.cjs prepends this to every emitted stylesheet, directly
+   after _fonts.css.
+
+   The four layout stylesheets grew incompatible vocabularies:
+   home's --ink is light text while music's --ink is the dark
+   colour used on top of the accent, home's --rule is 0.10 alpha
+   while case's is 0.14. Renaming those in place would mean
+   rewriting thousands of usages at once.
+
+   So every token here carries a prefix that appears nowhere in
+   the existing stylesheets. Each layout keeps its own vocabulary
+   and re-points it at these values in a small alias block, which
+   is where the four palettes actually converge. New work should
+   use the prefixed tokens directly.
+   ========================================================= */
+
+:root {
+  /* ---- surfaces: one ramp, cool-neutral, deliberately no blue cast ---- */
+  --c-bg-0: #0b0b0d;   /* deepest: full-bleed slabs, media wells, letterbox */
+  --c-bg-1: #101012;   /* page */
+  --c-bg-2: #151517;   /* raised: cards, tiles, code, thumbs */
+  --c-bg-3: #1b1b1e;   /* top: player bar, sheets, popovers */
+  --c-glass: rgba(11, 11, 13, 0.9);
+
+  /* ---- ink: three tiers, all at or above 4.5:1 on --c-bg-1 ---- */
+  --c-ink:   #eceef0;
+  --c-ink-2: rgba(236, 238, 240, 0.72);  /* body prose, nav */
+  --c-ink-3: rgba(236, 238, 240, 0.55);  /* captions, meta, mono labels */
+
+  /* ---- lines: exactly three jobs ---- */
+  --c-line:   rgba(236, 238, 240, 0.08);  /* row dividers, table rules */
+  --c-line-2: rgba(236, 238, 240, 0.16);  /* container edges, inputs, pills */
+  --c-line-3: rgba(236, 238, 240, 0.30);  /* hover and active edges */
+
+  /* ---- accent: one, plus one status colour ----
+     Project identity is carried by imagery, not by a per-page hue. */
+  --c-accent:      #aac6de;
+  --c-accent-hi:   #c2d8ea;               /* hover only */
+  --c-accent-weak: rgba(170, 198, 222, 0.14);
+  --c-accent-ink:  #0b0b0d;               /* text on an accent fill */
+  --c-warn:        #e8a5a5;               /* the only failure state on the site */
+
+  /* ---- radii ---- */
+  --r-s: 6px;
+  --r-m: 12px;
+  --r-pill: 999px;
+
+  /* ---- elevation: an inner highlight plus two real drops ---- */
+  --e-1: inset 0 1px 0 0 rgba(236, 238, 240, 0.045);
+  --e-2: 0 12px 32px rgba(0, 0, 0, 0.38);
+  --e-3: 0 32px 90px rgba(0, 0, 0, 0.46);
+
+  /* ---- space ---- */
+  --s-1: 6px;
+  --s-2: 10px;
+  --s-3: 16px;
+  --s-4: 24px;
+  --s-5: 40px;
+  --s-6: 64px;
+  --s-7: 96px;
+  --s-8: 130px;
+
+  /* ---- page frame ----
+     One formula everywhere: the outer box is the content width plus
+     two gutters, so the text edge lands on the same x on every page.
+       width: min(100%, calc(var(--page-max) + var(--page-gutter) * 2));
+       margin-inline: auto;
+       padding-inline: var(--page-gutter);
+     At 1440 that puts every first text edge at 120px. */
+  --page-max: 1200px;
+  --page-gutter: clamp(20px, 5vw, 64px);
+  --reading-max: 800px;   /* prose measure, 66-72ch */
+  --section-pad: clamp(64px, 10vh, 108px);
+
+  /* ---- type ladder: 1.25 ratio off a 16.5px body ----
+     Tracking is negative on display sizes because Space Grotesk sets
+     loose at scale. Nothing outside this ladder should be introduced. */
+  --t-d1: clamp(52px, 8vw, 112px);   /* project h1, short titles */
+  --t-d2: clamp(44px, 5.4vw, 76px);  /* project h1, long titles */
+  --t-t1: clamp(32px, 3.6vw, 49px);  /* section h2 */
+  --t-t2: clamp(24px, 2.4vw, 31px);  /* card h3, hero lead */
+  --t-t3: clamp(20px, 1.9vw, 25px);  /* minor h3, run-in heads */
+  --t-b1: 20px;                      /* section deck */
+  --t-b0: 16.5px;                    /* body */
+  --t-s1: 14px;                      /* captions, notes */
+  --t-m1: 12px;                      /* mono labels, meta, kickers */
+  --t-m0: 11px;                      /* smallest mono, data labels */
+
+  --lh-d1: 0.88;
+  --lh-d2: 0.94;
+  --lh-t1: 1.06;
+  --lh-t2: 1.18;
+  --lh-t3: 1.26;
+  --lh-b1: 1.55;
+  --lh-b0: 1.7;
+
+  --tr-d1: -0.035em;
+  --tr-d2: -0.032em;
+  --tr-t1: -0.03em;
+  --tr-t2: -0.02em;
+  --tr-t3: -0.015em;
+  --tr-m:  0.08em;   /* mono labels */
+
+  /* ---- motion ---- */
+  --dur: 160ms;
+  --dur-slow: 320ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* ---- families ---- */
+  --f-display: 'Space Grotesk', 'Space Grotesk Fallback', system-ui, sans-serif;
+  --f-body: 'Inter', 'Inter Fallback', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+/* ---------------------------------------------------------
+   Shared page substrate.
+
+   Every layout painted its own flat or near-flat background and
+   home had none at all, which is why home read flatter than its
+   own subpages. One cool wash plus a fixed monochrome grain: the
+   grain is what stops large near-black fields banding on cheap
+   panels. Inline data URI, no extra request, and it is static so
+   prefers-reduced-motion needs no branch.
+
+   Layout stylesheets set body { background: var(--c-bg-1) } and
+   must not paint competing washes. Each one already gives its content
+   wrapper a stacking position so nothing here covers the page.
+
+   This used to be a .page-substrate class that no element carried, with
+   all four layouts hand-copying its declarations into their own
+   body::before - three formatting variants had already drifted apart.
+   Declaring the pseudo-element here directly is the single source.
+   --------------------------------------------------------- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 70% at 50% -8%, rgba(170, 198, 222, 0.05), transparent 62%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  background-repeat: no-repeat, repeat;
+  background-size: auto, 120px 120px;
+}
+
+/* ---------------------------------------------------------
+   Shared interface craft. home.css defined none of this, so
+   selecting text on the homepage painted Chrome's default blue
+   and focusing a <summary> drew the UA outline.
+   --------------------------------------------------------- */
+/* Form controls do not inherit the document face. Without this the music page
+   rendered 80 of them in Arial 13.33px - every track tile, all 44 archive rows
+   and the whole transport - while the prose around them was Inter. */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+::selection {
+  background: var(--c-accent);
+  color: var(--c-accent-ink);
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(236, 238, 240, 0.18) transparent;
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(236, 238, 240, 0.18); border-radius: var(--r-pill); }
+::-webkit-scrollbar-thumb:hover { background: var(--c-accent); }
+
+:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------
+   The colophon sits on the page frame, so its box is the
+   content width plus two gutters. A border-top therefore ran
+   64px past the text edge on each side at 1440 - the only rule
+   on the page that missed the grid the rest of the content
+   sits on. Painting the hairline as an inset background keeps
+   it on the text edge without needing an extra wrapper.
+
+   The layout stylesheets must not re-declare border-top here.
+   --------------------------------------------------------- */
+.colophon {
+  border-top: 0;
+  background-image: linear-gradient(var(--c-line-2), var(--c-line-2));
+  background-repeat: no-repeat;
+  background-position: var(--page-gutter) 0;
+  background-size: calc(100% - var(--page-gutter) * 2) 1px;
+}
+
+/* ---------------------------------------------------------
+   Buttons.
+
+   Every surface used to invent its own geometry: a 10px-radius
+   48px pill on the music hero, a 999px 44px chip on the filters,
+   circles at 44/46/64px on the transport, and nine more radii
+   across the project pages. Three variants cover the site.
+   --------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-height: 44px;
+  padding: 0 var(--s-3);
+  border: 1px solid var(--c-line-2);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--c-ink-2);
+  font-family: var(--f-mono);
+  font-size: var(--t-m0);
+  line-height: 1;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease),
+              border-color var(--dur) var(--ease),
+              background var(--dur) var(--ease);
+}
+
+.btn:hover,
+.btn--ghost:hover {
+  border-color: var(--c-line-3);
+  color: var(--c-ink);
+}
+
+.btn--primary {
+  color: var(--c-accent-ink);
+  background: var(--c-ink);
+  border-color: var(--c-ink);
+}
+
+.btn--primary:hover {
+  color: var(--c-accent-ink);
+  background: #fff;
+  border-color: #fff;
+}
+
+.btn[disabled] {
+  opacity: .5;
+  cursor: not-allowed;
+}

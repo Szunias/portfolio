@@ -4,6 +4,8 @@
   if (!lightbox) return;
   const lbImg = lightbox.querySelector('img');
   const lbCaption = lightbox.querySelector('.lightbox__caption');
+  const lbCount = lightbox.querySelector('.lightbox__count');
+  const lbHint = lightbox.querySelector('.lightbox__hint');
   const closeBtn = lightbox.querySelector('.lightbox__close');
   const prevBtn = lightbox.querySelector('.lightbox__nav--prev');
   const nextBtn = lightbox.querySelector('.lightbox__nav--next');
@@ -38,6 +40,10 @@
   [prevBtn, nextBtn].filter(Boolean).forEach(btn => {
     btn.hidden = !hasMultipleImages;
   });
+  // A single capture has nothing to count through and nothing to browse, so
+  // "1 / 1" and the arrow hint would both be noise.
+  if (lbCount) lbCount.hidden = !hasMultipleImages;
+  if (lbHint && !hasMultipleImages) lbHint.textContent = 'esc to close';
 
   function render(index) {
     currentIndex = index;
@@ -45,6 +51,9 @@
     lbImg.alt = images[index].alt;
     lbImg.removeAttribute('aria-hidden');
     if (lbCaption) lbCaption.textContent = images[index].caption || images[index].alt;
+    // Without this there is no way to tell a three-image set from a ten-image
+    // one, or where in it you are.
+    if (lbCount) lbCount.textContent = (index + 1) + ' / ' + images.length;
   }
 
   function getFocusable() {
@@ -147,6 +156,16 @@
   galleryItems.forEach((item, i) => {
     item.setAttribute('aria-haspopup', 'dialog');
     item.setAttribute('aria-controls', 'lightbox');
+    // Only one page hand-wrote this badge, so on the others nothing signalled
+    // that a capture opens - and on touch there is no hover state to discover
+    // it with. It is decoration for a control the tile already exposes.
+    if (!item.querySelector('.gallery-item__zoom')) {
+      const badge = document.createElement('span');
+      badge.className = 'gallery-item__zoom';
+      badge.setAttribute('aria-hidden', 'true');
+      badge.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="22" y2="22"/></svg>';
+      item.appendChild(badge);
+    }
     if (item.tagName !== 'BUTTON' && item.tagName !== 'A') {
       item.setAttribute('role', 'button');
       item.setAttribute('tabindex', '0');

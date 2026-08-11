@@ -76,7 +76,6 @@
   const note = browser.querySelector('[data-ai-sample-note]');
   const latency = browser.querySelector('[data-ai-sample-latency]');
   const use = browser.querySelector('[data-ai-sample-use]');
-  const wave = browser.querySelector('[data-ai-sample-wave]');
   const promptButtons = Array.from(browser.querySelectorAll('[data-ai-sample-prompt]'));
   const modelButtons = Array.from(browser.querySelectorAll('[data-ai-sample-model]'));
   if (!audio || !play || !promptButtons.length || !modelButtons.length) return;
@@ -90,19 +89,6 @@
     if (!play) return;
     const label = play.querySelector('strong');
     if (label) label.textContent = text;
-  }
-
-  function makeWave(seed) {
-    if (!wave) return;
-    wave.innerHTML = '';
-    for (let i = 0; i < 32; i += 1) {
-      const code = seed.charCodeAt(i % seed.length);
-      const height = 18 + ((code + i * 13) % 62);
-      const bar = document.createElement('i');
-      bar.style.setProperty('--h', `${height}%`);
-      bar.style.setProperty('--d', `${(i % 8) * 42}ms`);
-      wave.appendChild(bar);
-    }
   }
 
   function stopAudio() {
@@ -138,7 +124,6 @@
     if (use) use.textContent = model.use;
     setPressed(promptButtons, currentPrompt, 'data-ai-sample-prompt');
     setPressed(modelButtons, currentModel, 'data-ai-sample-model');
-    makeWave(`${currentPrompt}-${currentModel}`);
   }
 
   promptButtons.forEach(button => {
