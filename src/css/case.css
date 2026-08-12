@@ -4457,15 +4457,23 @@ main#main-content { position: relative; z-index: 1; }
   display: block;
 }
 
+.tool-caption > span:first-child { color: var(--ink-55); }
+.tool-caption > span:last-child { color: var(--ink-70); }
+
+/* A spec line, not a sentence: every use is a label and the value it names,
+   including the chain "Export -> Trim & fades -> ...". Mono, on a hairline,
+   with the label held back so the value carries. */
 .tool-caption {
   display: grid;
   grid-template-columns: minmax(130px, 0.3fr) minmax(0, 1fr);
   gap: clamp(16px, 2.5vw, 32px);
   margin: 0;
-  padding-top: 10px;
-  font-family: var(--mono);
-  font-size: var(--t-m0);
-  line-height: 1.55;
+  padding-top: 12px;
+  border-top: 1px solid var(--tool-rule);
+  font-family: var(--micro-data-font);
+  font-size: var(--micro-data-size);
+  letter-spacing: var(--micro-data-tr);
+  line-height: 1.65;
   color: var(--ink-55);
 }
 
@@ -4638,25 +4646,46 @@ main#main-content { position: relative; z-index: 1; }
 /* Four bordered columns of ordinary prose gave each step about 28 characters
    a line, and AGENTS.md reserves borders for media, data, code, interaction
    and warnings. Two plain columns, no dividers. */
-.at-flow {
+/* ---- Step chain ----
+   Both tool pages describe a four-step workflow. AutoTrim drew it as a 2x2
+   of headed sentences, which is the shape a features block takes, so an
+   ordered process read as a list of selling points. Both are the same device
+   now: four positions on one line, each with its ordinal and a tick where it
+   sits. The numerals come from a counter, so the markup stays a plain list. */
+.at-flow,
+.mw-flow {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 46%), 1fr));
-  gap: clamp(22px, 3vw, 38px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
   margin: 0;
-  padding-top: 22px;
+  padding: 0;
   list-style: none;
+  counter-reset: step;
   border-top: 1px solid var(--tool-rule);
   border-bottom: 0;
 }
 
-.at-flow li {
+.at-flow li,
+.mw-flow li {
+  counter-increment: step;
   min-width: 0;
-  padding: 0 0 22px;
+  padding: 24px clamp(16px, 2vw, 28px) 26px 0;
+  /* The tick that puts this step on the line above it. */
+  background-image: linear-gradient(var(--tool-accent), var(--tool-accent));
+  background-size: 26px 1px;
+  background-position: 0 0;
+  background-repeat: no-repeat;
 }
 
-.at-flow li + li {
-  padding-left: 0;
-  border-left: 0;
+.at-flow li::before,
+.mw-flow li::before {
+  content: counter(step, decimal-leading-zero);
+  display: block;
+  margin-bottom: 12px;
+  font-family: var(--micro-data-font);
+  font-size: var(--micro-data-size);
+  letter-spacing: var(--micro-data-tr);
+  color: var(--micro-data-ink);
 }
 
 .at-flow strong,
@@ -4939,25 +4968,6 @@ main#main-content { position: relative; z-index: 1; }
   padding-right: 0;
 }
 
-.mw-flow {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin: 0;
-  list-style: none;
-  border-top: 1px solid color-mix(in srgb, var(--tool-accent) 46%, transparent);
-  border-bottom: 1px solid var(--tool-rule);
-}
-
-.mw-flow li {
-  min-width: 0;
-  padding: 21px clamp(16px, 2vw, 26px) 23px 0;
-}
-
-.mw-flow li + li {
-  padding-left: clamp(16px, 2vw, 26px);
-  border-left: 1px solid var(--tool-rule);
-}
-
 .mw-workflow__notes {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -5175,19 +5185,8 @@ main#main-content { position: relative; z-index: 1; }
     width: min(100%, 900px);
   }
 
-  .mw-flow {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .mw-flow li:nth-child(3) {
-    padding-left: 0;
-    border-left: 0;
-    border-top: 1px solid var(--tool-rule);
-  }
-
-  .mw-flow li:nth-child(4) {
-    border-top: 1px solid var(--tool-rule);
-  }
+  .at-flow,
+  .mw-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
   .at-delivery,
   .aq-chain__columns,
@@ -5352,23 +5351,11 @@ main#main-content { position: relative; z-index: 1; }
     gap: 0;
   }
 
-  .mw-flow {
-    grid-template-columns: minmax(0, 1fr);
-  }
+  .at-flow,
+  .mw-flow { grid-template-columns: minmax(0, 1fr); }
 
-  .mw-flow li,
-  .mw-flow li + li,
-  .mw-flow li:nth-child(3) {
-    padding: 15px 0;
-    border-top: 0;
-    border-right: 0;
-    border-left: 0;
-    border-bottom: 1px solid var(--tool-rule-soft);
-  }
-
-  .mw-flow li:last-child {
-    border-bottom: 0;
-  }
+  .at-flow li,
+  .mw-flow li { padding: 18px 0 20px; }
 
 }
 
@@ -5774,7 +5761,6 @@ main#main-content { position: relative; z-index: 1; }
 /* ---------- R3 CAPTION ----------
    "A photograph from the Polaroid camera" is a sentence, not a label. Body
    face, sentence case, no tracking. */
-.tool-caption,
 .tool-shot .gallery-item__caption,
 .tool-note,
 .tool-meta,
