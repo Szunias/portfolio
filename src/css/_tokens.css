@@ -85,9 +85,14 @@
   --t-t3: clamp(20px, 1.9vw, 25px);  /* minor h3, run-in heads */
   --t-b1: 20px;                      /* section deck */
   --t-b0: 16.5px;                    /* body */
-  --t-s1: 14px;                      /* captions, notes */
-  --t-m1: 12px;                      /* mono labels, meta, kickers */
-  --t-m0: 11px;                      /* smallest mono, data labels */
+  --t-s1: 14px;                      /* captions, notes, both non-mono registers */
+  --t-m1: 12px;                      /* the ONLY mono size on the site */
+  --t-m0: var(--t-m1);               /* RETIRED. 11px sat one pixel from --t-m1:
+                                        invisible to the reader, a second rung in
+                                        the code. The alias collapses every
+                                        existing --t-m0 usage in case.css,
+                                        music.css, contact.css, sidar.css and
+                                        home.css without touching one of them. */
 
   --lh-d1: 0.88;
   --lh-d2: 0.94;
@@ -102,7 +107,34 @@
   --tr-t1: -0.03em;
   --tr-t2: -0.02em;
   --tr-t3: -0.015em;
-  --tr-m:  0.08em;   /* mono labels */
+  --tr-m:  0.06em;   /* mono labels. 0.08em at 12px is 0.96px, which reads as a
+                        gap between letters rather than as tracking. */
+
+  /* ---- micro-type: three registers, one job each ----------------------
+     R1 ACTION   anything the reader can click. Body face, sentence case.
+                 Mono uppercase inside a button is the clearest tell that a
+                 page was styled rather than designed.
+     R2 DATA     facts a machine could emit: years, tools, versions, run
+                 times, counts. This is the only thing mono is for now.
+     R3 CAPTION  a human sentence tied to a picture or a field. Body face,
+                 sentence case: it is prose, and prose is not a label.
+     Nothing small may be styled outside these three, and the accent belongs
+     to links and state, never to a register. ---------------------------- */
+  --micro-act-font:   var(--f-body);
+  --micro-act-size:   var(--t-s1);   /* deliberately not a new rung */
+  --micro-act-weight: 500;
+  --micro-act-strong: 600;
+  --micro-act-tr:     -0.005em;
+
+  --micro-data-font:  var(--f-mono);
+  --micro-data-size:  var(--t-m1);
+  --micro-data-tr:    var(--tr-m);
+  --micro-data-ink:   var(--c-ink-3);
+
+  --micro-cap-font:   var(--f-body);
+  --micro-cap-size:   var(--t-s1);
+  --micro-cap-tr:     0;
+  --micro-cap-ink:    var(--c-ink-3);
 
   /* ---- motion ---- */
   --dur: 160ms;
@@ -238,16 +270,18 @@ html {
   justify-content: center;
   gap: var(--s-2);
   min-height: 44px;
-  padding: 0 var(--s-3);
+  /* Inter 14 needs more shoulder than tracked mono 11 did. */
+  padding: 0 var(--s-4);
   border: 1px solid var(--c-line-2);
   border-radius: var(--r-pill);
   background: transparent;
   color: var(--c-ink-2);
-  font-family: var(--f-mono);
-  font-size: var(--t-m0);
+  font-family: var(--micro-act-font);
+  font-size: var(--micro-act-size);
+  font-weight: var(--micro-act-weight);
   line-height: 1;
-  letter-spacing: .08em;
-  text-transform: uppercase;
+  letter-spacing: var(--micro-act-tr);
+  text-transform: none;
   cursor: pointer;
   transition: color var(--dur) var(--ease),
               border-color var(--dur) var(--ease),
@@ -260,16 +294,19 @@ html {
   color: var(--c-ink);
 }
 
+/* White is the loudest value available on #0b0b0d and reads as a stock SaaS
+   CTA. The ice fill is the one colour the site actually owns. */
 .btn--primary {
   color: var(--c-accent-ink);
-  background: var(--c-ink);
-  border-color: var(--c-ink);
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+  font-weight: var(--micro-act-strong);
 }
 
 .btn--primary:hover {
   color: var(--c-accent-ink);
-  background: #fff;
-  border-color: #fff;
+  background: var(--c-accent-hi);
+  border-color: var(--c-accent-hi);
 }
 
 .btn[disabled] {

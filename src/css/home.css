@@ -204,17 +204,35 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
   margin-top:var(--s-4); max-width:52ch;
   color:var(--ink); font-size:var(--t-b1); line-height:var(--lh-b1);
 }
-.hero__meta {
-  margin-top:var(--s-3);
-  font-family:var(--mono); font-size:var(--t-m1); color:var(--muted);
-  letter-spacing:.08em;
+/* ---------- R2 DATA: the only mono left on this page ----------
+   One face, one size, one tracking, one ink. If a string is not a year, a
+   tool, a count or a version, it does not belong in this selector list.
+   Each selector below keeps only its own margin/position declarations. */
+.hero__meta,
+.hero__reelmeta,
+.wcard__meta,
+.prow__meta,
+.music-cta__meta,
+.about-facts dt,
+.earlier-work summary span,
+.error-page__code {
+  font-family:var(--micro-data-font);
+  font-size:var(--micro-data-size);
+  letter-spacing:var(--micro-data-tr);
+  text-transform:uppercase;
+  color:var(--micro-data-ink);
 }
 
-/* The availability signal is the one fact a recruiter scans for, so it leads
-   the meta line and carries the only moving pixel on the page: a 6px pulse,
-   removed entirely under prefers-reduced-motion. */
+.hero__meta { margin-top:var(--s-3); }
+
+/* The availability signal is the one fact a recruiter scans for, so it is the
+   one small string on the page that is not mono. "· Kortrijk, Belgium" stays
+   in R2 through .hero__meta, so the pair reads as signal and context. */
 .hero__avail {
   display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--micro-act-font); font-size:var(--micro-act-size);
+  font-weight:var(--micro-act-weight); letter-spacing:0;
+  text-transform:none;
   color:var(--ice);
 }
 .hero__avail-dot {
@@ -273,45 +291,58 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
   .cursor-light { display:none; }
 }
 
-.hero__reelmeta {
-  margin-top:var(--s-5);
-  font-family:var(--mono); font-size:var(--t-m0); color:var(--faint);
-  letter-spacing:.08em; text-transform:uppercase;
-}
+.hero__reelmeta { margin-top:var(--s-5); }
 
-.hero__cta { margin-top:var(--s-5); display:flex; gap:12px; flex-wrap:wrap; }
+.hero__cta { margin-top:var(--s-5); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+
+/* One interactive register: Inter, sentence case, near-zero tracking. This is
+   the rule the header block at the end of this file already states - mono
+   stays on things that are actually data - applied to the actions as well. */
 .hero__cta a,
 .hero-reel__launch {
-  display:inline-flex; align-items:center; gap:12px; min-height:48px;
-  font-family:var(--mono); font-size:var(--t-m1); letter-spacing:.08em;
-  padding:13px 24px; border-radius:var(--r-pill);
+  display:inline-flex; align-items:center; gap:10px; min-height:48px;
+  font-family:var(--micro-act-font); font-size:var(--micro-act-size);
+  font-weight:var(--micro-act-weight); letter-spacing:var(--micro-act-tr);
+  text-transform:none;
+  padding:13px var(--s-4); border-radius:var(--r-pill);
   cursor:pointer;
   transition:background var(--dur) var(--ease), border-color var(--dur) var(--ease),
-             color var(--dur) var(--ease), filter var(--dur) var(--ease),
-             box-shadow var(--dur) var(--ease);
+             color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
-.hero__cta a.primary { background:var(--ink); color:var(--c-accent-ink); }
-.hero__cta a.primary:hover { filter:brightness(1.08); }
-.hero__cta a.ghost,
+
+/* Rank 1: one filled action per screen, in the colour the page owns. */
+.hero__cta a.primary {
+  border:1px solid var(--ice);
+  background:var(--ice); color:var(--c-accent-ink);
+  font-weight:var(--micro-act-strong);
+}
+.hero__cta a.primary:hover { background:var(--c-accent-hi); border-color:var(--c-accent-hi); }
+
+/* Rank 2: the reel's own affordance. It used to carry an accent border AND an
+   accent-filled disc beside a white pill - three rank-one signals in one row.
+   The disc alone is enough, so the border returns to the neutral line. */
 .hero-reel__launch {
-  border:1px solid var(--c-line-2); color:var(--muted);
+  padding-left:8px;
+  border:1px solid var(--c-line-2); color:var(--ink);
   background:color-mix(in srgb, var(--c-bg-0) 62%, transparent);
   backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
 }
-.hero__cta a.ghost:hover { color:var(--ink); border-color:var(--c-line-3); }
-
-/* The launch button is the reel's own affordance, so it leads the row and
-   carries the accent edge. */
-.hero-reel__launch {
-  padding-left:14px;
-  border-color:color-mix(in srgb, var(--ice) 42%, transparent);
-  color:var(--ink);
-}
 .hero-reel__launch:hover,
 .hero-reel__launch:focus-visible {
-  border-color:var(--ice);
+  border-color:var(--c-line-3);
   background:color-mix(in srgb, var(--c-bg-0) 78%, transparent);
 }
+
+/* Rank 3: the CV is a document, not a call to action. A bordered pill made it
+   the visual equal of the two above it. Bare text on a rule instead - the same
+   vocabulary as .closing__more. Same href, same download, same 48px target. */
+.hero__cta a.ghost {
+  padding:0 2px; border:0; border-radius:0;
+  background:none; backdrop-filter:none; -webkit-backdrop-filter:none;
+  color:var(--muted);
+  box-shadow:inset 0 -1px 0 0 var(--rule);
+}
+.hero__cta a.ghost:hover { color:var(--ink); box-shadow:inset 0 -1px 0 0 var(--ink); }
 /* Without JS the video keeps its native controls and this button would be a
    dead end, so it only appears once the script has taken them over. */
 .hero-reel__launch { display:none; }
@@ -342,10 +373,6 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
 /* ---------- Sections ---------- */
 /* All vertical rhythm comes off the shared --s-* steps. */
 section { padding:var(--s-7) 0; }
-.sec-kicker {
-  font-family:var(--mono); font-size:var(--t-m1); color:var(--ice);
-  letter-spacing:.08em; margin-bottom:14px;
-}
 .sec-title {
   font-family:var(--display); font-weight:600; font-size:var(--t-t1);
   /* Without this the title inherits the body's 1.6, so a two-line heading
@@ -431,23 +458,8 @@ section.panel { padding:0; }
 }
 /* 01..06 is part of the identity of this set. On the plate rather than in the
    margin: the number belongs to the picture it labels. */
-.wcard__idx {
-  position:absolute; z-index:2; top:12px; left:12px;
-  display:inline-flex; align-items:center;
-  height:26px; padding:0 10px;
-  border:1px solid var(--c-line-2); border-radius:var(--r-pill);
-  background:color-mix(in srgb, var(--c-bg-0) 66%, transparent);
-  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-  font-family:var(--mono); font-size:var(--t-m0); letter-spacing:.08em;
-  color:var(--ice);
-  transition:border-color var(--dur) var(--ease);
-}
 .wcard__body { display:grid; gap:var(--s-2); align-content:start; min-width:0; }
-.wcard__meta {
-  font-family:var(--mono); font-size:var(--t-m0); letter-spacing:.08em;
-  text-transform:uppercase; color:var(--faint);
-  transition:color var(--dur) var(--ease);
-}
+.wcard__meta { transition:color var(--dur) var(--ease); }
 .wcard__title {
   font-family:var(--display); font-weight:600;
   font-size:var(--t-t2); line-height:var(--lh-t2); letter-spacing:-.02em;
@@ -470,8 +482,6 @@ section.panel { padding:0; }
 .wcard--closer .wcard__media img { filter:brightness(1.32); }
 .wcard--closer:hover .wcard__media img,
 .wcard--closer:focus-visible .wcard__media img { filter:brightness(1.42) saturate(1); }
-.wcard:hover .wcard__idx,
-.wcard:focus-visible .wcard__idx { border-color:color-mix(in srgb, var(--ice) 52%, transparent); }
 .wcard:hover .wcard__title,
 .wcard:focus-visible .wcard__title { color:var(--ice); }
 .wcard:hover .wcard__meta,
@@ -508,23 +518,26 @@ section.panel { padding:0; }
 .plist { margin-top:var(--s-6); border-top:1px solid var(--rule); }
 
 .plist__group {
-  font-family:var(--mono); font-size:var(--t-m1); color:var(--ice);
-  letter-spacing:.08em;
-  padding:var(--s-4) var(--s-1) 14px;
+  font-family:var(--display); font-weight:600;
+  font-size:var(--t-t3); line-height:var(--lh-t3); letter-spacing:var(--tr-t3);
+  color:var(--faint);
+  padding:var(--s-5) var(--s-1) 16px;
   border-bottom:1px solid var(--rule);
 }
-.plist__group:first-child { padding-top:var(--s-4); }
+.plist__group:first-child { padding-top:var(--s-5); }
+/* Same anatomy the phone layout already used: thumb, then meta above the
+   title it belongs to. The old fourth column parked the meta about 400px
+   from its own row, ragged left against a right edge. */
 .prow {
   position:relative;
   display:grid;
-  grid-template-columns:34px 92px minmax(0,1fr) 172px;
-  gap:0 var(--s-4);
-  align-items:center;
+  grid-template-columns:92px minmax(0,1fr);
+  gap:4px var(--s-4);
+  align-items:start;
   padding:var(--s-3) var(--s-1);
   border-bottom:1px solid var(--rule);
   transition:background-color var(--dur) var(--ease);
 }
-.prow > * { grid-row:1; }
 /* A 1.5% wash was not nameable next to its neighbours, on a link to a full
    case page. The rule is absolutely positioned so it costs no reflow, and it
    is a rule rather than a shift because the design has no hover transforms. */
@@ -541,7 +554,6 @@ section.panel { padding:0; }
 .prow:focus-visible { background:color-mix(in srgb, var(--ice) 6%, transparent); }
 .prow:hover::before,
 .prow:focus-visible::before { opacity:1; }
-.prow__idx { grid-column:1; font-family:var(--mono); font-size:var(--t-m1); letter-spacing:.08em; color:var(--ice); }
 /* Application captures crop to their top-left rather than being fitted whole:
    a 1680px window scaled into a 92px square reads as an empty grey tile. The
    top-left crop alone was not enough - these are dark UIs, so the tile still
@@ -549,7 +561,7 @@ section.panel { padding:0; }
    zoom into the corner) and lifted above its shipped brightness, so actual
    controls survive at 96px. */
 .prow__thumb {
-  grid-column:2;
+  grid-column:1; grid-row:1 / span 2;
   overflow:hidden;
   aspect-ratio:1 / 1;
   border-radius:var(--r-s);
@@ -563,17 +575,16 @@ section.panel { padding:0; }
   filter:brightness(1.18);
   transition:filter var(--dur) var(--ease);
 }
-.prow > div:not(.prow__thumb) { grid-column:3; min-width:0; }
+.prow > div:not(.prow__thumb) { grid-column:2; grid-row:2; min-width:0; }
 .prow h3 {
   font-family:var(--display); font-weight:600;
   font-size:var(--t-t3); line-height:var(--lh-t3); letter-spacing:-.015em;
   transition:color var(--dur) var(--ease);
 }
 .prow p { max-width:68ch; margin-top:6px; color:var(--muted); font-size:var(--t-s1); line-height:1.5; }
-.prow__meta {
-  grid-column:4;
-  font-family:var(--mono); font-size:var(--t-m0); color:var(--faint);
-  letter-spacing:.08em; line-height:1.9; text-align:right;
+.prow > .prow__meta {
+  grid-column:2; grid-row:1;
+  text-align:left; line-height:var(--lh-b1);
   transition:color var(--dur) var(--ease);
 }
 .prow:hover h3,
@@ -596,10 +607,7 @@ section.panel { padding:0; }
 .earlier-work summary::-webkit-details-marker { display:none; }
 .earlier-work summary::after { content:'+'; margin-left:auto; color:var(--ice); font-family:var(--mono); }
 .earlier-work[open] summary::after { content:'-'; }
-.earlier-work summary span {
-  color:var(--faint); font-family:var(--mono);
-  font-size:var(--t-m0); letter-spacing:.08em; font-weight:400;
-}
+.earlier-work summary span { font-weight:400; }
 .earlier-work nav { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); padding:0 var(--s-1) 22px; }
 .earlier-work nav a {
   display:grid; gap:3px; align-content:center;
@@ -647,10 +655,7 @@ section.panel { padding:0; }
 /* text-wrap:pretty keeps the shortened sentence off a one-word last line. */
 .music-cta__body span { max-width:56ch; font-size:.9rem; color:var(--muted); text-wrap:pretty; }
 
-.music-cta__meta {
-  flex:0 0 auto; white-space:nowrap;
-  font-family:var(--mono); font-size:var(--t-m0); letter-spacing:.08em; color:var(--faint);
-}
+.music-cta__meta { flex:0 0 auto; white-space:nowrap; }
 
 @media (max-width:700px) {
   .music-cta__link { grid-template-columns:minmax(0,1fr); align-items:start; }
@@ -685,10 +690,6 @@ section.panel { padding:0; }
   padding:6px 0;
 }
 .about-facts > div + div { border-top:1px solid var(--rule); }
-.about-facts dt {
-  font-family:var(--mono); font-size:var(--t-m0); letter-spacing:.08em;
-  text-transform:uppercase; color:var(--faint);
-}
 .about-facts dd { margin:0; color:var(--muted); font-size:.95rem; line-height:1.6; }
 
 @media (max-width:560px) {
@@ -756,7 +757,9 @@ section.panel { padding:0; }
 .closing__more {
   display:inline-flex; align-items:center; gap:8px;
   min-height:44px; padding-bottom:3px;
-  font-family:var(--mono); font-size:var(--t-m1); letter-spacing:.08em;
+  font-family:var(--micro-act-font); font-size:var(--micro-act-size);
+  font-weight:var(--micro-act-weight); letter-spacing:var(--micro-act-tr);
+  text-transform:none;
   color:var(--muted);
   box-shadow:inset 0 -1px 0 0 var(--rule-h);
   transition:color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
@@ -764,16 +767,18 @@ section.panel { padding:0; }
 .closing__more:hover { color:var(--ink); box-shadow:inset 0 -1px 0 0 var(--ink); }
 
 /* ---------- Colophon ----------
-   Matches the case pages: uppercase mono, underlined accent links. It is the
-   tightest of the three variants on a phone. */
+   The line is a copyright year, so it stays in R2. Its six links are
+   navigation, so they are R1 and take the accent on hover only - which is
+   what puts the accent back to meaning "active". */
 .colophon {
   position:relative; z-index:10;
   /* The right span holds 44px inline-flex links and the left one is plain
      text: with the default stretch the two sat on different baselines. */
   display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
   padding-block:26px var(--s-5);
-  font-family:var(--mono); font-size:var(--t-m0); color:var(--faint);
-  letter-spacing:.08em; text-transform:uppercase;
+  font-family:var(--micro-data-font); font-size:var(--micro-data-size);
+  letter-spacing:var(--micro-data-tr); text-transform:none;
+  color:var(--faint);
 }
 .colophon a {
   /* No min-width: these are inline links in a separated list, the case WCAG
@@ -781,19 +786,21 @@ section.panel { padding:0; }
      the row that read as a missing item. */
   display:inline-flex; min-height:44px;
   align-items:center; justify-content:center;
-  color:var(--ice);
+  font-family:var(--micro-act-font); font-size:var(--micro-act-size);
+  font-weight:var(--micro-act-weight); letter-spacing:var(--micro-act-tr);
+  color:var(--muted);
   text-decoration:underline;
   text-decoration-thickness:1px;
   text-underline-offset:4px;
-  text-decoration-color:color-mix(in srgb, var(--c-accent) 45%, transparent);
+  text-decoration-color:var(--c-line-2);
   transition:color var(--dur) var(--ease), text-decoration-color var(--dur) var(--ease);
 }
-.colophon a:hover { color:var(--ink); text-decoration-color:var(--ink); }
+.colophon a:hover { color:var(--ice); text-decoration-color:var(--ice); }
 
 /* Glass fallback for browsers without backdrop-filter support. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .site-header,
-  .hero__cta a.ghost { background:color-mix(in srgb, var(--c-bg-1) 94%, transparent); }
+  /* The ghost has no glass left to fall back from; it is bare text now. */
+  .site-header { background:color-mix(in srgb, var(--c-bg-1) 94%, transparent); }
 }
 
 /* ---------- Responsive ---------- */
@@ -802,19 +809,6 @@ section.panel { padding:0; }
    thing left to do between 1000px and 820px is narrow the software row. */
 @media (max-width: 1100px) {
   .prow { grid-template-columns:30px 84px minmax(0,1fr) 150px; gap:0 var(--s-3); }
-}
-
-@media (max-width: 900px) and (min-width: 821px) {
-  /* Below this the meta cannot hold its own column without squeezing the
-     description under 40 characters a line, so it moves under the heading. */
-  .prow { grid-template-columns:30px 84px minmax(0,1fr); align-items:start; }
-  .prow > .prow__meta {
-    grid-column:3; grid-row:2;
-    margin-top:6px;
-    text-align:left; line-height:1.5;
-  }
-  .prow > .prow__thumb { grid-row:1 / span 2; align-self:start; }
-  .prow > div:not(.prow__thumb) { grid-row:1; }
 }
 
 @media (max-width: 820px) {
@@ -833,21 +827,14 @@ section.panel { padding:0; }
      push the text out over the navigation instead of wrapping it. */
   .site-header__name { line-height:1.25; }
   .site-header nav { gap:8px; }
-  .hero__cta a,
+  .hero__cta a.primary,
   .hero-reel__launch { padding:13px 16px; }
   /* align-items:flex-start because the centring that aligns the two spans on
      one row would centre them horizontally once the axis turns vertical. */
   .colophon { flex-direction:column; align-items:flex-start; gap:6px; }
 }
 /* Audit V4 — flat metadata and readable prose */
-.hero__meta {
-  margin-top: 16px;
-  font-family: var(--mono);
-  font-size: var(--t-m1);
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
+.hero__meta { margin-top: 16px; }
 
 /* The 440px block that used to sit here rebuilt the project row as a two
    column grid with an 82px thumbnail. The mobile layer at the end of this
@@ -1050,10 +1037,6 @@ section.panel { padding:0; }
     letter-spacing: -.035em;
     text-wrap: balance;
   }
-  .sec-kicker {
-    margin-bottom: 10px;
-    font-size: var(--t-m0);
-  }
   .hero__sub,
   .prow p,
   .about-panel p,
@@ -1076,14 +1059,17 @@ section.panel { padding:0; }
     gap: 10px;
     margin-top: 26px;
   }
-  .hero__cta a,
+  /* The register is one size at every width, so no font-size override here. */
+  .hero__cta a.primary,
   .hero-reel__launch {
     justify-content: center;
     padding: 14px 16px;
-    font-size: var(--t-m0);
     text-align: center;
     white-space: nowrap;
   }
+  /* Full width would stretch the ghost's hairline across the column and turn
+     a text link into a divider. It hugs its own label instead. */
+  .hero__cta a.ghost { justify-self: center; padding: 14px 2px; }
   .hero__reelmeta { margin-top: var(--s-4); }
 
   /* ---- Featured work on a phone ----
@@ -1092,7 +1078,6 @@ section.panel { padding:0; }
   .wgrid { gap: var(--s-5); margin-top: var(--s-4); }
   .wcard { gap: 13px; }
   .wcard__media { border-radius: 14px; }
-  .wcard__idx { top: 10px; left: 10px; height: 24px; }
   .wcard__title { font-size: clamp(1.6rem, 6.4vw, 2.05rem); line-height: 1.06; letter-spacing: -.03em; }
   .wcard__desc,
   .wcard--lead .wcard__desc { font-size: .95rem; line-height: 1.55; text-wrap: pretty; }
@@ -1112,7 +1097,6 @@ section.panel { padding:0; }
     align-items: start;
     padding: 18px 0 20px;
   }
-  .prow__idx { display: none; }
   .prow > .prow__thumb {
     grid-column: 1;
     grid-row: 1 / span 2;
@@ -1120,19 +1104,13 @@ section.panel { padding:0; }
     border-radius: 14px;
   }
   .prow > .prow__thumb img { border-radius: 14px; }
-  .prow > div:not(.prow__thumb) { grid-column: 2; grid-row: 1; }
-  .prow > .prow__meta {
-    grid-column: 2; grid-row: 2;
-    text-align: left; line-height: 1.6;
-  }
+  .prow > div:not(.prow__thumb) { grid-column: 2; grid-row: 2; }
+  .prow > .prow__meta { grid-column: 2; grid-row: 1; line-height: var(--lh-b1); }
   .prow h3 { font-size: clamp(1.32rem, 5.2vw, 1.6rem); line-height: 1.1; }
   .prow p { margin-top: 7px; font-size: .9rem; }
   .prow::before { display: none; }
 
-  .plist__group {
-    padding: var(--s-5) 0 12px;
-    font-size: var(--t-m0);
-  }
+  .plist__group { padding: var(--s-5) 0 12px; }
   .plist__group:first-child { padding-top: 20px; }
 
   /* ---- Earlier work ----
@@ -1201,7 +1179,7 @@ section.panel { padding:0; }
     flex-wrap: wrap;
     gap: 12px;
   }
-  .hero__cta a,
+  .hero__cta a.primary,
   .hero-reel__launch {
     flex: 0 1 auto;
     padding-inline: var(--s-4);

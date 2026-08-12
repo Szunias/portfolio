@@ -243,10 +243,12 @@ main { position: relative; }
   gap: 8px;
   border-bottom: 0;
   color: var(--ink-70);
-  font-family: var(--mono);
-  font-size: 12px;
+  font-family: var(--micro-act-font);
+  font-size: var(--micro-act-size);
+  font-weight: var(--micro-act-weight);
+  letter-spacing: var(--micro-act-tr);
   line-height: 1.4;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .project-return a:hover {
@@ -372,9 +374,11 @@ main { position: relative; }
   display: flex;
   flex-wrap: wrap;
   gap: 8px 28px;
-  font-family: var(--mono);
-  font-size: 12px;
-  text-transform: uppercase;
+  font-family: var(--micro-act-font);
+  font-size: var(--micro-act-size);
+  font-weight: var(--micro-act-weight);
+  letter-spacing: var(--micro-act-tr);
+  text-transform: none;
 }
 
 .ifmc-foot__next {
@@ -1291,21 +1295,11 @@ main#main-content { position: relative; z-index: 1; }
 .sf-video-frame {
   position: relative;
   overflow: hidden;
-  padding: 34px 8px 8px;
+  padding: 8px;
   border: 1px solid var(--rule);
   border-radius: var(--r-m);
   background: var(--c-bg-0);
   box-shadow: var(--e-3);
-}
-
-.sf-video-frame__label {
-  position: absolute;
-  top: 9px;
-  left: 14px;
-  font-family: var(--mono);
-  font-size: var(--t-m0);
-  text-transform: uppercase;
-  color: var(--ink-55);
 }
 
 .sf-video-frame .video-wrap {
@@ -1419,7 +1413,7 @@ main#main-content { position: relative; z-index: 1; }
   }
 
   .sf-video-frame {
-    padding: 29px 4px 4px;
+    padding: 4px;
     border-radius: var(--r-s);
   }
 
@@ -2209,35 +2203,57 @@ main#main-content { position: relative; z-index: 1; }
   margin-top: 25px;
 }
 
-.nt-hero__actions a,
-.sf-hero__actions a {
+/* One interactive register across every project hero: body face, sentence
+   case. The three near-identical mono-uppercase pairs each used a 10-14%
+   signal tint as a "primary", which is not a rank a reader can see, so the
+   two buttons read as one two-part control. Fill is the rank now. */
+:is(
+  .sf-hero__actions, .nt-hero__actions, .ai-hero__actions, .tr-hero__actions
+) a {
   display: inline-flex;
   min-width: 185px;
   align-items: center;
   justify-content: space-between;
   gap: 22px;
-  padding: 10px 13px;
-  border: 1px solid rgba(236, 238, 240, 0.22);
+  padding: 12px 16px;
+  border: 1px solid var(--rule);
   border-radius: var(--r-s);
   background: rgba(8, 6, 5, 0.52);
-  font-family: var(--mono);
-  font-size: var(--t-m0);
-  text-transform: uppercase;
+  font-family: var(--micro-act-font);
+  font-size: var(--micro-act-size);
+  font-weight: var(--micro-act-weight);
+  letter-spacing: var(--micro-act-tr);
+  text-transform: none;
   color: var(--paper);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
 }
 
-.nt-hero__actions a:first-child,
-.sf-hero__actions a:first-child {
-  border-color: color-mix(in srgb, var(--nt-signal) 62%, transparent);
-  background: color-mix(in srgb, var(--nt-signal) 14%, rgba(8, 6, 5, 0.62));
+/* One filled action per hero: the gameplay recording is what the page is
+   about; the trailer keeps the outline. */
+:is(
+  .sf-hero__actions, .nt-hero__actions, .ai-hero__actions, .tr-hero__actions
+) a:first-child {
+  border-color: var(--c-accent);
+  background: var(--c-accent);
+  color: var(--c-accent-ink);
+  font-weight: var(--micro-act-strong);
 }
 
-.nt-hero__actions a:hover,
-.sf-hero__actions a:hover {
+:is(
+  .sf-hero__actions, .nt-hero__actions, .ai-hero__actions, .tr-hero__actions
+) a:hover {
   border-color: var(--paper);
   background: rgba(236, 238, 240, 0.08);
+}
+
+:is(
+  .sf-hero__actions, .nt-hero__actions, .ai-hero__actions, .tr-hero__actions
+) a:first-child:hover {
+  border-color: var(--c-accent-hi);
+  background: var(--c-accent-hi);
+  color: var(--c-accent-ink);
 }
 
 .nt-intro h2,
@@ -2559,32 +2575,6 @@ main#main-content { position: relative; z-index: 1; }
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 25px;
-}
-
-.ai-hero__actions a {
-  display: inline-flex;
-  min-width: 185px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 22px;
-  padding: 10px 13px;
-  border: 1px solid rgba(236, 238, 240, 0.22);
-  border-radius: var(--r-s);
-  background: rgba(10, 10, 13, 0.52);
-  font-family: var(--mono);
-  font-size: var(--t-m0);
-  text-transform: uppercase;
-  color: var(--paper);
-}
-
-.ai-hero__actions a:first-child {
-  border-color: color-mix(in srgb, var(--ai-signal) 62%, transparent);
-  background: color-mix(in srgb, var(--ai-signal) 12%, rgba(10, 10, 13, 0.62));
-}
-
-.ai-hero__actions a:hover {
-  border-color: var(--paper);
-  background: rgba(236, 238, 240, 0.08);
 }
 
 .ai-intro h2,
@@ -3131,30 +3121,6 @@ main#main-content { position: relative; z-index: 1; }
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 26px;
-}
-
-.tr-hero__actions a {
-  min-width: 180px;
-  padding: 12px 14px;
-  display: flex;
-  justify-content: space-between;
-  gap: 18px;
-  border: 1px solid var(--rule);
-  border-radius: var(--r-s);
-  font-family: var(--mono);
-  font-size: var(--t-m0);
-  text-transform: uppercase;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-
-.tr-hero__actions a:first-child {
-  border-color: color-mix(in srgb, var(--tr-signal) 54%, var(--rule));
-  background: color-mix(in srgb, var(--tr-signal) 10%, transparent);
-}
-
-.tr-hero__actions a:hover {
-  border-color: var(--paper);
-  background: rgba(236, 238, 240, 0.08);
 }
 
 .tr-snapshot__label,
@@ -5789,19 +5755,25 @@ main#main-content { position: relative; z-index: 1; }
   text-wrap: pretty;
 }
 
-/* mono microtype: kickers, labels, meta */
+/* ---------- R2 DATA: kickers ----------
+   Only kickers carrying a fact the heading does not are left in the markup
+   (hero dates, genres, stacks, release status). Ink, not accent: a decorative
+   eyebrow in --c-accent was the loudest object in its column. */
 :is(
   .sf-kicker, .xr-kicker, .nt-kicker, .aq-kicker, .ai-kicker, .tr-kicker,
-  .mw-kicker, .tool-kicker, .ifmc-lessons__kicker
+  .mw-kicker, .tool-kicker, .sidar-kicker, .ifmc-lessons__kicker
 ) {
-  font-family: var(--mono);
-  font-size: var(--t-m1);
+  font-family: var(--micro-data-font);
+  font-size: var(--micro-data-size);
   line-height: var(--lh-b1);
-  letter-spacing: var(--tr-m);
+  letter-spacing: var(--micro-data-tr);
   text-transform: uppercase;
-  color: var(--c-accent);
+  color: var(--micro-data-ink);
 }
 
+/* ---------- R3 CAPTION ----------
+   "A photograph from the Polaroid camera" is a sentence, not a label. Body
+   face, sentence case, no tracking. */
 .tool-caption,
 .tool-shot .gallery-item__caption,
 .tool-note,
@@ -5811,11 +5783,15 @@ main#main-content { position: relative; z-index: 1; }
 .video-caption,
 .video-note,
 .video-intro,
-.footer-note {
-  font-family: var(--mono);
-  font-size: var(--t-m1);
-  line-height: var(--lh-b1);
-  color: var(--ink-55);
+.footer-note,
+.sf-video-frame__label, .xr-video-frame__label, .nt-video-frame__label,
+.aq-video-frame__label, .ai-video-frame__label, .tr-video-frame__label {
+  font-family: var(--micro-cap-font);
+  font-size: var(--micro-cap-size);
+  line-height: 1.5;
+  letter-spacing: var(--micro-cap-tr);
+  text-transform: none;
+  color: var(--micro-cap-ink);
 }
 
 .ai-result-chart figcaption,
@@ -5973,15 +5949,21 @@ main#main-content { position: relative; z-index: 1; }
 
 /* ---------- T. colophon, on tokens ---------- */
 .colophon {
-  font-family: var(--mono);
-  font-size: var(--t-m1);
-  letter-spacing: var(--tr-m);
-  text-transform: uppercase;
+  font-family: var(--micro-data-font);
+  font-size: var(--micro-data-size);
+  letter-spacing: var(--micro-data-tr);
+  text-transform: none;
   color: var(--ink-55);
 }
 
-.colophon a { color: var(--c-accent); }
-.colophon a:hover { color: var(--paper); }
+.colophon a {
+  font-family: var(--micro-act-font);
+  font-size: var(--micro-act-size);
+  font-weight: var(--micro-act-weight);
+  letter-spacing: var(--micro-act-tr);
+  color: var(--ink-55);
+}
+.colophon a:hover { color: var(--c-accent); }
 
 /* ---------- the last strays off the ladder ----------
    Measured on the six pages after the block above: 16/1.72 story prose,
