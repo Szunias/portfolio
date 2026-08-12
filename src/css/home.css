@@ -186,18 +186,15 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
 .hero__inner > * { pointer-events:auto; }
 
 .hero__copy { min-width:0; }
-.hero__kicker {
-  font-family:var(--mono); font-size:var(--t-m1); color:var(--ice);
-  letter-spacing:.08em; margin-bottom:20px;
-}
-/* The display step, same as a project h1. At 15ch the sentence sets three
-   lines and the block reads as one object. */
+/* The long-title rung. "Technical Sound Designer & Audio Programmer" is 42
+   characters: on --t-d1 it rendered ~102px and set three lines about 280px
+   tall at 1280, which is what made the page feel oversized. */
 .hero h1 {
   font-family:var(--display); font-weight:700;
-  font-size:var(--t-d1);
-  line-height:var(--lh-d1);
-  letter-spacing:-.035em;
-  max-width:15ch;
+  font-size:var(--t-d2);
+  line-height:var(--lh-d2);
+  letter-spacing:var(--tr-d2);
+  max-width:24ch;
   text-wrap:balance;
   /* The reel has bright frames, so parts of the line can land on mid grey.
      Too soft to read as an effect, enough to hold the type off the image. */
@@ -381,10 +378,6 @@ section.panel { padding:0; }
   border-bottom:1px solid var(--rule);
 }
 .work-head .sec-title { margin-bottom:0; }
-.work-head__note {
-  font-family:var(--mono); font-size:var(--t-m0); letter-spacing:.08em;
-  text-transform:uppercase; color:var(--faint);
-}
 
 /* ---------- Featured work: image-led grid ----------
    This replaced a typographic index with a sticky preview panel. The panel
@@ -461,15 +454,8 @@ section.panel { padding:0; }
   text-wrap:balance;
   transition:color var(--dur) var(--ease);
 }
-.wcard--lead .wcard__title { font-size:var(--t-t1); line-height:var(--lh-t1); letter-spacing:-.03em; }
 .wcard__desc { max-width:56ch; color:var(--muted); font-size:var(--t-b0); line-height:var(--lh-b1); }
 .wcard--lead .wcard__desc { font-size:var(--t-b1); }
-.wcard__cue {
-  display:inline-flex; align-items:center; gap:8px; min-height:44px;
-  font-family:var(--mono); font-size:var(--t-m1); letter-spacing:.08em;
-  color:var(--ice);
-  transition:color var(--dur) var(--ease);
-}
 
 /* Colour, edge and brightness only: the design has no hover transforms. */
 .wcard:hover .wcard__media,
@@ -490,8 +476,6 @@ section.panel { padding:0; }
 .wcard:focus-visible .wcard__title { color:var(--ice); }
 .wcard:hover .wcard__meta,
 .wcard:focus-visible .wcard__meta { color:var(--muted); }
-.wcard:hover .wcard__cue,
-.wcard:focus-visible .wcard__cue { color:var(--c-accent-hi); }
 /* Touch has no hover, so the card needs a press state of its own. */
 .wcard:active .wcard__title { color:var(--ice); }
 
@@ -505,7 +489,6 @@ section.panel { padding:0; }
     align-items:center;
   }
   .wcard__body { align-content:center; }
-  .wcard__cue { min-height:36px; }
 }
 
 @media (min-width:1000px) {
@@ -516,18 +499,6 @@ section.panel { padding:0; }
   .wcard--closer { grid-column:1 / -1; align-items:center; }
   .wcard--lead { grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:0 var(--s-6); }
   .wcard--closer { grid-template-columns:minmax(0,400px) minmax(0,1fr); gap:0 var(--s-5); }
-  /* The closer runs the full width, so its copy would trail off into empty
-     column. The cue takes the far edge instead and the row reads as a bridge
-     into the software tier below it. */
-  .wcard--closer .wcard__body {
-    grid-template-columns:minmax(0,1fr) auto;
-    column-gap:var(--s-5);
-    align-items:center;
-  }
-  .wcard--closer .wcard__meta,
-  .wcard--closer .wcard__title,
-  .wcard--closer .wcard__desc { grid-column:1; }
-  .wcard--closer .wcard__cue { grid-column:2; grid-row:1 / span 3; justify-self:end; }
 }
 
 /* ---------- Software list: the quieter tier ----------
@@ -655,10 +626,6 @@ section.panel { padding:0; }
    second hairline 57px under the first read as an empty row. */
 .music-cta { margin-top:var(--s-6); }
 
-.music-cta__label {
-  font-family:var(--mono); font-size:var(--t-m1); letter-spacing:.08em;
-  text-transform:uppercase; color:var(--faint);
-}
 
 .music-cta__link {
   display:grid; grid-template-columns:minmax(0,1fr) auto;
@@ -677,7 +644,8 @@ section.panel { padding:0; }
 
 .music-cta__link:hover .music-cta__body strong { color:var(--ice); }
 
-.music-cta__body span { max-width:56ch; font-size:.9rem; color:var(--muted); }
+/* text-wrap:pretty keeps the shortened sentence off a one-word last line. */
+.music-cta__body span { max-width:56ch; font-size:.9rem; color:var(--muted); text-wrap:pretty; }
 
 .music-cta__meta {
   flex:0 0 auto; white-space:nowrap;
@@ -1098,17 +1066,6 @@ section.panel { padding:0; }
      below should start before the fold rather than after a whole screen. */
   .hero { min-height: 84svh; }
   .hero__inner { padding-block: var(--s-7) var(--s-5); }
-  .hero__kicker {
-    margin-bottom: 16px;
-    font-size: var(--t-m0);
-  }
-  /* This override made the homepage h1 the smallest on the site at every
-     mobile width - 36.7px at 390 against 52px on music and every case page -
-     and put it off the ladder on leading and tracking too. The ladder's own
-     clamp already scales down; only the measure needs a mobile value. */
-  .hero h1 {
-    max-width: 18ch;
-  }
   .hero__sub { margin-top: 18px; font-size: 1.02rem; line-height: 1.55; }
   .hero__meta { margin-top: 14px; line-height: 1.6; }
   /* Three actions on a 390px column: stacked full width, so no label wraps
@@ -1128,9 +1085,6 @@ section.panel { padding:0; }
     white-space: nowrap;
   }
   .hero__reelmeta { margin-top: var(--s-4); }
-  /* Three lines of mono under the actions is clutter on a phone; the runtime
-     and format are the part that earns its place. */
-  .hero__reelmeta-tail { display: none; }
 
   /* ---- Featured work on a phone ----
      One column, the still at the full width of the text, the copy under it.
@@ -1140,10 +1094,8 @@ section.panel { padding:0; }
   .wcard__media { border-radius: 14px; }
   .wcard__idx { top: 10px; left: 10px; height: 24px; }
   .wcard__title { font-size: clamp(1.6rem, 6.4vw, 2.05rem); line-height: 1.06; letter-spacing: -.03em; }
-  .wcard--lead .wcard__title { font-size: clamp(1.75rem, 7.4vw, 2.35rem); line-height: 1.04; }
   .wcard__desc,
   .wcard--lead .wcard__desc { font-size: .95rem; line-height: 1.55; text-wrap: pretty; }
-  .wcard__cue { min-height: 40px; }
 
   /* ---- Software: compact rows ----
      A REAPER script or a VST has no cinematic frame to show, so these keep a
@@ -1238,21 +1190,6 @@ section.panel { padding:0; }
    Appended last so it settles the earlier narrow-screen
    patches that touch the same elements.
    ========================================================= */
-
-/* ---- The homepage title is a long title ----
-   The ladder has two h1 rungs: --t-d1 for short titles and --t-d2 for long
-   ones. "Technical Sound Designer & Audio Programmer" is 42 characters and
-   was set on the short rung, so at 390 it ran five lines and left
-   "Programmer" alone on the last. The long rung is the one it belongs on;
-   below 560px it takes it, leading and tracking included. */
-@media (max-width: 560px) {
-  .hero h1 {
-    font-size: var(--t-d2);
-    line-height: var(--lh-d2);
-    letter-spacing: var(--tr-d2);
-    max-width: 20ch;
-  }
-}
 
 /* ---- Tablet band: the hero actions are not full-width slabs ----
    The phone layout stacks the three actions into one column, which is right
