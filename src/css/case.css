@@ -1292,6 +1292,146 @@ main#main-content { position: relative; z-index: 1; }
   max-width: 17ch;
 }
 
+/* ---------- Anomaly cue diagram ----------
+   The page described the mechanic in a sentence and then showed a recording of
+   a dark room, so the one thing that makes the game what it is - that you find
+   the change by listening - was the one thing never drawn. Same vocabulary as
+   the XR Labs diagrams: a plan view in thin strokes, mono labels, the accent
+   used only for the signal. Three rooms rather than one, because the prose
+   describes a sequence and a single frame would have to stack all three cues
+   on top of each other. */
+.sf-cue-figure {
+  margin: 0 0 clamp(28px, 4vw, 48px);
+}
+
+.sf-diagram {
+  padding: clamp(10px, 2vw, 22px) clamp(8px, 1.5vw, 18px);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-m);
+  background: var(--c-bg-2);
+}
+
+.sf-diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.sf-diagram text {
+  font-family: var(--micro-data-font);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  fill: color-mix(in srgb, var(--paper) 44%, transparent);
+  /* Labels live in viewBox units, so a later geometry edit could put a stroke
+     through one. Painting the stroke first knocks the bed out behind them. */
+  paint-order: stroke fill;
+  stroke: var(--c-bg-2);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.sf-stage__index { fill: var(--c-accent); }
+.sf-stage__name { fill: color-mix(in srgb, var(--paper) 62%, transparent); }
+.sf-note { fill: color-mix(in srgb, var(--paper) 34%, transparent); }
+
+.sf-room {
+  fill: rgba(170, 198, 222, 0.022);
+  stroke: rgba(170, 198, 222, 0.24);
+  stroke-width: 1.5;
+}
+
+/* The player is the same two-ring node the XR listener uses. */
+.sf-player circle:first-child {
+  fill: none;
+  stroke: color-mix(in srgb, var(--paper) 62%, transparent);
+  stroke-width: 1.5;
+}
+.sf-player circle:last-child { fill: color-mix(in srgb, var(--paper) 62%, transparent); }
+
+.sf-object { fill: var(--c-accent); }
+.sf-object--idle { fill: rgba(170, 198, 222, 0.28); }
+
+/* Stage 01: the alert arrives at the player, so the rings are centred on the
+   player rather than on the object. That is the whole point of the cue. */
+.sf-ring {
+  fill: none;
+  stroke: rgba(170, 198, 222, 0.3);
+  stroke-width: 1.25;
+  stroke-dasharray: 3 7;
+}
+.sf-ring--tight {
+  stroke: rgba(170, 198, 222, 0.5);
+  stroke-dasharray: none;
+}
+
+.sf-route {
+  fill: none;
+  stroke: rgba(170, 198, 222, 0.5);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+}
+
+.sf-route-trace {
+  fill: none;
+  stroke: var(--c-accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 4 96;
+  stroke-dashoffset: 100;
+  opacity: 0;
+  animation: sf-cue-travel 4.5s linear infinite;
+}
+
+.sf-approach {
+  fill: none;
+  stroke: color-mix(in srgb, var(--paper) 34%, transparent);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+}
+
+/* Viewfinder corners rather than a box: a full rectangle landed on top of the
+   confirmation ring and the two read as one smudged shape. */
+.sf-frame {
+  fill: none;
+  stroke: color-mix(in srgb, var(--paper) 46%, transparent);
+  stroke-width: 1.5;
+  stroke-linecap: square;
+}
+
+@keyframes sf-cue-travel {
+  0%   { opacity: 0; stroke-dashoffset: 100; }
+  4%   { opacity: 0.95; }
+  30%  { opacity: 0.95; stroke-dashoffset: 0; }
+  34%, 100% { opacity: 0; stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sf-route-trace { display: none; }
+}
+
+.sf-cue-figure figcaption {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.3fr) minmax(0, 1fr);
+  gap: clamp(16px, 2.5vw, 32px);
+  margin: 0;
+  padding-top: 12px;
+  font-family: var(--micro-data-font);
+  font-size: var(--micro-data-size);
+  letter-spacing: var(--micro-data-tr);
+  line-height: 1.65;
+}
+.sf-cue-figure figcaption > span:first-child { color: var(--ink-55); }
+.sf-cue-figure figcaption > span:last-child { color: var(--ink-70); }
+
+@media (max-width: 700px) {
+  /* Three rooms side by side stop being legible on a phone. Rather than
+     shrinking them past reading size, the diagram scrolls inside its own
+     frame - the pattern the wide tables on this site already use. */
+  .sf-diagram { overflow-x: auto; overscroll-behavior-x: contain; }
+  .sf-diagram svg { min-width: 620px; }
+  .sf-cue-figure figcaption { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+}
+
 .sf-video-frame {
   position: relative;
   overflow: hidden;
