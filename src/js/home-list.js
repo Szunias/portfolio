@@ -50,3 +50,42 @@
   // The cover copy returns only once the reel has actually finished.
   video.addEventListener('ended', function () { setPlaying(false); });
 })();
+
+/* Hero slideshow. The stills cycle with a slow crossfade until the reel
+   starts, then stop for good: the reel carries its own picture from there.
+   Reduced-motion visitors keep the first still, and a hidden tab does not
+   burn cycles fading images nobody sees. */
+(function () {
+  var frame = document.querySelector('[data-showreel]');
+  if (!frame) return;
+  var slides = frame.querySelectorAll('.hero__slides img');
+  if (slides.length < 2) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var current = 0;
+  var timer = null;
+  var stopped = false;
+  var HOLD_MS = 7000;
+
+  function next() {
+    slides[current].classList.remove('is-active');
+    current = (current + 1) % slides.length;
+    slides[current].classList.add('is-active');
+  }
+  function start() {
+    if (!stopped && timer === null) timer = window.setInterval(next, HOLD_MS);
+  }
+  function pause() {
+    if (timer !== null) { window.clearInterval(timer); timer = null; }
+  }
+  function stop() { stopped = true; pause(); }
+
+  var video = frame.querySelector('video');
+  if (video) video.addEventListener('play', stop);
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) pause(); else start();
+  });
+
+  start();
+})();
