@@ -2179,10 +2179,12 @@ main#main-content { position: relative; z-index: 1; }
 .xr-confidentiality {
   width: var(--page-frame);
   max-width: none;
-  margin: clamp(16px, 3vh, 32px) auto clamp(72px, 10vh, 112px);
-  padding: 22px var(--page-gutter);
+  /* No bottom border and no bottom margin: the footer's own border-top closes
+     this note. The old pair of rules plus 90px of empty page between them made
+     the page look like it ended twice. */
+  margin: clamp(28px, 4vh, 44px) auto 0;
+  padding: 22px var(--page-gutter) 0;
   border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
   font-size: var(--t-s1);
   line-height: var(--lh-b1);
   color: var(--ink-55);
@@ -2884,10 +2886,13 @@ main#main-content { position: relative; z-index: 1; }
   border: 1px solid rgba(236, 238, 240, 0.18);
   border-radius: var(--r-pill);
   background: transparent;
-  font-family: var(--mono);
-  font-size: var(--t-m0);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  /* R1 ACTION, not R2 DATA: these are controls you press, and the mono register
+     is reserved for years, tools, versions and counts. */
+  font-family: var(--micro-act-font);
+  font-size: var(--micro-act-size);
+  font-weight: var(--micro-act-weight);
+  letter-spacing: var(--micro-act-tr);
+  text-transform: none;
   color: var(--ink-70);
   cursor: pointer;
   transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
@@ -3023,12 +3028,14 @@ main#main-content { position: relative; z-index: 1; }
   background: var(--ai-signal);
 }
 
+/* Same reasoning as the prompt and model pills: this is the play control's own
+   label, so it belongs to R1 ACTION rather than the mono data register. */
 .ai-browser__play strong {
-  font-family: var(--mono);
-  font-size: var(--t-m0);
-  font-weight: 400;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-family: var(--micro-act-font);
+  font-size: var(--micro-act-size);
+  font-weight: var(--micro-act-weight);
+  letter-spacing: var(--micro-act-tr);
+  text-transform: none;
 }
 
 /* ---------- Recordings ---------- */
@@ -3948,7 +3955,10 @@ main#main-content { position: relative; z-index: 1; }
   display: inline-flex;
   min-height: var(--tap-target);
   align-items: center;
-  font-size: 12px;
+  /* These are buttons, so they belong to R1 ACTION. The old 12px here was
+     overriding the correct ACTION size and made the primary call to action the
+     smallest text on the page. */
+  font-size: var(--micro-act-size);
 }
 
 :is(
@@ -4012,11 +4022,6 @@ main#main-content { position: relative; z-index: 1; }
 .ai-browser__models button {
   min-height: var(--tap-target);
 }
-
-.ai-delay__trigger span,
-.ai-browser__play strong,
-.ai-browser__prompts button,
-.ai-browser__models button { font-size: 12px; }
 
 .ifmc-entry__copy cite { font-size: var(--t-m1); }
 
@@ -4226,8 +4231,10 @@ main#main-content { position: relative; z-index: 1; }
   /* Was none, which was fine while these blocks were always two narrow
      columns. Now that a column needs 430px, the single-column case would run
      the full 800px (about 90 characters a line) without a cap. In the
-     two-column case the column is narrower than this anyway. */
-  max-width: 66ch;
+     two-column case the column is narrower than this anyway.
+     54ch not 66ch: the ladder block below raises these paragraphs to 16.5px,
+     so a cap authored against 16px was delivering 83-92 real characters. */
+  max-width: 54ch;
   margin: 0;
   font-size: 16px;
   line-height: 1.72;
@@ -4241,7 +4248,7 @@ main#main-content { position: relative; z-index: 1; }
 ) > p:only-child,
 .case-sec > .concept-body > p:last-child:nth-child(odd) {
   grid-column: 1 / -1;
-  max-width: 64ch;
+  max-width: 54ch;
 }
 
 .sf-team-story {
@@ -4250,7 +4257,7 @@ main#main-content { position: relative; z-index: 1; }
 }
 
 .sf-team-story > p {
-  max-width: 64ch;
+  max-width: 54ch;
   margin: 0;
   font-size: 16px;
   line-height: 1.72;
@@ -4874,7 +4881,9 @@ main#main-content { position: relative; z-index: 1; }
 .at-flow span,
 .mw-flow span {
   display: block;
-  font-size: 13px;
+  /* --t-s1, not an off-ladder 13px: a step blurb sits in a ~272px column, so
+     13px was running 23 characters a line. */
+  font-size: var(--t-s1);
   line-height: 1.58;
   color: var(--ink-55);
 }
@@ -5002,41 +5011,9 @@ main#main-content { position: relative; z-index: 1; }
 
 /* AudioQ */
 
-.aq-demo {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: clamp(22px, 3vw, 38px);
-  align-items: end;
-}
-
-.aq-demo__heading {
-  display: block;
-  grid-column: 9 / -1;
-  grid-row: 1;
-  margin: 0;
-  padding-bottom: 25px;
-}
-
-.aq-demo__heading .tool-kicker {
-  margin-bottom: 12px;
-}
-
-.aq-demo__heading h2 {
-  max-width: 12ch;
-  margin: 0;
-}
-
-.aq-demo__heading > p:last-child {
-  max-width: 42ch;
-  margin: 18px 0 0;
-  font-size: 14px;
-  line-height: 1.68;
-}
-
-.aq-demo__video {
-  grid-column: 1 / 9;
-  grid-row: 1;
-}
+/* The demo section deliberately has no rules of its own: its header carries
+   .tool-section__heading, so it inherits the shared 12-column heading device
+   (h2 on the x120 text edge, 52ch deck at --t-b1) like every other section. */
 
 .aq-signal-path {
   display: grid;
@@ -5084,8 +5061,10 @@ main#main-content { position: relative; z-index: 1; }
 
 .aq-chain__columns {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
-  gap: clamp(38px, 7vw, 92px);
+  /* Closer to even, with a tighter gutter: the old 1.35/0.65 split plus a 92px
+     gap starved the limits aside down to about 35 characters a line. */
+  grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+  gap: clamp(32px, 4vw, 60px);
   margin-top: clamp(32px, 4vw, 48px);
 }
 
@@ -5140,12 +5119,12 @@ main#main-content { position: relative; z-index: 1; }
   padding-right: 0;
 }
 
+/* Not a grid: it holds one sentence, so a two-column track pushed it off the
+   text edge into a half-empty band. It is the same device as AutoTrim's
+   .at-flow__note, so it starts where the rest of the section starts. */
 .mw-workflow__notes {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(30px, 7vw, 96px);
-  width: min(100%, 960px);
-  margin: 24px 0 0 auto;
+  max-width: 64ch;
+  margin: 4px 0 0;
 }
 
 .mw-workflow__notes p {
@@ -5375,12 +5354,6 @@ main#main-content { position: relative; z-index: 1; }
     display: block;
   }
 
-  .aq-demo__heading {
-    display: grid;
-    margin-bottom: 34px;
-    padding-bottom: 0;
-  }
-
   .mw-interface__layout {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -5496,11 +5469,6 @@ main#main-content { position: relative; z-index: 1; }
 
   .aq-signal-path li:nth-last-child(-n + 2) {
     border-bottom: 0;
-  }
-
-  .mw-workflow__notes {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 15px;
   }
 
   .aq-chain__limits {
@@ -5819,8 +5787,6 @@ main#main-content { position: relative; z-index: 1; }
   max-width: 20ch;
 }
 
-.aq-demo__heading h2 { max-width: 14ch; }
-
 /* h3, card and section rank */
 .sf-findings h3,
 .sf-chapter h3, .xr-chapter h3, .nt-chapter h3,
@@ -5888,12 +5854,12 @@ main#main-content { position: relative; z-index: 1; }
    paragraph carrying a class has already picked its register. */
 .aq-chain__columns p, .mw-boundary > p:not([class]), .mw-commands > p:not([class]),
 .mw-release-note__copy p,
-.mw-workflow__notes p,
 .tool-page .mw-command-list li,
-.tool-release__body p, .tool-release > p:not([class]),
+/* The release aside and the step-chain blurbs are NOT on this rung: they sit in
+   columns of about 320px and 270px, where the body size would run 23 characters
+   a line. They keep their own 14px rules above. */
 .at-duet__copy p,
 .at-checks p,
-.at-flow span, .mw-flow span,
 .challenge-card__text {
   font-size: var(--t-b0);
   line-height: var(--lh-b0);
@@ -5905,11 +5871,7 @@ main#main-content { position: relative; z-index: 1; }
    measuring 81 characters: the smallest body type on the site inside the
    longest line on the site. */
 .at-duet__copy p,
-.at-checks p,
-.tool-release__body p,
-.tool-release > p:not([class]),
-.at-flow span,
-.mw-flow span { max-width: 62ch; }
+.at-checks p { max-width: 62ch; }
 
 /* section deck: its own size and tone, so a section stops scanning as one
    undifferentiated grey field. No rule, border or background. */
@@ -5934,7 +5896,11 @@ main#main-content { position: relative; z-index: 1; }
    eyebrow in --c-accent was the loudest object in its column. */
 :is(
   .sf-kicker, .xr-kicker, .nt-kicker, .aq-kicker, .ai-kicker, .tr-kicker,
-  .mw-kicker, .tool-kicker, .sidar-kicker, .ifmc-lessons__kicker
+  .mw-kicker, .tool-kicker, .sidar-kicker, .ifmc-lessons__kicker,
+  /* ifmc had its own accent-coloured, 0.72rem eyebrows. Same job as every other
+     kicker, so same register: this block sits later at equal specificity and
+     wins over the earlier per-page rules on order. */
+  .ifmc-hero__kicker, .ifmc-entry__number
 ) {
   font-family: var(--micro-data-font);
   font-size: var(--micro-data-size);
@@ -5951,6 +5917,7 @@ main#main-content { position: relative; z-index: 1; }
 .tool-note,
 .tool-meta,
 .at-flow__note,
+.mw-workflow__notes p,
 .gallery-item__caption,
 .video-caption,
 .video-note,
@@ -5997,6 +5964,11 @@ main#main-content { position: relative; z-index: 1; }
   .nt-shots .gallery-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  /* Not three up. These three captures are 1585, 1101 and 1125 wide, so a 391px
+     tile drew them at a quarter to a third of capture size and no label in them
+     was readable. Stacked they draw at or near capture size. */
+  .nt-tech .gallery-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (min-width: 900px) and (max-width: 999.98px) {
@@ -6325,10 +6297,7 @@ main#main-content { position: relative; z-index: 1; }
     .ai-hero__role,
     .ai-player-story__label,
     .ai-delay__trigger span,
-    .ai-browser__prompts button,
-    .ai-browser__models button,
     .ai-browser__meta,
-    .ai-browser__play strong,
     .ai-thesis a,
     .tr-kicker,
     .tr-hero__role,
@@ -6598,3 +6567,31 @@ main#main-content { position: relative; z-index: 1; }
 
   .aq-signal-path li:nth-last-child(-n + 2) { border-bottom: 0; }
 }
+
+/* ---------- the older case template joins the ladder ----------
+   sounddesign, amorak, akantilado, ray, richter, pausedeserve and wwiseprojects
+   still run the first-generation .case-* markup, which predates the three micro
+   registers. These four rules pull its eyebrows and hero deck onto the same
+   rungs the project pages use, without touching the markup. The child-combinator
+   forms are deliberate: .case-sec__no needs 0,2,0 to beat .case-sec p. */
+.case-hero > .case-hero__kicker,
+.case-sec > .case-sec__no {
+  letter-spacing: var(--micro-data-tr);
+  color: var(--micro-data-ink);
+}
+
+/* No text-transform here: the facts line carries product names like dearVR PRO
+   that uppercasing would flatten. */
+.case-hero > .case-hero__facts { letter-spacing: var(--micro-data-tr); }
+
+.case-hero > .case-hero__sub {
+  font-size: var(--t-b1);
+  line-height: var(--lh-b1);
+  max-width: 48ch;
+}
+
+/* Wwise Projects: the shared screenshot rule centres the capture, so a 960px
+   image floated inside the left edge that the kicker, heading, prose and both
+   videos all share. The max-width cap stays, so it is still never upscaled;
+   margin-inline: auto remains correct for .gallery-item--contain img. */
+.case-sec > .screenshot-section img { margin-inline: 0; }
