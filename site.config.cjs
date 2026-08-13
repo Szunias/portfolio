@@ -89,7 +89,8 @@ module.exports = {
       css: 'contact',
       js: ['prefetch'],
       title: 'Contact | Igor Szuniewicz',
-      description: 'Email Igor Szuniewicz at igorszuniewiczwork@gmail.com about game audio, spatial and VR sound, audio tools or music, with links to his LinkedIn, GitHub, itch.io, Spotify and CV.',
+      // Kept under 160 characters so Google does not truncate it mid-address.
+      description: 'Email Igor Szuniewicz at igorszuniewiczwork@gmail.com about game audio, spatial and VR sound, audio tools or music. Links to LinkedIn, GitHub, Spotify and CV.',
       canonical: `${SITE}/contact.html`,
       // Not an article: og:type defaults to article for every non-home page.
       ogType: 'website',
@@ -243,6 +244,11 @@ module.exports = {
       title: 'AutoTrim Exporter | REAPER Sound Asset Delivery',
       description: 'AutoTrim Exporter 3.4.3 is a REAPER delivery tool for collecting layered sounds, checking the render path and exporting trimmed, named and verified audio assets.',
       canonical: `${SITE}/autotrim.html`,
+      // A tool page, not an article: og:type defaults to article for every
+      // non-home page, which makes consumers look for a byline and a
+      // published_time this page has no reason to carry. The JSON-LD here is
+      // SoftwareApplication.
+      ogType: 'website',
       ogImage: `${SITE}/old/public/assets/images/projects-autotrim/autotrim-3.4.3-export.png`,
       ogImageAlt: 'AutoTrim Exporter 3.4.3 Export screen for REAPER sound asset delivery',
       ogImageWidth: 1680,
@@ -261,6 +267,9 @@ module.exports = {
       title: 'AudioQ Sampler & Sound-Mangling Plugin | C++ JUCE',
       description: 'A C++/JUCE sampler with loop editing, granular playback and effects. The public release is Windows VST3; the source also builds a standalone app.',
       canonical: `${SITE}/audioq.html`,
+      // Tool page, same reason as autotrim: SoftwareApplication in JSON-LD,
+      // so og:type should not claim article.
+      ogType: 'website',
       ogImage: `${SITE}/old/public/assets/images/social/audioq-1200x630.webp`,
       ogImageAlt: 'AudioQ VST3 sampler plugin interface with waveform and effects controls',
       ogImageWidth: 1200,
@@ -289,10 +298,10 @@ module.exports = {
       js: ['prefetch', 'local-video'],
       schemaType: 'VideoGame',
       title: 'Pause & Deserve | Solo UE5 Horror Prototype',
-      description: 'Pause and Deserve: a solo-built UE5 horror prototype where pausing freezes the enemy but permanently increases its speed.',
+      description: 'Pause & Deserve: a solo-built UE5 horror prototype where pausing freezes the enemy but permanently increases its speed.',
       canonical: `${SITE}/pausedeserve.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-pausedeserve/redcorridor.png`,
-      ogImageAlt: 'Pause and Deserve UE5 horror game red corridor screenshot',
+      ogImageAlt: 'Pause & Deserve UE5 horror game red corridor screenshot',
       ogImageWidth: 1920,
       ogImageHeight: 1080,
       ogImageType: 'image/png',
@@ -331,7 +340,7 @@ module.exports = {
       layout: 'project',
       css: 'case',
       js: ['prefetch', 'local-video'],
-      title: 'Game Audio Sound Design Archive | Igor Szuniewicz',
+      title: 'Three Sound Redesigns | Game Audio Sound Design',
       description: 'Three short clips where Igor removed the original audio and rebuilt combat, spells and weapons from recordings, foley and synthesis.',
       canonical: `${SITE}/sounddesign.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-sounddesign/sounddesignprojectcover.png`,
@@ -345,7 +354,7 @@ module.exports = {
       layout: 'project',
       css: 'case',
       js: ['prefetch', 'local-video'],
-      title: 'Wwise Game Audio Exercises | Unity',
+      title: 'Three Wwise Exercises | Game Audio in Unity',
       description: 'Three Wwise exercises showing how Igor kept important sounds audible, made spaces transition smoothly and reduced memory use on Android.',
       canonical: `${SITE}/wwiseprojects.html`,
       ogImage: `${SITE}/old/public/wwiseprojectsinfo/images/StomachAches.png`,
@@ -365,6 +374,8 @@ module.exports = {
       title: 'Mówik | Local Push-to-Talk Dictation for Windows',
       description: 'A local Windows dictation app built in Python with faster-whisper. Voice commands insert preset text, open trusted targets or copy terminal commands for review.',
       canonical: `${SITE}/mowik.html`,
+      // Tool page, same reason as autotrim and audioq.
+      ogType: 'website',
       ogImage: `${SITE}/old/public/assets/images/social/mowik-1200x630.webp`,
       ogImageAlt: 'Dark Mówik settings window showing local Polish speech-to-text controls',
       ogImageWidth: 1200,
