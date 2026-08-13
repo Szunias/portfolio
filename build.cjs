@@ -1153,7 +1153,7 @@ function chromeTokens(page) {
     CURRENT_MUSIC: page.layout === 'music' ? ' aria-current="page"' : '',
     // Contact is keyed off the slug rather than the layout: it shares the home
     // layout, so a layout test would also mark the homepage.
-    CURRENT_CONTACT: page.slug === 'contact' ? ' aria-current="page"' : '',
+    CURRENT_CONTACT: page.slug.startsWith('contact') ? ' aria-current="page"' : '',
     YEAR: String(new Date().getFullYear()),
   };
 }
@@ -1470,9 +1470,6 @@ function validateConfig(cfg) {
     if (!page.ogImage || !page.ogImageAlt) {
       throw new Error(`OG image and alt text are required for ${page.slug}`);
     }
-    if (!fs.existsSync(path.join(SRC, 'css', `${page.css}.css`))) {
-      throw new Error(`CSS not found: src/css/${page.css}.css (required by ${page.slug})`);
-    }
     const pageSource = read(path.join(SRC, 'pages', `${page.slug}.html`));
     const h1Count = (pageSource.match(/<h1\b/gi) || []).length;
     if (h1Count !== 1) {
@@ -1495,19 +1492,12 @@ function validateConfig(cfg) {
         throw new Error(`${page.slug} gallery item is missing an image with src and alt`);
       }
     }
-    const css = read(path.join(SRC, 'css', `${page.css}.css`));
     // Viewport units in font-size are only allowed inside clamp() (rem bounds keep zoom working).
-    const viewportFontSize = css.match(/font-size\s*:(?![^;]*clamp\()[^;]*(?:vw|vh|vmin|vmax)[^;]*;/i);
-    if (viewportFontSize) {
-      throw new Error(`Viewport-based font-size outside clamp() is not allowed in src/css/${page.css}.css: ${viewportFontSize[0]}`);
-    }
-    // Tracking must be 0 or a relative em value (design uses em tracking on mono
-    // labels/display type). Since the shared ladder in _tokens.css now carries
-    // the tracking, a var() is allowed too, but only after the reference is
-    // resolved: the rule is about the value, not about the syntax, so an
-    // unresolvable name or a px token still fails here.
+    // Tracking must be 0 or a relative em value. A var() is allowed after the
+    // reference is resolved against _tokens.css and every stylesheet on the page.
+    const pageCssSources = cssNames.map(name => read(path.join(SRC, 'css', `${name}.css`)));
     const trackingProps = new Map();
-    for (const source of [getCSS('_tokens'), css]) {
+    for (const source of [getCSS('_tokens')].concat(pageCssSources)) {
       for (const decl of source.matchAll(/(--[\w-]+)\s*:\s*([^;{}]+);/g)) {
         trackingProps.set(decl[1], decl[2].trim());
       }
@@ -1522,12 +1512,19 @@ function validateConfig(cfg) {
       if (reference[2]) return resolveTracking(reference[2], depth + 1);
       return value;
     };
-    for (const match of css.matchAll(/letter-spacing\s*:\s*([^;]+);/gi)) {
-      const value = resolveTracking(match[1], 0);
-      if (value !== '0' && !/^-?(?:\d+)?\.?\d+em$/.test(value)) {
-        throw new Error(`letter-spacing must be 0 or an em value in src/css/${page.css}.css: ${match[0]}`);
+    cssNames.forEach((name, index) => {
+      const css = pageCssSources[index];
+      const viewportFontSize = css.match(/font-size\s*:(?![^;]*clamp\()[^;]*(?:vw|vh|vmin|vmax)[^;]*;/i);
+      if (viewportFontSize) {
+        throw new Error(`Viewport-based font-size outside clamp() is not allowed in src/css/${name}.css: ${viewportFontSize[0]}`);
       }
-    }
+      for (const match of css.matchAll(/letter-spacing\s*:\s*([^;]+);/gi)) {
+        const value = resolveTracking(match[1], 0);
+        if (value !== '0' && !/^-?(?:\d+)?\.?\d+em$/.test(value)) {
+          throw new Error(`letter-spacing must be 0 or an em value in src/css/${name}.css: ${match[0]}`);
+        }
+      }
+    });
     for (const jsName of page.js) {
       if (!fs.existsSync(path.join(SRC, 'js', `${jsName}.js`))) {
         throw new Error(`JS not found: src/js/${jsName}.js (required by ${page.slug})`);
