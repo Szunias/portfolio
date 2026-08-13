@@ -1,0 +1,159 @@
+/* Graz clock beside the address. Layers on contact.css for header and colophon. */
+
+.ck {
+  --ck-ink: var(--c-ink);
+  --ck-wash: var(--c-bg-0);
+  --ck-ring: var(--c-accent);
+  position: relative;
+  z-index: 10;
+  min-height: calc(100svh - 72px);
+  background: var(--ck-wash);
+  color: var(--ck-ink);
+}
+
+.ck[data-phase="night"] { --ck-wash: #07080c; --ck-ink: #e8eef4; --ck-ring: #9eb6cc; }
+.ck[data-phase="dawn"] { --ck-wash: #121014; --ck-ink: #f3e6d4; --ck-ring: #e0b48a; }
+.ck[data-phase="day"] { --ck-wash: #101012; --ck-ink: #eceef0; --ck-ring: var(--c-accent); }
+.ck[data-phase="dusk"] { --ck-wash: #100e0f; --ck-ink: #f2d2b4; --ck-ring: #d4926a; }
+
+.ck__room {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.9fr) minmax(260px, 1.1fr);
+  align-items: center;
+  gap: var(--s-5) var(--s-6);
+  width: min(100%, calc(var(--page-max) + var(--page-gutter) * 2));
+  min-height: inherit;
+  margin-inline: auto;
+  padding: var(--s-5) var(--page-gutter);
+}
+
+.ck__plate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+  margin: 0;
+}
+
+.ck__dial {
+  width: min(100%, 320px, 48vh);
+  height: auto;
+  overflow: visible;
+}
+
+.ck__ring {
+  fill: rgba(11, 11, 13, 0.35);
+  stroke: var(--ck-ring);
+  stroke-width: 1.1;
+}
+
+.ck__tick {
+  stroke: rgba(236, 238, 240, 0.22);
+  stroke-width: 0.4;
+}
+
+.ck__tick--hour {
+  stroke: var(--ck-ink);
+  stroke-width: 0.9;
+}
+
+.ck__hand {
+  stroke-linecap: round;
+}
+
+.ck__hand--hour {
+  stroke: var(--ck-ink);
+  stroke-width: 2.2;
+}
+
+.ck__hand--minute {
+  stroke: var(--ck-ink);
+  stroke-width: 1.4;
+}
+
+.ck__hand--second {
+  stroke: var(--ck-ring);
+  stroke-width: 0.6;
+}
+
+.ck__cap { fill: var(--ck-ring); }
+
+.ck__cap-line,
+.ck__langs,
+.ck__status,
+.ck__out {
+  font-family: var(--mono);
+  font-size: var(--t-m1);
+  line-height: var(--lh-t3);
+  letter-spacing: var(--micro-data-tr);
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.ck__cap-line { margin: 0; color: var(--ck-ink); }
+
+.ck__langs { margin: 0 0 var(--s-3); }
+
+.ck__mail {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 600;
+  line-height: var(--lh-t2);
+  letter-spacing: var(--tr-t1);
+}
+
+.ck__mail a {
+  color: var(--ck-ink);
+  text-decoration: none;
+  border-bottom: 2px solid var(--rule-hi);
+  overflow-wrap: anywhere;
+}
+
+.ck__mail a:hover {
+  color: var(--ice);
+  border-bottom-color: var(--ice);
+}
+
+.ck__write {
+  margin: var(--s-3) 0 0;
+  color: var(--muted);
+  font-size: var(--t-b1);
+  line-height: var(--lh-b1);
+}
+
+.ck__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+  margin-top: var(--s-4);
+}
+
+.ck__out {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px var(--s-4);
+  margin-top: var(--s-5);
+}
+
+.ck__out a {
+  color: var(--faint);
+  text-decoration: none;
+}
+
+.ck__out a:hover { color: var(--ck-ink); }
+
+@media (max-width: 620px) {
+  .ck__room {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    padding-block: var(--s-4) var(--s-5);
+  }
+
+  .ck__side { width: min(100%, 36rem); }
+
+  .ck__actions,
+  .ck__out { justify-content: center; }
+}
