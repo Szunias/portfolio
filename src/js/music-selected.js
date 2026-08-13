@@ -1249,6 +1249,14 @@
   registerMediaHandlers();
   applyFilter(DEFAULT_FILTER);
   restoreState();
+  // First visit, nothing restored: open on the first piece of the set list
+  // so the stage shows a selection instead of an empty player. Returning
+  // listeners keep whatever they last played.
+  if (!selectedTrack() && tiles.length) {
+    const firstFeatured = byTitle.get(cardTitle(tiles[0]));
+    const firstIndex = firstFeatured ? tracks.indexOf(firstFeatured) : -1;
+    if (validIndex(firstIndex)) select(firstIndex, false);
+  }
   updateModeUI();
   updateVolumeUI();
   setSeekEnabled(false);
