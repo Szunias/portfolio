@@ -142,8 +142,11 @@ module.exports = {
       // not part of. The home layout renders the same header, main and
       // colophon chrome without that constraint.
       layout: 'home',
-      css: 'contact',
-      js: ['prefetch'],
+      // The Graz-clock layout promoted from the contact-time review page:
+      // contact-alt.js carries the copy-address action, contact-time.js the
+      // clock itself.
+      css: ['contact', 'contact-time'],
+      js: ['prefetch', 'contact-alt', 'contact-time'],
       title: 'Contact | Igor Szuniewicz',
       // Kept under 160 characters so Google does not truncate it mid-address.
       description: 'Email Igor Szuniewicz at igorszuniewiczwork@gmail.com about game audio, spatial and VR sound, audio tools or music. Links to LinkedIn, GitHub, Spotify and CV.',
