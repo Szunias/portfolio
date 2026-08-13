@@ -33,7 +33,9 @@ html { scroll-behavior:smooth; scroll-padding-top:72px; }
 
 body {
   background:var(--c-bg-1); color:var(--ink);
-  font-family:var(--body); font-size:16px; line-height:1.6;
+  /* Was a hard 16px/1.6, which made home and 404 the only two pages whose
+     body prose sat off the shared ladder the other nineteen use. */
+  font-family:var(--body); font-size:var(--t-b0); line-height:var(--lh-b0);
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
@@ -225,31 +227,10 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
 
 .hero__meta { margin-top:var(--s-3); }
 
-/* The availability signal is the one fact a recruiter scans for, so it is the
-   one small string on the page that is not mono. "· Kortrijk, Belgium" stays
-   in R2 through .hero__meta, so the pair reads as signal and context. */
-.hero__avail {
-  display:inline-flex; align-items:center; gap:8px;
-  font-family:var(--micro-act-font); font-size:var(--micro-act-size);
-  font-weight:var(--micro-act-weight); letter-spacing:0;
-  text-transform:none;
-  color:var(--ice);
-}
-.hero__avail-dot {
-  width:6px; height:6px; flex:none;
-  border-radius:50%;
-  background:var(--ice);
-  box-shadow:0 0 0 0 color-mix(in srgb, var(--ice) 55%, transparent);
-  animation:avail-pulse 2.6s var(--ease) infinite;
-}
-@keyframes avail-pulse {
-  0%   { box-shadow:0 0 0 0 color-mix(in srgb, var(--ice) 55%, transparent); }
-  60%  { box-shadow:0 0 0 7px color-mix(in srgb, var(--ice) 0%, transparent); }
-  100% { box-shadow:0 0 0 0 color-mix(in srgb, var(--ice) 0%, transparent); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero__avail-dot { animation:none; }
-}
+/* The "Open to roles" badge and its pulsing dot lived here. The badge repeated
+   a sentence further down the page and was removed from index.html, so the
+   rules, the keyframes and the reduced-motion branch had no markup left. */
+
 /* Cursor light (created by cursor.js, so no-JS pages never carry the node).
    The blend mode lets the same glow ride dark panels and stills alike; both
    layers are fixed and transform-driven, so they never cause layout work.
@@ -604,6 +585,11 @@ section.panel { padding:0; }
   /* Display type must not inherit the body's 1.6, or it floats in its row. */
   line-height:var(--lh-t3);
 }
+/* Every other row in this list moves its title to the accent on hover. This
+   one is a 1200x76 control and moved nothing, so it read as a heading. */
+.earlier-work summary { transition:color var(--dur) var(--ease); }
+.earlier-work summary:hover,
+.earlier-work summary:focus-visible { color:var(--ice); }
 .earlier-work summary::-webkit-details-marker { display:none; }
 .earlier-work summary::after { content:'+'; margin-left:auto; color:var(--ice); font-family:var(--mono); }
 .earlier-work[open] summary::after { content:'-'; }
@@ -781,10 +767,11 @@ section.panel { padding:0; }
   color:var(--faint);
 }
 .colophon a {
-  /* No min-width: these are inline links in a separated list, the case WCAG
-     2.5.5 exempts, and a 44px box around "CV" opened a gap in the middle of
-     the row that read as a missing item. */
-  display:inline-flex; min-height:44px;
+  /* No 44px min-width: these are inline links in a separated list, the case
+     WCAG 2.5.5 exempts, and a 44px box around "CV" opened a gap in the middle
+     of the row that read as a missing item. 24px is the floor the shortest
+     label ("CV", 20px wide) actually fell under, and it costs 2px a side. */
+  display:inline-flex; min-height:44px; min-width:24px;
   align-items:center; justify-content:center;
   font-family:var(--micro-act-font); font-size:var(--micro-act-size);
   font-weight:var(--micro-act-weight); letter-spacing:var(--micro-act-tr);
@@ -943,6 +930,14 @@ section.panel { padding:0; }
   font-weight: 600;
   letter-spacing: .01em;
   color: var(--ink);
+}
+/* The wordmark is a link home and was the one item in the header with no
+   hover state at all. It already rests at full ink, so the colour move the
+   nav links make is not available to it; it underlines instead. */
+.site-header__name:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
 }
 /* The wordmark shortens to IGOR on narrow screens. Both labels are in the
    markup and aria-hidden, with the accessible name on the link itself, so the

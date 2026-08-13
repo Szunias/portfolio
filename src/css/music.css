@@ -152,8 +152,12 @@ a { color: var(--paper); }
 .colophon a {
   display: inline-flex;
   min-height: 44px;
+  /* "CV" measured 20px across, under the 24px floor for the smallest side of
+     a target. Centring inside a 24px box costs 2px a side. */
+  min-width: 24px;
   align-items: center;
-    font-family: var(--micro-act-font);
+  justify-content: center;
+  font-family: var(--micro-act-font);
   font-size: var(--micro-act-size);
   font-weight: var(--micro-act-weight);
   letter-spacing: var(--micro-act-tr);
@@ -231,8 +235,11 @@ a { color: var(--paper); }
    magenta and green, which would be the only saturated colour on the site.
    The element is 1/0.74 of the section wide with the frame pinned to its left
    edge, so that column lands outside the section and is clipped rather than
-   scrimmed into a smear. At 1440 the picture renders 1947px from a 1920px
-   source, so nothing is meaningfully upscaled. */
+   scrimmed into a smear. At 1440 the picture renders 1947px from the 1280px
+   source, so it is upscaled 1.52x. The 1920px candidate that used to cover
+   that was dropped: it cost 643KB against 52KB for a decorative, aria-hidden
+   frame that sits under a two-axis scrim and a brightness(1.14) lift, which
+   is where the softening goes. */
 .music-hero__still {
   position: absolute;
   left: 0;
@@ -465,7 +472,7 @@ a { color: var(--paper); }
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 4px;
-  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  text-decoration-color: var(--c-accent-line);
 }
 
 .featured__case-link:hover,
@@ -574,7 +581,7 @@ a { color: var(--paper); }
 /* One playing row inside 44 needs more than a 9% wash to be findable again
    after scrolling, so it also carries a bar on the leading edge. */
 .library-row.active {
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  background: var(--c-accent-weak);
   box-shadow: inset 2px 0 0 0 var(--accent);
 }
 
@@ -796,7 +803,7 @@ a { color: var(--paper); }
   cursor: pointer;
   /* Only a real drag locks the page: a swipe that starts here still scrolls. */
   touch-action: pan-y;
-  background: linear-gradient(var(--rule), var(--rule)) center / 100% 4px no-repeat;
+  background: linear-gradient(var(--c-control), var(--c-control)) center / 100% 4px no-repeat;
 }
 
 .player-bar__progress.is-scrubbing,
@@ -826,7 +833,9 @@ a { color: var(--paper); }
   border-radius: 2px;
 }
 
-.player-bar__progress-buffer { background: var(--rule-strong); }
+/* The rail behind the fill and the buffer over it both carry position without
+   any text, so they need 3:1. --rule read 1.48:1 and --rule-strong 2.41:1. */
+.player-bar__progress-buffer { background: var(--c-control-hi); }
 .player-bar__progress-fill { background: var(--accent); }
 
 .player-bar__progress-fill::after {
@@ -970,7 +979,9 @@ a { color: var(--paper); }
   width: 84px;
   height: 4px;
   border-radius: 2px;
-  background: var(--rule);
+  /* Same as the seek rail: the unset part of the slider is the control, and
+     --rule measured 1.48:1 against the bar. */
+  background: var(--c-control);
   cursor: pointer;
   touch-action: none;
 }
@@ -1137,7 +1148,7 @@ a { color: var(--paper); }
   height: 18px;
   cursor: pointer;
   touch-action: pan-y;
-  background: linear-gradient(var(--rule), var(--rule)) center / 100% 4px no-repeat;
+  background: linear-gradient(var(--c-control), var(--c-control)) center / 100% 4px no-repeat;
 }
 
 .now-playing__scrub::before {
@@ -1449,9 +1460,16 @@ a { color: var(--paper); }
   min-width: 24px; transition: color var(--dur) var(--ease);
   color: var(--text-muted);
 }
-.site-header__name:hover,
 .site-header nav a:hover,
 .site-header nav a[aria-current='page'] { color: var(--paper); }
+/* The wordmark is a link home and had no visible hover: it declared :hover to
+   --paper, the colour it already rests at. Resting at full ink leaves it no
+   colour to move to, so it underlines instead. */
+.site-header__name:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
 .site-header nav a[aria-current='page'] { box-shadow: inset 0 -1px 0 0 var(--paper); }
 @media (max-width:640px) {
   .site-header__name { font-size: .85rem; }

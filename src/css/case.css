@@ -40,6 +40,12 @@
   /* One accent. The per-page --*-signal hues are aliased to it further down;
      project identity is carried by imagery, never by hue. */
   --signal: var(--c-accent);
+  /* --aq-signal and --mw-cyan were the two the migration missed. Nothing
+     defined them, so `color: var(--aq-signal)` fell back to inherit and the
+     AudioQ signal-path rule and the Mowik command-list rule were invalid at
+     computed-value time and drew nothing at all. */
+  --aq-signal: var(--c-accent);
+  --mw-cyan: var(--c-accent);
   --violet: var(--c-accent);
   --grey: var(--c-ink-3);
   --rule: var(--c-line-2);
@@ -59,7 +65,10 @@
 
 img { max-width: 100%; }
 
-.tr-compare { overflow-x:auto; border-block:1px solid var(--rule); }
+/* overscroll-behavior-x, as on .sf-diagram: the table is 720px inside a 320px
+   viewport, so without it a drag that reaches the last column chains into the
+   browser's back gesture. */
+.tr-compare { overflow-x:auto; overscroll-behavior-x:contain; border-block:1px solid var(--rule); }
 .tr-compare table { width:100%; min-width:720px; border-collapse:collapse; }
 .tr-compare th,
 .tr-compare td { padding:16px 14px; border-bottom:1px solid var(--rule-soft); text-align:left; vertical-align:top; }
@@ -68,8 +77,9 @@ img { max-width: 100%; }
 .tr-compare tbody td { color:var(--ink-70); }
 
 .ai-result-chart { margin:0 0 38px; border-block:1px solid var(--rule); padding:26px 0 18px; }
-.ai-result-chart__budget { display:flex; justify-content:space-between; gap:20px; margin-bottom:22px; padding:12px 14px; border-left:3px solid var(--c-accent); color:var(--ink-70); background:var(--rule-soft); font-family:var(--mono); font-size:var(--t-s1); line-height:var(--lh-b1); }
-.ai-result-chart__budget strong { color:var(--paper); font-family:var(--mono); font-size:var(--t-s1); }
+/* Mono at --t-s1 was a 14px mono rung nothing else on the site uses. */
+.ai-result-chart__budget { display:flex; justify-content:space-between; gap:20px; margin-bottom:22px; padding:12px 14px; border-left:3px solid var(--c-accent); color:var(--ink-70); background:var(--rule-soft); font-family:var(--mono); font-size:var(--t-m1); line-height:var(--lh-b1); }
+.ai-result-chart__budget strong { color:var(--paper); font-family:var(--mono); font-size:var(--t-m1); }
 .ai-result-chart__plot { display:grid; gap:13px; }
 .ai-result-chart__plot > div { display:grid; grid-template-columns:150px minmax(0,1fr) 62px; align-items:center; gap:13px; }
 .ai-result-chart__plot span,
@@ -143,7 +153,6 @@ body {
   letter-spacing:.06em;
 }
 .site-header nav { display:flex; gap:24px; }
-.site-header__name:hover,
 .site-header nav a:hover { color:var(--paper); border:0; }
 
 /* 78ch of IBM Plex Mono is about 90ch of Inter, so the line split "A
@@ -167,7 +176,7 @@ body {
 a {
   color: var(--accent);
   text-decoration: none;
-  border-bottom: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-bottom: 1px solid var(--c-accent-line);
   transition: color 0.2s, border-color 0.2s;
 }
 
@@ -268,7 +277,7 @@ main { position: relative; }
   flex-wrap: wrap;
   gap: 10px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--t-m1);
   text-transform: uppercase;
   color: var(--ink-55);
 }
@@ -292,7 +301,7 @@ main { position: relative; }
    declarations the hero kicker was the only mixed-case eyebrow anywhere. */
 .ifmc-hero__kicker {
   font-family: var(--mono);
-  font-size: clamp(11px, 1.2vw, 13px);
+  font-size: var(--t-m1);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--signal);
@@ -632,7 +641,7 @@ main#main-content { position: relative; z-index: 1; }
 .video-caption,
 .video-note {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--t-m1);
   color: var(--ink-55);
   padding-top: 12px;
   line-height: 1.6;
@@ -714,7 +723,7 @@ main#main-content { position: relative; z-index: 1; }
 .gallery-item--contain .gallery-item__caption {
   position: static;
   padding: 9px 12px 11px;
-  background: rgba(5, 5, 7, 0.9);
+  background: var(--c-glass);
 }
 
 /* Contained tiles hold UI captures, whose shapes range from 0.49 to 2.66.
@@ -769,7 +778,7 @@ main#main-content { position: relative; z-index: 1; }
   font-size: var(--t-m0);
   letter-spacing: 0.04em;
   color: var(--paper);
-  background: linear-gradient(180deg, transparent, rgba(5, 5, 7, 0.85));
+  background: linear-gradient(180deg, transparent, rgba(11, 11, 13, 0.85));
 }
 
 .gallery-item__zoom {
@@ -782,7 +791,7 @@ main#main-content { position: relative; z-index: 1; }
   align-items: center;
   justify-content: center;
   border-radius: var(--r-pill);
-  background: rgba(5, 5, 7, 0.6);
+  background: rgba(11, 11, 13, 0.6);
   opacity: 0;
   transition: opacity 0.2s;
 }
@@ -1057,8 +1066,8 @@ main#main-content { position: relative; z-index: 1; }
 
 .sf-hero__shade {
   background:
-    linear-gradient(180deg, rgba(5, 5, 7, 0.18) 0%, rgba(5, 5, 7, 0.2) 35%, rgba(5, 5, 7, 0.92) 100%),
-    linear-gradient(90deg, rgba(5, 5, 7, 0.7), transparent 62%);
+    linear-gradient(180deg, rgba(11, 11, 13, 0.18) 0%, rgba(11, 11, 13, 0.2) 35%, rgba(11, 11, 13, 0.92) 100%),
+    linear-gradient(90deg, rgba(11, 11, 13, 0.7), transparent 62%);
 }
 
 .sf-hero__content {
@@ -1093,7 +1102,7 @@ main#main-content { position: relative; z-index: 1; }
   max-width: 58ch;
   margin-top: 20px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--t-m1);
   line-height: 1.7;
   color: var(--ink-70);
 }
@@ -1200,7 +1209,7 @@ main#main-content { position: relative; z-index: 1; }
   }
 
   .sf-hero__role {
-    font-size: 11px;
+    font-size: var(--t-m1);
   }
 }
 
@@ -1222,8 +1231,8 @@ main#main-content { position: relative; z-index: 1; }
 
 .sf-hero__shade {
   background:
-    linear-gradient(180deg, rgba(5, 5, 7, 0) 0%, rgba(5, 5, 7, 0.08) 36%, rgba(5, 5, 7, 0.94) 100%),
-    linear-gradient(90deg, rgba(5, 5, 7, 0.7) 0%, rgba(5, 5, 7, 0.3) 48%, rgba(5, 5, 7, 0) 78%);
+    linear-gradient(180deg, rgba(11, 11, 13, 0) 0%, rgba(11, 11, 13, 0.08) 36%, rgba(11, 11, 13, 0.94) 100%),
+    linear-gradient(90deg, rgba(11, 11, 13, 0.7) 0%, rgba(11, 11, 13, 0.3) 48%, rgba(11, 11, 13, 0) 78%);
 }
 
 .sf-hero__content {
@@ -2358,7 +2367,9 @@ main#main-content { position: relative; z-index: 1; }
   padding: 12px 16px;
   border: 1px solid var(--rule);
   border-radius: var(--r-s);
-  background: rgba(8, 6, 5, 0.52);
+  /* Was rgba(8, 6, 5, .52), the one warm surface on a site whose whole ramp
+     is cool-neutral. */
+  background: var(--c-glass);
   font-family: var(--micro-act-font);
   font-size: var(--micro-act-size);
   font-weight: var(--micro-act-weight);
@@ -2602,7 +2613,7 @@ main#main-content { position: relative; z-index: 1; }
 .aq-signal-path {
   align-self: end;
   padding: 22px 0 4px;
-  border-top: 1px solid color-mix(in srgb, var(--aq-signal) 36%, transparent);
+  border-top: 1px solid var(--c-accent-line);
   font-size: 13px;
   line-height: 1.75;
   color: var(--ink-70);
@@ -2824,7 +2835,7 @@ main#main-content { position: relative; z-index: 1; }
 .ai-signal-path {
   align-self: end;
   padding: 22px 0 4px;
-  border-top: 1px solid color-mix(in srgb, var(--ai-signal) 36%, transparent);
+  border-top: 1px solid var(--c-accent-line);
   font-size: 13px;
   line-height: 1.75;
   color: var(--ink-70);
@@ -2844,7 +2855,7 @@ main#main-content { position: relative; z-index: 1; }
 .ai-browser {
   border: 1px solid var(--rule);
   border-radius: var(--r-m);
-  background: rgba(10, 10, 13, 0.62);
+  background: rgba(11, 11, 13, 0.62);
   box-shadow: var(--e-3);
   overflow: hidden;
 }
@@ -2895,8 +2906,8 @@ main#main-content { position: relative; z-index: 1; }
 }
 
 .ai-browser__models button[aria-pressed="true"] {
-  border-color: color-mix(in srgb, var(--ai-signal) 70%, transparent);
-  background: color-mix(in srgb, var(--ai-signal) 14%, transparent);
+  border-color: var(--c-accent-line);
+  background: var(--c-accent-weak);
   color: var(--ai-signal);
 }
 
@@ -2984,9 +2995,9 @@ main#main-content { position: relative; z-index: 1; }
   gap: 14px;
   flex-shrink: 0;
   padding: 10px 16px;
-  border: 1px solid color-mix(in srgb, var(--ai-signal) 62%, transparent);
+  border: 1px solid var(--c-accent-line);
   border-radius: var(--r-pill);
-  background: color-mix(in srgb, var(--ai-signal) 12%, transparent);
+  background: var(--c-accent-weak);
   color: var(--paper);
   cursor: pointer;
   transition: border-color 0.2s ease, background 0.2s ease;
@@ -3018,9 +3029,6 @@ main#main-content { position: relative; z-index: 1; }
   font-weight: 400;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-}
-
-@media (prefers-reduced-motion: reduce) {
 }
 
 /* ---------- Recordings ---------- */
@@ -3318,24 +3326,17 @@ main#main-content { position: relative; z-index: 1; }
   color: var(--ink-55);
 }
 
+/* Geometry and label register are set once for all six frames near the end of
+   this file. The copy that used to sit here still carried position:absolute
+   and top/left, which the shared block does not re-declare, so the label kept
+   overlaying the video after it was moved into flow. */
 .tr-video-frame {
   position: relative;
   overflow: hidden;
-  padding: 34px 8px 8px;
   border: 1px solid var(--rule);
   border-radius: var(--r-m);
   background: var(--c-bg-0);
   box-shadow: var(--e-3);
-}
-
-.tr-video-frame__label {
-  position: absolute;
-  top: 9px;
-  left: 14px;
-  font-family: var(--mono);
-  font-size: var(--t-m0);
-  text-transform: uppercase;
-  color: var(--ink-55);
 }
 
 .tr-video-frame .video-wrap {
@@ -3372,7 +3373,7 @@ main#main-content { position: relative; z-index: 1; }
 .tr-signal-path {
   align-self: end;
   padding: 22px 0 4px;
-  border-top: 1px solid color-mix(in srgb, var(--tr-signal) 36%, transparent);
+  border-top: 1px solid var(--c-accent-line);
   font-size: 13px;
   line-height: 1.75;
   color: var(--ink-70);
@@ -3468,7 +3469,7 @@ main#main-content { position: relative; z-index: 1; }
   .tr-section-head { margin-bottom: 28px; }
 
   .tr-video-frame {
-    padding: 29px 4px 4px;
+    padding: 4px;
     border-radius: var(--r-s);
   }
 
@@ -3649,6 +3650,10 @@ main#main-content { position: relative; z-index: 1; }
 }
 
 .ifmc-entry__copy > p {
+  /* The container caps at 64ch of the inherited body size, which is 634px and
+     about 86 characters of the 16px these paragraphs are actually set in. The
+     limit belongs on the paragraph, counted from its own size. */
+  max-width: 62ch;
   color: var(--ink-70);
   font-size: 16px;
   line-height: 1.75;
@@ -3657,21 +3662,36 @@ main#main-content { position: relative; z-index: 1; }
 .ifmc-entry__copy > p + p,
 .ifmc-entry__copy blockquote + p { margin-top: 18px; }
 
-.ifmc-entry__note {
+/* Qualified by the parent: the note is one of those direct-child paragraphs,
+   and the rule above outranked a bare .ifmc-entry__note, so the note came out
+   as 16px mono. */
+.ifmc-entry__copy > .ifmc-entry__note {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--t-m1);
   line-height: 1.6;
   color: var(--ink-55);
 }
 
+/* The one link in this copy is the whole paragraph, so it is a control rather
+   than a phrase inside a sentence. It measured 21px tall. */
+.ifmc-entry__copy > p > a:only-child {
+  display: inline-flex;
+  min-height: var(--tap-target);
+  align-items: center;
+}
+
 .ifmc-entry__copy blockquote {
-  max-width: 34ch;
   margin-top: clamp(26px, 4vw, 42px);
   padding-left: clamp(18px, 3vw, 30px);
   border-left: 1px solid var(--signal);
 }
 
+/* The 34ch measure used to sit on the blockquote, where ch counts the
+   inherited 16.5px body while the pull quote inside renders up to 32px. At
+   1440 that came out as 18 characters a line over seven lines. On the
+   paragraph, ch counts the size the quote is actually set in. */
 .ifmc-entry__copy blockquote p {
+  max-width: 34ch;
   color: var(--paper);
   font-family: var(--serif);
   font-size: clamp(21px, 2.7vw, 32px);
@@ -3773,7 +3793,7 @@ main#main-content { position: relative; z-index: 1; }
 
 @media (max-width: 620px) {
   :where(.sf-hero__role, .nt-hero__role, .tr-hero__role, .ai-hero__role, .aq-hero__role, .xr-hero__role) {
-    font-size: 11px;
+    font-size: var(--t-m1);
     letter-spacing: .035em;
     line-height: 1.55;
   }
@@ -3787,7 +3807,7 @@ main#main-content { position: relative; z-index: 1; }
     padding: 11px 14px 0;
     color: var(--ink-55);
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: var(--t-m1);
     letter-spacing: .04em;
     text-transform: uppercase;
   }
@@ -3958,6 +3978,11 @@ main#main-content { position: relative; z-index: 1; }
   line-height: 1.7;
 }
 
+/* .ai-browser__now > span used to sit inside this :is(), and :is() takes the
+   specificity of its most specific argument: one child combinator lifted the
+   whole list to 0,1,1, which outranked the R3 CAPTION block further down and
+   set every .gallery-item__caption on Shadow Frames and Not Today at 12px
+   instead of the caption rung. It gets its own rule. */
 :is(
   .gallery-item__caption,
   .sf-video-frame__label, .xr-video-frame__label, .nt-video-frame__label,
@@ -3965,9 +3990,10 @@ main#main-content { position: relative; z-index: 1; }
   .sf-video-frame__bar, .xr-video-frame__bar, .nt-video-frame__bar,
   .aq-video-frame__bar, .ai-video-frame__bar, .tr-video-frame__bar,
   .ai-snapshot__label, .ai-player-story__label,
-  .ai-browser__now > span, .ai-browser__meta,
+  .ai-browser__meta,
   .xr-system-card__number
-) {
+),
+.ai-browser__now > span {
   font-size: var(--proof-size);
   line-height: 1.55;
 }
@@ -3975,7 +4001,7 @@ main#main-content { position: relative; z-index: 1; }
 .ai-hero-result span,
 .ai-delay__nodes,
 .ai-delay__mark,
-.ai-signal-path span { font-size: 11px; }
+.ai-signal-path span { font-size: var(--t-m1); }
 
 .ai-hero-result p,
 .ai-browser__now > p { font-size: 15px; }
@@ -3992,7 +4018,7 @@ main#main-content { position: relative; z-index: 1; }
 .ai-browser__prompts button,
 .ai-browser__models button { font-size: 12px; }
 
-.ifmc-entry__copy cite { font-size: 11px; }
+.ifmc-entry__copy cite { font-size: var(--t-m1); }
 
 .ifmc-foot a {
   display: inline-flex;
@@ -4014,7 +4040,7 @@ main#main-content { position: relative; z-index: 1; }
   .tr-player-story__label,
   .tr-signal-path span,
   .tr-chapter__eyebrow
-) { font-size: 11px; }
+) { font-size: var(--t-m1); }
 
 .xr-direction-diagram text {
   font-size: 22px;
@@ -4325,7 +4351,7 @@ main#main-content { position: relative; z-index: 1; }
 
 .mw-command-list {
   list-style: none;
-  border-top: 1px solid color-mix(in srgb, var(--mw-cyan) 28%, transparent);
+  border-top: 1px solid var(--c-accent-line);
 }
 
 .mw-command-list li {
@@ -4418,7 +4444,7 @@ main#main-content { position: relative; z-index: 1; }
 .tool-kicker {
   margin: 0 0 15px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--t-m1);
   line-height: 1.55;
   letter-spacing: 0.065em;
   text-transform: uppercase;
@@ -4477,7 +4503,7 @@ main#main-content { position: relative; z-index: 1; }
   padding-top: 13px;
   border-top: 1px solid var(--tool-rule);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--t-m1);
   line-height: 1.6;
   color: var(--ink-55);
 }
@@ -4500,9 +4526,9 @@ main#main-content { position: relative; z-index: 1; }
   min-height: 44px;
   align-items: center;
   gap: 9px;
-  border-bottom: 1px solid color-mix(in srgb, var(--tool-accent) 52%, transparent);
+  border-bottom: 1px solid var(--c-accent-line);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--t-m1);
   color: var(--paper);
 }
 
@@ -4548,10 +4574,13 @@ main#main-content { position: relative; z-index: 1; }
   height: 42px;
   padding: 0;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.34);
+  /* Was pure white ink over rgba(5, 6, 7, .82) with a white border: three
+     values that exist nowhere else. The ink ramp tops out at #eceef0 and the
+     surface floor is #0b0b0d. */
+  border: 1px solid var(--c-control);
   border-radius: 50%;
-  background: rgba(5, 6, 7, 0.82);
-  color: #fff;
+  background: var(--c-glass);
+  color: var(--c-ink);
   cursor: pointer;
   backdrop-filter: blur(8px);
   transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
@@ -4564,8 +4593,8 @@ main#main-content { position: relative; z-index: 1; }
 /* This one had no (hover: hover) guard either, so a tap-and-hold on a phone
    fired the scale. Border and background carry it now. */
 .tool-hero__tour-toggle:hover {
-  border-color: rgba(255, 255, 255, 0.72);
-  background: rgba(5, 6, 7, 0.94);
+  border-color: var(--c-control-hi);
+  background: var(--c-bg-0);
 }
 
 .tool-hero__tour-toggle:focus-visible {
@@ -4741,7 +4770,7 @@ main#main-content { position: relative; z-index: 1; }
 .tool-release {
   min-width: 0;
   padding-top: 22px;
-  border-top: 1px solid color-mix(in srgb, var(--tool-accent) 46%, transparent);
+  border-top: 1px solid var(--c-accent-line);
 }
 
 .tool-release h3 {
@@ -4754,8 +4783,11 @@ main#main-content { position: relative; z-index: 1; }
   letter-spacing: -0.026em;
 }
 
+/* :not([class]) throughout: a bare `> p` is 0,1,1 and outranks the 0,1,0
+   register blocks at the end of the file, so .tool-kicker inside this aside
+   came out as body prose instead of a mono data label. */
 .tool-release__body p,
-.tool-release > p {
+.tool-release > p:not([class]) {
   max-width: 66ch;
   font-size: 14px;
   line-height: 1.7;
@@ -4763,7 +4795,7 @@ main#main-content { position: relative; z-index: 1; }
 }
 
 .tool-release__body p + p,
-.tool-release > p + p {
+.tool-release > p:not([class]) + p {
   margin-top: 14px;
 }
 
@@ -5014,7 +5046,7 @@ main#main-content { position: relative; z-index: 1; }
      (old audioq layout, ~line 4267) to cancel the UA default padding. */
   padding: 22px 0 4px;
   list-style: none;
-  border-top: 1px solid color-mix(in srgb, var(--tool-accent) 46%, transparent);
+  border-top: 1px solid var(--c-accent-line);
   border-bottom: 1px solid var(--tool-rule);
 }
 
@@ -5069,8 +5101,8 @@ main#main-content { position: relative; z-index: 1; }
 }
 
 .aq-chain__columns p,
-.mw-boundary > p,
-.mw-commands > p {
+.mw-boundary > p:not([class]),
+.mw-commands > p:not([class]) {
   max-width: 66ch;
   margin: 0;
   font-size: 15px;
@@ -5084,7 +5116,7 @@ main#main-content { position: relative; z-index: 1; }
 
 .aq-chain__limits {
   padding-left: clamp(22px, 3vw, 36px);
-  border-left: 1px solid color-mix(in srgb, var(--tool-accent) 46%, transparent);
+  border-left: 1px solid var(--c-accent-line);
 }
 
 .aq-chain__limits a {
@@ -5093,7 +5125,7 @@ main#main-content { position: relative; z-index: 1; }
   align-items: center;
   gap: 9px;
   margin-top: 19px;
-  border-bottom-color: color-mix(in srgb, var(--tool-accent) 52%, transparent);
+  border-bottom-color: var(--c-accent-line);
   font-family: var(--mono);
   font-size: var(--t-m0);
   color: var(--paper);
@@ -5151,10 +5183,10 @@ main#main-content { position: relative; z-index: 1; }
 .mw-boundary {
   min-width: 0;
   padding-top: 19px;
-  border-top: 1px solid color-mix(in srgb, var(--tool-accent) 46%, transparent);
+  border-top: 1px solid var(--c-accent-line);
 }
 
-.mw-boundary > p {
+.mw-boundary > p:not([class]) {
   font-size: 14px;
 }
 
@@ -5239,7 +5271,7 @@ main#main-content { position: relative; z-index: 1; }
   margin-top: clamp(26px, 4vw, 40px);
 }
 
-.mw-release > p {
+.mw-release > p:not([class]) {
   font-size: 14px;
 }
 
@@ -5474,7 +5506,7 @@ main#main-content { position: relative; z-index: 1; }
   .aq-chain__limits {
     padding-top: 22px;
     padding-left: 0;
-    border-top: 1px solid color-mix(in srgb, var(--tool-accent) 46%, transparent);
+    border-top: 1px solid var(--c-accent-line);
     border-left: 0;
   }
 
@@ -5540,6 +5572,15 @@ main#main-content { position: relative; z-index: 1; }
   font-family: 'Space Grotesk', system-ui, sans-serif;
   font-size: .95rem; font-weight: 600; letter-spacing: .01em;
   color: var(--paper);
+}
+/* The wordmark is a link home and was the one item in the header with no
+   hover state at all: the rule further up declared :hover to --paper, which
+   is the colour it already rests at. It rests at full ink, so the colour move
+   the nav links make is not available to it; it underlines instead. */
+.site-header__name:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
 }
 .site-header__name-short { display: none; }
 .site-header nav a {
@@ -5840,11 +5881,16 @@ main#main-content { position: relative; z-index: 1; }
 .xr-system-card figcaption div p,
 .xr-disclosure__copy p,
 .xr-disclosure__heading > p:last-child,
-.aq-chain__columns p, .mw-boundary > p, .mw-commands > p,
+/* :not([class]) on the three child selectors below. A bare `> p` is 0,1,1 and
+   outranked the 0,1,0 register blocks further down, so .tool-kicker inside
+   .mw-commands and .tool-release came out as 16.5px body instead of 12px
+   mono, and .tool-note inside .mw-boundary as body instead of a caption. Any
+   paragraph carrying a class has already picked its register. */
+.aq-chain__columns p, .mw-boundary > p:not([class]), .mw-commands > p:not([class]),
 .mw-release-note__copy p,
 .mw-workflow__notes p,
 .tool-page .mw-command-list li,
-.tool-release__body p, .tool-release > p,
+.tool-release__body p, .tool-release > p:not([class]),
 .at-duet__copy p,
 .at-checks p,
 .at-flow span, .mw-flow span,
@@ -5861,7 +5907,7 @@ main#main-content { position: relative; z-index: 1; }
 .at-duet__copy p,
 .at-checks p,
 .tool-release__body p,
-.tool-release > p,
+.tool-release > p:not([class]),
 .at-flow span,
 .mw-flow span { max-width: 62ch; }
 
@@ -5997,8 +6043,12 @@ main#main-content { position: relative; z-index: 1; }
 .tr-video-frame {
   position: relative;
   overflow: hidden;
-  /* room for the label strip, which is now above the picture on all six */
-  padding: 32px 8px 8px;
+  /* The label strip sits above the picture on all six and is now in flow, so
+     the frame no longer reserves a fixed 32px for it. It used to: the label
+     was absolute at top:9px inside a 32px reservation, which held exactly one
+     line. At 360px "Original prototype - SVM + OSC - 2025" wraps to two, and
+     the video painted over the second one. */
+  padding: 8px;
   border: 1px solid var(--rule);
   border-radius: var(--r-m);
   background: var(--c-bg-0);
@@ -6011,12 +6061,13 @@ main#main-content { position: relative; z-index: 1; }
 .aq-video-frame__label,
 .ai-video-frame__label,
 .tr-video-frame__label {
-  position: absolute;
-  top: 9px;
-  left: 14px;
-  right: 14px;
+  display: block;
+  /* Reproduces the old inset - 8px frame padding plus 6px reads 14px from the
+     border, 1px above puts the first line back on 9px - and the 9px below is
+     what separates however many lines there are from the picture. */
+  padding: 1px 6px 9px;
   font-family: var(--mono);
-  font-size: var(--t-m0);
+  font-size: var(--t-m1);
   letter-spacing: var(--tr-m);
   text-transform: uppercase;
   color: var(--ink-55);
@@ -6083,6 +6134,10 @@ main#main-content { position: relative; z-index: 1; }
 }
 
 .colophon a {
+  /* "CV" measured 20px across, under the 24px floor for the smallest side of
+     a target. Centring inside a 24px box costs 2px a side. */
+  min-width: 24px;
+  justify-content: center;
   font-family: var(--micro-act-font);
   font-size: var(--micro-act-size);
   font-weight: var(--micro-act-weight);
@@ -6365,13 +6420,13 @@ main#main-content { position: relative; z-index: 1; }
 .colophon a,
 .ifmc-foot__links a,
 .tool-footer__links a {
-  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  text-decoration-color: var(--c-accent-line);
 }
 
 .tool-links a,
 .tool-release__links a,
 .aq-chain__limits a {
-  text-decoration-color: color-mix(in srgb, var(--tool-accent) 52%, transparent);
+  text-decoration-color: var(--c-accent-line);
 }
 
 .colophon a:hover,
@@ -6482,19 +6537,19 @@ main#main-content { position: relative; z-index: 1; }
    around them was 16.5px. They are captions to a mono label, so they sit on
    the caption rung rather than the label one. */
 .mw-boundary__facts dd {
+  max-width: 62ch;
   font-size: var(--t-s1);
   line-height: 1.62;
 }
 
 /* ---- Footer ----
-   The agreed treatment is 11px mono; the project pages were the only ones
-   still at 12, which is also what pushed the six links onto a second line at
-   390 with a separator left hanging at the end of the first.
+   Mono at the one mono rung the site has left.
 
-   The links keep a 44px minimum height and no minimum width. They are inline
-   links inside a separated list, which is the case WCAG 2.5.5 exempts, and
-   the 44px box around a two-letter link (CV) opened a gap in the middle of
-   the row that read as a missing item. */
+   The links keep a 44px minimum height and no 44px minimum width. They are
+   inline links inside a separated list, which is the case WCAG 2.5.5 exempts,
+   and the 44px box around a two-letter link (CV) opened a gap in the middle
+   of the row that read as a missing item. 24px is the floor that link was
+   actually under, and it costs 2px a side. */
 .colophon { font-size: var(--t-m0); }
 
 /* ---- The comparison table ----

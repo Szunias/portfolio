@@ -35,11 +35,21 @@
   --c-line-2: rgba(236, 238, 240, 0.16);  /* container edges, inputs, pills */
   --c-line-3: rgba(236, 238, 240, 0.30);  /* hover and active edges */
 
+  /* ---- control edges: the one place the line ramp is not enough ----
+     WCAG 1.4.11 wants 3:1 for anything that carries meaning without text.
+     On --c-bg-1 the ramp above measures 1.19:1, 1.52:1 and 2.46:1, so a
+     ghost button whose only boundary is --c-line-2, or a seek rail whose
+     unplayed part is --rule, fails. 0.42 lands at 3.4:1 and 0.62 at 6.2:1.
+     Decoration keeps the ramp; controls use these two. */
+  --c-control:    rgba(236, 238, 240, 0.42);
+  --c-control-hi: rgba(236, 238, 240, 0.62);
+
   /* ---- accent: one, plus one status colour ----
      Project identity is carried by imagery, not by a per-page hue. */
   --c-accent:      #aac6de;
   --c-accent-hi:   #c2d8ea;               /* hover only */
-  --c-accent-weak: rgba(170, 198, 222, 0.14);
+  --c-accent-weak: rgba(170, 198, 222, 0.14);  /* the only accent fill */
+  --c-accent-line: rgba(170, 198, 222, 0.45);  /* the only accent edge or underline */
   --c-accent-ink:  #0b0b0d;               /* text on an accent fill */
   --c-warn:        #e8a5a5;               /* the only failure state on the site */
 
@@ -272,7 +282,9 @@ html {
   min-height: 44px;
   /* Inter 14 needs more shoulder than tracked mono 11 did. */
   padding: 0 var(--s-4);
-  border: 1px solid var(--c-line-2);
+  /* --c-line-2 read at 1.52:1 here. A ghost button has no fill and no
+     underline, so the border is the whole control: it has to clear 3:1. */
+  border: 1px solid var(--c-control);
   border-radius: var(--r-pill);
   background: transparent;
   color: var(--c-ink-2);
@@ -290,7 +302,7 @@ html {
 
 .btn:hover,
 .btn--ghost:hover {
-  border-color: var(--c-line-3);
+  border-color: var(--c-control-hi);
   color: var(--c-ink);
 }
 

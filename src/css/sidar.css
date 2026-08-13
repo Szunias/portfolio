@@ -127,6 +127,15 @@ button { font: inherit; }
   color: var(--ash);
 }
 
+/* The wordmark is a link home and was the one item in the header with no
+   hover state. It rests at full ink, so the colour move the nav links make is
+   not available to it; it underlines instead. */
+.site-header__name:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
 .site-header__name-short { display: none; }
 
 .site-header nav {
@@ -788,12 +797,16 @@ main {
 .colophon a {
   display: inline-flex;
   min-height: 44px;
+  /* "CV" measured 16px across here, under the 24px floor for the smallest
+     side of a target. Centring inside a 24px box costs 4px a side. */
+  min-width: 24px;
   align-items: center;
+  justify-content: center;
   color: var(--muted);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 4px;
-  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  text-decoration-color: var(--c-accent-line);
   transition: color var(--dur) var(--ease);
 }
 
@@ -923,9 +936,12 @@ main {
 
 @media (max-width: 480px) {
   /* No max-width here: the name is set to nowrap, so capping the box would
-     push the text out over the navigation instead of wrapping it. */
+     push the text out over the navigation instead of wrapping it.
+
+     This block used to also drop the nav to .7rem. Declared after the pill
+     block above, it won, and sidar was the only page in the set whose phone
+     navigation set at 11.2px instead of 12px. */
   .site-header__name { line-height: 1.25; }
-  .site-header nav a { font-size: .7rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
