@@ -676,6 +676,97 @@ a { color: var(--paper); }
 
 .library__noscript { color: var(--text-dim); }
 
+/* ------------------------- shelf of finished pieces -------------------------
+   Finished tracks have real cover art, so they get a grid of covers instead
+   of 40px rows; sketches keep the dated ledger below. The state pill reuses
+   the Play/Pause text the player already writes into .library-row__state. */
+
+.library-shelf {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: var(--s-4) var(--s-3);
+}
+
+.shelf-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--paper);
+  text-align: left;
+  cursor: pointer;
+}
+
+.shelf-tile__art {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--r-m);
+  background-color: var(--surface-raised);
+  background-size: cover;
+  background-position: center;
+  /* Dark covers have no edge of their own against the page. */
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+/* Overrides the ledger-row state styling this element also carries. */
+.shelf-tile__state {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-m);
+  /* --c-bg-0 at the scrim family's alpha, so covers dim the same way the
+     hero stills do. */
+  background: rgba(11, 11, 13, 0.55);
+  font-family: var(--mono);
+  font-size: var(--t-m1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.shelf-tile:hover .shelf-tile__state,
+.shelf-tile:focus-visible .shelf-tile__state,
+.shelf-tile.active .shelf-tile__state { opacity: 1; }
+
+.shelf-tile.active .shelf-tile__art { box-shadow: inset 0 0 0 2px var(--accent); }
+.shelf-tile.active .shelf-tile__name { color: var(--accent); }
+
+.shelf-tile__name {
+  margin-top: var(--s-1);
+  font-size: var(--t-s1);
+  font-weight: 500;
+  line-height: 1.35;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.shelf-tile__meta {
+  font-family: var(--mono);
+  font-size: var(--t-m1);
+  line-height: var(--lh-t3);
+  color: var(--text-faint);
+}
+
+@media (max-width: 560px) {
+  .library-shelf {
+    grid-template-columns: repeat(auto-fill, minmax(136px, 1fr));
+    gap: var(--s-3) var(--s-2);
+  }
+}
+
 /* ============================== noscript fallback ============================== */
 
 .music-fallback { padding-block: var(--section-pad); }

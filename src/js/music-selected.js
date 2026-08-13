@@ -641,14 +641,84 @@
     // visitors; the interactive library replaces it.
     const staticIndex = document.getElementById('musicStaticIndex');
     if (staticIndex) staticIndex.remove();
-    const years = new Map();
-    tracks.forEach((track, index) => {
-      const year = trackYear(track);
-      if (!years.has(year)) years.set(year, []);
-      years.get(year).push({ track: track, index: index });
-    });
 
     const rows = [];
+
+    // Finished pieces come as a shelf of covers: the artwork carries more
+    // than a 40px row ever showed, and the shelf keeps the newest-first
+    // order the heading promises. Sketches have no artwork of their own,
+    // so they stay a dated ledger below rather than a wall of gradients.
+    const releases = [];
+    const sketchEntries = [];
+    tracks.forEach((track, index) => {
+      (isSketch(track) ? sketchEntries : releases).push({ track: track, index: index });
+    });
+
+    if (releases.length) {
+      const shelf = document.createElement('section');
+      shelf.className = 'library-group library-group--shelf';
+
+      const heading = document.createElement('header');
+      heading.className = 'library-group__head';
+      const title = document.createElement('h3');
+      title.textContent = 'Finished';
+      const meta = document.createElement('p');
+      meta.textContent = releases.length + ' pieces · newest first';
+      heading.append(title, meta);
+
+      const grid = document.createElement('ol');
+      grid.className = 'library-shelf';
+
+      releases.forEach(entry => {
+        const track = entry.track;
+        const item = document.createElement('li');
+        const button = document.createElement('button');
+        const trackTitle = track.dataset.title || 'Untitled track';
+        button.className = 'shelf-tile';
+        button.type = 'button';
+        button.dataset.catalogTrack = trackTitle;
+        button.dataset.kind = 'release';
+        button.setAttribute('aria-label', 'Play ' + trackTitle + ', ' + accessibleDate(track) + ', ' + kindLabel(track));
+        button.setAttribute('aria-controls', 'playerBar');
+        button.setAttribute('aria-pressed', 'false');
+
+        const art = document.createElement('span');
+        art.className = 'shelf-tile__art';
+        art.setAttribute('aria-hidden', 'true');
+        art.style.backgroundImage = rowArtStyle(track);
+
+        // Carries the library-row class as well so setPlayState finds it
+        // with the same selector it uses for ledger rows.
+        const state = document.createElement('span');
+        state.className = 'library-row__state shelf-tile__state';
+        state.textContent = 'Play';
+        state.setAttribute('aria-hidden', 'true');
+
+        const name = document.createElement('span');
+        name.className = 'shelf-tile__name';
+        name.textContent = trackTitle;
+
+        const tileMeta = document.createElement('span');
+        tileMeta.className = 'shelf-tile__meta';
+        tileMeta.textContent = trackYear(track) + ' · ' + (track.dataset.duration || '');
+
+        button.append(art, state, name, tileMeta);
+        item.append(button);
+        grid.append(item);
+        rows.push(button);
+      });
+
+      shelf.append(heading, grid);
+      library.append(shelf);
+    }
+
+    const years = new Map();
+    sketchEntries.forEach(entry => {
+      const year = trackYear(entry.track);
+      if (!years.has(year)) years.set(year, []);
+      years.get(year).push(entry);
+    });
+
     years.forEach((entries, year) => {
       const group = document.createElement('section');
       group.className = 'library-group';
@@ -693,14 +763,13 @@
         const name = document.createElement('span');
         name.className = 'library-row__name';
         name.textContent = trackTitle;
-        const kind = document.createElement('span');
-        kind.className = 'library-row__kind library-row__kind--' + (isSketch(track) ? 'sketch' : 'finished');
-        kind.textContent = kindLabel(track);
+        // No kind badge here: every ledger row is a sketch now, and the
+        // year headings already carry the count.
 
         const detail = document.createElement('span');
         detail.className = 'library-row__detail';
         detail.textContent = rowDetail(track, activeFilter);
-        main.append(name, kind, detail);
+        main.append(name, detail);
 
         const date = document.createElement('time');
         date.className = 'library-row__date';
@@ -745,7 +814,7 @@
       if (rowTrack && detail) detail.textContent = rowDetail(rowTrack, filter);
     });
     Array.from(document.querySelectorAll('.library-group')).forEach(group => {
-      const shown = Array.from(group.querySelectorAll('.library-row'))
+      const shown = Array.from(group.querySelectorAll('[data-catalog-track]'))
         .some(row => !row.closest('li').hidden);
       group.hidden = !shown;
     });
