@@ -1132,7 +1132,11 @@
     shuffleOn = saved.shuffle === true;
     repeatMode = ['off', 'all', 'one'].indexOf(saved.repeat) >= 0 ? saved.repeat : 'off';
     buildOrder(null);
-    if (saved.title && byTitle.has(saved.title)) {
+    // Only a piece still on the set list resumes. A track picked once out of
+    // the archive, or one since dropped from the list, should not outrank the
+    // curated opener on every later visit.
+    const onSetList = tiles.some(tile => cardTitle(tile) === saved.title);
+    if (saved.title && onSetList && byTitle.has(saved.title)) {
       const index = tracks.indexOf(byTitle.get(saved.title));
       // Restore the selection only when it belongs to the active filter.
       // Autoplay without a gesture is blocked anyway.
