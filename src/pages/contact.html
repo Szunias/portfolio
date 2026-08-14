@@ -1,15 +1,21 @@
 <!-- The Graz clock is the object: a sender sees at a glance what time it is
      here and whether an answer is likely tonight or tomorrow. The address
      stays the largest thing on the page. Promoted from the contact-time
-     review page. Everything else this page used to say lives on the home
-     page already.
+     review page; the windable dial promoted from contact-wind. Everything
+     else this page used to say lives on the home page already.
+
+     The dial can be wound: drag it (or arrow keys once focused) and the
+     hands preview another hour, the light phase follows, and the caption
+     says when the mail would land. Released, it springs back to now.
 
      No form: the site is a static build with no backend, so a form would only
      fail on submit. -->
 <section class="ck" data-time-root data-phase="night" aria-labelledby="ck-address">
   <div class="ck__room">
     <figure class="ck__plate">
-      <svg class="ck__dial" viewBox="0 0 100 100" aria-hidden="true">
+      <svg class="ck__dial" viewBox="0 0 100 100" role="slider" tabindex="0"
+           aria-label="Wind the clock to preview another hour in Graz"
+           aria-valuemin="-24" aria-valuemax="24" aria-valuenow="0" aria-valuetext="now">
         <circle class="ck__ring" cx="50" cy="50" r="48"></circle>
         <g data-ticks></g>
         <line class="ck__hand ck__hand--hour" data-hand="hour" x1="50" y1="50" x2="50" y2="30"></line>
@@ -17,7 +23,10 @@
         <line class="ck__hand ck__hand--second" data-hand="second" x1="50" y1="54" x2="50" y2="16"></line>
         <circle class="ck__cap" cx="50" cy="50" r="1.8"></circle>
       </svg>
-      <figcaption class="ck__cap-line">Graz, Austria &middot; <time data-local-time datetime="">&mdash;</time></figcaption>
+      <figcaption class="ck__cap-line">
+        <span data-cap-now>Graz, Austria &middot; <time data-local-time datetime="">&mdash;</time></span>
+        <span data-cap-preview hidden></span>
+      </figcaption>
     </figure>
 
     <div class="ck__side">
