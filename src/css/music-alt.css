@@ -55,6 +55,22 @@
       rgba(11, 11, 13, 0.46) 100%);
 }
 
+/* The analyser sits between the scrim and the room: a log-frequency
+   spectrum along the bottom of the stage, faint at rest, full during
+   playback. Painted by music-alt.js. */
+.stage__spectrum {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.55;
+  transition: opacity 640ms ease;
+}
+
+.stage.is-playing .stage__spectrum { opacity: 1; }
+
 .stage__room {
   position: relative;
   z-index: 1;
@@ -242,6 +258,10 @@
 @media (max-width: 980px) {
   .stage { min-height: 0; }
 
+  /* The analyser needs horizontal room to read as an instrument; on the
+     stacked layout it would cut across the set list. */
+  .stage__spectrum { display: none; }
+
   .stage__room {
     grid-template-columns: minmax(0, 1fr);
     justify-items: center;
@@ -271,5 +291,6 @@
 @media print {
   .stage__atmosphere,
   .stage__scrim,
+  .stage__spectrum,
   .stage__viz { display: none; }
 }

@@ -2,17 +2,23 @@
   const audio = window.__musicAudio;
   const stage = document.querySelector('.stage');
   const plate = document.querySelector('.stage__plate');
-  const canvas = document.querySelector('.stage__viz');
-  if (!stage || !plate || !canvas) return;
+  const ringCanvas = document.querySelector('.stage__viz');
+  const specCanvas = document.querySelector('.stage__spectrum');
+  if (!stage || !plate || !ringCanvas) return;
 
   const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   let reduceMotion = reduceQuery.matches;
   const cards = Array.from(document.querySelectorAll('#trackData .track-card'));
   const titleEl = document.querySelector('.stage [data-player="title"]');
-  const ctx2d = canvas.getContext('2d');
-  if (!ctx2d) return;
+  const ringCtx = ringCanvas.getContext('2d');
+  const specCtx = specCanvas ? specCanvas.getContext('2d') : null;
+  if (!ringCtx) return;
 
-  const freq = new Uint8Array(128);
+  // ?viz=demo drives the analyser with synthetic data so the spectrum can be
+  // judged without sound playing (headless screenshots, local design passes).
+  const demoMode = /[?&]viz=demo\b/.test(window.location.search);
+
+  let freq = null;
   let analyser = null;
   let audioCtx = null;
   let graphFailed = false;
@@ -81,20 +87,25 @@
     if (title && title !== lastTitle) {
       lastTitle = title;
       applyPlate(trackByTitle(title));
-      sizeCanvasAndRedraw();
+      sizeCanvasesAndRedraw();
     }
     stage.classList.toggle('is-playing', !!(audio && !audio.paused && !audio.ended));
   }
 
-  function sizeCanvas() {
+  function sizeCanvas(canvas, ctx, w, h) {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const w = Math.max(1, Math.round(plate.clientWidth));
-    const h = Math.max(1, Math.round(plate.clientHeight));
+    w = Math.max(1, Math.round(w));
+    h = Math.max(1, Math.round(h));
     canvas.width = w * dpr;
     canvas.height = h * dpr;
     canvas.style.width = w + 'px';
     canvas.style.height = h + 'px';
-    ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function sizeCanvases() {
+    sizeCanvas(ringCanvas, ringCtx, plate.clientWidth, plate.clientHeight);
+    if (specCanvas && specCtx) sizeCanvas(specCanvas, specCtx, stage.clientWidth, stage.clientHeight);
   }
 
   function ensureGraph() {
@@ -108,10 +119,12 @@
       audioCtx = new Ctx();
       const source = audioCtx.createMediaElementSource(audio);
       analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 256;
-      analyser.smoothingTimeConstant = 0.84;
+      analyser.fftSize = 2048;
+      analyser.smoothingTimeConstant = 0.6;
       source.connect(analyser);
       analyser.connect(audioCtx.destination);
+      freq = new Uint8Array(analyser.frequencyBinCount);
+      computeBands();
     } catch (_) {
       graphFailed = true;
       analyser = null;
@@ -125,39 +138,160 @@
     }
   }
 
-  function drawRing(w, h, live) {
-    const cx = w / 2;
-    const cy = h / 2;
-    const rx = Math.max(8, w / 2 - 8);
-    const ry = Math.max(8, h / 2 - 8);
+  /* ---------------- spectrum: log-frequency analyser ---------------- */
 
-    ctx2d.beginPath();
-    ctx2d.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-    ctx2d.strokeStyle = 'rgba(236, 238, 240, 0.22)';
-    ctx2d.lineWidth = 1.25;
-    ctx2d.stroke();
+  const POINTS = 144;
+  const FMIN = 30;
+  const FMAX = 16000;
+  const GRID = [
+    [50, '50'], [100, '100'], [200, '200'], [500, '500'],
+    [1000, '1k'], [2000, '2k'], [5000, '5k'], [10000, '10k']
+  ];
+  const cur = new Float32Array(POINTS);
+  const peak = new Float32Array(POINTS);
+  let bandLo = null;
+  let bandHi = null;
+
+  function computeBands() {
+    const nyquist = audioCtx.sampleRate / 2;
+    const bins = analyser.frequencyBinCount;
+    bandLo = new Uint16Array(POINTS);
+    bandHi = new Uint16Array(POINTS);
+    for (let i = 0; i < POINTS; i++) {
+      const f0 = FMIN * Math.pow(FMAX / FMIN, (i - 0.5) / (POINTS - 1));
+      const f1 = FMIN * Math.pow(FMAX / FMIN, (i + 0.5) / (POINTS - 1));
+      let lo = Math.floor((f0 / nyquist) * bins);
+      let hi = Math.ceil((f1 / nyquist) * bins);
+      lo = Math.max(0, Math.min(bins - 1, lo));
+      hi = Math.max(lo + 1, Math.min(bins, hi));
+      bandLo[i] = lo;
+      bandHi[i] = hi;
+    }
+  }
+
+  function hump(t, center, width) {
+    const d = (t - center) / width;
+    return Math.exp(-d * d);
+  }
+
+  function sampleSpectrum(nowMs) {
+    const liveAudio = analyser && playingNow();
+    if (liveAudio) analyser.getByteFrequencyData(freq);
+    for (let i = 0; i < POINTS; i++) {
+      const t = i / (POINTS - 1);
+      let v;
+      if (liveAudio) {
+        let sum = 0;
+        for (let b = bandLo[i]; b < bandHi[i]; b++) sum += freq[b];
+        v = sum / (bandHi[i] - bandLo[i]) / 255;
+        // Gentle tilt so the top octaves read against the bass-heavy FFT.
+        v *= 0.66 + 0.62 * t;
+      } else {
+        const s = nowMs / 1000;
+        v = 0.8 * hump(t, 0.1, 0.14) * (0.62 + 0.38 * Math.sin(s * 2.2))
+          + 0.5 * hump(t, 0.42, 0.2) * (0.6 + 0.3 * Math.sin(s * 1.3 + 1.7))
+          + 0.44 * hump(t, 0.74, 0.11) * (0.55 + 0.35 * Math.sin(s * 3.6 + 0.5))
+          + 0.04 + 0.05 * Math.random();
+      }
+      if (v > 1) v = 1;
+      if (v < 0) v = 0;
+      cur[i] += (v - cur[i]) * (v > cur[i] ? 0.5 : 0.1);
+      peak[i] = Math.max(peak[i] - 0.0045, cur[i]);
+    }
+  }
+
+  function tracePath(values, w, base, amp) {
+    const step = w / (POINTS - 1);
+    let px = 0;
+    let py = base - values[0] * amp;
+    specCtx.moveTo(px, py);
+    for (let i = 1; i < POINTS; i++) {
+      const x = i * step;
+      const y = base - values[i] * amp;
+      specCtx.quadraticCurveTo(px, py, (px + x) / 2, (py + y) / 2);
+      px = x;
+      py = y;
+    }
+    specCtx.lineTo(px, py);
+  }
+
+  function drawSpectrum(live) {
+    if (!specCtx || !specCanvas.clientWidth) return;
+    const w = stage.clientWidth;
+    const h = stage.clientHeight;
+    if (w < 8 || h < 8) return;
+    specCtx.clearRect(0, 0, w, h);
+    const base = h - 40;
+    const amp = h * 0.44;
+    const span = Math.log(FMAX / FMIN);
+
+    specCtx.font = '10px "IBM Plex Mono", ui-monospace, monospace';
+    specCtx.textAlign = 'center';
+    specCtx.lineWidth = 1;
+    for (let g = 0; g < GRID.length; g++) {
+      const x = Math.round((w * Math.log(GRID[g][0] / FMIN)) / span) + 0.5;
+      specCtx.strokeStyle = 'rgba(236, 238, 240, 0.06)';
+      specCtx.beginPath();
+      specCtx.moveTo(x, base);
+      specCtx.lineTo(x, base - amp - 24);
+      specCtx.stroke();
+      specCtx.fillStyle = 'rgba(236, 238, 240, 0.3)';
+      specCtx.fillText(GRID[g][1], x, base + 18);
+    }
+    specCtx.strokeStyle = 'rgba(236, 238, 240, 0.12)';
+    specCtx.beginPath();
+    specCtx.moveTo(0, base + 0.5);
+    specCtx.lineTo(w, base + 0.5);
+    specCtx.stroke();
 
     if (!live) return;
 
-    analyser.getByteFrequencyData(freq);
-    const bins = 64;
-    const maxBar = Math.min(w, h) * 0.055;
-    ctx2d.lineCap = 'round';
-    for (let i = 0; i < bins; i++) {
-      const sample = freq[Math.min(freq.length - 1, 2 + Math.floor(i * 0.85))];
-      const value = sample / 255;
-      const angle = (i / bins) * Math.PI * 2 - Math.PI / 2;
-      const ox = Math.cos(angle);
-      const oy = Math.sin(angle);
-      const innerX = cx + ox * rx;
-      const innerY = cy + oy * ry;
-      ctx2d.beginPath();
-      ctx2d.moveTo(innerX, innerY);
-      ctx2d.lineTo(innerX + ox * (3 + value * maxBar), innerY + oy * (3 + value * maxBar));
-      ctx2d.strokeStyle = 'rgba(236, 238, 240,' + (0.2 + value * 0.7) + ')';
-      ctx2d.lineWidth = 2;
-      ctx2d.stroke();
-    }
+    specCtx.lineJoin = 'round';
+
+    // Peak-hold contour, slowly falling back to the live curve.
+    specCtx.beginPath();
+    tracePath(peak, w, base, amp);
+    specCtx.strokeStyle = 'rgba(170, 198, 222, 0.3)';
+    specCtx.lineWidth = 1;
+    specCtx.stroke();
+
+    // Filled spectrum body.
+    specCtx.beginPath();
+    tracePath(cur, w, base, amp);
+    specCtx.lineTo(w, base);
+    specCtx.lineTo(0, base);
+    specCtx.closePath();
+    const fillGrad = specCtx.createLinearGradient(0, base - amp, 0, base);
+    fillGrad.addColorStop(0, 'rgba(170, 198, 222, 0.22)');
+    fillGrad.addColorStop(1, 'rgba(170, 198, 222, 0.02)');
+    specCtx.fillStyle = fillGrad;
+    specCtx.fill();
+
+    // Soft glow pass under a crisp line.
+    specCtx.beginPath();
+    tracePath(cur, w, base, amp);
+    specCtx.strokeStyle = 'rgba(170, 198, 222, 0.12)';
+    specCtx.lineWidth = 6;
+    specCtx.stroke();
+    specCtx.beginPath();
+    tracePath(cur, w, base, amp);
+    specCtx.strokeStyle = 'rgba(190, 214, 234, 0.85)';
+    specCtx.lineWidth = 1.5;
+    specCtx.stroke();
+  }
+
+  /* ---------------- ring: still frame around the cover ---------------- */
+
+  function drawRing() {
+    const w = plate.clientWidth;
+    const h = plate.clientHeight;
+    if (w < 8 || h < 8) return;
+    ringCtx.clearRect(0, 0, w, h);
+    ringCtx.beginPath();
+    ringCtx.ellipse(w / 2, h / 2, Math.max(8, w / 2 - 8), Math.max(8, h / 2 - 8), 0, 0, Math.PI * 2);
+    ringCtx.strokeStyle = 'rgba(236, 238, 240, 0.22)';
+    ringCtx.lineWidth = 1.25;
+    ringCtx.stroke();
   }
 
   function playingNow() {
@@ -165,28 +299,22 @@
   }
 
   function drawStatic() {
-    const w = plate.clientWidth;
-    const h = plate.clientHeight;
-    if (w < 8 || h < 8) return;
-    ctx2d.clearRect(0, 0, w, h);
-    drawRing(w, h, false);
+    drawRing();
+    drawSpectrum(false);
   }
 
-  // The loop runs only while sound is actually playing; a resting page
-  // draws its ring once and schedules nothing. Reduced-motion visitors
-  // keep the still ring even during playback.
-  function drawFrame() {
+  // The loop runs only while sound is actually playing (or in demo mode); a
+  // resting page draws its ring and grid once and schedules nothing.
+  // Reduced-motion visitors keep the still frame even during playback.
+  function drawFrame(nowMs) {
     raf = 0;
-    if (!(analyser && playingNow() && !reduceMotion)) {
+    const live = !reduceMotion && (demoMode || (analyser && playingNow()));
+    if (!live) {
       drawStatic();
       return;
     }
-    const w = plate.clientWidth;
-    const h = plate.clientHeight;
-    if (w >= 8 && h >= 8) {
-      ctx2d.clearRect(0, 0, w, h);
-      drawRing(w, h, true);
-    }
+    sampleSpectrum(nowMs || 0);
+    drawSpectrum(true);
     raf = window.requestAnimationFrame(drawFrame);
   }
 
@@ -195,6 +323,7 @@
   }
 
   function stop() {
+    if (demoMode) return;
     if (raf) {
       window.cancelAnimationFrame(raf);
       raf = 0;
@@ -202,19 +331,22 @@
     drawStatic();
   }
 
-  function sizeCanvasAndRedraw() {
-    sizeCanvas();
-    // Resizing wipes the bitmap; the running loop repaints on its own,
-    // a resting page needs its still ring back.
-    if (!raf) drawStatic();
+  function sizeCanvasesAndRedraw() {
+    sizeCanvases();
+    // Resizing wipes the bitmaps; the running loop repaints the spectrum on
+    // its own, but the ring is out of the loop and a resting page needs its
+    // still frame back either way.
+    drawRing();
+    if (!raf) drawSpectrum(false);
   }
 
   applyPlate(trackByTitle(titleEl ? titleEl.textContent.trim() : ''));
-  sizeCanvas();
+  sizeCanvases();
   drawStatic();
-  window.addEventListener('resize', sizeCanvasAndRedraw, { passive: true });
+  window.addEventListener('resize', sizeCanvasesAndRedraw, { passive: true });
   if (typeof ResizeObserver === 'function') {
-    new ResizeObserver(sizeCanvasAndRedraw).observe(plate);
+    new ResizeObserver(sizeCanvasesAndRedraw).observe(plate);
+    new ResizeObserver(sizeCanvasesAndRedraw).observe(stage);
   }
 
   if (typeof reduceQuery.addEventListener === 'function') {
@@ -253,5 +385,10 @@
       characterData: true,
       subtree: true
     });
+  }
+
+  if (demoMode && specCanvas) {
+    specCanvas.style.opacity = '1';
+    if (!reduceMotion) start();
   }
 })();
