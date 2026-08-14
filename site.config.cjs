@@ -259,6 +259,28 @@ module.exports = {
       sitemap: false,
     },
 
+    // The published clock page with a windable dial, for review. Dragging the
+    // dial previews another hour in Graz; contact-wind.js replaces
+    // contact-time.js because both would write the same hand transforms.
+    {
+      slug: 'contact-wind',
+      layout: 'home',
+      css: ['contact', 'contact-time', 'contact-wind'],
+      js: ['prefetch', 'contact-alt', 'contact-wind'],
+      title: 'Contact, wound clock | Igor Szuniewicz',
+      description: 'Write to Igor Szuniewicz in Graz. Wind the clock forward to see what time your mail would arrive, then let it spring back. Copy the address or open a mail.',
+      canonical: `${SITE}/contact-wind.html`,
+      ogType: 'website',
+      schemaPageType: 'ContactPage',
+      ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_04.jpg`,
+      ogImageAlt: 'Lit stage with a piano and instruments in the Shadow Frames pub, the still used on the published contact page',
+      ogImageWidth: 1920,
+      ogImageHeight: 1080,
+      ogImageType: 'image/jpeg',
+      noindex: true,
+      sitemap: false,
+    },
+
     // Projects with lightbox
     {
       slug: 'sidar',
