@@ -243,20 +243,32 @@
     buildOrder(keepCurrent && pool.indexOf(current) >= 0 ? current : null);
   }
 
-  function playOrderPos(position) {
+  // The last track the listener deliberately navigated to (a click on a
+  // track, next/prev, a queue jump). Auto-advance after a track ends and
+  // shuffle landings do not count, so they cannot overwrite a real choice.
+  let chosenTitle = '';
+
+  function rememberChoice(index) {
+    const track = tracks[index];
+    chosenTitle = track ? track.dataset.title : '';
+    saveState();
+  }
+
+  function playOrderPos(position, explicit) {
     if (position < 0 || position >= order.length) return;
     orderPos = position;
     select(order[position], true);
+    if (explicit) rememberChoice(order[position]);
   }
 
   function goNext(userInitiated) {
     if (!order.length) return;
     if (orderPos < 0) {
-      playOrderPos(0);
+      playOrderPos(0, userInitiated);
       return;
     }
     if (orderPos + 1 < order.length) {
-      playOrderPos(orderPos + 1);
+      playOrderPos(orderPos + 1, userInitiated);
       return;
     }
     if (repeatMode === 'all' || userInitiated) {
@@ -270,7 +282,7 @@
         order = reshuffledOrder;
         renderQueue();
       }
-      playOrderPos(0);
+      playOrderPos(0, userInitiated);
       return;
     }
     audio.pause();
@@ -287,10 +299,10 @@
       return;
     }
     if (orderPos > 0) {
-      playOrderPos(orderPos - 1);
+      playOrderPos(orderPos - 1, true);
       return;
     }
-    if (order.length) playOrderPos(order.length - 1);
+    if (order.length) playOrderPos(order.length - 1, true);
   }
 
   function playTrackIndex(index) {
@@ -305,6 +317,7 @@
     if (at >= 0) orderPos = at;
     else buildOrder(index);
     select(index, true);
+    rememberChoice(index);
   }
 
   // ------------------------------------------------------------ media session
@@ -879,7 +892,7 @@
       time.className = 'now-playing__queue-time';
       time.textContent = track.dataset.duration || '';
       button.append(art, name, time);
-      button.addEventListener('click', () => playOrderPos(orderPos + 1 + offset));
+      button.addEventListener('click', () => playOrderPos(orderPos + 1 + offset, true));
       item.append(button);
       list.append(item);
     });
@@ -1106,6 +1119,7 @@
   function saveState() {
     try {
       window.localStorage.setItem(STORE_KEY, JSON.stringify({
+        title: chosenTitle,
         volume: audio.volume,
         muted: audio.muted,
         shuffle: shuffleOn,
@@ -1130,9 +1144,21 @@
     shuffleOn = saved.shuffle === true;
     repeatMode = ['off', 'all', 'one'].indexOf(saved.repeat) >= 0 ? saved.repeat : 'off';
     buildOrder(null);
-    // The selection itself is deliberately NOT restored: the set list is a
-    // curated opening, so every visit starts on the first piece. Only the
-    // listening preferences above survive between visits.
+    // Only a track the listener deliberately navigated to comes back, and
+    // only while it is still on the set list. Auto-advance never saves, so
+    // wherever playback happened to stop cannot outrank the curated opener.
+    const onSetList = tiles.some(tile => cardTitle(tile) === saved.title);
+    if (saved.title && onSetList && byTitle.has(saved.title)) {
+      const index = tracks.indexOf(byTitle.get(saved.title));
+      // Restore the selection only when it belongs to the active filter.
+      // Autoplay without a gesture is blocked anyway.
+      if (validIndex(index) && pool.indexOf(index) >= 0) {
+        const at = order.indexOf(index);
+        if (at >= 0) orderPos = at;
+        chosenTitle = saved.title;
+        select(index, false);
+      }
+    }
   }
 
   // ----------------------------------------------------------- audio events
@@ -1240,9 +1266,8 @@
   registerMediaHandlers();
   applyFilter(DEFAULT_FILTER);
   restoreState();
-  // Open on the first piece of the set list so the stage shows a selection
-  // instead of an empty player. Every visit, not just the first: the opener
-  // is curated and a saved selection no longer outranks it.
+  // Nothing chosen on an earlier visit: open on the first piece of the set
+  // list so the stage shows a selection instead of an empty player.
   if (!selectedTrack() && tiles.length) {
     const firstFeatured = byTitle.get(cardTitle(tiles[0]));
     const firstIndex = firstFeatured ? tracks.indexOf(firstFeatured) : -1;
