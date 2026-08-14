@@ -1105,9 +1105,7 @@
 
   function saveState() {
     try {
-      const track = selectedTrack();
       window.localStorage.setItem(STORE_KEY, JSON.stringify({
-        title: track ? track.dataset.title : '',
         volume: audio.volume,
         muted: audio.muted,
         shuffle: shuffleOn,
@@ -1132,20 +1130,9 @@
     shuffleOn = saved.shuffle === true;
     repeatMode = ['off', 'all', 'one'].indexOf(saved.repeat) >= 0 ? saved.repeat : 'off';
     buildOrder(null);
-    // Only a piece still on the set list resumes. A track picked once out of
-    // the archive, or one since dropped from the list, should not outrank the
-    // curated opener on every later visit.
-    const onSetList = tiles.some(tile => cardTitle(tile) === saved.title);
-    if (saved.title && onSetList && byTitle.has(saved.title)) {
-      const index = tracks.indexOf(byTitle.get(saved.title));
-      // Restore the selection only when it belongs to the active filter.
-      // Autoplay without a gesture is blocked anyway.
-      if (validIndex(index) && pool.indexOf(index) >= 0) {
-        const at = order.indexOf(index);
-        if (at >= 0) orderPos = at;
-        select(index, false);
-      }
-    }
+    // The selection itself is deliberately NOT restored: the set list is a
+    // curated opening, so every visit starts on the first piece. Only the
+    // listening preferences above survive between visits.
   }
 
   // ----------------------------------------------------------- audio events
@@ -1253,9 +1240,9 @@
   registerMediaHandlers();
   applyFilter(DEFAULT_FILTER);
   restoreState();
-  // First visit, nothing restored: open on the first piece of the set list
-  // so the stage shows a selection instead of an empty player. Returning
-  // listeners keep whatever they last played.
+  // Open on the first piece of the set list so the stage shows a selection
+  // instead of an empty player. Every visit, not just the first: the opener
+  // is curated and a saved selection no longer outranks it.
   if (!selectedTrack() && tiles.length) {
     const firstFeatured = byTitle.get(cardTitle(tiles[0]));
     const firstIndex = firstFeatured ? tracks.indexOf(firstFeatured) : -1;
