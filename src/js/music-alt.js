@@ -278,6 +278,84 @@
     specCtx.strokeStyle = 'rgba(190, 214, 234, 0.85)';
     specCtx.lineWidth = 1.5;
     specCtx.stroke();
+
+    drawInspector(w, base, amp);
+  }
+
+  /* ---------------- inspector: the frequency under the cursor ----------------
+     Mouse only, and only while the spectrum is actually drawing: the hairline
+     and readout ride inside the live render loop, so a resting page never
+     pays for them. Touch is left alone so nothing competes with scrolling. */
+
+  const finePointer = window.matchMedia('(pointer: fine)').matches;
+  const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+  let hoverX = -1;
+  let hoverY = -1;
+
+  function noteLabel(f) {
+    const midi = Math.round(69 + 12 * Math.log2(f / 440));
+    if (midi < 12 || midi > 131) return '';
+    return NOTE_NAMES[midi % 12] + (Math.floor(midi / 12) - 1);
+  }
+
+  function drawInspector(w, base, amp) {
+    if (hoverX < 0 || hoverY < base - amp - 24 || hoverY > base + 20) return;
+    const t = Math.max(0, Math.min(1, hoverX / w));
+    const f = FMIN * Math.pow(FMAX / FMIN, t);
+    const x = Math.round(hoverX) + 0.5;
+
+    specCtx.strokeStyle = 'rgba(170, 198, 222, 0.35)';
+    specCtx.lineWidth = 1;
+    specCtx.beginPath();
+    specCtx.moveTo(x, base);
+    specCtx.lineTo(x, base - amp - 24);
+    specCtx.stroke();
+
+    const i = Math.round(t * (POINTS - 1));
+    specCtx.beginPath();
+    specCtx.arc(hoverX, base - cur[i] * amp, 2.5, 0, Math.PI * 2);
+    specCtx.fillStyle = 'rgba(190, 214, 234, 0.9)';
+    specCtx.fill();
+
+    const note = noteLabel(f);
+    const label = (f < 1000 ? Math.round(f) + ' Hz' : (f / 1000).toFixed(1) + ' kHz') + (note ? ' · ' + note : '');
+    specCtx.font = '10px "IBM Plex Mono", ui-monospace, monospace';
+    specCtx.fillStyle = 'rgba(190, 214, 234, 0.85)';
+    const flip = hoverX > w - 84;
+    specCtx.textAlign = flip ? 'right' : 'left';
+    /* The canvas sits under the page content, so the top of the hairline can
+       run behind the track list; the readout stays in the clear strip just
+       above the baseline instead. */
+    specCtx.fillText(label, flip ? hoverX - 8 : hoverX + 8, base - 8);
+  }
+
+  function inspectorLive() {
+    return !reduceMotion && (demoMode || playingNow());
+  }
+
+  if (finePointer && specCtx) {
+    stage.addEventListener('pointermove', function (event) {
+      if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
+      const over = event.target && event.target.closest &&
+        event.target.closest('a, button, input, [role="slider"]');
+      if (over) {
+        hoverX = -1;
+        stage.classList.remove('stage--inspect');
+        return;
+      }
+      const box = stage.getBoundingClientRect();
+      hoverX = event.clientX - box.left;
+      hoverY = event.clientY - box.top;
+      const base = stage.clientHeight - 40;
+      const amp = stage.clientHeight * 0.44;
+      const inBand = hoverY >= base - amp - 24 && hoverY <= base + 20;
+      stage.classList.toggle('stage--inspect', inBand && inspectorLive());
+    }, { passive: true });
+
+    stage.addEventListener('pointerleave', function () {
+      hoverX = -1;
+      stage.classList.remove('stage--inspect');
+    }, { passive: true });
   }
 
   /* ---------------- ring: still frame around the cover ---------------- */
