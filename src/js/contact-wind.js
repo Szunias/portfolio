@@ -1,9 +1,10 @@
 (function () {
-  /* The windable fork of contact-time.js for the contact-wind review page.
-     It owns the hands, the phase and the caption, so the page must include it
-     INSTEAD of contact-time.js: two writers on the same transform attributes
-     would fight once the preview offset is non-zero. contact-alt.js only ever
-     writes into [data-local-time], which lives in its own caption span here. */
+  /* The windable clock on the published contact page (and its contact-wind
+     review twin), forked from contact-time.js. It owns the hands, the phase
+     and the caption, so a page must include it INSTEAD of contact-time.js:
+     two writers on the same transform attributes would fight once the preview
+     offset is non-zero. contact-alt.js only ever writes into
+     [data-local-time], which lives in its own caption span here. */
   const ZONE = 'Europe/Vienna';
   const MAX_OFFSET = 24 * 60;
   const root = document.querySelector('[data-time-root]');

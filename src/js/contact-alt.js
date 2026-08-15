@@ -1,6 +1,8 @@
 (function () {
   const EMAIL = 'igorszuniewiczwork@gmail.com';
-  const ZONE = 'Europe/Brussels';
+  // Graz: the caption next to the readout names the city, and the footer
+  // clock (colophon-clock.js) reads the same zone, so the two never disagree.
+  const ZONE = 'Europe/Vienna';
   const TOPICS = {
     game: 'Game audio',
     vr: 'Spatial and VR sound',
@@ -87,20 +89,18 @@
     } else {
       label = now.toTimeString().slice(0, 5);
     }
+    let iso = '';
+    if (isoFmt) {
+      const parts = isoFmt.formatToParts(now);
+      const get = function (type) {
+        const part = parts.find(function (item) { return item.type === type; });
+        return part ? part.value : '';
+      };
+      iso = get('year') + '-' + get('month') + '-' + get('day') + 'T' + get('hour') + ':' + get('minute');
+    }
     clockOuts.forEach(function (el) {
-      if (el.tagName === 'TIME') {
-        if (isoFmt) {
-          const parts = isoFmt.formatToParts(now);
-          const get = function (type) {
-            const part = parts.find(function (item) { return item.type === type; });
-            return part ? part.value : '';
-          };
-          el.dateTime = get('year') + '-' + get('month') + '-' + get('day') + 'T' + get('hour') + ':' + get('minute');
-        }
-        el.textContent = label;
-      } else {
-        el.textContent = label;
-      }
+      if (el.tagName === 'TIME' && iso) el.dateTime = iso;
+      el.textContent = label;
     });
   }
 

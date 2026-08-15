@@ -741,13 +741,9 @@
       heading.className = 'library-group__head';
       const title = document.createElement('h3');
       title.textContent = year;
-      const finished = entries.filter(entry => !isSketch(entry.track)).length;
-      const sketches = entries.length - finished;
       const meta = document.createElement('p');
-      const parts = [];
-      if (finished) parts.push(finished + ' finished');
-      if (sketches) parts.push(sketches + (sketches === 1 ? ' sketch' : ' sketches'));
-      meta.textContent = parts.join(' · ');
+      // Every ledger entry is a sketch; finished pieces live on the shelf above.
+      meta.textContent = entries.length + (entries.length === 1 ? ' sketch' : ' sketches');
       heading.append(title, meta);
 
       const list = document.createElement('ol');
@@ -761,7 +757,7 @@
         button.className = 'library-row';
         button.type = 'button';
         button.dataset.catalogTrack = trackTitle;
-        button.dataset.kind = isSketch(track) ? 'sketch' : 'release';
+        button.dataset.kind = 'sketch';
         button.setAttribute('aria-label', 'Play ' + trackTitle + ', ' + accessibleDate(track) + ', ' + kindLabel(track));
         button.setAttribute('aria-controls', 'playerBar');
         button.setAttribute('aria-pressed', 'false');
@@ -776,8 +772,6 @@
         const name = document.createElement('span');
         name.className = 'library-row__name';
         name.textContent = trackTitle;
-        // No kind badge here: every ledger row is a sketch now, and the
-        // year headings already carry the count.
 
         const detail = document.createElement('span');
         detail.className = 'library-row__detail';
@@ -840,8 +834,6 @@
       if (filter === 'all' || (isSketch(track) ? 'sketch' : 'release') === filter) indices.push(index);
     });
     setPool(indices, true);
-    // The kind badge only says something when both kinds are on screen at once.
-    if (library) library.classList.toggle('is-all', filter === 'all');
     return visible;
   }
 

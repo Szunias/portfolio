@@ -403,6 +403,17 @@ function schemaTags(page) {
 function injectStaticTrackIndex(content) {
   const cards = content.match(/<div class="track-card"[^>]*>/g) || [];
   if (!cards.length) return content;
+
+  // The filter chips print how many tracks each filter holds. Counting the
+  // cards here keeps those numbers honest when a track is added or reclassed,
+  // instead of trusting a hand-typed figure in four page files.
+  const sketches = cards.filter(tag => /\bdata-kind="sketch"/.test(tag)).length;
+  const counts = { all: cards.length, release: cards.length - sketches, sketch: sketches };
+  content = content.replace(
+    /(<button[^>]*\bdata-filter="(all|release|sketch)"[^>]*>[^<]*<span class="filter-chip__count">)\d*(<\/span>)/g,
+    (_, open, filter, close) => `${open}${counts[filter]}${close}`
+  );
+
   const items = cards.map(tag => {
     const title = (tag.match(/data-title="([^"]*)"/) || [])[1];
     if (!title) return '';
