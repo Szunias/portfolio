@@ -184,14 +184,24 @@
 
 .stage .track-tile:last-of-type { border-bottom: 0; }
 
+/* The title already rests at --paper, so lifting it on hover changed nothing;
+   the index and time were the only inks left with room to move. They step up
+   from faint to body ink, and the row's own hairline brightens under it, so
+   the pointer gets an answer without a fill or a transform. */
 .stage .track-tile:hover,
 .stage .track-tile:focus-visible {
   background: transparent;
+  border-bottom-color: var(--c-line-3);
   color: var(--paper);
 }
 
 .stage .track-tile:hover .track-tile__title,
 .stage .track-tile:focus-visible .track-tile__title { color: var(--paper); }
+
+.stage .track-tile:hover .track-tile__index,
+.stage .track-tile:hover .track-tile__time,
+.stage .track-tile:focus-visible .track-tile__index,
+.stage .track-tile:focus-visible .track-tile__time { color: var(--c-ink-2); }
 
 .stage .track-tile.active {
   background: transparent;
@@ -242,8 +252,12 @@
   position: relative;
   z-index: 1;
   padding-top: var(--s-6);
-  border-top: 1px solid var(--rule);
-  background: var(--c-bg-1);
+  border-top: 0;
+  /* One shorthand: the ground colour plus the inset hairline on the text
+     edge. A separate border-top spanned the whole page frame. */
+  background:
+    linear-gradient(var(--rule), var(--rule)) var(--page-gutter) 0 / calc(100% - var(--page-gutter) * 2) 1px no-repeat,
+    var(--c-bg-1);
 }
 
 .library .section-heading {

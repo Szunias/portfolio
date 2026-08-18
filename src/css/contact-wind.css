@@ -4,9 +4,13 @@
 
 .ck__dial {
   cursor: grab;
-  /* The dial is the one place on the page where a touch drag must wind the
-     clock instead of scrolling; everywhere else the page scrolls as usual. */
-  touch-action: none;
+  /* At 360 the dial is 300px square and a third of the first screen. With
+     touch-action: none a finger that landed on it could not scroll the page
+     at all. pan-y hands vertical drags back to the browser (the page scrolls,
+     the script gets pointercancel and springs the hands back) and keeps
+     sideways and circular drags for winding, which is how the dial is turned
+     anyway. */
+  touch-action: pan-y;
 }
 
 .ck--scrubbing .ck__dial { cursor: grabbing; }

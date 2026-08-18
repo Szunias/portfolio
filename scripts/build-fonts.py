@@ -65,16 +65,25 @@ UNICODES = [
 
 # (output stem, upstream path, axis limits, subfamily note)
 FAMILIES = [
-    # Body copy: Inter at 400 and 500 only. opsz is pinned to 14 (the optical
-    # size the layout was designed at) so the variable font keeps one axis.
+    # Body copy: Inter at 400 to 600. opsz is pinned to 14 (the optical size
+    # the layout was designed at) so the variable font keeps one axis. 600 is
+    # in the range because --micro-act-strong (primary buttons), the selected
+    # piece titles on the music page and the contact "Copy address" action all
+    # ask for it; with a 400-500 file every one of those was browser-synthesised
+    # faux bold.
     ("inter-latin", "ofl/inter/Inter[opsz,wght].ttf",
-     {"opsz": 14, "wght": (400, 500)}, "Inter"),
+     {"opsz": 14, "wght": (400, 600)}, "Inter"),
     # Display: Space Grotesk at 500/600/700.
     ("space-grotesk-latin", "ofl/spacegrotesk/SpaceGrotesk[wght].ttf",
      {"wght": (500, 700)}, "Space Grotesk"),
     # Mono: static regular, nothing to instantiate.
     ("ibm-plex-mono-latin", "ofl/ibmplexmono/IBMPlexMono-Regular.ttf",
      None, "IBM Plex Mono"),
+    # Mono emphasis: <strong> inside mono data labels (the AI research chart,
+    # the tool release asides) asks for bold. One static SemiBold file lets the
+    # browser match a real face instead of smearing the regular one.
+    ("ibm-plex-mono-latin-600", "ofl/ibmplexmono/IBMPlexMono-SemiBold.ttf",
+     None, "IBM Plex Mono SemiBold"),
 ]
 
 LICENCES = [

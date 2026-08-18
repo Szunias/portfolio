@@ -491,7 +491,13 @@ a { color: var(--paper); }
    two sections read as misaligned. */
 .library {
   padding-block: var(--s-6) var(--section-pad);
-  border-top: 1px solid var(--rule);
+  /* The archive box is the page frame, so a border-top ran a gutter past the
+     text edge on both sides. Painted inset instead, like .colophon. */
+  border-top: 0;
+  background-image: linear-gradient(var(--rule), var(--rule));
+  background-repeat: no-repeat;
+  background-position: var(--page-gutter) 0;
+  background-size: calc(100% - var(--page-gutter) * 2) 1px;
 }
 
 .library .section-heading,
@@ -1343,6 +1349,21 @@ a { color: var(--paper); }
 
   .player-bar__artist,
   .player-bar__sep { display: none; }
+}
+
+/* At 360 the info column measured 62px: the title clipped to "Miss Y…" and
+   the status, which could not shrink, painted under the expand chevron. The
+   status now ellipsizes inside its column, and the readout drops the total
+   (the sheet still shows it) so the title gets the width back. The current
+   time stays: that is the position feedback the block above keeps for phones. */
+@media (max-width: 480px) {
+  .player-bar__status {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .player-bar__time-sep,
+  .player-bar__time-group [data-player='total-time'] { display: none; }
 }
 
 @media (max-width: 700px) {

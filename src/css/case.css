@@ -375,7 +375,14 @@ main { position: relative; }
   align-items: baseline;
   flex-wrap: wrap;
   gap: 22px;
-  border-top: 1px solid var(--rule);
+  /* Painted inset, not border-top: this box is the page frame, so a border
+     ran the gutter's width past the text edge on both sides (the same miss
+     _tokens.css fixes for .colophon). */
+  border-top: 0;
+  background-image: linear-gradient(var(--rule), var(--rule));
+  background-repeat: no-repeat;
+  background-position: var(--page-gutter) 0;
+  background-size: calc(100% - var(--page-gutter) * 2) 1px;
   padding-top: 34px;
 }
 
@@ -1331,6 +1338,11 @@ main#main-content { position: relative; z-index: 1; }
   height: auto;
 }
 
+/* Rendered only where the diagram scrolls (see the 700px block below): the
+   same sticky mono cue the Transientica table uses, so a phone is told the
+   panels continue past the cut "02" instead of guessing. */
+.sf-diagram__hint { display: none; }
+
 .sf-diagram text {
   font-family: var(--micro-data-font);
   font-size: 13px;
@@ -1443,6 +1455,22 @@ main#main-content { position: relative; z-index: 1; }
      frame - the pattern the wide tables on this site already use. */
   .sf-diagram { overflow-x: auto; overscroll-behavior-x: contain; }
   .sf-diagram svg { min-width: 620px; }
+
+  .sf-diagram__hint {
+    position: sticky;
+    left: 0;
+    display: block;
+    width: max-content;
+    margin: 0 0 6px;
+    padding: 0 6px;
+    color: var(--ink-55);
+    font-family: var(--micro-data-font);
+    font-size: var(--t-m1);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  .sf-diagram__hint span { color: var(--c-accent); }
   .sf-cue-figure figcaption { grid-template-columns: minmax(0, 1fr); gap: 4px; }
 }
 
@@ -2189,7 +2217,13 @@ main#main-content { position: relative; z-index: 1; }
      the page look like it ended twice. */
   margin: clamp(28px, 4vh, 44px) auto 0;
   padding: 22px var(--page-gutter) 0;
-  border-top: 1px solid var(--rule);
+  /* Inset hairline on the text edge, as .colophon does; a border here spanned
+     the full page frame. */
+  border-top: 0;
+  background-image: linear-gradient(var(--rule), var(--rule));
+  background-repeat: no-repeat;
+  background-position: var(--page-gutter) 0;
+  background-size: calc(100% - var(--page-gutter) * 2) 1px;
   font-size: var(--t-s1);
   line-height: var(--lh-b1);
   color: var(--ink-55);
@@ -3075,10 +3109,14 @@ main#main-content { position: relative; z-index: 1; }
   border-radius: var(--r-s);
 }
 
+/* The two clips are 1920x1140 and 1722x916, neither 16:9. A hardcoded 16/9 box
+   with object-fit: cover cropped about 5% off each frame and its poster; the
+   page hands each video its own ratio through --shot-ar, the same property the
+   facades and gallery shots use. */
 .ai-video-frame video {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: var(--shot-ar, 16 / 9);
   object-fit: cover;
 }
 
@@ -4445,7 +4483,14 @@ main#main-content { position: relative; z-index: 1; }
   width: min(1440px, 100%);
   margin: 0 auto;
   padding: clamp(68px, 7vw, 104px) var(--tool-gutter) clamp(52px, 6vw, 76px);
-  border-bottom: 1px solid var(--tool-rule);
+  /* Inset hairline on the text edge rather than a border across the whole
+     frame: the tool hero is the one hero whose closing rule overshot the grid
+     the copy sits on. */
+  border-bottom: 0;
+  background-image: linear-gradient(var(--tool-rule), var(--tool-rule));
+  background-repeat: no-repeat;
+  background-position: var(--tool-gutter) 100%;
+  background-size: calc(100% - var(--tool-gutter) * 2) 1px;
 }
 
 .tool-hero__copy,
