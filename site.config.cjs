@@ -30,7 +30,9 @@ module.exports = {
       js: ['prefetch', 'colophon-clock', 'home-list', 'cursor'],
       title: 'Igor Szuniewicz | Technical Sound Designer & Audio Programmer',
       ogTitle: 'Igor Szuniewicz | Technical Sound Designer & Audio Programmer',
-      description: 'Portfolio of Igor Szuniewicz: interactive audio for games and VR, plus audio tools built in C++, C#, Python and Lua.',
+      // 158 characters: the snippet used to stop at 116 on the one page
+      // Google actually indexes.
+      description: 'Portfolio of Igor Szuniewicz: interactive audio for games and VR in Wwise, Unreal and Unity, plus audio tools built in C++, C#, Python and Lua. Based in Graz.',
       canonical: `${SITE}/`,
       ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
       ogImageAlt: 'Shadow Frames horror game screenshot from Igor Szuniewicz game audio portfolio',
@@ -153,7 +155,7 @@ module.exports = {
       // Kept under 160 characters so Google does not truncate it mid-address.
       description: 'Email Igor Szuniewicz at igorszuniewiczwork@gmail.com about game audio, spatial and VR sound, audio tools or music. Links to LinkedIn, GitHub, Spotify and CV.',
       canonical: `${SITE}/contact.html`,
-      // Not an article: og:type defaults to article for every non-home page.
+      // Explicit for clarity; build.cjs defaults every page to website too.
       ogType: 'website',
       schemaPageType: 'ContactPage',
       // The share card is the frame the page now opens on, so the preview
@@ -423,10 +425,9 @@ module.exports = {
       title: 'AutoTrim Exporter | REAPER Sound Asset Delivery',
       description: 'AutoTrim Exporter 3.4.3 is a REAPER delivery tool for collecting layered sounds, checking the render path and exporting trimmed, named and verified audio assets.',
       canonical: `${SITE}/autotrim.html`,
-      // A tool page, not an article: og:type defaults to article for every
-      // non-home page, which makes consumers look for a byline and a
-      // published_time this page has no reason to carry. The JSON-LD here is
-      // SoftwareApplication.
+      // Explicit for clarity; build.cjs defaults every page to website, so a
+      // consumer never looks for a byline or published_time here. The JSON-LD
+      // is SoftwareApplication.
       ogType: 'website',
       ogImage: `${SITE}/old/public/assets/images/projects-autotrim/autotrim-3.4.3-export.png`,
       ogImageAlt: 'AutoTrim Exporter 3.4.3 Export screen for REAPER sound asset delivery',
@@ -446,8 +447,7 @@ module.exports = {
       title: 'AudioQ Sampler & Sound-Mangling Plugin | C++ JUCE',
       description: 'A C++/JUCE sampler with loop editing, granular playback and effects. The public release is Windows VST3; the source also builds a standalone app.',
       canonical: `${SITE}/audioq.html`,
-      // Tool page, same reason as autotrim: SoftwareApplication in JSON-LD,
-      // so og:type should not claim article.
+      // Tool page, same as autotrim: SoftwareApplication in JSON-LD.
       ogType: 'website',
       ogImage: `${SITE}/old/public/assets/images/social/audioq-1200x630.webp`,
       ogImageAlt: 'AudioQ VST3 sampler plugin interface with waveform and effects controls',
@@ -462,7 +462,7 @@ module.exports = {
       css: 'case',
       js: ['prefetch', 'colophon-clock', 'local-video'],
       title: 'Amorak | Independent Binaural Audio Redesign',
-      description: 'Igor replaced the complete soundtrack of a 90-second horror animation, built its creature voice and mixed movement around a headphone listener.',
+      description: 'Igor replaced the complete soundtrack of a two-minute horror animation, built its creature voice and mixed movement around a headphone listener.',
       canonical: `${SITE}/amorak.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-amorak/basement.png`,
       ogImageAlt: 'Amorak horror animation basement scene used for binaural sound design',

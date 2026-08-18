@@ -255,7 +255,13 @@ const EMPTY_INLINE_SCRIPT_PATTERN = String.raw`<script\b(?![^>]*\ssrc\s*=)[^>]*>
 function ogTags(page) {
   const ogTitle = page.ogTitle || page.title;
   const imageAlt = page.ogImageAlt || `${ogTitle} preview image`;
-  const defaultOgType = page.slug === 'index' || page.layout === 'music' ? 'website' : 'article';
+  // 'website' everywhere unless a page says otherwise. The old default of
+  // 'article' for project pages promised article:published_time and
+  // article:author that no page emits, and consumers that read og:type
+  // (Facebook's debugger in particular) flag the missing pair. A project page
+  // is a page about a work, not a dated post; the tool pages already said so
+  // explicitly, so this brings the other fourteen in line with them.
+  const defaultOgType = 'website';
   const lines = [
     `<meta property="og:title" content="${escAttr(ogTitle)}">`,
     `<meta property="og:description" content="${escAttr(page.description)}">`,

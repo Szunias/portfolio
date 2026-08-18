@@ -126,21 +126,13 @@
   if (note) note.addEventListener('input', syncMail);
   if (copyBtn) copyBtn.addEventListener('click', copyAddress);
 
-  document.addEventListener('keydown', function (event) {
-    if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) return;
-    const tag = event.target && event.target.tagName;
-    if (tag === 'INPUT' || tag === 'TEXTAREA' || (event.target && event.target.isContentEditable)) return;
-    if (event.key === 'c' || event.key === 'C') {
-      event.preventDefault();
-      copyAddress();
-      return;
-    }
-    const index = '1234'.indexOf(event.key);
-    if (index >= 0 && topics[index]) {
-      event.preventDefault();
-      setTopic(topics[index].dataset.topic || '');
-    }
-  });
+  // There used to be a document-level keydown here: a bare "c" copied the
+  // address and "1"-"4" picked a topic wherever focus rested. Nothing on any
+  // contact page announced those keys, and single-character shortcuts with
+  // no modifier and no way to turn them off are exactly what WCAG 2.1.4
+  // forbids (a voice-input user saying a word that starts with "c" would
+  // silently overwrite their clipboard). The buttons do the same work with
+  // Enter and Space, so the shortcuts are gone rather than gated.
 
   if (hero && !reduceMotion && window.matchMedia('(pointer: fine)').matches) {
     hero.addEventListener('pointermove', function (event) {
