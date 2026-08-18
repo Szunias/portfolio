@@ -285,6 +285,28 @@ module.exports = {
       sitemap: false,
     },
 
+    // Review layout for the project pages, tried on the lead project. The
+    // published page stays shadowframes.html. Layout 'home' because build.cjs
+    // requires every layout:'project' page to sit in the homepage work index,
+    // and a review twin must not; case-plain.css carries its own shell.
+    {
+      slug: 'shadowframes-alt',
+      layout: 'home',
+      css: 'case-plain',
+      js: ['prefetch', 'colophon-clock', 'video-facade'],
+      title: 'Shadow Frames, plain layout | Igor Szuniewicz',
+      description: 'A review layout of the Shadow Frames page written as a document: one reading column, plain headings and media with captions. Solo audio design in Wwise and Unreal Engine 5.',
+      canonical: `${SITE}/shadowframes-alt.html`,
+      ogType: 'website',
+      ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
+      ogImageAlt: 'Shadow Frames UE5 horror game scene with spatial audio implementation',
+      ogImageWidth: 1920,
+      ogImageHeight: 1080,
+      ogImageType: 'image/jpeg',
+      noindex: true,
+      sitemap: false,
+    },
+
     // Projects with lightbox
     {
       slug: 'sidar',

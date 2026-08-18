@@ -1,0 +1,467 @@
+/* =========================================================
+   CASE, PLAIN — a review layout for the project pages
+
+   A project page written like a document rather than a
+   product page: one reading column, headings that are just
+   headings, media at column width with a caption under it,
+   and no kicker, numbered feature row, bordered card, glass
+   or display face doing the talking. Self-contained like
+   contact.css: it is the only layout sheet the page loads,
+   so it carries the shell (skip link, header, colophon).
+   ========================================================= */
+
+:root {
+  --ink:   var(--c-ink);
+  --muted: var(--c-ink-2);
+  --faint: var(--c-ink-3);
+  --rule:  var(--c-line-2);
+  --ice:   var(--c-accent);
+  --body:  var(--f-body);
+  --mono:  var(--f-mono);
+  --page-frame: min(100%, calc(var(--page-max) + var(--page-gutter) * 2));
+  /* The one measure on the page. 66ch of Inter 17 is about 610px. */
+  --measure: 66ch;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-padding-top: 84px;
+}
+
+body {
+  margin: 0;
+  background: var(--c-bg-1);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: var(--t-b0);
+  line-height: var(--lh-b0);
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; height: auto; }
+
+a { color: inherit; }
+
+/* ---------- Skip link ---------- */
+.skip-link {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 3000;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: var(--r-s);
+  background: var(--ice);
+  color: var(--c-accent-ink);
+  font-family: var(--mono);
+  font-size: var(--t-m1);
+  letter-spacing: .04em;
+  text-decoration: none;
+  transform: translateY(-240%);
+  transition: transform var(--dur) var(--ease);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* ---------- Header ----------
+   Same geometry as every other page; no blur behind it. A solid bar on the
+   page colour with a hairline reads as part of the document, not as a pane
+   of glass floating over it. */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-block: 14px;
+  padding-inline: max(var(--page-gutter), calc((100% - var(--page-max)) / 2));
+  border-bottom: 1px solid var(--rule);
+  background: var(--c-bg-1);
+}
+
+.site-header__name,
+.site-header nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color var(--dur) var(--ease);
+}
+
+.site-header__name {
+  font-family: var(--body);
+  font-size: var(--t-s1);
+  font-weight: 600;
+  letter-spacing: .01em;
+  color: var(--ink);
+}
+
+.site-header__name:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.site-header__name-short { display: none; }
+
+.site-header nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1.6vw, 24px);
+}
+
+.site-header nav a {
+  min-width: 24px;
+  font-family: var(--body);
+  font-size: var(--t-s1);
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+
+.site-header nav a:hover { color: var(--ink); }
+
+.site-header nav a[aria-current="page"] {
+  color: var(--ink);
+  box-shadow: inset 0 -1px 0 0 var(--ink);
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+  display: block;
+}
+
+/* ---------- The document ---------- */
+.doc {
+  width: var(--page-frame);
+  margin-inline: auto;
+  padding: clamp(40px, 6vw, 72px) var(--page-gutter) clamp(56px, 8vw, 96px);
+}
+
+/* Prose sits in one column; media may take the whole frame. */
+.doc > * { max-width: var(--measure); }
+.doc > .doc__media,
+.doc > .doc__grid,
+.doc > .doc__figure,
+.doc > .doc__end { max-width: none; }
+
+.doc h1 {
+  margin: 0 0 var(--s-3);
+  font-size: clamp(34px, 4.6vw, 54px);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+/* The one line of data on the page: mono, small, and everything about the
+   project a reader would otherwise scan a sidebar for. */
+.doc__meta {
+  margin: 0 0 var(--s-4);
+  font-family: var(--mono);
+  font-size: var(--t-m1);
+  line-height: 1.7;
+  letter-spacing: var(--tr-m);
+  color: var(--faint);
+}
+
+.doc__lead {
+  margin: 0 0 var(--s-3);
+  font-size: var(--t-b1);
+  line-height: var(--lh-b1);
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.doc p {
+  margin: 0 0 var(--s-3);
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.doc p a,
+.doc__links a,
+.doc__end a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--rule);
+  transition: text-decoration-color var(--dur) var(--ease);
+}
+
+.doc p a:hover,
+.doc__links a:hover,
+.doc__end a:hover { text-decoration-color: var(--ice); }
+
+/* Plain links in a row, not pills. */
+.doc__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-4);
+  margin: 0 0 var(--s-5);
+  font-size: var(--t-s1);
+}
+
+.doc__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+}
+
+.doc h2 {
+  margin: var(--s-6) 0 var(--s-2);
+  font-size: var(--t-t3);
+  font-weight: 600;
+  line-height: var(--lh-t3);
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+/* ---------- Media ---------- */
+.doc__media,
+.doc__figure {
+  margin: var(--s-4) 0 var(--s-5);
+}
+
+.doc__media img,
+.doc__media video,
+.doc__media .yt-facade {
+  display: block;
+  width: 100%;
+  background: var(--c-bg-0);
+}
+
+.doc__caption {
+  max-width: var(--measure);
+  margin: var(--s-2) 0 0;
+  font-size: var(--t-s1);
+  line-height: var(--lh-b1);
+  color: var(--faint);
+}
+
+/* Stills and screenshots in a row: figures with a line under each, not tiles
+   with an overlay. Odd-sized screenshots keep their own shape and align at
+   the top, the way figures in a document do. */
+.doc__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-4) var(--s-3);
+  align-items: start;
+  margin: var(--s-4) 0 var(--s-5);
+}
+
+.doc__grid figure { margin: 0; }
+.doc__grid img { display: block; width: 100%; background: var(--c-bg-0); }
+.doc__grid figcaption {
+  margin-top: var(--s-2);
+  font-size: var(--t-s1);
+  line-height: var(--lh-b1);
+  color: var(--faint);
+}
+
+/* ---------- The cue diagram, flat ----------
+   The same drawing the published page has, without the bordered bed around
+   it. The rooms are the drawing's own rectangles; nothing frames the frame. */
+.doc__figure svg { display: block; width: 100%; max-width: 960px; height: auto; }
+
+.doc__figure text {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  fill: var(--faint);
+}
+.sf-stage__index { fill: var(--ice); }
+.sf-stage__name { fill: var(--muted); }
+.sf-note { fill: var(--faint); }
+.sf-room { fill: rgba(170, 198, 222, 0.03); stroke: rgba(170, 198, 222, 0.28); stroke-width: 1.5; }
+.sf-player circle:first-child { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.sf-player circle:last-child { fill: var(--muted); }
+.sf-object { fill: var(--ice); }
+.sf-object--idle { fill: rgba(170, 198, 222, 0.28); }
+.sf-ring { fill: none; stroke: rgba(170, 198, 222, 0.32); stroke-width: 1.25; stroke-dasharray: 3 7; }
+.sf-ring--tight { stroke: rgba(170, 198, 222, 0.5); stroke-dasharray: none; }
+.sf-route { fill: none; stroke: rgba(170, 198, 222, 0.5); stroke-width: 1.75; stroke-linecap: round; }
+.sf-route-trace {
+  fill: none;
+  stroke: var(--ice);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 4 96;
+  stroke-dashoffset: 100;
+  opacity: 0;
+  animation: sf-cue-travel 4.5s linear infinite;
+}
+.sf-approach { fill: none; stroke: var(--faint); stroke-width: 1.5; stroke-dasharray: 5 5; }
+.sf-frame { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-linecap: square; }
+
+@keyframes sf-cue-travel {
+  0%   { opacity: 0; stroke-dashoffset: 100; }
+  4%   { opacity: 0.95; }
+  30%  { opacity: 0.95; stroke-dashoffset: 0; }
+  34%, 100% { opacity: 0; stroke-dashoffset: 0; }
+}
+
+@media (max-width: 700px) {
+  .doc__figure { overflow-x: auto; overscroll-behavior-x: contain; }
+  .doc__figure svg { min-width: 620px; }
+}
+
+/* ---------- Click-to-load YouTube facade (video-facade.js) ---------- */
+.yt-facade {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--shot-ar, 16 / 9);
+  overflow: hidden;
+  background: var(--c-bg-0);
+}
+.yt-facade iframe { display: block; width: 100%; height: 100%; border: 0; }
+.yt-facade__launch {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.yt-facade__launch img { display: block; width: 100%; height: 100%; object-fit: contain; background: var(--c-bg-0); }
+.yt-facade__launch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, .04) 0%, rgba(0, 0, 0, .1) 55%, rgba(0, 0, 0, .3) 100%);
+}
+.yt-facade__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(240, 242, 244, .94);
+  color: var(--c-accent-ink);
+}
+.yt-facade__play svg { width: 28px; height: 28px; fill: currentColor; transform: translateX(2px); }
+.yt-facade__launch:hover .yt-facade__play,
+.yt-facade__launch:focus-visible .yt-facade__play { background: #fff; box-shadow: 0 0 0 6px rgba(236, 238, 240, .12); }
+.yt-facade__launch:focus-visible { outline: 2px solid var(--ice); outline-offset: -4px; }
+
+/* ---------- End of the page ---------- */
+.doc__end {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--s-2) var(--s-4);
+  margin-top: var(--s-6);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--rule);
+  font-size: var(--t-s1);
+}
+
+.doc__end a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+.doc__end span { display: flex; flex-wrap: wrap; gap: 0 var(--s-4); }
+
+/* ---------- Colophon ---------- */
+.colophon {
+  position: relative;
+  z-index: 10;
+  width: var(--page-frame);
+  margin-inline: auto;
+  padding: 26px var(--page-gutter) var(--s-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-family: var(--micro-data-font);
+  font-size: var(--micro-data-size);
+  letter-spacing: var(--micro-data-tr);
+  color: var(--faint);
+}
+
+.colophon a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 24px;
+  color: var(--faint);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--rule);
+}
+.colophon a:hover { color: var(--ink); text-decoration-color: var(--ink); }
+
+/* ---------- Narrow screens ---------- */
+@media (max-width: 820px) {
+  .site-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 6px;
+    padding-block: 7px;
+  }
+  .site-header__name { min-height: 44px; font-size: .82rem; letter-spacing: .015em; }
+  .site-header__name-full { display: none; }
+  .site-header__name-short { display: inline; }
+  .site-header nav {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .site-header .site-header__cv { display: none; }
+  .site-header nav a {
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 clamp(5px, 1.8vw, 10px);
+    border: 1px solid var(--rule);
+    border-radius: var(--r-pill);
+    background: rgba(236, 238, 240, 0.035);
+    font-size: .75rem;
+    letter-spacing: 0;
+    box-shadow: none;
+  }
+  .site-header nav a:hover { border-color: var(--c-line-3); }
+  .site-header nav a[aria-current="page"],
+  .site-header nav a[aria-current="page"]:hover {
+    border-color: transparent;
+    background: var(--c-ink);
+    color: var(--c-accent-ink);
+    box-shadow: none;
+  }
+
+  .doc__grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .colophon { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .doc__end { flex-direction: column; align-items: flex-start; }
+  /* 20px on a 320px column is a headline, not a lead. */
+  .doc__lead { font-size: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link { transition: none; }
+  .sf-route-trace { display: none; }
+}
