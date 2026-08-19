@@ -547,3 +547,69 @@ a { color: inherit; }
   [data-reveal] .cine-mix__layer i { transform: scaleX(var(--level, 1)); transition: none; }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* =========================================================
+   PIECES THE OTHER PROJECTS NEED
+
+   Shadow Frames needed a row of frames and a set of levels.
+   The research page has audio samples, the tool pages have
+   specification pairs, and several pages have secondary
+   material that should be available without being in the way.
+   ========================================================= */
+
+/* ---------- Audio samples ---------- */
+.cine-audio { display: grid; gap: 12px; margin: 0 0 var(--s-3); padding: 0; list-style: none; }
+.cine-audio li { display: grid; gap: 6px; }
+.cine-audio strong { color: var(--ink); font-weight: 600; font-size: var(--t-s1); }
+.cine-audio span { font-size: var(--t-s1); line-height: var(--lh-b1); color: var(--muted); }
+.cine-audio audio { width: 100%; min-width: 0; }
+
+/* ---------- Specification pairs ---------- */
+.cine dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 5px var(--s-4);
+  margin: 0 0 var(--s-3);
+  font-size: var(--t-s1);
+  line-height: var(--lh-b1);
+}
+.cine dt { color: var(--ink); font-weight: 500; }
+.cine dd { margin: 0; color: var(--muted); }
+
+/* ---------- Lists ---------- */
+.cine ul, .cine ol { padding-left: 1.2em; max-width: var(--measure); }
+.cine li { margin-bottom: 5px; }
+.cine li::marker { color: var(--faint); }
+
+/* ---------- Secondary material ---------- */
+.cine details { margin: 0 0 var(--s-3); }
+.cine summary { cursor: pointer; color: var(--ink); font-weight: 500; font-size: var(--t-s1); min-height: 44px; display: flex; align-items: center; }
+.cine details > :not(summary) { margin-top: 8px; }
+
+/* ---------- A quote with its source ---------- */
+.cine blockquote {
+  margin: 0 0 var(--s-3);
+  padding-left: var(--s-3);
+  border-left: 1px solid var(--c-accent-line);
+  color: var(--muted);
+}
+.cine blockquote p:last-child { margin-bottom: 0; }
+.cine blockquote cite {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: var(--t-m1);
+  font-style: normal;
+  letter-spacing: var(--tr-m);
+  color: var(--faint);
+}
+
+/* ---------- A video that keeps its own shape ---------- */
+.cine-split__media video,
+.cine-row video { display: block; width: 100%; background: var(--c-bg-0); }
+.cine-split__media video[style*="--shot-ar"] { aspect-ratio: var(--shot-ar); object-fit: contain; }
+
+@media (max-width: 900px) {
+  .cine dl { grid-template-columns: 1fr; gap: 2px; }
+  .cine dd { margin-bottom: 8px; }
+}

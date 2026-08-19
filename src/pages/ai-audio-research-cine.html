@@ -1,0 +1,165 @@
+<!-- Compact layout for the AI audio research page. The published page stays
+     ai-audio-research.html; this one is noindex and unlinked. Same facts as the
+     published page: the timing table sits beside the paragraph that explains
+     how it was measured, and the prototype's own frames sit beside the text
+     rather than taking the window. The three stills come from the two
+     recordings on this page, in the order they happen.
+
+     The stills are pre-compensated for the brightness filter cine.css puts on
+     .cine-split__media img and .cine-row img: that filter was written for
+     near-black game frames, and these are an editor and a terminal, so the
+     files are darkened by the inverse and render at their true levels. -->
+<article class="cine">
+
+  <header class="cine-split cine-open">
+    <div class="cine-split__body">
+      <p class="cine-kicker">2025&ndash;2026 &middot; Graduation work, Howest DAE</p>
+      <h1>Testing whether AI-generated sound is fast enough for gameplay</h1>
+      <p class="cine-lead">A thesis and a working Unreal prototype that measure how long a generated sound takes to reach the player after an in-game event.</p>
+      <p class="cine-meta">Solo researcher and prototype developer &middot; Unreal Engine 5 &middot; Python &middot; 68-page thesis</p>
+      <p class="cine-links">
+        <a href="szuniewicz-ai-audio-thesis-2026.pdf" target="_blank" rel="noopener noreferrer">Read the thesis <span aria-hidden="true">&nearr;</span></a>
+      </p>
+    </div>
+    <div class="cine-split__media">
+      <img src="old/public/assets/images/projects-ai-audio-research/frames/prototype-castle-log.jpg" srcset="old/public/assets/images/projects-ai-audio-research/frames/prototype-castle-log-640.webp 640w, old/public/assets/images/projects-ai-audio-research/frames/prototype-castle-log-1200.webp 1200w, old/public/assets/images/projects-ai-audio-research/frames/prototype-castle-log-1920.webp 1920w" sizes="(min-width: 900px) 690px, calc(100vw - 40px)" width="1920" height="1140" alt="The demo level running in the Unreal editor, the character inside a candlelit chapel, with the audio server console beside it listing eight generated sounds" fetchpriority="high" decoding="async">
+    </div>
+  </header>
+
+  <section class="cine-split" aria-labelledby="ai-timing-title">
+    <div class="cine-split__body">
+      <h2 id="ai-timing-title">How long each method took</h2>
+      <p>I did the research and built the prototype: the Unreal client, the Python generation server, the cache and the fallback.</p>
+      <p>I timed five methods, one procedural baseline and four AI configurations, from the in-game event to the first audible sample, five runs per method and prompt. The figures cover the whole wait: request, generation or transfer, decoding and playback, not the model alone.</p>
+      <p>The thesis works with a 100 to 150 ms budget for interactive sound effects, taken from earlier latency studies. Only the procedural baseline stays inside it. A separate quality check by one rater covered 60 anonymised samples.</p>
+    </div>
+    <div class="cine-split__media">
+      <div class="cine-table">
+        <table>
+          <thead>
+            <tr><th scope="col">Method</th><th scope="col">95th-percentile latency</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Procedural DSP</th><td>25 ms</td></tr>
+            <tr><th scope="row">MMAudio Small</th><td>1.9 s</td></tr>
+            <tr><th scope="row">AudioGen</th><td>2.8 s</td></tr>
+            <tr><th scope="row">MMAudio Large</th><td>3.4 s</td></tr>
+            <tr><th scope="row">ElevenLabs</th><td>3.5 s</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="cine-cap">Test machine: AMD Ryzen 9 7940HS, RTX 5070 Laptop GPU with 8 GB VRAM, 64 GB RAM, Unreal Engine 5.4.4, Python 3.11.7.</p>
+    </div>
+  </section>
+
+  <section class="cine-split cine-split--flip" aria-labelledby="ai-predict-title">
+    <div class="cine-split__body">
+      <h2 id="ai-predict-title">Preparing the sound before the event</h2>
+      <p>Because a first generation is too slow, the server watches the game state and prepares sounds the player is likely to trigger: approaching a door prepares door sounds, entering a forest prepares ambience. The result is cached and played on demand.</p>
+      <p>When the guess is wrong, the game plays the synthetic fallback and keeps the generated sample for later.</p>
+    </div>
+    <div class="cine-split__media">
+      <video controls playsinline preload="none" poster="old/public/assets/images/video-posters/unreal-engine-demo-1600.webp" aria-label="Unreal client in-game request demo" style="--shot-ar:1920/1140">
+        <source src="UnrealEngineDemo.mp4" type="video/mp4">
+        Your browser does not support the video element.
+      </video>
+      <p class="cine-cap">The Unreal client asking for sounds during play.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="ai-request-title">
+    <h2 id="ai-request-title" data-reveal>From the request to the file</h2>
+    <p data-reveal>Three moments from the two recordings, in the order they happen.</p>
+    <div class="cine-row" data-reveal>
+      <figure>
+        <img src="old/public/assets/images/projects-ai-audio-research/frames/prototype-first-requests.jpg" srcset="old/public/assets/images/projects-ai-audio-research/frames/prototype-first-requests-640.webp 640w, old/public/assets/images/projects-ai-audio-research/frames/prototype-first-requests-1200.webp 1200w" sizes="(min-width: 900px) 390px, calc(100vw - 40px)" width="1920" height="1140" alt="The character running towards the chapel while the server console prints its first two footstep requests" loading="lazy" decoding="async">
+        <p class="cine-row__num">01</p>
+        <h3>The client asks for a sound</h3>
+        <p>The server prints each request as it arrives.</p>
+      </figure>
+      <figure>
+        <img src="old/public/assets/images/projects-ai-audio-research/frames/generation-time.jpg" srcset="old/public/assets/images/projects-ai-audio-research/frames/generation-time-640.webp 640w, old/public/assets/images/projects-ai-audio-research/frames/generation-time-1200.webp 1200w" sizes="(min-width: 900px) 390px, calc(100vw - 40px)" width="1543" height="916" alt="The generation tool printing a generation time of 2347 milliseconds, the file it saved, and a note that this is 1.2 times slower than real time" loading="lazy" decoding="async">
+        <p class="cine-row__num">02</p>
+        <h3>Every generation is timed</h3>
+        <p>Each one is logged with its time and whether it took longer than the sound it made.</p>
+      </figure>
+      <figure>
+        <img src="old/public/assets/images/projects-ai-audio-research/frames/prototype-door-ready.jpg" srcset="old/public/assets/images/projects-ai-audio-research/frames/prototype-door-ready-640.webp 640w, old/public/assets/images/projects-ai-audio-research/frames/prototype-door-ready-1200.webp 1200w" sizes="(min-width: 900px) 390px, calc(100vw - 40px)" width="1920" height="1140" alt="The character walking up to the chapel door while the console already lists the wooden door sound" loading="lazy" decoding="async">
+        <p class="cine-row__num">03</p>
+        <h3>Ready before the door</h3>
+        <p>The door sound is in the log before the player reaches the chapel.</p>
+      </figure>
+    </div>
+  </section>
+
+  <section class="cine-split" aria-labelledby="ai-samples-title">
+    <div class="cine-split__body">
+      <h2 id="ai-samples-title">One prompt through each method</h2>
+      <p>A heavy footstep on wet stone, four times. Full results and the method are in the thesis.</p>
+      <ul class="cine-audio">
+        <li>
+          <strong>Procedural DSP</strong>
+          <span>The fallback: low latency, clearly synthetic.</span>
+          <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-footstep.wav" aria-label="Procedural DSP: heavy footstep on wet stone"></audio>
+        </li>
+        <li>
+          <strong>AudioGen</strong>
+          <span>For ambience: better texture, but the response lands seconds late.</span>
+          <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/audiogen-footstep.wav" aria-label="AudioGen: heavy footstep on wet stone"></audio>
+        </li>
+        <li>
+          <strong>MMAudio</strong>
+          <span>For prepared content. The benchmark separates Small and Large; this sample is not used to compare them.</span>
+          <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/mmaudio-footstep.wav" aria-label="MMAudio: heavy footstep on wet stone"></audio>
+        </li>
+        <li>
+          <strong>ElevenLabs</strong>
+          <span>For pregeneration: often the cleanest here, but not safe for an instant response.</span>
+          <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/elevenlabs-footstep.wav" aria-label="ElevenLabs: heavy footstep on wet stone"></audio>
+        </li>
+      </ul>
+      <details>
+        <summary>The other three prompts</summary>
+        <ul class="cine-audio">
+          <li>
+            <strong>Machine gun burst</strong>
+            <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-machine-gun.wav" aria-label="Procedural DSP: machine gun burst"></audio>
+            <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/audiogen-machine-gun.wav" aria-label="AudioGen: machine gun burst"></audio>
+            <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/mmaudio-machine-gun.wav" aria-label="MMAudio: machine gun burst"></audio>
+            <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/elevenlabs-machine-gun.wav" aria-label="ElevenLabs: machine gun burst"></audio>
+          </li>
+          <li>
+            <strong>Cat meowing sample</strong>
+            <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-cat.wav" aria-label="Procedural DSP: cat meowing sample"></audio>
+            <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/audiogen-cat.wav" aria-label="AudioGen: cat meowing sample"></audio>
+            <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/mmaudio-cat.wav" aria-label="MMAudio: cat meowing sample"></audio>
+            <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/elevenlabs-cat.wav" aria-label="ElevenLabs: cat meowing sample"></audio>
+          </li>
+          <li>
+            <strong>Wooden door slam</strong>
+            <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/dsp-door.wav" aria-label="Procedural DSP: wooden door slam"></audio>
+            <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/audiogen-door.wav" aria-label="AudioGen: wooden door slam"></audio>
+            <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/mmaudio-door.mp3" aria-label="MMAudio: wooden door slam"></audio>
+            <audio controls preload="none" src="old/public/assets/images/projects-ai-audio-research/presentation/audio/elevenlabs-door.wav" aria-label="ElevenLabs: wooden door slam"></audio>
+          </li>
+        </ul>
+      </details>
+    </div>
+    <div class="cine-split__media">
+      <video controls playsinline preload="none" poster="old/public/assets/images/video-posters/python-prototype-demo.jpg" aria-label="Python server models, cache and retries demo" style="--shot-ar:1722/916">
+        <source src="PythonPrototypeDemo.mp4" type="video/mp4">
+        Your browser does not support the video element.
+      </video>
+      <p class="cine-cap">The Python server: models, cache and retries.</p>
+    </div>
+  </section>
+
+  <nav class="cine-close" aria-label="Project links and navigation">
+    <span>
+      <a href="szuniewicz-ai-audio-thesis-2026.pdf" target="_blank" rel="noopener noreferrer">Thesis: Real-Time AI-Generated Sound Effects for Video Games (PDF)</a>
+      <a href="/#work">Back to selected work</a>
+    </span>
+    <a class="cine-close__next" href="shadowframes.html">Next: Shadow Frames <span aria-hidden="true">&rarr;</span></a>
+  </nav>
+
+</article>
