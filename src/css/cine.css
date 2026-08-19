@@ -290,7 +290,7 @@ html[data-scrolled] .cine-open__cue { opacity: 0; }
 .cine-passage {
   width: var(--page-frame);
   margin-inline: auto;
-  padding: clamp(56px, 11vh, 132px) var(--page-gutter);
+  padding: clamp(48px, 8vh, 96px) var(--page-gutter);
 }
 
 .cine-passage--tight { padding-block: clamp(40px, 7vh, 84px); }
@@ -389,7 +389,7 @@ html[data-scrolled] .cine-open__cue { opacity: 0; }
   background: var(--c-bg-0);
 }
 
-.cine-plate--tall img { max-height: 92svh; object-fit: cover; }
+.cine-plate--tall img { max-height: 62svh; object-fit: cover; }
 
 .cine-plate figcaption,
 .cine-cap {
@@ -409,7 +409,7 @@ html[data-scrolled] .cine-open__cue { opacity: 0; }
 .cine-stage__sticky {
   position: sticky;
   top: 0;
-  height: 100svh;
+  height: var(--stage-h, 100svh);
   display: grid;
   align-content: center;
   overflow: hidden;
@@ -435,6 +435,10 @@ html[data-scrolled] .cine-open__cue { opacity: 0; }
 
 .cine-stage__visual { grid-column: 2; min-width: 0; }
 
+/* A supporting set piece: same behaviour, a fraction of the scroll. One page
+   should hold the reader once, not twice. */
+.cine-stage--compact { --stage-h: 64svh; --step-h: 50svh; }
+
 .cine-stage__steps {
   position: relative;
   z-index: 2;
@@ -443,11 +447,13 @@ html[data-scrolled] .cine-open__cue { opacity: 0; }
   padding-inline: var(--page-gutter);
   /* The steps ride over the pinned visual on a wide screen and sit in the
      column under it on a narrow one. */
-  margin-top: -100svh;
+  margin-top: calc(-1 * var(--stage-h, 100svh));
 }
 
 .cine-step {
-  min-height: 92svh;
+  /* Long enough to land and no longer. At a full screen per step the page
+     held the reader on every beat and the whole thing read as one long pin. */
+  min-height: var(--step-h, 74svh);
   display: grid;
   align-content: center;
   max-width: 34ch;
@@ -505,19 +511,18 @@ html[data-scrolled] .cine-open__cue { opacity: 0; }
   max-width: none;
   object-fit: cover;
   opacity: 0;
-  transform: scale(1.05);
   /* The game is graded for a dark room and these stills sit near black. The
      lift is what makes them read as pictures on a lit screen; the trailer's
      own grade is still what you see, just brought up. */
   filter: brightness(1.7) contrast(1.06);
-  transition: opacity 900ms var(--cine-ease), transform 4200ms linear;
+  transition: opacity 900ms var(--cine-ease);
 }
 
 [data-step="0"] .cine-frames img[data-frame="0"],
 [data-step="1"] .cine-frames img[data-frame="1"],
 [data-step="2"] .cine-frames img[data-frame="2"],
 [data-step="3"] .cine-frames img[data-frame="3"],
-[data-step="all"] .cine-frames img[data-frame="0"] { opacity: 1; transform: scale(1); }
+[data-step="all"] .cine-frames img[data-frame="0"] { opacity: 1; }
 
 /* The steps sit on the left of the frame, so the veil is weighted there and
    the right two thirds of the picture stay clear. */
@@ -550,8 +555,8 @@ html[data-scrolled] .cine-open__cue { opacity: 0; }
    ========================================================= */
 [data-reveal] {
   opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 700ms var(--cine-ease), transform 700ms var(--cine-ease);
+  transform: translateY(10px);
+  transition: opacity 600ms var(--cine-ease), transform 600ms var(--cine-ease);
 }
 
 [data-reveal].is-in { opacity: 1; transform: none; }
