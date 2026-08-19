@@ -1,0 +1,99 @@
+<!-- Review layout for the project pages, tried on the XR Labs page. The
+     published page stays xrlabs.html; this one is noindex and unlinked.
+     Same facts, written as a document: one column, plain headings, media at
+     column width with a caption under it. -->
+<article class="doc">
+  <h1>XR Labs</h1>
+  <p class="doc__meta">February &ndash; June 2026 &middot; Technical Sound Designer &middot; Unity &middot; Steam Audio &middot; Perforce &middot; XR Labs Belgium, Brussels</p>
+  <p class="doc__lead">Audio systems for VR and AR training simulations for police, military and customs services, built in Unity.</p>
+  <p>At XR Labs Belgium I designed and implemented audio for selected simulations. I used spatialisation, occlusion and distance layers so trainees could locate a source, hear when a wall blocked it and judge how far away a weapon shot was.</p>
+  <p class="doc__links">
+    <a href="https://www.youtube.com/watch?v=VWOk_6-lF2I" target="_blank" rel="noopener noreferrer">Public training footage <span aria-hidden="true">&nearr;</span></a>
+  </p>
+
+  <figure class="doc__media">
+    <img src="old/public/assets/images/about-grid/xrlabssoldiers.png" srcset="old/public/assets/images/about-grid/xrlabssoldiers-640.webp 640w, old/public/assets/images/about-grid/xrlabssoldiers.webp 1071w" sizes="(min-width: 1000px) 920px, calc(100vw - 40px)" width="1071" height="710" alt="Three people in camouflage wearing VR headsets and holding rifle-shaped controllers, in a hall with a marked floor" fetchpriority="high" decoding="async">
+    <figcaption class="doc__caption">A VR training session at XR Labs.</figcaption>
+  </figure>
+
+  <h2>How trainees hear direction, walls and distance</h2>
+  <p>These diagrams are recreated for this page. They show the two systems without using production code or internal settings.</p>
+
+  <h3>Direction and indirect paths between rooms</h3>
+  <p>I kept sources fixed in the virtual room and used Steam Audio for direction, occlusion and indirect paths when a wall blocked the direct route.</p>
+
+  <figure class="doc__figure">
+    <div role="img" aria-label="A direct sound path stops at the wall while one indirect path reaches the listener through the open doorway.">
+      <svg viewBox="0 0 720 420" aria-hidden="true">
+        <rect class="sf-room" x="72" y="80" width="576" height="260" rx="7"></rect>
+        <path class="sf-frame" d="M360 80V255M360 315V340"></path>
+
+        <path class="sf-approach" d="M178 180H355"></path>
+        <path class="sf-route" d="M178 180L300 285H430L548 180"></path>
+        <path class="sf-route-trace" pathLength="100" d="M178 180L300 285H430L548 180"></path>
+
+        <circle class="sf-object" cx="178" cy="180" r="7"></circle>
+        <g class="sf-player">
+          <circle cx="548" cy="180" r="9"></circle>
+          <circle cx="548" cy="180" r="3"></circle>
+        </g>
+
+        <text class="sf-stage__name" x="178" y="262" text-anchor="middle">SOURCE</text>
+        <text class="sf-stage__name" x="548" y="262" text-anchor="middle">LISTENER</text>
+        <text class="sf-note" x="232" y="163" text-anchor="middle">DIRECT</text>
+        <text class="sf-note" x="280" y="310" text-anchor="middle">INDIRECT</text>
+        <text class="sf-note" x="360" y="373" text-anchor="middle">OPEN DOOR</text>
+      </svg>
+    </div>
+    <figcaption class="doc__caption">The direct path stops at the wall; the indirect path reaches the listener through the open door.</figcaption>
+  </figure>
+
+  <h3>Near and far layers across distance</h3>
+  <p>Each shot blends near and far layers. As the listener moves away, close detail fades while the distance layer takes over.</p>
+  <div class="doc__table">
+    <table>
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>What it carries</th>
+          <th>As the listener moves away</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Near</th>
+          <td>Close detail</td>
+          <td>Fades out</td>
+        </tr>
+        <tr>
+          <th>Far</th>
+          <td>Distant body</td>
+          <td>Takes over</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Public footage of the training facility</h2>
+  <p>This public XR Labs clip shows the facility and several trainees using it together. It is not a demo of my production audio.</p>
+
+  <figure class="doc__media">
+    <div class="doc__video">
+      <video controls playsinline preload="none" poster="old/public/assets/images/video-posters/xrlabs-training-dsu.jpg" aria-label="XR Labs public footage of the VR training facility">
+        <source src="old/public/assets/videos/xrlabs-training-dsu.mp4" type="video/mp4">
+        Your browser does not support the video element.
+      </video>
+    </div>
+    <figcaption class="doc__caption">Training DSU, XR Labs Belgium. 00:45.</figcaption>
+  </figure>
+
+  <p><strong>Confidentiality.</strong> Client scenarios, internal settings and operational training content are not shown.</p>
+
+  <nav class="doc__end" aria-label="Project links and navigation">
+    <span>
+      <a href="https://www.youtube.com/watch?v=VWOk_6-lF2I" target="_blank" rel="noopener noreferrer">Public training footage on YouTube</a>
+      <a href="/#work">Back to selected work</a>
+    </span>
+    <a href="transientica.html">Next: Transientica <span aria-hidden="true">&rarr;</span></a>
+  </nav>
+</article>

@@ -21,6 +21,10 @@
   --page-frame: min(100%, calc(var(--page-max) + var(--page-gutter) * 2));
   /* The one measure on the page. 66ch of Inter 17 is about 610px. */
   --measure: 66ch;
+  /* Media stop here rather than at the 1200px frame: a picture twice as wide
+     as the text beside it read as a hero every time, and the page as mostly
+     empty. */
+  --media-max: 920px;
 }
 
 * { box-sizing: border-box; }
@@ -149,18 +153,19 @@ a { color: inherit; }
 .doc {
   width: var(--page-frame);
   margin-inline: auto;
-  padding: clamp(40px, 6vw, 72px) var(--page-gutter) clamp(56px, 8vw, 96px);
+  padding: clamp(32px, 4.5vw, 52px) var(--page-gutter) clamp(48px, 6vw, 72px);
 }
 
-/* Prose sits in one column; media may take the whole frame. */
+/* Prose sits in one column; media and tables may go to --media-max. */
 .doc > * { max-width: var(--measure); }
 .doc > .doc__media,
 .doc > .doc__grid,
 .doc > .doc__figure,
-.doc > .doc__end { max-width: none; }
+.doc > .doc__table,
+.doc > .doc__end { max-width: var(--media-max); }
 
 .doc h1 {
-  margin: 0 0 var(--s-3);
+  margin: 0 0 var(--s-2);
   font-size: clamp(34px, 4.6vw, 54px);
   font-weight: 600;
   line-height: 1.04;
@@ -171,7 +176,7 @@ a { color: inherit; }
 /* The one line of data on the page: mono, small, and everything about the
    project a reader would otherwise scan a sidebar for. */
 .doc__meta {
-  margin: 0 0 var(--s-4);
+  margin: 0 0 var(--s-3);
   font-family: var(--mono);
   font-size: var(--t-m1);
   line-height: 1.7;
@@ -180,18 +185,47 @@ a { color: inherit; }
 }
 
 .doc__lead {
-  margin: 0 0 var(--s-3);
+  margin: 0 0 var(--s-2);
   font-size: var(--t-b1);
   line-height: var(--lh-b1);
   color: var(--ink);
   text-wrap: pretty;
 }
 
-.doc p {
-  margin: 0 0 var(--s-3);
+.doc p,
+.doc ul,
+.doc ol,
+.doc dl {
+  margin: 0 0 14px;
   color: var(--muted);
   text-wrap: pretty;
 }
+
+.doc ul,
+.doc ol { padding-left: 1.2em; }
+.doc li { margin-bottom: 4px; }
+.doc li::marker { color: var(--faint); }
+
+/* A definition list is the one structured block a document needs: a short
+   term, then its line. No grid, no rules between rows. */
+.doc dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px var(--s-4); }
+.doc dt { color: var(--ink); font-weight: 500; }
+.doc dd { margin: 0; }
+
+.doc strong { color: var(--ink); font-weight: 600; }
+
+.doc blockquote {
+  margin: 0 0 14px;
+  padding-left: var(--s-3);
+  border-left: 1px solid var(--rule);
+  color: var(--muted);
+}
+.doc blockquote p:last-child { margin-bottom: 0; }
+.doc blockquote cite { display: block; margin-top: 6px; font-style: normal; font-size: var(--t-s1); color: var(--faint); }
+
+.doc details { margin: 0 0 14px; }
+.doc summary { cursor: pointer; color: var(--ink); font-weight: 500; }
+.doc details > :not(summary) { margin-top: 10px; }
 
 .doc p a,
 .doc__links a,
@@ -212,8 +246,8 @@ a { color: inherit; }
 .doc__links {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--s-2) var(--s-4);
-  margin: 0 0 var(--s-5);
+  gap: 0 var(--s-4);
+  margin: 0 0 var(--s-3);
   font-size: var(--t-s1);
 }
 
@@ -225,7 +259,7 @@ a { color: inherit; }
 }
 
 .doc h2 {
-  margin: var(--s-6) 0 var(--s-2);
+  margin: var(--s-5) 0 var(--s-2);
   font-size: var(--t-t3);
   font-weight: 600;
   line-height: var(--lh-t3);
@@ -234,18 +268,62 @@ a { color: inherit; }
 }
 
 /* ---------- Media ---------- */
+.doc h3 {
+  margin: var(--s-4) 0 var(--s-1);
+  font-size: var(--t-b0);
+  font-weight: 600;
+  line-height: var(--lh-t3);
+}
+
+.doc h2 + h3 { margin-top: var(--s-2); }
+
+/* ---------- Media ---------- */
 .doc__media,
-.doc__figure {
-  margin: var(--s-4) 0 var(--s-5);
+.doc__figure,
+.doc__table {
+  margin: var(--s-3) 0 var(--s-4);
 }
 
 .doc__media img,
 .doc__media video,
-.doc__media .yt-facade {
+.doc__media audio,
+.doc__media .yt-facade,
+.doc__video {
   display: block;
   width: 100%;
   background: var(--c-bg-0);
 }
+
+.doc__media audio { background: transparent; }
+
+/* local-video.js needs the <video> alone in its parent to draw the poster
+   play control, so a video sits in .doc__video inside the figure. */
+.doc__video { position: relative; }
+.doc__video video { display: block; width: 100%; height: auto; }
+
+/* Videos and stills that must not be cropped keep their own ratio through
+   --shot-ar (set inline by the page), like the facade does. */
+.doc__video video[style*="--shot-ar"] { aspect-ratio: var(--shot-ar); object-fit: contain; }
+
+/* ---------- Tables ---------- */
+.doc__table { overflow-x: auto; overscroll-behavior-x: contain; }
+.doc table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--t-s1);
+  line-height: var(--lh-b1);
+}
+.doc th,
+.doc td {
+  padding: 8px 12px 8px 0;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--c-line);
+  color: var(--muted);
+}
+.doc th { color: var(--ink); font-weight: 600; }
+.doc thead th { border-bottom-color: var(--rule); }
+.doc td[data-num], .doc th[data-num] { font-variant-numeric: tabular-nums; }
 
 .doc__caption {
   max-width: var(--measure);
@@ -261,12 +339,19 @@ a { color: inherit; }
 .doc__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--s-4) var(--s-3);
+  gap: var(--s-3);
   align-items: start;
-  margin: var(--s-4) 0 var(--s-5);
+  margin: var(--s-3) 0 var(--s-4);
 }
+.doc__grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.doc__grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
 .doc__grid figure { margin: 0; }
+/* Grid figures may wrap the image in a link to the full-size file: a 300px
+   screenshot of a mixer is a thumbnail, and the reader gets the original in
+   a new tab without a lightbox script. */
+.doc__grid a { display: block; }
+.doc__grid a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 .doc__grid img { display: block; width: 100%; background: var(--c-bg-0); }
 .doc__grid figcaption {
   margin-top: var(--s-2);
@@ -278,7 +363,7 @@ a { color: inherit; }
 /* ---------- The cue diagram, flat ----------
    The same drawing the published page has, without the bordered bed around
    it. The rooms are the drawing's own rectangles; nothing frames the frame. */
-.doc__figure svg { display: block; width: 100%; max-width: 960px; height: auto; }
+.doc__figure svg { display: block; width: 100%; height: auto; }
 
 .doc__figure text {
   font-family: var(--mono);
@@ -367,14 +452,41 @@ a { color: inherit; }
 .yt-facade__launch:focus-visible .yt-facade__play { background: #fff; box-shadow: 0 0 0 6px rgba(236, 238, 240, .12); }
 .yt-facade__launch:focus-visible { outline: 2px solid var(--ice); outline-offset: -4px; }
 
+/* ---------- Poster-first local video (local-video.js) ---------- */
+.local-video { position: relative; }
+.local-video__launch {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .06), rgba(0, 0, 0, .3));
+  cursor: pointer;
+}
+.local-video__play {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(240, 242, 244, .94);
+  color: var(--c-accent-ink);
+}
+.local-video__play svg { width: 28px; height: 28px; fill: currentColor; transform: translateX(2px); }
+.local-video__launch:hover .local-video__play,
+.local-video__launch:focus-visible .local-video__play { background: #fff; box-shadow: 0 0 0 6px rgba(236, 238, 240, .12); }
+.local-video__launch:focus-visible { outline: 2px solid var(--ice); outline-offset: -4px; }
+
 /* ---------- End of the page ---------- */
 .doc__end {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   gap: var(--s-2) var(--s-4);
-  margin-top: var(--s-6);
-  padding-top: var(--s-4);
+  margin-top: var(--s-5);
+  padding-top: var(--s-3);
   border-top: 1px solid var(--rule);
   font-size: var(--t-s1);
 }
@@ -451,7 +563,11 @@ a { color: inherit; }
     box-shadow: none;
   }
 
-  .doc__grid { grid-template-columns: 1fr; }
+  .doc__grid,
+  .doc__grid--2,
+  .doc__grid--4 { grid-template-columns: 1fr; }
+  .doc dl { grid-template-columns: 1fr; gap: 2px; }
+  .doc dd { margin-bottom: 8px; }
 }
 
 @media (max-width: 600px) {

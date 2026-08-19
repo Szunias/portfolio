@@ -1,0 +1,51 @@
+<!-- Review layout for the project pages, tried on AudioQ. The published page
+     stays audioq.html; this one is noindex and unlinked. Same facts, written
+     as a document: one column, plain headings, media at column width with a
+     caption under it. -->
+<article class="doc">
+  <h1>AudioQ</h1>
+  <p class="doc__meta">Started 2024 &middot; public v1.0.0, 9 November 2025 &middot; Solo C++ and JUCE &middot; C++17 &middot; JUCE 8 &middot; MIT</p>
+  <p class="doc__lead">AudioQ is a sampler plug-in. It loads a sound, turns any part of it into a loop and reshapes the playback with granular mode and effects.</p>
+  <p>I built it alone in C++ and JUCE. The waveform editor, the playback engine and the DSP chain are all mine.</p>
+  <p class="doc__links">
+    <a href="https://github.com/Szunias/AudioQ" target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">&nearr;</span></a>
+    <a href="https://www.youtube.com/watch?v=Q2hwWfisU4A" target="_blank" rel="noopener noreferrer">Recorded demo <span aria-hidden="true">&nearr;</span></a>
+  </p>
+
+  <figure class="doc__media">
+    <img src="audioqscreenshot.png" srcset="audioqscreenshot-640.webp 640w, audioqscreenshot-1400.webp 1400w" sizes="(min-width: 1000px) 920px, calc(100vw - 40px)" width="2028" height="1389" alt="AudioQ v1.0.0 interface with a source waveform, live output display and processing controls" fetchpriority="high" decoding="async">
+    <figcaption class="doc__caption">AudioQ v1.0.0, the current interface.</figcaption>
+  </figure>
+
+  <h2>Loading a sound and looping it</h2>
+  <p>AudioQ loads WAV, AIFF and MP3 files. Dragging across the waveform sets the loop region, and a crossfade smooths its join. The 20&ndash;300 BPM control changes playback speed; it does not time-stretch the file to a detected tempo.</p>
+
+  <figure class="doc__media">
+    <div class="yt-facade" data-yt-facade data-video-id="Q2hwWfisU4A"><button class="yt-facade__launch" type="button" data-yt-launch data-video-title="AudioQ recorded demonstration using the earlier interface" aria-label="Play the AudioQ recorded demonstration"><img src="old/public/assets/images/video-posters/audioq-demo.jpg" srcset="old/public/assets/images/video-posters/audioq-demo-640.webp 640w, old/public/assets/images/video-posters/audioq-demo-1200.webp 1200w, old/public/assets/images/video-posters/audioq-demo.jpg 1280w" sizes="(min-width: 1360px) 1200px, calc(100vw - 40px)" alt="" width="1280" height="848" loading="lazy" aria-hidden="true"><span class="yt-facade__play" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 7.5v9l7-4.5-7-4.5Z"/></svg></span></button><noscript><iframe src="https://www.youtube-nocookie.com/embed/Q2hwWfisU4A" title="AudioQ recorded demonstration using the earlier interface" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></noscript></div>
+    <figcaption class="doc__caption">The recorded demo runs through loading, looping and processing a sound. It uses an earlier interface than the screenshot above.</figcaption>
+  </figure>
+
+  <h2>The order the controls run in</h2>
+  <p>Granular mode changes the source playback before the sound reaches the effects. JUCE supplies the TPT filters and the compressor; I wrote the rest.</p>
+  <ol>
+    <li>Source file and loop region</li>
+    <li>Playback speed or granular mode</li>
+    <li>Filters</li>
+    <li>Compressor</li>
+    <li>Tremolo, bitcrusher and glitch</li>
+    <li>Dry / wet output</li>
+  </ol>
+
+  <h2>The safety limit and what is still untested</h2>
+  <p>The compressor handles normal peaks. If the signal still exceeds 4.0 linear gain, a separate fail-safe stops playback. It is a last resort, not certified hearing protection.</p>
+  <p>I rebuilt the plugin more than once before the public release. The download is a Windows VST3 build. The source also builds a standalone app, but broader testing across hosts, operating systems, sample rates and channel layouts is still pending.</p>
+
+  <nav class="doc__end" aria-label="Project links and navigation">
+    <span>
+      <a href="https://github.com/Szunias/AudioQ" target="_blank" rel="noopener noreferrer">Source code on GitHub</a>
+      <a href="https://www.youtube.com/watch?v=Q2hwWfisU4A" target="_blank" rel="noopener noreferrer">Demo on YouTube</a>
+      <a href="/#work">Back to selected work</a>
+    </span>
+    <a href="autotrim.html">Next: AutoTrim Exporter <span aria-hidden="true">&rarr;</span></a>
+  </nav>
+</article>

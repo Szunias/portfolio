@@ -1,0 +1,73 @@
+<!-- Review layout for the project pages, tried on the Mowik tool page. The
+     published page stays mowik.html; this one is noindex and unlinked.
+     Same facts, written as a document: one column, plain headings, media at
+     column width with a caption under it. -->
+<article class="doc">
+  <h1>M&oacute;wik</h1>
+  <p class="doc__meta">2026 &middot; Python &middot; faster-whisper &middot; Windows 10/11 x64 &middot; MIT</p>
+  <p class="doc__lead">M&oacute;wik is a Windows push-to-talk dictation app that inserts transcribed speech into the active window.</p>
+  <p>I wrote the Python app and its transcription pipeline, and I maintain the Polish and English interface and the Windows releases.</p>
+  <p class="doc__links">
+    <a href="https://github.com/Szunias/Mowik/releases" target="_blank" rel="noopener noreferrer">Get M&oacute;wik <span aria-hidden="true">&nearr;</span></a>
+    <a href="https://github.com/Szunias/Mowik" target="_blank" rel="noopener noreferrer">Read the source <span aria-hidden="true">&nearr;</span></a>
+  </p>
+
+  <figure class="doc__media">
+    <img src="old/public/assets/images/projects-mowik/mowik-home-pl.png" srcset="old/public/assets/images/projects-mowik/mowik-home-pl-640.webp 640w, old/public/assets/images/projects-mowik/mowik-home-pl-1200.webp 1200w, old/public/assets/images/projects-mowik/mowik-home-pl.png 1680w" sizes="(min-width: 1000px) 920px, calc(100vw - 40px)" width="1680" height="1170" alt="Dark M&oacute;wik Center in Polish with dictation shortcut, command mode, microphone and quality settings" fetchpriority="high" decoding="async">
+    <figcaption class="doc__caption">Start, UI 2.7.4 working build. The shortcut, command mode, microphone, quality profile and local-processing status stay visible.</figcaption>
+  </figure>
+
+  <h2>Dictating with F8</h2>
+  <p>F8 is the default shortcut and can be changed in Settings. Holding it starts recording, with a short RAM pre-roll that helps retain the first syllable. On release, faster-whisper transcribes it and the text is typed into the active window, copied to the clipboard or both. Sound cues for the start of recording and the end of transcription are optional.</p>
+
+  <h2>The settings screens</h2>
+  <p>The main screen holds the shortcut, microphone, language, quality profile and feedback settings; model, device, speech detection and buffer controls sit under Advanced. The screenshots come from the local v2.7.4 working build; the latest release on GitHub is v2.9.0.</p>
+  <div class="doc__grid doc__grid--2">
+    <figure>
+      <a href="old/public/assets/images/projects-mowik/mowik-dictation-en.png" target="_blank" rel="noopener noreferrer"><img src="old/public/assets/images/projects-mowik/mowik-dictation-en.png" srcset="old/public/assets/images/projects-mowik/mowik-dictation-en-640.webp 640w, old/public/assets/images/projects-mowik/mowik-dictation-en-1200.webp 1200w, old/public/assets/images/projects-mowik/mowik-dictation-en.png 1680w" sizes="(min-width: 1000px) 450px, calc(100vw - 40px)" width="1680" height="1170" alt="Dark English M&oacute;wik dictation settings with quality profiles, shortcut, microphone, language and advanced recognition controls" loading="lazy" decoding="async"></a>
+      <figcaption>Dictation and local model controls, UI 2.7.4 working build.</figcaption>
+    </figure>
+    <figure>
+      <a href="old/public/assets/images/projects-mowik/mowik-sounds-en.png" target="_blank" rel="noopener noreferrer"><img src="old/public/assets/images/projects-mowik/mowik-sounds-en.png" srcset="old/public/assets/images/projects-mowik/mowik-sounds-en-640.webp 640w, old/public/assets/images/projects-mowik/mowik-sounds-en-1200.webp 1200w, old/public/assets/images/projects-mowik/mowik-sounds-en.png 1680w" sizes="(min-width: 1000px) 450px, calc(100vw - 40px)" width="1680" height="1170" alt="Dark English M&oacute;wik sound and notification settings for recording and transcription feedback" loading="lazy" decoding="async"></a>
+      <figcaption>The recording and transcription cues, all of them optional, UI 2.7.4 working build.</figcaption>
+    </figure>
+  </div>
+
+  <h2>Where the audio and the text go</h2>
+  <p>M&oacute;wik does not upload audio or dictated text. Recognition runs through faster-whisper on the computer instead of a remote speech service.</p>
+  <dl>
+    <dt>Audio</dt><dd>Kept in RAM, discarded after transcription and not saved to disk.</dd>
+    <dt>Transcript</dt><dd>Typed or copied on request. Technical logs omit the dictated text.</dd>
+    <dt>Model</dt><dd>Internet is needed once to download it. Recognition then uses NVIDIA CUDA in float16 when available and CPU int8 when CUDA cannot start.</dd>
+    <dt>Correction</dt><dd>Off by default. When it is enabled, Ollama runs locally.</dd>
+  </dl>
+
+  <h2>What a voice command can do</h2>
+  <p>Custom voice commands arrived in v2.7 and use F7 by default. Each pairs an exact spoken phrase with a preset action.</p>
+  <ul>
+    <li>Insert text: types a predefined phrase into the active window.</li>
+    <li>Open a trusted target: a configured app, file or HTTPS address, after confirmation.</li>
+    <li>Copy a terminal command: validated text goes to the clipboard. M&oacute;wik does not run it or press Enter.</li>
+  </ul>
+
+  <figure class="doc__media">
+    <img src="old/public/assets/images/projects-mowik/mowik-commands-en.png" srcset="old/public/assets/images/projects-mowik/mowik-commands-en-640.webp 640w, old/public/assets/images/projects-mowik/mowik-commands-en-1200.webp 1200w, old/public/assets/images/projects-mowik/mowik-commands-en.png 1680w" sizes="(min-width: 1000px) 920px, calc(100vw - 40px)" width="1680" height="1170" alt="Dark English M&oacute;wik custom commands page with the F7 shortcut, command list and safety notice" loading="lazy" decoding="async">
+    <figcaption class="doc__caption">The commands page, with the safety boundary written next to the list, UI 2.7.4 working build.</figcaption>
+  </figure>
+
+  <h2>The v2.9.0 installer</h2>
+  <p>Checked 19 August 2026. The 79 MB installer supports Windows 10 version 1809 or newer and Windows 11. It no longer bundles the NVIDIA runtime: the first time a model starts on the GPU, M&oacute;wik downloads its pinned CUDA 12.9 libraries, close to a gigabyte, verifies them against the release checksums and stores them locally. With no network at that moment, dictation runs on the CPU. The installer is not Authenticode-signed, so Windows may show <em>Unknown publisher</em> or SmartScreen; the release publishes a SHA-256 checksum and a GitHub build attestation.</p>
+  <p class="doc__links">
+    <a href="https://github.com/Szunias/Mowik/releases/tag/v2.9.0" target="_blank" rel="noopener noreferrer">Release notes <span aria-hidden="true">&nearr;</span></a>
+    <a href="https://github.com/Szunias/Mowik/releases/download/v2.9.0/SHA256SUMS.txt" target="_blank" rel="noopener noreferrer">SHA-256 file <span aria-hidden="true">&nearr;</span></a>
+  </p>
+
+  <nav class="doc__end" aria-label="Project links and navigation">
+    <span>
+      <a href="https://github.com/Szunias/Mowik/releases" target="_blank" rel="noopener noreferrer">Releases on GitHub</a>
+      <a href="https://github.com/Szunias/Mowik" target="_blank" rel="noopener noreferrer">Source code on GitHub</a>
+      <a href="/#work">Back to selected work</a>
+    </span>
+    <a href="audioq.html">Next: AudioQ <span aria-hidden="true">&rarr;</span></a>
+  </nav>
+</article>

@@ -1,0 +1,60 @@
+<!-- Review layout for the project pages, tried on Transientica. The published
+     page stays transientica.html; this one is noindex and unlinked. Same
+     facts, written as a document: one column, plain headings, media at column
+     width with a caption under it. -->
+<article class="doc">
+  <h1>Transientica</h1>
+  <p class="doc__meta">2025 &ndash; Present &middot; Solo developer &middot; Unity 6 &middot; C# &middot; KNN &middot; FFT &middot; In development</p>
+  <p class="doc__lead">A Unity rhythm game played by beatboxing into a microphone.</p>
+  <p>I built the game and its audio recognition in C#. Before a song starts, it learns how that player makes a kick, a snare and a hi-hat, then classifies each live hit against the notes in the beatmap.</p>
+
+  <figure class="doc__media">
+    <img src="transienticascreenshot.png" srcset="transienticascreenshot-640.webp 640w, transienticascreenshot-1200.webp 1200w" sizes="(min-width: 1000px) 920px, calc(100vw - 40px)" width="2560" height="1440" alt="Transientica gameplay: three lanes labelled KICK, SNARE and HI-HAT, a note falling towards the line at the bottom, a score and a combo counter" fetchpriority="high" decoding="async">
+    <figcaption class="doc__caption">The current build, with one lane for each of the three sounds.</figcaption>
+  </figure>
+
+  <h2>Ten recordings before the first song</h2>
+  <p>Players record ten examples of each beatbox sound with their own microphone. The game trains on those recordings, then classifies live hits while it judges their timing against a beatmapped song.</p>
+
+  <figure class="doc__media">
+    <div class="yt-facade" data-yt-facade data-video-id="r9IC7t0GPOU"><button class="yt-facade__launch" type="button" data-yt-launch data-video-title="Transientica gameplay demo" aria-label="Play the Transientica gameplay demo"><img src="old/public/assets/images/video-posters/transientica-current-1600.webp" alt="" width="1600" height="900" loading="lazy" aria-hidden="true"><span class="yt-facade__play" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 7.5v9l7-4.5-7-4.5Z"/></svg></span></button><noscript><iframe src="https://www.youtube-nocookie.com/embed/r9IC7t0GPOU" title="Transientica gameplay demo" allow="encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe></noscript></div>
+    <figcaption class="doc__caption">Training and gameplay in the current C# build.</figcaption>
+  </figure>
+
+  <h2>From microphone onset to a judged note</h2>
+  <p>All of it runs inside Unity. The build does not need Python or another application open beside the game.</p>
+  <p>When the microphone registers an onset, the game runs a 512-sample FFT, measures seven features of the sound and compares them with the player&rsquo;s own recordings. A KNN classifier decides whether the hit was a kick, a snare or a hi-hat. The hit is then matched to the nearest note on Unity&rsquo;s audio clock and scored. A short calibration estimates the microphone delay, and the player can fine-tune the offset in 1 ms steps.</p>
+
+  <h2>Why I rebuilt the prototype in Unity</h2>
+  <p>The first version recognised sounds in a separate Python program and sent the result to Unity. I replaced it with a C# system that analyses and classifies each hit inside the game. That turned a classifier demo into a playable loop with song selection, beatmaps, scoring and saved results. Training data stays in readable JSON, so it can be updated between rounds.</p>
+  <p>The 2025 figures below come from the player-specific SVM prototype. Accuracy means kick, snare and hi-hat classification after training on that player&rsquo;s recordings, and latency covers the mouth-to-game path through Python, OSC and Unity. The current C# build has not yet been tested under the same protocol.</p>
+
+  <div class="doc__table">
+    <table>
+      <thead>
+        <tr><th scope="col">Version</th><th scope="col">Model</th><th scope="col">Runtime</th><th scope="col">Accuracy</th><th scope="col">End-to-end latency</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">2025 prototype, retired</th><td>SVM</td><td>Python + OSC + Unity</td><td>92%</td><td>45 ms</td></tr>
+        <tr><th scope="row">Current rebuild</th><td>KNN, K=5</td><td>Pure C# in Unity 6</td><td>Pending like-for-like benchmark</td><td>Pending like-for-like benchmark</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure class="doc__media">
+    <div class="doc__video">
+      <video controls playsinline preload="none" poster="old/public/assets/images/video-posters/transientica-prototype-gameview.webp" aria-label="Transientica beatboxing-controlled rhythm game prototype" style="--shot-ar:984/554">
+        <source src="old/public/assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4" type="video/mp4">
+        Your browser does not support the video element.
+      </video>
+    </div>
+    <figcaption class="doc__caption">The 2025 prototype, with the SVM classifier running in Python.</figcaption>
+  </figure>
+
+  <nav class="doc__end" aria-label="Project links and navigation">
+    <span>
+      <a href="/#work">Back to selected work</a>
+    </span>
+    <a href="nottoday.html">Next: Not Today, Darling! <span aria-hidden="true">&rarr;</span></a>
+  </nav>
+</article>
