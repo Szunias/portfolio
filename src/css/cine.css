@@ -413,8 +413,12 @@ html[data-scrolled] .cine-open__cue { opacity: 0; }
   display: grid;
   align-content: center;
   overflow: hidden;
+  isolation: isolate;
   background: var(--c-bg-0);
 }
+
+/* Everything except the bed and the frames sits above them. */
+.cine-stage__frame { position: relative; z-index: 2; }
 
 /* Two columns on the same axis the steps use, so the step that is speaking
    sits beside the visual it is describing rather than on top of it. The left
@@ -480,9 +484,65 @@ html[data-scrolled] .cine-open__cue { opacity: 0; }
 .cine-stage--photo .cine-step {
   padding: var(--s-4);
   border-left: 1px solid var(--c-accent-line);
-  background: linear-gradient(90deg, rgba(11, 11, 13, .88), rgba(11, 11, 13, .55) 70%, transparent);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: linear-gradient(90deg, rgba(11, 11, 13, .82), rgba(11, 11, 13, .42) 74%, transparent);
+}
+
+/* ---------- Film stage: the real frames, crossfading ----------
+   The strongest picture a game project has is the game. A stage marked
+   --film pins the frames themselves at full bleed and cuts between them as
+   the steps advance, so the reader is looking at the thing being described
+   rather than at a drawing of it. The slow scale is a hold, not an effect:
+   it keeps a still frame from reading as a frozen screenshot. */
+.cine-stage--film .cine-stage__sticky { display: block; padding: 0; }
+
+.cine-frames { position: absolute; inset: 0; z-index: 0; }
+
+.cine-frames img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.05);
+  /* The game is graded for a dark room and these stills sit near black. The
+     lift is what makes them read as pictures on a lit screen; the trailer's
+     own grade is still what you see, just brought up. */
+  filter: brightness(1.7) contrast(1.06);
+  transition: opacity 900ms var(--cine-ease), transform 4200ms linear;
+}
+
+[data-step="0"] .cine-frames img[data-frame="0"],
+[data-step="1"] .cine-frames img[data-frame="1"],
+[data-step="2"] .cine-frames img[data-frame="2"],
+[data-step="3"] .cine-frames img[data-frame="3"],
+[data-step="all"] .cine-frames img[data-frame="0"] { opacity: 1; transform: scale(1); }
+
+/* The steps sit on the left of the frame, so the veil is weighted there and
+   the right two thirds of the picture stay clear. */
+.cine-stage__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(11, 11, 13, .92) 0%, rgba(11, 11, 13, .62) 26%, rgba(11, 11, 13, 0) 54%, rgba(11, 11, 13, 0) 100%),
+    linear-gradient(180deg, rgba(11, 11, 13, .74) 0%, rgba(11, 11, 13, 0) 18%, rgba(11, 11, 13, 0) 78%, rgba(11, 11, 13, .74) 100%);
+}
+
+/* A quiet bed under a stage that has no photograph of its own, so the panel
+   is not floating in a void. */
+.cine-stage__bed {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  opacity: .28;
+  filter: grayscale(1) brightness(1.5);
 }
 
 /* =========================================================
@@ -719,6 +779,9 @@ html[data-scrolled] .cine-open__cue { opacity: 0; }
   /* The pinned stage stops being pinned: a 34ch panel over a photograph does
      not fit a phone, so the visual and its steps run in sequence instead. */
   .cine-stage__sticky { position: static; height: auto; min-height: 0; padding-block: var(--s-5); }
+  .cine-stage--film .cine-stage__sticky { position: sticky; height: 62svh; padding-block: 0; }
+  .cine-stage--film .cine-stage__steps { margin-top: 0; }
+  .cine-stage--film .cine-step { padding-block: var(--s-5); }
   .cine-stage__frame { display: block; }
   .cine-stage__visual { grid-column: auto; }
   .cine-stage__steps { margin-top: 0; }
