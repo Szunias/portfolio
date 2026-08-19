@@ -595,6 +595,28 @@ module.exports = {
       sitemap: false,
     },
 
+    // Cinematic layout for the project pages, tried on the lead project. The
+    // published page stays shadowframes.html. Layout 'home' because build.cjs
+    // requires every layout:'project' page to sit in the homepage work index,
+    // which a review twin must not; cine.css carries its own shell.
+    {
+      slug: 'shadowframes-cine',
+      layout: 'home',
+      css: ['cine', 'shadowframes-cine'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade', 'local-video'],
+      title: 'Shadow Frames, cinematic layout | Igor Szuniewicz',
+      description: 'A scroll-told version of the Shadow Frames page: the anomaly cue and the priority mix play out as the reader scrolls. Solo audio design in Wwise and Unreal Engine 5.',
+      canonical: `${SITE}/shadowframes-cine.html`,
+      ogType: 'website',
+      ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
+      ogImageAlt: 'Shadow Frames UE5 horror game scene with spatial audio implementation',
+      ogImageWidth: 1920,
+      ogImageHeight: 1080,
+      ogImageType: 'image/jpeg',
+      noindex: true,
+      sitemap: false,
+    },
+
     // Projects with lightbox
     {
       slug: 'sidar',
