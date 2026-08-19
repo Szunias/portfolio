@@ -602,8 +602,8 @@ module.exports = {
     {
       slug: 'shadowframes-cine',
       layout: 'home',
-      css: ['cine', 'shadowframes-cine'],
-      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade', 'local-video'],
+      css: 'cine',
+      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade'],
       title: 'Shadow Frames, cinematic layout | Igor Szuniewicz',
       description: 'A scroll-told version of the Shadow Frames page: the anomaly cue and the priority mix play out as the reader scrolls. Solo audio design in Wwise and Unreal Engine 5.',
       canonical: `${SITE}/shadowframes-cine.html`,
