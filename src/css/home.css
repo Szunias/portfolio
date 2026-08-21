@@ -257,46 +257,9 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
    a sentence further down the page and was removed from index.html, so the
    rules, the keyframes and the reduced-motion branch had no markup left. */
 
-/* Cursor light (created by cursor.js, so no-JS pages never carry the node).
-   The blend mode lets the same glow ride dark panels and stills alike; both
-   layers are fixed and transform-driven, so they never cause layout work.
-
-   The wrapper is a zero-size anchor at the viewport origin and carries only
-   the fade. Each layer owns its own transform, written whole by cursor.js -
-   never the standalone `scale` property, which composes BEFORE `transform`
-   and would multiply the translation, throwing the glow off the pointer. */
-.cursor-light {
-  position:fixed; top:0; left:0; z-index:4000;
-  width:0; height:0;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .35s var(--ease);
-}
-.cursor-light.is-on { opacity:1; }
-.cursor-light__halo,
-.cursor-light__dot {
-  position:absolute; top:0; left:0;
-  border-radius:50%;
-  will-change:transform;
-}
-.cursor-light__halo {
-  width:220px; height:220px;
-  margin:-110px 0 0 -110px;
-  background:radial-gradient(circle,
-    color-mix(in srgb, var(--ice) 26%, transparent) 0%,
-    color-mix(in srgb, var(--ice) 10%, transparent) 34%,
-    transparent 68%);
-  mix-blend-mode:screen;
-}
-.cursor-light__dot {
-  width:6px; height:6px;
-  margin:-3px 0 0 -3px;
-  background:color-mix(in srgb, var(--ice) 85%, #fff);
-  opacity:.9;
-}
-@media (prefers-reduced-motion: reduce) {
-  .cursor-light { display:none; }
-}
+/* The cursor light lived here: an ice-tinted halo that trailed the pointer and
+   swelled over anything clickable. It read as odd rather than as a cue, so the
+   glow, its script and the reduced-motion branch are gone. */
 
 .hero__reelmeta { margin-top:var(--s-5); }
 

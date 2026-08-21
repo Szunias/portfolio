@@ -27,7 +27,7 @@ module.exports = {
       slug: 'index',
       layout: 'home',
       css: 'home',
-      js: ['prefetch', 'colophon-clock', 'home-list', 'cursor'],
+      js: ['prefetch', 'colophon-clock', 'home-list'],
       title: 'Igor Szuniewicz | Technical Sound Designer & Audio Programmer',
       ogTitle: 'Igor Szuniewicz | Technical Sound Designer & Audio Programmer',
       // 158 characters: the snippet used to stop at 116 on the one page
