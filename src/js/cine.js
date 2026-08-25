@@ -30,7 +30,10 @@
           entry.target.classList.add('is-in');
           revealObserver.unobserve(entry.target);
         });
-      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.15 });
+        /* Nearly at the edge: media on these pages is evidence, and the old
+           15% / -12% gate left a diagram dark for most of a second after it
+           was already on screen. */
+      }, { rootMargin: '0px 0px -4% 0px', threshold: 0.05 });
       revealables.forEach(function (el) { revealObserver.observe(el); });
     }
   }

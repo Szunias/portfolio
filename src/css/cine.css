@@ -275,6 +275,14 @@ a { color: inherit; }
 
 .cine-row--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
+/* One tall portrait shot beside two landscape ones: as three equal columns
+   the row ended ragged, with a hole under the short middle panel. The tall
+   shot takes the right column and the two others stack on the left. */
+@media (min-width: 901px) {
+  .cine-row--balance { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cine-row--balance figure:nth-child(3) { grid-column: 2; grid-row: 1 / 3; }
+}
+
 .cine-row figure { margin: 0; }
 .cine-row img { display: block; width: 100%; background: var(--c-bg-0); }
 
@@ -295,6 +303,31 @@ a { color: inherit; }
   line-height: var(--lh-b1);
   color: var(--muted);
 }
+
+/* ---------- Collapsed sample sets ----------
+   A bare <details> read as a dead heading with nothing under it. The
+   summary is a control, so it gets the same +/- affordance as the
+   earlier-work list on the home page. */
+.cine-more > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  transition: color var(--dur, 200ms) ease;
+}
+.cine-more > summary::-webkit-details-marker { display: none; }
+.cine-more > summary::after {
+  content: '+';
+  font-family: var(--mono);
+  color: var(--ice);
+}
+.cine-more[open] > summary::after { content: '-'; }
+.cine-more > summary:hover,
+.cine-more > summary:focus-visible { color: var(--ice); }
 
 /* =========================================================
    THE MIX - five levels beside their paragraph
@@ -364,7 +397,9 @@ a { color: inherit; }
    ========================================================= */
 [data-reveal] {
   opacity: 0;
-  transition: opacity 500ms var(--cine-ease);
+  /* Short enough that a screenshot or diagram is readable the moment it
+     scrolls in; 500ms read as a delay on the evidence, not an entrance. */
+  transition: opacity 220ms var(--cine-ease);
 }
 
 [data-reveal].is-in { opacity: 1; }
