@@ -230,12 +230,12 @@
     specCtx.lineWidth = 1;
     for (let g = 0; g < GRID.length; g++) {
       const x = Math.round((w * Math.log(GRID[g][0] / FMIN)) / span) + 0.5;
-      specCtx.strokeStyle = 'rgba(236, 238, 240, 0.06)';
+      specCtx.strokeStyle = 'rgba(236, 238, 240, 0.10)';
       specCtx.beginPath();
       specCtx.moveTo(x, base);
       specCtx.lineTo(x, base - amp - 24);
       specCtx.stroke();
-      specCtx.fillStyle = 'rgba(236, 238, 240, 0.3)';
+      specCtx.fillStyle = 'rgba(236, 238, 240, 0.48)';
       specCtx.fillText(GRID[g][1], x, base + 18);
     }
     specCtx.strokeStyle = 'rgba(236, 238, 240, 0.12)';
