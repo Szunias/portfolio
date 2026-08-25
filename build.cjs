@@ -636,7 +636,12 @@ function sanitizeStaticSnapshot(html) {
 }
 
 function enhanceInlineSvgAccessibility(html) {
-  return html.replace(/<svg\b(?![^>]*\baria-hidden=)(?![^>]*\brole=)([^>]*)>/gi, '<svg aria-hidden="true" focusable="false"$1>');
+  // Split additions: an svg that already carries focusable="false" in the
+  // source must not receive a second copy of the attribute.
+  return html.replace(/<svg\b(?![^>]*\baria-hidden=)(?![^>]*\brole=)([^>]*)>/gi, (match, attrs) => {
+    const focusable = /\bfocusable=/i.test(attrs) ? '' : ' focusable="false"';
+    return `<svg aria-hidden="true"${focusable}${attrs}>`;
+  });
 }
 
 function neutralizeJavascriptHrefs(html) {
