@@ -17,13 +17,18 @@
       // The script runs at the end of the body, so a reader can already have
       // pressed the native control. Leave a started video alone.
       if (!video.paused || video.currentTime > 0) return false;
-      var shell = video.parentElement;
-      return !!shell && shell.children.length === 1;
+      return !!video.parentElement;
     });
 
   videos.forEach(function (video) {
-    var shell = video.parentElement;
     var label = video.getAttribute('aria-label') || 'video';
+
+    // The video gets its own positioning shell, so a caption next to it in
+    // the figure neither blocks the facade nor sits under the overlay.
+    var shell = document.createElement('div');
+    shell.className = 'local-video';
+    video.parentElement.insertBefore(shell, video);
+    shell.appendChild(video);
 
     var launch = document.createElement('button');
     launch.type = 'button';
@@ -32,7 +37,6 @@
     launch.innerHTML = '<span class="local-video__play">' + PLAY_ICON + '</span>';
 
     video.removeAttribute('controls');
-    shell.classList.add('local-video');
     shell.appendChild(launch);
 
     function start() {
