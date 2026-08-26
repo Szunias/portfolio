@@ -19,7 +19,14 @@ const SITE = 'https://igorszuniewicz.com';
 
 module.exports = {
   /** Historical snapshots stay in archive/ and are intentionally not deployed. */
-  staticCopy: [],
+  staticCopy: [
+    {
+      file: 'src/static/trip.html',
+      outName: 'trip/index.html',
+      noindex: true,
+      sitemap: false,
+    },
+  ],
 
   pages: [
     // Home
