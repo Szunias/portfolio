@@ -1281,9 +1281,11 @@ function getCSS(name) {
 // while giving the site one palette, one type ladder and one spacing scale.
 //
 // _fonts first (order-independent, cannot interact with the cascade), then
-// _tokens, then the layout stylesheets which may override any token.
+// _tokens, then _chrome (the shared header and colophon, which no layout
+// stylesheet re-declares), then the layout stylesheets which may override any
+// token.
 function pageStylesheet(names) {
-  return [getCSS('_fonts'), getCSS('_tokens')].concat(names.map(getCSS)).join('\n');
+  return [getCSS('_fonts'), getCSS('_tokens'), getCSS('_chrome')].concat(names.map(getCSS)).join('\n');
 }
 
 // Conservative CSS minifier: strips comments and collapses whitespace, but
@@ -1724,7 +1726,7 @@ function validateConfig(cfg) {
     // reference is resolved against _tokens.css and every stylesheet on the page.
     const pageCssSources = cssNames.map(name => read(path.join(SRC, 'css', `${name}.css`)));
     const trackingProps = new Map();
-    for (const source of [getCSS('_tokens')].concat(pageCssSources)) {
+    for (const source of [getCSS('_tokens'), getCSS('_chrome')].concat(pageCssSources)) {
       for (const decl of source.matchAll(/(--[\w-]+)\s*:\s*([^;{}]+);/g)) {
         trackingProps.set(decl[1], decl[2].trim());
       }

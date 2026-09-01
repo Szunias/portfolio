@@ -114,8 +114,23 @@
 }
 
 .ck__mail a:hover {
-  color: var(--ice);
-  border-bottom-color: var(--ice);
+  color: var(--ck-ring);
+  border-bottom-color: var(--ck-ring);
+}
+
+/* One accent per screen. The copy button takes the phase colour the ring and
+   the address already carry; the site's ice fill next to a dusk-copper dial
+   was two accents fighting on the one page whose job is a single address. */
+.ck .btn--primary {
+  color: var(--c-accent-ink);
+  background: var(--ck-ring);
+  border-color: var(--ck-ring);
+}
+
+.ck .btn--primary:hover {
+  color: var(--c-accent-ink);
+  background: color-mix(in srgb, var(--ck-ring) 84%, #ffffff);
+  border-color: color-mix(in srgb, var(--ck-ring) 84%, #ffffff);
 }
 
 .ck__write {
@@ -166,4 +181,16 @@
 
   .ck__actions,
   .ck__out { justify-content: center; }
+
+  /* 28px put "igorszuniewiczwork@" past a 320px column and broke the address
+     at the wbr into two underlined stubs. At 20px on 360 it holds one line
+     and is still the largest thing on the screen. */
+  .ck__mail { font-size: clamp(18px, 5.6vw, 28px); letter-spacing: -.02em; }
+
+  /* The two controls share the column instead of hugging their labels. */
+  .ck__actions .btn { flex: 1 1 auto; }
+
+  /* Five uppercase mono labels at the desktop gap ran 20px past a 320px
+     column and left Spotify alone on a second line. */
+  .ck__out { gap: 8px var(--s-3); }
 }
