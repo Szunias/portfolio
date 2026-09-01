@@ -628,7 +628,7 @@ module.exports = {
       schemaType: 'VideoGame',
       schemaRole: 'contributor',
       title: 'Shadow Frames | Audio-Driven Horror in Wwise + UE5',
-      description: 'Solo audio design for a horror game with no on-screen markers: players find every anomaly by ear. 200+ Wwise events and voice acting in Unreal Engine 5.',
+      description: 'Sole audio design for a horror game where players find every anomaly by ear: 200+ Wwise events and voice acting in Unreal Engine 5.',
       canonical: `${SITE}/shadowframes.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
       ogImageAlt: 'Shadow Frames UE5 horror game scene with spatial audio implementation',
@@ -739,7 +739,7 @@ module.exports = {
       schemaApplicationCategory: 'MultimediaApplication',
       schemaOperatingSystem: 'Windows, macOS, Linux',
       title: 'AutoTrim Exporter | REAPER Sound Asset Delivery',
-      description: 'AutoTrim Exporter 3.4.3 is a REAPER delivery tool for collecting layered sounds, checking the render path and exporting trimmed, named and verified audio assets.',
+      description: 'AutoTrim Exporter is a REAPER delivery tool for collecting layered sounds, checking the render path and exporting trimmed, named and verified audio assets.',
       canonical: `${SITE}/autotrim.html`,
       // Explicit for clarity; build.cjs defaults every page to website, so a
       // consumer never looks for a byline or published_time here. The JSON-LD
@@ -759,7 +759,7 @@ module.exports = {
       schemaType: 'SoftwareApplication',
       schemaApplicationCategory: 'MultimediaApplication',
       schemaOperatingSystem: 'Windows',
-      title: 'AudioQ Sampler & Sound-Mangling Plugin | C++ JUCE',
+      title: 'AudioQ Sampler Plug-in | C++ JUCE',
       description: 'A C++/JUCE sampler with loop editing, granular playback and effects. The public release is Windows VST3; the source also builds a standalone app.',
       canonical: `${SITE}/audioq.html`,
       // Tool page, same as autotrim: SoftwareApplication in JSON-LD.
