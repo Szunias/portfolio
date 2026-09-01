@@ -348,11 +348,25 @@ a { color: var(--paper); }
 
 .featured { padding-block: var(--section-pad) var(--s-6); }
 
+/* The eight tiles are an ordered set, so the wrapper is a real <ol> and each
+   tile sits in an <li>: assistive tech announces the count and each position,
+   which the aria-hidden visible indexes cannot. The li is a plain flex
+   passthrough so the button keeps filling the grid cell. */
 .featured__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--s-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
+
+.featured__grid > li {
+  display: flex;
+  min-width: 0;
+}
+
+.featured__grid > li > .track-tile { width: 100%; }
 
 .track-tile {
   position: relative;
@@ -1057,13 +1071,14 @@ a { color: var(--paper); }
   touch-action: none;
 }
 
+/* Same 44px of hit area the seek bar gets, all of it inside the bar. */
 .player-bar__volume::before {
   content: '';
   position: absolute;
   left: 0;
   right: 0;
-  top: -12px;
-  height: 28px;
+  top: -20px;
+  height: 44px;
 }
 
 .player-bar__volume-fill {
@@ -1481,7 +1496,7 @@ a { color: var(--paper); }
   .music-fallback li { grid-template-columns: minmax(0, 1fr); gap: var(--s-2); }
 
   /* ---- Page foot ----
-     home.css and case.css both turn the colophon into a column here; this
+     home.css turns the colophon into a column here; this
      layout relied on flex-wrap instead, which stacks the two spans but keeps
      the row gap meant for a single line. */
   .colophon {
@@ -1517,7 +1532,7 @@ a { color: var(--paper); }
 
 
 /* ---------- Header: shared geometry + type ----------
-   Identical in home.css, music.css, case.css and sidar.css on purpose. The bar
+   Identical in home.css, music.css, cine.css and case-plain.css on purpose. The bar
    used to be defined four times with four different paddings, so it jumped
    every time you switched pages. Change one, change all four.
 
@@ -1535,15 +1550,17 @@ a { color: var(--paper); }
   min-height: 44px; white-space: nowrap; text-decoration: none;
 }
 .site-header nav { display: flex; align-items: center; gap: clamp(8px,1.6vw,24px); }
+/* Header type sits on the shared R1 ACTION register (--micro-act), matching
+   the project pages, so the wordmark never changes face between layouts. */
 .site-header__name {
-  font-family: var(--serif);
-  font-size: .95rem; font-weight: 600; letter-spacing: .01em;
+  font-family: var(--sans);
+  font-size: var(--t-s1); font-weight: 600; letter-spacing: .01em;
   color: var(--paper);
 }
 .site-header__name-short { display: none; }
 .site-header nav a {
   font-family: var(--sans);
-  font-size: .82rem; font-weight: 500; letter-spacing: .01em;
+  font-size: var(--t-s1); font-weight: 500; letter-spacing: 0;
   min-width: 24px; transition: color var(--dur) var(--ease);
   color: var(--text-muted);
 }
@@ -1558,10 +1575,6 @@ a { color: var(--paper); }
   text-underline-offset: 4px;
 }
 .site-header nav a[aria-current='page'] { box-shadow: inset 0 -1px 0 0 var(--paper); }
-@media (max-width:640px) {
-  .site-header__name { font-size: .85rem; }
-  .site-header nav a { font-size: .78rem; }
-}
 
 /* ---------- Header: mobile navigation ----------
    Music keeps the three destination links visible without horizontal scroll.
@@ -1580,8 +1593,6 @@ a { color: var(--paper); }
     flex: 0 0 auto;
     min-width: 44px;
     min-height: 44px;
-    font-size: .82rem;
-    letter-spacing: .015em;
   }
 
   .site-header__name-full { display: none; }
@@ -1611,7 +1622,7 @@ a { color: var(--paper); }
     box-shadow: none;
   }
 
-  /* case.css resets the nav border to 0 on hover for its underlined links;
+  /* Other layouts reset the nav border to 0 on hover for underlined links;
      without this the pill outline disappears on a narrow desktop window. */
   .site-header nav a:hover { border: 1px solid var(--rule-strong); }
 

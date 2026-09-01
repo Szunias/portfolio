@@ -20,7 +20,10 @@
   --mono:  var(--f-mono);
   --page-frame: min(100%, calc(var(--page-max) + var(--page-gutter) * 2));
   /* The one measure on the page. 66ch of Inter 17 is about 610px. */
-  --measure: 66ch;
+  /* 54ch of the "0" advance lands at 70-75 real characters per line in
+     Inter 16.5 - the ch unit overshoots for proportional text, so 66ch
+     measured up to 91 actual characters on the widest leads. */
+  --measure: 54ch;
   /* Media stop here rather than at the 1200px frame: a picture twice as wide
      as the text beside it read as a hero every time, and the page as mostly
      empty. */
@@ -444,7 +447,7 @@ a { color: inherit; }
   height: 64px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: rgba(240, 242, 244, .94);
+  background: rgba(236, 238, 240, .94);
   color: var(--c-accent-ink);
 }
 .yt-facade__play svg { width: 28px; height: 28px; fill: currentColor; transform: translateX(2px); }
@@ -471,7 +474,7 @@ a { color: inherit; }
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: rgba(240, 242, 244, .94);
+  background: rgba(236, 238, 240, .94);
   color: var(--c-accent-ink);
 }
 .local-video__play svg { width: 28px; height: 28px; fill: currentColor; transform: translateX(2px); }
@@ -500,7 +503,7 @@ a { color: inherit; }
   z-index: 10;
   width: var(--page-frame);
   margin-inline: auto;
-  padding: 26px var(--page-gutter) var(--s-5);
+  padding: var(--s-4) var(--page-gutter) var(--s-5);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -533,7 +536,7 @@ a { color: inherit; }
     gap: 6px;
     padding-block: 7px;
   }
-  .site-header__name { min-height: 44px; font-size: .82rem; letter-spacing: .015em; }
+  .site-header__name { min-height: 44px; }
   .site-header__name-full { display: none; }
   .site-header__name-short { display: inline; }
   .site-header nav {

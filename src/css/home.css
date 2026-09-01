@@ -67,7 +67,7 @@ a:focus-visible { outline:2px solid var(--ice); outline-offset:3px; }
 }
 
 /* ---------- Chrome ---------- */
-/* Geometry is shared with music.css / case.css / sidar.css. */
+/* Geometry is shared with music.css / cine.css / case-plain.css. */
 .site-header {
   position:sticky; top:0; left:0; right:0; z-index:1000;
   display:flex; justify-content:space-between; align-items:center;
@@ -381,12 +381,18 @@ section.panel { padding:0; }
    The border, the drop and the numbered chip belong to the media. The copy
    under it is plain prose sitting on the page: nothing here wraps text in a
    card. */
+/* The card set is a real list so assistive tech announces "6 items"; each
+   li is a flex passthrough and the anchor keeps filling the grid cell. */
 .wgrid {
   display:grid;
   grid-template-columns:minmax(0,1fr);
   gap:var(--s-5);
-  margin-top:var(--s-5);
+  margin:var(--s-5) 0 0;
+  padding:0;
+  list-style:none;
 }
+.wgrid > li { display:flex; min-width:0; }
+.wgrid > li > .wcard { width:100%; }
 .wcard {
   display:grid;
   grid-template-columns:minmax(0,1fr);
@@ -472,9 +478,13 @@ section.panel { padding:0; }
 @media (min-width:1000px) {
   .wgrid { grid-template-columns:repeat(2, minmax(0,1fr)); }
   /* Wide, two by two, wide. The set opens on the lead and steps down into the
-     software tier below rather than running as six identical boxes. */
+     software tier below rather than running as six identical boxes. The li
+     wrappers are the grid items now, so the full-width placement sits on the
+     first and last of them (the lead and closer cards, in document order). */
+  .wgrid > li:first-child,
+  .wgrid > li:last-child { grid-column:1 / -1; }
   .wcard--lead,
-  .wcard--closer { grid-column:1 / -1; align-items:center; }
+  .wcard--closer { align-items:center; }
   .wcard--lead { grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:0 var(--s-6); }
   .wcard--closer { grid-template-columns:minmax(0,400px) minmax(0,1fr); gap:0 var(--s-5); }
 }
@@ -484,6 +494,9 @@ section.panel { padding:0; }
    small mark and a dense row. The contrast with the grid above is the point:
    it tells the reader which tier they are in without a label doing it. */
 .plist { margin-top:var(--s-6); border-top:1px solid var(--rule); }
+/* The three tool rows are a list under their group label; the wrapper only
+   resets list chrome, each row keeps its own border and padding. */
+.plist__rows { margin:0; padding:0; list-style:none; }
 
 /* The group label introduces the rows under it, so it must not sit on the
    same rung as their titles. Still display face, not mono: the DATA register
@@ -757,7 +770,7 @@ section.panel { padding:0; }
   /* The right span holds 44px inline-flex links and the left one is plain
      text: with the default stretch the two sat on different baselines. */
   display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
-  padding-block:26px var(--s-5);
+  padding-block:var(--s-4) var(--s-5);
   font-family:var(--micro-data-font); font-size:var(--micro-data-size);
   letter-spacing:var(--micro-data-tr); text-transform:none;
   color:var(--faint);
@@ -937,10 +950,13 @@ section.panel { padding:0; }
 
 /* ---------- Header: alignment + type ----------
    Nav is set in Inter, not mono. Mono stays on things that are actually data
-   (years, tool lists); in navigation it only costs legibility. */
+   (years, tool lists); in navigation it only costs legibility. The whole
+   header sits on the R1 ACTION register (--micro-act in _tokens.css), the
+   same as the project pages, so navigating between layouts never swaps the
+   wordmark's face or size. */
 .site-header__name {
-  font-family: var(--display);
-  font-size: .95rem;
+  font-family: var(--body);
+  font-size: var(--t-s1);
   font-weight: 600;
   letter-spacing: .01em;
   color: var(--ink);
@@ -955,23 +971,18 @@ section.panel { padding:0; }
 }
 /* The wordmark shortens to IGOR on narrow screens. Both labels are in the
    markup and aria-hidden, with the accessible name on the link itself, so the
-   swap is a plain display toggle - the same mechanism music.css, case.css and
-   sidar.css use. */
+   swap is a plain display toggle - the same mechanism the other layouts use. */
 .site-header__name-short { display: none; }
 .site-header nav a {
   font-family: var(--body);
-  font-size: .82rem;
+  font-size: var(--t-s1);
   font-weight: 500;
-  letter-spacing: .01em;
+  letter-spacing: 0;
   color: var(--muted);
 }
 .site-header nav a:hover,
 .site-header nav a[aria-current] { color: var(--ink); }
 .site-header nav a[aria-current] { box-shadow: inset 0 -1px 0 0 var(--ink); }
-@media (max-width:640px) {
-  .site-header__name { font-size: .85rem; }
-  .site-header nav a { font-size: .78rem; }
-}
 
 /* ---------- Header: mobile home navigation ----------
    The home page keeps CV in two prominent places below, so its narrow header
@@ -996,8 +1007,6 @@ section.panel { padding:0; }
     flex: 0 0 auto;
     min-width: 44px;
     min-height: 44px;
-    font-size: .82rem;
-    letter-spacing: .015em;
   }
 
   .site-header__name-full { display: none; }
@@ -1014,7 +1023,7 @@ section.panel { padding:0; }
     mask-image: none;
   }
 
-  /* flex:1 1 0 rather than content-width pills: music.css and case.css already
+  /* flex:1 1 0 rather than content-width pills: music.css already
      size them this way, and the three copies used to disagree (69/99/102px for
      the same link on the same viewport). */
   .site-header nav a {
@@ -1032,7 +1041,7 @@ section.panel { padding:0; }
 
   .site-header .site-header__cv { display: none; }
 
-  /* case.css resets the nav border to 0 on hover for its underlined links;
+  /* Other layouts reset the nav border to 0 on hover for underlined links;
      without this the pill outline disappears on a narrow desktop window. */
   .site-header nav a:hover { border: 1px solid var(--c-line-3); }
 
@@ -1074,7 +1083,7 @@ section.panel { padding:0; }
   /* ---- Type ---- */
   .sec-title {
     margin-bottom: 22px;
-    font-size: clamp(1.85rem, 7.4vw, 2.5rem);
+    font-size: var(--t-sv-t1);
     line-height: 1.08;
     letter-spacing: -.035em;
     text-wrap: balance;
@@ -1091,7 +1100,7 @@ section.panel { padding:0; }
      below should start before the fold rather than after a whole screen. */
   .hero { min-height: 84svh; }
   .hero__inner { padding-block: var(--s-7) var(--s-5); }
-  .hero__sub { margin-top: 18px; font-size: 1.02rem; line-height: 1.55; }
+  .hero__sub { margin-top: 18px; font-size: var(--t-b0); line-height: 1.55; }
   /* Two actions on a 390px column: stacked full width, so no label wraps
      inside its own pill and turns it into a blob. */
   .hero__cta {
@@ -1118,9 +1127,9 @@ section.panel { padding:0; }
   .wgrid { gap: var(--s-5); margin-top: var(--s-4); }
   .wcard { gap: 13px; }
   .wcard__media { border-radius: 14px; }
-  .wcard__title { font-size: clamp(1.6rem, 6.4vw, 2.05rem); line-height: 1.06; letter-spacing: -.03em; }
+  .wcard__title { font-size: var(--t-sv-t2); line-height: 1.06; letter-spacing: -.03em; }
   .wcard__desc,
-  .wcard--lead .wcard__desc { font-size: .95rem; line-height: 1.55; text-wrap: pretty; }
+  .wcard--lead .wcard__desc { font-size: var(--t-s1); line-height: 1.55; text-wrap: pretty; }
 
   /* ---- Software: compact rows ----
      A REAPER script or a VST has no cinematic frame to show, so these keep a
@@ -1146,8 +1155,8 @@ section.panel { padding:0; }
   .prow > .prow__thumb img { border-radius: 14px; }
   .prow > div:not(.prow__thumb) { grid-column: 2; grid-row: 2; }
   .prow > .prow__meta { grid-column: 2; grid-row: 1; line-height: var(--lh-b1); }
-  .prow h3 { font-size: clamp(1.32rem, 5.2vw, 1.6rem); line-height: 1.1; }
-  .prow p { margin-top: 7px; font-size: .9rem; }
+  .prow h3 { font-size: var(--t-sv-t3); line-height: 1.1; }
+  .prow p { margin-top: 7px; font-size: var(--t-s1); }
   .prow::before { display: none; }
 
   .plist__group { padding: var(--s-5) 0 12px; }
@@ -1161,7 +1170,7 @@ section.panel { padding:0; }
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 3px 14px;
     padding: 22px 0;
-    font-size: 1.28rem;
+    font-size: var(--t-t3);
     line-height: 1.2;
   }
   .earlier-work summary span {
@@ -1174,14 +1183,14 @@ section.panel { padding:0; }
     grid-row: 1 / span 2;
     align-self: center;
     margin-left: 0;
-    font-size: 1.3rem;
+    font-size: var(--t-t3);
   }
   .earlier-work nav { padding: 0 0 22px; }
   .earlier-work nav a { min-height: 62px; padding: 13px 0; }
 
   /* ---- Music entry ---- */
   .music-cta { margin-top: var(--s-5); }
-  .music-cta__body strong { font-size: clamp(1.45rem, 5.6vw, 1.8rem); }
+  .music-cta__body strong { font-size: var(--t-sv-t2); }
   .music-cta__body span { font-size: var(--t-s1); line-height: var(--lh-b1); }
 
   /* ---- About ---- */
@@ -1192,7 +1201,7 @@ section.panel { padding:0; }
      The address used to break as "igorszuniewiczwork@" / "gmail.com" at 390px
      with a 2.2rem cap and a 6.6vw slope. */
   .closing { padding-block: var(--s-5); gap: var(--s-3); }
-  .closing__line { font-size: 1rem; text-wrap: pretty; }
+  .closing__line { font-size: var(--t-b0); text-wrap: pretty; }
   .closing__mail {
     font-size: clamp(1.1rem, 5vw, 2.2rem);
     line-height: 1.15;
