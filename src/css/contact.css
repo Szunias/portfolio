@@ -83,86 +83,6 @@ img { max-width: 100%; }
   outline-offset: 2px;
 }
 
-/* ---------- Header ----------
-   Geometry shared with home.css / cine.css / music.css: full-bleed bar, its
-   contents on the page frame axis. */
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s-4);
-  padding-block: 14px;
-  padding-inline: max(var(--page-gutter), calc((100% - var(--page-max)) / 2));
-  border-bottom: 1px solid var(--rule);
-  background: var(--c-glass);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-}
-
-.site-header__name,
-.site-header nav a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  white-space: nowrap;
-  text-decoration: none;
-  letter-spacing: .01em;
-  transition: color var(--dur) var(--ease);
-}
-
-/* Header type sits on the shared R1 ACTION register (--micro-act), matching
-   the project pages, so the wordmark never changes face between layouts. */
-.site-header__name {
-  font-family: var(--body);
-  font-size: var(--t-s1);
-  font-weight: 600;
-  letter-spacing: .01em;
-  color: var(--ink);
-}
-
-/* The wordmark is a link home and was the one item in the header with no
-   hover state. It rests at full ink, so the colour move the nav links make is
-   not available to it; it underlines instead. */
-.site-header__name:hover {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
-}
-
-.site-header__name-short { display: none; }
-
-.site-header nav {
-  display: flex;
-  align-items: center;
-  gap: clamp(8px, 1.6vw, 24px);
-}
-
-.site-header nav a {
-  min-width: 24px;
-  font-family: var(--body);
-  font-size: var(--t-s1);
-  font-weight: 500;
-  letter-spacing: 0;
-  color: var(--muted);
-}
-
-.site-header nav a:hover { color: var(--ink); }
-
-/* The contact link is the current page. build.cjs now emits aria-current on
-   it the same way it does for music, so the visual cue and the one a screen
-   reader gets come from the same attribute. */
-.site-header nav a[aria-current="page"] {
-  color: var(--ink);
-  box-shadow: inset 0 -1px 0 0 var(--ink);
-}
-
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .site-header { background: color-mix(in srgb, var(--c-bg-1) 94%, transparent); }
-}
 
 /* ---------- Content shell ---------- */
 .content {
@@ -525,61 +445,18 @@ img { max-width: 100%; }
 .ct-return a:hover { color: var(--ink); }
 
 /* ---------- Colophon ----------
-   The case-page treatment: uppercase mono, accent links, hairline underline. */
-/* The five profile tiles a hundred pixels above already carry LinkedIn,
-   GitHub, itch.io, Spotify and the CV, each with its actual destination.
-   Repeating them here as bare words is the same list twice on one screen, and
-   the email the strip would add is the page's own h1. On this page the footer
-   keeps the line that is not redundant. */
+   _chrome.css owns the treatment. The .ck__out row directly above already
+   carries the CV, LinkedIn, GitHub, itch.io and Spotify, each with its actual
+   destination, and the email is the page's own h1. Repeating the six links
+   here would be the same list twice on one screen, so the footer keeps the
+   line that is not redundant. */
 .colophon__links { display: none; }
 
 /* The footer's Graz time points at this very page, where the real clock is
    the largest thing on screen: here it would be the same fact twice. The
-   wrapper carries the separator too, so the line ends on "AT" rather than on
-   a stray middot. */
+   wrapper carries its separator, so the line ends on "AT". */
 .colophon .colophon__graz { display: none; }
 
-.colophon {
-  position: relative;
-  z-index: 10;
-  width: var(--page-frame);
-  margin-inline: auto;
-  padding-inline: var(--page-gutter);
-  padding-block: var(--s-4) var(--s-5);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  font-family: var(--micro-data-font);
-  font-size: var(--micro-data-size);
-  letter-spacing: var(--micro-data-tr);
-  text-transform: none;
-  color: var(--faint);
-}
-
-.colophon a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  min-width: 44px;
-  font-family: var(--micro-act-font);
-  font-size: var(--micro-act-size);
-  font-weight: var(--micro-act-weight);
-  letter-spacing: var(--micro-act-tr);
-  color: var(--muted);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
-  text-decoration-color: var(--c-line-2);
-  transition: color var(--dur) var(--ease), text-decoration-color var(--dur) var(--ease);
-}
-
-.colophon a:hover {
-  color: var(--ice);
-  text-decoration-color: var(--ice);
-}
 
 /* =========================================================
    RESPONSIVE
@@ -638,58 +515,9 @@ img { max-width: 100%; }
   .ct-fact dd { text-align: right; }
 }
 
-/* Header: the compact treatment the project pages use, so the four
-   destinations stay reachable and 44px tall on a phone. */
-@media (max-width: 820px) {
-  .site-header {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 6px;
-    padding-block: 7px;
-  }
-
-  .site-header__name {
-    min-height: 44px;
-  }
-
-  .site-header__name-full { display: none; }
-  .site-header__name-short { display: inline; }
-
-  .site-header nav {
-    min-width: 0;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 4px;
-  }
-
-  .site-header .site-header__cv { display: none; }
-
-  .site-header nav a {
-    min-width: 0;
-    min-height: 44px;
-    padding: 0 clamp(5px, 1.8vw, 10px);
-    border: 1px solid var(--rule);
-    border-radius: var(--r-pill);
-    background: rgba(236, 238, 240, 0.035);
-    font-size: .75rem;
-    letter-spacing: .015em;
-    box-shadow: none;
-  }
-
-  .site-header nav a:hover { border-color: var(--rule-hi); }
-
-  .site-header nav a[aria-current="page"],
-  .site-header nav a[aria-current="page"]:hover {
-    border-color: transparent;
-    background: var(--c-ink);
-    color: var(--c-accent-ink);
-    box-shadow: none;
-  }
-}
 
 @media (max-width: 600px) {
   .ct-return { flex-direction: column; align-items: flex-start; gap: 0; }
-  .colophon { flex-direction: column; align-items: flex-start; gap: 6px; }
 }
 
 @media (max-width: 520px) {

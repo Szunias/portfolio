@@ -255,47 +255,6 @@ html {
 }
 
 /* ---------------------------------------------------------
-   The colophon sits on the page frame, so its box is the
-   content width plus two gutters. A border-top therefore ran
-   64px past the text edge on each side at 1440 - the only rule
-   on the page that missed the grid the rest of the content
-   sits on. Painting the hairline as an inset background keeps
-   it on the text edge without needing an extra wrapper.
-
-   The layout stylesheets must not re-declare border-top here.
-   --------------------------------------------------------- */
-.colophon {
-  border-top: 0;
-  background-image: linear-gradient(var(--c-line-2), var(--c-line-2));
-  background-repeat: no-repeat;
-  background-position: var(--page-gutter) 0;
-  background-size: calc(100% - var(--page-gutter) * 2) 1px;
-}
-
-/* A separator and the word it introduces wrap as one unit, so a narrow
-   screen never ends a line on a dangling middot. */
-.colophon__graz,
-.colophon__pair {
-  white-space: nowrap;
-}
-
-/* ---------------------------------------------------------
-   The header's CV link is two letters: about 14px of text in
-   a box that every layout stylesheet clamps to min-width 24px,
-   so from 821px up it was the one 24x44 target in the chrome.
-   Padding widens the hit area to 44px and the negative margin
-   gives the space straight back, so the letters stay where
-   they were and the gaps between the links do not change.
-   Below 820px every stylesheet hides this link, so the rule
-   never meets the pill layout there. The compound selector
-   outranks the (0,1,2) nav rules that follow in each layout.
-   --------------------------------------------------------- */
-.site-header nav a.site-header__cv {
-  padding-inline: 15px;
-  margin-inline: -15px;
-}
-
-/* ---------------------------------------------------------
    Buttons.
 
    Every surface used to invent its own geometry: a 10px-radius

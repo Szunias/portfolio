@@ -79,58 +79,6 @@ a { color: inherit; }
 
 .skip-link:focus-visible { transform: translateY(0); outline: 2px solid var(--ink); outline-offset: 2px; }
 
-/* ---------- Header ---------- */
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s-4);
-  padding-block: 14px;
-  padding-inline: max(var(--page-gutter), calc((100% - var(--page-max)) / 2));
-  border-bottom: 1px solid var(--rule);
-  background: var(--c-glass);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-}
-
-.site-header__name,
-.site-header nav a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  white-space: nowrap;
-  text-decoration: none;
-  transition: color var(--dur) var(--ease);
-}
-
-.site-header__name {
-  font-family: var(--body);
-  font-size: var(--t-s1);
-  font-weight: 600;
-  letter-spacing: .01em;
-  color: var(--ink);
-}
-
-.site-header__name:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
-.site-header__name-short { display: none; }
-
-.site-header nav { display: flex; align-items: center; gap: clamp(8px, 1.6vw, 24px); }
-
-.site-header nav a {
-  min-width: 24px;
-  font-family: var(--body);
-  font-size: var(--t-s1);
-  font-weight: 500;
-  letter-spacing: 0;
-  color: var(--muted);
-}
-
-.site-header nav a:hover { color: var(--ink); }
-.site-header nav a[aria-current="page"] { color: var(--ink); box-shadow: inset 0 -1px 0 0 var(--ink); }
 
 .content { position: relative; z-index: 1; display: block; }
 
@@ -171,6 +119,21 @@ a { color: inherit; }
 .cine-split__media img,
 .cine-row img { filter: brightness(1.55) contrast(1.04); }
 
+/* One frame for every piece of media: a hairline and the small radius, so a
+   photograph, a video poster and an interface capture read as one set when
+   they stand next to each other. Diagrams and tables keep their own rules. */
+.cine-split__media img,
+.cine-split__media video,
+.cine-split__media .yt-facade,
+.cine-split__media .local-video,
+.cine-row img {
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-s);
+}
+.cine-split__media .yt-facade,
+.cine-split__media .local-video { overflow: hidden; }
+.cine-split__media .local-video > video { border: 0; border-radius: 0; }
+
 .cine-cap {
   margin: var(--s-2) 0 0;
   font-size: var(--t-s1);
@@ -206,13 +169,20 @@ a { color: inherit; }
   text-wrap: pretty;
 }
 
+/* The role line is the first fact a reader needs and used to be the smallest
+   text on the page: mono 12px at 55% ink. It is a sentence of role, span and
+   tools rather than one datum, so it sits on the caption register (body
+   face, 14px) at the prose ink. */
 .cine-meta {
   margin: 0 0 var(--s-3);
-  font-family: var(--mono);
-  font-size: var(--t-m1);
-  line-height: 1.7;
-  letter-spacing: var(--tr-m);
-  color: var(--faint);
+  /* A list of facts, not prose: the 54ch measure is for reading text and at
+     14px it shrank to 416px, wrapping the last tool onto its own line. */
+  max-width: none;
+  font-family: var(--micro-cap-font);
+  font-size: var(--micro-cap-size);
+  line-height: var(--lh-b1);
+  letter-spacing: var(--micro-cap-tr);
+  color: var(--muted);
 }
 
 /* ---------- Prose ---------- */
@@ -263,6 +233,28 @@ a { color: inherit; }
 .cine-links a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--ink); }
 
 /* =========================================================
+   THE HEAD - a plain section opens on the same two tracks
+
+   Sections without a split still begin with a heading and one
+   paragraph. As a single column the paragraph sat in the left
+   45% of the frame with the right half empty, which at 1440
+   read as a picture that had failed to load. The heading takes
+   the text column and the paragraph the media column; the row
+   or list under them spans both.
+   ========================================================= */
+@media (min-width: 901px) {
+  .cine > section:not(.cine-split) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    column-gap: clamp(24px, 3.5vw, 52px);
+    align-items: baseline;
+  }
+  .cine > section:not(.cine-split) > h2 { grid-column: 1; }
+  .cine > section:not(.cine-split) > p { grid-column: 2; }
+  .cine > section:not(.cine-split) > :not(h2):not(p) { grid-column: 1 / -1; }
+}
+
+/* =========================================================
    THE ROW - the loop, three frames on one line
 
    Three moves of one game system read as three moves when they
@@ -288,6 +280,28 @@ a { color: inherit; }
 
 .cine-row figure { margin: 0; }
 .cine-row img { display: block; width: 100%; background: var(--c-bg-0); }
+
+/* Interface captures show at their own pixel size inside a well and are never
+   scaled up: enlarged to the column, a Wwise tree put 20px labels beside 16px
+   prose and cut its rows at the edges. The well spans the column, so the
+   three figures share one edge whatever their natural size. */
+.cine-shot {
+  display: flex;
+  padding: var(--s-3);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-s);
+  background: var(--c-bg-0);
+  overflow: hidden;
+}
+.cine-row .cine-shot img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  filter: none;
+}
 
 .cine-row__num {
   margin: var(--s-2) 0 4px;
@@ -424,36 +438,6 @@ a { color: inherit; }
 .cine-close span { display: flex; flex-wrap: wrap; gap: 0 var(--s-4); }
 .cine-close__next { font-weight: 600; }
 
-/* ---------- Colophon ---------- */
-.colophon {
-  position: relative;
-  z-index: 1;
-  width: var(--page-frame);
-  margin-inline: auto;
-  padding: var(--s-4) var(--page-gutter) var(--s-5);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  font-family: var(--micro-data-font);
-  font-size: var(--micro-data-size);
-  letter-spacing: var(--micro-data-tr);
-  color: var(--faint);
-}
-
-.colophon a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  min-width: 24px;
-  color: var(--faint);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
-  text-decoration-color: var(--rule);
-}
-.colophon a:hover { color: var(--ink); text-decoration-color: var(--ink); }
 
 /* ---------- Click-to-load YouTube facade ---------- */
 .yt-facade {
@@ -552,29 +536,8 @@ a { color: inherit; }
   .cine-row--2 { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 820px) {
-  .site-header { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px; padding-block: 7px; }
-  .site-header__name { min-height: 44px; }
-  .site-header__name-full { display: none; }
-  .site-header__name-short { display: inline; }
-  .site-header nav { min-width: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
-  .site-header .site-header__cv { display: none; }
-  .site-header nav a {
-    min-width: 0;
-    min-height: 44px;
-    padding: 0 clamp(5px, 1.8vw, 10px);
-    border: 1px solid var(--rule);
-    border-radius: var(--r-pill);
-    background: rgba(236, 238, 240, 0.035);
-    font-size: .75rem;
-    letter-spacing: 0;
-    box-shadow: none;
-  }
-  .site-header nav a[aria-current="page"] { border-color: transparent; background: var(--c-ink); color: var(--c-accent-ink); box-shadow: none; }
-}
 
 @media (max-width: 600px) {
-  .colophon { flex-direction: column; align-items: flex-start; gap: 6px; }
   .cine-close { flex-direction: column; align-items: flex-start; }
   .cine-lead { font-size: 18px; }
 }
