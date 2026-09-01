@@ -233,6 +233,134 @@ a { color: inherit; }
 .cine-links a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--ink); }
 
 /* =========================================================
+   THE POSTER - the title on the frame
+
+   The opener used to be the same split as every section, title
+   left and still right, so the first screen of a project was
+   quieter than the home page. From 901px the still runs the
+   full frame at 21:9 and carries the kicker, title, lead, role
+   line and links on a two-axis scrim, the construction the home
+   hero uses. Under 900px the still leads and the copy follows,
+   as before. A video opener keeps the treatment until playback
+   starts, then hands the frame to the player.
+   ========================================================= */
+@media (min-width: 901px) {
+  .cine-open { display: block; position: relative; }
+  .cine-open .cine-split__media { position: relative; }
+
+  /* The crop focus is set per page where the subject sits off centre:
+     style="--poster-pos: 50% 30%" on the media element. */
+  /* The video selector carries the extra class so it outranks the
+     [style*="--shot-ar"] rule further down, which build.cjs feeds from the
+     poster's own size. */
+  .cine-open .cine-split__media > img,
+  .cine .cine-open .cine-split__media video,
+  .cine-open .cine-split__media > .yt-facade { aspect-ratio: 21 / 9; }
+  .cine-open .cine-split__media > img,
+  .cine .cine-open .cine-split__media video {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    object-position: var(--poster-pos, 50% 45%);
+  }
+  .cine-open .cine-split__media > img,
+  .cine-open .cine-split__media video,
+  .cine-open .yt-facade__launch img {
+    object-position: var(--poster-pos, 50% 45%);
+    filter: brightness(1.2) contrast(1.04);
+  }
+
+  /* Two gradients: the horizontal pass protects the copy column, the
+     vertical pass seats the frame and keeps the bottom edge dark under
+     the meta line. */
+  .cine-open .cine-split__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    border-radius: var(--r-s);
+    background:
+      linear-gradient(90deg,
+        rgba(11, 11, 13, 0.82) 0%,
+        rgba(11, 11, 13, 0.56) 40%,
+        rgba(11, 11, 13, 0.10) 76%,
+        rgba(11, 11, 13, 0.02) 100%),
+      linear-gradient(180deg,
+        rgba(11, 11, 13, 0.30) 0%,
+        rgba(11, 11, 13, 0.00) 28%,
+        rgba(11, 11, 13, 0.08) 56%,
+        rgba(11, 11, 13, 0.90) 100%);
+    transition: opacity var(--dur) var(--ease);
+  }
+
+  /* Above the play control (z 2) so a video poster cannot cover the copy;
+     the box itself lets clicks through to that control, the links do not. */
+  .cine-open .cine-split__body {
+    position: absolute;
+    left: var(--s-5);
+    right: 38%;
+    bottom: var(--s-5);
+    z-index: 3;
+    pointer-events: none;
+    transition: opacity var(--dur) var(--ease);
+  }
+  .cine-open .cine-split__body a { pointer-events: auto; }
+  .cine-open h1 { text-shadow: 0 2px 28px rgba(11, 11, 13, 0.65); }
+  .cine-open .cine-kicker,
+  .cine-open .cine-meta,
+  .cine-open .cine-links { text-shadow: 0 1px 12px rgba(11, 11, 13, 0.8); }
+  .cine-open .cine-lead { color: var(--ink); text-shadow: 0 1px 18px rgba(11, 11, 13, 0.7); }
+  .cine-open .cine-meta { color: var(--ink); opacity: .85; }
+
+  /* An interface capture is bright and busy where a game frame is dark, so the
+     tool pages carry a heavier scrim and no lift. */
+  .cine-open--dense .cine-split__media > img,
+  .cine-open--dense .yt-facade__launch img { filter: none; }
+  .cine-open--dense .cine-split__media::after {
+    background:
+      linear-gradient(90deg,
+        rgba(11, 11, 13, 0.94) 0%,
+        rgba(11, 11, 13, 0.86) 38%,
+        rgba(11, 11, 13, 0.46) 70%,
+        rgba(11, 11, 13, 0.26) 100%),
+      linear-gradient(180deg,
+        rgba(11, 11, 13, 0.36) 0%,
+        rgba(11, 11, 13, 0.06) 30%,
+        rgba(11, 11, 13, 0.20) 60%,
+        rgba(11, 11, 13, 0.92) 100%);
+  }
+
+  /* A caption inside the opener sits in the frame's bottom right corner. */
+  .cine-open .cine-cap {
+    position: absolute;
+    right: var(--s-4);
+    bottom: var(--s-3);
+    z-index: 2;
+    max-width: 34ch;
+    margin: 0;
+    text-align: right;
+    transition: opacity var(--dur) var(--ease);
+  }
+
+  /* The play control stays above the scrim. */
+  .cine-open .yt-facade__launch,
+  .cine-open .local-video__launch { z-index: 2; }
+
+  /* Playback: the copy and the scrim step aside and the frame returns to the
+     video's own 16:9, uncropped. local-video.js sets is-playing; the YouTube
+     facade marks itself is-loaded. */
+  .cine-open.is-playing .cine-split__body,
+  .cine-open.is-playing .cine-split__media::after,
+  .cine-open.is-playing .cine-cap,
+  .cine-open:has(.yt-facade.is-loaded) .cine-split__body,
+  .cine-open:has(.yt-facade.is-loaded) .cine-split__media::after,
+  .cine-open:has(.yt-facade.is-loaded) .cine-cap { opacity: 0; pointer-events: none; }
+  .cine .cine-open.is-playing .cine-split__media video { aspect-ratio: 16 / 9; object-fit: contain; filter: none; }
+  .cine-open:has(.yt-facade.is-loaded) .cine-split__media > .yt-facade { aspect-ratio: 16 / 9; }
+}
+
+/* =========================================================
    THE HEAD - a plain section opens on the same two tracks
 
    Sections without a split still begin with a heading and one

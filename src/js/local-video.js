@@ -39,10 +39,15 @@
     video.removeAttribute('controls');
     shell.appendChild(launch);
 
+    // A poster opener carries the title on this frame; once the video runs
+    // the copy and the scrim step aside (cine.css .cine-open.is-playing).
+    var opener = video.closest('.cine-open');
+
     function start() {
       video.setAttribute('controls', '');
       launch.remove();
       shell.classList.remove('local-video');
+      if (opener) opener.classList.add('is-playing');
       var started = video.play();
       // Safari rejects play() on a file it has not buffered yet; the native
       // controls are already back, so the reader can start it themselves.
@@ -51,5 +56,9 @@
     }
 
     launch.addEventListener('click', start);
+    if (opener) {
+      video.addEventListener('play', function () { opener.classList.add('is-playing'); });
+      video.addEventListener('ended', function () { opener.classList.remove('is-playing'); });
+    }
   });
 })();
