@@ -218,7 +218,10 @@ function enforceDistBudget() {
   // GitHub Pages hard limit is 1 GB; 700 MB keeps ~300 MB headroom
   // (raised from 650 MB when the 54-track Evolution section landed).
   const maxTotal = 700 * 1024 * 1024;
-  const maxFile = 65 * 1024 * 1024;
+  // GitHub blocks individual files at 100 MB; 80 MB keeps real headroom below
+  // that (raised from 65 MB when the 2026 showreel master reached 63.65 MB and
+  // sat 1.35 MB under the old cap, one re-render away from blocking deploys).
+  const maxFile = 80 * 1024 * 1024;
   const largestFiles = files.slice().sort((a, b) => b.size - a.size);
   const largest = largestFiles[0];
   if (total > maxTotal) {
@@ -228,6 +231,15 @@ function enforceDistBudget() {
     throw new Error(`${largest.path} is ${byteSizeLabel(largest.size)}, above the ${byteSizeLabel(maxFile)} single-file budget`);
   }
   console.log(`  → deploy size budget OK (${files.length} files, ${byteSizeLabel(total)}${largest ? `, largest ${byteSizeLabel(largest.size)}` : ''})`);
+  // The hard failures above give no advance notice, so shout while there is
+  // still room to act instead of on the first build that crosses the line.
+  if (total > maxTotal * 0.9) {
+    console.warn(`  ! dist total ${byteSizeLabel(total)} is above 90% of the ${byteSizeLabel(maxTotal)} deploy budget`);
+  }
+  for (const file of largestFiles) {
+    if (file.size <= maxFile * 0.9) break;
+    console.warn(`  ! ${file.path} ${byteSizeLabel(file.size)} is above 90% of the ${byteSizeLabel(maxFile)} single-file budget`);
+  }
   const heavyFiles = largestFiles
     .filter(file => file.size >= 20 * 1024 * 1024)
     .slice(0, 5);
@@ -609,6 +621,76 @@ function reserveFacadeAspectRatio(html) {
       ))
       : ` style="${ratio}"${attrs}`;
     return `<div${nextAttrs}>${between}${img}`;
+  });
+}
+
+/* Minimal header readers for the three raster formats posters use. Returns
+   { width, height } or null when the file is missing or not recognised. */
+function readImageSize(absPath) {
+  let buf;
+  try {
+    buf = fs.readFileSync(absPath);
+  } catch (_) {
+    return null;
+  }
+  if (buf.length > 24 && buf.readUInt32BE(0) === 0x89504e47) {
+    return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+  }
+  if (buf.length > 4 && buf[0] === 0xff && buf[1] === 0xd8) {
+    let i = 2;
+    while (i + 9 < buf.length) {
+      if (buf[i] !== 0xff) { i++; continue; }
+      const marker = buf[i + 1];
+      if (marker === 0xff) { i++; continue; }
+      // SOF0-SOF15 minus the non-frame markers DHT (C4), JPG (C8), DAC (CC).
+      if (marker >= 0xc0 && marker <= 0xcf && marker !== 0xc4 && marker !== 0xc8 && marker !== 0xcc) {
+        return { width: buf.readUInt16BE(i + 7), height: buf.readUInt16BE(i + 5) };
+      }
+      if (marker === 0xd8 || (marker >= 0xd0 && marker <= 0xd9)) { i += 2; continue; }
+      i += 2 + buf.readUInt16BE(i + 2);
+    }
+    return null;
+  }
+  if (buf.length > 30 && buf.toString('ascii', 0, 4) === 'RIFF' && buf.toString('ascii', 8, 12) === 'WEBP') {
+    const chunk = buf.toString('ascii', 12, 16);
+    if (chunk === 'VP8 ') {
+      return { width: buf.readUInt16LE(26) & 0x3fff, height: buf.readUInt16LE(28) & 0x3fff };
+    }
+    if (chunk === 'VP8L') {
+      const b0 = buf[21], b1 = buf[22], b2 = buf[23], b3 = buf[24];
+      return {
+        width: 1 + (((b1 & 0x3f) << 8) | b0),
+        height: 1 + (((b3 & 0x0f) << 10) | (b2 << 2) | ((b1 & 0xc0) >> 6)),
+      };
+    }
+    if (chunk === 'VP8X') {
+      return { width: 1 + buf.readUIntLE(24, 3), height: 1 + buf.readUIntLE(27, 3) };
+    }
+  }
+  return null;
+}
+
+/* Videos got none of the reservation images get above: no width/height in the
+   markup and no intrinsic size until the poster paints, so on a slow
+   connection the box could collapse and shift the page. Read the poster's
+   real dimensions off disk and hand the element the same --shot-ar custom
+   property the stylesheets already consume for images and facades. Videos
+   with a hand-set ratio (the video's own frame size where it differs from
+   the poster crop) are left alone. */
+function reserveVideoAspectRatio(html) {
+  return html.replace(/<video\b([^>]*)>/gi, (match, attrs) => {
+    if (/--shot-ar\s*:/i.test(attrs)) return match;
+    const poster = attrValue(match, 'poster');
+    if (!poster || /^(data:|https?:|\/\/)/i.test(poster)) return match;
+    const size = readImageSize(path.join(__dirname, poster.replace(/^\/+/, '').split('?')[0]));
+    if (!size || !size.width || !size.height) return match;
+    const ratio = `--shot-ar:${size.width}/${size.height}`;
+    if (hasAttr(attrs, 'style')) {
+      return `<video${attrs.replace(/\bstyle=(["'])([\s\S]*?)\1/i, (styleMatch, quote, value) => (
+        `style=${quote}${ratio};${value}${quote}`
+      ))}>`;
+    }
+    return `<video style="${ratio}"${attrs}>`;
   });
 }
 
@@ -1256,6 +1338,129 @@ function minifyCss(source) {
   return out.trim();
 }
 
+// Conservative JS minifier in the same spirit as minifyCss: it only removes
+// comments, trailing whitespace, leading indentation and blank lines, and
+// keeps every other token (and every remaining newline) exactly as written,
+// so automatic-semicolon-insertion behaviour cannot change. The scanner
+// tracks strings, template literals (with ${} nesting) and regex literals;
+// a `/` is a regex only where an expression may start (after an operator,
+// opening bracket, `}` or a keyword), matching how the browser reads it.
+function minifyJs(source) {
+  let out = '';
+  let i = 0;
+  const n = source.length;
+  const templateDepth = []; // true = inside ${ } of a template literal
+  const regexAllowedAfterKeyword = /(?:^|[^\w$])(?:return|typeof|instanceof|in|of|new|delete|void|throw|case|do|else|yield|await)$/;
+  const lastSignificant = () => {
+    for (let k = out.length - 1; k >= 0; k--) {
+      if (!/\s/.test(out[k])) return out[k];
+    }
+    return '';
+  };
+  const regexCanStart = () => {
+    const prev = lastSignificant();
+    if (prev === '') return true;
+    if ('(,=:[!&|?{};+-*%~^<>'.includes(prev)) return true;
+    if (/[\w$]/.test(prev)) {
+      const tail = out.slice(-12);
+      return regexAllowedAfterKeyword.test(tail);
+    }
+    return prev === '}';
+  };
+  while (i < n) {
+    const ch = source[i];
+    if (ch === '/' && source[i + 1] === '*') {
+      const end = source.indexOf('*/', i + 2);
+      const body = source.slice(i, end === -1 ? n : end + 2);
+      i = end === -1 ? n : end + 2;
+      // Preserve a line break from multi-line comments so `a /* \n */ b`
+      // cannot fuse statements; single-line comments become one space.
+      out += body.includes('\n') ? '\n' : ' ';
+      continue;
+    }
+    if (ch === '/' && source[i + 1] === '/') {
+      while (i < n && source[i] !== '\n') i++;
+      continue;
+    }
+    if (ch === '"' || ch === "'") {
+      out += ch;
+      i++;
+      while (i < n) {
+        out += source[i];
+        if (source[i] === '\\') { i++; if (i < n) { out += source[i]; i++; } continue; }
+        if (source[i] === ch) { i++; break; }
+        i++;
+      }
+      continue;
+    }
+    if (ch === '`') {
+      out += ch;
+      i++;
+      while (i < n) {
+        out += source[i];
+        if (source[i] === '\\') { i++; if (i < n) { out += source[i]; i++; } continue; }
+        if (source[i] === '$' && source[i + 1] === '{') {
+          out += '{';
+          templateDepth.push(true);
+          i += 2;
+          break;
+        }
+        if (source[i] === '`') { i++; break; }
+        i++;
+      }
+      continue;
+    }
+    if (ch === '{' && templateDepth.length) {
+      templateDepth.push(false);
+      out += ch;
+      i++;
+      continue;
+    }
+    if (ch === '}' && templateDepth.length) {
+      const wasInterpolation = templateDepth.pop();
+      out += ch;
+      i++;
+      if (wasInterpolation) {
+        // Back inside the template literal's text portion.
+        while (i < n) {
+          out += source[i];
+          if (source[i] === '\\') { i++; if (i < n) { out += source[i]; i++; } continue; }
+          if (source[i] === '$' && source[i + 1] === '{') {
+            out += '{';
+            templateDepth.push(true);
+            i += 2;
+            break;
+          }
+          if (source[i] === '`') { i++; break; }
+          i++;
+        }
+      }
+      continue;
+    }
+    if (ch === '/' && regexCanStart()) {
+      out += ch;
+      i++;
+      let inClass = false;
+      while (i < n) {
+        out += source[i];
+        if (source[i] === '\\') { i++; if (i < n) { out += source[i]; i++; } continue; }
+        if (source[i] === '[') inClass = true;
+        else if (source[i] === ']') inClass = false;
+        else if (source[i] === '/' && !inClass) { i++; break; }
+        i++;
+      }
+      continue;
+    }
+    out += ch;
+    i++;
+  }
+  return out
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line !== '')
+    .join('\n');
+}
+
 // Syntax gate for browser JS. The build only concatenates files, so without
 // this a syntax error ships to production and breaks the page at runtime.
 // Pages load classic scripts (no type="module"), so vm.Script is the matching
@@ -1273,7 +1478,16 @@ function getJS(name) {
   if (!jsCache[name]) {
     const source = read(path.join(SRC, 'js', `${name}.js`));
     assertParsableJs(source, `src/js/${name}.js`);
-    jsCache[name] = source;
+    const minified = minifyJs(source);
+    try {
+      assertParsableJs(minified, `src/js/${name}.js (minified)`);
+      jsCache[name] = minified;
+    } catch (err) {
+      // A minifier bug must never ship broken JS: fall back to the verbatim
+      // source, which is always valid, and say so instead of failing silently.
+      console.warn(`  ! minifyJs produced unparsable output for src/js/${name}.js; shipping it unminified`);
+      jsCache[name] = source;
+    }
   }
   return jsCache[name];
 }
@@ -1356,6 +1570,7 @@ function buildPage(page) {
   content = enhanceImageAccessibility(content);
   content = reserveImageAspectRatio(content);
   content = reserveFacadeAspectRatio(content);
+  content = reserveVideoAspectRatio(content);
   content = enhanceInlineSvgAccessibility(content);
   content = enhanceGalleryItemLinks(content);
   if (page.layout === 'music') content = injectStaticTrackIndex(content);
@@ -1392,12 +1607,6 @@ function buildPage(page) {
     : '');
 
   // 6. Optional partials
-  if (page.lightbox) {
-    html = html.replace('<!-- LIGHTBOX -->', () => enhanceInlineSvgAccessibility(getPartial('lightbox')));
-  } else {
-    html = html.replace('<!-- LIGHTBOX -->', '');
-  }
-
   if (page.layout === 'music') {
     html = html.replace('<!-- PLAYER -->', () => enhanceInlineSvgAccessibility(getPartial('player-bar')));
   }
@@ -1498,14 +1707,10 @@ function validateConfig(cfg) {
       throw new Error(`src/pages/${page.slug}.html must contain exactly one h1, found ${h1Count}`);
     }
     const galleryItemTags = [...pageSource.matchAll(/<([a-z][\w:-]*)\b(?=[^>]*\bclass=(["'])[^"']*\bgallery-item\b[^"']*\2)[^>]*>/gi)];
-    if (page.lightbox && !page.js.includes('lightbox')) {
-      throw new Error(`${page.slug} has lightbox enabled but does not include src/js/lightbox.js`);
-    }
-    if (page.lightbox && !galleryItemTags.length) {
-      throw new Error(`${page.slug} has lightbox enabled but no .gallery-item elements`);
-    }
-    if (!page.lightbox && galleryItemTags.length) {
-      throw new Error(`${page.slug} has .gallery-item elements but lightbox is not enabled`);
+    if (page.lightbox) {
+      // The lightbox partial and script were removed once no page used them;
+      // .gallery-item images now ship as plain links via enhanceGalleryItemLinks.
+      throw new Error(`${page.slug} sets lightbox, but the lightbox feature was removed from the build`);
     }
     for (const match of galleryItemTags) {
       const afterTag = pageSource.slice(match.index, match.index + 1200);
@@ -1764,7 +1969,6 @@ function main() {
   // The deploy workflow no longer copies these separately - it relies on this list.
   const rootAssets = [
     'audioqscreenshot.png',
-    'transienticascreenshot.webm',
     'transienticascreenshot.png',
     'UnrealEngineDemo.mp4',
     'PythonPrototypeDemo.mp4',
