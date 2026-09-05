@@ -1,91 +1,75 @@
-/* Showreel cover. The native controls remain the no-JS fallback; when JS is
-   available, the reel opens with a quieter branded play action and restores
-   the browser controls as soon as playback starts. */
+/* Silent film cover with an explicit, separately controlled full showreel. */
 (function () {
-  var frame = document.querySelector('[data-showreel]');
-  if (!frame) return;
-  var video = frame.querySelector('video');
-  // The reel is the full-bleed hero now, so its play action lives with the
-  // other calls to action rather than inside the media layer.
-  var launch = frame.querySelector('[data-showreel-play]') || document.querySelector('[data-showreel-play]');
-  if (!video || !launch) return;
-
-  // State drives both the media layer and the copy that sits on it, so the
-  // class goes on the section that contains both.
-  var scope = frame.closest('.hero') || frame;
-
+  'use strict';
+  var scope = document.querySelector('.hero');
+  if (!scope) return;
+  var video = scope.querySelector('.hero__film');
+  var preview = scope.querySelector('[data-preview-video]');
+  var launch = scope.querySelector('[data-showreel-play]');
+  var close = scope.querySelector('[data-showreel-close]');
+  var toggle = scope.querySelector('[data-preview-toggle]');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (!video || !preview || !launch) return;
+  var playing = false;
+  var visible = true;
+  var paused = !!(navigator.connection && navigator.connection.saveData);
   video.controls = false;
-  frame.classList.add('has-custom-cover');
-  scope.classList.add('has-custom-cover');
+  preview.muted = true;
 
+  function updatePreview() {
+    var canPlay = !paused && !playing && !reduced.matches && !document.hidden && visible;
+    if (toggle) {
+      toggle.hidden = reduced.matches || playing;
+      toggle.setAttribute('aria-label', paused ? 'Play motion' : 'Pause motion');
+      toggle.setAttribute('title', paused ? 'Play motion' : 'Pause motion');
+      toggle.setAttribute('aria-pressed', String(paused));
+      toggle.firstElementChild.textContent = paused ? '▶' : 'Ⅱ';
+    }
+    if (!canPlay) { preview.pause(); return; }
+    var attempt = preview.play();
+    if (attempt) attempt.catch(function (error) {
+      if (error.name === 'AbortError') return;
+      paused = true;
+      updatePreview();
+    });
+  }
   function revealPlayer() {
-    frame.classList.add('is-started');
-    scope.classList.add('is-started');
+    playing = true;
+    scope.classList.add('is-started','is-playing');
     video.controls = true;
+    if (close) close.hidden = false;
+    updatePreview();
   }
-
-  // The copy sits on top of the reel, and the reel carries its own titles and
-  // lower thirds, so while it plays the headline was covering the thing it was
-  // introducing. This state lets the CSS clear the copy out of the way and put
-  // the whole frame on screen, then bring it back when playback stops.
-  function setPlaying(on) {
-    frame.classList.toggle('is-playing', on);
-    scope.classList.toggle('is-playing', on);
+  function restoreCover(returnFocus) {
+    playing = false;
+    video.pause();
+    video.controls = false;
+    scope.classList.remove('is-started','is-playing');
+    if (close) close.hidden = true;
+    updatePreview();
+    if (returnFocus) launch.focus({ preventScroll:true });
   }
-
   launch.addEventListener('click', function () {
     revealPlayer();
-    var promise = video.play();
-    if (promise && typeof promise.catch === 'function') {
-      promise.catch(function () { video.controls = true; });
-    }
+    window.scrollTo({ top:0, behavior:'instant' });
+    if (close) close.focus({ preventScroll:true });
+    var attempt = video.play();
+    if (attempt) attempt.catch(function () { if (playing) video.controls = true; });
   });
-
-  video.addEventListener('play', function () {
-    revealPlayer();
-    setPlaying(true);
+  video.addEventListener('play', revealPlayer);
+  video.addEventListener('ended', function () { restoreCover(scope.contains(document.activeElement)); });
+  if (close) close.addEventListener('click', function () { restoreCover(true); });
+  scope.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && playing && !document.fullscreenElement) restoreCover(true);
   });
-  // Pausing must NOT bring the headline back: the paused frame carries the
-  // reel's own titles, and the copy landing on top of them read as a glitch.
-  // The cover copy returns only once the reel has actually finished.
-  video.addEventListener('ended', function () { setPlaying(false); });
-})();
-
-/* Hero slideshow. The stills cycle with a slow crossfade until the reel
-   starts, then stop for good: the reel carries its own picture from there.
-   Reduced-motion visitors keep the first still, and a hidden tab does not
-   burn cycles fading images nobody sees. */
-(function () {
-  var frame = document.querySelector('[data-showreel]');
-  if (!frame) return;
-  var slides = frame.querySelectorAll('.hero__slides img');
-  if (slides.length < 2) return;
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  var current = 0;
-  var timer = null;
-  var stopped = false;
-  var HOLD_MS = 7000;
-
-  function next() {
-    slides[current].classList.remove('is-active');
-    current = (current + 1) % slides.length;
-    slides[current].classList.add('is-active');
+  if (toggle) toggle.addEventListener('click', function () { paused = !paused; updatePreview(); });
+  reduced.addEventListener('change', updatePreview);
+  document.addEventListener('visibilitychange', updatePreview);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      visible = entries[0].isIntersecting;
+      updatePreview();
+    }).observe(scope);
   }
-  function start() {
-    if (!stopped && timer === null) timer = window.setInterval(next, HOLD_MS);
-  }
-  function pause() {
-    if (timer !== null) { window.clearInterval(timer); timer = null; }
-  }
-  function stop() { stopped = true; pause(); }
-
-  var video = frame.querySelector('video');
-  if (video) video.addEventListener('play', stop);
-
-  document.addEventListener('visibilitychange', function () {
-    if (document.hidden) pause(); else start();
-  });
-
-  start();
+  updatePreview();
 })();

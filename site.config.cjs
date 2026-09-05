@@ -892,3 +892,11 @@ module.exports = {
     },
   ],
 };
+
+// Shared visual direction for published pages; review layouts stay independent.
+module.exports.pages.forEach(page => {
+  if (page.noindex && page.layout !== 'error') return;
+  page.css = (Array.isArray(page.css) ? page.css : [page.css]).concat('studio');
+  if (page.slug === 'index') page.css.push('home-studio');
+  page.js = page.js.concat('studio-motion');
+});

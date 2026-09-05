@@ -51,6 +51,15 @@ rather than expecting `showreel:sources` to restore it.
 
 ## Render
 
+The home page uses a separate 13.8-second silent cover in
+`src/assets/hero-motion.mp4` (1280×720, 24 fps, about 2.5 MB). Rebuild it with
+`node showreel/render-preview.cjs` after restoring the source mirrors. Its
+three five-second source cuts start at 74 seconds in Ray, 312.77 seconds in
+Shadow Frames and 10.33 seconds in Akantilado, with 0.6-second crossfades.
+The full showreel remains the separately launched version with audio and
+project credits. The cover has no audio stream and pauses offscreen or when
+reduced motion is requested.
+
 Requirements:
 
 - Node.js 22 or newer
