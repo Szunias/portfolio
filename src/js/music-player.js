@@ -155,7 +155,8 @@
 
   // ------------------------------------------------------------------- audio
 
-  const audio = new Audio();
+  const audio = document.querySelector('[data-music-audio]');
+  if (!audio) return;
   audio.preload = 'metadata';
 
   let current = -1;

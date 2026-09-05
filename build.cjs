@@ -11,7 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const vm = require('vm');
+const { minifyCss, assertParsableJs } = require('./scripts/build/browser-assets.cjs');
 const { execFileSync } = require('child_process');
 
 const config = require('./site.config.cjs');
@@ -412,7 +412,7 @@ function schemaTags(page) {
 }
 
 /**
- * The interactive library is built entirely by music-selected.js from
+ * The interactive library is built entirely by music-player.js from
  * data-* attributes, so without this the initial HTML contains no track
  * titles at all: crawlers that skip JS rendering see an empty page. The
  * injected list mirrors the data attributes and is removed at runtime by
@@ -461,7 +461,7 @@ function attrValue(tag, name) {
 }
 
 function hasAttr(attrs, name) {
-  return new RegExp(`(?:^|\\s)${name}\\s*=`, 'i').test(attrs);
+  return new RegExp(`(?:^|\\s)${escapeRegExp(name)}(?=\\s|=|/?>|$)`, 'i').test(attrs);
 }
 
 function htmlFileSlug(href) {
@@ -1100,7 +1100,10 @@ function validateGeneratedHtml(htmlFiles) {
 
     for (const match of html.matchAll(/<audio\b[^>]*>/gi)) {
       const tag = match[0];
-      if (!attrValue(tag, 'src')) issues.push(`${file}: audio element missing src`);
+      // The music player selects a source from validated data-src-e track data.
+      const managedByMusicPlayer = hasAttr(tag, 'data-music-audio') &&
+        pageConfig?.layout === 'music' && pageConfig.js.includes('music-player') && !hasAttr(tag, 'controls');
+      if (!attrValue(tag, 'src') && !managedByMusicPlayer) issues.push(`${file}: audio element missing src`);
       if (!/\bpreload=(["'])none\1/i.test(tag)) issues.push(`${file}: audio element must use preload="none"`);
     }
   }
@@ -1255,8 +1258,7 @@ function chromeTokens(page) {
     ROOT: root,
     HOME: page.slug === 'index' ? '' : '/',
     CURRENT_MUSIC: page.layout === 'music' ? ' aria-current="page"' : '',
-    // Contact is keyed off the slug rather than the layout: it shares the home
-    // layout, so a layout test would also mark the homepage.
+    // Contact shares the generic page shell with review routes; match the slug.
     CURRENT_CONTACT: page.slug.startsWith('contact') ? ' aria-current="page"' : '',
     YEAR: String(new Date().getFullYear()),
   };
@@ -1288,208 +1290,12 @@ function pageStylesheet(names) {
   return [getCSS('_fonts'), getCSS('_tokens'), getCSS('_chrome')].concat(names.map(getCSS)).join('\n');
 }
 
-// Conservative CSS minifier: strips comments and collapses whitespace, but
-// leaves every other token untouched. It is string-aware so quoted content
-// (e.g. content: "*/") cannot be corrupted, and it never removes spaces
-// around ':' or inside calc(), where whitespace is syntactically meaningful.
-function minifyCss(source) {
-  let out = '';
-  let i = 0;
-  const n = source.length;
-  let quote = null;
-  const structural = '{};,>';
-  while (i < n) {
-    const ch = source[i];
-    if (quote) {
-      out += ch;
-      if (ch === '\\' && i + 1 < n) { out += source[i + 1]; i += 2; continue; }
-      if (ch === quote) quote = null;
-      i++;
-      continue;
-    }
-    if (ch === '"' || ch === "'") { quote = ch; out += ch; i++; continue; }
-    if (ch === '/' && source[i + 1] === '*') {
-      const end = source.indexOf('*/', i + 2);
-      i = end === -1 ? n : end + 2;
-      // A comment can separate two tokens; keep a single space when both
-      // neighbours are token characters so `a/**/b` cannot fuse into `ab`.
-      const prev = out[out.length - 1];
-      const next = source[i];
-      if (prev && next && !structural.includes(prev) && prev !== ' ' &&
-          !structural.includes(next) && !/\s/.test(next)) out += ' ';
-      continue;
-    }
-    if (/\s/.test(ch)) {
-      while (i < n && /\s/.test(source[i])) i++;
-      const prev = out[out.length - 1];
-      const next = source[i];
-      if (prev && next !== undefined && prev !== ' ' &&
-          !structural.includes(prev) && !structural.includes(next)) out += ' ';
-      continue;
-    }
-    if (ch === '}') {
-      while (out.endsWith(' ')) out = out.slice(0, -1);
-      if (out.endsWith(';')) out = out.slice(0, -1);
-      out += '}';
-      i++;
-      continue;
-    }
-    out += ch;
-    i++;
-  }
-  return out.trim();
-}
-
-// Conservative JS minifier in the same spirit as minifyCss: it only removes
-// comments, trailing whitespace, leading indentation and blank lines, and
-// keeps every other token (and every remaining newline) exactly as written,
-// so automatic-semicolon-insertion behaviour cannot change. The scanner
-// tracks strings, template literals (with ${} nesting) and regex literals;
-// a `/` is a regex only where an expression may start (after an operator,
-// opening bracket, `}` or a keyword), matching how the browser reads it.
-function minifyJs(source) {
-  let out = '';
-  let i = 0;
-  const n = source.length;
-  const templateDepth = []; // true = inside ${ } of a template literal
-  const regexAllowedAfterKeyword = /(?:^|[^\w$])(?:return|typeof|instanceof|in|of|new|delete|void|throw|case|do|else|yield|await)$/;
-  const lastSignificant = () => {
-    for (let k = out.length - 1; k >= 0; k--) {
-      if (!/\s/.test(out[k])) return out[k];
-    }
-    return '';
-  };
-  const regexCanStart = () => {
-    const prev = lastSignificant();
-    if (prev === '') return true;
-    if ('(,=:[!&|?{};+-*%~^<>'.includes(prev)) return true;
-    if (/[\w$]/.test(prev)) {
-      const tail = out.slice(-12);
-      return regexAllowedAfterKeyword.test(tail);
-    }
-    return prev === '}';
-  };
-  while (i < n) {
-    const ch = source[i];
-    if (ch === '/' && source[i + 1] === '*') {
-      const end = source.indexOf('*/', i + 2);
-      const body = source.slice(i, end === -1 ? n : end + 2);
-      i = end === -1 ? n : end + 2;
-      // Preserve a line break from multi-line comments so `a /* \n */ b`
-      // cannot fuse statements; single-line comments become one space.
-      out += body.includes('\n') ? '\n' : ' ';
-      continue;
-    }
-    if (ch === '/' && source[i + 1] === '/') {
-      while (i < n && source[i] !== '\n') i++;
-      continue;
-    }
-    if (ch === '"' || ch === "'") {
-      out += ch;
-      i++;
-      while (i < n) {
-        out += source[i];
-        if (source[i] === '\\') { i++; if (i < n) { out += source[i]; i++; } continue; }
-        if (source[i] === ch) { i++; break; }
-        i++;
-      }
-      continue;
-    }
-    if (ch === '`') {
-      out += ch;
-      i++;
-      while (i < n) {
-        out += source[i];
-        if (source[i] === '\\') { i++; if (i < n) { out += source[i]; i++; } continue; }
-        if (source[i] === '$' && source[i + 1] === '{') {
-          out += '{';
-          templateDepth.push(true);
-          i += 2;
-          break;
-        }
-        if (source[i] === '`') { i++; break; }
-        i++;
-      }
-      continue;
-    }
-    if (ch === '{' && templateDepth.length) {
-      templateDepth.push(false);
-      out += ch;
-      i++;
-      continue;
-    }
-    if (ch === '}' && templateDepth.length) {
-      const wasInterpolation = templateDepth.pop();
-      out += ch;
-      i++;
-      if (wasInterpolation) {
-        // Back inside the template literal's text portion.
-        while (i < n) {
-          out += source[i];
-          if (source[i] === '\\') { i++; if (i < n) { out += source[i]; i++; } continue; }
-          if (source[i] === '$' && source[i + 1] === '{') {
-            out += '{';
-            templateDepth.push(true);
-            i += 2;
-            break;
-          }
-          if (source[i] === '`') { i++; break; }
-          i++;
-        }
-      }
-      continue;
-    }
-    if (ch === '/' && regexCanStart()) {
-      out += ch;
-      i++;
-      let inClass = false;
-      while (i < n) {
-        out += source[i];
-        if (source[i] === '\\') { i++; if (i < n) { out += source[i]; i++; } continue; }
-        if (source[i] === '[') inClass = true;
-        else if (source[i] === ']') inClass = false;
-        else if (source[i] === '/' && !inClass) { i++; break; }
-        i++;
-      }
-      continue;
-    }
-    out += ch;
-    i++;
-  }
-  return out
-    .split('\n')
-    .map(line => line.trim())
-    .filter(line => line !== '')
-    .join('\n');
-}
-
-// Syntax gate for browser JS. The build only concatenates files, so without
-// this a syntax error ships to production and breaks the page at runtime.
-// Pages load classic scripts (no type="module"), so vm.Script is the matching
-// parser: it accepts exactly what the browser accepts here.
-function assertParsableJs(source, label) {
-  try {
-    new vm.Script(source, { filename: label });
-  } catch (err) {
-    throw new Error(`JavaScript syntax error in ${label}: ${err.message}`);
-  }
-}
-
 const jsCache = {};
 function getJS(name) {
   if (!jsCache[name]) {
     const source = read(path.join(SRC, 'js', `${name}.js`));
     assertParsableJs(source, `src/js/${name}.js`);
-    const minified = minifyJs(source);
-    try {
-      assertParsableJs(minified, `src/js/${name}.js (minified)`);
-      jsCache[name] = minified;
-    } catch (err) {
-      // A minifier bug must never ship broken JS: fall back to the verbatim
-      // source, which is always valid, and say so instead of failing silently.
-      console.warn(`  ! minifyJs produced unparsable output for src/js/${name}.js; shipping it unminified`);
-      jsCache[name] = source;
-    }
+    jsCache[name] = source;
   }
   return jsCache[name];
 }
@@ -1652,7 +1458,7 @@ function validateConfig(cfg) {
     }
     if (seen.has(page.slug)) throw new Error(`Duplicate slug: ${page.slug}`);
     seen.add(page.slug);
-    if (!['home', 'project', 'music', 'error'].includes(page.layout)) {
+    if (!['home', 'page', 'project', 'music', 'error'].includes(page.layout)) {
       throw new Error(`Unknown layout "${page.layout}" for ${page.slug}`);
     }
     if (page.noindex && page.sitemap !== false) {

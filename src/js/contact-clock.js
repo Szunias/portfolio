@@ -3,7 +3,7 @@
      review twin), forked from contact-time.js. It owns the hands, the phase
      and the caption, so a page must include it INSTEAD of contact-time.js:
      two writers on the same transform attributes would fight once the preview
-     offset is non-zero. contact-alt.js only ever writes into
+     offset is non-zero. contact-actions.js only ever writes into
      [data-local-time], which lives in its own caption span here. */
   const ZONE = 'Europe/Vienna';
   const MAX_OFFSET = 24 * 60;

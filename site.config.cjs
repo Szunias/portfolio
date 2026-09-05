@@ -3,8 +3,8 @@
  *
  * Each entry specifies:
  *   slug       - output filename (without .html)
- *   layout     - which layout template to use (home | project | music | error)
- *   css        - CSS file bundled into a content-hashed asset (one per layout type)
+ *   layout     - which layout template to use (home | page | project | music | error)
+ *   css        - ordered CSS files bundled into a content-hashed asset
  *   js         - JS files concatenated into a content-hashed asset
  *   title      - <title> tag content
  *   description- meta description
@@ -32,8 +32,8 @@ module.exports = {
     {
       slug: 'index',
       layout: 'home',
-      css: 'home',
-      js: ['prefetch', 'colophon-clock', 'home-list'],
+      css: ['home', 'portfolio', 'home-hero'],
+      js: ['prefetch', 'colophon-clock', 'home-showreel', 'page-motion'],
       title: 'Igor Szuniewicz | Technical Sound Designer & Audio Programmer',
       ogTitle: 'Igor Szuniewicz | Technical Sound Designer & Audio Programmer',
       // 158 characters: the snippet used to stop at 116 on the one page
@@ -51,8 +51,8 @@ module.exports = {
     {
       slug: '404',
       layout: 'error',
-      css: 'home',
-      js: ['prefetch', 'colophon-clock'],
+      css: ['home', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'page-motion'],
       title: 'Page Not Found | Igor Szuniewicz',
       description: 'The requested portfolio page could not be found. Return to Igor Szuniewicz’s game audio and audio programming work.',
       canonical: `${SITE}/404.html`,
@@ -71,10 +71,10 @@ module.exports = {
       slug: 'music',
       layout: 'music',
       // The listening-room layout promoted from the music-alt review page:
-      // music-alt-bind must load before music-selected to capture its Audio
-      // node, and music-alt after it to attach the visualiser.
-      css: ['music', 'music-alt'],
-      js: ['prefetch', 'colophon-clock', 'music-alt-bind', 'music-selected', 'music-alt'],
+      // music-player owns the shared audio element; music-visualizer reads
+      // that element after the player is initialized.
+      css: ['music', 'music-stage', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'music-player', 'music-visualizer', 'page-motion'],
       title: 'Game & Film Music | Igor Szuniewicz',
       description: 'Eight selected pieces by Igor Szuniewicz, followed by a dated archive of all 44 tracks: film scores, animation cues, releases and sketches from 2023 to 2026.',
       canonical: `${SITE}/music.html`,
@@ -92,8 +92,8 @@ module.exports = {
     {
       slug: 'music-alt',
       layout: 'music',
-      css: ['music', 'music-alt'],
-      js: ['prefetch', 'colophon-clock', 'music-alt-bind', 'music-selected', 'music-alt'],
+      css: ['music', 'music-stage'],
+      js: ['prefetch', 'colophon-clock', 'music-player', 'music-visualizer'],
       title: 'Music, alternate layout | Igor Szuniewicz',
       description: 'An alternate listening-room layout of Igor Szuniewicz’s music page: eight selected pieces, a dated archive of 44 tracks, and a visualiser driven by the playing audio.',
       canonical: `${SITE}/music-alt.html`,
@@ -110,7 +110,7 @@ module.exports = {
       slug: 'music-crate',
       layout: 'music',
       css: ['music', 'music-crate'],
-      js: ['prefetch', 'colophon-clock', 'music-selected'],
+      js: ['prefetch', 'colophon-clock', 'music-player'],
       title: 'Music, crate layout | Igor Szuniewicz',
       description: 'A cover-crate layout of Igor Szuniewicz’s music: six selected pieces in a horizontal rail, then a dated archive of all 44 tracks and sketches from 2023 to 2026.',
       canonical: `${SITE}/music-crate.html`,
@@ -127,7 +127,7 @@ module.exports = {
       slug: 'music-reel',
       layout: 'music',
       css: ['music', 'music-reel'],
-      js: ['prefetch', 'colophon-clock', 'music-selected'],
+      js: ['prefetch', 'colophon-clock', 'music-player'],
       title: 'Music, reel layout | Igor Szuniewicz',
       description: 'A vertical reel of six selected pieces by Igor Szuniewicz, followed by a dated archive of all 44 tracks: film scores, animation cues, releases and sketches.',
       canonical: `${SITE}/music-reel.html`,
@@ -147,16 +147,16 @@ module.exports = {
       slug: 'contact',
       // build.cjs requires every layout:'project' page to appear in the homepage
       // work index and to close a next-project cycle, which a contact page is
-      // not part of. The home layout renders the same header, main and
+      // not part of. The page layout renders the same header, main and
       // colophon chrome without that constraint.
-      layout: 'home',
+      layout: 'page',
       // The Graz-clock layout promoted from the contact-time review page,
-      // the windable dial from contact-wind: contact-alt.js carries the
-      // copy-address action, contact-wind.js the clock AND the winding —
+      // the windable dial from contact-wind: contact-actions.js carries the
+      // copy-address action, contact-clock.js the clock AND the winding —
       // it replaces contact-time.js, which would fight it over the same
       // hand transforms.
-      css: ['contact', 'contact-time', 'contact-wind'],
-      js: ['prefetch', 'colophon-clock', 'contact-alt', 'contact-wind'],
+      css: ['contact', 'contact-time', 'contact-wind', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'contact-actions', 'contact-clock', 'page-motion'],
       title: 'Contact | Igor Szuniewicz',
       // Kept under 160 characters so Google does not truncate it mid-address.
       description: 'Email Igor Szuniewicz at igorszuniewiczwork@gmail.com about game audio, spatial and VR sound, audio tools or music. Links to LinkedIn, GitHub, Spotify and CV.',
@@ -176,9 +176,9 @@ module.exports = {
     // Alternate contact desk for review. The published page stays contact.html.
     {
       slug: 'contact-alt',
-      layout: 'home',
+      layout: 'page',
       css: ['contact', 'contact-alt'],
-      js: ['prefetch', 'colophon-clock', 'contact-alt'],
+      js: ['prefetch', 'colophon-clock', 'contact-actions'],
       title: 'Contact, alternate layout | Igor Szuniewicz',
       description: 'An alternate contact desk for Igor Szuniewicz: choose the kind of work, copy the address or open a mail with the subject already filled in. Based in Graz, CET.',
       canonical: `${SITE}/contact-alt.html`,
@@ -195,9 +195,9 @@ module.exports = {
 
     {
       slug: 'contact-card',
-      layout: 'home',
+      layout: 'page',
       css: ['contact', 'contact-card'],
-      js: ['prefetch', 'colophon-clock', 'contact-alt'],
+      js: ['prefetch', 'colophon-clock', 'contact-actions'],
       title: 'Contact, card layout | Igor Szuniewicz',
       description: 'A calling-card contact page for Igor Szuniewicz: copy the address or open a mail with a chosen subject. Based in Graz, CET. Polish, English, German.',
       canonical: `${SITE}/contact-card.html`,
@@ -214,9 +214,9 @@ module.exports = {
 
     {
       slug: 'contact-dir',
-      layout: 'home',
+      layout: 'page',
       css: ['contact', 'contact-dir'],
-      js: ['prefetch', 'colophon-clock', 'contact-alt'],
+      js: ['prefetch', 'colophon-clock', 'contact-actions'],
       title: 'Contact, directory | Igor Szuniewicz',
       description: 'A typographic directory for contacting Igor Szuniewicz about game audio, spatial and VR sound, audio tools or music. Graz, CET. Links to CV, LinkedIn, GitHub and Spotify.',
       canonical: `${SITE}/contact-dir.html`,
@@ -233,9 +233,9 @@ module.exports = {
 
     {
       slug: 'contact-stage',
-      layout: 'home',
+      layout: 'page',
       css: ['contact', 'contact-stage'],
-      js: ['prefetch', 'colophon-clock', 'contact-alt'],
+      js: ['prefetch', 'colophon-clock', 'contact-actions'],
       title: 'Contact, presence | Igor Szuniewicz',
       description: 'Igor Szuniewicz is in Graz. Copy the work address or open a mail. Polish, English, German. Central European Time.',
       canonical: `${SITE}/contact-stage.html`,
@@ -252,9 +252,9 @@ module.exports = {
 
     {
       slug: 'contact-time',
-      layout: 'home',
+      layout: 'page',
       css: ['contact', 'contact-time'],
-      js: ['prefetch', 'colophon-clock', 'contact-alt', 'contact-time'],
+      js: ['prefetch', 'colophon-clock', 'contact-actions', 'contact-time'],
       title: 'Contact, time | Igor Szuniewicz',
       description: 'Write to Igor Szuniewicz in Graz. A live clock shows the local time next to the work address. Copy it or open a mail. Polish, English, German.',
       canonical: `${SITE}/contact-time.html`,
@@ -270,13 +270,13 @@ module.exports = {
     },
 
     // The published clock page with a windable dial, for review. Dragging the
-    // dial previews another hour in Graz; contact-wind.js replaces
+    // dial previews another hour in Graz; contact-clock.js replaces
     // contact-time.js because both would write the same hand transforms.
     {
       slug: 'contact-wind',
-      layout: 'home',
+      layout: 'page',
       css: ['contact', 'contact-time', 'contact-wind'],
-      js: ['prefetch', 'colophon-clock', 'contact-alt', 'contact-wind'],
+      js: ['prefetch', 'colophon-clock', 'contact-actions', 'contact-clock'],
       title: 'Contact, wound clock | Igor Szuniewicz',
       description: 'Write to Igor Szuniewicz in Graz. Wind the clock forward to see what time your mail would arrive, then let it spring back. Copy the address or open a mail.',
       canonical: `${SITE}/contact-wind.html`,
@@ -297,8 +297,8 @@ module.exports = {
     // and a review twin must not; case-plain.css carries its own shell.
     {
       slug: 'shadowframes-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'video-facade'],
       title: 'Shadow Frames, plain layout | Igor Szuniewicz',
       description: 'A review layout of the Shadow Frames page written as a document: one reading column, plain headings and media with captions. Solo audio design in Wwise and Unreal Engine 5.',
@@ -315,8 +315,8 @@ module.exports = {
 
     {
       slug: 'sidar-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'video-facade', 'local-video'],
       title: 'SIDAR NULL, plain layout | Igor Szuniewicz',
       description: 'A review layout of the SIDAR NULL page: one reading column, plain headings and media with captions. A solo first-person horror prototype where sound reveals pitch-black spaces.',
@@ -333,8 +333,8 @@ module.exports = {
 
     {
       slug: 'nottoday-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'local-video'],
       title: 'Not Today, Darling!, plain layout | Igor Szuniewicz',
       description: 'A review layout of the Not Today, Darling! page: one reading column, plain headings and media with captions.',
@@ -351,8 +351,8 @@ module.exports = {
 
     {
       slug: 'transientica-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'video-facade', 'local-video'],
       title: 'Transientica, plain layout | Igor Szuniewicz',
       description: 'A review layout of the Transientica page: one reading column, plain headings and media with captions.',
@@ -369,8 +369,8 @@ module.exports = {
 
     {
       slug: 'ai-audio-research-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'local-video'],
       title: 'AI Audio Research, plain layout | Igor Szuniewicz',
       description: 'A review layout of the AI Audio Research page: one reading column, plain headings and media with captions.',
@@ -387,8 +387,8 @@ module.exports = {
 
     {
       slug: 'autotrim-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'local-video'],
       title: 'AutoTrim Exporter, plain layout | Igor Szuniewicz',
       description: 'A review layout of the AutoTrim Exporter page: one reading column, plain headings and media with captions.',
@@ -405,8 +405,8 @@ module.exports = {
 
     {
       slug: 'audioq-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'video-facade'],
       title: 'AudioQ Sampler & Sound-Mangling Plugin, plain layout | Igor Szuniewicz',
       description: 'A review layout of the AudioQ Sampler & Sound-Mangling Plugin page: one reading column, plain headings and media with captions. A C++/JUCE sampler with loop editing, granular playback and effects.',
@@ -423,8 +423,8 @@ module.exports = {
 
     {
       slug: 'mowik-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock'],
       title: 'Mówik, plain layout | Igor Szuniewicz',
       description: 'A review layout of the Mówik page: one reading column, plain headings and media with captions. A local Windows dictation app built in Python with faster-whisper.',
@@ -441,8 +441,8 @@ module.exports = {
 
     {
       slug: 'xrlabs-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'local-video'],
       title: 'XR Labs, plain layout | Igor Szuniewicz',
       description: 'A review layout of the XR Labs page: one reading column, plain headings and media with captions.',
@@ -459,8 +459,8 @@ module.exports = {
 
     {
       slug: 'ray-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'local-video'],
       title: 'Ray, plain layout | Igor Szuniewicz',
       description: 'A review layout of the Ray page: one reading column, plain headings and media with captions. Ray: a disco-funk score written during the final eight days before a DAE graduation animation’s cinema screening.',
@@ -477,8 +477,8 @@ module.exports = {
 
     {
       slug: 'akantilado-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'video-facade'],
       title: 'Akantilado Sound Design, plain layout | Igor Szuniewicz',
       description: 'A review layout of the Akantilado Sound Design page: one reading column, plain headings and media with captions.',
@@ -495,8 +495,8 @@ module.exports = {
 
     {
       slug: 'amorak-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'local-video'],
       title: 'Amorak, plain layout | Igor Szuniewicz',
       description: 'A review layout of the Amorak page: one reading column, plain headings and media with captions.',
@@ -513,8 +513,8 @@ module.exports = {
 
     {
       slug: 'pausedeserve-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'local-video'],
       title: 'Pause & Deserve, plain layout | Igor Szuniewicz',
       description: 'A review layout of the Pause & Deserve page: one reading column, plain headings and media with captions.',
@@ -531,8 +531,8 @@ module.exports = {
 
     {
       slug: 'richter-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'local-video'],
       title: 'Richter Field Recording Sound Design, plain layout | Igor Szuniewicz',
       description: 'A review layout of the Richter Field Recording Sound Design page: one reading column, plain headings and media with captions.',
@@ -549,8 +549,8 @@ module.exports = {
 
     {
       slug: 'ifmc-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'video-facade'],
       title: 'Indie Film Music Contest, plain layout | Igor Szuniewicz',
       description: 'A review layout of the Indie Film Music Contest page: one reading column, plain headings and media with captions.',
@@ -567,8 +567,8 @@ module.exports = {
 
     {
       slug: 'sounddesign-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'local-video'],
       title: 'Three Sound Redesigns, plain layout | Igor Szuniewicz',
       description: 'A review layout of the Three Sound Redesigns page: one reading column, plain headings and media with captions.',
@@ -585,8 +585,8 @@ module.exports = {
 
     {
       slug: 'wwiseprojects-alt',
-      layout: 'home',
-      css: 'case-plain',
+      layout: 'page',
+      css: ['case-plain'],
       js: ['prefetch', 'colophon-clock', 'local-video'],
       title: 'Three Wwise Exercises, plain layout | Igor Szuniewicz',
       description: 'A review layout of the Three Wwise Exercises page: one reading column, plain headings and media with captions.',
@@ -608,8 +608,8 @@ module.exports = {
     {
       slug: 'sidar',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade', 'local-video'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade', 'local-video', 'page-motion'],
       schemaType: 'VideoGame',
       title: 'SIDAR NULL | Sound-Revealed Exploration Horror',
       description: 'A solo first-person horror prototype where sound reveals pitch-black spaces. Planned pursuit behaviour will let stronger scans give Null a clearer trail.',
@@ -623,8 +623,8 @@ module.exports = {
     {
       slug: 'shadowframes',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade', 'page-motion'],
       schemaType: 'VideoGame',
       schemaRole: 'contributor',
       title: 'Shadow Frames | Audio-Driven Horror in Wwise + UE5',
@@ -639,8 +639,8 @@ module.exports = {
     {
       slug: 'nottoday',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'local-video'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'local-video', 'page-motion'],
       schemaType: 'VideoGame',
       schemaRole: 'contributor',
       title: 'Not Today, Darling! | Four-Player UE5 Game Audio',
@@ -655,8 +655,8 @@ module.exports = {
     {
       slug: 'ray',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'local-video'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'local-video', 'page-motion'],
       title: 'Ray | Eight-Day Disco-Funk Score',
       description: 'Ray: a disco-funk score written during the final eight days before a DAE graduation animation’s cinema screening. Slap bass, drums, brass and sax.',
       canonical: `${SITE}/ray.html`,
@@ -669,8 +669,8 @@ module.exports = {
     {
       slug: 'akantilado',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade', 'page-motion'],
       title: 'Akantilado Sound Design | 5.1 Jungle Foley',
       description: 'Sound design for a student jungle animation: Igor assembled and edited more than 200 sounds, then delivered stereo and surround mixes.',
       canonical: `${SITE}/akantilado.html`,
@@ -684,8 +684,8 @@ module.exports = {
     {
       slug: 'transientica',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade', 'local-video'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade', 'local-video', 'page-motion'],
       schemaType: 'VideoGame',
       title: 'Transientica | Unity Beatbox Rhythm Game & Audio ML',
       description: 'A Unity rhythm game that learns each player’s beatboxed kick, snare and hi-hat, then scores the hits in time with the music. In development in Unity 6.',
@@ -699,8 +699,8 @@ module.exports = {
     {
       slug: 'ai-audio-research',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'local-video'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'local-video', 'page-motion'],
       schemaType: 'ScholarlyArticle',
       schemaDatePublished: '2026',
       title: 'AI Audio Research | Game Sound Generation Latency',
@@ -733,8 +733,8 @@ module.exports = {
     {
       slug: 'autotrim',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'local-video'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'local-video', 'page-motion'],
       schemaType: 'SoftwareApplication',
       schemaApplicationCategory: 'MultimediaApplication',
       schemaOperatingSystem: 'Windows, macOS, Linux',
@@ -754,8 +754,8 @@ module.exports = {
     {
       slug: 'audioq',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade', 'page-motion'],
       schemaType: 'SoftwareApplication',
       schemaApplicationCategory: 'MultimediaApplication',
       schemaOperatingSystem: 'Windows',
@@ -773,8 +773,8 @@ module.exports = {
     {
       slug: 'amorak',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'local-video'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'local-video', 'page-motion'],
       title: 'Amorak | Independent Binaural Audio Redesign',
       description: 'Igor replaced the complete soundtrack of a two-minute horror animation, built its creature voice and mixed movement around a headphone listener.',
       canonical: `${SITE}/amorak.html`,
@@ -787,8 +787,8 @@ module.exports = {
     {
       slug: 'pausedeserve',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'local-video'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'local-video', 'page-motion'],
       schemaType: 'VideoGame',
       title: 'Pause & Deserve | Solo UE5 Horror Prototype',
       description: 'Pause & Deserve: a solo-built UE5 horror prototype where pausing freezes the enemy for five seconds but permanently increases its speed for the rest of the run.',
@@ -802,8 +802,8 @@ module.exports = {
     {
       slug: 'richter',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'local-video'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'local-video', 'page-motion'],
       title: 'Richter Field Recording Sound Design | Earthquake Film',
       description: 'Igor created the sound design and score for an earthquake short using his own recordings and synthesizers while keeping the dialogue clear.',
       canonical: `${SITE}/richter.html`,
@@ -816,8 +816,8 @@ module.exports = {
     {
       slug: 'ifmc',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'video-facade', 'page-motion'],
       assets: [],
       title: 'Indie Film Music Contest | Two Competition Rescores',
       description: 'Igor wrote new music for two short films in the Indie Film Music Contest Winter 2025; both finished films and the jury review are included.',
@@ -831,8 +831,8 @@ module.exports = {
     {
       slug: 'sounddesign',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'local-video'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'local-video', 'page-motion'],
       title: 'Three Sound Redesigns | Game Audio Sound Design',
       description: 'Three short clips where Igor removed the original audio and rebuilt combat, spells and weapons from recordings, foley and synthesis.',
       canonical: `${SITE}/sounddesign.html`,
@@ -845,8 +845,8 @@ module.exports = {
     {
       slug: 'wwiseprojects',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'local-video'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'local-video', 'page-motion'],
       title: 'Three Wwise Exercises | Game Audio in Unity',
       description: 'Three Wwise exercises showing how Igor kept important sounds audible, made spaces transition smoothly and reduced memory use on Android.',
       canonical: `${SITE}/wwiseprojects.html`,
@@ -859,8 +859,8 @@ module.exports = {
     {
       slug: 'mowik',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'page-motion'],
       schemaType: 'SoftwareApplication',
       schemaApplicationCategory: 'UtilitiesApplication',
       schemaOperatingSystem: 'Windows 10, Windows 11',
@@ -878,8 +878,8 @@ module.exports = {
     {
       slug: 'xrlabs',
       layout: 'project',
-      css: 'cine',
-      js: ['prefetch', 'colophon-clock', 'cine', 'local-video'],
+      css: ['cine', 'portfolio'],
+      js: ['prefetch', 'colophon-clock', 'cine', 'local-video', 'page-motion'],
       // No schemaType: XR Labs Belgium is the employer, not a work Igor authored.
       title: 'XR Labs | Spatial Audio for Unity VR Training',
       description: 'Igor designed and implemented sound for Unity VR training at XR Labs Belgium (February to June 2026): Steam Audio for direction, occlusion and distance.',
@@ -892,11 +892,3 @@ module.exports = {
     },
   ],
 };
-
-// Shared visual direction for published pages; review layouts stay independent.
-module.exports.pages.forEach(page => {
-  if (page.noindex && page.layout !== 'error') return;
-  page.css = (Array.isArray(page.css) ? page.css : [page.css]).concat('studio');
-  if (page.slug === 'index') page.css.push('home-studio');
-  page.js = page.js.concat('studio-motion');
-});

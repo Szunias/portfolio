@@ -37,7 +37,7 @@ Rules for the new titles:
 - Leave `TIME`, `Cinematic Game` and `state of shock` alone unless the owner asks otherwise.
 - Update `data-title` only. `data-src-e` must keep pointing at the existing audio file — do not rename files on disk.
 
-Anything referencing a title by string must be updated with it: `src/js/music-selected.js` matches `data-featured-track` / `data-catalog-track` against `data-title`, and `localStorage` restores by title (key `music-player-v2`, stale entries degrade gracefully).
+Anything referencing a title by string must be updated with it: `src/js/music-player.js` matches `data-featured-track` / `data-catalog-track` against `data-title`, and `localStorage` restores by title (key `music-player-v2`, stale entries degrade gracefully).
 
 ## Task B — Cover art for the 27 sketches
 

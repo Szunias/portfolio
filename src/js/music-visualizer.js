@@ -1,5 +1,6 @@
+/* Artwork and spectrum for the listening stage; playback belongs to music-player.js. */
 (function () {
-  const audio = window.__musicAudio;
+  const audio = document.querySelector('[data-music-audio]');
   const stage = document.querySelector('.stage');
   const plate = document.querySelector('.stage__plate');
   const ringCanvas = document.querySelector('.stage__viz');
