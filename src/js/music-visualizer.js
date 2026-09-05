@@ -25,6 +25,7 @@
   let graphFailed = false;
   let raf = 0;
   let lastTitle = '';
+  let artworkVersion = 0;
 
   function trackByTitle(title) {
     return cards.find(card => card.dataset.title === title) || null;
@@ -52,12 +53,14 @@
   }
 
   function sampleLuma(src) {
+    const version = ++artworkVersion;
     if (!src) {
       applyVeil(0.22);
       return;
     }
     const img = new Image();
     img.onload = function () {
+      if (version !== artworkVersion) return;
       try {
         const probe = document.createElement('canvas');
         probe.width = 24;
@@ -79,7 +82,7 @@
         applyVeil(0.22);
       }
     };
-    img.onerror = function () { applyVeil(0.22); };
+    img.onerror = function () { if (version === artworkVersion) applyVeil(0.22); };
     img.src = src;
   }
 

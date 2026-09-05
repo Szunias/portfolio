@@ -60,6 +60,16 @@ The full showreel remains the separately launched version with audio and
 project credits. The cover has no audio stream and pauses offscreen or when
 reduced motion is requested.
 
+The same command also builds `src/assets/hero-motion-mobile.mp4` at 540×960.
+Each shot has its own horizontal crop: Ray follows the creature, Shadow Frames
+centres the pub, and Akantilado keeps the animal on the right in view. The site
+selects this portrait version below 601 px.
+
+Two six-second silent card previews are written to `src/assets/previews/`:
+Shadow Frames at 312.77 seconds and Transientica at 30.07 seconds in the source
+recordings. They are 960×540 at 24 fps and load only when a card is hovered or
+focused with a keyboard. All three new files are versioned for clean-checkout builds.
+
 Requirements:
 
 - Node.js 22 or newer

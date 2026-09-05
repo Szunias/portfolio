@@ -2,6 +2,10 @@
   const PLACEHOLDER = 'assets/track-placeholder.svg';
   const STORE_KEY = 'music-player-v2';
   const DEFAULT_FILTER = 'release';
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  reducedMotion.addEventListener('change', () => {
+    if (reducedMotion.matches) document.querySelectorAll('.stage__art--previous').forEach(node => node.remove());
+  });
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -138,6 +142,45 @@
     if (track && track.dataset.art) return track.dataset.artSize || '';
     if (track && track.dataset.gradient) return '512x512';
     return '';
+  }
+
+  function updateArtwork(src, version) {
+    const covers = roleAll('cover');
+    let applied = false;
+    function apply(next) {
+      if (applied || version !== sourceVersion) return;
+      applied = true;
+      covers.forEach(img => {
+        let previous;
+        if (img.hasAttribute('data-art-transition')) {
+          img.parentElement.querySelectorAll('.stage__art--previous').forEach(node => node.remove());
+          if (!reducedMotion.matches && img.animate && img.complete && img.naturalWidth && img.getAttribute('src') !== next) {
+            previous = img.cloneNode();
+            previous.removeAttribute('data-player');
+            previous.removeAttribute('data-art-transition');
+            previous.classList.add('stage__art--previous');
+            img.after(previous);
+          }
+        }
+        img.src = next;
+        img.alt = '';
+        if (previous) {
+          previous.animate([{ opacity: 1 }, { opacity: 0 }], {
+            duration: 480, easing: 'cubic-bezier(.22,1,.36,1)'
+          }).finished.then(() => previous.remove(), () => previous.remove());
+        }
+      });
+    }
+    if (reducedMotion.matches || !covers.some(img => img.hasAttribute('data-art-transition'))) {
+      apply(src);
+      return;
+    }
+    // Keep the current picture until its replacement is ready. A fast second
+    // selection invalidates this request using the same version as playback.
+    const next = new Image();
+    next.onload = () => apply(src);
+    next.onerror = () => apply(PLACEHOLDER);
+    next.src = src;
   }
 
   function artTypeFor(track) {
@@ -612,11 +655,7 @@
     setText('artist', track.dataset.artist || 'Igor Szuniewicz');
     setText('detail', trackDetail(track));
     setText('total-time', track.dataset.duration || '0:00');
-    const art = artFor(track);
-    roleAll('cover').forEach(img => {
-      img.src = art;
-      img.alt = '';
-    });
+    updateArtwork(artFor(track), version);
     bar.classList.add('has-track');
     setStatus(autoplay ? 'Loading' : 'Ready to play', autoplay ? 'loading' : '');
 

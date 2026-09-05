@@ -62,8 +62,10 @@ an intermediate width and desktop, including long titles and player controls.
 | File under `src/js/` | Responsibility |
 | --- | --- |
 | `home-showreel.js` | Silent preview, full showreel, pause/close and focus restoration. |
+| `project-previews.js` | Lazy, silent previews on project-card hover or keyboard focus. |
+| `copy-email.js` | Copies the visible address on the homepage and contact pages. |
 | `page-motion.js` | Shared entrance effects, header state and homepage parallax. |
-| `music-player.js` | Track selection, transport, seek, volume, filters and player state. |
+| `music-player.js` | Track selection, transport, seek, volume, filters, artwork transitions and player state. |
 | `music-visualizer.js` | Cover proportions, sampled artwork brightness and audio spectrum. |
 | `contact-actions.js` | Contact-page actions and progressive enhancement. |
 | `contact-clock.js` | Windable contact clock and its interaction state. |
@@ -83,10 +85,17 @@ it; `music-visualizer.js` observes it after player initialization. Do not replac
 lives in `#trackData .track-card` on the music page; the build also turns it into
 a static track index. The `data-src-e` values encode local media paths, not secrets.
 
-The homepage's `[data-preview-video]` is separate from `.hero__film`. Preview
+The homepage's `[data-preview-video]` selects landscape or portrait footage at
+600 px and is separate from `.hero__film`. Preview
 playback observes reduced motion, page visibility and intersection state. Full
 showreel playback requires the visible launch action. Keep the pause and close
 controls, and return keyboard focus to the launch button after closing.
+
+Project-card videos use `[data-card-preview]` with a validated `data-src` path.
+Only one runs at a time; its source loads on deliberate hover or keyboard focus.
+Touch, reduced motion and data-saving preferences retain the still images.
+Software-card crops use the original application screenshots and CSS variables
+on `.tool-art`; the full screenshots remain available on their project pages.
 
 ## Build and validation
 

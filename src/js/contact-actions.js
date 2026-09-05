@@ -13,8 +13,6 @@
   const links = Array.from(document.querySelectorAll('[data-mail-link]'));
   const topics = Array.from(document.querySelectorAll('[data-topic]'));
   const note = document.querySelector('[data-mail-note]');
-  const copyBtn = document.querySelector('[data-copy-mail]');
-  const copyStatus = document.querySelector('[data-copy-status]');
   const subjectOut = document.querySelector('[data-preview-subject]');
   const noteOut = document.querySelector('[data-preview-note]');
   const clockOuts = Array.from(document.querySelectorAll('[data-local-time]'));
@@ -22,7 +20,6 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let topic = '';
-  let copyTimer = 0;
 
   const timeFmt = (function () {
     try {
@@ -104,35 +101,13 @@
     });
   }
 
-  function copied(ok) {
-    if (!copyStatus) return;
-    copyStatus.textContent = ok ? 'Copied.' : 'Copy failed. Select the address instead.';
-    window.clearTimeout(copyTimer);
-    copyTimer = window.setTimeout(function () { copyStatus.textContent = ''; }, 2400);
-  }
-
-  function copyAddress() {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(EMAIL).then(function () { copied(true); }).catch(function () { copied(false); });
-      return;
-    }
-    copied(false);
-  }
-
   topics.forEach(function (btn) {
     btn.addEventListener('click', function () { setTopic(btn.dataset.topic || ''); });
   });
 
   if (note) note.addEventListener('input', syncMail);
-  if (copyBtn) copyBtn.addEventListener('click', copyAddress);
 
-  // There used to be a document-level keydown here: a bare "c" copied the
-  // address and "1"-"4" picked a topic wherever focus rested. Nothing on any
-  // contact page announced those keys, and single-character shortcuts with
-  // no modifier and no way to turn them off are exactly what WCAG 2.1.4
-  // forbids (a voice-input user saying a word that starts with "c" would
-  // silently overwrite their clipboard). The buttons do the same work with
-  // Enter and Space, so the shortcuts are gone rather than gated.
+  // Native buttons provide keyboard activation without global shortcuts.
 
   if (hero && !reduceMotion && window.matchMedia('(pointer: fine)').matches) {
     hero.addEventListener('pointermove', function (event) {

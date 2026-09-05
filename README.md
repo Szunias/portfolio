@@ -37,6 +37,7 @@ requests. Set `PORT` to use a different port.
 | --- | --- |
 | Homepage content and project order | `src/pages/index.html` |
 | Opening film, name, role and showreel button | `src/css/home-hero.css`, `src/js/home-showreel.js` |
+| Project-card video previews | `src/js/project-previews.js`, `src/assets/previews/` |
 | Homepage sections below the film | `src/css/home.css` |
 | Shared public theme and motion styling | `src/css/portfolio.css` |
 | Shared header, footer and metadata markup | `src/partials/` |
@@ -44,7 +45,7 @@ requests. Set `PORT` to use a different port.
 | Project content | `src/pages/<slug>.html` |
 | Music tracks and their metadata | `src/pages/music.html`, in `#trackData` |
 | Music playback and artwork visualization | `src/js/music-player.js`, `music-visualizer.js` |
-| Contact actions and interactive clock | `src/js/contact-actions.js`, `contact-clock.js` |
+| Email copying, contact actions and interactive clock | `src/js/copy-email.js`, `contact-actions.js`, `contact-clock.js` |
 | Routes, metadata and asset loading order | `site.config.cjs` |
 | Template assembly and output validation | `build.cjs`, `scripts/build/` |
 | Deployment | `.github/workflows/deploy.yml` |

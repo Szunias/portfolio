@@ -107,6 +107,37 @@ a { color: inherit; }
 .cine-split__body > :last-child { margin-bottom: 0; }
 .cine-split__media { min-width: 0; }
 
+/* A full-width recording opens Shadow Frames; the role remains beside the title. */
+.cine-open.cine-open--screen {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 36px;
+  align-items: start;
+  margin-bottom: 72px;
+}
+.cine-open--screen .cine-split__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 64px;
+  align-items: start;
+}
+.cine-open--screen .cine-kicker { grid-column: 1; grid-row: 1; }
+.cine-open--screen h1 { grid-column: 1; grid-row: 2; }
+.cine-open--screen .cine-meta { grid-column: 1; grid-row: 3; margin: 0; }
+.cine-open--screen .cine-lead { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
+.cine-open--screen .cine-links { grid-column: 2; grid-row: 3; margin: 0; }
+.cine-role {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 64px;
+  margin-bottom: 88px;
+}
+@media (max-width: 820px) {
+  .cine-open--screen .cine-split__body { display: block; }
+  .cine-open--screen .cine-meta { margin-block: 20px; }
+  .cine-open--screen .cine-split__media { order: 0; }
+  .cine-role { grid-template-columns: 1fr; gap: 12px; margin-bottom: 64px; }
+}
+
 .cine-split__media img,
 .cine-split__media video,
 .cine-split__media .yt-facade {
