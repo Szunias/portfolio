@@ -54,26 +54,17 @@
       rgba(11, 11, 13, 0.46) 100%);
 }
 
-/* The analyser sits between the scrim and the room: a log-frequency
-   spectrum along the bottom of the stage, faint at rest, full during
-   playback. Painted by music-visualizer.js. */
+/* Actual audio levels, drawn below the cover by music-visualizer.js. */
 .stage__spectrum {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
+  display: block;
   width: 100%;
-  height: 100%;
+  max-width: 500px;
+  height: 56px;
   pointer-events: none;
-  opacity: 0.55;
-  transition: opacity 640ms ease;
+  opacity: .85;
 }
 
 .stage.is-playing .stage__spectrum { opacity: 1; }
-
-/* The frequency inspector: music-visualizer.js sets this class only while the
-   pointer is over the live spectrum band, so the crosshair never appears
-   over the player or a resting page. */
-.stage--inspect { cursor: crosshair; }
 
 .stage__room {
   position: relative;
@@ -139,19 +130,11 @@
   margin-inline: auto;
 }
 
-.stage__viz {
+.stage__art {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
-}
-
-.stage__art {
-  position: absolute;
-  inset: 14px;
-  width: calc(100% - 28px);
-  height: calc(100% - 28px);
   max-width: none;
   object-fit: contain;
   object-position: center;
@@ -200,88 +183,132 @@
 }
 
 .stage .featured__grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
 
 .stage .track-tile {
   display: grid;
-  grid-template-columns: 2em minmax(0, 1fr) 3.2em;
+  grid-template-columns: 48px minmax(0, 1fr);
   align-items: center;
-  column-gap: var(--s-3);
-  min-height: 48px;
-  padding: 0;
-  overflow: visible;
-  border: 0;
-  border-bottom: 1px solid var(--c-line);
-  border-radius: 0;
-  background: transparent;
+  column-gap: 11px;
+  min-height: 76px;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid var(--c-line);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--c-bg-1) 68%, transparent);
+  transition: background .24s ease, border-color .24s ease;
 }
 
-.stage .track-tile:last-of-type { border-bottom: 0; }
-
-/* The title already rests at --paper, so lifting it on hover changed nothing;
-   the index and time were the only inks left with room to move. They step up
-   from faint to body ink, and the row's own hairline brightens under it, so
-   the pointer gets an answer without a fill or a transform. */
 .stage .track-tile:hover,
 .stage .track-tile:focus-visible {
-  background: transparent;
-  border-bottom-color: var(--c-line-3);
-  color: var(--paper);
+  background: var(--c-accent-weak);
+  border-color: var(--c-accent-line);
 }
-
-.stage .track-tile:hover .track-tile__title,
-.stage .track-tile:focus-visible .track-tile__title { color: var(--paper); }
-
-.stage .track-tile:hover .track-tile__index,
-.stage .track-tile:hover .track-tile__time,
-.stage .track-tile:focus-visible .track-tile__index,
-.stage .track-tile:focus-visible .track-tile__time { color: var(--c-ink-2); }
 
 .stage .track-tile.active {
-  background: transparent;
-  box-shadow: none;
+  border-color: var(--c-accent-line);
+  background: var(--c-accent-weak);
+  box-shadow: inset 2px 0 0 var(--c-accent);
 }
 
-.stage .track-tile.active .track-tile__index,
 .stage .track-tile.active .track-tile__title,
-.stage .track-tile.active .track-tile__time { color: var(--accent); }
+.stage .track-tile.active .track-tile__time { color: var(--c-accent); }
 
-.stage .track-tile__index,
-.stage .track-tile__time {
-  font-family: var(--mono);
-  font-size: var(--t-m1);
-  line-height: var(--lh-t3);
+.stage .track-tile__art-frame {
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
+.stage .track-tile__art {
+  display: block;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border: 1px solid var(--c-line);
+  border-radius: 4px;
+  background: var(--c-bg-0);
+}
+
+.stage .track-tile__state {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 4px;
+  background: rgba(6,10,13,.68);
+  color: var(--c-ink);
+  opacity: 0;
+}
+
+.stage .track-tile.is-playing .track-tile__state {
+  background: rgba(6,10,13,.68);
+  color: var(--c-accent);
+}
+
+.stage .track-tile__body {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 0;
+}
+
+.stage .track-tile__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  text-transform: none;
   letter-spacing: 0;
-  color: var(--text-faint);
+}
+
+.stage .track-tile__note {
+  display: block;
+  overflow: hidden;
+  color: var(--c-ink-3);
+  font: 400 11px/1.4 var(--f-body);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.stage .track-tile__time {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: 0;
+  color: var(--c-ink-3);
   font-variant-numeric: tabular-nums;
 }
 
-.stage .track-tile__time { text-align: right; }
-
 .stage .track-tile__title {
   min-width: 0;
-  overflow: hidden;
-  font-family: var(--sans);
-  font-size: var(--t-s1);
-  font-weight: 600;
-  line-height: var(--lh-t3);
-  letter-spacing: 0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  color: var(--c-ink);
+  font: 500 14px/1.35 var(--f-body);
+  letter-spacing: -.015em;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
-.stage .track-tile__state,
-.stage .track-tile__art,
-.stage .track-tile__note,
-.stage .track-tile__body { display: none; }
-
-.stage .featured__case-link {
-  margin-top: var(--s-3);
-  color: var(--text-faint);
+/* The review page retains its numbered set list. */
+.stage--review .featured__grid { grid-template-columns: 1fr; }
+.stage--review .track-tile {
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  min-height: 54px;
 }
+.stage--review .track-tile__index {
+  color: var(--c-ink-3);
+  font: 400 11px/1.4 var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.stage--review .track-tile.is-playing .track-tile__index { color: var(--c-accent); }
 
 /* ============================== archive ============================== */
 
@@ -314,10 +341,6 @@
 @media (max-width: 980px) {
   .stage { min-height: 0; }
 
-  /* The analyser needs horizontal room to read as an instrument; on the
-     stacked layout it would cut across the set list. */
-  .stage__spectrum { display: none; }
-
   .stage__room {
     grid-template-columns: minmax(0, 1fr);
     justify-items: center;
@@ -340,6 +363,16 @@
   .stage__room { padding-block: var(--s-4) var(--s-5); gap: var(--s-4); }
   .stage__record .stage__plate { width: min(62vw, 240px); }
   .stage__caption>span { max-width: 34ch; margin-inline: auto; }
+  .stage .featured__grid { grid-template-columns: 1fr; }
+  .stage .track-tile { min-height: 72px; }
+  .stage--review .track-tile { min-height: 54px; }
+  .stage .track-tile__title { font-size: 15px; }
+  .stage .track-tile__note,
+  .stage .track-tile__time { font-size: 12px; }
+}
+
+@media (min-width: 621px) and (max-width: 1100px) {
+  .stage .featured__grid { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -349,6 +382,5 @@
 @media print {
   .stage__atmosphere,
   .stage__scrim,
-  .stage__spectrum,
-  .stage__viz { display: none; }
+  .stage__spectrum { display: none; }
 }

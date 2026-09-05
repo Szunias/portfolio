@@ -7,7 +7,6 @@
   var preview = scope.querySelector('[data-preview-video]');
   var launch = scope.querySelector('[data-showreel-play]');
   var close = scope.querySelector('[data-showreel-close]');
-  var toggle = scope.querySelector('[data-preview-toggle]');
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   var mobile = window.matchMedia('(max-width: 600px)');
   if (!video || !preview || !launch) return;
@@ -29,13 +28,7 @@
 
   function updatePreview() {
     var canPlay = !paused && !playing && !reduced.matches && !document.hidden && visible;
-    if (toggle) {
-      toggle.hidden = reduced.matches || playing;
-      toggle.setAttribute('aria-label', paused ? 'Play motion' : 'Pause motion');
-      toggle.setAttribute('title', paused ? 'Play motion' : 'Pause motion');
-      toggle.setAttribute('aria-pressed', String(paused));
-      toggle.firstElementChild.textContent = paused ? '▶' : 'Ⅱ';
-    }
+    scope.classList.toggle('is-settled', paused || reduced.matches);
     if (!canPlay) { preview.pause(); return; }
     var attempt = preview.play();
     if (attempt) attempt.catch(function (error) {
@@ -83,7 +76,13 @@
   scope.addEventListener('keydown', function (event) {
     if (event.key === 'Escape' && playing && !document.fullscreenElement) restoreCover(true);
   });
-  if (toggle) toggle.addEventListener('click', function () { paused = !paused; updatePreview(); });
+  // The background is a brief introduction, then a still: no second player UI.
+  preview.addEventListener('timeupdate', function () {
+    if (preview.currentTime >= 4.5) {
+      paused = true;
+      updatePreview();
+    }
+  });
   reduced.addEventListener('change', updatePreview);
   mobile.addEventListener('change', selectPreview);
   document.addEventListener('visibilitychange', updatePreview);

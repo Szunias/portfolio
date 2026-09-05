@@ -290,10 +290,7 @@ a { color: var(--paper); }
 
 .featured { padding-block: var(--section-pad) var(--s-6); }
 
-/* The eight tiles are an ordered set, so the wrapper is a real <ol> and each
-   tile sits in an <li>: assistive tech announces the count and each position,
-   which the aria-hidden visible indexes cannot. The li is a plain flex
-   passthrough so the button keeps filling the grid cell. */
+/* Each button fills its ordered-list item. */
 .featured__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -414,8 +411,6 @@ a { color: var(--paper); }
   background: linear-gradient(to right, currentColor 0 4px, transparent 4px 7px, currentColor 7px 11px);
 }
 
-/* The two outbound links on the page. They used to be bare 12px mono with a
-   transparent bottom border, which read as a caption rather than a link. */
 .featured__case-link,
 .library__spotify {
   display: inline-flex;
@@ -556,8 +551,9 @@ a { color: var(--paper); }
   /* Dark covers have no edge of their own against the page. */
   box-shadow: inset 0 0 0 1px var(--rule);
   background-color: var(--surface-raised);
-  background-size: cover;
+  background-size: contain;
   background-position: center;
+  background-repeat: no-repeat;
 }
 
 .library-row__main {
@@ -641,8 +637,9 @@ a { color: var(--paper); }
   aspect-ratio: 1;
   border-radius: var(--r-m);
   background-color: var(--surface-raised);
-  background-size: cover;
+  background-size: contain;
   background-position: center;
+  background-repeat: no-repeat;
   /* Dark covers have no edge of their own against the page. */
   box-shadow: inset 0 0 0 1px var(--rule);
 }
@@ -1332,8 +1329,7 @@ a { color: var(--paper); }
 }
 
 @media (max-width: 620px) {
-  /* Below this width the six selected pieces read better as rows than as a
-     single column of large squares. */
+  /* Compact featured rows on narrow screens. */
   .featured__grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
 
   .track-tile {

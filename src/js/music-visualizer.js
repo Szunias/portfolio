@@ -1,63 +1,37 @@
-/* Artwork and spectrum for the listening stage; playback belongs to music-player.js. */
+/* Actual audio in a compact strip; music-player.js owns playback and the queue. */
 (function () {
   const audio = document.querySelector('[data-music-audio]');
   const stage = document.querySelector('.stage');
   const plate = document.querySelector('.stage__plate');
-  const ringCanvas = document.querySelector('.stage__viz');
-  const specCanvas = document.querySelector('.stage__spectrum');
-  if (!stage || !plate || !ringCanvas) return;
+  const canvas = document.querySelector('.stage__spectrum');
+  if (!stage || !plate || !canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
 
-  const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let reduceMotion = reduceQuery.matches;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const cards = Array.from(document.querySelectorAll('#trackData .track-card'));
-  const titleEl = document.querySelector('.stage [data-player="title"]');
-  const ringCtx = ringCanvas.getContext('2d');
-  const specCtx = specCanvas ? specCanvas.getContext('2d') : null;
-  if (!ringCtx) return;
-
-  const theme = window.getComputedStyle(stage);
-  function readColour(token, fallback) {
-    const hex = theme.getPropertyValue(token).trim();
-    if (!/^#[0-9a-f]{6}$/i.test(hex)) return fallback;
-    return [1, 3, 5].map(index => parseInt(hex.slice(index, index + 2), 16)).join(', ');
-  }
-  const palette = {
-    ink: readColour('--c-ink', '241, 240, 235'),
-    accent: readColour('--c-accent', '170, 198, 222'),
-    highlight: readColour('--c-accent-hi', '194, 216, 234')
-  };
-  const tint = (colour, opacity) => `rgba(${palette[colour]}, ${opacity})`;
-
-  // ?viz=demo drives the analyser with synthetic data so the spectrum can be
-  // judged without sound playing (headless screenshots, local design passes).
-  const demoMode = /[?&]viz=demo\b/.test(window.location.search);
-
-  let freq = null;
-  let analyser = null;
+  const titleEl = stage.querySelector('[data-player="title"]');
+  const theme = getComputedStyle(stage);
+  const accent = theme.getPropertyValue('--c-accent').trim() || '#aac6de';
+  const ink = theme.getPropertyValue('--c-ink').trim() || '#f1f0eb';
+  const BANDS = 48;
+  const levels = new Float32Array(BANDS);
+  let bins = null;
+  let bandLo = null;
+  let bandHi = null;
   let audioCtx = null;
+  let source = null;
+  let analyser = null;
+  let graphPending = false;
   let graphFailed = false;
   let raf = 0;
+  let lastFrame = 0;
+  let width = 0;
+  let height = 0;
+  let visible = true;
+  let buffering = false;
   let lastTitle = '';
   let artworkVersion = 0;
-
-  function trackByTitle(title) {
-    return cards.find(card => card.dataset.title === title) || null;
-  }
-
-  function applyPlate(track) {
-    const raw = track && track.dataset.artSize;
-    const parts = raw ? raw.split('x') : [];
-    const w = parseInt(parts[0], 10);
-    const h = parseInt(parts[1], 10);
-    if (w > 0 && h > 0) {
-      plate.style.setProperty('--stage-art-w', String(w));
-      plate.style.setProperty('--stage-art-h', String(h));
-    } else {
-      plate.style.setProperty('--stage-art-w', '1');
-      plate.style.setProperty('--stage-art-h', '1');
-    }
-    sampleLuma(track && track.dataset.art);
-  }
 
   function applyVeil(luma) {
     const light = Math.max(0, Math.min(1, luma));
@@ -67,33 +41,23 @@
 
   function sampleLuma(src) {
     const version = ++artworkVersion;
-    if (!src) {
-      applyVeil(0.22);
-      return;
-    }
+    if (!src) { applyVeil(0.22); return; }
     const img = new Image();
     img.onload = function () {
       if (version !== artworkVersion) return;
       try {
         const probe = document.createElement('canvas');
-        probe.width = 24;
-        probe.height = 24;
-        const ctx = probe.getContext('2d', { willReadFrequently: true });
-        if (!ctx) {
-          applyVeil(0.22);
-          return;
-        }
-        ctx.drawImage(img, 0, 0, 24, 24);
-        const data = ctx.getImageData(0, 0, 24, 24).data;
+        probe.width = probe.height = 24;
+        const probeCtx = probe.getContext('2d', { willReadFrequently: true });
+        if (!probeCtx) { applyVeil(0.22); return; }
+        probeCtx.drawImage(img, 0, 0, 24, 24);
+        const data = probeCtx.getImageData(0, 0, 24, 24).data;
         let sum = 0;
-        const pixels = data.length / 4;
         for (let i = 0; i < data.length; i += 4) {
           sum += 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
         }
-        applyVeil(sum / pixels / 255);
-      } catch (_) {
-        applyVeil(0.22);
-      }
+        applyVeil(sum / (data.length / 4) / 255);
+      } catch (_) { applyVeil(0.22); }
     };
     img.onerror = function () { if (version === artworkVersion) applyVeil(0.22); };
     img.src = src;
@@ -101,389 +65,161 @@
 
   function syncTrack() {
     const title = titleEl ? titleEl.textContent.trim() : '';
-    if (title && title !== lastTitle) {
+    if (title !== lastTitle) {
       lastTitle = title;
-      applyPlate(trackByTitle(title));
-      sizeCanvasesAndRedraw();
+      const track = cards.find(card => card.dataset.title === title);
+      const size = (track && track.dataset.artSize || '1x1').split('x');
+      plate.style.setProperty('--stage-art-w', String(parseInt(size[0], 10) || 1));
+      plate.style.setProperty('--stage-art-h', String(parseInt(size[1], 10) || 1));
+      sampleLuma(track && track.dataset.art);
+      levels.fill(0);
     }
-    stage.classList.toggle('is-playing', !!(audio && !audio.paused && !audio.ended));
+    stage.classList.toggle('is-playing', playing());
+    updateMotion();
   }
 
-  function sizeCanvas(canvas, ctx, w, h) {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    w = Math.max(1, Math.round(w));
-    h = Math.max(1, Math.round(h));
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width = w + 'px';
-    canvas.style.height = h + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  function playing() {
+    return !!(audio && !audio.paused && !audio.ended && !audio.error);
   }
 
-  function sizeCanvases() {
-    sizeCanvas(ringCanvas, ringCtx, plate.clientWidth, plate.clientHeight);
-    if (specCanvas && specCtx) sizeCanvas(specCanvas, specCtx, stage.clientWidth, stage.clientHeight);
+  function wantsMotion() {
+    return playing() && audio.readyState >= 2 && !buffering &&
+      !reduced.matches && !document.hidden && visible && width > 0;
   }
 
-  function ensureGraph() {
-    if (analyser || graphFailed || !audio) return analyser;
-    const Ctx = window.AudioContext || window.webkitAudioContext;
-    if (typeof Ctx !== 'function') {
-      graphFailed = true;
-      return null;
+  function resumeContext() {
+    if (audioCtx && (audioCtx.state === 'suspended' || audioCtx.state === 'interrupted')) {
+      return audioCtx.resume();
     }
+    return Promise.resolve();
+  }
+
+  async function prepareGraph() {
+    if (analyser || graphPending || graphFailed || !audio) return;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) { graphFailed = true; return; }
+    graphPending = true;
     try {
-      audioCtx = new Ctx();
-      const source = audioCtx.createMediaElementSource(audio);
+      audioCtx = audioCtx || new AudioContext();
+      audioCtx.addEventListener('statechange', updateMotion);
+      // Keep native playback until an active context can take over its output.
+      await resumeContext();
+      if (audioCtx.state !== 'running') throw new Error('Audio context unavailable');
+      source = audioCtx.createMediaElementSource(audio);
+      // The audible path remains connected even if analyser setup fails.
+      source.connect(audioCtx.destination);
       analyser = audioCtx.createAnalyser();
       analyser.fftSize = 2048;
       analyser.smoothingTimeConstant = 0.6;
       source.connect(analyser);
-      analyser.connect(audioCtx.destination);
-      freq = new Uint8Array(analyser.frequencyBinCount);
-      computeBands();
+      bins = new Uint8Array(analyser.frequencyBinCount);
+      bandLo = new Uint16Array(BANDS);
+      bandHi = new Uint16Array(BANDS);
+      const nyquist = audioCtx.sampleRate / 2;
+      const high = Math.min(16000, nyquist);
+      for (let i = 0; i < BANDS; i++) {
+        const lo = 40 * Math.pow(high / 40, i / BANDS);
+        const hi = 40 * Math.pow(high / 40, (i + 1) / BANDS);
+        bandLo[i] = Math.min(bins.length - 1, Math.floor(lo / nyquist * bins.length));
+        bandHi[i] = Math.min(bins.length, Math.max(bandLo[i] + 1, Math.ceil(hi / nyquist * bins.length)));
+      }
     } catch (_) {
       graphFailed = true;
       analyser = null;
     }
-    return analyser;
+    graphPending = false;
+    updateMotion();
   }
 
-  function resumeContext() {
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume().catch(function () {});
+  function draw(live) {
+    ctx.clearRect(0, 0, width, height);
+    const step = width / BANDS;
+    const bar = Math.max(1.5, Math.min(3, step * 0.44));
+    ctx.lineWidth = bar;
+    ctx.lineCap = 'round';
+    for (let i = 0; i < BANDS; i++) {
+      const value = live ? levels[i] : 0;
+      const size = Math.max(1, (height - 8) * Math.pow(value, 1.2));
+      const x = (i + 0.5) * step;
+      ctx.strokeStyle = live ? accent : ink;
+      ctx.globalAlpha = live ? 0.35 + value * 0.65 : 0.16;
+      ctx.beginPath();
+      ctx.moveTo(x, (height - size) / 2);
+      ctx.lineTo(x, (height + size) / 2);
+      ctx.stroke();
     }
+    ctx.globalAlpha = 1;
   }
 
-  /* ---------------- spectrum: log-frequency analyser ---------------- */
-
-  const POINTS = 144;
-  const FMIN = 30;
-  const FMAX = 16000;
-  const GRID = [
-    [50, '50'], [100, '100'], [200, '200'], [500, '500'],
-    [1000, '1k'], [2000, '2k'], [5000, '5k'], [10000, '10k']
-  ];
-  const cur = new Float32Array(POINTS);
-  const peak = new Float32Array(POINTS);
-  let bandLo = null;
-  let bandHi = null;
-
-  function computeBands() {
-    const nyquist = audioCtx.sampleRate / 2;
-    const bins = analyser.frequencyBinCount;
-    bandLo = new Uint16Array(POINTS);
-    bandHi = new Uint16Array(POINTS);
-    for (let i = 0; i < POINTS; i++) {
-      const f0 = FMIN * Math.pow(FMAX / FMIN, (i - 0.5) / (POINTS - 1));
-      const f1 = FMIN * Math.pow(FMAX / FMIN, (i + 0.5) / (POINTS - 1));
-      let lo = Math.floor((f0 / nyquist) * bins);
-      let hi = Math.ceil((f1 / nyquist) * bins);
-      lo = Math.max(0, Math.min(bins - 1, lo));
-      hi = Math.max(lo + 1, Math.min(bins, hi));
-      bandLo[i] = lo;
-      bandHi[i] = hi;
-    }
-  }
-
-  function hump(t, center, width) {
-    const d = (t - center) / width;
-    return Math.exp(-d * d);
-  }
-
-  function sampleSpectrum(nowMs) {
-    const liveAudio = analyser && playingNow();
-    if (liveAudio) analyser.getByteFrequencyData(freq);
-    for (let i = 0; i < POINTS; i++) {
-      const t = i / (POINTS - 1);
-      let v;
-      if (liveAudio) {
-        let sum = 0;
-        for (let b = bandLo[i]; b < bandHi[i]; b++) sum += freq[b];
-        v = sum / (bandHi[i] - bandLo[i]) / 255;
-        // Gentle tilt so the top octaves read against the bass-heavy FFT.
-        v *= 0.66 + 0.62 * t;
-      } else {
-        const s = nowMs / 1000;
-        v = 0.8 * hump(t, 0.1, 0.14) * (0.62 + 0.38 * Math.sin(s * 2.2))
-          + 0.5 * hump(t, 0.42, 0.2) * (0.6 + 0.3 * Math.sin(s * 1.3 + 1.7))
-          + 0.44 * hump(t, 0.74, 0.11) * (0.55 + 0.35 * Math.sin(s * 3.6 + 0.5))
-          + 0.04 + 0.05 * Math.random();
-      }
-      if (v > 1) v = 1;
-      if (v < 0) v = 0;
-      cur[i] += (v - cur[i]) * (v > cur[i] ? 0.5 : 0.1);
-      peak[i] = Math.max(peak[i] - 0.0045, cur[i]);
-    }
-  }
-
-  function tracePath(values, w, base, amp) {
-    const step = w / (POINTS - 1);
-    let px = 0;
-    let py = base - values[0] * amp;
-    specCtx.moveTo(px, py);
-    for (let i = 1; i < POINTS; i++) {
-      const x = i * step;
-      const y = base - values[i] * amp;
-      specCtx.quadraticCurveTo(px, py, (px + x) / 2, (py + y) / 2);
-      px = x;
-      py = y;
-    }
-    specCtx.lineTo(px, py);
-  }
-
-  function drawSpectrum(live) {
-    if (!specCtx || !specCanvas.clientWidth) return;
-    const w = stage.clientWidth;
-    const h = stage.clientHeight;
-    if (w < 8 || h < 8) return;
-    specCtx.clearRect(0, 0, w, h);
-    const base = h - 40;
-    const amp = h * 0.44;
-    const span = Math.log(FMAX / FMIN);
-
-    specCtx.font = '10px "IBM Plex Mono", ui-monospace, monospace';
-    specCtx.textAlign = 'center';
-    specCtx.lineWidth = 1;
-    for (let g = 0; g < GRID.length; g++) {
-      const x = Math.round((w * Math.log(GRID[g][0] / FMIN)) / span) + 0.5;
-      specCtx.strokeStyle = tint('ink', 0.1);
-      specCtx.beginPath();
-      specCtx.moveTo(x, base);
-      specCtx.lineTo(x, base - amp - 24);
-      specCtx.stroke();
-      specCtx.fillStyle = tint('ink', 0.48);
-      specCtx.fillText(GRID[g][1], x, base + 18);
-    }
-    specCtx.strokeStyle = tint('ink', 0.12);
-    specCtx.beginPath();
-    specCtx.moveTo(0, base + 0.5);
-    specCtx.lineTo(w, base + 0.5);
-    specCtx.stroke();
-
-    if (!live) return;
-
-    specCtx.lineJoin = 'round';
-
-    // Peak-hold contour, slowly falling back to the live curve.
-    specCtx.beginPath();
-    tracePath(peak, w, base, amp);
-    specCtx.strokeStyle = tint('accent', 0.3);
-    specCtx.lineWidth = 1;
-    specCtx.stroke();
-
-    // Filled spectrum body.
-    specCtx.beginPath();
-    tracePath(cur, w, base, amp);
-    specCtx.lineTo(w, base);
-    specCtx.lineTo(0, base);
-    specCtx.closePath();
-    const fillGrad = specCtx.createLinearGradient(0, base - amp, 0, base);
-    fillGrad.addColorStop(0, tint('accent', 0.22));
-    fillGrad.addColorStop(1, tint('accent', 0.02));
-    specCtx.fillStyle = fillGrad;
-    specCtx.fill();
-
-    // Soft glow pass under a crisp line.
-    specCtx.beginPath();
-    tracePath(cur, w, base, amp);
-    specCtx.strokeStyle = tint('accent', 0.12);
-    specCtx.lineWidth = 6;
-    specCtx.stroke();
-    specCtx.beginPath();
-    tracePath(cur, w, base, amp);
-    specCtx.strokeStyle = tint('highlight', 0.85);
-    specCtx.lineWidth = 1.5;
-    specCtx.stroke();
-
-    drawInspector(w, base, amp);
-  }
-
-  /* ---------------- inspector: the frequency under the cursor ----------------
-     Mouse only, and only while the spectrum is actually drawing: the hairline
-     and readout ride inside the live render loop, so a resting page never
-     pays for them. Touch is left alone so nothing competes with scrolling. */
-
-  const finePointer = window.matchMedia('(pointer: fine)').matches;
-  const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-  let hoverX = -1;
-  let hoverY = -1;
-
-  function noteLabel(f) {
-    const midi = Math.round(69 + 12 * Math.log2(f / 440));
-    if (midi < 12 || midi > 131) return '';
-    return NOTE_NAMES[midi % 12] + (Math.floor(midi / 12) - 1);
-  }
-
-  function drawInspector(w, base, amp) {
-    if (hoverX < 0 || hoverY < base - amp - 24 || hoverY > base + 20) return;
-    const t = Math.max(0, Math.min(1, hoverX / w));
-    const f = FMIN * Math.pow(FMAX / FMIN, t);
-    const x = Math.round(hoverX) + 0.5;
-
-    specCtx.strokeStyle = tint('accent', 0.35);
-    specCtx.lineWidth = 1;
-    specCtx.beginPath();
-    specCtx.moveTo(x, base);
-    specCtx.lineTo(x, base - amp - 24);
-    specCtx.stroke();
-
-    const i = Math.round(t * (POINTS - 1));
-    specCtx.beginPath();
-    specCtx.arc(hoverX, base - cur[i] * amp, 2.5, 0, Math.PI * 2);
-    specCtx.fillStyle = tint('highlight', 0.9);
-    specCtx.fill();
-
-    const note = noteLabel(f);
-    const label = (f < 1000 ? Math.round(f) + ' Hz' : (f / 1000).toFixed(1) + ' kHz') + (note ? ' · ' + note : '');
-    specCtx.font = '10px "IBM Plex Mono", ui-monospace, monospace';
-    specCtx.fillStyle = tint('highlight', 0.85);
-    const flip = hoverX > w - 84;
-    specCtx.textAlign = flip ? 'right' : 'left';
-    /* The canvas sits under the page content, so the top of the hairline can
-       run behind the track list; the readout stays in the clear strip just
-       above the baseline instead. */
-    specCtx.fillText(label, flip ? hoverX - 8 : hoverX + 8, base - 8);
-  }
-
-  function inspectorLive() {
-    return !reduceMotion && (demoMode || playingNow());
-  }
-
-  if (finePointer && specCtx) {
-    stage.addEventListener('pointermove', function (event) {
-      if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
-      const over = event.target && event.target.closest &&
-        event.target.closest('a, button, input, [role="slider"]');
-      if (over) {
-        hoverX = -1;
-        stage.classList.remove('stage--inspect');
-        return;
-      }
-      const box = stage.getBoundingClientRect();
-      hoverX = event.clientX - box.left;
-      hoverY = event.clientY - box.top;
-      const base = stage.clientHeight - 40;
-      const amp = stage.clientHeight * 0.44;
-      const inBand = hoverY >= base - amp - 24 && hoverY <= base + 20;
-      stage.classList.toggle('stage--inspect', inBand && inspectorLive());
-    }, { passive: true });
-
-    stage.addEventListener('pointerleave', function () {
-      hoverX = -1;
-      stage.classList.remove('stage--inspect');
-    }, { passive: true });
-  }
-
-  /* ---------------- ring: still frame around the cover ---------------- */
-
-  function drawRing() {
-    const w = plate.clientWidth;
-    const h = plate.clientHeight;
-    if (w < 8 || h < 8) return;
-    ringCtx.clearRect(0, 0, w, h);
-    ringCtx.beginPath();
-    ringCtx.ellipse(w / 2, h / 2, Math.max(8, w / 2 - 8), Math.max(8, h / 2 - 8), 0, 0, Math.PI * 2);
-    ringCtx.strokeStyle = tint('ink', 0.22);
-    ringCtx.lineWidth = 1.25;
-    ringCtx.stroke();
-  }
-
-  function playingNow() {
-    return !!(audio && !audio.paused && !audio.ended);
-  }
-
-  function drawStatic() {
-    drawRing();
-    drawSpectrum(false);
-  }
-
-  // The loop runs only while sound is actually playing (or in demo mode); a
-  // resting page draws its ring and grid once and schedules nothing.
-  // Reduced-motion visitors keep the still frame even during playback.
-  function drawFrame(nowMs) {
+  function frame(now) {
     raf = 0;
-    const live = !reduceMotion && (demoMode || (analyser && playingNow()));
-    if (!live) {
-      drawStatic();
+    if (!wantsMotion() || !analyser) { draw(false); return; }
+    const delta = Math.min(100, lastFrame ? now - lastFrame : 16.7);
+    lastFrame = now;
+    analyser.getByteFrequencyData(bins);
+    for (let i = 0; i < BANDS; i++) {
+      let sum = 0;
+      for (let j = bandLo[i]; j < bandHi[i]; j++) sum += bins[j];
+      const target = sum / (bandHi[i] - bandLo[i]) / 255;
+      const response = 1 - Math.exp(-delta / (target > levels[i] ? 38 : 170));
+      levels[i] += (target - levels[i]) * response;
+    }
+    draw(true);
+    raf = requestAnimationFrame(frame);
+  }
+
+  function updateMotion() {
+    if (wantsMotion() && analyser) {
+      if (!raf) { lastFrame = 0; raf = requestAnimationFrame(frame); }
       return;
     }
-    sampleSpectrum(nowMs || 0);
-    drawSpectrum(true);
-    raf = window.requestAnimationFrame(drawFrame);
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    draw(false);
+    if (wantsMotion() && !graphFailed) prepareGraph();
   }
 
-  function start() {
-    if (!raf) raf = window.requestAnimationFrame(drawFrame);
+  function resize() {
+    const box = canvas.getBoundingClientRect();
+    width = box.width;
+    height = box.height;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.max(1, Math.round(width * dpr));
+    canvas.height = Math.max(1, Math.round(height * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    updateMotion();
   }
 
-  function stop() {
-    if (demoMode) return;
-    if (raf) {
-      window.cancelAnimationFrame(raf);
-      raf = 0;
-    }
-    drawStatic();
+  if (typeof ResizeObserver === 'function') new ResizeObserver(resize).observe(canvas);
+  else window.addEventListener('resize', resize, { passive: true });
+  if (typeof IntersectionObserver === 'function') {
+    new IntersectionObserver(function (entries) {
+      visible = entries[0].isIntersecting;
+      updateMotion();
+    }).observe(canvas);
   }
-
-  function sizeCanvasesAndRedraw() {
-    sizeCanvases();
-    // Resizing wipes the bitmaps; the running loop repaints the spectrum on
-    // its own, but the ring is out of the loop and a resting page needs its
-    // still frame back either way.
-    drawRing();
-    if (!raf) drawSpectrum(false);
-  }
-
-  applyPlate(trackByTitle(titleEl ? titleEl.textContent.trim() : ''));
-  sizeCanvases();
-  drawStatic();
-  window.addEventListener('resize', sizeCanvasesAndRedraw, { passive: true });
-  if (typeof ResizeObserver === 'function') {
-    new ResizeObserver(sizeCanvasesAndRedraw).observe(plate);
-    new ResizeObserver(sizeCanvasesAndRedraw).observe(stage);
-  }
-
-  if (typeof reduceQuery.addEventListener === 'function') {
-    reduceQuery.addEventListener('change', function (event) {
-      reduceMotion = event.matches;
-      if (!reduceMotion && playingNow()) start(); else stop();
-    });
-  }
-
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && playing()) resumeContext().then(updateMotion).catch(function () {});
+    updateMotion();
+  });
+  reduced.addEventListener('change', updateMotion);
+  if (titleEl) new MutationObserver(syncTrack).observe(titleEl, { childList: true, characterData: true, subtree: true });
   if (audio) {
-    audio.addEventListener('play', function () {
-      ensureGraph();
-      resumeContext();
+    ['play', 'playing'].forEach(event => audio.addEventListener(event, function () {
+      buffering = false;
+      resumeContext().then(updateMotion).catch(function () {});
       syncTrack();
-      start();
+    }));
+    audio.addEventListener('waiting', function () {
+      buffering = true;
+      updateMotion();
     });
-    audio.addEventListener('playing', function () {
-      ensureGraph();
-      resumeContext();
+    ['pause', 'ended', 'emptied', 'error'].forEach(event => audio.addEventListener(event, function () {
+      buffering = false;
+      levels.fill(0);
       syncTrack();
-      start();
-    });
-    audio.addEventListener('pause', function () {
-      syncTrack();
-      stop();
-    });
-    audio.addEventListener('ended', function () {
-      syncTrack();
-      stop();
-    });
+    }));
   }
-
-  if (titleEl && typeof MutationObserver === 'function') {
-    new MutationObserver(syncTrack).observe(titleEl, {
-      childList: true,
-      characterData: true,
-      subtree: true
-    });
-  }
-
-  if (demoMode && specCanvas) {
-    specCanvas.style.opacity = '1';
-    if (!reduceMotion) start();
-  }
+  resize();
+  syncTrack();
 })();
