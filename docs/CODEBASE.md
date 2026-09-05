@@ -49,6 +49,8 @@ The files in the page's `css` array follow in exactly that order.
   Homepage order is `home`, `portfolio`, `home-hero`.
 - `cine.css` styles the public project pages. `case-plain.css` supports project
   review variants.
+- `sidar.css` owns SIDAR's trailer-first layout and its Annex04 palette. It is
+  loaded only on `sidar.html`; the shared project styles stay unchanged.
 - `music.css` owns the library and player. `music-stage.css` owns the listening
   stage; `music-crate.css` and `music-reel.css` are review layouts.
 - `contact.css`, `contact-time.css` and `contact-wind.css` compose the public
