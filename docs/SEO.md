@@ -38,7 +38,8 @@ instructions](https://docs.github.com/en/pages/configuring-a-custom-domain-for-y
 A mobile PageSpeed Insights request returned HTTP 429, so this audit did not
 produce a Lighthouse score or real-user Core Web Vitals. The homepage uses a
 26 KB poster and about 49 KB of self-hosted fonts. Its 1.66 MB mobile background
-video remains an intentional bandwidth cost; those sizes alone do not establish
+video was subsequently replaced by a 1.08 MB landscape preview for the revised
+mobile layout. These sizes alone do not establish
 a passing or failing Core Web Vitals result.
 
 ## Checks in Google Search Console

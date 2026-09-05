@@ -62,8 +62,15 @@
   }
   launch.addEventListener('click', function () {
     revealPlayer();
-    window.scrollTo({ top:0, behavior:'instant' });
-    if (close) close.focus({ preventScroll:true });
+    if (close) {
+      var header = document.querySelector('.site-header');
+      var visibleTop = (header ? header.getBoundingClientRect().bottom : 0) + 12;
+      var closeBox = close.getBoundingClientRect();
+      if (closeBox.top < visibleTop || closeBox.bottom > window.innerHeight) {
+        window.scrollBy({ top:closeBox.top - visibleTop, behavior:'instant' });
+      }
+      close.focus({ preventScroll:true });
+    }
     var attempt = video.play();
     if (attempt) attempt.catch(function () { if (playing) video.controls = true; });
   });

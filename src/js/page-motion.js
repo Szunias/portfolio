@@ -3,7 +3,6 @@
   'use strict';
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   var header = document.querySelector('.site-header');
-  var hero = document.querySelector('.hero');
   var pending = false;
   function updateHeader() {
     if (pending) return;
@@ -11,10 +10,6 @@
     requestAnimationFrame(function () {
       pending = false;
       if (header) header.classList.toggle('is-scrolled', window.scrollY > 24);
-      if (hero) {
-        var progress = reduced.matches || hero.classList.contains('is-started') ? 0 : Math.min(1, Math.max(0, window.scrollY / hero.offsetHeight));
-        hero.style.setProperty('--hero-scroll', progress.toFixed(3));
-      }
     });
   }
   window.addEventListener('scroll', updateHeader, { passive:true });
@@ -35,17 +30,13 @@
     document.querySelectorAll(selectors).forEach(function (element) {
       observer.observe(element);
     });
-    document.querySelectorAll('.hero__line').forEach(function (line, index) {
-      line.style.animationDelay = (index * 90) + 'ms';
-      line.classList.add('motion-line');
-    });
   }
   enableMotion();
   reduced.addEventListener('change', function () {
     updateHeader();
     if (observer) observer.disconnect();
-    document.querySelectorAll('.motion-enter,.motion-line').forEach(function (el) {
-      el.classList.remove('motion-enter','motion-line');
+    document.querySelectorAll('.motion-enter').forEach(function (el) {
+      el.classList.remove('motion-enter');
     });
     if (!reduced.matches) enableMotion();
   });

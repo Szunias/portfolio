@@ -43,8 +43,9 @@ The files in the page's `css` array follow in exactly that order.
 - `portfolio.css` applies the current public theme and shared motion styles.
   Review variants keep their own configured styles. An override belongs to the
   component's owner unless it is intentionally part of the shared theme.
-- `home.css` owns work, software, music, about and closing sections, plus the 404
-  content. `home-hero.css` owns the homepage opening and its header treatment.
+- `home.css` owns work, tools and research, music, about and closing sections,
+  plus the 404 content. `home-hero.css` owns the homepage introduction and
+  panoramic showreel. The header always uses `_chrome.css`.
   Homepage order is `home`, `portfolio`, `home-hero`.
 - `cine.css` styles the public project pages. `case-plain.css` supports project
   review variants.
@@ -85,7 +86,7 @@ it; `music-visualizer.js` observes it after player initialization. Do not replac
 lives in `#trackData .track-card` on the music page; the build also turns it into
 a static track index. The `data-src-e` values encode local media paths, not secrets.
 
-The homepage's `[data-preview-video]` selects landscape or portrait footage at
+The homepage's `[data-preview-video]` selects a smaller landscape encode below
 600 px and is separate from `.hero__film`. Preview
 playback observes reduced motion, page visibility and intersection state. Full
 showreel playback requires the visible launch action. Keep the pause and close

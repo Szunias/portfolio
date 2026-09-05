@@ -15,6 +15,19 @@
   const specCtx = specCanvas ? specCanvas.getContext('2d') : null;
   if (!ringCtx) return;
 
+  const theme = window.getComputedStyle(stage);
+  function readColour(token, fallback) {
+    const hex = theme.getPropertyValue(token).trim();
+    if (!/^#[0-9a-f]{6}$/i.test(hex)) return fallback;
+    return [1, 3, 5].map(index => parseInt(hex.slice(index, index + 2), 16)).join(', ');
+  }
+  const palette = {
+    ink: readColour('--c-ink', '241, 240, 235'),
+    accent: readColour('--c-accent', '170, 198, 222'),
+    highlight: readColour('--c-accent-hi', '194, 216, 234')
+  };
+  const tint = (colour, opacity) => `rgba(${palette[colour]}, ${opacity})`;
+
   // ?viz=demo drives the analyser with synthetic data so the spectrum can be
   // judged without sound playing (headless screenshots, local design passes).
   const demoMode = /[?&]viz=demo\b/.test(window.location.search);
@@ -234,15 +247,15 @@
     specCtx.lineWidth = 1;
     for (let g = 0; g < GRID.length; g++) {
       const x = Math.round((w * Math.log(GRID[g][0] / FMIN)) / span) + 0.5;
-      specCtx.strokeStyle = 'rgba(236, 238, 240, 0.10)';
+      specCtx.strokeStyle = tint('ink', 0.1);
       specCtx.beginPath();
       specCtx.moveTo(x, base);
       specCtx.lineTo(x, base - amp - 24);
       specCtx.stroke();
-      specCtx.fillStyle = 'rgba(236, 238, 240, 0.48)';
+      specCtx.fillStyle = tint('ink', 0.48);
       specCtx.fillText(GRID[g][1], x, base + 18);
     }
-    specCtx.strokeStyle = 'rgba(236, 238, 240, 0.12)';
+    specCtx.strokeStyle = tint('ink', 0.12);
     specCtx.beginPath();
     specCtx.moveTo(0, base + 0.5);
     specCtx.lineTo(w, base + 0.5);
@@ -255,7 +268,7 @@
     // Peak-hold contour, slowly falling back to the live curve.
     specCtx.beginPath();
     tracePath(peak, w, base, amp);
-    specCtx.strokeStyle = 'rgba(170, 198, 222, 0.3)';
+    specCtx.strokeStyle = tint('accent', 0.3);
     specCtx.lineWidth = 1;
     specCtx.stroke();
 
@@ -266,20 +279,20 @@
     specCtx.lineTo(0, base);
     specCtx.closePath();
     const fillGrad = specCtx.createLinearGradient(0, base - amp, 0, base);
-    fillGrad.addColorStop(0, 'rgba(170, 198, 222, 0.22)');
-    fillGrad.addColorStop(1, 'rgba(170, 198, 222, 0.02)');
+    fillGrad.addColorStop(0, tint('accent', 0.22));
+    fillGrad.addColorStop(1, tint('accent', 0.02));
     specCtx.fillStyle = fillGrad;
     specCtx.fill();
 
     // Soft glow pass under a crisp line.
     specCtx.beginPath();
     tracePath(cur, w, base, amp);
-    specCtx.strokeStyle = 'rgba(170, 198, 222, 0.12)';
+    specCtx.strokeStyle = tint('accent', 0.12);
     specCtx.lineWidth = 6;
     specCtx.stroke();
     specCtx.beginPath();
     tracePath(cur, w, base, amp);
-    specCtx.strokeStyle = 'rgba(190, 214, 234, 0.85)';
+    specCtx.strokeStyle = tint('highlight', 0.85);
     specCtx.lineWidth = 1.5;
     specCtx.stroke();
 
@@ -308,7 +321,7 @@
     const f = FMIN * Math.pow(FMAX / FMIN, t);
     const x = Math.round(hoverX) + 0.5;
 
-    specCtx.strokeStyle = 'rgba(170, 198, 222, 0.35)';
+    specCtx.strokeStyle = tint('accent', 0.35);
     specCtx.lineWidth = 1;
     specCtx.beginPath();
     specCtx.moveTo(x, base);
@@ -318,13 +331,13 @@
     const i = Math.round(t * (POINTS - 1));
     specCtx.beginPath();
     specCtx.arc(hoverX, base - cur[i] * amp, 2.5, 0, Math.PI * 2);
-    specCtx.fillStyle = 'rgba(190, 214, 234, 0.9)';
+    specCtx.fillStyle = tint('highlight', 0.9);
     specCtx.fill();
 
     const note = noteLabel(f);
     const label = (f < 1000 ? Math.round(f) + ' Hz' : (f / 1000).toFixed(1) + ' kHz') + (note ? ' · ' + note : '');
     specCtx.font = '10px "IBM Plex Mono", ui-monospace, monospace';
-    specCtx.fillStyle = 'rgba(190, 214, 234, 0.85)';
+    specCtx.fillStyle = tint('highlight', 0.85);
     const flip = hoverX > w - 84;
     specCtx.textAlign = flip ? 'right' : 'left';
     /* The canvas sits under the page content, so the top of the hairline can
@@ -371,7 +384,7 @@
     ringCtx.clearRect(0, 0, w, h);
     ringCtx.beginPath();
     ringCtx.ellipse(w / 2, h / 2, Math.max(8, w / 2 - 8), Math.max(8, h / 2 - 8), 0, 0, Math.PI * 2);
-    ringCtx.strokeStyle = 'rgba(236, 238, 240, 0.22)';
+    ringCtx.strokeStyle = tint('ink', 0.22);
     ringCtx.lineWidth = 1.25;
     ringCtx.stroke();
   }

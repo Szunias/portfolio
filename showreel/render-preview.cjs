@@ -4,10 +4,15 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
+const args = process.argv.slice(2);
+if (args.length > 1 || (args.length === 1 && args[0] !== '--hero-mobile')) {
+  throw new Error('Usage: node showreel/render-preview.cjs [--hero-mobile]');
+}
+const mobileOnly = args[0] === '--hero-mobile';
 const clips = [
-  { start: 74, source: 'old/public/assets/videos/ray-animation-h264.mp4', focus: 0.64 },
-  { start: 312.77, source: 'showreel/assets/source/shadow-frames-gameplay.webm', focus: 0.53 },
-  { start: 10.33, source: 'showreel/assets/source/akantilado-film.mp4', focus: 0.88 },
+  { start: 74, source: 'old/public/assets/videos/ray-animation-h264.mp4' },
+  { start: 312.77, source: 'showreel/assets/source/shadow-frames-gameplay.webm' },
+  { start: 10.33, source: 'showreel/assets/source/akantilado-film.mp4' },
 ];
 
 function render(args, output) {
@@ -20,12 +25,12 @@ function render(args, output) {
   console.log(`Rendered ${output}`);
 }
 
-for (const mobile of [false, true]) {
-  const width = mobile ? 540 : 1280;
-  const height = mobile ? 960 : 720;
-  const filter = clips.map((clip, i) =>
+for (const mobile of mobileOnly ? [true] : [false, true]) {
+  const width = mobile ? 768 : 1280;
+  const height = mobile ? 432 : 720;
+  const filter = clips.map((_, i) =>
     `[${i}:v]fps=24,scale=${width}:${height}:force_original_aspect_ratio=increase,` +
-    `crop=${width}:${height}:(iw-ow)*${mobile ? clip.focus : 0.5}:(ih-oh)/2,` +
+    `crop=${width}:${height}:(iw-ow)/2:(ih-oh)/2,` +
     `setsar=1,settb=AVTB,setpts=PTS-STARTPTS[v${i}]`
   ).join(';') +
     ';[v0][v1]xfade=transition=fade:duration=0.6:offset=4.4[ab]' +
@@ -36,7 +41,7 @@ for (const mobile of [false, true]) {
   ], `src/assets/hero-motion${mobile ? '-mobile' : ''}.mp4`);
 }
 
-for (const clip of [
+for (const clip of mobileOnly ? [] : [
   { name: 'shadowframes', start: 312.77, source: clips[1].source },
   { name: 'transientica', start: 30.07, source: 'showreel/assets/source/transientica-gameplay.webm' },
 ]) {

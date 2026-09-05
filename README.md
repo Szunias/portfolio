@@ -39,6 +39,7 @@ requests. Set `PORT` to use a different port.
 | Opening film, name, role and showreel button | `src/css/home-hero.css`, `src/js/home-showreel.js` |
 | Project-card video previews | `src/js/project-previews.js`, `src/assets/previews/` |
 | Homepage sections below the film | `src/css/home.css` |
+| CV text, layout and fonts | `src/cv/content.json`, `scripts/build-cv.py`; see [CV instructions](src/cv/README.md) |
 | Shared public theme and motion styling | `src/css/portfolio.css` |
 | Shared header, footer and metadata markup | `src/partials/` |
 | Shared fonts, design tokens and page chrome | `src/css/_fonts.css`, `_tokens.css`, `_chrome.css` |
