@@ -44,8 +44,8 @@ The files in the page's `css` array follow in exactly that order.
   Review variants keep their own configured styles. An override belongs to the
   component's owner unless it is intentionally part of the shared theme.
 - `home.css` owns work, tools and research, music, about and closing sections,
-  plus the 404 content. `home-hero.css` owns the homepage introduction and
-  panoramic showreel. The header always uses `_chrome.css`.
+  plus the 404 content. `home-hero.css` owns the full-screen film opening,
+  name and showreel controls. The header always uses `_chrome.css`.
   Homepage order is `home`, `portfolio`, `home-hero`.
 - `cine.css` styles the public project pages. `case-plain.css` supports project
   review variants.
@@ -65,7 +65,7 @@ an intermediate width and desktop, including long titles and player controls.
 | `home-showreel.js` | Silent preview, full showreel, pause/close and focus restoration. |
 | `project-previews.js` | Lazy, silent previews on project-card hover or keyboard focus. |
 | `copy-email.js` | Copies the visible address on the homepage and contact pages. |
-| `page-motion.js` | Shared entrance effects, header state and homepage parallax. |
+| `page-motion.js` | Shared entrance effects and header state. |
 | `music-player.js` | Track selection, transport, seek, volume, filters, artwork transitions and player state. |
 | `music-visualizer.js` | Cover proportions, sampled artwork brightness and audio spectrum. |
 | `contact-actions.js` | Contact-page actions and progressive enhancement. |

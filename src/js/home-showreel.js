@@ -51,6 +51,17 @@
     if (close) close.hidden = false;
     updatePreview();
   }
+  function focusVisible(control) {
+    var header = document.querySelector('.site-header');
+    var visibleTop = (header ? header.getBoundingClientRect().bottom : 0) + 12;
+    var box = control.getBoundingClientRect();
+    if (box.top < visibleTop) {
+      window.scrollBy({ top:box.top - visibleTop, behavior:'instant' });
+    } else if (box.bottom > window.innerHeight - 12) {
+      window.scrollBy({ top:box.bottom - window.innerHeight + 12, behavior:'instant' });
+    }
+    control.focus({ preventScroll:true });
+  }
   function restoreCover(returnFocus) {
     playing = false;
     video.pause();
@@ -58,19 +69,11 @@
     scope.classList.remove('is-started','is-playing');
     if (close) close.hidden = true;
     updatePreview();
-    if (returnFocus) launch.focus({ preventScroll:true });
+    if (returnFocus) focusVisible(launch);
   }
   launch.addEventListener('click', function () {
     revealPlayer();
-    if (close) {
-      var header = document.querySelector('.site-header');
-      var visibleTop = (header ? header.getBoundingClientRect().bottom : 0) + 12;
-      var closeBox = close.getBoundingClientRect();
-      if (closeBox.top < visibleTop || closeBox.bottom > window.innerHeight) {
-        window.scrollBy({ top:closeBox.top - visibleTop, behavior:'instant' });
-      }
-      close.focus({ preventScroll:true });
-    }
+    if (close) focusVisible(close);
     var attempt = video.play();
     if (attempt) attempt.catch(function () { if (playing) video.controls = true; });
   });

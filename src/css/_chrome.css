@@ -21,7 +21,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 86px;
+  min-height: var(--site-header-height);
   gap: var(--s-4);
   padding-block: 14px;
   padding-inline: max(var(--page-gutter), calc((100% - var(--page-max)) / 2));
@@ -33,6 +33,14 @@
 }
 
 .site-header.is-scrolled { background: rgba(11,11,13,.96); }
+
+/* The homepage film extends underneath the same, unchanged navigation box. */
+.home-page .site-header:not(.is-scrolled) {
+  background: transparent;
+  border-bottom-color: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
 
 /* The content can transition while the same navigation stays in place. */
 ::view-transition-group(site-header) { animation-duration: 0s; }
@@ -125,8 +133,8 @@
 
 /* Keep all four destinations on phones. Only the wordmark shortens. */
 @media (max-width: 820px) {
+  :root { --site-header-height: 70px; }
   .site-header {
-    min-height: 70px;
     gap: 12px;
     padding-block: 9px;
     padding-inline:
