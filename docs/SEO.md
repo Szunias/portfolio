@@ -36,11 +36,10 @@ without a certificate error. This follows [GitHub's custom-domain
 instructions](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site#configuring-a-subdomain).
 
 A mobile PageSpeed Insights request returned HTTP 429, so this audit did not
-produce a Lighthouse score or real-user Core Web Vitals. The homepage uses a
-26 KB poster and about 49 KB of self-hosted fonts. Its 1.66 MB mobile background
-video was subsequently replaced by a 1.08 MB landscape preview for the revised
-mobile layout. These sizes alone do not establish
-a passing or failing Core Web Vitals result.
+produce a Lighthouse score or real-user Core Web Vitals. Background video was
+revised after that request; its current delivery settings are documented in
+`showreel/README.md`. Media sizes alone do not establish a passing or failing
+Core Web Vitals result.
 
 ## Checks in Google Search Console
 

@@ -62,7 +62,7 @@ an intermediate width and desktop, including long titles and player controls.
 
 | File under `src/js/` | Responsibility |
 | --- | --- |
-| `home-showreel.js` | Brief silent opening, full showreel, close and focus restoration. |
+| `home-showreel.js` | Looping silent background, full showreel, close and focus restoration. |
 | `project-previews.js` | Lazy, silent previews on project-card hover or keyboard focus. |
 | `copy-email.js` | Copies the visible address on the homepage and contact pages. |
 | `page-motion.js` | Shared entrance effects and header state. |
@@ -86,10 +86,11 @@ it; `music-visualizer.js` observes it after player initialization. Do not replac
 lives in `#trackData .track-card` on the music page; the build also turns it into
 a static track index. The `data-src-e` values encode local media paths, not secrets.
 
-The homepage's `[data-preview-video]` selects a smaller landscape encode below
-600 px and is separate from `.hero__film`. The silent opening stops after
-roughly 4.5 seconds and observes reduced motion, page visibility and intersection
-state. The full showreel starts from its explicit launch button. Keep its close
+The homepage's `[data-preview-video]` selects a separate mobile encode below
+601 px and is separate from `.hero__film`. The silent background loops while
+visible and observes reduced motion, data saving and page visibility. It pauses
+while the full showreel plays and resumes after closing it. The full showreel
+starts from its explicit launch button. Keep its close
 control and return keyboard focus to the launch button after closing.
 
 The music spectrum sits below the cover and reads the existing audio element.

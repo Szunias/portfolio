@@ -76,13 +76,6 @@
   scope.addEventListener('keydown', function (event) {
     if (event.key === 'Escape' && playing && !document.fullscreenElement) restoreCover(true);
   });
-  // The background is a brief introduction, then a still: no second player UI.
-  preview.addEventListener('timeupdate', function () {
-    if (preview.currentTime >= 4.5) {
-      paused = true;
-      updatePreview();
-    }
-  });
   reduced.addEventListener('change', updatePreview);
   mobile.addEventListener('change', selectPreview);
   document.addEventListener('visibilitychange', updatePreview);

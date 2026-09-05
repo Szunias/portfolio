@@ -51,24 +51,29 @@ rather than expecting `showreel:sources` to restore it.
 
 ## Render
 
-The home page uses a separate 13.8-second silent cover in
-`src/assets/hero-motion.mp4` (1280×720, 24 fps, about 2.5 MB). Rebuild it with
-`npm run showreel:preview` after restoring the source mirrors. Its
+The home page uses a separate, looping 13.8-second silent background in
+`src/assets/hero-motion.mp4` (1920×1080, 24 fps). Rebuild both hero versions with
+`npm run showreel:preview -- --hero-only` after restoring the source mirrors. Its
 three five-second source cuts start at 74 seconds in Ray, 312.77 seconds in
 Shadow Frames and 10.33 seconds in Akantilado, with 0.6-second crossfades.
 The full showreel remains the separately launched version with audio and
-project credits. The cover has no audio stream and pauses offscreen or when
-reduced motion is requested.
+project credits. The background has no audio stream and pauses offscreen or
+while the full showreel plays. Reduced motion and data-saving preferences keep
+the still image. Both hero encodes use H.264 at CRF 21 with the slow preset;
+Ray is rendered from its original AV1 file rather than another H.264 copy.
+Ray's original is 720p, so its source detail remains a limit on larger screens.
 
-The same command also builds `src/assets/hero-motion-mobile.mp4` at 540×960.
+The same command also builds `src/assets/hero-motion-mobile.mp4` at 720×1280.
 Each shot has its own horizontal crop: Ray follows the creature, Shadow Frames
 centres the pub, and Akantilado keeps the animal on the right in view. The site
-selects this portrait version below 601 px.
+selects this portrait version below 601 px. Use `--hero-mobile` to regenerate
+only this version.
 
-Two six-second silent card previews are written to `src/assets/previews/`:
+Without a flag, `npm run showreel:preview` also writes two six-second silent
+card previews to `src/assets/previews/`:
 Shadow Frames at 312.77 seconds and Transientica at 30.07 seconds in the source
 recordings. They are 960×540 at 24 fps and load only when a card is hovered or
-focused with a keyboard. All three new files are versioned for clean-checkout builds.
+focused with a keyboard. All four preview files are versioned for clean-checkout builds.
 
 Requirements:
 
