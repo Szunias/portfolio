@@ -11,9 +11,11 @@ address. `npm run build` also validates the rendered metadata, links, assets,
 robots directives and sitemap. Its sitemap dates come from committed content
 changes rather than the deployment time.
 
-The old `/old/public/cv/Igor_Szuniewicz_CV.pdf` URL still appears in public search
-results. `staticCopy` serves the current root PDF there to preserve those links.
-New links should use `/Igor_Szuniewicz_CV.pdf`.
+The historical `/old/public/cv/Igor_Szuniewicz_CV.pdf` and
+`/cv/Igor_Szuniewicz_CV.pdf` URLs still appear in search results. `staticCopy`
+serves the current root PDF at both addresses to preserve those links.
+New links should use `/Igor_Szuniewicz_CV.pdf`. The homepage retains its
+`#contact`, `#work` and `#about` anchors for existing links.
 
 ## Audit on 5 September 2026
 

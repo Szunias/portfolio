@@ -31,6 +31,11 @@ module.exports = {
       outName: 'old/public/cv/Igor_Szuniewicz_CV.pdf',
       sitemap: false,
     },
+    {
+      file: 'Igor_Szuniewicz_CV.pdf',
+      outName: 'cv/Igor_Szuniewicz_CV.pdf',
+      sitemap: false,
+    },
   ],
 
   pages: [

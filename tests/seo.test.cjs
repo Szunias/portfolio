@@ -53,8 +53,10 @@ test('JSON-LD safely preserves names containing markup without closing its scrip
   assert.equal(graph(html).find(node => node['@type'] === 'ProfilePage').name, name);
 });
 
-test('old indexed CV address is built from the current PDF and excluded from sitemap', () => {
-  const alias = config.staticCopy.find(entry => entry.outName === 'old/public/cv/Igor_Szuniewicz_CV.pdf');
-  assert.equal(alias?.file, 'Igor_Szuniewicz_CV.pdf');
-  assert.equal(alias.sitemap, false);
+test('historical CV addresses use the current PDF and stay out of the sitemap', () => {
+  for (const address of ['old/public/cv/Igor_Szuniewicz_CV.pdf', 'cv/Igor_Szuniewicz_CV.pdf']) {
+    const alias = config.staticCopy.find(entry => entry.outName === address);
+    assert.equal(alias?.file, 'Igor_Szuniewicz_CV.pdf', address);
+    assert.equal(alias.sitemap, false, address);
+  }
 });
