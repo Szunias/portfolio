@@ -12,6 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { minifyCss, assertParsableJs } = require('./scripts/build/browser-assets.cjs');
+const { schemaTags, structuredDataIssues } = require('./scripts/build/seo.cjs');
 const { execFileSync } = require('child_process');
 
 const config = require('./site.config.cjs');
@@ -295,120 +296,6 @@ function ogTags(page) {
     lines.push(`<meta name="twitter:image:alt" content="${escAttr(imageAlt)}">`);
   }
   return lines.join('\n');
-}
-
-function jsonLdTag(graph) {
-  const json = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }, null, 2)
-    .replace(/</g, '\\u003c');
-  return `<script type="application/ld+json">\n${json}\n</script>`;
-}
-
-function schemaTags(page) {
-  if (page.noindex) return '';
-  const siteOrigin = new URL(config.pages[0].canonical).origin;
-  const siteId = `${siteOrigin}/#website`;
-  const personId = `${siteOrigin}/#igor`;
-  const pageId = `${page.canonical}#webpage`;
-  const pageName = page.ogTitle || page.title;
-  const person = {
-    '@type': 'Person',
-    '@id': personId,
-    name: 'Igor Szuniewicz',
-    url: `${siteOrigin}/`,
-    jobTitle: 'Technical Sound Designer & Audio Programmer',
-    description: 'Game audio designer and programmer focused on Wwise, FMOD, Unreal Engine, Unity, spatial audio, sound design, and C++ audio tools.',
-    knowsAbout: [
-      'Game audio',
-      'Technical sound design',
-      'Wwise',
-      'FMOD',
-      'Unreal Engine',
-      'Unity',
-      'MetaSounds',
-      'Spatial audio',
-      'C++ audio tools',
-      'JUCE'
-    ],
-    sameAs: [
-      'https://www.linkedin.com/in/igorszuniewicz',
-      'https://github.com/Szunias',
-      'https://igorszuniewicz.itch.io',
-      'https://open.spotify.com/artist/6jEBXZZOeunaMzMnnHYvd6',
-      'https://www.therookies.co/u/szuniewiczigor'
-    ]
-  };
-  const website = {
-    '@type': 'WebSite',
-    '@id': siteId,
-    url: `${siteOrigin}/`,
-    name: 'Igor Szuniewicz',
-    description: 'Game audio and technical sound design portfolio by Igor Szuniewicz.',
-    publisher: { '@id': personId }
-  };
-  // The page node is always a WebPage subtype; a typed work (VideoGame,
-  // SoftwareApplication, ScholarlyArticle) hangs off it as mainEntity rather
-  // than replacing it, so the graph stays valid for both kinds of consumers.
-  const webPage = {
-    // schemaPageType lets a page name its own WebPage subtype when neither the
-    // slug nor the layout implies one; contact uses it for ContactPage.
-    '@type': page.schemaPageType
-      || (page.slug === 'index' ? 'ProfilePage' : (page.layout === 'music' ? 'CollectionPage' : 'WebPage')),
-    '@id': pageId,
-    url: page.canonical,
-    name: pageName,
-    description: page.description,
-    isPartOf: { '@id': siteId }
-  };
-  if (page.ogImage) webPage.image = page.ogImage;
-  const graph = [person, website, webPage];
-  if (page.slug === 'index') {
-    webPage.mainEntity = { '@id': personId };
-  } else {
-    webPage.author = { '@id': personId };
-    webPage.creator = { '@id': personId };
-    if (page.schemaType) {
-      const workId = `${page.canonical}#work`;
-      // On a team project Igor authored the audio, not the work itself, so the
-      // page declares contributor instead. Claiming author on a collaborative
-      // game contradicts the credits stated on the page.
-      const work = {
-        '@type': page.schemaType,
-        '@id': workId,
-        name: pageName.replace(/\s+\|\s+.*$/, ''),
-        url: page.canonical,
-        description: page.description,
-        [page.schemaRole || 'author']: { '@id': personId },
-        mainEntityOfPage: { '@id': pageId }
-      };
-      if (page.schemaApplicationCategory) work.applicationCategory = page.schemaApplicationCategory;
-      if (page.schemaOperatingSystem) work.operatingSystem = page.schemaOperatingSystem;
-      if (page.schemaDatePublished) work.datePublished = page.schemaDatePublished;
-      if (page.ogImage) work.image = page.ogImage;
-      webPage.mainEntity = { '@id': workId };
-      graph.push(work);
-    }
-  }
-  if (page.slug !== 'index') {
-    graph.push({
-      '@type': 'BreadcrumbList',
-      '@id': `${page.canonical}#breadcrumb`,
-      itemListElement: [
-        {
-          '@type': 'ListItem',
-          position: 1,
-          name: 'Home',
-          item: `${siteOrigin}/`
-        },
-        {
-          '@type': 'ListItem',
-          position: 2,
-          name: pageName.replace(/\s+\|\s+.*$/, '').replace(/\s+-\s+Igor Szuniewicz$/, ''),
-          item: page.canonical
-        }
-      ]
-    });
-  }
-  return jsonLdTag(graph);
 }
 
 /**
@@ -941,18 +828,8 @@ function validateGeneratedHtml(htmlFiles) {
     if (/<!--\s*(?:TITLE|DESCRIPTION|CANONICAL|OG_TAGS|CSS|CONTENT|JS|SCHEMA|PLAYER|LIGHTBOX|FOOTER)\s*-->/.test(html)) {
       issues.push(`${file}: unresolved build placeholder`);
     }
-    for (const match of html.matchAll(/<script\b(?=[^>]*\btype=(["'])application\/ld\+json\1)[^>]*>([\s\S]*?)<\/script>/gi)) {
-      try {
-        const schema = JSON.parse(match[2]);
-        if (schema['@context'] !== 'https://schema.org') {
-          issues.push(`${file}: JSON-LD missing schema.org context`);
-        }
-        if (!Array.isArray(schema['@graph']) || !schema['@graph'].length) {
-          issues.push(`${file}: JSON-LD graph is empty or missing`);
-        }
-      } catch (err) {
-        issues.push(`${file}: invalid JSON-LD (${err.message})`);
-      }
+    for (const issue of structuredDataIssues(html, pageByFile.get(file), new URL(config.pages[0].canonical).origin)) {
+      issues.push(`${file}: ${issue}`);
     }
     const ids = [...html.matchAll(/(?<![\w-])id=(["'])(.*?)\1/gi)].map(match => match[2]);
     const fragmentTargets = fragmentTargetsByFile.get(file);
@@ -1420,7 +1297,7 @@ function buildPage(page) {
   }
 
   // 7. Schema (home page)
-  const schema = [schemaTags(page), page.schema || ''].filter(Boolean).join('\n');
+  const schema = [schemaTags(page, new URL(config.pages[0].canonical).origin), page.schema || ''].filter(Boolean).join('\n');
   html = html.replace('<!-- SCHEMA -->', () => schema);
 
   return html;

@@ -6,7 +6,7 @@
   <h1>AudioQ</h1>
   <p class="doc__meta">Started 2024 &middot; public v1.0.0, 9 November 2025 &middot; Solo C++ and JUCE &middot; C++17 &middot; JUCE 8 &middot; MIT</p>
   <p class="doc__lead">AudioQ is a sampler plug-in. It loads a sound, turns any part of it into a loop and reshapes the playback with granular mode and effects.</p>
-  <p>I built it alone in C++ and JUCE. The waveform editor, the playback engine and the DSP chain are all mine.</p>
+  <p>I built it alone in C++ and JUCE. I wrote the waveform editor, playback engine and custom effects; the filters and compressor use JUCE DSP components.</p>
   <p class="doc__links">
     <a href="https://github.com/Szunias/AudioQ" target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">&nearr;</span></a>
     <a href="https://www.youtube.com/watch?v=Q2hwWfisU4A" target="_blank" rel="noopener noreferrer">Recorded demo <span aria-hidden="true">&nearr;</span></a>
@@ -37,7 +37,7 @@
   </ol>
 
   <h2>The safety limit and what is still untested</h2>
-  <p>The compressor handles normal peaks. If the signal still exceeds 4.0 linear gain, a separate fail-safe stops playback. It is a last resort, not certified hearing protection.</p>
+  <p>If an output block exceeds 4.0 linear amplitude, the processor clears that block and flags a warning. This check silences the affected block; it does not limit its peaks.</p>
   <p>I rebuilt the plugin more than once before the public release. The download is a Windows VST3 build. The source also builds a standalone app, but broader testing across hosts, operating systems, sample rates and channel layouts is still pending.</p>
 
   <nav class="doc__end" aria-label="Project links and navigation">

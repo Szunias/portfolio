@@ -17,12 +17,18 @@
 const SITE = 'https://igorszuniewicz.com';
 
 module.exports = {
-  /** Historical snapshots stay in archive/ and are intentionally not deployed. */
+  /** Explicit standalone files and compatibility URLs; archive pages stay undeployed. */
   staticCopy: [
     {
       file: 'src/static/trip.html',
       outName: 'trip/index.html',
       noindex: true,
+      sitemap: false,
+    },
+    {
+      // This PDF address still appears in search results and external links.
+      file: 'Igor_Szuniewicz_CV.pdf',
+      outName: 'old/public/cv/Igor_Szuniewicz_CV.pdf',
       sitemap: false,
     },
   ],
@@ -36,8 +42,6 @@ module.exports = {
       js: ['prefetch', 'colophon-clock', 'home-showreel', 'project-previews', 'copy-email', 'page-motion'],
       title: 'Igor Szuniewicz | Technical Sound Designer & Audio Programmer',
       ogTitle: 'Igor Szuniewicz | Technical Sound Designer & Audio Programmer',
-      // 158 characters: the snippet used to stop at 116 on the one page
-      // Google actually indexes.
       description: 'Portfolio of Igor Szuniewicz: interactive audio for games and VR in Wwise, Unreal and Unity, plus audio tools built in C++, C#, Python and Lua. Based in Graz.',
       canonical: `${SITE}/`,
       ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
@@ -150,24 +154,18 @@ module.exports = {
       // not part of. The page layout renders the same header, main and
       // colophon chrome without that constraint.
       layout: 'page',
-      // The Graz-clock layout promoted from the contact-time review page,
-      // the windable dial from contact-wind: contact-actions.js carries the
-      // copy-address action, contact-clock.js the clock AND the winding —
-      // it replaces contact-time.js, which would fight it over the same
-      // hand transforms.
+      // contact-clock owns the clock and its winding interaction.
+      // copy-email handles copying; contact-actions handles mail links.
       css: ['contact', 'contact-time', 'contact-wind', 'portfolio'],
       js: ['prefetch', 'colophon-clock', 'copy-email', 'contact-actions', 'contact-clock', 'page-motion'],
       title: 'Contact | Igor Szuniewicz',
-      // Kept under 160 characters so Google does not truncate it mid-address.
-      description: 'Email Igor Szuniewicz at igorszuniewiczwork@gmail.com about game audio, spatial and VR sound, audio tools or music. Links to LinkedIn, GitHub, Spotify and CV.',
+      description: 'Contact Igor Szuniewicz, technical sound designer and audio programmer based in Graz, Austria. Email, CV and professional profiles for game audio work.',
       canonical: `${SITE}/contact.html`,
       // Explicit for clarity; build.cjs defaults every page to website too.
       ogType: 'website',
       schemaPageType: 'ContactPage',
-      // The share card is the frame the page now opens on, so the preview
-      // and the first screen are the same image.
       ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_04.jpg`,
-      ogImageAlt: 'Lit stage with a piano and instruments in the Shadow Frames pub, the still the contact page opens on',
+      ogImageAlt: 'Piano and instruments in Shadow Frames, a game with audio by Igor Szuniewicz',
       ogImageWidth: 1920,
       ogImageHeight: 1080,
       ogImageType: 'image/jpeg',
@@ -628,7 +626,7 @@ module.exports = {
       schemaType: 'VideoGame',
       schemaRole: 'contributor',
       title: 'Shadow Frames | Audio-Driven Horror in Wwise + UE5',
-      description: 'Solo audio design for a horror game with no on-screen markers: players find every anomaly by ear. 200+ Wwise events and voice acting in Unreal Engine 5.',
+      description: 'Sound design and Wwise implementation for Shadow Frames, a UE5 horror game where players locate anomalies by ear. Igor was the sole audio designer.',
       canonical: `${SITE}/shadowframes.html`,
       ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
       ogImageAlt: 'Shadow Frames UE5 horror game scene with spatial audio implementation',
@@ -739,7 +737,7 @@ module.exports = {
       schemaApplicationCategory: 'MultimediaApplication',
       schemaOperatingSystem: 'Windows, macOS, Linux',
       title: 'AutoTrim Exporter | REAPER Sound Asset Delivery',
-      description: 'AutoTrim Exporter 3.4.3 is a REAPER delivery tool for collecting layered sounds, checking the render path and exporting trimmed, named and verified audio assets.',
+      description: 'AutoTrim Exporter is a REAPER tool by Igor Szuniewicz for collecting layered sounds, checking the render path and exporting trimmed, named audio assets.',
       canonical: `${SITE}/autotrim.html`,
       // Explicit for clarity; build.cjs defaults every page to website, so a
       // consumer never looks for a byline or published_time here. The JSON-LD

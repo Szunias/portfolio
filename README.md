@@ -53,6 +53,8 @@ requests. Set `PORT` to use a different port.
 See [the codebase map](docs/CODEBASE.md) for layout responsibilities, CSS order,
 JavaScript contracts, media tools and review pages. `npm run inspect` gives the
 current file list directly from configuration.
+The [search visibility notes](docs/SEO.md) cover metadata validation, Search
+Console checks and the custom-domain audit.
 
 ## Adding a project
 

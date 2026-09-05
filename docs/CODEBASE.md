@@ -103,7 +103,9 @@ on `.tool-art`; the full screenshots remain available on their project pages.
 accessibility enhancements, referenced asset copying, generated-document checks,
 support files, size budgets and publishing the successful temporary output.
 `scripts/build/browser-assets.cjs` contains the isolated CSS transform and
-JavaScript syntax gate. Tests for these helpers live in `tests/`.
+JavaScript syntax gate. `scripts/build/seo.cjs` generates and validates structured
+data, including page identities and project credits. Tests for these helpers live
+in `tests/`; deployment and Search Console checks are documented in `docs/SEO.md`.
 
 `npm run check` validates without replacing `dist/`. `npm run build` publishes
 the validated output locally. Neither renders video nor downloads source media.
