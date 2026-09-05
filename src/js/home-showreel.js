@@ -1,4 +1,4 @@
-/* Silent film cover with an explicit, separately controlled full showreel. */
+/* Looping thumbnail and an explicitly opened, separately controlled showreel. */
 (function () {
   'use strict';
   var scope = document.querySelector('.hero');
@@ -7,24 +7,14 @@
   var preview = scope.querySelector('[data-preview-video]');
   var launch = scope.querySelector('[data-showreel-play]');
   var close = scope.querySelector('[data-showreel-close]');
+  var header = document.querySelector('.site-header');
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var mobile = window.matchMedia('(max-width: 600px)');
   if (!video || !preview || !launch) return;
   var playing = false;
   var visible = true;
   var paused = !!(navigator.connection && navigator.connection.saveData);
   video.controls = false;
   preview.muted = true;
-
-  function selectPreview() {
-    var source = [].slice.call(preview.querySelectorAll('source')).find(function (item) {
-      return !item.media || window.matchMedia(item.media).matches;
-    });
-    if (source && preview.getAttribute('src') !== source.getAttribute('src')) {
-      preview.src = source.getAttribute('src');
-    }
-    updatePreview();
-  }
 
   function updatePreview() {
     var canPlay = !paused && !playing && !reduced.matches && !document.hidden && visible;
@@ -43,9 +33,9 @@
     video.controls = true;
     if (close) close.hidden = false;
     updatePreview();
+    scope.dispatchEvent(new CustomEvent('hero:playback', { detail:{ playing:true } }));
   }
   function focusVisible(control) {
-    var header = document.querySelector('.site-header');
     var visibleTop = (header ? header.getBoundingClientRect().bottom : 0) + 12;
     var box = control.getBoundingClientRect();
     if (box.top < visibleTop) {
@@ -62,6 +52,7 @@
     scope.classList.remove('is-started','is-playing');
     if (close) close.hidden = true;
     updatePreview();
+    scope.dispatchEvent(new CustomEvent('hero:playback', { detail:{ playing:false } }));
     if (returnFocus) focusVisible(launch);
   }
   launch.addEventListener('click', function () {
@@ -77,13 +68,12 @@
     if (event.key === 'Escape' && playing && !document.fullscreenElement) restoreCover(true);
   });
   reduced.addEventListener('change', updatePreview);
-  mobile.addEventListener('change', selectPreview);
   document.addEventListener('visibilitychange', updatePreview);
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (entries) {
       visible = entries[0].isIntersecting;
       updatePreview();
-    }).observe(scope);
+    }, { rootMargin:'-' + (header ? header.offsetHeight : 0) + 'px 0px 0px' }).observe(preview);
   }
-  selectPreview();
+  updatePreview();
 })();

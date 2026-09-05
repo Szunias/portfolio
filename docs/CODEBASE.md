@@ -44,8 +44,8 @@ The files in the page's `css` array follow in exactly that order.
   Review variants keep their own configured styles. An override belongs to the
   component's owner unless it is intentionally part of the shared theme.
 - `home.css` owns work, tools and research, music, about and closing sections,
-  plus the 404 content. `home-hero.css` owns the full-screen film opening,
-  name and showreel controls. The header always uses `_chrome.css`.
+  plus the 404 content. `home-hero.css` owns the Edition 03 editorial opening,
+  decorative waveform, compact showreel preview and full player. The header uses `_chrome.css`.
   Homepage order is `home`, `portfolio`, `home-hero`.
 - `cine.css` styles the public project pages. `case-plain.css` supports project
   review variants.
@@ -64,7 +64,8 @@ an intermediate width and desktop, including long titles and player controls.
 
 | File under `src/js/` | Responsibility |
 | --- | --- |
-| `home-showreel.js` | Looping silent background, full showreel, close and focus restoration. |
+| `home-showreel.js` | Compact silent preview, full showreel, close and focus restoration. |
+| `home-waveform.js` | Decorative canvas waveform, entrance motion and pointer response. |
 | `project-previews.js` | Lazy, silent previews on project-card hover or keyboard focus. |
 | `copy-email.js` | Copies the visible address on the homepage and contact pages. |
 | `page-motion.js` | Shared entrance effects and header state. |
@@ -88,12 +89,16 @@ it; `music-visualizer.js` observes it after player initialization. Do not replac
 lives in `#trackData .track-card` on the music page; the build also turns it into
 a static track index. The `data-src-e` values encode local media paths, not secrets.
 
-The homepage's `[data-preview-video]` selects a separate mobile encode below
-601 px and is separate from `.hero__film`. The silent background loops while
-visible and observes reduced motion, data saving and page visibility. It pauses
-while the full showreel plays and resumes after closing it. The full showreel
-starts from its explicit launch button. Keep its close
-control and return keyboard focus to the launch button after closing.
+The homepage's `[data-preview-video]` loops `assets/showreel-preview.mp4` inside
+the showreel button at every viewport size. It observes reduced motion, data
+saving and page visibility, and pauses while the separate `.hero__film` plays.
+The full showreel starts only from its launch button. Keep the close control and
+return keyboard focus to the launch button after closing.
+
+The waveform is decorative, not an audio analyser. `home-waveform.js` animates
+its entrance and responds to a fine pointer; it stops drawing once settled or
+when hidden or covered by the full player. `assets/hero-waveform.svg` provides
+the static fallback without JavaScript and with reduced motion.
 
 The music spectrum sits below the cover and reads the existing audio element.
 It draws only during playback while visible, with reduced motion disabled.
@@ -128,11 +133,12 @@ those HTTP behaviors. It is a local development tool, not a deployment server.
 
 | Location | Purpose |
 | --- | --- |
-| `src/assets/` | Current website assets, including the silent hero film. |
+| `src/assets/` | Current website assets, including the waveform fallback and compact showreel preview. |
 | `old/public/assets/` | Images, audio, videos and other media retained from the earlier site. |
 | `showreel/timeline.json` | Full showreel cuts, titles, transitions and gains. |
 | `showreel/render.cjs` | Full renderer, mastering and media QA; documented in `showreel/README.md`. |
-| `showreel/render-preview.cjs` | Separate silent hero-film renderer. |
+| `showreel/render-preview.cjs` | Retained large silent encodes and project-card previews. |
+| `showreel/render-thumbnail.cjs` | Compact showreel preview, derived from `src/assets/hero-motion.mp4`. |
 | `showreel/sources.json`, `fetch-sources.cjs` | Public media source manifest and restoration tool. |
 | `scripts/generate-peaks.cjs` | Music waveform generation; run after replacing audio. |
 | `scripts/build-fonts.py` | Offline font preparation. |

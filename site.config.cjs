@@ -44,7 +44,7 @@ module.exports = {
       slug: 'index',
       layout: 'home',
       css: ['home', 'portfolio', 'home-hero'],
-      js: ['prefetch', 'colophon-clock', 'home-showreel', 'project-previews', 'copy-email', 'page-motion'],
+      js: ['prefetch', 'colophon-clock', 'home-showreel', 'home-waveform', 'project-previews', 'copy-email', 'page-motion'],
       title: 'Igor Szuniewicz | Technical Sound Designer & Audio Programmer',
       ogTitle: 'Igor Szuniewicz | Technical Sound Designer & Audio Programmer',
       description: 'Portfolio of Igor Szuniewicz: interactive audio for games and VR in Wwise, Unreal and Unity, plus audio tools built in C++, C#, Python and Lua. Based in Graz.',

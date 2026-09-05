@@ -8,6 +8,8 @@ transition and gain decision remains visible and reproducible.
 
 - `timeline.json` — edit order, source in/out points, captions, transitions and clip gain.
 - `render.cjs` — deterministic FFmpeg renderer, caption generator, loudness pass and QA outputs.
+- `render-preview.cjs` — large silent encodes and project-card previews.
+- `render-thumbnail.cjs` — compact silent preview used by the homepage showreel button.
 - `sources.json` — exact public source URLs, yt-dlp formats and local filenames.
 - `fetch-sources.cjs` — reproducibly fetches the six high-resolution public demos.
 - `assets/fonts/` — locally vendored OFL fonts, shipped as static instances.
@@ -49,31 +51,40 @@ fetchable. It is minutes 2:43-3:45 of Igor's own 1920x1080 60 fps capture from
 reel needs real gameplay and its real mix. Re-cut it from the original capture
 rather than expecting `showreel:sources` to restore it.
 
-## Render
+## Website previews
 
-The home page uses a separate, looping 13.8-second silent background in
-`src/assets/hero-motion.mp4` (1920×1080, 24 fps). Rebuild both hero versions with
-`npm run showreel:preview -- --hero-only` after restoring the source mirrors. Its
-three five-second source cuts start at 74 seconds in Ray, 312.77 seconds in
-Shadow Frames and 10.33 seconds in Akantilado, with 0.6-second crossfades.
-The full showreel remains the separately launched version with audio and
-project credits. The background has no audio stream and pauses offscreen or
-while the full showreel plays. Reduced motion and data-saving preferences keep
-the still image. Both hero encodes use H.264 at CRF 21 with the slow preset;
-Ray is rendered from its original AV1 file rather than another H.264 copy.
-Ray's original is 720p, so its source detail remains a limit on larger screens.
+The Edition 03 homepage uses a decorative waveform with a compact, looping
+showreel thumbnail. `src/js/home-waveform.js` controls the waveform;
+`src/assets/hero-waveform.svg` is its static fallback. The full showreel, with
+audio and project credits, plays only after the visitor launches it.
 
-The same command also builds `src/assets/hero-motion-mobile.mp4` at 720×1280.
-Each shot has its own horizontal crop: Ray follows the creature, Shadow Frames
-centres the pub, and Akantilado keeps the animal on the right in view. The site
-selects this portrait version below 601 px. Use `--hero-mobile` to regenerate
-only this version.
+The thumbnail is `src/assets/showreel-preview.mp4`: 480×270, 24 fps, 13.83 seconds,
+709,373 bytes, H.264 at CRF 24 with the slow preset and fast-start metadata.
+It has no audio stream and is shared across viewport sizes. It pauses offscreen
+or while the full player is open; reduced motion and data saving retain a still.
+Rebuild it from the repository root with:
+
+```powershell
+node showreel/render-thumbnail.cjs
+```
+
+Its source, `src/assets/hero-motion.mp4`, retains the three five-second cuts:
+Ray at 74 seconds, Shadow Frames at 312.77 seconds and Akantilado at 10.33 seconds,
+with 0.6-second crossfades. The large 1920×1080 encode and retained 720×1280
+portrait variant use H.264 CRF 21/slow at 24 fps. They are no longer fullscreen
+homepage backgrounds. Ray comes from the original 720p AV1 recording, which
+limits its detail. After restoring the source mirrors, use
+`npm run showreel:preview -- --hero-only` to rebuild both large encodes, then
+rerun the thumbnail command. `--hero-mobile` rebuilds only the retained portrait.
 
 Without a flag, `npm run showreel:preview` also writes two six-second silent
 card previews to `src/assets/previews/`:
 Shadow Frames at 312.77 seconds and Transientica at 30.07 seconds in the source
 recordings. They are 960×540 at 24 fps and load only when a card is hovered or
-focused with a keyboard. All four preview files are versioned for clean-checkout builds.
+focused with a keyboard. These assets and the thumbnail are versioned for
+clean-checkout builds; the website build does not run the media renderers.
+
+## Render the full showreel
 
 Requirements:
 
