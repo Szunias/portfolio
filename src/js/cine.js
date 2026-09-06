@@ -1,104 +1,109 @@
-/* Scroll machinery for the cinematic project pages.
-
-   Three jobs, no dependencies:
-
-   1. reveal      elements marked [data-reveal] fade and rise once, when they
-                  first enter the viewport.
-   2. stage       a scrollytelling stage: a sticky visual that changes state as
-                  its step blocks scroll past. The stage carries data-step with
-                  the index of the step the reader is on, and the CSS decides
-                  what that means for this particular page.
-   3. progress    a hairline at the top of the page showing how far in you are,
-                  and a data-scrolled flag on <html> after the first screen.
-
-   Everything here is decoration over markup that already reads without it:
-   the steps are ordinary blocks, the visual is an ordinary figure, and with
-   JavaScript off or reduced motion on, all of it simply sits still and
-   visible. */
+/* Progressive enhancement for project-page reveals, stages and reading progress. */
 (function () {
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  'use strict';
 
-  /* ---------- 1. reveal ---------- */
-  var revealables = [].slice.call(document.querySelectorAll('[data-reveal]'));
-  if (revealables.length) {
-    if (reduce || !('IntersectionObserver' in window)) {
-      revealables.forEach(function (el) { el.classList.add('is-in'); });
-    } else {
-      var revealObserver = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add('is-in');
-          revealObserver.unobserve(entry.target);
-        });
-        /* Nearly at the edge: media on these pages is evidence, and the old
-           15% / -12% gate left a diagram dark for most of a second after it
-           was already on screen. */
-      }, { rootMargin: '0px 0px -4% 0px', threshold: 0.05 });
-      revealables.forEach(function (el) { revealObserver.observe(el); });
-    }
+  const reduced = window.matchMedia
+    ? window.matchMedia('(prefers-reduced-motion: reduce)')
+    : null;
+  const revealables = Array.from(document.querySelectorAll('[data-reveal]'));
+  const stages = Array.from(document.querySelectorAll('[data-stage]')).map(element => ({
+    element,
+    steps: Array.from(element.querySelectorAll('[data-step-index]')),
+    current: 0,
+  })).filter(stage => stage.steps.length);
+  const bar = document.querySelector('[data-progress]');
+  const hasProgress = bar || document.querySelector('[data-cine]');
+  let observers = [];
+  let observedHeight = 0;
+  let pending = false;
+
+  function viewportHeight() {
+    return window.innerHeight || document.documentElement.clientHeight || 1;
   }
 
-  /* ---------- 2. stages ---------- */
-  var stages = [].slice.call(document.querySelectorAll('[data-stage]'));
-  stages.forEach(function (stage) {
-    var steps = [].slice.call(stage.querySelectorAll('[data-step-index]'));
-    if (!steps.length) return;
-
-    // The last step is the resting state without JS, so every fact a step
-    // carries has already been read by the time the page ends.
-    stage.setAttribute('data-step', '0');
-    steps.forEach(function (step, i) { if (i > 0) step.classList.add('is-dim'); });
-
-    if (reduce || !('IntersectionObserver' in window)) {
-      steps.forEach(function (step) { step.classList.remove('is-dim'); });
-      stage.setAttribute('data-step', 'all');
-      return;
-    }
-
-    var current = 0;
-    function setStep(next) {
-      if (next === current) return;
-      current = next;
-      stage.setAttribute('data-step', String(next));
-      steps.forEach(function (step, i) { step.classList.toggle('is-dim', i !== next); });
-    }
-
-    // A band across the middle of the screen decides which step is current:
-    // whichever step block covers it wins, so the visual changes exactly when
-    // the matching sentence is where the reader is looking.
-    var stepObserver = new IntersectionObserver(function (entries) {
-      var best = null;
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) best = entry;
-      });
-      if (!best) return;
-      setStep(Number(best.target.getAttribute('data-step-index')) || 0);
-    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
-
-    steps.forEach(function (step) { stepObserver.observe(step); });
-  });
-
-  /* ---------- 3. progress ---------- */
-  var bar = document.querySelector('[data-progress]');
-  var ticking = false;
-
-  function onScroll() {
-    if (ticking) return;
-    ticking = true;
-    window.requestAnimationFrame(function () {
-      ticking = false;
-      var doc = document.documentElement;
-      if (bar) {
-        var max = doc.scrollHeight - window.innerHeight;
-        var ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-        bar.style.setProperty('--progress', ratio.toFixed(4));
-      }
-      doc.toggleAttribute('data-scrolled', window.scrollY > window.innerHeight * 0.6);
+  function setStep(stage, index) {
+    stage.current = index;
+    const value = stage.steps[index].getAttribute('data-step-index') || String(index);
+    stage.element.setAttribute('data-step', value);
+    stage.steps.forEach((step, position) => {
+      step.classList.toggle('is-dim', position !== index);
     });
   }
 
-  if (bar || document.querySelector('[data-cine]')) {
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+  function connectObservers() {
+    observers.forEach(observer => observer.disconnect());
+    observers = [];
+    observedHeight = viewportHeight();
+
+    if ((reduced && reduced.matches) || !('IntersectionObserver' in window)) {
+      revealables.forEach(element => element.classList.add('is-in'));
+      stages.forEach(stage => {
+        stage.element.setAttribute('data-step', 'all');
+        stage.steps.forEach(step => step.classList.remove('is-dim'));
+      });
+      return;
+    }
+
+    // Vertical rootMargin percentages are based on WIDTH, not height.
+    // Pixel margins keep the activation band valid on wide/landscape screens.
+    const revealInset = Math.round(observedHeight * 0.04);
+    const unrevealed = revealables.filter(element => !element.classList.contains('is-in'));
+    if (unrevealed.length) {
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-in');
+          observer.unobserve(entry.target);
+        });
+      }, { rootMargin: `0px 0px -${revealInset}px 0px`, threshold: 0.05 });
+      unrevealed.forEach(element => observer.observe(element));
+      observers.push(observer);
+    }
+
+    const stageInset = Math.floor(observedHeight * 0.45);
+    stages.forEach(stage => {
+      setStep(stage, stage.current);
+      const observer = new IntersectionObserver(entries => {
+        const visible = entries.filter(entry => entry.isIntersecting);
+        if (!visible.length) return;
+        const index = stage.steps.indexOf(visible[visible.length - 1].target);
+        if (index !== -1 && index !== stage.current) setStep(stage, index);
+      }, { rootMargin: `-${stageInset}px 0px -${stageInset}px 0px`, threshold: 0 });
+      stage.steps.forEach(step => observer.observe(step));
+      observers.push(observer);
+    });
+  }
+
+  function scheduleUpdate() {
+    if (pending) return;
+    pending = true;
+    window.requestAnimationFrame(() => {
+      pending = false;
+      const height = viewportHeight();
+      if (height !== observedHeight) connectObservers();
+      if (!hasProgress) return;
+      const root = document.documentElement;
+      if (bar) {
+        const maximum = root.scrollHeight - height;
+        const progress = maximum > 0 ? Math.min(1, Math.max(0, window.scrollY / maximum)) : 0;
+        bar.style.setProperty('--progress', progress.toFixed(4));
+      }
+      root.toggleAttribute('data-scrolled', window.scrollY > height * 0.6);
+    });
+  }
+
+  connectObservers();
+  if (hasProgress) window.addEventListener('scroll', scheduleUpdate, { passive: true });
+  if (hasProgress || revealables.length || stages.length) {
+    window.addEventListener('resize', scheduleUpdate, { passive: true });
+    scheduleUpdate();
+  }
+  if (reduced) {
+    const onMotionChange = () => { connectObservers(); scheduleUpdate(); };
+    if (typeof reduced.addEventListener === 'function') {
+      reduced.addEventListener('change', onMotionChange);
+    } else if (typeof reduced.addListener === 'function') {
+      reduced.addListener(onMotionChange);
+    }
   }
 })();

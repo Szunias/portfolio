@@ -1,65 +1,95 @@
-/* One silent card preview at a time; source files load only on deliberate hover or focus. */
+/* One silent card preview at a time; load only on deliberate hover or focus. */
 (function () {
   'use strict';
+
+  const previews = Array.from(document.querySelectorAll('.wcard')).map(card => ({
+    card,
+    video: card.querySelector('[data-card-preview]'),
+  })).filter(item => item.video);
+  if (!previews.length) return;
+
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
-  const cards = Array.from(document.querySelectorAll('.wcard')).filter(card => card.querySelector('[data-card-preview]'));
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   let current = null;
   let pending = 0;
+  let generation = 0;
 
   function stop() {
+    generation += 1;
     window.clearTimeout(pending);
+    pending = 0;
     if (!current) return;
-    current.classList.remove('is-previewing');
-    current.querySelector('[data-card-preview]').pause();
+    current.card.classList.remove('is-previewing');
+    current.video.pause();
     current = null;
   }
 
   function allowed() {
-    return !reduced.matches && !document.hidden && !(navigator.connection && navigator.connection.saveData);
+    return !reduced.matches && !document.hidden && !(connection && connection.saveData);
   }
 
-  function queue(card) {
+  function queue(item) {
     stop();
     if (!allowed()) return;
-    current = card;
+    const { video } = item;
+    const source = video.getAttribute('src') || video.dataset.src;
+    if (!source) return;
+    current = item;
+    const request = generation;
     pending = window.setTimeout(() => {
+      pending = 0;
+      if (request !== generation || current !== item) return;
       if (!allowed()) { stop(); return; }
-      const video = card.querySelector('[data-card-preview]');
       video.muted = true;
-      if (!video.getAttribute('src')) video.src = video.dataset.src;
-      const playing = video.play();
-      if (playing) playing.catch(() => { if (current === card) stop(); });
+      if (!video.getAttribute('src')) video.src = source;
+      function onFailure() {
+        // A rejected older play() must not stop a newer attempt on this card.
+        if (request === generation && current === item) stop();
+      }
+      try {
+        const playing = video.play();
+        if (playing && typeof playing.catch === 'function') playing.catch(onFailure);
+      } catch {
+        onFailure();
+      }
     }, 180);
   }
 
-  cards.forEach(card => {
-    const video = card.querySelector('[data-card-preview]');
+  previews.forEach(item => {
+    const { card, video } = item;
     video.addEventListener('playing', () => {
-      if (current === card && allowed()) card.classList.add('is-previewing');
+      if (current === item && allowed()) card.classList.add('is-previewing');
       else video.pause();
     });
-    video.addEventListener('error', () => { if (current === card) stop(); });
+    video.addEventListener('error', () => { if (current === item) stop(); });
     card.addEventListener('pointerenter', event => {
-      if (fine.matches && event.pointerType !== 'touch') queue(card);
+      if (fine.matches && event.pointerType !== 'touch') queue(item);
     });
     card.addEventListener('pointerleave', () => {
-      if (current === card && !card.matches(':focus-visible')) stop();
+      if (current === item && !card.matches(':focus-visible')) stop();
     });
-    card.addEventListener('focus', () => { if (card.matches(':focus-visible')) queue(card); });
-    card.addEventListener('blur', () => { if (current === card) stop(); });
+    card.addEventListener('focus', () => { if (card.matches(':focus-visible')) queue(item); });
+    card.addEventListener('blur', () => { if (current === item) stop(); });
   });
 
   if ('IntersectionObserver' in window) {
+    const byCard = new Map(previews.map(item => [item.card, item]));
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        if (!entry.isIntersecting && entry.target === current) stop();
-        else if (entry.isIntersecting && !current && entry.target.matches(':focus-visible')) queue(entry.target);
+        if (!entry.isIntersecting && current && entry.target === current.card) stop();
+        else if (entry.isIntersecting && !current && entry.target.matches(':focus-visible')) {
+          const item = byCard.get(entry.target);
+          if (item) queue(item);
+        }
       });
     });
-    cards.forEach(card => observer.observe(card));
+    previews.forEach(({ card }) => observer.observe(card));
   }
   reduced.addEventListener('change', stop);
   fine.addEventListener('change', stop);
+  if (connection && typeof connection.addEventListener === 'function') {
+    connection.addEventListener('change', () => { if (!allowed()) stop(); });
+  }
   document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
 })();
