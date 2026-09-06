@@ -75,10 +75,10 @@ an intermediate width and desktop, including long titles and player controls.
 | `contact-clock.js` | Windable contact clock and its interaction state. |
 | `contact-time.js` | Clock treatment on the separate contact-time review page. |
 | `colophon-clock.js` | Time display in the shared footer. |
-| `cine.js` | Project galleries, lightbox and project media interactions. |
+| `cine.js` | One-shot `[data-reveal]` entrance effects; responds to reduced-motion changes. |
 | `local-video.js` | Local-video enhancement on configured project pages. |
 | `video-facade.js` | Lazy embedded-video activation on configured review pages. |
-| `prefetch.js` | Same-origin navigation prefetch. |
+| `prefetch.js` | Same-origin document prefetch on hover, touch and keyboard focus. |
 
 Scripts use local scopes and DOM hooks. Keep their loading order in configuration
 and preserve accessible markup when JavaScript is unavailable.
@@ -93,7 +93,9 @@ The homepage's `[data-preview-video]` loops `assets/showreel-preview.mp4` inside
 the showreel button at every viewport size. It observes reduced motion, data
 saving and page visibility, and pauses while the separate `.hero__film` plays.
 The full showreel starts only from its launch button. Keep the close control and
-return keyboard focus to the launch button after closing.
+return keyboard focus to the launch button after closing. `hero:playback` reports
+whether the full player is open, not whether native playback is currently paused.
+Native `play` events must not reopen a closed player or duplicate this notification.
 
 The waveform is decorative, not an audio analyser. `home-waveform.js` animates
 its entrance and responds to a fine pointer; it stops drawing once settled or
@@ -107,6 +109,9 @@ Stopping the drawing loop must not interrupt audio output.
 Project-card videos use `[data-card-preview]` with a validated `data-src` path.
 Only one runs at a time; its source loads on deliberate hover or keyboard focus.
 Touch, reduced motion and data-saving preferences retain the still images.
+Each playback attempt has an identity so an old rejected promise cannot cancel
+a newer attempt on the same card. Clipboard feedback similarly belongs to the
+most recent copy request, regardless of completion order.
 Software-card crops use the original application screenshots and CSS variables
 on `.tool-art`; the full screenshots remain available on their project pages.
 
@@ -119,6 +124,12 @@ support files, size budgets and publishing the successful temporary output.
 JavaScript syntax gate. `scripts/build/seo.cjs` generates and validates structured
 data, including page identities and project credits. Tests for these helpers live
 in `tests/`; deployment and Search Console checks are documented in `docs/SEO.md`.
+
+`tests/browser-interactions.test.cjs` runs the actual browser scripts in Node VM
+contexts with small DOM/media test doubles. It covers asynchronous playback and
+clipboard races, focus, visibility, connection preferences and reduced motion.
+It runs with `npm test` and introduces no dependencies. These tests do not replace
+real-browser checks of layout, focus behavior, media decoding or mobile rendering.
 
 `npm run check` validates without replacing `dist/`. `npm run build` publishes
 the validated output locally. Neither renders video nor downloads source media.

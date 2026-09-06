@@ -1,42 +1,42 @@
-/* Warm same-origin pages before they are clicked.
-   The site is static HTML on a CDN, so the whole cost of a navigation is one
-   small document fetch; starting it on hover or first touch makes the click
-   land on a warm cache. Safari has no prefetch support and fails the relList
-   check, metered and slow connections opt out, and every URL is fetched at
-   most once per pageview. */
+/* Warm same-origin documents on deliberate navigation intent. */
 (function () {
-  var probe = document.createElement('link');
+  'use strict';
+  const probe = document.createElement('link');
   if (!probe.relList || !probe.relList.supports || !probe.relList.supports('prefetch')) return;
 
-  var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  if (connection && (connection.saveData || /(^|\b)(slow-2g|2g|3g)$/.test(connection.effectiveType || ''))) return;
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const warmed = new Set();
 
-  var warmed = {};
+  function allowed() {
+    return !connection || !(connection.saveData || /^(slow-2g|2g|3g)$/.test(connection.effectiveType || ''));
+  }
 
   function prefetchable(anchor) {
     if (!anchor || anchor.origin !== window.location.origin) return null;
-    if (anchor.hasAttribute('download') || anchor.target === '_blank') return null;
+    if (anchor.hasAttribute('download') || (anchor.target && anchor.target.toLowerCase() !== '_self')) return null;
     // Documents only: media and the CV PDF are too heavy to fetch on a guess.
     if (!/(\.html|\/)$/.test(anchor.pathname)) return null;
-    var url = anchor.pathname;
-    if (url === window.location.pathname || warmed[url]) return null;
-    return url;
+    // Query strings identify different documents; fragments do not.
+    const url = anchor.pathname + anchor.search;
+    const current = window.location.pathname + window.location.search;
+    return url === current || warmed.has(url) ? null : url;
   }
 
   function warm(event) {
-    var target = event.target instanceof Element ? event.target.closest('a[href]') : null;
-    var url = prefetchable(target);
+    // Recheck preferences when the interaction happens, not only at page load.
+    if (!allowed()) return;
+    const anchor = event.target instanceof Element ? event.target.closest('a[href]') : null;
+    const url = prefetchable(anchor);
     if (!url) return;
-    warmed[url] = true;
-    var link = document.createElement('link');
+    warmed.add(url);
+    const link = document.createElement('link');
     link.rel = 'prefetch';
     link.as = 'document';
     link.href = url;
     document.head.appendChild(link);
   }
 
-  // mouseover covers pointer hover; touchstart fires early enough on phones
-  // to buy ~100ms before the synthetic click completes.
   document.addEventListener('mouseover', warm, { passive: true });
   document.addEventListener('touchstart', warm, { passive: true });
+  document.addEventListener('focusin', warm);
 })();
