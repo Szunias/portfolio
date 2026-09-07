@@ -6,8 +6,10 @@
   const cards = Array.from(document.querySelectorAll('.wcard')).filter(card => card.querySelector('[data-card-preview]'));
   let current = null;
   let pending = 0;
+  let requestVersion = 0;
 
   function stop() {
+    requestVersion++;
     window.clearTimeout(pending);
     if (!current) return;
     current.classList.remove('is-previewing');
@@ -23,13 +25,18 @@
     stop();
     if (!allowed()) return;
     current = card;
+    const version = requestVersion;
     pending = window.setTimeout(() => {
+      if (version !== requestVersion) return;
       if (!allowed()) { stop(); return; }
       const video = card.querySelector('[data-card-preview]');
       video.muted = true;
       if (!video.getAttribute('src')) video.src = video.dataset.src;
       const playing = video.play();
-      if (playing) playing.catch(() => { if (current === card) stop(); });
+      if (playing) playing.catch(() => {
+        // A previous play() can reject after the same card is hovered again.
+        if (version === requestVersion && current === card) stop();
+      });
     }, 180);
   }
 

@@ -23,10 +23,32 @@ function byteRange(header, size) {
   return { start, end };
 }
 
+function isInside(root, file) {
+  const relative = path.relative(root, file);
+  return relative !== '..' && !relative.startsWith('..' + path.sep) && !path.isAbsolute(relative);
+}
+
+function previewFile(root, candidate) {
+  try {
+    // Lexical containment alone does not stop file or directory symlinks.
+    const file = fs.realpathSync(candidate);
+    if (!isInside(root, file)) {
+      const error = new Error('File resolves outside the preview root');
+      error.code = 'OUTSIDE_PREVIEW_ROOT';
+      throw error;
+    }
+    return { file, stat: fs.statSync(file) };
+  } catch (error) {
+    if (error.code === 'ENOENT' || error.code === 'ENOTDIR') return null;
+    throw error;
+  }
+}
+
 function createPreviewServer(directory) {
-  const root = path.resolve(directory);
+  const root = fs.realpathSync(directory);
   return http.createServer((req, res) => {
     res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
     if (!['GET', 'HEAD'].includes(req.method)) {
       res.writeHead(405, { Allow: 'GET, HEAD' }).end();
       return;
@@ -40,22 +62,27 @@ function createPreviewServer(directory) {
       return;
     }
     let file = path.resolve(root, '.' + pathname.replace(/\\/g, '/'));
-    const relative = path.relative(root, file);
-    if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative)) {
+    if (!isInside(root, file)) {
       res.writeHead(403).end('Forbidden');
       return;
     }
     try {
-      if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
-      if (!fs.existsSync(file) && fs.existsSync(file + '.html')) file += '.html';
-      if (!fs.existsSync(file) || !fs.statSync(file).isFile()) {
-        const fallback = path.join(root, '404.html');
-        const body = fs.existsSync(fallback) ? fs.readFileSync(fallback) : Buffer.from('Not found');
+      let resource = previewFile(root, file);
+      if (resource && resource.stat.isDirectory()) {
+        file = path.join(file, 'index.html');
+        resource = previewFile(root, file);
+      }
+      if (!resource) resource = previewFile(root, file + '.html');
+      if (!resource || !resource.stat.isFile()) {
+        const fallback = previewFile(root, path.join(root, '404.html'));
+        const body = fallback && fallback.stat.isFile()
+          ? fs.readFileSync(fallback.file) : Buffer.from('Not found');
         res.writeHead(404, { 'Content-Type': TYPES['.html'], 'Content-Length': body.length });
         res.end(req.method === 'HEAD' ? undefined : body);
         return;
       }
-      const size = fs.statSync(file).size;
+      file = resource.file;
+      const size = resource.stat.size;
       const headers = {
         'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream',
         'Content-Length': size, 'Accept-Ranges': 'bytes',
@@ -75,9 +102,10 @@ function createPreviewServer(directory) {
       stream.on('error', () => res.destroy());
       res.on('close', () => stream.destroy());
       stream.pipe(res);
-    } catch {
-      if (!res.headersSent) res.writeHead(500).end('Could not read the preview file');
-      else res.destroy();
+    } catch (error) {
+      if (res.headersSent) { res.destroy(); return; }
+      if (error.code === 'OUTSIDE_PREVIEW_ROOT') res.writeHead(403).end('Forbidden');
+      else res.writeHead(500).end('Could not read the preview file');
     }
   });
 }
