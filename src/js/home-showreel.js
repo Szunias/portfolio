@@ -28,6 +28,7 @@
     });
   }
   function revealPlayer() {
+    if (playing) return;
     playing = true;
     scope.classList.add('is-started','is-playing');
     video.controls = true;
@@ -61,7 +62,10 @@
     var attempt = video.play();
     if (attempt) attempt.catch(function () { if (playing) video.controls = true; });
   });
-  video.addEventListener('play', revealPlayer);
+  video.addEventListener('play', function () {
+    // A queued play event may arrive after Close has already paused the video.
+    if (!video.paused) revealPlayer();
+  });
   video.addEventListener('ended', function () { restoreCover(scope.contains(document.activeElement)); });
   if (close) close.addEventListener('click', function () { restoreCover(true); });
   scope.addEventListener('keydown', function (event) {

@@ -969,7 +969,11 @@
     sheet.addEventListener('cancel', syncSheetLock);
     // Clicking the backdrop closes the sheet; clicks inside must not.
     sheet.addEventListener('click', event => {
-      if (event.target === sheet) closeSheet();
+      if (event.target !== sheet) return;
+      const box = sheet.getBoundingClientRect();
+      const outside = event.clientX < box.left || event.clientX > box.right ||
+        event.clientY < box.top || event.clientY > box.bottom;
+      if (outside) closeSheet();
     });
   }
 
@@ -1303,7 +1307,12 @@
   if (!selectedTrack() && tiles.length) {
     const firstFeatured = byTitle.get(cardTitle(tiles[0]));
     const firstIndex = firstFeatured ? tracks.indexOf(firstFeatured) : -1;
-    if (validIndex(firstIndex)) select(firstIndex, false);
+    if (validIndex(firstIndex)) {
+      // The selected opener and Next must share the same queue position.
+      if (pool.indexOf(firstIndex) < 0) applyFilter('all');
+      buildOrder(firstIndex);
+      select(firstIndex, false);
+    }
   }
   updateModeUI();
   updateVolumeUI();

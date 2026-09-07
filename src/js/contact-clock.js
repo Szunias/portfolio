@@ -74,6 +74,7 @@
 
   let offsetMinutes = 0;
   let scrubbing = false;
+  let activePointer = null;
   let lastPointerAngle = 0;
   let lastRatchetStep = 0;
   let snapRaf = 0;
@@ -200,12 +201,14 @@
   }
 
   svg.addEventListener('pointerdown', function (event) {
-    if (event.button !== 0 && event.pointerType === 'mouse') return;
+    if (!event.isPrimary || activePointer !== null || (event.button !== 0 && event.pointerType === 'mouse')) return;
+    activePointer = event.pointerId;
     scrubbing = true;
     stopSnap();
     lastPointerAngle = pointerAngle(event);
     lastRatchetStep = Math.floor(offsetMinutes / 30);
-    if (svg.setPointerCapture) svg.setPointerCapture(event.pointerId);
+    svg.focus({ preventScroll: true });
+    try { svg.setPointerCapture(event.pointerId); } catch (_) { /* capture is optional */ }
     root.classList.add('ck--scrubbing');
     ensureAudio();
     render();
@@ -213,7 +216,7 @@
   });
 
   svg.addEventListener('pointermove', function (event) {
-    if (!scrubbing) return;
+    if (!scrubbing || event.pointerId !== activePointer) return;
     const angle = pointerAngle(event);
     let delta = angle - lastPointerAngle;
     if (delta > 180) delta -= 360;
@@ -224,15 +227,20 @@
     setOffset(offsetMinutes + delta * 2, true);
   });
 
-  function release() {
-    if (!scrubbing) return;
+  function release(event) {
+    if (!scrubbing || event.pointerId !== activePointer) return;
+    activePointer = null;
     scrubbing = false;
+    try { svg.releasePointerCapture(event.pointerId); } catch (_) { /* capture may already be lost */ }
     root.classList.remove('ck--scrubbing');
     snapBack();
   }
 
   svg.addEventListener('pointerup', release);
   svg.addEventListener('pointercancel', release);
+  svg.addEventListener('lostpointercapture', release);
+  window.addEventListener('pointerup', release);
+  window.addEventListener('pointercancel', release);
 
   /* ---- keyboard winding: an hour per arrow, Escape or Home rewinds ---- */
 
