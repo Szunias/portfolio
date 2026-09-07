@@ -16,6 +16,8 @@ const { schemaTags, structuredDataIssues } = require('./scripts/build/seo.cjs');
 const { execFileSync } = require('child_process');
 
 const config = require('./site.config.cjs');
+const { injectStaticTrackIndex } = require('./scripts/build/music-index.cjs');
+const { checkedSource } = require('./scripts/build/source-paths.cjs');
 
 /** Git mtime (ISO date) for a file, or null if unavailable/untracked. */
 function gitMtime(filePath) {
@@ -178,6 +180,7 @@ function publishDist() {
 
 function copyDirContents(srcDir, destDir) {
   if (!fs.existsSync(srcDir)) return 0;
+  srcDir = checkedSource(__dirname, srcDir, 'directory');
   ensureDir(destDir);
   let copied = 0;
   for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
@@ -186,8 +189,10 @@ function copyDirContents(srcDir, destDir) {
     if (entry.isDirectory()) {
       copied += copyDirContents(src, dest);
     } else if (entry.isFile()) {
-      fs.copyFileSync(src, dest);
+      fs.copyFileSync(checkedSource(__dirname, src), dest);
       copied++;
+    } else {
+      throw new Error(`Unsupported source asset: ${path.relative(__dirname, src)}`);
     }
   }
   return copied;
@@ -298,40 +303,6 @@ function ogTags(page) {
   return lines.join('\n');
 }
 
-/**
- * The interactive library is built entirely by music-player.js from
- * data-* attributes, so without this the initial HTML contains no track
- * titles at all: crawlers that skip JS rendering see an empty page. The
- * injected list mirrors the data attributes and is removed at runtime by
- * buildLibrary() as soon as the real library mounts.
- */
-function injectStaticTrackIndex(content) {
-  const cards = content.match(/<div class="track-card"[^>]*>/g) || [];
-  if (!cards.length) return content;
-
-  // The filter chips print how many tracks each filter holds. Counting the
-  // cards here keeps those numbers honest when a track is added or reclassed,
-  // instead of trusting a hand-typed figure in four page files.
-  const sketches = cards.filter(tag => /\bdata-kind="sketch"/.test(tag)).length;
-  const counts = { all: cards.length, release: cards.length - sketches, sketch: sketches };
-  content = content.replace(
-    /(<button[^>]*\bdata-filter="(all|release|sketch)"[^>]*>[^<]*<span class="filter-chip__count">)\d*(<\/span>)/g,
-    (_, open, filter, close) => `${open}${counts[filter]}${close}`
-  );
-
-  const items = cards.map(tag => {
-    const title = (tag.match(/data-title="([^"]*)"/) || [])[1];
-    if (!title) return '';
-    const year = ((tag.match(/data-year="([^"]*)"/) || [])[1] || '').slice(0, 4);
-    return `<li>${title}${year ? ` (${year})` : ''}</li>`;
-  }).filter(Boolean).join('');
-  if (!items) return content;
-  const list = `<ol class="music-static-index" id="musicStaticIndex" aria-label="All tracks in the archive">${items}</ol>`;
-  const replaced = content.replace(/(<div class="library__list" id="musicLibrary">)/, `$1${list}`);
-  if (replaced === content) throw new Error('music: #musicLibrary container not found for the static track index');
-  return replaced;
-}
-
 function stripTags(html) {
   return decodeHtmlAttr(html
     .replace(/<script[\s\S]*?<\/script>/gi, '')
@@ -366,16 +337,23 @@ function videoLabelFromContext(prefix) {
 
 function enhanceVideoAccessibility(html) {
   let counter = 0;
+  const usedIds = new Set([...html.matchAll(/(?<![\w-])id=(["'])(.*?)\1/gi)]
+    .map(match => decodeHtmlAttr(match[2])));
   let output = html.replace(
     /(<video\b(?=[^>]*\bcontrols\b)(?![^>]*\baria-describedby=)([^>]*)>[\s\S]*?<\/video>)(\s*<\/div>\s*<p\s+class="video-caption")([^>]*>)/gi,
     (match, videoHtml, attrs, captionStart, captionAttrs) => {
-      counter++;
-      const id = `video-caption-${counter}`;
-      const describedVideo = videoHtml.replace(/<video\b/i, `<video aria-describedby="${id}"`);
-      const describedCaptionStart = /(?<![\w-])id=/.test(captionAttrs)
+      const existingId = decodeHtmlAttr(attrValue(captionAttrs, 'id'));
+      let id = existingId;
+      if (!id) {
+        do { id = `video-caption-${++counter}`; } while (usedIds.has(id));
+        usedIds.add(id);
+      }
+      const describedVideo = videoHtml.replace(/<video\b/i, () => `<video aria-describedby="${escAttr(id)}"`);
+      const describedCaptionStart = existingId
         ? captionStart
-        : `${captionStart} id="${id}"`;
-      return describedVideo + describedCaptionStart + captionAttrs;
+        : `${captionStart} id="${escAttr(id)}"`;
+      const remainingAttrs = existingId ? captionAttrs : captionAttrs.replace(/\s+id=(["'])\1/i, '');
+      return describedVideo + describedCaptionStart + remainingAttrs;
     }
   );
 
@@ -722,15 +700,6 @@ function safeRepoPath(rel) {
   return resolved;
 }
 
-function isPathInside(root, candidate) {
-  const relative = path.relative(root, candidate);
-  return relative === '' || (
-    relative !== '..' &&
-    !relative.startsWith(`..${path.sep}`) &&
-    !path.isAbsolute(relative)
-  );
-}
-
 function safeDistPath(rel) {
   if (typeof rel !== 'string') return null;
   const normalized = rel.replace(/\\/g, '/');
@@ -762,15 +731,7 @@ function copyReferencedAssets(refs) {
     if (!fs.existsSync(src)) {
       throw new Error(`Referenced asset not found: ${rel}`);
     }
-    const lexicalStat = fs.lstatSync(src);
-    if (lexicalStat.isSymbolicLink()) {
-      throw new Error(`Referenced asset must not be a symbolic link: ${rel}`);
-    }
-    const realRoot = fs.realpathSync.native(__dirname);
-    const realSrc = fs.realpathSync.native(src);
-    if (!isPathInside(realRoot, realSrc) || !fs.statSync(realSrc).isFile()) {
-      throw new Error(`Referenced asset resolves outside the repository or is not a file: ${rel}`);
-    }
+    const realSrc = checkedSource(__dirname, src);
     ensureDir(path.dirname(dest));
     fs.copyFileSync(realSrc, dest);
     copied.push(rel);
@@ -1249,6 +1210,7 @@ function buildPage(page) {
     throw new Error(`Page content not found: src/pages/${page.slug}.html`);
   }
   let content = read(pagePath);
+  if (page.layout === 'music') content = injectStaticTrackIndex(content);
   content = enhanceVideoAccessibility(content);
   content = enhanceExternalLinkSafety(content);
   content = enhanceIframeAccessibility(content);
@@ -1258,7 +1220,6 @@ function buildPage(page) {
   content = reserveVideoAspectRatio(content);
   content = enhanceInlineSvgAccessibility(content);
   content = enhanceGalleryItemLinks(content);
-  if (page.layout === 'music') content = injectStaticTrackIndex(content);
 
   // 3. Assemble shared, cacheable CSS and the page's progressive enhancement.
   //    `css` may be a single name or a list. The list form exists so project
@@ -1288,7 +1249,7 @@ function buildPage(page) {
   html = html.replace('<!-- CSS -->', () => `<link rel="stylesheet" href="${escAttr(pageCssHref)}">`);
   html = html.replace('<!-- CONTENT -->', () => content);
   html = html.replace('<!-- JS -->', () => jsSrc
-    ? `<script src="${escAttr(jsSrc)}" defer></script>`
+    ? `<script src="${escAttr(page.layout === 'error' ? `/${jsSrc}` : jsSrc)}" defer></script>`
     : '');
 
   // 6. Optional partials
@@ -1525,6 +1486,7 @@ function validateConfig(cfg) {
     if (!fs.existsSync(src)) {
       throw new Error(`Static copy not found: ${entry.file}`);
     }
+    checkedSource(__dirname, src);
     if (staticOutNames.has(outKey)) {
       throw new Error(`Duplicate staticCopy output "${outKey}" for ${staticOutNames.get(outKey)} and ${entry.file}`);
     }
@@ -1574,7 +1536,8 @@ function main() {
   if (staticEntries.length) {
     for (const entry of staticEntries) {
       const outName = entry.outName;
-      const src = safeRepoPath(entry.file);
+      const candidate = safeRepoPath(entry.file);
+      const src = candidate && checkedSource(__dirname, candidate);
       const dest = safeDistPath(outName);
       if (!src || !dest) {
         throw new Error(`Unsafe static copy path: ${entry.file} -> ${outName}`);
@@ -1623,7 +1586,7 @@ function main() {
 
   // Old crawlers and some tools request /favicon.ico unconditionally, so the
   // mark also ships at the root even though every page links assets/ icons.
-  fs.copyFileSync(path.join(SRC, 'assets', 'favicon-mark.ico'), path.join(DIST, 'favicon.ico'));
+  fs.copyFileSync(checkedSource(__dirname, path.join(SRC, 'assets', 'favicon-mark.ico')), path.join(DIST, 'favicon.ico'));
 
   // Generate sitemap.xml - lastmod follows content files, not every shared build/config change.
   const SITE_ORIGIN = new URL(config.pages[0].canonical).origin;
@@ -1710,17 +1673,21 @@ function main() {
   console.log(`\nDone: ${built} pages built, ${copied} files copied → dist/`);
 }
 
-try {
-  main();
-} catch (err) {
+if (require.main === module) {
   try {
-    cleanDir(DIST);
-    if (fs.existsSync(DIST_BACKUP) && !fs.existsSync(FINAL_DIST)) {
-      fs.renameSync(DIST_BACKUP, FINAL_DIST);
+    main();
+  } catch (err) {
+    try {
+      cleanDir(DIST);
+      if (fs.existsSync(DIST_BACKUP) && !fs.existsSync(FINAL_DIST)) {
+        fs.renameSync(DIST_BACKUP, FINAL_DIST);
+      }
+    } catch (cleanupError) {
+      console.error(`\nBuild cleanup failed: ${cleanupError.message}`);
     }
-  } catch (cleanupError) {
-    console.error(`\nBuild cleanup failed: ${cleanupError.message}`);
+    console.error(`\nBuild failed: ${err.message}`);
+    process.exitCode = 1;
   }
-  console.error(`\nBuild failed: ${err.message}`);
-  process.exitCode = 1;
 }
+
+module.exports = { buildPage, validateConfig, copyDirContents, main };
