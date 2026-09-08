@@ -108,10 +108,11 @@ module.exports = {
       slug: 'music',
       layout: 'music',
       // The listening-room layout promoted from the music-alt review page:
-      // music-player owns the shared audio element; music-visualizer reads
+      // music-library provides metadata and markup; music-player owns the
+      // shared audio element; music-visualizer reads
       // that element after the player is initialized.
       css: ['music', 'music-stage', 'portfolio'],
-      js: ['prefetch', 'colophon-clock', 'music-player', 'music-visualizer', 'page-motion'],
+      js: ['prefetch', 'colophon-clock', 'music-library', 'music-player', 'music-visualizer', 'page-motion'],
       title: 'Game & Film Music | Igor Szuniewicz',
       // Keep the summary independent of track counts, which change with releases.
       description: 'Listen to film scores, animation cues, singles and sketches by Igor Szuniewicz, with selected pieces and a dated archive of his music.',
@@ -131,7 +132,7 @@ module.exports = {
       slug: 'music-alt',
       layout: 'music',
       css: ['music', 'music-stage'],
-      js: ['prefetch', 'colophon-clock', 'music-player', 'music-visualizer'],
+      js: ['prefetch', 'colophon-clock', 'music-library', 'music-player', 'music-visualizer'],
       title: 'Music, alternate layout | Igor Szuniewicz',
       description: 'An alternate listening-room layout of Igor Szuniewicz’s music page: eight selected pieces, a dated archive of 44 tracks, and a visualiser driven by the playing audio.',
       canonical: `${SITE}/music-alt.html`,
@@ -148,7 +149,7 @@ module.exports = {
       slug: 'music-crate',
       layout: 'music',
       css: ['music', 'music-crate'],
-      js: ['prefetch', 'colophon-clock', 'music-player'],
+      js: ['prefetch', 'colophon-clock', 'music-library', 'music-player'],
       title: 'Music, crate layout | Igor Szuniewicz',
       description: 'A cover-crate layout of Igor Szuniewicz’s music: six selected pieces in a horizontal rail, then a dated archive of all 44 tracks and sketches from 2023 to 2026.',
       canonical: `${SITE}/music-crate.html`,
@@ -165,7 +166,7 @@ module.exports = {
       slug: 'music-reel',
       layout: 'music',
       css: ['music', 'music-reel'],
-      js: ['prefetch', 'colophon-clock', 'music-player'],
+      js: ['prefetch', 'colophon-clock', 'music-library', 'music-player'],
       title: 'Music, reel layout | Igor Szuniewicz',
       description: 'A vertical reel of six selected pieces by Igor Szuniewicz, followed by a dated archive of all 44 tracks: film scores, animation cues, releases and sketches.',
       canonical: `${SITE}/music-reel.html`,

@@ -1,8 +1,9 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { Element, browser, deferred } = require('./helpers/browser-fixture.cjs');
+const { pages } = require('../site.config.cjs');
 
-function musicFixture({ first = 'Track 1', saved = null } = {}) {
+function musicFixture({ first = 'Track 1', saved = null, deferredPlayback = false, pointers = false, pageSlug = 'music' } = {}) {
   const tracks = [1, 2, 3].map(i => new Element('div', {
     'data-title': 'Track ' + i, 'data-year': '202' + (7 - i),
     'data-kind': 'release', 'data-src-e': btoa('track-' + i + '.mp3'),
@@ -10,6 +11,12 @@ function musicFixture({ first = 'Track 1', saved = null } = {}) {
   const title = new Element('span');
   const queue = new Element('ol');
   const next = new Element('button');
+  const bar = new Element();
+  const status = new Element('span');
+  const play = new Element('button');
+  const repeat = new Element('button');
+  const progress = new Element();
+  const attempts = [];
   const sheet = new Element('dialog');
   sheet.open = false;
   sheet.showModal = () => { sheet.open = true; };
@@ -19,11 +26,21 @@ function musicFixture({ first = 'Track 1', saved = null } = {}) {
   Object.assign(audio, { paused: true, ended: false, duration: 120, currentTime: 0, readyState: 4, buffered: { length: 0 } });
   audio.load = () => {};
   audio.pause = () => { audio.paused = true; };
-  audio.play = () => { audio.paused = false; return Promise.resolve(); };
+  audio.play = () => {
+    audio.paused = false;
+    if (!deferredPlayback) return Promise.resolve();
+    const attempt = deferred();
+    attempts.push(attempt);
+    return attempt.promise;
+  };
   const fixture = browser({
     '#trackData .track-card': tracks,
     '[data-featured-track]': [new Element('button', { 'data-featured-track': first })],
-    '[data-player="bar"]': [new Element()],
+    '[data-player="bar"]': [bar],
+    '[data-player="status"]': [status],
+    '[data-player="play"]': [play],
+    '[data-player="repeat"]': [repeat],
+    '[data-player="progress"]': [progress],
     '[data-player="title"]': [title],
     '[data-player="queue"]': [queue],
     '[data-player="next"]': [next],
@@ -31,9 +48,19 @@ function musicFixture({ first = 'Track 1', saved = null } = {}) {
     '[data-player="open-sheet"]': [opener],
     '[data-music-audio]': [audio],
   });
+  if (pointers) fixture.window.PointerEvent = class {};
   fixture.window.localStorage.getItem = () => saved ? JSON.stringify(saved) : null;
-  fixture.run('music-player.js');
-  return { ...fixture, title, queue, next, sheet, opener };
+  pages.find(page => page.slug === pageSlug).js.forEach(name => fixture.run(name + '.js'));
+  return { ...fixture, title, queue, next, sheet, opener, audio, bar, status, play, repeat, progress, attempts };
+}
+
+for (const page of pages.filter(page => page.layout === 'music')) {
+  test(page.slug + ' initializes the player using its configured script order', () => {
+    const fixture = musicFixture({ pageSlug: page.slug });
+    assert.equal(fixture.title.textContent, 'Track 1');
+    assert.equal(fixture.bar.hidden, false);
+    assert.equal(fixture.queue.querySelectorAll('.now-playing__queue-row').length, 2);
+  });
 }
 
 test('the initial featured selection is excluded from the upcoming queue', async () => {
@@ -63,6 +90,76 @@ test('dialog padding is not a backdrop; a genuine outside click closes the sheet
   assert.equal(fixture.sheet.open, true);
   await fixture.sheet.emit('click', { clientX: 250, clientY: 250 });
   assert.equal(fixture.sheet.open, false);
+});
+
+test('an earlier play rejection cannot overwrite a resumed track', async () => {
+  const fixture = musicFixture({ deferredPlayback: true });
+  await fixture.play.emit('click');
+  await fixture.play.emit('click'); // Pause while the first play is pending.
+  await fixture.play.emit('click');
+  fixture.attempts[1].resolve();
+  await fixture.audio.emit('playing');
+  fixture.attempts[0].reject(Object.assign(new Error('earlier play aborted'), { name: 'AbortError' }));
+  await Promise.resolve();
+  assert.equal(fixture.status.textContent, 'Playing');
+  assert.equal(fixture.bar.classList.contains('has-error'), false);
+});
+
+test('the current play rejection still presents a retryable error', async () => {
+  const fixture = musicFixture({ deferredPlayback: true });
+  await fixture.play.emit('click');
+  fixture.audio.paused = true;
+  fixture.attempts[0].reject(new Error('decoder failed'));
+  await Promise.resolve();
+  assert.equal(fixture.status.textContent, 'Playback failed. Try again.');
+  assert.equal(fixture.play.getAttribute('aria-label'), 'Retry Track 1');
+});
+
+test('loading a different track ignores the previous source play failure', async () => {
+  const fixture = musicFixture({ deferredPlayback: true });
+  await fixture.play.emit('click');
+  await fixture.next.emit('click');
+  fixture.attempts[1].resolve();
+  await fixture.audio.emit('playing');
+  fixture.attempts[0].reject(new Error('previous file failed'));
+  await Promise.resolve();
+  assert.equal(fixture.title.textContent, 'Track 2');
+  assert.equal(fixture.status.textContent, 'Playing');
+});
+
+test('play and pause preserve the existing queue controls', async () => {
+  const fixture = musicFixture();
+  const row = fixture.queue.querySelector('.now-playing__queue-row');
+  fixture.document.activeElement = row;
+  for (const event of ['play', 'playing', 'pause', 'canplay']) await fixture.audio.emit(event);
+  assert.equal(fixture.queue.querySelector('.now-playing__queue-row'), row);
+  assert.ok(fixture.queue.contains(fixture.document.activeElement));
+  await row.emit('click');
+  assert.equal(fixture.title.textContent, 'Track 2');
+});
+
+test('queue controls and the end message still update after navigation or repeat changes', async () => {
+  const fixture = musicFixture();
+  await fixture.next.emit('click');
+  assert.deepEqual(fixture.queue.querySelectorAll('.now-playing__queue-name').map(el => el.textContent), ['Track 3']);
+  await fixture.next.emit('click');
+  assert.equal(fixture.queue.textContent, 'End of the queue.');
+  await fixture.repeat.emit('click');
+  assert.equal(fixture.queue.textContent, 'End of the queue. Repeat is on, so it starts over.');
+});
+
+test('a primary mouse cannot take over an active touch seek', async () => {
+  const fixture = musicFixture({ pointers: true });
+  await fixture.progress.emit('pointerdown', { pointerId: 1, pointerType: 'touch', isPrimary: true, clientX: 60 });
+  assert.equal(fixture.audio.currentTime, 30);
+  await fixture.progress.emit('pointerdown', { pointerId: 2, pointerType: 'mouse', isPrimary: true, button: 0, clientX: 160 });
+  assert.equal(fixture.audio.currentTime, 30);
+  await fixture.progress.emit('pointermove', { pointerId: 1, clientX: 110 });
+  assert.equal(fixture.audio.currentTime, 60);
+  await fixture.progress.emit('lostpointercapture', { pointerId: 1 });
+  assert.equal(fixture.progress.classList.contains('is-scrubbing'), false);
+  await fixture.progress.emit('pointermove', { pointerId: 1, clientX: 210 });
+  assert.equal(fixture.audio.currentTime, 60);
 });
 
 function previewFixture() {
