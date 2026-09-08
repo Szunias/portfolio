@@ -16,6 +16,28 @@
 
 const SITE = 'https://igorszuniewicz.com';
 
+// Confirmed old URLs from old/public/sitemap.xml, plus archive/gradwork.html.
+// Keep explicit mappings: removed tools without an equivalent must remain 404.
+// The HTML sources use instant meta refresh + canonical + a normal fallback
+// link. These are static-host redirects, not HTTP 301 responses; see docs/SEO.md.
+const LEGACY_PATHS = [
+  ['projects', 'work'],
+  ['about', 'about'],
+  ['projects/shadow_frames', 'shadowframes'],
+  ['projects/not_today_darling', 'nottoday'],
+  ['projects/transientica_audiolab', 'transientica'],
+  ['projects/audioq', 'audioq'],
+  ['projects/amorak', 'amorak'],
+  ['projects/sound-design', 'sounddesign'],
+  ['projects/ray_animation', 'ray'],
+  ['projects/middleware-optimization', 'wwiseprojects'],
+  ['projects/akantilado', 'akantilado'],
+  ['projects/richter', 'richter'],
+  ['projects/gradwork', 'ai-audio-research'],
+  ['gradwork', 'ai-audio-research'],
+  ['projects/pause_and_deserve', 'pausedeserve'],
+];
+
 module.exports = {
   /** Explicit standalone files and compatibility URLs; archive pages stay undeployed. */
   staticCopy: [
@@ -36,6 +58,12 @@ module.exports = {
       outName: 'cv/Igor_Szuniewicz_CV.pdf',
       sitemap: false,
     },
+    // Both historical .html links and extensionless/directory URLs are served.
+    // Do not add noindex or robots Disallow: crawlers need to follow the move.
+    ...LEGACY_PATHS.flatMap(([from, target]) => [
+      { file: `src/static/redirects/${target}.html`, outName: `${from}.html`, sitemap: false },
+      { file: `src/static/redirects/${target}.html`, outName: `${from}/index.html`, sitemap: false },
+    ]),
   ],
 
   pages: [
@@ -45,9 +73,9 @@ module.exports = {
       layout: 'home',
       css: ['home', 'portfolio', 'home-hero'],
       js: ['prefetch', 'colophon-clock', 'home-showreel', 'home-waveform', 'project-previews', 'copy-email', 'page-motion'],
-      title: 'Igor Szuniewicz | Technical Sound Designer & Audio Programmer',
-      ogTitle: 'Igor Szuniewicz | Technical Sound Designer & Audio Programmer',
-      description: 'Portfolio of Igor Szuniewicz: interactive audio for games and VR in Wwise, Unreal and Unity, plus audio tools built in C++, C#, Python and Lua. Based in Graz.',
+      title: 'Game Sound Designer & Audio Programmer | Igor Szuniewicz',
+      ogTitle: 'Game Sound Designer & Audio Programmer | Igor Szuniewicz',
+      description: 'Game sound design and audio implementation in Wwise, Unreal Engine and Unity by Igor Szuniewicz. Discuss freelance projects or technical sound design roles.',
       canonical: `${SITE}/`,
       ogImage: `${SITE}/old/public/assets/images/projects-shadowframes/22_ShadowFrames_03.jpg`,
       ogImageAlt: 'Shadow Frames horror game screenshot from Igor Szuniewicz game audio portfolio',
@@ -85,7 +113,8 @@ module.exports = {
       css: ['music', 'music-stage', 'portfolio'],
       js: ['prefetch', 'colophon-clock', 'music-player', 'music-visualizer', 'page-motion'],
       title: 'Game & Film Music | Igor Szuniewicz',
-      description: 'Eight selected pieces by Igor Szuniewicz, followed by a dated archive of all 44 tracks: film scores, animation cues, releases and sketches from 2023 to 2026.',
+      // Keep the summary independent of track counts, which change with releases.
+      description: 'Listen to film scores, animation cues, singles and sketches by Igor Szuniewicz, with selected pieces and a dated archive of his music.',
       canonical: `${SITE}/music.html`,
       ogImage: `${SITE}/old/public/assets/images/social/music-1200x630.webp`,
       ogImageAlt: 'Album cover artwork for music by Igor Szuniewicz',
@@ -163,8 +192,8 @@ module.exports = {
       // copy-email handles copying; contact-actions handles mail links.
       css: ['contact', 'contact-time', 'contact-wind', 'portfolio'],
       js: ['prefetch', 'colophon-clock', 'copy-email', 'contact-actions', 'contact-clock', 'page-motion'],
-      title: 'Contact | Igor Szuniewicz',
-      description: 'Contact Igor Szuniewicz, technical sound designer and audio programmer based in Graz, Austria. Email, CV and professional profiles for game audio work.',
+      title: 'Contact Igor Szuniewicz | Freelance Game Audio & Sound Design',
+      description: 'Discuss freelance game sound design, audio implementation or studio roles with Igor Szuniewicz. Send your project, scope and timeline in English or Polish.',
       canonical: `${SITE}/contact.html`,
       // Explicit for clarity; build.cjs defaults every page to website too.
       ogType: 'website',
