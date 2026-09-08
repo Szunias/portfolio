@@ -49,7 +49,10 @@ async function loadImages(page) {
   await page.waitForFunction(() => Array.from(document.images).every((img) => img.complete), null, { timeout: 15000 });
   const broken = await page.evaluate(() => Array.from(document.images).filter((img) => !img.naturalWidth).map((img) => img.currentSrc || img.src));
   assert.deepEqual(broken, [], 'Every referenced image must load');
-  await page.evaluate(() => document.fonts.ready);
+  await page.evaluate(async () => {
+    await Promise.all(Array.from(document.images, (img) => img.decode()));
+    await document.fonts.ready;
+  });
 }
 
 async function assertTextFits(page, selector) {
@@ -73,6 +76,31 @@ async function assertTextFits(page, selector) {
     return issues;
   });
   assert.deepEqual(overflow, [], 'Text extends beyond the viewport');
+}
+
+async function recordEvidence(page, name) {
+  // Visit media before capture: full-page screenshots alone can omit decoded
+  // offscreen images, and capture a sticky header at the previous scroll offset.
+  const cards = page.locator('.wcard__media');
+  for (let i = 0; i < await cards.count(); i++) {
+    const card = cards.nth(i);
+    await card.scrollIntoViewIfNeeded();
+    const media = await card.locator('img').evaluate((img) => {
+      const box = img.getBoundingClientRect();
+      const css = getComputedStyle(img);
+      return { width: box.width, height: box.height, opacity: css.opacity, visibility: css.visibility };
+    });
+    assert.ok(media.width > 100 && media.height > 100, 'Project image must fill a real frame');
+    assert.equal(media.opacity, '1');
+    assert.equal(media.visibility, 'visible');
+    await card.screenshot({ path: path.join(output, `${name}-project-${i + 1}.png`), animations: 'disabled' });
+  }
+  await page.evaluate(() => {
+    document.activeElement?.blur();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  });
+  await page.screenshot({ path: path.join(output, `${name}.png`), fullPage: true, animations: 'disabled' });
 }
 
 async function main() {
@@ -131,9 +159,7 @@ async function main() {
       await copy.click();
       const mail = await page.locator('[data-mail-link]').getAttribute('href');
       assert.equal(await page.evaluate(() => navigator.clipboard.readText()), mail.slice(7));
-      if ([375, 768, 1440].includes(width)) {
-        await page.screenshot({ path: path.join(output, `home-${width}.png`), fullPage: true, animations: 'disabled' });
-      }
+      if ([375, 768, 1440].includes(width)) await recordEvidence(page, `home-${width}`);
       results.push({ page: 'home', width, passed: true, ...geometry });
     }
     for (const route of ['autotrim.html', '404.html']) {
@@ -144,7 +170,7 @@ async function main() {
         await assertTextFits(page, route === 'autotrim.html' ? '.cine' : '.error-page');
         if (route === 'autotrim.html') {
           assert.match(await page.locator('#at-development-title').textContent(), /queues/i);
-          await page.screenshot({ path: path.join(output, `autotrim-${width}.png`), fullPage: true, animations: 'disabled' });
+          await recordEvidence(page, `autotrim-${width}`);
         }
         results.push({ page: route, width, passed: true });
       }
