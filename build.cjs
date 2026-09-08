@@ -12,12 +12,25 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { minifyCss, assertParsableJs } = require('./scripts/build/browser-assets.cjs');
-const { schemaTags, structuredDataIssues } = require('./scripts/build/seo.cjs');
+const { schemaTags } = require('./scripts/build/seo.cjs');
 const { execFileSync } = require('child_process');
 
 const config = require('./site.config.cjs');
 const { injectStaticTrackIndex } = require('./scripts/build/music-index.cjs');
 const { checkedSource } = require('./scripts/build/source-paths.cjs');
+const { read, ensureDir, cleanDir, copySourceDirectory, publishDist } = require('./scripts/build/output-files.cjs');
+const { enforceDistBudget } = require('./scripts/build/output-budget.cjs');
+const { validateGeneratedHtml, validateSupportFiles } = require('./scripts/build/output-validation.cjs');
+const { SHARED_STYLESHEETS, CHROME_PARTIALS, pageCssNames, staticCopyEntries } = require('./scripts/build/site-inputs.cjs');
+const { escAttr, attrValue, htmlFileSlug, decodeHtmlAttr,
+  decodeBase64Attr } = require('./scripts/build/html-utils.cjs');
+const {
+  enhanceVideoAccessibility, enhanceGalleryItemLinks, enhanceExternalLinkSafety,
+  enhanceIframeAccessibility, enhanceImageAccessibility, reserveImageAspectRatio,
+  reserveFacadeAspectRatio, reserveVideoAspectRatio, enhanceDocumentBasics,
+  sanitizeStaticSnapshot, enhanceInlineSvgAccessibility, neutralizeJavascriptHrefs,
+  ensureNoindex, rewriteRootRelativeUrls, ensureFragmentTargets,
+} = require('./scripts/build/document-transforms.cjs');
 
 /** Git mtime (ISO date) for a file, or null if unavailable/untracked. */
 function gitMtime(filePath) {
@@ -52,222 +65,10 @@ const DIST = path.join(__dirname, `.dist-tmp-${BUILD_TOKEN}`);
 const DIST_BACKUP = path.join(__dirname, `.dist-backup-${BUILD_TOKEN}`);
 const SAFE_PAGE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-// Helpers
-
-function read(filePath) {
-  return fs.readFileSync(filePath, 'utf8');
-}
-
-function ensureDir(dir) {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-}
-
-function cleanDir(dir) {
-  if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
-}
-
-function listRelativeFiles(root, current = root) {
-  if (!fs.existsSync(current)) return [];
-  const files = [];
-  for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
-    const absolute = path.join(current, entry.name);
-    if (entry.isDirectory()) {
-      files.push(...listRelativeFiles(root, absolute));
-    } else if (entry.isFile()) {
-      files.push(path.relative(root, absolute));
-    }
-  }
-  return files;
-}
-
-function pruneEmptyDirectories(root, current = root) {
-  if (!fs.existsSync(current)) return;
-  for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
-    if (entry.isDirectory()) pruneEmptyDirectories(root, path.join(current, entry.name));
-  }
-  if (current !== root && fs.readdirSync(current).length === 0) fs.rmdirSync(current);
-}
-
-function filesHaveSameContent(left, right) {
-  if (!fs.existsSync(right)) return false;
-  const leftStat = fs.statSync(left);
-  const rightStat = fs.statSync(right);
-  if (!leftStat.isFile() || !rightStat.isFile() || leftStat.size !== rightStat.size) return false;
-
-  const chunkSize = 64 * 1024;
-  const leftBuffer = Buffer.allocUnsafe(chunkSize);
-  const rightBuffer = Buffer.allocUnsafe(chunkSize);
-  const leftFd = fs.openSync(left, 'r');
-  const rightFd = fs.openSync(right, 'r');
-  try {
-    let position = 0;
-    while (position < leftStat.size) {
-      const length = Math.min(chunkSize, leftStat.size - position);
-      const leftRead = fs.readSync(leftFd, leftBuffer, 0, length, position);
-      const rightRead = fs.readSync(rightFd, rightBuffer, 0, length, position);
-      if (leftRead === 0 || rightRead === 0) return false;
-      if (leftRead !== rightRead || Buffer.compare(leftBuffer.subarray(0, leftRead), rightBuffer.subarray(0, rightRead)) !== 0) return false;
-      position += leftRead;
-    }
-    return true;
-  } finally {
-    fs.closeSync(leftFd);
-    fs.closeSync(rightFd);
-  }
-}
-
-function publishDistInPlace() {
-  ensureDir(FINAL_DIST);
-  const stagedFiles = listRelativeFiles(DIST);
-  const isEntryPoint = rel => /(?:\.html|\.xml|\.txt)$/i.test(rel) || ['CNAME', '.nojekyll'].includes(rel);
-  stagedFiles.sort((left, right) => Number(isEntryPoint(left)) - Number(isEntryPoint(right)) || left.localeCompare(right));
-
-  // Assets are copied first and entry points last, so a failed copy leaves the
-  // previous HTML pointing at the previous, still-present assets.
-  for (const rel of stagedFiles) {
-    const source = path.join(DIST, rel);
-    const target = path.join(FINAL_DIST, rel);
-    ensureDir(path.dirname(target));
-    if (!filesHaveSameContent(source, target)) fs.copyFileSync(source, target);
-  }
-
-  const stagedSet = new Set(stagedFiles.map(rel => rel.replace(/\\/g, '/')));
-  for (const rel of listRelativeFiles(FINAL_DIST)) {
-    if (!stagedSet.has(rel.replace(/\\/g, '/'))) fs.rmSync(path.join(FINAL_DIST, rel), { force: true });
-  }
-  pruneEmptyDirectories(FINAL_DIST);
-  cleanDir(DIST);
-  console.warn('  ! dist directory was locked; published the validated build in place');
-}
-
-function publishDist() {
-  const hadPreviousDist = fs.existsSync(FINAL_DIST);
-  if (hadPreviousDist) {
-    try {
-      fs.renameSync(FINAL_DIST, DIST_BACKUP);
-    } catch (moveError) {
-      if (process.platform === 'win32' && ['EBUSY', 'EPERM', 'EACCES'].includes(moveError.code)) {
-        publishDistInPlace();
-        return;
-      }
-      throw moveError;
-    }
-  }
-
-  try {
-    fs.renameSync(DIST, FINAL_DIST);
-  } catch (publishError) {
-    if (hadPreviousDist && fs.existsSync(DIST_BACKUP) && !fs.existsSync(FINAL_DIST)) {
-      try {
-        fs.renameSync(DIST_BACKUP, FINAL_DIST);
-      } catch (restoreError) {
-        throw new Error(
-          `Could not publish the staged build (${publishError.message}) or restore the previous dist (${restoreError.message}); previous output remains at ${path.basename(DIST_BACKUP)}`
-        );
-      }
-    }
-    throw publishError;
-  }
-
-  if (hadPreviousDist) {
-    try {
-      cleanDir(DIST_BACKUP);
-    } catch (cleanupError) {
-      console.warn(`  ! published dist, but could not remove ${path.basename(DIST_BACKUP)}: ${cleanupError.message}`);
-    }
-  }
-}
-
+/** Copy repository-owned assets; keep the entry-point API used by fixtures. */
 function copyDirContents(srcDir, destDir) {
-  if (!fs.existsSync(srcDir)) return 0;
-  srcDir = checkedSource(__dirname, srcDir, 'directory');
-  ensureDir(destDir);
-  let copied = 0;
-  for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
-    const src = path.join(srcDir, entry.name);
-    const dest = path.join(destDir, entry.name);
-    if (entry.isDirectory()) {
-      copied += copyDirContents(src, dest);
-    } else if (entry.isFile()) {
-      fs.copyFileSync(checkedSource(__dirname, src), dest);
-      copied++;
-    } else {
-      throw new Error(`Unsupported source asset: ${path.relative(__dirname, src)}`);
-    }
-  }
-  return copied;
+  return copySourceDirectory(__dirname, srcDir, destDir);
 }
-
-function byteSizeLabel(bytes) {
-  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-}
-
-function collectFileSizes(dir, base = dir) {
-  if (!fs.existsSync(dir)) return [];
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-  const files = [];
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      files.push(...collectFileSizes(fullPath, base));
-    } else if (entry.isFile()) {
-      const size = fs.statSync(fullPath).size;
-      files.push({ path: path.relative(base, fullPath).replace(/\\/g, '/'), size });
-    }
-  }
-  return files;
-}
-
-function enforceDistBudget() {
-  const files = collectFileSizes(DIST);
-  const total = files.reduce((sum, file) => sum + file.size, 0);
-  // GitHub Pages hard limit is 1 GB; 700 MB keeps ~300 MB headroom
-  // (raised from 650 MB when the 54-track Evolution section landed).
-  const maxTotal = 700 * 1024 * 1024;
-  // GitHub blocks individual files at 100 MB; 80 MB keeps real headroom below
-  // that (raised from 65 MB when the 2026 showreel master reached 63.65 MB and
-  // sat 1.35 MB under the old cap, one re-render away from blocking deploys).
-  const maxFile = 80 * 1024 * 1024;
-  const largestFiles = files.slice().sort((a, b) => b.size - a.size);
-  const largest = largestFiles[0];
-  if (total > maxTotal) {
-    throw new Error(`dist is ${byteSizeLabel(total)}, above the ${byteSizeLabel(maxTotal)} deploy budget`);
-  }
-  if (largest && largest.size > maxFile) {
-    throw new Error(`${largest.path} is ${byteSizeLabel(largest.size)}, above the ${byteSizeLabel(maxFile)} single-file budget`);
-  }
-  console.log(`  → deploy size budget OK (${files.length} files, ${byteSizeLabel(total)}${largest ? `, largest ${byteSizeLabel(largest.size)}` : ''})`);
-  // The hard failures above give no advance notice, so shout while there is
-  // still room to act instead of on the first build that crosses the line.
-  if (total > maxTotal * 0.9) {
-    console.warn(`  ! dist total ${byteSizeLabel(total)} is above 90% of the ${byteSizeLabel(maxTotal)} deploy budget`);
-  }
-  for (const file of largestFiles) {
-    if (file.size <= maxFile * 0.9) break;
-    console.warn(`  ! ${file.path} ${byteSizeLabel(file.size)} is above 90% of the ${byteSizeLabel(maxFile)} single-file budget`);
-  }
-  const heavyFiles = largestFiles
-    .filter(file => file.size >= 20 * 1024 * 1024)
-    .slice(0, 5);
-  if (heavyFiles.length) {
-    console.log(`  → largest assets: ${heavyFiles.map(file => `${file.path} ${byteSizeLabel(file.size)}`).join('; ')}`);
-  }
-}
-
-/** Escape characters that break HTML attribute values. Order matters: & first. */
-function escAttr(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-
-function escapeRegExp(value) {
-  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-const EMPTY_INLINE_SCRIPT_PATTERN = String.raw`<script\b(?![^>]*\ssrc\s*=)[^>]*>\s*<\/script>`;
 
 /** Generate OG + Twitter meta tags from page config. */
 function ogTags(page) {
@@ -303,324 +104,6 @@ function ogTags(page) {
   return lines.join('\n');
 }
 
-function stripTags(html) {
-  return decodeHtmlAttr(html
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/<[^>]+>/g, ' '))
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function attrValue(tag, name) {
-  // (?<![\w-]) keeps e.g. name="src" from matching data-src= (\b matches after "-").
-  const match = tag.match(new RegExp(`(?<![\\w-])${name}=(["'])(.*?)\\1`, 'i'));
-  return match ? match[2] : '';
-}
-
-function hasAttr(attrs, name) {
-  return new RegExp(`(?:^|\\s)${escapeRegExp(name)}(?=\\s|=|/?>|$)`, 'i').test(attrs);
-}
-
-function htmlFileSlug(href) {
-  return href.replace(/[?#].*$/, '').replace(/\.html$/i, '');
-}
-
-function videoLabelFromContext(prefix) {
-  const headings = [...prefix.matchAll(/<h[23]\b[^>]*>([\s\S]*?)<\/h[23]>/gi)];
-  if (headings.length) {
-    const text = stripTags(headings[headings.length - 1][1]);
-    if (text) return `Video: ${text}`;
-  }
-  return 'Project video';
-}
-
-function enhanceVideoAccessibility(html) {
-  let counter = 0;
-  const usedIds = new Set([...html.matchAll(/(?<![\w-])id=(["'])(.*?)\1/gi)]
-    .map(match => decodeHtmlAttr(match[2])));
-  let output = html.replace(
-    /(<video\b(?=[^>]*\bcontrols\b)(?![^>]*\baria-describedby=)([^>]*)>[\s\S]*?<\/video>)(\s*<\/div>\s*<p\s+class="video-caption")([^>]*>)/gi,
-    (match, videoHtml, attrs, captionStart, captionAttrs) => {
-      const existingId = decodeHtmlAttr(attrValue(captionAttrs, 'id'));
-      let id = existingId;
-      if (!id) {
-        do { id = `video-caption-${++counter}`; } while (usedIds.has(id));
-        usedIds.add(id);
-      }
-      const describedVideo = videoHtml.replace(/<video\b/i, () => `<video aria-describedby="${escAttr(id)}"`);
-      const describedCaptionStart = existingId
-        ? captionStart
-        : `${captionStart} id="${escAttr(id)}"`;
-      const remainingAttrs = existingId ? captionAttrs : captionAttrs.replace(/\s+id=(["'])\1/i, '');
-      return describedVideo + describedCaptionStart + remainingAttrs;
-    }
-  );
-
-  output = output.replace(/<video\b(?=[^>]*\bcontrols\b)(?![^>]*\baria-label=)(?![^>]*\baria-labelledby=)(?![^>]*\baria-describedby=)([^>]*)>/gi, (match, attrs, offset) => {
-    const context = output.slice(Math.max(0, offset - 2500), offset);
-    return `<video aria-label="${escAttr(videoLabelFromContext(context))}"${attrs}>`;
-  });
-
-  return output;
-}
-
-function assertGalleryItemMarkup(html) {
-  const stack = [];
-  const tagPattern = /<\/?div\b[^>]*>/gi;
-  let match;
-  while ((match = tagPattern.exec(html))) {
-    const tag = match[0];
-    const isClosing = /^<\//.test(tag);
-    if (isClosing) {
-      stack.pop();
-      continue;
-    }
-
-    const className = decodeHtmlAttr(attrValue(tag, 'class'));
-    const isGalleryItem = /\bgallery-item\b/.test(className);
-    const parentGalleryItem = stack.find(entry => entry.isGalleryItem);
-    if (parentGalleryItem) {
-      throw new Error(
-        `gallery-item markup must not contain nested <div> elements; use span/figure-safe inline markup near offset ${match.index}`
-      );
-    }
-    stack.push({ isGalleryItem });
-  }
-}
-
-function enhanceGalleryItemLinks(html) {
-  assertGalleryItemMarkup(html);
-  return html.replace(/<div\b([^>]*\bclass=(["'])[^"']*\bgallery-item\b[^"']*\2[^>]*)>([\s\S]*?)<\/div>/gi, (match, attrs, quote, inner) => {
-    const linkAttrs = attrs
-      .replace(/\s+role=(["'])button\1/gi, '')
-      .replace(/\s+tabindex=(["'])0\1/gi, '');
-    const image = inner.match(/<img\b[^>]*>/i);
-    const href = image ? attrValue(image[0], 'src') : '';
-    if (!href) throw new Error('gallery-item is missing an image source');
-    return `<a${linkAttrs} href="${escAttr(href)}">${inner}</a>`;
-  });
-}
-
-function enhanceExternalLinkSafety(html) {
-  return html.replace(/<a\b([^>]*\btarget=(["'])_blank\2[^>]*)>/gi, (match, attrs) => {
-    const rel = attrs.match(/\brel=(["'])(.*?)\1/i);
-    if (!rel) return `<a${attrs} rel="noopener noreferrer">`;
-
-    const tokens = rel[2].split(/\s+/).filter(Boolean);
-    for (const token of ['noopener', 'noreferrer']) {
-      if (!tokens.some(existing => existing.toLowerCase() === token)) tokens.push(token);
-    }
-    const nextRel = `rel=${rel[1]}${tokens.join(' ')}${rel[1]}`;
-    return `<a${attrs.replace(rel[0], nextRel)}>`;
-  });
-}
-
-function enhanceIframeAccessibility(html) {
-  return html.replace(/<iframe\b([^>]*)>/gi, (match, attrs) => {
-    let next = attrs;
-    if (!hasAttr(next, 'loading')) next = ` loading="lazy"${next}`;
-    if (!hasAttr(next, 'title')) next = ` title="Embedded content"${next}`;
-    return `<iframe${next}>`;
-  });
-}
-
-function enhanceImageAccessibility(html) {
-  let imageIndex = 0;
-  return html.replace(/<img\b([^>]*)>/gi, (match, attrs) => {
-    let next = attrs;
-    const isFirstImage = imageIndex === 0;
-    imageIndex += 1;
-    if (!hasAttr(next, 'alt')) next = ` alt=""${next}`;
-    if (!hasAttr(next, 'decoding')) next = ` decoding="async"${next}`;
-    if (!isFirstImage && !hasAttr(next, 'loading')) next = ` loading="lazy"${next}`;
-    return `<img${next}>`;
-  });
-}
-
-/* Captures whose CSS clears the 16/10 tile ratio need their own ratio back, or
-   they occupy 2px until they load: the page shifts as they arrive and a fast
-   phone scroll can leave them blank, because a 2px box never stays in view long
-   enough to start the lazy load. Chrome derives no usable ratio from the width
-   and height attributes once a stylesheet sets aspect-ratio, and `revert` does
-   not restore it, so the ratio travels as a custom property the stylesheet
-   reads. Images without both attributes keep the per-component fallback. */
-function reserveImageAspectRatio(html) {
-  return html.replace(/<img\b([^>]*)>/gi, (match, attrs) => {
-    if (/--shot-ar\s*:/i.test(attrs)) return match;
-    const width = Number(attrValue(match, 'width'));
-    const height = Number(attrValue(match, 'height'));
-    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return match;
-    /* --shot-w is the same measurement in the other direction: a tile that
-       stretches a 379px capture to 527px invents detail the file never had.
-       The stylesheet caps max-width with it, so small captures sit at their
-       own size instead of being upscaled. */
-    const ratio = `--shot-ar:${width}/${height};--shot-w:${width}px`;
-    if (hasAttr(attrs, 'style')) {
-      return `<img${attrs.replace(/\bstyle=(["'])([\s\S]*?)\1/i, (styleMatch, quote, value) => (
-        `style=${quote}${ratio};${value}${quote}`
-      ))}>`;
-    }
-    return `<img style="${ratio}"${attrs}>`;
-  });
-}
-
-/* The click-to-load YouTube facade is a bare <div>: its poster is positioned
-   to fill it, so the box has no intrinsic ratio of its own and the stylesheet
-   had to hardcode 16/9. AudioQ's poster is 1280x848 (1.51), so the hardcoded
-   box cropped roughly 15% of its height with object-fit and the frame resized
-   the moment the real player mounted. Hand the facade the poster's own ratio
-   through the same custom property the image pass uses. */
-function reserveFacadeAspectRatio(html) {
-  return html.replace(/<div\b([^>]*\bdata-yt-facade\b[^>]*)>([\s\S]*?)(<img\b[^>]*>)/gi, (match, attrs, between, img) => {
-    if (/--shot-ar\s*:/i.test(attrs)) return match;
-    // The first image after the opening tag has to still be inside the facade.
-    if (/<\/div>|<div\b/i.test(between)) return match;
-    const width = Number(attrValue(img, 'width'));
-    const height = Number(attrValue(img, 'height'));
-    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return match;
-    const ratio = `--shot-ar:${width}/${height}`;
-    const nextAttrs = hasAttr(attrs, 'style')
-      ? attrs.replace(/\bstyle=(["'])([\s\S]*?)\1/i, (styleMatch, quote, value) => (
-        `style=${quote}${ratio};${value}${quote}`
-      ))
-      : ` style="${ratio}"${attrs}`;
-    return `<div${nextAttrs}>${between}${img}`;
-  });
-}
-
-/* Minimal header readers for the three raster formats posters use. Returns
-   { width, height } or null when the file is missing or not recognised. */
-function readImageSize(absPath) {
-  let buf;
-  try {
-    buf = fs.readFileSync(absPath);
-  } catch (_) {
-    return null;
-  }
-  if (buf.length > 24 && buf.readUInt32BE(0) === 0x89504e47) {
-    return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
-  }
-  if (buf.length > 4 && buf[0] === 0xff && buf[1] === 0xd8) {
-    let i = 2;
-    while (i + 9 < buf.length) {
-      if (buf[i] !== 0xff) { i++; continue; }
-      const marker = buf[i + 1];
-      if (marker === 0xff) { i++; continue; }
-      // SOF0-SOF15 minus the non-frame markers DHT (C4), JPG (C8), DAC (CC).
-      if (marker >= 0xc0 && marker <= 0xcf && marker !== 0xc4 && marker !== 0xc8 && marker !== 0xcc) {
-        return { width: buf.readUInt16BE(i + 7), height: buf.readUInt16BE(i + 5) };
-      }
-      if (marker === 0xd8 || (marker >= 0xd0 && marker <= 0xd9)) { i += 2; continue; }
-      i += 2 + buf.readUInt16BE(i + 2);
-    }
-    return null;
-  }
-  if (buf.length > 30 && buf.toString('ascii', 0, 4) === 'RIFF' && buf.toString('ascii', 8, 12) === 'WEBP') {
-    const chunk = buf.toString('ascii', 12, 16);
-    if (chunk === 'VP8 ') {
-      return { width: buf.readUInt16LE(26) & 0x3fff, height: buf.readUInt16LE(28) & 0x3fff };
-    }
-    if (chunk === 'VP8L') {
-      const b0 = buf[21], b1 = buf[22], b2 = buf[23], b3 = buf[24];
-      return {
-        width: 1 + (((b1 & 0x3f) << 8) | b0),
-        height: 1 + (((b3 & 0x0f) << 10) | (b2 << 2) | ((b1 & 0xc0) >> 6)),
-      };
-    }
-    if (chunk === 'VP8X') {
-      return { width: 1 + buf.readUIntLE(24, 3), height: 1 + buf.readUIntLE(27, 3) };
-    }
-  }
-  return null;
-}
-
-/* Videos got none of the reservation images get above: no width/height in the
-   markup and no intrinsic size until the poster paints, so on a slow
-   connection the box could collapse and shift the page. Read the poster's
-   real dimensions off disk and hand the element the same --shot-ar custom
-   property the stylesheets already consume for images and facades. Videos
-   with a hand-set ratio (the video's own frame size where it differs from
-   the poster crop) are left alone. */
-function reserveVideoAspectRatio(html) {
-  return html.replace(/<video\b([^>]*)>/gi, (match, attrs) => {
-    if (/--shot-ar\s*:/i.test(attrs)) return match;
-    const poster = attrValue(match, 'poster');
-    if (!poster || /^(data:|https?:|\/\/)/i.test(poster)) return match;
-    const size = readImageSize(path.join(__dirname, poster.replace(/^\/+/, '').split('?')[0]));
-    if (!size || !size.width || !size.height) return match;
-    const ratio = `--shot-ar:${size.width}/${size.height}`;
-    if (hasAttr(attrs, 'style')) {
-      return `<video${attrs.replace(/\bstyle=(["'])([\s\S]*?)\1/i, (styleMatch, quote, value) => (
-        `style=${quote}${ratio};${value}${quote}`
-      ))}>`;
-    }
-    return `<video style="${ratio}"${attrs}>`;
-  });
-}
-
-function enhanceDocumentBasics(html) {
-  let output = html;
-  output = output.replace(new RegExp(EMPTY_INLINE_SCRIPT_PATTERN, 'gi'), '');
-  output = output.replace(/<html\b([^>]*)>/i, (match, attrs) => (
-    hasAttr(attrs, 'lang') ? match : `<html lang="en"${attrs}>`
-  ));
-  if (!/<meta\b(?=[^>]*(?<![\w-])name=(["'])viewport\1)/i.test(output) && /<\/head>/i.test(output)) {
-    output = output.replace(/<\/head>/i, '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n</head>');
-  }
-  return output;
-}
-
-function sanitizeStaticSnapshot(html) {
-  return html
-    .replace(/[\u2014\u2013]/g, '-')
-    .replace(/\u2500/g, '-')
-    .replace(/<script\b[\s\S]*?<\/script>/gi, '')
-    .replace(/<noscript\b[\s\S]*?<\/noscript>/gi, '')
-    .replace(/<form\b[\s\S]*?<\/form>/gi, '')
-    .replace(/\s+on[a-z]+\s*=\s*(["'])[\s\S]*?\1/gi, '')
-    .replace(/\s+on[a-z]+\s*=\s*[^\s>]+/gi, '');
-}
-
-function enhanceInlineSvgAccessibility(html) {
-  // Split additions: an svg that already carries focusable="false" in the
-  // source must not receive a second copy of the attribute.
-  return html.replace(/<svg\b(?![^>]*\baria-hidden=)(?![^>]*\brole=)([^>]*)>/gi, (match, attrs) => {
-    const focusable = /\bfocusable=/i.test(attrs) ? '' : ' focusable="false"';
-    return `<svg aria-hidden="true"${focusable}${attrs}>`;
-  });
-}
-
-function neutralizeJavascriptHrefs(html) {
-  if (!/\bhref=(["'])javascript:[^"']*\1/i.test(html)) return html;
-  let output = html;
-  if (!/(?<![\w-])id=(["'])top\1/i.test(output)) {
-    output = output.replace(/<body\b[^>]*>/i, '$&\n<span id="top" hidden></span>');
-  }
-  return output.replace(/\bhref=(["'])javascript:[^"']*\1/gi, 'href="#top"');
-}
-
-function ensureNoindex(html) {
-  const cleaned = html.replace(/<meta\b(?=[^>]*(?<![\w-])name=["']robots["'])[^>]*>\s*/gi, '');
-  if (/<\/head>/i.test(html)) {
-    return cleaned.replace(/<\/head>/i, '  <meta name="robots" content="noindex, nofollow">\n</head>');
-  }
-  return cleaned;
-}
-
-function decodeHtmlAttr(value) {
-  return String(value)
-    .replace(/&#(?:x([0-9a-f]+)|(\d+));/gi, (entity, hex, decimal) => {
-      const codePoint = Number.parseInt(hex || decimal, hex ? 16 : 10);
-      try { return String.fromCodePoint(codePoint); } catch (_) { return entity; }
-    })
-    .replace(/&(amp|quot|apos|lt|gt|nbsp|ndash|mdash|lsquo|rsquo|ldquo|rdquo|hellip|middot);/gi, (entity, name) => ({
-      amp: '&', quot: '"', apos: "'", lt: '<', gt: '>', nbsp: ' ',
-      ndash: '–', mdash: '—', lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”',
-      hellip: '…', middot: '·',
-    })[name.toLowerCase()] || entity);
-}
-
 function urlPathname(value, siteOrigin) {
   const raw = decodeHtmlAttr(value).trim();
   if (!raw || raw.startsWith('#')) return null;
@@ -633,18 +116,6 @@ function urlPathname(value, siteOrigin) {
     const noHash = raw.split('#')[0].split('?')[0];
     if (!noHash) return null;
     try { return decodeURIComponent(noHash); } catch (_) { return noHash; }
-  }
-}
-
-function decodeBase64Attr(value) {
-  const raw = decodeHtmlAttr(value).trim();
-  if (!raw) return '';
-  try {
-    // Match music-player.js: Buffer.from(base64) accepts corrupt encodings
-    // that the browser rejects, and UTF-8 decoding changes atob's byte string.
-    return atob(raw).trim();
-  } catch (_) {
-    return '';
   }
 }
 
@@ -760,255 +231,6 @@ function validateLocalRefsInDist(htmlFiles, siteOrigin) {
   }
 }
 
-function collectFragmentTargets(html) {
-  const ids = [...html.matchAll(/(?<![\w-])id=(["'])(.*?)\1/gi)].map(match => match[2]);
-  return new Set(ids.concat(
-    [...html.matchAll(/(?<![\w-])name=(["'])(.*?)\1/gi)].map(match => match[2])
-  ));
-}
-
-function decodeFragment(fragment) {
-  try {
-    return decodeURIComponent(fragment);
-  } catch (_) {
-    return fragment;
-  }
-}
-
-function validateGeneratedHtml(htmlFiles) {
-  const issues = [];
-  const htmlFileSet = new Set(htmlFiles);
-  const pageByFile = new Map(config.pages.map(page => [`${page.slug}.html`, page]));
-  const htmlByFile = new Map(htmlFiles.map(file => [file, read(path.join(DIST, file))]));
-  const fragmentTargetsByFile = new Map(
-    [...htmlByFile.entries()].map(([file, html]) => [file, collectFragmentTargets(html)])
-  );
-  for (const file of htmlFiles) {
-    const html = htmlByFile.get(file);
-    if (!/<html\b[^>]*\blang=(["'])[^"']+\1/i.test(html)) issues.push(`${file}: html missing lang`);
-    if (!/<meta\b(?=[^>]*(?<![\w-])name=(["'])viewport\1)/i.test(html)) issues.push(`${file}: missing viewport meta`);
-    if (new RegExp(EMPTY_INLINE_SCRIPT_PATTERN, 'i').test(html)) issues.push(`${file}: empty inline script block`);
-    if (/<!--\s*(?:TITLE|DESCRIPTION|CANONICAL|OG_TAGS|CSS|CONTENT|JS|SCHEMA|PLAYER|LIGHTBOX|FOOTER)\s*-->/.test(html)) {
-      issues.push(`${file}: unresolved build placeholder`);
-    }
-    for (const issue of structuredDataIssues(html, pageByFile.get(file), new URL(config.pages[0].canonical).origin)) {
-      issues.push(`${file}: ${issue}`);
-    }
-    const ids = [...html.matchAll(/(?<![\w-])id=(["'])(.*?)\1/gi)].map(match => match[2]);
-    const fragmentTargets = fragmentTargetsByFile.get(file);
-    const duplicateId = ids.find((id, index) => ids.indexOf(id) !== index);
-    if (duplicateId) issues.push(`${file}: duplicate id "${duplicateId}"`);
-    const isNoindex = /<meta\b(?=[^>]*(?<![\w-])name=(["'])robots\1)(?=[^>]*\bcontent=(["'])[^"']*\bnoindex\b[^"']*\2)/i.test(html);
-    const pageConfig = pageByFile.get(file);
-
-    if (pageConfig) {
-      if (Boolean(pageConfig.noindex) !== isNoindex) {
-        issues.push(`${file}: robots directive does not match site.config.cjs`);
-      }
-      const titles = [...html.matchAll(/<title\b[^>]*>([\s\S]*?)<\/title>/gi)].map(match => stripTags(match[1]));
-      if (titles.length !== 1 || !titles[0]) issues.push(`${file}: expected exactly one non-empty title`);
-      const descriptions = [...html.matchAll(/<meta\b(?=[^>]*(?<![\w-])name=(["'])description\1)[^>]*>/gi)];
-      if (descriptions.length !== 1 || !attrValue(descriptions[0][0], 'content')) {
-        issues.push(`${file}: expected exactly one non-empty meta description`);
-      }
-      const canonicals = [...html.matchAll(/<link\b(?=[^>]*\brel=(["'])canonical\1)[^>]*>/gi)];
-      const canonical = canonicals.length === 1 ? decodeHtmlAttr(attrValue(canonicals[0][0], 'href')) : '';
-      if (canonicals.length !== 1 || canonical !== pageConfig.canonical) {
-        issues.push(`${file}: canonical mismatch in generated HTML`);
-      }
-      const ogUrls = [...html.matchAll(/<meta\b(?=[^>]*\bproperty=(["'])og:url\1)[^>]*>/gi)]
-        .map(match => decodeHtmlAttr(attrValue(match[0], 'content')));
-      if (ogUrls.length !== 1 || ogUrls[0] !== pageConfig.canonical) {
-        issues.push(`${file}: og:url mismatch in generated HTML`);
-      }
-    }
-
-    if (pageConfig || !isNoindex) {
-      for (const match of html.matchAll(/<([a-z][\w:-]*)\b[^>]*>/gi)) {
-        const tag = match[0];
-        for (const attr of ['aria-labelledby', 'aria-describedby', 'aria-controls', 'aria-owns', 'aria-activedescendant', 'for']) {
-          const value = attrValue(tag, attr);
-          if (!value) continue;
-          for (const idRef of decodeHtmlAttr(value).trim().split(/\s+/).filter(Boolean)) {
-            if (!fragmentTargets.has(idRef)) {
-              issues.push(`${file}: ${attr} references missing id "${idRef}"`);
-            }
-          }
-        }
-      }
-    }
-
-    for (const match of html.matchAll(/\b(?:href|src|poster|action|data-src|data-cover)=["']([^"']+)["']/gi)) {
-      const value = decodeHtmlAttr(match[1]).trim();
-      if (/^javascript:/i.test(value)) issues.push(`${file}: disallowed javascript: URL`);
-      if ((pageConfig || !isNoindex) && /^http:\/\//i.test(value)) issues.push(`${file}: insecure http URL ${value}`);
-    }
-    for (const match of html.matchAll(/\bdata-src-e=["']([^"']+)["']/gi)) {
-      const value = decodeBase64Attr(match[1]).trim();
-      if (!value) issues.push(`${file}: invalid data-src-e value`);
-      if (/^javascript:/i.test(value)) issues.push(`${file}: disallowed encoded javascript: URL`);
-      if ((pageConfig || !isNoindex) && /^http:\/\//i.test(value)) issues.push(`${file}: insecure encoded http URL ${value}`);
-    }
-
-    for (const match of html.matchAll(/<a\b[^>]*\bhref=(["'])(.*?)\1[^>]*>/gi)) {
-      const href = decodeHtmlAttr(match[2]).trim();
-      if (href === '#') {
-        issues.push(`${file}: placeholder href="#"`);
-        continue;
-      }
-      if (/^(https?:|mailto:|tel:|data:|feed:)/i.test(href) || href.startsWith('//')) continue;
-      const localPath = href.split('#')[0].split('?')[0];
-      const localFile = localPath === '/'
-        ? 'index.html'
-        : localPath.replace(/^\/+/, '');
-      const hash = href.includes('#') ? href.split('#')[1] : '';
-      if (localFile.endsWith('.html') && !htmlFileSet.has(localFile)) {
-        issues.push(`${file}: broken local page link ${href}`);
-      }
-      if (hash) {
-        const targetId = decodeFragment(hash);
-        if ((!localFile || localFile === file) && !fragmentTargets.has(targetId)) {
-          issues.push(`${file}: missing same-page fragment ${href}`);
-        } else if (localFile.endsWith('.html') && htmlFileSet.has(localFile)) {
-          const targetFragments = fragmentTargetsByFile.get(localFile);
-          if (targetFragments && !targetFragments.has(targetId)) {
-            issues.push(`${file}: missing cross-page fragment ${href}`);
-          }
-        }
-      }
-    }
-
-    for (const match of html.matchAll(/<a\b[^>]*>/gi)) {
-      const tag = match[0];
-      if (/\btarget=(["'])_blank\1/i.test(tag) && !/\brel=(["'])[^"']*\bnoopener\b/i.test(tag)) {
-        issues.push(`${file}: target="_blank" link missing noopener`);
-      }
-    }
-
-    for (const match of html.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/gi)) {
-      const tag = match[0];
-      const text = stripTags(match[1]);
-      if (!/\btype=(["'])(?:button|submit|reset)\1/i.test(tag)) {
-        issues.push(`${file}: button missing explicit type`);
-      }
-      if (!text && !/\baria-label=(["'])[^"']+\1/i.test(tag) && !/\btitle=(["'])[^"']+\1/i.test(tag)) {
-        issues.push(`${file}: button missing accessible name`);
-      }
-    }
-
-    if (pageConfig || !isNoindex) {
-      for (const match of html.matchAll(/<img\b[^>]*>/gi)) {
-        const tag = match[0];
-        const isLightboxImage = /\bdata-lightbox-image\b/i.test(tag);
-        const isAriaHidden = /\baria-hidden=(["'])true\1/i.test(tag);
-        if (!/\bsrc=(["'])[^"']+\1/i.test(tag) && !isLightboxImage) {
-          issues.push(`${file}: image missing src`);
-        }
-        if (/\balt=(["'])\1/i.test(tag) && !isAriaHidden && !isLightboxImage) {
-          issues.push(`${file}: empty image alt without aria-hidden`);
-        }
-      }
-    }
-
-    for (const match of html.matchAll(/<iframe\b[^>]*>/gi)) {
-      const tag = match[0];
-      if (!/\btitle=(["'])[^"']+\1/i.test(tag)) issues.push(`${file}: iframe missing title`);
-      if (!/\bloading=(["'])lazy\1/i.test(tag)) issues.push(`${file}: iframe missing lazy loading`);
-    }
-
-    for (const match of html.matchAll(/<video\b[^>]*\bcontrols\b[^>]*>[\s\S]*?<\/video>/gi)) {
-      const tag = match[0];
-      const openTag = tag.match(/<video\b[^>]*>/i)?.[0] || '';
-      const sources = [...tag.matchAll(/<source\b[^>]*>/gi)].map(source => source[0]);
-      if (!attrValue(openTag, 'poster')) {
-        issues.push(`${file}: controls video missing poster`);
-      }
-      if (!/\bpreload=(["'])none\1/i.test(openTag)) {
-        issues.push(`${file}: controls video must use preload="none"`);
-      }
-      if (!sources.length && !attrValue(openTag, 'src')) {
-        issues.push(`${file}: controls video missing source`);
-      }
-      for (const source of sources) {
-        if (!attrValue(source, 'src')) issues.push(`${file}: video source missing src`);
-        if (!/^video\//i.test(attrValue(source, 'type'))) issues.push(`${file}: video source missing video/* type`);
-      }
-      if (!/\baria-(?:label|labelledby|describedby)=/i.test(tag)) {
-        issues.push(`${file}: controls video missing accessible label or description`);
-      }
-    }
-
-    for (const match of html.matchAll(/<audio\b[^>]*>/gi)) {
-      const tag = match[0];
-      // The music player selects a source from validated data-src-e track data.
-      const managedByMusicPlayer = hasAttr(tag, 'data-music-audio') &&
-        pageConfig?.layout === 'music' && pageConfig.js.includes('music-player') && !hasAttr(tag, 'controls');
-      if (!attrValue(tag, 'src') && !managedByMusicPlayer) issues.push(`${file}: audio element missing src`);
-      if (!/\bpreload=(["'])none\1/i.test(tag)) issues.push(`${file}: audio element must use preload="none"`);
-    }
-  }
-
-  if (issues.length) {
-    throw new Error(`Generated HTML validation failed:\n  - ${issues.slice(0, 30).join('\n  - ')}${issues.length > 30 ? `\n  ...and ${issues.length - 30} more` : ''}`);
-  }
-}
-
-function validateSupportFiles(siteOrigin, copiedStatic) {
-  const issues = [];
-  const sitemapPath = path.join(DIST, 'sitemap.xml');
-  const robotsPath = path.join(DIST, 'robots.txt');
-  const sitemap = fs.existsSync(sitemapPath) ? read(sitemapPath) : '';
-  const robots = fs.existsSync(robotsPath) ? read(robotsPath) : '';
-
-  if (!sitemap) issues.push('sitemap.xml is missing');
-  if (!robots) issues.push('robots.txt is missing');
-  if (sitemap && !/^<\?xml version="1\.0" encoding="UTF-8"\?>/.test(sitemap)) {
-    issues.push('sitemap.xml missing XML declaration');
-  }
-  if (sitemap && !/<urlset\b[^>]*xmlns=(["'])http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9\1/i.test(sitemap)) {
-    issues.push('sitemap.xml missing sitemap namespace');
-  }
-
-  const sitemapLocs = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => decodeHtmlAttr(match[1]));
-  const expectedLocs = config.pages
-    .filter(page => page.sitemap !== false && !page.noindex)
-    .map(page => page.canonical)
-    .concat(
-      copiedStatic
-        .filter(entry => entry.sitemap !== false)
-        .map(entry => `${siteOrigin}/${entry.outName}`)
-    );
-  const duplicateLoc = sitemapLocs.find((loc, index) => sitemapLocs.indexOf(loc) !== index);
-  const missingLocs = expectedLocs.filter(loc => !sitemapLocs.includes(loc));
-  const extraLocs = sitemapLocs.filter(loc => !expectedLocs.includes(loc));
-  if (duplicateLoc) issues.push(`sitemap.xml duplicate URL ${duplicateLoc}`);
-  if (missingLocs.length) issues.push(`sitemap.xml missing URL(s): ${missingLocs.join(', ')}`);
-  if (extraLocs.length) issues.push(`sitemap.xml has unexpected URL(s): ${extraLocs.join(', ')}`);
-
-  if (robots && !new RegExp(`^Sitemap:\\s*${escapeRegExp(siteOrigin)}\\/sitemap\\.xml\\s*$`, 'm').test(robots)) {
-    issues.push('robots.txt missing canonical sitemap URL');
-  }
-
-  const cnameHost = new URL(config.pages[0].canonical).hostname;
-  const cnamePath = path.join(DIST, 'CNAME');
-  if (cnameHost && !cnameHost.endsWith('.github.io')) {
-    const cname = fs.existsSync(cnamePath) ? read(cnamePath).trim() : '';
-    if (cname !== cnameHost) issues.push(`CNAME mismatch: expected ${cnameHost}, got ${cname || 'missing'}`);
-  }
-
-  if (issues.length) {
-    throw new Error(`Support file validation failed:\n  - ${issues.join('\n  - ')}`);
-  }
-}
-
-function staticCopyEntries(cfg) {
-  return (cfg.staticCopy || []).map(entry => (
-    typeof entry === 'string'
-      ? { file: entry, outName: path.basename(entry), sitemap: true }
-      : { ...entry, outName: entry.outName || (entry.file ? path.basename(entry.file) : '') }
-  ));
-}
-
 function pageContentInputs(page) {
   return [
     relPath('src', 'pages', `${page.slug}.html`),
@@ -1026,33 +248,7 @@ function sitemapUrl(loc, lastmod, priority) {
   ].filter(Boolean).join('\n');
 }
 
-function rewriteRootRelativeUrls(html, origin) {
-  const cleanOrigin = origin.replace(/\/$/, '');
-  return html
-    .replace(/\b(href|src|poster|action)=(["'])\/(?!\/)([^"']*)\2/gi, `$1=$2${cleanOrigin}/$3$2`)
-    .replace(/\b(srcset)=(["'])([^"']*)\2/gi, (match, attr, quote, value) => {
-      const rewritten = value.split(',').map(part => {
-        const trimmed = part.trim();
-        if (!trimmed.startsWith('/')) return part;
-        return part.replace(/^\s*\/(?!\/)/, `${cleanOrigin}/`);
-      }).join(',');
-      return `${attr}=${quote}${rewritten}${quote}`;
-    })
-    .replace(/url\((["']?)\/(?!\/)([^)"']+)\1\)/gi, `url($1${cleanOrigin}/$2$1)`);
-}
-
-function ensureFragmentTargets(html, ids) {
-  let output = html;
-  for (const id of ids || []) {
-    const hasTarget = new RegExp(`(?<![\\w-])id=(["'])${escapeRegExp(id)}\\1`, 'i').test(output);
-    if (!hasTarget) {
-      output = output.replace(/<body\b([^>]*)>/i, `$&\n<div id="${escAttr(id)}" tabindex="-1"></div>`);
-    }
-  }
-  return output;
-}
-
-// Cache partials
+// Template loading and shared chrome
 
 const partials = {};
 function getPartial(name) {
@@ -1127,7 +323,7 @@ function getCSS(name) {
 // stylesheet re-declares), then the layout stylesheets which may override any
 // token.
 function pageStylesheet(names) {
-  return [getCSS('_fonts'), getCSS('_tokens'), getCSS('_chrome')].concat(names.map(getCSS)).join('\n');
+  return SHARED_STYLESHEETS.map(getCSS).concat(names.map(getCSS)).join('\n');
 }
 
 const jsCache = {};
@@ -1180,7 +376,7 @@ function collectCssRefs(siteOrigin) {
   return refs;
 }
 
-// Build
+// Page assembly: preserve transform order and browser asset bytes
 
 function buildPage(page) {
   // 1. Read layout
@@ -1193,11 +389,7 @@ function buildPage(page) {
   // rather than a layout with holes in it.
   const tokens = chromeTokens(page);
   let html = read(layoutPath);
-  for (const [marker, partial] of [
-    ['<!-- HEAD -->', 'head'],
-    ['<!-- SITE_HEADER -->', 'site-header'],
-    ['<!-- COLOPHON -->', 'colophon'],
-  ]) {
+  for (const [marker, partial] of CHROME_PARTIALS) {
     const occurrences = html.split(marker).length - 1;
     if (occurrences !== 1) {
       throw new Error(`Layout src/layouts/${page.layout}.html must contain ${marker} exactly once (found ${occurrences})`);
@@ -1219,7 +411,7 @@ function buildPage(page) {
   content = enhanceImageAccessibility(content);
   content = reserveImageAspectRatio(content);
   content = reserveFacadeAspectRatio(content);
-  content = reserveVideoAspectRatio(content);
+  content = reserveVideoAspectRatio(content, __dirname);
   content = enhanceInlineSvgAccessibility(content);
   content = enhanceGalleryItemLinks(content);
 
@@ -1227,7 +419,7 @@ function buildPage(page) {
   //    `css` may be a single name or a list. The list form exists so project
   //    pages load the shared case chrome plus only their own block, instead of
   //    one 147 KB stylesheet holding every project's rules.
-  const cssNames = Array.isArray(page.css) ? page.css : [page.css];
+  const cssNames = pageCssNames(page);
   const css = minifyCss(pageStylesheet(cssNames));
   const cssHref = emitBrowserAsset('css', cssNames.join('-'), css);
   const pageCssHref = page.layout === 'error' ? `/${cssHref}` : cssHref;
@@ -1266,7 +458,7 @@ function buildPage(page) {
   return html;
 }
 
-// Main
+// Source registration and project-navigation validation
 
 function validateConfig(cfg) {
   if (!cfg.pages || !Array.isArray(cfg.pages) || !cfg.pages.length) {
@@ -1307,7 +499,7 @@ function validateConfig(cfg) {
     if (!Array.isArray(page.js)) {
       throw new Error(`JS list for ${page.slug} must be an array`);
     }
-    const cssNames = Array.isArray(page.css) ? page.css : [page.css];
+    const cssNames = pageCssNames(page);
     if (!cssNames.length || cssNames.some(name => typeof name !== 'string' || !name)) {
       throw new Error(`CSS entry for ${page.slug} must be a stylesheet name or a non-empty array of names`);
     }
@@ -1496,7 +688,14 @@ function validateConfig(cfg) {
   }
 }
 
+// Staged build orchestration; publication is the final step.
 function main() {
+  // Exported main() may be called again in the same process. A new staging
+  // directory must not inherit cached source text or previously emitted paths.
+  for (const cache of [partials, cssCache, jsCache]) {
+    for (const key of Object.keys(cache)) delete cache[key];
+  }
+  emittedBrowserAssets.clear();
   validateConfig(config);
 
   // Always assemble and validate away from dist. The last successful output is
@@ -1650,7 +849,7 @@ function main() {
 
   validateLocalRefsInDist(htmlOutputs, SITE_ORIGIN);
   console.log('  → local asset references validated');
-  validateGeneratedHtml(htmlOutputs);
+  validateGeneratedHtml(htmlOutputs, { dist: DIST, config });
   console.log('  → generated HTML validated');
 
   const cnameHost = new URL(config.pages[0].canonical).hostname;
@@ -1660,10 +859,10 @@ function main() {
   }
   fs.writeFileSync(path.join(DIST, '.nojekyll'), '', 'utf8');
   console.log('  → .nojekyll');
-  validateSupportFiles(SITE_ORIGIN, copiedStatic);
+  validateSupportFiles(SITE_ORIGIN, copiedStatic, { dist: DIST, config });
   console.log('  → support files validated');
 
-  enforceDistBudget();
+  enforceDistBudget(DIST, console);
 
   if (CHECK_ONLY) {
     cleanDir(DIST);
@@ -1671,7 +870,8 @@ function main() {
     return;
   }
 
-  publishDist();
+  publishDist({ stagingDir: DIST, outputDir: FINAL_DIST, backupDir: DIST_BACKUP,
+    platform: process.platform, logger: console });
   console.log(`\nDone: ${built} pages built, ${copied} files copied → dist/`);
 }
 
