@@ -69,13 +69,14 @@ an intermediate width and desktop, including long titles and player controls.
 | `project-previews.js` | Lazy, silent previews on project-card hover or keyboard focus. |
 | `copy-email.js` | Copies the visible address on the homepage and contact pages. |
 | `page-motion.js` | Shared entrance effects and header state. |
-| `music-player.js` | Track selection, transport, seek, volume, filters, artwork transitions and player state. |
+| `music-library.js` | Track dates and labels, artwork styles, finished-piece shelf and sketch ledger markup. |
+| `music-player.js` | Track selection, queue, transport, seek, volume, filters, artwork transitions and player state. |
 | `music-visualizer.js` | Cover proportions, sampled artwork brightness and audio spectrum. |
 | `contact-actions.js` | Contact-page actions and progressive enhancement. |
 | `contact-clock.js` | Windable contact clock and its interaction state. |
 | `contact-time.js` | Clock treatment on the separate contact-time review page. |
 | `colophon-clock.js` | Time display in the shared footer. |
-| `cine.js` | Project galleries, lightbox and project media interactions. |
+| `cine.js` | Project reveal effects, scroll-driven stages and reading progress. |
 | `local-video.js` | Local-video enhancement on configured project pages. |
 | `video-facade.js` | Lazy embedded-video activation on configured review pages. |
 | `prefetch.js` | Same-origin navigation prefetch. |
@@ -88,6 +89,13 @@ it; `music-visualizer.js` observes it after player initialization. Do not replac
 `window.Audio` or use a hidden global to exchange the player instance. Track data
 lives in `#trackData .track-card` on the music page; the build also turns it into
 a static track index. The `data-src-e` values encode local media paths, not secrets.
+
+Every music route loads `music-library.js` before `music-player.js`. Its explicit
+`PortfolioMusicLibrary` API is a classic-script lexical binding, not a player
+instance on `window`. It creates the existing library markup and formats track
+metadata; selection, filtering and event handlers stay in the player. Keep this
+order in `site.config.cjs`; the interaction tests execute each configured bundle.
+See [browser maintenance notes](../src/js/README.md) for state and async boundaries.
 
 The homepage's `[data-preview-video]` loops `assets/showreel-preview.mp4` inside
 the showreel button at every viewport size. It observes reduced motion, data

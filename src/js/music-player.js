@@ -1,4 +1,7 @@
+/* Playback, transport and persistence. music-library.js owns track formatting
+   and list markup; music-visualizer.js observes the same audio element. */
 (function () {
+  const { sortDate, trackYear, isSketch, kindLabel, rowDetail, trackDetail, rowArtStyle } = PortfolioMusicLibrary;
   const PLACEHOLDER = 'assets/track-placeholder.svg';
   const STORE_KEY = 'music-player-v2';
   const DEFAULT_FILTER = 'release';
@@ -6,14 +9,6 @@
   reducedMotion.addEventListener('change', () => {
     if (reducedMotion.matches) document.querySelectorAll('.stage__art--previous').forEach(node => node.remove());
   });
-  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-  function sortDate(track) {
-    const value = track.dataset.year || '';
-    if (/^\d{4}(-\d{2}-\d{2})?$/.test(value)) return value;
-    return '0000';
-  }
 
   const tracks = Array.from(document.querySelectorAll('#trackData .track-card'))
     .sort((a, b) => sortDate(b).localeCompare(sortDate(a)));
@@ -38,50 +33,6 @@
   }
   function setStyle(name, prop, value) {
     roleAll(name).forEach(el => { el.style[prop] = value; });
-  }
-
-  // ---------------------------------------------------------------- metadata
-
-  function trackYear(track) {
-    const match = (track.dataset.year || '').match(/^(\d{4})/);
-    return match ? match[1] : 'Date unknown';
-  }
-
-  function hasExactDate(track) {
-    return /^\d{4}-\d{2}-\d{2}$/.test(track.dataset.year || '');
-  }
-
-  function visibleDate(track) {
-    const match = (track.dataset.year || '').match(/^\d{4}-(\d{2})-(\d{2})$/);
-    if (!match) return '';
-    return (match[2] + ' ' + (MONTHS[Number(match[1]) - 1] || '')).trim();
-  }
-
-  function accessibleDate(track) {
-    const value = track.dataset.year || '';
-    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (!match) return value || 'date unknown';
-    return (Number(match[3]) + ' ' + (MONTHS[Number(match[2]) - 1] || '') + ' ' + match[1]).trim();
-  }
-
-  function isSketch(track) {
-    return track.dataset.kind === 'sketch';
-  }
-
-  function kindLabel(track) {
-    return isSketch(track) ? 'Sketch' : 'Finished';
-  }
-
-  function rowDetail(track, filter) {
-    const parts = [];
-    if (filter === 'all') parts.push(kindLabel(track));
-    if (hasExactDate(track)) parts.push(visibleDate(track));
-    return parts.join(' \u00b7 ');
-  }
-
-  function trackDetail(track) {
-    const date = hasExactDate(track) ? accessibleDate(track) : trackYear(track);
-    return kindLabel(track) + ' · ' + date;
   }
 
   // ----------------------------------------------------------------- artwork
@@ -191,11 +142,6 @@
     return '';
   }
 
-  function rowArtStyle(track) {
-    if (track.dataset.thumb) return 'url("' + track.dataset.thumb.replace(/"/g, '%22') + '")';
-    return track.dataset.gradient || '';
-  }
-
   // ------------------------------------------------------------------- audio
 
   const audio = document.querySelector('[data-music-audio]');
@@ -210,6 +156,7 @@
   let repeatMode = 'off';
   let lastVolume = 0.7;
   let sourceVersion = 0;
+  let playbackRequestVersion = 0;
   let changingTrack = false;
   let hasPlaybackError = false;
   let activeFilter = DEFAULT_FILTER;
@@ -608,6 +555,7 @@
     }
 
     const attempt = sourceVersion;
+    const request = ++playbackRequestVersion;
     setStatus(audio.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA ? 'Starting' : 'Loading', 'loading');
     let promise;
     try {
@@ -618,7 +566,8 @@
     }
     if (promise && typeof promise.catch === 'function') {
       promise.catch(error => {
-        if (attempt !== sourceVersion) return;
+        // Pause/resume can start a new request without changing the source.
+        if (attempt !== sourceVersion || request !== playbackRequestVersion) return;
         if (error && error.name === 'AbortError' && audio.paused) {
           setStatus('Paused');
           setPlayState();
@@ -688,167 +637,6 @@
     return tiles.concat(libraryRows);
   }
 
-  function buildLibrary() {
-    if (!library) return [];
-    // The build injects a plain-text track index for crawlers and no-JS
-    // visitors; the interactive library replaces it.
-    const staticIndex = document.getElementById('musicStaticIndex');
-    if (staticIndex) staticIndex.remove();
-
-    const rows = [];
-
-    // Finished pieces come as a shelf of covers: the artwork carries more
-    // than a 40px row ever showed, and the shelf keeps the newest-first
-    // order the heading promises. Sketches have no artwork of their own,
-    // so they stay a dated ledger below rather than a wall of gradients.
-    const releases = [];
-    const sketchEntries = [];
-    tracks.forEach((track, index) => {
-      (isSketch(track) ? sketchEntries : releases).push({ track: track, index: index });
-    });
-
-    if (releases.length) {
-      const shelf = document.createElement('section');
-      shelf.className = 'library-group library-group--shelf';
-
-      const heading = document.createElement('header');
-      heading.className = 'library-group__head';
-      const title = document.createElement('h3');
-      title.textContent = 'Finished';
-      const meta = document.createElement('p');
-      meta.textContent = releases.length + ' pieces · newest first';
-      heading.append(title, meta);
-
-      const grid = document.createElement('ol');
-      grid.className = 'library-shelf';
-
-      releases.forEach(entry => {
-        const track = entry.track;
-        const item = document.createElement('li');
-        const button = document.createElement('button');
-        const trackTitle = track.dataset.title || 'Untitled track';
-        button.className = 'shelf-tile';
-        button.type = 'button';
-        button.dataset.catalogTrack = trackTitle;
-        button.dataset.kind = 'release';
-        button.setAttribute('aria-label', 'Play ' + trackTitle + ', ' + accessibleDate(track) + ', ' + kindLabel(track));
-        button.setAttribute('aria-controls', 'playerBar');
-        button.setAttribute('aria-pressed', 'false');
-
-        const art = document.createElement('span');
-        art.className = 'shelf-tile__art';
-        art.setAttribute('aria-hidden', 'true');
-        art.style.backgroundImage = rowArtStyle(track);
-
-        // Carries the library-row class as well so setPlayState finds it
-        // with the same selector it uses for ledger rows.
-        const state = document.createElement('span');
-        state.className = 'library-row__state shelf-tile__state';
-        state.textContent = 'Play';
-        state.setAttribute('aria-hidden', 'true');
-
-        const name = document.createElement('span');
-        name.className = 'shelf-tile__name';
-        name.textContent = trackTitle;
-
-        const tileMeta = document.createElement('span');
-        tileMeta.className = 'shelf-tile__meta';
-        tileMeta.textContent = trackYear(track) + ' · ' + (track.dataset.duration || '');
-
-        button.append(art, state, name, tileMeta);
-        item.append(button);
-        grid.append(item);
-        rows.push(button);
-      });
-
-      shelf.append(heading, grid);
-      library.append(shelf);
-    }
-
-    const years = new Map();
-    sketchEntries.forEach(entry => {
-      const year = trackYear(entry.track);
-      if (!years.has(year)) years.set(year, []);
-      years.get(year).push(entry);
-    });
-
-    years.forEach((entries, year) => {
-      const group = document.createElement('section');
-      group.className = 'library-group';
-      group.dataset.year = year;
-
-      const heading = document.createElement('header');
-      heading.className = 'library-group__head';
-      const title = document.createElement('h3');
-      title.textContent = year;
-      const meta = document.createElement('p');
-      // Every ledger entry is a sketch; finished pieces live on the shelf above.
-      meta.textContent = entries.length + (entries.length === 1 ? ' sketch' : ' sketches');
-      heading.append(title, meta);
-
-      const list = document.createElement('ol');
-      list.className = 'library-group__list';
-
-      entries.forEach(entry => {
-        const track = entry.track;
-        const item = document.createElement('li');
-        const button = document.createElement('button');
-        const trackTitle = track.dataset.title || 'Untitled track';
-        button.className = 'library-row';
-        button.type = 'button';
-        button.dataset.catalogTrack = trackTitle;
-        button.dataset.kind = 'sketch';
-        button.setAttribute('aria-label', 'Play ' + trackTitle + ', ' + accessibleDate(track) + ', ' + kindLabel(track));
-        button.setAttribute('aria-controls', 'playerBar');
-        button.setAttribute('aria-pressed', 'false');
-
-        const art = document.createElement('span');
-        art.className = 'library-row__art';
-        art.setAttribute('aria-hidden', 'true');
-        art.style.backgroundImage = rowArtStyle(track);
-
-        const main = document.createElement('span');
-        main.className = 'library-row__main';
-        const name = document.createElement('span');
-        name.className = 'library-row__name';
-        name.textContent = trackTitle;
-
-        const detail = document.createElement('span');
-        detail.className = 'library-row__detail';
-        detail.textContent = rowDetail(track, activeFilter);
-        main.append(name, detail);
-
-        const date = document.createElement('time');
-        date.className = 'library-row__date';
-        date.dateTime = track.dataset.year || '';
-        // A track with only a known year already sits under a heading that
-        // prints that year, so the cell stays empty instead of repeating it
-        // down the whole column.
-        date.textContent = hasExactDate(track)
-          ? visibleDate(track)
-          : (trackYear(track) === year ? '' : trackYear(track));
-
-        const duration = document.createElement('span');
-        duration.className = 'library-row__duration';
-        duration.textContent = track.dataset.duration || '';
-
-        const state = document.createElement('span');
-        state.className = 'library-row__state';
-        state.textContent = 'Play';
-        state.setAttribute('aria-hidden', 'true');
-
-        button.append(art, main, date, duration, state);
-        item.append(button);
-        list.append(item);
-        rows.push(button);
-      });
-
-      group.append(heading, list);
-      library.append(group);
-    });
-    return rows;
-  }
-
   function applyFilter(filter) {
     activeFilter = filter;
     let visible = 0;
@@ -879,10 +667,16 @@
 
   // ------------------------------------------------------------------- queue
 
+  let queueSignature = '';
+
   function renderQueue() {
     const list = role('queue');
     if (!list) return;
     const upcoming = order.slice(orderPos + 1, orderPos + 21);
+    const signature = JSON.stringify([orderPos, repeatMode, upcoming]);
+    // Transport events do not change the queue. Keep its nodes and focus intact.
+    if (signature === queueSignature) return;
+    queueSignature = signature;
     // Rebuilding the list destroys the focused row, which would silently dump
     // keyboard focus to the body inside the open dialog. Remember the slot so
     // focus can land on the equivalent row afterwards.
@@ -1001,7 +795,7 @@
     }
     let activePointer = null;
     element.addEventListener('pointerdown', event => {
-      if (!event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
+      if (!event.isPrimary || activePointer !== null || (event.pointerType === 'mouse' && event.button !== 0)) return;
       activePointer = event.pointerId;
       event.preventDefault();
       // touch-action stays pan-y until here, so a swipe that starts on the rail
@@ -1275,7 +1069,7 @@
 
   // -------------------------------------------------------------------- init
 
-  libraryRows = buildLibrary();
+  libraryRows = PortfolioMusicLibrary.build(library, tracks, activeFilter);
 
   cards().forEach(card => {
     const fallback = cardTitle(card) || 'track';
