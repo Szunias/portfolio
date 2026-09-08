@@ -640,7 +640,9 @@ function decodeBase64Attr(value) {
   const raw = decodeHtmlAttr(value).trim();
   if (!raw) return '';
   try {
-    return Buffer.from(raw, 'base64').toString('utf8');
+    // Match music-player.js: Buffer.from(base64) accepts corrupt encodings
+    // that the browser rejects, and UTF-8 decoding changes atob's byte string.
+    return atob(raw).trim();
   } catch (_) {
     return '';
   }
@@ -1690,4 +1692,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { buildPage, validateConfig, copyDirContents, main };
+module.exports = { buildPage, validateConfig, copyDirContents, main, decodeBase64Attr };

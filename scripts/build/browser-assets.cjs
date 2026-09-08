@@ -1,56 +1,81 @@
 /* Browser asset transforms. JavaScript is shipped verbatim after syntax validation. */
 const vm = require('node:vm');
 
-// Conservative CSS minifier: strips comments and collapses whitespace, but
-// leaves every other token untouched. It is string-aware so quoted content
-// (e.g. content: "*/") cannot be corrupted, and it never removes spaces
-// around ':' or inside calc(), where whitespace is syntactically meaningful.
+// Preserve CSS token boundaries instead of treating JavaScript's \s as CSS
+// whitespace. URLs are opaque, and stylesheets with unquoted escapes fall back
+// to the original source rather than risking a changed selector or value.
 function minifyCss(source) {
+  const space = ch => ch !== undefined && /[\t\n\f\r ]/.test(ch);
+  const structural = '{};,>';
   let out = '';
   let i = 0;
-  const n = source.length;
   let quote = null;
-  const structural = '{};,>';
-  while (i < n) {
+  while (i < source.length) {
     const ch = source[i];
     if (quote) {
       out += ch;
-      if (ch === '\\' && i + 1 < n) { out += source[i + 1]; i += 2; continue; }
+      if (ch === '\\' && i + 1 < source.length) {
+        out += source[i + 1];
+        i += 2;
+        continue;
+      }
       if (ch === quote) quote = null;
       i++;
       continue;
     }
-    if (ch === '"' || ch === "'") { quote = ch; out += ch; i++; continue; }
-    if (ch === '/' && source[i + 1] === '*') {
-      const end = source.indexOf('*/', i + 2);
-      i = end === -1 ? n : end + 2;
-      // A comment can separate two tokens; keep a single space when both
-      // neighbours are token characters so `a/**/b` cannot fuse into `ab`.
-      const prev = out[out.length - 1];
-      const next = source[i];
-      if (prev && next && !structural.includes(prev) && prev !== ' ' &&
-          !structural.includes(next) && !/\s/.test(next)) out += ' ';
+    if (ch === '"' || ch === "'") {
+      quote = ch;
+      out += ch;
+      i++;
       continue;
     }
-    if (/\s/.test(ch)) {
-      while (i < n && /\s/.test(source[i])) i++;
+    // A hex escape may consume one following whitespace character, leaving
+    // the next as a descendant combinator. Preserve the whole stylesheet.
+    if (ch === '\\') return source;
+    if (source.slice(i, i + 4).toLowerCase() === 'url(' &&
+        (i === 0 || !/[\w\-\u0080-\uffff]/.test(source[i - 1]))) {
+      let end = i + 4;
+      let urlQuote = null;
+      for (; end < source.length; end++) {
+        const next = source[end];
+        if (next === '\\') { end++; continue; }
+        if (urlQuote) {
+          if (next === urlQuote) urlQuote = null;
+        } else if (next === '"' || next === "'") {
+          urlQuote = next;
+        } else if (next === '(') {
+          return source;
+        } else if (next === ')') {
+          break;
+        }
+      }
+      if (end >= source.length || urlQuote) return source;
+      out += source.slice(i, end + 1);
+      i = end + 1;
+      continue;
+    }
+    if (ch === '/' && source[i + 1] === '*') {
+      const end = source.indexOf('*/', i + 2);
+      if (end === -1) return source;
+      // Empty comments retain token separation without inventing a space:
+      // .a/**/.b is a compound selector, not the descendant selector .a .b.
+      out += '/**/';
+      i = end + 2;
+      continue;
+    }
+    if (space(ch)) {
+      while (space(source[i])) i++;
       const prev = out[out.length - 1];
       const next = source[i];
       if (prev && next !== undefined && prev !== ' ' &&
           !structural.includes(prev) && !structural.includes(next)) out += ' ';
       continue;
     }
-    if (ch === '}') {
-      while (out.endsWith(' ')) out = out.slice(0, -1);
-      if (out.endsWith(';')) out = out.slice(0, -1);
-      out += '}';
-      i++;
-      continue;
-    }
+    // Do not delete semicolons inside nested custom-property blocks.
     out += ch;
     i++;
   }
-  return out.trim();
+  return out;
 }
 
 // Syntax gate for browser JS. The build only concatenates files, so without
