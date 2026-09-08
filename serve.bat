@@ -1,4 +1,5 @@
 @echo off
+setlocal
 title Igor Szuniewicz - local preview server
 rem Always run from the folder this .bat lives in (the repo root)
 cd /d "%~dp0"
@@ -20,13 +21,15 @@ if errorlevel 1 (
     exit /b 1
 )
 
+rem Use the same dependency-free, loopback-only server as npm run preview.
+set "PORT=8080"
 echo.
 echo === 2/2 Starting server ===
-echo   http://localhost:8080            (home)
-echo   http://localhost:8080/music.html (music timeline)
-echo   http://localhost:8080/ifmc.html  (IFMC case study)
+echo   http://127.0.0.1:8080            (home)
+echo   http://127.0.0.1:8080/music.html (music timeline)
+echo   http://127.0.0.1:8080/ifmc.html  (IFMC case study)
 echo.
 echo Press Ctrl+C to stop the server.
-call npx --yes http-server dist -p 8080 -c-1 -o
+call node scripts/serve-dist.cjs
 
 pause
