@@ -76,13 +76,17 @@ an intermediate width and desktop, including long titles and player controls.
 | `contact-clock.js` | Windable contact clock and its interaction state. |
 | `contact-time.js` | Clock treatment on the separate contact-time review page. |
 | `colophon-clock.js` | Time display in the shared footer. |
-| `cine.js` | Project reveal effects, scroll-driven stages and reading progress. |
+| `cine.js` | One-shot project reveals, including live reduced-motion changes. |
 | `local-video.js` | Local-video enhancement on configured project pages. |
 | `video-facade.js` | Lazy embedded-video activation on configured review pages. |
 | `prefetch.js` | Same-origin navigation prefetch. |
 
 Scripts use local scopes and DOM hooks. Keep their loading order in configuration
 and preserve accessible markup when JavaScript is unavailable.
+
+The contact clocks observe live motion preferences and keep one refresh timer.
+The windable clock's sound is optional: Web Audio failures must not interrupt
+pointer, keyboard or ARIA state. Temporary tone nodes disconnect when finished.
 
 Music has one explicit audio element in `player-bar.html`. `music-player.js` owns
 it; `music-visualizer.js` observes it after player initialization. Do not replace
@@ -136,6 +140,14 @@ GitHub Pages. Pull requests run the checks without deploying.
 `scripts/serve-dist.cjs` serves the built files on localhost, including byte ranges
 for native media seeking, HEAD responses and the real 404 page. Tests exercise
 those HTTP behaviors. It is a local development tool, not a deployment server.
+
+`tests/browser-motion.test.cjs` uses the existing DOM/event doubles to cover
+clock audio failures and live motion preferences. It runs with `npm test`.
+The isolated Playwright workflow additionally runs `scripts/check-site-interactions.cjs`
+after the homepage layout checks: every configured route at 320 px and desktop,
+image loading, horizontal document overflow, script errors, project reveals and
+contact-clock interactions. Reports are saved under `layout-results/`.
+These checks do not certify third-party embeds, all codecs or Safari/iOS behavior.
 
 ## Media and supporting tools
 

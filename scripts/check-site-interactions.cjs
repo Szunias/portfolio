@@ -58,6 +58,12 @@ async function smoke(context, entry, width) {
     await page.setViewportSize({ width, height: 900 });
     const response = await page.goto(address(entry), { waitUntil: 'load' });
     assert.ok(response && response.ok(), 'The registered HTML route must load');
+    await page.evaluate(() => {
+      document.querySelectorAll('img[loading="lazy"]').forEach(img => { img.loading = 'eager'; });
+    });
+    await page.waitForFunction(() => Array.from(document.images).every(img => img.complete));
+    const broken = await page.evaluate(() => Array.from(document.images).filter(img => !img.naturalWidth).map(img => img.currentSrc || img.src));
+    assert.deepEqual(broken, [], 'Every referenced image must load');
     await page.evaluate(async () => { await document.fonts.ready; });
     await settle(page);
     const geometry = await page.evaluate(() => ({
@@ -73,18 +79,10 @@ async function smoke(context, entry, width) {
   }
 }
 
-async function checkProgress(page) {
-  await page.waitForFunction(() => {
-    const bar = document.querySelector('[data-progress]');
-    const max = document.documentElement.scrollHeight - innerHeight;
-    const expected = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
-    const actual = Number.parseFloat(bar.style.getPropertyValue('--progress'));
-    return Number.isFinite(actual) && Math.abs(actual - expected) < 0.001;
-  });
-}
-
 async function projectMotion(context, entry, width) {
   const page = await context.newPage();
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
   try {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: 'no-preference' });
@@ -96,21 +94,8 @@ async function projectMotion(context, entry, width) {
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await settle(page);
     assert.equal(await page.locator('[data-reveal]:not(.is-in)').count(), 0, 'Restoring motion must not hide revealed content');
-    assert.equal(await page.locator('[data-progress]').count(), 1);
-    await page.evaluate(() => scrollTo({ top: (document.documentElement.scrollHeight - innerHeight) / 3, behavior: 'instant' }));
-    await checkProgress(page);
-    await page.setViewportSize({ width, height: 700 });
-    await checkProgress(page);
-    await page.evaluate(() => {
-      const content = document.createElement('div');
-      content.id = 'qa-late-content';
-      content.style.height = '900px';
-      document.body.appendChild(content);
-    });
-    await checkProgress(page);
-    await page.locator('#qa-late-content').evaluate(el => el.remove());
-    await checkProgress(page);
-    return { reducedMotion: true, viewportResize: true, lateContent: true };
+    assert.deepEqual(errors, [], 'Motion preference changes emitted runtime errors');
+    return { reducedMotion: true };
   } finally {
     await page.close();
   }
@@ -173,13 +158,14 @@ async function main() {
         await record({ check: 'route smoke', page: entry.slug, width }, () => smoke(context, entry, width));
       }
     }
-    // Derive the representative project from real markup, not a fixture that
-    // could outlive the feature it is supposed to exercise.
-    const project = pages.find(entry => (entry.js || []).includes('cine') &&
+    // Exercise only features that are actually present in registered pages.
+    const projects = pages.filter(entry => (entry.js || []).includes('cine') &&
       /\bdata-reveal\b/.test(fs.readFileSync(path.join(root, 'src/pages', entry.slug + '.html'), 'utf8')));
-    assert.ok(project, 'No configured project with reveal markup was found');
+    assert.ok(projects.length, 'No configured project with reveal markup was found');
     for (const width of [320, 1440]) {
-      await record({ check: 'project motion', page: project.slug, width }, () => projectMotion(context, project, width));
+      for (const entry of projects) {
+        await record({ check: 'project motion', page: entry.slug, width }, () => projectMotion(context, entry, width));
+      }
       for (const entry of pages.filter(entry => (entry.js || []).some(script => script === 'contact-clock' || script === 'contact-time'))) {
         await record({ check: 'clock motion', page: entry.slug, width }, () => clockMotion(context, entry, width));
       }

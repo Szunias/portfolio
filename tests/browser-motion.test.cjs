@@ -4,17 +4,9 @@ const { Element, browser } = require('./helpers/browser-fixture.cjs');
 
 const MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
-function cineFixture({ reduced = false, intersection = true, resize = true } = {}) {
+function cineFixture({ reduced = false, intersection = true } = {}) {
   const reveal = new Element('figure', { 'data-reveal': '' });
-  const bar = new Element('div');
-  const progress = new Map();
-  bar.style.setProperty = (key, value) => progress.set(key, value);
-  const fixture = browser({ '[data-reveal]': [reveal], '[data-progress]': [bar] });
-  const doc = fixture.document.documentElement;
-  doc.scrollHeight = 2400;
-  doc.toggleAttribute = (name, enabled) => enabled ? doc.setAttribute(name, '') : doc.removeAttribute(name);
-  fixture.window.scrollY = 800;
-  fixture.window.innerHeight = 800;
+  const fixture = browser({ '[data-reveal]': [reveal] });
   const media = fixture.window.matchMedia(MOTION_QUERY);
   media.matches = reduced;
   const observers = [];
@@ -26,16 +18,8 @@ function cineFixture({ reduced = false, intersection = true, resize = true } = {
       disconnect() { this.targets.clear(); }
     };
   }
-  const sizeObservers = [];
-  if (resize) {
-    fixture.context.ResizeObserver = fixture.window.ResizeObserver = class {
-      constructor(callback) { this.callback = callback; this.targets = new Set(); sizeObservers.push(this); }
-      observe(node) { this.targets.add(node); }
-    };
-  }
   fixture.run('cine.js');
-  fixture.flushTimers();
-  return { ...fixture, doc, reveal, progress, media, observers, sizeObservers };
+  return { ...fixture, reveal, media, observers };
 }
 
 test('cinematic reveals remain one-shot when motion is reduced after initialization', async () => {
@@ -66,52 +50,6 @@ test('ordinary cinematic reveals ignore non-intersections and unobserve after en
   observer.callback([{ target: fixture.reveal, isIntersecting: true }]);
   assert.equal(fixture.reveal.classList.contains('is-in'), true);
   assert.equal(observer.targets.size, 0);
-});
-
-test('reading progress updates after viewport resize without waiting for another scroll', async () => {
-  const fixture = cineFixture();
-  assert.equal(fixture.progress.get('--progress'), '0.5000');
-  fixture.window.innerHeight = 400;
-  await fixture.window.emit('resize');
-  fixture.flushTimers();
-  assert.equal(fixture.progress.get('--progress'), '0.4000');
-});
-
-test('reading progress reacts to lazy content changing the document height', () => {
-  const fixture = cineFixture();
-  const observer = fixture.sizeObservers.find(item => item.targets.has(fixture.doc));
-  assert.ok(observer, 'the document height must be observed');
-  fixture.doc.scrollHeight = 4000;
-  observer.callback([]);
-  fixture.flushTimers();
-  assert.equal(fixture.progress.get('--progress'), '0.2500');
-});
-
-test('load and resize remain useful when ResizeObserver is unavailable', async () => {
-  const fixture = cineFixture({ resize: false });
-  fixture.doc.scrollHeight = 4000;
-  await fixture.window.emit('load');
-  fixture.flushTimers();
-  assert.equal(fixture.progress.get('--progress'), '0.2500');
-});
-
-test('reading progress clamps overscroll and coalesces events into one frame', async () => {
-  const fixture = cineFixture();
-  fixture.window.scrollY = -100;
-  await fixture.window.emit('scroll');
-  await fixture.window.emit('resize');
-  await fixture.window.emit('scroll');
-  assert.equal(fixture.timers.size, 1);
-  fixture.flushTimers();
-  assert.equal(fixture.progress.get('--progress'), '0.0000');
-  fixture.window.scrollY = 10000;
-  await fixture.window.emit('scroll');
-  fixture.flushTimers();
-  assert.equal(fixture.progress.get('--progress'), '1.0000');
-  fixture.doc.scrollHeight = 500;
-  await fixture.window.emit('scroll');
-  fixture.flushTimers();
-  assert.equal(fixture.progress.get('--progress'), '0.0000');
 });
 
 function clockFixture(file, { reduced = false, AudioContext } = {}) {
@@ -191,7 +129,6 @@ function audioStub({ state = 'running', failure = '' } = {}) {
   const nodes = [];
   let caught = false;
   let resumes = 0;
-  let audio;
   function node(kind) {
     const result = {
       kind, disconnected: false, stopped: false,
@@ -206,7 +143,7 @@ function audioStub({ state = 'running', failure = '' } = {}) {
     return result;
   }
   class AudioContext {
-    constructor() { this.state = state; this.currentTime = 0; this.destination = {}; audio = this; }
+    constructor() { this.state = state; this.currentTime = 0; this.destination = {}; }
     resume() {
       resumes++;
       if (failure === 'resume') throw new Error('resume unavailable');
@@ -223,7 +160,7 @@ function audioStub({ state = 'running', failure = '' } = {}) {
       return node('gain');
     }
   }
-  return { AudioContext, nodes, caught: () => caught, resumes: () => resumes, audio: () => audio };
+  return { AudioContext, nodes, caught: () => caught, resumes: () => resumes };
 }
 
 for (const state of ['suspended', 'interrupted']) {
