@@ -8,7 +8,7 @@
   const secondHand = document.querySelector('[data-hand="second"]');
   if (!root) return;
 
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   const partsFmt = (function () {
     try {
@@ -63,8 +63,6 @@
     }
   }
 
-  if (reduceMotion && secondHand) secondHand.setAttribute('visibility', 'hidden');
-
   function tick() {
     const now = new Date();
     const hour = partNumber(now, 'hour');
@@ -72,10 +70,22 @@
     const second = partNumber(now, 'second');
     setHand(hourHand, (hour % 12) * 30 + minute * 0.5);
     setHand(minuteHand, minute * 6 + second * 0.1);
-    if (!reduceMotion) setHand(secondHand, second * 6);
+    if (secondHand) {
+      if (reducedMotion.matches) secondHand.setAttribute('visibility', 'hidden');
+      else {
+        secondHand.removeAttribute('visibility');
+        setHand(secondHand, second * 6);
+      }
+    }
     root.setAttribute('data-phase', phaseName(hour));
   }
 
-  tick();
-  window.setInterval(tick, reduceMotion ? 15000 : 1000);
+  let clockTimer = 0;
+  function syncMotion() {
+    window.clearInterval(clockTimer);
+    tick();
+    clockTimer = window.setInterval(tick, reducedMotion.matches ? 15000 : 1000);
+  }
+  reducedMotion.addEventListener('change', syncMotion);
+  syncMotion();
 })();

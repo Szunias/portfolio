@@ -17,7 +17,7 @@
   const capPreview = document.querySelector('[data-cap-preview]');
   if (!root || !svg) return;
 
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   const partsFmt = (function () {
     try {
@@ -88,7 +88,7 @@
      lands lower and a touch louder. Only ever while the user is turning. ---- */
 
   function ensureAudio() {
-    if (reduceMotion || audio) return;
+    if (reducedMotion.matches || audio) return;
     try {
       audio = new (window.AudioContext || window.webkitAudioContext)();
     } catch (_) {
@@ -97,18 +97,39 @@
   }
 
   function tickSound(strong) {
-    if (!audio || reduceMotion) return;
-    if (audio.state === 'suspended') audio.resume();
-    const t = audio.currentTime;
-    const osc = audio.createOscillator();
-    const gain = audio.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(strong ? 950 : 1900, t);
-    gain.gain.setValueAtTime(strong ? 0.07 : 0.045, t);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
-    osc.connect(gain).connect(audio.destination);
-    osc.start(t);
-    osc.stop(t + 0.06);
+    if (!audio || reducedMotion.matches) return;
+    let osc;
+    let gain;
+    function disconnect() {
+      if (osc) {
+        osc.onended = null;
+        try { osc.disconnect(); } catch (_) {}
+      }
+      if (gain) { try { gain.disconnect(); } catch (_) {} }
+    }
+    try {
+      // A suspended context must not collect ticks that all sound on resume.
+      // Sound is optional; blocked audio must never interrupt winding or ARIA.
+      if (audio.state === 'suspended' || audio.state === 'interrupted') {
+        audio.resume().catch(function () {});
+        return;
+      }
+      if (audio.state !== 'running') return;
+      const t = audio.currentTime;
+      osc = audio.createOscillator();
+      gain = audio.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(strong ? 950 : 1900, t);
+      gain.gain.setValueAtTime(strong ? 0.07 : 0.045, t);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+      osc.connect(gain).connect(audio.destination);
+      osc.onended = disconnect;
+      osc.start(t);
+      osc.stop(t + 0.06);
+    } catch (_) {
+      if (osc) { try { osc.stop(); } catch (_) {} }
+      disconnect();
+    }
   }
 
   /* ---- rendering ---- */
@@ -136,7 +157,7 @@
     /* A frozen second hand reads as a stopped clock, so it hides while the
        preview is wound away from now. */
     if (secondHand) {
-      if (reduceMotion || active) {
+      if (reducedMotion.matches || active) {
         secondHand.setAttribute('visibility', 'hidden');
       } else {
         secondHand.removeAttribute('visibility');
@@ -184,7 +205,7 @@
 
   function snapBack() {
     stopSnap();
-    if (reduceMotion || Math.abs(offsetMinutes) < 1) {
+    if (reducedMotion.matches || Math.abs(offsetMinutes) < 1) {
       setOffset(0, false);
       return;
     }
@@ -266,6 +287,14 @@
     if (!scrubbing) snapBack();
   });
 
-  render();
-  window.setInterval(render, reduceMotion ? 15000 : 1000);
+  let clockTimer = 0;
+  function syncMotion() {
+    // Finish only an active rewind; preserve a deliberately selected offset.
+    if (reducedMotion.matches && snapRaf) snapBack();
+    window.clearInterval(clockTimer);
+    render();
+    clockTimer = window.setInterval(render, reducedMotion.matches ? 15000 : 1000);
+  }
+  reducedMotion.addEventListener('change', syncMotion);
+  syncMotion();
 })();
