@@ -4,6 +4,7 @@
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
   const cards = Array.from(document.querySelectorAll('.wcard')).filter(card => card.querySelector('[data-card-preview]'));
+  const connection = navigator.connection;
   let current = null;
   let pending = 0;
   let requestVersion = 0;
@@ -18,7 +19,7 @@
   }
 
   function allowed() {
-    return !reduced.matches && !document.hidden && !(navigator.connection && navigator.connection.saveData);
+    return !reduced.matches && !document.hidden && !(connection && connection.saveData);
   }
 
   function queue(card) {
@@ -65,6 +66,9 @@
       });
     });
     cards.forEach(card => observer.observe(card));
+  }
+  if (connection && typeof connection.addEventListener === 'function') {
+    connection.addEventListener('change', () => { if (connection.saveData) stop(); });
   }
   reduced.addEventListener('change', stop);
   fine.addEventListener('change', stop);
