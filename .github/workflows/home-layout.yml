@@ -3,14 +3,14 @@ name: Homepage layout checks
 on:
   pull_request:
     paths:
-      - 'src/pages/index.html'
-      - 'src/pages/autotrim.html'
+      - 'src/pages/**'
       - 'src/css/**'
       - 'src/js/**'
       - 'src/layouts/**'
       - 'src/partials/**'
       - 'site.config.cjs'
       - 'scripts/check-home-layout.cjs'
+      - 'scripts/check-site-interactions.cjs'
       - '.github/workflows/home-layout.yml'
   workflow_dispatch:
 
@@ -45,6 +45,8 @@ jobs:
           # The hero is deliberately fixed only for this refresh, not for later redesigns.
           REFRESH_BASE: ${{ github.head_ref == 'feat/portfolio-section-refresh-20260908' && github.event.pull_request.base.sha || '' }}
         run: NODE_PATH="$RUNNER_TEMP/home-layout/node_modules" node scripts/check-home-layout.cjs
+      - name: Check all registered routes and motion preferences
+        run: NODE_PATH="$RUNNER_TEMP/home-layout/node_modules" node scripts/check-site-interactions.cjs
       - name: Save review evidence
         if: always()
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
