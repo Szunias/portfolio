@@ -1,6 +1,9 @@
 name: Homepage layout checks
 
 on:
+  # Check the combined revision after merges, not just isolated PR branches.
+  push:
+    branches: [main]
   pull_request:
     paths:
       - 'src/pages/**'
@@ -9,6 +12,9 @@ on:
       - 'src/layouts/**'
       - 'src/partials/**'
       - 'site.config.cjs'
+      - 'build.cjs'
+      - 'scripts/build/**'
+      - 'scripts/serve-dist.cjs'
       - 'scripts/check-home-layout.cjs'
       - 'scripts/check-site-interactions.cjs'
       - '.github/workflows/home-layout.yml'

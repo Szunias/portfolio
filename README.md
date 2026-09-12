@@ -25,18 +25,21 @@ requests. Set `PORT` to use a different port.
 | --- | --- |
 | `npm run build` | Validate a temporary build, then replace `dist/` on success. |
 | `npm run check` | Run the same build and validation without replacing `dist/`. |
-| `npm test` | Test browser asset handling and local preview behavior. |
+| `npm test` | Test browser interactions, build helpers, preview behavior and architecture contracts. |
 | `npm run preview` | Serve the generated website locally. |
 | `npm run inspect` | Print every route, its source files and any unregistered source files. |
 | `npm run peaks` | Regenerate music waveform data after changing audio; requires FFmpeg. |
-| `npm run showreel:preview` | Regenerate the silent hero background; requires FFmpeg and source media. |
+| `npm run showreel:preview` | Regenerate retained large encodes and project-card previews; requires FFmpeg and source media. |
+
+The current compact showreel thumbnail is a separate output. Rebuild it with
+`node showreel/render-thumbnail.cjs`; see [preview sources and render order](showreel/README.md#website-previews).
 
 ## Where to edit
 
 | Change | Source |
 | --- | --- |
 | Homepage content and project order | `src/pages/index.html` |
-| Opening film, name, role and showreel button | `src/css/home-hero.css`, `src/js/home-showreel.js` |
+| Opening appearance and showreel controls | `src/css/home-hero.css`, `src/js/home-showreel.js` |
 | Project-card video previews | `src/js/project-previews.js`, `src/assets/previews/` |
 | Homepage sections below the film | `src/css/home.css` |
 | CV text, layout and fonts | `src/cv/content.json`, `scripts/build-cv.py`; see [CV instructions](src/cv/README.md) |
@@ -53,7 +56,8 @@ requests. Set `PORT` to use a different port.
 
 See [the codebase map](docs/CODEBASE.md) for layout responsibilities, CSS order,
 JavaScript contracts, media tools and review pages. `npm run inspect` gives the
-current file list directly from configuration.
+current file list directly from configuration. The [maintenance audit](docs/MAINTENANCE.md)
+records known overlaps and the limits of this map; it is not a second ownership registry.
 The [search visibility notes](docs/SEO.md) cover metadata validation, Search
 Console checks and the custom-domain audit.
 
@@ -71,6 +75,12 @@ local links and fragments, referenced media, JavaScript syntax, CSS variables
 and output size budgets. A failed build preserves the previous `dist/`.
 
 ## Historical files and media
+
+Top-level `concept-*.html`, `preview-*.html`, `redesign-*.html`,
+`music-preview.html` and `ifmc-preview.html` are studies. The inspector reports
+unregistered root HTML but does not search entire legacy applications or infer
+that an unregistered file is safe to delete. `READMEtra.md` documents Transientica;
+`REDESIGN-PLAN.md` is an older Tailwind specification, not the active site plan.
 
 `old/`, `archive/`, `v2/`, `new-portfolio/` and `design-mockups/` contain previous
 implementations or design studies. They are not the active website.

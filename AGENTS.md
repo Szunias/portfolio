@@ -9,6 +9,7 @@ historical implementations to infer how the current site works.
 | --- | --- |
 | Find the inputs for a page | `npm run inspect -- --page <slug>` |
 | Find which pages load a file | `npm run inspect -- --file src/js/<name>.js` (also accepts CSS, layouts and partials) |
+| Review duplication or unfamiliar root files | [Maintenance audit](docs/MAINTENANCE.md), then the ownership map |
 | Change website content or interactions | `src/`; use the ownership map in `docs/CODEBASE.md` |
 | Change build, validation or developer tooling | [scripts/AGENTS.md](scripts/AGENTS.md) |
 | Change portfolio wording | Copy rules below and `HUMANIZE-GUIDE.md` |
@@ -16,7 +17,8 @@ historical implementations to infer how the current site works.
 
 `node scripts/inspect-site.cjs --json` produces a machine-readable input map
 without npm's command banner. It reports missing inputs and unregistered
-sources, including shared partials. Media referenced inside HTML/CSS is still
+sources, including shared partials and top-level HTML studies. This is not a
+dead-code detector or an import graph. Media referenced inside HTML/CSS is still
 resolved by the full build, not by this entry-input map.
 
 ## Live architecture
@@ -38,6 +40,13 @@ It is not an archived implementation or private content. Do not remove it or
 rename media paths as a side effect of cleanup.
 
 ## Maintenance boundaries
+
+Start searches in the registered inputs, not across every historical copy.
+Root `concept-*.html`, `preview-*.html`, `redesign-*.html`, `music-preview.html`
+and `ifmc-preview.html` are studies, not the page sources. `READMEtra.md` is a
+Transientica reference; `REDESIGN-PLAN.md` describes an older Tailwind design.
+Neither overrides the current build. An unregistered result is not permission
+to delete a file: check standalone registrations, references and offline tools.
 
 For cleanup-only work, preserve page copy, markup, selectors, media URLs,
 CSS cascade and classic-script order. Do not change the design while moving
@@ -70,3 +79,7 @@ Run `npm test` and `npm run build` after live-site changes. Verify generated HTM
 For build-only refactors, `tests/build-output.test.cjs` checks deterministic
 output against the pre-refactor builder and verifies repeated builds. This does
 not replace a full build or browser checks when changing frontend behavior.
+
+`tests/architecture.test.cjs` checks browser ownership documentation, music
+script order and exclusive clock writers. These guards do not detect all code
+duplication; review the known overlaps before proposing a shared abstraction.

@@ -28,12 +28,12 @@ function routeInputs(route) {
     ...(route.css || []), ...(route.js || [])].filter(Boolean);
 }
 
-function sourceFiles(root, directory, extension) {
+function sourceFiles(root, directory, extension, recursive = true) {
   const current = path.join(root, directory);
   if (!fs.existsSync(current)) return [];
   return fs.readdirSync(current, { withFileTypes: true }).flatMap(entry => {
-    const relative = `${directory}/${entry.name}`;
-    if (entry.isDirectory()) return sourceFiles(root, relative, extension);
+    const relative = directory ? `${directory}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) return recursive ? sourceFiles(root, relative, extension) : [];
     return entry.isFile() && entry.name.endsWith(extension) ? [relative] : [];
   });
 }
@@ -61,6 +61,9 @@ function createSiteMap(config, repoRoot) {
     .map(([file, routes]) => [file, [...routes]]));
   const unregistered = Object.entries(SOURCE_TYPES)
     .flatMap(([directory, extension]) => sourceFiles(repoRoot, `src/${directory}`, extension))
+    // Root HTML studies can resemble the live site. Report them without
+    // recursively treating old applications or media tools as browser inputs.
+    .concat(sourceFiles(repoRoot, '', '.html', false))
     .filter(file => !owners.has(file)).sort();
   const missing = [...owners.keys()].filter(file => {
     try { return !fs.statSync(path.join(repoRoot, file)).isFile(); }
@@ -76,7 +79,7 @@ function selectRoutes(map, { page, file } = {}) {
   if (page !== undefined && file !== undefined) throw new Error('Use either --page or --file, not both');
   if (file !== undefined) {
     const key = normalizeFile(file);
-    const owners = map.files[key] || [];
+    const owners = Object.hasOwn(map.files, key) ? map.files[key] : [];
     // An unregistered source is a useful answer, not a missing-route error.
     if (!owners.length && !map.unregistered.includes(key)) {
       throw new Error(`No configured input or unregistered source matches ${key}`);
