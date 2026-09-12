@@ -1,14 +1,4 @@
-/* =========================================================
-   CONTACT
-
-   Self-contained page stylesheet: this is the only layout
-   sheet the page loads, so it carries the shared chrome
-   (skip link, header, colophon) as well as its own blocks.
-   Every value below comes from _tokens.css through the alias
-   block, which is the same migration the other four layouts
-   use, so the header geometry, the colophon treatment and
-   the 120px text edge match the rest of the site.
-   ========================================================= */
+/* Contact base styles, composed with the registered contact variant and _chrome.css. */
 
 :root {
   --ink:     var(--c-ink);
@@ -47,15 +37,6 @@ body {
 
 img { max-width: 100%; }
 
-/* ---------- The page frame ----------
-   Content width plus two gutters, so the first text edge lands on 120px at
-   1440, the same x as home, the project pages and music. */
-.ct-frame {
-  width: var(--page-frame);
-  margin-inline: auto;
-  padding-inline: var(--page-gutter);
-}
-
 /* ---------- Skip link ---------- */
 .skip-link {
   position: fixed;
@@ -91,261 +72,7 @@ img { max-width: 100%; }
   display: block;
 }
 
-/* =========================================================
-   HERO - the address on a bed, the way every other page opens
-
-   The page used to start with a kicker on flat near-black, which made it the
-   only screen on the site with no image on it. The bed is the same
-   construction home, music and the project pages use: full-bleed still, copy
-   on it behind a two-axis scrim, one mono line naming the frame.
-
-   The height is 52vw, so the box is 1.92:1 against the still's own 1.78:1 and
-   the cover crop takes 8% off the top, which is ceiling. At 1440 the picture
-   renders 1440x749 from a 1920x1080 source, so nothing is upscaled. The svh
-   term only takes over on a short window and 1000px caps very wide ones.
-   ========================================================= */
-.ct-hero {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-  min-height: min(52vw, calc(100svh - 56px), 1000px);
-  background: var(--c-bg-0);
-}
-
-.ct-hero__media {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-}
-
-.ct-hero__still {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  object-fit: cover;
-  /* The stage sits slightly above centre in the frame, so a cover crop at a
-     ratio other than 16:9 keeps the piano rather than the ceiling. */
-  object-position: 50% 66%;
-  /* The still is graded near-black. Lifting it here rather than shipping a
-     second file keeps one asset on disk. */
-  filter: brightness(1.34) contrast(1.06);
-}
-
-/* Two gradients, the same pair home and music use: the horizontal pass
-   protects the copy column, the vertical pass keeps the sticky header
-   readable and seats the section against the band below it. */
-.ct-hero__scrim {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg,
-      rgba(11, 11, 13, 0.82) 0%,
-      rgba(11, 11, 13, 0.60) 30%,
-      rgba(11, 11, 13, 0.24) 58%,
-      rgba(11, 11, 13, 0.06) 82%,
-      rgba(11, 11, 13, 0.24) 100%),
-    linear-gradient(180deg,
-      rgba(11, 11, 13, 0.60) 0%,
-      rgba(11, 11, 13, 0.04) 26%,
-      rgba(11, 11, 13, 0.34) 62%,
-      rgba(11, 11, 13, 0.94) 100%);
-}
-
-.ct-hero__inner {
-  position: relative;
-  z-index: 2;
-  padding-block: var(--s-7) var(--s-6);
-}
-
-.ct-kicker {
-  margin: 0 0 var(--s-3);
-  font-family: var(--micro-data-font);
-  font-size: var(--micro-data-size);
-  line-height: 1.4;
-  letter-spacing: var(--micro-data-tr);
-  text-transform: uppercase;
-  color: var(--micro-data-ink);
-}
-
-.ct-address {
-  margin: 0;
-  /* Off the shared ladder only in its lower bound: --t-d2 bottoms out at 44px,
-     which puts "igorszuniewiczwork@" past the 350px content width at 390. */
-  font-size: clamp(30px, 6.4vw, 76px);
-  font-family: var(--display);
-  font-weight: 600;
-  line-height: var(--lh-d2);
-  letter-spacing: -.032em;
-  /* Parts of the address land on the lit part of the stage. Too soft to read
-     as an effect, enough to hold the type off the image. */
-  text-shadow: 0 2px 28px rgba(11, 11, 13, 0.65);
-}
-
-/* A real target, not a styled paragraph: the box is the width of the address
-   and 44px tall at every size, and the hairline under it is the affordance. */
-.ct-address__link {
-  display: inline-block;
-  max-width: 100%;
-  padding-block: 2px 10px;
-  border-bottom: 2px solid var(--rule-hi);
-  color: var(--ink);
-  text-decoration: none;
-  overflow-wrap: break-word;
-  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
-}
-
-.ct-address__link:hover {
-  color: var(--ice);
-  border-bottom-color: var(--ice);
-}
-
-.ct-address__link:active { color: var(--c-accent-hi); }
-
-.ct-note {
-  margin: var(--s-4) 0 0;
-  max-width: var(--reading-max);
-  color: var(--ink);
-  font-size: var(--t-b1);
-  line-height: var(--lh-b1);
-  text-shadow: 0 1px 18px rgba(11, 11, 13, 0.7);
-}
-
-/* Same job as the reel meta line on home and the still line on music: one
-   mono row of fact under the copy, naming the media the section sits on. */
-.ct-hero__meta {
-  margin: var(--s-3) 0 0;
-  font-family: var(--mono);
-  font-size: var(--t-m0);
-  line-height: var(--lh-t3);
-  letter-spacing: var(--micro-data-tr);
-  text-transform: uppercase;
-  color: var(--faint);
-}
-
-/* =========================================================
-   FACT STRIP
-
-   Three facts, so they are data and get rules. As a three-column grid on the
-   full frame each cell was 370px wide holding a 20 character value, which was
-   most of the page's dead space. Inline pairs on one line are dense, and the
-   deeper ground continues the letterbox of the bed above.
-   ========================================================= */
-.ct-strip {
-  position: relative;
-  z-index: 10;
-  background: var(--c-bg-0);
-  box-shadow: var(--e-1);
-}
-
-.ct-strip__inner {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s-2) var(--s-6);
-  /* margin-block only: the strip sits on the page frame, and a margin
-     shorthand here would drop the auto inline margin that centres it. */
-  margin-block: 0;
-  padding-block: var(--s-4);
-}
-
-.ct-fact {
-  display: flex;
-  align-items: baseline;
-  gap: var(--s-2);
-  min-height: 24px;
-}
-
-.ct-fact dt {
-  font-family: var(--micro-data-font);
-  font-size: var(--micro-data-size);
-  letter-spacing: var(--micro-data-tr);
-  text-transform: none;
-  color: var(--faint);
-}
-
-.ct-fact dd {
-  margin: 0;
-  color: var(--ink);
-  font-size: var(--t-s1);
-  line-height: var(--lh-b1);
-}
-
-/* =========================================================
-   SECTIONS
-   ========================================================= */
-.ct-sec {
-  position: relative;
-  z-index: 10;
-  padding-block: var(--section-pad) 0;
-}
-
-.ct-sec__head { margin-bottom: var(--s-5); }
-
-.ct-sec__title {
-  margin: 0;
-  font-family: var(--display);
-  font-weight: 600;
-  font-size: var(--t-t1);
-  line-height: var(--lh-t1);
-  letter-spacing: -.03em;
-}
-
-/* ---------- Scope ----------
-   Two columns of label plus one sentence. Full-width rows left the right 40%
-   of the page empty and gave each sentence a 95 character measure; at two
-   columns the measure is inside the reading range and the block is half as
-   tall. Ordinary prose carries no border of its own here; the rules belong to
-   the list structure. */
-.ct-scope {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 var(--s-6);
-  margin: 0;
-  border-top: 1px solid var(--rule);
-}
-
-.ct-scope__item {
-  padding-block: var(--s-4);
-  border-bottom: 1px solid var(--rule-soft);
-}
-
-.ct-scope dt {
-  font-family: var(--display);
-  font-size: var(--t-t3);
-  font-weight: 600;
-  line-height: var(--lh-t3);
-  letter-spacing: -.015em;
-  color: var(--ink);
-}
-
-.ct-scope dd {
-  margin: var(--s-2) 0 0;
-  max-width: 52ch;
-  color: var(--muted);
-  font-size: var(--t-b0);
-  line-height: var(--lh-b0);
-}
-
-/* ---------- Profiles and CV ----------
-   Interaction, so these get a ground and an edge. The colophon under them
-   carries the same six destinations as bare words; each tile here says what
-   kind of thing is at the other end and shows the address, which is the part
-   a footer link cannot answer. Five tiles across the frame also stops the
-   list repeating the shape of the scope block directly above it. */
-.ct-links {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(206px, 1fr));
-  gap: var(--s-2);
-}
-
+/* ---------- Profile links ---------- */
 .ct-link {
   display: flex;
   flex-direction: column;
@@ -369,30 +96,7 @@ img { max-width: 100%; }
   color: var(--ink);
 }
 
-.ct-link:hover .ct-link__go,
-.ct-link:focus-visible .ct-link__go { color: var(--ice); }
-
 .ct-link:active { background: var(--c-accent-weak); }
-
-.ct-link__top {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--s-2);
-}
-
-.ct-link__kind,
-.ct-link__go {
-  font-family: var(--mono);
-  font-size: var(--t-m0);
-  line-height: 1.4;
-  /* The DATA register's own tracking, so these match .ct-kicker on the same
-     page rather than running 0.02em wider than every other mono label. */
-  letter-spacing: var(--micro-data-tr);
-  text-transform: uppercase;
-  color: var(--faint);
-  transition: color var(--dur) var(--ease);
-}
 
 .ct-link__name {
   margin-top: var(--s-4);
@@ -402,17 +106,6 @@ img { max-width: 100%; }
   line-height: var(--lh-t3);
   letter-spacing: -.015em;
   color: var(--ink);
-}
-
-.ct-link__dest {
-  margin-top: auto;
-  padding-top: var(--s-2);
-  font-family: var(--mono);
-  font-size: var(--t-m0);
-  line-height: 1.5;
-  letter-spacing: 0;
-  color: var(--faint);
-  overflow-wrap: anywhere;
 }
 
 /* ---------- Return row ---------- */
@@ -462,68 +155,8 @@ img { max-width: 100%; }
    RESPONSIVE
    ========================================================= */
 
-/* Scope goes to one column before the measure drops under 40 characters. */
-@media (max-width: 900px) {
-  .ct-scope { grid-template-columns: minmax(0, 1fr); }
-}
-
-/* Phone and small tablet: the bed becomes a band with the address underneath
-   it rather than on it. A landscape still inside a 390x560 box would have
-   thrown away 60% of the frame's width, and the address needs the whole text
-   column at this size. The band is 16:10 against the still's 16:9, so the crop
-   takes 11% off the top and the stage sits closer than it does on the desktop
-   bed. */
-@media (max-width: 760px) {
-  .ct-hero {
-    display: block;
-    min-height: 0;
-  }
-
-  .ct-hero__media {
-    position: relative;
-    aspect-ratio: 16 / 10;
-  }
-
-  .ct-hero__scrim {
-    background:
-      linear-gradient(180deg,
-        rgba(11, 11, 13, 0.62) 0%,
-        rgba(11, 11, 13, 0.04) 30%,
-        rgba(11, 11, 13, 0.10) 62%,
-        rgba(16, 16, 18, 0.96) 100%);
-  }
-
-  .ct-hero__inner {
-    padding-block: var(--s-5) var(--s-6);
-  }
-
-  .ct-address,
-  .ct-note { text-shadow: none; }
-
-  .ct-strip__inner {
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .ct-fact {
-    justify-content: space-between;
-    gap: var(--s-4);
-    padding-block: 12px;
-    border-bottom: 1px solid var(--rule-soft);
-  }
-
-  .ct-fact dd { text-align: right; }
-}
-
-
 @media (max-width: 600px) {
   .ct-return { flex-direction: column; align-items: flex-start; gap: 0; }
-}
-
-@media (max-width: 520px) {
-  /* --t-t1 floors at 32px while .ct-address floors at 30px, so below 500px
-     the section headings outranked the h1 they sit under. */
-  .ct-sec__title { font-size: var(--t-t2); }
 }
 
 @media (prefers-reduced-motion: reduce) {

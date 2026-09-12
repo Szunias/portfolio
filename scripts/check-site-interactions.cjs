@@ -131,6 +131,97 @@ async function clockMotion(context, entry, width) {
   }
 }
 
+// A deterministic PCM fixture exercises decoding and the real Web Audio graph
+// without depending on leading silence, track length or a particular MP3 codec.
+function testTone() {
+  const rate = 16000;
+  const samples = rate * 20;
+  const wav = Buffer.alloc(44 + samples * 2);
+  wav.write('RIFF');
+  wav.writeUInt32LE(wav.length - 8, 4);
+  wav.write('WAVEfmt ', 8);
+  wav.writeUInt32LE(16, 16);
+  wav.writeUInt16LE(1, 20);
+  wav.writeUInt16LE(1, 22);
+  wav.writeUInt32LE(rate, 24);
+  wav.writeUInt32LE(rate * 2, 28);
+  wav.writeUInt16LE(2, 32);
+  wav.writeUInt16LE(16, 34);
+  wav.write('data', 36);
+  wav.writeUInt32LE(samples * 2, 40);
+  for (let i = 0; i < samples; i++) wav.writeInt16LE(Math.round(4000 * Math.sin(2 * Math.PI * 440 * i / rate)), 44 + i * 2);
+  return wav;
+}
+
+async function musicPlayback(context, entry, width) {
+  const page = await context.newPage();
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  try {
+    await page.setViewportSize({ width, height: 900 });
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    const tone = testTone();
+    await page.route('**/old/public/assets/audio/**/*.mp3', route => route.fulfill({ contentType: 'audio/wav', body: tone }));
+    await page.addInitScript(() => {
+      const NativeAudioContext = window.AudioContext;
+      const qa = window.__musicAudioQA = { contexts: [], sources: 0, destinationConnections: 0, reads: 0, nonzero: false };
+      window.AudioContext = class extends NativeAudioContext {
+        constructor(options) { super(options); qa.contexts.push(this); }
+        createMediaElementSource(audio) {
+          const source = super.createMediaElementSource(audio);
+          qa.sources++;
+          const connect = source.connect.bind(source);
+          source.connect = (...args) => {
+            const result = connect(...args);
+            if (args[0] === this.destination) qa.destinationConnections++;
+            return result;
+          };
+          return source;
+        }
+        createAnalyser() {
+          const analyser = super.createAnalyser();
+          const read = analyser.getByteFrequencyData.bind(analyser);
+          analyser.getByteFrequencyData = bins => {
+            read(bins);
+            qa.reads++;
+            qa.nonzero ||= bins.some(value => value > 0);
+          };
+          return analyser;
+        }
+      };
+    });
+    await page.goto(address(entry), { waitUntil: 'load' });
+    await page.locator('[data-featured-track]').first().click();
+    const spectrum = page.locator('.stage__spectrum');
+    await spectrum.scrollIntoViewIfNeeded();
+    await page.waitForFunction(() => {
+      const audio = document.querySelector('[data-music-audio]');
+      return !audio.paused && audio.currentTime > 0 && window.__musicAudioQA.nonzero;
+    });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await settle(page);
+    const stoppedAt = await page.evaluate(() => ({ reads: window.__musicAudioQA.reads, time: document.querySelector('[data-music-audio]').currentTime }));
+    await page.waitForFunction(time => document.querySelector('[data-music-audio]').currentTime > time + 0.1, stoppedAt.time);
+    assert.equal(await page.evaluate(() => window.__musicAudioQA.reads), stoppedAt.reads, 'Reduced motion stops drawing while audio advances');
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.waitForFunction(reads => window.__musicAudioQA.reads > reads, stoppedAt.reads);
+    const transport = page.locator('#playerBar [data-player="play"]');
+    await transport.click();
+    await page.waitForFunction(() => document.querySelector('[data-music-audio]').paused);
+    // Model a context suspended by the browser while keeping native Web Audio.
+    await page.evaluate(() => window.__musicAudioQA.contexts[0].suspend());
+    await transport.click();
+    await page.waitForFunction(() => !document.querySelector('[data-music-audio]').paused && window.__musicAudioQA.contexts[0].state === 'running');
+    const graph = await page.evaluate(() => ({ sources: window.__musicAudioQA.sources,
+      destinationConnections: window.__musicAudioQA.destinationConnections, nonzero: window.__musicAudioQA.nonzero }));
+    assert.deepEqual(graph, { sources: 1, destinationConnections: 1, nonzero: true });
+    assert.deepEqual(errors, [], 'Music playback emitted runtime errors');
+    return graph;
+  } finally {
+    await page.close();
+  }
+}
+
 async function main() {
   const server = spawn(process.execPath, ['scripts/serve-dist.cjs'], {
     cwd: root, env: { ...process.env, PORT: '4174' }, stdio: ['ignore', 'pipe', 'pipe'],
@@ -168,6 +259,9 @@ async function main() {
       }
       for (const entry of pages.filter(entry => (entry.js || []).some(script => script === 'contact-clock' || script === 'contact-time'))) {
         await record({ check: 'clock motion', page: entry.slug, width }, () => clockMotion(context, entry, width));
+      }
+      for (const entry of pages.filter(entry => entry.js.includes('music-visualizer'))) {
+        await record({ check: 'music playback', page: entry.slug, width }, () => musicPlayback(context, entry, width));
       }
     }
     assert.equal(results.filter(result => !result.passed).length, 0, 'Browser checks failed; see site-interactions-report.json');

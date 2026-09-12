@@ -17,11 +17,12 @@ const { execFileSync } = require('child_process');
 
 const config = require('./site.config.cjs');
 const { injectStaticTrackIndex } = require('./scripts/build/music-index.cjs');
+const { injectMusicCatalog } = require('./scripts/build/music-catalog.cjs');
 const { checkedSource } = require('./scripts/build/source-paths.cjs');
 const { read, ensureDir, cleanDir, copySourceDirectory, publishDist } = require('./scripts/build/output-files.cjs');
 const { enforceDistBudget } = require('./scripts/build/output-budget.cjs');
 const { validateGeneratedHtml, validateSupportFiles } = require('./scripts/build/output-validation.cjs');
-const { SHARED_STYLESHEETS, CHROME_PARTIALS, pageCssNames, staticCopyEntries } = require('./scripts/build/site-inputs.cjs');
+const { MUSIC_CATALOG_SOURCE, SHARED_STYLESHEETS, CHROME_PARTIALS, pageCssNames, pageSources, staticCopyEntries } = require('./scripts/build/site-inputs.cjs');
 const { escAttr, attrValue, htmlFileSlug, decodeHtmlAttr,
   decodeBase64Attr } = require('./scripts/build/html-utils.cjs');
 const {
@@ -234,6 +235,7 @@ function validateLocalRefsInDist(htmlFiles, siteOrigin) {
 function pageContentInputs(page) {
   return [
     relPath('src', 'pages', `${page.slug}.html`),
+    ...pageSources(page).data,
     ...(page.lastmodInputs || []),
   ];
 }
@@ -404,6 +406,12 @@ function buildPage(page) {
     throw new Error(`Page content not found: src/pages/${page.slug}.html`);
   }
   let content = read(pagePath);
+  if (page.musicCatalog !== undefined) {
+    const catalog = JSON.parse(read(checkedSource(__dirname, path.join(__dirname, MUSIC_CATALOG_SOURCE))));
+    content = injectMusicCatalog(content, catalog, page.musicCatalog);
+  } else if (content.includes('<!-- MUSIC_TRACKS -->')) {
+    throw new Error(`${page.slug} must register a musicCatalog artwork variant`);
+  }
   if (page.layout === 'music') content = injectStaticTrackIndex(content);
   content = enhanceVideoAccessibility(content);
   content = enhanceExternalLinkSafety(content);
@@ -492,6 +500,9 @@ function validateConfig(cfg) {
     seen.add(page.slug);
     if (!['home', 'page', 'project', 'music', 'error'].includes(page.layout)) {
       throw new Error(`Unknown layout "${page.layout}" for ${page.slug}`);
+    }
+    if (page.musicCatalog !== undefined && (page.layout !== 'music' || typeof page.musicCatalog !== 'string')) {
+      throw new Error(`${page.slug}: musicCatalog requires a music layout and an artwork variant name`);
     }
     if (page.noindex && page.sitemap !== false) {
       throw new Error(`${page.slug} is noindex and must set sitemap: false`);

@@ -10,7 +10,7 @@ Examples:
   npm run inspect -- --file src/js/music-player.js
   node scripts/inspect-site.cjs --json
 
-Lists shared partials and all CSS/JS in loading order. No files are changed.
+Lists shared partials, catalog data and all CSS/JS in loading order. No files are changed.
 Use node directly for machine-readable JSON without npm's command banner.
 Media embedded in HTML/CSS is discovered by the build, not this input map.`;
 
@@ -43,6 +43,7 @@ function formatText(report) {
     if (route.kind === 'page') {
       lines.push(`  Layout       ${route.layout}`);
       lines.push(`  Partials     ${route.partials.join(', ')}`);
+      if (route.data.length) lines.push(`  Data         ${route.data.join(', ')}`);
       lines.push(`  CSS          ${route.css.join(', ')}`);
       lines.push(`  JS           ${route.js.join(', ') || '(none)'}`);
     }

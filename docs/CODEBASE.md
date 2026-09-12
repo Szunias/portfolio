@@ -13,8 +13,8 @@ CSS is conservatively compressed; JavaScript is syntax-checked and concatenated
 without rewriting its contents. Browser scripts are classic scripts, not ES modules.
 
 `npm run inspect` prints the complete route-to-file map from configuration,
-including shared partials and all CSS in loading order. It reports missing
-inputs and unregistered page, layout, partial, CSS and JS source files.
+including shared partials, catalog data and all CSS in loading order. It reports
+missing inputs and unregistered page, layout, partial, data, CSS and JS sources.
 
 ```sh
 npm run inspect -- --page music
@@ -87,6 +87,7 @@ an intermediate width and desktop, including long titles and player controls.
 | `music-player.js` | Track selection, queue, transport, seek, volume, filters, artwork transitions and player state. |
 | `music-visualizer.js` | Cover proportions, sampled artwork brightness and audio spectrum. |
 | `contact-actions.js` | Contact-page actions and progressive enhancement. |
+| `clock-face.js` | Shared Vienna time parts, phase labels, hand transforms and SVG ticks for contact clocks. |
 | `contact-clock.js` | Windable contact clock and its interaction state. |
 | `contact-time.js` | Clock treatment on the separate contact-time review page. |
 | `colophon-clock.js` | Time display in the shared footer. |
@@ -98,15 +99,27 @@ an intermediate width and desktop, including long titles and player controls.
 Scripts use local scopes and DOM hooks. Keep their loading order in configuration
 and preserve accessible markup when JavaScript is unavailable.
 
-The contact clocks observe live motion preferences and keep one refresh timer.
+Each contact clock loads `clock-face.js` before its controller. The read-only
+`PortfolioClockFace` lexical API owns only face/time helpers; controllers keep
+all timers, audio and interaction state. The contact clocks observe live motion
+preferences and keep one refresh timer.
 The windable clock's sound is optional: Web Audio failures must not interrupt
 pointer, keyboard or ARIA state. Temporary tone nodes disconnect when finished.
 
 Music has one explicit audio element in `player-bar.html`. `music-player.js` owns
 it; `music-visualizer.js` observes it after player initialization. Do not replace
 `window.Audio` or use a hidden global to exchange the player instance. Track data
-lives in `#trackData .track-card` on the music page; the build also turns it into
-a static track index. The `data-src-e` values encode local media paths, not secrets.
+is authored once in `src/data/music-tracks.json`. The `musicCatalog` setting
+selects an artwork variant; `scripts/build/music-catalog.cjs` fills the page’s
+`<!-- MUSIC_TRACKS -->` marker before the static index and media checks run.
+The browser still reads `#trackData .track-card`. The `data-src-e` values encode
+local media paths, not secrets. Catalog edits also update sitemap lastmod.
+
+`default` serves music and music-alt. `review` preserves the gradient-only
+Electronic sketch and Miss You artwork in music-crate and music-reel. Overrides
+may change artwork only; titles, dates and audio paths stay shared. Featured
+selections and their order remain authored in each page. Use
+`npm run inspect -- --file src/data/music-tracks.json` to find all consumers.
 
 Every music route loads `music-library.js` before `music-player.js`. Its explicit
 `PortfolioMusicLibrary` API is a classic-script lexical binding, not a player
@@ -149,7 +162,8 @@ module and the relevant tests; start there instead of searching the runner.
 `site-inputs.cjs` shares CSS/partial composition and standalone-entry normalization
 with the inspector. `browser-assets.cjs` owns the isolated CSS transform and
 JavaScript syntax gate; `seo.cjs` generates and validates structured data;
-`music-index.cjs` builds the static track index; `source-paths.cjs` enforces source
+`music-catalog.cjs` renders shared track data; `music-index.cjs` builds the static
+track index; `source-paths.cjs` enforces source
 containment. Deployment and Search Console checks remain in `docs/SEO.md`.
 
 `tests/build-output.test.cjs` checks a deterministic mix of pages, markup
@@ -172,7 +186,9 @@ clock audio failures and live motion preferences. It runs with `npm test`.
 The isolated Playwright workflow additionally runs `scripts/check-site-interactions.cjs`
 after the homepage layout checks: every configured route at 320 px and desktop,
 image loading, horizontal document overflow, script errors, project reveals and
-contact-clock interactions. Reports are saved under `layout-results/`.
+contact-clock interactions and real Web Audio music playback with motion enabled.
+`tests/music-visualizer.test.cjs` covers graph failures, drawing gates and context
+resumption using deterministic audio doubles. Reports are saved under `layout-results/`.
 These checks do not certify third-party embeds, all codecs or Safari/iOS behavior.
 
 ## Media and supporting tools
@@ -186,7 +202,6 @@ These checks do not certify third-party embeds, all codecs or Safari/iOS behavio
 | `showreel/render-preview.cjs` | Retained large silent encodes and project-card previews. |
 | `showreel/render-thumbnail.cjs` | Compact showreel preview, derived from `src/assets/hero-motion.mp4`. |
 | `showreel/sources.json`, `fetch-sources.cjs` | Public media source manifest and restoration tool. |
-| `scripts/generate-peaks.cjs` | Music waveform generation; run after replacing audio. |
 | `scripts/build-fonts.py` | Offline font preparation. |
 | `scripts/make-*-cover*.py`, `replace-ai-covers.py` | Manual artwork preparation, outside the website build. |
 | `src/static/trip.html` | Standalone page explicitly copied by configuration. |

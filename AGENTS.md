@@ -28,6 +28,7 @@ The deployed portfolio is a static HTML build. Its source of truth is:
 - `src/pages/*.html` for page content
 - `src/layouts/*.html` for home, project and music shells
 - `src/partials/*.html` for shared fragments
+- `src/data/music-tracks.json` for the shared music catalog and artwork variants
 - `src/css/*.css` and `src/js/*.js`, bundled into content-hashed assets by the build
 - `site.config.cjs` for page registration and metadata
 - `build.cjs` for orchestration; `scripts/build/` for focused build helpers

@@ -15,6 +15,7 @@ requirements and are not part of the website build.
 | Markup enhancement passes, aspect ratios and snapshot cleanup | `build/document-transforms.cjs` |
 | CSS transform and classic JavaScript syntax gate | `build/browser-assets.cjs` |
 | Structured data generation and validation | `build/seo.cjs` |
+| Shared music records and artwork variants | `build/music-catalog.cjs` |
 | No-JavaScript track index | `build/music-index.cjs` |
 | Source containment and symlink checks | `build/source-paths.cjs` |
 | Copying, comparing, publishing and restoring output | `build/output-files.cjs` |
@@ -67,7 +68,7 @@ when `routes` is filtered. Use `node scripts/inspect-site.cjs --json` for script
 | Publication, rollback, file comparisons | `output-files.test.cjs`, `build-boundaries.test.cjs` |
 | Inspector queries and composition | `site-map.test.cjs` |
 | CSS handling | `browser-assets.test.cjs`, `css-token-safety.test.cjs` |
-| HTML/base64/music metadata | `browser-base64.test.cjs`, `music-index.test.cjs` |
+| HTML/base64/music metadata | `browser-base64.test.cjs`, `music-index.test.cjs`, `music-catalog.test.cjs` |
 | Structured data | `seo.test.cjs` |
 | Preview HTTP server | `preview-server.test.cjs`, `preview-security.test.cjs` |
 

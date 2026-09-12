@@ -36,5 +36,12 @@ test('a route never registers competing writers for the contact clock hands', ()
   for (const page of pages) {
     assert.ok(!(page.js.includes('contact-clock') && page.js.includes('contact-time')),
       page.slug + ': select one clock controller, not both');
+    for (const controller of ['contact-clock', 'contact-time']) {
+      const index = page.js.indexOf(controller);
+      if (index !== -1) {
+        assert.ok(page.js.indexOf('clock-face') !== -1 && page.js.indexOf('clock-face') < index,
+          page.slug + ': clock-face must load before ' + controller);
+      }
+    }
   }
 });

@@ -13,7 +13,7 @@ route and stylesheet map is in `docs/CODEBASE.md`; `npm run inspect` lists input
 | `music-player.js` | The audio element, selection, filters, queue, transport, sheet, artwork transitions and saved settings. |
 | `music-visualizer.js` | Artwork brightness/proportions and the spectrum drawn from that audio element. |
 
-Load the library before the player and the visualizer afterwards. The only helper
+Load the library before the player and the visualizer afterwards. The music helper
 API is the read-only `PortfolioMusicLibrary` lexical binding. Keep audio state
 inside the player and preserve the existing DOM classes, attributes and order.
 Metadata is inserted with `textContent`, not interpolated into HTML.
@@ -27,6 +27,13 @@ The queue is rendered only when its upcoming tracks, position or repeat mode
 changes. Ordinary play/pause events must preserve its buttons and keyboard focus.
 Seek and volume rails accept one active pointer until release, cancellation or
 lost capture, including devices with both touch and mouse input.
+
+## Contact clocks
+
+`clock-face.js` supplies the read-only `PortfolioClockFace` lexical API. Load it
+before `contact-clock.js` or `contact-time.js`. Controllers retain their own
+timers, motion preferences, audio and winding state. Never load both controllers
+on the same route.
 
 ## Editing and checking
 

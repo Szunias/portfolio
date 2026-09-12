@@ -292,6 +292,7 @@ function clockFixture() {
   const svg = new Element('svg');
   const fixture = browser({ '[data-time-root]': [root], '.ck__dial': [svg] });
   fixture.window.matchMedia('(prefers-reduced-motion: reduce)').matches = true;
+  fixture.run('clock-face.js');
   fixture.run('contact-clock.js');
   return { ...fixture, root, svg };
 }

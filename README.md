@@ -28,7 +28,6 @@ requests. Set `PORT` to use a different port.
 | `npm test` | Test browser interactions, build helpers, preview behavior and architecture contracts. |
 | `npm run preview` | Serve the generated website locally. |
 | `npm run inspect` | Print every route, its source files and any unregistered source files. |
-| `npm run peaks` | Regenerate music waveform data after changing audio; requires FFmpeg. |
 | `npm run showreel:preview` | Regenerate retained large encodes and project-card previews; requires FFmpeg and source media. |
 
 The current compact showreel thumbnail is a separate output. Rebuild it with
@@ -47,7 +46,7 @@ The current compact showreel thumbnail is a separate output. Rebuild it with
 | Shared header, footer and metadata markup | `src/partials/` |
 | Shared fonts, design tokens and page chrome | `src/css/_fonts.css`, `_tokens.css`, `_chrome.css` |
 | Project content | `src/pages/<slug>.html` |
-| Music tracks and their metadata | `src/pages/music.html`, in `#trackData` |
+| Music tracks and their metadata | `src/data/music-tracks.json`; featured selections in each `src/pages/music*.html` |
 | Music playback and artwork visualization | `src/js/music-player.js`, `music-visualizer.js` |
 | Email copying, contact actions and interactive clock | `src/js/copy-email.js`, `contact-actions.js`, `contact-clock.js` |
 | Routes, metadata and asset loading order | `site.config.cjs` |

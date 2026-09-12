@@ -19,7 +19,7 @@ node scripts/inspect-site.cjs --file music-preview.html
 
 The first three queries describe configured inputs. The last identifies an
 unregistered root study; it does not select the published music page.
-The inspector scans the page/layout/partial/CSS/JS directories and top-level
+The inspector scans the page/layout/partial/data/CSS/JS directories and top-level
 HTML. It does not recursively classify archived applications, follow imports,
 list functions, or discover media references. `--file build.cjs` is outside its
 entry-input scope; use the build ownership table, not an empty result, to decide
@@ -30,20 +30,18 @@ script, then follow the CSS loading order from configuration. For build changes,
 follow imports from `build.cjs` into the module identified by the build guide.
 Tests and fixtures may repeat markup on purpose; they are not deployed code.
 
-## Overlaps that still need a deliberate decision
+## Maintenance boundaries after cleanup
 
 | Family | Actual overlap | Safe next step |
 | --- | --- | --- |
-| Contact clock face | `src/js/contact-clock.js` and `src/js/contact-time.js` repeat time-part formatting, `phaseName`, `setHand` and SVG tick generation. | A focused shared face/time helper is a reasonable refactor. Keep winding, pointer ownership, audio, timers and rewind state in their own controller; test both configured variants before changing loading order. |
-| Contact identity and time zone | The two clock scripts, `contact-actions.js` and `colophon-clock.js` repeat the Vienna zone. `contact-actions.js` also contains the mail destination while page HTML contains visible mail links. | A zone or email change is cross-file today. Compare the visible address, generated mailto target and all time labels; do not assume changing one HTML string updates the scripts. Avoid a generic global utility merely to remove a constant. |
-| Music catalogue | `src/pages/music.html`, `music-alt.html`, `music-crate.html` and `music-reel.html` each author a `#trackData` block. | Public catalogue edits start in `music.html`. Decide whether review variants should receive that edit or remain snapshots. Compare complete records and featured-track references before introducing one shared catalogue. Their data has not been proved interchangeable by this audit. |
+| Contact clock face | `src/js/clock-face.js` supplies the shared face/time API to both controllers. | Keep winding, pointer ownership, audio, timers and rewind state in the controllers; register the helper before each controller. |
+| Contact identity and time zone | The shared clock face, `contact-actions.js` and `colophon-clock.js` repeat the Vienna zone. `contact-actions.js` also contains the mail destination while page HTML contains visible mail links. | A zone or email change is cross-file today. Compare the visible address, generated mailto target and all time labels; do not assume changing one HTML string updates the scripts. Avoid a generic global utility merely to remove a constant. |
+| Music catalogue | `src/data/music-tracks.json` supplies all four music pages, with explicit artwork variants. | Edit shared records there. Preserve the two gradient-only artwork overrides in `review` and the featured selections authored in each page. |
 | Repeated page styling and markup | Review variants and responsive/theme overrides intentionally share selectors and some structure. | Distinguish a repeated rule from an intentional later override. Do not delete a selector because it appears twice, or replace different review bodies with one generic template. |
 
-The clock duplication is real technical debt, not evidence that #97 was wrong:
-that PR fixed runtime behavior in both controllers. The music controller/library
-split and shared build composition already give those responsibilities clear
-owners; they do not deduplicate every authored dataset or every clock helper.
-This audit does not extract those runtime families or modify their output.
+The follow-up cleanup shares the clock face and music catalogue, removes unused
+contact/music hero styles, and retires the unconsumed peaks generator. Clock
+controllers and page-specific layouts keep their existing responsibilities.
 
 ## Root references that can mislead a new contributor
 
