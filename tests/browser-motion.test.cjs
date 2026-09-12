@@ -71,6 +71,7 @@ function clockFixture(file, { reduced = false, AudioContext } = {}) {
   const media = fixture.window.matchMedia(MOTION_QUERY);
   media.matches = reduced;
   if (AudioContext) fixture.window.AudioContext = AudioContext;
+  fixture.run('clock-face.js');
   fixture.run(file);
   return { ...fixture, root, svg, second, caption, intervals, media };
 }

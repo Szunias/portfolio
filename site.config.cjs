@@ -4,6 +4,7 @@
  * Each entry specifies:
  *   slug       - output filename (without .html)
  *   layout     - which layout template to use (home | page | project | music | error)
+ *   musicCatalog - optional artwork variant from src/data/music-tracks.json
  *   css        - ordered CSS files bundled into a content-hashed asset
  *   js         - JS files concatenated into a content-hashed asset
  *   title      - <title> tag content
@@ -107,6 +108,7 @@ module.exports = {
     {
       slug: 'music',
       layout: 'music',
+      musicCatalog: 'default',
       // The listening-room layout promoted from the music-alt review page:
       // music-library provides metadata and markup; music-player owns the
       // shared audio element; music-visualizer reads
@@ -131,6 +133,7 @@ module.exports = {
     {
       slug: 'music-alt',
       layout: 'music',
+      musicCatalog: 'default',
       css: ['music', 'music-stage'],
       js: ['prefetch', 'colophon-clock', 'music-library', 'music-player', 'music-visualizer'],
       title: 'Music, alternate layout | Igor Szuniewicz',
@@ -148,6 +151,7 @@ module.exports = {
     {
       slug: 'music-crate',
       layout: 'music',
+      musicCatalog: 'review',
       css: ['music', 'music-crate'],
       js: ['prefetch', 'colophon-clock', 'music-library', 'music-player'],
       title: 'Music, crate layout | Igor Szuniewicz',
@@ -165,6 +169,7 @@ module.exports = {
     {
       slug: 'music-reel',
       layout: 'music',
+      musicCatalog: 'review',
       css: ['music', 'music-reel'],
       js: ['prefetch', 'colophon-clock', 'music-library', 'music-player'],
       title: 'Music, reel layout | Igor Szuniewicz',
@@ -192,7 +197,7 @@ module.exports = {
       // contact-clock owns the clock and its winding interaction.
       // copy-email handles copying; contact-actions handles mail links.
       css: ['contact', 'contact-time', 'contact-wind', 'portfolio'],
-      js: ['prefetch', 'colophon-clock', 'copy-email', 'contact-actions', 'contact-clock', 'page-motion'],
+      js: ['prefetch', 'colophon-clock', 'copy-email', 'contact-actions', 'clock-face', 'contact-clock', 'page-motion'],
       title: 'Contact Igor Szuniewicz | Freelance Game Audio & Sound Design',
       description: 'Discuss freelance game sound design, audio implementation or studio roles with Igor Szuniewicz. Send your project, scope and timeline in English or Polish.',
       canonical: `${SITE}/contact.html`,
@@ -287,7 +292,7 @@ module.exports = {
       slug: 'contact-time',
       layout: 'page',
       css: ['contact', 'contact-time'],
-      js: ['prefetch', 'colophon-clock', 'copy-email', 'contact-actions', 'contact-time'],
+      js: ['prefetch', 'colophon-clock', 'copy-email', 'contact-actions', 'clock-face', 'contact-time'],
       title: 'Contact, time | Igor Szuniewicz',
       description: 'Write to Igor Szuniewicz in Graz. A live clock shows the local time next to the work address. Copy it or open a mail. Polish, English, German.',
       canonical: `${SITE}/contact-time.html`,
@@ -309,7 +314,7 @@ module.exports = {
       slug: 'contact-wind',
       layout: 'page',
       css: ['contact', 'contact-time', 'contact-wind'],
-      js: ['prefetch', 'colophon-clock', 'copy-email', 'contact-actions', 'contact-clock'],
+      js: ['prefetch', 'colophon-clock', 'copy-email', 'contact-actions', 'clock-face', 'contact-clock'],
       title: 'Contact, wound clock | Igor Szuniewicz',
       description: 'Write to Igor Szuniewicz in Graz. Wind the clock forward to see what time your mail would arrive, then let it spring back. Copy the address or open a mail.',
       canonical: `${SITE}/contact-wind.html`,

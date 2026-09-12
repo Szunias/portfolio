@@ -7,7 +7,7 @@ const path = require('node:path');
 const { pageSources, staticCopyEntries } = require('./build/site-inputs.cjs');
 
 const SOURCE_TYPES = Object.freeze({
-  pages: '.html', layouts: '.html', partials: '.html', css: '.css', js: '.js',
+  pages: '.html', layouts: '.html', partials: '.html', data: '.json', css: '.css', js: '.js',
 });
 
 function normalizeFile(value) {
@@ -25,7 +25,7 @@ function normalizeFile(value) {
 
 function routeInputs(route) {
   return [route.source, route.layout, ...(route.partials || []),
-    ...(route.css || []), ...(route.js || [])].filter(Boolean);
+    ...(route.data || []), ...(route.css || []), ...(route.js || [])].filter(Boolean);
 }
 
 function sourceFiles(root, directory, extension, recursive = true) {

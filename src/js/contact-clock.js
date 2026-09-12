@@ -1,11 +1,6 @@
 (function () {
-  /* The windable clock on the published contact page (and its contact-wind
-     review twin), forked from contact-time.js. It owns the hands, the phase
-     and the caption, so a page must include it INSTEAD of contact-time.js:
-     two writers on the same transform attributes would fight once the preview
-     offset is non-zero. contact-actions.js only ever writes into
-     [data-local-time], which lives in its own caption span here. */
-  const ZONE = 'Europe/Vienna';
+  /* Owns winding, hands and captions. Load only one contact-clock controller
+     per page; contact-actions writes to its separate local-time span. */
   const MAX_OFFSET = 24 * 60;
   const root = document.querySelector('[data-time-root]');
   const svg = document.querySelector('.ck__dial');
@@ -19,58 +14,8 @@
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  const partsFmt = (function () {
-    try {
-      return new Intl.DateTimeFormat('en-GB', {
-        timeZone: ZONE,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hourCycle: 'h23'
-      });
-    } catch (_) {
-      return null;
-    }
-  })();
-
-  function partNumber(date, type) {
-    if (!partsFmt) {
-      if (type === 'hour') return date.getHours();
-      if (type === 'minute') return date.getMinutes();
-      return date.getSeconds();
-    }
-    const part = partsFmt.formatToParts(date).find(function (item) { return item.type === type; });
-    return part ? Number(part.value) : 0;
-  }
-
-  function phaseName(hour) {
-    if (hour < 5 || hour >= 22) return 'night';
-    if (hour < 8) return 'dawn';
-    if (hour >= 17) return 'dusk';
-    return 'day';
-  }
-
-  function setHand(node, angle) {
-    if (!node) return;
-    node.setAttribute('transform', 'rotate(' + angle.toFixed(2) + ' 50 50)');
-  }
-
-  if (ticks && !ticks.childElementCount) {
-    const ns = 'http://www.w3.org/2000/svg';
-    for (let i = 0; i < 60; i += 1) {
-      const hour = i % 5 === 0;
-      const angle = (i * 6) * Math.PI / 180;
-      const inner = hour ? 39 : 43.5;
-      const outer = 46.5;
-      const line = document.createElementNS(ns, 'line');
-      line.setAttribute('x1', (50 + Math.sin(angle) * inner).toFixed(2));
-      line.setAttribute('y1', (50 - Math.cos(angle) * inner).toFixed(2));
-      line.setAttribute('x2', (50 + Math.sin(angle) * outer).toFixed(2));
-      line.setAttribute('y2', (50 - Math.cos(angle) * outer).toFixed(2));
-      line.setAttribute('class', hour ? 'ck__tick ck__tick--hour' : 'ck__tick');
-      ticks.appendChild(line);
-    }
-  }
+  const { partNumber, phaseName, setHand, addTicks } = PortfolioClockFace;
+  addTicks(svg, ticks);
 
   let offsetMinutes = 0;
   let scrubbing = false;

@@ -3,6 +3,7 @@
  * on them. Change registration in site.config.cjs, not in generated output.
  */
 const path = require('node:path');
+const MUSIC_CATALOG_SOURCE = 'src/data/music-tracks.json';
 
 const SHARED_STYLESHEETS = Object.freeze(['_fonts', '_tokens', '_chrome']);
 const CHROME_PARTIALS = Object.freeze([
@@ -30,9 +31,10 @@ function pageSources(page) {
     layout: `src/layouts/${page.layout}.html`,
     partials: CHROME_PARTIALS.map(([, name]) => `src/partials/${name}.html`)
       .concat(page.layout === 'music' ? ['src/partials/player-bar.html'] : []),
+    data: page.musicCatalog !== undefined ? [MUSIC_CATALOG_SOURCE] : [],
     css: [...SHARED_STYLESHEETS, ...pageCssNames(page)].map(name => `src/css/${name}.css`),
     js: page.js.map(name => `src/js/${name}.js`),
   };
 }
 
-module.exports = { SHARED_STYLESHEETS, CHROME_PARTIALS, pageCssNames, staticCopyEntries, pageSources };
+module.exports = { MUSIC_CATALOG_SOURCE, SHARED_STYLESHEETS, CHROME_PARTIALS, pageCssNames, staticCopyEntries, pageSources };
