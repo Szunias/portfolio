@@ -12,9 +12,23 @@ shared partials. It emits HTML plus content-hashed CSS and JS under `dist/assets
 CSS is conservatively compressed; JavaScript is syntax-checked and concatenated
 without rewriting its contents. Browser scripts are classic scripts, not ES modules.
 
-`npm run inspect` prints the complete route-to-file map from configuration. It also
-reports page, layout, CSS or JS files that are not registered. Use it when tracing
-which stylesheet or interaction a page actually loads.
+`npm run inspect` prints the complete route-to-file map from configuration,
+including shared partials and all CSS in loading order. It reports missing
+inputs and unregistered page, layout, partial, CSS and JS source files.
+
+```sh
+npm run inspect -- --page music
+npm run inspect -- --file src/js/music-player.js
+npm run inspect -- --file src/partials/player-bar.html
+node scripts/inspect-site.cjs --json
+```
+
+`--page` accepts a slug or route; `--file` finds every configured owner of a
+repository-relative source path. They are mutually exclusive and can each be
+combined with `--json`. Use `node` directly when another tool parses stdout.
+JSON has `schemaVersion`, `routes`, `files`, `unregistered`, `missing` and `query`.
+Only `routes` is filtered; the reverse index and diagnostics cover the whole site.
+This maps entry inputs, not media references discovered by the full build.
 
 ## Layouts and partials
 
@@ -124,13 +138,25 @@ on `.tool-art`; the full screenshots remain available on their project pages.
 
 ## Build and validation
 
-`build.cjs` handles configuration validation, template assembly, metadata and
-accessibility enhancements, referenced asset copying, generated-document checks,
-support files, size budgets and publishing the successful temporary output.
-`scripts/build/browser-assets.cjs` contains the isolated CSS transform and
-JavaScript syntax gate. `scripts/build/seo.cjs` generates and validates structured
-data, including page identities and project credits. Tests for these helpers live
-in `tests/`; deployment and Search Console checks are documented in `docs/SEO.md`.
+`build.cjs` owns orchestration, configuration/source validation, template and
+bundle assembly, referenced asset discovery and support-file generation.
+It clears per-run caches, builds in staging, validates, then publishes.
+Focused helpers under `scripts/build/` own document transforms, HTML utilities,
+source composition, filesystem publication, output validation and size budgets.
+The [build ownership table and contracts](../scripts/AGENTS.md) identify each
+module and the relevant tests; start there instead of searching the runner.
+
+`site-inputs.cjs` shares CSS/partial composition and standalone-entry normalization
+with the inspector. `browser-assets.cjs` owns the isolated CSS transform and
+JavaScript syntax gate; `seo.cjs` generates and validates structured data;
+`music-index.cjs` builds the static track index; `source-paths.cjs` enforces source
+containment. Deployment and Search Console checks remain in `docs/SEO.md`.
+
+`tests/build-output.test.cjs` checks a deterministic mix of pages, markup
+transforms, media placeholders and support files against pre-refactor output.
+It also checks repeated builds and source-cache invalidation. It does not render
+a browser or replace a full-site build. Publication rollback and the Windows
+locked-directory fallback have separate tests in `tests/output-files.test.cjs`.
 
 `npm run check` validates without replacing `dist/`. `npm run build` publishes
 the validated output locally. Neither renders video nor downloads source media.

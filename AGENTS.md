@@ -1,5 +1,24 @@
 # Project Guidelines
 
+## Start here
+
+Read this file first, then [the codebase map](docs/CODEBASE.md). Do not search
+historical implementations to infer how the current site works.
+
+| Task | First stop |
+| --- | --- |
+| Find the inputs for a page | `npm run inspect -- --page <slug>` |
+| Find which pages load a file | `npm run inspect -- --file src/js/<name>.js` (also accepts CSS, layouts and partials) |
+| Change website content or interactions | `src/`; use the ownership map in `docs/CODEBASE.md` |
+| Change build, validation or developer tooling | [scripts/AGENTS.md](scripts/AGENTS.md) |
+| Change portfolio wording | Copy rules below and `HUMANIZE-GUIDE.md` |
+| Change CV or render media | `src/cv/README.md` or `showreel/README.md` |
+
+`node scripts/inspect-site.cjs --json` produces a machine-readable input map
+without npm's command banner. It reports missing inputs and unregistered
+sources, including shared partials. Media referenced inside HTML/CSS is still
+resolved by the full build, not by this entry-input map.
+
 ## Live architecture
 
 The deployed portfolio is a static HTML build. Its source of truth is:
@@ -9,10 +28,25 @@ The deployed portfolio is a static HTML build. Its source of truth is:
 - `src/partials/*.html` for shared fragments
 - `src/css/*.css` and `src/js/*.js`, bundled into content-hashed assets by the build
 - `site.config.cjs` for page registration and metadata
-- `build.cjs` for the zero-dependency build into `dist/`
+- `build.cjs` for orchestration; `scripts/build/` for focused build helpers
 - `.github/workflows/deploy.yml` for GitHub Pages
 
 `old/`, `archive/`, `v2/`, `new-portfolio/`, `design-mockups/` and `.claude/agent-team-*.md` are legacy references. Do not edit them as live-site code. Changes under `old/` are limited to assets in `old/public/assets/`.
+
+A registered `noindex` review route is still built and publicly accessible.
+It is not an archived implementation or private content. Do not remove it or
+rename media paths as a side effect of cleanup.
+
+## Maintenance boundaries
+
+For cleanup-only work, preserve page copy, markup, selectors, media URLs,
+CSS cascade and classic-script order. Do not change the design while moving
+build responsibilities. Keep generated `dist/` out of source edits.
+
+Comments should explain ownership, ordering, constraints or a non-obvious
+reason. Do not narrate obvious statements or paste task history into source.
+Update the ownership map when moving a responsibility; keep detailed build
+rules in `scripts/AGENTS.md` rather than copying them into every agent file.
 
 ## Portfolio copy rules
 
@@ -32,3 +66,7 @@ The deployed portfolio is a static HTML build. Its source of truth is:
 ## Validation
 
 Run `npm test` and `npm run build` after live-site changes. Verify generated HTML, referenced assets, the narrowest supported viewport and any interaction that was changed.
+
+For build-only refactors, `tests/build-output.test.cjs` checks deterministic
+output against the pre-refactor builder and verifies repeated builds. This does
+not replace a full build or browser checks when changing frontend behavior.

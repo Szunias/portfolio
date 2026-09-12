@@ -1,32 +1,82 @@
-/* Print the configured route-to-source map without building or changing files. */
-const fs = require('node:fs');
+#!/usr/bin/env node
+/** CLI only. Source composition lives in build/site-inputs.cjs; queries in site-map.cjs. */
 const path = require('node:path');
-const config = require('../site.config.cjs');
+const { createSiteMap, normalizeFile, selectRoutes } = require('./site-map.cjs');
 
-console.log('Paths below are relative to src/. CSS and JS run in the listed order.');
-console.log('Every page also receives css/_fonts.css, css/_tokens.css and css/_chrome.css.\n');
+const HELP = `Usage: npm run inspect -- [--page <slug-or-route> | --file <repo-path>] [--json]
 
-for (const page of config.pages) {
-  const route = page.slug === 'index' ? '/' : `/${page.slug}.html`;
-  console.log(`${route}${page.noindex ? ' [noindex]' : ''}`);
-  console.log(`  HTML  pages/${page.slug}.html + layouts/${page.layout}.html`);
-  console.log(`  CSS   ${page.css.map(name => `css/${name}.css`).join(', ')}`);
-  console.log(`  JS    ${page.js.map(name => `js/${name}.js`).join(', ') || '(none)'}`);
+Examples:
+  npm run inspect -- --page music
+  npm run inspect -- --file src/js/music-player.js
+  node scripts/inspect-site.cjs --json
+
+Lists shared partials and all CSS/JS in loading order. No files are changed.
+Use node directly for machine-readable JSON without npm's command banner.
+Media embedded in HTML/CSS is discovered by the build, not this input map.`;
+
+function parseArgs(args) {
+  const options = {};
+  for (let index = 0; index < args.length; index++) {
+    const flag = args[index];
+    if (flag === '--help' || flag === '-h') options.help = true;
+    else if (flag === '--json') options.json = true;
+    else if (flag === '--page' || flag === '--file') {
+      const key = flag.slice(2);
+      const value = args[++index];
+      if (!value || value.startsWith('--')) throw new Error(`${flag} requires a value`);
+      if (options[key] !== undefined) throw new Error(`${flag} may only be supplied once`);
+      options[key] = value;
+    } else throw new Error(`Unknown option: ${flag}`);
+  }
+  if (options.page !== undefined && options.file !== undefined) {
+    throw new Error('Use either --page or --file, not both');
+  }
+  return options;
 }
-for (const entry of config.staticCopy || []) {
-  console.log(`/${entry.outName} <- ${entry.file} [standalone${entry.noindex ? ', noindex' : ''}]`);
+
+function formatText(report) {
+  const lines = ['Paths are repository-relative. CSS and JS retain their loading order.',
+    'A [noindex] route is still built and publicly accessible.\n'];
+  for (const route of report.routes) {
+    lines.push(`${route.route}${route.noindex ? ' [noindex]' : ''}${route.kind === 'static' ? ' [standalone]' : ''}`);
+    lines.push(`  HTML/source  ${route.source}`);
+    if (route.kind === 'page') {
+      lines.push(`  Layout       ${route.layout}`);
+      lines.push(`  Partials     ${route.partials.join(', ')}`);
+      lines.push(`  CSS          ${route.css.join(', ')}`);
+      lines.push(`  JS           ${route.js.join(', ') || '(none)'}`);
+    }
+  }
+  if (!report.routes.length) lines.push('No configured route owns this unregistered source.');
+  // Diagnostics always cover the entire registry, even when route output is filtered.
+  for (const [label, files] of [['Unregistered sources', report.unregistered], ['Missing inputs', report.missing]]) {
+    lines.push(`\n${label} (whole site): ${files.length ? '\n' + files.join('\n') : 'none'}`);
+  }
+  return lines.join('\n');
 }
 
-const sources = {
-  pages: { extension: '.html', used: new Set(config.pages.map(page => page.slug)) },
-  layouts: { extension: '.html', used: new Set(config.pages.map(page => page.layout)) },
-  css: { extension: '.css', used: new Set(['_fonts', '_tokens', '_chrome', ...config.pages.flatMap(page => page.css)]) },
-  js: { extension: '.js', used: new Set(config.pages.flatMap(page => page.js)) },
-};
-const unused = [];
-for (const [directory, { extension, used }] of Object.entries(sources)) {
-  for (const file of fs.readdirSync(path.join(__dirname, '..', 'src', directory)).sort()) {
-    if (file.endsWith(extension) && !used.has(path.basename(file, extension))) unused.push(`src/${directory}/${file}`);
+/** Dependency injection keeps tests read-only and imports free of CLI side effects. */
+function inspect(args, { config, repoRoot }) {
+  const options = parseArgs(args);
+  if (options.help) return HELP;
+  const map = createSiteMap(config, repoRoot);
+  const report = { ...map, routes: selectRoutes(map, options),
+    query: { page: options.page || null, file: options.file ? normalizeFile(options.file) : null } };
+  return options.json ? JSON.stringify(report, null, 2) : formatText(report);
+}
+
+if (require.main === module) {
+  try {
+    const args = process.argv.slice(2);
+    // Help does not require loading or evaluating site configuration.
+    const options = parseArgs(args);
+    console.log(options.help ? HELP : inspect(args, {
+      config: require('../site.config.cjs'), repoRoot: path.resolve(__dirname, '..'),
+    }));
+  } catch (error) {
+    console.error(`Inspect failed: ${error.message}`);
+    process.exitCode = 1;
   }
 }
-console.log(`\nUnregistered page, layout, CSS or JS files: ${unused.length ? '\n' + unused.join('\n') : 'none'}`);
+
+module.exports = { inspect, parseArgs };
