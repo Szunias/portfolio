@@ -12,18 +12,23 @@
   if (!video || !preview || !launch) return;
   var playing = false;
   var visible = true;
-  var paused = !!(navigator.connection && navigator.connection.saveData);
+  var connection = navigator.connection;
+  var previewFailed = false;
+  var previewRequestVersion = 0;
   video.controls = false;
   preview.muted = true;
 
   function updatePreview() {
-    var canPlay = !paused && !playing && !reduced.matches && !document.hidden && visible;
-    scope.classList.toggle('is-settled', paused || reduced.matches);
+    var settled = previewFailed || reduced.matches || !!(connection && connection.saveData);
+    var canPlay = !settled && !playing && !document.hidden && visible;
+    var version = ++previewRequestVersion;
+    scope.classList.toggle('is-settled', settled);
     if (!canPlay) { preview.pause(); return; }
     var attempt = preview.play();
     if (attempt) attempt.catch(function (error) {
-      if (error.name === 'AbortError') return;
-      paused = true;
+      // A stopped or superseded request cannot disable a later preview.
+      if (version !== previewRequestVersion || (error && error.name === 'AbortError')) return;
+      previewFailed = true;
       updatePreview();
     });
   }
@@ -71,6 +76,9 @@
   scope.addEventListener('keydown', function (event) {
     if (event.key === 'Escape' && playing && !document.fullscreenElement) restoreCover(true);
   });
+  if (connection && typeof connection.addEventListener === 'function') {
+    connection.addEventListener('change', updatePreview);
+  }
   reduced.addEventListener('change', updatePreview);
   document.addEventListener('visibilitychange', updatePreview);
   if ('IntersectionObserver' in window) {
