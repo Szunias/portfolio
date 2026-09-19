@@ -13,11 +13,12 @@
     '<button type="button" data-zoom-toggle aria-pressed="false">Zoom in</button>' +
     '<a data-original target="_blank" rel="noopener noreferrer">Open original</a>' +
     '<button type="button" data-close aria-label="Close image preview" autofocus><span class="image-viewer__close-label">Close</span><span aria-hidden="true">&times;</span></button>' +
-    '</div><div class="image-viewer__surface" tabindex="0" role="region" aria-label="Image detail"><img class="image-viewer__image" alt=""></div>' +
+    '</div><div class="image-viewer__surface" tabindex="0" role="region" aria-label="Image detail"></div>' +
     '<p class="image-viewer__caption" id="image-viewer-caption"></p>';
   document.body.appendChild(dialog);
 
-  var image = dialog.querySelector('img');
+  var image = document.createElement('img');
+  image.className = 'image-viewer__image';
   var caption = dialog.querySelector('.image-viewer__caption');
   var surface = dialog.querySelector('.image-viewer__surface');
   var original = dialog.querySelector('[data-original]');
@@ -42,6 +43,8 @@
       var thumbnail = link.querySelector('img');
       image.alt = thumbnail.alt;
       image.src = link.href;
+      // Keep the unused dialog free of an image with no source.
+      if (!image.parentNode) surface.appendChild(image);
       caption.textContent = thumbnail.alt;
       original.href = link.href;
       setZoom(false);
