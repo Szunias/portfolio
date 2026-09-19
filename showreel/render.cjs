@@ -8,15 +8,38 @@ const { spawnSync } = require('child_process');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const PROJECT_DIR = __dirname;
-const BUILD_DIR = path.join(PROJECT_DIR, 'build');
+function editionPaths(args) {
+  const flags = args.filter((value) => value === '--edition' || value.startsWith('--edition='));
+  if (flags.length > 1) throw new Error('Specify --edition only once.');
+  const flag = flags[0];
+  const edition = flag === '--edition'
+    ? args[args.indexOf(flag) + 1]
+    : flag?.slice('--edition='.length);
+  if (flag && (!edition || edition.length > 64 ||
+      !/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(edition) ||
+      /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/.test(edition))) {
+    throw new Error('Edition must be a lowercase slug of at most 64 letters, numbers and hyphens.');
+  }
+  const directory = edition ? path.join(PROJECT_DIR, 'editions', edition) : PROJECT_DIR;
+  return {
+    directory,
+    build: path.join(directory, 'build'),
+    output: path.join(directory, 'output'),
+    timeline: path.join(directory, 'timeline.json'),
+    filename: `igor-szuniewicz-showreel-2026${edition ? `-${edition}` : ''}.mp4`,
+  };
+}
+
+const EDITION_PATHS = editionPaths(process.argv.slice(2));
+const BUILD_DIR = EDITION_PATHS.build;
 const SEGMENT_DIR = path.join(BUILD_DIR, 'segments');
-const OUTPUT_DIR = path.join(PROJECT_DIR, 'output');
+const OUTPUT_DIR = EDITION_PATHS.output;
 const FONT_DIR = path.join(PROJECT_DIR, 'assets', 'fonts');
-const TIMELINE_PATH = path.join(PROJECT_DIR, 'timeline.json');
+const TIMELINE_PATH = EDITION_PATHS.timeline;
 const CAPTIONS_PATH = path.join(BUILD_DIR, 'captions.ass');
 const COMPOSE_FILTER_PATH = path.join(BUILD_DIR, 'compose.ffscript');
 const COMPOSED_PATH = path.join(BUILD_DIR, 'timeline.mkv');
-const FINAL_PATH = path.join(OUTPUT_DIR, 'igor-szuniewicz-showreel-2026.mp4');
+const FINAL_PATH = path.join(OUTPUT_DIR, EDITION_PATHS.filename);
 const POSTER_PATH = path.join(OUTPUT_DIR, 'poster.jpg');
 const CONTACT_SHEET_PATH = path.join(OUTPUT_DIR, 'contact-sheet.jpg');
 const REPORT_PATH = path.join(OUTPUT_DIR, 'render-report.json');
@@ -27,8 +50,17 @@ const FFPROBE = process.env.FFPROBE_BIN || 'ffprobe';
 function assertSafeBuildPath(target) {
   const resolved = path.resolve(target);
   const projectPrefix = `${path.resolve(PROJECT_DIR)}${path.sep}`;
-  if (!resolved.startsWith(projectPrefix) || path.basename(resolved) !== 'build') {
+  if (resolved !== path.resolve(BUILD_DIR) || !resolved.startsWith(projectPrefix)) {
     throw new Error(`Refusing to remove unexpected path: ${resolved}`);
+  }
+  // An edition directory must not redirect cleanup through a junction/symlink.
+  let existing = resolved;
+  while (!fs.existsSync(existing)) existing = path.dirname(existing);
+  const realProject = fs.realpathSync(PROJECT_DIR);
+  const realTarget = fs.realpathSync(existing);
+  const expectedTarget = path.join(realProject, path.relative(PROJECT_DIR, existing));
+  if (realTarget !== expectedTarget) {
+    throw new Error(`Refusing cleanup through a redirected showreel directory: ${realTarget}`);
   }
 }
 
@@ -43,13 +75,13 @@ function cleanBuild() {
 // only thing lost is the guarantee that nothing unrelated is left behind.
 function prepareBuild() {
   if (process.argv.includes('--keep-build')) {
-    console.log('Reusing showreel/build/ (--keep-build); intermediates are overwritten in place.');
+    console.log(`Reusing ${path.relative(REPO_ROOT, BUILD_DIR)} (--keep-build); intermediates are overwritten in place.`);
     return;
   }
   cleanBuild();
 }
 
-if (process.argv.includes('--clean')) {
+if (require.main === module && process.argv.includes('--clean')) {
   cleanBuild();
   console.log(`Removed rebuildable intermediates: ${BUILD_DIR}`);
   process.exit(0);
@@ -110,6 +142,10 @@ function loadTimeline() {
   if (!Array.isArray(value.segments) || value.segments.length < 2) {
     throw new Error('timeline.json must contain at least two segments.');
   }
+  value.segments.forEach((segment, index) => {
+    audioShape(segment, value.segments[index - 1]);
+    if (index > 0) pictureTransition(segment, value.settings);
+  });
   return value;
 }
 
@@ -122,6 +158,7 @@ function compositionFingerprint(timeline) {
     sampleRate: settings.sampleRate,
     losslessIntermediates: settings.losslessIntermediates,
     intermediateCrf: settings.intermediateCrf,
+    intermediatePreset: settings.intermediatePreset,
   };
   const segments = timeline.segments.map((segment) => {
     const compositionSegment = JSON.parse(JSON.stringify(segment));
@@ -136,7 +173,7 @@ function compositionFingerprint(timeline) {
     segments,
     // The audio layout is baked into build/timeline.mkv, so changing the handles
     // has to invalidate it the same way a re-cut does.
-    audioLayout: { handleIn: AUDIO_HANDLE_IN, handleOut: AUDIO_HANDLE_OUT, version: 2 },
+    audioLayout: { handleIn: AUDIO_HANDLE_IN, handleOut: AUDIO_HANDLE_OUT, version: 3 },
   });
   return crypto.createHash('sha256').update(payload).digest('hex');
 }
@@ -268,7 +305,7 @@ function intermediateVideoArgs(settings) {
   }
   return [
     '-c:v', 'libx264',
-    '-preset', 'medium',
+    '-preset', settings.intermediatePreset || 'medium',
     '-crf', String(settings.intermediateCrf || 8),
     '-pix_fmt', 'yuv420p',
   ];
@@ -309,7 +346,12 @@ function sourceVideoFilter(segment, settings) {
     common.push(`crop=${cropWidth}:${cropHeight}:${cropX}:${cropY}`);
   }
 
-  if (segment.fit === 'contain') {
+  if (segment.fit === 'tool') {
+    common.push(
+      `scale=${width - 160}:${height - 300}:force_original_aspect_ratio=decrease:flags=lanczos`,
+      `pad=${width}:${height}:(ow-iw)/2:40:color=0x101012`,
+    );
+  } else if (segment.fit === 'contain') {
     common.push(
       `scale=${width}:${height}:force_original_aspect_ratio=decrease:flags=lanczos`,
       `pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2:color=0x101012`,
@@ -388,7 +430,7 @@ function sourceAudioFilter(segment, settings) {
   ];
   if (Number.isFinite(Number(limiterDb))) {
     const limit = Math.pow(10, Number(limiterDb) / 20);
-    filters.push(`alimiter=limit=${ffNumber(limit)}:attack=5:release=80:level=false`);
+    filters.push(`alimiter=limit=${ffNumber(limit)}:attack=5:release=80:level=false:latency=true`);
   }
   filters.push(
     `apad=pad_dur=${duration}`,
@@ -557,7 +599,7 @@ function renderLegacySignalSyntaxIntro(segment, settings, outputPath) {
     `[body][air][hit][spark]amix=inputs=4:normalize=0:dropout_transition=0,`,
     `aecho=0.8:0.72:68|124:0.09|0.038,volume=1.08,`,
     `highpass=f=44:poles=2,lowpass=f=9200,`,
-    `alimiter=limit=0.48:attack=3:release=90:level=false,`,
+    `alimiter=limit=0.48:attack=3:release=90:level=false:latency=true,`,
     `afade=t=in:st=0:d=0.035,afade=t=out:st=${audioFadeOutStart}:d=0.3,`,
     `apad=pad_dur=${duration},atrim=duration=${duration},`,
     `aresample=${settings.sampleRate},`,
@@ -609,7 +651,7 @@ function renderLegacySignalSyntaxOutro(segment, settings, outputPath) {
     `[0:v][mark]overlay=x=96:y=390:shortest=1,noise=alls=2:allf=t+u,format=yuv420p[v];`,
     `[2:a]volume=0.78,highpass=f=90:poles=2,lowpass=f=7200,`,
     'aecho=0.8:0.28:48|96:0.14|0.06,adelay=250|259,',
-    'alimiter=limit=0.35:attack=2:release=40:level=false,',
+    'alimiter=limit=0.35:attack=2:release=40:level=false:latency=true,',
     `afade=t=in:st=0:d=0.16,afade=t=out:st=${ffNumber(segment.duration - 0.9)}:d=0.78,`,
     `apad=pad_dur=${duration},atrim=duration=${duration},`,
     `aresample=${settings.sampleRate}[a]`,
@@ -675,7 +717,7 @@ function renderWordmarkIntro(segment, settings, outputPath) {
     `[body][air][hit][spark]amix=inputs=4:normalize=0:dropout_transition=0,` +
       `aecho=0.8:0.7:62|118:0.085|0.034,volume=2.7,` +
       `highpass=f=44:poles=2,lowpass=f=9600,` +
-      `alimiter=limit=0.63:attack=3:release=90:level=false,` +
+      `alimiter=limit=0.63:attack=3:release=90:level=false:latency=true,` +
       `afade=t=in:st=0:d=0.03,afade=t=out:st=${audioFadeOutStart}:d=0.3,` +
       `apad=pad_dur=${duration},atrim=duration=${duration},` +
       `aresample=${settings.sampleRate},` +
@@ -708,7 +750,7 @@ function renderWordmarkOutro(segment, settings, outputPath) {
     `fade=t=out:st=${fadeOutStart}:d=0.48,format=yuv420p[v];`,
     `[1:a]volume=3.9,highpass=f=90:poles=2,lowpass=f=7200,` +
       'aecho=0.8:0.28:48|96:0.14|0.06,adelay=250|259,' +
-      'alimiter=limit=0.35:attack=2:release=40:level=false,' +
+      'alimiter=limit=0.35:attack=2:release=40:level=false:latency=true,' +
       `afade=t=in:st=0:d=0.16,afade=t=out:st=${ffNumber(segment.duration - 0.9)}:d=0.78,` +
       `apad=pad_dur=${duration},atrim=duration=${duration},` +
       `aresample=${settings.sampleRate}[a]`,
@@ -826,20 +868,33 @@ const AUDIO_HANDLE_IN = 0.34;
 const AUDIO_HANDLE_OUT = 0.5;
 
 function audioShape(segment, previous) {
+  const audio = segment.audio || {};
+  for (const field of ['handleIn', 'handleOut', 'fadeIn', 'fadeOut']) {
+    if (audio[field] !== undefined &&
+        (!Number.isFinite(Number(audio[field])) || Number(audio[field]) < 0)) {
+      throw new Error(`Invalid audio.${field} for segment ${segment.id}: expected a nonnegative number.`);
+    }
+  }
   const sameProject = Boolean(
     previous && previous.source && segment.source && previous.source === segment.source,
   );
   const isIdent = segment.kind === 'intro' || segment.kind === 'outro';
-  if (isIdent) {
+  if (isIdent && !audio.source) {
     return { handleIn: 0, handleOut: 0, fadeIn: 0, fadeOut: 0 };
   }
-  const handleIn = Math.min(AUDIO_HANDLE_IN, Math.max(0, Number(segment.in || 0)));
-  return sameProject
+  const availableHead = Math.max(0, Number(audio.in ?? segment.in ?? 0));
+  const defaults = sameProject
     // Another angle in the same project: keep it tight, the material is related.
-    ? { handleIn, handleOut: AUDIO_HANDLE_OUT, fadeIn: 0.2, fadeOut: 0.3 }
+    ? { handleIn: AUDIO_HANDLE_IN, handleOut: AUDIO_HANDLE_OUT, fadeIn: 0.2, fadeOut: 0.3 }
     // A new project: pre-lap in over the handle, and let the outgoing one ring
     // out underneath rather than stopping on the cut.
-    : { handleIn, handleOut: AUDIO_HANDLE_OUT, fadeIn: 0.3, fadeOut: 0.44 };
+    : { handleIn: AUDIO_HANDLE_IN, handleOut: AUDIO_HANDLE_OUT, fadeIn: 0.3, fadeOut: 0.44 };
+  const shape = Object.fromEntries(Object.entries(defaults).map(([field, value]) =>
+    [field, Number(audio[field] ?? value)]));
+  // A pre-lap cannot start before programme time zero. Reading an earlier
+  // source in-point for the opening shot would shift its sync instead.
+  shape.handleIn = previous ? Math.min(shape.handleIn, availableHead) : 0;
+  return shape;
 }
 
 function segmentAudioPath(index, segment) {
@@ -854,7 +909,9 @@ function renderSegmentAudio(segment, settings, shape, outputPath) {
   const args = ['-hide_banner', '-y'];
   const mode = segment.audio?.mode || 'source';
 
-  if (mode === 'bed') {
+  if (mode === 'silence') {
+    args.push('-f', 'lavfi', '-i', `anullsrc=r=${settings.sampleRate}:cl=stereo:d=${window}`);
+  } else if (mode === 'bed') {
     const expression = [
       'aevalsrc=',
       '0.34*sin(2*PI*220*t)+0.13*sin(2*PI*330*t)+0.05*sin(2*PI*880*t)',
@@ -887,14 +944,16 @@ function renderSegmentAudio(segment, settings, shape, outputPath) {
   }
   if (Number.isFinite(Number(limiterDb))) {
     const limit = Math.pow(10, Number(limiterDb) / 20);
-    filters.push(`alimiter=limit=${ffNumber(limit)}:attack=5:release=80:level=false`);
+    filters.push(`alimiter=limit=${ffNumber(limit)}:attack=5:release=80:level=false:latency=true`);
   }
   // The fades live on the handles, not on the picture cut.
-  const fadeIn = Math.max(0.008, Number(shape.fadeIn) || 0.008);
-  const fadeOut = Math.max(0.008, Number(shape.fadeOut) || 0.008);
+  const fadeIn = Number(shape.fadeIn);
+  const fadeOut = Number(shape.fadeOut);
+  if (fadeIn > 0) filters.push(`afade=t=in:st=0:d=${ffNumber(fadeIn)}:curve=qsin`);
+  if (fadeOut > 0) {
+    filters.push(`afade=t=out:st=${ffNumber(Math.max(0, Number(window) - fadeOut))}:d=${ffNumber(fadeOut)}:curve=qsin`);
+  }
   filters.push(
-    `afade=t=in:st=0:d=${ffNumber(fadeIn)}:curve=qsin`,
-    `afade=t=out:st=${ffNumber(Math.max(0, Number(window) - fadeOut))}:d=${ffNumber(fadeOut)}:curve=qsin`,
     `apad=pad_dur=${window}`,
     `atrim=duration=${window}`,
     'asetpts=PTS-STARTPTS',
@@ -942,9 +1001,9 @@ function renderSegments(timeline) {
       if (!sourceMetadata[segment.source]) {
         sourceMetadata[segment.source] = probeJson(sourcePath(segment.source));
       }
-      if (segment.audio?.source && !sourceMetadata[segment.audio.source]) {
-        sourceMetadata[segment.audio.source] = probeJson(sourcePath(segment.audio.source));
-      }
+    }
+    if (segment.audio?.source && !sourceMetadata[segment.audio.source]) {
+      sourceMetadata[segment.audio.source] = probeJson(sourcePath(segment.audio.source));
     }
 
     // The compose stage derives every xfade offset from these requested
@@ -962,7 +1021,8 @@ function renderSegments(timeline) {
 
     const shape = audioShape(segment, timeline.segments[index - 1]);
     const audioPath = segmentAudioPath(index, segment);
-    if (segment.kind === 'intro' || segment.kind === 'outro') {
+    if ((segment.kind === 'intro' || segment.kind === 'outro') &&
+        !segment.audio?.source && segment.audio?.mode !== 'silence') {
       extractSegmentAudio(outputPath, timeline.settings, audioPath);
     } else {
       renderSegmentAudio(segment, timeline.settings, shape, audioPath);
@@ -974,13 +1034,29 @@ function renderSegments(timeline) {
   return { rendered, sourceMetadata };
 }
 
-function resolveTimelineStarts(segments) {
+function pictureTransition(segment, settings = {}) {
+  const transition = segment.transitionIn || { type: 'fade', duration: 0.1 };
+  const requested = Number(transition.duration ?? 0);
+  if (!Number.isFinite(requested) || requested < 0) {
+    throw new Error(`Invalid transition duration for segment ${segment.id}.`);
+  }
+  if (transition.type === 'cut') {
+    if (requested !== 0) throw new Error(`Cut transition must have duration 0: ${segment.id}.`);
+    return { type: 'cut', duration: 0 };
+  }
+  return {
+    type: transition.type || 'fade',
+    duration: Math.max(1 / Number(settings.fps || 60), requested),
+  };
+}
+
+function resolveTimelineStarts(segments, settings = {}) {
   let compositeDuration = Number(segments[0].duration);
   const resolved = [{ ...segments[0], timelineStart: 0 }];
 
   for (let index = 1; index < segments.length; index += 1) {
     const segment = segments[index];
-    const transitionDuration = Number(segment.transitionIn?.duration || 0);
+    const transitionDuration = pictureTransition(segment, settings).duration;
     const start = compositeDuration - transitionDuration;
     resolved.push({ ...segment, timelineStart: start });
     compositeDuration = start + Number(segment.duration);
@@ -1003,16 +1079,19 @@ function buildComposeFilter(resolved, settings) {
 
   for (let index = 1; index < count; index += 1) {
     const segment = resolved[index];
-    const transition = segment.transitionIn || { type: 'fade', duration: 0.1 };
-    // A hard cut is expressed as the shortest transition the frame rate allows,
-    // so cuts stay cuts instead of being rounded up into a soft five-frame mush.
-    const minimum = 1 / Number(settings.fps || 60);
-    const duration = Math.max(minimum, Number(transition.duration || minimum));
+    const transition = pictureTransition(segment, settings);
+    const duration = transition.duration;
     const offset = compositeDuration - duration;
     const nextVideo = `vx${index}`;
-    filters.push(
-      `[${videoLabel}][v${index}]xfade=transition=${transition.type || 'fade'}:duration=${ffNumber(duration)}:offset=${ffNumber(offset)}[${nextVideo}]`,
-    );
+    if (transition.type === 'cut') {
+      filters.push(
+        `[${videoLabel}][v${index}]concat=n=2:v=1:a=0,settb=AVTB[${nextVideo}]`,
+      );
+    } else {
+      filters.push(
+        `[${videoLabel}][v${index}]xfade=transition=${transition.type}:duration=${ffNumber(duration)}:offset=${ffNumber(offset)}[${nextVideo}]`,
+      );
+    }
     videoLabel = nextVideo;
     compositeDuration = offset + Number(segment.duration);
   }
@@ -1051,9 +1130,9 @@ function composeTimeline(resolved, timeline) {
     'utf8',
   );
 
-  const args = ['-hide_banner', '-y'];
+  const args = ['-hide_banner', '-y', '-filter_complex_threads', '2'];
   for (const segment of resolved) {
-    args.push('-i', segment.outputPath);
+    args.push('-threads', '2', '-i', segment.outputPath);
   }
   for (const segment of resolved) {
     args.push('-i', segment.audioPath);
@@ -1138,6 +1217,9 @@ const OUTRO_META_Y = 618;
 const OUTRO_URL_Y = 664;
 
 function buildAss(resolved, duration, timeline) {
+  if (timeline.style?.captionLayout === 'editorial') {
+    return require('./editorial-captions.cjs')(resolved, duration, timeline);
+  }
   const style = timeline.style;
   const paper = assColour(style.paper);
   const muted = assColour(style.muted);
@@ -1450,12 +1532,12 @@ function renderFinal(timeline, resolvedDuration, resolved) {
 
   console.log('\nBurning captions and applying final two-pass loudness normalization');
   run(FFMPEG, [
-    '-hide_banner', '-y',
+    '-hide_banner', '-y', '-filter_complex_threads', '2', '-threads', '2',
     '-i', COMPOSED_PATH,
     '-filter_complex', filter,
     '-map', '[v]', '-map', '[a]',
-    '-c:v', 'libx264',
-    '-preset', 'slower',
+    '-c:v', 'libx264', '-threads', '6',
+    '-preset', timeline.settings.deliveryPreset || 'slower',
     ...videoRateArgs,
     '-profile:v', 'high',
     '-level:v', Number(timeline.settings.fps) >= 50 ? '4.2' : '4.1',
@@ -1471,7 +1553,7 @@ function renderFinal(timeline, resolvedDuration, resolved) {
     '-movflags', '+faststart',
     '-metadata', `title=${timeline.title}`,
     '-metadata', 'artist=Igor Szuniewicz',
-    '-metadata', 'comment=Rendered from showreel/timeline.json',
+    '-metadata', `comment=Rendered from ${path.relative(REPO_ROOT, TIMELINE_PATH).replace(/\\/g, '/')}`,
     '-t', ffNumber(resolvedDuration),
     FINAL_PATH,
   ]);
@@ -1637,7 +1719,7 @@ function main() {
     run(FFMPEG, [
       '-hide_banner', '-y', '-i', plate,
       '-vf', `ass=filename='${assRelative}':fontsdir='${fontsRelative}',format=yuv420p`,
-      '-c:v', 'libx264', '-preset', 'slower', '-crf', '16',
+      '-c:v', 'libx264', '-preset', timeline.settings.deliveryPreset || 'slower', '-crf', '16',
       '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k',
       previewPath,
     ]);
@@ -1656,7 +1738,7 @@ function main() {
       throw new Error('QA-only mode requires an existing final render and build/timeline.mkv.');
     }
     assertCompositionIsCurrent(timeline, 'showreel:qa');
-    const { resolved, duration } = resolveTimelineStarts(timeline.segments);
+    const { resolved, duration } = resolveTimelineStarts(timeline.segments, timeline.settings);
     const loudness = {
       firstPass: measureLoudness(
         COMPOSED_PATH,
@@ -1691,13 +1773,14 @@ function main() {
       throw new Error('Master-only mode requires build/timeline.mkv.');
     }
     assertCompositionIsCurrent(timeline, 'showreel:master');
-    const { resolved, duration } = resolveTimelineStarts(timeline.segments);
+    const { resolved, duration } = resolveTimelineStarts(timeline.segments, timeline.settings);
     fs.writeFileSync(
       CAPTIONS_PATH,
       buildAss(resolved, duration, timeline),
       'utf8',
     );
     const loudness = renderFinal(timeline, duration, resolved);
+    createPoster(resolved, duration);
     createContactSheet(resolved, duration, timeline.settings.fps);
     writeReport(
       timeline,
@@ -1715,7 +1798,7 @@ function main() {
   prepareBuild();
   fs.mkdirSync(SEGMENT_DIR, { recursive: true });
   const { rendered, sourceMetadata } = renderSegments(timeline);
-  const { resolved, duration } = resolveTimelineStarts(rendered);
+  const { resolved, duration } = resolveTimelineStarts(rendered, timeline.settings);
 
   fs.writeFileSync(
     CAPTIONS_PATH,
@@ -1739,4 +1822,6 @@ function main() {
   );
 }
 
-main();
+if (require.main === module) main();
+
+module.exports = { editionPaths, audioShape, pictureTransition, resolveTimelineStarts, buildComposeFilter };

@@ -1,4 +1,32 @@
 /* Edition 03 opening: editorial typography, a signal surface, and the real reel. */
+.home-scene {
+  position: relative;
+  isolation: isolate;
+  background: var(--c-bg-0);
+}
+.home-scene__opening { position: relative; z-index: 0; }
+.home-scene__backdrop {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.home-scene .panel { position: relative; z-index: 2; background: var(--c-bg-1); }
+/* Two composited layers; the work section covers the complete opening. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-scene.has-cinematic-transition .home-scene__opening {
+    position: sticky;
+    top: var(--hero-pin-top, var(--site-header-height));
+  }
+  .home-scene.has-cinematic-transition .hero {
+    will-change: transform, opacity;
+  }
+  .home-scene.has-cinematic-transition .hero-wave { will-change: transform; }
+  .home-scene.has-cinematic-transition .panel { box-shadow: 0 -24px 56px #0002; }
+  .home-scene.has-cinematic-transition .work-head.motion-enter,
+  .home-scene.has-cinematic-transition .wcard--lead.motion-enter { animation: none; }
+}
 .hero {
   position: relative;
   isolation: isolate;
@@ -7,7 +35,7 @@
   padding: 36px var(--page-gutter) 36px;
   overflow: hidden;
   border-bottom: 1px solid var(--c-line);
-  background: var(--c-bg-0);
+  background: transparent;
   color: var(--c-ink);
 }
 .hero__editorial {
@@ -49,10 +77,17 @@
 .hero__statement > span { display: block; }
 .hero__statement em {
   font-family: "Times New Roman", Times, serif;
-  font-size: 1.18em;
+  font-size: clamp(72px, 7.4vw, 116px);
   font-weight: 400;
   line-height: .88;
   letter-spacing: -.065em;
+}
+.hero__service {
+  max-width: 36ch;
+  margin: 24px 0 0;
+  color: var(--c-ink-2);
+  font-size: 17px;
+  line-height: 1.6;
 }
 .hero-wave {
   position: absolute;
@@ -64,7 +99,6 @@
   pointer-events: none;
   mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
 }
-.hero-wave canvas,
 .hero-wave__still {
   position: absolute;
   inset: 0;
@@ -73,9 +107,6 @@
   height: 100%;
   object-fit: contain;
 }
-.hero-wave canvas { opacity: 0; transition: opacity .45s; }
-.hero-wave.is-ready canvas { opacity: 1; }
-.hero-wave.is-ready .hero-wave__still { opacity: 0; }
 .hero__base {
   display: grid;
   grid-template-columns: 1fr auto auto;
@@ -188,8 +219,10 @@
   .hero__overline span { margin-inline: 4px; }
   .hero__location { display: none; }
   .hero h1.hero__statement { margin-top: 40px; font-size: clamp(86px, 24vw, 145px); }
-  .hero-wave { top: 142px; left: 6%; width: 143%; height: 400px; }
-  .hero__base { grid-template-columns: 1fr auto; column-gap: 20px; row-gap: 22px; padding-top: 112px; }
+  .hero__statement em { font-size: clamp(38px, 11vw, 80px); }
+  .hero__service { margin-top: 20px; font-size: 14px; }
+  .hero-wave { top: 220px; left: 6%; width: 143%; height: 400px; }
+  .hero__base { grid-template-columns: 1fr auto; column-gap: 20px; row-gap: 22px; padding-top: 140px; }
   .hero__introduction { grid-column: 1 / -1; }
   .hero__introduction .hero__name { margin-bottom: 6px; font-size: 15px; }
   .hero__work-link { gap: 12px; font-size: 13px; }
@@ -205,9 +238,8 @@
   .hero-reel__launch { gap: 9px; font-size: 13px; }
   .hero-reel__preview { flex-basis: 46px; width: 46px; height: 46px; }
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .hero-wave canvas { display: none; }
-  .hero-wave.is-ready .hero-wave__still { opacity: 1; }
   .hero-reel__launch-icon svg,
   .hero__work-link > span:last-child,
   .hero-reel__preview > video { transition: none; }

@@ -5,7 +5,7 @@
   --r-m: 18px;
   --page-max: 1320px;
   --page-gutter: clamp(20px,5vw,80px);
-  --t-m1: 12px;
+  --t-m1: 13px;
   --t-s1: 14px;
   --dur: 240ms;
   --dur-slow: 650ms;
@@ -125,7 +125,7 @@ summary:focus-visible {
 }
 
 .cine .cine-meta {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.8;
   margin-block: 22px;
 }
@@ -157,7 +157,9 @@ summary:focus-visible {
 .cine-split__media>img,
 .cine-split__media>video,
 .cine-split__media>.yt-facade,
-.cine-row figure>img {
+.cine-row figure>img,
+.cine-split__media>.image-zoom>img,
+.cine-row figure>.image-zoom>img {
   border-radius: var(--r-m);
   border: 1px solid var(--c-line);
   box-shadow: 0 24px 64px #0003;
@@ -166,6 +168,11 @@ summary:focus-visible {
 .cine-row figure>img {
   margin-bottom: 18px;
 }
+
+.cine-row figure>.image-zoom { margin-bottom: 18px; }
+
+.wcard__meta,
+.prow>.prow__meta { font-size: var(--t-m1); }
 
 .cine .cine-row__num {
   color: var(--c-accent);
@@ -230,6 +237,10 @@ summary:focus-visible {
   color: var(--c-ink-3);
   margin-bottom: 16px;
 }
+
+.stage__caption>span,
+.stage .track-tile__note,
+.stage .track-tile__time { font-size: 13px; }
 
 .library {
   padding-top: 88px;
@@ -374,17 +385,28 @@ summary:focus-visible {
 @media (max-width:620px) {
   .stage__room {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 20px;
     padding-block: 24px 40px;
   }
 
-  .stage__plate {
-    width: min(62vw,240px);
+  .stage__side { display: contents; }
+  .stage__copy { grid-row: 1; width: 100%; margin: 0; }
+  .stage__record {
+    grid-row: 2;
+    grid-template-columns: 88px minmax(0,1fr);
+    gap: 6px 16px;
+    justify-items: start;
+    align-items: center;
   }
+  .stage__record .stage__plate { grid-column: 1; grid-row: 1 / 3; width: 88px; }
+  .stage__caption { grid-column: 2; padding: 0; text-align: left; text-wrap: initial; }
+  .stage__caption>span { margin-top: 4px; }
+  .stage__spectrum { grid-column: 2; height: 24px; }
+  .stage .featured { grid-row: 3; width: 100%; }
 
   .stage__title {
     font-size: 48px;
-    margin-bottom: 20px;
+    margin-bottom: 0;
   }
 
   .library {

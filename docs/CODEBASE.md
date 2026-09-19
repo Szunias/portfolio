@@ -79,7 +79,8 @@ an intermediate width and desktop, including long titles and player controls.
 | File under `src/js/` | Responsibility |
 | --- | --- |
 | `home-showreel.js` | Compact silent preview, full showreel, close and focus restoration. |
-| `home-waveform.js` | Decorative canvas waveform, entrance motion and pointer response. |
+| `home-transition.js` | Scroll-driven hero exit, whole-wave transforms and showreel coverage state. |
+| `image-viewer.js` | Original-image dialog, zoom and focus restoration on project screenshots. |
 | `project-previews.js` | Lazy, silent previews on project-card hover or keyboard focus. |
 | `copy-email.js` | Copies the visible address on the homepage and contact pages. |
 | `page-motion.js` | Shared entrance effects and header state. |
@@ -128,16 +129,17 @@ metadata; selection, filtering and event handlers stay in the player. Keep this
 order in `site.config.cjs`; the interaction tests execute each configured bundle.
 See [browser maintenance notes](../src/js/README.md) for state and async boundaries.
 
-The homepage's `[data-preview-video]` loops `assets/showreel-preview.mp4` inside
+The homepage's `[data-preview-video]` loops `assets/showreel-preview-editorial-v2.mp4` inside
 the showreel button at every viewport size. It observes reduced motion, data
 saving and page visibility, and pauses while the separate `.hero__film` plays.
 The full showreel starts only from its launch button. Keep the close control and
 return keyboard focus to the launch button after closing.
 
-The waveform is decorative, not an audio analyser. `home-waveform.js` animates
-its entrance and responds to a fine pointer; it stops drawing once settled or
-when hidden or covered by the full player. `assets/hero-waveform.svg` provides
-the static fallback without JavaScript and with reduced motion.
+The waveform is decorative, not an audio analyser. `assets/hero-waveform.svg`
+provides its fixed geometry. `home-transition.js` changes only whole-layer
+transforms and hero opacity as projects cover the opening. It has no continuous
+drawing loop. Reduced motion uses normal document flow without the transforms.
+Coverage changes pause the thumbnail or close a completely covered full player.
 
 The music spectrum sits below the cover and reads the existing audio element.
 It draws only during playback while visible, with reduced motion disabled.
@@ -201,6 +203,8 @@ These checks do not certify third-party embeds, all codecs or Safari/iOS behavio
 | `showreel/render.cjs` | Full renderer, mastering and media QA; documented in `showreel/README.md`. |
 | `showreel/render-preview.cjs` | Retained large silent encodes and project-card previews. |
 | `showreel/render-thumbnail.cjs` | Compact showreel preview, derived from `src/assets/hero-motion.mp4`. |
+| `showreel/render-web.cjs` | Current extended-cut website delivery and eight-second silent preview. |
+| `showreel/editions/editorial-v2/` | Current showreel edit, render report, poster and verification. |
 | `showreel/sources.json`, `fetch-sources.cjs` | Public media source manifest and restoration tool. |
 | `scripts/build-fonts.py` | Offline font preparation. |
 | `scripts/make-*-cover*.py`, `replace-ai-covers.py` | Manual artwork preparation, outside the website build. |

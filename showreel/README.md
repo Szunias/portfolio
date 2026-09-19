@@ -9,7 +9,9 @@ transition and gain decision remains visible and reproducible.
 - `timeline.json` — edit order, source in/out points, captions, transitions and clip gain.
 - `render.cjs` — deterministic FFmpeg renderer, caption generator, loudness pass and QA outputs.
 - `render-preview.cjs` — large silent encodes and project-card previews.
-- `render-thumbnail.cjs` — compact silent preview used by the homepage showreel button.
+- `render-thumbnail.cjs` — retained thumbnail exporter for the earlier three-clip preview.
+- `render-web.cjs` — current extended-cut website film and compact silent preview.
+- `editions/editorial-v2/` — current 1:59 edit, render report, poster and verification.
 - `sources.json` — exact public source URLs, yt-dlp formats and local filenames.
 - `fetch-sources.cjs` — reproducibly fetches the six high-resolution public demos.
 - `assets/fonts/` — locally vendored OFL fonts, shipped as static instances.
@@ -18,7 +20,8 @@ transition and gain decision remains visible and reproducible.
 - `assets/branding/` — active wordmark source plus retained rejected ident
   explorations and their generation prompts.
 - `assets/source/` — local high-resolution source mirrors; ignored by Git because of their size.
-- `output/igor-szuniewicz-showreel-2026.mp4` — final website-ready H.264/AAC delivery.
+- `output/igor-szuniewicz-showreel-2026-editorial-v2.mp4` — current website H.264/AAC delivery.
+- `output/igor-szuniewicz-showreel-2026.mp4` — retained earlier delivery.
 - `output/poster.jpg` — website poster regenerated from the stable intro hold.
 - `output/contact-sheet.jpg` — quick visual overview of the current render.
 - `output/render-report.json` — resolved timeline, source metadata and final loudness measurements.
@@ -53,22 +56,21 @@ rather than expecting `showreel:sources` to restore it.
 
 ## Website previews
 
-The Edition 03 homepage uses a decorative waveform with a compact, looping
-showreel thumbnail. `src/js/home-waveform.js` controls the waveform;
-`src/assets/hero-waveform.svg` is its static fallback. The full showreel, with
-audio and project credits, plays only after the visitor launches it.
+The homepage uses the static `src/assets/hero-waveform.svg`, moved as a whole
+by `src/js/home-transition.js` when projects cover the hero. The full showreel,
+with audio and project credits, plays only after the visitor launches it.
 
-The thumbnail is `src/assets/showreel-preview.mp4`: 480×270, 24 fps, 13.83 seconds,
-709,373 bytes, H.264 at CRF 24 with the slow preset and fast-start metadata.
+The thumbnail is `src/assets/showreel-preview-editorial-v2.mp4`: 480×270, 24 fps,
+eight seconds from the approved extended cut, H.264 CRF 24 and fast-start metadata.
 It has no audio stream and is shared across viewport sizes. It pauses offscreen
 or while the full player is open; reduced motion and data saving retain a still.
 Rebuild it from the repository root with:
 
 ```powershell
-node showreel/render-thumbnail.cjs
+node showreel/render-web.cjs
 ```
 
-Its source, `src/assets/hero-motion.mp4`, retains the three five-second cuts:
+The older preview source, `src/assets/hero-motion.mp4`, retains three five-second cuts:
 Ray at 74 seconds, Shadow Frames at 312.77 seconds and Akantilado at 10.33 seconds,
 with 0.6-second crossfades. The large 1920×1080 encode and retained 720×1280
 portrait variant use H.264 CRF 21/slow at 24 fps. They are no longer fullscreen

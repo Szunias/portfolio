@@ -12,6 +12,7 @@
   if (!video || !preview || !launch) return;
   var playing = false;
   var visible = true;
+  var covered = false;
   var connection = navigator.connection;
   var previewFailed = false;
   var previewRequestVersion = 0;
@@ -20,7 +21,7 @@
 
   function updatePreview() {
     var settled = previewFailed || reduced.matches || !!(connection && connection.saveData);
-    var canPlay = !settled && !playing && !document.hidden && visible;
+    var canPlay = !settled && !playing && !covered && !document.hidden && visible;
     var version = ++previewRequestVersion;
     scope.classList.toggle('is-settled', settled);
     if (!canPlay) { preview.pause(); return; }
@@ -62,6 +63,7 @@
     if (returnFocus) focusVisible(launch);
   }
   launch.addEventListener('click', function () {
+    scope.dispatchEvent(new CustomEvent('hero:reveal'));
     revealPlayer();
     if (close) focusVisible(close);
     var attempt = video.play();
@@ -79,6 +81,14 @@
   if (connection && typeof connection.addEventListener === 'function') {
     connection.addEventListener('change', updatePreview);
   }
+  scope.addEventListener('hero:transition', function (event) {
+    var nextCovered = event.detail.progress > 0.12;
+    if (covered !== nextCovered) {
+      covered = nextCovered;
+      updatePreview();
+    }
+    if (event.detail.progress >= 0.98 && playing) restoreCover(false);
+  });
   reduced.addEventListener('change', updatePreview);
   document.addEventListener('visibilitychange', updatePreview);
   if ('IntersectionObserver' in window) {
