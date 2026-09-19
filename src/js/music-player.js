@@ -444,13 +444,15 @@
   function updateProgress() {
     const duration = audio.duration;
     const hasDuration = Number.isFinite(duration) && duration > 0;
+    // Catalog lengths use the nearest second; elapsed time counts completed seconds.
+    const total = format(Math.round(duration));
     const percent = hasDuration ? clamp(audio.currentTime / duration * 100, 0, 100) : 0;
     setStyle('progress-fill', 'width', percent + '%');
     setText('current-time', format(audio.currentTime));
-    if (hasDuration) setText('total-time', format(duration));
+    if (hasDuration) setText('total-time', total);
     roleAll('progress').forEach(el => {
       el.setAttribute('aria-valuenow', String(Math.round(percent)));
-      el.setAttribute('aria-valuetext', format(audio.currentTime) + ' of ' + format(duration));
+      el.setAttribute('aria-valuetext', format(audio.currentTime) + ' of ' + total);
     });
     setSeekEnabled(hasDuration);
   }
@@ -531,6 +533,8 @@
     if (error && error.name === 'NotAllowedError') message = 'Press play to allow audio.';
     else if (error && error.name === 'NotSupportedError') message = 'This browser cannot play the selected audio format.';
     setStatus(message, 'error');
+    // A failed media element can retain paused=false even after output stops.
+    audio.pause();
     setPlayState();
   }
 
@@ -1040,6 +1044,7 @@
       4: 'This browser does not support the selected audio.'
     };
     setStatus(messages[audio.error && audio.error.code] || 'The selected audio could not be loaded.', 'error');
+    audio.pause();
     setSeekEnabled(false);
     setPlayState();
   });

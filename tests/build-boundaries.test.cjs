@@ -11,6 +11,17 @@ function preserved(fixture) {
   assert.equal(fs.readFileSync(path.join(fixture.root, 'dist/previous.txt'), 'utf8'), 'last successful build');
 }
 
+function fileSymlink(t, target, link) {
+  try {
+    fs.symlinkSync(target, link);
+    return true;
+  } catch (error) {
+    if (process.platform !== 'win32' || error.code !== 'EPERM') throw error;
+    t.skip('Creating file symlinks requires Windows Developer Mode or elevated permissions');
+    return false;
+  }
+}
+
 test('importing the builder has no publication side effects', t => {
   const fixture = buildFixture(t);
   assert.equal(typeof fixture.build.buildPage, 'function');
@@ -59,7 +70,7 @@ test('staticCopy cannot publish a symlink to a file outside the repository', t =
   const external = path.join(f.parent, 'private.html');
   fs.writeFileSync(external, '<p>private fixture canary</p>');
   fs.unlinkSync(path.join(f.root, 'snapshot.html'));
-  fs.symlinkSync(external, path.join(f.root, 'snapshot.html'));
+  if (!fileSymlink(t, external, path.join(f.root, 'snapshot.html'))) return;
   assert.throws(() => f.build.main(), /symbolic link|outside the repository/);
   preserved(f);
 });
@@ -92,7 +103,7 @@ test('the asset-tree root cannot be a symlink to an external directory', t => {
 test('nested asset symlinks fail explicitly rather than being silently omitted', t => {
   const f = buildFixture(t);
   const real = f.write('src/assets/real.txt', 'safe fixture');
-  fs.symlinkSync(real, path.join(f.root, 'src/assets/link.txt'));
+  if (!fileSymlink(t, real, path.join(f.root, 'src/assets/link.txt'))) return;
   assert.throws(() => f.build.main(), /Unsupported source asset|symbolic link/);
 });
 

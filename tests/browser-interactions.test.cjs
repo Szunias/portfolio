@@ -16,6 +16,8 @@ function musicFixture({ first = 'Track 1', saved = null, deferredPlayback = fals
   const play = new Element('button');
   const repeat = new Element('button');
   const progress = new Element();
+  const currentTime = new Element('span');
+  const totalTime = new Element('span');
   const attempts = [];
   const sheet = new Element('dialog');
   sheet.open = false;
@@ -41,6 +43,8 @@ function musicFixture({ first = 'Track 1', saved = null, deferredPlayback = fals
     '[data-player="play"]': [play],
     '[data-player="repeat"]': [repeat],
     '[data-player="progress"]': [progress],
+    '[data-player="current-time"]': [currentTime],
+    '[data-player="total-time"]': [totalTime],
     '[data-player="title"]': [title],
     '[data-player="queue"]': [queue],
     '[data-player="next"]': [next],
@@ -51,7 +55,7 @@ function musicFixture({ first = 'Track 1', saved = null, deferredPlayback = fals
   if (pointers) fixture.window.PointerEvent = class {};
   fixture.window.localStorage.getItem = () => saved ? JSON.stringify(saved) : null;
   pages.find(page => page.slug === pageSlug).js.forEach(name => fixture.run(name + '.js'));
-  return { ...fixture, title, queue, next, sheet, opener, audio, bar, status, play, repeat, progress, attempts };
+  return { ...fixture, title, queue, next, sheet, opener, audio, bar, status, play, repeat, progress, currentTime, totalTime, attempts };
 }
 
 for (const page of pages.filter(page => page.layout === 'music')) {
@@ -75,6 +79,23 @@ test('Next follows a featured selection that is not first in chronological order
   const fixture = musicFixture({ first: 'Track 2' });
   await fixture.next.emit('click');
   assert.equal(fixture.title.textContent, 'Track 3');
+});
+
+test('track totals round to the nearest second while elapsed playback stays truncated', async () => {
+  const fixture = musicFixture();
+  fixture.audio.duration = 116.6;
+  fixture.audio.currentTime = 116.6;
+  await fixture.audio.emit('loadedmetadata');
+  assert.equal(fixture.totalTime.textContent, '1:57');
+  assert.equal(fixture.currentTime.textContent, '1:56');
+  assert.equal(fixture.progress.getAttribute('aria-valuetext'), '1:56 of 1:57');
+
+  fixture.audio.duration = 59.8;
+  fixture.audio.currentTime = 59.8;
+  await fixture.audio.emit('timeupdate');
+  assert.equal(fixture.totalTime.textContent, '1:00');
+  assert.equal(fixture.currentTime.textContent, '0:59');
+  assert.equal(fixture.progress.getAttribute('aria-valuetext'), '0:59 of 1:00');
 });
 
 test('restored shuffle does not put the current selection in its upcoming queue', () => {
@@ -113,6 +134,34 @@ test('the current play rejection still presents a retryable error', async () => 
   await Promise.resolve();
   assert.equal(fixture.status.textContent, 'Playback failed. Try again.');
   assert.equal(fixture.play.getAttribute('aria-label'), 'Retry Track 1');
+});
+
+test('a playback failure stops a pending element and retries on the next click', async () => {
+  const fixture = musicFixture({ deferredPlayback: true });
+  await fixture.play.emit('click');
+  fixture.attempts[0].reject(new Error('decoder failed'));
+  await Promise.resolve();
+  assert.equal(fixture.audio.paused, true);
+  assert.equal(fixture.play.getAttribute('aria-label'), 'Retry Track 1');
+  await fixture.play.emit('click');
+  assert.equal(fixture.attempts.length, 2);
+  fixture.attempts[1].resolve();
+});
+
+test('a media error during playback leaves one-click recovery instead of a Pause control', async () => {
+  const fixture = musicFixture();
+  await fixture.play.emit('click');
+  await fixture.audio.emit('playing');
+  fixture.audio.error = { code: 2 };
+  await fixture.audio.emit('error');
+  assert.equal(fixture.audio.paused, true);
+  assert.equal(fixture.play.getAttribute('aria-label'), 'Retry Track 1');
+  assert.equal(fixture.bar.classList.contains('is-playing'), false);
+  let reloads = 0;
+  fixture.audio.load = () => { reloads++; fixture.audio.error = null; };
+  await fixture.play.emit('click');
+  assert.equal(reloads, 1);
+  assert.equal(fixture.audio.paused, false);
 });
 
 test('loading a different track ignores the previous source play failure', async () => {

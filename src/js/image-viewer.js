@@ -58,12 +58,20 @@
   close.addEventListener('click', function () { dialog.close(); });
   // Close only when both ends of a click are on the backdrop, not after a pan.
   var backdropDown = false;
-  dialog.addEventListener('pointerdown', function (event) { backdropDown = event.target === dialog; });
+  function onBackdrop(event) {
+    if (event.target !== dialog) return false;
+    var box = dialog.getBoundingClientRect();
+    return event.clientX < box.left || event.clientX > box.right ||
+      event.clientY < box.top || event.clientY > box.bottom;
+  }
+  dialog.addEventListener('pointerdown', function (event) { backdropDown = onBackdrop(event); });
+  dialog.addEventListener('pointercancel', function () { backdropDown = false; });
   dialog.addEventListener('click', function (event) {
-    if (backdropDown && event.target === dialog) dialog.close();
+    if (backdropDown && onBackdrop(event)) dialog.close();
     backdropDown = false;
   });
   dialog.addEventListener('close', function () {
+    backdropDown = false;
     document.documentElement.classList.remove('image-viewer-open');
     if (trigger) trigger.focus({ preventScroll: true });
   });

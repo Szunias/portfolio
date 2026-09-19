@@ -17,7 +17,8 @@
   const noteOut = document.querySelector('[data-preview-note]');
   const clockOuts = Array.from(document.querySelectorAll('[data-local-time]'));
   const hero = document.querySelector('[data-spot-root]');
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const finePointer = window.matchMedia('(pointer: fine)');
 
   let topic = '';
 
@@ -109,17 +110,21 @@
 
   // Native buttons provide keyboard activation without global shortcuts.
 
-  if (hero && !reduceMotion && window.matchMedia('(pointer: fine)').matches) {
+  if (hero) {
+    function resetSpotlight() {
+      hero.style.removeProperty('--spot-x');
+      hero.style.removeProperty('--spot-y');
+    }
     hero.addEventListener('pointermove', function (event) {
+      if (reducedMotion.matches || !finePointer.matches) return;
       const box = hero.getBoundingClientRect();
       if (!box.width || !box.height) return;
       hero.style.setProperty('--spot-x', ((event.clientX - box.left) / box.width * 100).toFixed(2) + '%');
       hero.style.setProperty('--spot-y', ((event.clientY - box.top) / box.height * 100).toFixed(2) + '%');
     });
-    hero.addEventListener('pointerleave', function () {
-      hero.style.removeProperty('--spot-x');
-      hero.style.removeProperty('--spot-y');
-    });
+    hero.addEventListener('pointerleave', resetSpotlight);
+    reducedMotion.addEventListener('change', resetSpotlight);
+    finePointer.addEventListener('change', resetSpotlight);
   }
 
   tickClock();

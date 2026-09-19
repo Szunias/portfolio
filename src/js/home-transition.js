@@ -16,6 +16,7 @@
   var distance = 1;
   var lastProgress = -1;
   var lastPlaybackState = -1;
+  var revealFocusedControls = false;
 
   function ease(value) {
     value = Math.max(0, Math.min(1, value));
@@ -24,6 +25,15 @@
 
   function render() {
     frame = 0;
+    if (revealFocusedControls) {
+      revealFocusedControls = false;
+      if (!reduced.matches && controls.contains(document.activeElement)) {
+        // Native focus scrolling can center a low control past the sticky
+        // boundary, where Work covers it. Cancel that scroll before applying
+        // coverage; the pin position keeps the complete control row visible.
+        window.scrollTo({ top:start, behavior:'instant' });
+      }
+    }
     var travel = window.scrollY - start;
     var progress = reduced.matches ? 0 : Math.max(0, Math.min(1, travel / distance));
     if (progress === lastProgress) return;
@@ -74,6 +84,11 @@
   window.addEventListener('scroll', requestRender, { passive:true });
   window.addEventListener('resize', measure, { passive:true });
   window.addEventListener('pageshow', measure);
+  if (controls) controls.addEventListener('focusin', function (event) {
+    if (!event.target.matches(':focus-visible')) return;
+    revealFocusedControls = true;
+    requestRender();
+  });
   hero.addEventListener('hero:reveal', function () {
     if (frame) cancelAnimationFrame(frame);
     window.scrollTo({ top:origin, behavior:'instant' });
