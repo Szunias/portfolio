@@ -18,7 +18,7 @@ function transitionFixture({ height = 568, openingHeight = 662, reduced = false 
   const fixture = browser({ '[data-home-scene]': [scene], '.site-header': [header] });
   fixture.window.innerHeight = height;
   fixture.window.scrollY = 0;
-  scene.getBoundingClientRect = () => ({ top: 70 - fixture.window.scrollY });
+  scene.getBoundingClientRect = () => ({ top: header.offsetHeight - fixture.window.scrollY });
   const scrolls = [];
   fixture.window.scrollTo = options => {
     scrolls.push(options);
@@ -32,7 +32,7 @@ function transitionFixture({ height = 568, openingHeight = 662, reduced = false 
     fixture.document.activeElement = launch;
     await controls.emit('focusin', { target: launch });
   }
-  return { ...fixture, scene, opening, hero, controls, launch, media, scrolls, focus };
+  return { ...fixture, scene, opening, hero, controls, launch, header, media, scrolls, focus };
 }
 
 test('keyboard entry into a short hero cancels native focus scrolling before it covers the control', async () => {
@@ -110,5 +110,65 @@ test('keyboard reveal also keeps controls visible when the hero fits the viewpor
   fixture.window.scrollY = 80;
   fixture.flushTimers();
   assert.equal(fixture.window.scrollY, 0);
+  assert.equal(fixture.controls.inert, false);
+});
+
+test('resizing preserves keyboard focus when a short hero becomes a full-height desktop opening', async () => {
+  const fixture = transitionFixture();
+  await fixture.focus();
+  fixture.flushTimers();
+  assert.equal(fixture.window.scrollY, 164);
+  fixture.window.innerHeight = 900;
+  fixture.header.offsetHeight = 86;
+  fixture.opening.offsetHeight = 814;
+  await fixture.window.emit('resize');
+  assert.equal(fixture.window.scrollY, 0);
+  assert.equal(fixture.controls.inert, false);
+  assert.equal(fixture.document.activeElement, fixture.launch);
+  assert.equal(fixture.hero.style.opacity, '1.0000');
+});
+
+test('resizing to a short screen reveals the newly offscreen keyboard control', async () => {
+  const fixture = transitionFixture({ height: 900, openingHeight: 830 });
+  await fixture.focus();
+  fixture.flushTimers();
+  fixture.window.innerHeight = 568;
+  fixture.opening.offsetHeight = 662;
+  await fixture.window.emit('resize');
+  assert.equal(fixture.window.scrollY, 164);
+  assert.equal(fixture.controls.inert, false);
+  assert.equal(fixture.document.activeElement, fixture.launch);
+});
+
+test('resizing does not override pointer focus or focus outside the hero', async () => {
+  for (const elsewhere of [false, true]) {
+    const fixture = transitionFixture();
+    await fixture.focus({ keyboard: elsewhere });
+    if (elsewhere) {
+      const other = new Element('a');
+      other.focusVisible = true;
+      fixture.document.activeElement = other;
+    }
+    fixture.flushTimers();
+    fixture.window.scrollY = 164;
+    fixture.window.innerHeight = 900;
+    fixture.opening.offsetHeight = 830;
+    await fixture.window.emit('resize');
+    assert.equal(fixture.scrolls.length, 0);
+    assert.equal(fixture.window.scrollY, 164);
+    assert.equal(fixture.controls.inert, true);
+  }
+});
+
+test('resizing in reduced-motion mode preserves native scrolling with keyboard focus', async () => {
+  const fixture = transitionFixture({ reduced: true });
+  await fixture.focus();
+  fixture.flushTimers();
+  fixture.window.scrollY = 164;
+  fixture.window.innerHeight = 900;
+  fixture.opening.offsetHeight = 830;
+  await fixture.window.emit('resize');
+  assert.equal(fixture.scrolls.length, 0);
+  assert.equal(fixture.window.scrollY, 164);
   assert.equal(fixture.controls.inert, false);
 });

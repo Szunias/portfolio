@@ -69,7 +69,7 @@
 .hero__overline .hero__location { color: var(--c-ink-3); white-space: nowrap; }
 .hero h1.hero__statement {
   max-width: 800px;
-  margin: 48px 0 0;
+  margin: clamp(40px, 4.8vw, 48px) 0 0;
   font-family: var(--f-body);
   font-size: clamp(112px, 12.4vw, 198px);
   font-weight: 400;
@@ -216,16 +216,16 @@
 .hero.is-started .hero__cinema { visibility: visible; pointer-events: auto; }
 
 @media (max-width: 1000px) {
-  .hero h1.hero__statement { font-size: clamp(110px, 14vw, 140px); }
   .home-scene__backdrop {
     position: relative;
     inset: auto;
-    flex: 1 0 clamp(160px, 38vw, 280px);
-    min-height: clamp(160px, 38vw, 280px);
+    /* Let the wave use spare height without pushing the controls off screen. */
+    flex: 1 1 0px;
+    min-height: 160px;
     margin: 24px calc(-1 * var(--page-gutter)) 20px;
     mask-image: linear-gradient(transparent, #000 10%, #000 90%, transparent);
   }
-  .hero-wave { top: 50%; left: 6%; width: 143%; height: 400px; margin-top: -200px; }
+  .hero-wave { top: -40px; left: 6%; width: 143%; height: calc(100% + 80px); }
   .hero__base { gap: 24px; padding-top: 0; }
   .hero-reel__preview { flex-basis: 94px; width: 94px; height: 68px; }
   .hero-reel__arrow { display: none; }
@@ -236,8 +236,8 @@
   .hero__overline p { font-size: 10px; letter-spacing: .02em; }
   .hero__overline span { margin-inline: 4px; }
   .hero__location { display: none; }
-  .hero h1.hero__statement { margin-top: 40px; font-size: clamp(86px, 24vw, 145px); }
-  .hero__statement > span:last-child { font-size: clamp(38px, 11vw, 80px); }
+  .hero h1.hero__statement { font-size: clamp(86px, 24vw, 112px); }
+  .hero__statement > span:last-child { font-size: clamp(38px, 11vw, 72px); }
   .hero__service { margin-top: 20px; font-size: 14px; }
   .hero__base { grid-template-columns: 1fr auto; column-gap: 20px; row-gap: 22px; }
   .hero__introduction { grid-column: 1 / -1; }

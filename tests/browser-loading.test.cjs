@@ -80,6 +80,69 @@ test('hero preview responds immediately when data saving changes', async () => {
   assert.equal(f.scope.classList.contains('is-settled'), false);
 });
 
+function observedHeroFixture({ resizeObserver = true } = {}) {
+  const fixture = heroFixture();
+  const header = new Element('header');
+  header.offsetHeight = 86;
+  const querySelector = fixture.document.querySelector;
+  fixture.document.querySelector = selector => selector === '.site-header' ? header : querySelector(selector);
+  const observers = [];
+  const resizeObservers = [];
+  fixture.context.IntersectionObserver = fixture.window.IntersectionObserver = class {
+    constructor(callback, options) {
+      Object.assign(this, { callback, options, disconnected: false });
+      observers.push(this);
+    }
+    observe(target) { this.target = target; }
+    disconnect() { this.disconnected = true; }
+  };
+  if (resizeObserver) fixture.context.ResizeObserver = fixture.window.ResizeObserver = class {
+    constructor(callback) { this.callback = callback; resizeObservers.push(this); }
+    observe(target) { this.target = target; }
+  };
+  fixture.run('home-showreel.js');
+  return { ...fixture, header, observers, resizeObservers };
+}
+
+test('hero preview visibility follows responsive header height without accumulating observers', () => {
+  const fixture = observedHeroFixture();
+  assert.equal(fixture.observers[0].options.rootMargin, '-86px 0px 0px');
+  assert.equal(fixture.resizeObservers[0].target, fixture.header);
+  fixture.header.offsetHeight = 70;
+  fixture.resizeObservers[0].callback();
+  assert.equal(fixture.observers.length, 2);
+  assert.equal(fixture.observers[0].disconnected, true);
+  assert.equal(fixture.observers[1].options.rootMargin, '-70px 0px 0px');
+  fixture.resizeObservers[0].callback();
+  assert.equal(fixture.observers.length, 2);
+  fixture.header.offsetHeight = 86;
+  fixture.resizeObservers[0].callback();
+  assert.equal(fixture.observers.length, 3);
+  assert.equal(fixture.observers[1].disconnected, true);
+});
+
+test('an obsolete preview observer cannot override visibility after resizing', () => {
+  const fixture = observedHeroFixture();
+  fixture.header.offsetHeight = 70;
+  fixture.resizeObservers[0].callback();
+  fixture.observers[1].callback([{ isIntersecting: false }]);
+  assert.equal(fixture.preview.paused, true);
+  const plays = fixture.preview.plays;
+  fixture.observers[0].callback([{ isIntersecting: true }]);
+  assert.equal(fixture.preview.paused, true);
+  assert.equal(fixture.preview.plays, plays);
+  fixture.observers[1].callback([{ isIntersecting: true }]);
+  assert.equal(fixture.preview.paused, false);
+});
+
+test('hero preview header measurement falls back to window resize without ResizeObserver', async () => {
+  const fixture = observedHeroFixture({ resizeObserver: false });
+  fixture.header.offsetHeight = 70;
+  await fixture.window.emit('resize');
+  assert.equal(fixture.observers.length, 2);
+  assert.equal(fixture.observers[1].options.rootMargin, '-70px 0px 0px');
+});
+
 test('hero preview can start after data saving was enabled on page load', async () => {
   const f = heroFixture(connection(true));
   f.run('home-showreel.js');

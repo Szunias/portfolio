@@ -92,10 +92,29 @@
   reduced.addEventListener('change', updatePreview);
   document.addEventListener('visibilitychange', updatePreview);
   if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function (entries) {
-      visible = entries[0].isIntersecting;
-      updatePreview();
-    }, { rootMargin:'-' + (header ? header.offsetHeight : 0) + 'px 0px 0px' }).observe(preview);
+    var previewObserver;
+    var observedHeaderHeight = -1;
+    function observePreview() {
+      var height = header ? header.offsetHeight : 0;
+      if (height === observedHeaderHeight) return;
+      observedHeaderHeight = height;
+      if (previewObserver) previewObserver.disconnect();
+      // IntersectionObserver margins are immutable; rebuild only when the
+      // responsive header height actually changes.
+      var observer = new IntersectionObserver(function (entries) {
+        if (previewObserver !== observer) return;
+        visible = entries[0].isIntersecting;
+        updatePreview();
+      }, { rootMargin:'-' + height + 'px 0px 0px' });
+      previewObserver = observer;
+      observer.observe(preview);
+    }
+    observePreview();
+    if (header && 'ResizeObserver' in window) {
+      new ResizeObserver(observePreview).observe(header);
+    } else if (header) {
+      window.addEventListener('resize', observePreview, { passive:true });
+    }
   }
   updatePreview();
 })();

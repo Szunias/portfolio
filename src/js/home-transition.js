@@ -23,11 +23,16 @@
     return value * value * (3 - 2 * value);
   }
 
+  function keyboardControlFocused() {
+    var active = document.activeElement;
+    return controls && controls.contains(active) && active.matches(':focus-visible');
+  }
+
   function render() {
     frame = 0;
     if (revealFocusedControls) {
       revealFocusedControls = false;
-      if (!reduced.matches && controls.contains(document.activeElement)) {
+      if (!reduced.matches && keyboardControlFocused()) {
         // Native focus scrolling can center a low control past the sticky
         // boundary, where Work covers it. Cancel that scroll before applying
         // coverage; the pin position keeps the complete control row visible.
@@ -72,6 +77,8 @@
     origin = Math.max(0, sceneTop - headerHeight);
     start = sceneTop - pinTop;
     scene.style.setProperty('--hero-pin-top', pinTop + 'px');
+    // A new viewport can move the pin boundary past a keyboard-focused control.
+    revealFocusedControls = revealFocusedControls || keyboardControlFocused();
     lastProgress = -1;
     render();
   }
@@ -84,8 +91,8 @@
   window.addEventListener('scroll', requestRender, { passive:true });
   window.addEventListener('resize', measure, { passive:true });
   window.addEventListener('pageshow', measure);
-  if (controls) controls.addEventListener('focusin', function (event) {
-    if (!event.target.matches(':focus-visible')) return;
+  if (controls) controls.addEventListener('focusin', function () {
+    if (!keyboardControlFocused()) return;
     revealFocusedControls = true;
     requestRender();
   });
