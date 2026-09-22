@@ -125,6 +125,8 @@ a { color: inherit; }
 .cine-open--screen .cine-meta { grid-column: 1; grid-row: 3; margin: 0; }
 .cine-open--screen .cine-lead { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
 .cine-open--screen .cine-links { grid-column: 2; grid-row: 3; margin: 0; }
+/* A section of heading and prose alone ends on the same gap as a split or a row. */
+.cine-text { margin-bottom: clamp(40px, 5.5vw, 76px); }
 .cine-role {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -206,15 +208,20 @@ a { color: inherit; }
    face, 14px) at the prose ink. */
 .cine-meta {
   margin: 0 0 var(--s-3);
-  /* A list of facts, not prose: the 54ch measure is for reading text and at
-     14px it shrank to 416px, wrapping the last tool onto its own line. */
-  max-width: none;
   font-family: var(--micro-cap-font);
   font-size: var(--micro-cap-size);
   line-height: var(--lh-b1);
   letter-spacing: var(--micro-cap-tr);
   color: var(--muted);
 }
+/* A list of facts, not prose: the reading measure from `.cine p` wrapped it
+   at about 477px. The extra class outranks that rule. Each fact is a span
+   that wraps as a unit, so a line breaks only after a separator, never
+   inside "68-page thesis" or "Windows, macOS and Linux". */
+.cine .cine-meta { max-width: none; }
+.cine-meta > span { white-space: nowrap; }
+/* Inter's contextual alternates draw the x of "x64" as a multiplication sign. */
+.cine-meta { font-variant-ligatures: no-contextual; }
 
 /* ---------- Prose ---------- */
 .cine h2 {
@@ -283,6 +290,9 @@ a { color: inherit; }
   .cine > section:not(.cine-split) > h2 { grid-column: 1; }
   .cine > section:not(.cine-split) > p { grid-column: 2; }
   .cine > section:not(.cine-split) > :not(h2):not(p) { grid-column: 1 / -1; }
+  /* The role section wraps its paragraphs in a div, which the rule above
+     spread across both columns under the heading, leaving the right half empty. */
+  .cine > section.cine-role:not(.cine-split) > div { grid-column: 2; }
 }
 
 /* =========================================================
@@ -376,54 +386,6 @@ a { color: inherit; }
 .cine-more[open] > summary::after { content: '-'; }
 .cine-more > summary:hover,
 .cine-more > summary:focus-visible { color: var(--ice); }
-
-/* =========================================================
-   THE MIX - five levels beside their paragraph
-   ========================================================= */
-.cine-mix { display: grid; gap: 9px; }
-
-.cine-mix__layer {
-  display: grid;
-  grid-template-columns: 9ch minmax(0, 1fr);
-  align-items: center;
-  gap: var(--s-3);
-  margin: 0;
-  max-width: none;
-  font-family: var(--mono);
-  font-size: var(--t-m1);
-  letter-spacing: var(--tr-m);
-  text-transform: uppercase;
-  color: var(--faint);
-}
-
-.cine-mix__layer i {
-  display: block;
-  height: 9px;
-  border-radius: 2px;
-  background: var(--c-control);
-  transform-origin: 0 50%;
-  transform: scaleX(var(--level, 1));
-  transition: transform 900ms var(--cine-ease);
-}
-
-/* The three that carry information are the ones that hold, so they are the
-   ones that carry the accent. */
-.cine-mix__layer--keep i { background: var(--ice); }
-.cine-mix__layer--keep { color: var(--ink); }
-
-/* The bars grow from nothing when the block is first reached, so the shape of
-   the rule arrives rather than being there already. */
-[data-reveal] .cine-mix__layer i { transform: scaleX(0); }
-[data-reveal].is-in .cine-mix__layer i { transform: scaleX(var(--level, 1)); }
-
-.cine-mix__note {
-  margin: var(--s-3) 0 0;
-  font-family: var(--mono);
-  font-size: var(--t-m1);
-  letter-spacing: var(--tr-m);
-  text-transform: uppercase;
-  color: var(--faint);
-}
 
 /* =========================================================
    TABLE
@@ -575,8 +537,6 @@ a { color: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] { opacity: 1; transition: none; }
-  .cine-mix__layer i,
-  [data-reveal] .cine-mix__layer i { transform: scaleX(var(--level, 1)); transition: none; }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
 
