@@ -308,13 +308,6 @@ section.panel { padding: 0; }
   border-radius: var(--r-s);
   background: var(--c-bg-0);
 }
-.tool-feature__caption {
-  display: block;
-  margin-top: 10px;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.5;
-}
 .prow {
   display: grid;
   grid-template-columns: 128px minmax(0,1fr);
@@ -528,7 +521,7 @@ section.panel { padding: 0; }
   text-underline-offset: 4px;
 }
 .about-bio p a:hover { color: var(--ice); text-decoration-color: currentColor; }
-.about-bio .about-bio__code { margin-bottom: 0; font-size: 14px; }
+.about-bio p:last-child { margin-bottom: 0; }
 .about-tools h3 { margin: 0 0 20px; color: var(--muted); font: 500 16px/1.5 var(--body); }
 .about-tools__list { margin: 0; padding: 0; border-top: 1px solid var(--rule); list-style: none; }
 .about-tool {
@@ -665,6 +658,18 @@ section.panel { padding: 0; }
 .error-routes a:focus-visible .error-routes__desc { color: var(--muted); }
 @media (min-width: 760px) {
   .error-routes a { grid-template-columns: minmax(180px,.3fr) minmax(0,1fr); gap: 0 var(--s-5); align-items: baseline; }
+}
+
+/* From 1000px the project cards split the page into two equal columns. The
+   AutoTrim feature, music, about and contact rows share that split, so each
+   right-hand column starts on the edge of the second card instead of at five
+   slightly different offsets. */
+@media (min-width: 1000px) {
+  .tool-feature,
+  .music-cta__link,
+  .about-panel,
+  .closing { grid-template-columns: repeat(2,minmax(0,1fr)); column-gap: 32px; }
+  .music-cta__art { justify-self: start; }
 }
 
 /* Narrow layouts are defined once, after the section defaults. */
