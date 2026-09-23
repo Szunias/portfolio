@@ -23,9 +23,15 @@
   --c-line-2: rgba(233, 236, 238, .16);
   --c-line-3: rgba(233, 236, 238, .30);
   --ice: #d3d5d8;
-  --sf-paper: #d7d8db;   /* Polaroid frame: candle-wax highlight #cbccd0, lifted */
+  --sf-paper: #d7d8db;   /* silver for controls: candle-wax highlight #cbccd0, lifted */
   --sf-paper-ink: #131516;
   --sf-paper-ink-2: #3b3f42;
+  /* Polaroids are printed dark, like the homepage card: graphite paper, silver ink. */
+  --sf-print: linear-gradient(177deg, #212428 0%, #1a1c1f 62%, #15171a 100%);
+  --sf-print-flat: #1c1e21;
+  --sf-print-edge: inset 0 1px 0 rgba(255, 255, 255, .06), 0 0 0 1px rgba(211, 213, 216, .16);
+  --sf-print-ink: #d3d5d8;
+  --sf-print-ink-2: #979b9f;
   --sf-cork-hi: #25292b; /* spot-lit centre of the board */
   --sf-cork: #121517;    /* board edge #1d2122, darkened */
   --sf-string: #555b5f;  /* string on the board #414547, lifted to show on the cork */
@@ -72,8 +78,8 @@ body::before { background: none; }
   display: flex;
   flex-direction: column-reverse; /* h1 first in the source, printed on the strip */
   padding: clamp(10px, 1.3vw, 18px) clamp(10px, 1.3vw, 18px) 0;
-  background: var(--sf-paper);
-  box-shadow: 0 34px 60px -34px #000;
+  background: var(--sf-print);
+  box-shadow: var(--sf-print-edge), 0 34px 70px -34px rgba(0, 0, 0, .95);
 }
 .sf-print .yt-facade { background: #000; }
 .sf-print__strip {
@@ -86,14 +92,14 @@ body::before { background: none; }
 }
 .sf .sf-print h1 {
   margin: 0;
-  color: var(--sf-paper-ink);
+  color: var(--sf-print-ink);
   font: 500 clamp(32px, 4.3vw, 60px)/.95 var(--f-display);
   letter-spacing: -.05em;
 }
 .sf .sf-print__note {
   max-width: 23ch;
   margin: 0;
-  color: var(--sf-paper-ink-2);
+  color: var(--sf-print-ink-2);
   font: 400 12px/1.45 var(--f-mono);
   text-align: right;
 }
@@ -170,8 +176,8 @@ body::before { background: none; }
 }
 .sf-slot.is-pinned .sf-slot__print {
   outline: 0;
-  background: var(--sf-paper);
-  box-shadow: 0 12px 18px -12px #000;
+  background: var(--sf-print-flat);
+  box-shadow: var(--sf-print-edge), 0 12px 18px -12px #000;
   transform: rotate(var(--tilt, -1.4deg));
 }
 .sf-slot.is-pinned .sf-slot__img { background: #070808; }
