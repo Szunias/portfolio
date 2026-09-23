@@ -57,8 +57,9 @@ The files in the page's `css` array follow in exactly that order.
 - `portfolio.css` applies the current public theme and shared motion styles.
   Review variants keep their own configured styles. An override belongs to the
   component's owner unless it is intentionally part of the shared theme.
-- `home.css` owns work, tools and research, music, about and closing sections,
-  plus the 404 content. `home-hero.css` owns the Edition 03 editorial opening,
+- `home.css` owns work (with the tools desk and project track colours), tools
+  and research, music, the about and contact closing band, plus the 404
+  content. `home-hero.css` owns the Edition 03 editorial opening,
   decorative waveform, compact showreel preview and full player. The header uses `_chrome.css`.
   Homepage order is `home`, `portfolio`, `home-hero`.
 - `cine.css` styles the public project pages. `case-plain.css` supports project
@@ -84,6 +85,7 @@ an intermediate width and desktop, including long titles and player controls.
 | --- | --- |
 | `home-showreel.js` | Compact silent preview, full showreel, close and focus restoration. |
 | `home-transition.js` | Scroll-driven hero exit, whole-wave transforms and showreel coverage state. |
+| `home-solo.js` | Solo keys on the homepage tools desk: dims the projects made without the soloed tool and names the lit ones in a status line. |
 | `image-viewer.js` | Original-image dialog, zoom and focus restoration on project screenshots. |
 | `project-previews.js` | Lazy, silent previews on project-card hover or keyboard focus. |
 | `copy-email.js` | Copies the visible address on the homepage and contact pages. |
@@ -167,8 +169,9 @@ Stopping the drawing loop must not interrupt audio output.
 Project-card videos use `[data-card-preview]` with a validated `data-src` path.
 Only one runs at a time; its source loads on deliberate hover or keyboard focus.
 Touch, reduced motion and data-saving preferences retain the still images.
-Software-card crops use the original application screenshots and CSS variables
-on `.tool-art`; the full screenshots remain available on their project pages.
+Every homepage project link carries a `track-<slug>` class whose colour is copied
+from that project's stylesheet, and a `data-tools` list taken from that page's
+meta for the solo keys. Update both when a project's palette or tools change.
 
 ## Build and validation
 
