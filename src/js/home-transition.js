@@ -1,4 +1,4 @@
-/* Scroll-driven compositing: move the opening and its pre-rendered wave. */
+/* Scroll-driven compositing: move the opening as projects cover it. */
 (function () {
   'use strict';
   var scene = document.querySelector('[data-home-scene]');
@@ -6,7 +6,6 @@
   var hero = opening && opening.querySelector('.hero');
   if (!hero) return;
   var controls = hero.querySelector('.hero__base');
-  var wave = hero.querySelector('.hero-wave');
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   var header = document.querySelector('.site-header');
@@ -44,13 +43,11 @@
     if (progress === lastProgress) return;
     lastProgress = progress;
     var travelEase = ease(progress);
-    // Only transform and opacity change during scrolling. The SVG is rasterized
-    // once; there is no canvas render loop or inherited per-frame CSS variable.
+    // Only transform and opacity change during scrolling; there is no canvas
+    // render loop or inherited per-frame CSS variable.
     hero.style.transform = reduced.matches ? '' : 'translate3d(0,' +
       (-Math.min(140, distance * 0.2) * travelEase).toFixed(2) + 'px,0)';
     hero.style.opacity = reduced.matches ? '' : (1 - ease((progress - 0.3) / 0.7)).toFixed(4);
-    if (wave) wave.style.transform = reduced.matches ? '' : 'translate3d(' +
-      (-24 * travelEase).toFixed(2) + 'px,0,0) rotate(' + (-7 * travelEase).toFixed(3) + 'deg)';
     // Covered controls must not remain in the keyboard navigation order.
     if (controls) controls.inert = progress > 0.08;
     opening.inert = progress >= 0.98;

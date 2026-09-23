@@ -60,7 +60,7 @@ The files in the page's `css` array follow in exactly that order.
 - `home.css` owns work (with the tools desk and project track colours), tools
   and research, music, the about and contact closing band, plus the 404
   content. `home-hero.css` owns the Edition 03 editorial opening,
-  the reel surface and its chapter list, compact showreel preview and full player. The header uses `_chrome.css`.
+  one still frame from Shadow Frames, compact showreel preview and full player. The header uses `_chrome.css`.
   Homepage order is `home`, `portfolio`, `home-hero`.
 - `cine.css` styles the public project pages. `case-plain.css` supports project
   review variants.
@@ -87,7 +87,6 @@ an intermediate width and desktop, including long titles and player controls.
 | File under `src/js/` | Responsibility |
 | --- | --- |
 | `home-showreel.js` | Compact silent preview, full showreel, close and focus restoration. |
-| `home-reel-chapters.js` | Showreel chapters under the hero surface: one tab stop with arrow, Home and End keys, a playhead at the chapter's start on hover or focus, and a chapter starts the reel there through the launch button. Loads before `home-transition.js`. |
 | `home-transition.js` | Scroll-driven hero exit, whole-wave transforms and showreel coverage state. |
 | `home-solo.js` | Solo keys on the homepage tools desk: dims the projects made without the soloed tool and names the lit ones in a status line. |
 | `image-viewer.js` | Original-image dialog, zoom and focus restoration on project screenshots. |
@@ -164,18 +163,15 @@ See [browser maintenance notes](../src/js/README.md) for state and async boundar
 The homepage's `[data-preview-video]` loops `assets/showreel-preview-editorial-v2.mp4` inside
 the showreel button at every viewport size. It observes reduced motion, data
 saving and page visibility, and pauses while the separate `.hero__film` plays.
-The full showreel starts only from its launch button, or from a chapter under the hero surface, which clicks that button. Keep the close control and
+The full showreel starts only from its launch button. Keep the close control and
 return keyboard focus to the launch button after closing.
 
-The hero surface, `assets/home/reel-surface.svg`, is the delivered showreel's own
-sound: 120 frequency bands over its length, drawn once by
-`scripts/make-reel-surface.cjs`. It is a static image, not an audio analyser. The
-chapter list under it carries the reel's length and each chapter's start in seconds;
-after a new cut the generator redraws the surface and prints a changed list.
-`home-transition.js` changes only whole-layer transforms and hero opacity as
-projects cover the opening. It has no continuous drawing loop. Reduced motion uses
-normal document flow without the transforms. Coverage changes pause the thumbnail,
-take covered chapters out of the tab order or close a completely covered full player.
+The hero's picture is one still frame from Shadow Frames (the bar,
+`22_ShadowFrames_01` in 640/1200/1920 webp), faded into the page with CSS masks;
+nothing in it moves or takes input. `home-transition.js` changes only whole-layer
+transforms and hero opacity as projects cover the opening. It has no continuous
+drawing loop. Reduced motion uses normal document flow without the transforms.
+Coverage changes pause the thumbnail or close a completely covered full player.
 
 The music analyser spans the stage under the selected piece and reads the
 existing audio element. It draws only during playback while the bridge or the
@@ -235,14 +231,13 @@ These checks do not certify third-party embeds, all codecs or Safari/iOS behavio
 
 | Location | Purpose |
 | --- | --- |
-| `src/assets/` | Current website assets, including the hero's reel surface and the compact showreel preview. |
+| `src/assets/` | Current website assets, including the compact showreel preview. |
 | `old/public/assets/` | Images, audio, videos and other media retained from the earlier site. |
 | `showreel/timeline.json` | Full showreel cuts, titles, transitions and gains. |
 | `showreel/render.cjs` | Full renderer, mastering and media QA; documented in `showreel/README.md`. |
 | `showreel/render-preview.cjs` | Retained large silent encodes and project-card previews. |
 | `showreel/render-thumbnail.cjs` | Compact showreel preview, derived from `src/assets/hero-motion.mp4`. |
 | `showreel/render-web.cjs` | Current extended-cut website delivery and eight-second silent preview. |
-| `scripts/make-reel-surface.cjs` | Hero reel surface from the delivered showreel's audio and the chapter list check; run after `render-web.cjs` (needs ffmpeg). |
 | `showreel/editions/editorial-v2/` | Current showreel edit, render report, poster and verification. |
 | `showreel/sources.json`, `fetch-sources.cjs` | Public media source manifest and restoration tool. |
 | `scripts/build-fonts.py` | Offline font preparation. |

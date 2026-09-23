@@ -58,5 +58,4 @@ versioned website film in `showreel/output/` at 1080p60, H.264 CRF 20, and copie
 the mastered AAC audio without re-encoding. The smaller video fits the website's
 80 MiB per-file budget. It also exports an eight-second silent button preview.
 The homepage links to this delivery, displays 01:59 and uses this edition's poster.
-Then run `node scripts/make-reel-surface.cjs` to redraw the homepage surface and check its chapters.
 The original website film remains available in the repository history and files.

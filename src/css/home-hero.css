@@ -1,5 +1,5 @@
-/* Edition 03 opening: editorial typography, the showreel's own sound as its
-   surface, the reel's chapters, and the real reel. */
+/* Edition 03 opening: editorial typography, one still frame from Shadow
+   Frames, and the real reel. */
 .home-scene {
   position: relative;
   isolation: isolate;
@@ -26,7 +26,6 @@
   .home-scene.has-cinematic-transition .hero {
     will-change: transform, opacity;
   }
-  .home-scene.has-cinematic-transition .hero-wave { will-change: transform; }
   .home-scene.has-cinematic-transition .panel { box-shadow: 0 -24px 56px #0002; }
   .home-scene.has-cinematic-transition .work-head.motion-enter,
   .home-scene.has-cinematic-transition .wcard--lead.motion-enter { animation: none; }
@@ -100,108 +99,39 @@
   font-size: 17px;
   line-height: 1.6;
 }
-/* The surface is the showreel's sound (assets/home/reel-surface.svg, drawn by
-   scripts/make-reel-surface.cjs): 120 frequency bands over the reel, time left
-   to right, low bands in front. Its view box is 1040 x 760 and the time axis
-   runs along the front edge from x 16 to 836 at y 712; the chapter list sits
-   under that edge and starts the reel there. The desktop keeps the Edition 03
-   slot, lifted so the chapters clear the controls. */
-.hero-wave {
-  /* The frame keeps the drawing's ratio: 66% of the backdrop, less on short screens. */
-  --surface-w: min(66cqw, (100cqh - 150px) * 1.3684);
-  position: absolute;
-  z-index: 0;
-  /* Centred in the space above the controls row, never higher than -30px. */
-  top: max(-30px, (100cqh - 220px - var(--surface-w) * .7308) / 2);
-  left: 36%;
-  width: 66%;
-  height: calc(100% - 150px);
-  pointer-events: none;
-}
-.reel-surface__frame {
+/* One real frame: the Shadow Frames bar (candles and the Polaroid camera on
+   the counter), still and untouched. It fills the right of the opening and
+   fades into the page towards the words and the controls. Existing webp sizes
+   640/1200/1920; nothing moves and nothing needs a click. */
+.hero-still__frame {
   position: absolute;
   top: 0;
-  left: 0;
-  width: var(--surface-w);
-  aspect-ratio: 1040 / 760;
+  right: 0;
+  bottom: 0;
+  width: 64%;
 }
-.hero-wave__still {
-  position: absolute;
-  inset: 0;
+.hero-still__img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  opacity: .82;
-  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 76%, transparent 99%);
+  object-fit: cover;
+  object-position: 40% 42%;
+  opacity: .9;
+  mask-image:
+    linear-gradient(90deg, transparent, #000 42%),
+    linear-gradient(#000 50%, transparent 82%);
+  mask-composite: intersect;
 }
-/* The playhead marks where a chapter starts while it is hovered or focused. */
-.reel-surface__head {
+.hero-still__caption {
   position: absolute;
-  top: 28%;
-  bottom: calc(100% - 712 / 760 * 100%);
-  width: 1px;
-  background: linear-gradient(transparent, var(--c-accent));
-  opacity: 0;
-  transition: opacity .2s ease;
-  pointer-events: none;
-}
-.reel-surface.is-cued .reel-surface__head { opacity: .85; }
-.reel-surface__head > span {
-  position: absolute;
-  top: -2px;
-  left: 8px;
-  color: var(--c-accent);
-  font: 400 10.5px/1 var(--f-mono);
-  letter-spacing: .04em;
-}
-/* Each chapter spans its stretch of the front edge in its project's track
-   colour; --start, --len and --reel-length are seconds set in the markup. */
-.reel-chapters {
-  position: absolute;
-  top: calc(var(--surface-w) * .6846 + 10px);
-  left: calc(var(--surface-w) * .01538);
-  width: calc(var(--surface-w) * .78846);
-  height: 46px;
+  right: calc(var(--page-gutter) + max(0px, (100cqw - 2 * var(--page-gutter) - var(--page-max)) / 2));
+  bottom: 176px;
   margin: 0;
-  padding: 0;
-  list-style: none;
-  pointer-events: auto;
-}
-.reel-chapters li {
-  position: absolute;
-  top: 0;
-  left: calc(var(--start) / var(--reel-length) * 100%);
-  width: calc(var(--len) / var(--reel-length) * 100%);
-  padding-right: 4px;
-}
-.reel-chapters button {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  width: 100%;
-  min-height: 46px;
-  padding: 8px 0 0;
-  border: 0;
-  border-top: 2px solid color-mix(in srgb, var(--track) 42%, transparent);
-  background: none;
-  color: var(--c-ink-2);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
-}
-.reel-chapters__time {
   color: var(--c-ink-3);
-  font: 400 10px/1.2 var(--f-mono);
+  font: 11px/1.6 var(--f-mono);
   letter-spacing: .04em;
-  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
 }
-.reel-chapters__name { font: 500 11px/1.25 var(--f-body); letter-spacing: -.005em; }
-.reel-chapters button:hover,
-.reel-chapters button:focus-visible { border-top-color: var(--track); color: var(--c-ink); }
-.reel-chapters button:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
 .hero__base {
   display: grid;
   grid-template-columns: 1fr auto auto;
@@ -222,8 +152,7 @@
   font-size: 14px;
   text-decoration: none;
 }
-.hero__work-link > span:last-child { font-size: 24px; transition: transform .2s; }
-.hero__work-link:hover > span:last-child { transform: translateY(4px); }
+.hero__work-link > span:last-child { font-size: 24px; }
 .hero-reel__launch {
   display: flex;
   align-items: center;
@@ -264,9 +193,8 @@
   place-items: center;
   color: #fff;
 }
-.hero-reel__launch-icon svg { width: 40px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.5; transition: transform .2s; }
+.hero-reel__launch-icon svg { width: 40px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.5; }
 .hero-reel__launch-icon .hero-reel__play { fill: currentColor; stroke: none; }
-.hero-reel__launch:hover .hero-reel__launch-icon svg { transform: scale(1.08); }
 .hero-reel__copy { display: flex; flex-direction: column; gap: 8px; white-space: nowrap; }
 .hero-reel__copy small { color: var(--c-ink-3); font: 11px/1.4 var(--f-mono); }
 .hero-reel__arrow { margin-left: 4px; font-size: 23px; }
@@ -298,17 +226,15 @@
 .hero__close[hidden] { display: none; }
 .hero__close span { font-size: 24px; font-weight: 400; }
 .hero.is-started .hero__editorial,
-.hero.is-started .hero-wave { visibility: hidden; pointer-events: none; }
+.hero.is-started .hero-still { visibility: hidden; pointer-events: none; }
 .hero.is-started .hero__cinema { visibility: visible; pointer-events: auto; }
 
-/* Where the shortest chapters get too narrow for their names, the seven keep
-   their order in equal columns; the playhead still marks the true start. */
 @media (min-width: 1001px) and (max-width: 1299.98px) {
-  .reel-chapters { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); column-gap: 4px; }
-  .reel-chapters li { position: static; width: auto; padding: 0; }
+  .hero-still__frame { width: 60%; }
+  .hero-still__img { object-position: 46% 42%; }
 }
-/* Below 1000px the hero stacks: the surface becomes a band whose front edge
-   spans the full width, so each chapter sits under its own stretch of the reel. */
+/* Below 1000px the hero stacks: the frame becomes a full-bleed band between
+   the words and the controls, fading at both edges. */
 @media (max-width: 1000px) {
   .home-scene__backdrop {
     position: relative;
@@ -320,33 +246,21 @@
     margin: 18px 0 20px;
     container-type: inline-size;
   }
-  .hero-wave { position: relative; top: auto; left: auto; width: 100%; height: auto; }
-  .reel-surface__frame {
+  .home-scene__backdrop.hero-still { margin: 22px calc(-1 * var(--page-gutter)) 22px; }
+  .hero-still__frame {
     position: relative;
-    width: 100%;
-    height: clamp(150px, 26svh, 250px);
-    aspect-ratio: auto;
-    overflow: hidden;
-    mask-image: linear-gradient(transparent, #000 38%);
-  }
-  /* At 124.4cqw the front edge runs from 1.91cqw to the right edge, level with
-     the bottom of the band. */
-  .hero-wave__still {
     inset: auto;
-    left: 0;
-    bottom: -5.73cqw;
-    width: 124.4cqw;
-    height: auto;
-    mask-image: none;
+    width: 100%;
+    height: clamp(230px, 34svh, 380px);
   }
-  .reel-surface__head { display: none; }
-  .reel-chapters {
-    position: relative;
-    top: 0;
-    left: 0;
-    width: calc(100% - 1.91cqw);
-    height: 48px;
-    margin: 12px 0 0 1.91cqw;
+  .hero-still__img {
+    object-position: 44% 46%;
+    mask-image: linear-gradient(transparent, #000 20%, #000 74%, transparent);
+  }
+  .hero-still__caption {
+    position: static;
+    margin: 6px var(--page-gutter) 0 auto;
+    text-align: right;
   }
   .hero__base { gap: 24px; padding-top: 0; }
   .hero-reel__preview { flex-basis: 94px; width: 94px; height: 68px; }
@@ -370,33 +284,10 @@
   .hero-reel__launch-icon svg { width: 30px; height: 24px; }
   .hero-reel__copy { gap: 5px; }
 }
-/* Phones keep "Watch showreel" above the fold: a lower band, and the seven
-   chapters as a list of two columns under it. */
+/* Phones keep "Watch showreel" above the fold with a lower band. */
 @media (max-width: 639.98px) {
-  .reel-surface__frame { height: clamp(96px, 16svh, 150px); }
-  .reel-chapters {
-    display: grid;
-    grid-template-columns: repeat(2,minmax(0,1fr));
-    grid-template-rows: repeat(4,auto);
-    grid-auto-flow: column;
-    column-gap: 16px;
-    width: auto;
-    height: auto;
-    margin-left: 0;
-  }
-  .reel-chapters li { position: static; width: auto; padding: 0; }
-  .reel-chapters button {
-    flex-direction: row;
-    align-items: baseline;
-    gap: 8px;
-    min-height: 30px;
-    padding: 6px 0 6px 10px;
-    border-top: 0;
-    border-left: 2px solid color-mix(in srgb, var(--track) 60%, transparent);
-  }
-  .reel-chapters button:hover,
-  .reel-chapters button:focus-visible { border-left-color: var(--track); }
-  .reel-chapters__name { font-size: 12.5px; }
+  .hero-still__frame { height: clamp(200px, 30svh, 270px); }
+  .hero-still__caption { font-size: 10px; }
 }
 @media (max-width: 380px) {
   .hero__base { column-gap: 12px; }
@@ -405,16 +296,7 @@
   .hero-reel__launch { gap: 9px; font-size: 13px; }
   .hero-reel__preview { flex-basis: 46px; width: 46px; height: 46px; }
 }
-@media (max-width: 360px) {
-  .reel-chapters { column-gap: 10px; }
-  .reel-chapters button { gap: 6px; padding-left: 8px; }
-  .reel-chapters__name { font-size: 12px; }
-}
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-reel__launch-icon svg,
-  .hero__work-link > span:last-child,
   .hero-reel__preview > video { transition: none; }
-  .hero-reel__launch:hover .hero-reel__launch-icon svg,
-  .hero__work-link:hover > span:last-child { transform: none; }
 }

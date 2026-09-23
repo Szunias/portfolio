@@ -73,7 +73,7 @@ module.exports = {
       slug: 'index',
       layout: 'home',
       css: ['home', 'portfolio', 'home-hero'],
-      js: ['prefetch', 'colophon-clock', 'home-showreel', 'home-reel-chapters', 'home-transition', 'project-previews', 'copy-email', 'page-motion', 'home-solo'],
+      js: ['prefetch', 'colophon-clock', 'home-showreel', 'home-transition', 'project-previews', 'copy-email', 'page-motion', 'home-solo'],
       title: 'Game Sound Designer & Audio Programmer | Igor Szuniewicz',
       ogTitle: 'Game Sound Designer & Audio Programmer | Igor Szuniewicz',
       description: 'Game sound design and audio implementation in Wwise, Unreal Engine and Unity by Igor Szuniewicz. Discuss freelance projects or technical sound design roles.',
