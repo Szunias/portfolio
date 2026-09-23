@@ -114,12 +114,18 @@ async function clockMotion(context, entry, width) {
     await page.waitForFunction(() => document.querySelector('[data-hand="second"]').getAttribute('visibility') === 'hidden');
     if (entry.js.includes('contact-clock')) {
       const dial = page.locator('.ck__dial');
+      // contact.html's two-line caption; the contact-wind review page keeps [data-cap-preview].
+      const where = page.locator('[data-cap-where]');
+      const twoLine = await where.count() > 0;
       await dial.focus();
       await page.keyboard.press('ArrowRight');
       assert.equal(await dial.getAttribute('aria-valuenow'), '1');
+      assert.match(await dial.getAttribute('aria-valuetext'), / in Graz, in 1 hour, (day|dawn|dusk|night)$/);
+      if (twoLine) assert.match(await where.textContent(), /^in 1 h · (day|dawn|dusk|night)$/);
       await page.keyboard.press('Home');
       assert.equal(await dial.getAttribute('aria-valuenow'), '0');
       assert.equal(await page.locator('[data-cap-preview]').isVisible(), false);
+      if (twoLine) assert.equal(await where.textContent(), 'Graz, Austria');
     }
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.waitForFunction(() => !document.querySelector('[data-hand="second"]').hasAttribute('visibility'));

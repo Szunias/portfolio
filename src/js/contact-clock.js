@@ -1,20 +1,35 @@
 (function () {
-  /* Owns winding, hands and captions. Load only one contact-clock controller
-     per page; contact-actions writes to its separate local-time span. */
+  /* Owns winding, hands, the daylight face, the crown and the caption. Load
+     only one contact-clock controller per page. contact.html has a two-line
+     caption whose time line keeps its place while winding; the contact-wind
+     review page keeps the older line, which [data-cap-preview] replaces while
+     winding (contact-actions writes its resting time). */
   const MAX_OFFSET = 24 * 60;
+  /* After a pointer lets go, the preview holds long enough to read the
+     caption a thumb was covering, then winds back. */
+  const HOLD_TOUCH = 2200;
+  const HOLD_MOUSE = 1000;
   const root = document.querySelector('[data-time-root]');
   const svg = document.querySelector('.ck__dial');
   const ticks = document.querySelector('[data-ticks]');
   const hourHand = document.querySelector('[data-hand="hour"]');
   const minuteHand = document.querySelector('[data-hand="minute"]');
   const secondHand = document.querySelector('[data-hand="second"]');
+  const knurl = document.querySelector('[data-knurl]');
+  const skyCore = document.querySelector('[data-sky="core"]');
+  const skyEdge = document.querySelector('[data-sky="edge"]');
+  const capTime = document.querySelector('[data-cap-time]');
+  const capHm = document.querySelector('[data-cap-hm]');
+  const capZone = document.querySelector('[data-cap-zone]');
+  const capWhere = document.querySelector('[data-cap-where]');
   const capNow = document.querySelector('[data-cap-now]');
   const capPreview = document.querySelector('[data-cap-preview]');
   if (!root || !svg) return;
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const restingWhere = capWhere ? capWhere.textContent : '';
 
-  const { partNumber, phaseName, setHand, addTicks } = PortfolioClockFace;
+  const { timeParts, sunAltitude, phaseName, setHand, addTicks } = PortfolioClockFace;
   addTicks(svg, ticks);
 
   let offsetMinutes = 0;
@@ -23,14 +38,17 @@
   let lastPointerAngle = 0;
   let lastRatchetStep = 0;
   let snapRaf = 0;
+  let holdTimer = 0;
   let audio = null;
+  let clickNoise = null;
 
   function previewing() {
     return scrubbing || Math.abs(offsetMinutes) >= 1;
   }
 
-  /* ---- sound: a short decaying sine is a soft ratchet tick; the hour step
-     lands lower and a touch louder. Only ever while the user is turning. ---- */
+  /* ---- sound: 12 ms of decaying noise through a band-pass is a ratchet
+     click; the full hour lands lower and a touch louder. Only ever while the
+     user is turning. ---- */
 
   function ensureAudio() {
     if (reducedMotion.matches || audio) return;
@@ -41,15 +59,28 @@
     }
   }
 
+  function noiseBuffer() {
+    if (!clickNoise) {
+      const length = Math.floor(audio.sampleRate * 0.012);
+      const buffer = audio.createBuffer(1, length, audio.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < length; i += 1) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 3);
+      clickNoise = buffer;
+    }
+    return clickNoise;
+  }
+
   function tickSound(strong) {
     if (!audio || reducedMotion.matches) return;
-    let osc;
+    let source;
+    let band;
     let gain;
     function disconnect() {
-      if (osc) {
-        osc.onended = null;
-        try { osc.disconnect(); } catch (_) {}
+      if (source) {
+        source.onended = null;
+        try { source.disconnect(); } catch (_) {}
       }
+      if (band) { try { band.disconnect(); } catch (_) {} }
       if (gain) { try { gain.disconnect(); } catch (_) {} }
     }
     try {
@@ -61,29 +92,46 @@
       }
       if (audio.state !== 'running') return;
       const t = audio.currentTime;
-      osc = audio.createOscillator();
+      source = audio.createBufferSource();
+      band = audio.createBiquadFilter();
       gain = audio.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(strong ? 950 : 1900, t);
-      gain.gain.setValueAtTime(strong ? 0.07 : 0.045, t);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
-      osc.connect(gain).connect(audio.destination);
-      osc.onended = disconnect;
-      osc.start(t);
-      osc.stop(t + 0.06);
+      source.buffer = noiseBuffer();
+      band.type = 'bandpass';
+      band.frequency.value = strong ? 1700 : 3400;
+      band.Q.value = strong ? 5 : 9;
+      gain.gain.setValueAtTime(strong ? 0.6 : 0.4, t);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.04);
+      source.connect(band).connect(gain).connect(audio.destination);
+      source.onended = disconnect;
+      source.start(t);
+      source.stop(t + 0.045);
     } catch (_) {
-      if (osc) { try { osc.stop(); } catch (_) {} }
+      if (source) { try { source.stop(); } catch (_) {} }
       disconnect();
     }
   }
 
   /* ---- rendering ---- */
 
-  function offsetLabel(mins) {
+  /* Face light from the sun's altitude: 0 once it is 8 deg under the
+     horizon, 1 once it is 6 deg above, eased in between. */
+  function daylight(alt) {
+    const x = Math.min(1, Math.max(0, (alt + 8) / 14));
+    return x * x * (3 - 2 * x);
+  }
+
+  /* "in 3 h 10 min" for the caption, "in 3 hours 10 minutes" for ARIA. */
+  function offsetLabel(mins, words) {
     const rounded = Math.round(Math.abs(mins) / 5) * 5;
+    if (!rounded) return 'now';
     const h = Math.floor(rounded / 60);
     const m = rounded % 60;
-    const span = h ? h + ' h' + (m ? ' ' + m + ' min' : '') : m + ' min';
+    let span;
+    if (words) {
+      span = [h ? h + (h === 1 ? ' hour' : ' hours') : '', m ? m + ' minutes' : ''].filter(Boolean).join(' ');
+    } else {
+      span = h ? h + ' h' + (m ? ' ' + m + ' min' : '') : m + ' min';
+    }
     return mins >= 0 ? 'in ' + span : span + ' ago';
   }
 
@@ -92,13 +140,11 @@
   }
 
   function render() {
-    const date = new Date(Date.now() + offsetMinutes * 60000);
-    const hour = partNumber(date, 'hour');
-    const minute = partNumber(date, 'minute');
-    const second = partNumber(date, 'second');
+    const ms = Date.now() + offsetMinutes * 60000;
+    const t = timeParts(new Date(ms));
     const active = previewing();
-    setHand(hourHand, (hour % 12) * 30 + minute * 0.5);
-    setHand(minuteHand, minute * 6 + second * 0.1);
+    setHand(hourHand, (t.hour % 12) * 30 + t.minute * 0.5);
+    setHand(minuteHand, t.minute * 6 + t.second * 0.1);
     /* A frozen second hand reads as a stopped clock, so it hides while the
        preview is wound away from now. */
     if (secondHand) {
@@ -106,25 +152,44 @@
         secondHand.setAttribute('visibility', 'hidden');
       } else {
         secondHand.removeAttribute('visibility');
-        setHand(secondHand, second * 6);
+        setHand(secondHand, t.second * 6);
       }
     }
-    root.setAttribute('data-phase', phaseName(hour));
 
-    const label = pad(hour) + ':' + pad(minute) + ' in Graz · ' + offsetLabel(offsetMinutes) + ' · ' + phaseName(hour);
+    /* The face carries the daylight over Graz at the time it shows. Light is
+       a state, not an animation, so reduced motion keeps it. */
+    const phase = phaseName(ms);
+    const light = daylight(sunAltitude(ms));
+    if (skyCore) skyCore.setAttribute('stop-opacity', (light * 0.16).toFixed(3));
+    if (skyEdge) skyEdge.setAttribute('stop-opacity', (light * 0.045).toFixed(3));
+    root.setAttribute('data-phase', phase);
+    root.classList.toggle('ck--preview', active);
+
+    /* The knurl slides a groove's width (1.6 units) every sixteen minutes of winding. */
+    if (knurl) {
+      const shift = ((offsetMinutes * 0.1) % 1.6 + 1.6) % 1.6;
+      knurl.setAttribute('transform', 'translate(' + shift.toFixed(2) + ' 0)');
+    }
+
+    const hm = pad(t.hour) + ':' + pad(t.minute);
+    const away = offsetLabel(offsetMinutes);
+    if (capHm) capHm.textContent = hm;
+    if (capZone) capZone.textContent = t.zone;
+    if (capTime) capTime.setAttribute('datetime', hm);
+    if (capWhere) capWhere.textContent = active ? away + ' · ' + phase : restingWhere;
     if (capNow) capNow.hidden = active;
     if (capPreview) {
       capPreview.hidden = !active;
-      capPreview.textContent = active ? label : '';
+      capPreview.textContent = active ? hm + ' in Graz · ' + away + ' · ' + phase : '';
     }
     svg.setAttribute('aria-valuenow', String(Math.round(offsetMinutes / 60)));
-    svg.setAttribute('aria-valuetext', active ? label : 'now');
+    svg.setAttribute('aria-valuetext', hm + ' in Graz, ' + (active ? offsetLabel(offsetMinutes, true) + ', ' + phase : 'now'));
   }
 
   function setOffset(next, ratchet) {
     offsetMinutes = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET, next));
     if (ratchet) {
-      /* One tick per half hour of winding, a deeper one on the full hour. */
+      /* One click per half hour of winding, a deeper one on the full hour. */
       const step = Math.floor(offsetMinutes / 30);
       if (step !== lastRatchetStep) {
         tickSound(step % 2 === 0);
@@ -146,6 +211,8 @@
   function stopSnap() {
     if (snapRaf) window.cancelAnimationFrame(snapRaf);
     snapRaf = 0;
+    if (holdTimer) window.clearTimeout(holdTimer);
+    holdTimer = 0;
   }
 
   function snapBack() {
@@ -199,7 +266,15 @@
     scrubbing = false;
     try { svg.releasePointerCapture(event.pointerId); } catch (_) { /* capture may already be lost */ }
     root.classList.remove('ck--scrubbing');
-    snapBack();
+    /* Only a deliberate lift holds the preview. A pointercancel (the browser
+       took the gesture as a scroll) or a capture lost without a lift goes
+       home at once. */
+    if (event.type !== 'pointerup' || Math.abs(offsetMinutes) < 1) {
+      snapBack();
+      return;
+    }
+    render();
+    holdTimer = window.setTimeout(snapBack, event.pointerType === 'mouse' ? HOLD_MOUSE : HOLD_TOUCH);
   }
 
   svg.addEventListener('pointerup', release);
