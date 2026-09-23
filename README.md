@@ -64,7 +64,7 @@ Console checks and the custom-domain audit.
 
 1. Add `src/pages/<slug>.html` containing page content only.
 2. Register the route, layout, ordered CSS/JS and metadata in `site.config.cjs`.
-3. Add its homepage card and update the project navigation cycle.
+3. Add its homepage card and link it into the "Next" cycle, which follows the homepage order.
 4. Follow the content rules in [AGENTS.md](AGENTS.md).
 5. Run tests and the build, then check the page at 320 px and desktop widths.
    Exercise any changed interactions.

@@ -650,19 +650,16 @@ function validateConfig(cfg) {
   }
   for (const [group, slugs] of projectGroups) {
     if (!slugs.length) throw new Error(`Homepage work group ${group} is empty`);
-    const visited = [];
-    let cursor = slugs[0];
-    for (let i = 0; i < slugs.length + 1 && cursor; i++) {
-      if (visited.includes(cursor)) break;
-      visited.push(cursor);
-      cursor = nextProject.get(cursor);
-    }
-    const missedByCycle = slugs.filter(slug => !visited.includes(slug));
-    const escaped = visited.filter(slug => !slugs.includes(slug));
-    if (missedByCycle.length || escaped.length || cursor !== slugs[0]) {
-      throw new Error(`Next-project links for ${group} must form one cycle from ${slugs[0]}. Missed: ${missedByCycle.join(', ') || 'none'}; escaped: ${escaped.join(', ') || 'none'}; ended at: ${cursor || 'missing'}`);
-    }
   }
+  // "Next" walks every project once in homepage order and the last one returns
+  // to the first, so pressing it leads from the games into the tools, research
+  // and earlier work instead of circling inside one group.
+  cardSlugs.forEach((slug, index) => {
+    const expected = cardSlugs[(index + 1) % cardSlugs.length];
+    if (nextProject.get(slug) !== expected) {
+      throw new Error(`Next-project link in src/pages/${slug}.html must lead to ${expected} (homepage order), not ${nextProject.get(slug)}`);
+    }
+  });
   const staticOutNames = new Map();
   const reservedOutputs = new Set(cfg.pages.map(page => `${page.slug}.html`).concat([
     'assets',

@@ -62,8 +62,7 @@ The files in the page's `css` array follow in exactly that order.
   content. `home-hero.css` owns the Edition 03 editorial opening,
   one still frame from Shadow Frames, compact showreel preview and full player. The header uses `_chrome.css`.
   Homepage order is `home`, `portfolio`, `home-hero`.
-- `cine.css` styles the public project pages. `case-plain.css` supports project
-  review variants.
+- `cine.css` styles the public project pages.
 - `sidar.css` owns SIDAR's trailer-first layout and its Annex04 palette. It is
   loaded only on `sidar.html`; the shared project styles stay unchanged.
 - Every other project page also owns a stylesheet named after its slug

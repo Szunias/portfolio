@@ -137,7 +137,7 @@ async function main() {
       // The music card shows no cover art, only the first three pieces of the set list.
       assert.equal(await page.locator('.music-cta img').count(), 0);
       assert.deepEqual(await page.locator('.music-cta__list li').evaluateAll((items) => items.map((item) => item.textContent.replace(/\s+/g, ' ').trim())),
-        ['01 Cage 1:50', '02 Electronic sketch 2:30', '03 Ray 0:22']);
+        ['01 Ray 0:22', '02 Cage 1:50', '03 Electronic sketch 2:30']);
       assert.equal(await page.locator('.earlier-work nav a').count(), 8);
       assert.deepEqual(await page.locator('[data-solo-desk] a').evaluateAll((links) => links.map((link) => link.getAttribute('href'))), deskLinks, 'Tools desk proof links changed');
       assert.equal(await page.locator('.tool-feature a, .tool-feature button, .music-cta__link a, .music-cta__link button').count(), 0, 'Feature links must not contain interactive descendants');
