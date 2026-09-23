@@ -1,14 +1,12 @@
 /* Playback, transport and persistence. music-library.js owns track formatting
    and list markup; music-visualizer.js observes the same audio element. */
 (function () {
-  const { sortDate, trackYear, isSketch, kindLabel, rowDetail, trackDetail, rowArtStyle } = PortfolioMusicLibrary;
+  const { sortDate, trackYear, isSketch, kindLabel, rowDetail, trackDetail, displayName, displayNote } = PortfolioMusicLibrary;
   const PLACEHOLDER = 'assets/track-placeholder.svg';
   const STORE_KEY = 'music-player-v2';
-  const DEFAULT_FILTER = 'release';
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  reducedMotion.addEventListener('change', () => {
-    if (reducedMotion.matches) document.querySelectorAll('.stage__art--previous').forEach(node => node.remove());
-  });
+  // The archive opens on the chip the page marks as pressed (All on music.html).
+  const pressedChip = document.querySelector('[data-filter][aria-pressed="true"]');
+  const DEFAULT_FILTER = (pressedChip && pressedChip.dataset.filter) || 'all';
 
   const tracks = Array.from(document.querySelectorAll('#trackData .track-card'))
     .sort((a, b) => sortDate(b).localeCompare(sortDate(a)));
@@ -34,12 +32,19 @@
   function setStyle(name, prop, value) {
     roleAll(name).forEach(el => { el.style[prop] = value; });
   }
+  // An optional line disappears instead of leaving an empty gap.
+  function showText(name, text) {
+    roleAll(name).forEach(el => {
+      el.textContent = text;
+      el.hidden = !text;
+    });
+  }
 
   // ----------------------------------------------------------------- artwork
 
-  // Sketches ship a CSS gradient instead of a cover file. Painting that gradient
-  // onto a canvas gives every sketch its own recognisable plate on a lock screen
-  // or in CarPlay, which would otherwise show an empty square.
+  // Every track ships a CSS gradient. Painting it onto a canvas gives a track
+  // without usable cover art its own plate on a lock screen or in CarPlay,
+  // which would otherwise show an empty square.
   const artCache = new Map();
 
   function gradientColors(value) {
@@ -82,6 +87,8 @@
     return url;
   }
 
+  // Covers on the page itself exist only in the review layouts (music-alt,
+  // music-crate); music.html has no [data-player="cover"] image at all.
   function artFor(track) {
     if (!track) return PLACEHOLDER;
     if (track.dataset.art) return track.dataset.art;
@@ -89,53 +96,31 @@
     return PLACEHOLDER;
   }
 
-  function artSizeFor(track) {
-    if (track && track.dataset.art) return track.dataset.artSize || '';
-    if (track && track.dataset.gradient) return '512x512';
-    return '';
+  function updateArtwork(track) {
+    const size = (track.dataset.art && track.dataset.artSize || '1x1').split('x');
+    roleAll('cover').forEach(img => {
+      img.src = artFor(track);
+      img.alt = '';
+      // music-alt's plate takes the proportions of the cover it holds.
+      const plate = img.closest && img.closest('.stage__plate');
+      if (!plate) return;
+      plate.style.setProperty('--stage-art-w', String(parseInt(size[0], 10) || 1));
+      plate.style.setProperty('--stage-art-h', String(parseInt(size[1], 10) || 1));
+    });
   }
 
-  function updateArtwork(src, version) {
-    const covers = roleAll('cover');
-    let applied = false;
-    function apply(next) {
-      if (applied || version !== sourceVersion) return;
-      applied = true;
-      covers.forEach(img => {
-        let previous;
-        if (img.hasAttribute('data-art-transition')) {
-          img.parentElement.querySelectorAll('.stage__art--previous').forEach(node => node.remove());
-          if (!reducedMotion.matches && img.animate && img.complete && img.naturalWidth && img.getAttribute('src') !== next) {
-            previous = img.cloneNode();
-            previous.removeAttribute('data-player');
-            previous.removeAttribute('data-art-transition');
-            previous.classList.add('stage__art--previous');
-            img.after(previous);
-          }
-        }
-        img.src = next;
-        img.alt = '';
-        if (previous) {
-          previous.animate([{ opacity: 1 }, { opacity: 0 }], {
-            duration: 480, easing: 'cubic-bezier(.22,1,.36,1)'
-          }).finished.then(() => previous.remove(), () => previous.remove());
-        }
-      });
+  // The lock screen shows a cover only when the catalogue's art-kind marks it
+  // genuine ("genuine" or the unconfirmed "genuine?"). AI-looking covers give
+  // way to the track's neutral gradient plate.
+  function sessionArt(track) {
+    if (track.dataset.art && /^genuine/.test(track.dataset.artKind || '')) {
+      return { src: track.dataset.art, sizes: track.dataset.artSize || '' };
     }
-    if (reducedMotion.matches || !covers.some(img => img.hasAttribute('data-art-transition'))) {
-      apply(src);
-      return;
-    }
-    // Keep the current picture until its replacement is ready. A fast second
-    // selection invalidates this request using the same version as playback.
-    const next = new Image();
-    next.onload = () => apply(src);
-    next.onerror = () => apply(PLACEHOLDER);
-    next.src = src;
+    if (track.dataset.gradient) return { src: gradientArt(track), sizes: '512x512' };
+    return { src: PLACEHOLDER, sizes: '' };
   }
 
-  function artTypeFor(track) {
-    const src = artFor(track);
+  function artType(src) {
     if (/^data:image\/jpeg/.test(src) || /\.jpe?g$/i.test(src)) return 'image/jpeg';
     if (/\.png$/i.test(src)) return 'image/png';
     if (/\.svg$/i.test(src)) return 'image/svg+xml';
@@ -324,12 +309,11 @@
       return;
     }
     const artwork = [];
-    const src = artFor(track);
-    if (src) {
-      const entry = { src: new URL(src, document.baseURI).href };
-      const sizes = artSizeFor(track);
-      const type = artTypeFor(track);
-      if (sizes) entry.sizes = sizes;
+    const art = sessionArt(track);
+    if (art.src) {
+      const entry = { src: new URL(art.src, document.baseURI).href };
+      const type = artType(art.src);
+      if (art.sizes) entry.sizes = art.sizes;
       if (type) entry.type = type;
       artwork.push(entry);
     }
@@ -411,7 +395,7 @@
   function setPlayState() {
     const track = selectedTrack();
     const playing = !!track && !audio.paused && !audio.ended;
-    const trackName = track ? (track.dataset.title || 'track') : 'first track';
+    const trackName = track ? displayName(track) : 'first track';
     const action = playing ? 'Pause' : (hasPlaybackError ? 'Retry' : 'Play');
 
     bar.classList.toggle('is-playing', playing);
@@ -582,6 +566,34 @@
     }
   }
 
+  // The selection as a listener reads it: the display name (a long one steps
+  // down a size on the stage), the note, the sentence about the piece, the
+  // facts line, the link to its film and its place in the set list.
+  function showSelection(track) {
+    const name = displayName(track);
+    roleAll('name').forEach(el => {
+      el.textContent = name;
+      el.classList.toggle('is-long', name.length > 12);
+    });
+    showText('note', displayNote(track));
+    showText('about', track.dataset.about || displayNote(track));
+    setText('facts', [trackDetail(track), track.dataset.duration].filter(Boolean).join(' · '));
+    roleAll('page').forEach(link => {
+      const page = track.dataset.page || '';
+      link.hidden = !page;
+      if (page) link.setAttribute('href', page);
+    });
+    const at = tiles.findIndex(tile => byTitle.get(cardTitle(tile)) === track);
+    roleAll('set-position').forEach(el => {
+      el.hidden = at < 0;
+      if (at < 0) return;
+      const index = document.createElement('span');
+      index.textContent = String(at + 1).padStart(2, '0');
+      el.textContent = '';
+      el.append(index, ' / ' + String(tiles.length).padStart(2, '0'));
+    });
+  }
+
   function select(index, autoplay) {
     if (!validIndex(index)) {
       setStatus('That track is not configured correctly.', 'error');
@@ -608,7 +620,8 @@
     setText('artist', track.dataset.artist || 'Igor Szuniewicz');
     setText('detail', trackDetail(track));
     setText('total-time', track.dataset.duration || '0:00');
-    updateArtwork(artFor(track), version);
+    showSelection(track);
+    updateArtwork(track);
     bar.classList.add('has-track');
     setStatus(autoplay ? 'Loading' : 'Ready to play', autoplay ? 'loading' : '');
 
@@ -652,7 +665,9 @@
       const detail = row.querySelector('.library-row__detail');
       if (rowTrack && detail) detail.textContent = rowDetail(rowTrack, filter);
     });
-    Array.from(document.querySelectorAll('.library-group')).forEach(group => {
+    // A year, the shelf or the whole sketch notebook with nothing left to show
+    // goes away with its heading.
+    Array.from(document.querySelectorAll('.library-group, .library-sketchbook')).forEach(group => {
       const shown = Array.from(group.querySelectorAll('[data-catalog-track]'))
         .some(row => !row.closest('li').hidden);
       group.hidden = !shown;
@@ -710,18 +725,14 @@
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'now-playing__queue-row';
-      button.setAttribute('aria-label', 'Play ' + (track.dataset.title || 'track') + ' next');
-      const art = document.createElement('span');
-      art.className = 'now-playing__queue-art';
-      art.setAttribute('aria-hidden', 'true');
-      art.style.backgroundImage = rowArtStyle(track);
+      button.setAttribute('aria-label', 'Play ' + displayName(track) + ' next');
       const name = document.createElement('span');
       name.className = 'now-playing__queue-name';
-      name.textContent = track.dataset.title || 'Untitled track';
+      name.textContent = displayName(track);
       const time = document.createElement('span');
       time.className = 'now-playing__queue-time';
       time.textContent = track.dataset.duration || '';
-      button.append(art, name, time);
+      button.append(name, time);
       button.addEventListener('click', () => playOrderPos(orderPos + 1 + offset, true));
       item.append(button);
       list.append(item);
@@ -1076,6 +1087,14 @@
 
   libraryRows = PortfolioMusicLibrary.build(library, tracks, activeFilter);
 
+  // The set list's running time is the sum of the catalogue durations.
+  const setSeconds = tiles.reduce((sum, tile) => {
+    const track = byTitle.get(cardTitle(tile));
+    const time = track && /^(\d+):([0-5]\d)$/.exec(track.dataset.duration || '');
+    return sum + (time ? Number(time[1]) * 60 + Number(time[2]) : 0);
+  }, 0);
+  if (setSeconds) setText('set-runtime', Math.round(setSeconds / 60) + ' min');
+
   cards().forEach(card => {
     const fallback = cardTitle(card) || 'track';
     const label = card.getAttribute('aria-label') || ('Play ' + fallback);
@@ -1097,6 +1116,11 @@
 
   bar.hidden = false;
   document.querySelectorAll('[data-player-only]').forEach(el => { el.hidden = false; });
+  // A play control authored on the page stays inert until the player runs.
+  roleAll('play').forEach(button => {
+    button.disabled = false;
+    button.removeAttribute('aria-disabled');
+  });
 
   registerMediaHandlers();
   applyFilter(DEFAULT_FILTER);

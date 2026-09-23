@@ -1,4 +1,6 @@
-/* Listening room. Layers on music.css. */
+/* Listening room. Layers on music.css. The published page uses the meter
+   bridge stage at the end of this file; the cover stage above it serves the
+   music-alt review page. */
 
 .library,
 .music-fallback {
@@ -117,11 +119,9 @@
   line-height: 1.5;
 }
 
-.stage__art--previous { z-index: 1; pointer-events: none; }
-
 .stage__plate {
   /* Matches the default cover (Miss You, 500x500) so the first paint and the
-     JS-applied plate agree; applyPlate() overrides per track. */
+     JS-applied plate agree; music-player.js sets it per track. */
   --stage-art-w: 500;
   --stage-art-h: 500;
   position: relative;
@@ -383,4 +383,319 @@
   .stage__atmosphere,
   .stage__scrim,
   .stage__spectrum { display: none; }
+}
+
+/* ======================= meter bridge stage (music.html) =======================
+   The selected piece set as type, the live analyser across the full width as a
+   meter bridge, and the eight selected pieces as a tracklist. No cover art:
+   colour is the site's ice on the neutral greys, nothing per track. */
+
+.stage--bridge .room {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "copy  list"
+    "now   list"
+    "meter meter";
+  column-gap: clamp(48px, 7vw, 112px);
+  width: min(100%, calc(var(--page-max) + var(--page-gutter) * 2));
+  min-height: inherit;
+  margin-inline: auto;
+  padding: clamp(28px, 4.6vh, 52px) var(--page-gutter) clamp(18px, 2.6vh, 28px);
+}
+
+.room__copy { grid-area: copy; }
+.room__now { grid-area: now; align-self: end; }
+.room__meter { grid-area: meter; margin-top: 30px; }
+.room__list { grid-area: list; align-self: start; }
+
+.room__title {
+  margin: 0;
+  font: 500 var(--t-t1)/var(--lh-t1) var(--f-display);
+  letter-spacing: var(--tr-t1);
+  color: var(--c-ink);
+}
+
+.room__lead {
+  max-width: 34ch;
+  margin: 12px 0 0;
+  font: 400 17px/1.5 var(--f-body);
+  color: var(--c-ink-2);
+  text-wrap: pretty;
+}
+
+/* ------------------------------ the piece ------------------------------ */
+
+.now { padding: 32px 0 0; }
+
+.now__no {
+  margin: 0 0 14px;
+  font: 400 var(--t-m1)/1 var(--f-mono);
+  letter-spacing: var(--tr-m);
+  color: var(--c-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.now__no > span { color: var(--c-accent); }
+
+.now__name {
+  max-width: 13ch;
+  margin: 0;
+  font: 500 var(--t-d1)/var(--lh-d1) var(--f-display);
+  letter-spacing: var(--tr-d1);
+  color: var(--c-ink);
+  text-wrap: balance;
+}
+
+/* Names over twelve characters step down one size (music-player.js). */
+.now__name.is-long {
+  max-width: 16ch;
+  font-size: var(--t-d2);
+  line-height: var(--lh-d2);
+  letter-spacing: var(--tr-d2);
+}
+
+.now__note {
+  max-width: 46ch;
+  margin: 18px 0 0;
+  font: 400 17px/1.5 var(--f-body);
+  color: var(--c-ink-2);
+  text-wrap: pretty;
+}
+
+.now__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+  margin-top: 26px;
+}
+
+.now__play {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--c-ink);
+  color: var(--c-bg-0);
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease);
+}
+
+.now__play:disabled { cursor: default; }
+
+.now__play:hover,
+.now__play:focus-visible { background: var(--c-accent-hi); }
+
+.now__play svg { width: 22px; height: 22px; fill: currentColor; }
+.now__play svg polygon { transform: translateX(1px); }
+
+.now__detail {
+  margin: 0;
+  font: 400 var(--t-m1)/1.4 var(--f-mono);
+  letter-spacing: .02em;
+  color: var(--c-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.now__film {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font: 500 var(--t-s1)/1.4 var(--f-body);
+  color: var(--c-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--c-accent-line);
+  text-underline-offset: 4px;
+}
+
+.now__film:hover,
+.now__film:focus-visible {
+  color: var(--c-accent-hi);
+  text-decoration-color: currentColor;
+}
+
+.now__film[hidden],
+.now__no[hidden],
+.now__note[hidden] { display: none; }
+
+/* ----------------------------- meter bridge ----------------------------
+   The canvas is the analyser itself (music-visualizer.js): unlit segments at
+   rest, ice segments and white peak caps while music plays. The scale under
+   it is its real frequency axis. */
+.stage--bridge .stage__spectrum {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: clamp(112px, 16.5vh, 164px);
+  opacity: 1;
+}
+
+.meter__scale {
+  position: relative;
+  height: 16px;
+  margin-top: 10px;
+  font: 400 var(--t-m1)/1 var(--f-mono);
+  letter-spacing: .02em;
+  color: var(--c-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.meter__scale > span {
+  position: absolute;
+  top: 0;
+  left: var(--x);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.meter__scale > .meter__unit { left: auto; right: 0; transform: none; }
+
+/* ------------------------------ tracklist ------------------------------ */
+
+.set__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--c-line-2);
+}
+
+.set__title,
+.set__runtime {
+  margin: 0;
+  font: 400 var(--t-m1)/1.4 var(--f-mono);
+  letter-spacing: var(--tr-m);
+  text-transform: uppercase;
+  color: var(--c-ink-3);
+}
+
+.set { margin: 0; padding: 0; list-style: none; }
+.set > li { display: block; }
+
+.set-row {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto 40px;
+  align-items: center;
+  column-gap: 14px;
+  width: 100%;
+  min-height: 50px;
+  padding: 6px 8px 6px 6px;
+  border: 0;
+  border-bottom: 1px solid var(--c-line);
+  background: transparent;
+  color: var(--c-ink);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease);
+}
+
+.set-row:disabled { cursor: default; }
+
+.set-row:hover,
+.set-row:focus-visible { background: color-mix(in srgb, var(--c-ink) 5%, transparent); }
+
+.set-row.active {
+  background: color-mix(in srgb, var(--c-accent) 9%, transparent);
+  box-shadow: inset 2px 0 0 var(--c-accent);
+}
+
+/* The number and the level meter share one cell; a playing row shows the meter. */
+.set-row__no {
+  display: grid;
+  align-items: center;
+  justify-items: start;
+  font: 400 var(--t-m1)/1 var(--f-mono);
+  color: var(--c-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.set-row__no > * { grid-area: 1 / 1; }
+.set-row.is-playing .set-row__num { visibility: hidden; }
+
+.set-row__body { display: grid; gap: 2px; min-width: 0; }
+
+.set-row__title {
+  font: 500 16px/1.3 var(--f-body);
+  letter-spacing: -.01em;
+  color: var(--c-ink);
+}
+
+.set-row__note {
+  font: 400 var(--t-s1)/1.35 var(--f-body);
+  color: var(--c-ink-3);
+}
+
+.set-row__year,
+.set-row__time {
+  font: 400 var(--t-m1)/1 var(--f-mono);
+  color: var(--c-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.set-row__time { text-align: right; }
+
+.set-row.active .set-row__title,
+.set-row.active .set-row__num,
+.set-row.active .set-row__time { color: var(--c-accent); }
+
+@media (max-width: 1180px) {
+  .set-row { grid-template-columns: 30px minmax(0, 1fr) 40px; }
+  .set-row__year { display: none; }
+}
+
+@media (max-width: 899.98px) {
+  .stage--bridge { min-height: 0; }
+
+  .stage--bridge .room {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas:
+      "copy"
+      "now"
+      "meter"
+      "list";
+    min-height: 0;
+    padding-block: 28px 44px;
+  }
+
+  .room__now { align-self: start; }
+  .now { padding: 34px 0 0; }
+  .room__list { margin-top: 40px; }
+  .set-row { grid-template-columns: 30px minmax(0, 1fr) auto 40px; }
+  .set-row__year { display: block; }
+}
+
+@media (max-width: 620px) {
+  .room__title { font-size: 44px; }
+  .room__lead { font-size: 16px; }
+  .now__note { margin-top: 14px; font-size: 16px; }
+  .now__row { margin-top: 20px; column-gap: 14px; }
+  .now__play { width: 52px; height: 52px; }
+  .stage--bridge .stage__spectrum { height: 112px; }
+  .meter__scale > .meter__minor { display: none; }
+  .set-row { min-height: 58px; column-gap: 12px; }
+}
+
+@media (max-width: 480px) {
+  .set-row { grid-template-columns: 26px minmax(0, 1fr) 40px; }
+  .set-row__year { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .set-row,
+  .now__play { transition: none; }
+}
+
+@media print {
+  .stage--bridge .meter { display: none; }
 }

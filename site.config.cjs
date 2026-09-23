@@ -109,10 +109,10 @@ module.exports = {
       slug: 'music',
       layout: 'music',
       musicCatalog: 'default',
-      // The listening-room layout promoted from the music-alt review page:
-      // music-library provides metadata and markup; music-player owns the
-      // shared audio element; music-visualizer reads
-      // that element after the player is initialized.
+      // The meter bridge stage with no cover art: music-library builds the
+      // spines and the sketch notebook; music-player owns the shared audio
+      // element and writes the selection; music-visualizer reads that
+      // element after the player is initialized.
       css: ['music', 'music-stage', 'portfolio'],
       js: ['prefetch', 'colophon-clock', 'music-library', 'music-player', 'music-visualizer', 'page-motion'],
       title: 'Game & Film Music | Igor Szuniewicz',

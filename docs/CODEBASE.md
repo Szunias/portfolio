@@ -70,8 +70,11 @@ The files in the page's `css` array follow in exactly that order.
   (`shadowframes.css`, `ray.css` and so on). It holds that page's motif and
   overrides colour tokens for that page only; `cine.css` and `portfolio.css`
   stay the shared base.
-- `music.css` owns the library and player. `music-stage.css` owns the listening
-  stage; `music-crate.css` and `music-reel.css` are review layouts.
+- `music.css` owns the library (the published shelf of spines and sketch
+  notebook, and the review pages' cover shelf) and the player. `music-stage.css`
+  owns the listening stage: the meter bridge stage of `music.html` and the cover
+  stage of the music-alt review page. `music-crate.css` and `music-reel.css` are
+  review layouts.
 - `contact.css`, `contact-time.css` and `contact-wind.css` compose the public
   contact page. Other `contact-*` styles belong to their registered review pages.
 
@@ -90,9 +93,9 @@ an intermediate width and desktop, including long titles and player controls.
 | `project-previews.js` | Lazy, silent previews on project-card hover or keyboard focus. |
 | `copy-email.js` | Copies the visible address on the homepage and contact pages. |
 | `page-motion.js` | Shared entrance effects and header state. |
-| `music-library.js` | Track dates and labels, artwork styles, finished-piece shelf and sketch ledger markup. |
-| `music-player.js` | Track selection, queue, transport, seek, volume, filters, artwork transitions and player state. |
-| `music-visualizer.js` | Cover proportions, sampled artwork brightness and audio spectrum. |
+| `music-library.js` | Track dates, display names and labels; the published shelf of spines and sketch notebook (`data-layout="spines"`), and the cover shelf and sketch ledger of the review pages. |
+| `music-player.js` | Track selection and the display roles it fills (name, note, facts, film link, set position), queue, transport, seek, volume, filters, review-page covers, lock-screen artwork and player state. |
+| `music-visualizer.js` | The meter-bridge audio analyser and the level meter of the playing list row. |
 | `contact-actions.js` | Contact-page actions and progressive enhancement. |
 | `clock-face.js` | Shared Vienna time parts, the sun over Graz (altitude and phase of the day), hand transforms and SVG ticks for contact clocks. |
 | `contact-clock.js` | Windable contact clock: daylight face, crown, caption, hold after release, ratchet click and interaction state. |
@@ -140,7 +143,14 @@ local media paths, not secrets. Catalog edits also update sitemap lastmod.
 `default` serves music and music-alt. `review` preserves the gradient-only
 Electronic sketch and Miss You artwork in music-crate and music-reel. Overrides
 may change artwork only; titles, dates and audio paths stay shared. Featured
-selections and their order remain authored in each page. Use
+selections and their order remain authored in each page.
+
+A record's `title` is its key: selection, saved state and the lock screen use
+it unchanged. The optional `name`, `note`, `about` (the stage sentence) and
+`page` (the film page behind "Watch it with the film") are what the page,
+player bar and sheet show. `art-kind` classifies the cover art as `genuine`,
+`genuine?`, `ai?` or `ai`; music.html shows no cover, and a lock screen shows
+one only when its kind starts with `genuine`, otherwise the track's gradient. Use
 `npm run inspect -- --file src/data/music-tracks.json` to find all consumers.
 
 Every music route loads `music-library.js` before `music-player.js`. Its explicit
@@ -162,9 +172,10 @@ transforms and hero opacity as projects cover the opening. It has no continuous
 drawing loop. Reduced motion uses normal document flow without the transforms.
 Coverage changes pause the thumbnail or close a completely covered full player.
 
-The music spectrum sits below the cover and reads the existing audio element.
-It draws only during playback while visible, with reduced motion disabled.
-Stopping the drawing loop must not interrupt audio output.
+The music analyser spans the stage under the selected piece and reads the
+existing audio element. It draws only during playback while the bridge or the
+playing row's level meter is visible, with reduced motion disabled; at rest it
+shows its unlit segments. Stopping the drawing loop must not interrupt audio output.
 
 Project-card videos use `[data-card-preview]` with a validated `data-src` path.
 Only one runs at a time; its source loads on deliberate hover or keyboard focus.

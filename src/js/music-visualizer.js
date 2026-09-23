@@ -1,21 +1,44 @@
-/* Actual audio in a compact strip; music-player.js owns playback and the queue. */
+/* The live analyser, drawn as a meter bridge: columns of LED segments on a
+   logarithmic 40 Hz to 16 kHz axis, unlit at rest, lit in ice with white peak
+   caps while music plays. It also feeds the three-bar level meter (.vu) of
+   whichever list row is playing. music-player.js owns playback and the queue;
+   this file only observes the shared audio element. */
 (function () {
   const audio = document.querySelector('[data-music-audio]');
   const stage = document.querySelector('.stage');
-  const plate = document.querySelector('.stage__plate');
   const canvas = document.querySelector('.stage__spectrum');
-  if (!stage || !plate || !canvas) return;
+  if (!stage || !canvas) return;
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const cards = Array.from(document.querySelectorAll('#trackData .track-card'));
-  const titleEl = stage.querySelector('[data-player="title"]');
   const theme = getComputedStyle(stage);
-  const accent = theme.getPropertyValue('--c-accent').trim() || '#aac6de';
-  const ink = theme.getPropertyValue('--c-ink').trim() || '#f1f0eb';
-  const BANDS = 48;
-  const levels = new Float32Array(BANDS);
+  const ICE = theme.getPropertyValue('--c-accent').trim() || '#aac6de';
+  const INK = theme.getPropertyValue('--c-ink').trim() || '#f1f0eb';
+  const UNLIT = 'rgba(241, 240, 235, 0.075)';
+  const MIN_DB = -100;
+  const MAX_DB = -34;
+  // A 3 dB per octave tilt around 1 kHz, as spectrum analysers such as SPAN
+  // use, so a full mix does not read as nothing but bass.
+  const SLOPE = 3;
+  const MAX_BANDS = 64;
+  const PLAYING_METERS = '.set-row.is-playing .vu, .spine.is-playing .vu, .sketch-row.is-playing .vu';
+  const levels = new Float32Array(MAX_BANDS);
+  const peaks = new Float32Array(MAX_BANDS);
+  const holds = new Float32Array(MAX_BANDS);
+  const tilt = new Float32Array(MAX_BANDS);
+  const colX = new Float32Array(MAX_BANDS);
+  // Level meters on screen. A meter outside the playing row is display:none
+  // and never intersects, so any entry here belongs to the playing row.
+  const shownMeters = new Set();
+  let bands = 48;
+  let rows = 20;
+  let seg = 4;
+  let pitch = 7;
+  let colW = 8;
+  let W = 0;
+  let H = 0;
+  let width = 0;
   let bins = null;
   let bandLo = null;
   let bandHi = null;
@@ -26,56 +49,76 @@
   let graphFailed = false;
   let raf = 0;
   let lastFrame = 0;
-  let width = 0;
-  let height = 0;
-  let visible = true;
+  let canvasVisible = true;
   let buffering = false;
-  let lastTitle = '';
-  let artworkVersion = 0;
 
-  function applyVeil(luma) {
-    const light = Math.max(0, Math.min(1, luma));
-    stage.style.setProperty('--stage-veil', (0.52 + light * 0.4).toFixed(3));
-    stage.style.setProperty('--stage-bloom', (0.64 - light * 0.42).toFixed(3));
-  }
+  const shape = value => Math.pow(Math.max(0, Math.min(1, value)), 1.15);
+  const segmentY = row => H - row * pitch - seg;
 
-  function sampleLuma(src) {
-    const version = ++artworkVersion;
-    if (!src) { applyVeil(0.22); return; }
-    const img = new Image();
-    img.onload = function () {
-      if (version !== artworkVersion) return;
-      try {
-        const probe = document.createElement('canvas');
-        probe.width = probe.height = 24;
-        const probeCtx = probe.getContext('2d', { willReadFrequently: true });
-        if (!probeCtx) { applyVeil(0.22); return; }
-        probeCtx.drawImage(img, 0, 0, 24, 24);
-        const data = probeCtx.getImageData(0, 0, 24, 24).data;
-        let sum = 0;
-        for (let i = 0; i < data.length; i += 4) {
-          sum += 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
-        }
-        applyVeil(sum / (data.length / 4) / 255);
-      } catch (_) { applyVeil(0.22); }
-    };
-    img.onerror = function () { if (version === artworkVersion) applyVeil(0.22); };
-    img.src = src;
-  }
-
-  function syncTrack() {
-    const title = titleEl ? titleEl.textContent.trim() : '';
-    if (title !== lastTitle) {
-      lastTitle = title;
-      const track = cards.find(card => card.dataset.title === title);
-      const size = (track && track.dataset.artSize || '1x1').split('x');
-      plate.style.setProperty('--stage-art-w', String(parseInt(size[0], 10) || 1));
-      plate.style.setProperty('--stage-art-h', String(parseInt(size[1], 10) || 1));
-      sampleLuma(track && track.dataset.art);
-      levels.fill(0);
+  function mapBands() {
+    for (let i = 0; i < bands; i++) {
+      const centre = 40 * Math.pow(400, (i + 0.5) / bands);
+      tilt[i] = SLOPE * Math.log2(centre / 1000) / (MAX_DB - MIN_DB);
     }
-    stage.classList.toggle('is-playing', playing());
-    updateMotion();
+    levels.fill(0);
+    peaks.fill(0);
+    if (!analyser) return;
+    const nyquist = audioCtx.sampleRate / 2;
+    const high = Math.min(16000, nyquist);
+    for (let i = 0; i < bands; i++) {
+      const lo = 40 * Math.pow(high / 40, i / bands);
+      const hi = 40 * Math.pow(high / 40, (i + 1) / bands);
+      bandLo[i] = Math.min(bins.length - 1, Math.floor(lo / nyquist * bins.length));
+      bandHi[i] = Math.min(bins.length, Math.max(bandLo[i] + 1, Math.ceil(hi / nyquist * bins.length)));
+    }
+  }
+
+  // Device pixels throughout, so every segment lands on whole pixels.
+  function draw(live) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = UNLIT;
+    ctx.beginPath();
+    for (let i = 0; i < bands; i++) for (let r = 0; r < rows; r++) ctx.rect(colX[i], segmentY(r), colW, seg);
+    ctx.fill();
+    if (!live) return;
+    ctx.fillStyle = ICE;
+    ctx.beginPath();
+    for (let i = 0; i < bands; i++) {
+      const lit = Math.min(rows, Math.round(shape(levels[i]) * rows));
+      for (let r = 0; r < lit; r++) ctx.rect(colX[i], segmentY(r), colW, seg);
+    }
+    ctx.fill();
+    ctx.fillStyle = INK;
+    ctx.beginPath();
+    for (let i = 0; i < bands; i++) {
+      const peak = Math.min(rows, Math.round(peaks[i]));
+      if (peak >= 1) ctx.rect(colX[i], segmentY(peak - 1), colW, seg);
+    }
+    ctx.fill();
+  }
+
+  // Low, middle and high thirds of the same bands.
+  function feedMeters() {
+    const meters = document.querySelectorAll(PLAYING_METERS);
+    if (!meters.length) return;
+    const a = Math.round(bands / 3);
+    const b = Math.round(bands * 2 / 3);
+    const average = (from, to) => {
+      let sum = 0;
+      for (let i = from; i < to; i++) sum += shape(levels[i]);
+      return sum / Math.max(1, to - from);
+    };
+    const values = [average(0, a), average(a, b), average(b, bands)];
+    meters.forEach(meter => {
+      values.forEach((value, k) => meter.style.setProperty('--v' + (k + 1), Math.min(1, 0.3 + value * 0.95).toFixed(3)));
+    });
+  }
+
+  function rest() {
+    levels.fill(0);
+    peaks.fill(0);
+    document.querySelectorAll('.vu[style]').forEach(meter => meter.removeAttribute('style'));
+    draw(false);
   }
 
   function playing() {
@@ -84,7 +127,12 @@
 
   function wantsMotion() {
     return playing() && audio.readyState >= 2 && !buffering &&
-      !reduced.matches && !document.hidden && visible && width > 0;
+      !reduced.matches && !document.hidden && width > 0 && (canvasVisible || shownMeters.size > 0);
+  }
+
+  function syncPlayback() {
+    stage.classList.toggle('is-playing', playing());
+    updateMotion();
   }
 
   function resumeContext() {
@@ -109,20 +157,16 @@
       // The audible path remains connected even if analyser setup fails.
       source.connect(audioCtx.destination);
       analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 2048;
-      analyser.smoothingTimeConstant = 0.6;
+      // 8192 points keep the lowest bands (40 to 60 Hz) on separate bins.
+      analyser.fftSize = 8192;
+      analyser.smoothingTimeConstant = 0.55;
+      analyser.minDecibels = MIN_DB;
+      analyser.maxDecibels = MAX_DB;
       source.connect(analyser);
       bins = new Uint8Array(analyser.frequencyBinCount);
-      bandLo = new Uint16Array(BANDS);
-      bandHi = new Uint16Array(BANDS);
-      const nyquist = audioCtx.sampleRate / 2;
-      const high = Math.min(16000, nyquist);
-      for (let i = 0; i < BANDS; i++) {
-        const lo = 40 * Math.pow(high / 40, i / BANDS);
-        const hi = 40 * Math.pow(high / 40, (i + 1) / BANDS);
-        bandLo[i] = Math.min(bins.length - 1, Math.floor(lo / nyquist * bins.length));
-        bandHi[i] = Math.min(bins.length, Math.max(bandLo[i] + 1, Math.ceil(hi / nyquist * bins.length)));
-      }
+      bandLo = new Uint16Array(MAX_BANDS);
+      bandHi = new Uint16Array(MAX_BANDS);
+      mapBands();
     } catch (_) {
       graphFailed = true;
       analyser = null;
@@ -131,40 +175,25 @@
     updateMotion();
   }
 
-  function draw(live) {
-    ctx.clearRect(0, 0, width, height);
-    const step = width / BANDS;
-    const bar = Math.max(1.5, Math.min(3, step * 0.44));
-    ctx.lineWidth = bar;
-    ctx.lineCap = 'round';
-    for (let i = 0; i < BANDS; i++) {
-      const value = live ? levels[i] : 0;
-      const size = Math.max(1, (height - 8) * Math.pow(value, 1.2));
-      const x = (i + 0.5) * step;
-      ctx.strokeStyle = live ? accent : ink;
-      ctx.globalAlpha = live ? 0.35 + value * 0.65 : 0.16;
-      ctx.beginPath();
-      ctx.moveTo(x, (height - size) / 2);
-      ctx.lineTo(x, (height + size) / 2);
-      ctx.stroke();
-    }
-    ctx.globalAlpha = 1;
-  }
-
   function frame(now) {
     raf = 0;
-    if (!wantsMotion() || !analyser) { draw(false); return; }
+    if (!wantsMotion() || !analyser) { rest(); return; }
     const delta = Math.min(100, lastFrame ? now - lastFrame : 16.7);
     lastFrame = now;
     analyser.getByteFrequencyData(bins);
-    for (let i = 0; i < BANDS; i++) {
+    for (let i = 0; i < bands; i++) {
       let sum = 0;
       for (let j = bandLo[i]; j < bandHi[i]; j++) sum += bins[j];
-      const target = sum / (bandHi[i] - bandLo[i]) / 255;
-      const response = 1 - Math.exp(-delta / (target > levels[i] ? 38 : 170));
-      levels[i] += (target - levels[i]) * response;
+      const value = sum / (bandHi[i] - bandLo[i]) / 255;
+      const target = value > 0.02 ? Math.max(0, Math.min(1, value + tilt[i])) : 0;
+      levels[i] += (target - levels[i]) * (1 - Math.exp(-delta / (target > levels[i] ? 30 : 160)));
+      // Peak caps hold for a moment, then fall more slowly than the bars.
+      const lit = shape(levels[i]) * rows;
+      if (lit >= peaks[i]) { peaks[i] = lit; holds[i] = 0; }
+      else if ((holds[i] += delta) > 700) peaks[i] = Math.max(lit, peaks[i] - delta * 0.018);
     }
-    draw(true);
+    if (canvasVisible) draw(true);
+    feedMeters();
     raf = requestAnimationFrame(frame);
   }
 
@@ -175,51 +204,65 @@
     }
     if (raf) cancelAnimationFrame(raf);
     raf = 0;
-    draw(false);
+    rest();
     if (wantsMotion() && !graphFailed) prepareGraph();
   }
 
   function resize() {
     const box = canvas.getBoundingClientRect();
-    width = box.width;
-    height = box.height;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.max(1, Math.round(width * dpr));
-    canvas.height = Math.max(1, Math.round(height * dpr));
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    width = box.width;
+    W = canvas.width = Math.max(1, Math.round(box.width * dpr));
+    H = canvas.height = Math.max(1, Math.round(box.height * dpr));
+    // About one column per 20 CSS pixels: 64 across a desktop, 24 on a phone.
+    bands = Math.max(24, Math.min(MAX_BANDS, Math.round(box.width / 20)));
+    seg = Math.max(2, Math.round((box.height >= 140 ? 4 : 3) * dpr));
+    pitch = seg + Math.max(2, Math.round(3 * dpr));
+    rows = Math.max(6, Math.floor((H + pitch - seg) / pitch));
+    const step = W / bands;
+    colW = Math.max(2, Math.round(step * 0.62));
+    for (let i = 0; i < bands; i++) colX[i] = Math.round(i * step + (step - colW) / 2);
+    mapBands();
     updateMotion();
   }
 
   if (typeof ResizeObserver === 'function') new ResizeObserver(resize).observe(canvas);
   else window.addEventListener('resize', resize, { passive: true });
+  // The loop runs while the bridge or the playing row's meter is on screen.
   if (typeof IntersectionObserver === 'function') {
-    new IntersectionObserver(function (entries) {
-      visible = entries[0].isIntersecting;
+    const visibility = new IntersectionObserver(function (entries) {
+      entries.forEach(entry => {
+        if (entry.target === canvas) canvasVisible = entry.isIntersecting;
+        else if (entry.isIntersecting) shownMeters.add(entry.target);
+        else shownMeters.delete(entry.target);
+      });
       updateMotion();
-    }).observe(canvas);
+    });
+    visibility.observe(canvas);
+    document.querySelectorAll('.vu').forEach(meter => visibility.observe(meter));
   }
   document.addEventListener('visibilitychange', function () {
     if (!document.hidden && playing()) resumeContext().then(updateMotion).catch(function () {});
     updateMotion();
   });
   reduced.addEventListener('change', updateMotion);
-  if (titleEl) new MutationObserver(syncTrack).observe(titleEl, { childList: true, characterData: true, subtree: true });
   if (audio) {
     ['play', 'playing'].forEach(event => audio.addEventListener(event, function () {
       buffering = false;
       resumeContext().then(updateMotion).catch(function () {});
-      syncTrack();
+      syncPlayback();
     }));
     audio.addEventListener('waiting', function () {
       buffering = true;
       updateMotion();
     });
+    // A new selection pauses and empties the element first, so the bridge
+    // and its peak caps start from rest for every track.
     ['pause', 'ended', 'emptied', 'error'].forEach(event => audio.addEventListener(event, function () {
       buffering = false;
-      levels.fill(0);
-      syncTrack();
+      syncPlayback();
     }));
   }
   resize();
-  syncTrack();
+  syncPlayback();
 })();

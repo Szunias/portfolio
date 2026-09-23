@@ -52,6 +52,16 @@ const PortfolioMusicLibrary = (function () {
     return kindLabel(track) + ' · ' + date;
   }
 
+  // Catalogue titles stay the key for selection, saved state and the lock
+  // screen; the optional name and note are what a listener reads.
+  function displayName(track) {
+    return track.dataset.name || track.dataset.title || 'Untitled track';
+  }
+
+  function displayNote(track) {
+    return track.dataset.note || '';
+  }
+
   function rowArtStyle(track) {
     if (track.dataset.thumb) return 'url("' + track.dataset.thumb.replace(/"/g, '%22') + '")';
     return track.dataset.gradient || '';
@@ -86,6 +96,136 @@ const PortfolioMusicLibrary = (function () {
     return state;
   }
 
+  function sketchesByYear(entries) {
+    const years = new Map();
+    entries.forEach(track => {
+      const year = trackYear(track);
+      if (!years.has(year)) years.set(year, []);
+      years.get(year).push(track);
+    });
+    return years;
+  }
+
+  function sketchDate(track, year) {
+    // A track with only a known year already sits under a heading that
+    // prints that year, so the cell stays empty instead of repeating it.
+    if (hasExactDate(track)) return visibleDate(track);
+    return trackYear(track) === year ? '' : trackYear(track);
+  }
+
+  // ------------------------------------------------------ spines and notebook
+  // The published page (#musicLibrary data-layout="spines") shows no cover
+  // art: finished pieces stand on a shelf spine out, sketches are a notebook
+  // with one column per year. Nothing here reads artwork, so the archive
+  // requests no images. Every row carries a three-bar level meter that
+  // music-visualizer.js feeds while that row plays.
+
+  function textSpan(className, text) {
+    const node = document.createElement('span');
+    node.className = className;
+    node.textContent = text;
+    return node;
+  }
+
+  function levelMeter() {
+    const meter = textSpan('vu', '');
+    meter.setAttribute('aria-hidden', 'true');
+    meter.append(document.createElement('i'), document.createElement('i'), document.createElement('i'));
+    return meter;
+  }
+
+  function namedButton(track, className) {
+    const button = createTrackButton(track, className);
+    const name = [displayName(track), displayNote(track)].filter(Boolean).join(', ');
+    button.setAttribute('aria-label', 'Play ' + name + ', ' + accessibleDate(track) + ', ' + kindLabel(track));
+    return button;
+  }
+
+  function groupHead(level, title, meta, id) {
+    const head = document.createElement('header');
+    head.className = 'library-group__head';
+    const heading = document.createElement(level);
+    heading.textContent = title;
+    if (id) heading.id = id;
+    head.append(heading);
+    if (meta) {
+      const line = document.createElement('p');
+      line.textContent = meta;
+      head.append(line);
+    }
+    return head;
+  }
+
+  function buildSpines(library, releases, sketchEntries) {
+    const rows = [];
+
+    if (releases.length) {
+      const shelf = document.createElement('section');
+      shelf.className = 'library-group library-group--shelf';
+      const head = groupHead('h3', 'Finished');
+      // The page's Spotify link is about the finished pieces, so it moves
+      // into their header; without JavaScript it stays under the index.
+      const spotify = document.querySelector('.library__spotify');
+      if (spotify) head.append(spotify);
+
+      const list = document.createElement('ol');
+      list.className = 'library-shelf';
+      releases.forEach(track => {
+        const item = document.createElement('li');
+        const button = namedButton(track, 'spine');
+        const text = textSpan('spine__text', '');
+        text.append(textSpan('spine__title', displayName(track)));
+        if (displayNote(track)) text.append(textSpan('spine__note', displayNote(track)));
+        button.append(textSpan('spine__year', trackYear(track)), text,
+          textSpan('spine__time', track.dataset.duration || ''), levelMeter());
+        item.append(button);
+        list.append(item);
+        rows.push(button);
+      });
+      shelf.append(head, list);
+      library.append(shelf);
+    }
+
+    const years = sketchesByYear(sketchEntries);
+    if (years.size) {
+      const book = document.createElement('section');
+      book.className = 'library-sketchbook';
+      book.setAttribute('aria-labelledby', 'sketches-title');
+      const head = groupHead('h3', 'Sketches', '', 'sketches-title');
+      const columns = document.createElement('div');
+      columns.className = 'library-sketchbook__years';
+
+      years.forEach((entries, year) => {
+        const group = document.createElement('section');
+        group.className = 'library-group';
+        group.dataset.year = year;
+        const list = document.createElement('ol');
+        list.className = 'library-group__list';
+        entries.forEach(track => {
+          const item = document.createElement('li');
+          const button = namedButton(track, 'sketch-row');
+          const date = document.createElement('time');
+          date.className = 'sketch-row__date';
+          date.dateTime = track.dataset.year || '';
+          date.textContent = sketchDate(track, year);
+          const name = textSpan('sketch-row__name', displayName(track));
+          if (displayNote(track)) name.append(textSpan('sketch-row__note', displayNote(track)));
+          button.append(date, name, textSpan('sketch-row__time', track.dataset.duration || ''), levelMeter());
+          item.append(button);
+          list.append(item);
+          rows.push(button);
+        });
+        group.append(groupHead('h4', year, entries.length + (entries.length === 1 ? ' sketch' : ' sketches')), list);
+        columns.append(group);
+      });
+      book.append(head, columns);
+      library.append(book);
+    }
+    return rows;
+  }
+
+  // ------------------------------------------------------------------ build
+
   function buildLibrary(library, tracks, activeFilter) {
     if (!library) return [];
     // The build injects a plain-text track index for crawlers and no-JS
@@ -93,18 +233,17 @@ const PortfolioMusicLibrary = (function () {
     const staticIndex = document.getElementById('musicStaticIndex');
     if (staticIndex) staticIndex.remove();
 
-    const rows = [];
-
-    // Finished pieces come as a shelf of covers: the artwork carries more
-    // than a 40px row ever showed, and the shelf keeps the newest-first
-    // order the heading promises. Sketches have no artwork of their own,
-    // so they stay a dated ledger below rather than a wall of gradients.
     const releases = [];
     const sketchEntries = [];
     tracks.forEach(track => {
       (isSketch(track) ? sketchEntries : releases).push(track);
     });
+    if (library.dataset.layout === 'spines') return buildSpines(library, releases, sketchEntries);
 
+    const rows = [];
+
+    // Review layouts: finished pieces come as a shelf of covers and the
+    // sketches stay a dated ledger below rather than a wall of gradients.
     if (releases.length) {
       const shelf = document.createElement('section');
       shelf.className = 'library-group library-group--shelf';
@@ -148,14 +287,7 @@ const PortfolioMusicLibrary = (function () {
       library.append(shelf);
     }
 
-    const years = new Map();
-    sketchEntries.forEach(track => {
-      const year = trackYear(track);
-      if (!years.has(year)) years.set(year, []);
-      years.get(year).push(track);
-    });
-
-    years.forEach((entries, year) => {
+    sketchesByYear(sketchEntries).forEach((entries, year) => {
       const group = document.createElement('section');
       group.className = 'library-group';
       group.dataset.year = year;
@@ -192,12 +324,7 @@ const PortfolioMusicLibrary = (function () {
         const date = document.createElement('time');
         date.className = 'library-row__date';
         date.dateTime = track.dataset.year || '';
-        // A track with only a known year already sits under a heading that
-        // prints that year, so the cell stays empty instead of repeating it
-        // down the whole column.
-        date.textContent = hasExactDate(track)
-          ? visibleDate(track)
-          : (trackYear(track) === year ? '' : trackYear(track));
+        date.textContent = sketchDate(track, year);
 
         const duration = document.createElement('span');
         duration.className = 'library-row__duration';
@@ -219,6 +346,7 @@ const PortfolioMusicLibrary = (function () {
 
   return Object.freeze({
     sortDate, trackYear, isSketch, kindLabel, rowDetail, trackDetail, rowArtStyle,
+    displayName, displayNote,
     build: buildLibrary
   });
 })();

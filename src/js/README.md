@@ -9,9 +9,9 @@ route and stylesheet map is in `docs/CODEBASE.md`; `npm run inspect` lists input
 
 | File | Owns |
 | --- | --- |
-| `music-library.js` | Date/label formatting and markup for the finished shelf and sketch ledger. |
-| `music-player.js` | The audio element, selection, filters, queue, transport, sheet, artwork transitions and saved settings. |
-| `music-visualizer.js` | Artwork brightness/proportions and the spectrum drawn from that audio element. |
+| `music-library.js` | Date/label and display-name formatting; markup for the published spines and sketch notebook, and for the review pages' shelf and ledger. |
+| `music-player.js` | The audio element, selection and its display roles, filters, queue, transport, sheet, covers, lock-screen artwork and saved settings. |
+| `music-visualizer.js` | The meter-bridge analyser drawn from that audio element and the playing row's level meter. |
 
 Load the library before the player and the visualizer afterwards. The music helper
 API is the read-only `PortfolioMusicLibrary` lexical binding. Keep audio state
@@ -21,7 +21,7 @@ Metadata is inserted with `textContent`, not interpolated into HTML.
 There are two independent asynchronous boundaries in the player: `sourceVersion`
 invalidates work for a previous track, and `playbackRequestVersion` invalidates an
 earlier play request for the same track. Both are needed when a listener quickly
-pauses and resumes. Artwork requests use the source version.
+pauses and resumes.
 
 The queue is rendered only when its upcoming tracks, position or repeat mode
 changes. Ordinary play/pause events must preserve its buttons and keyboard focus.

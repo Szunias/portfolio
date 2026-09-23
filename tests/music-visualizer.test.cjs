@@ -2,20 +2,22 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { Target, Element, browser, deferred } = require('./helpers/browser-fixture.cjs');
 
-// A real stage/plate/canvas fixture is necessary: the visualizer deliberately
-// exits before touching audio when any of those DOM hooks is absent.
+// A real stage/canvas fixture is necessary: the visualizer deliberately exits
+// before touching audio when either DOM hook is absent. The level meter
+// stands for the playing row's three bars, observed like the canvas.
 function visualizer({ reduced = false, failure, initialState = 'running' } = {}) {
   const audio = Object.assign(new Target(), { paused: true, ended: false, error: null, readyState: 4 });
   const stage = new Element();
-  const plate = new Element();
   const canvas = new Element('canvas');
+  const meter = new Element('span', { class: 'vu' });
   const calls = { contexts: 0, sources: 0, reads: 0, resumes: 0, disconnects: 0, connections: [] };
+  const observed = [];
   let context;
   let intersection;
   let resumeGate;
-  canvas.getContext = () => ({ clearRect() {}, setTransform() {}, beginPath() {}, moveTo() {}, lineTo() {}, stroke() {} });
+  canvas.getContext = () => ({ clearRect() {}, beginPath() {}, rect() {}, fill() {} });
   const fixture = browser({ '[data-music-audio]': [audio], '.stage': [stage],
-    '.stage__plate': [plate], '.stage__spectrum': [canvas] });
+    '.stage__spectrum': [canvas], '.vu': [meter] });
   const motion = fixture.window.matchMedia('(prefers-reduced-motion: reduce)');
   motion.matches = reduced;
   const analyser = { frequencyBinCount: 1024, getByteFrequencyData(bins) { calls.reads++; bins.fill(128); } };
@@ -54,11 +56,11 @@ function visualizer({ reduced = false, failure, initialState = 'running' } = {})
   fixture.context.getComputedStyle = () => ({ getPropertyValue: () => '' });
   fixture.context.IntersectionObserver = class {
     constructor(callback) { intersection = callback; }
-    observe() {}
+    observe(target) { observed.push(target); }
   };
   fixture.run('music-visualizer.js');
-  return { ...fixture, audio, stage, calls, motion, get audioContext() { return context; },
-    setVisible(value) { intersection([{ isIntersecting: value }]); },
+  return { ...fixture, audio, stage, canvas, meter, observed, calls, motion, get audioContext() { return context; },
+    setVisible(value, target = canvas) { intersection([{ target, isIntersecting: value }]); },
     blockResume() { resumeGate = deferred(); return resumeGate; },
     async play() { audio.paused = false; await audio.emit('play'); await audio.emit('playing'); await settle(); },
   };
@@ -94,6 +96,28 @@ test('spectrum gates drawing without disconnecting playback or creating another 
     assert.ok(f.calls.reads > reads, gate + ' should allow drawing to resume');
   }
   assert.equal(f.calls.sources, 1, 'A media element can only be attached once');
+  assert.equal(f.calls.disconnects, 0);
+  assert.equal(f.audio.paused, false);
+});
+
+test('a playing row on screen keeps the analyser running after the bridge scrolls away', async () => {
+  const f = visualizer();
+  assert.deepEqual(f.observed, [f.canvas, f.meter], 'The bridge and every row meter are observed');
+  await f.play();
+  f.setVisible(true, f.meter);
+  f.setVisible(false);
+  let reads = f.calls.reads;
+  f.flushTimers();
+  assert.ok(f.calls.reads > reads, 'The visible row meter still needs live levels');
+  f.setVisible(false, f.meter);
+  assert.equal(f.timers.size, 0, 'Nothing on screen stops the drawing loop');
+  reads = f.calls.reads;
+  f.flushTimers();
+  assert.equal(f.calls.reads, reads);
+  f.setVisible(true);
+  f.flushTimers();
+  assert.ok(f.calls.reads > reads, 'The bridge coming back resumes drawing');
+  assert.equal(f.calls.sources, 1);
   assert.equal(f.calls.disconnects, 0);
   assert.equal(f.audio.paused, false);
 });
