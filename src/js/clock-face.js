@@ -1,6 +1,10 @@
 /* Shared contact-clock face. Controllers own timers, motion and interaction state. */
 const PortfolioClockFace = (function () {
+  /* Graz: the zone sets the hands, the coordinates set the sun that names
+     the phase of the day. */
   const ZONE = 'Europe/Vienna';
+  const LAT = 47.07;
+  const LON = 15.44;
   const partsFmt = (function () {
     try {
       return new Intl.DateTimeFormat('en-GB', {
@@ -8,28 +12,53 @@ const PortfolioClockFace = (function () {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
-        hourCycle: 'h23'
+        hourCycle: 'h23',
+        timeZoneName: 'short'
       });
     } catch (_) {
       return null;
     }
   })();
 
-  function partNumber(now, type) {
-    if (!partsFmt) {
-      if (type === 'hour') return now.getHours();
-      if (type === 'minute') return now.getMinutes();
-      return now.getSeconds();
-    }
-    const part = partsFmt.formatToParts(now).find(function (item) { return item.type === type; });
-    return part ? Number(part.value) : 0;
+  /* Hour, minute and second in Graz plus the zone name (CET or CEST), read
+     from one formatter call. Without Intl the device clock stands in. */
+  function timeParts(now) {
+    const out = { hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds(), zone: '' };
+    if (!partsFmt) return out;
+    partsFmt.formatToParts(now).forEach(function (part) {
+      if (part.type === 'hour') out.hour = Number(part.value) % 24;
+      else if (part.type === 'minute') out.minute = Number(part.value);
+      else if (part.type === 'second') out.second = Number(part.value);
+      else if (part.type === 'timeZoneName') out.zone = part.value;
+    });
+    return out;
   }
 
-  function phaseName(hour) {
-    if (hour < 5 || hour >= 22) return 'night';
-    if (hour < 8) return 'dawn';
-    if (hour >= 17) return 'dusk';
-    return 'day';
+  /* Sun altitude over Graz in degrees at a timestamp (ms). A low-precision
+     solar position (about 0.01 deg) is plenty for a face that brightens
+     between dawn and dusk. */
+  function sunAltitude(ms) {
+    const rad = Math.PI / 180;
+    const d = (ms - 946728000000) / 86400000;            // days since J2000.0
+    const g = (357.529 + 0.98560028 * d) * rad;          // mean anomaly
+    const q = 280.459 + 0.98564736 * d;                  // mean longitude
+    const L = (q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * rad;
+    const e = (23.439 - 0.00000036 * d) * rad;           // obliquity
+    const dec = Math.asin(Math.sin(e) * Math.sin(L));
+    const ra = Math.atan2(Math.cos(e) * Math.sin(L), Math.cos(L));
+    const gmst = (280.46061837 + 360.98564736629 * d) * rad;
+    const ha = gmst + LON * rad - ra;
+    const lat = LAT * rad;
+    return Math.asin(Math.sin(lat) * Math.sin(dec) + Math.cos(lat) * Math.cos(dec) * Math.cos(ha)) / rad;
+  }
+
+  /* Day while the sun is up, night once it is 6 deg under the horizon. Civil
+     twilight between is dawn or dusk; the next ten minutes say which. */
+  function phaseName(ms) {
+    const alt = sunAltitude(ms);
+    if (alt >= 0) return 'day';
+    if (alt >= -6) return sunAltitude(ms + 600000) > alt ? 'dawn' : 'dusk';
+    return 'night';
   }
 
   function setHand(node, angle) {
@@ -55,5 +84,5 @@ const PortfolioClockFace = (function () {
     }
   }
 
-  return Object.freeze({ partNumber, phaseName, setHand, addTicks });
+  return Object.freeze({ timeParts, sunAltitude, phaseName, setHand, addTicks });
 })();

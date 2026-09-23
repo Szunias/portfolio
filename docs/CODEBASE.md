@@ -92,8 +92,8 @@ an intermediate width and desktop, including long titles and player controls.
 | `music-player.js` | Track selection, queue, transport, seek, volume, filters, artwork transitions and player state. |
 | `music-visualizer.js` | Cover proportions, sampled artwork brightness and audio spectrum. |
 | `contact-actions.js` | Contact-page actions and progressive enhancement. |
-| `clock-face.js` | Shared Vienna time parts, phase labels, hand transforms and SVG ticks for contact clocks. |
-| `contact-clock.js` | Windable contact clock and its interaction state. |
+| `clock-face.js` | Shared Vienna time parts, the sun over Graz (altitude and phase of the day), hand transforms and SVG ticks for contact clocks. |
+| `contact-clock.js` | Windable contact clock: daylight face, crown, caption, hold after release, ratchet click and interaction state. |
 | `contact-time.js` | Clock treatment on the separate contact-time review page. |
 | `colophon-clock.js` | Time display in the shared footer. |
 | `cine.js` | One-shot project reveals, including live reduced-motion changes. |
@@ -124,7 +124,7 @@ Each contact clock loads `clock-face.js` before its controller. The read-only
 all timers, audio and interaction state. The contact clocks observe live motion
 preferences and keep one refresh timer.
 The windable clock's sound is optional: Web Audio failures must not interrupt
-pointer, keyboard or ARIA state. Temporary tone nodes disconnect when finished.
+pointer, keyboard or ARIA state. Temporary click nodes disconnect when finished.
 
 Music has one explicit audio element in `player-bar.html`. `music-player.js` owns
 it; `music-visualizer.js` observes it after player initialization. Do not replace

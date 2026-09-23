@@ -1,6 +1,7 @@
 /* Windable-dial affordances for the contact page (and its contact-wind review
    twin). Loaded after contact-time.css, which carries the whole clock; this
-   file only makes the dial feel grabbable. */
+   file makes the dial feel grabbable, draws its crown and, on the published
+   page only, sizes the dial and sets out its two-line caption. */
 
 .ck__dial {
   cursor: grab;
@@ -19,4 +20,99 @@
   outline: 2px solid var(--ice);
   outline-offset: 6px;
   border-radius: 50%;
+}
+
+/* Crown at 12: the one visible sign that the dial winds. contact-clock.js
+   slides the knurl while it turns and sets the sky gradient's stops from the
+   sun over Graz. */
+.ck__crown-body {
+  fill: var(--c-bg-0);
+  stroke: var(--ck-ring);
+  stroke-width: .6;
+}
+
+.ck__stem { fill: var(--ck-ring); }
+
+.ck__knurl line {
+  stroke: var(--ck-ring);
+  stroke-width: .38;
+  stroke-opacity: .7;
+}
+
+/* ---------- Published page (.ck--contact) ----------
+   portfolio.css loads after this file and styles .ck--contact parts with two
+   classes, so these rules carry a third (.ck) to win without editing the
+   shared theme. */
+
+/* The clock is the page: at 1440 it weighs as much as the title. */
+.ck.ck--contact .ck__dial { width: min(100%, 360px, 46vh); }
+
+/* The crown stands 3% of the dial above its box (11px at 360); the focus
+   ring, also shown while winding, clears it instead of cutting through it. */
+.ck.ck--contact .ck__dial:focus-visible { outline-offset: 14px; }
+
+/* The time keeps its place; only the line under it changes while winding,
+   and the digits turn ice while they are not "now". */
+.ck.ck--contact .ck__cap-line {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.ck.ck--contact .ck__cap-time {
+  font-family: var(--f-mono);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: .05em;
+  color: var(--c-ink);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--dur) var(--ease);
+}
+
+/* The digits are the datum, the zone is a unit: lighter and fainter. */
+.ck.ck--contact .ck__cap-zone {
+  font-weight: 400;
+  color: var(--c-ink-3);
+}
+
+.ck.ck--contact .ck__cap-where { color: var(--c-ink-3); }
+
+.ck.ck--contact.ck--preview .ck__cap-time { color: var(--c-accent); }
+
+/* One column: the dial is centred and big enough to wind with a thumb. */
+@media (max-width: 820px) {
+  .ck.ck--contact .ck__plate {
+    justify-self: stretch;
+    align-items: center;
+    margin-top: 12px;
+  }
+
+  .ck.ck--contact .ck__dial { width: min(100%, 240px); }
+  .ck.ck--contact .ck__dial:focus-visible { outline-offset: 10px; }
+}
+
+@media (max-width: 620px) {
+  /* "English or Polish." gets its own line instead of leaving "Polish." alone. */
+  .ck.ck--contact .ck__lang { display: block; }
+
+  /* The CV is the one download: its own row, then the four profiles in one
+     row, so Spotify is never left alone on a second line. */
+  .ck.ck--contact .ck__out {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    justify-content: start;
+    gap: 0 20px;
+    margin-top: 8px;
+  }
+
+  .ck.ck--contact .ck__cv {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ck.ck--contact .ck__cap-time { transition: none; }
 }

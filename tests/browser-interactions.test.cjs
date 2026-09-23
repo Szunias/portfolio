@@ -1,5 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const vm = require('node:vm');
 const { Element, browser, deferred } = require('./helpers/browser-fixture.cjs');
 const { pages } = require('../site.config.cjs');
 
@@ -336,14 +337,18 @@ test('opening the showreel emits one state change, not another on native play', 
   assert.deepEqual(fixture.states, [true]);
 });
 
-function clockFixture() {
+function clockFixture(selectors = {}) {
   const root = new Element();
   const svg = new Element('svg');
-  const fixture = browser({ '[data-time-root]': [root], '.ck__dial': [svg] });
+  const fixture = browser({ '[data-time-root]': [root], '.ck__dial': [svg], ...selectors });
+  // Record the hold delays; animation frames keep the fixture's own timer queue.
+  const holds = [];
+  const setTimeout = fixture.window.setTimeout;
+  fixture.window.setTimeout = (callback, delay) => { holds.push(delay); return setTimeout(callback, delay); };
   fixture.window.matchMedia('(prefers-reduced-motion: reduce)').matches = true;
   fixture.run('clock-face.js');
   fixture.run('contact-clock.js');
-  return { ...fixture, root, svg };
+  return { ...fixture, root, svg, holds };
 }
 const pointer = (id, x = 110, y = 10) => ({ pointerId: id, pointerType: 'touch', isPrimary: id === 1, button: 0, clientX: x, clientY: y });
 
@@ -366,4 +371,96 @@ test('losing pointer capture releases the clock instead of leaving it stuck', as
   await svg.emit('lostpointercapture', pointer(1));
   assert.equal(root.classList.contains('ck--scrubbing'), false);
   assert.equal(svg.getAttribute('aria-valuenow'), '0');
+});
+
+test('a lifted pointer holds the wound preview, 2.2 s for touch and 1 s for a mouse', async () => {
+  for (const [pointerType, delay] of [['touch', 2200], ['pen', 2200], ['mouse', 1000]]) {
+    const { svg, root, holds, timers, flushTimers } = clockFixture();
+    const at = (x, y) => ({ pointerId: 1, pointerType, isPrimary: true, button: 0, clientX: x, clientY: y });
+    await svg.emit('pointerdown', at(110, 10));
+    await svg.emit('pointermove', at(210, 110));
+    await svg.emit('pointerup', at(210, 110));
+    assert.equal(root.classList.contains('ck--scrubbing'), false);
+    assert.equal(root.classList.contains('ck--preview'), true);
+    assert.equal(svg.getAttribute('aria-valuenow'), '3');
+    assert.deepEqual(holds, [delay]);
+    flushTimers();
+    assert.equal(svg.getAttribute('aria-valuenow'), '0');
+    assert.equal(root.classList.contains('ck--preview'), false);
+    assert.equal(timers.size, 0);
+  }
+});
+
+test('a cancelled gesture or a capture lost without a lift rewinds at once', async () => {
+  for (const type of ['pointercancel', 'lostpointercapture']) {
+    const { svg, holds } = clockFixture();
+    await svg.emit('pointerdown', pointer(1));
+    await svg.emit('pointermove', pointer(1, 210, 110));
+    await svg.emit(type, pointer(1, 210, 110));
+    assert.equal(svg.getAttribute('aria-valuenow'), '0');
+    assert.deepEqual(holds, []);
+  }
+});
+
+test('taking hold of the dial again during the hold keeps the wound offset', async () => {
+  const { svg, timers } = clockFixture();
+  await svg.emit('pointerdown', pointer(1));
+  await svg.emit('pointermove', pointer(1, 210, 110));
+  await svg.emit('pointerup', pointer(1, 210, 110));
+  assert.equal(timers.size, 1);
+  await svg.emit('pointerdown', pointer(1, 210, 110));
+  assert.equal(timers.size, 0);
+  assert.equal(svg.getAttribute('aria-valuenow'), '3');
+});
+
+test('the dial speaks the previewed hour in words while the caption time keeps its line', async () => {
+  const hm = new Element('span');
+  const where = new Element('span');
+  where.textContent = 'Graz, Austria';
+  const { svg, root } = clockFixture({ '[data-cap-hm]': [hm], '[data-cap-where]': [where] });
+  const phase = '(day|dawn|dusk|night)';
+  assert.match(svg.getAttribute('aria-valuetext'), /^\d\d:\d\d in Graz, now$/);
+  assert.match(hm.textContent, /^\d\d:\d\d$/);
+  await svg.emit('keydown', { key: 'ArrowRight' });
+  assert.match(svg.getAttribute('aria-valuetext'), new RegExp('^' + hm.textContent + ' in Graz, in 1 hour, ' + phase + '$'));
+  assert.match(where.textContent, new RegExp('^in 1 h · ' + phase + '$'));
+  assert.equal(root.getAttribute('data-phase'), where.textContent.split(' · ')[1]);
+  await svg.emit('keydown', { key: 'ArrowLeft' });
+  await svg.emit('keydown', { key: 'ArrowLeft' });
+  await svg.emit('keydown', { key: 'ArrowLeft' });
+  assert.match(svg.getAttribute('aria-valuetext'), new RegExp(' in Graz, 2 hours ago, ' + phase + '$'));
+  assert.match(where.textContent, new RegExp('^2 h ago · ' + phase + '$'));
+  await svg.emit('keydown', { key: 'Home' });
+  assert.equal(where.textContent, 'Graz, Austria');
+  assert.match(svg.getAttribute('aria-valuetext'), / in Graz, now$/);
+});
+
+test('the contact-wind review caption swaps its resting line for a one-line preview', async () => {
+  const now = new Element('span');
+  const preview = new Element('span');
+  preview.hidden = true;
+  const { svg } = clockFixture({ '[data-cap-now]': [now], '[data-cap-preview]': [preview] });
+  await svg.emit('keydown', { key: 'ArrowRight' });
+  assert.equal(now.hidden, true);
+  assert.equal(preview.hidden, false);
+  assert.match(preview.textContent, /^\d\d:\d\d in Graz · in 1 h · (day|dawn|dusk|night)$/);
+  await svg.emit('keydown', { key: 'Escape' });
+  assert.equal(now.hidden, false);
+  assert.equal(preview.hidden, true);
+});
+
+test('the phase of the day follows the sun over Graz, not fixed hours', () => {
+  const fixture = browser();
+  fixture.run('clock-face.js');
+  const face = vm.runInContext('PortfolioClockFace', fixture.context);
+  const phase = iso => face.phaseName(Date.parse(iso));
+  // 17:18 CEST in September: the sun is still about 15 deg up (fixed hours said dusk).
+  assert.equal(phase('2026-09-23T15:18:00Z'), 'day');
+  assert.ok(Math.abs(face.sunAltitude(Date.parse('2026-09-23T10:51:00Z')) - 42.8) < 0.5);
+  // 07:00 CEST at midsummer is two hours after sunrise (fixed hours said dawn).
+  assert.equal(phase('2026-06-21T05:00:00Z'), 'day');
+  // 16:45 CET at midwinter is half an hour after sunset (fixed hours said day).
+  assert.equal(phase('2026-12-21T15:45:00Z'), 'dusk');
+  assert.equal(phase('2026-09-23T04:30:00Z'), 'dawn');
+  assert.equal(phase('2026-09-23T20:00:00Z'), 'night');
 });
