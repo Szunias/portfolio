@@ -1,0 +1,349 @@
+/* Three Wwise exercises: page-owned styles, loaded only on wwiseprojects.html.
+
+   The page is drawn like a Wwise hierarchy: neutral greys, thin tree wires and
+   one object colour per exercise. The colours are the purple, green and red
+   object bars of the Ellen exercise's Wwise capture
+   (old/public/wwiseprojectsinfo/ellen/interactivemusichierrarchy.png), each
+   matched to its game and lifted for contrast on #101012:
+   Boney's night sky #511747 + purple #5836ae -> #cf9be8 (8.6:1),
+   Ellen's moss #4b4b2c + green #186d18 -> #9ad694 (11.2:1),
+   the stomach wall #2b0c0e + red #892324 -> #f0909c (8.3:1). */
+:root {
+  --c-accent: #d3d5d9;
+  --c-accent-hi: #e6e7ea;
+  --c-accent-ink: #0b0b0d;
+  --c-accent-line: rgba(211, 213, 217, .42);
+  --c-accent-weak: rgba(211, 213, 217, .10);
+  --ww-boney: #cf9be8;
+  --ww-ellen: #9ad694;
+  --ww-stomach: #f0909c;
+  --ww-pane: #161618;   /* the Wwise tree pane #2b2b2b, taken down to the page */
+  --ww-wire: rgba(236, 238, 240, .22);
+  --w-purple: #6242bd;  /* object colours as captured, one step lighter */
+  --w-green: #23862a;
+  --w-red: #a02b2e;
+}
+
+.ww [data-obj="boney"] { --obj: var(--ww-boney); }
+.ww [data-obj="ellen"] { --obj: var(--ww-ellen); }
+.ww [data-obj="stomach"] { --obj: var(--ww-stomach); }
+
+.ww figure { margin: 0; }
+.ww .ww-unit__rows,
+.ww .ww-wtree,
+.ww .ww-wtree ul { max-width: none; margin: 0; padding: 0; list-style: none; }
+.ww .ww-unit__rows li,
+.ww .ww-wtree li { margin: 0; }
+
+.ww .ww-bar {
+  flex: none;
+  display: block;
+  width: 4px;
+  height: 20px;
+  border-radius: 1px;
+  background: var(--obj);
+}
+
+/* ---------- Opening: the work unit beside the three games ---------- */
+.ww .ww-open {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(32px, 5vw, 76px);
+  align-items: stretch;
+  margin-bottom: clamp(96px, 10vw, 148px);
+}
+.ww .ww-open__text { display: flex; flex-direction: column; }
+.ww h1 {
+  margin: 0 0 28px;
+  font: 500 clamp(46px, 5.4vw, 80px)/1 var(--f-display);
+  letter-spacing: -.055em;
+  text-wrap: balance;
+}
+.ww .ww-lead {
+  max-width: 35ch;
+  margin: 0 0 44px;
+  color: var(--c-ink);
+  font-size: clamp(18px, 1.45vw, 21px);
+  line-height: 1.58;
+}
+
+.ww .ww-unit { margin-top: auto; }
+.ww .ww-unit__root {
+  max-width: none;
+  margin: 0;
+  padding: 0 0 10px;
+  color: var(--c-ink-3);
+  font: 400 12px/1.6 var(--f-mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.ww .ww-unit__root > span { white-space: nowrap; }
+.ww .ww-unit__rows { padding-left: 6px; }
+.ww .ww-unit__rows li { position: relative; padding-left: 24px; }
+
+/* Tree wires: an elbow into each row, and the trunk running on to the next. */
+.ww .ww-unit__rows li::before,
+.ww .ww-wtree ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 16px;
+  height: 50%;
+  border-left: 1px solid var(--ww-wire);
+  border-bottom: 1px solid var(--ww-wire);
+}
+.ww .ww-unit__rows li::after,
+.ww .ww-wtree ul > li::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  bottom: 0;
+  border-left: 1px solid var(--ww-wire);
+}
+.ww .ww-unit__rows li:last-child::after,
+.ww .ww-wtree ul > li:last-child::after { display: none; }
+
+.ww .ww-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 50px;
+  padding: 0 14px 0 10px;
+  border-radius: 6px;
+  color: var(--c-ink);
+  text-decoration: none;
+  transition: background-color .25s var(--ease);
+}
+.ww .ww-row__name { font: 500 20px/1.2 var(--f-display); letter-spacing: -.015em; }
+.ww .ww-row__topic {
+  margin-left: auto;
+  color: var(--c-ink-3);
+  font: 400 11.5px/1.4 var(--f-mono);
+  letter-spacing: .08em;
+  text-align: right;
+  text-transform: uppercase;
+  transition: color .25s var(--ease);
+}
+.ww .ww-row:hover,
+.ww .ww-row:focus-visible { background: rgba(236, 238, 240, .055); }
+.ww .ww-row:hover .ww-row__topic,
+.ww .ww-row:focus-visible .ww-row__topic { color: var(--obj); }
+
+/* Three frames cut from one strip; the bar on each is its object colour. */
+.ww .ww-tri {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  min-height: 440px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+.ww .ww-slice { position: relative; overflow: hidden; background: #050506; }
+.ww .ww-slice::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--obj);
+}
+.ww .ww-slice img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--x, 50%) 50%;
+  transition: opacity .35s var(--ease);
+}
+.ww .ww-slice[data-obj="ellen"] { --x: 57%; }
+/* Taller boxes crop the frame without any transform: Boney loses the game's
+   own health bar under the object bar, Stomach Aches loses its letterbox. */
+.ww .ww-slice[data-obj="boney"] img { top: -10%; height: 118%; }
+.ww .ww-slice[data-obj="stomach"] img { top: -6%; height: 112%; }
+
+/* Solo: pointing at a row or a frame keeps that game lit and fades the other
+   two. Opacity only. */
+.ww .ww-open:has(.ww-row:focus-visible) .ww-slice img { opacity: .26; }
+.ww .ww-open:has(.ww-row[data-obj="boney"]:focus-visible) .ww-slice[data-obj="boney"] img,
+.ww .ww-open:has(.ww-row[data-obj="ellen"]:focus-visible) .ww-slice[data-obj="ellen"] img,
+.ww .ww-open:has(.ww-row[data-obj="stomach"]:focus-visible) .ww-slice[data-obj="stomach"] img { opacity: 1; }
+@media (hover: hover) {
+  .ww .ww-open:has(.ww-row:hover, .ww-slice:hover) .ww-slice img { opacity: .26; }
+  .ww .ww-open:has([data-obj="boney"]:is(.ww-row, .ww-slice):hover) .ww-slice[data-obj="boney"] img,
+  .ww .ww-open:has([data-obj="ellen"]:is(.ww-row, .ww-slice):hover) .ww-slice[data-obj="ellen"] img,
+  .ww .ww-open:has([data-obj="stomach"]:is(.ww-row, .ww-slice):hover) .ww-slice[data-obj="stomach"] img { opacity: 1; }
+  .ww .ww-open:has(.ww-slice[data-obj="boney"]:hover) .ww-row[data-obj="boney"],
+  .ww .ww-open:has(.ww-slice[data-obj="ellen"]:hover) .ww-row[data-obj="ellen"],
+  .ww .ww-open:has(.ww-slice[data-obj="stomach"]:hover) .ww-row[data-obj="stomach"] { background: rgba(236, 238, 240, .055); }
+  .ww .ww-open:has(.ww-slice[data-obj="boney"]:hover) .ww-row[data-obj="boney"] .ww-row__topic,
+  .ww .ww-open:has(.ww-slice[data-obj="ellen"]:hover) .ww-row[data-obj="ellen"] .ww-row__topic,
+  .ww .ww-open:has(.ww-slice[data-obj="stomach"]:hover) .ww-row[data-obj="stomach"] .ww-row__topic { color: var(--obj); }
+}
+
+/* ---------- The three exercises, hanging from one trunk ---------- */
+.ww .ww-node {
+  --mid: 31px;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(28px, 4.4vw, 64px);
+  align-items: start;
+  padding: 0 0 clamp(88px, 9vw, 128px) 54px;
+}
+.ww .ww-node::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid var(--ww-wire);
+}
+.ww .ww-node:first-child::before { top: var(--mid); }
+.ww .ww-node:last-child::before { bottom: auto; height: var(--mid); }
+
+/* Name over type with one colour bar beside both, like a row in the tree. */
+.ww .ww-node__head {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 16px;
+  row-gap: 5px;
+  margin: 0 0 26px;
+  font: 500 clamp(28px, 2.8vw, 40px)/1.1 var(--f-display);
+  letter-spacing: -.03em;
+}
+.ww .ww-node__head::before {
+  content: "";
+  position: absolute;
+  left: -46px;
+  top: var(--mid);
+  width: 38px;
+  border-top: 1px solid var(--ww-wire);
+}
+.ww .ww-node__head .ww-bar { grid-row: 1 / span 2; align-self: stretch; width: 5px; height: auto; }
+.ww .ww-node__topic {
+  grid-column: 2;
+  color: var(--obj);
+  font: 400 12px/1.4 var(--f-mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.ww .ww-node__text p {
+  max-width: 44ch;
+  margin: 0 0 18px;
+  color: var(--c-ink-2);
+  font-size: 17px;
+  line-height: 1.68;
+}
+.ww .ww-node__text > :last-child { margin-bottom: 0; }
+.ww .ww-links { margin-top: 26px; font-size: 15px; }
+.ww .ww-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--c-ink);
+  text-decoration-color: var(--obj);
+}
+.ww .ww-node a:hover { text-decoration-color: var(--c-ink); }
+
+.ww .ww-node__media { min-width: 0; }
+.ww .ww-node__media video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border: 1px solid var(--c-line);
+  border-radius: 12px;
+}
+.ww .ww-node__media .local-video { border: 1px solid var(--c-line); border-radius: 12px; overflow: hidden; }
+.ww .ww-node__media .local-video > video { border: 0; border-radius: 0; }
+
+/* ---------- The exercise's music hierarchy, retyped from the capture ---------- */
+.ww .ww-pane {
+  border: 1px solid var(--c-line-2);
+  border-radius: 12px;
+  background: var(--ww-pane);
+  overflow: hidden;
+}
+.ww .ww-pane__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 46px;
+  padding: 0 8px 0 18px;
+  border-bottom: 1px solid var(--c-line);
+  color: var(--c-ink-3);
+  font: 400 12px/1.4 var(--f-mono);
+  letter-spacing: .04em;
+}
+.ww .ww-pane__bar a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 10px;
+  color: var(--c-ink-2);
+  white-space: nowrap;
+}
+.ww .ww-wtree {
+  padding: 16px 18px 20px;
+  color: #d9dadd;
+  font: 400 13px/30px var(--f-mono);
+}
+.ww .ww-wtree ul { padding-left: 8px; }
+.ww .ww-wtree ul > li { position: relative; padding-left: 22px; }
+.ww .ww-wtree ul > li::before { width: 15px; height: 15px; }
+.ww .ww-wtree ul > li::after { top: 15px; }
+.ww .ww-o { overflow-wrap: anywhere; }
+.ww .ww-o::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 16px;
+  margin-right: 9px;
+  vertical-align: -3px;
+  background: var(--c, #5c5c60);
+}
+.ww .ww-o--p { --c: var(--w-purple); }
+.ww .ww-o--g { --c: var(--w-green); }
+.ww .ww-o--r { --c: var(--w-red); }
+
+/* ---------- Narrow screens ---------- */
+@media (max-width: 900px) {
+  .ww .ww-open { display: flex; flex-direction: column; gap: 0; }
+  .ww .ww-open__text { display: contents; }
+  .ww h1 { order: 1; margin-bottom: 20px; }
+  .ww .ww-lead { order: 2; margin-bottom: 28px; }
+  .ww .ww-tri { order: 3; min-height: 0; aspect-ratio: 1.42; border-radius: 12px; }
+  .ww .ww-unit { order: 4; margin-top: 30px; }
+  .ww .ww-node { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 0 0 76px; }
+  .ww .ww-node::before,
+  .ww .ww-node__head::before { display: none; }
+  .ww .ww-node__head { margin-bottom: 18px; }
+}
+@media (max-width: 600px) {
+  .ww .ww-node__text p { font-size: 16.5px; }
+  .ww .ww-wtree { padding: 12px 12px 16px; font-size: 11.5px; line-height: 27px; }
+  .ww .ww-wtree ul { padding-left: 4px; }
+  .ww .ww-wtree ul > li { padding-left: 17px; }
+  .ww .ww-wtree ul > li::before { width: 11px; height: 13.5px; }
+  .ww .ww-wtree ul > li::after { top: 13.5px; }
+}
+@media (max-width: 400px) {
+  .ww .ww-row { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 12px; row-gap: 2px; padding-block: 8px; }
+  .ww .ww-row .ww-bar { grid-row: 1 / span 2; align-self: stretch; height: auto; }
+  .ww .ww-row__topic { grid-column: 2; margin-left: 0; text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ww .ww-slice img,
+  .ww .ww-row,
+  .ww .ww-row__topic { transition: none; }
+}

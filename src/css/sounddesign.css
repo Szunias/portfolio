@@ -1,0 +1,275 @@
+/* Two sound redesigns: page-owned styles, loaded only on sounddesign.html.
+
+   The page is a sound editor's spotting session: each clip is a monitor with
+   a burnt-in timecode, a ruler with a mark where each cue lands, and the cue
+   sheet beside it. The palette is sampled from the clips' own frames:
+     tavern shadow in the Baldur's Gate 3 clip   #03080f -> page #0c0f13
+     Ice Storm highlight (brightest tenth)       #76a8d4 -> accent #8fc3ec
+     Ice Storm, most saturated tenth             #5493cf -> cue marks, progress
+     God of War rock face (brightest tenth)      #b6c3cb -> body ink #b7c0c7
+   On #0c0f13: ink-3 7.4:1, ink-2 10.4:1, accent 10.2:1, marks 5.9:1. */
+:root {
+  --c-bg-0: #07090c;
+  --c-bg-1: #0c0f13;
+  --c-bg-2: #12161b;
+  --c-bg-3: #181d23;
+  --c-ink: #eef2f5;
+  --c-ink-2: #b7c0c7;
+  --c-ink-3: #97a2ab;
+  --c-accent: #8fc3ec;
+  --c-accent-hi: #bfe0f7;
+  --c-accent-ink: #07090c;
+  --c-accent-line: rgba(143, 195, 236, .45);
+  --c-accent-weak: rgba(143, 195, 236, .11);
+  --c-line: rgba(214, 228, 240, .08);
+  --c-line-2: rgba(214, 228, 240, .16);
+  --c-line-3: rgba(214, 228, 240, .30);
+  --ice: #8fc3ec;
+  --sd-vivid: #5493cf;
+  --sd-burn-bg: rgba(0, 0, 0, .74);
+  --sd-burn-ink: #f3f7fa;
+  --sd-cols: minmax(0, 1.72fr) minmax(300px, 1fr);
+  --sd-gap: clamp(28px, 3.8vw, 56px);
+}
+
+/* The site glow (portfolio.css), re-lit in the Ice Storm blue. */
+body::before { background: radial-gradient(ellipse at 22% 0, rgba(84, 147, 207, .075), transparent 56%); }
+
+/* Opt out of the shared heading-left / paragraph-right grid in cine.css. */
+.cine.sd > section:not(.cine-split) { display: block; }
+/* cine.css also spreads every child of a plain section across both tracks
+   from 901px up (> :not(h2):not(p) { grid-column: 1 / -1 }), so a reel names
+   its own tracks. */
+.cine.sd > section.sd-reel {
+  display: grid;
+  grid-template-columns: var(--sd-cols);
+  column-gap: var(--sd-gap);
+  align-items: start;
+}
+.cine.sd > section.sd-reel > .sd-monitor { grid-column: 1; }
+.cine.sd > section.sd-reel > .sd-sheet { grid-column: 2; }
+.cine.sd { padding-top: clamp(36px, 4.6vw, 68px); }
+.sd figure { margin: 0; min-width: 0; }
+.sd .sd-nw { white-space: nowrap; }
+
+/* ---------- Opening: title over the picture's track, text over the sheet's ---------- */
+.sd .sd-open {
+  display: grid;
+  grid-template-columns: var(--sd-cols);
+  gap: 20px var(--sd-gap);
+  align-items: end;
+  margin-bottom: clamp(36px, 4vw, 52px);
+}
+.sd h1 {
+  margin: 0;
+  font: 600 clamp(46px, 6.3vw, 90px)/.92 var(--f-display);
+  letter-spacing: -.048em;
+  text-wrap: balance;
+}
+.sd .sd-lead { margin: 0 0 14px; max-width: 44ch; color: var(--c-ink); font-size: 18px; line-height: 1.55; }
+.sd .sd-note { margin: 0 0 16px; max-width: 48ch; color: var(--c-ink-2); font-size: 15px; line-height: 1.6; }
+.sd .sd-meta {
+  margin: 0;
+  max-width: none;
+  color: var(--c-ink-3);
+  font: 400 12px/1.5 var(--f-mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.sd .sd-meta span[aria-hidden] { color: var(--sd-vivid); }
+
+/* ---------- A reel: the monitor and its spotting sheet ---------- */
+.sd .sd-reel {
+  row-gap: 28px;
+  padding-bottom: clamp(48px, 6vw, 80px);
+  margin-bottom: clamp(40px, 5vw, 64px);
+  border-bottom: 1px solid var(--c-line);
+}
+.sd .sd-screen {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--c-line-2);
+  border-radius: 3px;
+  background: #000;
+}
+.sd .sd-screen video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: #000;
+}
+
+/* Burnt-in timecode, as on a work picture. The cue name joins it while that cue sounds. */
+.sd .sd-burn {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  gap: 12px;
+  max-width: none;
+  margin: 0;
+  padding: 5px 9px 4px;
+  background: var(--sd-burn-bg);
+  color: var(--sd-burn-ink);
+  font: 400 13px/1.25 var(--f-mono);
+  letter-spacing: .05em;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.sd .sd-burn__cue { color: var(--c-accent); text-transform: uppercase; }
+.sd .sd-burn__cue:empty { display: none; }
+
+/* The ruler: a tick per second, a longer one every five, a mark where each cue lands. */
+.sd .sd-ruler {
+  --d: 13.5;
+  --sec: calc(100% / var(--d));
+  position: relative;
+  height: 32px;
+  margin-top: 14px;
+  cursor: pointer;
+  touch-action: manipulation;
+  background:
+    linear-gradient(var(--c-line-3), var(--c-line-3)) 0 0 / 100% 1px no-repeat,
+    repeating-linear-gradient(90deg, var(--c-line-3) 0 1px, transparent 1px var(--sec)) 0 0 / 100% 6px no-repeat,
+    repeating-linear-gradient(90deg, var(--c-ink-3) 0 1px, transparent 1px calc(var(--sec) * 5)) 0 0 / 100% 10px no-repeat;
+}
+.sd .sd-ruler__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: var(--sd-vivid);
+}
+.sd .sd-ruler__label {
+  position: absolute;
+  top: 15px;
+  left: calc(var(--t) / var(--d) * 100%);
+  padding-left: 5px;
+  color: var(--c-ink-3);
+  font: 400 11px/1 var(--f-mono);
+  letter-spacing: .06em;
+}
+.sd .sd-ruler__mark {
+  position: absolute;
+  top: -7px;
+  left: calc(var(--t) / var(--d) * 100%);
+  width: 1px;
+  height: 17px;
+  background: var(--sd-vivid);
+}
+.sd .sd-ruler__mark::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -4px;
+  width: 9px;
+  height: 7px;
+  background: var(--sd-vivid);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.sd .sd-ruler__mark.is-lit,
+.sd .sd-ruler__mark.is-now,
+.sd .sd-ruler__mark.is-lit::before,
+.sd .sd-ruler__mark.is-now::before { background: var(--c-accent-hi); }
+.sd .sd-ruler__head {
+  position: absolute;
+  top: -14px;
+  width: 2px;
+  height: 30px;
+  margin-left: -1px;
+  background: var(--c-accent-hi);
+}
+
+/* ---------- The spotting sheet ---------- */
+.sd .sd-sheet { min-width: 0; }
+.sd .sd-sheet h2 {
+  margin: 0 0 12px;
+  font: 600 clamp(26px, 2.4vw, 34px)/1.1 var(--f-display);
+  letter-spacing: -.03em;
+}
+.sd .sd-sheet > p { margin: 0 0 22px; color: var(--c-ink-2); }
+.sd .sd-cues {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--c-line-2);
+}
+.sd .sd-cue {
+  position: relative;
+  display: grid;
+  grid-template-columns: 124px minmax(0, 1fr);
+  column-gap: 14px;
+  margin: 0;
+  padding: 13px 10px 14px;
+  border-bottom: 1px solid var(--c-line);
+}
+.sd .sd-cue__tc,
+.sd .sd-cue__play {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: start;
+  color: var(--c-accent);
+  font: 400 13px/1.9 var(--f-mono);
+  letter-spacing: .03em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.sd .sd-cue__play {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  justify-self: start;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.sd .sd-cue__play .sd-cue__tc { line-height: inherit; }
+.sd .sd-cue__play svg { width: 9px; height: 9px; flex: none; fill: currentColor; }
+/* The whole row answers the tap; the timecode stays the named control. */
+.sd .sd-cue__play::after { content: ""; position: absolute; inset: 0; }
+.sd .sd-cue__play:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 4px; border-radius: 2px; }
+.sd .sd-cue__name {
+  grid-column: 2;
+  color: var(--c-ink);
+  font-weight: 600;
+  line-height: 1.6;
+}
+.sd .sd-cue__how {
+  grid-column: 2;
+  color: var(--c-ink-2);
+  font-size: 15px;
+  line-height: 1.55;
+}
+.sd .sd-cue:hover,
+.sd .sd-cue.is-lit { background: linear-gradient(90deg, var(--c-accent-weak), transparent 85%); }
+.sd .sd-cue.is-now { box-shadow: inset 2px 0 0 var(--c-accent); }
+.sd .sd-cue.is-now .sd-cue__name { color: var(--c-accent-hi); }
+
+/* ---------- Narrow screens ---------- */
+@media (max-width: 900px) {
+  .sd .sd-open,
+  .cine.sd > section.sd-reel { grid-template-columns: minmax(0, 1fr); }
+  .cine.sd > section.sd-reel > .sd-sheet { grid-column: 1; }
+  .sd .sd-open { gap: 18px; }
+  .sd .sd-reel { row-gap: 26px; }
+  .sd .sd-lead, .sd .sd-note { max-width: 60ch; }
+}
+@media (max-width: 600px) {
+  .sd h1 { font-size: clamp(40px, 12vw, 58px); }
+  .sd .sd-lead { font-size: 17px; }
+  .sd .sd-burn { top: 8px; left: 8px; gap: 9px; padding: 4px 7px 3px; font-size: 11.5px; }
+  .sd .sd-ruler__label { font-size: 10.5px; }
+  .sd .sd-reel { row-gap: 32px; }
+  .sd .sd-cue { grid-template-columns: 112px minmax(0, 1fr); column-gap: 10px; padding-inline: 6px; }
+}
+@media (max-width: 359px) {
+  .sd .sd-cue { grid-template-columns: minmax(0, 1fr); }
+  .sd .sd-cue__tc, .sd .sd-cue__play { grid-row: auto; }
+  .sd .sd-cue__name, .sd .sd-cue__how { grid-column: 1; }
+}

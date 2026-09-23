@@ -65,6 +65,10 @@ The files in the page's `css` array follow in exactly that order.
   review variants.
 - `sidar.css` owns SIDAR's trailer-first layout and its Annex04 palette. It is
   loaded only on `sidar.html`; the shared project styles stay unchanged.
+- Every other project page also owns a stylesheet named after its slug
+  (`shadowframes.css`, `ray.css` and so on). It holds that page's motif and
+  overrides colour tokens for that page only; `cine.css` and `portfolio.css`
+  stay the shared base.
 - `music.css` owns the library and player. `music-stage.css` owns the listening
   stage; `music-crate.css` and `music-reel.css` are review layouts.
 - `contact.css`, `contact-time.css` and `contact-wind.css` compose the public
@@ -96,6 +100,21 @@ an intermediate width and desktop, including long titles and player controls.
 | `local-video.js` | Local-video enhancement on configured project pages. |
 | `video-facade.js` | Lazy embedded-video activation on configured review pages. |
 | `prefetch.js` | Same-origin navigation prefetch. |
+| `shadowframes.js` | Drives the ten-slot investigation board: the range input (native keyboard support) and its two buttons toggle .is-pinned on the photo slots, develop each newly pinned photo from black, and rewrite the aria-live ProgressiveAmbience stage/layers readout from a static Wwise stage table copied off SC_AMB_Progressive; the slots themselves are a pointer/touch shortcut only, staying aria-hidden. |
+| `sidar.js` | SIDAR NULL: Scanner console: Scan key, frame reveal and the prototype recording on one screen. |
+| `xrlabs.js` | XR Labs: Floor-plan positions that draw the shot path to each trainee position. |
+| `transientica.js` | Transientica: Practice lane played with K, S and H keys or touch pads, with timing feedback. |
+| `nottoday.js` | Not Today, Darling!: Stage tiles that cue the run recording and list the sounds of each stage. |
+| `autotrim.js` | AutoTrim Exporter: Tool window whose pages follow the chapters, plus the Select across tracks demo. |
+| `audioq.js` | AudioQ: Signal-chain rack of working knobs that show what the code does with each value. |
+| `mowik.js` | Mówik: Hold F8 or F7 to run the dictation indicator and the RAM buffer strip. |
+| `ai-audio-research.js` | AI Audio Research: Frame ruler that replays the measured latencies and plays each method’s sample. |
+| `sounddesign.js` | Three sound redesigns: Spotting-sheet players: timecode marks that cue each sound in the clip. |
+| `ifmc.js` | Drives both IFMC score reels: play/pause, drag- or keyboard-scrub via a range input synced to the audio, and cue buttons on the Clapping reel that seek 3s ahead of an annotated moment; paints the playhead and lights the current cue against a static, pre-measured loudness trace of each published track. |
+| `richter.js` | Richter: Seismograph drum of the low end that scrubs the film and follows playback. |
+| `pausedeserve.js` | Pause & Deserve: The P Pauses Death sign as a five-second pause toy. |
+| `amorak.js` | Amorak: Ear-to-ear balance strip that scrubs the film and lights the louder ear. |
+| `ray.js` | Ray: Colour strip of the whole film with light-shaft marks that cue the film. |
 
 Scripts use local scopes and DOM hooks. Keep their loading order in configuration
 and preserve accessible markup when JavaScript is unavailable.
