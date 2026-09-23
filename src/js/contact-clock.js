@@ -1,8 +1,9 @@
 (function () {
   /* Owns winding, hands, the daylight face, the crown and the caption. Load
-     only one contact-clock controller per page. contact.html has a two-line
-     caption whose time line keeps its place while winding; the contact-wind
-     review page keeps the older line, which [data-cap-preview] replaces while
+     only one contact-clock controller per page. contact.html has a caption
+     whose time line keeps its place while winding, plus a third line
+     ([data-cap-you]) for a visitor on another clock; the contact-wind review
+     page keeps the older line, which [data-cap-preview] replaces while
      winding (contact-actions writes its resting time). */
   const MAX_OFFSET = 24 * 60;
   /* After a pointer lets go, the preview holds long enough to read the
@@ -24,12 +25,13 @@
   const capWhere = document.querySelector('[data-cap-where]');
   const capNow = document.querySelector('[data-cap-now]');
   const capPreview = document.querySelector('[data-cap-preview]');
+  const capYou = document.querySelector('[data-cap-you]');
   if (!root || !svg) return;
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const restingWhere = capWhere ? capWhere.textContent : '';
 
-  const { timeParts, sunAltitude, phaseName, setHand, addTicks } = PortfolioClockFace;
+  const { timeParts, utcOffset, sunAltitude, phaseName, setHand, addTicks } = PortfolioClockFace;
   addTicks(svg, ticks);
 
   let offsetMinutes = 0;
@@ -120,19 +122,31 @@
     return x * x * (3 - 2 * x);
   }
 
-  /* "in 3 h 10 min" for the caption, "in 3 hours 10 minutes" for ARIA. */
+  /* "3 h 10 min" for the caption, "3 hours 10 minutes" for ARIA. */
+  function span(mins, words) {
+    const h = Math.floor(Math.abs(mins) / 60);
+    const m = Math.abs(mins) % 60;
+    if (words) return [h ? h + (h === 1 ? ' hour' : ' hours') : '', m ? m + ' minutes' : ''].filter(Boolean).join(' ');
+    return h ? h + ' h' + (m ? ' ' + m + ' min' : '') : m + ' min';
+  }
+
+  /* The wound offset to the nearest five minutes: "in 3 h 10 min", "2 h ago". */
   function offsetLabel(mins, words) {
     const rounded = Math.round(Math.abs(mins) / 5) * 5;
     if (!rounded) return 'now';
-    const h = Math.floor(rounded / 60);
-    const m = rounded % 60;
-    let span;
-    if (words) {
-      span = [h ? h + (h === 1 ? ' hour' : ' hours') : '', m ? m + ' minutes' : ''].filter(Boolean).join(' ');
-    } else {
-      span = h ? h + ' h' + (m ? ' ' + m + ' min' : '') : m + ' min';
-    }
-    return mins >= 0 ? 'in ' + span : span + ' ago';
+    return mins >= 0 ? 'in ' + span(rounded, words) : span(rounded, words) + ' ago';
+  }
+
+  /* Minutes Graz is ahead of the visitor's own clock (negative: behind),
+     from the device's time zone in the browser; nothing leaves the page.
+     Without Intl there is no answer, so the visitor's line stays hidden. */
+  function gapMinutes(ms) {
+    const graz = utcOffset(ms);
+    return graz === null ? 0 : graz + new Date(ms).getTimezoneOffset();
+  }
+
+  function gapLabel(gap, words) {
+    return span(gap, words) + (gap > 0 ? ' ahead of you' : ' behind you');
   }
 
   function pad(n) {
@@ -140,7 +154,8 @@
   }
 
   function render() {
-    const ms = Date.now() + offsetMinutes * 60000;
+    const now = Date.now();
+    const ms = now + offsetMinutes * 60000;
     const t = timeParts(new Date(ms));
     const active = previewing();
     setHand(hourHand, (t.hour % 12) * 30 + t.minute * 0.5);
@@ -182,8 +197,25 @@
       capPreview.hidden = !active;
       capPreview.textContent = active ? hm + ' in Graz · ' + away + ' · ' + phase : '';
     }
+
+    /* The visitor's line, only when their clock is not on Graz time: how far
+       Graz is from it at rest ("9 h ahead of you"), their own time at the
+       previewed moment while winding ("13:25 your time"). The dial speaks it too. */
+    const gap = capYou ? gapMinutes(now) : 0;
+    let you = '';
+    let youWords = '';
+    if (gap) {
+      const local = new Date(ms);
+      you = active ? pad(local.getHours()) + ':' + pad(local.getMinutes()) + ' your time' : gapLabel(gap);
+      youWords = active ? you : gapLabel(gap, true);
+    }
+    if (capYou) {
+      capYou.hidden = !gap;
+      capYou.textContent = you;
+    }
     svg.setAttribute('aria-valuenow', String(Math.round(offsetMinutes / 60)));
-    svg.setAttribute('aria-valuetext', hm + ' in Graz, ' + (active ? offsetLabel(offsetMinutes, true) + ', ' + phase : 'now'));
+    svg.setAttribute('aria-valuetext', hm + ' in Graz, ' + (active ? offsetLabel(offsetMinutes, true) + ', ' + phase : 'now') +
+      (youWords ? ', ' + youWords : ''));
   }
 
   function setOffset(next, ratchet) {

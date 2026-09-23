@@ -242,7 +242,9 @@ async function main() {
     await ready(server);
     if (serverError) throw serverError;
     browser = await chromium.launch();
-    const context = await browser.newContext({ reducedMotion: 'reduce' });
+    // Graz time: contact.html adds the visitor's own clock to the dial's text
+    // on any other zone (a UTC runner), and the clock checks read Graz only.
+    const context = await browser.newContext({ reducedMotion: 'reduce', timezoneId: 'Europe/Vienna' });
     context.setDefaultTimeout(10000);
     // A local regression check must not depend on third-party availability.
     // Deliberately launched external embeds are outside this smoke test.

@@ -2,13 +2,16 @@
 
   <!-- The opening is the game screen. The sign under it is the game's own
        "P Pauses Death" hint, cropped in CSS from pause-rule-1200.webp, and
-       pausedeserve.js turns it into a five-second pause for the frame above. -->
+       pausedeserve.js turns it into a five-second pause for the frame above.
+       The two frames are the trailer's own chase (timer 00:04.45 at 1:15 and
+       00:14.98 at 1:25), so the toy's caught screen can link to that same
+       run in the trailer below. -->
   <header class="pd-open">
     <div class="pd-open__text">
       <h1>Pause &amp; Deserve</h1>
-      <p class="pd-lead">A horror prototype I made on my own in Unreal Engine&nbsp;5 in eight weeks. Pressing P freezes Death for five seconds. When the chase resumes, Death is permanently faster, so every pause makes the rest of the run harder.</p>
+      <p class="pd-lead">A horror prototype I made on my own in Unreal Engine&nbsp;5 in eight weeks, sound effects included. Death&rsquo;s footsteps, breaking branches and movement are spatialised with HRTF, so on headphones you can place it while it is off screen. Pressing P freezes Death for five seconds, and every pause leaves it permanently faster.</p>
       <p class="pd-meta"><span>2024</span> &middot; <span>8 weeks</span> &middot; <span>Unreal Engine 5</span> &middot; <span>Blueprints</span> &middot; <span>MetaSounds</span></p>
-      <p class="pd-links"><a href="https://www.youtube.com/watch?v=bBuhTHrN81k" target="_blank" rel="noopener noreferrer">Watch on YouTube <span aria-hidden="true">&nearr;</span></a></p>
+      <p class="pd-links"><a href="#pd-trailer" data-pd-seek="69">Watch the chase <span class="pd-time">1:09</span></a></p>
     </div>
 
     <div class="pd-screen" data-pd-screen>
@@ -16,7 +19,7 @@
         <img class="pd-shot is-on" src="old/public/assets/images/projects-pausedeserve/deathapproaches.png" srcset="old/public/assets/images/projects-pausedeserve/deathapproaches-640.webp 640w, old/public/assets/images/projects-pausedeserve/deathapproaches-1200.webp 1200w" sizes="(min-width: 901px) 780px, calc(100vw - 40px)" width="1920" height="1080" alt="Death among the bushes ahead at night, its head glowing red. The timer at the top reads 00:04.45." fetchpriority="high" decoding="async">
         <img class="pd-shot" src="old/public/assets/images/projects-pausedeserve/frames/enemy-close.jpg" srcset="old/public/assets/images/projects-pausedeserve/frames/enemy-close-640.webp 640w, old/public/assets/images/projects-pausedeserve/frames/enemy-close-1200.webp 1200w" sizes="(min-width: 901px) 780px, calc(100vw - 40px)" width="1280" height="720" alt="Death a few steps away beside a tree lit red. The timer reads 00:14.98." decoding="async">
         <p class="pd-count" aria-hidden="true" data-pd-count></p>
-        <p class="pd-caught" aria-hidden="true">Caught</p>
+        <p class="pd-caught" aria-hidden="true"><span class="pd-caught__time">00:15.41</span>Caught</p>
       </div>
       <div class="pd-hud">
         <button class="pd-plate" type="button" aria-label="P pauses Death" aria-keyshortcuts="P" aria-describedby="pd-status">
@@ -31,30 +34,41 @@
           <span class="pd-label">Pauses</span>
           <span class="pd-pips" aria-hidden="true"><i class="pd-pip"></i><i class="pd-pip"></i></span>
         </div>
-        <p class="pd-status" id="pd-status" aria-live="polite" data-pd-status>Press P or tap the sign.</p>
+        <p class="pd-status"><span id="pd-status" aria-live="polite" data-pd-status>Press P or tap the sign.</span> <a class="pd-runlink" href="#pd-trailer" data-pd-seek="69" data-pd-runlink hidden>Watch this run with sound <span class="pd-time">1:09</span></a></p>
       </div>
     </div>
   </header>
 
   <section class="pd-made" aria-labelledby="pd-made-title">
-    <div class="pd-made__text">
-      <h2 id="pd-made-title">Logic, level and sound</h2>
-      <dl class="pd-credits">
-        <div><dt>Game logic</dt><dd>The chase and the pause rule, in Blueprints.</dd></div>
-        <div><dt>Level</dt><dd>A red-lit corridor with wood-panelled walls and shelves, and the undergrowth Death comes through.</dd></div>
-        <div><dt>Sound effects</dt><dd>Made for the game, including Death&rsquo;s footsteps, breaking branches and movement.</dd></div>
-        <div><dt>Audio in Unreal</dt><dd>MetaSounds, and HRTF spatialisation on Death&rsquo;s sounds, so a player on headphones can place it while it is off screen.</dd></div>
-        <div class="pd-credits__other"><dt>Music</dt><dd>From a library.</dd></div>
-      </dl>
-    </div>
+    <h2 id="pd-made-title">Sound, logic and level</h2>
 
-    <figure class="pd-made__video">
+    <!-- pausedeserve.js turns every data-pd-seek control here, in the hero
+         link above and in the toy's run link into a jump into this video,
+         started through local-video.js's own launch control. The chapter
+         list stays hidden until that script confirms the video is on the
+         page. -->
+    <figure class="pd-made__video" id="pd-trailer">
       <video controls playsinline preload="none" poster="old/public/assets/images/video-posters/pausedeserve-trailer-1280.webp" aria-label="Pause and Deserve gameplay with the spatial mix">
         <source src="old/public/assets/videos/pausedeserve-trailer.mp4" type="video/mp4">
         Your browser does not support the video element.
       </video>
-      <figcaption>Gameplay with the spatial mix. Best on headphones.</figcaption>
+      <div class="pd-chapters" data-pd-chapters hidden>
+        <span class="pd-label" id="pd-chapters-label">Jump to</span>
+        <ol aria-labelledby="pd-chapters-label">
+          <li><button type="button" data-pd-seek="18"><span class="pd-time">0:18</span> Start</button></li>
+          <li><button type="button" data-pd-seek="45"><span class="pd-time">0:45</span> Corridor</button></li>
+          <li><button type="button" data-pd-seek="69"><span class="pd-time">1:09</span> Chase</button></li>
+        </ol>
+      </div>
+      <figcaption>Gameplay with the spatial mix. Best on headphones. <a href="https://www.youtube.com/watch?v=bBuhTHrN81k" target="_blank" rel="noopener noreferrer">Also on YouTube <span aria-hidden="true">&nearr;</span></a></figcaption>
     </figure>
+
+    <dl class="pd-credits">
+      <div><dt>Sound effects</dt><dd>Made for the game and implemented in Unreal with MetaSounds.</dd></div>
+      <div><dt>Game logic</dt><dd>The chase and the pause rule, in Blueprints.</dd></div>
+      <div><dt>Level</dt><dd>A red-lit corridor with wood-panelled walls and shelves, and the undergrowth Death comes through.</dd></div>
+      <div class="pd-credits__other"><dt>Music</dt><dd>From a library.</dd></div>
+    </dl>
 
     <figure class="pd-strip">
       <div class="pd-strip__frames">

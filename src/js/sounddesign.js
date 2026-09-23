@@ -1,7 +1,9 @@
 /* Two sound redesigns: the spotting-sheet players.
    Each reel gets a burnt-in timecode that runs with the video, a ruler whose
    playhead follows playback, and cue timecodes that play the clip from half a
-   second before the sound lands. local-video.js (loaded earlier) keeps a
+   second before the sound lands. While a cue sounds, the burn-in also shows
+   its spotting note (data-note): what that sound is made of, gone 3s after
+   onset like the cue name above it. local-video.js (loaded earlier) keeps a
    poster button over an unstarted video; a cue presses it, so the native
    controls come back exactly as with a direct play. Without JavaScript the
    cue list stays plain text and the videos keep their native controls.
@@ -34,6 +36,7 @@
     var duration = parseFloat(reel.getAttribute('data-duration')) || 0;
     var burnTc = reel.querySelector('.sd-burn__tc');
     var burnCue = reel.querySelector('.sd-burn__cue');
+    var burnNote = reel.querySelector('.sd-burn__note');
     var ruler = reel.querySelector('.sd-ruler');
     var head = reel.querySelector('.sd-ruler__head');
     var fill = reel.querySelector('.sd-ruler__fill');
@@ -104,6 +107,8 @@
       cues.forEach(function (cue, j) { cue.classList.toggle('is-now', j === now); });
       marks.forEach(function (mark, j) { mark.classList.toggle('is-now', j === now); });
       if (burnCue) burnCue.textContent = now > -1 ? (cues[now].getAttribute('data-short') || '') : '';
+      // The spotting note: what the sounding cue is made of, same 3s window as the name above.
+      if (burnNote) burnNote.textContent = now > -1 ? (cues[now].getAttribute('data-note') || '') : '';
       if (duration) {
         var x = Math.min(100, (t / duration) * 100) + '%';
         if (head) head.style.left = x;

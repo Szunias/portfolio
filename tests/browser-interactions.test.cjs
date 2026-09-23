@@ -413,11 +413,28 @@ test('taking hold of the dial again during the hold keeps the wound offset', asy
   assert.equal(svg.getAttribute('aria-valuenow'), '3');
 });
 
-test('the dial speaks the previewed hour in words while the caption time keeps its line', async () => {
+// contact.html adds the visitor's own clock to the caption and the dial's
+// text when the device is not on Graz time, so these checks set the process
+// zone (a CI runner is on UTC). Node on Windows keeps the last zone it was
+// given, so the previous one is set back instead of deleted.
+async function inZone(zone, run) {
+  const saved = process.env.TZ;
+  const system = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  process.env.TZ = zone;
+  try {
+    return await run();
+  } finally {
+    process.env.TZ = saved === undefined ? system : saved;
+  }
+}
+
+test('the dial speaks the previewed hour in words while the caption time keeps its line', () => inZone('Europe/Vienna', async () => {
   const hm = new Element('span');
   const where = new Element('span');
+  const you = new Element('span');
   where.textContent = 'Graz, Austria';
-  const { svg, root } = clockFixture({ '[data-cap-hm]': [hm], '[data-cap-where]': [where] });
+  you.hidden = true;
+  const { svg, root } = clockFixture({ '[data-cap-hm]': [hm], '[data-cap-where]': [where], '[data-cap-you]': [you] });
   const phase = '(day|dawn|dusk|night)';
   assert.match(svg.getAttribute('aria-valuetext'), /^\d\d:\d\d in Graz, now$/);
   assert.match(hm.textContent, /^\d\d:\d\d$/);
@@ -433,6 +450,33 @@ test('the dial speaks the previewed hour in words while the caption time keeps i
   await svg.emit('keydown', { key: 'Home' });
   assert.equal(where.textContent, 'Graz, Austria');
   assert.match(svg.getAttribute('aria-valuetext'), / in Graz, now$/);
+  assert.equal(you.hidden, true);
+}));
+
+test('a visitor on another clock reads the gap at rest and their own time while winding', async () => {
+  // London stays an hour behind Graz and Helsinki an hour ahead all year:
+  // the three change to and from summer time at the same instant.
+  for (const [zone, rest, spoken, shift] of [
+    ['Europe/London', '1 h ahead of you', '1 hour ahead of you', -1],
+    ['Europe/Helsinki', '1 h behind you', '1 hour behind you', 1],
+  ]) {
+    await inZone(zone, async () => {
+      const hm = new Element('span');
+      const you = new Element('span');
+      you.hidden = true;
+      const { svg } = clockFixture({ '[data-cap-hm]': [hm], '[data-cap-you]': [you] });
+      assert.equal(you.hidden, false);
+      assert.equal(you.textContent, rest);
+      assert.match(svg.getAttribute('aria-valuetext'), new RegExp('^\\d\\d:\\d\\d in Graz, now, ' + spoken + '$'));
+      await svg.emit('keydown', { key: 'ArrowRight' });
+      const [h, m] = hm.textContent.split(':').map(Number);
+      const local = String((h + shift + 24) % 24).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ' your time';
+      assert.equal(you.textContent, local);
+      assert.match(svg.getAttribute('aria-valuetext'), new RegExp(' in Graz, in 1 hour, (day|dawn|dusk|night), ' + local + '$'));
+      await svg.emit('keydown', { key: 'Home' });
+      assert.equal(you.textContent, rest);
+    });
+  }
 });
 
 test('the contact-wind review caption swaps its resting line for a one-line preview', async () => {

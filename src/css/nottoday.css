@@ -231,34 +231,8 @@ body:has(.cine.nt)::before { background: none; }
 .nt-stage.is-on .nt-oval path { stroke-dashoffset: 0; }
 .nt .nt-note { max-width: 60ch; margin: 14px 0 0; color: var(--c-ink-3); font-size: 14px; line-height: 1.55; }
 
-/* The folders of Audio/Sounds; the current stage lights its own. */
-.nt-panel { grid-area: panel; margin-top: 30px; padding-top: 16px; border-top: 1px solid var(--c-line-2); }
-.nt .nt-panel__src {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  max-width: none;
-  margin: 0 0 14px;
-  color: var(--c-ink-3);
-  font: 500 11.5px/1.4 var(--f-mono);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-.nt-panel__src a { letter-spacing: .04em; text-transform: none; }
-.nt .nt-folders { display: flex; flex-wrap: wrap; gap: 6px; max-width: none; margin: 0 0 22px; padding: 0; list-style: none; }
-.nt-folders li {
-  margin: 0;
-  padding: 3px 8px 3px 7px;
-  border: 1px solid var(--c-line-2);
-  border-radius: 3px;
-  color: var(--c-ink-2);
-  font: 400 12.5px/1.4 var(--f-mono);
-  transition: color .2s var(--ease), background-color .2s var(--ease), border-color .2s var(--ease);
-}
-.nt-folders li::before { content: "/"; margin-right: 3px; color: var(--c-ink-3); }
-.nt-panel.is-live .nt-folders li { border-color: var(--c-line); color: var(--c-ink-3); }
-.nt-panel.is-live .nt-folders li.is-lit { border-color: var(--c-accent-line); background: var(--c-accent-weak); color: var(--c-ink); }
-.nt-panel.is-live .nt-folders li.is-lit::before { color: var(--c-accent); }
+/* Each stage's text and its own Audio/Sounds folders, one stage visible at a time with JS. */
+.nt-panel { grid-area: panel; margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--c-line-2); }
 .nt-s + .nt-s { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--c-line); }
 .nt-panel.is-live .nt-s { display: none; }
 .nt-panel.is-live .nt-s.is-on { display: block; margin: 0; padding: 0; border: 0; }
@@ -266,24 +240,74 @@ body:has(.cine.nt)::before { background: none; }
   display: flex;
   align-items: baseline;
   gap: 12px;
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   color: var(--c-ink);
   font: 500 23px/1.2 var(--f-display);
   letter-spacing: -.01em;
 }
 .nt-s__t { color: var(--c-accent); font: 500 12px/1 var(--f-mono); letter-spacing: .04em; }
 .nt .nt-s p { max-width: 46ch; margin: 0; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.6; }
-.nt .nt-s .nt-s__folders { margin: 0 0 8px; color: var(--c-ink-3); font: 400 12.5px/1.5 var(--f-mono); }
-/* With JS the lit folders show the same list, so the line is kept for screen readers only. */
-.nt .nt-panel.is-live .nt-s__folders {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
+
+/* Each stage's own folders sit under its text; there is no separate 17-chip cloud. */
+.nt .nt-s .nt-dirs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  max-width: none;
+  margin: 14px 0 0;
+  padding: 0;
+  color: var(--c-ink-3);
+  font: 400 12.5px/1.4 var(--f-mono);
 }
+.nt .nt-s .nt-dirs span {
+  padding: 2px 8px 2px 7px;
+  border: 1px solid var(--c-accent-line);
+  border-radius: 3px;
+  background: var(--c-accent-weak);
+  color: var(--c-ink);
+}
+.nt .nt-s .nt-dirs span::before { content: "/"; margin-right: 3px; color: var(--c-accent); }
+.nt .nt-s .nt-dirs .nt-dirs__k {
+  margin-right: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--c-ink-3);
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.nt .nt-s .nt-dirs .nt-dirs__k::before { content: none; }
+.nt .nt-all { max-width: none; margin: 18px 0 0; font: 400 12.5px/1.5 var(--f-mono); }
+.nt .nt-all a { color: var(--c-ink-3); }
+.nt .nt-all a:hover { color: var(--c-ink); }
+
+/* Time cues: play the run from the moment named in the text beside them. */
+.nt .nt-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 7px 0 6px;
+  border: 1px solid var(--c-accent-line);
+  border-radius: 3px;
+  color: var(--c-accent);
+  font: 500 .84em/1.6 var(--f-mono);
+  letter-spacing: .02em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+}
+.nt .nt-cue::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 4.5px solid transparent;
+  border-bottom: 4.5px solid transparent;
+  border-left: 7px solid currentColor;
+}
+.nt .nt-cue:hover { border-color: var(--c-accent); background: var(--c-accent-weak); color: var(--c-accent-hi); }
+.nt .nt-cue:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
 
 /* ---------- Sections ---------- */
 .nt-sec { margin-bottom: clamp(96px, 10vw, 150px); }
@@ -347,25 +371,17 @@ body:has(.cine.nt)::before { background: none; }
 .nt .nt-thumbs img { display: block; width: auto; max-width: none; height: 104px; border-radius: 0; }
 .nt-thumbs figcaption { margin-top: 7px; color: var(--c-ink-3); font: 400 12px/1.4 var(--f-mono); }
 
-/* The mix: the four-player screen with its legend of real asset names. */
+/* The mix: text beside the four-player screen, captures for the real asset names as links. */
 .nt-mixrow {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
   gap: clamp(32px, 4.4vw, 64px);
-  align-items: center;
+  align-items: start;
 }
-.nt .nt-data { display: block; max-width: none; margin: 0; border-top: 1px solid var(--c-line-2); }
-.nt-data > div {
-  display: grid;
-  grid-template-columns: 118px minmax(0, 1fr);
-  gap: 14px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--c-line);
-}
-.nt .nt-data dt { color: var(--c-ink-3); font: 400 12px/2 var(--f-mono); letter-spacing: .02em; }
-.nt .nt-data dd { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
-.nt .nt-small { max-width: 44ch; margin: 18px 0 0; color: var(--c-ink-3); font-size: 14.5px; line-height: 1.6; }
-.nt .nt-proofs { display: flex; flex-wrap: wrap; gap: 6px 18px; max-width: none; margin: 14px 0 0; font-size: 14.5px; }
+.nt .nt-mixrow .nt-screen { margin-top: 6px; }
+.nt .nt-mixtext p { max-width: 54ch; margin: 0 0 16px; color: var(--c-ink-2); font-size: 17px; line-height: 1.65; }
+.nt .nt-proofs { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; max-width: none; margin: 22px 0 0; font-size: 14.5px; }
+.nt .nt-proofs__k { color: var(--c-ink-3); font: 400 11px/1.4 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; }
 
 /* The cast: portrait and name tiles, as on the in-game plates. */
 .nt .nt-cast {
@@ -388,13 +404,33 @@ body:has(.cine.nt)::before { background: none; }
   box-shadow: 0 8px 14px -6px #000;
 }
 .nt .nt-cast .nt-tiles { --t: 27px; --calm: .8; }
+
+/* Betsy, the granny in the run, is circled like the current stage on the rack. */
+.nt-castname { position: relative; display: inline-flex; }
+.nt .nt-cast .is-run .nt-oval {
+  top: -10px;
+  left: -13px;
+  width: calc(100% + 26px);
+  height: calc(100% + 18px);
+  opacity: 1;
+}
+.nt .nt-cast .is-run .nt-oval path { stroke-dashoffset: 0; }
+.nt .nt-inrun { max-width: 66ch; margin: 0 0 22px; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.7; }
 .nt .nt-credit { max-width: 66ch; margin: 0; color: var(--c-ink-3); font-size: 14.5px; line-height: 1.6; }
 
 /* ---------- Narrow screens ---------- */
+/* Rack stays one row between 901 and 1180px, where it would otherwise wrap. */
+@media (min-width: 901px) and (max-width: 1180px) {
+  .nt .nt-rack { gap: 12px 4px; padding: 14px 10px 10px; }
+  .nt .nt-rack .nt-tiles { --t: 19px; }
+  .nt .nt-stage { padding: 6px 4px 2px; }
+}
 @media (max-width: 900px) {
   .nt-open { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "text" "run" "panel"; grid-template-rows: none; }
   .nt-open__text { margin-bottom: 40px; }
-  .nt-after, .nt-mixrow { grid-template-columns: minmax(0, 1fr); }
+  .nt-after { grid-template-columns: minmax(0, 1fr); }
+  .nt-mixrow { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .nt-mixrow .nt-screen { margin-top: 0; }
 }
 @media (max-width: 600px) {
   .nt .nt-rack { justify-content: space-evenly; padding: 14px 8px 10px; }
@@ -405,11 +441,17 @@ body:has(.cine.nt)::before { background: none; }
   .nt-into::before { content: "\2193"; }
   .nt-thumbs { display: grid; grid-template-columns: 1fr 1fr; }
   .nt .nt-thumbs img { width: 100%; height: auto; }
-  .nt-data > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .nt .nt-cast { gap: 18px 26px; }
   .nt .nt-cast .nt-tiles { --t: 24px; }
   .nt .nt-cast img { width: 38px; height: 38px; }
 }
+/* Two rows at 320px: MENU INTRO / 3 2 1 RACE WON. */
+@media (max-width: 360px) {
+  .nt .nt-rack { gap: 12px 6px; padding: 14px 6px 10px; }
+  .nt .nt-rack .nt-tiles { --t: 19px; }
+  .nt .nt-stage { padding: 6px 3px 2px; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .nt-oval, .nt-oval path, .nt-time, .nt-folders li { transition: none; }
+  .nt-oval, .nt-oval path, .nt-time { transition: none; }
+  .nt .nt-cue { transition: none; }
 }

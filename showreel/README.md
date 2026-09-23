@@ -56,8 +56,12 @@ rather than expecting `showreel:sources` to restore it.
 
 ## Website previews
 
-The homepage uses the static `src/assets/hero-waveform.svg`, moved as a whole
-by `src/js/home-transition.js` when projects cover the hero. The full showreel,
+The homepage hero surface, `src/assets/home/reel-surface.svg`, is this reel's own
+sound (120 frequency bands), with the reel's chapters under it. After a new cut,
+run `node scripts/make-reel-surface.cjs` after `render-web.cjs`: it redraws the
+surface and prints the chapter list for `src/pages/index.html` when the timeline
+changed. `src/js/home-transition.js` moves the surface as a whole when projects
+cover the hero. The full showreel,
 with audio and project credits, plays only after the visitor launches it.
 
 The thumbnail is `src/assets/showreel-preview-editorial-v2.mp4`: 480×270, 24 fps,

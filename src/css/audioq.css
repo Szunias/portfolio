@@ -74,7 +74,7 @@ body::before { background: none; }
   letter-spacing: .06em;
   text-transform: uppercase;
 }
-.aq .aq-links { display: flex; flex-wrap: wrap; gap: 0 26px; max-width: none; margin: 0; font-size: 14.5px; }
+.aq .aq-links { display: flex; flex-wrap: wrap; gap: 0 24px; max-width: none; margin: 0; font-size: 14.5px; }
 .aq .aq-links a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--c-ink); }
 
 .aq-window {
@@ -95,6 +95,7 @@ body::before { background: none; }
 .aq .aq-hint { display: none; }
 .aq-chain.is-live .aq-hint {
   display: block;
+  max-width: none;
   margin: 12px 0 0;
   color: var(--c-ink-3);
   font: 400 12px/1.6 var(--f-mono);
@@ -297,6 +298,18 @@ body::before { background: none; }
 }
 .aq-note__shot img { display: block; width: 100%; height: auto; }
 
+/* Where the stage's own control sits in the shared interface crops. */
+.aq-note__shot--marked { position: relative; }
+.aq-mark {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px solid var(--c-accent);
+  border-radius: 7px;
+  background: rgba(165, 172, 255, .07);
+  box-shadow: 0 0 0 1px rgba(10, 12, 16, .6);
+  pointer-events: none;
+}
+
 .aq-modes { display: none; }
 .aq-rack.is-live .aq-modes {
   display: inline-flex;
@@ -321,10 +334,19 @@ body::before { background: none; }
 .aq-mode[aria-pressed="true"] { background: var(--c-accent); color: var(--c-accent-ink); }
 .aq-mode:focus-visible { outline: 2px solid var(--c-accent-hi); outline-offset: -3px; }
 
-/* ---------- The first interface ---------- */
-.aq-first { align-items: start; margin-bottom: clamp(64px, 8vw, 110px); }
-.aq .aq-first h2 { margin-top: 0; }
-.aq .aq-first p { color: var(--c-ink-2); }
+/* ---------- The demo, moved up under the opening ---------- */
+.aq-demo { align-items: center; margin-bottom: clamp(88px, 10vw, 140px); scroll-margin-top: 100px; }
+.aq .aq-demo h2 { margin-top: 0; }
+.aq .aq-demo p { color: var(--c-ink-2); }
+
+/* ---------- One plain paragraph under the rack ---------- */
+.aq .aq-after {
+  max-width: 70ch;
+  margin: 22px 0 0;
+  color: var(--c-ink-3);
+  font-size: 15px;
+  line-height: 1.65;
+}
 
 /* ---------- Rack as a vertical chain: the rail runs down the left ---------- */
 @media (max-width: 1180px) {
@@ -362,6 +384,40 @@ body::before { background: none; }
     padding: 20px 0 6px;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
+}
+/* 901-1180px: the stage list stays narrow but the readout moves beside it
+   instead of opening inside the stage (audioq.js keeps that JS threshold at
+   900px so it matches this layout). */
+@media (min-width: 901px) and (max-width: 1180px) {
+  .aq-rack.is-live {
+    display: grid;
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+    align-items: start;
+    overflow: clip;
+  }
+  /* The divider belongs to the taller list, so it runs the full height. */
+  .aq-rack.is-live .aq-stages { border-right: 1px solid var(--c-line-2); }
+  .aq-rack.is-live .aq-notes { border-top: 0; }
+  .aq-rack.is-live .aq-note { grid-template-columns: minmax(0, 1fr); gap: 18px; padding: 26px 26px 30px; }
+  .aq-rack.is-live .aq-stage {
+    grid-template-columns: 94px minmax(0, 1fr);
+    column-gap: 10px;
+    align-items: start;
+    padding: 16px 14px 16px 42px;
+  }
+  .aq-rack.is-live .aq-stage::before { left: 20px; }
+  .aq-rack.is-live .aq-stage::after { top: 22px; left: 15px; }
+  .aq-rack.is-live .aq-stage:first-child::before { top: 28px; }
+  .aq-rack.is-live .aq-stage__head { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .aq-rack.is-live .aq-stage__name { letter-spacing: .08em; }
+  .aq-rack.is-live .aq-knobs { gap: 6px 4px; }
+  .aq-rack.is-live .aq-knob, .aq-rack.is-live .aq-fixed { width: 56px; }
+  .aq-rack.is-live .aq-knob__val { min-width: 0; width: 100%; }
+}
+/* The readout follows a stage picked low in the list, below the sticky site
+   header, when the screen is tall enough to hold all of it. */
+@media (min-width: 901px) and (max-width: 1180px) and (min-height: 820px) {
+  .aq-rack.is-live .aq-notes { position: sticky; top: 100px; }
 }
 @media (max-width: 900px) {
   .aq-open__head { grid-template-columns: minmax(0, 1fr); }

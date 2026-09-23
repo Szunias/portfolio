@@ -18,7 +18,10 @@
     launch.addEventListener('click', function () {
       var frame = document.createElement('iframe');
       // autoplay is safe here: it only ever runs from this click.
-      frame.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0';
+      // enablejsapi=1 lets a page script pause the player through postMessage
+      // (ifmc.js pauses a film when a score reel starts). The player sends
+      // nothing and changes nothing until a script talks to it.
+      frame.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&enablejsapi=1';
       frame.title = launch.getAttribute('data-video-title') || 'Embedded video';
       frame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
       frame.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');

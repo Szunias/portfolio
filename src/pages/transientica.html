@@ -4,7 +4,7 @@
     <div class="tr-open__text">
       <h1>Transientica</h1>
       <p class="tr-lead">A rhythm game you play by beatboxing into a microphone. I am developing it solo in Unity 6 and wrote its audio recognition in C#: the game learns how each player makes a kick, a snare and a <span class="tr-nw">hi-hat</span>, then reads every live hit as an input on one of three lanes.</p>
-      <p class="tr-meta">2025&ndash;present &middot; Solo &middot; Unity 6 &middot; C# &middot; KNN &middot; FFT &middot; In development</p>
+      <p class="tr-meta">2025&ndash;present&nbsp;&middot; Solo&nbsp;&middot; Unity&nbsp;6&nbsp;&middot; C#&nbsp;&middot; KNN&nbsp;&middot; FFT&nbsp;&middot; In&nbsp;development</p>
     </div>
     <figure class="tr-screen">
       <div class="yt-facade" data-yt-facade data-video-id="r9IC7t0GPOU"><button class="yt-facade__launch" type="button" data-yt-launch data-video-title="Transientica gameplay demo" aria-label="Play the Transientica gameplay demo"><img src="old/public/assets/images/video-posters/transientica-current-1600.webp" alt="" width="1600" height="900" fetchpriority="high" decoding="async" aria-hidden="true"><span class="yt-facade__play" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 7.5v9l7-4.5-7-4.5Z"/></svg></span></button><noscript><iframe src="https://www.youtube-nocookie.com/embed/r9IC7t0GPOU" title="Transientica gameplay demo" allow="encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe></noscript></div>
@@ -15,7 +15,7 @@
           <span class="is-snare">Snare</span>
           <span class="is-hat">Hi-hat</span>
         </span>
-        <span class="tr-screen__cap">Training and gameplay in the current C# build.</span>
+        <span class="tr-screen__cap">Training and gameplay in the current C# build, March&nbsp;2026.</span>
       </figcaption>
     </figure>
   </header>
@@ -23,20 +23,25 @@
   <section class="tr-path" aria-labelledby="tr-path-title">
     <div class="tr-head">
       <h2 id="tr-path-title">From a sound to a lane</h2>
-      <p>The player records at least ten examples of each sound with their own microphone, and the classifier learns from those recordings. They are saved as labelled features in JSON, so training can be updated between rounds.</p>
-      <p>I wrote the recognition in C#, including the FFT and the KNN classifier, so the audio processing runs in the same application as the game. Every hit during a song takes the same path:</p>
+      <p>Before the first song, the player teaches the game their own sounds: at least ten recordings each of their kick, snare and <span class="tr-nw">hi-hat</span>, made with their own microphone. The game measures every recording and saves the measurements, labelled by sound, in a JSON file, so a player can retrain between rounds.</p>
+      <p>I wrote the recognition in C#, including the FFT and a <span class="tr-nw">k-nearest-neighbours</span> (KNN) classifier, so it runs inside the game with no Python or second program beside it.</p>
     </div>
     <div class="tr-path__body">
-      <ol class="tr-chain">
-        <li><b>Onset</b><span>The microphone registers a hit.</span></li>
-        <li><b>FFT</b><span>512 samples.</span></li>
-        <li><b>Features</b><span>Seven features are measured from the hit.</span></li>
-        <li><b>KNN</b><span>The classifier compares them with the player&rsquo;s own recordings.</span></li>
-        <li><b>Lane</b><span class="tr-chain__lanes"><em class="is-kick">Kick</em> <em class="is-snare">Snare</em> <em class="is-hat">Hi-hat</em></span></li>
-      </ol>
-      <figure class="tr-still">
-        <img src="old/public/assets/images/projects-transientica/frames/02-hit-classified.jpg" srcset="old/public/assets/images/projects-transientica/frames/02-hit-classified-640.webp 640w, old/public/assets/images/projects-transientica/frames/02-hit-classified-1200.webp 1200w" sizes="(min-width: 900px) 760px, calc(100vw - 40px)" width="1920" height="1080" alt="A hit named SNARE across the top of the screen with a confidence figure under it, and the upcoming notes listed in a strip below" loading="lazy" decoding="async">
-        <figcaption>The classified sound is named at the top of the screen in its lane&rsquo;s colour, with the classifier&rsquo;s confidence under it.</figcaption>
+      <div class="tr-path__chain">
+        <p class="tr-label">Every hit during a song</p>
+        <ol class="tr-chain">
+          <li><b>Onset</b><span>The microphone registers a hit.</span></li>
+          <li><b>FFT</b><span>A 512-sample FFT splits the hit into its frequencies.</span></li>
+          <li><b>Features</b><span>Seven numbers are measured from the hit, the same seven that were saved for each training recording.</span></li>
+          <li><b>KNN</b><span>The training recordings with the closest numbers decide which sound it was.</span></li>
+          <li><b>Lane</b><span>The game names the sound at the top of the screen, and the hit becomes an input on that lane.</span><span class="tr-chain__lanes"><em class="is-kick">Kick</em> <em class="is-snare">Snare</em> <em class="is-hat">Hi-hat</em></span></li>
+        </ol>
+      </div>
+      <figure class="tr-hud">
+        <div class="tr-hud__crop">
+          <img src="old/public/assets/images/projects-transientica/frames/02-hit-classified.jpg" srcset="old/public/assets/images/projects-transientica/frames/02-hit-classified-640.webp 640w, old/public/assets/images/projects-transientica/frames/02-hit-classified-1200.webp 1200w, old/public/assets/images/projects-transientica/frames/02-hit-classified.jpg 1920w" sizes="(min-width: 900px) 1800px, 350vw" width="1920" height="1080" alt="The top of the game screen during a song: SNARE in large blue letters with 89% under it, above a strip of upcoming notes" loading="lazy" decoding="async">
+        </div>
+        <figcaption>The 89% under the name is the classifier&rsquo;s confidence in its answer.</figcaption>
       </figure>
     </div>
   </section>
@@ -92,15 +97,16 @@
   <section class="tr-proto" aria-labelledby="tr-rebuild-title">
     <div class="tr-head">
       <h2 id="tr-rebuild-title">The 2025 Python prototype</h2>
-      <p>I started with a prototype in 2025: a Python script recognised each sound and sent the result to Unity over OSC. For the current build I moved recognition into C#, so the audio processing and gameplay run in one application.</p>
+      <p>The first version was a Python script. It found each hit in the microphone signal with onset detection, classified it with a machine learning model I had trained to recognise three beatbox sounds, and sent the result to Unity over OSC, where the lane for that sound reacted.</p>
+      <p>The current build is the game I planned at the end of the prototype&rsquo;s video: a proper rhythm game where you have to beatbox in sync with the beat to score points.</p>
     </div>
     <div class="tr-proto__body">
       <table class="tr-versions">
         <thead><tr><td></td><th scope="col">2025 prototype</th><th scope="col">Current build</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Recognition</th><td>A Python classifier</td><td>A KNN classifier and FFT in C#</td></tr>
+          <tr><th scope="row">Recognition</th><td>Onset detection and a trained model, in Python</td><td>A KNN classifier and an FFT, written in C#</td></tr>
           <tr><th scope="row">Link to the game</th><td>OSC messages from Python to Unity</td><td>Inside Unity 6, one application</td></tr>
-          <tr><th scope="row">Sounds</th><td>Boom for the kick, ch for the snare, ts for the <span class="tr-nw">hi-hat</span></td><td>The player&rsquo;s own recordings, at least ten per sound</td></tr>
+          <tr><th scope="row">Sounds</th><td>Boom for the kick, a sharp ch for the snare, a crisp ts for the <span class="tr-nw">hi-hat</span></td><td>Each player&rsquo;s own, at least ten recordings per sound</td></tr>
           <tr><th scope="row">Game</th><td>Three lanes that react to each recognised sound</td><td>Song selection, beatmaps, scoring and saved results</td></tr>
         </tbody>
       </table>
@@ -109,6 +115,7 @@
           <source src="old/public/assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4" type="video/mp4">
           Your browser does not support the video element.
         </video>
+        <button class="tr-jump" type="button" data-tr-jump="65" hidden><svg viewBox="0 0 24 24" focusable="false"><path d="M9 7.5v9l7-4.5-7-4.5Z"/></svg>Skip to the live demo (1:05)</button>
         <figcaption>The 2025 prototype, with its Python classifier.</figcaption>
       </figure>
     </div>

@@ -1,4 +1,4 @@
-<!-- The waveform is decorative; the showreel starts only from its launch button. -->
+<!-- The showreel starts only from its launch button or from a chapter under the surface. -->
 <div class="home-scene" data-home-scene>
 <div class="home-scene__opening">
 <section class="hero" id="showreel" aria-labelledby="hero-title">
@@ -9,9 +9,24 @@
     </div>
     <h1 class="hero__statement" id="hero-title"><span>Audio</span> <span><em>implementation</em></span></h1>
     <p class="hero__service">Sound design and integration for games.<br>Wwise, Unreal Engine and Unity.</p>
-    <div class="home-scene__backdrop" aria-hidden="true">
-      <div class="hero-wave">
-        <img class="hero-wave__still" src="assets/hero-waveform.svg" width="1040" height="760" alt="" aria-hidden="true" fetchpriority="high">
+    <!-- The surface is the showreel's sound: 120 frequency bands over its 1:59,
+         time left to right. The chapter list starts the reel at a project.
+         scripts/make-reel-surface.cjs redraws both from a new cut. -->
+    <div class="home-scene__backdrop">
+      <div class="hero-wave reel-surface" data-reel-surface>
+        <div class="reel-surface__frame">
+          <img class="hero-wave__still" src="assets/home/reel-surface.svg" width="1040" height="760" alt="" aria-hidden="true" fetchpriority="high">
+          <span class="reel-surface__head" aria-hidden="true"><span data-reel-readout></span></span>
+        </div>
+        <ol class="reel-chapters" aria-label="Showreel chapters" data-reel-chapters style="--reel-length:119.25">
+          <li class="track-shadowframes" style="--start:0;--len:16"><button type="button" data-reel-at="0"><span class="reel-chapters__time">0:00</span> <span class="reel-chapters__name">Shadow Frames</span></button></li>
+          <li class="track-nottoday" style="--start:16;--len:18.033"><button type="button" data-reel-at="16" tabindex="-1"><span class="reel-chapters__time">0:16</span> <span class="reel-chapters__name">Not Today, Darling!</span></button></li>
+          <li class="track-pausedeserve" style="--start:34.033;--len:21.75"><button type="button" data-reel-at="34.033" tabindex="-1"><span class="reel-chapters__time">0:34</span> <span class="reel-chapters__name">Pause &amp; Deserve</span></button></li>
+          <li class="track-transientica" style="--start:55.783;--len:12"><button type="button" data-reel-at="55.783" tabindex="-1"><span class="reel-chapters__time">0:56</span> <span class="reel-chapters__name">Transientica</span></button></li>
+          <li class="track-audioq" style="--start:67.783;--len:14"><button type="button" data-reel-at="67.783" tabindex="-1"><span class="reel-chapters__time">1:08</span> <span class="reel-chapters__name">AudioQ</span></button></li>
+          <li class="track-akantilado" style="--start:81.783;--len:19.467"><button type="button" data-reel-at="81.783" tabindex="-1"><span class="reel-chapters__time">1:22</span> <span class="reel-chapters__name">Akantilado</span></button></li>
+          <li class="track-ray" style="--start:101.25;--len:15"><button type="button" data-reel-at="101.25" tabindex="-1"><span class="reel-chapters__time">1:41</span> <span class="reel-chapters__name">Ray</span></button></li>
+        </ol>
       </div>
     </div>
     <div class="hero__base">
@@ -60,22 +75,22 @@
         <li class="tool-strip">
           <button class="tool-strip__solo" type="button" data-solo="wwise" aria-pressed="false" hidden><span aria-hidden="true">S</span><span class="sr-only">Solo Wwise</span></button>
           <span class="tool-strip__name">Wwise</span>
-          <a class="tool-strip__proof" href="shadowframes.html#sf-mix-title">Reactive mixing <span class="tool-strip__project">Shadow Frames <span class="tool-strip__go" aria-hidden="true">&nearr;</span></span></a>
+          <a class="tool-strip__proof" href="shadowframes.html#sf-mix-title">Reactive mixing <span class="tool-strip__project">Shadow Frames&nbsp;<span class="tool-strip__go" aria-hidden="true">&nearr;</span></span></a>
         </li>
         <li class="tool-strip">
           <button class="tool-strip__solo" type="button" data-solo="unreal" aria-pressed="false" hidden><span aria-hidden="true">S</span><span class="sr-only">Solo Unreal Engine</span></button>
           <span class="tool-strip__name">Unreal Engine</span>
-          <a class="tool-strip__proof" href="nottoday.html#nt-engines-title">MetaSounds engines <span class="tool-strip__project">Not Today, Darling! <span class="tool-strip__go" aria-hidden="true">&nearr;</span></span></a>
+          <a class="tool-strip__proof" href="nottoday.html#nt-engines-title">MetaSounds engines <span class="tool-strip__project">Not Today, Darling!&nbsp;<span class="tool-strip__go" aria-hidden="true">&nearr;</span></span></a>
         </li>
         <li class="tool-strip">
           <button class="tool-strip__solo" type="button" data-solo="unity" aria-pressed="false" hidden><span aria-hidden="true">S</span><span class="sr-only">Solo Unity</span></button>
           <span class="tool-strip__name">Unity</span>
-          <a class="tool-strip__proof" href="transientica.html#tr-path-title">Live audio recognition <span class="tool-strip__project">Transientica <span class="tool-strip__go" aria-hidden="true">&nearr;</span></span></a>
+          <a class="tool-strip__proof" href="transientica.html#tr-path-title">Live audio recognition <span class="tool-strip__project">Transientica&nbsp;<span class="tool-strip__go" aria-hidden="true">&nearr;</span></span></a>
         </li>
         <li class="tool-strip">
           <button class="tool-strip__solo" type="button" data-solo="reaper" aria-pressed="false" hidden><span aria-hidden="true">S</span><span class="sr-only">Solo REAPER</span></button>
           <span class="tool-strip__name">REAPER</span>
-          <a class="tool-strip__proof" href="autotrim.html#at-flow-title">Sound asset delivery <span class="tool-strip__project">AutoTrim Exporter <span class="tool-strip__go" aria-hidden="true">&nearr;</span></span></a>
+          <a class="tool-strip__proof" href="autotrim.html#at-flow-title">Sound asset delivery <span class="tool-strip__project">AutoTrim Exporter&nbsp;<span class="tool-strip__go" aria-hidden="true">&nearr;</span></span></a>
         </li>
       </ul>
       <p class="tools-desk__status" data-solo-status role="status" aria-live="polite"></p>
@@ -94,6 +109,7 @@
       </div>
       <div class="wcard__body">
         <p class="wcard__desc">Sole audio designer on a pub horror game where changes are found by ear.</p>
+        <p class="wcard__built">I made the ambience that changes with every confirmed photo, footsteps on five surfaces, anomaly cues, voice lines and a mix that reacts to the enemy.</p>
         <p class="wcard__meta">2025 &middot; Wwise &middot; UE5 &middot; C++ &middot; REAPER</p>
       </div>
     </a></li>
@@ -121,7 +137,7 @@
       <div class="wcard__body">
         <h3 class="wcard__title">XR Labs</h3>
         <p class="wcard__desc">Weapon audio, Taser sounds and Steam Audio for police, military and customs VR training.</p>
-        <p class="wcard__meta"><span class="wcard__meta-part">Technical Sound Designer</span> &middot; <span class="wcard__meta-part">Feb&ndash;Jun 2026 &middot; Unity</span></p>
+        <p class="wcard__meta"><span class="wcard__meta-part">Technical Sound Designer</span><span class="wcard__meta-sep" aria-hidden="true"> &middot; </span><span class="wcard__meta-part">Feb&ndash;Jun 2026 &middot; Unity</span></p>
       </div>
     </a></li>
 
@@ -191,7 +207,7 @@
       <li><a class="prow prow--tool track-ai-audio-research" href="ai-audio-research.html" data-tools="unreal" data-name="AI Audio Research">
         <div>
           <h3>AI Audio Research</h3>
-          <p>An Unreal client and Python server that measure how late AI-generated sounds arrive.</p>
+          <p>For my graduation thesis I built an Unreal client that asks AI models for footsteps, doors and ambience during play.</p>
         </div>
         <span class="prow__meta">2025&ndash;2026 &middot; UE 5.4 &middot; C++ &middot; Python</span>
       </a></li>

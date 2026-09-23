@@ -345,13 +345,21 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 }
 .wcard:active .wcard__title { color: var(--track,var(--ice)); }
 
-/* The lead's title sits on its Polaroid, so the sentence becomes the caption. */
+/* The lead's title sits on its Polaroid, so the sentence becomes the caption,
+   and one line of what I made for the game fills the column beside it. */
 .wcard--lead .wcard__body { align-self: end; gap: 16px; padding-bottom: 26px; }
 .wcard--lead .wcard__desc {
   max-width: 26ch;
   color: var(--c-ink);
   font: 400 clamp(20px,1.75vw,25px)/1.45 var(--f-display);
   letter-spacing: -.012em;
+}
+.wcard--lead .wcard__built {
+  max-width: 44ch;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.65;
+  text-wrap: pretty;
 }
 
 /* Each card frames its picture with an object from the project's page. */
@@ -946,10 +954,16 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 }
 
 /* Narrow layouts are defined once, after the section defaults. */
-@media (min-width: 640px) and (max-width: 999.98px) {
+@media (max-width: 999.98px) {
+  /* The desk becomes a 2 x 2 block of channel strips, phones included. */
   .tools-desk__strips { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .tool-strip:nth-child(3) { border-left: 0; }
   .tool-strip:nth-child(n + 3) { border-top: 1px solid var(--c-line); }
+  /* XR Labs tape: two clean lines instead of a line that ends on a middot. */
+  .track-xrlabs .wcard__meta-part { display: block; }
+  .track-xrlabs .wcard__meta-sep { display: none; }
+}
+@media (min-width: 640px) and (max-width: 999.98px) {
   /* Room for "Electronic sketch" on one line; the column split only has to
      match the project cards from 1000px. */
   .music-cta__link { grid-template-columns: minmax(0,.85fr) minmax(0,1.15fr); }
@@ -963,17 +977,25 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 @media (max-width: 639.98px) {
   .panel__inner { padding-block: 64px 0; }
   .tools-desk { margin-top: 18px; }
-  .tools-desk__top { padding: 11px 14px 10px; }
-  .tools-desk__strips { grid-template-columns: minmax(0,1fr); }
-  .tool-strip { padding: 12px 14px 13px; border-left: 0; border-top: 1px solid var(--c-line); }
-  .tool-strip:first-child { border-top: 0; }
-  .tool-strip__name { font-size: 18px; }
+  .tools-desk__top { padding: 10px 12px 9px; }
+  .tools-desk__hint { font-size: 12.5px; }
+  /* Key and tool name share the top row of each strip, the proof runs under both. */
+  .tool-strip { align-content: start; padding: 12px 12px 14px; }
+  .tools-desk.has-solo .tool-strip { column-gap: 10px; row-gap: 9px; }
+  .tools-desk.has-solo .tool-strip__solo { grid-row: 1; }
+  .tools-desk.has-solo .tool-strip__name { grid-row: 1; align-self: center; }
+  .tools-desk.has-solo .tool-strip__proof { grid-column: 1 / -1; grid-row: 2; }
+  .tool-strip__name { font-size: 17px; line-height: 1.15; }
+  .tool-strip__proof { font-size: 13px; line-height: 1.4; }
+  /* The key's hidden label is clipped; keep its text box inside the column. */
+  .tool-strip__solo .sr-only { font-size: 1px; }
   .wgrid { margin-top: 40px; gap: 56px; }
   .wcard { gap: 18px; }
   .wcard__title { font-size: 30px; line-height: 1.08; }
   .wcard__desc { line-height: 1.55; }
   .wcard--lead .wcard__body { padding-bottom: 0; }
   .wcard--lead .wcard__desc { font-size: 19px; }
+  .wcard--lead .wcard__built { font-size: 15px; line-height: 1.6; }
   .wcard__frame--polaroid { padding: 9px 9px 0; }
   .wcard__frame--polaroid .wcard__title { padding: 15px 4px 18px; font-size: 30px; line-height: 1; }
   .wcard__frame--terminal,

@@ -426,6 +426,26 @@
   text-wrap: pretty;
 }
 
+/* The proof-in-10-seconds line: which of the eight pieces have a film to
+   watch them with. nowrap keeps a two-word title on one line. */
+.room__lead.room__films { margin-top: 10px; }
+
+.room__films a {
+  white-space: nowrap;
+  color: var(--c-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--c-accent-line);
+  text-underline-offset: 4px;
+  transition: color var(--dur) var(--ease), text-decoration-color var(--dur) var(--ease);
+}
+
+.room__films a:hover,
+.room__films a:focus-visible {
+  color: var(--c-accent-hi);
+  text-decoration-color: currentColor;
+}
+
 /* ------------------------------ the piece ------------------------------ */
 
 .now { padding: 32px 0 0; }
@@ -458,7 +478,9 @@
 }
 
 .now__note {
-  max-width: 46ch;
+  /* 52ch: long enough for the film-track "about" sentences to stay at or
+     under 3 lines at 1440 without pushing the Hz axis under the bar. */
+  max-width: 52ch;
   margin: 18px 0 0;
   font: 400 17px/1.5 var(--f-body);
   color: var(--c-ink-2);
@@ -693,7 +715,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .set-row,
-  .now__play { transition: none; }
+  .now__play,
+  .room__films a { transition: none; }
 }
 
 @media print {

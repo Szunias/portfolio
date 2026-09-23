@@ -20,6 +20,23 @@ const PortfolioClockFace = (function () {
     }
   })();
 
+  const wallFmt = (function () {
+    try {
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: ZONE,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hourCycle: 'h23'
+      });
+    } catch (_) {
+      return null;
+    }
+  })();
+
   /* Hour, minute and second in Graz plus the zone name (CET or CEST), read
      from one formatter call. Without Intl the device clock stands in. */
   function timeParts(now) {
@@ -32,6 +49,16 @@ const PortfolioClockFace = (function () {
       else if (part.type === 'timeZoneName') out.zone = part.value;
     });
     return out;
+  }
+
+  /* Minutes Graz is ahead of UTC at a timestamp (60 in CET, 120 in CEST):
+     its wall clock read back as if it were UTC. Null without Intl. */
+  function utcOffset(ms) {
+    if (!wallFmt) return null;
+    const wall = {};
+    wallFmt.formatToParts(new Date(ms)).forEach(function (part) { wall[part.type] = Number(part.value); });
+    const asUtc = Date.UTC(wall.year, wall.month - 1, wall.day, wall.hour % 24, wall.minute, wall.second);
+    return Math.round((asUtc - Math.floor(ms / 1000) * 1000) / 60000);
   }
 
   /* Sun altitude over Graz in degrees at a timestamp (ms). A low-precision
@@ -84,5 +111,5 @@ const PortfolioClockFace = (function () {
     }
   }
 
-  return Object.freeze({ timeParts, sunAltitude, phaseName, setHand, addTicks });
+  return Object.freeze({ timeParts, utcOffset, sunAltitude, phaseName, setHand, addTicks });
 })();

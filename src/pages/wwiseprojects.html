@@ -3,7 +3,7 @@
   <header class="ww-open">
     <div class="ww-open__text">
       <h1>Three Wwise exercises</h1>
-      <p class="ww-lead">I did the audio implementation in Wwise for three Unity exercises: playback priorities for a scene with too many sounds, the sound of a walk from a forest into a cave, and an Android build that loads its sounds by area.</p>
+      <p class="ww-lead">I did the audio implementation in Wwise for three Unity exercises: which sounds keep playing when skeletons crowd the screen, how a walk from a forest into a cave sounds, and an Android build that loads each area&rsquo;s sounds only when it needs them.</p>
 
       <nav class="ww-unit" aria-label="Exercises on this page">
         <p class="ww-unit__root"><span>Howest DAE</span>&nbsp;&middot; <span>Game Sound Integration</span>&nbsp;&middot; <span>2023&ndash;2024</span></p>
@@ -16,11 +16,12 @@
     </div>
 
     <!-- One strip cut into the three games; pointing at a row or a frame solos
-         that game (CSS only, wwiseprojects.css). -->
-    <div class="ww-tri" role="img" aria-label="Frames from the three exercises: a skeleton in a suit hit by a shot in Boney Boogaloo, the player character in mossy ruins in Ellen, and a glowing creature in a red cavern in Stomach Aches">
+         that game (CSS only, wwiseprojects.css). The Stomach Aches frame is a
+         still from the recording further down the page (0:33.9). -->
+    <div class="ww-tri" role="img" aria-label="Frames from the three exercises: a skeleton in a suit hit by a shot in Boney Boogaloo, the player character in mossy ruins in Ellen, and a green germ hit by the GermOBlaster in Stomach Aches">
       <div class="ww-slice" data-obj="boney"><img src="old/public/assets/images/projects-wwise/frames/boney-shot-1200.webp" srcset="old/public/assets/images/projects-wwise/frames/boney-shot-640.webp 640w, old/public/assets/images/projects-wwise/frames/boney-shot-1200.webp 1200w, old/public/assets/images/projects-wwise/frames/boney-shot.jpg 1920w" sizes="(min-width: 901px) 980px, 440px" width="1920" height="1080" alt="" aria-hidden="true" fetchpriority="high" decoding="async"></div>
       <div class="ww-slice" data-obj="ellen"><img src="old/public/assets/images/projects-wwise/frames/ellen-ruins-1200.webp" srcset="old/public/assets/images/projects-wwise/frames/ellen-ruins-640.webp 640w, old/public/assets/images/projects-wwise/frames/ellen-ruins-1200.webp 1200w, old/public/assets/images/projects-wwise/frames/ellen-ruins.jpg 1920w" sizes="(min-width: 901px) 980px, 440px" width="1920" height="1080" alt="" aria-hidden="true" decoding="async"></div>
-      <div class="ww-slice" data-obj="stomach"><img src="old/public/assets/images/projects-wwise/frames/stomach-cavern-1200.webp" srcset="old/public/assets/images/projects-wwise/frames/stomach-cavern-640.webp 640w, old/public/assets/images/projects-wwise/frames/stomach-cavern-1200.webp 1200w, old/public/assets/images/projects-wwise/frames/stomach-cavern.jpg 1920w" sizes="(min-width: 901px) 980px, 440px" width="1920" height="1080" alt="" aria-hidden="true" decoding="async"></div>
+      <div class="ww-slice" data-obj="stomach"><img src="assets/wwiseprojects/stomach-germ-1200.webp" srcset="assets/wwiseprojects/stomach-germ-640.webp 640w, assets/wwiseprojects/stomach-germ-1200.webp 1200w, assets/wwiseprojects/stomach-germ.jpg 1920w" sizes="(min-width: 901px) 980px, 440px" width="1920" height="1080" alt="" aria-hidden="true" decoding="async"></div>
     </div>
   </header>
 
@@ -29,7 +30,7 @@
     <section class="ww-node" id="ww-boney" data-obj="boney" aria-labelledby="ww-priority-title">
       <div class="ww-node__text">
         <h2 class="ww-node__head" id="ww-priority-title"><span class="ww-bar" aria-hidden="true"></span><span class="ww-node__name">Boney Boogaloo</span> <span class="ww-node__topic">Playback priority</span></h2>
-        <p>I set the playback priorities for a test scene that plays more sounds at once than the project&rsquo;s voice limit allows: nearby weapons keep playing and distant enemy voices drop out first. I also removed the silent gaps.</p>
+        <p>In the test scene, skeletons in suits keep rising over the hill, and more sounds play at once than the project&rsquo;s voice limit allows. I set the playback priorities that decide what you still hear: nearby weapons keep playing and distant enemy voices drop out first.</p>
       </div>
       <figure class="ww-node__media"><video controls playsinline preload="none" poster="old/public/assets/images/video-posters/boney-boogaloo-1600.webp" aria-label="Recording of the Boney Boogaloo test scene"><source src="old/public/wwiseprojectsinfo/videos/boneyboogaloo/optboo.mp4" type="video/mp4">Your browser does not support the video element.</video></figure>
     </section>
@@ -37,12 +38,18 @@
     <section class="ww-node" id="ww-ellen" data-obj="ellen" aria-labelledby="ww-spaces-title">
       <div class="ww-node__text">
         <h2 class="ww-node__head" id="ww-spaces-title"><span class="ww-bar" aria-hidden="true"></span><span class="ww-node__name">Ellen</span> <span class="ww-node__topic">Forest to cave</span></h2>
-        <p>I set how quickly each type of sound fades with distance. When the player walks from the forest into the cave, the two ambiences crossfade and the reverb changes with them instead of switching in one step.</p>
-        <p class="ww-links"><a href="https://vimeo.com/1135151616" target="_blank" rel="noopener noreferrer">Watch the walk into the cave on Vimeo <span aria-hidden="true">&nearr;</span></a></p>
+        <p>When the player walks from the forest into the cave, the two ambiences crossfade and the reverb changes with them instead of switching in one step. I also set the attenuation for each type of sound, which decides how quickly it fades with distance.</p>
+        <!-- The walk is the proof of the transition. Vimeo cannot be embedded
+             under the page's CSP (frame-src allows youtube-nocookie only), so it
+             is a transport row that opens the recording. -->
+        <a class="ww-watch" href="https://vimeo.com/1135151616" target="_blank" rel="noopener noreferrer">
+          <span class="ww-watch__play" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 7.5v9l7-4.5-7-4.5Z"/></svg></span>
+          <span class="ww-watch__text"><span class="ww-watch__label">Watch the walk into the cave</span><span class="ww-watch__where">Vimeo <span aria-hidden="true">&nearr;</span></span></span>
+        </a>
       </div>
       <!-- Retyped from the exercise's Wwise capture, object colours included. -->
       <figure class="ww-node__media ww-pane">
-        <figcaption class="ww-pane__bar"><span>The exercise&rsquo;s music hierarchy</span><a href="old/public/wwiseprojectsinfo/ellen/interactivemusichierrarchy.png" aria-label="Open the Wwise capture of the music hierarchy">Capture <span aria-hidden="true">&nearr;</span></a></figcaption>
+        <figcaption class="ww-pane__bar"><span>Music hierarchy in Wwise</span><a href="old/public/wwiseprojectsinfo/ellen/interactivemusichierrarchy.png" aria-label="Open the Wwise capture of the music hierarchy">Capture <span aria-hidden="true">&nearr;</span></a></figcaption>
         <ul class="ww-wtree">
           <li><span class="ww-o ww-o--p">MUSIC Root</span>
             <ul>

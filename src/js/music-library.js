@@ -49,7 +49,11 @@ const PortfolioMusicLibrary = (function () {
 
   function trackDetail(track) {
     const date = hasExactDate(track) ? accessibleDate(track) : trackYear(track);
-    return kindLabel(track) + ' · ' + date;
+    // Next to the stage's play button and in the Now playing sheet, "Finished"
+    // reads as a playback state rather than a fact about the piece; sketches
+    // keep their "Sketch" label since that distinction still matters there.
+    // The chips, shelf heading and aria-labels keep kindLabel() unchanged.
+    return isSketch(track) ? (kindLabel(track) + ' · ' + date) : date;
   }
 
   // Catalogue titles stay the key for selection, saved state and the lock

@@ -1030,6 +1030,9 @@
     pushPositionState(true);
   });
   audio.addEventListener('playing', () => {
+    // First real playback: let music.css show the buffered range. Before
+    // this, a preloaded buffer next to "Ready to play" looks part-heard.
+    document.documentElement.classList.add('has-played');
     setStatus('Playing');
     setPlayState();
     pushPositionState(true);

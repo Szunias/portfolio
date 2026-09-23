@@ -1020,6 +1020,13 @@ a { color: var(--paper); }
 .player-bar__progress-buffer { background: var(--c-control-hi); }
 .player-bar__progress-fill { background: var(--accent); }
 
+/* preload="metadata" plus the explicit load() in music-player.js draws a
+   buffered range as soon as metadata arrives, before anything has actually
+   played; next to "Ready to play 0:00" that reads as a track already partly
+   heard. Hide it until music-player.js marks the first real "playing" event,
+   on both this bar and the now-playing sheet's scrub, which reuse this class. */
+:root:not(.has-played) .player-bar__progress-buffer { opacity: 0; }
+
 .player-bar__progress-fill::after {
   content: '';
   position: absolute;

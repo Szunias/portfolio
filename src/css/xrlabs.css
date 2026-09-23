@@ -84,13 +84,22 @@ body::before { background: none; }
   font: 500 clamp(36px, 4.4vw, 62px)/.95 var(--f-display);
   letter-spacing: -.045em;
 }
-.xr .xr-plate__tag {
+.xr .xr-plate__role {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
   max-width: none;
   margin: 0;
-  color: var(--c-ink-3);
-  font: 400 11.5px/1.5 var(--f-mono);
+  font: 400 12px/1.5 var(--f-mono);
   letter-spacing: .08em;
   text-transform: uppercase;
+}
+.xr .xr-role { color: var(--c-ink); font-weight: 500; }
+.xr .xr-when { color: var(--c-ink-3); }
+.xr .xr-when::before {
+  content: "\00B7";
+  margin: 0 .75em;
+  color: var(--c-ink-3);
 }
 .xr .xr-plate video {
   display: block;
@@ -103,6 +112,24 @@ body::before { background: none; }
   background: #000;
   box-shadow: none;
 }
+.xr .xr-plate__media { position: relative; }
+.xr .xr-plate__src {
+  display: none;
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  z-index: 2;
+  padding: 3px 7px;
+  background: rgba(10, 11, 10, .8);
+  color: var(--c-ink-2);
+  font: 400 10.5px/1.3 var(--f-mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+/* Only while the poster shows: local-video.js wraps the video in .local-video
+   and drops that class when playback starts. No JS, no tag. */
+.xr .local-video ~ .xr-plate__src { display: block; }
 .xr .xr-open__text { padding-top: clamp(4px, 1vw, 14px); }
 .xr .xr-lead {
   max-width: 40ch;
@@ -110,24 +137,25 @@ body::before { background: none; }
   color: var(--c-ink);
   font-size: clamp(18px, 1.42vw, 20.5px);
   line-height: 1.55;
+  text-wrap: pretty;
 }
 .xr .xr-meta {
-  margin: 0 0 8px;
+  margin: 0;
   color: var(--c-ink-3);
   font: 400 12px/1.7 var(--f-mono);
   letter-spacing: .06em;
   text-transform: uppercase;
 }
 .xr .xr-meta span { white-space: nowrap; }
-.xr .xr-links { margin: 0; font-size: 14.5px; }
 .xr .xr-note {
   max-width: 44ch;
-  margin: 30px 0 0;
+  margin: 24px 0 0;
   padding-top: 16px;
   border-top: 1px solid var(--c-line-2);
   color: var(--c-ink-3);
   font: 400 12px/1.65 var(--f-mono);
 }
+.xr .xr-note a { color: var(--c-ink-2); }
 
 /* ---------- The floor: one shot, four trainee positions ---------- */
 .xr .xr-floor { margin-bottom: clamp(72px, 8vw, 112px); }
@@ -286,18 +314,38 @@ body::before { background: none; }
   .xr .xr-open { grid-template-columns: minmax(0, 1fr); }
   .xr .xr-desk__grid { grid-template-columns: minmax(0, 1fr); }
 }
+@media (min-width: 600px) and (max-width: 900px) {
+  .xr .xr-open__text {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    column-gap: clamp(24px, 4.5vw, 44px);
+    align-items: start;
+  }
+  .xr .xr-lead { grid-row: 1 / span 2; margin: 0; }
+  .xr .xr-meta { grid-column: 2; }
+  .xr .xr-note { grid-column: 2; margin-top: 16px; }
+}
 @media (max-width: 600px) {
   .xr .xr-pick { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .xr .xr-pick label { padding: 8px 10px; font-size: 14px; }
   .xr .xr-desk { padding: 14px; }
-  .xr .xr-plan .tag { font-size: 26px; }
-  .xr .xr-spot .num { font-size: 30px; transform: translate(10px, 9px); }
+  .xr .xr-plan .tag { font-size: 32px; }
+  .xr .xr-spot .num { font-size: 36px; transform: translate(8px, 8px); }
+  .xr [data-xr-spot="4"] .num { transform: translate(10px, -6px); }
   .xr .xr-spot .ring { r: 17px; }
   .xr .xr-spot .halo { r: 30px; }
   .xr .xr-shot .core { r: 10px; }
   .xr .xr-shot .burst { r: 27px; }
   .xr .xr-plan .hit { r: 11px; }
   .xr .xr-pos dl > div { grid-template-columns: 108px minmax(0, 1fr); }
+}
+@media (max-width: 599px) {
+  .xr .xr-plate__role { display: block; margin-top: 2px; }
+  .xr .xr-plate__role span { display: block; }
+  .xr .xr-when::before { content: none; }
+}
+@media (max-width: 420px) {
+  .xr .xr-plate__src { bottom: 6px; left: 6px; padding: 2px 6px; font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .xr .xr-rays, .xr .xr-pick label, .xr .xr-spot .ring { transition: none; }

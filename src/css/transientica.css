@@ -106,22 +106,24 @@ body::before { background: none; }
 /* ---------- From a sound to a lane: the signal chain ---------- */
 .tr .tr-path__body {
   display: grid;
-  grid-template-columns: minmax(250px, .72fr) minmax(0, 1.28fr);
+  grid-template-columns: minmax(280px, .92fr) minmax(0, 1.08fr);
   gap: clamp(28px, 4.4vw, 64px);
-  align-items: start;
+  align-items: end;
 }
+.cine.tr .tr-path__chain .tr-label { margin-bottom: 18px; }
 .cine.tr .tr-chain { position: relative; max-width: none; margin: 0; padding: 2px 0 0; list-style: none; }
-.tr .tr-chain::before {
+.tr .tr-chain li { position: relative; margin: 0; padding: 0 0 24px 32px; }
+.tr .tr-chain li:last-child { padding-bottom: 0; }
+/* One connector per step instead of one line down the whole list, so it stops at the last node however long its text is. */
+.tr .tr-chain li:not(:last-child)::after {
   content: "";
   position: absolute;
   left: 6px;
-  top: 12px;
-  bottom: 28px;
+  top: 17px;
+  bottom: -3px;
   width: 2px;
-  background: linear-gradient(var(--tr-line), rgba(63, 224, 204, .22));
+  background: rgba(63, 224, 204, .5);
 }
-.tr .tr-chain li { position: relative; margin: 0; padding: 0 0 22px 32px; }
-.tr .tr-chain li:last-child { padding-bottom: 0; }
 .tr .tr-chain li::before {
   content: "";
   position: absolute;
@@ -141,7 +143,8 @@ body::before { background: none; }
   letter-spacing: .1em;
   text-transform: uppercase;
 }
-.tr .tr-chain span { display: block; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.55; }
+.tr .tr-chain span { display: block; max-width: 44ch; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.55; }
+.tr .tr-chain .tr-chain__lanes { margin-top: 8px; }
 .tr .tr-chain__lanes em {
   margin-right: 12px;
   font: 600 12.5px/1.6 var(--f-mono);
@@ -149,7 +152,26 @@ body::before { background: none; }
   letter-spacing: .08em;
   text-transform: uppercase;
 }
-.tr .tr-still img { display: block; width: 100%; height: auto; border: 1px solid var(--c-line-2); border-radius: 4px; }
+/* The game's own readout, cropped from the full 1920px frame at close to 1:1:
+   the classified sound, its confidence and the strip of upcoming notes.
+   --x/--w pick the crop window in source pixels (frame is 1920 x 1080). */
+.tr .tr-hud { --x: 580; --w: 760; --h: 330; }
+.tr .tr-hud__crop {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: var(--w) / var(--h);
+  border: 1px solid var(--c-line-2);
+  border-radius: 4px;
+  background: #000;
+}
+.tr .tr-hud__crop img {
+  position: absolute;
+  top: 0;
+  left: calc(var(--x) / var(--w) * -100%);
+  width: calc(1920 / var(--w) * 100%);
+  max-width: none;
+  height: auto;
+}
 
 /* ---------- Judged on the audio clock: the practice lane ---------- */
 .tr .tr-toy {
@@ -319,10 +341,34 @@ body::before { background: none; }
 .tr .tr-versions td { color: var(--c-ink-2); }
 .tr .tr-versions td:last-child { color: var(--c-ink); }
 .tr .tr-proto__video video { display: block; width: 100%; height: auto; border: 1px solid var(--c-line-2); background: #000; }
+.tr .tr-proto__video figcaption { margin-top: 10px; }
+
+/* The prototype video's own button that jumps straight to the live demo. */
+.tr .tr-jump {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 14px;
+  padding: 0 18px 0 14px;
+  border: 1px solid var(--c-accent-line);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--c-accent);
+  font: 600 14.5px/1.2 var(--f-body);
+  cursor: pointer;
+}
+.tr .tr-jump svg { width: 18px; height: 18px; fill: currentColor; }
+.tr .tr-jump[hidden] { display: none; }
+.tr .tr-jump:hover { border-color: var(--c-accent); background: var(--c-accent-weak); }
+.tr .tr-jump:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
 
 @media (max-width: 900px) {
   .tr .tr-open { grid-template-columns: minmax(0, 1fr); grid-template-areas: "text" "screen"; gap: 32px; }
   .tr .tr-path__body, .tr .tr-proto__body { grid-template-columns: minmax(0, 1fr); }
+  .tr .tr-path__body { gap: 36px; }
+  /* A tighter crop window on narrow screens keeps "89%" legible. */
+  .tr .tr-hud { --x: 680; --w: 560; --h: 300; }
   /* Phones and tablets: the lane comes straight after Play; the timing legend follows the pads. */
   .tr .tr-toy { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; gap: 0; }
   .tr .tr-toy__side { display: contents; }

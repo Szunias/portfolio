@@ -59,10 +59,26 @@
 }
 .ar .ar-lead {
   max-width: 36ch;
-  margin: 0 0 24px;
+  margin: 0 0 18px;
   color: var(--c-ink);
   font-size: clamp(18px, 1.42vw, 20.5px);
   line-height: 1.58;
+  text-wrap: pretty;
+}
+.ar .ar-answer {
+  max-width: 44ch;
+  margin: 0 0 26px;
+  color: var(--c-ink-2);
+  font-size: clamp(16px, 1.15vw, 17px);
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+/* Two paragraphs now: a wider text column keeps the thesis link above the
+   fold at 1440 x 900 and brings the two columns closer in height. */
+@media (min-width: 901px) {
+  .ar .ar-open { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+  .ar .ar-lead { max-width: 40ch; }
+  .ar .ar-answer { max-width: 48ch; }
 }
 .ar .ar-meta {
   max-width: none;
@@ -113,6 +129,7 @@
 }
 .ar .ar-term {
   position: relative;
+  container: arterm / inline-size;
   width: 78%;
   margin: -15.5% 0 0 auto;
   background: var(--ar-term);
@@ -157,6 +174,18 @@
 .ar .ar-log__r { display: inline-grid; grid-template-columns: 5ch 7.5ch auto; column-gap: 0; }
 .ar .ar-log__ms { color: #fff; }
 .ar .ar-log__b { color: #a8a8a8; }
+/* Between about 900 and 1240 px (and on phones) the terminal window is
+   narrower than a full log line, so the bytes column fits the window it is
+   drawn in instead of clipping mid-number. Below 480 px it is dropped, since
+   it is the one column without meaning for the reader; from 330 px up a
+   request still fits on one line. */
+@container arterm (max-width: 480px) {
+  .ar .ar-log__b { display: none; }
+}
+@container arterm (min-width: 330px) and (max-width: 480px) {
+  .ar .ar-log li { grid-template-columns: 4ch 30ch auto; white-space: pre; }
+  .ar .ar-log__r { grid-column: auto; margin-bottom: 0; }
+}
 .ar .ar-rig figcaption {
   margin: 14px 0 0 22%;
   color: var(--c-ink-3);
@@ -166,7 +195,7 @@
 
 /* ---------- Section heads ---------- */
 .ar .ar-head { max-width: 66ch; margin-bottom: clamp(26px, 3vw, 40px); }
-.ar .ar-head p { max-width: 64ch; margin: 0; color: var(--c-ink-2); font-size: 17px; line-height: 1.68; }
+.ar .ar-head p { max-width: 64ch; margin: 0; color: var(--c-ink-2); font-size: 17px; line-height: 1.68; text-wrap: pretty; }
 .ar .ar-head--wide { max-width: none; }
 
 /* ---------- The ruler: event at 0, sound where the measurement puts it ---------- */
@@ -394,6 +423,7 @@
   letter-spacing: .1em;
   text-align: left;
   text-transform: uppercase;
+  white-space: normal;
   border-top: 1px solid var(--c-line);
 }
 .ar .ar-cache tr.ar-group { height: auto; }
@@ -417,7 +447,7 @@
 
 /* ---------- The request path ---------- */
 .ar .ar-path { margin-bottom: clamp(96px, 11vw, 150px); }
-.ar .ar-cols p { max-width: 66ch; margin: 0 0 18px; color: var(--c-ink-2); font-size: 16.5px; line-height: 1.7; break-inside: avoid; }
+.ar .ar-cols p { max-width: 66ch; margin: 0 0 18px; color: var(--c-ink-2); font-size: 16.5px; line-height: 1.7; break-inside: avoid; text-wrap: pretty; }
 .ar .ar-film { margin: 0; }
 .ar .ar-film video {
   display: block;
@@ -427,6 +457,53 @@
   border: 1px solid var(--c-line-2);
 }
 .ar .ar-film figcaption { max-width: 72ch; margin: 12px 0 0; color: var(--c-ink-3); font-size: 13.5px; line-height: 1.55; }
+
+/* ---------- The demo walk: video first, chapters from the server log ---------- */
+.ar .ar-walk .ar-head { margin-bottom: clamp(20px, 2.4vw, 30px); }
+.ar .ar-walk .ar-film { margin-bottom: clamp(30px, 3.4vw, 46px); }
+.ar .ar-chapters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--c-line-2);
+  border-top: 0;
+  background: var(--c-bg-1);
+}
+.ar .ar-chapters li { margin: 0; border-left: 1px solid var(--c-line); }
+.ar .ar-chapters li:first-child { border-left: 0; }
+.ar .ar-chapters li,
+.ar .ar-ch {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+.ar .ar-chapters li { padding: 12px 16px 13px; }
+.ar .ar-chapters li:has(> .ar-ch) { padding: 0; }
+.ar .ar-ch {
+  width: 100%;
+  min-height: 100%;
+  padding: 12px 16px 13px;
+  border: 0;
+  background: transparent;
+  color: var(--c-ink-2);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color .2s var(--ease), color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.ar .ar-ch:hover { background: var(--c-bg-2); color: var(--c-ink); }
+.ar .ar-ch[aria-current="true"] { color: var(--c-ink); box-shadow: inset 0 2px 0 var(--c-accent); }
+.ar .ar-ch__t { color: var(--c-accent); font: 500 12.5px/1.4 var(--f-mono); letter-spacing: .02em; }
+.ar .ar-ch__n { color: var(--c-ink-3); font: 400 12px/1.4 var(--f-mono); }
+.ar .ar-ch__l { flex-basis: 100%; color: inherit; font: 500 14px/1.35 var(--f-body); }
+.ar .ar-chapters li > .ar-ch__l { color: var(--c-ink-2); }
+.ar .ar-walk .ar-film figcaption { margin-top: 12px; }
+.ar .ar-cue { color: var(--c-ink); font-weight: 600; }
 
 /* ---------- Listening matrix ---------- */
 .ar .ar-listen { margin-bottom: clamp(72px, 8vw, 110px); }
@@ -511,7 +588,7 @@
 }
 @media (max-width: 700px) {
   :root { --ar-ticks: 40; } /* one tick per 100 ms, six frames */
-  .ar .ar-term { width: calc(100% - 14px); margin-top: -12%; font-size: 11.5px; line-height: 1.55; }
+  .ar .ar-term { width: calc(100% - 14px); margin-top: -12%; font-size: 11px; line-height: 1.55; }
   .ar .ar-term__bar { height: 30px; font-size: 11px; }
   .ar .ar-term__ctl { gap: 16px; padding-right: 12px; }
   .ar .ar-term__body { padding: 10px 12px 13px; }
@@ -544,6 +621,12 @@
   .ar .ar-axis__budget { font-size: 10.5px; }
 
   .ar .ar-cols p { font-size: 16px; }
+  .ar .ar-chapters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ar .ar-chapters li:nth-child(3) { border-left: 0; }
+  .ar .ar-chapters li:nth-child(n + 3) { border-top: 1px solid var(--c-line); }
+  .ar .ar-chapters li, .ar .ar-ch { padding-right: 12px; padding-left: 12px; }
+  .ar .ar-chapters li:has(> .ar-ch) { padding: 0; }
+  .ar .ar-ch__l { font-size: 13.5px; }
 
   .ar .ar-matrix, .ar .ar-matrix tbody { display: block; }
   .ar .ar-matrix thead { display: none; }
@@ -554,5 +637,5 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .ar .ar-ruler.is-running .ar-lane::after { opacity: 0; }
-  .ar .ar-fire, .ar .ar-sound, .ar .ar-play, .ar .ar-play::before, .ar .ar-thesis__title { transition: none; }
+  .ar .ar-fire, .ar .ar-sound, .ar .ar-play, .ar .ar-play::before, .ar .ar-thesis__title, .ar .ar-ch { transition: none; }
 }

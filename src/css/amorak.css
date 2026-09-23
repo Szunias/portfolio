@@ -160,9 +160,15 @@ body:has(.cine.am)::before {
 }
 .am .am-ears__line--tail { stroke: var(--c-ink-3); opacity: .5; }
 
+/* Labels sit above the playhead on the panel's own colour, so the dot
+   doesn't strike through the text it crosses while the film plays. */
 .am .am-ears__tail-label,
 .am .am-mark > span {
   position: absolute;
+  z-index: 1;
+  padding: 1px 3px;
+  margin-left: -3px;
+  border-radius: 2px;
   color: var(--c-ink-3);
   font: 500 10.5px/1.2 var(--f-mono);
   letter-spacing: .05em;
@@ -170,7 +176,7 @@ body:has(.cine.am)::before {
   white-space: nowrap;
   pointer-events: none;
 }
-.am .am-ears__tail-label { left: 60.94%; top: 4px; padding-left: 8px; }
+.am .am-ears__tail-label { left: 60.94%; top: 4px; padding-left: 5px; margin-left: 3px; background: #131a1d; }
 .am .am-mark {
   position: absolute;
   top: 0;
@@ -180,8 +186,8 @@ body:has(.cine.am)::before {
   border-left: 1px dashed rgba(196, 222, 232, .26);
   pointer-events: none;
 }
-.am .am-mark > span { top: 4px; left: 6px; color: var(--c-ink-2); }
-.am .am-mark--low > span { top: auto; bottom: 4px; }
+.am .am-mark > span { top: 4px; left: 6px; color: var(--c-ink-2); background: #0e1417; }
+.am .am-mark--low > span { top: auto; bottom: 4px; background: #0d1316; }
 
 .am .am-ears__playhead {
   position: absolute;
@@ -315,6 +321,31 @@ body:has(.cine.am)::before {
   color: var(--c-ink-3);
   font-size: 13.5px;
   line-height: 1.65;
+}
+
+/* From 1180 px the title card and the lead share one row, so the film and
+   its play button stay on the first screen of a 1440x900 laptop instead of
+   sitting under the fold below a full-width card. */
+@media (min-width: 1180px) {
+  .am .am-open {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: clamp(44px, 4.4vw, 72px);
+    align-items: end;
+    margin-bottom: 48px;
+  }
+  .am .am-title { margin-bottom: 0; }
+  /* The card has ~7% of black under the letters; lift the text to the letters' baseline. */
+  .am .am-open__text { padding-bottom: 1.1%; }
+  .am .am-lead { max-width: none; font-size: 19px; line-height: 1.55; margin-bottom: 16px; }
+  .am .am-br { display: inline; }
+  .am .am-sep { display: none; }
+}
+
+/* The hatch is above the basement in the film, so its marker keeps the long
+   word out of the strip label sooner than the general short/long swap below. */
+@media (max-width: 900px) {
+  .am .am-mark .am-long { display: none; }
 }
 
 @media (min-width: 721px) {

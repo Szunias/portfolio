@@ -19,6 +19,9 @@ const deskLinks = ['shadowframes.html#sf-mix-title', 'nottoday.html#nt-engines-t
 const results = [];
 fs.mkdirSync(output, { recursive: true });
 
+// A section refresh leaves the opening as it was: the hero markup with its
+// chapter list, the reel surface drawn from the showreel, and the styles and
+// scripts that run the surface, the chapters and the player.
 function checkPreservedHero() {
   const base = process.env.REFRESH_BASE;
   if (!base) return;
@@ -27,7 +30,7 @@ function checkPreservedHero() {
   const current = (file) => fs.readFileSync(path.join(root, file));
   const hero = (buffer) => buffer.toString('utf8').split('</section>')[0];
   assert.equal(hero(current('src/pages/index.html')), hero(old('src/pages/index.html')));
-  for (const file of ['src/css/home-hero.css', 'src/js/home-showreel.js']) {
+  for (const file of ['src/css/home-hero.css', 'src/js/home-showreel.js', 'src/js/home-reel-chapters.js', 'src/assets/home/reel-surface.svg']) {
     assert.ok(current(file).equals(old(file)), `${file} changed during the section refresh`);
   }
   results.push({ check: 'hero source preservation', passed: true, base });
@@ -129,7 +132,10 @@ async function main() {
       await page.setViewportSize({ width, height: 1000 });
       await page.goto(origin, { waitUntil: 'load' });
       await loadImages(page);
-      await assertTextFits(page, '#work, #about, #contact');
+      await assertTextFits(page, '#work, #about, #contact, .reel-chapters');
+      // The showreel chapters under the hero surface form one tab stop.
+      assert.deepEqual(await page.locator('[data-reel-chapters] button').evaluateAll((buttons) => buttons.map((button) => button.tabIndex)),
+        [0, -1, -1, -1, -1, -1, -1], 'Showreel chapters must keep a single tab stop');
       assert.equal(await page.locator('a.prow--featured').count(), 5);
       assert.equal(await page.locator('a.prow--tool').count(), 4);
       // The music card shows no cover art, only the first three pieces of the set list.
@@ -188,6 +194,7 @@ async function main() {
     assert.equal(await fallback.locator('.music-cta__link').isVisible(), true);
     assert.equal(await fallback.locator('[data-mail-link]').isVisible(), true);
     assert.equal(await fallback.locator('[data-copy-mail]').isVisible(), false);
+    assert.equal(await fallback.locator('.reel-chapters').isVisible(), false, 'Chapters need JavaScript to start the reel');
     assert.deepEqual(await fallback.locator('[data-solo-desk] a').evaluateAll((links) => links.map((link) => link.getAttribute('href'))), deskLinks);
     assert.deepEqual(await fallback.locator('[data-solo]').evaluateAll((keys) => keys.map((key) => key.checkVisibility())), [false, false, false, false], 'Solo keys must stay hidden without JavaScript');
     await fallback.locator('.earlier-work summary').click();

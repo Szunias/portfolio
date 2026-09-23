@@ -1,7 +1,8 @@
 /* Windable-dial affordances for the contact page (and its contact-wind review
    twin). Loaded after contact-time.css, which carries the whole clock; this
    file makes the dial feel grabbable, draws its crown and, on the published
-   page only, sizes the dial and sets out its two-line caption. */
+   page only, sizes the room and the dial, sets out the caption and confirms
+   Copy email on its button. */
 
 .ck__dial {
   cursor: grab;
@@ -44,14 +45,52 @@
    classes, so these rules carry a third (.ck) to win without editing the
    shared theme. */
 
-/* The clock is the page: at 1440 it weighs as much as the title. */
-.ck.ck--contact .ck__dial { width: min(100%, 360px, 46vh); }
-
 /* The crown stands 3% of the dial above its box (11px at 360); the focus
    ring, also shown while winding, clears it instead of cutting through it. */
 .ck.ck--contact .ck__dial:focus-visible { outline-offset: 14px; }
 
-/* The time keeps its place; only the line under it changes while winding,
+/* "I'm open to relocating." (.ck__move) is the lead's last line, so the
+   lead's gap sits under it. It is a paragraph of its own: run on, it left
+   "relocating." alone on a third line, and tests/seo-copy.test.cjs wants the
+   freelance sentence as plain paragraph text. */
+.ck.ck--contact .ck__intro:not(.ck__move) { margin-bottom: 0; }
+
+/* Copy email confirms on the button itself (copy-email.js sets
+   data-copy-state). Both labels share one grid cell, so the width holds. */
+.ck.ck--contact .ck__copy {
+  display: inline-grid;
+  place-items: center;
+}
+
+.ck.ck--contact .ck__copy > span { grid-area: 1 / 1; }
+
+.ck.ck--contact .ck__copy-done,
+.ck.ck--contact .ck__copy[data-copy-state="copied"] .ck__copy-idle { visibility: hidden; }
+
+.ck.ck--contact .ck__copy[data-copy-state="copied"] {
+  color: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+.ck.ck--contact .ck__copy[data-copy-state="copied"] .ck__copy-done { visibility: visible; }
+
+/* The status stays the screen reader's live region, out of the layout, and
+   shows only when copying fails: it then says how to copy by hand. */
+.ck.ck--contact .ck__status:not([data-copy-state="failed"]) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* No status line is reserved above the profiles, so they keep their own gap. */
+.ck.ck--contact .ck__out { margin-top: 30px; }
+
+/* The time keeps its place; only the lines under it change while winding,
    and the digits turn ice while they are not "now". */
 .ck.ck--contact .ck__cap-line {
   display: grid;
@@ -77,9 +116,27 @@
   color: var(--c-ink-3);
 }
 
-.ck.ck--contact .ck__cap-where { color: var(--c-ink-3); }
+/* The third line, [data-cap-you], shows only for a visitor whose clock is
+   not on Graz time (contact-clock.js). */
+.ck.ck--contact .ck__cap-where,
+.ck.ck--contact .ck__cap-you { color: var(--c-ink-3); }
 
 .ck.ck--contact.ck--preview .ck__cap-time { color: var(--c-accent); }
+
+/* One screen on a desktop: the room leaves space for the header and the
+   80px colophon. The dial's right edge sits on the frame's right edge, under
+   the Contact tab, as the title's left edge sits under the name. */
+@media (min-width: 821px) {
+  .ck.ck--contact { min-height: calc(100svh - var(--site-header-height) - 80px); }
+
+  /* The clock is the page: at 1440 it weighs as much as the title. */
+  .ck.ck--contact .ck__plate {
+    justify-self: end;
+    width: min(100%, 360px, 46vh);
+  }
+
+  .ck.ck--contact .ck__dial { width: 100%; }
+}
 
 /* One column: the dial is centred and big enough to wind with a thumb. */
 @media (max-width: 820px) {
@@ -104,7 +161,7 @@
     grid-template-columns: repeat(4, auto);
     justify-content: start;
     gap: 0 20px;
-    margin-top: 8px;
+    margin-top: 26px;
   }
 
   .ck.ck--contact .ck__cv {
@@ -114,5 +171,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ck.ck--contact .ck__cap-time { transition: none; }
+  .ck.ck--contact .ck__cap-time,
+  .ck.ck--contact .ck__copy { transition: none; }
 }

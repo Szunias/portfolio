@@ -10,7 +10,7 @@
     </div>
 
     <div class="sf-open__text">
-      <p class="sf-lead">A horror game set in one abandoned pub, where the player finds changes by ear and photographs them with a Polaroid camera. I was the sole audio designer: sound design, voice recording, implementation and mixing, with over 200 Wwise events in the finished game.</p>
+      <p class="sf-lead">A black-and-white horror game set in one abandoned pub, where the player finds changes by ear and photographs them with a Polaroid camera. I was the sole audio designer: sound design, voice recording, implementation and mixing, with over 200 Wwise events in the finished game.</p>
       <div class="sf-open__foot">
         <p class="sf-meta"><span>2025</span>&nbsp;&middot; <span>4 months</span>&nbsp;&middot; <span>Wwise</span>&nbsp;&middot; <span>Unreal Engine 5</span>&nbsp;&middot; <span>C++</span>&nbsp;&middot; <span>REAPER</span></p>
         <p class="sf-links"><a href="https://www.youtube.com/watch?v=878QcFfuhZY" target="_blank" rel="noopener noreferrer">Trailer on YouTube <span aria-hidden="true">&nearr;</span></a></p>
@@ -21,7 +21,7 @@
   <section class="sf-sec" aria-labelledby="sf-ambience-title">
     <div class="sf-head">
       <h2 id="sf-ambience-title">The ambience follows the board</h2>
-      <p>Every confirmed photograph goes on the board, and the pub&rsquo;s ambience moves with it. The ambience is a Wwise switch group on <code>RTPC_Photos_OnBoard</code>, with its own stage for every value from 0 to 10.</p>
+      <p>Every confirmed photograph goes on the board, and each one moves the pub&rsquo;s ambience a stage further. The first adds weird noises to the base layer and the third a ghostly screech. The fourth swaps both for a horror drone, and from the eighth only the horror background ambience is left. In Wwise it is a switch group on <code>RTPC_Photos_OnBoard</code>, with a stage for every count from 0 to 10.</p>
     </div>
 
     <div class="sf-board" data-sf-board>
@@ -64,37 +64,48 @@
       </figure>
       <figure>
         <a class="image-zoom" data-image-zoom style="--image-natural-width:1920px" href="old/public/assets/images/projects-shadowframes/SwitchContainer.png" aria-label="Enlarge image: the SC_AMB_Progressive switch container in Wwise"><img src="assets/shadowframes/switch-container-640.webp" width="640" height="374" alt="The SC_AMB_Progressive switch container in Wwise, with the ambience layers assigned to each stage" loading="lazy" decoding="async"></a>
-        <figcaption><code>SC_AMB_Progressive</code>, layers per stage</figcaption>
+        <figcaption><code>SC_AMB_Progressive</code>: layers that two stages share keep playing through the switch instead of restarting.</figcaption>
       </figure>
-      <p>Layers that two stages share keep playing through the switch instead of restarting.</p>
     </div>
   </section>
 
   <section class="sf-sec" aria-labelledby="sf-steps-title">
     <div class="sf-head">
       <h2 id="sf-steps-title">Footsteps on five surfaces</h2>
-      <p>I exposed floor, anomaly and enemy settings as Unreal Data Assets, so designers could tune them without changing code. Each footstep passes the surface type of the floor, and <code>BP_FootstepAudioManager</code> sets the matching switch before it posts the sound. The enemy&rsquo;s footsteps use the same five surfaces from their own Data Asset.</p>
+      <p>The player&rsquo;s footsteps change with the floor: tiles, wood, concrete, creaky wood and creaky wooden stairs. The enemy walks on the same five surfaces from its own Data Asset. I exposed floor, anomaly and enemy settings as Unreal Data Assets, so designers could tune them without changing code.</p>
     </div>
-    <figure class="sf-graph">
-      <div class="sf-graph__flow">
-        <div class="sf-node">
-          <p class="sf-node__head">OnFootstep_Event</p>
-          <ul class="sf-pins"><li class="is-out">Surface Type</li></ul>
+    <figure class="sf-bp">
+      <div class="sf-bp__graph">
+        <div class="sf-bp__node sf-bp__node--event">
+          <p class="sf-bp__head">OnFootstep_Event</p>
+          <ul class="sf-bp__rows"><li class="is-out">Surface Type</li></ul>
         </div>
-        <div class="sf-node">
-          <p class="sf-node__head">Switch on Name</p>
-          <ul class="sf-pins"><li class="is-out">Tiles</li><li class="is-out">Wood</li><li class="is-out">Concrete</li><li class="is-out">Creaky Wood</li><li class="is-out">Creaky Wooden Stairs</li></ul>
+        <div class="sf-bp__node sf-bp__node--switch">
+          <p class="sf-bp__head">Switch on Name</p>
+          <ul class="sf-bp__rows">
+            <li class="is-out">Tiles</li>
+            <li class="is-out">Wood</li>
+            <li class="is-out">Concrete</li>
+            <li class="is-out">Creaky Wood</li>
+            <li class="is-out">Creaky Wooden Stairs</li>
+          </ul>
         </div>
-        <div class="sf-node">
-          <p class="sf-node__head">Set Switch</p>
-          <ul class="sf-pins"><li><span>Switch Value</span> FootstepSurface</li><li class="sf-pins__note">one node per surface</li></ul>
+        <div class="sf-bp__node sf-bp__node--set">
+          <p class="sf-bp__head">Set Switch <span>one per surface</span></p>
+          <ul class="sf-bp__rows">
+            <li>FootstepSurface</li>
+            <li aria-hidden="true">FootstepSurface</li>
+            <li aria-hidden="true">FootstepSurface</li>
+            <li aria-hidden="true">FootstepSurface</li>
+            <li aria-hidden="true">FootstepSurface</li>
+          </ul>
         </div>
-        <div class="sf-node">
-          <p class="sf-node__head">Post Event</p>
-          <ul class="sf-pins"><li><span>Ak Event</span> Play_PLYR_Footstep</li></ul>
+        <div class="sf-bp__node sf-bp__node--post">
+          <p class="sf-bp__head">Post Event</p>
+          <ul class="sf-bp__rows"><li>Play_PLYR_Footstep</li></ul>
         </div>
       </div>
-      <figcaption>Simplified from the Blueprint graph. <a href="old/public/assets/images/projects-shadowframes/BP_Footstep_AudioManager.png">Blueprint capture <span aria-hidden="true">&nearr;</span></a> <a href="old/public/assets/images/projects-shadowframes/DA_Enemy_Footstep_Config.png">Enemy footstep Data Asset <span aria-hidden="true">&nearr;</span></a></figcaption>
+      <figcaption>Simplified from <code>BP_FootstepAudioManager</code>. It listens to the player&rsquo;s On Footstep event, sets the <code>FootstepSurface</code> switch for the surface each step reports, then posts the footstep. <a href="old/public/assets/images/projects-shadowframes/BP_Footstep_AudioManager.png">Blueprint capture <span aria-hidden="true">&nearr;</span></a> <a href="old/public/assets/images/projects-shadowframes/DA_Enemy_Footstep_Config.png">Enemy footstep Data Asset <span aria-hidden="true">&nearr;</span></a></figcaption>
     </figure>
   </section>
 
@@ -121,12 +132,29 @@
 
   <section class="sf-sec" aria-labelledby="sf-voices-title">
     <div class="sf-head">
-      <h2 id="sf-voices-title">Voice lines</h2>
-      <p>I recorded the voice lines. The player&rsquo;s monologue is one switch container on the <code>StoryAnomaly</code> switch group, so each story anomaly can carry its own line. An Unreal Data Table, <code>DT_Dialogue</code>, lists the duration of each line.</p>
+      <h2 id="sf-voices-title">Keiran&rsquo;s voice lines</h2>
+      <p>I recorded the voice lines. Keiran, the player character, has his own lines for the story anomalies, played from one switch container on the <code>StoryAnomaly</code> switch group. Four reminder lines, such as <code>IshouldPickup</code>, work the same way on a switch group of their own.</p>
     </div>
-    <figure class="sf-shot">
-      <a class="image-zoom" data-image-zoom style="--image-natural-width:2437px" href="old/public/assets/images/projects-shadowframes/MonologueVoicelineSwitchContianer.png" aria-label="Enlarge image: the monologue switch container in Wwise"><img src="assets/shadowframes/monologue-1200.webp" srcset="assets/shadowframes/monologue-640.webp 640w, assets/shadowframes/monologue-1200.webp 1200w" sizes="(min-width: 1100px) 880px, calc(100vw - 40px)" width="1200" height="657" alt="The KeiranVoicelinesSwitch container in Wwise: one voice line with its waveform under each StoryAnomaly value" loading="lazy" decoding="async"></a>
-    </figure>
+    <div class="sf-lines">
+      <table class="sf-lines__table">
+        <caption>Line names from <code>KeiranVoicelinesSwitch</code> in Wwise. An Unreal Data Table, <code>DT_Dialogue</code>, lists the duration of each line. <a href="old/public/assets/images/projects-shadowframes/DT_Dialogue.png">Data table capture <span aria-hidden="true">&nearr;</span></a></caption>
+        <thead><tr><th scope="col">Anomaly</th><th scope="col">Line in Wwise</th></tr></thead>
+        <tbody>
+          <tr><td>01</td><td>I never allow</td></tr>
+          <tr><td>02</td><td>Another one of</td></tr>
+          <tr><td>03</td><td>My little Maeve</td></tr>
+          <tr><td>04</td><td>Aidens mug</td></tr>
+          <tr><td>05</td><td>It was still</td></tr>
+          <tr><td>06</td><td>That sounds f</td></tr>
+          <tr><td>07</td><td>Aidens fishing gear</td></tr>
+          <tr><td>08</td><td>What is going</td></tr>
+          <tr><td>09</td><td>Hello Emergency No</td></tr>
+        </tbody>
+      </table>
+      <figure class="sf-shot">
+        <a class="image-zoom" data-image-zoom style="--image-natural-width:2437px" href="old/public/assets/images/projects-shadowframes/MonologueVoicelineSwitchContianer.png" aria-label="Enlarge image: the monologue switch container in Wwise"><img src="assets/shadowframes/monologue-1200.webp" srcset="assets/shadowframes/monologue-640.webp 640w, assets/shadowframes/monologue-1200.webp 1200w" sizes="(min-width: 901px) 50vw, calc(100vw - 40px)" width="1200" height="657" alt="The KeiranVoicelinesSwitch container in Wwise: one voice line with its waveform under each StoryAnomaly value" loading="lazy" decoding="async"></a>
+      </figure>
+    </div>
   </section>
 
   <section class="sf-sec" aria-labelledby="sf-mix-title">

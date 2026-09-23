@@ -88,9 +88,11 @@ body::before { background: radial-gradient(ellipse 70% 60% at 70% -12%, rgba(174
   letter-spacing: .08em;
   text-transform: uppercase;
 }
+/* Year+role and tools stay whole; each group only breaks from the other. */
+.ray .ray-meta__g { white-space: nowrap; }
 
 /* ---------- The film and its strip ---------- */
-.ray .ray-rig { position: relative; margin: 0 0 clamp(96px, 11vw, 150px); }
+.ray .ray-rig { position: relative; margin: 0 0 clamp(88px, 8.5vw, 120px); }
 .ray .ray-screen {
   overflow: hidden;
   border-radius: 4px;
@@ -227,6 +229,11 @@ body::before { background: radial-gradient(ellipse 70% 60% at 70% -12%, rgba(174
 .ray .ray-scene[aria-current] .ray-scene__t { color: var(--c-accent); }
 .ray .ray-scene:focus { outline: none; }
 .ray .ray-scene:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 5px; border-radius: 4px; }
+/* Touch has no hover to lighten a still, so it shows at full strength there;
+   the playing scene still gets its ring, name colour and timecode above. */
+@media (hover: none) {
+  .ray .ray-scene__img img { opacity: 1; }
+}
 
 /* ---------- How the music was timed ---------- */
 .cine.ray > .ray-notes { max-width: 640px; margin: 0 0 clamp(56px, 6vw, 88px); }
@@ -242,7 +249,7 @@ body::before { background: radial-gradient(ellipse 70% 60% at 70% -12%, rgba(174
 .cine.ray > .ray-credits {
   position: relative;
   isolation: isolate;
-  margin: 0 0 clamp(88px, 10vw, 140px);
+  margin: 0 0 clamp(56px, 6.5vw, 96px);
   padding: clamp(40px, 5vw, 72px) 0;
   text-align: center;
 }
@@ -344,6 +351,18 @@ body::before { background: radial-gradient(ellipse 70% 60% at 70% -12%, rgba(174
   .ray .ray-roll dt,
   .ray .ray-roll dd { text-align: center; }
   .ray .ray-roll .is-me { padding: 10px 0; }
+}
+/* Below 375px the tools no longer fit beside the year and role; give the
+   groups their own lines instead of leaving the middot dangling at the end. */
+@media (max-width: 374px) {
+  .ray .ray-meta__sep { display: none; }
+  .ray .ray-meta__g { display: block; }
+}
+/* Below 361px the theme button's default sizing overruns the 280px credits
+   column; tighten its gap and bar so it sits on the same axis as the name. */
+@media (max-width: 360px) {
+  .ray .ray-theme__btn { gap: 10px; padding-right: 14px; }
+  .ray .ray-theme__bar { width: 44px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ray .ray-beams polygon,

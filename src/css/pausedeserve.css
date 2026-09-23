@@ -43,6 +43,15 @@ body:has(.cine.pd)::before {
   text-transform: uppercase;
 }
 
+/* Times read like the white timer at the top of every game frame: the hero
+   and run links, and the chapter buttons under the trailer. */
+.cine.pd .pd-time {
+  color: var(--c-ink);
+  font: 500 .92em/1 var(--f-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .02em;
+}
+
 /* ---------- Opening: the game screen, the pause sign under it ---------- */
 .cine.pd .pd-open {
   display: grid;
@@ -80,7 +89,10 @@ body:has(.cine.pd)::before {
 }
 .cine.pd .pd-meta > span { white-space: nowrap; }
 .cine.pd .pd-links { max-width: none; margin: 0; font-size: 14.5px; }
-.cine.pd .pd-links a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--c-ink); }
+.cine.pd .pd-links a { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--c-ink); }
+/* inline-block keeps the link underline off the time. */
+.cine.pd .pd-links .pd-time,
+.cine.pd .pd-runlink .pd-time { display: inline-block; color: var(--c-ink-2); }
 
 .cine.pd .pd-view {
   position: relative;
@@ -144,6 +156,21 @@ body:has(.cine.pd)::before {
   transition: opacity 420ms var(--cine-ease), visibility 0s linear 420ms;
 }
 .cine.pd .is-caught .pd-caught { opacity: 1; visibility: visible; transition-delay: 0s; }
+.cine.pd .pd-caught__time {
+  position: absolute;
+  top: 1.6%;
+  left: 50%;
+  /* Static centring. The black backing hides the frame's own 00:14.98, which
+     otherwise ghosts through the edge of the overlay. */
+  transform: translateX(-50%);
+  padding: 3px 9px;
+  background: #000;
+  color: #fff;
+  font: 600 clamp(9px, 1.25vw, 13px)/1 var(--f-body);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
 
 /* The strip under the screen reads like the game's HUD: the sign that
    teaches the rule, the blue bar, and a tally that only goes up.
@@ -213,39 +240,53 @@ body:has(.cine.pd)::before {
 
 .cine.pd .pd-status {
   grid-area: status;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
   max-width: none;
   margin: 0;
+  gap: 4px 18px;
   color: var(--c-ink-2);
   font-size: 14.5px;
   line-height: 1.5;
 }
+.cine.pd .pd-runlink { color: var(--c-ink); font-size: 14.5px; }
+.cine.pd .pd-runlink[hidden] { display: none; }
+.cine.pd .pd-runlink .pd-time { margin-left: 6px; }
 
-/* ---------- Logic, level and sound: credits beside the trailer, two frames under both ---------- */
+/* ---------- Sound, logic and level: trailer in the screen column, credits beside it ---------- */
 .cine.pd > section.pd-made {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  grid-template-columns: minmax(0, 1.72fr) minmax(300px, 1fr);
+  grid-template-rows: auto auto 1fr auto;
+  grid-template-areas:
+    "video head"
+    "video list"
+    "video ."
+    "strip strip";
   column-gap: clamp(32px, 4.4vw, 64px);
-  row-gap: clamp(40px, 4.6vw, 64px);
+  row-gap: 0;
   align-items: start;
   margin-bottom: clamp(64px, 8vw, 110px);
 }
-.cine.pd .pd-made__text { grid-column: 1; }
-.cine.pd .pd-made__video { grid-column: 2; margin: 0; }
-.cine.pd .pd-strip { grid-column: 1 / -1; margin: 0; }
-
-.cine.pd .pd-made h2 { margin: 0 0 22px; }
+.cine.pd .pd-made > h2 { grid-area: head; margin: -6px 0 22px; }
+.cine.pd .pd-made__video { grid-area: video; margin: 0; }
+.cine.pd .pd-strip { grid-area: strip; margin: clamp(48px, 5vw, 72px) 0 0; }
 
 .cine.pd .pd-credits {
+  grid-area: list;
   display: block;
   max-width: none;
   margin: 0;
   border-top: 1px solid var(--c-line-2);
 }
+/* The column beside the trailer is narrow: credits read top to bottom,
+   name over line, instead of the two-column label/value row. */
 .cine.pd .pd-credits > div {
   display: grid;
-  grid-template-columns: 9.5rem minmax(0, 1fr);
-  gap: 16px;
-  padding: 13px 0;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3px;
+  padding: 13px 0 14px;
   border-bottom: 1px solid var(--c-line);
 }
 .cine.pd .pd-credits dt {
@@ -268,6 +309,50 @@ body:has(.cine.pd)::before {
 .cine.pd .pd-made__video .local-video { border: 1px solid var(--c-line-2); overflow: hidden; }
 .cine.pd .pd-made__video .local-video > video { border: 0; }
 .cine.pd .pd-made figcaption { margin-top: 12px; color: var(--c-ink-3); font-size: 14px; line-height: 1.5; }
+.cine.pd .pd-made__video figcaption { margin-top: 10px; }
+.cine.pd .pd-made__video figcaption a { color: var(--c-ink-2); white-space: nowrap; }
+
+/* ---------- Chapter jumps under the trailer, in the game's HUD language ---------- */
+.cine.pd .pd-chapters[hidden] { display: none; }
+.cine.pd .pd-chapters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 22px;
+  margin-top: 6px;
+  border-bottom: 1px solid var(--c-line);
+}
+.cine.pd .pd-chapters ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 22px;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cine.pd .pd-chapters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: none;
+  color: var(--c-ink-2);
+  font: 500 12px/1.4 var(--f-mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 180ms var(--cine-ease), border-color 180ms var(--cine-ease);
+}
+.cine.pd .pd-chapters button .pd-time { font-size: 13px; letter-spacing: .02em; }
+.cine.pd .pd-chapters button:hover { color: var(--c-ink); border-bottom-color: var(--c-line-3); }
+.cine.pd .pd-chapters button:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+/* The chapter that is playing takes the blue of the game's HUD bar. */
+.cine.pd .pd-chapters button[aria-current="true"] { color: var(--c-ink); border-bottom-color: var(--pd-hud); }
+.cine.pd .pd-chapters button[aria-current="true"] .pd-time { color: var(--pd-hud); }
 
 .cine.pd .pd-strip__frames {
   display: grid;
@@ -287,15 +372,31 @@ body:has(.cine.pd)::before {
 
 .cine.pd .pd-close { border-top-color: var(--c-line-2); }
 
+/* ---------- 901 to 1180: the HUD stacks so the Freeze bar keeps its length
+   (it shrank to about 45px there, once the screen shares the row with the
+   text column instead of using the full viewport width) ---------- */
+@media (min-width: 901px) and (max-width: 1180px) {
+  .cine.pd .pd-live .pd-hud {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "plate tally" "freeze freeze" "status status";
+    gap: 14px 16px;
+  }
+}
+
 /* ---------- Narrow screens ---------- */
 @media (max-width: 900px) {
   .cine.pd .pd-open { grid-template-columns: minmax(0, 1fr); gap: 28px; margin-bottom: 76px; }
   .cine.pd .pd-open__text,
   .cine.pd .pd-screen { grid-column: 1; grid-row: auto; }
-  .cine.pd > section.pd-made { grid-template-columns: minmax(0, 1fr); row-gap: 36px; }
-  .cine.pd .pd-made__text,
-  .cine.pd .pd-made__video,
-  .cine.pd .pd-strip { grid-column: 1; }
+  .cine.pd > section.pd-made {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas: "head" "video" "list" "strip";
+    row-gap: 0;
+  }
+  .cine.pd .pd-made > h2 { margin: 0 0 20px; }
+  .cine.pd .pd-credits { margin-top: 34px; }
+  .cine.pd .pd-strip { margin-top: 40px; }
   .cine.pd .pd-strip__frames { grid-template-columns: minmax(0, 1fr); }
 }
 
@@ -306,11 +407,14 @@ body:has(.cine.pd)::before {
     gap: 14px 16px;
   }
   .cine.pd .pd-plate { width: min(224px, 100%); }
-  .cine.pd .pd-credits > div { grid-template-columns: minmax(0, 1fr); gap: 2px; padding: 12px 0; }
+  .cine.pd .pd-chapters { gap: 0 16px; }
+  .cine.pd .pd-chapters ol { gap: 0 18px; }
+  .cine.pd .pd-chapters .pd-label { flex-basis: 100%; padding-top: 6px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cine.pd .pd-shot,
   .cine.pd .pd-count,
-  .cine.pd .pd-caught { transition: none; }
+  .cine.pd .pd-caught,
+  .cine.pd .pd-chapters button { transition: none; }
 }

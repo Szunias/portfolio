@@ -209,3 +209,66 @@
     a.addEventListener('ended', off);
   });
 })();
+
+/* Chapters under the demo video: each one is the moment a request from the
+   server log appears; pressing it starts the video there and marks the
+   chapter that is playing. Without this script the chapters stay a plain
+   list of timestamps. Nothing plays until the reader presses something. */
+(function () {
+  var root = document.querySelector('.ar');
+  if (!root) return;
+  var list = root.querySelector('[data-ar-chapters]');
+  var film = list ? list.closest('.ar-film') : null;
+  var video = film ? film.querySelector('video') : null;
+  if (!list || !video) return;
+
+  var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  var buttons = [];
+
+  Array.prototype.forEach.call(list.querySelectorAll('li[data-t]'), function (li) {
+    var t = Number(li.getAttribute('data-t')) || 0;
+    var time = li.querySelector('.ar-ch__t');
+    var name = li.querySelector('.ar-ch__l');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ar-ch';
+    while (li.firstChild) btn.appendChild(li.firstChild);
+    btn.setAttribute('aria-label', 'Play the demo from ' + (time ? time.textContent : t + ' s') + (name ? ', ' + name.textContent : ''));
+    btn.arT = t;
+    btn.addEventListener('click', function () { seek(t); });
+    li.appendChild(btn);
+    buttons.push(btn);
+  });
+  if (!buttons.length) return;
+
+  function seek(t) {
+    function go() { try { video.currentTime = t; } catch (e) { /* not seekable yet */ } }
+    if (video.readyState >= 1) go();
+    else video.addEventListener('loadedmetadata', go, { once: true });
+    /* local-video.js keeps its own start button over the poster until the
+       first play; use it so the native controls come back the same way. */
+    var launch = film.querySelector('.local-video__launch');
+    if (launch) launch.click();
+    else if (video.paused) {
+      var p = video.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+    var r = video.getBoundingClientRect();
+    if (r.top < 0 || r.bottom > window.innerHeight) {
+      video.scrollIntoView({ block: 'center', behavior: mq && mq.matches ? 'auto' : 'smooth' });
+    }
+  }
+
+  function mark() {
+    var now = video.currentTime;
+    var current = null;
+    buttons.forEach(function (b) { if (now >= b.arT) current = b; });
+    buttons.forEach(function (b) {
+      if (b === current && !video.paused) b.setAttribute('aria-current', 'true');
+      else b.removeAttribute('aria-current');
+    });
+  }
+  video.addEventListener('timeupdate', mark);
+  video.addEventListener('pause', mark);
+  video.addEventListener('ended', mark);
+})();

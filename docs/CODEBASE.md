@@ -60,7 +60,7 @@ The files in the page's `css` array follow in exactly that order.
 - `home.css` owns work (with the tools desk and project track colours), tools
   and research, music, the about and contact closing band, plus the 404
   content. `home-hero.css` owns the Edition 03 editorial opening,
-  decorative waveform, compact showreel preview and full player. The header uses `_chrome.css`.
+  the reel surface and its chapter list, compact showreel preview and full player. The header uses `_chrome.css`.
   Homepage order is `home`, `portfolio`, `home-hero`.
 - `cine.css` styles the public project pages. `case-plain.css` supports project
   review variants.
@@ -87,35 +87,36 @@ an intermediate width and desktop, including long titles and player controls.
 | File under `src/js/` | Responsibility |
 | --- | --- |
 | `home-showreel.js` | Compact silent preview, full showreel, close and focus restoration. |
+| `home-reel-chapters.js` | Showreel chapters under the hero surface: one tab stop with arrow, Home and End keys, a playhead at the chapter's start on hover or focus, and a chapter starts the reel there through the launch button. Loads before `home-transition.js`. |
 | `home-transition.js` | Scroll-driven hero exit, whole-wave transforms and showreel coverage state. |
 | `home-solo.js` | Solo keys on the homepage tools desk: dims the projects made without the soloed tool and names the lit ones in a status line. |
 | `image-viewer.js` | Original-image dialog, zoom and focus restoration on project screenshots. |
 | `project-previews.js` | Lazy, silent previews on project-card hover or keyboard focus. |
-| `copy-email.js` | Copies the visible address on the homepage and contact pages. |
+| `copy-email.js` | Copies the visible address on the homepage and contact pages and marks the clicked button and the status with `data-copy-state` for 4 s. |
 | `page-motion.js` | Shared entrance effects and header state. |
 | `music-library.js` | Track dates, display names and labels; the published shelf of spines and sketch notebook (`data-layout="spines"`), and the cover shelf and sketch ledger of the review pages. |
 | `music-player.js` | Track selection and the display roles it fills (name, note, facts, film link, set position), queue, transport, seek, volume, filters, review-page covers, lock-screen artwork and player state. |
 | `music-visualizer.js` | The meter-bridge audio analyser and the level meter of the playing list row. |
 | `contact-actions.js` | Contact-page actions and progressive enhancement. |
-| `clock-face.js` | Shared Vienna time parts, the sun over Graz (altitude and phase of the day), hand transforms and SVG ticks for contact clocks. |
-| `contact-clock.js` | Windable contact clock: daylight face, crown, caption, hold after release, ratchet click and interaction state. |
+| `clock-face.js` | Shared Vienna time parts and UTC offset, the sun over Graz (altitude and phase of the day), hand transforms and SVG ticks for contact clocks. |
+| `contact-clock.js` | Windable contact clock: daylight face, crown, caption (with the visitor's own clock), hold after release, ratchet click and interaction state. |
 | `contact-time.js` | Clock treatment on the separate contact-time review page. |
 | `colophon-clock.js` | Time display in the shared footer. |
 | `cine.js` | One-shot project reveals, including live reduced-motion changes. |
 | `local-video.js` | Local-video enhancement on configured project pages. |
-| `video-facade.js` | Lazy embedded-video activation on configured review pages. |
+| `video-facade.js` | Click-to-load YouTube embeds on the pages that configure it: the poster button is replaced by the player (`autoplay=1&rel=0&enablejsapi=1`), so a page script can pause it through postMessage. |
 | `prefetch.js` | Same-origin navigation prefetch. |
 | `shadowframes.js` | Drives the ten-slot investigation board: the range input (native keyboard support) and its two buttons toggle .is-pinned on the photo slots, develop each newly pinned photo from black, and rewrite the aria-live ProgressiveAmbience stage/layers readout from a static Wwise stage table copied off SC_AMB_Progressive; the slots themselves are a pointer/touch shortcut only, staying aria-hidden. |
 | `sidar.js` | SIDAR NULL: Scanner console: Scan key, frame reveal and the prototype recording on one screen. |
 | `xrlabs.js` | XR Labs: Floor-plan positions that draw the shot path to each trainee position. |
-| `transientica.js` | Transientica: Practice lane played with K, S and H keys or touch pads, with timing feedback. |
-| `nottoday.js` | Not Today, Darling!: Stage tiles that cue the run recording and list the sounds of each stage. |
+| `transientica.js` | Transientica: Practice lane played with K, S and H keys or touch pads, with timing feedback, and a button that jumps the 2025 prototype video straight to its live-demo timestamp. |
+| `nottoday.js` | Not Today, Darling!: Stage tiles on the rack and inline time cues in the sections below it that play the one run recording, defaulting to the race stage. |
 | `autotrim.js` | AutoTrim Exporter: Tool window whose pages follow the chapters, plus the Select across tracks demo. |
 | `audioq.js` | AudioQ: Signal-chain rack of working knobs that show what the code does with each value. |
 | `mowik.js` | Mówik: Hold F8 or F7 to run the dictation indicator and the RAM buffer strip. |
 | `ai-audio-research.js` | AI Audio Research: Frame ruler that replays the measured latencies and plays each method’s sample. |
 | `sounddesign.js` | Three sound redesigns: Spotting-sheet players: timecode marks that cue each sound in the clip. |
-| `ifmc.js` | Drives both IFMC score reels: play/pause, drag- or keyboard-scrub via a range input synced to the audio, and cue buttons on the Clapping reel that seek 3s ahead of an annotated moment; paints the playhead and lights the current cue against a static, pre-measured loudness trace of each published track. |
+| `ifmc.js` | Drives both IFMC score reels: play/pause, drag- or keyboard-scrub via a range input synced to the audio, and cue buttons on the Clapping reel that seek 3s ahead of an annotated moment; paints the playhead and lights the current cue against a static, pre-measured loudness trace of each published track. Keeps the reels and the two embedded films from playing together: a reel that starts pauses the films, and a film that opens or reports playing (the YouTube player's postMessage state after a "listening" handshake) pauses the reels and the other film. |
 | `richter.js` | Richter: Seismograph drum of the low end that scrubs the film and follows playback. |
 | `pausedeserve.js` | Pause & Deserve: The P Pauses Death sign as a five-second pause toy. |
 | `amorak.js` | Amorak: Ear-to-ear balance strip that scrubs the film and lights the louder ear. |
@@ -163,14 +164,18 @@ See [browser maintenance notes](../src/js/README.md) for state and async boundar
 The homepage's `[data-preview-video]` loops `assets/showreel-preview-editorial-v2.mp4` inside
 the showreel button at every viewport size. It observes reduced motion, data
 saving and page visibility, and pauses while the separate `.hero__film` plays.
-The full showreel starts only from its launch button. Keep the close control and
+The full showreel starts only from its launch button, or from a chapter under the hero surface, which clicks that button. Keep the close control and
 return keyboard focus to the launch button after closing.
 
-The waveform is decorative, not an audio analyser. `assets/hero-waveform.svg`
-provides its fixed geometry. `home-transition.js` changes only whole-layer
-transforms and hero opacity as projects cover the opening. It has no continuous
-drawing loop. Reduced motion uses normal document flow without the transforms.
-Coverage changes pause the thumbnail or close a completely covered full player.
+The hero surface, `assets/home/reel-surface.svg`, is the delivered showreel's own
+sound: 120 frequency bands over its length, drawn once by
+`scripts/make-reel-surface.cjs`. It is a static image, not an audio analyser. The
+chapter list under it carries the reel's length and each chapter's start in seconds;
+after a new cut the generator redraws the surface and prints a changed list.
+`home-transition.js` changes only whole-layer transforms and hero opacity as
+projects cover the opening. It has no continuous drawing loop. Reduced motion uses
+normal document flow without the transforms. Coverage changes pause the thumbnail,
+take covered chapters out of the tab order or close a completely covered full player.
 
 The music analyser spans the stage under the selected piece and reads the
 existing audio element. It draws only during playback while the bridge or the
@@ -230,13 +235,14 @@ These checks do not certify third-party embeds, all codecs or Safari/iOS behavio
 
 | Location | Purpose |
 | --- | --- |
-| `src/assets/` | Current website assets, including the waveform fallback and compact showreel preview. |
+| `src/assets/` | Current website assets, including the hero's reel surface and the compact showreel preview. |
 | `old/public/assets/` | Images, audio, videos and other media retained from the earlier site. |
 | `showreel/timeline.json` | Full showreel cuts, titles, transitions and gains. |
 | `showreel/render.cjs` | Full renderer, mastering and media QA; documented in `showreel/README.md`. |
 | `showreel/render-preview.cjs` | Retained large silent encodes and project-card previews. |
 | `showreel/render-thumbnail.cjs` | Compact showreel preview, derived from `src/assets/hero-motion.mp4`. |
 | `showreel/render-web.cjs` | Current extended-cut website delivery and eight-second silent preview. |
+| `scripts/make-reel-surface.cjs` | Hero reel surface from the delivered showreel's audio and the chapter list check; run after `render-web.cjs` (needs ffmpeg). |
 | `showreel/editions/editorial-v2/` | Current showreel edit, render report, poster and verification. |
 | `showreel/sources.json`, `fetch-sources.cjs` | Public media source manifest and restoration tool. |
 | `scripts/build-fonts.py` | Offline font preparation. |

@@ -124,7 +124,7 @@ body::before { background: none; }
 
 /* ---------- Section heads: heading over its text, one column ---------- */
 .sf-sec { margin-bottom: clamp(88px, 10vw, 140px); }
-.sf-sec:last-of-type { margin-bottom: clamp(48px, 6vw, 76px); }
+.sf-sec:last-of-type { margin-bottom: clamp(64px, 7vw, 100px); }
 .sf-head { max-width: 64ch; margin-bottom: clamp(24px, 3vw, 36px); }
 .sf .sf-head p { margin: 0 0 14px; color: var(--c-ink-2); font-size: 17px; line-height: 1.65; }
 .sf .sf-head p:last-child { margin-bottom: 0; }
@@ -160,7 +160,7 @@ body::before { background: none; }
 .sf-slot__print {
   display: block;
   padding: 7% 7% 30%;
-  outline: 1px dashed rgba(215, 216, 219, .2);
+  outline: 1px dashed rgba(215, 216, 219, .14);
   outline-offset: -1px;
   transform-origin: 50% 0;
   transition: background-color .35s var(--ease), box-shadow .35s var(--ease);
@@ -172,7 +172,8 @@ body::before { background: none; }
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  filter: grayscale(1) contrast(1.08);
+  /* Lifted so a print still reads at thumbnail size on the dark board. */
+  filter: grayscale(1) contrast(1.12) brightness(1.34);
 }
 .sf-slot.is-pinned .sf-slot__print {
   outline: 0;
@@ -184,7 +185,7 @@ body::before { background: none; }
 .sf-slot.is-pinned img { opacity: 1; }
 .sf-slot:nth-child(3n + 2) { --tilt: 1.2deg; }
 .sf-slot:nth-child(3n) { --tilt: -.5deg; }
-.sf-slot:hover .sf-slot__print { outline-color: rgba(215, 216, 219, .5); }
+.sf-slot:hover .sf-slot__print { outline-color: rgba(215, 216, 219, .45); }
 /* pin */
 .sf-slot::after {
   content: "";
@@ -305,83 +306,186 @@ body::before { background: none; }
 .sf-readout code { padding: 3px 7px; color: var(--c-ink-2); }
 .sf-readout code.is-new { background: rgba(215, 216, 219, .2); color: #fff; box-shadow: inset 0 -1px 0 var(--sf-paper); }
 
-/* Proof beside the board */
+/* Proof under the board: the two Wwise captures, each caption carrying its note */
 .sf-proof {
   display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr);
-  gap: 16px 22px;
-  align-items: end;
-  margin-top: 22px;
+  grid-template-columns: auto auto;
+  justify-content: start;
+  gap: 16px 28px;
+  align-items: start;
+  margin-top: 26px;
 }
 .sf-proof figure { margin: 0; min-width: 0; }
 .sf .sf-proof .image-zoom {
   display: block;
-  height: 150px;
+  height: 172px;
   margin: 0;
   border: 1px solid var(--c-line-2);
   background: #1d1d1d;
 }
 .sf-proof .image-zoom img { display: block; width: auto; height: 100%; }
-.sf-proof figcaption { margin-top: 8px; color: var(--c-ink-3); font-size: 13px; }
-.sf .sf-proof p { max-width: 44ch; margin: 0; color: var(--c-ink-3); font-size: 14px; line-height: 1.6; }
+.sf-proof figcaption { max-width: 40ch; margin-top: 8px; color: var(--c-ink-3); font-size: 13px; line-height: 1.5; }
 
-/* ---------- Footsteps: the Blueprint switch, redrawn as a row of nodes ---------- */
-.sf-graph { margin: 0; }
-.sf-graph__flow {
+/* ---------- Footsteps: the Blueprint graph, nodes on a grid with their wires ---------- */
+.sf-bp { margin: 0; }
+.sf-bp__graph {
+  --head: 38px;
+  --row: 34px;
+  --pad: 6px;
+  --gap: clamp(30px, 3.2vw, 48px);
+  --wire: #7d8387;
+  --node: #16181a;
+  position: relative;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1.05fr);
+  column-gap: var(--gap);
   align-items: start;
-  gap: clamp(16px, 2.4vw, 28px);
-}
-.sf-node {
-  min-width: 0;
+  padding: 26px clamp(18px, 2.4vw, 30px) 30px;
   border: 1px solid var(--c-line-2);
-  background: var(--c-bg-2);
-  font: 400 12.5px/1.5 var(--f-mono);
+  background-color: #0c0d0e;
+  background-image:
+    linear-gradient(rgba(233, 236, 238, .045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(233, 236, 238, .045) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
-.sf-node__head {
-  margin: 0;
-  padding: 9px 12px;
-  border-bottom: 1px solid var(--c-line);
-  color: var(--c-ink);
-  font: 500 12px/1.4 var(--f-mono);
-  letter-spacing: .02em;
+.sf-bp__node {
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--c-line-3);
+  border-radius: 4px;
+  background: var(--node);
+  box-shadow: 0 10px 22px -14px #000;
 }
-.sf-pins { margin: 0; padding: 8px 12px 11px; list-style: none; }
-.sf-pins li {
+.sf .sf-bp__head {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  gap: 4px 10px;
+  gap: 8px;
+  box-sizing: border-box;
+  max-width: none;
+  height: var(--head);
   margin: 0;
-  padding: 3px 0;
-  color: var(--c-ink-2);
-  overflow-wrap: anywhere;
-}
-.sf-pins li span { color: var(--c-ink-3); }
-.sf-pins li.is-out {
-  justify-content: flex-end;
+  padding: 0 12px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--c-line-2);
+  border-radius: 3px 3px 0 0;
+  background: rgba(215, 216, 219, .07);
   color: var(--c-ink);
+  font: 500 12.5px/1.2 var(--f-mono);
+  white-space: nowrap;
 }
-.sf-pins li.is-out::before {
-  content: "";
-  flex: none;
-  align-self: center;
-  width: 5px;
-  height: 5px;
-  margin-right: 8px;
-  border-radius: 50%;
-  background: var(--c-ink-3);
+.sf-bp__head span { color: var(--c-ink-3); font-size: 11.5px; font-weight: 400; }
+.sf .sf-bp__rows { max-width: none; margin: 0; padding: var(--pad) 0; list-style: none; }
+.sf .sf-bp__rows li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: var(--row);
+  margin: 0;
+  padding: 0 14px;
+  color: var(--c-ink-2);
+  font: 400 12.5px/1.2 var(--f-mono);
+  white-space: nowrap;
 }
-.sf-pins li.sf-pins__note {
-  justify-content: flex-start;
-  margin-top: 3px;
-  padding-top: 6px;
-  border-top: 1px dashed var(--c-line);
-  color: var(--c-ink-3);
-  font-style: italic;
+.sf .sf-bp__rows li.is-out { justify-content: flex-end; color: var(--c-ink); }
+.sf .sf-bp figcaption { max-width: 72ch; margin: 16px 0 0; color: var(--c-ink-3); font-size: 13.5px; line-height: 1.6; }
+
+@media (min-width: 901px) {
+  /* Pins sit on the node edges; every wire runs through the gaps between nodes. */
+  .sf-bp__rows li.is-out::after,
+  .sf-bp__node--set li::before,
+  .sf-bp__node--post li::before,
+  .sf-bp__node--switch::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    margin-top: -3.5px;
+    border-radius: 50%;
+    background: #aeb3b6;
+    box-shadow: 0 0 0 2px var(--node);
+  }
+  .sf-bp__rows li.is-out::after { right: -4px; }
+  .sf-bp__node--set li::before,
+  .sf-bp__node--post li::before { left: -5px; }
+  .sf-bp__node--switch::before { top: calc(var(--head) + var(--pad) + var(--row) / 2); left: -5px; }
+
+  /* event -> switch, and one wire per surface from the switch to its Set Switch */
+  .sf-bp__node--event::after,
+  .sf-bp__node--switch li.is-out::before {
+    content: "";
+    position: absolute;
+    left: calc(100% + 1px);
+    width: var(--gap);
+    height: 1px;
+    background: var(--wire);
+  }
+  .sf-bp__node--event::after { top: calc(var(--head) + var(--pad) + var(--row) / 2); }
+  .sf-bp__node--switch li.is-out::before { top: 50%; }
+
+  /* the five Set Switch outputs meet on a bus that feeds Post Event */
+  .sf-bp__node--set li::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 1px);
+    width: calc(var(--gap) / 2);
+    height: 1px;
+    background: var(--wire);
+  }
+  .sf-bp__node--set::after {
+    content: "";
+    position: absolute;
+    top: calc(var(--head) + var(--pad) + var(--row) / 2);
+    left: calc(100% + 1px + var(--gap) / 2);
+    width: 1px;
+    height: calc(var(--row) * 4);
+    background: var(--wire);
+  }
+  .sf-bp__node--post { margin-top: calc(var(--row) * 2); }
+  .sf-bp__node--post::after {
+    content: "";
+    position: absolute;
+    top: calc(var(--head) + var(--pad) + var(--row) / 2);
+    right: calc(100% + 1px);
+    width: calc(var(--gap) / 2);
+    height: 1px;
+    background: var(--wire);
+  }
 }
-.sf .sf-graph figcaption { margin: 16px 0 0; color: var(--c-ink-3); font-size: 13.5px; line-height: 1.6; }
+
+@media (max-width: 900px) {
+  /* A vertical chain: one wire down the left edge, a stub into each node. */
+  .sf-bp__graph {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 22px;
+    padding: 22px 16px 24px 36px;
+  }
+  .sf-bp__node { max-width: 440px; }
+  .sf-bp__graph::before {
+    content: "";
+    position: absolute;
+    top: 41px;
+    bottom: 87px;
+    left: 20px;
+    width: 1px;
+    background: var(--wire);
+  }
+  .sf-bp__node::before {
+    content: "";
+    position: absolute;
+    top: 18px;
+    left: -17px;
+    width: 16px;
+    height: 1px;
+    background: var(--wire);
+  }
+  .sf .sf-bp__rows li { height: 30px; }
+  .sf .sf-bp__rows li.is-out { justify-content: flex-start; }
+  .sf-bp__node--set li[aria-hidden="true"] { display: none; }
+}
 
 /* ---------- Anomaly cues beside the camera viewfinder ---------- */
 .sf-clues {
@@ -411,6 +515,7 @@ body::before { background: none; }
 .sf-cue { color: var(--sf-paper); font: 500 12px/1.75 var(--f-mono); letter-spacing: .02em; }
 .sf .sf-cues li p { margin: 0; color: var(--c-ink-2); font-size: 14.5px; line-height: 1.55; }
 .sf .sf-note {
+  max-width: none; /* spans the cue list it closes */
   margin: 18px 0 0;
   padding-top: 16px;
   border-top: 1px solid var(--c-line-2);
@@ -419,9 +524,39 @@ body::before { background: none; }
   line-height: 1.6;
 }
 
-/* ---------- Voice lines: one full capture ---------- */
+/* ---------- Voice lines: the story lines as a table beside the Wwise capture ---------- */
+.sf-lines {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(24px, 3.5vw, 52px);
+  align-items: start;
+}
+.sf-lines__table {
+  width: 100%;
+  border-collapse: collapse;
+  font: 400 13.5px/1.4 var(--f-mono);
+}
+.sf-lines__table caption {
+  caption-side: bottom;
+  padding-top: 14px;
+  color: var(--c-ink-3);
+  font: 400 13.5px/1.6 var(--f-body);
+  text-align: left;
+}
+.sf-lines__table th {
+  padding: 0 0 9px;
+  border-bottom: 1px solid var(--c-line-2);
+  color: var(--c-ink-3);
+  font: 500 11.5px/1.4 var(--f-mono);
+  letter-spacing: .1em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.sf-lines__table td { padding: 8px 0; border-bottom: 1px solid var(--c-line); color: var(--c-ink); vertical-align: baseline; }
+.sf-lines__table td:first-child { width: 6.2em; color: var(--c-ink-3); }
+.sf-lines__table th:first-child,
+.sf-lines__table td:first-child { padding-right: 12px; }
 .sf-shot {
-  max-width: 880px;
   margin: 0;
   border: 1px solid var(--c-line-2);
   background: var(--c-bg-2);
@@ -466,19 +601,30 @@ body::before { background: none; }
 .sf-asset .is-hot { margin: 0 -14px; padding-inline: 14px; background: rgba(215, 216, 219, .09); }
 .sf .sf-asset .is-hot dt, .sf .sf-asset .is-hot dd { color: #fff; }
 
-.sf .sf-credit { margin: 28px 0 0; color: var(--c-ink-3); font-size: 14.5px; }
+/* The credit line keeps its own space above the closing rule. */
+.sf .sf-credit { max-width: 72ch; margin: 0 0 clamp(40px, 5vw, 64px); color: var(--c-ink-3); font-size: 14.5px; line-height: 1.6; }
 
 /* ---------- Narrow screens ---------- */
 @media (max-width: 900px) {
   .sf-open { grid-template-columns: minmax(0, 1fr); }
   .sf-deck { grid-template-columns: minmax(0, 1fr); }
   .sf-proof { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .sf-proof p { grid-column: 1 / -1; }
   .sf .sf-proof .image-zoom { height: auto; }
   .sf-proof .image-zoom img { width: 100%; height: auto; }
-  .sf-graph__flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sf-clues { grid-template-columns: minmax(0, 1fr); }
+  .sf-lines { grid-template-columns: minmax(0, 1fr); }
   .sf-mix { grid-template-columns: minmax(0, 1fr); }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  /* Tablet: the lead beside the meta line and links, not above an empty right half. */
+  .sf-open__text {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 0 clamp(24px, 4vw, 40px);
+    align-items: start;
+  }
+  .sf .sf-lead { margin-bottom: 0; }
+  .sf-open__foot { padding-top: 0; border-top: 0; }
 }
 @media (max-width: 600px) {
   .sf .sf-print__note { max-width: none; text-align: left; }
@@ -486,7 +632,8 @@ body::before { background: none; }
   .sf-slot:nth-child(6)::before { display: none; }
   .sf-readout > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .sf-cues li { grid-template-columns: 62px minmax(0, 1fr); gap: 10px; }
-  .sf-graph__flow { grid-template-columns: minmax(0, 1fr); }
+  .sf-lines__table td:first-child { width: 4.4em; }
+  .sf-lines__table th { letter-spacing: .06em; }
 }
 @media (prefers-reduced-motion: reduce) {
   .sf-board.is-live .sf-slot img,

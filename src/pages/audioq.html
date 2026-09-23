@@ -6,17 +6,27 @@
       <div class="aq-open__text">
         <p class="aq-lead">AudioQ is a sampler plug-in I built on my own in C++ with JUCE. It plays a recording as a loop, in random regions or in short grains, and sends it through filters, a compressor and four effects I wrote: tremolo, bitcrusher, stutter and reverse.</p>
         <p class="aq-meta"><span>Started 2024</span>&nbsp;&middot; <span>v1.0.0, 9&nbsp;November 2025</span>&nbsp;&middot; <span>C++17</span>&nbsp;&middot; <span>JUCE 8</span>&nbsp;&middot; <span>MIT</span></p>
-        <p class="aq-links"><a href="https://github.com/Szunias/AudioQ" target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">&nearr;</span></a><a href="https://github.com/Szunias/AudioQ/releases/tag/v1.0.0" target="_blank" rel="noopener noreferrer">v1.0.0 for Windows, VST3 <span aria-hidden="true">&nearr;</span></a></p>
+        <p class="aq-links"><a href="#aq-demo">Watch the demo, 1:48 <span aria-hidden="true">&darr;</span></a><a href="https://github.com/Szunias/AudioQ" target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">&nearr;</span></a><a href="https://github.com/Szunias/AudioQ/releases/tag/v1.0.0" target="_blank" rel="noopener noreferrer">v1.0.0 for Windows, VST3 <span aria-hidden="true">&nearr;</span></a></p>
       </div>
     </div>
     <figure class="aq-window"><img src="audioqscreenshot.png" srcset="audioqscreenshot-640.webp 640w, audioqscreenshot-1400.webp 1400w, audioqscreenshot.png 2028w" sizes="(min-width: 1440px) 1286px, calc(100vw - 40px)" width="2028" height="1389" alt="The AudioQ interface: a source display with a loop region, a live output display, and panels for main, filters, compressor, granular, tremolo and glitch controls" fetchpriority="high" decoding="async"></figure>
   </header>
 
+  <section class="cine-split aq-demo" id="aq-demo" aria-labelledby="aq-demo-title">
+    <div class="cine-split__body">
+      <h2 id="aq-demo-title">A demo of the earlier version</h2>
+      <p>I started AudioQ in 2024 and later remade it. The recording shows the earlier version: I play a file through the tremolo, the filters and the compressor, switch to the random and granular modes, and loop a short region drawn on the waveform.</p>
+    </div>
+    <div class="cine-split__media">
+      <div class="yt-facade" data-yt-facade data-video-id="Q2hwWfisU4A"><button class="yt-facade__launch" type="button" data-yt-launch data-video-title="AudioQ recorded demonstration using an earlier interface" aria-label="Play the AudioQ recorded demonstration"><img src="old/public/assets/images/video-posters/audioq-demo.jpg" srcset="old/public/assets/images/video-posters/audioq-demo-640.webp 640w, old/public/assets/images/video-posters/audioq-demo-1200.webp 1200w, old/public/assets/images/video-posters/audioq-demo.jpg 1280w" sizes="(min-width: 901px) 46vw, calc(100vw - 40px)" alt="" width="1280" height="848" loading="lazy" aria-hidden="true"><span class="yt-facade__play" aria-hidden="true"><svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="M9 7.5v9l7-4.5-7-4.5Z"/></svg></span></button><noscript><iframe src="https://www.youtube-nocookie.com/embed/Q2hwWfisU4A" title="AudioQ recorded demonstration using an earlier interface" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></noscript></div>
+    </div>
+  </section>
+
   <section class="aq-chain" aria-labelledby="aq-chain-title">
     <div class="aq-head">
       <h2 id="aq-chain-title">From the file player to the output</h2>
       <p>The interface groups the controls into panels, but the audio passes through them in one fixed order. The filters and the compressor are JUCE modules. I wrote the file player, the make-up gain after the compressor and everything from the tremolo on.</p>
-      <p class="aq-hint"><span class="aq-hint__mouse">Drag a knob, or focus it and use the arrow keys.</span><span class="aq-hint__touch">Swipe sideways on a knob to turn it.</span></p>
+      <p class="aq-hint"><span class="aq-hint__mouse">Select a stage or drag a knob. The readout uses the plug-in’s own formulas.</span><span class="aq-hint__touch">Tap a stage or swipe sideways on a knob. The readout uses the plug-in’s own formulas.</span></p>
     </div>
     <div class="aq-rack" data-aq-rack>
       <ol class="aq-stages">
@@ -46,7 +56,7 @@
         </li>
         <li class="aq-stage" data-stage="reverse">
           <div class="aq-stage__head"><button class="aq-stage__name" type="button" aria-pressed="false" aria-controls="aq-note-reverse"><span>Reverse</span></button></div>
-          <div class="aq-knobs"><div class="aq-fixed"><span class="aq-knob__name">Chunk</span><span class="aq-fixed__glyph" aria-hidden="true"><svg viewBox="0 0 18 18"><path d="M8.5 4 3.5 9l5 5M15 4l-5 5 5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="aq-knob__val">0.18 s</span></div></div>
+          <div class="aq-knobs"><div class="aq-fixed"><span class="aq-knob__name">Chunk</span><span class="aq-fixed__glyph" aria-hidden="true"><svg aria-hidden="true" focusable="false" viewBox="0 0 18 18"><path d="M8.5 4 3.5 9l5 5M15 4l-5 5 5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="aq-knob__val">0.18 s</span></div></div>
         </li>
         <li class="aq-stage" data-stage="mix">
           <div class="aq-stage__head"><button class="aq-stage__name" type="button" aria-pressed="false" aria-controls="aq-note-mix"><span>Dry/wet</span></button></div>
@@ -54,17 +64,18 @@
         </li>
         <li class="aq-stage" data-stage="out">
           <div class="aq-stage__head"><button class="aq-stage__name" type="button" aria-pressed="false" aria-controls="aq-note-out"><span>Output</span></button></div>
-          <div class="aq-knobs"><div class="aq-knob" data-param="gain" data-label="Output gain" data-min="0" data-max="3.1623" data-def="1" style="--n:0.3162"><span class="aq-knob__name">Gain</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">1.00</span></div><div class="aq-fixed"><span class="aq-knob__name">Check</span><span class="aq-fixed__glyph" aria-hidden="true"><svg viewBox="0 0 18 18"><path d="M2.5 4.5h13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2.2"/><path d="M9 15V8.5M6 11.5l3-3 3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="aq-knob__val">4.00</span></div></div>
+          <div class="aq-knobs"><div class="aq-knob" data-param="gain" data-label="Output gain" data-min="0" data-max="3.1623" data-def="1" style="--n:0.3162"><span class="aq-knob__name">Gain</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">1.00</span></div><div class="aq-fixed"><span class="aq-knob__name">Check</span><span class="aq-fixed__glyph" aria-hidden="true"><svg aria-hidden="true" focusable="false" viewBox="0 0 18 18"><path d="M2.5 4.5h13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2.2"/><path d="M9 15V8.5M6 11.5l3-3 3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="aq-knob__val">4.00</span></div></div>
         </li>
       </ol>
       <div class="aq-notes">
         <section class="aq-note" id="aq-note-source" data-note="source" aria-labelledby="aq-note-source-h">
           <div class="aq-note__text">
             <h3 id="aq-note-source-h"><span class="aq-note__t">Source</span> <small>AudioFilePlayer</small></h3>
-            <p>I wrote the file player. Drop a WAV, AIFF or MP3 on the plug-in and drag across the waveform to set the loop region. The tempo knob changes the playback speed, and nothing is time-stretched. Random and granular modes keep jumping to new regions of the file.</p>
+            <p>I wrote the file player. Drop a WAV, AIFF or MP3 on the plug-in and drag across the waveform to set the loop region. The tempo knob resamples the file, so speed and pitch change together. Random and granular modes keep jumping to new regions of the file.</p>
             <div class="aq-modes" role="group" aria-label="Playback mode"><button class="aq-mode" type="button" data-mode="loop" aria-pressed="true">Loop</button><button class="aq-mode" type="button" data-mode="random" aria-pressed="false">Random</button><button class="aq-mode" type="button" data-mode="granular" aria-pressed="false">Granular</button></div>
-            <p class="aq-live" data-live aria-live="polite">Speed = tempo ÷ 120. Random mode picks regions of 0.1 to 3 s, granular mode regions of 0.05 to 0.2 s.</p>
-            <pre class="aq-code"><code>double ratio = (double)tempoValue / 120.0;</code></pre>
+            <p class="aq-live" data-live aria-live="polite">Loop mode: the region you drew, at the original speed and pitch.</p>
+            <pre class="aq-code"><code>double minLen = isRandom ? 0.1 : 0.05;
+double maxLen = isRandom ? 3.0 : 0.20;</code></pre>
           </div>
           <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-source-loop.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-source-loop-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-source-loop-884.webp 884w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="884" height="340" alt="The AudioQ source display: a waveform with a lit loop region and the playhead standing to its left" loading="lazy" decoding="async"></figure>
         </section>
@@ -75,7 +86,7 @@
             <p class="aq-live" data-live aria-live="polite">Passes 20 Hz to 20.0 kHz.</p>
             <pre class="aq-code"><code>juce::NormalisableRange&lt;float&gt;(20.0f, 20000.0f, 1.0f, 0.3f)</code></pre>
           </div>
-          <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-filters-compressor.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-filters-compressor-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-filters-compressor-691.webp 691w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="691" height="266" alt="The filters panel with low and high pass knobs, beside the compressor panel with threshold, ratio, attack and release" loading="lazy" decoding="async"></figure>
+          <figure class="aq-note__shot aq-note__shot--marked"><img src="old/public/assets/images/projects-audioq/frames/aq-filters-compressor.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-filters-compressor-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-filters-compressor-691.webp 691w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="691" height="266" alt="The filters panel, marked, with low and high pass knobs, beside the compressor panel" loading="lazy" decoding="async"><span class="aq-mark" aria-hidden="true" style="left:0.6%;top:3%;width:29.4%;height:94%"></span></figure>
         </section>
         <section class="aq-note" id="aq-note-comp" data-note="comp" aria-labelledby="aq-note-comp-h">
           <div class="aq-note__text">
@@ -85,7 +96,7 @@
             <pre class="aq-code"><code>float makeupDb = juce::jlimit(0.0f, 18.0f,
     (-cThresh) * (1.0f - (1.0f / juce::jmax(1.0f, cRatio))) * 0.35f);</code></pre>
           </div>
-          <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-filters-compressor.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-filters-compressor-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-filters-compressor-691.webp 691w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="691" height="266" alt="The filters panel with low and high pass knobs, beside the compressor panel with threshold, ratio, attack and release" loading="lazy" decoding="async"></figure>
+          <figure class="aq-note__shot aq-note__shot--marked"><img src="old/public/assets/images/projects-audioq/frames/aq-filters-compressor.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-filters-compressor-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-filters-compressor-691.webp 691w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="691" height="266" alt="The compressor panel, marked, with threshold, ratio, attack and release, beside the filters panel" loading="lazy" decoding="async"><span class="aq-mark" aria-hidden="true" style="left:33.2%;top:3%;width:66.2%;height:94%"></span></figure>
         </section>
         <section class="aq-note" id="aq-note-trem" data-note="trem" aria-labelledby="aq-note-trem-h">
           <div class="aq-note__text">
@@ -95,16 +106,16 @@
             <pre class="aq-code"><code>float shapedLfo = lfoVal * lfoVal;
 float minGain = juce::jmax(0.0f, 1.0f - (tremDepth * 2.0f));</code></pre>
           </div>
-          <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The tremolo panel with rate and depth, beside the glitch panel with crush, downsample, stutter and dry / wet knobs" loading="lazy" decoding="async"></figure>
+          <figure class="aq-note__shot aq-note__shot--marked"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The tremolo panel, marked, with its switch, rate and depth, beside the glitch panel" loading="lazy" decoding="async"><span class="aq-mark" aria-hidden="true" style="left:0.8%;top:3%;width:35.4%;height:94%"></span></figure>
         </section>
         <section class="aq-note" id="aq-note-crush" data-note="crush" aria-labelledby="aq-note-crush-h">
           <div class="aq-note__text">
             <h3 id="aq-note-crush-h"><span class="aq-note__t">Bitcrusher</span></h3>
-            <p>My bitcrusher rounds each sample to steps of 1/2<sup>bits</sup> and holds the value for the downsample count. At 16 bits with no downsampling it is skipped.</p>
-            <p class="aq-live" data-live aria-live="polite">Skipped: 16 bits and no downsampling.</p>
+            <p>My bitcrusher rounds each sample to steps of 1/2<sup>bits</sup>. Downsample then holds each value for up to 40 samples, as if the sample rate dropped by that factor.</p>
+            <p class="aq-live" data-live aria-live="polite">16 bits and no downsampling: the sound passes through unchanged.</p>
             <pre class="aq-code"><code>crushHeldSample[ch] = std::round(data[s] * levels) / levels;</code></pre>
           </div>
-          <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The tremolo panel with rate and depth, beside the glitch panel with crush, downsample, stutter and dry / wet knobs" loading="lazy" decoding="async"></figure>
+          <figure class="aq-note__shot aq-note__shot--marked"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The glitch panel with the crush and downsample knobs marked" loading="lazy" decoding="async"><span class="aq-mark" aria-hidden="true" style="left:41.4%;top:34.5%;width:27.2%;height:45.5%"></span></figure>
         </section>
         <section class="aq-note" id="aq-note-stutter" data-note="stutter" aria-labelledby="aq-note-stutter-h">
           <div class="aq-note__text">
@@ -113,7 +124,7 @@ float minGain = juce::jmax(0.0f, 1.0f - (tremDepth * 2.0f));</code></pre>
             <p class="aq-live" data-live aria-live="polite">Repeats the last 125 ms, 8.0 times a second.</p>
             <pre class="aq-code"><code>int targetLen = juce::jmax(64, (int)(currentSR / (double)stutterRate));</code></pre>
           </div>
-          <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The tremolo panel with rate and depth, beside the glitch panel with crush, downsample, stutter and dry / wet knobs" loading="lazy" decoding="async"></figure>
+          <figure class="aq-note__shot aq-note__shot--marked"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The glitch panel with the stutter switch and the stutter rate knob marked" loading="lazy" decoding="async"><span class="aq-mark" aria-hidden="true" style="left:40.8%;top:19.6%;width:28.6%;height:16.6%"></span><span class="aq-mark" aria-hidden="true" style="left:69.9%;top:34.5%;width:11.8%;height:45.5%"></span></figure>
         </section>
         <section class="aq-note" id="aq-note-reverse" data-note="reverse" aria-labelledby="aq-note-reverse-h">
           <div class="aq-note__text">
@@ -122,7 +133,7 @@ float minGain = juce::jmax(0.0f, 1.0f - (tremDepth * 2.0f));</code></pre>
             
             <pre class="aq-code"><code>reverseLength = juce::jmax(1, (int)(sampleRate * 0.18));</code></pre>
           </div>
-          <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The tremolo panel with rate and depth, beside the glitch panel with crush, downsample, stutter and dry / wet knobs" loading="lazy" decoding="async"></figure>
+          <figure class="aq-note__shot aq-note__shot--marked"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The glitch panel with the reverse switch marked" loading="lazy" decoding="async"><span class="aq-mark" aria-hidden="true" style="left:69.5%;top:19.6%;width:28.2%;height:16.6%"></span></figure>
         </section>
         <section class="aq-note" id="aq-note-mix" data-note="mix" aria-labelledby="aq-note-mix-h">
           <div class="aq-note__text">
@@ -131,12 +142,12 @@ float minGain = juce::jmax(0.0f, 1.0f - (tremDepth * 2.0f));</code></pre>
             <p class="aq-live" data-live aria-live="polite">Processed signal only.</p>
             <pre class="aq-code"><code>wet[s] = dry[s] * (1.0f - dryWet) + wet[s] * dryWet;</code></pre>
           </div>
-          <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The tremolo panel with rate and depth, beside the glitch panel with crush, downsample, stutter and dry / wet knobs" loading="lazy" decoding="async"></figure>
+          <figure class="aq-note__shot aq-note__shot--marked"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The glitch panel with the dry / wet knob marked" loading="lazy" decoding="async"><span class="aq-mark" aria-hidden="true" style="left:84.2%;top:34.5%;width:12.6%;height:45.5%"></span></figure>
         </section>
         <section class="aq-note" id="aq-note-out" data-note="out" aria-labelledby="aq-note-out-h">
           <div class="aq-note__text">
             <h3 id="aq-note-out-h"><span class="aq-note__t">Output</span></h3>
-            <p>Gain comes last, up to about +10 dB. Then every block is checked: if any sample peaks above 4.0, about +12 dB, the block is cleared and a warning appears. The check silences the block; it does not limit it. What passes goes to the live output display.</p>
+            <p>Gain comes last, up to about +10&nbsp;dB. A safety check then clears any block that peaks above 4.0, about +12&nbsp;dB, and shows a warning. What passes goes to the live output display.</p>
             <p class="aq-live" data-live aria-live="polite">Output gain: +0.0 dB.</p>
             <pre class="aq-code"><code>if (peakLevel &gt; 4.0f)
 {
@@ -149,17 +160,7 @@ float minGain = juce::jmax(0.0f, 1.0f - (tremDepth * 2.0f));</code></pre>
         </section>
       </div>
     </div>
-  </section>
-
-  <section class="cine-split aq-first" aria-labelledby="aq-first-title">
-    <div class="cine-split__body">
-      <h2 id="aq-first-title">The earlier interface</h2>
-      <p>The recorded demo loads, loops and processes a sound in an earlier AudioQ interface: twelve knobs in one row above a green source display and a blue output display.</p>
-      <p>In July 2026 I added the bitcrusher, stutter, reverse, dry/wet and a standalone build to the source on GitHub. The release download is still v1.0.0, and testing across hosts, operating systems, sample rates and channel layouts is not done yet.</p>
-    </div>
-    <div class="cine-split__media">
-      <div class="yt-facade" data-yt-facade data-video-id="Q2hwWfisU4A"><button class="yt-facade__launch" type="button" data-yt-launch data-video-title="AudioQ recorded demonstration using an earlier interface" aria-label="Play the AudioQ recorded demonstration"><img src="old/public/assets/images/video-posters/audioq-demo.jpg" srcset="old/public/assets/images/video-posters/audioq-demo-640.webp 640w, old/public/assets/images/video-posters/audioq-demo-1200.webp 1200w, old/public/assets/images/video-posters/audioq-demo.jpg 1280w" sizes="(min-width: 901px) 46vw, calc(100vw - 40px)" alt="" width="1280" height="848" loading="lazy" aria-hidden="true"><span class="yt-facade__play" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 7.5v9l7-4.5-7-4.5Z"/></svg></span></button><noscript><iframe src="https://www.youtube-nocookie.com/embed/Q2hwWfisU4A" title="AudioQ recorded demonstration using an earlier interface" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></noscript></div>
-    </div>
+    <p class="aq-after">The chain follows the source on GitHub, updated in July 2026. The download there is still v1.0.0 for Windows, VST3, and I have not yet tested AudioQ across hosts, operating systems, sample rates and channel layouts.</p>
   </section>
 
   <nav class="cine-close" aria-label="Project links and navigation">

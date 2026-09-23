@@ -150,7 +150,7 @@ body::before { display: none; }
 
 /* ---------- Scanning a Black Zone: the scanner console ---------- */
 .sidar .sn-scan { margin-top: clamp(84px, 9vw, 132px); }
-.sidar h2 { margin: 0 0 16px; font: 500 clamp(28px, 2.9vw, 42px)/1.12 var(--f-display); letter-spacing: -.04em; }
+.sidar h2 { margin: 0 0 16px; font: 500 clamp(28px, 2.9vw, 42px)/1.12 var(--f-display); letter-spacing: -.04em; text-wrap: balance; }
 .sidar .sn-scan__lead { max-width: 60ch; margin: 0 0 34px; font-size: 16px; line-height: 1.75; }
 .sidar .sn-console {
   display: grid;
@@ -202,6 +202,41 @@ body::before { display: none; }
 }
 .sidar .sn-rec-frame { position: absolute; inset: 0; z-index: 5; width: 100%; height: 100%; border: 0; background: #000; }
 
+/* The dark frame asks for the scan: an in-game style prompt with the Scan
+   key's own ring. It sits under the CRT glass, so it reads as part of the
+   screen, and it fades out with the first pulse. */
+.sidar .sn-prompt {
+  position: absolute;
+  left: 50%;
+  bottom: 7%;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px 8px 11px;
+  border: 1px solid rgba(194, 206, 163, .34);
+  border-radius: 2px;
+  background: rgba(6, 8, 5, .7);
+  color: var(--c-ink);
+  font: 400 11px/1 var(--f-mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-50%);
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+.sidar .sn-console.is-dark .sn-prompt { opacity: 1; }
+.sidar .sn-prompt__ring {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid var(--c-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(194, 206, 163, .12);
+}
+
 .sidar .sn-console__panel {
   display: flex;
   flex-direction: column;
@@ -227,6 +262,7 @@ body::before { display: none; }
   color: var(--c-ink);
   font: 500 clamp(19px, 1.55vw, 23px)/1.36 var(--f-display);
   letter-spacing: -.02em;
+  text-wrap: pretty;
 }
 
 /* The deck: the Scan key, then the three frames as keys. */
@@ -312,9 +348,9 @@ body::before { display: none; }
   text-align: left;
   cursor: pointer;
 }
-.sidar .sn-tape__thumb { position: relative; flex: none; width: 96px; }
+.sidar .sn-tape__thumb { position: relative; flex: none; width: 124px; }
 .sidar .sn-tape__thumb img { display: block; width: 100%; aspect-ratio: 1248 / 546; object-fit: cover; border: 1px solid var(--c-line-2); border-radius: 2px; }
-.sidar .sn-tape__thumb svg { position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; fill: var(--c-ink); transform: translate(-50%, -50%); }
+.sidar .sn-tape__thumb svg { position: absolute; left: 50%; top: 50%; width: 18px; height: 18px; fill: var(--c-ink); transform: translate(-50%, -50%); }
 .sidar .sn-tape__play:hover .sn-tape__thumb img,
 .sidar .sn-tape__play[aria-pressed="true"] .sn-tape__thumb img { border-color: var(--sn-scan); }
 .sidar .sn-tape__text { display: grid; gap: 5px; }
@@ -328,6 +364,15 @@ body::before { display: none; }
 .sidar-close { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px 32px; margin-top: clamp(64px, 7vw, 96px); padding-top: 24px; border-top: 1px solid var(--c-line); font-size: 14px; }
 .sidar-close a { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; }
 
+/* 1001-1180px: the console keeps two columns but the panel is narrow, so the
+   tape takes the phone layout (link on its own line) instead of wrapping its
+   title into four lines. */
+@media (min-width: 1001px) and (max-width: 1180px) {
+  .sidar .sn-tape { flex-wrap: wrap; row-gap: 6px; }
+  .sidar .sn-tape__play { flex-basis: 100%; }
+  .sidar .sn-tape a { margin-left: auto; }
+  .sidar .sn-tape__thumb { width: 104px; }
+}
 @media (max-width: 1000px) {
   .sidar-heading { grid-template-columns: 1fr; align-items: start; gap: 24px; }
   .sidar .sidar-intro { max-width: 70ch; }
@@ -356,8 +401,17 @@ body::before { display: none; }
   .sidar .sn-tape { flex-wrap: wrap; row-gap: 6px; }
   .sidar .sn-tape__play { flex-basis: 100%; }
   .sidar .sn-tape a { margin-left: auto; }
-  .sidar .sn-tape__thumb { width: 80px; }
+  .sidar .sn-prompt { gap: 8px; padding: 6px 11px 6px 9px; font-size: 10px; letter-spacing: .12em; }
+  .sidar .sn-prompt__ring { width: 10px; height: 10px; }
+  .sidar .sn-tape__thumb { width: 96px; }
   .sidar-close { margin-top: 56px; }
+}
+/* 320px: the teaser lip keeps its link on the same line and the tape title
+   fits one line. */
+@media (max-width: 360px) {
+  .sidar .sn-unit__lip { gap: 6px 10px; font-size: 10px; letter-spacing: .03em; }
+  .sidar .sn-tape__play { gap: 12px; }
+  .sidar .sn-tape__thumb { width: 72px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .sidar .sn-layer.is-on { transition: none; }
@@ -365,5 +419,6 @@ body::before { display: none; }
   .sidar .sn-key,
   .sidar .sn-thumb,
   .sidar .sn-thumb img,
+  .sidar .sn-prompt,
   .sidar .sidar-play { transition: none; }
 }

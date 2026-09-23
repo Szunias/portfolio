@@ -3,6 +3,10 @@
    25-140 Hz, peak level every 25 ms (40 readings a second), normalised to the
    loudest reading and stored as one character per reading (0-63 on a 0.7
    curve, decoded back to linear here). Nothing in it is invented.
+   The drum draws power (the decoded peak, squared): the mix stays dense from
+   0:06 to 0:33, so a linear trace is a uniform zigzag, while power settles the
+   body into a tremor and leaves the main shock at 0:17.85 standing out, same
+   measured data either way.
    Like a helicorder, the record wraps into lines: 4 lines of 11 s on a wide
    screen, 8 lines of 5.5 s on a phone; both draw the peak of every 50 ms.
    Cue times come from the picture. 0:07 is where the released "Richter - Main
@@ -23,9 +27,9 @@
     [3, 'rumble', 'The plain'],
     [7, 'craft', 'The craft'],
     [10, 'crack', 'The ground splits'],
-    [18, 'collapse', 'The ridge collapses'],
-    [28, 'gate', 'The gate'],
-    [37, 'title', 'The title card']
+    [18, 'collapse', 'The collapse'],
+    [28, 'gate', 'Closing gate'],
+    [37, 'title', 'Title hit']
   ];
   var NS = 'http://www.w3.org/2000/svg';
   var mq = function (q) { return window.matchMedia ? window.matchMedia(q) : { matches: false }; };
@@ -36,11 +40,15 @@
   var hint = drum.querySelector('[data-ri-hint]');
   var rows = [].slice.call(document.querySelectorAll('[data-ri-cue]'));
 
-  var fine = [], coarseData = [];
+  /* decode to linear peak, keep the louder of each pair (50 ms), draw as power */
+  var fine = [], power = [];
   for (var i = 0; i < TRACE.length; i++) {
     fine.push(Math.pow(Math.max(0, CHARS.indexOf(TRACE.charAt(i))) / 63, 1 / 0.7));
   }
-  for (var j = 0; j < fine.length; j += 2) coarseData.push(Math.max(fine[j], fine[j + 1] || 0));
+  for (var j = 0; j < fine.length; j += 2) {
+    var lin = Math.max(fine[j], fine[j + 1] || 0);
+    power.push(lin * lin);
+  }
 
   var g = null, lit = [], marks = [], penLine, penDot, hover, hoverLine, hoverText;
   var t = 0, raf = 0, flip = 1, now = -2, lastW = 0, rz = 0;
@@ -75,8 +83,8 @@
     lastW = w;
     var small = w < 600;
     g = small
-      ? { lines: 8, rate: 20, data: coarseData, gut: 38, right: 8, top: 14, row: 32, amp: 32 * 0.8, foot: 6 }
-      : { lines: 4, rate: 20, data: coarseData, gut: 58, right: 18, top: 22, row: 64, amp: 64 * 0.92, foot: 12 };
+      ? { lines: 8, rate: 20, data: power, gut: 38, right: 8, top: 16, row: 32, amp: 32 * 0.95, foot: 8 }
+      : { lines: 4, rate: 20, data: power, gut: 58, right: 18, top: 24, row: 64, amp: 64 * 0.95, foot: 14 };
     g.small = small;
     g.w = w;
     g.line = SPAN / g.lines;
@@ -105,11 +113,26 @@
       lit.push(el('rect', { x: 0, y: y - g.row, width: 0, height: g.row * 2 }, clip));
       el('path', { d: d, 'clip-path': 'url(#ri-clip-' + k + ')' }, bright);
     }
+    /* A label runs right of its marker, or left of it at the right edge. If it would
+       touch the previous label on the same line it keeps only its timecode. */
+    var prev = { k: -1, end: 0 };
     marks = CUES.map(function (c) {
       var k = lineOf(c[0]), x = xOf(c[0] - k * g.line), y = yOf(k);
       var grp = el('g', { 'class': 'ri-mk' }, mk);
       el('line', { x1: x, x2: x, y1: y - g.row / 2 + 1, y2: y + g.row / 2 - 1 }, grp);
-      el('text', { x: x + 5, y: y - g.row / 2 + (small ? 9 : 11) }, grp).textContent = fmt(c[0]) + (small ? '' : ' ' + c[1]);
+      var label = el('text', { x: x + 5, y: y - g.row / 2 + (small ? 9 : 11) }, grp);
+      function fit(text) {
+        label.textContent = text;
+        var len = 0;
+        try { len = label.getComputedTextLength(); } catch (e) { len = text.length * 6.6; }
+        var flip = x + 5 + len > w - g.right;
+        label.setAttribute('x', flip ? x - 5 : x + 5);
+        label.setAttribute('text-anchor', flip ? 'end' : 'start');
+        return { start: flip ? x - 5 - len : x + 5, end: flip ? x - 5 : x + 5 + len };
+      }
+      var box = fit(fmt(c[0]) + (small ? '' : ' ' + c[1]));
+      if (prev.k === k && box.start < prev.end + 8) box = fit(fmt(c[0]));
+      prev = { k: k, end: box.end };
       return grp;
     });
     hover = el('g', { 'class': 'ri-hover', display: 'none' }, svg);

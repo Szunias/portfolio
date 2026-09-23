@@ -110,6 +110,36 @@ body::before { background: none; }
 /* 3:2 from the left edge keeps the film's own festival laurels out of frame */
 .ifmc .if-film--clap .yt-facade__launch img { object-position: 0 50%; }
 .ifmc .if-film .yt-facade__launch:focus-visible { outline-color: var(--film); }
+/* The poster names what it plays: a labelled control in the corner instead of
+   the shared centred disc keeps Walter's face clear, and "Watch with my score"
+   (the film) reads apart from "Play the score" (the reel below). */
+.ifmc .if-film .yt-facade__play {
+  top: auto;
+  right: auto;
+  bottom: 16px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  width: auto;
+  height: 40px;
+  padding: 0 15px 0 12px;
+  transform: none;
+  border: 1px solid rgba(241, 240, 235, .34);
+  border-radius: 2px;
+  background: rgba(13, 12, 14, .82);
+  color: var(--c-ink);
+  font: 500 14px/1 var(--f-body);
+  white-space: nowrap;
+  box-shadow: none;
+  transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+/* the shared icon draws its triangle in the middle third of a 24-unit box */
+.ifmc .if-film .yt-facade__play svg { width: 24px; height: 24px; margin: 0 -6px 0 -7px; transform: none; fill: var(--film); transition: fill var(--dur) var(--ease); }
+.ifmc .if-film .yt-facade__launch:hover .yt-facade__play,
+.ifmc .if-film .yt-facade__launch:focus-visible .yt-facade__play { border-color: var(--film); background: var(--film); color: var(--c-accent-ink); box-shadow: none; }
+.ifmc .if-film .yt-facade__launch:hover .yt-facade__play svg,
+.ifmc .if-film .yt-facade__launch:focus-visible .yt-facade__play svg { fill: var(--c-accent-ink); }
 
 /* ---------- The reel: measured loudness of the published track ---------- */
 .ifmc .if-reel { --pos: 0; position: relative; padding-top: 14px; }
@@ -274,6 +304,7 @@ body::before { background: none; }
   .ifmc .if-top h1 { font-size: clamp(34px, 10.4vw, 46px); }
   .ifmc .if-film__head { display: block; }
   .ifmc .if-kind { margin-top: 6px; }
+  .ifmc .if-film .yt-facade__play { bottom: 12px; left: 12px; height: 38px; padding: 0 13px 0 11px; font-size: 13.5px; }
   .ifmc .if-ruler .is-late { display: none; }
   .ifmc .if-lane { height: 70px; }
   .ifmc .if-text { font-size: 16px; }
@@ -283,6 +314,8 @@ body::before { background: none; }
 @media (prefers-reduced-motion: reduce) {
   .ifmc .if-lead a,
   .ifmc .if-quote a,
+  .ifmc .if-film .yt-facade__play,
+  .ifmc .if-film .yt-facade__play svg,
   .ifmc .if-lane,
   .ifmc .if-play,
   .ifmc .if-cue,

@@ -4,7 +4,13 @@
    to a frame, and the prototype 0.4 recording plays on the same screen until
    the next scan removes it. Clicking the screen is a pointer shortcut for
    Scan. Reduced motion is read on every scan, so a live change applies at once;
-   without JS a <noscript> style lays the frames out as a strip. */
+   without JS a <noscript> style lays the frames out as a strip.
+
+   The dark frame shows a "Press Scan" prompt (class is-dark) until the first
+   pulse. The console also runs one scan by itself the first time its screen
+   has been at least 60% in view for half a second, so a visitor who never
+   clicks still sees the dark room turn into points; it never runs after the
+   visitor has used the console or under prefers-reduced-motion. */
 (function () {
   var unit = document.querySelector('[data-scanner]');
   if (!unit) return;
@@ -15,7 +21,7 @@
   var nextLabel = unit.querySelector('[data-scan-next-label]');
   var steps = [].slice.call(unit.querySelectorAll('[data-scan-step]'));
   var status = unit.querySelector('[data-scan-status]');
-  var count = unit.querySelector('[data-scan-count]');
+  var label = unit.querySelector('[data-scan-label]');
   var rec = unit.querySelector('[data-scan-rec]');
   if (!screen || !layers.length || !next || !status) return;
 
@@ -25,11 +31,15 @@
     'The doorway gives the player a direction for the next scan.'
   ];
   var REC_TEXT = 'Prototype 0.4: the button-triggered scanner and the corridor blockout.';
+  var REC_LABEL = 'Prototype 0.4 recording';
   var reduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var last = layers.length - 1;
   var state = 0;
   var frame = null;
   var timer = 0;
+  var touched = false;
+
+  function frameLabel(i) { return 'Black Zone · frame ' + (i + 1) + ' of ' + layers.length; }
 
   function stopRecording() {
     if (frame && frame.parentNode) frame.parentNode.removeChild(frame);
@@ -66,8 +76,9 @@
       ring.classList.remove('is-live');
     }
     unit.classList.toggle('is-scanned', state > 0);
+    unit.classList.toggle('is-dark', state === 0);
     status.textContent = TEXT[state] || '';
-    if (count) count.textContent = 'frame ' + (state + 1) + ' of ' + layers.length;
+    if (label) label.textContent = frameLabel(state);
     steps.forEach(function (key, i) { key.setAttribute('aria-pressed', i === state ? 'true' : 'false'); });
     if (nextLabel) nextLabel.textContent = state === last ? 'Go dark' : 'Scan';
   }
@@ -91,21 +102,43 @@
     frame.setAttribute('allowfullscreen', '');
     screen.appendChild(frame);
     unit.classList.add('is-rec');
+    unit.classList.remove('is-dark');
     rec.setAttribute('aria-pressed', 'true');
     steps.forEach(function (key) { key.setAttribute('aria-pressed', 'false'); });
     status.textContent = REC_TEXT;
-    if (count) count.textContent = 'prototype 0.4 recording';
+    if (label) label.textContent = REC_LABEL;
     if (nextLabel) nextLabel.textContent = 'Scan';
   }
 
   next.addEventListener('click', function () {
+    touched = true;
     if (frame) show(state, false);
     else scan();
   });
   steps.forEach(function (key, i) {
-    key.addEventListener('click', function () { show(i, i > state); });
+    key.addEventListener('click', function () { touched = true; show(i, i > state); });
   });
-  screen.addEventListener('click', function () { if (!frame) scan(); });
-  if (rec) rec.addEventListener('click', playRecording);
+  screen.addEventListener('click', function () {
+    touched = true;
+    if (!frame) scan();
+  });
+  if (rec) rec.addEventListener('click', function () { touched = true; playRecording(); });
   show(0, false);
+
+  // One scan on first view. Scroll-driven, once, never after the visitor has
+  // touched the console and never with reduced motion.
+  if (touched || !('IntersectionObserver' in window)) return;
+  var wait = 0;
+  var io = new IntersectionObserver(function (entries) {
+    var entry = entries[entries.length - 1];
+    if (touched || (reduce && reduce.matches)) { window.clearTimeout(wait); io.disconnect(); return; }
+    window.clearTimeout(wait);
+    if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+      wait = window.setTimeout(function () {
+        io.disconnect();
+        if (!touched && !frame && state === 0 && !(reduce && reduce.matches)) show(1, true);
+      }, 500);
+    }
+  }, { threshold: [0, 0.6] });
+  io.observe(screen);
 })();

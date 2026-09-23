@@ -3,7 +3,10 @@
    from Source/PluginProcessor.cpp and AudioFilePlayer.cpp (master). No audio is
    made here; each knob shows what the code does with its value. Knobs are
    role="slider": arrows, Page Up/Down, Home/End; mouse drags vertically,
-   touch swipes sideways so vertical swipes still scroll the page. */
+   touch swipes sideways so vertical swipes still scroll the page. Below 900px
+   the readout still opens inside its stage; the 901-1180px layout keeps it
+   beside the list instead (see audioq.css), so this threshold must match
+   that breakpoint. */
 (function () {
   var rack = document.querySelector('[data-aq-rack]');
   if (!rack) return;
@@ -12,7 +15,7 @@
   var home = rack.querySelector('.aq-notes');
   if (!stages.length || !home) return;
 
-  var narrow = window.matchMedia('(max-width: 1180px)');
+  var narrow = window.matchMedia('(max-width: 900px)');
   var notes = {};
   Array.prototype.forEach.call(rack.querySelectorAll('.aq-note'), function (n) { notes[n.getAttribute('data-note')] = n; });
   var knobs = {};
@@ -36,12 +39,21 @@
   function db(x) { return (x < 0 ? '−' : '+') + Math.abs(x).toFixed(1) + ' dB'; }
   function val(p) { return knobs[p] ? knobs[p].value : 0; }
 
+  /* Resampling by tempo / 120 moves speed and pitch together:
+     12 * log2(ratio) semitones. */
+  function speed() {
+    var r = val('tempo') / 120;
+    var st = 12 * Math.log(r) / Math.LN2;
+    if (Math.abs(st) < 0.05) return 'at the original speed and pitch.';
+    if (r > 1) return r.toFixed(2) + '× faster and ' + st.toFixed(1) + ' semitones higher.';
+    return 'at ' + r.toFixed(2) + '× the speed and ' + Math.abs(st).toFixed(1) + ' semitones lower.';
+  }
+
   var READ = {
     source: function () {
-      var r = (val('tempo') / 120).toFixed(2) + '× speed.';
-      if (mode === 'random') return 'Random mode: a new region of 0.1 to 3 s whenever one ends, at ' + r;
-      if (mode === 'granular') return 'Granular mode: a new region of 0.05 to 0.2 s whenever one ends, at ' + r;
-      return 'Loop mode: the region you drew, at ' + r;
+      if (mode === 'random') return 'Random mode: a new region of 0.1 to 3 s whenever one ends, ' + speed();
+      if (mode === 'granular') return 'Granular mode: a new region of 0.05 to 0.2 s whenever one ends, ' + speed();
+      return 'Loop mode: the region you drew, ' + speed();
     },
     filters: function () {
       var lo = val('hpf'), hi = val('lpf');
@@ -59,7 +71,7 @@
     },
     crush: function () {
       var b = val('bits'), dsv = val('ds'), ds = Math.max(1, Math.floor(dsv));
-      if (b >= 15.5 && dsv <= 1.5) return 'Skipped: 16 bits and no downsampling.';
+      if (b >= 15.5 && dsv <= 1.5) return '16 bits and no downsampling: the sound passes through unchanged.';
       var lv = Math.pow(2, b);
       var steps = lv < 100 ? String(Math.round(lv * 10) / 10) : Math.round(lv).toLocaleString('en-US');
       return 'Steps of 1/' + steps + ', each value held for ' + ds + (ds === 1 ? ' sample.' : ' samples.');

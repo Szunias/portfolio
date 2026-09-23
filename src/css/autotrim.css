@@ -63,22 +63,23 @@ body::before { background: none; }
 .at .at-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.62fr) minmax(0, 1fr);
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto 1fr;
   column-gap: clamp(36px, 4.4vw, 72px);
   margin-bottom: clamp(80px, 9vw, 136px);
 }
 .at .at-stage {
   grid-column: 1;
-  grid-row: 1 / span 2;
+  grid-row: 1 / span 3;
   align-self: start;
   position: sticky;
   top: 104px;
 }
-.at .at-head { grid-column: 2; grid-row: 1; }
-.at .at-pages { grid-column: 2; grid-row: 2; padding-top: clamp(56px, 6vw, 88px); }
+.at .at-title { grid-column: 2; grid-row: 1; }
+.at .at-head { grid-column: 2; grid-row: 2; }
+.at .at-pages { grid-column: 2; grid-row: 3; padding-top: clamp(56px, 6vw, 88px); }
 
-/* ---------- Opening ---------- */
-.cine.at .at-head h1 {
+/* ---------- Opening: the title is its own grid item, so phones show the window straight under it ---------- */
+.cine.at .at-title {
   margin: -6px 0 22px;
   font-family: var(--display);
   font-size: clamp(44px, 4.7vw, 70px);
@@ -248,6 +249,13 @@ body::before { background: none; }
   border-left: 2.5px solid currentColor;
   border-right: 2.5px solid currentColor;
 }
+/* The tour's length on its own button: 10.7 s, silent. Hidden while it plays. */
+.at .atw__len {
+  font: 500 12px/1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--c-ink-3);
+}
+.at .atw__act[aria-pressed="true"] .atw__len { display: none; }
 
 /* ---------- The six pages, in the window's order ---------- */
 .cine.at .at-group {
@@ -263,6 +271,10 @@ body::before { background: none; }
   padding-bottom: 44px;
 }
 .at .at-page:last-child { min-height: 0; padding-bottom: 0; }
+/* The last chapter (Preflight) keeps the window's height, so it reads beside its own capture. */
+@media (min-width: 1000px) {
+  .at .at-page:last-child { min-height: min(44vw, 640px); }
+}
 .cine.at .at-row {
   position: relative;
   display: flex;
@@ -305,6 +317,14 @@ body::before { background: none; }
 .at .at-shot img { display: block; width: 100%; height: auto; border: 1px solid var(--c-line-2); border-radius: 8px; }
 @media (min-width: 1000px) {
   .at.at-js .at-shot { display: none; }
+}
+/* The hint sits in the capture's own empty status bar instead of over the panels. */
+.at .at-shot .image-zoom__hint {
+  right: 1.6%;
+  bottom: 1.4%;
+  padding: 2px 8px;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 /* ---------- Select overlapping: the arrange sketch ---------- */
@@ -396,7 +416,18 @@ body::before { background: none; }
     box-shadow .25s var(--cine-ease),
     opacity .3s var(--cine-ease);
 }
-.at .arr__item.is-anchor { background: var(--at-sel); box-shadow: inset 0 0 0 1.5px var(--c-accent); }
+.at .arr__item.is-anchor { background: var(--at-sel); box-shadow: inset 0 0 0 1.5px var(--c-accent); font-size: 0; }
+/* The anchor's own name lives beside the item, not inside it, so it is never clipped in a narrow lane. */
+.at .arr__label {
+  position: absolute;
+  top: 50%;
+  left: calc((var(--e) - var(--t0)) / (var(--t1) - var(--t0)) * 100% + 7px);
+  font: 500 10.5px/1 var(--mono);
+  color: var(--c-accent-hi);
+  white-space: nowrap;
+  translate: 0 -50%;
+  transition: left .65s var(--cine-ease);
+}
 .at .is-across .arr__item.is-layer { background: var(--at-sel); box-shadow: inset 0 0 0 1px rgba(150, 162, 255, .6); }
 .at .arr__tag {
   position: absolute;
@@ -433,27 +464,22 @@ body::before { background: none; }
 .cine.at .at-dev > p:not(.at-group) { max-width: 60ch; }
 .cine.at .at-dev__list {
   display: block;
-  max-width: none;
-  margin: 36px 0 0;
+  max-width: 64ch;
+  margin: 28px 0 0;
   padding: 0;
-  border-top: 1px solid var(--c-line-2);
+  border-top: 0;
+  list-style: none;
 }
-.at .at-dev__list > div {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.85fr);
-  gap: 8px clamp(24px, 4vw, 64px);
-  padding: 22px 0 24px;
-  border-bottom: 1px solid var(--c-line-2);
-}
-.cine.at .at-dev__list dt {
+.at .at-dev__list li {
   display: flex;
   align-items: baseline;
-  gap: 12px;
+  gap: 14px;
   margin: 0;
-  font: 600 17px/1.35 var(--body);
-  color: var(--c-ink);
+  padding: 0;
 }
-.cine.at .at-dev__list dd { max-width: 64ch; margin: 0; font-size: inherit; line-height: 1.65; color: var(--c-ink-2); }
+.at .at-dev__list li + li { margin-top: 16px; }
+.cine.at .at-dev__list p { max-width: none; margin: 0; color: var(--c-ink-2); }
+.cine.at .at-dev__list b { font-weight: 600; color: var(--c-ink); }
 .at .at-ring {
   flex: none;
   width: 10px;
@@ -461,6 +487,7 @@ body::before { background: none; }
   border: 1.5px solid var(--c-accent);
   border-radius: 50%;
 }
+.at .at-dev__list .at-ring { translate: 0 -1px; }
 
 /* ---------- The public release ---------- */
 .at .at-rel { margin: 0 0 clamp(64px, 7vw, 104px); }
@@ -480,30 +507,32 @@ body::before { background: none; }
 /* ---------- Narrow screens: one column, the window under the opening ---------- */
 @media (max-width: 999px) {
   .at .at-grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .at .at-title,
   .at .at-stage,
   .at .at-head,
   .at .at-pages { grid-column: 1; grid-row: auto; }
-  .at .at-stage { position: static; margin-top: 30px; }
+  .at .at-stage { position: static; margin-top: 6px; }
+  .at .at-head { margin-top: 34px; }
   .at .atw__hot,
   .at .atw__hint { display: none; }
   .at .at-pages { padding-top: 56px; }
   .at .at-page { min-height: 0; padding-bottom: 40px; }
   .cine.at .at-page p { max-width: 62ch; }
 }
-@media (max-width: 760px) {
-  .at .at-dev__list > div { grid-template-columns: minmax(0, 1fr); }
-}
 @media (max-width: 560px) {
-  .cine.at .at-head h1 { font-size: clamp(40px, 12vw, 52px); }
+  .cine.at .at-title { font-size: clamp(40px, 12vw, 52px); }
   .at .atw__acts { width: 100%; }
   .at .atw__act { flex: 1 1 0; justify-content: center; min-height: 44px; }
   .at .arr__btn { min-height: 44px; }
   .at .arr__ruler,
   .at .arr__track { grid-template-columns: 74px minmax(0, 1fr); }
   .at .arr__name { padding-left: 10px; font-size: 11px; }
-  .at .arr__item.is-anchor { font-size: 0; }
   .at .arr__tag { font-size: 10px; }
   .cine.at .at-row { margin-left: -12px; padding-left: 12px; padding-right: 12px; }
+}
+@media (max-width: 360px) {
+  .cine.at .at-primary { gap: 6px; padding: 0 12px; font-size: 15px; letter-spacing: -0.005em; }
+  .at .atw__len { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
