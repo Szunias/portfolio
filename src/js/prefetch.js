@@ -10,6 +10,9 @@
 
   function prefetchable(anchor) {
     if (!anchor || anchor.origin !== window.location.origin) return null;
+    // A root path beginning // becomes a foreign host when used as an href.
+    // Skip speculative loading; the original link still navigates normally.
+    if (anchor.pathname.startsWith('//')) return null;
     if (anchor.hasAttribute('download') || anchor.target.toLowerCase() === '_blank') return null;
     // Documents only: media and the CV PDF are too heavy to fetch on a guess.
     if (!/(\.html|\/)$/.test(anchor.pathname)) return null;

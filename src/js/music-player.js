@@ -814,24 +814,29 @@
       event.preventDefault();
       update(element, event.clientX);
     });
-    element.addEventListener('pointerup', event => {
-      if (event.pointerId !== activePointer) return;
-      event.preventDefault();
-      update(element, event.clientX);
+    function stopPointer() {
+      if (activePointer === null) return;
+      const pointer = activePointer;
       activePointer = null;
       element.classList.remove('is-scrubbing');
-      try { element.releasePointerCapture(event.pointerId); } catch (_) {}
-    });
-    element.addEventListener('pointercancel', event => {
-      if (event.pointerId !== activePointer) return;
-      activePointer = null;
-      element.classList.remove('is-scrubbing');
-    });
-    element.addEventListener('lostpointercapture', event => {
-      if (event.pointerId !== activePointer) return;
-      activePointer = null;
-      element.classList.remove('is-scrubbing');
-    });
+      try { element.releasePointerCapture(pointer); } catch (_) {}
+    }
+    function finishPointer(event) {
+      if (activePointer === null || event.pointerId !== activePointer) return;
+      // Clear ownership before releasing capture or handling the bubbled event.
+      stopPointer();
+      if (event.type === 'pointerup') {
+        event.preventDefault();
+        update(element, event.clientX);
+      }
+    }
+    element.addEventListener('pointerup', finishPointer);
+    element.addEventListener('pointercancel', finishPointer);
+    element.addEventListener('lostpointercapture', finishPointer);
+    // Capture can fail; releasing outside the rail must not lock later drags.
+    window.addEventListener('pointerup', finishPointer);
+    window.addEventListener('pointercancel', finishPointer);
+    window.addEventListener('blur', stopPointer);
   }
 
   roleAll('progress').forEach(element => {
@@ -997,15 +1002,23 @@
 
   // ----------------------------------------------------------- audio events
 
+  function reportLoading(text, requiresPlayback) {
+    // Media tasks can arrive after play() rejects or the listener pauses.
+    // Queued loading notifications must not clear a retryable failure.
+    if (!selectedTrack() || hasPlaybackError || audio.error) return;
+    if (requiresPlayback && (audio.paused || audio.ended)) return;
+    setStatus(text, 'loading');
+  }
+
   audio.addEventListener('loadstart', () => {
-    if (selectedTrack()) setStatus('Loading', 'loading');
+    reportLoading('Loading', false);
     updateBuffered();
   });
   audio.addEventListener('waiting', () => {
-    if (selectedTrack()) setStatus('Buffering', 'loading');
+    reportLoading('Buffering', true);
   });
   audio.addEventListener('stalled', () => {
-    if (selectedTrack()) setStatus('Network stalled. Retrying…', 'loading');
+    reportLoading('Network stalled. Retrying…', true);
   });
   audio.addEventListener('canplay', () => {
     if (!selectedTrack()) return;
@@ -1019,6 +1032,7 @@
     pushPositionState(true);
   });
   audio.addEventListener('playing', () => {
+    if (audio.paused || audio.ended || audio.error || hasPlaybackError) return;
     setStatus('Playing');
     setPlayState();
     pushPositionState(true);
