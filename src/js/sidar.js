@@ -23,6 +23,11 @@
   var status = unit.querySelector('[data-scan-status]');
   var label = unit.querySelector('[data-scan-label]');
   var rec = unit.querySelector('[data-scan-rec]');
+  // The Annex04 teaser lives in the page header, outside the console, but the
+  // teaser and the recording below must never play at once (stopRecording
+  // and pauseTeaser), so it is looked up here too.
+  var trailerFacade = document.querySelector('.sidar-trailer[data-yt-facade]');
+  var trailerLaunch = trailerFacade ? trailerFacade.querySelector('[data-yt-launch]') : null;
   if (!screen || !layers.length || !next || !status) return;
 
   var TEXT = [
@@ -46,6 +51,18 @@
     frame = null;
     unit.classList.remove('is-rec');
     if (rec) rec.setAttribute('aria-pressed', 'false');
+  }
+
+  // Pauses the teaser through the YouTube iframe API: same postMessage
+  // pauseVideo ifmc.js sends its reels' films. A no-op until the teaser has
+  // been launched (video-facade.js mounts it with enablejsapi=1).
+  function pauseTeaser() {
+    if (!trailerFacade) return;
+    var teaser = trailerFacade.querySelector('iframe');
+    if (!teaser || !teaser.contentWindow) return;
+    try {
+      teaser.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), 'https://www.youtube-nocookie.com');
+    } catch (e) {}
   }
 
   function show(n, pulse) {
@@ -90,6 +107,7 @@
 
   function playRecording() {
     if (frame) { show(state, false); return; }
+    pauseTeaser();
     var id = rec.getAttribute('data-video-id');
     if (!id) return;
     frame = document.createElement('iframe');
@@ -123,6 +141,16 @@
     if (!frame) scan();
   });
   if (rec) rec.addEventListener('click', function () { touched = true; playRecording(); });
+  if (trailerLaunch) {
+    // video-facade.js's click listener on this same button runs first (it
+    // loads first) and has already swapped the poster for the 16:9 player by
+    // the time this one runs: stop the console recording so the two never
+    // play together, then bring the now-taller player fully into view.
+    trailerLaunch.addEventListener('click', function () {
+      stopRecording();
+      trailerFacade.scrollIntoView({ block: 'nearest', behavior: reduce && reduce.matches ? 'auto' : 'smooth' });
+    });
+  }
   show(0, false);
 
   // One scan on first view. Scroll-driven, once, never after the visitor has

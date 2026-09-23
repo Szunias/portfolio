@@ -103,7 +103,6 @@
     dict: rig.querySelector('[data-mw-key="dict"]'),
     cmd: rig.querySelector('[data-mw-key="cmd"]')
   };
-  var langBtns = Array.prototype.slice.call(rig.querySelectorAll('[data-mw-lang]'));
   var soundBtn = rig.querySelector('[data-mw-sound]');
   if (!title || !sub || !readout || !bar || !time || !keyEls.dict || !keyEls.cmd) return;
   var seg = {
@@ -116,26 +115,14 @@
   var PRE = 0.3, POST = 0.12, MIN = 0.25, OK = 1.8, PROC = 0.9, NONE = 1.35;
 
   var UI = {
-    en: {
-      idle: ['Ready to dictate', 'Hold the shortcut, speak, then release'],
-      rec: 'Listening',
-      cmd: 'Voice command',
-      proc: ['Transcribing speech', 'Preparing your text…'],
-      cproc: ['Recognizing command', 'One moment…'],
-      ok: ['Ready', 'Text inserted'],
-      none: ['No matching command was found', ''],
-      short: ['The recording was too short', '']
-    },
-    pl: {
-      idle: ['Gotowy do dyktowania', 'Przytrzymaj skrót, powiedz zdanie i puść'],
-      rec: 'Słucham',
-      cmd: 'Komenda głosowa',
-      proc: ['Rozpoznaję mowę', 'Porządkuję tekst…'],
-      cproc: ['Rozpoznaję komendę', 'Chwila…'],
-      ok: ['Gotowe', 'Tekst został wklejony'],
-      none: ['Nie znaleziono pasującej komendy', ''],
-      short: ['Nagranie było zbyt krótkie', '']
-    }
+    idle: ['Ready to dictate', 'Hold the shortcut, speak, then release'],
+    rec: 'Listening',
+    cmd: 'Voice command',
+    proc: ['Transcribing speech', 'Preparing your text…'],
+    cproc: ['Recognizing command', 'One moment…'],
+    ok: ['Ready', 'Text inserted'],
+    none: ['No matching command was found', ''],
+    short: ['The recording was too short', '']
   };
   var LINE = {
     idle: 'Hold F8 or F7 on your keyboard, or press and hold a key above.',
@@ -147,8 +134,13 @@
     ok: 'pasted into the active window and copied; audio dropped',
     none: 'no exact match: nothing typed, nothing run'
   };
+  /* Touch has no keyboard function row to point at, so the idle hint on a
+     phone or tablet only names the keys and drops "on your keyboard". */
+  if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
+    LINE.idle = 'Press and hold F8 or F7 above.';
+  }
 
-  var lang = 'en', state = 'idle', mode = null, t0 = 0, held = 0, raf = 0, timers = [], soundOn = false;
+  var state = 'idle', mode = null, t0 = 0, held = 0, raf = 0, timers = [], soundOn = false;
 
   function later(fn, s) { timers.push(setTimeout(fn, s * 1000)); }
   function clearTimers() { timers.forEach(clearTimeout); timers = []; }
@@ -164,15 +156,13 @@
   }
 
   function paint() {
-    var s = UI[lang];
     var pair;
-    if (state === 'rec') pair = [s.rec, held.toFixed(1) + ' s'];
-    else if (state === 'cmd') pair = [s.cmd, held.toFixed(1) + ' s'];
-    else pair = s[state] || s.idle;
+    if (state === 'rec') pair = [UI.rec, held.toFixed(1) + ' s'];
+    else if (state === 'cmd') pair = [UI.cmd, held.toFixed(1) + ' s'];
+    else pair = UI[state] || UI.idle;
     title.textContent = pair[0];
     sub.textContent = pair[1];
     sub.hidden = !pair[1];
-    title.parentNode.setAttribute('lang', lang);
   }
 
   function setState(next) {
@@ -289,17 +279,6 @@
     });
     k.addEventListener('contextmenu', function (e) { e.preventDefault(); });
     k.addEventListener('click', function (e) { e.preventDefault(); });
-  });
-
-  function setLang(next) {
-    lang = next === 'pl' ? 'pl' : 'en';
-    langBtns.forEach(function (b) {
-      b.setAttribute('aria-pressed', String(b.getAttribute('data-mw-lang') === lang));
-    });
-    paint();
-  }
-  langBtns.forEach(function (b) {
-    b.addEventListener('click', function () { setLang(b.getAttribute('data-mw-lang')); });
   });
 
   function setSound(on) {

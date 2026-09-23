@@ -239,12 +239,16 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 .tool-strip__proof:focus-visible { color: var(--c-ink); text-decoration-color: var(--c-accent); }
 .tool-strip__proof:hover .tool-strip__go,
 .tool-strip__proof:focus-visible .tool-strip__go { color: var(--c-accent); }
+/* The hint and the solo status share one grid cell, so a solo swaps the text
+   in place instead of adding a row that would push the projects down. */
+.tools-desk__note { display: grid; min-width: 0; }
+.tools-desk__note > * { grid-area: 1 / 1; }
+.tools-desk.is-soloed .tools-desk__hint { visibility: hidden; }
 .tools-desk__status {
   color: var(--c-accent);
   font: 400 12px/1.5 var(--f-mono);
   letter-spacing: .02em;
 }
-.tools-desk__status:not(:empty) { padding: 10px 18px 11px; border-top: 1px solid var(--c-line); }
 
 /* A solo dims the projects made without that tool; nothing moves. The dim is
    a filter because the one-shot entrance animation (.motion-enter in
@@ -918,8 +922,6 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   letter-spacing: -.035em;
   line-height: var(--lh-d2);
 }
-.error-page__air { width: min(320px,76%); height: 24px; margin: 30px 0 0; }
-.error-page__air path { stroke: rgba(236,238,240,0.28); stroke-width: 1.25; stroke-linejoin: round; stroke-linecap: round; }
 .error-page > p:not(.error-page__code) { max-width: 54ch; margin: 28px 0 0; color: var(--muted); font-size: var(--t-b1); line-height: var(--lh-b1); }
 .error-routes { display: grid; margin-top: 40px; border-top: 1px solid var(--rule); }
 .error-routes a {
@@ -962,6 +964,9 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   /* XR Labs tape: two clean lines instead of a line that ends on a middot. */
   .track-xrlabs .wcard__meta-part { display: block; }
   .track-xrlabs .wcard__meta-sep { display: none; }
+  /* About and Contact stack below 1000px, so About drops the bottom space
+     that only the two-column band needs. */
+  #about { padding-block: 48px 8px; }
 }
 @media (min-width: 640px) and (max-width: 999.98px) {
   /* Room for "Electronic sketch" on one line; the column split only has to
@@ -1025,7 +1030,6 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   .music-cta { margin-top: 64px; }
   .music-cta__link { grid-template-columns: minmax(0,1fr); gap: 26px; padding: 22px; }
   .closing-band { margin-top: 72px; }
-  #about { padding-block: 48px 8px; }
   #contact { padding-block: 48px 64px; }
 }
 @media (max-width: 360px) {

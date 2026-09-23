@@ -54,8 +54,26 @@
     var soundOn = true;
     var raf = 0;
     var t0 = 0;
-    var idle = readout ? readout.textContent : '';
+    /* Below 700 px the axis draws one tick per 100 ms instead of one per
+       frame (see --ar-ticks in the CSS), so the idle caption has to match:
+       pick it from matchMedia rather than reading the HTML's default text. */
+    var idleText = {
+      wide: 'One tick is one frame at 60 fps. Bars run from the 5th to the 95th percentile.',
+      narrow: 'One tick is 100 ms, six frames at 60 fps. Bars run from the 5th to the 95th percentile.'
+    };
+    var narrowMq = window.matchMedia ? window.matchMedia('(max-width: 700px)') : null;
+    var idle = narrowMq && narrowMq.matches ? idleText.narrow : idleText.wide;
     var hint = 'Samples play at the 95th-percentile delay of their method.';
+    if (readout) readout.textContent = idle;
+    if (narrowMq) {
+      var onNarrow = function (e) {
+        var was = idle;
+        idle = e.matches ? idleText.narrow : idleText.wide;
+        if (readout && readout.textContent === was) readout.textContent = idle;
+      };
+      if (narrowMq.addEventListener) narrowMq.addEventListener('change', onNarrow);
+      else if (narrowMq.addListener) narrowMq.addListener(onNarrow);
+    }
 
     rows.forEach(function (r) {
       r.arA = Number(r.getAttribute('data-a')) || 0;

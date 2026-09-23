@@ -75,20 +75,47 @@
     }
   }
 
-  // Click, tap or drag across the strip. touch-action: pan-y keeps vertical swipes scrolling.
+  // Mouse seeks on pointerdown and while dragging. Touch and pen wait: a pointerdown alone
+  // can be the start of a page scroll (touch-action: pan-y lets vertical panning through,
+  // and the browser only sends pointercancel once it has decided that's what's happening),
+  // so currentTime stays untouched until the gesture reads as a tap or a clear horizontal drag.
+  var tapSlop = 8;
   var dragging = false;
+  var touch = null; // { id, x, y, dragging } for the in-progress touch/pen pointer
   function timeFrom(e) {
     var r = track.getBoundingClientRect();
     return r.width ? clamp((e.clientX - r.left) / r.width, 0, 1) * dur : 0;
   }
   track.addEventListener('pointerdown', function (e) {
     if (typeof e.button === 'number' && e.button !== 0) return;
+    if (e.pointerType !== 'mouse') {
+      touch = { id: e.pointerId, x: e.clientX, y: e.clientY, dragging: false };
+      return;
+    }
     dragging = true;
     try { track.setPointerCapture(e.pointerId); } catch (err) { /* capture is optional */ }
     seek(timeFrom(e), false);
   });
-  track.addEventListener('pointermove', function (e) { if (dragging) seek(timeFrom(e), false); });
-  function release() { dragging = false; }
+  track.addEventListener('pointermove', function (e) {
+    if (dragging) { seek(timeFrom(e), false); return; }
+    if (!touch || e.pointerId !== touch.id) return;
+    var dx = e.clientX - touch.x, dy = e.clientY - touch.y;
+    if (!touch.dragging) {
+      if (Math.abs(dx) <= tapSlop || Math.abs(dx) <= Math.abs(dy)) return; // undecided, or a scroll
+      touch.dragging = true;
+      try { track.setPointerCapture(e.pointerId); } catch (err) { /* capture is optional */ }
+    }
+    seek(timeFrom(e), false);
+  });
+  function release(e) {
+    dragging = false;
+    if (!touch || (e && e.pointerId !== touch.id)) return;
+    if (e && e.type === 'pointerup' && !touch.dragging) {
+      var dx = e.clientX - touch.x, dy = e.clientY - touch.y;
+      if (Math.abs(dx) < tapSlop && Math.abs(dy) < tapSlop) seek(timeFrom(e), false);
+    }
+    touch = null;
+  }
   track.addEventListener('pointerup', release);
   track.addEventListener('pointercancel', release);
 

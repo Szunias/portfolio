@@ -120,6 +120,7 @@ body::before { background: none; }
   letter-spacing: .06em;
   text-transform: uppercase;
 }
+.sf .sf-meta span { white-space: nowrap; }
 .sf .sf-links { margin: 0; font-size: 14.5px; }
 
 /* ---------- Section heads: heading over its text, one column ---------- */
@@ -456,6 +457,12 @@ body::before { background: none; }
   }
 }
 
+@media (min-width: 901px) and (max-width: 1219px) {
+  /* Set Switch's column is too narrow here for its "one per surface" note;
+     the five wired rows already show one Set Switch per surface. */
+  .sf-bp__head span { display: none; }
+}
+
 @media (max-width: 900px) {
   /* A vertical chain: one wire down the left edge, a stub into each node. */
   .sf-bp__graph {
@@ -524,38 +531,7 @@ body::before { background: none; }
   line-height: 1.6;
 }
 
-/* ---------- Voice lines: the story lines as a table beside the Wwise capture ---------- */
-.sf-lines {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-  gap: clamp(24px, 3.5vw, 52px);
-  align-items: start;
-}
-.sf-lines__table {
-  width: 100%;
-  border-collapse: collapse;
-  font: 400 13.5px/1.4 var(--f-mono);
-}
-.sf-lines__table caption {
-  caption-side: bottom;
-  padding-top: 14px;
-  color: var(--c-ink-3);
-  font: 400 13.5px/1.6 var(--f-body);
-  text-align: left;
-}
-.sf-lines__table th {
-  padding: 0 0 9px;
-  border-bottom: 1px solid var(--c-line-2);
-  color: var(--c-ink-3);
-  font: 500 11.5px/1.4 var(--f-mono);
-  letter-spacing: .1em;
-  text-align: left;
-  text-transform: uppercase;
-}
-.sf-lines__table td { padding: 8px 0; border-bottom: 1px solid var(--c-line); color: var(--c-ink); vertical-align: baseline; }
-.sf-lines__table td:first-child { width: 6.2em; color: var(--c-ink-3); }
-.sf-lines__table th:first-child,
-.sf-lines__table td:first-child { padding-right: 12px; }
+/* ---------- Voice lines: the Wwise capture, full width ---------- */
 .sf-shot {
   margin: 0;
   border: 1px solid var(--c-line-2);
@@ -563,6 +539,7 @@ body::before { background: none; }
 }
 .sf .sf-shot .image-zoom { display: block; margin: 0; }
 .sf-shot img { display: block; width: 100%; height: auto; }
+.sf .sf-shot figcaption { max-width: 72ch; margin: 16px 0 0; color: var(--c-ink-3); font-size: 13.5px; line-height: 1.6; }
 
 /* ---------- How the mix reacts: text beside the enemy's Data Asset ---------- */
 .sf-mix {
@@ -597,7 +574,7 @@ body::before { background: none; }
   padding: 4px 0;
 }
 .sf .sf-asset dt { color: var(--c-ink-3); font-weight: 400; }
-.sf .sf-asset dd { margin: 0; color: var(--c-ink); }
+.sf .sf-asset dd { margin: 0 0 0 auto; color: var(--c-ink); }
 .sf-asset .is-hot { margin: 0 -14px; padding-inline: 14px; background: rgba(215, 216, 219, .09); }
 .sf .sf-asset .is-hot dt, .sf .sf-asset .is-hot dd { color: #fff; }
 
@@ -612,7 +589,6 @@ body::before { background: none; }
   .sf .sf-proof .image-zoom { height: auto; }
   .sf-proof .image-zoom img { width: 100%; height: auto; }
   .sf-clues { grid-template-columns: minmax(0, 1fr); }
-  .sf-lines { grid-template-columns: minmax(0, 1fr); }
   .sf-mix { grid-template-columns: minmax(0, 1fr); }
 }
 @media (min-width: 601px) and (max-width: 900px) {
@@ -632,8 +608,11 @@ body::before { background: none; }
   .sf-slot:nth-child(6)::before { display: none; }
   .sf-readout > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .sf-cues li { grid-template-columns: 62px minmax(0, 1fr); gap: 10px; }
-  .sf-lines__table td:first-child { width: 4.4em; }
-  .sf-lines__table th { letter-spacing: .06em; }
+}
+@media (max-width: 380px) {
+  /* Two columns leave no room for a code token like RTPC_Photos_OnBoard;
+     overflow-wrap: anywhere then splits it mid-word. */
+  .sf-proof { grid-template-columns: minmax(0, 1fr); }
 }
 @media (prefers-reduced-motion: reduce) {
   .sf-board.is-live .sf-slot img,

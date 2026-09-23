@@ -41,11 +41,15 @@
       event.preventDefault();
       trigger = link;
       var thumbnail = link.querySelector('img');
-      image.alt = thumbnail.alt;
+      // A link with no thumbnail (plain "Capture" text) names its own image
+      // via data-caption; falling back to the link text keeps it captioned
+      // even when a page forgets the attribute.
+      var text = thumbnail ? thumbnail.alt : (link.getAttribute('data-caption') || link.textContent.trim());
+      image.alt = text;
       image.src = link.href;
       // Keep the unused dialog free of an image with no source.
       if (!image.parentNode) surface.appendChild(image);
-      caption.textContent = thumbnail.alt;
+      caption.textContent = text;
       original.href = link.href;
       setZoom(false);
       dialog.showModal();

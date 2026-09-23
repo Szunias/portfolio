@@ -24,7 +24,7 @@
   var CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_';
   var DUR = 43.96, SPAN = 44;
   var CUES = [
-    [3, 'rumble', 'The plain'],
+    [3, 'rumble', 'The rumble'],
     [7, 'craft', 'The craft'],
     [10, 'crack', 'The ground splits'],
     [18, 'collapse', 'The collapse'],

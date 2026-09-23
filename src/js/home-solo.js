@@ -40,6 +40,8 @@
       if (tool && on) lit.push(item.getAttribute('data-name'));
     });
     status.textContent = tool ? 'Solo ' + toolName(button) + ': ' + lit.join(', ') : '';
+    // The status takes the hint's place (home.css), so the desk keeps its height.
+    desk.classList.toggle('is-soloed', !!tool);
   }
 
   buttons.forEach(function (button) {

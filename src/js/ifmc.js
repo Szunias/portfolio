@@ -59,6 +59,12 @@
     var ticks = [].slice.call(reel.querySelectorAll('[data-tick]'));
     var pending = null;
     var raf = 0;
+    // A clicked cue seeks to LEAD seconds before its own data-at, so during
+    // the lead-in "last cue at or before t" below still resolves to the
+    // previous cue. Pin the clicked index instead, until playback reaches
+    // its moment (then the normal scan below picks it up on its own) or the
+    // scrubber is moved by hand.
+    var pinned = null;
 
     audios.push(audio);
     audio.removeAttribute('controls');
@@ -70,8 +76,9 @@
       timeEl.textContent = fmt(t);
       scrub.value = String(Math.round(t));
       scrub.setAttribute('aria-valuetext', fmt(t) + ' of ' + fmt(dur));
-      var now = -1;
-      if (reel.classList.contains('is-started')) {
+      if (pinned !== null && Number(cues[pinned].getAttribute('data-at')) <= t + 0.05) pinned = null;
+      var now = pinned === null ? -1 : pinned;
+      if (pinned === null && reel.classList.contains('is-started')) {
         cues.forEach(function (c, i) { if (Number(c.getAttribute('data-at')) <= t + 0.05) now = i; });
       }
       cues.forEach(function (c, i) {
@@ -104,9 +111,9 @@
     btn.addEventListener('click', function () {
       if (audio.paused) start(); else audio.pause();
     });
-    scrub.addEventListener('input', function () { seek(Number(scrub.value), false); });
-    cues.forEach(function (c) {
-      c.addEventListener('click', function () { seek(Number(c.getAttribute('data-at')) - LEAD, true); });
+    scrub.addEventListener('input', function () { pinned = null; seek(Number(scrub.value), false); });
+    cues.forEach(function (c, i) {
+      c.addEventListener('click', function () { pinned = i; seek(Number(c.getAttribute('data-at')) - LEAD, true); });
     });
 
     audio.addEventListener('loadedmetadata', function () {

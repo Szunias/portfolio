@@ -174,18 +174,6 @@
 .ar .ar-log__r { display: inline-grid; grid-template-columns: 5ch 7.5ch auto; column-gap: 0; }
 .ar .ar-log__ms { color: #fff; }
 .ar .ar-log__b { color: #a8a8a8; }
-/* Between about 900 and 1240 px (and on phones) the terminal window is
-   narrower than a full log line, so the bytes column fits the window it is
-   drawn in instead of clipping mid-number. Below 480 px it is dropped, since
-   it is the one column without meaning for the reader; from 330 px up a
-   request still fits on one line. */
-@container arterm (max-width: 480px) {
-  .ar .ar-log__b { display: none; }
-}
-@container arterm (min-width: 330px) and (max-width: 480px) {
-  .ar .ar-log li { grid-template-columns: 4ch 30ch auto; white-space: pre; }
-  .ar .ar-log__r { grid-column: auto; margin-bottom: 0; }
-}
 .ar .ar-rig figcaption {
   margin: 14px 0 0 22%;
   color: var(--c-ink-3);
@@ -634,6 +622,20 @@
   .ar .ar-matrix tbody th { grid-column: 1 / -1; padding: 0 0 10px; }
   .ar .ar-matrix tbody td { display: grid; justify-items: center; gap: 6px; height: auto; }
   .ar .ar-matrix__m { display: block; color: var(--c-ink-3); font: 400 10.5px/1.2 var(--f-mono); letter-spacing: .02em; }
+}
+/* Between about 900 and 1240 px (and on phones) the terminal window is
+   narrower than a full log line, so the bytes column fits the window it is
+   drawn in instead of clipping mid-number. Below 480 px it is dropped, since
+   it is the one column without meaning for the reader; from 330 px up a
+   request still fits on one line. Placed after the max-width: 700px block on
+   purpose: both target .ar-log at equal specificity, so source order decides
+   which wins, and the phone one-line layout needs to win under 480px. */
+@container arterm (max-width: 480px) {
+  .ar .ar-log__b { display: none; }
+}
+@container arterm (min-width: 330px) and (max-width: 480px) {
+  .ar .ar-log li { grid-template-columns: 4ch 30ch auto; white-space: pre; }
+  .ar .ar-log__r { grid-column: auto; margin-bottom: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ar .ar-ruler.is-running .ar-lane::after { opacity: 0; }
