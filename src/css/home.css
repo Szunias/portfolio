@@ -110,6 +110,7 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 /* Track colours, as in a DAW session: the frame stays neutral and colour
    appears only with a project. Each link carries the accent of the page it
    opens, copied from that page's own stylesheet; update both together. */
+.track-hushabye { --track: #bfd6c8; }
 .track-shadowframes { --track: #d3d5d8; }
 .track-sidar { --track: #c2cea3; }
 .track-xrlabs { --track: #5ec8b6; --track-line: rgba(94,200,182,.45); --track-tape: #d8dad4; }
@@ -373,6 +374,26 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   transition: border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease);
 }
 
+/* HUSHABYE: one still across the whole frame, the name set on its dark foot. */
+.wcard__frame--still {
+  border-radius: var(--r-s);
+  box-shadow: 0 0 0 1px rgba(191,214,200,.14),0 34px 70px -34px rgba(0,0,0,.95);
+}
+.wcard__frame--still .wcard__media { border: 0; }
+.wcard__frame--still .wcard__media::after { box-shadow: inset 0 -150px 110px -70px rgba(8,9,9,.9); }
+.wcard__frame--still .wcard__title {
+  position: absolute;
+  left: 24px;
+  bottom: 18px;
+  z-index: 1;
+  color: #eef1ee;
+  font-size: clamp(30px,3.3vw,48px);
+  line-height: 1;
+  letter-spacing: .01em;
+}
+.wcard:hover .wcard__frame--still,
+.wcard:focus-visible .wcard__frame--still { box-shadow: 0 0 0 1px rgba(191,214,200,.45),0 34px 70px -34px rgba(0,0,0,.95); }
+
 /* Shadow Frames: the Polaroid from the page hero, on graphite paper. */
 .wcard__frame--polaroid {
   padding: 12px 12px 0;
@@ -541,7 +562,8 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 }
 @media (min-width: 1000px) {
   .wgrid { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .wgrid > li:first-child { grid-column: 1 / -1; }
+  /* Each lead project takes a full row; the others pair up below. */
+  .wgrid > li:has(> .wcard--lead) { grid-column: 1 / -1; }
   .wcard--lead {
     grid-template-columns: minmax(0,1.38fr) minmax(0,1fr);
     align-items: center;
@@ -1003,6 +1025,7 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   .wcard--lead .wcard__built { font-size: 15px; line-height: 1.6; }
   .wcard__frame--polaroid { padding: 9px 9px 0; }
   .wcard__frame--polaroid .wcard__title { padding: 15px 4px 18px; font-size: 30px; line-height: 1; }
+  .wcard__frame--still .wcard__title { left: 16px; bottom: 14px; font-size: 30px; }
   .wcard__frame--terminal,
   .wcard__frame--tape,
   .wcard__frame--lanes,

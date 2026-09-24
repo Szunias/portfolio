@@ -132,7 +132,7 @@ async function main() {
       await page.goto(origin, { waitUntil: 'load' });
       await loadImages(page);
       await assertTextFits(page, '#work, #about, #contact');
-      assert.equal(await page.locator('a.prow--featured').count(), 5);
+      assert.equal(await page.locator('a.prow--featured').count(), 6);
       assert.equal(await page.locator('a.prow--tool').count(), 4);
       // The music card shows no cover art, only the first three pieces of the set list.
       assert.equal(await page.locator('.music-cta img').count(), 0);

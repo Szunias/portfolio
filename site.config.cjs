@@ -329,6 +329,21 @@ module.exports = {
       sitemap: false,
     },
 
+    {
+      slug: 'hushabye',
+      layout: 'project',
+      css: ['cine', 'portfolio', 'hushabye'],
+      js: ['prefetch', 'colophon-clock', 'video-facade', 'page-motion'],
+      schemaType: 'VideoGame',
+      title: 'HUSHABYE | Voice-Controlled Horror Game in Unity 6',
+      description: 'HUSHABYE is a horror game by Igor Szuniewicz, played by singing into the microphone, with real-time YIN pitch detection and a C# DSP engine that carries sound through the house.',
+      canonical: `${SITE}/hushabye.html`,
+      ogImage: `${SITE}/assets/hushabye/og-monitor-1280.jpg`,
+      ogImageAlt: 'The HUSH-1 baby monitor held up in a dark corridor in HUSHABYE, showing the crib on its infrared camera',
+      ogImageWidth: 1280,
+      ogImageHeight: 720,
+      ogImageType: 'image/jpeg',
+    },
     // Cinematic layout for the project pages, tried on the lead project. The
     // published page stays shadowframes.html. Layout 'home' because build.cjs
     // requires every layout:'project' page to sit in the homepage work index,
