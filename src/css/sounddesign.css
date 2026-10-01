@@ -14,8 +14,14 @@
   --ft-accent-ink: #07090c;
 }
 
-/* Three cues, three columns. */
-.sd .sd-chapters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+/* Each game is one row: its picture on one side, the words and the cues beside it. */
+.sd .sd-row { align-items: center; }
+.sd .sd-row .ft-pull { grid-column: auto; }
+.sd .sd-chapters { grid-template-columns: minmax(0, 1fr); margin-top: 22px; }
+.sd .sd-chapters li { padding-block: 10px 12px; }
+.sd .sd-row .sd-chapters p { font-size: 15.5px; }
+.sd .sd-chapters li:last-child { border-bottom: 1px solid var(--ft-rule); }
+.sd .sd-watch { margin: 20px 0 0; }
 
 /* ---------- The spells: a second stage that becomes its own player ---------- */
 .sd .sd-stage {
@@ -35,11 +41,15 @@
   margin-inline: auto;
 }
 .sd .sd-stage.is-film > video { object-fit: contain; background: #000; }
-.sd .sd-stage + .ft-cap { margin-top: 24px; }
-.sd .sd-stage.is-film + .ft-cap { display: none; }
+.sd .sd-row:has(.sd-stage.is-film) .sd-watch { display: none; }
 
 @media (max-width: 1099px) {
-  .sd .sd-chapters { grid-template-columns: minmax(0, 1fr); }
+  .sd .sd-chapters li { display: block; }
+}
+/* A narrow laptop still has room for the fight's few words beside its picture. */
+@media (min-width: 900px) and (max-width: 1099px) {
+  .sd .ft-row--right > .ft-media { grid-column: c 6 / full-end; grid-row: 1; }
+  .sd .ft-row--right > :not(.ft-media) { grid-column: content-start / c 5; grid-row: 1; }
 }
 @media (max-width: 699px) {
   /* The clip is shot from above with the game's interface at its edges; the loop shows its middle. */
