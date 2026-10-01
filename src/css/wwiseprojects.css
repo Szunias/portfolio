@@ -71,16 +71,59 @@
 .ww-o--g { --c: var(--w-green); }
 .ww-o--r { --c: var(--w-red); }
 
-.ww-ellen .ft-row--right { align-items: start; }
-.ww-ellen .ft-row--right > .ft-body { align-self: end; }
+/* ---------- Hero: the course line under the role line ---------- */
+.ww .ft-hero__who { margin-bottom: 10px; }
+.ww-when {
+  margin: 0 0 clamp(22px, 2.4vw, 32px);
+  color: var(--ft-ink-2);
+  font-size: 15px;
+  line-height: 1.5;
+  text-shadow: 0 1px 14px rgba(0, 0, 0, .6);
+}
 
+/* Bands close at the section spacing, not at poster depth. */
+.ww .ft-band { padding-bottom: var(--ft-space); }
+
+/* ---------- Wide: each game's picture beside its text ---------- */
+@media (min-width: 1100px) {
+  .ww-boney .ft-row { align-items: center; }
+  .ww-boney .ft-row--right > .ft-media { grid-column: c 6 / full-end; }
+  .ww-boney .ft-row--right > :not(.ft-media) { grid-column: content-start / c 5; }
+
+  /* Ellen: the music tree on the left, the text and the still on the right. */
+  .ww-ellen__text { grid-column: c 6 / content-end; grid-row: 2; }
+  .ww-ellen__shot { grid-column: c 6 / content-end; grid-row: 3; }
+  .ww-ellen .ww-tree { grid-column: content-start / c 6; grid-row: 2 / span 2; align-self: start; }
+  .ww-ellen__shot img { aspect-ratio: 16 / 10; object-fit: cover; object-position: 50% 40%; }
+  .ww-tree > .ww-wtree { padding-block: 24px; }
+
+  .ww-stomach .ft-row { align-items: center; }
+  .ww-stomach .ft-row--left > .ft-media { grid-column: full-start / c 6; }
+  .ww-stomach .ft-row--left > :not(.ft-media) { grid-column: c 7 / content-end; }
+}
 @media (max-width: 1099px) {
-  .ww-ellen .ft-row--right > .ft-body { align-self: auto; }
+  .ww-ellen__text { grid-column: content-start / c 10; }
+  .ww-ellen__shot img { aspect-ratio: 16 / 10; object-fit: cover; object-position: 50% 40%; }
+}
+/* Medium: the still and the tree share a row, the still cut to the tree's height. */
+@media (min-width: 900px) and (max-width: 1099px) {
+  .ww-ellen__shot { grid-column: content-start / c 6; grid-row: 3; align-self: stretch; }
+  .ww-ellen__shot img { height: 100%; aspect-ratio: auto; object-position: 35% 50%; }
+  .ww-ellen .ww-tree { grid-column: c 6 / content-end; grid-row: 3; }
+  .ww-tree > .ww-wtree { font-size: 13px; padding-inline: 20px; }
 }
 @media (max-width: 699px) {
-  /* The tall phone hero keeps the skeletons beside the title in view. */
-  .ww .ft-hero__stage > video { object-position: 60% 50%; }
-  .ww-tree > .ww-wtree { font-size: 12px; line-height: 28px; padding: 16px 12px 18px; }
+  /* Phone hero: the loop at a 4:3 crop with the skeletons whole, the title under it. */
+  .ww .ft-hero:not(.is-film) .ft-hero__stage { height: auto; aspect-ratio: 4 / 3; }
+  .ww .ft-hero:not(.is-film) .ft-hero__stage::after { background: linear-gradient(0deg, var(--ft-fade) 0%, transparent 26%); }
+  .ww .ft-hero__stage > video { object-position: 55% 50%; }
+  .ww .ft-hero:not(.is-film) .ft-hero__text { position: static; padding-top: 6px; padding-bottom: 12px; }
+  .ww-ellen__text { grid-column: content; }
+  /* Edge to edge like the other pictures, so the longest names stay on one line. */
+  .ww-ellen__shot,
+  .ww-ellen .ww-tree { grid-column: full; }
+  .ww-ellen .ww-tree > .ft-cap { padding-inline: var(--page-gutter); }
+  .ww-tree > .ww-wtree { font-size: 12px; line-height: 28px; padding: 16px var(--page-gutter) 18px; }
   .ww-wtree ul { padding-left: 4px; }
   .ww-wtree ul > li { padding-left: 17px; }
   .ww-wtree ul > li::before { width: 11px; height: 14px; }
@@ -90,7 +133,7 @@
 /* At 320 a long name wraps under its own start, never under the bar; one
    line is still one row, so the wire elbows keep meeting the first line. */
 @media (max-width: 360px) {
-  .ww-tree > .ww-wtree { font-size: 10.5px; padding-inline: 10px; }
+  .ww-tree > .ww-wtree { font-size: 10.5px; padding-inline: 16px; }
   .ww-wtree ul { padding-left: 2px; }
   .ww-wtree ul > li { padding-left: 14px; }
   .ww-wtree ul > li::before { width: 9px; }
