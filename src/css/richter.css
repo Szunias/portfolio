@@ -1,265 +1,100 @@
-/* Richter only (richter.html). Colours come from the film's own frames:
-   rock shadow #101213 -> page, canyon rock #171b1d -> raised, storm cloud #23262b -> top,
-   sky #54636a / #696e71 lifted -> links and prose, engine glow #8a3836 saturated -> the player bar. */
+/* Richter: page-owned styles, loaded only on richter.html after feature.css.
+   The palette is sampled from the film: the cold slate behind the craft for the page,
+   the storm cloud over the collapse for the cue band, the dust of the plain for the
+   theme band, and the pale haze of the sky for heads, cues and the one filled button. */
 :root {
-  --c-bg-0: #08090a;
-  --c-bg-1: #0c0d0f;
-  --c-bg-2: #131618;
-  --c-bg-3: #1b1f22;
-  --c-ink: #eceff1;
-  --c-ink-2: #b6bec3;
-  --c-ink-3: #8f989e;
-  --c-accent: #a9bcc6;
-  --c-accent-hi: #c9d6dc;
-  --c-accent-ink: #08090a;
-  --c-accent-line: rgba(169, 188, 198, .42);
-  --c-accent-weak: rgba(169, 188, 198, .12);
-  --c-line: rgba(226, 232, 236, .08);
-  --c-line-2: rgba(226, 232, 236, .15);
-  --c-line-3: rgba(226, 232, 236, .30);
-  --ice: #a9bcc6;
-  --ri-pen: #e5484d;     /* engine glow of the craft */
+  --ft-bg: #0e1214;
+  --ft-band: #1a2024;
+  --ft-band-2: #221f1c;
+  --ft-ink: #eef1f2;
+  --ft-ink-2: #cfd6d9;
+  --ft-ink-3: #a5aeb3;
+  --ft-head: #e4ecf0;
+  --ft-accent: #b9cbd4;
+  --ft-accent-ink: #0e1214;
 }
 
-/* The site's ice glow gives way to the haze of the film's sky. */
-body::before { background: none; }
-main#main-content {
-  background: radial-gradient(110% 560px at 50% -200px, rgba(84, 99, 106, .26), transparent 72%) no-repeat;
+/* The film is cut 2.35:1. From tablet width up the hero keeps that shape, so the
+   720p picture is shown whole instead of cropped and blown up; a phone crops it. */
+@media (min-width: 700px) {
+  .ri .ft-hero:not(.is-film) .ft-hero__stage {
+    height: min(calc(100svh - var(--site-header-height)), max(440px, calc(100vw * 544 / 1280)));
+  }
 }
+.ri .ft-hero__stage > video { object-position: 62% 50%; }
+.ri .ft-media video { --shot-ar: 1280 / 544; }
+.ri .ri-logo { width: clamp(220px, 34vw, 520px); }
 
-/* Opt out of the shared heading-left / paragraph-right grid (cine.css, .cine > section). */
-.cine.ri > section { display: block; }
-.ri button {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-.ri button:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
-
-/* ---------- Opening: the title card, then who did what ---------- */
-.ri-open { margin-bottom: clamp(28px, 3.4vw, 44px); }
-.ri .ri-title {
-  margin: 0 -.3em clamp(22px, 2.6vw, 34px) 0;
-  color: var(--c-ink);
-  font: 600 clamp(34px, 12.4vw, 132px)/.86 var(--f-display);
-  letter-spacing: .3em;
-  text-transform: uppercase;
-}
-.ri-intro {
-  display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
-  gap: 20px clamp(32px, 5vw, 80px);
-  align-items: start;
-}
-.ri .ri-lead {
-  max-width: 44ch;
-  margin: 0;
-  color: var(--c-ink);
-  font-size: clamp(18px, 1.5vw, 21px);
-  line-height: 1.55;
-}
-.ri .ri-slate {
+/* ---------- Cue sheet: six cues, each with its frame ---------- */
+.ri .ri-cues { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: clamp(36px, 3.6vw, 56px); }
+.ri .ri-cues img {
   display: block;
-  max-width: none;
-  margin: 4px 0 0;
-  border-top: 1px solid var(--c-line-2);
-}
-.ri-slate > div {
-  display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
-  gap: 14px;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--c-line);
-}
-.ri .ri-slate dt {
-  color: var(--c-ink-3);
-  font: 500 11px/1.9 var(--f-mono);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-.ri .ri-slate dd { margin: 0; color: var(--c-ink-2); font-size: 14.5px; line-height: 1.55; }
-
-/* ---------- The film ---------- */
-.ri-reel { margin-bottom: clamp(88px, 10vw, 136px); }
-.ri-screen {
-  position: relative;
-  aspect-ratio: 1280 / 544; /* the picture inside the 16:9 file, letterbox cropped away */
-  overflow: hidden;
-  background: #000;
-}
-.ri-screen > div,
-.ri .ri-screen video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.ri .ri-screen video {
-  display: block;
-  max-width: none;
-  aspect-ratio: auto;
-  border: 0;
-  border-radius: 0;
-  object-fit: cover;
-  background: #000;
-}
-
-/* local-video.js puts its round play button over the poster; keep its shade. */
-.ri .ri-screen .local-video__launch {
-  background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .02), rgba(0, 0, 0, .34));
-}
-
-/* ---------- Cue by cue ---------- */
-.ri-cues { margin-bottom: clamp(88px, 10vw, 136px); }
-.ri-head { max-width: 68ch; margin-bottom: clamp(26px, 3vw, 40px); }
-.ri .ri-head h2 { margin-bottom: 16px; }
-.ri .ri-head p { max-width: 66ch; margin: 0; color: var(--c-ink-2); font-size: 17px; line-height: 1.65; }
-
-.ri .ri-cuelist {
-  max-width: none;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--c-line-2);
-}
-.ri .ri-cuelist > li {
-  display: grid;
-  grid-template-columns: 72px 208px minmax(0, 1fr);
-  grid-template-areas: "tc frame title" "tc frame text";
-  gap: 6px clamp(20px, 2.6vw, 36px);
-  align-items: center;
-  margin: 0;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--c-line);
-}
-.ri-cue__tc { grid-area: tc; }
-.ri-cue__tc button {
-  min-height: 44px;
-  color: var(--c-ink);
-  font: 500 15px/1 var(--f-mono);
-  letter-spacing: .02em;
-  text-decoration: underline;
-  text-decoration-color: var(--c-line-3);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 6px;
-  transition: color .2s var(--ease), text-decoration-color .2s var(--ease);
-}
-.ri-cue__tc button:hover { text-decoration-color: var(--ri-pen); }
-.ri-cue__frame {
-  grid-area: frame;
-  aspect-ratio: 640 / 272;
-  overflow: hidden;
-  border: 1px solid var(--c-line);
-  background: #000;
-  cursor: pointer;
-  transition: border-color .2s var(--ease);
-}
-.ri-cue__frame:hover { border-color: var(--c-line-3); }
-.ri-cue__frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.ri .ri-cuelist h3 { grid-area: title; align-self: end; margin: 0; font-size: 19px; line-height: 1.3; }
-.ri .ri-cuelist li > p { grid-area: text; align-self: start; max-width: 62ch; margin: 0; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.6; }
-.ri .ri-after { max-width: 66ch; margin: 26px 0 0; color: var(--c-ink-3); font-size: 15px; line-height: 1.6; }
-
-/* ---------- Main theme ---------- */
-.cine.ri > section.ri-theme {
-  display: grid;
-  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
-  grid-template-rows: 1fr auto;
-  grid-template-areas: "art body" "art player";
-  gap: 26px clamp(32px, 5vw, 80px);
-  align-items: end;
-  margin-bottom: 64px;
-}
-/* cine.css spreads every non-heading child across both columns on wide
-   screens (.cine > section > :not(h2):not(p)); name the areas above it. */
-.cine.ri > section.ri-theme > .ri-theme__art { grid-area: art; }
-.cine.ri > section.ri-theme > .ri-theme__body { grid-area: body; }
-.cine.ri > section.ri-theme > .ri-player { grid-area: player; }
-.ri-theme__art {
-  display: block;
+  order: -1;
   width: 100%;
   height: auto;
-  border: 1px solid var(--c-line);
+  margin-bottom: 14px;
+  background: var(--c-bg-0);
+  transition: opacity var(--dur) var(--ease);
 }
-.ri .ri-theme__body h2 { margin-bottom: 12px; }
-.ri .ri-theme__body p { max-width: 50ch; margin: 0; color: var(--c-ink-2); font-size: 17px; line-height: 1.65; }
+.ri .ri-cues .ft-cue:hover img { opacity: .9; }
+
+/* ---------- The main theme ---------- */
 .ri-player {
-  grid-area: player;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas: "btn name time" "btn bar bar";
-  gap: 10px 16px;
+  gap: 10px 18px;
   align-items: center;
-  max-width: 540px;
-  padding: 16px 20px 16px 16px;
-  border: 1px solid var(--c-line-2);
-  background: var(--c-bg-2);
+  max-width: 34em;
+  margin-top: 28px;
 }
 .ri-player audio { grid-column: 1 / -1; width: 100%; }
 .ri-player audio[hidden] { display: none; }
-.ri-player__btn {
+.ri .ri-player__btn {
   grid-area: btn;
   display: grid;
   place-items: center;
-  width: 52px;
-  height: 52px;
+  width: 60px;
+  height: 60px;
+  margin: 0;
+  padding: 0;
+  border: 0;
   border-radius: 50%;
-  background: var(--c-ink) !important;
-  color: var(--c-bg-0) !important;
-  transition: background-color .2s var(--ease);
+  background: var(--ft-accent);
+  color: var(--ft-accent-ink);
+  cursor: pointer;
+  transition: opacity var(--dur) var(--ease);
 }
+.ri .ri-player__btn:hover { opacity: .88; }
 .ri-player__btn[hidden] { display: none; }
-.ri-player__btn:hover { background: var(--c-accent-hi) !important; }
-.ri-player__btn svg { width: 22px; height: 22px; fill: currentColor; }
+.ri-player__btn svg { width: 24px; height: 24px; fill: currentColor; }
 .ri-player__btn .i-pause,
 .ri-player__btn.is-playing .i-play { display: none; }
 .ri-player__btn.is-playing .i-pause { display: block; }
-.ri-player__name { grid-area: name; color: var(--c-ink); font-size: 15px; font-weight: 500; }
-.ri-player__time { grid-area: time; color: var(--c-ink-3); font: 400 12.5px/1 var(--f-mono); }
-.ri-player__bar { grid-area: bar; position: relative; height: 2px; background: var(--c-line-2); }
-.ri-player__bar span { position: absolute; top: 0; bottom: 0; left: 0; width: 0; background: var(--ri-pen); transition: width .25s linear; }
+.ri-player__name { grid-area: name; color: var(--ft-head); font: 600 22px/1.2 var(--f-display); letter-spacing: -.01em; }
+.ri-player__time { grid-area: time; color: var(--ft-ink-3); font: 400 15px/1 var(--f-mono); font-variant-numeric: tabular-nums; }
+.ri-player__bar { grid-area: bar; position: relative; height: 2px; background: color-mix(in srgb, var(--ft-ink) 18%, transparent); }
+.ri-player__bar span { position: absolute; top: 0; bottom: 0; left: 0; width: 0; background: var(--ft-accent); transition: width .25s linear; }
 
-/* ---------- Narrow screens ---------- */
-@media (max-width: 900px) {
-  .ri-intro { grid-template-columns: minmax(0, 1fr); }
-  .ri .ri-cuelist > li { grid-template-columns: 64px 168px minmax(0, 1fr); row-gap: 4px; }
+@media (min-width: 700px) and (max-width: 1099px) {
+  .ri .ri-cues { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 40px; }
+  .ri .ri-cues li { display: block; padding-bottom: 0; }
 }
-@media (min-width: 601px) and (max-width: 900px) {
-  .cine.ri > section.ri-theme { grid-template-columns: minmax(0, 220px) minmax(0, 1fr); }
+@media (max-width: 699px) {
+  .ri .ri-cues { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
 }
-@media (max-width: 600px) {
-  .ri .ri-cuelist > li {
-    grid-template-columns: 112px minmax(0, 1fr);
-    grid-template-areas: "frame tc" "frame title" "text text";
-    gap: 2px 14px;
-    align-items: center;
-    padding: 14px 0 16px;
-  }
-  .ri-cue__tc button { min-height: 32px; font-size: 14px; }
-  .ri .ri-cuelist h3 { align-self: start; font-size: 17px; }
-  .ri .ri-cuelist li > p { margin-top: 10px; font-size: 15px; }
-  .cine.ri > section.ri-theme {
-    grid-template-columns: 112px minmax(0, 1fr);
-    grid-template-rows: auto auto;
-    grid-template-areas: "art body" "player player";
-    gap: 20px 16px;
-    align-items: start;
-  }
-  .ri .ri-theme__body h2 { margin-bottom: 10px; }
-  .ri .ri-theme__body p { font-size: 15.5px; }
-  .ri-player { padding: 12px 14px 12px 12px; gap: 8px 12px; }
-  .ri-player__btn { width: 46px; height: 46px; }
+@media (max-width: 699px) {
+  /* A shorter phone hero crops less of the wide 720p frame, so it stays sharp. */
+  .ri .ft-hero:not(.is-film) .ft-hero__stage { height: clamp(440px, 122vw, 560px); }
+  .ri .ft-hero__stage > video { object-position: 64% 50%; }
+  .ri .ri-player__btn { width: 52px; height: 52px; }
+  .ri-player__name { font-size: 19px; }
 }
 @media (max-width: 360px) {
   .ri-player { grid-template-areas: "btn name name" "btn bar time"; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ri-cue__tc button,
-  .ri-cue__frame,
-  .ri-player__btn,
+  .ri .ri-cues img,
+  .ri .ri-player__btn,
   .ri-player__bar span { transition: none; }
 }
