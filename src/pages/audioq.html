@@ -23,90 +23,48 @@
   </section>
 
   <section class="aq-chain" aria-labelledby="aq-chain-title">
-    <div class="aq-head">
-      <h2 id="aq-chain-title">From the file player to the output</h2>
-      <p>The interface groups the controls into panels, but the audio passes through them in one fixed order. The filters and the compressor are JUCE modules. I wrote the file player, the make-up gain after the compressor and everything from the tremolo on.</p>
+    <div class="aq-group aq-group--first">
+      <div class="aq-group__text">
+        <h2 id="aq-chain-title">From the file player to the output</h2>
+        <p class="aq-intro">The panels group the controls, but the audio passes through them in this fixed order. The filters and the compressor are JUCE modules. I wrote the file player, the make-up gain and everything from the tremolo on.</p>
+        <ol class="aq-steps">
+          <li><h3>Source</h3><p>Loops a region dragged on the waveform, or jumps between regions in random and granular modes. <code>AudioFilePlayer</code></p></li>
+        </ol>
+      </div>
+      <figure class="aq-group__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-source-loop.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-source-loop-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-source-loop-884.webp 884w" sizes="(min-width: 1440px) 615px, (min-width: 901px) 45vw, calc(100vw - 40px)" width="884" height="340" alt="The AudioQ source display: a waveform with a lit loop region and the playhead standing to its left" loading="lazy" decoding="async"></figure>
     </div>
-    <div class="aq-rack">
-      <div class="aq-notes">
-        <section class="aq-note" id="aq-note-source" aria-labelledby="aq-note-source-h">
-          <div class="aq-note__text">
-            <h3 id="aq-note-source-h">Source <small>AudioFilePlayer</small></h3>
-            <p>Drop a WAV, AIFF or MP3 on the plug-in and drag across the waveform to set the loop region. The tempo knob resamples the file, so speed and pitch change together. Random and granular modes keep jumping to new regions of the file.</p>
-            <pre class="aq-code"><code>double minLen = isRandom ? 0.1 : 0.05;
-double maxLen = isRandom ? 3.0 : 0.20;</code></pre>
-          </div>
-          <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-source-loop.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-source-loop-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-source-loop-884.webp 884w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="884" height="340" alt="The AudioQ source display: a waveform with a lit loop region and the playhead standing to its left" loading="lazy" decoding="async"></figure>
-        </section>
-        <section class="aq-note" id="aq-note-filters" aria-labelledby="aq-note-filters-h">
-          <div class="aq-note__text">
-            <h3 id="aq-note-filters-h">Filters <small>juce::dsp::StateVariableTPTFilter</small></h3>
-            <p>A low-pass and a high-pass filter from JUCE’s DSP module. I skewed both cutoff ranges so the low frequencies get more of the knob’s travel: halfway round is about 2 kHz.</p>
-            <pre class="aq-code"><code>juce::NormalisableRange&lt;float&gt;(20.0f, 20000.0f, 1.0f, 0.3f)</code></pre>
-          </div>
-          <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-filters-compressor.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-filters-compressor-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-filters-compressor-691.webp 691w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="691" height="266" alt="The filters panel with low and high pass knobs, beside the compressor panel with threshold, ratio, attack and release" loading="lazy" decoding="async"></figure>
-        </section>
-        <section class="aq-note" id="aq-note-comp" aria-labelledby="aq-note-comp-h">
-          <div class="aq-note__text">
-            <h3 id="aq-note-comp-h">Compressor <small>juce::dsp::Compressor</small></h3>
-            <p>JUCE’s compressor, followed by a make-up gain I added so that compression stays audible. The gain is worked out from the threshold and the ratio and capped at 18 dB.</p>
-            <pre class="aq-code"><code>float makeupDb = juce::jlimit(0.0f, 18.0f,
-    (-cThresh) * (1.0f - (1.0f / juce::jmax(1.0f, cRatio))) * 0.35f);</code></pre>
-          </div>
-        </section>
-        <section class="aq-note" id="aq-note-trem" aria-labelledby="aq-note-trem-h">
-          <div class="aq-note__text">
-            <h3 id="aq-note-trem-h">Tremolo</h3>
-            <p>My tremolo squares its sine LFO, so the level spends longer in the dips. From a depth of 0.5 the dips reach silence.</p>
-            <pre class="aq-code"><code>float shapedLfo = lfoVal * lfoVal;
-float minGain = juce::jmax(0.0f, 1.0f - (tremDepth * 2.0f));</code></pre>
-          </div>
-          <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The tremolo panel with its switch, rate and depth, beside the glitch panel with the crush, downsample, stutter, reverse and dry / wet controls" loading="lazy" decoding="async"></figure>
-        </section>
-        <section class="aq-note" id="aq-note-crush" aria-labelledby="aq-note-crush-h">
-          <div class="aq-note__text">
-            <h3 id="aq-note-crush-h">Bitcrusher</h3>
-            <p>My bitcrusher rounds each sample to steps of 1/2<sup>bits</sup>. Downsample then holds each value for up to 40 samples, as if the sample rate dropped by that factor.</p>
-            <pre class="aq-code"><code>crushHeldSample[ch] = std::round(data[s] * levels) / levels;</code></pre>
-          </div>
-        </section>
-        <section class="aq-note" id="aq-note-stutter" aria-labelledby="aq-note-stutter-h">
-          <div class="aq-note__text">
-            <h3 id="aq-note-stutter-h">Stutter</h3>
-            <p>The plug-in keeps the last second of audio in a history buffer. When stutter is on, it copies the most recent chunk out of that buffer and repeats it. A chunk lasts one period of the stutter rate.</p>
-            <pre class="aq-code"><code>int targetLen = juce::jmax(64, (int)(currentSR / (double)stutterRate));</code></pre>
-          </div>
-        </section>
-        <section class="aq-note" id="aq-note-reverse" aria-labelledby="aq-note-reverse-h">
-          <div class="aq-note__text">
-            <h3 id="aq-note-reverse-h">Reverse</h3>
-            <p>Reverse reads the same history buffer backwards. It plays the most recent 180 ms in reverse, then takes the next 180 ms.</p>
-            <pre class="aq-code"><code>reverseLength = juce::jmax(1, (int)(sampleRate * 0.18));</code></pre>
-          </div>
-        </section>
-        <section class="aq-note" id="aq-note-mix" aria-labelledby="aq-note-mix-h">
-          <div class="aq-note__text">
-            <h3 id="aq-note-mix-h">Dry/wet</h3>
-            <p>A dry copy of the signal is saved straight after the file player, before the filters, and blended back in here.</p>
-            <pre class="aq-code"><code>wet[s] = dry[s] * (1.0f - dryWet) + wet[s] * dryWet;</code></pre>
-          </div>
-        </section>
-        <section class="aq-note" id="aq-note-out" aria-labelledby="aq-note-out-h">
-          <div class="aq-note__text">
-            <h3 id="aq-note-out-h">Output</h3>
-            <p>Gain comes last, up to about +10&nbsp;dB. A safety check then clears any block that peaks above 4.0, about +12&nbsp;dB, and shows a warning. What passes goes to the live output display.</p>
-            <pre class="aq-code"><code>if (peakLevel &gt; 4.0f)
+    <div class="aq-group">
+      <ol class="aq-steps aq-group__text" start="2">
+        <li><h3>Filters</h3><p>Low-pass and high-pass, skewed so halfway round the knob is about 2&nbsp;kHz. <code>juce::dsp::StateVariableTPTFilter</code></p></li>
+        <li><h3>Compressor</h3><p>Then a make-up gain I added, worked out from threshold and ratio, capped at 18&nbsp;dB. <code>juce::dsp::Compressor</code></p>
+<pre class="aq-code"><code>float makeupDb = juce::jlimit(0.0f, 18.0f,
+    (-cThresh) * (1.0f - (1.0f / juce::jmax(1.0f, cRatio))) * 0.35f);</code></pre></li>
+      </ol>
+      <figure class="aq-group__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-filters-compressor.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-filters-compressor-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-filters-compressor-691.webp 691w" sizes="(min-width: 1440px) 615px, (min-width: 901px) 45vw, calc(100vw - 40px)" width="691" height="266" alt="The filters panel with low and high pass knobs, beside the compressor panel with threshold, ratio, attack and release" loading="lazy" decoding="async"></figure>
+    </div>
+    <div class="aq-group">
+      <ol class="aq-steps aq-group__text" start="4">
+        <li><h3>Tremolo</h3><p>A squared sine LFO, so the level stays longer in the dips. From depth 0.5 they reach silence.</p></li>
+        <li><h3>Bitcrusher</h3><p>Rounds each sample to steps of 1/2<sup>bits</sup>. Downsample holds it for up to 40 samples.</p></li>
+        <li><h3>Stutter</h3><p>Repeats the latest chunk of a one-second history buffer, one period of the stutter rate long.</p></li>
+        <li><h3>Reverse</h3><p>Reads the same buffer backwards, 180&nbsp;ms at a time.</p></li>
+        <li><h3>Dry/wet</h3><p>Blends in a dry copy taken straight after the file player, before the filters.</p></li>
+      </ol>
+      <figure class="aq-group__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1440px) 615px, (min-width: 901px) 45vw, calc(100vw - 40px)" width="785" height="302" alt="The tremolo panel with its switch, rate and depth, beside the glitch panel with the crush, downsample, stutter, reverse and dry / wet controls" loading="lazy" decoding="async"></figure>
+    </div>
+    <div class="aq-group">
+      <ol class="aq-steps aq-group__text" start="9">
+        <li><h3>Output</h3><p>Gain up to about +10&nbsp;dB. A safety check then clears any block peaking above 4.0, about +12&nbsp;dB, and shows a warning.</p>
+<pre class="aq-code"><code>if (peakLevel &gt; 4.0f)
 {
     dangerousVolumeDetected.store(true);
     buffer.clear();
     return;
-}</code></pre>
-          </div>
-          <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-live-output.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-live-output-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-live-output-1008.webp 1008w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="1008" height="273" alt="The AudioQ live output display: a quiet stretch of signal followed by two louder passages" loading="lazy" decoding="async"></figure>
-        </section>
-      </div>
+}</code></pre></li>
+      </ol>
+      <figure class="aq-group__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-live-output.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-live-output-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-live-output-1008.webp 1008w" sizes="(min-width: 1440px) 615px, (min-width: 901px) 45vw, calc(100vw - 40px)" width="1008" height="273" alt="The AudioQ live output display: a quiet stretch of signal followed by two louder passages" loading="lazy" decoding="async"></figure>
     </div>
-    <p class="aq-after">The chain follows the source on GitHub, updated in July 2026. The download there is still v1.0.0 for Windows, VST3, and I have not yet tested AudioQ across hosts, operating systems, sample rates and channel layouts.</p>
+    <p class="aq-after">The chain follows the source on GitHub, updated in July 2026. The download there is still v1.0.0, and I have not yet tested AudioQ across hosts, operating systems, sample rates and channel layouts.</p>
   </section>
 
   <nav class="cine-close" aria-label="Project links and navigation">

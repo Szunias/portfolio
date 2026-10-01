@@ -83,82 +83,88 @@ body::before { background: none; }
 }
 .aq-window img { display: block; width: 100%; height: auto; }
 
-/* ---------- The chain ---------- */
-.aq-chain { margin-bottom: clamp(88px, 10vw, 140px); }
-.aq-head { max-width: 66ch; margin-bottom: clamp(22px, 2.6vw, 32px); }
-.aq .aq-head h2 { margin: 0 0 14px; }
-.aq .aq-head p { margin: 0; color: var(--c-ink-2); font-size: 17px; line-height: 1.65; }
-.aq-rack {
-  overflow: hidden;
-  border: 1px solid var(--c-line-2);
-  border-radius: 12px;
-}
-.aq-note {
+/* ---------- The chain: four real panels, the nine stages beside them in order ---------- */
+.aq-chain { margin-bottom: clamp(88px, 10vw, 140px); counter-reset: aq-stage; }
+.aq-group {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
-  gap: 22px clamp(28px, 4vw, 56px);
-  align-items: start;
-  padding: clamp(24px, 3vw, 36px) clamp(20px, 3vw, 40px) clamp(26px, 3vw, 38px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px clamp(32px, 4.4vw, 64px);
+  align-items: center;
+  padding: clamp(24px, 2.6vw, 34px) 0;
 }
-.aq-note + .aq-note { border-top: 1px solid var(--c-line); }
-.aq-note:not(:has(.aq-note__shot)) { grid-template-columns: minmax(0, 1fr); }
-.aq .aq-note h3 {
-  margin: 0 0 12px;
-  color: var(--c-ink);
-  font: 500 clamp(22px, 2vw, 27px)/1.15 var(--f-display);
-  letter-spacing: -.02em;
-}
-.aq .aq-note h3 small {
-  display: block;
-  margin: 8px 0 0;
-  color: var(--c-ink-3);
-  font: 400 12px/1.4 var(--f-mono);
+.aq-group + .aq-group { border-top: 1px solid var(--c-line); }
+.aq-group--first { padding-top: 0; align-items: end; }
+.aq .aq-group h2 { margin: 0 0 14px; }
+.aq .aq-intro { max-width: 58ch; margin: 0 0 clamp(26px, 3vw, 36px); color: var(--c-ink-2); font-size: 17px; line-height: 1.6; }
+.aq .aq-steps { margin: 0; padding: 0; list-style: none; }
+.aq-steps > li { display: grid; grid-template-columns: 8em minmax(0, 1fr); column-gap: 16px; margin: 0; counter-increment: aq-stage; }
+.aq-steps > li + li { margin-top: 14px; }
+.aq .aq-steps h3::before {
+  content: counter(aq-stage, decimal-leading-zero);
+  display: inline-block;
+  width: 2.2em;
+  color: var(--c-accent);
+  font: 500 12.5px/1 var(--f-mono);
   letter-spacing: .02em;
-  overflow-wrap: anywhere;
 }
-.aq .aq-note p { max-width: 56ch; margin: 0 0 16px; color: var(--c-ink-2); font-size: 16px; line-height: 1.65; }
-.aq-code {
-  max-width: 64ch;
+.aq .aq-steps h3 {
   margin: 0;
+  color: var(--c-ink);
+  font: 500 17px/1.45 var(--f-display);
+  letter-spacing: -.005em;
+}
+.aq .aq-steps p { max-width: none; margin: 0; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.55; }
+.aq .aq-steps p code { display: block; margin-top: 3px; color: var(--c-ink-3); font: 400 12px/1.5 var(--f-mono); overflow-wrap: anywhere; }
+.aq-steps sup { line-height: 0; }
+.aq-steps .aq-code { grid-column: 1 / -1; margin-top: 12px; }
+.aq-code {
+  max-width: none;
+  margin: 10px 0 0;
   padding: 10px 14px;
   border-left: 2px solid var(--c-accent-line);
   background: var(--aq-box);
   color: var(--c-ink-2);
-  font: 400 12.5px/1.6 var(--f-mono);
+  font: 400 12px/1.6 var(--f-mono);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-.aq-note__shot {
+.aq-group__shot {
   margin: 0;
   overflow: hidden;
   border: 1px solid var(--c-line-2);
   border-radius: 8px;
   background: #0b0f14;
 }
-.aq-note__shot img { display: block; width: 100%; height: auto; }
+.aq-group__shot img { display: block; width: 100%; height: auto; }
 
 /* ---------- The demo, moved up under the opening ---------- */
 .aq-demo { align-items: center; margin-bottom: clamp(88px, 10vw, 140px); scroll-margin-top: 100px; }
 .aq .aq-demo h2 { margin-top: 0; }
 .aq .aq-demo p { color: var(--c-ink-2); }
 
-/* ---------- One plain paragraph under the notes ---------- */
+/* ---------- One plain paragraph under the chain ---------- */
 .aq .aq-after {
   max-width: 70ch;
-  margin: 22px 0 0;
+  margin: clamp(8px, 1vw, 14px) 0 0;
   color: var(--c-ink-3);
   font-size: 15px;
   line-height: 1.65;
 }
 
+@media (max-width: 1180px) {
+  .aq-steps > li { grid-template-columns: minmax(0, 1fr); row-gap: 2px; }
+}
 @media (max-width: 900px) {
   .aq-open__head { grid-template-columns: minmax(0, 1fr); }
-  .aq-note { grid-template-columns: minmax(0, 1fr); }
+  .aq-group, .aq-group--first { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .aq-group__shot { order: -1; }
+  .aq-group--first { gap: 0; }
+  .aq-group--first .aq-group__text { display: contents; }
+  .aq-group--first .aq-group__shot { order: 0; margin-bottom: 24px; }
+  .aq-group--first .aq-steps { order: 1; }
 }
 @media (max-width: 600px) {
   .aq .aq-open h1 { padding-left: .26em; }
   .aq .aq-meta { letter-spacing: .04em; }
-  .aq-note { padding: 22px 16px 26px; }
-  .aq .aq-note p { font-size: 15.5px; }
   .aq-code { font-size: 12px; padding: 9px 11px; }
 }
