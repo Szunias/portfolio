@@ -1,5 +1,5 @@
-/* Shadow Frames: Polaroid hero and the investigation board that steps
-   through the ambience stages.
+/* Shadow Frames: the investigation board that steps through the ambience
+   stages.
 
    The board: photographs on the board -> ProgressiveAmbience stage. The
    stage names and layers are copied from SC_AMB_Progressive in the Wwise

@@ -1,159 +1,46 @@
-/* Shadow Frames: page-owned styles, loaded only on shadowframes.html.
-
-   "The Board": silver on graphite, no colour anywhere on the page. The hero
-   prints the gameplay recording as a Polaroid; the investigation board is
-   ten photo slots wired to a Wwise switch group; the sections after it show
-   what was built (footsteps, anomaly cues, voice lines, the reactive mix)
-   in the same bordered, mono-labelled card language. */
-
+/* Shadow Frames: page-owned styles, loaded only on shadowframes.html after feature.css.
+   The palette is sampled from the game's black-and-white frames: the near-black of the
+   bar counter for the page, the stage's grey for the board band, its lit back wall for
+   the enemy band, and the silver of the candle wax for heads, the button and the pins.
+   The rest of this sheet is the investigation board (shadowframes.js): ten dark Polaroids
+   wired to the ProgressiveAmbience switch group. */
 :root {
-  --c-bg-0: #0a0b0c;
-  --c-bg-1: #0e1011;
-  --c-bg-2: #15181a;
-  --c-bg-3: #1c1f21;
-  --c-ink: #eceeef;
-  --c-ink-2: #b9bcbf;
-  --c-ink-3: #979b9f;
-  --c-accent: #d3d5d8;
-  --c-accent-hi: #eef0f2;
-  --c-accent-ink: #0a0b0c;
-  --c-accent-line: rgba(211, 213, 216, .42);
-  --c-accent-weak: rgba(211, 213, 216, .10);
-  --c-line: rgba(233, 236, 238, .08);
-  --c-line-2: rgba(233, 236, 238, .16);
-  --c-line-3: rgba(233, 236, 238, .30);
-  --ice: #d3d5d8;
-  --sf-paper: #d7d8db;   /* silver for controls: candle-wax highlight #cbccd0, lifted */
-  --sf-paper-ink: #131516;
-  --sf-paper-ink-2: #3b3f42;
-  /* Polaroids are printed dark, like the homepage card: graphite paper, silver ink. */
-  --sf-print: linear-gradient(177deg, #212428 0%, #1a1c1f 62%, #15171a 100%);
-  --sf-print-flat: #1c1e21;
-  --sf-print-edge: inset 0 1px 0 rgba(255, 255, 255, .06), 0 0 0 1px rgba(211, 213, 216, .16);
-  --sf-print-ink: #d3d5d8;
-  --sf-print-ink-2: #979b9f;
-  --sf-cork-hi: #25292b; /* spot-lit centre of the board */
-  --sf-cork: #121517;    /* board edge #1d2122, darkened */
-  --sf-string: #555b5f;  /* string on the board #414547, lifted to show on the cork */
+  --ft-bg: #0f0f11;
+  --ft-band: #19191b;
+  --ft-band-2: #202124;
+  --ft-ink: #ecedee;
+  --ft-ink-2: #c9cbcd;
+  --ft-ink-3: #a5a8ab;
+  --ft-head: #f4f4f2;
+  --ft-accent: #d7d8db;
+  --ft-accent-ink: #111214;
+  /* Polaroids are printed dark: graphite paper, silver ink. */
+  --sf-print: #222427;
+  --sf-print-edge: inset 0 1px 0 rgba(255, 255, 255, .06), 0 0 0 1px rgba(215, 216, 219, .16);
+  --sf-cork-hi: #2b2d30; /* the lit centre of the board in the game, darkened */
+  --sf-cork: #141517;
+  --sf-string: #5c6166;
   --sf-gap: clamp(8px, 1.3vw, 18px);
 }
 
-/* The site's ice glow is dropped; the board carries this page's grain. */
-body::before { background: none; }
-
-/* Opt out of the shared heading-left / paragraph-right grid (cine.css, .cine > section):
-   every section below has its own bespoke layout instead. */
-.cine.sf > section:not(.cine-split) { display: block; }
-.sf .sf-slots, .sf .sf-cues ol { max-width: none; padding: 0; list-style: none; }
-.sf .sf-slots { padding: 12px 0 0; }
-
-.sf a:hover { text-decoration-color: var(--sf-paper); }
-.sf code {
-  padding: 1px 5px;
-  border-radius: 2px;
-  background: var(--c-accent-weak);
-  color: var(--c-ink);
-  font: 400 .86em/1.4 var(--f-mono);
-  overflow-wrap: anywhere;
-}
-.sf h2.sf-label,
-.sf .sf-label {
-  display: block;
-  margin: 0 0 12px;
-  color: var(--c-ink-3);
-  font: 500 11.5px/1.4 var(--f-mono);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-
-/* ---------- Opening: the gameplay video printed as a Polaroid ---------- */
-.sf-open {
-  display: grid;
-  grid-template-columns: minmax(0, 1.72fr) minmax(300px, 1fr);
-  gap: clamp(32px, 4.4vw, 64px);
-  align-items: start;
-  margin-bottom: clamp(88px, 10vw, 140px);
-}
-.sf-print {
-  display: flex;
-  flex-direction: column-reverse; /* h1 first in the source, printed on the strip */
-  padding: clamp(10px, 1.3vw, 18px) clamp(10px, 1.3vw, 18px) 0;
-  background: var(--sf-print);
-  box-shadow: var(--sf-print-edge), 0 34px 70px -34px rgba(0, 0, 0, .95);
-}
-.sf-print .yt-facade { background: #000; }
-.sf-print__strip {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 6px 24px;
-  padding: clamp(14px, 1.6vw, 22px) 2px clamp(14px, 1.7vw, 24px);
-}
-.sf .sf-print h1 {
-  margin: 0;
-  color: var(--sf-print-ink);
-  font: 500 clamp(32px, 4.3vw, 60px)/.95 var(--f-display);
-  letter-spacing: -.05em;
-}
-.sf .sf-print__note {
-  max-width: 23ch;
-  margin: 0;
-  color: var(--sf-print-ink-2);
-  font: 400 12px/1.45 var(--f-mono);
-  text-align: right;
-}
-
-.sf-open__text { padding-top: 2px; }
-.sf .sf-lead {
-  max-width: 40ch;
-  margin: 0 0 22px;
-  color: var(--c-ink);
-  font-size: clamp(18px, 1.42vw, 20.5px);
-  line-height: 1.55;
-}
-.sf-open__foot { padding-top: 18px; border-top: 1px solid var(--c-line-2); }
-.sf .sf-meta {
-  margin: 0 0 6px;
-  color: var(--c-ink-3);
-  font: 400 12px/1.7 var(--f-mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-.sf .sf-meta span { white-space: nowrap; }
-.sf .sf-links { margin: 0; font-size: 14.5px; }
-
-/* ---------- Section heads: heading over its text, one column ---------- */
-.sf-sec { margin-bottom: clamp(88px, 10vw, 140px); }
-.sf-sec:last-of-type { margin-bottom: clamp(64px, 7vw, 100px); }
-.sf-head { max-width: 64ch; margin-bottom: clamp(24px, 3vw, 36px); }
-.sf .sf-head p { margin: 0 0 14px; color: var(--c-ink-2); font-size: 17px; line-height: 1.65; }
-.sf .sf-head p:last-child { margin-bottom: 0; }
+.sf [data-image-zoom] img { cursor: zoom-in; }
+.sf .ft-hero h1 { max-width: 7ch; }
 
 /* ---------- The board ---------- */
 .sf-board {
   position: relative;
-  padding: clamp(26px, 3.2vw, 44px) clamp(16px, 3vw, 44px) clamp(20px, 2.6vw, 36px);
-  border: 1px solid var(--c-line-2);
-  background: radial-gradient(80% 110% at 50% 0%, var(--sf-cork-hi), var(--sf-cork) 72%);
+  padding: clamp(30px, 3.6vw, 52px) clamp(16px, 3vw, 48px) clamp(24px, 3vw, 40px);
+  border-radius: 4px;
+  background: radial-gradient(80% 110% at 50% 0%, var(--sf-cork-hi), var(--sf-cork) 75%);
+  box-shadow: inset 0 0 0 1px rgba(236, 237, 238, .08);
   overflow: hidden;
-}
-.sf-board::before { /* cork grain */
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.3' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23c)' opacity='.16'/%3E%3C/svg%3E") repeat;
-  background-size: 90px 90px;
-  mix-blend-mode: overlay;
 }
 .sf-slots {
   position: relative;
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: var(--sf-gap);
-  max-width: none;
-  margin: 0 0 clamp(26px, 3vw, 38px);
+  margin: 0 0 clamp(30px, 3.4vw, 46px);
   padding: 12px 0 0;
   list-style: none;
 }
@@ -161,7 +48,7 @@ body::before { background: none; }
 .sf-slot__print {
   display: block;
   padding: 7% 7% 30%;
-  outline: 1px dashed rgba(215, 216, 219, .14);
+  outline: 1px dashed rgba(215, 216, 219, .16);
   outline-offset: -1px;
   transform-origin: 50% 0;
   transition: background-color .35s var(--ease), box-shadow .35s var(--ease);
@@ -178,7 +65,7 @@ body::before { background: none; }
 }
 .sf-slot.is-pinned .sf-slot__print {
   outline: 0;
-  background: var(--sf-print-flat);
+  background: var(--sf-print);
   box-shadow: var(--sf-print-edge), 0 12px 18px -12px #000;
   transform: rotate(var(--tilt, -1.4deg));
 }
@@ -198,7 +85,7 @@ body::before { background: none; }
   height: 9px;
   margin-left: -4.5px;
   border-radius: 50%;
-  background: rgba(215, 216, 219, .16);
+  background: rgba(215, 216, 219, .18);
 }
 .sf-slot.is-pinned::after { background: #e9eaec; box-shadow: 0 2px 3px rgba(0, 0, 0, .7); }
 /* string from the previous pin to this one */
@@ -218,27 +105,33 @@ body::before { background: none; }
 .sf-board.is-live .sf-slot.is-pinned img.is-ready { opacity: 1; }
 
 .sf-deck {
-  position: relative;
   display: grid;
   grid-template-columns: minmax(0, .9fr) minmax(0, 1.3fr);
-  gap: 24px clamp(28px, 4vw, 56px);
-  padding-top: 22px;
-  border-top: 1px solid var(--c-line-2);
+  gap: 28px clamp(28px, 4vw, 64px);
+  padding-top: 26px;
+  border-top: 1px solid var(--ft-rule);
+}
+.sf .sf-label {
+  display: block;
+  margin: 0 0 10px;
+  color: var(--ft-ink-2);
+  font-size: 16px;
+  line-height: 1.4;
 }
 .sf-ctrl__row { display: flex; align-items: center; gap: 18px; }
 .sf-count {
   flex: none;
   min-width: 4.2em;
-  color: var(--c-ink-3);
-  font: 400 15px/1 var(--f-mono);
+  color: var(--ft-ink-3);
+  font: 400 17px/1 var(--f-body);
   text-align: right;
 }
-.sf-count b { color: var(--c-ink); font: 500 30px/1 var(--f-display); letter-spacing: -.03em; }
+.sf-count b { color: var(--ft-head); font: 600 40px/1 var(--f-display); letter-spacing: -.03em; }
 
 .sf-range {
   flex: 1;
   min-width: 0;
-  height: 32px;
+  height: 36px;
   margin: 0;
   background: transparent;
   cursor: pointer;
@@ -247,205 +140,118 @@ body::before { background: none; }
 }
 .sf-range::-webkit-slider-runnable-track { height: 2px; background: var(--sf-string); }
 .sf-range::-moz-range-track { height: 2px; background: var(--sf-string); }
-.sf-range::-moz-range-progress { height: 2px; background: var(--sf-paper); }
+.sf-range::-moz-range-progress { height: 2px; background: var(--ft-accent); }
 .sf-range::-webkit-slider-thumb {
-  width: 20px;
-  height: 20px;
-  margin-top: -9px;
+  width: 22px;
+  height: 22px;
+  margin-top: -10px;
   border: 0;
   border-radius: 50%;
-  background: var(--sf-paper);
+  background: var(--ft-accent);
   box-shadow: 0 2px 6px rgba(0, 0, 0, .6);
   -webkit-appearance: none;
   appearance: none;
 }
 .sf-range::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border: 0;
   border-radius: 50%;
-  background: var(--sf-paper);
+  background: var(--ft-accent);
 }
-.sf-range:focus-visible { outline: 2px solid var(--sf-paper); outline-offset: 4px; }
 
-.sf-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.sf-btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
 .sf-btn {
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1px solid var(--c-line-3);
-  border-radius: 2px;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 1px solid color-mix(in srgb, var(--ft-ink) 34%, transparent);
+  border-radius: 6px;
   background: transparent;
-  color: var(--c-ink);
-  font: 500 14px/1 var(--f-body);
+  color: var(--ft-ink);
+  font: 600 16px/1 var(--f-display);
   cursor: pointer;
-  transition: border-color .2s var(--ease), background-color .2s var(--ease), color .2s var(--ease);
+  transition: border-color var(--dur) var(--ease), opacity var(--dur) var(--ease);
 }
-.sf-btn:hover { border-color: var(--sf-paper); }
-.sf-btn--paper { border-color: var(--sf-paper); background: var(--sf-paper); color: var(--sf-paper-ink); }
-.sf-btn--paper:hover { background: #eceef0; border-color: #eceef0; }
-.sf-btn:focus-visible { outline: 2px solid var(--sf-paper); outline-offset: 3px; }
+.sf-btn:hover { border-color: var(--ft-ink); }
+.sf-btn--paper { border-color: var(--ft-accent); background: var(--ft-accent); color: var(--ft-accent-ink); }
+.sf-btn--paper:hover { border-color: var(--ft-accent); opacity: .88; }
 .sf-btn:disabled { opacity: .38; cursor: default; }
 
-.sf .sf-readout {
-  display: block;
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
-}
+.sf .sf-readout { margin: 0; }
 .sf-readout > div {
   display: grid;
-  grid-template-columns: 150px minmax(0, 1fr);
+  grid-template-columns: minmax(150px, 13em) minmax(0, 1fr);
   gap: 16px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--c-line);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--ft-rule);
 }
 .sf-readout > div:first-child { padding-top: 0; }
-.sf .sf-readout dt { color: var(--c-ink-3); font: 400 12px/1.9 var(--f-mono); letter-spacing: .02em; }
-.sf .sf-readout dd { margin: 0; color: var(--c-ink); }
-.sf-readout [data-sf-stage] { font: 500 19px/1.3 var(--f-display); letter-spacing: -.01em; }
-.sf-readout [data-sf-layers] { display: flex; flex-wrap: wrap; gap: 6px; }
-.sf-readout code { padding: 3px 7px; color: var(--c-ink-2); }
-.sf-readout code.is-new { background: rgba(215, 216, 219, .2); color: #fff; box-shadow: inset 0 -1px 0 var(--sf-paper); }
+.sf .sf-readout dt { color: var(--ft-ink-3); font-size: 16px; line-height: 1.7; }
+.sf .sf-readout dd { margin: 0; color: var(--ft-ink); }
+.sf-readout [data-sf-stage] { color: var(--ft-head); font: 600 28px/1.15 var(--f-display); letter-spacing: -.015em; }
+.sf-readout [data-sf-layers] { display: flex; flex-wrap: wrap; gap: 8px; }
+.sf .sf-readout code {
+  padding: 4px 9px;
+  border-radius: 3px;
+  background: rgba(215, 216, 219, .08);
+  color: var(--ft-ink-2);
+  font-size: 14.5px;
+}
+.sf .sf-readout code.is-new { background: rgba(215, 216, 219, .2); color: #fff; box-shadow: inset 0 -1px 0 var(--ft-accent); }
 
-/* Proof under the board: the two Wwise captures, each caption carrying its note */
+/* The two Wwise captures under the board, side by side. */
 .sf-proof {
   display: grid;
-  grid-template-columns: auto auto;
-  justify-content: start;
-  gap: 16px 28px;
-  align-items: start;
-  margin-top: 26px;
-}
-.sf-proof figure { margin: 0; min-width: 0; }
-.sf .sf-proof .image-zoom {
-  display: block;
-  height: 172px;
-  margin: 0;
-  border: 1px solid var(--c-line-2);
-  background: #1d1d1d;
-}
-.sf-proof .image-zoom img { display: block; width: auto; height: 100%; }
-.sf-proof figcaption { max-width: 40ch; margin-top: 8px; color: var(--c-ink-3); font-size: 13px; line-height: 1.5; }
-
-/* ---------- Anomaly cues beside the camera viewfinder ---------- */
-.sf-clues {
-  display: grid;
-  grid-template-columns: minmax(240px, 44%) minmax(0, 1fr);
-  gap: clamp(28px, 4vw, 48px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 32px var(--ft-gap);
   align-items: start;
 }
-.sf-viewfinder { margin: 0; }
-.sf-viewfinder img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--c-line-2);
-  background: var(--c-bg-0);
-}
-.sf-cues ol { margin: 0; padding: 0; list-style: none; }
-.sf-cues li {
+
+/* ---------- The four anomaly sounds ---------- */
+/* The viewfinder frame is nearly square: a narrower column keeps it to one screen. */
+.sf-vf { align-items: center; }
+.sf-vf > .ft-media { grid-column: full-start / c 6; }
+.sf-vf > :not(.ft-media) { grid-column: c 7 / content-end; }
+
+.sf-steps {
   display: grid;
-  grid-template-columns: 70px minmax(0, 1fr);
-  gap: 14px;
-  margin: 0;
-  padding: 11px 0;
-  border-bottom: 1px solid var(--c-line);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0 var(--ft-gap);
+  padding: 0;
+  list-style: none;
 }
-.sf-cues li:first-child { padding-top: 0; }
-.sf-cue { color: var(--sf-paper); font: 500 12px/1.75 var(--f-mono); letter-spacing: .02em; }
-.sf .sf-cues li p { margin: 0; color: var(--c-ink-2); font-size: 14.5px; line-height: 1.55; }
-.sf .sf-note {
-  max-width: none; /* spans the cue list it closes */
-  margin: 18px 0 0;
-  padding-top: 16px;
-  border-top: 1px solid var(--c-line-2);
-  color: var(--c-ink-3);
-  font-size: 14px;
-  line-height: 1.6;
-}
+.sf-steps li { padding-top: 16px; border-top: 1px solid var(--ft-rule); }
+.sf-steps b { display: block; color: var(--ft-head); font: 600 26px/1.2 var(--f-display); letter-spacing: -.015em; }
+.sf-steps p { margin: 10px 0 0; color: var(--ft-ink-2); font-size: 17px; line-height: 1.5; text-wrap: pretty; }
+.sf .sf-note { margin-top: -8px; grid-column: content-start / c 8; }
 
-/* ---------- Full-width captures: the footstep Blueprint and the voice lines ---------- */
-.sf-shot {
-  margin: 0;
-  border: 1px solid var(--c-line-2);
-  background: var(--c-bg-2);
-}
-.sf .sf-shot .image-zoom { display: block; margin: 0; }
-.sf-shot img { display: block; width: 100%; height: auto; }
-.sf .sf-shot figcaption { max-width: 72ch; margin: 16px 0 0; color: var(--c-ink-3); font-size: 13.5px; line-height: 1.6; }
-
-/* ---------- How the mix reacts: text beside the enemy's Data Asset ---------- */
-.sf-mix {
-  display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(260px, 1fr);
-  gap: clamp(24px, 3.5vw, 48px);
-  align-items: start;
-}
-.sf-mix .sf-head { margin-bottom: 0; }
-
-.sf-asset {
-  margin: 0;
-  border: 1px solid var(--c-line-2);
-  background: var(--c-bg-2);
-  font: 400 12.5px/1.5 var(--f-mono);
-}
-.sf-asset figcaption {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 9px 14px;
-  border-bottom: 1px solid var(--c-line);
-  color: var(--c-ink);
-}
-.sf .sf-asset .image-zoom { margin: 0; color: var(--c-ink-2); }
-.sf .sf-asset dl { display: block; margin: 0; padding: 6px 14px 8px; font: inherit; }
-.sf-asset dl > div {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 2px 16px;
-  padding: 4px 0;
-}
-.sf .sf-asset dt { color: var(--c-ink-3); font-weight: 400; }
-.sf .sf-asset dd { margin: 0 0 0 auto; color: var(--c-ink); }
-.sf-asset .is-hot { margin: 0 -14px; padding-inline: 14px; background: rgba(215, 216, 219, .09); }
-.sf .sf-asset .is-hot dt, .sf .sf-asset .is-hot dd { color: #fff; }
-
-/* The credit line keeps its own space above the closing rule. */
-.sf .sf-credit { max-width: 72ch; margin: 0 0 clamp(40px, 5vw, 64px); color: var(--c-ink-3); font-size: 14.5px; line-height: 1.6; }
-
-/* ---------- Narrow screens ---------- */
-@media (max-width: 900px) {
-  .sf-open { grid-template-columns: minmax(0, 1fr); }
+/* ---------- Medium ---------- */
+@media (max-width: 1099px) {
   .sf-deck { grid-template-columns: minmax(0, 1fr); }
-  .sf-proof { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .sf .sf-proof .image-zoom { height: auto; }
-  .sf-proof .image-zoom img { width: 100%; height: auto; }
-  .sf-clues { grid-template-columns: minmax(0, 1fr); }
-  .sf-mix { grid-template-columns: minmax(0, 1fr); }
+  .sf-vf > .ft-media { grid-column: full-start / c 8; }
+  .sf-vf > :not(.ft-media) { grid-column: content-start / c 10; }
+  .sf-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; }
+  .sf .sf-note { grid-column: content-start / c 10; }
 }
-@media (min-width: 601px) and (max-width: 900px) {
-  /* Tablet: the lead beside the meta line and links, not above an empty right half. */
-  .sf-open__text {
-    display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-    gap: 0 clamp(24px, 4vw, 40px);
-    align-items: start;
-  }
-  .sf .sf-lead { margin-bottom: 0; }
-  .sf-open__foot { padding-top: 0; border-top: 0; }
-}
-@media (max-width: 600px) {
-  .sf .sf-print__note { max-width: none; text-align: left; }
+
+/* ---------- Phone ---------- */
+@media (max-width: 699px) {
+  .ft-hero .ft-hero__stage > video { object-position: 62% 50%; }
+  .sf-vf > .ft-media { grid-column: full; }
+  .sf-vf > :not(.ft-media) { grid-column: content; }
+  .sf-board { padding-inline: 14px; }
   .sf-slots { grid-template-columns: repeat(5, minmax(0, 1fr)); row-gap: 22px; }
   .sf-slot:nth-child(6)::before { display: none; }
   .sf-readout > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
-  .sf-cues li { grid-template-columns: 62px minmax(0, 1fr); gap: 10px; }
+  .sf-readout [data-sf-stage] { font-size: 24px; }
+  .sf-proof { grid-template-columns: minmax(0, 1fr); }
+  .sf-steps { grid-template-columns: minmax(0, 1fr); row-gap: 22px; }
+  .sf-steps b { font-size: 22px; }
+  .sf .sf-note { grid-column: content; margin-top: 0; }
 }
 @media (max-width: 380px) {
-  /* Two columns leave no room for a code token like RTPC_Photos_OnBoard;
-     overflow-wrap: anywhere then splits it mid-word. */
-  .sf-proof { grid-template-columns: minmax(0, 1fr); }
+  .sf-btn { flex: 1 1 100%; }
+  .sf .sf-readout code { font-size: 13px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .sf-board.is-live .sf-slot img,
