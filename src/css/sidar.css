@@ -16,7 +16,28 @@
 }
 
 /* The logo is taller than it is wide, so it is set smaller than a wordmark would be. */
-.sd .ft-hero__logo { width: clamp(190px, 24vw, 360px); }
+.sd .ft-hero__logo { width: clamp(180px, 20vw, 300px); }
+
+/* ---------- Text beside media: five columns of text, the picture on the other six ---------- */
+@media (min-width: 1100px) {
+  .sd .ft-row--left > .ft-media { grid-column: full-start / c 6; }
+  .sd .ft-row--left > :not(.ft-media) { grid-column: c 7 / content-end; }
+  .sd .ft-row--right > .ft-media { grid-column: c 6 / full-end; }
+  .sd .ft-row--right > :not(.ft-media) { grid-column: content-start / c 5; }
+  .sd .sd-open { align-items: center; }
+}
+
+/* ---------- A scan in three stills ---------- */
+.sd .sd-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 var(--ft-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sd .sd-steps img { aspect-ratio: 16 / 9; object-fit: cover; }
+.sd .sd-steps .ft-cap { margin-top: 12px; text-wrap: pretty; }
 
 /* ---------- Prototype 0.4: the poster without its letterbox bars, then 16:9 once it plays ---------- */
 .sd .sd-film .yt-facade { aspect-ratio: 1280 / 546; background: #000; }
@@ -34,9 +55,15 @@
 .sd .sd-film .yt-facade__launch:focus-visible { outline: 2px solid var(--ft-accent); outline-offset: -4px; }
 
 @media (max-width: 699px) {
-  .sd .ft-hero__logo { width: clamp(190px, 60vw, 260px); }
+  .sd .ft-hero__logo { width: clamp(170px, 50vw, 220px); }
+  .sd .sd-steps { grid-template-columns: minmax(0, 1fr); gap: 24px; }
   .sd .sd-film .ft-watch { left: 12px; bottom: 12px; min-height: 44px; padding: 0 16px 0 14px; font-size: 15px; }
 }
 @media (max-width: 380px) {
   .sd .sd-film .ft-watch { width: auto; }
+}
+
+/* On narrower screens the opening sentence comes before the Annex04 still. */
+@media (max-width: 1099px) {
+  .sd .sd-open > .ft-media { grid-row: auto; }
 }
