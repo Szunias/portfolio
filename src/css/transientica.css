@@ -14,9 +14,18 @@
   --ft-accent-ink: #04120f;
 }
 
-/* The playfield sits in the middle of the frame, so on a wide screen the title stays in the dark band beside it. */
-.tr .ft-hero h1 { font-size: clamp(44px, 6.6vw, 112px); }
-.tr .ft-hero__who { max-width: 26ch; }
+/* The playfield sits in the middle of the frame, so on a wide screen the line stays in the dark band beside it. */
+.tr .ft-hero__who { max-width: 30ch; }
+
+/* Text beside media gets five columns on both sides, about 60 characters a line. */
+@media (min-width: 1100px) {
+  /* Text and picture share a middle line, so the shorter one leaves no empty band above it. */
+  .tr .ft-row { align-items: center; }
+  .tr .ft-row--right > .ft-media { grid-column: c 6 / full-end; }
+  .tr .ft-row--right > :not(.ft-media) { grid-column: content-start / c 5; }
+}
+/* The readout loop is a wide strip of the screen; it shows uncropped. */
+.tr .tr-readout video { --shot-ar: 1280 / 560; }
 
 /* The prototype video's own control: play from the live demo. */
 .tr .tr-jump {
@@ -49,10 +58,6 @@
 .tr .tr-jump[hidden] { display: none; }
 .tr .tr-proto .local-video { background: #000; }
 
-@media (max-width: 699px) {
-  /* One long word: it has to fit the narrowest phone on one line. */
-  .tr .ft-hero h1 { font-size: clamp(40px, 15vw, 72px); }
-}
 @media (max-width: 380px) {
   .tr .ft-watch { gap: 10px; padding-inline: 14px; font-size: 16px; }
 }
