@@ -1,8 +1,6 @@
 /* Not Today, Darling!: page-owned styles, loaded only on nottoday.html.
    Letter tiles from the game's name plates and menus, a near-neutral dark room,
-   the portrait-ring colours of the shared screen, and Penny's pink (also the
-   colour of audio wires in MetaSounds) as the pen that circles the current
-   stage, like "Quit" circled on the game's win screen. */
+   and Penny's pink (also the colour of audio wires in MetaSounds) as the accent. */
 :root {
   --c-bg-0: #0c0b0c;
   --c-bg-1: #121012;
@@ -24,11 +22,6 @@
   --nt-tile: #e6d9b8;       /* name-plate tile face */
   --nt-tile-ink: #1f1a14;
   --nt-tile-num: #5e5547;
-  --nt-ruth: #e5484d;       /* portrait rings in the HUD (NotTodayPic4, NotTodayPic1) */
-  --nt-betsy: #58a6e8;
-  --nt-patty: #9a6ee0;
-  --nt-gwen: #3cc56a;
-  --nt-penny: #ec5fa4;
   --nt-wire-array: #62b6ff; /* MetaSounds wire colours in MSP_MonoArray.png */
   --nt-wire-float: #9be15d;
   --nt-wire-audio: #f28cbd;
@@ -59,16 +52,6 @@ body:has(.cine.nt)::before { background: none; }
   color: var(--c-ink);
   font: 400 .86em/1.4 var(--f-mono);
   overflow-wrap: anywhere;
-}
-.nt .nt-label {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0 0 12px;
-  color: var(--c-ink-3);
-  font: 500 11.5px/1.4 var(--f-mono);
-  letter-spacing: .1em;
-  text-transform: uppercase;
 }
 
 /* ---------- Letter tiles: letters and points come from data-l / data-v ---------- */
@@ -123,8 +106,7 @@ body:has(.cine.nt)::before { background: none; }
 .nt-open {
   display: grid;
   grid-template-columns: minmax(0, 1.62fr) minmax(300px, 1fr);
-  grid-template-areas: "title title" "run text" "run panel";
-  grid-template-rows: auto auto 1fr;
+  grid-template-areas: "title title" "run text" "panel text";
   column-gap: clamp(32px, 4.4vw, 64px);
   margin-bottom: clamp(96px, 10vw, 150px);
 }
@@ -149,7 +131,7 @@ body:has(.cine.nt)::before { background: none; }
 .nt-meta span { white-space: nowrap; }
 .nt .nt-links { display: flex; flex-wrap: wrap; gap: 6px 22px; max-width: none; margin: 0; font-size: 14.5px; }
 
-/* The shared screen: four corners in the portrait colours of the HUD. */
+/* The shared screen: the run recording and the four-player capture. */
 .nt .nt-screen { position: relative; margin: 0; }
 .nt .nt-screen video,
 .nt .nt-screen img {
@@ -161,81 +143,11 @@ body:has(.cine.nt)::before { background: none; }
   border-radius: 3px;
   background: #000;
 }
-.nt-corner {
-  position: absolute;
-  z-index: 2;
-  width: clamp(14px, 1.8vw, 24px);
-  height: clamp(14px, 1.8vw, 24px);
-  border: 0 solid var(--c);
-  pointer-events: none;
-}
-.nt-corner--tl { --c: var(--nt-ruth); top: -7px; left: -7px; border-top-width: 3px; border-left-width: 3px; }
-.nt-corner--tr { --c: var(--nt-betsy); top: -7px; right: -7px; border-top-width: 3px; border-right-width: 3px; }
-.nt-corner--bl { --c: var(--nt-patty); bottom: -7px; left: -7px; border-bottom-width: 3px; border-left-width: 3px; }
-.nt-corner--br { --c: var(--nt-gwen); bottom: -7px; right: -7px; border-bottom-width: 3px; border-right-width: 3px; }
-
-/* The rack: one tile word per stage of the run. */
-.nt .nt-rack {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 14px 10px;
-  max-width: none;
-  margin: 22px 0 0;
-  padding: 16px 18px 12px;
-  border: 1px solid var(--c-line);
-  border-radius: 6px;
-  background: var(--c-bg-2);
-  list-style: none;
-}
-.nt-rack li { margin: 0; }
-.nt .nt-rack .nt-tiles { --t: clamp(22px, 1.95vw, 28px); --calm: .55; }
-.nt-rack .nt-tile { box-shadow: inset 0 calc(var(--t) * -.07) 0 rgba(40, 30, 16, .2), 0 3px 5px -2px rgba(0, 0, 0, .8); }
-.nt .nt-stage {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 9px;
-  min-height: 44px;
-  padding: 6px 6px 2px;
-  border-radius: 4px;
-  color: var(--c-ink-3);
-  text-decoration: none;
-}
-.nt-stage:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
-.nt-time { color: var(--c-ink-3); font: 500 12px/1 var(--f-mono); letter-spacing: .04em; transition: color .2s var(--ease); }
-.nt-stage:hover .nt-time { color: var(--c-ink); }
-.nt-stage.is-on .nt-time { color: var(--c-accent); }
-.nt-oval {
-  position: absolute;
-  top: -3px;
-  left: -9px;
-  width: calc(100% + 18px);
-  height: calc(100% - 12px);
-  overflow: visible;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .15s var(--ease);
-}
-.nt-oval path {
-  fill: none;
-  stroke: var(--c-accent);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transition: stroke-dashoffset .5s var(--ease);
-}
-.nt-stage.is-on .nt-oval { opacity: 1; }
-.nt-stage.is-on .nt-oval path { stroke-dashoffset: 0; }
 .nt .nt-note { max-width: 60ch; margin: 14px 0 0; color: var(--c-ink-3); font-size: 14px; line-height: 1.55; }
 
-/* Each stage's text and its own Audio/Sounds folders, one stage visible at a time with JS. */
+/* Each stage of the run: its text, its time as a cue into the video, and its own Audio/Sounds folders. */
 .nt-panel { grid-area: panel; margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--c-line-2); }
 .nt-s + .nt-s { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--c-line); }
-.nt-panel.is-live .nt-s { display: none; }
-.nt-panel.is-live .nt-s.is-on { display: block; margin: 0; padding: 0; border: 0; }
 .nt .nt-s h3 {
   display: flex;
   align-items: baseline;
@@ -245,7 +157,7 @@ body:has(.cine.nt)::before { background: none; }
   font: 500 23px/1.2 var(--f-display);
   letter-spacing: -.01em;
 }
-.nt-s__t { color: var(--c-accent); font: 500 12px/1 var(--f-mono); letter-spacing: .04em; }
+.nt .nt-s h3 .nt-cue { font-size: 12.5px; }
 .nt .nt-s p { max-width: 46ch; margin: 0; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.6; }
 
 /* Each stage's own folders sit under its text; there is no separate 17-chip cloud. */
@@ -307,25 +219,17 @@ body:has(.cine.nt)::before { background: none; }
 /* MSP_MonoArray, redrawn as nodes so it reads at phone width. */
 .nt-graph {
   margin: 0;
-  padding: 0 clamp(14px, 2vw, 26px) clamp(20px, 2.4vw, 30px);
+  padding: clamp(14px, 1.6vw, 20px) clamp(14px, 2vw, 26px) clamp(20px, 2.4vw, 30px);
   border: 1px solid var(--c-line-2);
   border-radius: 6px;
   background-color: #151316;
-  background-image: linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
-  background-size: 22px 22px;
 }
 .nt-graph figcaption {
   display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0 calc(clamp(14px, 2vw, 26px) * -1) clamp(18px, 2.2vw, 26px);
-  padding: 10px clamp(14px, 2vw, 26px);
-  border-bottom: 1px solid var(--c-line);
-  background: rgba(12, 11, 12, .6);
-  color: var(--c-ink-3);
+  justify-content: flex-end;
+  margin: 0 0 clamp(14px, 1.6vw, 20px);
   font: 400 12.5px/1.5 var(--f-mono);
 }
-.nt-graph figcaption b { margin-right: 8px; color: var(--c-ink); font-weight: 500; }
 .nt-graph figcaption a { white-space: nowrap; }
 .nt-pin--array { --pin: var(--nt-wire-array); }
 .nt-pin--audio { --pin: var(--nt-wire-audio); }
@@ -395,36 +299,18 @@ body:has(.cine.nt)::before { background: none; }
   box-shadow: 0 8px 14px -6px #000;
 }
 .nt .nt-cast .nt-tiles { --t: 27px; --calm: .8; }
-
-/* Betsy, the granny in the run, is circled like the current stage on the rack. */
-.nt-castname { position: relative; display: inline-flex; }
-.nt .nt-cast .is-run .nt-oval {
-  top: -10px;
-  left: -13px;
-  width: calc(100% + 26px);
-  height: calc(100% + 18px);
-  opacity: 1;
-}
-.nt .nt-cast .is-run .nt-oval path { stroke-dashoffset: 0; }
 .nt .nt-inrun { max-width: 66ch; margin: 0 0 22px; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.7; }
 .nt .nt-credit { max-width: 66ch; margin: 0; color: var(--c-ink-3); font-size: 14.5px; line-height: 1.6; }
 
 /* ---------- Narrow screens ---------- */
-/* Rack stays one row between 901 and 1180px, where it would otherwise wrap. */
-@media (min-width: 901px) and (max-width: 1180px) {
-  .nt .nt-rack { gap: 12px 4px; padding: 14px 10px 10px; }
-  .nt .nt-rack .nt-tiles { --t: 19px; }
-  .nt .nt-stage { padding: 6px 4px 2px; }
-}
 @media (max-width: 900px) {
-  .nt-open { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "text" "run" "panel"; grid-template-rows: none; }
+  .nt-open { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "text" "run" "panel"; }
   .nt-open__text { margin-bottom: 40px; }
   .nt-after { grid-template-columns: minmax(0, 1fr); }
   .nt-mixrow { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .nt-mixrow .nt-screen { margin-top: 0; }
 }
 @media (max-width: 600px) {
-  .nt .nt-rack { justify-content: space-evenly; padding: 14px 8px 10px; }
   .nt-lane { flex-direction: column; align-items: stretch; }
   .nt-lane + .nt-lane { margin-top: 22px; padding-top: 20px; border-top: 1px dashed var(--c-line-2); }
   .nt-wire { flex: none; width: 2px; height: 14px; margin-left: 22px; }
@@ -436,13 +322,6 @@ body:has(.cine.nt)::before { background: none; }
   .nt .nt-cast .nt-tiles { --t: 24px; }
   .nt .nt-cast img { width: 38px; height: 38px; }
 }
-/* Two rows at 320px: MENU INTRO / 3 2 1 RACE WON. */
-@media (max-width: 360px) {
-  .nt .nt-rack { gap: 12px 6px; padding: 14px 6px 10px; }
-  .nt .nt-rack .nt-tiles { --t: 19px; }
-  .nt .nt-stage { padding: 6px 3px 2px; }
-}
 @media (prefers-reduced-motion: reduce) {
-  .nt-oval, .nt-oval path, .nt-time { transition: none; }
   .nt .nt-cue { transition: none; }
 }
