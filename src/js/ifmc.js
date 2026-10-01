@@ -3,7 +3,8 @@
    seconds before its moment so the change is heard arriving. Nothing loads
    until the reader asks for it, and only one thing sounds at a time: starting
    a reel pauses the other reel and the films, and a film that opens or starts
-   playing pauses the reels and the other film. */
+   playing (Walter in the hero, the second film on its band) pauses the reels
+   and the other film. */
 (function () {
   var reels = [].slice.call(document.querySelectorAll('[data-reel]'));
   if (!reels.length) return;
@@ -142,27 +143,39 @@
     paint(0);
   });
 
-  [].slice.call(document.querySelectorAll('.ifmc [data-yt-facade]')).forEach(function (facade) {
-    // A click that bubbles up to the facade has already passed the launch
-    // button, where video-facade.js swaps the poster for the player.
-    facade.addEventListener('click', function () {
-      var frame = facade.querySelector('iframe');
-      if (!frame || films.some(function (f) { return f.frame === frame; })) return;
-      var film = { frame: frame, id: films.length + 1, state: -1, heard: false, hello: 0, settle: 0 };
-      films.push(film);
-      frame.addEventListener('load', function () {
-        var tries = 0;
-        function hello() {
-          if (film.heard || tries++ >= 40) { window.clearInterval(film.hello); return; }
-          post(film, { event: 'listening' });
-        }
-        film.heard = false;
-        window.clearInterval(film.hello);
-        film.hello = window.setInterval(hello, 250);
-        hello();
-      });
-      filmStarts(film);
+  function register(frame) {
+    var film = { frame: frame, id: films.length + 1, state: -1, heard: false, hello: 0, settle: 0 };
+    films.push(film);
+    frame.addEventListener('load', function () {
+      var tries = 0;
+      function hello() {
+        if (film.heard || tries++ >= 40) { window.clearInterval(film.hello); return; }
+        post(film, { event: 'listening' });
+      }
+      film.heard = false;
+      window.clearInterval(film.hello);
+      film.hello = window.setInterval(hello, 250);
+      hello();
     });
+    return film;
+  }
+
+  // Two players exist: the film on the band (video-facade.js swaps its poster
+  // for the embed) and Walter in the hero (feature.js swaps the loop for the
+  // embed, and later cues seek that same embed). Both swaps run on the
+  // control itself, so by the time the click reaches the document the
+  // iframe is in place.
+  document.addEventListener('click', function (e) {
+    var el = e.target && e.target.closest ? e.target.closest('[data-yt-launch], a[data-ft-play]') : null;
+    if (!el || (el.tagName === 'A' && !e.defaultPrevented)) return;
+    var started = null;
+    [].slice.call(document.querySelectorAll('.ifmc [data-yt-facade] iframe, .ifmc [data-ft-stage] iframe')).forEach(function (frame) {
+      var known = null;
+      films.forEach(function (f) { if (f.frame === frame) known = f; });
+      if (!known) started = register(frame);
+      else if (el.tagName === 'A' && frame.closest('[data-ft-stage]')) started = started || known;
+    });
+    if (started) filmStarts(started);
   });
 
   window.addEventListener('message', function (e) {
