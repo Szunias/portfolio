@@ -1,170 +1,96 @@
-/* AudioQ only: the slate panels of the plug-in and the blue of its first output
-   display (JUCE Colours::blue.brighter(0.3f), sampled #3628e7), lifted for text.
-   No gold: the plug-in's own accent stays inside its screenshots. */
+/* AudioQ: page-owned styles, loaded only on audioq.html after feature.css.
+   The palette is sampled from the plug-in window: the near-black under its panels for the
+   page, the slate of its display panels for the opening band, and for the one accent the
+   blue of the earlier version's output display (JUCE Colours::blue.brighter(0.3f), #3628e7),
+   lifted for text. The plug-in's own orange stays inside its screenshots. */
 :root {
-  --c-bg-0: #0a0c10;
-  --c-bg-1: #0d1015;
-  --c-bg-2: #141922;
-  --c-bg-3: #1a2029;
-  --c-ink: #eceff4;
-  --c-ink-2: #b9c1cd;
-  --c-ink-3: #939dad;
-  --c-accent: #a5acff;
-  --c-accent-hi: #d2d5ff;
-  --c-accent-ink: #0a0c10;
-  --c-accent-line: rgba(165, 172, 255, .42);
-  --c-accent-weak: rgba(165, 172, 255, .10);
-  --c-line: rgba(196, 206, 232, .08);
-  --c-line-2: rgba(196, 206, 232, .15);
-  --c-line-3: rgba(196, 206, 232, .28);
-  --ice: #a5acff;
+  --ft-bg: #0d1116;
+  --ft-band: #171c23;
+  --ft-band-2: #1f242a;
+  --ft-ink: #eef1f5;
+  --ft-ink-2: #c6cdd6;
+  --ft-ink-3: #9ea8b4;
+  --ft-head: #f4f6f9;
+  --ft-accent: #aeb4ff;
+  --ft-accent-ink: #0d1116;
   --aq-box: #0a0d12;      /* code, the plug-in's inset fields */
+  --aq-frame: #2a313a;    /* the hairline round the plug-in's own panels */
 }
 
-body::before { background: none; }
-
-/* Opt out of the shared heading-left / paragraph-right grid (cine.css, .cine > section). */
-.cine.aq > section:not(.cine-split) { display: block; }
-.aq a:hover { text-decoration-color: var(--c-accent); }
-
-/* ---------- Opening: title, then the plug-in window ---------- */
-.aq-open { margin-bottom: clamp(88px, 10vw, 140px); }
-.aq-open__head {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-  gap: 20px clamp(32px, 4.4vw, 64px);
-  align-items: end;
-  margin-bottom: clamp(30px, 3.6vw, 48px);
+/* The window fills the hero from its displays down to the knob row; its title bar repeats the h1. */
+.aq .ft-hero__stage > img { object-position: 50% 86%; }
+/* The window's small panel labels sit under the title, so the left side fades a little further. */
+@media (min-width: 700px) {
+  .aq .ft-hero:not(.is-film) .ft-hero__stage::after {
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--ft-fade) 92%, transparent) 0%, color-mix(in srgb, var(--ft-fade) 66%, transparent) 48%, transparent 76%),
+      linear-gradient(0deg, var(--ft-fade) 0%, transparent 25%);
+  }
 }
-.aq .aq-open h1 {
-  position: relative;
-  margin: 0 0 -.06em;
-  padding-left: .24em;
-  color: var(--c-ink);
-  font: 500 var(--t-d1)/.9 var(--f-display);
-  letter-spacing: -.045em;
+/* ---------- The demo's six chapters, three to a row ---------- */
+@media (min-width: 1100px) {
+  .aq-chapters { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 36px; }
 }
-/* The bar beside the name, as in the plug-in's own header. */
-.aq .aq-open h1::before {
-  content: "";
-  position: absolute;
-  top: .12em;
-  bottom: .17em;
-  left: 0;
-  width: .085em;
-  border-radius: 2px;
-  background: var(--c-accent);
-}
-.aq .aq-lead {
-  max-width: 46ch;
-  margin: 0 0 20px;
-  color: var(--c-ink);
-  font-size: clamp(18px, 1.42vw, 20.5px);
-  line-height: 1.55;
-}
-.aq .aq-meta {
-  max-width: none;
-  margin: 0 0 4px;
-  color: var(--c-ink-3);
-  font: 400 12px/1.7 var(--f-mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-.aq .aq-links { display: flex; flex-wrap: wrap; gap: 0 24px; max-width: none; margin: 0; font-size: 14.5px; }
-.aq .aq-links a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--c-ink); }
-
-.aq-window {
-  margin: 0;
-  overflow: hidden;
-  border: 1px solid var(--c-line-2);
-  border-radius: 10px;
-  background: #0b0f14;
-  box-shadow: 0 50px 90px -50px #000;
-}
-.aq-window img { display: block; width: 100%; height: auto; }
 
 /* ---------- The chain: four real panels, the nine stages beside them in order ---------- */
-.aq-chain { margin-bottom: clamp(88px, 10vw, 140px); counter-reset: aq-stage; }
-.aq-group {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 24px clamp(32px, 4.4vw, 64px);
-  align-items: center;
-  padding: clamp(24px, 2.6vw, 34px) 0;
-}
-.aq-group + .aq-group { border-top: 1px solid var(--c-line); }
-.aq-group--first { padding-top: 0; align-items: end; }
-.aq .aq-group h2 { margin: 0 0 14px; }
-.aq .aq-intro { max-width: 58ch; margin: 0 0 clamp(26px, 3vw, 36px); color: var(--c-ink-2); font-size: 17px; line-height: 1.6; }
-.aq .aq-steps { margin: 0; padding: 0; list-style: none; }
-.aq-steps > li { display: grid; grid-template-columns: 8em minmax(0, 1fr); column-gap: 16px; margin: 0; counter-increment: aq-stage; }
-.aq-steps > li + li { margin-top: 14px; }
-.aq .aq-steps h3::before {
-  content: counter(aq-stage, decimal-leading-zero);
-  display: inline-block;
-  width: 2.2em;
-  color: var(--c-accent);
-  font: 500 12.5px/1 var(--f-mono);
-  letter-spacing: .02em;
-}
-.aq .aq-steps h3 {
-  margin: 0;
-  color: var(--c-ink);
-  font: 500 17px/1.45 var(--f-display);
-  letter-spacing: -.005em;
-}
-.aq .aq-steps p { max-width: none; margin: 0; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.55; }
-.aq .aq-steps p code { display: block; margin-top: 3px; color: var(--c-ink-3); font: 400 12px/1.5 var(--f-mono); overflow-wrap: anywhere; }
-.aq-steps sup { line-height: 0; }
-.aq-steps .aq-code { grid-column: 1 / -1; margin-top: 12px; }
-.aq-code {
-  max-width: none;
-  margin: 10px 0 0;
-  padding: 10px 14px;
-  border-left: 2px solid var(--c-accent-line);
-  background: var(--aq-box);
-  color: var(--c-ink-2);
-  font: 400 12px/1.6 var(--f-mono);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-.aq-group__shot {
-  margin: 0;
-  overflow: hidden;
-  border: 1px solid var(--c-line-2);
+.aq-chain { counter-reset: aq-stage; }
+.aq-chain .ft-row { align-items: center; }
+.aq-panel img {
+  border: 1px solid var(--aq-frame);
   border-radius: 8px;
   background: #0b0f14;
 }
-.aq-group__shot img { display: block; width: 100%; height: auto; }
+/* A panel never runs off the screen: it is a window crop, not footage. */
+.aq-chain .ft-row--left > .aq-panel { grid-column: content-start / c 7; }
+.aq-chain .ft-row--right > .aq-panel { grid-column: c 6 / content-end; }
+.aq-chain .ft-row--right > .aq-steps { grid-column: content-start / c 5; }
 
-/* ---------- The demo, moved up under the opening ---------- */
-.aq-demo { align-items: center; margin-bottom: clamp(88px, 10vw, 140px); scroll-margin-top: 100px; }
-.aq .aq-demo h2 { margin-top: 0; }
-.aq .aq-demo p { color: var(--c-ink-2); }
+.aq .aq-steps { margin: 0; padding: 0; list-style: none; }
+.aq-steps > li { margin: 0; counter-increment: aq-stage; }
+.aq-steps > li + li { margin-top: 22px; }
+.aq .aq-steps h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin: 0 0 4px;
+  color: var(--ft-head);
+  font: 600 clamp(22px, 1.9vw, 27px)/1.2 var(--f-display);
+  letter-spacing: -.015em;
+}
+.aq .aq-steps h3::before {
+  content: counter(aq-stage, decimal-leading-zero);
+  color: var(--ft-accent);
+  font: 600 15px/1 var(--f-mono);
+  letter-spacing: 0;
+}
+.aq .aq-steps p { margin: 0; color: var(--ft-ink-2); font-size: 18px; line-height: 1.55; text-wrap: pretty; }
+.aq .aq-steps p code { display: block; margin-top: 4px; color: var(--ft-ink-3); font-size: 14px; }
+.aq-steps sup { line-height: 0; }
+.aq-code {
+  margin: 14px 0 0;
+  padding: 12px 16px;
+  border-left: 2px solid var(--ft-accent);
+  background: var(--aq-box);
+  color: var(--ft-ink-2);
+  font: 400 13.5px/1.6 var(--f-mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.aq-code code { color: inherit; font: inherit; }
 
-/* ---------- One plain paragraph under the chain ---------- */
-.aq .aq-after {
-  max-width: 70ch;
-  margin: clamp(8px, 1vw, 14px) 0 0;
-  color: var(--c-ink-3);
-  font-size: 15px;
-  line-height: 1.65;
+@media (max-width: 1099px) {
+  .aq-chain .ft-row--left > .aq-panel,
+  .aq-chain .ft-row--right > .aq-panel { grid-column: content-start / c 11; }
+  .aq-chain .ft-row--right > .aq-steps { grid-column: content-start / c 10; }
 }
-
-@media (max-width: 1180px) {
-  .aq-steps > li { grid-template-columns: minmax(0, 1fr); row-gap: 2px; }
-}
-@media (max-width: 900px) {
-  .aq-open__head { grid-template-columns: minmax(0, 1fr); }
-  .aq-group, .aq-group--first { grid-template-columns: minmax(0, 1fr); align-items: start; }
-  .aq-group__shot { order: -1; }
-  .aq-group--first { gap: 0; }
-  .aq-group--first .aq-group__text { display: contents; }
-  .aq-group--first .aq-group__shot { order: 0; margin-bottom: 24px; }
-  .aq-group--first .aq-steps { order: 1; }
-}
-@media (max-width: 600px) {
-  .aq .aq-open h1 { padding-left: .26em; }
-  .aq .aq-meta { letter-spacing: .04em; }
-  .aq-code { font-size: 12px; padding: 9px 11px; }
+@media (max-width: 699px) {
+  /* On a phone a crop of the window is unreadable behind the title: the whole window, the title under it. */
+  .aq .ft-hero:not(.is-film) .ft-hero__stage { height: auto; aspect-ratio: 2028 / 1389; }
+  .aq .ft-hero:not(.is-film) .ft-hero__stage::after { background: linear-gradient(0deg, var(--ft-fade) 0%, transparent 18%); }
+  .aq .ft-hero__text { position: static; padding-top: 28px; }
+  .aq-chain .ft-row--left > .aq-panel,
+  .aq-chain .ft-row--right > .aq-panel,
+  .aq-chain .ft-row--right > .aq-steps { grid-column: content; }
+  .aq .aq-steps p { font-size: 17px; }
+  .aq-code { font-size: 12.5px; padding: 10px 12px; }
 }
