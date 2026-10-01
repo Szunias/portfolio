@@ -4,7 +4,7 @@
    corridor, the white of the ceiling lamp and the blue of the HUD bar in
    the corner of every screenshot. Sampled values: corridor floor #5b0306,
    wall in shadow #290001, lamp core #fed6c7, torch-lit trunk #e3423b,
-   HUD bar #0a99cf on a #593032 track. Backgrounds stay near-neutral; the
+   HUD bar #0a99cf. Backgrounds stay near-neutral; the
    accent is the torch red lifted and pulled away from orange (hue 356). */
 :root {
   --c-bg-0: #080606;
@@ -24,7 +24,6 @@
   --c-line-3: rgba(255, 226, 222, .28);
   --ice: #ff4d58;
   --pd-hud: #0a99cf;
-  --pd-track: #3b2426;
 }
 
 /* The site's ice glow becomes the red spill of the game screen. */
@@ -52,7 +51,7 @@ body:has(.cine.pd)::before {
   letter-spacing: .02em;
 }
 
-/* ---------- Opening: the game screen, the pause sign under it ---------- */
+/* ---------- Opening: the game screen ---------- */
 .cine.pd .pd-open {
   display: grid;
   grid-template-columns: minmax(0, 1.72fr) minmax(300px, 1fr);
@@ -91,8 +90,7 @@ body:has(.cine.pd)::before {
 .cine.pd .pd-links { max-width: none; margin: 0; font-size: 14.5px; }
 .cine.pd .pd-links a { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--c-ink); }
 /* inline-block keeps the link underline off the time. */
-.cine.pd .pd-links .pd-time,
-.cine.pd .pd-runlink .pd-time { display: inline-block; color: var(--c-ink-2); }
+.cine.pd .pd-links .pd-time { display: inline-block; color: var(--c-ink-2); }
 
 .cine.pd .pd-view {
   position: relative;
@@ -100,159 +98,15 @@ body:has(.cine.pd)::before {
   overflow: hidden;
   background: #000;
   border: 1px solid var(--c-line-2);
-  box-shadow: 0 50px 120px -52px rgba(154, 4, 10, .6);
 }
 .cine.pd .pd-shot {
-  position: absolute;
-  inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0;
   /* The game is authored for a dark room; same lift as cine.css gives its frames. */
   filter: brightness(1.55) contrast(1.04);
-  transition: opacity 380ms var(--cine-ease), filter 420ms var(--cine-ease);
 }
-.cine.pd .pd-shot.is-on { opacity: 1; }
-/* Frozen: the red light drains out of the frame for the five seconds. */
-.cine.pd .is-frozen .pd-shot { filter: grayscale(1) brightness(1.25) contrast(1.12); }
-
-.cine.pd .pd-count {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  max-width: none;
-  margin: 0;
-  color: #fff;
-  font-family: var(--f-body);
-  font-size: clamp(3.5rem, 7vw, 6.5rem);
-  font-weight: 600;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  text-shadow: 0 2px 30px rgba(0, 0, 0, .75);
-  opacity: 0;
-  transition: opacity 200ms linear;
-  pointer-events: none;
-}
-.cine.pd .is-frozen .pd-count { opacity: 1; }
-
-.cine.pd .pd-caught {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  max-width: none;
-  margin: 0;
-  background: radial-gradient(closest-side, rgba(91, 3, 6, .8), #000 100%);
-  color: var(--c-ink);
-  font-family: var(--f-display);
-  font-size: clamp(2.25rem, 4.6vw, 4rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -.035em;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 420ms var(--cine-ease), visibility 0s linear 420ms;
-}
-.cine.pd .is-caught .pd-caught { opacity: 1; visibility: visible; transition-delay: 0s; }
-.cine.pd .pd-caught__time {
-  position: absolute;
-  top: 1.6%;
-  left: 50%;
-  /* Static centring. The black backing hides the frame's own 00:14.98, which
-     otherwise ghosts through the edge of the overlay. */
-  transform: translateX(-50%);
-  padding: 3px 9px;
-  background: #000;
-  color: #fff;
-  font: 600 clamp(9px, 1.25vw, 13px)/1 var(--f-body);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0;
-  white-space: nowrap;
-}
-
-/* The strip under the screen reads like the game's HUD: the sign that
-   teaches the rule, the blue bar, and a tally that only goes up.
-   Hidden until pausedeserve.js runs; the lead states the rule without it. */
-.cine.pd .pd-hud { display: none; }
-.cine.pd .pd-live .pd-hud {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-areas: "plate freeze tally" "status status status";
-  align-items: center;
-  gap: 14px 28px;
-  padding-top: 16px;
-}
-.cine.pd .pd-plate {
-  grid-area: plate;
-  position: relative;
-  display: block;
-  width: 224px;
-  aspect-ratio: 5 / 1;
-  padding: 0;
-  border: 1px solid var(--c-line-2);
-  border-radius: 3px;
-  background: #000;
-  overflow: hidden;
-  cursor: pointer;
-  transition: border-color 200ms var(--cine-ease), opacity 200ms var(--cine-ease);
-}
-/* The sign sits dead centre of the real frame (394 x 79 of 1200 x 675),
-   so centring the frame at 304.6% of the button's width shows only it. */
-.cine.pd .pd-plate img {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 304.6%;
-  max-width: none;
-  height: auto;
-  transform: translate(-50%, -50%);
-  border: 0;
-  filter: none;
-}
-.cine.pd .pd-plate:hover { border-color: var(--c-accent-line); }
-.cine.pd .pd-plate:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
-.cine.pd .pd-plate[aria-disabled="true"] { cursor: default; opacity: .5; }
-
-.cine.pd .pd-freeze {
-  grid-area: freeze;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) 6ch;
-  align-items: center;
-  gap: 12px;
-}
-.cine.pd .pd-bar { position: relative; height: 4px; background: var(--pd-track); overflow: hidden; }
-.cine.pd .pd-bar__fill { position: absolute; inset: 0; background: var(--pd-hud); transform-origin: left center; }
-.cine.pd .pd-secs {
-  color: var(--c-ink-2);
-  font: 500 13px/1 var(--f-mono);
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  white-space: nowrap;
-}
-.cine.pd .is-frozen .pd-secs { color: var(--pd-hud); }
-
-.cine.pd .pd-tally { grid-area: tally; display: flex; align-items: center; gap: 12px; }
-.cine.pd .pd-pips { display: flex; gap: 7px; }
-.cine.pd .pd-pip { width: 10px; height: 10px; border: 1px solid var(--c-accent-line); border-radius: 50%; }
-.cine.pd .pd-pip.is-on { background: var(--c-accent); border-color: var(--c-accent); }
-
-.cine.pd .pd-status {
-  grid-area: status;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  max-width: none;
-  margin: 0;
-  gap: 4px 18px;
-  color: var(--c-ink-2);
-  font-size: 14.5px;
-  line-height: 1.5;
-}
-.cine.pd .pd-runlink { color: var(--c-ink); font-size: 14.5px; }
-.cine.pd .pd-runlink[hidden] { display: none; }
-.cine.pd .pd-runlink .pd-time { margin-left: 6px; }
 
 /* ---------- Sound, logic and level: trailer in the screen column, credits beside it ---------- */
 .cine.pd > section.pd-made {
@@ -372,17 +226,6 @@ body:has(.cine.pd)::before {
 
 .cine.pd .pd-close { border-top-color: var(--c-line-2); }
 
-/* ---------- 901 to 1180: the HUD stacks so the Freeze bar keeps its length
-   (it shrank to about 45px there, once the screen shares the row with the
-   text column instead of using the full viewport width) ---------- */
-@media (min-width: 901px) and (max-width: 1180px) {
-  .cine.pd .pd-live .pd-hud {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas: "plate tally" "freeze freeze" "status status";
-    gap: 14px 16px;
-  }
-}
-
 /* ---------- Narrow screens ---------- */
 @media (max-width: 900px) {
   .cine.pd .pd-open { grid-template-columns: minmax(0, 1fr); gap: 28px; margin-bottom: 76px; }
@@ -403,20 +246,11 @@ body:has(.cine.pd)::before {
   /* Two frames side by side still read on a tablet; stacked they each grew
      as large as the trailer. */
   .cine.pd .pd-strip__frames { grid-template-columns: minmax(0, 1fr); }
-  .cine.pd .pd-live .pd-hud {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas: "plate tally" "freeze freeze" "status status";
-    gap: 14px 16px;
-  }
-  .cine.pd .pd-plate { width: min(224px, 100%); }
   .cine.pd .pd-chapters { gap: 0 16px; }
   .cine.pd .pd-chapters ol { gap: 0 18px; }
   .cine.pd .pd-chapters .pd-label { flex-basis: 100%; padding-top: 6px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cine.pd .pd-shot,
-  .cine.pd .pd-count,
-  .cine.pd .pd-caught,
   .cine.pd .pd-chapters button { transition: none; }
 }

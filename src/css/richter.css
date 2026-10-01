@@ -1,7 +1,6 @@
 /* Richter only (richter.html). Colours come from the film's own frames:
    rock shadow #101213 -> page, canyon rock #171b1d -> raised, storm cloud #23262b -> top,
-   sky #54636a / #696e71 lifted -> links and prose, engine glow #8a3836 saturated -> the pen.
-   The drum is smoked paper: soot black, the trace scratched in pale grey. */
+   sky #54636a / #696e71 lifted -> links and prose, engine glow #8a3836 saturated -> the player bar. */
 :root {
   --c-bg-0: #08090a;
   --c-bg-1: #0c0d0f;
@@ -20,8 +19,6 @@
   --c-line-3: rgba(226, 232, 236, .30);
   --ice: #a9bcc6;
   --ri-pen: #e5484d;     /* engine glow of the craft */
-  --ri-soot: #050607;    /* smoked-paper drum */
-  --ri-trace: #d6dde1;   /* scratched line */
 }
 
 /* The site's ice glow gives way to the haze of the film's sky. */
@@ -86,7 +83,7 @@ main#main-content {
 }
 .ri .ri-slate dd { margin: 0; color: var(--c-ink-2); font-size: 14.5px; line-height: 1.55; }
 
-/* ---------- The film and its drum ---------- */
+/* ---------- The film ---------- */
 .ri-reel { margin-bottom: clamp(88px, 10vw, 136px); }
 .ri-screen {
   position: relative;
@@ -116,70 +113,6 @@ main#main-content {
   background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .02), rgba(0, 0, 0, .34));
 }
 
-.ri-drum {
-  position: relative;
-  border: 1px solid var(--c-line-2);
-  border-top: 0;
-  background: var(--ri-soot);
-}
-.ri-drum:not(.is-live) { display: none; }
-.ri-drum::before { /* soot grain */
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23s)'/%3E%3C/svg%3E") repeat;
-  background-size: 120px 120px;
-  opacity: .07;
-  mix-blend-mode: screen;
-}
-.ri-drum__head {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 4px 20px;
-  padding: 14px 18px 0;
-  color: var(--c-ink-3);
-  font: 500 11px/1.5 var(--f-mono);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-.ri-drum__head b { color: var(--c-ink); font-weight: 500; }
-.ri-drum__plot {
-  position: relative;
-  height: 290px;
-  cursor: crosshair;
-  touch-action: pan-y;
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.ri-drum__plot:focus-visible { box-shadow: inset 0 0 0 2px var(--c-accent); }
-.ri-drum__plot svg { display: block; overflow: hidden; }
-.ri-drum text { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .04em; }
-.ri-rule { stroke: rgba(236, 239, 241, .08); stroke-width: 1; }
-.ri-tick { stroke: rgba(236, 239, 241, .16); stroke-width: 1; }
-.ri-lab { fill: var(--c-ink-3); }
-.ri-tr path { fill: none; stroke: var(--ri-trace); stroke-width: 1; stroke-linejoin: round; }
-.ri-tr--dim { opacity: .7; transition: opacity .6s var(--ease); }
-.has-started .ri-tr--dim { opacity: .28; }
-.ri-mk line { stroke: rgba(236, 239, 241, .42); stroke-width: 1; stroke-dasharray: 2 3; }
-.ri-mk text,
-.ri-hover text {
-  fill: var(--c-ink-2);
-  paint-order: stroke;
-  stroke: var(--ri-soot);
-  stroke-width: 4px;
-  stroke-linejoin: round;
-}
-.ri-mk.is-now line { stroke: var(--ri-pen); stroke-dasharray: none; }
-.ri-mk.is-now text { fill: var(--ri-pen); }
-.ri-hover line { stroke: rgba(236, 239, 241, .55); stroke-width: 1; }
-.ri-hover text { fill: var(--c-ink); }
-.ri-pen line { stroke: var(--ri-pen); stroke-width: 1.5; }
-.ri-pen circle { fill: var(--ri-pen); }
-
 /* ---------- Cue by cue ---------- */
 .ri-cues { margin-bottom: clamp(88px, 10vw, 136px); }
 .ri-head { max-width: 68ch; margin-bottom: clamp(26px, 3vw, 40px); }
@@ -194,7 +127,6 @@ main#main-content {
   border-top: 1px solid var(--c-line-2);
 }
 .ri .ri-cuelist > li {
-  position: relative;
   display: grid;
   grid-template-columns: 72px 208px minmax(0, 1fr);
   grid-template-areas: "tc frame title" "tc frame text";
@@ -230,19 +162,6 @@ main#main-content {
 .ri-cue__frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .ri .ri-cuelist h3 { grid-area: title; align-self: end; margin: 0; font-size: 19px; line-height: 1.3; }
 .ri .ri-cuelist li > p { grid-area: text; align-self: start; max-width: 62ch; margin: 0; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.6; }
-.ri-cuelist > li::before {
-  content: "";
-  position: absolute;
-  top: 14px;
-  bottom: 14px;
-  left: -16px;
-  width: 2px;
-  background: transparent;
-  transition: background-color .25s var(--ease);
-}
-.ri-cuelist > li.is-now::before { background: var(--ri-pen); }
-.ri-cuelist > li.is-now .ri-cue__tc button { color: var(--ri-pen); text-decoration-color: var(--ri-pen); }
-.ri-cuelist > li.is-now .ri-cue__frame { border-color: rgba(229, 72, 77, .7); }
 .ri .ri-after { max-width: 66ch; margin: 26px 0 0; color: var(--c-ink-3); font-size: 15px; line-height: 1.6; }
 
 /* ---------- Main theme ---------- */
@@ -313,10 +232,6 @@ main#main-content {
   .cine.ri > section.ri-theme { grid-template-columns: minmax(0, 220px) minmax(0, 1fr); }
 }
 @media (max-width: 600px) {
-  .ri-drum__head { padding: 12px 12px 0; font-size: 10px; }
-  .ri-drum__hint { display: inline; }
-  .ri-drum__what { flex: 1 0 100%; }
-  .ri-drum__plot { height: 276px; }
   .ri .ri-cuelist > li {
     grid-template-columns: 112px minmax(0, 1fr);
     grid-template-areas: "frame tc" "frame title" "text text";
@@ -327,7 +242,6 @@ main#main-content {
   .ri-cue__tc button { min-height: 32px; font-size: 14px; }
   .ri .ri-cuelist h3 { align-self: start; font-size: 17px; }
   .ri .ri-cuelist li > p { margin-top: 10px; font-size: 15px; }
-  .ri-cuelist > li::before { left: -10px; }
   .cine.ri > section.ri-theme {
     grid-template-columns: 112px minmax(0, 1fr);
     grid-template-rows: auto auto;
@@ -344,8 +258,6 @@ main#main-content {
   .ri-player { grid-template-areas: "btn name name" "btn bar time"; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ri-tr--dim,
-  .ri-cuelist > li::before,
   .ri-cue__tc button,
   .ri-cue__frame,
   .ri-player__btn,
