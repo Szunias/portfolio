@@ -1,335 +1,102 @@
-/* AutoTrim Exporter: page-owned styles, loaded only on autotrim.html.
-   The colours are the tool's own window, sampled from the v3.4.3 captures:
-   slate chrome and the periwinkle of a selected page or button. The captures'
-   amber warning text is deliberately not used. */
+/* AutoTrim Exporter: page-owned styles, loaded only on autotrim.html after feature.css.
+   The palette is the tool's own window, sampled from the v3.4.3 captures: the slate
+   chrome #101319 as the page, so the window sits on its own colour; the panel slate
+   for the opening band; the indigo of a selected button for the release band; and
+   the periwinkle of selected text (WAV, 48 kHz) for controls. The captures' amber
+   warning text is not used.
+
+   The hero is the tool, not footage: the title above, the whole Export window under
+   it at the text width. Watch turns the window into the interface tour in place, at
+   the same size and shape. On a phone the window is cropped to its left side, large
+   enough to read, and opens whole on a tap. */
 :root {
-  --c-bg-0: #0b0d11;
-  --c-bg-1: #0f1116;   /* page: the window chrome #101319, one step down */
-  --c-bg-2: #14171c;   /* the window's main area */
-  --c-bg-3: #1b1f26;   /* the window's panels */
-  --c-ink: #eceef4;
-  --c-ink-2: #b8bdca;
-  --c-ink-3: #9da3b2;
-  --c-accent: #96a2ff; /* selected text: WAV, 48 kHz, Per item */
-  --c-accent-hi: #b3bbff;
-  --c-accent-ink: #0f1116;
-  --c-accent-line: rgba(150, 162, 255, .45);
-  --c-accent-weak: rgba(150, 162, 255, .12);
-  --c-line: rgba(196, 204, 240, .08);
-  --c-line-2: rgba(196, 204, 240, .16);
-  --c-line-3: rgba(196, 204, 240, .30);
-  --ice: #96a2ff;
-  --at-chrome: #101319; /* title bar, sidebar, status bar */
-  --at-btn: #20242d;    /* an unselected segmented button */
-  --at-btn-hi: #292e3a;
-  --at-sel: #292f49;    /* a selected button */
-  --at-sel-hi: #323a5c;
+  --ft-bg: #101319;
+  --ft-band: #1b1f26;
+  --ft-band-2: #292f49;
+  --ft-ink: #eceef2;
+  --ft-ink-2: #c3c8d4;
+  --ft-ink-3: #a3a9b8;
+  --ft-head: #eceef2;
+  --ft-accent: #96a2ff;
+  --ft-accent-ink: #101319;
 }
 
-/* The site's ice glow is dropped; the window carries this page's light. */
-body::before { background: none; }
-
-.at .at-sr {
-  position: absolute !important;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
+/* ---------- Hero: the title, then the window ---------- */
+.at .ft-hero {
+  --ft-fade: var(--ft-bg);
+  padding: clamp(48px, 6vw, 96px) max(var(--page-gutter), calc((100% - var(--page-max)) / 2)) clamp(64px, 7vw, 112px);
 }
-
-.cine.at > section:not(.cine-split) { display: block; }
-.cine.at { padding-top: clamp(24px, 3.2vw, 44px); }
-.at a:focus-visible,
-.at button:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
-
-/* ---------- The grid: the window left and sticky, the text right ---------- */
-.at .at-grid {
+.at .ft-hero__text {
+  position: static;
   display: grid;
-  grid-template-columns: minmax(0, 1.62fr) minmax(0, 1fr);
-  grid-template-rows: auto auto 1fr;
-  column-gap: clamp(36px, 4.4vw, 72px);
-  margin-bottom: clamp(80px, 9vw, 136px);
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 0 var(--ft-gap);
+  padding: 0 0 clamp(36px, 4vw, 60px);
 }
-.at .at-stage {
-  grid-column: 1;
-  grid-row: 1 / span 3;
-  align-self: start;
-  position: sticky;
-  top: 104px;
-}
-.at .at-title { grid-column: 2; grid-row: 1; }
-.at .at-head { grid-column: 2; grid-row: 2; }
-.at .at-pages { grid-column: 2; grid-row: 3; padding-top: clamp(56px, 6vw, 88px); }
+.at .ft-hero h1 { grid-column: 1 / -1; text-shadow: none; }
+.at .ft-hero__who { margin: 0; text-shadow: none; }
+.at .ft-hero__acts { justify-content: flex-end; }
 
-/* ---------- Opening: the title is its own grid item, so phones show the window straight under it ---------- */
-.cine.at .at-title {
-  margin: -6px 0 22px;
-  font-family: var(--display);
-  font-size: clamp(44px, 4.7vw, 70px);
-  font-weight: 600;
-  line-height: .98;
-  letter-spacing: -0.025em;
-  text-wrap: balance;
+.at .ft-hero__stage {
+  height: auto;
+  overflow: visible;
+  background: none;
 }
-.at .at-ver {
-  display: inline-block;
-  vertical-align: top;
-  margin: .3em 0 0 .06em;
-  font: 600 14px/1 var(--body);
-  letter-spacing: .01em;
-  color: var(--c-accent);
-}
-.cine.at .at-lead {
-  max-width: 40ch;
-  margin: 0 0 18px;
-  font-size: clamp(17px, 1.28vw, 19px);
-  line-height: 1.55;
-  color: var(--c-ink);
-}
-.at .at-head .cine-meta { margin-bottom: 0; }
-.cine.at .at-links {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 22px;
-  max-width: none;
-  margin: 24px 0 0;
-}
-.cine.at .at-links a { text-decoration: none; }
-.cine.at .at-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 0 18px;
-  border-radius: 6px;
-  background: var(--at-sel);
-  box-shadow: inset 0 0 0 1px rgba(150, 162, 255, .3);
-  color: var(--c-accent-hi);
-  font-weight: 600;
-  transition: background-color .2s var(--cine-ease), box-shadow .2s var(--cine-ease);
-}
-.cine.at .at-primary:hover { background: var(--at-sel-hi); box-shadow: inset 0 0 0 1px rgba(150, 162, 255, .6); }
-.cine.at .at-textlink {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  color: var(--c-ink);
-  text-decoration: underline;
-  text-decoration-color: var(--c-line-3);
-}
-.cine.at .at-textlink:hover { text-decoration-color: var(--c-accent); }
-
-/* ---------- The window ---------- */
-.at .atw { margin: 0; }
-.at .atw__frame {
-  position: relative;
-  aspect-ratio: 1680 / 1140;
-  overflow: hidden;
-  border-radius: 10px;
-  background: var(--at-chrome);
-  box-shadow:
-    0 0 0 1px rgba(196, 204, 240, .14),
-    0 44px 90px -46px rgba(0, 0, 0, .95);
-}
-.at .atw__shot {
-  position: absolute;
-  inset: 0;
+.at .ft-hero__stage::after { content: none; }
+.at-window { display: block; text-decoration: none; }
+.at-window img {
   display: block;
-  opacity: 0;
-  pointer-events: none;
-  cursor: zoom-in;
-  transition: opacity .32s var(--cine-ease);
-}
-.at .atw__shot.is-on { opacity: 1; pointer-events: auto; }
-.at .atw__shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.at .atw__shot:focus-visible { outline: 2px solid var(--c-accent); outline-offset: -2px; }
-
-.at:not(.at-js) .atw__acts { display: none; }
-
-.at .atw__tour {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  background: var(--at-chrome);
-}
-.at .atw__tour[hidden] { display: none; }
-
-.at .atw__bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px 18px;
-  margin-top: 14px;
-}
-.cine.at .atw__note {
-  margin: 0;
-  max-width: 52ch;
-  font-size: 13.5px;
-  line-height: 1.45;
-  color: var(--c-ink-3);
-}
-.at .atw__acts { display: flex; flex-wrap: wrap; gap: 8px; }
-.at .atw__act {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  min-height: 36px;
-  padding: 0 13px;
-  border: 0;
-  border-radius: 6px;
-  background: var(--at-btn);
-  color: var(--c-ink);
-  font: 500 13.5px/1 var(--body);
-  cursor: pointer;
-  transition: background-color .15s var(--cine-ease), color .15s var(--cine-ease);
-}
-.at .atw__act:hover { background: var(--at-btn-hi); }
-.at .atw__act[aria-pressed="true"] { background: var(--at-sel); color: var(--c-accent-hi); }
-.at .atw__act[aria-pressed="true"]:hover { background: var(--at-sel-hi); }
-.at .atw__play {
-  width: 0;
-  height: 0;
-  border-left: 7px solid currentColor;
-  border-top: 4.5px solid transparent;
-  border-bottom: 4.5px solid transparent;
-}
-.at .atw__act[aria-pressed="true"] .atw__play {
-  width: 8px;
-  height: 9px;
-  border: 0;
-  border-left: 2.5px solid currentColor;
-  border-right: 2.5px solid currentColor;
-}
-/* The tour's length on its own button: 10.7 s, silent. Hidden while it plays. */
-.at .atw__len {
-  font: 500 12px/1 var(--mono);
-  font-variant-numeric: tabular-nums;
-  color: var(--c-ink-3);
-}
-.at .atw__act[aria-pressed="true"] .atw__len { display: none; }
-
-/* ---------- The six pages, in the window's order ---------- */
-.cine.at .at-group {
-  margin: 0 0 8px;
   max-width: none;
-  font-size: 14px;
-  line-height: 1.3;
-  color: var(--c-ink-3);
+  height: auto;
+  transition: opacity var(--dur) var(--ease);
 }
-.at .at-page {
-  min-height: 42vh;
-  padding-bottom: 44px;
-}
-.at .at-page:last-child { min-height: 0; padding-bottom: 0; }
-/* The last chapter (Preflight) keeps the window's height, so it reads beside its own capture. */
-@media (min-width: 1000px) {
-  .at .at-page:last-child { min-height: min(44vw, 640px); }
-}
-.cine.at .at-page h2 {
-  margin: 0 0 14px;
-  font-family: var(--display);
-  font-size: clamp(22px, 1.95vw, 28px);
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-}
-.cine.at .at-page p { max-width: 46ch; }
-.cine.at .at-note { font-size: 13.5px; line-height: 1.45; color: var(--c-ink-3); }
+.at-window:hover img { opacity: .92; }
 
-.at .at-shot { margin: 20px 0 0; }
-.at .at-shot img { display: block; width: 100%; height: auto; border: 1px solid var(--c-line-2); border-radius: 8px; }
-@media (min-width: 1000px) {
-  .at.at-js .at-shot { display: none; }
+/* The tour is the same window: same shape, on the window's own colour. */
+.at .ft-hero.is-film .ft-hero__stage {
+  width: min(100%, calc((100svh - var(--anchor-offset, 100px)) * 1440 / 978));
+  aspect-ratio: 1440 / 978;
+  max-height: none;
+  background: var(--ft-bg);
 }
-/* The hint sits in the capture's own empty status bar instead of over the panels. */
-.at .at-shot .image-zoom__hint {
-  right: 1.6%;
-  bottom: 1.4%;
-  padding: 2px 8px;
-  font-size: 12px;
-  line-height: 1.5;
+.at .ft-hero.is-film .ft-hero__stage > video { background: var(--ft-bg); }
+.at .ft-hero.is-film .ft-hero__text { padding-top: 0; }
+
+/* The UI captures are already dark; no frame box behind them. */
+.at .ft-media img { background: var(--ft-bg); }
+
+@media (max-width: 1099px) {
+  .at .ft-hero__text { grid-template-columns: minmax(0, 1fr); }
+  .at .ft-hero__acts { justify-content: flex-start; margin-top: clamp(22px, 2.4vw, 32px); }
 }
 
-/* ---------- In development ---------- */
-.at .at-dev { margin: 0 0 clamp(80px, 9vw, 128px); }
-.cine.at .at-dev h2 {
-  margin: 0 0 16px;
-  font-size: clamp(30px, 3.1vw, 44px);
-  line-height: 1.06;
-}
-.cine.at .at-dev > p:not(.at-group) { max-width: 60ch; }
-.cine.at .at-dev__list {
-  display: block;
-  max-width: 64ch;
-  margin: 28px 0 0;
-  padding: 0;
-  border-top: 0;
-  list-style: none;
-}
-.at .at-dev__list li {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  margin: 0;
-  padding: 0;
-}
-.at .at-dev__list li + li { margin-top: 16px; }
-.cine.at .at-dev__list p { max-width: none; margin: 0; color: var(--c-ink-2); }
-.cine.at .at-dev__list b { font-weight: 600; color: var(--c-ink); }
-.at .at-ring {
-  flex: none;
-  width: 10px;
-  height: 10px;
-  border: 1.5px solid var(--c-accent);
-  border-radius: 50%;
-}
-.at .at-dev__list .at-ring { translate: 0 -1px; }
-
-/* ---------- The public release ---------- */
-.at .at-rel { margin: 0 0 clamp(64px, 7vw, 104px); }
-.cine.at .at-status {
-  max-width: none;
-  margin: 0 0 14px;
-  font-size: 14px;
-  line-height: 1.3;
-  color: var(--c-ink-2);
-}
-.cine.at .at-rel h2 { margin: 0 0 16px; font-size: clamp(30px, 3.1vw, 44px); line-height: 1.06; }
-.cine.at .at-rel p:not(.at-status) { max-width: 64ch; }
-
-/* ---------- Narrow screens: one column, the window under the opening ---------- */
-@media (max-width: 999px) {
-  .at .at-grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
-  .at .at-title,
-  .at .at-stage,
-  .at .at-head,
-  .at .at-pages { grid-column: 1; grid-row: auto; }
-  .at .at-stage { position: static; margin-top: 6px; }
-  .at .at-head { margin-top: 34px; }
-  .at .at-pages { padding-top: 56px; }
-  .at .at-page { min-height: 0; padding-bottom: 40px; }
-  .cine.at .at-page p { max-width: 62ch; }
-}
-@media (max-width: 560px) {
-  .cine.at .at-title { font-size: clamp(40px, 12vw, 52px); }
-  .at .atw__acts { width: 100%; }
-  .at .atw__act { flex: 1 1 0; justify-content: center; min-height: 44px; }
-}
-@media (max-width: 360px) {
-  .cine.at .at-primary { gap: 6px; padding: 0 12px; font-size: 15px; letter-spacing: -0.005em; }
-  .at .atw__len { display: none; }
+@media (max-width: 699px) {
+  .at .ft-hero { padding-top: 40px; }
+  .at .ft-hero__acts { gap: 4px 24px; }
+  .at .ft-hero__acts .ft-watch { margin-bottom: 10px; }
+  .at .ft-hero__stage { margin-inline: calc(-1 * var(--page-gutter)); }
+  .at-window { aspect-ratio: 4 / 5; overflow: hidden; }
+  .at-window img { width: auto; height: 100%; }
+  .at .ft-hero.is-film .ft-hero__stage { width: auto; height: auto; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .at *,
-  .at *::before { transition: none !important; }
+/* ---------- The release band: the stable release and the development source side by side ---------- */
+.at-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(40px, 4.4vw, 72px) calc(var(--ft-gap) * 2);
+}
+.at-pair > .ft-body { grid-column: auto; }
+.at-pair h3 {
+  margin: 0 0 .8em;
+  padding-top: 16px;
+  border-top: 1px solid var(--ft-rule);
+  color: var(--ft-head);
+  font: 600 clamp(24px, 2.2vw, 32px)/1.15 var(--f-display);
+  letter-spacing: -.015em;
+}
+@media (max-width: 899px) {
+  .at-pair { grid-template-columns: minmax(0, 1fr); }
 }
