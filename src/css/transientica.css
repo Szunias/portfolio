@@ -1,5 +1,5 @@
 /* Transientica: page-owned styles, loaded only on transientica.html.
-   The game's black stage, its cyan hit line and the three lane colours,
+   The game's black stage and its cyan hit line,
    sampled from the gameplay captures in projects-transientica/frames. */
 :root {
   --c-bg-0: #07080b;
@@ -18,9 +18,6 @@
   --c-line-2: rgba(226, 232, 245, .15);
   --c-line-3: rgba(226, 232, 245, .30);
   --ice: #3fe0cc;
-  --tr-kick: #ff5566;  /* KICK #eb0d26, lifted for text */
-  --tr-snare: #7f9aff; /* SNARE #2566fd, lifted for text */
-  --tr-hat: #52e08f;   /* HI-HAT #29f568 / #5ed47e */
   --tr-line: #3fe0cc;
 }
 body::before { background: none; }
@@ -29,9 +26,6 @@ body::before { background: none; }
 .cine.tr > section:not(.cine-split) { display: block; }
 .tr figure { margin: 0; min-width: 0; }
 .tr a:hover { text-decoration-color: var(--c-accent); }
-.tr .is-kick { color: var(--tr-kick); }
-.tr .is-snare { color: var(--tr-snare); }
-.tr .is-hat { color: var(--tr-hat); }
 .tr .tr-nw { white-space: nowrap; }
 .cine.tr .tr-label {
   max-width: none;
@@ -43,7 +37,7 @@ body::before { background: none; }
 }
 .tr figcaption { margin-top: 12px; color: var(--c-ink-3); font-size: 13.5px; line-height: 1.5; }
 
-/* ---------- Opening: the game screen standing on its hit line ---------- */
+/* ---------- Opening: the game video and the lead ---------- */
 .tr .tr-open {
   display: grid;
   grid-template-columns: minmax(0, 1.62fr) minmax(300px, 1fr);
@@ -78,24 +72,9 @@ body::before { background: none; }
 .tr .tr-screen .yt-facade,
 .tr .tr-screen .yt-facade__launch,
 .tr .tr-screen .yt-facade img { border-radius: 0; }
-.tr .tr-screen .yt-facade { border: 1px solid var(--c-line-2); border-bottom: 0; background: #000; }
+.tr .tr-screen .yt-facade { border: 1px solid var(--c-line-2); background: #000; }
 .tr .tr-screen figcaption { display: block; margin: 0; }
-.tr .tr-hitline {
-  display: block;
-  height: 4px;
-  background: var(--tr-line);
-  box-shadow: 0 0 18px rgba(63, 224, 204, .5), 0 0 3px rgba(63, 224, 204, .9);
-}
-.tr .tr-legend {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  padding-top: 12px;
-  font: 600 12.5px/1.4 var(--f-mono);
-  letter-spacing: .08em;
-  text-align: center;
-  text-transform: uppercase;
-}
-.tr .tr-screen__cap { display: block; margin-top: 16px; }
+.tr .tr-screen__cap { display: block; margin-top: 12px; }
 
 /* ---------- Section heads: heading over its text, one column ---------- */
 .tr .tr-path, .tr .tr-time, .tr .tr-proto { margin-bottom: clamp(88px, 10vw, 136px); }
@@ -144,14 +123,7 @@ body::before { background: none; }
   text-transform: uppercase;
 }
 .tr .tr-chain span { display: block; max-width: 44ch; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.55; }
-.tr .tr-chain .tr-chain__lanes { margin-top: 8px; }
-.tr .tr-chain__lanes em {
-  margin-right: 12px;
-  font: 600 12.5px/1.6 var(--f-mono);
-  font-style: normal;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
+
 /* The game's own readout, cropped from the full 1920px frame at close to 1:1:
    the classified sound, its confidence and the strip of upcoming notes.
    --x/--w pick the crop window in source pixels (frame is 1920 x 1080). */
@@ -172,148 +144,6 @@ body::before { background: none; }
   max-width: none;
   height: auto;
 }
-
-/* ---------- Judged on the audio clock: the practice lane ---------- */
-.tr .tr-toy {
-  display: grid;
-  grid-template-columns: minmax(230px, .6fr) minmax(0, 1.4fr);
-  grid-template-areas: "side stage";
-  gap: clamp(24px, 4vw, 56px);
-  padding: clamp(20px, 3vw, 40px);
-  border: 1px solid var(--c-line-2);
-  background: radial-gradient(70% 70% at 66% 100%, rgba(63, 224, 204, .07), transparent 70%), var(--c-bg-0);
-}
-.tr .tr-toy:focus { outline: none; }
-.tr .tr-toy__side { grid-area: side; display: flex; flex-direction: column; align-items: flex-start; }
-.tr .tr-toy__stage { grid-area: stage; position: relative; min-width: 0; }
-.cine.tr .tr-toy__note { max-width: 32ch; margin: 0 0 20px; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.55; }
-.tr .tr-play {
-  display: none;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 20px;
-  border: 1px solid var(--c-accent-line);
-  border-radius: var(--r-pill);
-  background: transparent;
-  color: var(--c-accent);
-  font: inherit;
-  font-size: 14.5px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.tr .tr-toy.is-live .tr-play { display: inline-flex; }
-.tr .tr-toy.is-still .tr-play { display: none; }
-.tr .tr-play:hover { border-color: var(--c-accent); background: var(--c-accent-weak); }
-.tr .tr-play:focus-visible, .tr .tr-pad:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
-.cine.tr .tr-summary { min-height: 1.6em; max-width: none; margin: 14px 0 20px; color: var(--c-ink); font: 400 12.5px/1.6 var(--f-mono); }
-.tr .tr-windows { width: 100%; max-width: 300px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--c-line-2); }
-.cine.tr .tr-windows ul { max-width: none; margin: 0; padding: 0; list-style: none; }
-.tr .tr-windows li {
-  display: grid;
-  grid-template-columns: 16px 62px minmax(0, 1fr);
-  align-items: center;
-  gap: 10px;
-  margin: 0;
-  padding: 6px 0;
-  color: var(--c-ink-2);
-  font-size: 14px;
-}
-.tr .tr-windows b { color: var(--c-ink); font-weight: 600; }
-.tr .tr-windows span { color: var(--c-ink-3); font: 400 12.5px/1.4 var(--f-mono); }
-.tr .tr-sw { display: block; width: 16px; height: 10px; border: 1px solid rgba(226, 232, 245, .34); }
-.tr .tr-sw--perfect { background: rgba(226, 232, 245, .3); }
-.tr .tr-sw--great { background: rgba(226, 232, 245, .17); }
-.tr .tr-sw--good { background: rgba(226, 232, 245, .07); }
-.tr .tr-sw--miss { border-style: dashed; }
-
-/* The readout sits over the far end of the lanes, where the game prints the classified sound. */
-.cine.tr .tr-readout {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: none;
-  margin: 0;
-  text-align: center;
-  pointer-events: none;
-}
-.tr .tr-readout__lane {
-  min-height: 1.1em;
-  color: var(--c-ink-3);
-  font: 700 clamp(26px, 2.8vw, 36px)/1.1 var(--f-display);
-  letter-spacing: .02em;
-  text-transform: uppercase;
-}
-.tr .tr-readout__lane.is-kick { text-shadow: 0 0 18px rgba(235, 13, 38, .5); }
-.tr .tr-readout__lane.is-snare { text-shadow: 0 0 18px rgba(37, 102, 253, .55); }
-.tr .tr-readout__lane.is-hat { text-shadow: 0 0 18px rgba(41, 245, 104, .4); }
-.tr .tr-readout__judge {
-  min-height: 1.6em;
-  color: var(--c-ink);
-  font: 500 13px/1.6 var(--f-mono);
-  letter-spacing: .06em;
-  text-shadow: 0 1px 8px #000, 0 0 2px #000;
-}
-.tr .tr-readout__judge em { margin-left: 10px; color: var(--c-ink-3); font-style: normal; }
-.tr .tr-readout__judge.is-miss { color: var(--c-ink-3); }
-
-.tr .tr-road { display: block; width: 100%; max-width: 460px; height: auto; margin: 0 auto; }
-.tr .tr-shape { stroke-width: 1; transition: fill .12s; }
-.tr .tr-shape--kick { fill: rgba(235, 13, 38, .15); stroke: rgba(255, 85, 102, .35); }
-.tr .tr-shape--snare { fill: rgba(37, 102, 253, .16); stroke: rgba(127, 154, 255, .35); }
-.tr .tr-shape--hat { fill: rgba(41, 245, 104, .1); stroke: rgba(82, 224, 143, .35); }
-.tr .tr-shape--kick.is-hit { fill: rgba(235, 13, 38, .4); }
-.tr .tr-shape--snare.is-hit { fill: rgba(37, 102, 253, .42); }
-.tr .tr-shape--hat.is-hit { fill: rgba(41, 245, 104, .3); }
-.tr .tr-band { fill: rgba(226, 232, 245, .045); }
-.tr .tr-hit { stroke: var(--tr-line); stroke-width: 4; filter: drop-shadow(0 0 5px rgba(63, 224, 204, .7)); }
-.tr .tr-note__ring { fill: rgba(0, 0, 0, .35); stroke-width: 3.2; }
-.tr .tr-note--kick .tr-note__ring { stroke: var(--tr-kick); }
-.tr .tr-note--snare .tr-note__ring { stroke: var(--tr-snare); }
-.tr .tr-note--hat .tr-note__ring { stroke: var(--tr-hat); }
-.tr .tr-note--kick .tr-note__dot { fill: var(--tr-kick); }
-.tr .tr-note--snare .tr-note__dot { fill: var(--tr-snare); }
-.tr .tr-note--hat .tr-note__dot { fill: var(--tr-hat); }
-.tr .tr-note.is-missed { opacity: .25; }
-.tr .tr-burst { fill: none; stroke-width: 2.5; transform-box: fill-box; transform-origin: center; animation: tr-burst .32s ease-out forwards; }
-.tr .tr-burst--kick { stroke: var(--tr-kick); }
-.tr .tr-burst--snare { stroke: var(--tr-snare); }
-.tr .tr-burst--hat { stroke: var(--tr-hat); }
-@keyframes tr-burst { from { opacity: 1; transform: scale(.6); } to { opacity: 0; transform: scale(1.9); } }
-
-.tr .tr-pads { display: none; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; max-width: 460px; margin: 16px auto 0; }
-.tr .tr-toy.is-live .tr-pads { display: grid; }
-.tr .tr-pad {
-  display: grid;
-  justify-items: center;
-  align-content: center;
-  gap: 6px;
-  min-height: 64px;
-  padding: 10px 6px;
-  border: 1px solid;
-  border-radius: var(--r-s);
-  background: transparent;
-  font: inherit;
-  cursor: pointer;
-  touch-action: manipulation;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  transition: background-color .1s, border-color .1s;
-}
-.tr .tr-pad.is-kick { border-color: rgba(255, 85, 102, .5); }
-.tr .tr-pad.is-snare { border-color: rgba(127, 154, 255, .5); }
-.tr .tr-pad.is-hat { border-color: rgba(82, 224, 143, .5); }
-.tr .tr-pad:hover { border-color: currentColor; }
-.tr .tr-pad.is-kick.is-hit { background: rgba(235, 13, 38, .3); }
-.tr .tr-pad.is-snare.is-hit { background: rgba(37, 102, 253, .32); }
-.tr .tr-pad.is-hat.is-hit { background: rgba(41, 245, 104, .22); }
-.tr .tr-pad kbd { padding: 2px 7px; border: 1px solid currentColor; border-radius: 3px; font: 600 12px/1.3 var(--f-mono); }
-.tr .tr-pad b { font: 600 12px/1.3 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; }
 
 /* ---------- The 2025 prototype: then and now ---------- */
 /* The prototype video keeps the width of the text above it. */
@@ -346,22 +176,4 @@ body::before { background: none; }
   .tr .tr-path__body { grid-template-columns: minmax(0, 1fr); gap: 36px; }
   /* A tighter crop window on narrow screens keeps "89%" legible. */
   .tr .tr-hud { --x: 680; --w: 560; --h: 300; }
-  /* Phones and tablets: the lane comes straight after Play; the timing legend follows the pads. */
-  .tr .tr-toy { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; gap: 0; }
-  .tr .tr-toy__side { display: contents; }
-  .cine.tr .tr-toy .tr-label { order: 1; }
-  .cine.tr .tr-toy__note { order: 2; }
-  .tr .tr-toy .tr-play { order: 3; justify-self: start; margin-bottom: 20px; }
-  .tr .tr-toy__stage { grid-area: auto; order: 4; }
-  .cine.tr .tr-summary { order: 5; margin: 16px 0 8px; }
-  .tr .tr-windows { order: 6; max-width: none; margin-top: 4px; }
-  .cine.tr .tr-windows .tr-label { order: 0; }
-}
-@media (max-width: 560px) {
-  .tr .tr-legend { font-size: 11.5px; }
-  .tr .tr-toy { padding: 18px 14px 20px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .tr .tr-shape, .tr .tr-pad { transition: none; }
-  .tr .tr-burst { display: none; }
 }
