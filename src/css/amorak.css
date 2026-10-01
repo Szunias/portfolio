@@ -19,8 +19,8 @@
 /* ---------- The film's title card as the heading ---------- */
 /* The crop keeps 22 px before the A, pulled back so the letter meets the text edge. */
 .am .am-title {
-  width: clamp(280px, 46vw, 680px);
-  margin: 0 0 clamp(14px, 1.8vw, 26px) calc(clamp(280px, 46vw, 680px) * -0.0146);
+  width: clamp(260px, 38vw, 540px);
+  margin: 0 0 clamp(14px, 1.6vw, 22px) calc(clamp(260px, 38vw, 540px) * -0.0146);
   font-size: 0;
   line-height: 0;
   text-shadow: none;
@@ -33,6 +33,17 @@
 }
 /* The roar sits right of centre; keep its jaws in the frame on narrow screens. */
 .am .ft-hero__stage > video { object-position: 62% 50%; }
+
+/* ---------- Text beside the pictures ---------- */
+/* Each picture illustrates one paragraph, so it takes half the width and
+   the paragraph sits level with its middle instead of under a tall block. */
+@media (min-width: 1100px) {
+  .am .ft-row { align-items: center; }
+  .am .ft-row--right > .ft-media { grid-column: c 6 / full-end; }
+  .am .ft-row--right > :not(.ft-media) { grid-column: content-start / c 5; }
+  .am .ft-row--left > .ft-media { grid-column: full-start / c 6; }
+  .am .ft-row--left > :not(.ft-media) { grid-column: c 7 / content-end; }
+}
 
 /* ---------- Which ear is louder: a measurement of the mix, drawn once ---------- */
 .am .am-ears { grid-column: content; margin: 0; }
