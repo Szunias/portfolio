@@ -19,27 +19,33 @@
 /* The wide shot is the darkest frame; lifted so both cats read at phone width. */
 .ak-wide img { filter: brightness(1.22) saturate(1.05); }
 
-/* ---------- The two cats, side by side, off both edges ---------- */
-.ak-pair {
-  grid-column: full;
+/* ---------- Ambience: the wide shot beside the close one ---------- */
+.ak-two {
+  grid-column: content;
   display: grid;
-  grid-template-columns: subgrid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px var(--ft-gap);
   align-items: start;
 }
-.ak-pair > .ft-media:first-child { grid-column: full-start / c 6; }
-.ak-pair > .ft-media:last-child { grid-column: c 6 / full-end; margin-top: clamp(64px, 9vw, 150px); }
-/* A caption lines up with the text edge while its picture runs off the screen. */
-.ak-pair > .ft-media { display: grid; grid-template-columns: subgrid; align-content: start; }
-.ak-pair > .ft-media > :not(.ft-cap) { grid-column: 1 / -1; }
-.ak-pair > .ft-media:first-child > .ft-cap { grid-column: content-start / -1; }
-.ak-pair > .ft-media:last-child > .ft-cap { grid-column: 1 / content-end; }
 
+/* ---------- The cats: the Foley notes beside the two portraits ---------- */
+.ak-cats > .ft-head { grid-column: content; }
+.ak-cats > .ft-body { grid-column: content-start / c 4; grid-row: 2; }
+.ak-cats > .ft-media { grid-row: 2; align-self: start; }
+.ak-cats > .ft-media:nth-of-type(1) { grid-column: c 4 / c 8; }
+.ak-cats > .ft-media:nth-of-type(2) { grid-column: c 8 / content-end; }
+
+@media (max-width: 1099px) {
+  .ak-cats > .ft-body { grid-column: content-start / c 10; }
+  .ak-cats > .ft-media { grid-row: 3; }
+  .ak-cats > .ft-media:nth-of-type(1) { grid-column: content-start / c 6; }
+  .ak-cats > .ft-media:nth-of-type(2) { grid-column: c 6 / content-end; }
+}
 @media (max-width: 699px) {
-  .ak-pair { row-gap: 36px; }
-  .ak-pair > .ft-media:first-child,
-  .ak-pair > .ft-media:last-child { grid-column: full; margin-top: 0; }
-  .ak-pair > .ft-media:first-child > .ft-cap,
-  .ak-pair > .ft-media:last-child > .ft-cap { grid-column: content; }
+  .ak-two { grid-template-columns: minmax(0, 1fr); }
+  .ak-cats > .ft-body,
+  .ak-cats > .ft-media:nth-of-type(1),
+  .ak-cats > .ft-media:nth-of-type(2) { grid-column: content; grid-row: auto; }
 }
 /* "Watch the film with sound" stays on one line on the narrowest phones. */
 @media (max-width: 359px) {
