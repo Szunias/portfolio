@@ -119,7 +119,7 @@ body:has(.ft)::before { background: none; }
 
 .ft-band {
   margin-top: var(--ft-space);
-  padding-bottom: clamp(80px, 9vw, 140px);
+  padding-bottom: var(--ft-space);
   background: var(--ft-band);
 }
 .ft-band--alt { background: var(--ft-band-2); }
@@ -221,7 +221,7 @@ body:has(.ft)::before { background: none; }
 }
 .ft-chapters .ft-cue::before { align-self: center; }
 .ft-chapters b { font: 600 15px/1.4 var(--f-mono); letter-spacing: 0; }
-.ft-chapters span { width: 100%; color: var(--ft-ink); font: 600 19px/1.25 var(--f-display); letter-spacing: -.01em; }
+.ft-chapters span { width: 100%; color: var(--ft-ink); font: 600 19px/1.25 var(--f-display); letter-spacing: -.01em; white-space: normal; }
 .ft-chapters .ft-cue:hover span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; text-decoration-color: var(--ft-accent); }
 .ft-chapters p { margin: 6px 0 0; color: var(--ft-ink-2); font-size: 15.5px; line-height: 1.5; text-wrap: pretty; }
 
@@ -238,8 +238,8 @@ body:has(.ft)::before { background: none; }
 .ft-media video { aspect-ratio: var(--shot-ar, 16 / 9); object-fit: cover; }
 .ft-media--full { grid-column: full; }
 /* Edge-to-edge media stays within one screen, so a section never needs two scrolls for one picture. */
-.ft-media--full img,
-.ft-media--full video { max-height: min(72svh, 640px); object-fit: cover; }
+.ft-media--full > img,
+.ft-media--full > video { max-height: min(72svh, 640px); object-fit: cover; }
 /* A loop and its pause button share this box. */
 .ft-media__frame { position: relative; }
 .ft-media > a { display: block; text-decoration: none; }
@@ -436,11 +436,23 @@ body:has(.ft)::before { background: none; }
   .ft-chapters li { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 0 var(--ft-gap); padding-block: 16px 20px; }
   .ft-chapters p { margin-top: 6px; }
   .ft-row { row-gap: 28px; }
-  .ft-row--left > .ft-media { grid-column: full-start / c 11; }
-  .ft-row--right > .ft-media { grid-column: c 1 / full-end; }
+  .ft-media--full > .ft-cap { grid-column: content-start / c 10; }
+}
+
+/* Between 900 and 1099px a row splits evenly, so the text keeps a readable line. */
+@media (min-width: 900px) and (max-width: 1099px) {
+  .ft-row--left > .ft-media { grid-column: full-start / c 6; }
+  .ft-row--left > :not(.ft-media) { grid-column: c 7 / content-end; }
+  .ft-row--right > .ft-media { grid-column: c 7 / full-end; }
+  .ft-row--right > :not(.ft-media) { grid-column: content-start / c 6; }
+}
+
+/* Below 900px a row stacks: the picture across the text width, the text under it. */
+@media (max-width: 899px) {
+  .ft-row--left > .ft-media,
+  .ft-row--right > .ft-media { grid-column: content; }
   .ft-row--left > :not(.ft-media),
   .ft-row--right > :not(.ft-media) { grid-column: content-start / c 10; grid-row: auto; }
-  .ft-media--full > .ft-cap { grid-column: content-start / c 10; }
 }
 
 /* ---------- Phone: everything on one column, media edge to edge ---------- */
@@ -461,7 +473,7 @@ body:has(.ft)::before { background: none; }
   .ft-media--full > .ft-cap,
   .ft-row--left > .ft-media > .ft-cap,
   .ft-row--right > .ft-media > .ft-cap { grid-column: content; }
-  .ft-hero__stage { height: clamp(420px, calc(80svh - var(--site-header-height)), 600px); }
+  .ft-hero__stage { height: clamp(400px, calc(72svh - var(--site-header-height)), 520px); }
   .ft-hero__stage::after {
     background: linear-gradient(0deg, var(--ft-fade) 0%, color-mix(in srgb, var(--ft-fade) 62%, transparent) 30%, color-mix(in srgb, var(--ft-fade) 48%, transparent) 62%, color-mix(in srgb, var(--ft-fade) 30%, transparent) 100%);
   }
@@ -471,5 +483,5 @@ body:has(.ft)::before { background: none; }
   .ft > .cine-close { flex-direction: column; align-items: flex-start; }
 }
 @media (max-width: 380px) {
-  .ft .ft-watch { width: 100%; justify-content: center; }
+  .ft .ft-watch { width: 100%; justify-content: center; gap: 8px; padding-inline: 14px; font-size: 16px; }
 }
