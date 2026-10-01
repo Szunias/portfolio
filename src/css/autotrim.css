@@ -5,10 +5,11 @@
    the periwinkle of selected text (WAV, 48 kHz) for controls. The captures' amber
    warning text is not used.
 
-   The hero is the tool, not footage: the title above, the whole Export window under
-   it at the text width. Watch turns the window into the interface tour in place, at
-   the same size and shape. On a phone the window is cropped to its left side, large
-   enough to read, and opens whole on a tap. */
+   The hero is the tool, not footage: the title and links on the left, the Export
+   window beside them. Watch turns the window into the interface tour in place, at
+   the same size and shape. Every capture sits beside its text, so each section is
+   about one screen; on a phone everything stacks and the hero window is cropped to
+   its left side, large enough to read, and opens whole on a tap. */
 :root {
   --ft-bg: #101319;
   --ft-band: #1b1f26;
@@ -21,22 +22,47 @@
   --ft-accent-ink: #101319;
 }
 
-/* ---------- Hero: the title, then the window ---------- */
+/* Section heads sit beside the captures, so they are set a step below the shared scale. */
+.at .ft-head {
+  font-size: clamp(28px, 2.9vw, 42px);
+  line-height: 1.06;
+  letter-spacing: -.03em;
+}
+.at .ft-body > .ft-head { margin: 0 0 .55em; }
+.at .ft-body > .ft-pull { margin: 0 0 .8em; font-size: clamp(19px, 1.6vw, 23px); }
+.at .ft-band { padding-bottom: var(--ft-space); }
+.at .ft-hero + .ft-band { padding-top: var(--ft-space); }
+
+/* ---------- Hero: title and links beside the window ---------- */
 .at .ft-hero {
   --ft-fade: var(--ft-bg);
-  padding: clamp(48px, 6vw, 96px) max(var(--page-gutter), calc((100% - var(--page-max)) / 2)) clamp(64px, 7vw, 112px);
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  align-items: center;
+  gap: 32px var(--ft-gap);
+  padding: clamp(32px, 4vw, 56px) max(var(--page-gutter), calc((100% - var(--page-max)) / 2)) clamp(40px, 4.4vw, 64px);
 }
 .at .ft-hero__text {
   position: static;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: 0 var(--ft-gap);
-  padding: 0 0 clamp(36px, 4vw, 60px);
+  display: block;
+  padding: 0;
 }
-.at .ft-hero h1 { grid-column: 1 / -1; text-shadow: none; }
-.at .ft-hero__who { margin: 0; text-shadow: none; }
-.at .ft-hero__acts { justify-content: flex-end; }
+.at .ft-hero h1 {
+  margin-bottom: 20px;
+  font-size: clamp(40px, 4.4vw, 64px);
+  line-height: .98;
+  text-shadow: none;
+}
+.at .ft-hero__who { margin: 0 0 28px; text-shadow: none; }
+.at .ft-hero__acts { flex-direction: column; align-items: flex-start; gap: 6px; }
+.at .ft-hero__acts .ft-watch { margin-bottom: 10px; }
+.at-facts {
+  max-width: 34em;
+  margin: 24px 0 0;
+  color: var(--ft-ink-3);
+  font-size: 15px;
+  line-height: 1.55;
+}
 
 .at .ft-hero__stage {
   height: auto;
@@ -54,7 +80,7 @@
 }
 .at-window:hover img { opacity: .92; }
 
-/* The tour is the same window: same shape, on the window's own colour. */
+/* The tour is the same window: same place, same shape, on the window's own colour. */
 .at .ft-hero.is-film .ft-hero__stage {
   width: min(100%, calc((100svh - var(--anchor-offset, 100px)) * 1440 / 978));
   aspect-ratio: 1440 / 978;
@@ -67,36 +93,76 @@
 /* The UI captures are already dark; no frame box behind them. */
 .at .ft-media img { background: var(--ft-bg); }
 
-@media (max-width: 1099px) {
-  .at .ft-hero__text { grid-template-columns: minmax(0, 1fr); }
-  .at .ft-hero__acts { justify-content: flex-start; margin-top: clamp(22px, 2.4vw, 32px); }
+/* ---------- Text beside text, capture beside text ---------- */
+.at .at-side { grid-column: content-start / c 5; }
+.at .at-beside { grid-column: c 6 / content-end; }
+
+.at .ft-row { align-items: center; }
+.at .ft-row--right > .ft-media { grid-column: c 6 / content-end; }
+.at .ft-row--right > :not(.ft-media) { grid-column: content-start / c 6; padding-right: var(--ft-gap); }
+.at .ft-row--left > .ft-media { grid-column: content-start / c 6; }
+.at .ft-row--left > :not(.ft-media) { grid-column: c 6 / content-end; padding-left: var(--ft-gap); }
+@supports (grid-template-columns: subgrid) {
+  .at .ft-row--left > .ft-media > .ft-cap,
+  .at .ft-row--right > .ft-media > .ft-cap { grid-column: 1 / -1; }
 }
 
-@media (max-width: 699px) {
-  .at .ft-hero { padding-top: 40px; }
-  .at .ft-hero__acts { gap: 4px 24px; }
-  .at .ft-hero__acts .ft-watch { margin-bottom: 10px; }
-  .at .ft-hero__stage { margin-inline: calc(-1 * var(--page-gutter)); }
-  .at-window { aspect-ratio: 4 / 5; overflow: hidden; }
-  .at-window img { width: auto; height: 100%; }
-  .at .ft-hero.is-film .ft-hero__stage { width: auto; height: auto; }
-}
-
-/* ---------- The release band: the stable release and the development source side by side ---------- */
-.at-pair {
+/* Two captures, or two texts, side by side. */
+.at-two {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(40px, 4.4vw, 72px) calc(var(--ft-gap) * 2);
+  gap: 40px calc(var(--ft-gap) * 2);
+  align-items: start;
 }
-.at-pair > .ft-body { grid-column: auto; }
-.at-pair h3 {
-  margin: 0 0 .8em;
+.at-two .ft-body { grid-column: auto; }
+.at-two .ft-media + .ft-body { margin-top: 22px; }
+/* The release band: the stable release and the development source, each under its own head. */
+.at-sub {
+  margin: 0 0 .65em;
   padding-top: 16px;
   border-top: 1px solid var(--ft-rule);
   color: var(--ft-head);
-  font: 600 clamp(24px, 2.2vw, 32px)/1.15 var(--f-display);
+  font: 600 clamp(22px, 2vw, 28px)/1.15 var(--f-display);
   letter-spacing: -.015em;
+  text-wrap: balance;
 }
+
+/* ---------- Medium: the hero and the pairs stay side by side down to 900 ---------- */
+@media (max-width: 1099px) {
+  .at .ft-head { grid-column: content; }
+  .at .at-side { grid-column: content-start / c 5; }
+  .at .at-beside { grid-column: c 6 / content-end; }
+  .at .ft-row { row-gap: 0; }
+  .at .ft-row--right > .ft-media { grid-column: c 6 / content-end; grid-row: 1; }
+  .at .ft-row--right > :not(.ft-media) { grid-column: content-start / c 6; grid-row: 1; }
+  .at .ft-row--left > .ft-media { grid-column: content-start / c 6; grid-row: 1; }
+  .at .ft-row--left > :not(.ft-media) { grid-column: c 6 / content-end; grid-row: 1; }
+}
+
 @media (max-width: 899px) {
-  .at-pair { grid-template-columns: minmax(0, 1fr); }
+  .at .ft-hero { grid-template-columns: minmax(0, 1fr); }
+  .at .ft-hero__acts { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 24px; }
+  .at .ft-hero__acts .ft-watch { margin-bottom: 0; }
+  .at .at-side,
+  .at .at-beside { grid-column: content; }
+  .at .ft-row { row-gap: 28px; }
+  .at .ft-row--left > .ft-media,
+  .at .ft-row--right > .ft-media,
+  .at .ft-row--left > :not(.ft-media),
+  .at .ft-row--right > :not(.ft-media) { grid-column: content; grid-row: auto; padding: 0; }
+  .at .ft-row > .ft-body { order: -1; }
+  .at-two { grid-template-columns: minmax(0, 1fr); }
+  .at-two .ft-body p { max-width: 36em; }
+}
+
+@media (max-width: 699px) {
+  .at { --ft-space: 44px; }
+  .at .ft-hero { padding-top: 28px; gap: 28px; }
+  .at .ft-hero__acts .ft-watch { margin-bottom: 8px; }
+  .at .ft-hero__stage { margin-inline: calc(-1 * var(--page-gutter)); }
+  .at-window { aspect-ratio: 5 / 4; overflow: hidden; }
+  .at-window img { width: auto; height: 100%; }
+  .at .ft-hero.is-film .ft-hero__stage { justify-self: stretch; width: auto; height: auto; margin-inline: calc(-1 * var(--page-gutter)); }
+  .at .ft-row--left > .ft-media,
+  .at .ft-row--right > .ft-media { grid-column: content; }
 }
