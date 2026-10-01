@@ -14,8 +14,6 @@ const root = path.resolve(__dirname, '..');
 const output = path.join(root, 'layout-results');
 const origin = 'http://127.0.0.1:4173';
 const widths = [320, 375, 640, 768, 899, 900, 1024, 1199, 1200, 1440, 1920];
-// The tools desk links into each project's evidence section; keep the anchors exact.
-const deskLinks = ['shadowframes.html#sf-mix-title', 'nottoday.html#nt-engines-title', 'transientica.html#tr-path-title', 'autotrim.html#at-flow-title'];
 const results = [];
 fs.mkdirSync(output, { recursive: true });
 
@@ -139,7 +137,6 @@ async function main() {
       assert.deepEqual(await page.locator('.music-cta__list li').evaluateAll((items) => items.map((item) => item.textContent.replace(/\s+/g, ' ').trim())),
         ['01 Ray 0:22', '02 Cage 1:50', '03 Electronic sketch 2:30']);
       assert.equal(await page.locator('.earlier-work nav a').count(), 8);
-      assert.deepEqual(await page.locator('[data-solo-desk] a').evaluateAll((links) => links.map((link) => link.getAttribute('href'))), deskLinks, 'Tools desk proof links changed');
       assert.equal(await page.locator('.tool-feature a, .tool-feature button, .music-cta__link a, .music-cta__link button').count(), 0, 'Feature links must not contain interactive descendants');
       const geometry = await page.evaluate(() => {
         const style = (s) => getComputedStyle(document.querySelector(s));
@@ -190,8 +187,6 @@ async function main() {
     assert.equal(await fallback.locator('.music-cta__link').isVisible(), true);
     assert.equal(await fallback.locator('[data-mail-link]').isVisible(), true);
     assert.equal(await fallback.locator('[data-copy-mail]').isVisible(), false);
-    assert.deepEqual(await fallback.locator('[data-solo-desk] a').evaluateAll((links) => links.map((link) => link.getAttribute('href'))), deskLinks);
-    assert.deepEqual(await fallback.locator('[data-solo]').evaluateAll((keys) => keys.map((key) => key.checkVisibility())), [false, false, false, false], 'Solo keys must stay hidden without JavaScript');
     await fallback.locator('.earlier-work summary').click();
     assert.equal(await fallback.locator('.earlier-work nav').isVisible(), true);
     results.push({ check: 'no-JavaScript navigation and archive', passed: true });

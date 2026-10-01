@@ -87,38 +87,34 @@ an intermediate width and desktop, including long titles and player controls.
 | --- | --- |
 | `home-showreel.js` | Compact silent preview, full showreel, close and focus restoration. |
 | `home-transition.js` | Scroll-driven hero exit, whole-wave transforms and showreel coverage state. |
-| `home-solo.js` | Solo keys on the homepage tools desk: dims the projects made without the soloed tool and names the lit ones in a status line. |
 | `image-viewer.js` | Original-image dialog, zoom and focus restoration on project screenshots. |
 | `project-previews.js` | Lazy, silent previews on project-card hover or keyboard focus. |
 | `copy-email.js` | Copies the visible address on the homepage and contact pages and marks the clicked button and the status with `data-copy-state` for 4 s. |
-| `page-motion.js` | Shared entrance effects and header state. |
+| `page-motion.js` | Header state on scroll. |
 | `music-library.js` | Track dates, display names and labels; the published shelf of spines and sketch notebook (`data-layout="spines"`), and the cover shelf and sketch ledger of the review pages. |
-| `music-player.js` | Track selection and the display roles it fills (name, note, facts, film link, set position), queue, transport, seek, volume, filters, review-page covers, lock-screen artwork and player state. |
+| `music-player.js` | Track selection and the display roles it fills (name, note, facts, film link), queue, transport, seek, volume, filters, review-page covers, lock-screen artwork and player state. |
 | `music-visualizer.js` | The meter-bridge audio analyser and the level meter of the playing list row. |
 | `contact-actions.js` | Contact-page actions and progressive enhancement. |
 | `clock-face.js` | Shared Vienna time parts and UTC offset, the sun over Graz (altitude and phase of the day), hand transforms and SVG ticks for contact clocks. |
 | `contact-clock.js` | Windable contact clock: daylight face, crown, caption (with the visitor's own clock), hold after release, ratchet click and interaction state. |
 | `contact-time.js` | Clock treatment on the separate contact-time review page. |
 | `colophon-clock.js` | Time display in the shared footer. |
-| `cine.js` | One-shot project reveals, including live reduced-motion changes. |
+| `cine.js` | One-shot reveals for `[data-reveal]` (no page uses them at present). |
 | `local-video.js` | Local-video enhancement on configured project pages. |
 | `video-facade.js` | Click-to-load YouTube embeds on the pages that configure it: the poster button is replaced by the player (`autoplay=1&rel=0&enablejsapi=1`), so a page script can pause it through postMessage. |
 | `prefetch.js` | Same-origin navigation prefetch. |
 | `shadowframes.js` | Drives the ten-slot investigation board: the range input (native keyboard support) and its two buttons toggle .is-pinned on the photo slots, develop each newly pinned photo from black, and rewrite the aria-live ProgressiveAmbience stage/layers readout from a static Wwise stage table copied off SC_AMB_Progressive; the slots themselves are a pointer/touch shortcut only, staying aria-hidden. |
-| `sidar.js` | SIDAR NULL: Scanner console: Scan key, frame reveal and the prototype recording on one screen. |
-| `xrlabs.js` | XR Labs: Floor-plan positions that draw the shot path to each trainee position. |
-| `transientica.js` | Transientica: Practice lane played with K, S and H keys or touch pads, with timing feedback, and a button that jumps the 2025 prototype video straight to its live-demo timestamp. |
-| `nottoday.js` | Not Today, Darling!: Stage tiles on the rack and inline time cues in the sections below it that play the one run recording, defaulting to the race stage. |
-| `autotrim.js` | AutoTrim Exporter: Tool window whose pages follow the chapters, plus the Select across tracks demo. |
-| `audioq.js` | AudioQ: Signal-chain rack of working knobs that show what the code does with each value. |
-| `mowik.js` | Mówik: Hold F8 or F7 to run the dictation indicator and the RAM buffer strip. |
-| `ai-audio-research.js` | AI Audio Research: Frame ruler that replays the measured latencies and plays each method’s sample. |
-| `sounddesign.js` | Three sound redesigns: Spotting-sheet players: timecode marks that cue each sound in the clip. |
+| `transientica.js` | Transientica: a button that jumps the 2025 prototype video straight to its live-demo timestamp. |
+| `nottoday.js` | Not Today, Darling!: time cues in the stage list and the cast section that play the one run recording from that moment. |
+| `autotrim.js` | AutoTrim Exporter: tool window whose pages follow the chapters on scroll. |
+| `mowik.js` | Mówik: the cue table, which plays each built-in sound cue. |
+| `ai-audio-research.js` | AI Audio Research: replays the measured latencies on the ruler and plays each method’s sample. |
+| `sounddesign.js` | Three sound redesigns: cue buttons that play each clip from a cue and mark the cue now playing. |
 | `ifmc.js` | Drives both IFMC score reels: play/pause, drag- or keyboard-scrub via a range input synced to the audio, and cue buttons on the Clapping reel that seek 3s ahead of an annotated moment; paints the playhead and lights the current cue against a static, pre-measured loudness trace of each published track. Keeps the reels and the two embedded films from playing together: a reel that starts pauses the films, and a film that opens or reports playing (the YouTube player's postMessage state after a "listening" handshake) pauses the reels and the other film. |
-| `richter.js` | Richter: Seismograph drum of the low end that scrubs the film and follows playback. |
-| `pausedeserve.js` | Pause & Deserve: The P Pauses Death sign as a five-second pause toy. |
-| `amorak.js` | Amorak: Ear-to-ear balance strip that scrubs the film and lights the louder ear. |
-| `ray.js` | Ray: Colour strip of the whole film with light-shaft marks that cue the film. |
+| `richter.js` | Richter: timecode buttons that seek the film, and the main-theme player. |
+| `pausedeserve.js` | Pause & Deserve: chapter links that jump the trailer. |
+| `amorak.js` | Amorak: buttons and stills that start the film from a marked moment. |
+| `ray.js` | Ray: scene stills that cue the film and mark the scene now playing. |
 
 Scripts use local scopes and DOM hooks. Keep their loading order in configuration
 and preserve accessible markup when JavaScript is unavailable.
@@ -181,8 +177,7 @@ Project-card videos use `[data-card-preview]` with a validated `data-src` path.
 Only one runs at a time; its source loads on deliberate hover or keyboard focus.
 Touch, reduced motion and data-saving preferences retain the still images.
 Every homepage project link carries a `track-<slug>` class whose colour is copied
-from that project's stylesheet, and a `data-tools` list taken from that page's
-meta for the solo keys. Update both when a project's palette or tools change.
+from that project's stylesheet. Update it when a project's palette changes.
 
 ## Build and validation
 
