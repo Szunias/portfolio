@@ -1,68 +1,36 @@
-/* Not Today, Darling!: page-owned styles, loaded only on nottoday.html.
-   Letter tiles from the game's name plates and menus, a near-neutral dark room,
-   and Penny's pink (also the colour of audio wires in MetaSounds) as the accent. */
+/* Not Today, Darling!: page-owned styles, loaded only on nottoday.html after feature.css.
+   The palette is sampled from the run: the living room's near-black brown, the rust of the
+   bookshelves for the opening band, the dusky rose of the walls for the voices, and the
+   cream of the game's letter tiles for heads, cues and the one filled button. */
 :root {
-  --c-bg-0: #0c0b0c;
-  --c-bg-1: #121012;
-  --c-bg-2: #1a171a;
-  --c-bg-3: #221f23;
-  --c-ink: #f3eee8;
-  --c-ink-2: #c9c1ba;
-  --c-ink-3: #a39b98;
-  --c-accent: #f28cbd;
-  --c-accent-hi: #ffa8d0;
-  --c-accent-ink: #1a0d14;
-  --c-accent-line: rgba(242, 140, 189, .45);
-  --c-accent-weak: rgba(242, 140, 189, .12);
-  --c-line: rgba(243, 238, 232, .08);
-  --c-line-2: rgba(243, 238, 232, .16);
-  --c-line-3: rgba(243, 238, 232, .30);
-  --ice: #f28cbd;
-  --nt-tile-hi: #f4ead0;    /* name-plate tile face, lit */
-  --nt-tile: #e6d9b8;       /* name-plate tile face */
+  --ft-bg: #120c0b;
+  --ft-band: #2b140d;
+  --ft-band-2: #2e191a;
+  --ft-ink: #f6efe6;
+  --ft-ink-2: #dccfc2;
+  --ft-ink-3: #b3a598;
+  --ft-head: #f1e6c8;
+  --ft-accent: #f1e6c8;
+  --ft-accent-ink: #1f1a14;
+  --nt-tile-hi: #f6eed6;
+  --nt-tile: #e3d5b2;
   --nt-tile-ink: #1f1a14;
   --nt-tile-num: #5e5547;
-  --nt-wire-array: #62b6ff; /* MetaSounds wire colours in MSP_MonoArray.png */
-  --nt-wire-float: #9be15d;
-  --nt-wire-audio: #f28cbd;
-}
-/* The site's ice glow is dropped on this page; the tiles carry the colour. */
-body:has(.cine.nt)::before { background: none; }
-
-/* Opt out of the shared heading-left / paragraph-right grid (cine.css, .cine > section). */
-.cine.nt > section:not(.cine-split) { display: block; }
-.nt a:hover { text-decoration-color: var(--c-accent); }
-.nt .nt-sr {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
-  font-size: 12px;
-  line-height: 1;
-}
-.nt code {
-  padding: 2px 7px;
-  border-radius: 3px;
-  background: var(--c-bg-3);
-  color: var(--c-ink);
-  font: 400 .86em/1.4 var(--f-mono);
-  overflow-wrap: anywhere;
 }
 
-/* ---------- Letter tiles: letters and points come from data-l / data-v ---------- */
-.nt .nt-tiles {
-  --t: clamp(26px, calc((100vw - 110px) / 9.4), 60px);
+/* The filled button is a letter tile too. */
+.nt .ft-watch {
+  background: linear-gradient(180deg, var(--nt-tile-hi), var(--nt-tile));
+  box-shadow: inset 0 -3px 0 rgba(40, 30, 16, .2), 0 10px 26px -12px #000;
+}
+
+/* ---------- Letter tiles from the game's name plates; letters and points come from data-l / data-v ---------- */
+.nt-tiles {
+  --t: clamp(28px, calc((100vw - 2 * var(--page-gutter)) / 18.6), 72px);
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  gap: calc(var(--t) * .3) calc(var(--t) * .42);
-  max-width: none;
-  margin: 0;
+  gap: calc(var(--t) * .26) calc(var(--t) * .4);
 }
 .nt-word { display: inline-flex; align-items: flex-end; gap: calc(var(--t) * .07); }
 .nt-tile {
@@ -76,10 +44,11 @@ body:has(.cine.nt)::before { background: none; }
   height: calc(var(--t) * 1.04);
   border-radius: calc(var(--t) * .11);
   background: linear-gradient(180deg, var(--nt-tile-hi), var(--nt-tile));
-  box-shadow: inset 0 calc(var(--t) * -.06) 0 rgba(40, 30, 16, .2), 0 calc(var(--t) * .14) calc(var(--t) * .22) calc(var(--t) * -.1) rgba(0, 0, 0, .9);
+  box-shadow: inset 0 calc(var(--t) * -.06) 0 rgba(40, 30, 16, .22), 0 calc(var(--t) * .16) calc(var(--t) * .3) calc(var(--t) * -.08) rgba(0, 0, 0, .85);
   color: var(--nt-tile-ink);
   font: 700 calc(var(--t) * .6)/1 var(--f-display);
-  transform: rotate(calc(var(--r) * var(--calm, 1))) translateY(calc(var(--t) * var(--y) * var(--calm, 1)));
+  font-style: normal;
+  transform: rotate(var(--r)) translateY(calc(var(--t) * var(--y)));
 }
 .nt-tile:nth-child(4n + 1) { --r: -2.6deg; --y: .02; }
 .nt-tile:nth-child(4n + 2) { --r: 2.2deg; --y: -.04; }
@@ -95,270 +64,34 @@ body:has(.cine.nt)::before { background: none; }
   color: var(--nt-tile-num);
   font: 600 calc(var(--t) * .2)/1 var(--f-mono);
 }
-.nt-punct {
-  margin-left: calc(var(--t) * .04);
-  color: var(--nt-tile);
-  font: 700 calc(var(--t) * 1.02)/.82 var(--f-display);
-}
+.nt-punct { margin-left: calc(var(--t) * .04); color: var(--nt-tile); font: 700 calc(var(--t) * 1.02)/.82 var(--f-display); }
 .nt-punct::before { content: attr(data-l); }
 
-/* ---------- Opening: the name plate, then one run of the game ---------- */
-.nt-open {
-  display: grid;
-  grid-template-columns: minmax(0, 1.62fr) minmax(300px, 1fr);
-  grid-template-areas: "title title" "run text" "panel panel";
-  column-gap: clamp(32px, 4.4vw, 64px);
-  margin-bottom: clamp(96px, 10vw, 150px);
-}
-.nt .nt-title { position: relative; grid-area: title; margin: 0 0 clamp(34px, 4vw, 56px); padding-top: 6px; }
-.nt-run { grid-area: run; min-width: 0; }
-.nt-open__text { grid-area: text; }
-.nt .nt-lead {
-  max-width: 40ch;
-  margin: 0 0 22px;
-  color: var(--c-ink);
-  font-size: clamp(18px, 1.42vw, 20px);
-  line-height: 1.55;
-}
-.nt .nt-meta {
-  max-width: none;
-  margin: 0 0 10px;
-  color: var(--c-ink-3);
-  font: 400 12px/1.75 var(--f-mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-.nt-meta span { white-space: nowrap; }
-.nt .nt-links { display: flex; flex-wrap: wrap; gap: 6px 22px; max-width: none; margin: 0; font-size: 14.5px; }
-
-/* The shared screen: the run recording and the four-player capture. */
-.nt .nt-screen { position: relative; margin: 0; }
-.nt .nt-screen video,
-.nt .nt-screen img {
-  display: block;
-  width: 100%;
-  max-width: none;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  border-radius: 3px;
-  background: #000;
-}
-.nt .nt-note { max-width: 60ch; margin: 14px 0 0; color: var(--c-ink-3); font-size: 14px; line-height: 1.55; }
-
-/* The run in five stages: a real frame from the recording, its time, its text and its own
-   Audio/Sounds folders. The frame and the time both play the run from that moment.
-   Wide screens: one row of five under the video. Narrower: frame left, text right. */
-.nt-panel { grid-area: panel; margin-top: clamp(40px, 4.4vw, 64px); }
-.nt .nt-stages {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0 clamp(18px, 1.8vw, 28px);
-  max-width: none;
-  margin: 0;
+/* ---------- The five grannies: portrait and name plate ---------- */
+.nt-cast {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 24px 32px;
   padding: 0;
   list-style: none;
 }
-.nt-s { min-width: 0; margin: 0; }
-.nt .nt-s__frame { display: block; border-radius: 3px; background: #000; }
-.nt .nt-s__frame img {
-  display: block;
-  width: 100%;
-  max-width: none;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  border-radius: 3px;
-  outline: 1px solid transparent;
-  outline-offset: 3px;
-  transition: outline-color .2s var(--ease);
-}
-.nt .nt-s__frame:hover img { outline-color: var(--c-accent-line); }
-.nt .nt-s__frame:focus-visible { outline: none; }
-.nt .nt-s__frame:focus-visible img { outline: 2px solid var(--c-accent); }
-.nt-s__body { padding-top: 16px; }
-.nt .nt-s h3 {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin: 0 0 8px;
-  color: var(--c-ink);
-  font: 500 20px/1.2 var(--f-display);
-  letter-spacing: -.01em;
-}
-.nt .nt-s h3 .nt-cue {
-  padding: 0;
-  border: 0;
-  background: none;
-  font: 500 13px/1.2 var(--f-mono);
-}
-.nt .nt-s h3 .nt-cue::before { content: none; }
-.nt .nt-s h3 .nt-cue:hover { background: none; color: var(--c-accent-hi); }
-.nt .nt-s p { max-width: 46ch; margin: 0; color: var(--c-ink-2); font-size: 15px; line-height: 1.58; }
+.nt-cast li { display: flex; align-items: center; gap: 14px; }
+.nt-cast img { width: 64px; height: 64px; border-radius: 50%; background: var(--ft-bg); }
+.nt-cast .nt-tiles { --t: 30px; flex-wrap: nowrap; }
 
-/* Each stage's own folders sit under its text. */
-.nt .nt-s .nt-dirs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px 12px;
-  margin: 12px 0 0;
-  color: var(--c-ink-3);
-  font: 400 12px/1.5 var(--f-mono);
+@media (max-width: 1099px) {
+  .nt-cast { justify-content: flex-start; gap: 24px 40px; }
 }
-.nt .nt-all { max-width: none; margin: 28px 0 0; font: 400 12.5px/1.5 var(--f-mono); }
-.nt .nt-all a { color: var(--c-ink-3); }
-.nt .nt-all a:hover { color: var(--c-ink); }
-
-@media (max-width: 1179px) {
-  .nt .nt-stages { grid-template-columns: minmax(0, 1fr); }
-  .nt-s { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 0 clamp(20px, 3vw, 36px); align-items: start; }
-  .nt-s + .nt-s { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--c-line); }
-  .nt-s__body { padding-top: 0; }
+@media (max-width: 699px) {
+  .ft-hero .nt-tiles { --t: calc((100vw - 2 * var(--page-gutter)) / 8.7); }
+  .ft-hero .ft-hero__stage > video { object-position: 38% 50%; }
+  .nt-cast { display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); gap: 18px 24px; }
+  .nt-cast li { gap: 10px; }
+  .nt-cast img { width: 40px; height: 40px; }
+  .nt-cast .nt-tiles { --t: 21px; }
 }
-@media (max-width: 600px) {
-  .nt-s { grid-template-columns: minmax(0, 40%) minmax(0, 1fr); gap: 0 14px; }
-  .nt-s + .nt-s { margin-top: 18px; padding-top: 18px; }
-  .nt .nt-s h3 { gap: 8px; margin-bottom: 6px; font-size: 17px; }
-  .nt .nt-s h3 .nt-cue { font-size: 12px; }
-  .nt .nt-s p { font-size: 14.5px; line-height: 1.55; }
-  .nt .nt-s .nt-dirs { margin-top: 8px; font-size: 11.5px; gap: 0 10px; }
-}
-
-/* Time cues: play the run from the moment named in the text beside them. */
-.nt .nt-cue {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 7px 0 6px;
-  border: 1px solid var(--c-accent-line);
-  border-radius: 3px;
-  color: var(--c-accent);
-  font: 500 .84em/1.6 var(--f-mono);
-  letter-spacing: .02em;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: background-color .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
-}
-.nt .nt-cue::before {
-  content: "";
-  width: 0;
-  height: 0;
-  border-top: 4.5px solid transparent;
-  border-bottom: 4.5px solid transparent;
-  border-left: 7px solid currentColor;
-}
-.nt .nt-cue:hover { border-color: var(--c-accent); background: var(--c-accent-weak); color: var(--c-accent-hi); }
-.nt .nt-cue:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
-
-/* ---------- Sections ---------- */
-.nt-sec { margin-bottom: clamp(96px, 10vw, 150px); }
-.nt-head { max-width: 66ch; margin-bottom: clamp(26px, 3vw, 36px); }
-.nt .nt-head p { margin: 16px 0 0; color: var(--c-ink-2); font-size: 17px; line-height: 1.65; }
-
-/* MSP_MonoArray, redrawn as nodes so it reads at phone width. */
-.nt-graph {
-  margin: 0;
-  padding: clamp(14px, 1.6vw, 20px) clamp(14px, 2vw, 26px) clamp(20px, 2.4vw, 30px);
-  border: 1px solid var(--c-line-2);
-  border-radius: 6px;
-  background-color: #151316;
-}
-.nt-graph figcaption {
-  display: flex;
-  justify-content: flex-end;
-  margin: 0 0 clamp(14px, 1.6vw, 20px);
-  font: 400 12.5px/1.5 var(--f-mono);
-}
-.nt-graph figcaption a { white-space: nowrap; }
-.nt-pin--array { --pin: var(--nt-wire-array); }
-.nt-pin--audio { --pin: var(--nt-wire-audio); }
-.nt-pin--float { --pin: var(--nt-wire-float); }
-.nt-lane { display: flex; flex-wrap: wrap; align-items: center; gap: 0; }
-.nt-lane + .nt-lane { margin-top: 16px; }
-.nt-node {
-  min-width: 0;
-  border: 1px solid rgba(255, 255, 255, .1);
-  border-top: 3px solid var(--pin);
-  border-radius: 5px;
-  background: #222024;
-  box-shadow: 0 8px 16px -10px #000;
-  font: 400 12.5px/1.45 var(--f-mono);
-}
-.nt-node b { display: block; padding: 6px 11px 5px; border-bottom: 1px solid rgba(255, 255, 255, .07); color: #fff; font-weight: 500; }
-.nt-node span { display: block; padding: 5px 11px 6px; color: var(--c-ink-2); }
-.nt-node em { margin-left: 6px; color: var(--c-ink); font-style: normal; }
-.nt-wire { display: block; flex: 0 0 34px; height: 2px; background: var(--pin); }
-.nt-into { padding-left: 10px; color: var(--c-ink-3); font: 400 12.5px/1.45 var(--f-mono); }
-.nt-into::before { content: "\2192"; margin-right: 8px; color: var(--nt-wire-float); }
-.nt-after {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 20px clamp(28px, 4vw, 56px);
-  align-items: start;
-  margin-top: 24px;
-}
-.nt .nt-after p { max-width: 62ch; margin: 0; color: var(--c-ink-2); font-size: 16.5px; line-height: 1.65; }
-.nt-thumbs { display: flex; gap: 14px; }
-.nt-thumbs figure { margin: 0; }
-.nt-thumbs a { display: block; border: 1px solid var(--c-line-2); background: #1d1d1d; transition: border-color .2s var(--ease); }
-.nt-thumbs a:hover { border-color: var(--c-accent); }
-.nt .nt-thumbs img { display: block; width: auto; max-width: none; height: 104px; border-radius: 0; }
-.nt-thumbs figcaption { margin-top: 7px; color: var(--c-ink-3); font: 400 12px/1.4 var(--f-mono); }
-
-/* The mix: text beside the four-player screen, captures for the real asset names as links. */
-.nt-mixrow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-  gap: clamp(32px, 4.4vw, 64px);
-  align-items: start;
-}
-.nt .nt-mixrow .nt-screen { margin-top: 6px; }
-.nt .nt-mixtext p { max-width: 54ch; margin: 0 0 16px; color: var(--c-ink-2); font-size: 17px; line-height: 1.65; }
-.nt .nt-proofs { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; max-width: none; margin: 22px 0 0; font-size: 14.5px; }
-.nt .nt-proofs__k { color: var(--c-ink-3); font: 400 11px/1.4 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; }
-
-/* The cast: portrait and name tiles, as on the in-game plates. */
-.nt .nt-cast {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 22px clamp(24px, 3.4vw, 46px);
-  max-width: none;
-  margin: 6px 0 34px;
-  padding: 0;
-  list-style: none;
-}
-.nt-cast li { display: flex; align-items: center; gap: 12px; margin: 0; }
-.nt .nt-cast img {
-  flex: none;
-  width: 46px;
-  max-width: none;
-  height: 46px;
-  border-radius: 50%;
-  background: #141214;
-  box-shadow: 0 8px 14px -6px #000;
-}
-.nt .nt-cast .nt-tiles { --t: 27px; --calm: .8; }
-.nt .nt-inrun { max-width: 66ch; margin: 0 0 22px; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.7; }
-.nt .nt-credit { max-width: 66ch; margin: 0; color: var(--c-ink-3); font-size: 14.5px; line-height: 1.6; }
-
-/* ---------- Narrow screens ---------- */
-@media (max-width: 900px) {
-  .nt-open { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "text" "run" "panel"; }
-  .nt-open__text { margin-bottom: 40px; }
-  .nt-after { grid-template-columns: minmax(0, 1fr); }
-  .nt-mixrow { grid-template-columns: minmax(0, 1fr); gap: 28px; }
-  .nt-mixrow .nt-screen { margin-top: 0; }
-}
-@media (max-width: 600px) {
-  .nt-lane { flex-direction: column; align-items: stretch; }
-  .nt-lane + .nt-lane { margin-top: 22px; padding-top: 20px; border-top: 1px dashed var(--c-line-2); }
-  .nt-wire { flex: none; width: 2px; height: 14px; margin-left: 22px; }
-  .nt-into { padding: 0 0 0 16px; }
-  .nt-into::before { content: "\2193"; }
-  .nt-thumbs { display: grid; grid-template-columns: 1fr 1fr; align-items: end; }
-  .nt .nt-thumbs img { width: 100%; height: auto; }
-  .nt .nt-cast { gap: 18px 26px; }
-  .nt .nt-cast .nt-tiles { --t: 24px; }
-  .nt .nt-cast img { width: 38px; height: 38px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .nt .nt-cue { transition: none; }
+@media (max-width: 359px) {
+  .nt-cast .nt-tiles { --t: 18px; }
+  .nt-cast img { width: 34px; height: 34px; }
 }

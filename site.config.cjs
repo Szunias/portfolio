@@ -382,8 +382,8 @@ module.exports = {
     {
       slug: 'nottoday',
       layout: 'project',
-      css: ['cine', 'portfolio', 'nottoday'],
-      js: ['prefetch', 'colophon-clock', 'cine', 'local-video', 'nottoday', 'page-motion'],
+      css: ['cine', 'portfolio', 'feature', 'nottoday'],
+      js: ['prefetch', 'colophon-clock', 'poster-loop', 'feature'],
       schemaType: 'VideoGame',
       schemaRole: 'contributor',
       title: 'Not Today, Darling! | Four-Player UE5 Game Audio',

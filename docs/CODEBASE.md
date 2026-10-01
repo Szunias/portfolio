@@ -63,6 +63,13 @@ The files in the page's `css` array follow in exactly that order.
   one still frame from Shadow Frames, compact showreel preview and full player. The header uses `_chrome.css`.
   Homepage order is `home`, `portfolio`, `home-hero`.
 - `cine.css` styles the public project pages.
+- `feature.css` is the opt-in long-form project layout (Not Today, Darling! first):
+  a full-bleed hero loop that becomes the player, poster-scale section heads,
+  pull-out lines, a 12-column grid whose media can bleed off either edge, and
+  tinted bands. A page opts in with `feature` in its `css` list (after
+  `portfolio`) and `class="ft <slug>"` on its article; its own stylesheet then
+  sets only the `--ft-*` palette on `:root` and its motif. The block list and
+  tokens are documented at the top of the file.
 - `sidar.css` owns SIDAR's trailer-first layout and its Annex04 palette. It is
   loaded only on `sidar.html`; the shared project styles stay unchanged.
 - Every other project page also owns a stylesheet named after its slug
@@ -102,11 +109,11 @@ an intermediate width and desktop, including long titles and player controls.
 | `cine.js` | One-shot reveals for `[data-reveal]` (no page uses them at present). |
 | `local-video.js` | Local-video enhancement on configured project pages. |
 | `video-facade.js` | Click-to-load YouTube embeds on the pages that configure it: the poster button is replaced by the player (`autoplay=1&rel=0&enablejsapi=1`), so a page script can pause it through postMessage. |
-| `poster-loop.js` | Silent gameplay loops (`video[data-poster-loop]`) inside a YouTube facade's poster: load once on screen, play while half visible, never under reduced motion, data saving or a hidden tab; the facade click removes them. |
+| `poster-loop.js` | Silent gameplay loops (`video[data-poster-loop]`): load once on screen, play while half visible, never under reduced motion, data saving or a hidden tab. Inside a YouTube facade's poster the facade click removes them; on feature pages a `button[data-loop-toggle]` (its `aria-controls` names the loop) pauses and resumes one and is hidden while loops may not run. |
+| `feature.js` | Feature pages (`.ft`, feature.css): every `a[data-ft-play]` (the hero's "Watch with sound" and the play-from cues) replaces the hero's silent loop in `[data-ft-stage]` with the full recording from its `href`, with native controls and sound, and plays it from `data-t`; a cue lower on the page scrolls the hero back into view. The only thing that starts sound. |
 | `prefetch.js` | Same-origin navigation prefetch. |
 | `shadowframes.js` | Drives the ten-slot investigation board: the range input (native keyboard support) and its two buttons toggle .is-pinned on the photo slots, develop each newly pinned photo from black, and rewrite the aria-live ProgressiveAmbience stage/layers readout from a static Wwise stage table copied off SC_AMB_Progressive; the slots themselves are a pointer/touch shortcut only, staying aria-hidden. |
 | `transientica.js` | Transientica: a button that jumps the 2025 prototype video straight to its live-demo timestamp. |
-| `nottoday.js` | Not Today, Darling!: time cues in the stage list and the cast section that play the one run recording from that moment. |
 | `autotrim.js` | AutoTrim Exporter: tool window whose pages follow the chapters on scroll. |
 | `mowik.js` | Mówik: the cue table, which plays each built-in sound cue. |
 | `ai-audio-research.js` | AI Audio Research: replays the measured latencies on the ruler and plays each method’s sample. |
