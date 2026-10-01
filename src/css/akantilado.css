@@ -33,38 +33,6 @@ body::before { background: radial-gradient(70% 55% at 90% -8%, rgba(185, 83, 151
 /* Opt out of the shared heading-left / paragraph-right grid (cine.css, .cine > section). */
 .cine.ak > section:not(.cine-split) { display: block; }
 .ak a:hover { text-decoration-color: var(--c-accent); }
-.ak .ak-label {
-  display: block;
-  max-width: none;
-  margin: 0 0 14px;
-  color: var(--c-ink-3);
-  font: 500 11.5px/1.4 var(--f-mono);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-
-/* ---------- Viewfinder corners: the one mark the film and the shot frame share ---------- */
-.ak .ak-vf { position: relative; }
-.ak .ak-vf::after {
-  --m: var(--c-accent);
-  --l: 24px;
-  --w: 1.5px;
-  content: "";
-  position: absolute;
-  inset: -11px;
-  z-index: 2;
-  pointer-events: none;
-  background:
-    linear-gradient(var(--m), var(--m)) left top / var(--l) var(--w),
-    linear-gradient(var(--m), var(--m)) left top / var(--w) var(--l),
-    linear-gradient(var(--m), var(--m)) right top / var(--l) var(--w),
-    linear-gradient(var(--m), var(--m)) right top / var(--w) var(--l),
-    linear-gradient(var(--m), var(--m)) left bottom / var(--l) var(--w),
-    linear-gradient(var(--m), var(--m)) left bottom / var(--w) var(--l),
-    linear-gradient(var(--m), var(--m)) right bottom / var(--l) var(--w),
-    linear-gradient(var(--m), var(--m)) right bottom / var(--w) var(--l);
-  background-repeat: no-repeat;
-}
 
 /* ---------- Opening: the title card over the finished film ---------- */
 .ak .ak-open {
@@ -144,230 +112,30 @@ body::before { background: radial-gradient(70% 55% at 90% -8%, rgba(185, 83, 151
 }
 .ak .ak-meta > span { white-space: nowrap; }
 
-/* ---------- The camera: pick a camera distance, see what comes forward ---------- */
+/* ---------- The jungle: three stills from the film ---------- */
 .ak .ak-shots { margin-bottom: clamp(80px, 8vw, 120px); }
 .ak .ak-head { max-width: 62ch; margin-bottom: clamp(34px, 3.6vw, 48px); }
 .ak .ak-head h2 { margin: 0 0 16px; }
 .ak .ak-head p { max-width: none; margin: 0; color: var(--c-ink-2); font-size: 17px; line-height: 1.65; }
-
-.ak .ak-cam {
-  display: grid;
-  grid-template-columns: minmax(0, 1.62fr) minmax(300px, 1fr);
-  gap: 30px clamp(40px, 4.8vw, 72px);
-  align-items: start;
-}
-.ak .ak-cam__frame { min-width: 0; }
-.ak .ak-cam__view {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  background: #000;
-}
-/* Holds the wide image and its two focus marks as one unit, so a mark grows
-   with the frame during the push-in below instead of sitting still over it. */
-.ak .ak-cam__wide {
-  position: absolute;
-  inset: 0;
-  transition: opacity .45s var(--ease), transform 1.1s var(--ease);
-}
-.ak .ak-cam__img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transform: scale(1.08);
-  transition: opacity .5s var(--ease) .22s, transform 1.1s var(--ease);
-}
-.ak .ak-cam__img--wide {
-  /* The wide frame is the darkest of the three; lifted so both cats read at phone width.
-     Stays static: the push-in below now animates the .ak-cam__wide wrapper instead. */
-  filter: brightness(1.3) saturate(1.06);
-  opacity: 1;
-  transform: none;
-  transition: none;
-}
-/* A close shot pushes the wide frame in on that cat (orange high on the limb,
-   pink on the branch below), then cuts to the close-up. */
-.ak .ak-cam:has(input[value="orange"]:checked) .ak-cam__wide {
-  opacity: 0;
-  transform: translate(-4.8%, 45.6%) scale(2.4);
-  transition: opacity .5s var(--ease) .28s, transform 1.1s var(--ease);
-}
-.ak .ak-cam:has(input[value="pink"]:checked) .ak-cam__wide {
-  opacity: 0;
-  transform: translate(-6%, -67.2%) scale(2.4);
-  transition: opacity .5s var(--ease) .28s, transform 1.1s var(--ease);
-}
-.ak .ak-cam:has(input[value="orange"]:checked) .ak-cam__img--orange,
-.ak .ak-cam:has(input[value="pink"]:checked) .ak-cam__img--pink { opacity: 1; transform: none; }
-/* The hidden close-ups and the tag sit above the wide layer; keep them from
-   swallowing taps meant for the focus marks or the close-up's zoom-out label. */
-.ak .ak-cam__img--orange,
-.ak .ak-cam__img--pink,
-.ak .ak-cam__tag { pointer-events: none; }
-
-.ak .ak-cam__tag {
-  position: absolute;
-  z-index: 1;
-  top: 12px;
-  left: 14px;
-  max-width: none;
-  margin: 0;
-  padding: 5px 9px 4px;
-  background: rgba(12, 9, 11, .74);
-  color: var(--c-ink);
-  font: 500 11px/1.3 var(--f-mono);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-.ak .ak-cam__tag [data-for] { display: none; }
-.ak .ak-cam:has(input[value="wide"]:checked) [data-for="wide"],
-.ak .ak-cam:has(input[value="orange"]:checked) [data-for="orange"],
-.ak .ak-cam:has(input[value="pink"]:checked) [data-for="pink"] { display: inline; }
-@supports not selector(:has(*)) { .ak .ak-cam__tag [data-for="wide"] { display: inline; } }
-
-/* Focus marks: viewfinder corners at the size of a cat, over the wide shot only.
-   Positions are read off the 1920x1080 still (orange x 50-55%, y 19-42%; pink x
-   46-59%, y 73-84%) to land on the push-in targets above. Empty <label for>
-   elements bound to the same radios, so a tap needs no script. */
-.ak .ak-cam__af {
-  --m: var(--c-accent);
-  --l: 10px;
-  --w: 1.5px;
-  position: absolute;
-  z-index: 1;
-  cursor: zoom-in;
-  background-image:
-    linear-gradient(var(--m), var(--m)), linear-gradient(var(--m), var(--m)),
-    linear-gradient(var(--m), var(--m)), linear-gradient(var(--m), var(--m)),
-    linear-gradient(var(--m), var(--m)), linear-gradient(var(--m), var(--m)),
-    linear-gradient(var(--m), var(--m)), linear-gradient(var(--m), var(--m));
-  background-position: left top, left top, right top, right top, left bottom, left bottom, right bottom, right bottom;
-  background-size:
-    var(--l) var(--w), var(--w) var(--l), var(--l) var(--w), var(--w) var(--l),
-    var(--l) var(--w), var(--w) var(--l), var(--l) var(--w), var(--w) var(--l);
-  background-repeat: no-repeat;
-  background-color: transparent;
-  filter: drop-shadow(0 0 1px rgba(0, 0, 0, .7));
-  transition: background-color .2s var(--ease);
-}
-/* A finger-sized target around a small mark. */
-.ak .ak-cam__af::before { content: ""; position: absolute; inset: -12px; }
-.ak .ak-cam__af:hover { --m: var(--c-accent-hi); background-color: rgba(219, 134, 195, .12); }
-.ak .ak-cam__af--orange { left: 48.6%; top: 16.5%; width: 8.2%; height: 28.5%; }
-.ak .ak-cam__af--pink { left: 44.6%; top: 70.5%; width: 16%; height: 16.5%; }
-
-/* In a close-up, an invisible label covers the whole frame and switches back to the wide shot on tap. */
-.ak .ak-cam__out {
-  display: none;
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  cursor: zoom-out;
-}
-.ak .ak-cam:has(input[value="orange"]:checked, input[value="pink"]:checked) .ak-cam__out { display: block; }
-@supports not selector(:has(*)) { .ak .ak-cam__af { display: none; } }
-
-/* The shot list is the control: native radios, so arrows and touch work with no script. */
-.ak .ak-cam__list { min-width: 0; }
-.ak .ak-shot {
-  position: relative;
-  display: grid;
-  grid-template-columns: 26px minmax(0, 1fr);
-  column-gap: 16px;
-  margin: 0;
-  padding: 14px 16px 16px 14px;
-  border: 1px solid var(--c-line-2);
-  cursor: pointer;
-  transition: border-color .2s var(--ease), background-color .2s var(--ease);
-}
-.ak .ak-shot + .ak-shot { margin-top: 8px; }
-.ak .ak-shot input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-.ak .ak-shot:hover { border-color: var(--c-line-3); }
-/* 0.7 alpha keeps the selected edge above 3:1 on the page ground. */
-.ak .ak-shot:has(input:checked) { border-color: rgba(219, 134, 195, .7); background: var(--c-accent-weak); }
-.ak .ak-shot:has(input:focus-visible) { outline: 2px solid var(--c-accent); outline-offset: 3px; }
-.ak .ak-shot__name { grid-column: 2; color: var(--c-ink); font: 500 17px/1.3 var(--f-display); letter-spacing: -.01em; }
-.ak .ak-shot__text { grid-column: 2; margin-top: 4px; color: var(--c-ink-2); font-size: 15px; line-height: 1.5; }
-
-/* Shot-size pictogram: a small head in the wide frame, one head filling the close one. */
-.ak .ak-shot__icon {
-  --dot: var(--c-ink-3);
-  position: relative;
-  grid-column: 1;
-  grid-row: 1 / span 2;
-  width: 26px;
-  height: 18px;
-  margin-top: 3px;
-  border: 1.5px solid var(--dot);
-  overflow: hidden;
-  transition: border-color .2s var(--ease);
-}
-.ak .ak-shot__icon::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  background: var(--dot);
-}
-.ak .ak-shot--wide .ak-shot__icon::after { bottom: -2px; width: 6px; height: 7px; margin-left: -3px; border-radius: 50%; }
-.ak .ak-shot--close .ak-shot__icon::after { bottom: -6px; width: 14px; height: 15px; margin-left: -7px; border-radius: 50%; }
-.ak .ak-shot:has(input:checked) .ak-shot__icon { --dot: var(--c-accent); }
-
-/* The sound names light up in the shot that brings them forward. */
-.ak .ak-cam b { color: var(--c-ink); font-weight: 500; transition: color .2s var(--ease); }
-.ak .ak-shot:has(input:checked) b { color: var(--c-accent); }
-
-.ak .ak-cam__close { position: relative; margin-top: 22px; padding-left: 18px; }
-.ak .ak-cam__close::before {
-  content: "";
-  position: absolute;
-  top: 4px;
-  bottom: 0;
-  left: 0;
-  width: 1px;
-  background: var(--c-line-3);
-  transition: background-color .2s var(--ease);
-}
-.ak .ak-cam__rule { max-width: none; margin: 0 0 12px; color: var(--c-ink-2); font-size: 15px; line-height: 1.5; }
-.ak .ak-cam:has(input[value="orange"]:checked, input[value="pink"]:checked) .ak-cam__close::before { background: var(--c-accent); }
-.ak .ak-cam:has(input[value="orange"]:checked, input[value="pink"]:checked) .ak-cam__rule b { color: var(--c-accent); }
+.ak .cine-row { margin-bottom: 0; }
+/* The shared row lifts dark game frames; these stills are lit, so only the
+   wide frame, the darkest of the three, is lifted so both cats read at phone width. */
+.ak .cine-row img { filter: none; }
+.ak .cine-row figure:first-child img { filter: brightness(1.3) saturate(1.06); }
 
 /* ---------- Narrow screens ---------- */
 @media (max-width: 900px) {
   .ak .ak-open { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "film" "text"; }
   .ak .ak-lead { max-width: 46ch; }
-  .ak .ak-cam { grid-template-columns: minmax(0, 1fr); }
-  .ak .ak-cam__list { max-width: 560px; }
 }
 @media (max-width: 600px) {
   .ak .ak-open { row-gap: 26px; margin-bottom: 88px; }
-  .ak .ak-vf::after { --l: 16px; inset: -8px; }
   /* The whole frame is the button; the label only has to read. */
   .ak .ak-play { left: 10px; bottom: 10px; min-height: 36px; padding: 0 12px 0 11px; gap: 9px; font-size: 13.5px; }
   .ak .ak-play svg { width: 10px; height: 12px; }
   .ak .ak-play__time { padding-left: 9px; font-size: 11.5px; }
   .ak .ak-head p { font-size: 16px; }
-  .ak .ak-shot { grid-template-columns: 24px minmax(0, 1fr); column-gap: 12px; padding: 12px 12px 14px; }
-  .ak .ak-cam__tag { top: 9px; left: 10px; }
-  .ak .ak-cam__af { --l: 7px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ak .ak-cam__img,
-  .ak .ak-cam__wide,
-  .ak .ak-cam__af,
-  .ak .ak-shot,
-  .ak .ak-play,
-  .ak .ak-cam b,
-  .ak .ak-shot__icon,
-  .ak .ak-cam__close::before { transition: none !important; }
+  .ak .ak-play { transition: none !important; }
 }
