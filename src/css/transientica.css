@@ -1,210 +1,58 @@
-/* Transientica: page-owned styles, loaded only on transientica.html.
-   The game's black stage and its cyan hit line,
-   sampled from the gameplay captures in projects-transientica/frames. */
+/* Transientica: page-owned styles, loaded only on transientica.html after feature.css.
+   The palette is sampled from the gameplay: the stage black behind the lanes, the navy
+   of the snare lane for the opening band, the dark green of the hi-hat lane for the
+   prototype, and the cyan of the hit line for controls and rules. */
 :root {
-  --c-bg-0: #07080b;
-  --c-bg-1: #0b0c10;   /* stage black #000107, lifted to page level */
-  --c-bg-2: #11131a;
-  --c-bg-3: #171a22;
-  --c-ink: #eef0f4;
-  --c-ink-2: #b8bdc8;
-  --c-ink-3: #9aa0ad;
-  --c-accent: #3fe0cc; /* hit line #32e6cd to #3ff8ce */
-  --c-accent-hi: #7eeade;
-  --c-accent-ink: #07080b;
-  --c-accent-line: rgba(63, 224, 204, .45);
-  --c-accent-weak: rgba(63, 224, 204, .12);
-  --c-line: rgba(226, 232, 245, .08);
-  --c-line-2: rgba(226, 232, 245, .15);
-  --c-line-3: rgba(226, 232, 245, .30);
-  --ice: #3fe0cc;
-  --tr-line: #3fe0cc;
-}
-body::before { background: none; }
-
-/* Opt out of the shared heading-left / paragraph-right grid (cine.css, .cine > section). */
-.cine.tr > section:not(.cine-split) { display: block; }
-.tr figure { margin: 0; min-width: 0; }
-.tr a:hover { text-decoration-color: var(--c-accent); }
-.tr .tr-nw { white-space: nowrap; }
-.cine.tr .tr-label {
-  max-width: none;
-  margin: 0 0 12px;
-  color: var(--c-ink-3);
-  font: 500 11.5px/1.4 var(--f-mono);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-.tr figcaption { margin-top: 12px; color: var(--c-ink-3); font-size: 13.5px; line-height: 1.5; }
-
-/* ---------- Opening: the game video and the lead ---------- */
-.tr .tr-open {
-  display: grid;
-  grid-template-columns: minmax(0, 1.62fr) minmax(300px, 1fr);
-  grid-template-areas: "screen text";
-  gap: clamp(32px, 4.4vw, 64px);
-  align-items: center;
-  margin-bottom: clamp(88px, 10vw, 136px);
-}
-.tr .tr-open__text { grid-area: text; }
-.tr .tr-screen { grid-area: screen; }
-.cine.tr h1 {
-  margin: 0 0 24px;
-  color: var(--c-ink);
-  font: 600 clamp(44px, 5vw, 72px)/.94 var(--f-display);
-  letter-spacing: -.055em;
-}
-.cine.tr .tr-lead {
-  max-width: 40ch;
-  margin: 0 0 22px;
-  color: var(--c-ink);
-  font-size: clamp(17.5px, 1.36vw, 19.5px);
-  line-height: 1.58;
-}
-.cine.tr .tr-meta {
-  max-width: 40ch;
-  margin: 0;
-  color: var(--c-ink-3);
-  font: 400 12px/1.7 var(--f-mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-.tr .tr-screen .yt-facade,
-.tr .tr-screen .yt-facade__launch,
-.tr .tr-screen .yt-facade img { border-radius: 0; }
-.tr .tr-screen .yt-facade { border: 1px solid var(--c-line-2); background: #000; }
-.tr .tr-screen figcaption { display: block; margin: 0; }
-.tr .tr-screen__cap { display: block; margin-top: 12px; }
-
-/* ---------- Section heads: heading over its text, one column ---------- */
-.tr .tr-path, .tr .tr-time, .tr .tr-proto { margin-bottom: clamp(88px, 10vw, 136px); }
-.tr .tr-head { max-width: 66ch; margin-bottom: clamp(26px, 3vw, 40px); }
-.cine.tr .tr-head p { max-width: none; margin: 0 0 14px; color: var(--c-ink-2); font-size: 17px; line-height: 1.65; }
-.cine.tr .tr-head p:last-child { margin-bottom: 0; }
-
-/* ---------- From a sound to a lane: the signal chain ---------- */
-.tr .tr-path__body {
-  display: grid;
-  grid-template-columns: minmax(280px, .92fr) minmax(0, 1.08fr);
-  gap: clamp(28px, 4.4vw, 64px);
-  align-items: end;
-}
-.cine.tr .tr-path__chain .tr-label { margin-bottom: 18px; }
-.cine.tr .tr-chain { position: relative; max-width: none; margin: 0; padding: 2px 0 0; list-style: none; }
-.tr .tr-chain li { position: relative; margin: 0; padding: 0 0 24px 32px; }
-.tr .tr-chain li:last-child { padding-bottom: 0; }
-/* One connector per step instead of one line down the whole list, so it stops at the last node however long its text is. */
-.tr .tr-chain li:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  left: 6px;
-  top: 17px;
-  bottom: -3px;
-  width: 2px;
-  background: rgba(63, 224, 204, .5);
-}
-.tr .tr-chain li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 3px;
-  width: 10px;
-  height: 10px;
-  border: 2px solid var(--tr-line);
-  border-radius: 50%;
-  background: var(--c-bg-1);
-}
-.tr .tr-chain b {
-  display: block;
-  margin-bottom: 4px;
-  color: var(--c-ink);
-  font: 600 11.5px/1.5 var(--f-mono);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-.tr .tr-chain span { display: block; max-width: 44ch; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.55; }
-
-/* The game's own readout, cropped from the full 1920px frame at close to 1:1:
-   the classified sound, its confidence and the strip of upcoming notes.
-   --x/--w pick the crop window in source pixels (frame is 1920 x 1080). */
-.tr .tr-hud { --x: 580; --w: 760; --h: 330; }
-.tr .tr-hud__crop {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: var(--w) / var(--h);
-  border: 1px solid var(--c-line-2);
-  border-radius: 4px;
-  background: #000;
-}
-.tr .tr-hud__crop img {
-  position: absolute;
-  top: 0;
-  left: calc(var(--x) / var(--w) * -100%);
-  width: calc(1920 / var(--w) * 100%);
-  max-width: none;
-  height: auto;
+  --ft-bg: #07080c;
+  --ft-band: #0a1828;
+  --ft-band-2: #0a1f17;
+  --ft-ink: #eef1f4;
+  --ft-ink-2: #c6ccd4;
+  --ft-ink-3: #a3acb6;
+  --ft-head: #e4faf6;
+  --ft-accent: #3fe0cc;
+  --ft-accent-ink: #04120f;
 }
 
-/* ---------- Judged on the audio clock: a close crop of the hit line, text beside it ---------- */
-.cine.tr > section.tr-time {
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr);
-  gap: clamp(32px, 4.4vw, 64px);
-  align-items: center;
-}
-/* Placed explicitly: cine.css spans every non-heading child of a section across the grid. */
-.cine.tr > section.tr-time > .tr-time__text { grid-column: 2; grid-row: 1; margin-bottom: 0; }
-.cine.tr > section.tr-time > .tr-time__frame { grid-column: 1; grid-row: 1; }
-.tr .tr-time__frame img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--c-line-2);
-  border-radius: 4px;
-  background: #000;
-}
+/* The playfield sits in the middle of the frame, so on a wide screen the title stays in the dark band beside it. */
+.tr .ft-hero h1 { font-size: clamp(44px, 6.6vw, 112px); }
+.tr .ft-hero__who { max-width: 26ch; }
 
-/* ---------- The 2025 prototype: then and now ---------- */
-/* Text left, video right: the mirror of the section above, so the page alternates sides. */
-.cine.tr > section.tr-proto {
-  display: grid;
-  grid-template-columns: minmax(300px, 1fr) minmax(0, 1.35fr);
-  gap: clamp(32px, 4.4vw, 64px);
-  align-items: center;
-}
-.cine.tr > section.tr-proto > .tr-head { grid-column: 1; grid-row: 1; margin-bottom: 0; }
-.cine.tr > section.tr-proto > .tr-proto__body { grid-column: 2; grid-row: 1; }
-.tr .tr-proto__video video { display: block; width: 100%; height: auto; border: 1px solid var(--c-line-2); background: #000; }
-.tr .tr-proto__video figcaption { margin-top: 10px; }
-
-/* The prototype video's own button that jumps straight to the live demo. */
+/* The prototype video's own control: play from the live demo. */
 .tr .tr-jump {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;
+  gap: .4em;
   min-height: 44px;
-  margin-top: 14px;
-  padding: 0 18px 0 14px;
-  border: 1px solid var(--c-accent-line);
-  border-radius: var(--r-pill);
-  background: transparent;
-  color: var(--c-accent);
-  font: 600 14.5px/1.2 var(--f-body);
+  margin: 2px 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ft-head);
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .2em;
+  text-decoration-color: color-mix(in srgb, var(--ft-accent) 45%, transparent);
   cursor: pointer;
 }
-.tr .tr-jump svg { width: 18px; height: 18px; fill: currentColor; }
+.tr .tr-jump::before {
+  content: "";
+  flex: none;
+  width: 0;
+  height: 0;
+  border-top: .36em solid transparent;
+  border-bottom: .36em solid transparent;
+  border-left: .6em solid currentColor;
+}
+.tr .tr-jump:hover { text-decoration-color: var(--ft-accent); }
 .tr .tr-jump[hidden] { display: none; }
-.tr .tr-jump:hover { border-color: var(--c-accent); background: var(--c-accent-weak); }
-.tr .tr-jump:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
+.tr .tr-proto .local-video { background: #000; }
 
-@media (max-width: 900px) {
-  .tr .tr-open { grid-template-columns: minmax(0, 1fr); grid-template-areas: "text" "screen"; gap: 32px; }
-  .tr .tr-path__body { grid-template-columns: minmax(0, 1fr); gap: 36px; }
-  .cine.tr > section.tr-time { grid-template-columns: minmax(0, 1fr); gap: 28px; }
-  .cine.tr > section.tr-time > .tr-time__text { grid-column: 1; grid-row: 1; }
-  .cine.tr > section.tr-time > .tr-time__frame { grid-column: 1; grid-row: 2; }
-  .cine.tr > section.tr-proto { grid-template-columns: minmax(0, 1fr); gap: 28px; }
-  .cine.tr > section.tr-proto > .tr-proto__body { grid-column: 1; grid-row: 2; }
-  /* A tighter crop window on narrow screens keeps "89%" legible. */
-  .tr .tr-hud { --x: 680; --w: 560; --h: 300; }
+@media (max-width: 699px) {
+  /* One long word: it has to fit the narrowest phone on one line. */
+  .tr .ft-hero h1 { font-size: clamp(40px, 15vw, 72px); }
+}
+@media (max-width: 380px) {
+  .tr .ft-watch { gap: 10px; padding-inline: 14px; font-size: 16px; }
 }
