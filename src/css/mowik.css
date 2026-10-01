@@ -1,250 +1,182 @@
-/* Mówik: page-owned styles, loaded only on mowik.html. Every hue comes from
-   the app itself: the on-screen indicator in mowik.py (STATUS_INDICATOR_ACCENTS
-   and STATUS_INDICATOR_SURFACE_*) and the icon (assets/mowik-icon.svg).
-   Dictation is the indicator's recording cyan, commands its violet; the
-   backgrounds take the indicator surface's navy, dimmed to a near-neutral dark. */
+/* Mówik: page-owned styles, loaded only on mowik.html after feature.css.
+   The palette is sampled from the settings app itself (mowik-home-pl.png):
+   the input-field navy for the page, the "ready to dictate" card's blue for
+   the first band, the privacy card's green for the release band, its slate
+   text, and the blue-400 of its labels for controls. F7 keeps the command
+   violet of the on-screen indicator in mowik.py. */
 :root {
-  --c-bg-0: #080a0f;
-  --c-bg-1: #0b0d13;
-  --c-bg-2: #11151e;
-  --c-bg-3: #171c28;
-  --c-ink: #eef2f8;
-  --c-ink-2: #b7c1d0;
-  --c-ink-3: #8f9bb0;
-  --c-accent: #38bdf8;
-  --c-accent-hi: #7dd3fc;
-  --c-accent-ink: #06121b;
-  --c-accent-line: rgba(56, 189, 248, .42);
-  --c-accent-weak: rgba(56, 189, 248, .12);
-  --c-line: rgba(208, 222, 244, .08);
-  --c-line-2: rgba(208, 222, 244, .15);
-  --c-line-3: rgba(208, 222, 244, .28);
-  --ice: #38bdf8;
-  --mw-rec: #38bdf8;   /* recording (56,189,248) */
-  --mw-cmd: #c084fc;   /* command (192,132,252) */
-  --mw-ok: #34d399;    /* success (52,211,153) */
+  --ft-bg: #0b1220;
+  --ft-band: #14243d;
+  --ft-band-2: #0f2d25;
+  --ft-ink: #f1f5f9;
+  --ft-ink-2: #cbd5e1;
+  --ft-ink-3: #a3b0c2;
+  --ft-head: #f1f5f9;
+  --ft-accent: #60a5fa;
+  --ft-accent-ink: #08111f;
+  --mw-panel: #111827;
+  --mw-cmd: #c084fc;
+  --mw-ok: #6ee7b7;
 }
 
-body::before { background: radial-gradient(ellipse at 78% 0, rgba(56, 189, 248, .045), transparent 58%); }
-
-/* Opt out of the shared heading-left / paragraph-right grid (cine.css, .cine > section). */
-.cine.mw > section:not(.cine-split) { display: block; }
-
-.mw a:hover { text-decoration-color: var(--c-accent); }
-
-/* Keys in running text. */
-.mw kbd {
-  display: inline-block;
-  padding: .02em .4em .08em;
-  border: 1px solid rgba(56, 189, 248, .45);
-  border-bottom-width: 2px;
-  border-radius: 5px;
-  background: rgba(56, 189, 248, .08);
-  color: var(--mw-rec);
-  font: 500 .8em/1.3 var(--f-mono);
-  letter-spacing: .02em;
-  vertical-align: .08em;
-  white-space: nowrap;
-}
-.mw kbd.is-cmd { border-color: rgba(192, 132, 252, .5); background: rgba(192, 132, 252, .09); color: var(--mw-cmd); }
-.mw h2 kbd { padding: .04em .34em .1em; border-radius: 8px; font-size: .66em; vertical-align: .16em; }
-
-/* ---------- Opening ---------- */
-.mw-open {
-  display: grid;
-  grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr);
-  gap: clamp(36px, 5vw, 80px);
-  align-items: start;
-  margin-bottom: clamp(96px, 11vw, 150px);
-}
-.mw-open__text { padding-top: clamp(4px, 1.4vw, 24px); }
-.mw-icon { display: block; width: 60px; height: 60px; margin: 0 0 30px; }
-.cine.mw .mw-open h1 {
-  margin: 0;
-  font: 500 clamp(64px, 7.4vw, 112px)/.9 var(--f-display);
-  letter-spacing: -.055em;
-}
-.mw .mw-gloss { margin: 18px 0 34px; color: var(--c-ink-3); font: 400 13px/1.5 var(--f-mono); letter-spacing: .02em; }
-.mw .mw-gloss span { color: var(--c-ink-2); }
-.mw .mw-lead { max-width: 38ch; margin: 0 0 28px; color: var(--c-ink); font-size: clamp(18px, 1.42vw, 20.5px); line-height: 1.62; }
-.mw .mw-meta {
-  max-width: none;
-  margin: 0 0 8px;
-  color: var(--c-ink-3);
-  font: 400 12px/1.8 var(--f-mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  font-variant-ligatures: no-contextual;
-}
-.mw .mw-meta span { white-space: nowrap; }
-.mw .mw-links { display: flex; flex-wrap: wrap; gap: 0 28px; max-width: none; margin: 0; font-size: 15px; }
-.mw .mw-links a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--c-ink); text-decoration-color: var(--c-line-3); }
-.mw .mw-links a:first-child { color: var(--c-accent); text-decoration-color: var(--c-accent-line); }
-
-/* ---------- Sections ---------- */
-.mw-flow, .mw-cues, .mw-cmds { margin-bottom: clamp(96px, 11vw, 150px); }
-.mw .mw-flow h2, .mw .mw-cues h2, .mw .mw-cmds h2, .mw .mw-install h2 { margin-bottom: clamp(22px, 2.6vw, 34px); }
-.mw-cols {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-  gap: clamp(32px, 5vw, 80px);
-  align-items: start;
-}
-.mw .mw-cols__text p { max-width: 56ch; color: var(--c-ink-2); font-size: 17px; line-height: 1.7; }
-.mw .mw-cols__text > :last-child { margin-bottom: 0; }
-.mw .mw-cols__text code {
-  color: var(--mw-rec);
-  font: 400 .84em/1 var(--f-mono);
-  white-space: nowrap;
-}
 .mw-nw { white-space: nowrap; }
+/* Inter turns the x of x64 into a multiplication sign. */
+.mw .ft-facts { font-feature-settings: "calt" 0; }
 
-.mw-shot { margin: 0; }
-.mw .mw-shot a { display: block; border-radius: 12px; }
-.mw .mw-shot img {
-  display: block;
+/* Keys in running text and headings: the key's name in mono, no key cap. */
+.mw kbd {
+  color: var(--ft-accent);
+  font: 500 .86em/1 var(--f-mono);
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+.mw kbd.is-cmd { color: var(--mw-cmd); }
+.mw .ft-head kbd { font-weight: 600; font-size: .8em; }
+
+/* ---------- Hero: the real window beside the title ---------- */
+/* The text keeps its column on the left; the screenshot, uncropped, runs to the screen's right edge. */
+.mw-hero { --mw-in: max(var(--page-gutter), calc((100% - var(--page-max)) / 2)); }
+.mw .ft-hero__stage { background: var(--ft-bg); }
+.mw .ft-hero__stage::after { content: none; }
+.mw .ft-hero__stage > img {
   width: 100%;
   height: auto;
-  border: 1px solid var(--c-line-2);
-  border-radius: 12px;
-  filter: brightness(1.32) contrast(1.03);
+  object-fit: initial;
+  border: 1px solid rgba(203, 213, 225, .16);
+  border-right: 0;
 }
-.mw .mw-shot figcaption { max-width: 60ch; margin-top: 12px; color: var(--c-ink-3); font-size: 14px; line-height: 1.55; }
-/* Zoomable screenshots (image-viewer): the Enlarge hint sits under the
-   picture, beside the caption, instead of over the window's buttons. */
-.mw .mw-shot .image-zoom { display: block; }
-.mw .mw-shot .image-zoom__hint {
-  top: calc(100% + 10px);
-  right: 0;
-  bottom: auto;
-  padding: 3px 9px;
-  border-color: var(--c-line-3);
-  border-radius: 5px;
-  background: transparent;
-  color: var(--c-ink-2);
-  font: 500 11px/1.6 var(--f-mono);
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-.mw .mw-shot figcaption { padding-right: 96px; }
+/* The title sits on the plain page, not on footage, so it needs no shadow. */
+.mw .ft-hero h1,
+.mw .ft-hero__who { text-shadow: none; }
+.mw .mw-get::before { content: none; }
+.mw .mw-get { padding: 0 22px; }
 
-/* Commands: the three actions sit in the right grid column, like the media
-   in the other sections (no more empty-list screenshot). */
-.mw .mw-actions { display: block; margin: 0; border-top: 1px solid var(--c-line-2); font-size: inherit; }
-.mw-actions > div {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 4px;
-  padding: 15px 0 16px;
-  border-bottom: 1px solid var(--c-line-2);
+@media (min-width: 700px) {
+  .mw .ft-hero__stage {
+    container-type: size;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .mw .ft-hero__stage > img {
+    width: min(calc(100cqw - var(--mw-in) - (100cqw - 2 * var(--mw-in)) * .36), calc((100cqh - 2 * clamp(32px, 4vw, 56px)) * 1.4359));
+  }
+  .mw .ft-hero__text { right: auto; width: calc(var(--mw-in) + (100% - 2 * var(--mw-in)) * .33); }
+  .mw .ft-hero h1 { font-size: clamp(64px, 9.4vw, 150px); }
 }
-.mw .mw-actions dt { color: var(--mw-cmd); font: 500 13px/1.65 var(--f-mono); letter-spacing: .01em; }
-.mw .mw-actions dd { margin: 0; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.62; }
 
-/* ---------- The cue table: the real lines of mowik.py, each one playable ---------- */
-.mw-notes { align-self: start; }
-.mw-notes__src { padding: 12px 0 14px; }
+/* ---------- Cue table and code: the real lines, each cue playable ---------- */
+.mw-code {
+  margin: 0;
+  border: 1px solid rgba(203, 213, 225, .14);
+  border-radius: 8px;
+  background: var(--mw-panel);
+  overflow: hidden;
+}
+.mw .mw-code figcaption {
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(203, 213, 225, .1);
+  color: var(--ft-ink-3);
+  font: 500 13px/1.4 var(--f-mono);
+}
+.mw-code pre {
+  margin: 0;
+  padding: 18px 20px 20px;
+  color: var(--ft-ink);
+  font: 400 16px/1.85 var(--f-mono);
+  overflow-x: auto;
+  white-space: pre;
+}
+.mw-code pre code { color: inherit; font: inherit; }
+.mw-code .c { color: var(--ft-ink-3); }
+
+.mw-notes { grid-column: content-start / c 9; }
+.mw-notes__src { padding: 14px 0 16px; }
 .mw-notes .ln {
   display: block;
   box-sizing: border-box;
   width: 100%;
   margin: 0;
-  padding: 3px 18px 3px 42px;
+  padding: 4px 20px 4px 46px;
   border: 0;
   background: none;
-  color: var(--c-ink);
-  font: 400 12.5px/1.75 var(--f-mono);
+  color: var(--ft-ink);
+  font: 400 17px/1.7 var(--f-mono);
   text-align: left;
   white-space: pre-wrap;
   overflow-wrap: break-word;
   font-variant-ligatures: no-contextual;
 }
-.mw-notes .ln--in { padding-left: calc(42px + 4ch); text-indent: 0; }
-.mw-notes .c { color: var(--c-ink-3); }
+.mw-notes .ln--in { padding-left: calc(46px + 4ch); }
+.mw-notes .c { color: var(--ft-ink-3); }
 .mw-notes .ln--cue {
   position: relative;
+  min-height: 44px;
   cursor: pointer;
-  transition: background-color .15s var(--ease), color .15s var(--ease), box-shadow .15s var(--ease);
+  transition: background-color var(--dur) var(--ease);
 }
-/* play mark in the gutter */
+/* the play mark in the gutter */
 .mw-notes .ln--cue::before {
   content: "";
   position: absolute;
-  top: calc(3px + .875em - 5px);
-  left: 18px;
-  width: 8px;
-  height: 10px;
-  background: var(--c-ink-3);
+  top: 50%;
+  left: 20px;
+  width: 10px;
+  height: 12px;
+  margin-top: -6px;
+  background: var(--ft-accent);
   clip-path: polygon(0 0, 100% 50%, 0 100%);
-  transition: background-color .15s var(--ease);
 }
-.mw-notes .ln--cue:hover { background: rgba(56, 189, 248, .06); }
-.mw-notes .ln--cue:hover::before { background: var(--mw-rec); }
-.mw-notes .ln--cue:focus-visible { outline: 2px solid var(--c-accent); outline-offset: -2px; }
-.mw-notes .ln--cue.is-playing { background: rgba(56, 189, 248, .14); box-shadow: inset 2px 0 0 var(--mw-rec); color: #fff; }
-.mw-notes .ln--cue.is-playing::before { background: var(--mw-rec); }
-.mw-notes .ln--cue[data-cue="done"].is-playing { background: rgba(52, 211, 153, .13); box-shadow: inset 2px 0 0 var(--mw-ok); }
+.mw-notes .ln--cue:hover { background: rgba(96, 165, 250, .09); }
+.mw-notes .ln--cue:focus-visible { outline: 2px solid var(--ft-accent); outline-offset: -2px; }
+.mw-notes .ln--cue.is-playing { background: rgba(96, 165, 250, .18); box-shadow: inset 3px 0 0 var(--ft-accent); color: #fff; }
+.mw-notes .ln--cue[data-cue="done"].is-playing { background: rgba(110, 231, 183, .14); box-shadow: inset 3px 0 0 var(--mw-ok); }
 .mw-notes .ln--cue[data-cue="done"].is-playing::before { background: var(--mw-ok); }
 .mw .mw-notes__gloss {
-  max-width: none;
   margin: 0;
-  padding: 11px 18px 13px;
-  border-top: 1px solid var(--c-line);
-  color: var(--c-ink-3);
-  font-size: 13.5px;
+  padding: 13px 20px 15px;
+  border-top: 1px solid rgba(203, 213, 225, .1);
+  color: var(--ft-ink-3);
+  font-size: 15px;
   line-height: 1.55;
 }
 
-.mw-install { margin-bottom: 72px; }
-.mw .mw-install p { color: var(--c-ink-2); font-size: 17px; line-height: 1.7; }
-.mw-code {
-  margin: 0;
-  border: 1px solid var(--c-line-2);
-  border-radius: 10px;
-  background: var(--c-bg-2);
-  overflow: hidden;
+/* ---------- Commands: the three actions side by side ---------- */
+.mw-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 var(--ft-gap);
 }
-.mw .mw-code figcaption {
-  padding: 10px 18px;
-  border-bottom: 1px solid var(--c-line);
-  color: var(--c-ink-3);
-  font: 400 11.5px/1.4 var(--f-mono);
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-.mw-code pre {
-  margin: 0;
-  padding: 16px 18px 18px;
-  color: var(--c-ink);
-  font: 400 12.5px/1.85 var(--f-mono);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-.mw-code .c { color: var(--c-ink-3); }
-/* PowerShell: commands stay on one line and scroll instead of breaking inside a flag. */
-.mw-code--ps pre { overflow-x: auto; white-space: pre; overflow-wrap: normal; }
+.mw-actions > div { padding-top: 18px; border-top: 1px solid var(--ft-rule); }
+.mw .mw-actions dt { margin: 0 0 10px; color: var(--ft-head); font: 600 24px/1.2 var(--f-display); letter-spacing: -.015em; }
+.mw .mw-actions dd { margin: 0; color: var(--ft-ink-2); font-size: 17px; line-height: 1.55; text-wrap: pretty; }
 
-/* ---------- Narrow screens ---------- */
-@media (max-width: 900px) {
-  .mw-open, .mw-cols { grid-template-columns: minmax(0, 1fr); }
-  .mw .mw-lead { max-width: 40ch; }
+/* ---------- Installer: the text beside the two commands ---------- */
+.mw-code--ps { grid-column: content-start / c 9; }
+
+@media (max-width: 1099px) {
+  .mw-notes,
+  .mw-code--ps { grid-column: content; }
+  .mw-notes .ln { font-size: 15px; }
+  .mw-actions { grid-template-columns: minmax(0, 1fr); }
+  .mw-actions > div { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 0 var(--ft-gap); padding-block: 16px 20px; }
 }
-@media (max-width: 600px) {
-  .mw-icon { width: 46px; height: 46px; margin: 0; }
-  .mw .mw-gloss { margin: 12px 0 26px; }
-  .mw-open { gap: 36px; }
-  /* icon beside the title, so the window starts inside the first screen */
-  .mw-open__text { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 16px; align-items: center; }
-  .mw-open__text > * { grid-column: 1 / -1; }
-  .mw-open__text > .mw-icon { grid-column: 1; }
-  .mw-open__text > h1 { grid-column: 2; }
-  .mw .mw-cols__text p, .mw .mw-install p { font-size: 16.5px; }
-  .mw-code pre { padding: 14px 16px 16px; font-size: 12px; }
-  /* smaller gutter; a wrapped line continues 3ch further in, like Python */
-  .mw-notes .ln { padding: 3px 10px 3px calc(30px + 3ch); text-indent: -3ch; font-size: 11px; }
-  .mw-notes .ln--in { padding-left: calc(30px + 5ch); }
-  .mw-notes .ln--cue::before { left: 12px; }
+
+@media (max-width: 699px) {
+  /* The title first, then the window under it at the full screen width minus the left gutter. */
+  .mw .ft-hero { display: flex; flex-direction: column; }
+  .mw .ft-hero__text { position: static; padding-block: clamp(36px, 10vw, 56px) 36px; }
+  .mw .ft-hero__stage { height: auto; padding-left: var(--page-gutter); background: none; }
+  .mw .ft-hero h1 { font-size: clamp(64px, 22vw, 96px); }
+  .mw-actions > div { display: block; padding: 14px 0 18px; }
+  .mw .mw-actions dt { font-size: 21px; margin-bottom: 8px; }
+  .mw .mw-actions dd { font-size: 16.5px; }
+  .mw-notes .ln { padding: 4px 12px 4px calc(34px + 3ch); text-indent: -3ch; font-size: 12.5px; }
+  .mw-notes .ln--in { padding-left: calc(34px + 5ch); }
+  .mw-notes .ln--cue::before { left: 14px; }
+  .mw-code pre { padding: 14px 16px 16px; font-size: 12.5px; }
+  .mw .mw-notes__gloss { padding: 12px 14px 14px; font-size: 14.5px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mw-notes .ln--cue, .mw-notes .ln--cue::before { transition: none; }
+  .mw-notes .ln--cue { transition: none; }
 }
