@@ -172,9 +172,10 @@ async function main() {
         await page.setViewportSize({ width, height: 1000 });
         await page.goto(`${origin}/${route}`, { waitUntil: 'load' });
         await loadImages(page);
-        await assertTextFits(page, route === 'autotrim.html' ? '.cine' : '.error-page');
+        await assertTextFits(page, route === 'autotrim.html' ? '.ft' : '.error-page');
         if (route === 'autotrim.html') {
-          assert.match(await page.locator('#at-development-title').textContent(), /queues/i);
+          assert.equal(await page.locator('#at-flow-title').count(), 1, 'The homepage links to #at-flow-title');
+          assert.match(await page.locator('section:has(#at-release-title)').textContent(), /development source/i);
           await recordEvidence(page, `autotrim-${width}`);
         }
         results.push({ page: route, width, passed: true });

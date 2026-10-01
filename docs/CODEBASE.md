@@ -114,15 +114,12 @@ an intermediate width and desktop, including long titles and player controls.
 | `prefetch.js` | Same-origin navigation prefetch. |
 | `shadowframes.js` | Drives the ten-slot investigation board: the range input (native keyboard support) and its two buttons toggle .is-pinned on the photo slots, develop each newly pinned photo from black, and rewrite the aria-live ProgressiveAmbience stage/layers readout from a static Wwise stage table copied off SC_AMB_Progressive; the slots themselves are a pointer/touch shortcut only, staying aria-hidden. |
 | `transientica.js` | Transientica: a button that jumps the 2025 prototype video straight to its live-demo timestamp. |
-| `autotrim.js` | AutoTrim Exporter: tool window whose pages follow the chapters on scroll. |
 | `mowik.js` | Mówik: the cue table, which plays each built-in sound cue. |
-| `ai-audio-research.js` | AI Audio Research: replays the measured latencies on the ruler and plays each method’s sample. |
-| `sounddesign.js` | Three sound redesigns: cue buttons that play each clip from a cue and mark the cue now playing. |
-| `ifmc.js` | Drives both IFMC score reels: play/pause, drag- or keyboard-scrub via a range input synced to the audio, and cue buttons on the Clapping reel that seek 3s ahead of an annotated moment; paints the playhead and lights the current cue against a static, pre-measured loudness trace of each published track. Keeps the reels and the two embedded films from playing together: a reel that starts pauses the films, and a film that opens or reports playing (the YouTube player's postMessage state after a "listening" handshake) pauses the reels and the other film. |
-| `richter.js` | Richter: timecode buttons that seek the film, and the main-theme player. |
-| `pausedeserve.js` | Pause & Deserve: chapter links that jump the trailer. |
-| `amorak.js` | Amorak: buttons and stills that start the film from a marked moment. |
-| `ray.js` | Ray: scene stills that cue the film and mark the scene now playing. |
+| `ai-audio-research.js` | AI Audio Research: the sample table's play buttons, one sample at a time. |
+| `sounddesign.js` | Three sound redesigns: the second stage (Baldur's Gate 3) turns into its clip in place, and only one clip plays at a time. |
+| `ifmc.js` | Drives both IFMC score reels (play/pause, scrub, cues against a pre-measured loudness trace) and keeps the reels, the hero film (feature.js) and the second film (video-facade.js) from playing together. |
+| `richter.js` | Richter: the main-theme player, which keeps the theme and the film from playing at once. |
+| `ray.js` | Ray: the Credits theme play/pause button, which keeps the film and the theme from playing at once. |
 
 Scripts use local scopes and DOM hooks. Keep their loading order in configuration
 and preserve accessible markup when JavaScript is unavailable.

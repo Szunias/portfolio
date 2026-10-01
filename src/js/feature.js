@@ -65,6 +65,7 @@
     var t = Number(link.getAttribute('data-t')) || 0;
     var opened = !!film;
     var video = open(link, t);
+    pauseOthers();
     if (video.tagName === 'IFRAME') {
       // A fresh embed already starts at t; a loaded one is moved there.
       if (opened) { command(video, 'seekTo', [t, true]); command(video, 'playVideo'); }
@@ -83,6 +84,30 @@
     if (!hero.contains(link)) stage.scrollIntoView({ behavior: reduced.matches ? 'auto' : 'smooth', block: 'start' });
     video.focus({ preventScroll: true });
   }
+
+  // One sound at a time: the hero film pauses any other player on the page,
+  // and any other player (a native video, a YouTube facade) pauses the film.
+  function isLoop(el) { return el.hasAttribute && el.hasAttribute('data-poster-loop'); }
+  function pauseOthers() {
+    [].slice.call(document.querySelectorAll('video')).forEach(function (v) {
+      if (v !== film && !isLoop(v) && !v.paused) v.pause();
+    });
+    [].slice.call(document.querySelectorAll('iframe[src*="youtube"]')).forEach(function (f) {
+      if (f !== film) command(f, 'pauseVideo');
+    });
+  }
+  function pauseFilm() {
+    if (!film) return;
+    if (film.tagName === 'IFRAME') command(film, 'pauseVideo');
+    else film.pause();
+  }
+  document.addEventListener('play', function (e) {
+    if (e.target === film) pauseOthers();
+    else if (!isLoop(e.target)) pauseFilm();
+  }, true);
+  document.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('[data-yt-launch]')) pauseFilm();
+  });
 
   links.forEach(function (link) {
     link.setAttribute('role', 'button');
