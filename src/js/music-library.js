@@ -219,7 +219,7 @@ const PortfolioMusicLibrary = (function () {
           list.append(item);
           rows.push(button);
         });
-        group.append(groupHead('h4', year, entries.length + (entries.length === 1 ? ' sketch' : ' sketches')), list);
+        group.append(groupHead('h4', year), list);
         columns.append(group);
       });
       book.append(head, columns);

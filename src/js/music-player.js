@@ -583,15 +583,6 @@
       link.hidden = !page;
       if (page) link.setAttribute('href', page);
     });
-    const at = tiles.findIndex(tile => byTitle.get(cardTitle(tile)) === track);
-    roleAll('set-position').forEach(el => {
-      el.hidden = at < 0;
-      if (at < 0) return;
-      const index = document.createElement('span');
-      index.textContent = String(at + 1).padStart(2, '0');
-      el.textContent = '';
-      el.append(index, ' / ' + String(tiles.length).padStart(2, '0'));
-    });
   }
 
   function select(index, autoplay) {
@@ -623,7 +614,7 @@
     showSelection(track);
     updateArtwork(track);
     bar.classList.add('has-track');
-    setStatus(autoplay ? 'Loading' : 'Ready to play', autoplay ? 'loading' : '');
+    setStatus(autoplay ? 'Loading' : '', autoplay ? 'loading' : '');
 
     audio.src = trackSource;
     audio.load();
@@ -906,7 +897,6 @@
     shuffleOn = !shuffleOn;
     buildOrder(validIndex(current) ? current : null);
     updateModeUI();
-    setStatus(shuffleOn ? 'Shuffle on' : 'Shuffle off');
     saveState();
   }));
 
@@ -914,7 +904,6 @@
     repeatMode = repeatMode === 'off' ? 'all' : (repeatMode === 'all' ? 'one' : 'off');
     updateModeUI();
     renderQueue();
-    setStatus('Repeat ' + repeatMode);
     saveState();
   }));
 
@@ -1020,7 +1009,7 @@
   });
   audio.addEventListener('canplay', () => {
     if (!selectedTrack()) return;
-    if (!hasPlaybackError) setStatus(audio.paused ? 'Ready to play' : 'Playing');
+    if (!hasPlaybackError) setStatus(audio.paused ? '' : 'Playing');
     updateProgress();
     updateBuffered();
     setPlayState();
@@ -1031,7 +1020,7 @@
   });
   audio.addEventListener('playing', () => {
     // First real playback: let music.css show the buffered range. Before
-    // this, a preloaded buffer next to "Ready to play" looks part-heard.
+    // this, a preloaded buffer next to an idle player looks part-heard.
     document.documentElement.classList.add('has-played');
     setStatus('Playing');
     setPlayState();
@@ -1067,7 +1056,7 @@
     // never fire canplay, which would leave a restored, non-autoplay selection
     // stuck on "Loading" with aria-busy set. Metadata in hand while paused
     // means the track is ready to start.
-    if (audio.paused && !hasPlaybackError && selectedTrack()) setStatus('Ready to play');
+    if (audio.paused && !hasPlaybackError && selectedTrack()) setStatus('');
     updateProgress();
     updateBuffered();
     pushPositionState(true);
