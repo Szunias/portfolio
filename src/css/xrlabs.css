@@ -1,196 +1,59 @@
-/* XR Labs: page-owned styles, loaded only on xrlabs.html.
-   Palette from the public footage: the charcoal hall floor (#3f3b36 sampled in
-   hall-and-sim.jpg, darkened and neutralised) and the teal aim ray from the
-   simulation view (#3d9b8c in hall-and-sim.jpg), lifted for a dark page. */
+/* XR Labs: page-owned styles, loaded only on xrlabs.html after feature.css.
+   The palette is sampled from XR Labs' public footage: the near-black of the
+   hall floor for the page, its charcoal for the opening band, and the teal
+   aim line of the simulation view for the button, rules and focus. */
 :root {
-  --c-bg-0: #0a0b0a;
-  --c-bg-1: #0f100f;
-  --c-bg-2: #151715;
-  --c-bg-3: #1c1e1c;
-  --c-ink: #eceeea;
-  --c-ink-2: #b8bbb5;
-  --c-ink-3: #969992;
-  --c-accent: #5ec8b6;
-  --c-accent-hi: #8adccf;
-  --c-accent-ink: #061210;
-  --c-accent-line: rgba(94, 200, 182, .45);
-  --c-accent-weak: rgba(94, 200, 182, .10);
-  --c-line: rgba(216, 218, 212, .08);
-  --c-line-2: rgba(216, 218, 212, .16);
-  --c-line-3: rgba(216, 218, 212, .30);
-  --ice: #5ec8b6;
-  --xr-door: #5ec8b6;  /* teal from the simulation view, page accent */
+  --ft-bg: #10100f;
+  --ft-band: #1f1e1b;
+  --ft-band-2: #29251f;
+  --ft-ink: #efede7;
+  --ft-ink-2: #d4d1c9;
+  --ft-ink-3: #afaca4;
+  --ft-head: #f1eee6;
+  --ft-accent: #5ec8b6;
+  --ft-accent-ink: #061210;
 }
 
-/* The site's ice glow is dropped on this page. */
-body::before { background: none; }
-
-/* Opt out of the shared heading-left / paragraph-right grid. */
-.cine.xr > section:not(.cine-split) { display: block; }
-.xr figure { margin: 0; }
-.xr a:hover { text-decoration-color: var(--xr-door); }
-
-/* ---------- Opening: the public clip on an operator plate ---------- */
-.xr .xr-open {
-  display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
-  gap: clamp(36px, 4.6vw, 68px);
-  align-items: start;
-  margin-bottom: clamp(88px, 10vw, 140px);
-}
-.xr .xr-plate {
-  position: relative;
-  padding: clamp(10px, 1.2vw, 16px);
-  border: 1px solid var(--c-line-2);
-  background: var(--c-bg-0);
-}
-.xr .xr-plate__strip {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px 24px;
-  padding: 4px 2px clamp(12px, 1.5vw, 20px);
-}
-.xr .xr-plate h1 {
-  margin: 0;
-  color: var(--c-ink);
-  font: 500 clamp(36px, 4.4vw, 62px)/.95 var(--f-display);
-  letter-spacing: -.045em;
-}
-.xr .xr-plate__role {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  max-width: none;
-  margin: 0;
-  font: 400 12px/1.5 var(--f-mono);
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-.xr .xr-role { color: var(--c-ink); font-weight: 500; }
-.xr .xr-when { color: var(--c-ink-3); }
-.xr .xr-when::before {
-  content: "\00B7";
-  margin: 0 .75em;
-  color: var(--c-ink-3);
-}
-.xr .xr-plate video {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  margin: 0;
-  border: 0;
-  border-radius: 0;
-  background: #000;
-  box-shadow: none;
-}
-.xr .xr-plate__media { position: relative; }
-.xr .xr-plate__src {
-  display: none;
-  position: absolute;
-  bottom: 8px;
-  left: 8px;
-  z-index: 2;
-  padding: 3px 7px;
-  background: rgba(10, 11, 10, .8);
-  color: var(--c-ink-2);
-  font: 400 10.5px/1.3 var(--f-mono);
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  pointer-events: none;
-}
-/* Only while the poster shows: local-video.js wraps the video in .local-video
-   and drops that class when playback starts. No JS, no tag. */
-.xr .local-video ~ .xr-plate__src { display: block; }
-.xr .xr-open__text { padding-top: clamp(4px, 1vw, 14px); }
-.xr .xr-lead {
-  max-width: 40ch;
-  margin: 0 0 24px;
-  color: var(--c-ink);
-  font-size: clamp(18px, 1.42vw, 20.5px);
-  line-height: 1.55;
-  text-wrap: pretty;
-}
-.xr .xr-meta {
-  margin: 0;
-  color: var(--c-ink-3);
-  font: 400 12px/1.7 var(--f-mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-.xr .xr-meta span { white-space: nowrap; }
+/* The note on the footage sits under the paragraph it belongs to. */
 .xr .xr-note {
-  max-width: 44ch;
-  margin: 24px 0 0;
+  margin-top: 1.4em;
   padding-top: 16px;
-  border-top: 1px solid var(--c-line-2);
-  color: var(--c-ink-3);
-  font: 400 12px/1.65 var(--f-mono);
+  border-top: 1px solid var(--ft-rule);
+  color: var(--ft-ink-3);
+  font-size: 15px;
+  line-height: 1.55;
 }
-.xr .xr-note a { color: var(--c-ink-2); }
+.ft-row > .ft-body p.xr-note { font-size: 15px; }
 
-/* ---------- One shot, four trainee positions ---------- */
-.xr .xr-floor { margin-bottom: clamp(72px, 8vw, 112px); }
-.xr .xr-head { max-width: 64ch; margin-bottom: clamp(24px, 3vw, 34px); }
-.xr .xr-head h2 { margin: 0 0 14px; }
-.xr .xr-head p { max-width: 58ch; margin: 0; color: var(--c-ink-2); font-size: 17px; line-height: 1.65; }
-
-/* the four positions: stacked on narrow screens, two by two from 901px */
-.xr .xr-read { max-width: 640px; min-width: 0; }
-.xr .xr-pos + .xr-pos { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--c-line-2); }
-@media (min-width: 901px) {
-  .xr .xr-read {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 44px clamp(32px, 4vw, 56px);
-    max-width: none;
-  }
-  .xr .xr-pos { display: flex; flex-direction: column; padding-top: 22px; border-top: 1px solid var(--c-line-2); }
-  .xr .xr-pos + .xr-pos { margin-top: 0; }
-  /* Stills share a baseline across a row, whatever the sentence length. */
-  .xr .xr-still { margin-top: auto; }
-}
-.xr .xr-pos h3 {
-  margin: 0 0 10px;
-  color: var(--c-ink);
-  font: 500 clamp(22px, 2vw, 28px)/1.15 var(--f-display);
+/* ---------- The four positions ---------- */
+.xr h3 {
+  margin: 0 0 12px;
+  color: var(--ft-head);
+  font: 600 clamp(26px, 2.5vw, 36px)/1.1 var(--f-display);
   letter-spacing: -.02em;
 }
-.xr .xr-pos p { max-width: 46ch; margin: 0 0 16px; color: var(--c-ink-2); font-size: 16.5px; line-height: 1.6; }
-.xr .xr-still { position: relative; border: 1px solid var(--c-line-2); background: #000; }
-.xr .xr-still img {
+
+/* Two positions side by side: blocked by the wall, and through the doorway. */
+.xr-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(32px, 4vw, 56px) var(--ft-gap);
+  align-items: start;
+}
+.xr-pos { margin: 0; }
+.xr-pos img {
   display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 16 / 9;
-  margin: 0;
-  border-radius: 0;
-  box-shadow: none;
   object-fit: cover;
+  background: var(--c-bg-0);
 }
+.xr-pos figcaption { padding-top: 22px; }
+.xr-pos p { max-width: 30em; margin: 0; font-size: 19px; text-wrap: pretty; }
 
-/* ---------- Narrow screens ---------- */
-@media (max-width: 900px) {
-  .xr .xr-open { grid-template-columns: minmax(0, 1fr); }
-}
-@media (min-width: 600px) and (max-width: 900px) {
-  .xr .xr-open__text {
-    display: grid;
-    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
-    column-gap: clamp(24px, 4.5vw, 44px);
-    align-items: start;
-  }
-  .xr .xr-lead { grid-row: 1 / span 2; margin: 0; }
-  .xr .xr-meta { grid-column: 2; }
-  .xr .xr-note { grid-column: 2; margin-top: 16px; }
-}
-@media (max-width: 599px) {
-  .xr .xr-plate__role { display: block; margin-top: 2px; }
-  .xr .xr-plate__role span { display: block; }
-  .xr .xr-when::before { content: none; }
-}
-@media (max-width: 420px) {
-  .xr .xr-plate__src { bottom: 6px; left: 6px; padding: 2px 6px; font-size: 10px; }
+@media (max-width: 699px) {
+  .xr-pair { grid-column: full; grid-template-columns: minmax(0, 1fr); }
+  .xr-pos figcaption { padding-inline: var(--page-gutter); }
+  .xr-pos p { font-size: 18.5px; }
 }
