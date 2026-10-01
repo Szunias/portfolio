@@ -18,17 +18,13 @@
   --c-line-2: rgba(196, 206, 232, .15);
   --c-line-3: rgba(196, 206, 232, .28);
   --ice: #a5acff;
-  --aq-arc: #8791ff;      /* knob value arc, 5.9:1 on the rack */
-  --aq-track: #283040;    /* unlit part of the knob ring */
-  --aq-face: #1b2130;     /* knob face, the plug-in's raised panel */
-  --aq-box: #0a0d12;      /* value boxes and code, the plug-in's inset fields */
+  --aq-box: #0a0d12;      /* code, the plug-in's inset fields */
 }
 
 body::before { background: none; }
 
 /* Opt out of the shared heading-left / paragraph-right grid (cine.css, .cine > section). */
 .cine.aq > section:not(.cine-split) { display: block; }
-.aq .aq-stages, .aq .aq-knobs { max-width: none; margin: 0; padding: 0; list-style: none; }
 .aq a:hover { text-decoration-color: var(--c-accent); }
 
 /* ---------- Opening: title, then the plug-in window ---------- */
@@ -92,158 +88,11 @@ body::before { background: none; }
 .aq-head { max-width: 66ch; margin-bottom: clamp(22px, 2.6vw, 32px); }
 .aq .aq-head h2 { margin: 0 0 14px; }
 .aq .aq-head p { margin: 0; color: var(--c-ink-2); font-size: 17px; line-height: 1.65; }
-.aq .aq-hint { display: none; }
-.aq-chain.is-live .aq-hint {
-  display: block;
-  max-width: none;
-  margin: 12px 0 0;
-  color: var(--c-ink-3);
-  font: 400 12px/1.6 var(--f-mono);
-  letter-spacing: .04em;
-}
-
 .aq-rack {
-  position: relative;
   overflow: hidden;
-  overflow-anchor: none;
   border: 1px solid var(--c-line-2);
   border-radius: 12px;
-  background: linear-gradient(180deg, #151a24 0%, #10141b 62%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .035);
 }
-.aq .aq-stages {
-  display: grid;
-  grid-template-columns: 1fr 2fr 4fr 2fr 2fr 1fr 1fr 1fr 2fr;
-}
-.aq-stage {
-  position: relative;
-  min-width: 0;
-  margin: 0;
-  padding: 26px 8px 22px;
-  border-left: 1px solid var(--c-line);
-  transition: background-color .25s var(--ease);
-}
-.aq-stage:first-child { border-left: 0; }
-/* Signal rail: lit from the file player up to the selected stage. */
-.aq-stage::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 3px;
-  background: var(--c-line-2);
-  transition: background-color .25s var(--ease);
-}
-.aq-stage.is-passed::before,
-.aq-stage.is-on::before { background: var(--c-accent); }
-.aq-stage.is-on { background-color: rgba(165, 172, 255, .055); }
-
-.aq-stage__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 4px 8px;
-  margin: 0 0 16px;
-}
-.aq-stage__name {
-  min-height: 30px;
-  margin: 0;
-  padding: 0 2px;
-  border: 0;
-  background: none;
-  color: var(--c-ink-3);
-  font: 500 11px/1.2 var(--f-mono);
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  cursor: default;
-}
-.aq-stage__name span {
-  display: inline-block;
-  padding-bottom: 6px;
-  border-bottom: 2px solid var(--c-line-2);
-  transition: border-color .2s var(--ease), color .2s var(--ease);
-}
-.aq-rack.is-live .aq-stage__name { cursor: pointer; }
-.aq-rack.is-live .aq-stage__name:hover span { color: var(--c-ink); border-color: var(--c-line-3); }
-.aq-stage.is-on .aq-stage__name span { color: var(--c-ink); border-color: var(--c-accent); }
-.aq-stage__name:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; border-radius: 2px; }
-.aq-tag {
-  padding: 2px 5px 1px;
-  border: 1px solid var(--c-line-3);
-  border-radius: 3px;
-  color: var(--c-ink-3);
-  font: 500 9.5px/1.3 var(--f-mono);
-  letter-spacing: .08em;
-}
-
-/* Knobs: label above, ring, value box below, like the plug-in's panels. */
-.aq .aq-knobs { display: flex; justify-content: space-evenly; gap: 2px; }
-.aq-knob, .aq-fixed {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 7px;
-  width: 64px;
-  margin: 0;
-  padding: 4px 0 2px;
-  border-radius: 8px;
-}
-.aq-rack.is-live .aq-knob { cursor: ns-resize; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
-.aq-knob:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 1px; }
-.aq-knob__name {
-  color: var(--c-ink-2);
-  font: 500 10px/1 var(--f-mono);
-  letter-spacing: .07em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.aq-dial { display: block; width: 44px; height: 44px; overflow: visible; }
-.aq-dial circle { fill: none; transform-origin: 22px 22px; }
-.aq-dial__track { stroke: var(--aq-track); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 75 100; transform: rotate(135deg); }
-.aq-dial__arc {
-  stroke: var(--aq-arc);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-dasharray: calc(var(--n, 0) * 75) 100;
-  transform: rotate(135deg);
-}
-.aq .aq-dial__face { fill: var(--aq-face); stroke: #2c3446; stroke-width: 1; }
-.aq-dial__tick {
-  stroke: var(--c-accent-hi);
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  transform-origin: 22px 22px;
-  transform: rotate(calc(var(--n, 0) * 270deg - 135deg));
-}
-.aq-knob:hover .aq-dial__face { stroke: var(--c-accent-line); }
-.aq-knob.is-held .aq-dial__face { stroke: var(--c-accent); }
-.aq-knob__val {
-  min-width: 56px;
-  padding: 3px 4px 2px;
-  border: 1px solid #252c39;
-  border-radius: 3px;
-  background: var(--aq-box);
-  color: var(--c-ink);
-  font: 400 11px/1.3 var(--f-mono);
-  font-variant-numeric: tabular-nums;
-  text-align: center;
-}
-.aq-fixed .aq-fixed__glyph {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 1px dashed var(--c-line-3);
-  border-radius: 50%;
-  color: var(--c-ink-3);
-}
-.aq-fixed__glyph svg { width: 18px; height: 18px; }
-.aq-fixed .aq-knob__val { color: var(--c-ink-2); }
-
-/* ---------- The readout under the rack ---------- */
-.aq-notes { border-top: 1px solid var(--c-line-2); }
 .aq-note {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
@@ -251,8 +100,8 @@ body::before { background: none; }
   align-items: start;
   padding: clamp(24px, 3vw, 36px) clamp(20px, 3vw, 40px) clamp(26px, 3vw, 38px);
 }
-.aq-rack:not(.is-live) .aq-note + .aq-note { border-top: 1px solid var(--c-line); }
-.aq-rack.is-live .aq-note:not(.is-on) { display: none; }
+.aq-note + .aq-note { border-top: 1px solid var(--c-line); }
+.aq-note:not(:has(.aq-note__shot)) { grid-template-columns: minmax(0, 1fr); }
 .aq .aq-note h3 {
   margin: 0 0 12px;
   color: var(--c-ink);
@@ -267,17 +116,7 @@ body::before { background: none; }
   letter-spacing: .02em;
   overflow-wrap: anywhere;
 }
-.aq-hint__touch { display: none; }
-@media (hover: none) and (pointer: coarse) {
-  .aq-hint__mouse { display: none; }
-  .aq-hint__touch { display: inline; }
-}
 .aq .aq-note p { max-width: 56ch; margin: 0 0 16px; color: var(--c-ink-2); font-size: 16px; line-height: 1.65; }
-.aq .aq-note p.aq-live {
-  margin: 0 0 14px;
-  color: var(--c-accent);
-  font: 500 13.5px/1.55 var(--f-mono);
-}
 .aq-code {
   max-width: 64ch;
   margin: 0;
@@ -298,48 +137,12 @@ body::before { background: none; }
 }
 .aq-note__shot img { display: block; width: 100%; height: auto; }
 
-/* Where the stage's own control sits in the shared interface crops. */
-.aq-note__shot--marked { position: relative; }
-.aq-mark {
-  position: absolute;
-  box-sizing: border-box;
-  border: 2px solid var(--c-accent);
-  border-radius: 7px;
-  background: rgba(165, 172, 255, .07);
-  box-shadow: 0 0 0 1px rgba(10, 12, 16, .6);
-  pointer-events: none;
-}
-
-.aq-modes { display: none; }
-.aq-rack.is-live .aq-modes {
-  display: inline-flex;
-  margin: 0 0 14px;
-  overflow: hidden;
-  border: 1px solid var(--c-line-3);
-  border-radius: 6px;
-}
-.aq-mode {
-  min-height: 44px;
-  padding: 0 15px;
-  border: 0;
-  border-left: 1px solid var(--c-line-3);
-  background: transparent;
-  color: var(--c-ink-2);
-  font: 500 13.5px/1 var(--f-body);
-  cursor: pointer;
-  transition: background-color .2s var(--ease), color .2s var(--ease);
-}
-.aq-mode:first-child { border-left: 0; }
-.aq-mode:hover { color: var(--c-ink); background: var(--c-accent-weak); }
-.aq-mode[aria-pressed="true"] { background: var(--c-accent); color: var(--c-accent-ink); }
-.aq-mode:focus-visible { outline: 2px solid var(--c-accent-hi); outline-offset: -3px; }
-
 /* ---------- The demo, moved up under the opening ---------- */
 .aq-demo { align-items: center; margin-bottom: clamp(88px, 10vw, 140px); scroll-margin-top: 100px; }
 .aq .aq-demo h2 { margin-top: 0; }
 .aq .aq-demo p { color: var(--c-ink-2); }
 
-/* ---------- One plain paragraph under the rack ---------- */
+/* ---------- One plain paragraph under the notes ---------- */
 .aq .aq-after {
   max-width: 70ch;
   margin: 22px 0 0;
@@ -348,121 +151,14 @@ body::before { background: none; }
   line-height: 1.65;
 }
 
-/* ---------- Rack as a vertical chain: the rail runs down the left ---------- */
-@media (max-width: 1180px) {
-  .aq .aq-stages { grid-template-columns: minmax(0, 1fr); }
-  .aq-stage {
-    display: grid;
-    grid-template-columns: 170px minmax(0, 1fr);
-    align-items: center;
-    padding: 16px 20px 16px 46px;
-    border-top: 1px solid var(--c-line);
-    border-left: 0;
-  }
-  .aq-stage:first-child { border-top: 0; }
-  .aq-stage::before { top: 0; bottom: 0; left: 22px; right: auto; width: 2px; height: auto; }
-  .aq-stage:first-child::before { top: 30px; }
-  .aq-stage:last-child::before { bottom: auto; height: 30px; }
-  .aq-stage::after {
-    content: "";
-    position: absolute;
-    top: 25px;
-    left: 17px;
-    width: 12px;
-    height: 12px;
-    box-sizing: border-box;
-    border: 2px solid var(--c-line-3);
-    border-radius: 50%;
-    background: #121720;
-  }
-  .aq-stage.is-passed::after { border-color: var(--c-accent); }
-  .aq-stage.is-on::after { border-color: var(--c-accent); background: var(--c-accent); }
-  .aq-stage__head { justify-content: flex-start; margin: 0; }
-  .aq .aq-knobs { justify-content: flex-start; flex-wrap: wrap; gap: 4px 6px; }
-  .aq-stage > .aq-note {
-    grid-column: 1 / -1;
-    padding: 20px 0 6px;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-}
-/* 901-1180px: the stage list stays narrow but the readout moves beside it
-   instead of opening inside the stage (audioq.js keeps that JS threshold at
-   900px so it matches this layout). */
-@media (min-width: 901px) and (max-width: 1180px) {
-  .aq-rack.is-live {
-    display: grid;
-    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
-    align-items: start;
-    overflow: clip;
-  }
-  /* The divider belongs to the taller list, so it runs the full height. */
-  .aq-rack.is-live .aq-stages { border-right: 1px solid var(--c-line-2); }
-  .aq-rack.is-live .aq-notes { border-top: 0; }
-  .aq-rack.is-live .aq-note { grid-template-columns: minmax(0, 1fr); gap: 18px; padding: 26px 26px 30px; }
-  .aq-rack.is-live .aq-stage {
-    grid-template-columns: 94px minmax(0, 1fr);
-    column-gap: 10px;
-    align-items: start;
-    padding: 16px 14px 16px 42px;
-  }
-  .aq-rack.is-live .aq-stage::before { left: 20px; }
-  .aq-rack.is-live .aq-stage::after { top: 22px; left: 15px; }
-  .aq-rack.is-live .aq-stage:first-child::before { top: 28px; }
-  .aq-rack.is-live .aq-stage__head { flex-direction: column; align-items: flex-start; gap: 6px; }
-  .aq-rack.is-live .aq-stage__name { letter-spacing: .08em; }
-  .aq-rack.is-live .aq-knobs { gap: 6px 4px; }
-  .aq-rack.is-live .aq-knob, .aq-rack.is-live .aq-fixed { width: 56px; }
-  .aq-rack.is-live .aq-knob__val { min-width: 0; width: 100%; }
-}
-/* The readout follows a stage picked low in the list, below the sticky site
-   header. Its heading, description and live readout line sit at the top, so
-   they stay in view even on a short window; only the code and screenshot
-   further down can run past the bottom edge there. */
-@media (min-width: 901px) and (max-width: 1180px) {
-  .aq-rack.is-live .aq-notes { position: sticky; top: 100px; }
-}
 @media (max-width: 900px) {
   .aq-open__head { grid-template-columns: minmax(0, 1fr); }
   .aq-note { grid-template-columns: minmax(0, 1fr); }
-  .aq-stage > .aq-note { grid-template-columns: minmax(0, 1fr); }
-}
-/* Inside its stage the readout drops the repeated stage name (kept for screen readers). */
-@media (max-width: 1180px) {
-  .aq-stage > .aq-note .aq-note__t {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-  .aq-stage > .aq-note h3 small { margin-top: 0; }
-  .aq-stage > .aq-note h3:not(:has(small)) { margin: 0; }
 }
 @media (max-width: 600px) {
   .aq .aq-open h1 { padding-left: .26em; }
   .aq .aq-meta { letter-spacing: .04em; }
-  .aq-stage {
-    grid-template-columns: 76px minmax(0, 1fr);
-    column-gap: 8px;
-    align-items: start;
-    padding: 14px 8px 14px 34px;
-  }
-  .aq-stage::before { left: 15px; }
-  .aq-stage::after { top: 22px; left: 10px; }
-  .aq-stage:first-child::before { top: 28px; }
-  .aq-stage__head { flex-direction: column; align-items: flex-start; gap: 6px; }
-  .aq-stage__name { letter-spacing: .07em; }
-  .aq .aq-knobs { gap: 8px 3px; }
-  .aq-knob, .aq-fixed { width: 49px; gap: 6px; }
-  .aq-knob__name { font-size: 9.5px; letter-spacing: .02em; }
-  .aq-dial, .aq-fixed .aq-fixed__glyph { width: 40px; height: 40px; }
-  .aq-knob__val { width: 100%; min-width: 0; padding: 3px 1px 2px; font-size: 10.5px; }
   .aq-note { padding: 22px 16px 26px; }
   .aq .aq-note p { font-size: 15.5px; }
   .aq-code { font-size: 12px; padding: 9px 11px; }
-  .aq-mode { padding: 0 12px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .aq-stage, .aq-stage::before, .aq-stage__name span, .aq-mode { transition: none; }
 }

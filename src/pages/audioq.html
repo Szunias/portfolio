@@ -15,7 +15,7 @@
   <section class="cine-split aq-demo" id="aq-demo" aria-labelledby="aq-demo-title">
     <div class="cine-split__body">
       <h2 id="aq-demo-title">A demo of the earlier version</h2>
-      <p>I started AudioQ in 2024 and later remade it. The recording shows the earlier version: I play a file through the tremolo, the filters and the compressor, switch to the random and granular modes, and loop a short region drawn on the waveform.</p>
+      <p>The recording shows the version from before I remade it: I play a file through the tremolo, the filters and the compressor, switch to the random and granular modes, and loop a short region drawn on the waveform.</p>
     </div>
     <div class="cine-split__media">
       <div class="yt-facade" data-yt-facade data-video-id="Q2hwWfisU4A"><button class="yt-facade__launch" type="button" data-yt-launch data-video-title="AudioQ recorded demonstration using an earlier interface" aria-label="Play the AudioQ recorded demonstration"><img src="old/public/assets/images/video-posters/audioq-demo.jpg" srcset="old/public/assets/images/video-posters/audioq-demo-640.webp 640w, old/public/assets/images/video-posters/audioq-demo-1200.webp 1200w, old/public/assets/images/video-posters/audioq-demo.jpg 1280w" sizes="(min-width: 901px) 46vw, calc(100vw - 40px)" alt="" width="1280" height="848" loading="lazy" aria-hidden="true"><span class="yt-facade__play" aria-hidden="true"><svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="M9 7.5v9l7-4.5-7-4.5Z"/></svg></span></button><noscript><iframe src="https://www.youtube-nocookie.com/embed/Q2hwWfisU4A" title="AudioQ recorded demonstration using an earlier interface" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></noscript></div>
@@ -26,129 +26,75 @@
     <div class="aq-head">
       <h2 id="aq-chain-title">From the file player to the output</h2>
       <p>The interface groups the controls into panels, but the audio passes through them in one fixed order. The filters and the compressor are JUCE modules. I wrote the file player, the make-up gain after the compressor and everything from the tremolo on.</p>
-      <p class="aq-hint"><span class="aq-hint__mouse">Select a stage or drag a knob. The readout uses the plug-in’s own formulas.</span><span class="aq-hint__touch">Tap a stage or swipe sideways on a knob. The readout uses the plug-in’s own formulas.</span></p>
     </div>
-    <div class="aq-rack" data-aq-rack>
-      <ol class="aq-stages">
-        <li class="aq-stage" data-stage="source">
-          <div class="aq-stage__head"><button class="aq-stage__name" type="button" aria-pressed="false" aria-controls="aq-note-source"><span>Source</span></button></div>
-          <div class="aq-knobs"><div class="aq-knob" data-param="tempo" data-label="Tempo" data-min="20" data-max="300" data-def="120" data-unit="BPM" style="--n:0.3571"><span class="aq-knob__name">Tempo</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">120.00</span></div></div>
-        </li>
-        <li class="aq-stage" data-stage="filters">
-          <div class="aq-stage__head"><button class="aq-stage__name" type="button" aria-pressed="false" aria-controls="aq-note-filters"><span>Filters</span></button><span class="aq-tag" aria-hidden="true">JUCE</span></div>
-          <div class="aq-knobs"><div class="aq-knob" data-param="lpf" data-label="Low-pass cutoff" data-min="20" data-max="20000" data-def="20000" data-skew="0.3" data-interval="1" data-unit="Hz" style="--n:1.0000"><span class="aq-knob__name">LPF</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">20000</span></div><div class="aq-knob" data-param="hpf" data-label="High-pass cutoff" data-min="20" data-max="20000" data-def="20" data-skew="0.3" data-interval="1" data-unit="Hz" style="--n:0.0000"><span class="aq-knob__name">HPF</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">20</span></div></div>
-        </li>
-        <li class="aq-stage" data-stage="comp">
-          <div class="aq-stage__head"><button class="aq-stage__name" type="button" aria-pressed="false" aria-controls="aq-note-comp"><span>Compressor</span></button><span class="aq-tag" aria-hidden="true">JUCE</span></div>
-          <div class="aq-knobs"><div class="aq-knob" data-param="thresh" data-label="Threshold" data-min="-60" data-max="0" data-def="-30" data-unit="dB" style="--n:0.5000"><span class="aq-knob__name">Thresh</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">−30.00</span></div><div class="aq-knob" data-param="ratio" data-label="Ratio" data-min="1" data-max="20" data-def="6" data-unit="to 1" style="--n:0.2632"><span class="aq-knob__name">Ratio</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">6.00</span></div><div class="aq-knob" data-param="attack" data-label="Attack" data-min="1" data-max="200" data-def="5" data-unit="ms" style="--n:0.0201"><span class="aq-knob__name">Attack</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">5.00</span></div><div class="aq-knob" data-param="release" data-label="Release" data-min="5" data-max="1000" data-def="150" data-unit="ms" style="--n:0.1457"><span class="aq-knob__name">Release</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">150.00</span></div></div>
-        </li>
-        <li class="aq-stage" data-stage="trem">
-          <div class="aq-stage__head"><button class="aq-stage__name" type="button" aria-pressed="false" aria-controls="aq-note-trem"><span>Tremolo</span></button></div>
-          <div class="aq-knobs"><div class="aq-knob" data-param="rate" data-label="Tremolo rate" data-min="0.1" data-max="10" data-def="5" data-unit="Hz" style="--n:0.4949"><span class="aq-knob__name">Rate</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">5.00</span></div><div class="aq-knob" data-param="depth" data-label="Tremolo depth" data-min="0" data-max="1" data-def="0.85" style="--n:0.8500"><span class="aq-knob__name">Depth</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">0.85</span></div></div>
-        </li>
-        <li class="aq-stage" data-stage="crush">
-          <div class="aq-stage__head"><button class="aq-stage__name" type="button" aria-pressed="false" aria-controls="aq-note-crush"><span>Bitcrusher</span></button></div>
-          <div class="aq-knobs"><div class="aq-knob" data-param="bits" data-label="Crush bits" data-min="1" data-max="16" data-def="16" data-unit="bits" style="--n:1.0000"><span class="aq-knob__name">Crush</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">16.00</span></div><div class="aq-knob" data-param="ds" data-label="Downsample" data-min="1" data-max="40" data-def="1" data-unit="times" style="--n:0.0000"><span class="aq-knob__name">Downsmp</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">1.00</span></div></div>
-        </li>
-        <li class="aq-stage" data-stage="stutter">
-          <div class="aq-stage__head"><button class="aq-stage__name" type="button" aria-pressed="false" aria-controls="aq-note-stutter"><span>Stutter</span></button></div>
-          <div class="aq-knobs"><div class="aq-knob" data-param="srate" data-label="Stutter rate" data-min="2" data-max="32" data-def="8" data-unit="Hz" style="--n:0.2000"><span class="aq-knob__name">Rate</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">8.00</span></div></div>
-        </li>
-        <li class="aq-stage" data-stage="reverse">
-          <div class="aq-stage__head"><button class="aq-stage__name" type="button" aria-pressed="false" aria-controls="aq-note-reverse"><span>Reverse</span></button></div>
-          <div class="aq-knobs"><div class="aq-fixed"><span class="aq-knob__name">Chunk</span><span class="aq-fixed__glyph" aria-hidden="true"><svg aria-hidden="true" focusable="false" viewBox="0 0 18 18"><path d="M8.5 4 3.5 9l5 5M15 4l-5 5 5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="aq-knob__val">0.18 s</span></div></div>
-        </li>
-        <li class="aq-stage" data-stage="mix">
-          <div class="aq-stage__head"><button class="aq-stage__name" type="button" aria-pressed="false" aria-controls="aq-note-mix"><span>Dry/wet</span></button></div>
-          <div class="aq-knobs"><div class="aq-knob" data-param="drywet" data-label="Dry/wet" data-min="0" data-max="1" data-def="1" style="--n:1.0000"><span class="aq-knob__name">Mix</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">1.00</span></div></div>
-        </li>
-        <li class="aq-stage" data-stage="out">
-          <div class="aq-stage__head"><button class="aq-stage__name" type="button" aria-pressed="false" aria-controls="aq-note-out"><span>Output</span></button></div>
-          <div class="aq-knobs"><div class="aq-knob" data-param="gain" data-label="Output gain" data-min="0" data-max="3.1623" data-def="1" style="--n:0.3162"><span class="aq-knob__name">Gain</span><svg class="aq-dial" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle class="aq-dial__track" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__arc" cx="22" cy="22" r="18" pathLength="100"/><circle class="aq-dial__face" cx="22" cy="22" r="13"/><line class="aq-dial__tick" x1="22" y1="21" x2="22" y2="11.5"/></svg><span class="aq-knob__val">1.00</span></div><div class="aq-fixed"><span class="aq-knob__name">Check</span><span class="aq-fixed__glyph" aria-hidden="true"><svg aria-hidden="true" focusable="false" viewBox="0 0 18 18"><path d="M2.5 4.5h13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2.2"/><path d="M9 15V8.5M6 11.5l3-3 3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="aq-knob__val">4.00</span></div></div>
-        </li>
-      </ol>
+    <div class="aq-rack">
       <div class="aq-notes">
-        <section class="aq-note" id="aq-note-source" data-note="source" aria-labelledby="aq-note-source-h">
+        <section class="aq-note" id="aq-note-source" aria-labelledby="aq-note-source-h">
           <div class="aq-note__text">
-            <h3 id="aq-note-source-h"><span class="aq-note__t">Source</span> <small>AudioFilePlayer</small></h3>
+            <h3 id="aq-note-source-h">Source <small>AudioFilePlayer</small></h3>
             <p>Drop a WAV, AIFF or MP3 on the plug-in and drag across the waveform to set the loop region. The tempo knob resamples the file, so speed and pitch change together. Random and granular modes keep jumping to new regions of the file.</p>
-            <div class="aq-modes" role="group" aria-label="Playback mode"><button class="aq-mode" type="button" data-mode="loop" aria-pressed="true">Loop</button><button class="aq-mode" type="button" data-mode="random" aria-pressed="false">Random</button><button class="aq-mode" type="button" data-mode="granular" aria-pressed="false">Granular</button></div>
-            <p class="aq-live" data-live aria-live="polite">Loop mode: the region you drew, at the original speed and pitch.</p>
             <pre class="aq-code"><code>double minLen = isRandom ? 0.1 : 0.05;
 double maxLen = isRandom ? 3.0 : 0.20;</code></pre>
           </div>
           <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-source-loop.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-source-loop-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-source-loop-884.webp 884w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="884" height="340" alt="The AudioQ source display: a waveform with a lit loop region and the playhead standing to its left" loading="lazy" decoding="async"></figure>
         </section>
-        <section class="aq-note" id="aq-note-filters" data-note="filters" aria-labelledby="aq-note-filters-h">
+        <section class="aq-note" id="aq-note-filters" aria-labelledby="aq-note-filters-h">
           <div class="aq-note__text">
-            <h3 id="aq-note-filters-h"><span class="aq-note__t">Filters</span> <small>juce::dsp::StateVariableTPTFilter</small></h3>
+            <h3 id="aq-note-filters-h">Filters <small>juce::dsp::StateVariableTPTFilter</small></h3>
             <p>A low-pass and a high-pass filter from JUCE’s DSP module. I skewed both cutoff ranges so the low frequencies get more of the knob’s travel: halfway round is about 2 kHz.</p>
-            <p class="aq-live" data-live aria-live="polite">Passes 20 Hz to 20.0 kHz.</p>
             <pre class="aq-code"><code>juce::NormalisableRange&lt;float&gt;(20.0f, 20000.0f, 1.0f, 0.3f)</code></pre>
           </div>
-          <figure class="aq-note__shot aq-note__shot--marked"><img src="old/public/assets/images/projects-audioq/frames/aq-filters-compressor.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-filters-compressor-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-filters-compressor-691.webp 691w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="691" height="266" alt="The filters panel, marked, with low and high pass knobs, beside the compressor panel" loading="lazy" decoding="async"><span class="aq-mark" aria-hidden="true" style="left:0.6%;top:3%;width:29.4%;height:94%"></span></figure>
+          <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-filters-compressor.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-filters-compressor-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-filters-compressor-691.webp 691w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="691" height="266" alt="The filters panel with low and high pass knobs, beside the compressor panel with threshold, ratio, attack and release" loading="lazy" decoding="async"></figure>
         </section>
-        <section class="aq-note" id="aq-note-comp" data-note="comp" aria-labelledby="aq-note-comp-h">
+        <section class="aq-note" id="aq-note-comp" aria-labelledby="aq-note-comp-h">
           <div class="aq-note__text">
-            <h3 id="aq-note-comp-h"><span class="aq-note__t">Compressor</span> <small>juce::dsp::Compressor</small></h3>
+            <h3 id="aq-note-comp-h">Compressor <small>juce::dsp::Compressor</small></h3>
             <p>JUCE’s compressor, followed by a make-up gain I added so that compression stays audible. The gain is worked out from the threshold and the ratio and capped at 18 dB.</p>
-            <p class="aq-live" data-live aria-live="polite">Make-up gain: +8.8 dB.</p>
             <pre class="aq-code"><code>float makeupDb = juce::jlimit(0.0f, 18.0f,
     (-cThresh) * (1.0f - (1.0f / juce::jmax(1.0f, cRatio))) * 0.35f);</code></pre>
           </div>
-          <figure class="aq-note__shot aq-note__shot--marked"><img src="old/public/assets/images/projects-audioq/frames/aq-filters-compressor.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-filters-compressor-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-filters-compressor-691.webp 691w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="691" height="266" alt="The compressor panel, marked, with threshold, ratio, attack and release, beside the filters panel" loading="lazy" decoding="async"><span class="aq-mark" aria-hidden="true" style="left:33.2%;top:3%;width:66.2%;height:94%"></span></figure>
         </section>
-        <section class="aq-note" id="aq-note-trem" data-note="trem" aria-labelledby="aq-note-trem-h">
+        <section class="aq-note" id="aq-note-trem" aria-labelledby="aq-note-trem-h">
           <div class="aq-note__text">
-            <h3 id="aq-note-trem-h"><span class="aq-note__t">Tremolo</span></h3>
+            <h3 id="aq-note-trem-h">Tremolo</h3>
             <p>My tremolo squares its sine LFO, so the level spends longer in the dips. From a depth of 0.5 the dips reach silence.</p>
-            <p class="aq-live" data-live aria-live="polite">Level moves between 0.00 and 1.00, 5.0 times a second.</p>
             <pre class="aq-code"><code>float shapedLfo = lfoVal * lfoVal;
 float minGain = juce::jmax(0.0f, 1.0f - (tremDepth * 2.0f));</code></pre>
           </div>
-          <figure class="aq-note__shot aq-note__shot--marked"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The tremolo panel, marked, with its switch, rate and depth, beside the glitch panel" loading="lazy" decoding="async"><span class="aq-mark" aria-hidden="true" style="left:0.8%;top:3%;width:35.4%;height:94%"></span></figure>
+          <figure class="aq-note__shot"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The tremolo panel with its switch, rate and depth, beside the glitch panel with the crush, downsample, stutter, reverse and dry / wet controls" loading="lazy" decoding="async"></figure>
         </section>
-        <section class="aq-note" id="aq-note-crush" data-note="crush" aria-labelledby="aq-note-crush-h">
+        <section class="aq-note" id="aq-note-crush" aria-labelledby="aq-note-crush-h">
           <div class="aq-note__text">
-            <h3 id="aq-note-crush-h"><span class="aq-note__t">Bitcrusher</span></h3>
+            <h3 id="aq-note-crush-h">Bitcrusher</h3>
             <p>My bitcrusher rounds each sample to steps of 1/2<sup>bits</sup>. Downsample then holds each value for up to 40 samples, as if the sample rate dropped by that factor.</p>
-            <p class="aq-live" data-live aria-live="polite">16 bits and no downsampling: the sound passes through unchanged.</p>
             <pre class="aq-code"><code>crushHeldSample[ch] = std::round(data[s] * levels) / levels;</code></pre>
           </div>
-          <figure class="aq-note__shot aq-note__shot--marked"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The glitch panel with the crush and downsample knobs marked" loading="lazy" decoding="async"><span class="aq-mark" aria-hidden="true" style="left:41.4%;top:34.5%;width:27.2%;height:45.5%"></span></figure>
         </section>
-        <section class="aq-note" id="aq-note-stutter" data-note="stutter" aria-labelledby="aq-note-stutter-h">
+        <section class="aq-note" id="aq-note-stutter" aria-labelledby="aq-note-stutter-h">
           <div class="aq-note__text">
-            <h3 id="aq-note-stutter-h"><span class="aq-note__t">Stutter</span></h3>
+            <h3 id="aq-note-stutter-h">Stutter</h3>
             <p>The plug-in keeps the last second of audio in a history buffer. When stutter is on, it copies the most recent chunk out of that buffer and repeats it. A chunk lasts one period of the stutter rate.</p>
-            <p class="aq-live" data-live aria-live="polite">Repeats the last 125 ms, 8.0 times a second.</p>
             <pre class="aq-code"><code>int targetLen = juce::jmax(64, (int)(currentSR / (double)stutterRate));</code></pre>
           </div>
-          <figure class="aq-note__shot aq-note__shot--marked"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The glitch panel with the stutter switch and the stutter rate knob marked" loading="lazy" decoding="async"><span class="aq-mark" aria-hidden="true" style="left:40.8%;top:19.6%;width:28.6%;height:16.6%"></span><span class="aq-mark" aria-hidden="true" style="left:69.9%;top:34.5%;width:11.8%;height:45.5%"></span></figure>
         </section>
-        <section class="aq-note" id="aq-note-reverse" data-note="reverse" aria-labelledby="aq-note-reverse-h">
+        <section class="aq-note" id="aq-note-reverse" aria-labelledby="aq-note-reverse-h">
           <div class="aq-note__text">
-            <h3 id="aq-note-reverse-h"><span class="aq-note__t">Reverse</span></h3>
+            <h3 id="aq-note-reverse-h">Reverse</h3>
             <p>Reverse reads the same history buffer backwards. It plays the most recent 180 ms in reverse, then takes the next 180 ms.</p>
-            
             <pre class="aq-code"><code>reverseLength = juce::jmax(1, (int)(sampleRate * 0.18));</code></pre>
           </div>
-          <figure class="aq-note__shot aq-note__shot--marked"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The glitch panel with the reverse switch marked" loading="lazy" decoding="async"><span class="aq-mark" aria-hidden="true" style="left:69.5%;top:19.6%;width:28.2%;height:16.6%"></span></figure>
         </section>
-        <section class="aq-note" id="aq-note-mix" data-note="mix" aria-labelledby="aq-note-mix-h">
+        <section class="aq-note" id="aq-note-mix" aria-labelledby="aq-note-mix-h">
           <div class="aq-note__text">
-            <h3 id="aq-note-mix-h"><span class="aq-note__t">Dry/wet</span></h3>
+            <h3 id="aq-note-mix-h">Dry/wet</h3>
             <p>A dry copy of the signal is saved straight after the file player, before the filters, and blended back in here.</p>
-            <p class="aq-live" data-live aria-live="polite">Processed signal only.</p>
             <pre class="aq-code"><code>wet[s] = dry[s] * (1.0f - dryWet) + wet[s] * dryWet;</code></pre>
           </div>
-          <figure class="aq-note__shot aq-note__shot--marked"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1181px) 620px, (min-width: 901px) 44vw, calc(100vw - 72px)" width="785" height="302" alt="The glitch panel with the dry / wet knob marked" loading="lazy" decoding="async"><span class="aq-mark" aria-hidden="true" style="left:84.2%;top:34.5%;width:12.6%;height:45.5%"></span></figure>
         </section>
-        <section class="aq-note" id="aq-note-out" data-note="out" aria-labelledby="aq-note-out-h">
+        <section class="aq-note" id="aq-note-out" aria-labelledby="aq-note-out-h">
           <div class="aq-note__text">
-            <h3 id="aq-note-out-h"><span class="aq-note__t">Output</span></h3>
+            <h3 id="aq-note-out-h">Output</h3>
             <p>Gain comes last, up to about +10&nbsp;dB. A safety check then clears any block that peaks above 4.0, about +12&nbsp;dB, and shows a warning. What passes goes to the live output display.</p>
-            <p class="aq-live" data-live aria-live="polite">Output gain: +0.0 dB.</p>
             <pre class="aq-code"><code>if (peakLevel &gt; 4.0f)
 {
     dangerousVolumeDetected.store(true);
