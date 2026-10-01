@@ -113,7 +113,7 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 .track-hushabye { --track: #bfd6c8; }
 .track-shadowframes { --track: #d3d5d8; }
 .track-sidar { --track: #c2cea3; }
-.track-xrlabs { --track: #5ec8b6; --track-line: rgba(94,200,182,.45); --track-tape: #d8dad4; }
+.track-xrlabs { --track: #5ec8b6; --track-line: rgba(94,200,182,.45); }
 .track-transientica { --track: #3fe0cc; --track-line: rgba(63,224,204,.45); }
 .track-nottoday { --track: #f28cbd; --track-line: rgba(242,140,189,.45); }
 .track-autotrim { --track: #96a2ff; --track-line: rgba(150,162,255,.45); }
@@ -148,116 +148,6 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 
 /* About owns the next gap. Do not add bottom padding here as well. */
 .panel__inner { padding-block: 104px 0; }
-
-/* The "Tools in practice" desk: four channel strips, each with a solo key
-   (home-solo.js). The keys stay hidden without JavaScript, leaving four links. */
-.tools-desk {
-  margin-top: 24px;
-  border: 1px solid var(--c-line-2);
-  border-radius: 10px;
-  background: var(--c-bg-0);
-}
-.tools-desk__top {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 4px 16px;
-  padding: 12px 18px 11px;
-  border-bottom: 1px solid var(--c-line);
-}
-.tools-desk__title {
-  color: var(--c-ink-3);
-  font: 500 11.5px/1.4 var(--f-mono);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-.tools-desk__hint { color: var(--c-ink-3); font: 400 13px/1.4 var(--f-body); }
-.tools-desk__strips {
-  display: grid;
-  grid-template-columns: repeat(4,minmax(0,1fr));
-  list-style: none;
-}
-.tool-strip {
-  display: grid;
-  align-content: center;
-  gap: 3px;
-  min-width: 0;
-  padding: 16px 18px 17px;
-  border-left: 1px solid var(--c-line);
-}
-.tool-strip:first-child { border-left: 0; }
-.tools-desk.has-solo .tool-strip {
-  grid-template-columns: 40px minmax(0,1fr);
-  column-gap: 14px;
-}
-.tools-desk.has-solo .tool-strip__name,
-.tools-desk.has-solo .tool-strip__proof { grid-column: 2; }
-.tool-strip__solo {
-  grid-column: 1;
-  grid-row: 1 / span 2;
-  align-self: center;
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 44px;
-  border: 1px solid var(--c-control);
-  border-radius: 6px;
-  background: linear-gradient(180deg,var(--c-bg-3),var(--c-bg-2));
-  color: var(--c-ink-2);
-  font: 600 14px/1 var(--f-mono);
-  cursor: pointer;
-  transition: background-color var(--dur) var(--ease),border-color var(--dur) var(--ease),color var(--dur) var(--ease),box-shadow var(--dur) var(--ease);
-}
-.tool-strip__solo[hidden] { display: none; }
-.tool-strip__solo:hover { border-color: var(--c-control-hi); color: var(--c-ink); }
-.tool-strip__solo:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
-.tool-strip__solo[aria-pressed="true"] {
-  border-color: var(--c-accent);
-  background: var(--c-accent);
-  color: var(--c-accent-ink);
-  box-shadow: 0 0 0 3px var(--c-accent-weak),0 0 22px rgba(170,198,222,.35);
-}
-.tool-strip__name {
-  color: var(--c-ink);
-  font: 500 19px/1.2 var(--f-display);
-  letter-spacing: -.02em;
-}
-.tool-strip__proof {
-  justify-self: start;
-  color: var(--c-ink-2);
-  font-size: 13.5px;
-  line-height: 1.45;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
-  transition: color var(--dur) var(--ease),text-decoration-color var(--dur) var(--ease);
-}
-.tool-strip__project { display: block; color: var(--c-ink-3); }
-.tool-strip__go { color: var(--c-ink-3); }
-.tool-strip__proof:hover,
-.tool-strip__proof:focus-visible { color: var(--c-ink); text-decoration-color: var(--c-accent); }
-.tool-strip__proof:hover .tool-strip__go,
-.tool-strip__proof:focus-visible .tool-strip__go { color: var(--c-accent); }
-/* The hint and the solo status share one grid cell, so a solo swaps the text
-   in place instead of adding a row that would push the projects down. */
-.tools-desk__note { display: grid; min-width: 0; }
-.tools-desk__note > * { grid-area: 1 / 1; }
-.tools-desk.is-soloed .tools-desk__hint { visibility: hidden; }
-.tools-desk__status {
-  color: var(--c-accent);
-  font: 400 12px/1.5 var(--f-mono);
-  letter-spacing: .02em;
-}
-
-/* A solo dims the projects made without that tool; nothing moves. The dim is
-   a filter because the one-shot entrance animation (.motion-enter in
-   portfolio.css, fill-mode both) holds opacity at 1. A focused project is
-   never dimmed, so its focus ring stays visible. */
-#work [data-tools] { transition: filter .35s var(--ease); }
-#work [data-tools].is-muted { filter: grayscale(1) opacity(.2); }
-#work [data-tools].is-muted:focus-visible { filter: none; }
 
 .wgrid {
   display: grid;
@@ -438,13 +328,8 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   text-transform: uppercase;
   pointer-events: none;
 }
-.wcard__screen-leds { display: inline-flex; gap: 6px; }
-.wcard__screen-leds i { width: 6px; height: 6px; border-radius: 50%; background: #30382b; }
-.wcard__screen-leds i:first-child { background: #c2cea3; box-shadow: 0 0 8px rgba(194,206,163,.7); }
 .wcard:hover .wcard__frame--terminal,
 .wcard:focus-visible .wcard__frame--terminal { border-color: #6d7a5d; }
-.wcard:hover .wcard__screen-leds i:nth-child(2),
-.wcard:focus-visible .wcard__screen-leds i:nth-child(2) { background: #c2cea3; }
 .sidar-title { display: flex; align-items: baseline; gap: 16px; }
 .sidar-title__name { letter-spacing: -.05em; }
 .sidar-title__null {
@@ -453,60 +338,22 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   letter-spacing: .95em;
 }
 
-/* XR Labs: white tape marks from the training-hall floor; the meta is a strip of tape. */
+/* XR Labs: a plain dark mount around the still. */
 .wcard__frame--tape {
   padding: 12px;
   border-radius: 2px;
   background: #131513;
 }
-.wcard__frame--tape::before {
-  --t: linear-gradient(var(--track-tape),var(--track-tape));
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background:
-    var(--t) top left / 40px 4px no-repeat,var(--t) top left / 4px 40px no-repeat,
-    var(--t) top right / 40px 4px no-repeat,var(--t) top right / 4px 40px no-repeat,
-    var(--t) bottom left / 40px 4px no-repeat,var(--t) bottom left / 4px 40px no-repeat,
-    var(--t) bottom right / 40px 4px no-repeat,var(--t) bottom right / 4px 40px no-repeat;
-  opacity: .85;
-  transition: opacity var(--dur) var(--ease);
-}
 .wcard__frame--tape .wcard__media { border-color: transparent; border-radius: 1px; }
-.track-xrlabs .wcard__meta {
-  justify-self: start;
-  padding: 6px 10px 5px;
-  border-radius: 1px;
-  background: var(--track-tape);
-  color: #0f100f;
-  box-shadow: 0 1px 0 rgba(0,0,0,.45);
-}
-.wcard:hover .wcard__frame--tape::before,
-.wcard:focus-visible .wcard__frame--tape::before { opacity: 1; }
-.wcard.track-xrlabs:hover .wcard__meta,
-.wcard.track-xrlabs:focus-visible .wcard__meta { background: #eceeea; }
 .wcard:hover .wcard__frame--tape .wcard__media,
 .wcard:focus-visible .wcard__frame--tape .wcard__media { border-color: var(--track-line); }
 
-/* Transientica: the three lanes under the picture, lane colours in the line. */
+/* Transientica: lane colours in the line. */
 .wcard__frame--lanes {
   padding: 12px;
   border: 1px solid rgba(63,224,204,.16);
   border-radius: 8px;
   background: linear-gradient(180deg,#11131a,#0b0c10);
-}
-.wcard__frame--lanes::after {
-  content: "";
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 4px;
-  height: 4px;
-  border-radius: 2px;
-  background: linear-gradient(90deg,#ff5566 0 32.6%,transparent 32.6% 33.7%,#7f9aff 33.7% 66.3%,transparent 66.3% 67.4%,#52e08f 67.4%);
-  opacity: .9;
 }
 .wcard__frame--lanes .wcard__media { border-color: rgba(63,224,204,.2); }
 .lane-kick { color: #ff5566; }
@@ -686,33 +533,6 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 }
 .prow:hover h3,
 .prow:focus-visible h3 { color: var(--track,var(--ice)); }
-/* AudioQ's logo stroke and Mówik's push-to-talk key. */
-.prow__mark {
-  display: inline-block;
-  width: 3px;
-  height: .9em;
-  margin-right: 9px;
-  border-radius: 1px;
-  background: var(--track);
-}
-.prow__key {
-  display: inline-grid;
-  place-items: center;
-  min-width: 36px;
-  height: 28px;
-  margin-left: 12px;
-  padding: 0 7px;
-  border: 1px solid rgba(56,189,248,.5);
-  border-bottom-width: 3px;
-  border-radius: 6px;
-  background: linear-gradient(180deg,#171c28,#0b0d13);
-  color: #eef2f8;
-  font: 600 12px/1 var(--f-mono);
-  letter-spacing: .02em;
-  transition: border-color var(--dur) var(--ease),color var(--dur) var(--ease);
-}
-.prow:hover .prow__key,
-.prow:focus-visible .prow__key { border-color: var(--track); color: var(--track); }
 
 @media (min-width: 900px) {
   .tool-feature { grid-template-columns: minmax(0,1fr) minmax(0,1.2fr); gap: 64px; }
@@ -735,8 +555,7 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   .prow h3 { font-size: 23px; }
 }
 
-/* The archive remains a native disclosure, with no extra filtering interface.
-   Its colour ticks name eight rooms before it opens. */
+/* The archive remains a native disclosure, with no extra filtering interface. */
 .earlier-work {
   margin-top: 36px;
   border-block: 1px solid var(--rule);
@@ -762,9 +581,7 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   font-family: var(--mono);
 }
 .earlier-work[open] summary::after { content: '-'; }
-.earlier-work summary span { display: inline-flex; align-items: center; gap: 14px; font-weight: 400; }
-.earlier-work__ticks { display: inline-flex; gap: 4px; }
-.earlier-work__ticks i { width: 4px; height: 15px; border-radius: 1px; background: var(--track); }
+.earlier-work summary span { font-weight: 400; }
 .earlier-work nav {
   display: grid;
   grid-template-columns: repeat(2,minmax(0,1fr));
@@ -772,24 +589,13 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   padding: 0 var(--s-1) 22px;
 }
 .earlier-work nav a {
-  position: relative;
   display: grid;
   gap: 3px;
   align-content: start;
   min-height: 68px;
-  padding: 11px 0 11px 18px;
+  padding: 11px 0;
   border-top: 1px solid var(--rule);
   color: var(--muted);
-}
-.earlier-work nav a::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 16px;
-  width: 4px;
-  height: 15px;
-  border-radius: 1px;
-  background: var(--track);
 }
 .archive-project-link__name {
   color: var(--ink);
@@ -979,11 +785,7 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 
 /* Narrow layouts are defined once, after the section defaults. */
 @media (max-width: 999.98px) {
-  /* The desk becomes a 2 x 2 block of channel strips, phones included. */
-  .tools-desk__strips { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .tool-strip:nth-child(3) { border-left: 0; }
-  .tool-strip:nth-child(n + 3) { border-top: 1px solid var(--c-line); }
-  /* XR Labs tape: two clean lines instead of a line that ends on a middot. */
+  /* XR Labs: two clean lines instead of a line that ends on a middot. */
   .track-xrlabs .wcard__meta-part { display: block; }
   .track-xrlabs .wcard__meta-sep { display: none; }
   /* About and Contact stack below 1000px, so About drops the bottom space
@@ -1003,19 +805,6 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 }
 @media (max-width: 639.98px) {
   .panel__inner { padding-block: 64px 0; }
-  .tools-desk { margin-top: 18px; }
-  .tools-desk__top { padding: 10px 12px 9px; }
-  .tools-desk__hint { font-size: 12.5px; }
-  /* Key and tool name share the top row of each strip, the proof runs under both. */
-  .tool-strip { align-content: start; padding: 12px 12px 14px; }
-  .tools-desk.has-solo .tool-strip { column-gap: 10px; row-gap: 9px; }
-  .tools-desk.has-solo .tool-strip__solo { grid-row: 1; }
-  .tools-desk.has-solo .tool-strip__name { grid-row: 1; align-self: center; }
-  .tools-desk.has-solo .tool-strip__proof { grid-column: 1 / -1; grid-row: 2; }
-  .tool-strip__name { font-size: 17px; line-height: 1.15; }
-  .tool-strip__proof { font-size: 13px; line-height: 1.4; }
-  /* The key's hidden label is clipped; keep its text box inside the column. */
-  .tool-strip__solo .sr-only { font-size: 1px; }
   .wgrid { margin-top: 40px; gap: 56px; }
   .wcard { gap: 18px; }
   .wcard__title { font-size: 30px; line-height: 1.08; }
@@ -1031,14 +820,6 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   .wcard__frame--lanes,
   .wcard__frame--rack { padding: 9px; }
   .wcard__screen-bar { left: 20px; right: 20px; bottom: calc(9px + (100% - 18px) * .064 - 4.5px); font-size: 9px; letter-spacing: .1em; }
-  .wcard__frame--lanes::after { left: 9px; right: 9px; bottom: 3px; height: 3px; }
-  .wcard__frame--tape::before {
-    background:
-      var(--t) top left / 30px 3px no-repeat,var(--t) top left / 3px 30px no-repeat,
-      var(--t) top right / 30px 3px no-repeat,var(--t) top right / 3px 30px no-repeat,
-      var(--t) bottom left / 30px 3px no-repeat,var(--t) bottom left / 3px 30px no-repeat,
-      var(--t) bottom right / 30px 3px no-repeat,var(--t) bottom right / 3px 30px no-repeat;
-  }
   .sidar-title { gap: 12px; }
   .tile-title__tiles { gap: 8px 10px; }
   .tile-title__word i { width: 24px; height: 27px; font-size: 14px; }
