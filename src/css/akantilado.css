@@ -1,141 +1,47 @@
-/* Akantilado only: the plum fur shadows and the magenta fur of the two cats.
-   The gold of the fur and of the filigree ball stays in the pictures; the
-   interface carries no gold, amber or orange. Sampled from the stills:
-   magenta fur #b95397 (jungleviewfromtopshot.webp), fur shadow #4a1d2f to
-   #561b35 (pinkcatalikecreature.webp, akantilado-film-1600.webp).
-   This sheet loads on akantilado.html only, so the tokens are overridden on
-   :root; every other rule is scoped to the page class .ak. */
+/* Akantilado: page-owned styles, loaded only on akantilado.html after feature.css.
+   The palette is sampled from the film's frames: the near-black of the jungle's
+   shadows for the page, the dark moss of the canopy for the first band, the plum of
+   the fur shadows for the cats, and the magenta of the pink cat's fur, lifted, for
+   heads, rules and the one filled button. The gold of the fur and of the filigree
+   ball stays in the pictures. */
 :root {
-  --c-bg-0: #0c090b;
-  --c-bg-1: #120d11;
-  --c-bg-2: #1a1318;
-  --c-bg-3: #22191f;
-  --c-glass: rgba(12, 9, 11, .9);
-  --c-ink: #f4eef2;
-  --c-ink-2: #c9bdc5;
-  --c-ink-3: #ad9fa9;
-  --c-accent: #db86c3;
-  --c-accent-hi: #eba6d6;
-  --c-accent-ink: #120d11;
-  --c-accent-line: rgba(219, 134, 195, .46);
-  --c-accent-weak: rgba(219, 134, 195, .1);
-  --c-line: rgba(244, 226, 238, .08);
-  --c-line-2: rgba(244, 226, 238, .16);
-  --c-line-3: rgba(244, 226, 238, .3);
-  --c-control: rgba(244, 226, 238, .42);
-  --c-control-hi: rgba(244, 226, 238, .62);
-  --ice: #db86c3;
+  --ft-bg: #110e0b;
+  --ft-band: #1b1c10;
+  --ft-band-2: #26131b;
+  --ft-ink: #f5efe9;
+  --ft-ink-2: #dad1c9;
+  --ft-ink-3: #b4aaa1;
+  --ft-head: #f6dfee;
+  --ft-accent: #e29acf;
+  --ft-accent-ink: #1a0d16;
 }
 
-/* The site's ice glow becomes the magenta of the fur, from the top right. */
-body::before { background: radial-gradient(70% 55% at 90% -8%, rgba(185, 83, 151, .09), transparent 62%); }
+/* The wide shot is the darkest frame; lifted so both cats read at phone width. */
+.ak-wide img { filter: brightness(1.22) saturate(1.05); }
 
-/* Opt out of the shared heading-left / paragraph-right grid (cine.css, .cine > section). */
-.cine.ak > section:not(.cine-split) { display: block; }
-.ak a:hover { text-decoration-color: var(--c-accent); }
-
-/* ---------- Opening: the title card over the finished film ---------- */
-.ak .ak-open {
+/* ---------- The two cats, side by side, off both edges ---------- */
+.ak-pair {
+  grid-column: full;
   display: grid;
-  grid-template-columns: minmax(0, 1.62fr) minmax(300px, 1fr);
-  grid-template-areas: "title title" "film text";
-  gap: clamp(30px, 3.2vw, 46px) clamp(40px, 4.8vw, 72px);
+  grid-template-columns: subgrid;
   align-items: start;
-  margin-bottom: clamp(104px, 11vw, 160px);
 }
-.ak .ak-open h1 {
-  grid-area: title;
-  margin: 0 0 0 -.045em;
-  color: var(--c-ink);
-  font: 500 clamp(46px, 13vw, 140px)/.82 var(--f-display);
-  letter-spacing: -.064em;
-}
-.ak .ak-film { grid-area: film; min-width: 0; }
-.ak .ak-film .yt-facade { background: #000; }
-.ak .ak-film .yt-facade__launch::after { background: linear-gradient(180deg, transparent 58%, rgba(12, 9, 11, .5)); }
-.ak .ak-play {
-  position: absolute;
-  z-index: 1;
-  left: clamp(12px, 1.6vw, 22px);
-  bottom: clamp(12px, 1.6vw, 22px);
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 48px;
-  padding: 0 18px 0 16px;
-  border: 1px solid var(--c-accent-line);
-  border-radius: 2px;
-  background: rgba(18, 13, 17, .8);
-  color: var(--c-ink);
-  font: 500 15px/1.2 var(--f-body);
-  transition: background-color .2s var(--ease), border-color .2s var(--ease);
-}
-.ak .ak-play svg { width: 12px; height: 14px; fill: var(--c-accent); }
-.ak .yt-facade__launch:hover .ak-play,
-.ak .yt-facade__launch:focus-visible .ak-play { border-color: var(--c-accent); background: rgba(58, 24, 45, .92); }
-.ak .ak-play__time {
-  margin-left: 2px;
-  padding-left: 12px;
-  border-left: 1px solid var(--c-line-3);
-  color: var(--c-ink-2);
-  font: 500 12.5px/1 var(--f-mono);
-  letter-spacing: .06em;
-}
+.ak-pair > .ft-media:first-child { grid-column: full-start / c 6; }
+.ak-pair > .ft-media:last-child { grid-column: c 6 / full-end; margin-top: clamp(64px, 9vw, 150px); }
+/* A caption lines up with the text edge while its picture runs off the screen. */
+.ak-pair > .ft-media { display: grid; grid-template-columns: subgrid; align-content: start; }
+.ak-pair > .ft-media > :not(.ft-cap) { grid-column: 1 / -1; }
+.ak-pair > .ft-media:first-child > .ft-cap { grid-column: content-start / -1; }
+.ak-pair > .ft-media:last-child > .ft-cap { grid-column: 1 / content-end; }
 
-/* Lead on the film's top edge, the slate line on its bottom edge. */
-.ak .ak-open__text {
-  grid-area: text;
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 28px;
-  min-width: 0;
-  padding-top: 2px;
+@media (max-width: 699px) {
+  .ak-pair { row-gap: 36px; }
+  .ak-pair > .ft-media:first-child,
+  .ak-pair > .ft-media:last-child { grid-column: full; margin-top: 0; }
+  .ak-pair > .ft-media:first-child > .ft-cap,
+  .ak-pair > .ft-media:last-child > .ft-cap { grid-column: content; }
 }
-.ak .ak-lead {
-  max-width: 38ch;
-  margin: 0;
-  color: var(--c-ink);
-  font-size: clamp(18px, 1.45vw, 21px);
-  line-height: 1.55;
-}
-.ak .ak-meta {
-  max-width: none;
-  margin: 0;
-  padding-top: 16px;
-  border-top: 1px solid var(--c-line-2);
-  color: var(--c-ink-3);
-  font: 400 12px/1.9 var(--f-mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-.ak .ak-meta > span { white-space: nowrap; }
-
-/* ---------- The jungle: three stills from the film ---------- */
-.ak .ak-shots { margin-bottom: clamp(80px, 8vw, 120px); }
-.ak .ak-head { max-width: 62ch; margin-bottom: clamp(34px, 3.6vw, 48px); }
-.ak .ak-head h2 { margin: 0 0 16px; }
-.ak .ak-head p { max-width: none; margin: 0; color: var(--c-ink-2); font-size: 17px; line-height: 1.65; }
-.ak .cine-row { margin-bottom: 0; }
-/* The shared row lifts dark game frames; these stills are lit, so only the
-   wide frame, the darkest of the three, is lifted so both cats read at phone width. */
-.ak .cine-row img { filter: none; }
-.ak .cine-row figure:first-child img { filter: brightness(1.3) saturate(1.06); }
-
-/* ---------- Narrow screens ---------- */
-@media (max-width: 900px) {
-  .ak .ak-open { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "film" "text"; }
-  .ak .ak-lead { max-width: 46ch; }
-}
-@media (max-width: 600px) {
-  .ak .ak-open { row-gap: 26px; margin-bottom: 88px; }
-  /* The whole frame is the button; the label only has to read. */
-  .ak .ak-play { left: 10px; bottom: 10px; min-height: 36px; padding: 0 12px 0 11px; gap: 9px; font-size: 13.5px; }
-  .ak .ak-play svg { width: 10px; height: 12px; }
-  .ak .ak-play__time { padding-left: 9px; font-size: 11.5px; }
-  .ak .ak-head p { font-size: 16px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ak .ak-play { transition: none !important; }
+/* "Watch the film with sound" stays on one line on the narrowest phones. */
+@media (max-width: 359px) {
+  .ak .ft-watch { gap: 10px; padding-inline: 14px 12px; font-size: 16px; }
 }
