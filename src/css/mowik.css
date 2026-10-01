@@ -37,6 +37,10 @@
 /* The text keeps its column on the left; the screenshot, uncropped, runs to the screen's right edge. */
 .mw-hero { --mw-in: max(var(--page-gutter), calc((100% - var(--page-max)) / 2)); }
 .mw .ft-hero__stage { background: var(--ft-bg); }
+/* A shorter stage than a film hero: the deck shows on the first screen. */
+@media (min-width: 700px) {
+  .mw .ft-hero__stage { height: clamp(420px, calc(70svh - var(--site-header-height)), 40vw); }
+}
 .mw .ft-hero__stage::after { content: none; }
 .mw .ft-hero__stage > img {
   width: 100%;
@@ -62,8 +66,35 @@
     width: min(calc(100cqw - var(--mw-in) - (100cqw - 2 * var(--mw-in)) * .36), calc((100cqh - 2 * clamp(32px, 4vw, 56px)) * 1.4359));
   }
   .mw .ft-hero__text { right: auto; width: calc(var(--mw-in) + (100% - 2 * var(--mw-in)) * .33); }
-  .mw .ft-hero h1 { font-size: clamp(64px, 9.4vw, 150px); }
 }
+
+/* ---------- Text beside its proof ---------- */
+/* .mw-pair splits a section in two: the reading column on the left and the
+   screenshot, cue table or commands on the right. Lines count on the section grid. */
+.mw-pair {
+  grid-column: content;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: start;
+  row-gap: 28px;
+}
+.mw-pair > * { min-width: 0; margin: 0; }
+.mw-pair > .ft-body { grid-column: 1 / 6; }
+.mw-pair > :last-child { grid-column: 6 / -1; }
+.mw-pair--even > .ft-body:first-child { grid-column: 1 / 7; }
+.mw-pair--even > :last-child { grid-column: 7 / -1; }
+/* the screenshot runs off the right edge */
+.mw-pair--shot { grid-column: full; }
+.mw-pair--shot > .ft-body { grid-column: 2 / 7; }
+.mw-pair--shot > :last-child { grid-column: 8 / -1; }
+/* Heads sit in a half-width column, so they run smaller than the shared poster scale. */
+.mw .ft-head { font-size: clamp(28px, 3vw, 42px); line-height: 1.06; }
+.mw-pair .ft-body > .ft-head { margin: 0 0 22px; }
+.mw-pair > .ft-head { grid-column: 1 / 6; }
+/* A band ends one section space below its last line. */
+.mw .ft-band { padding-bottom: var(--ft-space); }
+.mw-pair--shot .ft-cap { padding-right: var(--page-gutter); }
+.mw-pair .ft-body p + .mw-code { margin-top: 22px; }
 
 /* ---------- Cue table and code: the real lines, each cue playable ---------- */
 .mw-code {
@@ -81,27 +112,27 @@
 }
 .mw-code pre {
   margin: 0;
-  padding: 18px 20px 20px;
+  padding: 14px 20px 16px;
   color: var(--ft-ink);
-  font: 400 16px/1.85 var(--f-mono);
+  font: 400 14px/1.7 var(--f-mono);
   overflow-x: auto;
-  white-space: pre;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 .mw-code pre code { color: inherit; font: inherit; }
 .mw-code .c { color: var(--ft-ink-3); }
 
-.mw-notes { grid-column: content-start / c 9; }
-.mw-notes__src { padding: 14px 0 16px; }
+.mw-notes__src { padding: 10px 0 12px; }
 .mw-notes .ln {
   display: block;
   box-sizing: border-box;
   width: 100%;
   margin: 0;
-  padding: 4px 20px 4px 46px;
+  padding: 3px 20px 3px 46px;
   border: 0;
   background: none;
   color: var(--ft-ink);
-  font: 400 17px/1.7 var(--f-mono);
+  font: 400 15px/1.6 var(--f-mono);
   text-align: left;
   white-space: pre-wrap;
   overflow-wrap: break-word;
@@ -111,7 +142,7 @@
 .mw-notes .c { color: var(--ft-ink-3); }
 .mw-notes .ln--cue {
   position: relative;
-  min-height: 44px;
+  min-height: 40px;
   cursor: pointer;
   transition: background-color var(--dur) var(--ease);
 }
@@ -148,16 +179,27 @@
   gap: 0 var(--ft-gap);
 }
 .mw-actions > div { padding-top: 18px; border-top: 1px solid var(--ft-rule); }
-.mw .mw-actions dt { margin: 0 0 10px; color: var(--ft-head); font: 600 24px/1.2 var(--f-display); letter-spacing: -.015em; }
-.mw .mw-actions dd { margin: 0; color: var(--ft-ink-2); font-size: 17px; line-height: 1.55; text-wrap: pretty; }
-
-/* ---------- Installer: the text beside the two commands ---------- */
-.mw-code--ps { grid-column: content-start / c 9; }
+.mw .mw-actions dt { margin: 0 0 8px; color: var(--ft-head); font: 600 20px/1.2 var(--f-display); letter-spacing: -.015em; }
+.mw .mw-actions dd { margin: 0; color: var(--ft-ink-2); font-size: 16px; line-height: 1.55; text-wrap: pretty; }
 
 @media (max-width: 1099px) {
-  .mw-notes,
-  .mw-code--ps { grid-column: content; }
-  .mw-notes .ln { font-size: 15px; }
+  /* The cue table needs the full width; the other pairs keep two columns. */
+  .mw-pair--code > .ft-body,
+  .mw-pair--code > :last-child { grid-column: 1 / -1; }
+  .mw-pair--code > .ft-body { max-width: 40em; }
+  .mw-pair--shot > .ft-body { grid-column: 2 / 8; }
+  .mw-pair--shot > :last-child { grid-column: 8 / -1; }
+}
+
+@media (max-width: 899px) {
+  .mw-pair > .ft-body,
+  .mw-pair > .ft-head,
+  .mw-pair > :last-child,
+  .mw-pair--even > .ft-body:first-child,
+  .mw-pair--even > :last-child { grid-column: 1 / -1; }
+  .mw-pair > .ft-body { max-width: 40em; }
+  .mw-pair--shot > .ft-body { grid-column: 2 / -2; }
+  .mw-pair--shot > :last-child { grid-column: 2 / -1; }
   .mw-actions { grid-template-columns: minmax(0, 1fr); }
   .mw-actions > div { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 0 var(--ft-gap); padding-block: 16px 20px; }
 }
@@ -167,15 +209,19 @@
   .mw .ft-hero { display: flex; flex-direction: column; }
   .mw .ft-hero__text { position: static; padding-block: clamp(36px, 10vw, 56px) 36px; }
   .mw .ft-hero__stage { height: auto; padding-left: var(--page-gutter); background: none; }
-  .mw .ft-hero h1 { font-size: clamp(64px, 22vw, 96px); }
-  .mw-actions > div { display: block; padding: 14px 0 18px; }
-  .mw .mw-actions dt { font-size: 21px; margin-bottom: 8px; }
-  .mw .mw-actions dd { font-size: 16.5px; }
+  .mw .ft-hero h1 { font-size: clamp(48px, 15vw, 64px); }
+  .mw-actions > div { display: block; padding: 12px 0 14px; }
+  .mw .mw-actions dt { font-size: 19px; margin-bottom: 6px; }
+  .mw .mw-actions dd { font-size: 16px; }
+  .mw .ft-head { font-size: clamp(26px, 7.4vw, 32px); }
+  .mw-pair--shot > :last-child { grid-column: 1 / -1; }
+  .mw-pair--shot .ft-cap { padding-inline: var(--page-gutter); }
+  .mw-pair { row-gap: 20px; }
   .mw-notes .ln { padding: 4px 12px 4px calc(34px + 3ch); text-indent: -3ch; font-size: 12.5px; }
   .mw-notes .ln--in { padding-left: calc(34px + 5ch); }
   .mw-notes .ln--cue::before { left: 14px; }
-  .mw-code pre { padding: 14px 16px 16px; font-size: 12.5px; }
-  .mw .mw-notes__gloss { padding: 12px 14px 14px; font-size: 14.5px; }
+  .mw-code pre { padding: 12px 14px 14px; font-size: 12.5px; }
+  .mw .mw-notes__gloss { padding: 12px 14px 14px; font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .mw-notes .ln--cue { transition: none; }
