@@ -71,6 +71,7 @@
   --c-accent-weak: color-mix(in srgb, var(--ft-accent) 14%, transparent);
 }
 body:has(.ft) { background: var(--ft-bg); }
+body:has(.ft) .site-header.is-scrolled { background: color-mix(in srgb, var(--ft-bg) 96%, transparent); }
 body:has(.ft)::before { background: none; }
 
 .ft {
@@ -314,8 +315,8 @@ body:has(.ft)::before { background: none; }
   inset: 0;
   z-index: 1;
   background:
-    linear-gradient(0deg, var(--ft-fade) 0%, color-mix(in srgb, var(--ft-fade) 80%, transparent) 20%, color-mix(in srgb, var(--ft-fade) 18%, transparent) 50%, transparent 68%),
-    linear-gradient(90deg, color-mix(in srgb, var(--ft-fade) 50%, transparent) 0%, transparent 55%);
+    linear-gradient(90deg, color-mix(in srgb, var(--ft-fade) 78%, transparent) 0%, color-mix(in srgb, var(--ft-fade) 40%, transparent) 50%, transparent 75%),
+    linear-gradient(0deg, var(--ft-fade) 0%, transparent 25%);
   pointer-events: none;
 }
 .ft-hero__stage > video {
@@ -328,15 +329,29 @@ body:has(.ft)::before { background: none; }
 .ft-hero__stage .ft-toggle { right: max(var(--page-gutter), calc((100% - var(--page-max)) / 2)); bottom: 24px; }
 .ft-hero__text {
   position: absolute;
-  right: 0;
-  bottom: clamp(36px, 5.5vh, 72px);
-  left: 0;
+  inset: 0;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding-inline: max(var(--page-gutter), calc((100% - var(--page-max)) / 2));
   pointer-events: none;
 }
 .ft-hero__text > * { pointer-events: auto; }
-.ft-hero h1 { margin: 0 0 clamp(22px, 2.6vw, 34px); }
+.ft-hero h1 {
+  margin: 0 0 clamp(22px, 2.6vw, 34px);
+  color: var(--ft-head);
+  font: 600 clamp(56px, 9.4vw, 150px)/.9 var(--f-display);
+  letter-spacing: -.035em;
+  text-shadow: 0 6px 40px rgba(0, 0, 0, .35);
+}
+/* A game's own logo takes the title's place when the project has one. */
+.ft-hero__logo {
+  display: block;
+  width: clamp(240px, 40vw, 600px);
+  height: auto;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, .45));
+}
 .ft-hero__who {
   max-width: 34ch;
   margin: 0 0 clamp(22px, 2.4vw, 32px);
@@ -383,6 +398,8 @@ body:has(.ft)::before { background: none; }
 }
 .ft-hero.is-film .ft-hero__stage::after { content: none; }
 .ft-hero.is-film .ft-hero__stage > video { object-fit: contain; background: #000; }
+.ft-hero.is-film .ft-hero__stage > iframe { display: block; width: 100%; height: 100%; border: 0; }
+.ft-hero__stage > img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .ft-hero.is-film .ft-hero__text { position: static; padding-top: clamp(28px, 3vw, 44px); }
 .ft-hero.is-film .ft-watch { display: none; }
 
@@ -443,10 +460,10 @@ body:has(.ft)::before { background: none; }
   .ft-row--right > .ft-media > .ft-cap { grid-column: content; }
   .ft-hero__stage { height: clamp(540px, calc(100svh - var(--site-header-height)), 760px); }
   .ft-hero__stage::after {
-    background: linear-gradient(0deg, var(--ft-fade) 0%, color-mix(in srgb, var(--ft-fade) 88%, transparent) 30%, color-mix(in srgb, var(--ft-fade) 30%, transparent) 56%, transparent 72%);
+    background: linear-gradient(0deg, var(--ft-fade) 0%, color-mix(in srgb, var(--ft-fade) 62%, transparent) 30%, color-mix(in srgb, var(--ft-fade) 48%, transparent) 62%, color-mix(in srgb, var(--ft-fade) 30%, transparent) 100%);
   }
   .ft-hero__stage .ft-toggle { top: 14px; bottom: auto; }
-  .ft-hero__text { bottom: 28px; }
+  .ft-hero__text { top: 56px; bottom: 28px; }
   .ft-hero.is-film .ft-hero__stage { max-height: none; }
   .ft > .cine-close { flex-direction: column; align-items: flex-start; }
 }
