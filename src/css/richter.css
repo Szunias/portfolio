@@ -23,20 +23,32 @@
 }
 .ri .ft-hero__stage > video { object-position: 62% 50%; }
 .ri .ft-media video { --shot-ar: 1280 / 544; }
-.ri .ri-logo { width: clamp(220px, 34vw, 520px); }
+.ri .ri-logo { width: clamp(200px, 26vw, 380px); }
 
-/* ---------- Cue sheet: six cues, each with its frame ---------- */
-.ri .ri-cues { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: clamp(36px, 3.6vw, 56px); }
+/* ---------- Cue sheet: six cues, each a small frame beside its line ----------
+   The frame sits in the item, outside the link; the link's ::after covers the
+   whole item, so the frame and the line play the cue too. */
+.ri .ri-cues { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ri .ri-cues li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  gap: 0 20px;
+  padding-block: 16px 18px;
+}
 .ri .ri-cues img {
+  grid-row: 1 / span 2;
   display: block;
-  order: -1;
   width: 100%;
   height: auto;
-  margin-bottom: 14px;
   background: var(--c-bg-0);
   transition: opacity var(--dur) var(--ease);
 }
-.ri .ri-cues .ft-cue:hover img { opacity: .9; }
+.ri .ri-cues .ft-cue { min-height: 0; }
+.ri .ri-cues .ft-cue::after { content: ""; position: absolute; inset: 0; }
+.ri .ri-cues p { margin-top: 4px; }
+.ri .ri-cues li:hover img { opacity: .9; }
 
 /* ---------- The main theme ---------- */
 .ri-player {
@@ -76,12 +88,20 @@
 .ri-player__bar { grid-area: bar; position: relative; height: 2px; background: color-mix(in srgb, var(--ft-ink) 18%, transparent); }
 .ri-player__bar span { position: absolute; top: 0; bottom: 0; left: 0; width: 0; background: var(--ft-accent); transition: width .25s linear; }
 
-@media (min-width: 700px) and (max-width: 1099px) {
-  .ri .ri-cues { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 40px; }
-  .ri .ri-cues li { display: block; padding-bottom: 0; }
+/* Text sits level with the middle of its picture. */
+.ri .ri-theme,
+.ri .ft-row--left { align-items: center; }
+.ri .ri-theme .ft-head { margin-bottom: 20px; }
+.ri .ri-theme .ri-player { margin-top: 24px; }
+
+@media (max-width: 1099px) {
+  .ri .ri-cues li { grid-template-columns: 180px minmax(0, 1fr); }
+  /* The heading leads the theme on a narrower screen; the craft follows the player. */
+  .ri .ri-theme > .ft-media { grid-row: auto; }
 }
-@media (max-width: 699px) {
-  .ri .ri-cues { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+@media (max-width: 899px) {
+  .ri .ri-cues { grid-template-columns: minmax(0, 1fr); }
+  .ri .ri-cues li { grid-template-columns: 240px minmax(0, 1fr); }
 }
 @media (max-width: 699px) {
   /* A shorter phone hero crops less of the wide 720p frame, so it stays sharp. */
@@ -89,9 +109,13 @@
   .ri .ft-hero__stage > video { object-position: 64% 50%; }
   .ri .ri-player__btn { width: 52px; height: 52px; }
   .ri-player__name { font-size: 19px; }
+  .ri .ri-cues li { grid-template-columns: minmax(0, 35%) minmax(0, 1fr); gap: 0 14px; padding-block: 14px; }
 }
 @media (max-width: 360px) {
   .ri-player { grid-template-areas: "btn name name" "btn bar time"; }
+  .ri .ri-cues li { gap: 0 12px; }
+  /* The film's label stays on one line in the full-width button. */
+  .ri .ft-watch { gap: 8px; padding-inline: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ri .ri-cues img,
