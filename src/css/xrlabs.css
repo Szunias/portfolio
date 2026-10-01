@@ -14,10 +14,21 @@
   --ft-accent-ink: #061210;
 }
 
+/* The opening band ends closer to the next section than the shared band does. */
+.xr .ft-band { padding-bottom: clamp(56px, 6vw, 88px); }
+
+/* The hall-and-simulation still takes half the width; the text beside it gets a wider column. */
+.xr-intro { align-items: center; }
+.xr-intro > .ft-media { grid-column: c 6 / full-end; }
+.xr-intro > :not(.ft-media) { grid-column: content-start / c 5; }
+/* The deck and the facts open the text column beside the still. */
+.xr-intro > .ft-body p.ft-deck { margin-bottom: 14px; font-size: clamp(20px, 1.8vw, 25px); }
+.xr-intro > .ft-body p.ft-facts { margin-bottom: 1.2em; font-size: 15px; }
+
 /* The note on the footage sits under the paragraph it belongs to. */
 .xr .xr-note {
-  margin-top: 1.4em;
-  padding-top: 16px;
+  margin-top: 1.2em;
+  padding-top: 14px;
   border-top: 1px solid var(--ft-rule);
   color: var(--ft-ink-3);
   font-size: 15px;
@@ -25,19 +36,11 @@
 }
 .ft-row > .ft-body p.xr-note { font-size: 15px; }
 
-/* ---------- The four positions ---------- */
-.xr h3 {
-  margin: 0 0 12px;
-  color: var(--ft-head);
-  font: 600 clamp(26px, 2.5vw, 36px)/1.1 var(--f-display);
-  letter-spacing: -.02em;
-}
-
-/* Two positions side by side: blocked by the wall, and through the doorway. */
-.xr-pair {
+/* ---------- The four positions, two by two ---------- */
+.xr-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(32px, 4vw, 56px) var(--ft-gap);
+  gap: clamp(28px, 3vw, 44px) var(--ft-gap);
   align-items: start;
 }
 .xr-pos { margin: 0; }
@@ -49,11 +52,23 @@
   object-fit: cover;
   background: var(--c-bg-0);
 }
-.xr-pos figcaption { padding-top: 22px; }
-.xr-pos p { max-width: 30em; margin: 0; font-size: 19px; text-wrap: pretty; }
+.xr-pos figcaption { padding-top: 16px; }
+.xr h3 {
+  margin: 0 0 6px;
+  color: var(--ft-head);
+  font: 600 clamp(19px, 1.6vw, 22px)/1.2 var(--f-display);
+  letter-spacing: -.015em;
+}
+.xr-pos p { max-width: 34em; margin: 0; color: var(--ft-ink-2); text-wrap: pretty; }
+
+@media (max-width: 1099px) {
+  .xr-intro > .ft-media { grid-column: c 1 / full-end; grid-row: auto; }
+  .xr-intro > :not(.ft-media) { grid-column: content-start / c 10; grid-row: auto; order: -1; }
+}
 
 @media (max-width: 699px) {
-  .xr-pair { grid-column: full; grid-template-columns: minmax(0, 1fr); }
-  .xr-pos figcaption { padding-inline: var(--page-gutter); }
-  .xr-pos p { font-size: 18.5px; }
+  .xr-intro > .ft-media { grid-column: full; }
+  .xr-intro > :not(.ft-media) { grid-column: content; }
+  .xr-intro > .ft-body p.ft-deck { font-size: clamp(19px, 5.2vw, 22px); }
+  .xr-grid { grid-template-columns: minmax(0, 1fr); }
 }
