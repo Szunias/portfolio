@@ -24,6 +24,26 @@
   box-shadow: inset 0 -3px 0 rgba(40, 30, 16, .2), 0 10px 26px -12px #000;
 }
 
+/* The logo is the title; at this size the role line and Watch stay well inside the first screen. */
+.nt .ft-hero__logo { width: clamp(180px, 25vw, 360px); }
+
+/* ---------- Two columns: a picture with its own text under it, side by side ---------- */
+.nt-col--a { grid-column: content-start / c 6; }
+.nt-col--b { grid-column: c 6 / content-end; }
+.nt-col > .ft-body { margin-top: 20px; }
+
+/* ---------- The voices: the two screens a line belongs to, the text beside them ---------- */
+.nt-shots {
+  grid-column: content-start / c 7;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ft-gap);
+  align-self: center;
+}
+.nt-shots img { display: block; width: 100%; max-width: none; height: auto; aspect-ratio: 16 / 9; object-fit: cover; background: var(--c-bg-0); }
+.ft-sec > .nt-voices { grid-column: c 7 / content-end; align-self: center; }
+.ft-sec > .nt-credits { grid-column: content-start / c 5; margin: 0; }
+
 /* ---------- Letter tiles from the game's name plates; letters and points come from data-l / data-v ---------- */
 .nt-tiles {
   --t: clamp(28px, calc((100vw - 2 * var(--page-gutter)) / 18.6), 72px);
@@ -82,9 +102,24 @@
 
 @media (max-width: 1099px) {
   .nt-cast { justify-content: flex-start; gap: 24px 40px; }
+  .ft-sec > .nt-credits { grid-column: content-start / c 7; }
+}
+/* Below this the two columns would be too narrow to read: they stack, picture then text. */
+@media (max-width: 899px) {
+  .nt-col--a,
+  .nt-col--b,
+  .nt-shots,
+  .ft-sec > .nt-voices,
+  .ft-sec > .nt-credits { grid-column: content; }
+  .nt-col > .ft-body { margin-top: 16px; }
 }
 @media (max-width: 699px) {
   .ft-hero .ft-hero__stage > video { object-position: 38% 50%; }
+  /* The run's five cues: time and name on one line, so the list stays short on a phone. */
+  .nt .ft-chapters li { padding: 6px 0 14px; }
+  .nt .ft-chapters .ft-cue { flex-wrap: nowrap; align-items: center; }
+  .nt .ft-chapters span { width: auto; }
+  .nt .ft-chapters p { margin-top: 0; }
   .nt-cast { display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); gap: 18px 24px; }
   .nt-cast li { gap: 10px; }
   .nt-cast img { width: 40px; height: 40px; }
