@@ -145,9 +145,35 @@ body::before { background: none; }
   height: auto;
 }
 
+/* ---------- Judged on the audio clock: a close crop of the hit line, text beside it ---------- */
+.cine.tr > section.tr-time {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr);
+  gap: clamp(32px, 4.4vw, 64px);
+  align-items: center;
+}
+/* Placed explicitly: cine.css spans every non-heading child of a section across the grid. */
+.cine.tr > section.tr-time > .tr-time__text { grid-column: 2; grid-row: 1; margin-bottom: 0; }
+.cine.tr > section.tr-time > .tr-time__frame { grid-column: 1; grid-row: 1; }
+.tr .tr-time__frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--c-line-2);
+  border-radius: 4px;
+  background: #000;
+}
+
 /* ---------- The 2025 prototype: then and now ---------- */
-/* The prototype video keeps the width of the text above it. */
-.tr .tr-proto__body { max-width: 66ch; }
+/* Text left, video right: the mirror of the section above, so the page alternates sides. */
+.cine.tr > section.tr-proto {
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) minmax(0, 1.35fr);
+  gap: clamp(32px, 4.4vw, 64px);
+  align-items: center;
+}
+.cine.tr > section.tr-proto > .tr-head { grid-column: 1; grid-row: 1; margin-bottom: 0; }
+.cine.tr > section.tr-proto > .tr-proto__body { grid-column: 2; grid-row: 1; }
 .tr .tr-proto__video video { display: block; width: 100%; height: auto; border: 1px solid var(--c-line-2); background: #000; }
 .tr .tr-proto__video figcaption { margin-top: 10px; }
 
@@ -174,6 +200,11 @@ body::before { background: none; }
 @media (max-width: 900px) {
   .tr .tr-open { grid-template-columns: minmax(0, 1fr); grid-template-areas: "text" "screen"; gap: 32px; }
   .tr .tr-path__body { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .cine.tr > section.tr-time { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .cine.tr > section.tr-time > .tr-time__text { grid-column: 1; grid-row: 1; }
+  .cine.tr > section.tr-time > .tr-time__frame { grid-column: 1; grid-row: 2; }
+  .cine.tr > section.tr-proto { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .cine.tr > section.tr-proto > .tr-proto__body { grid-column: 1; grid-row: 2; }
   /* A tighter crop window on narrow screens keeps "89%" legible. */
   .tr .tr-hud { --x: 680; --w: 560; --h: 300; }
 }

@@ -7,7 +7,7 @@
       <p class="tr-meta">2025&ndash;present &middot; Solo &middot; Unity 6 &middot; C#</p>
     </div>
     <figure class="tr-screen">
-      <div class="yt-facade" data-yt-facade data-video-id="r9IC7t0GPOU"><button class="yt-facade__launch" type="button" data-yt-launch data-video-title="Transientica gameplay demo" aria-label="Play the Transientica gameplay demo"><img src="old/public/assets/images/video-posters/transientica-current-1600.webp" alt="" width="1600" height="900" fetchpriority="high" decoding="async" aria-hidden="true"><span class="yt-facade__play" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 7.5v9l7-4.5-7-4.5Z"/></svg></span></button><noscript><iframe src="https://www.youtube-nocookie.com/embed/r9IC7t0GPOU" title="Transientica gameplay demo" allow="encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe></noscript></div>
+      <div class="yt-facade" data-yt-facade data-video-id="r9IC7t0GPOU"><button class="yt-facade__launch" type="button" data-yt-launch data-video-title="Transientica gameplay demo" aria-label="Play the Transientica gameplay demo"><img src="old/public/assets/images/video-posters/transientica-current-1600.webp" alt="" width="1600" height="900" fetchpriority="high" decoding="async" aria-hidden="true"><video class="yt-facade__loop" data-poster-loop data-src="assets/previews/transientica.mp4" muted playsinline loop preload="none" aria-hidden="true" tabindex="-1"></video><span class="yt-facade__play" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 7.5v9l7-4.5-7-4.5Z"/></svg></span></button><noscript><iframe src="https://www.youtube-nocookie.com/embed/r9IC7t0GPOU" title="Transientica gameplay demo" allow="encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe></noscript></div>
       <figcaption>
         <span class="tr-screen__cap">Training and gameplay in the current C# build, March&nbsp;2026.</span>
       </figcaption>
@@ -18,7 +18,7 @@
     <div class="tr-head">
       <h2 id="tr-path-title">From a sound to a lane</h2>
       <p>Before the first song, the player teaches the game their own sounds: at least ten recordings each of their kick, snare and <span class="tr-nw">hi-hat</span>, made with their own microphone. The game measures every recording and saves the measurements, labelled by sound, in a JSON file, so a player can retrain between rounds.</p>
-      <p>I wrote the recognition in C#, including the FFT and a <span class="tr-nw">k-nearest-neighbours</span> (KNN) classifier, so it runs inside the game with no Python or second program beside it.</p>
+      <p>The FFT and the <span class="tr-nw">k-nearest-neighbours</span> (KNN) classifier are my own C# code too, so the recognition runs inside the game with no Python or second program beside it.</p>
     </div>
     <div class="tr-path__body">
       <div class="tr-path__chain">
@@ -41,17 +41,21 @@
   </section>
 
   <section class="tr-time" aria-labelledby="tr-time-title">
-    <div class="tr-head">
+    <div class="tr-head tr-time__text">
       <h2 id="tr-time-title">Judged on the audio clock</h2>
-      <p>Each hit is matched to the nearest note on Unity&rsquo;s audio clock and scored by its timing. A short calibration estimates the microphone delay, and the offset can be adjusted in 1 ms steps.</p>
+      <p>Each hit is matched to the nearest note on Unity&rsquo;s audio clock and scored by its timing. A short calibration estimates the microphone delay, and the offset can be adjusted in 1&nbsp;ms steps.</p>
       <p>Around the recognition I built the rest of the game: song selection, beatmaps, scoring and saved results.</p>
     </div>
+    <figure class="tr-time__frame">
+      <img src="assets/transientica/hit-line-perfect-920.webp" srcset="assets/transientica/hit-line-perfect-640.webp 640w, assets/transientica/hit-line-perfect-920.webp 920w" sizes="(min-width: 1440px) 760px, (min-width: 900px) 55vw, calc(100vw - 40px)" width="920" height="520" alt="Close-up of the three lanes in the game: a hi-hat note lands on the cyan hit line in a burst of sparks, with PERFECT! 69x in yellow above it" loading="lazy" decoding="async">
+      <figcaption>A hi-hat on the hit line, judged PERFECT.</figcaption>
+    </figure>
   </section>
 
   <section class="tr-proto" aria-labelledby="tr-rebuild-title">
     <div class="tr-head">
       <h2 id="tr-rebuild-title">The 2025 Python prototype</h2>
-      <p>The first version was a Python script. It found each hit in the microphone signal with onset detection, classified it with a machine learning model I had trained to recognise three beatbox sounds (a boom for the kick, a sharp ch for the snare, a crisp ts for the hi-hat), and sent the result to Unity over OSC, where the lane for that sound reacted.</p>
+      <p>The first version was a Python script. It found each hit in the microphone signal with onset detection, classified it with a machine learning model I had trained to recognise three beatbox sounds (a boom for the kick, a sharp ch for the snare, a crisp ts for the <span class="tr-nw">hi-hat</span>), and sent the result to Unity over OSC, where the lane for that sound reacted.</p>
       <p>The current build is the game I planned at the end of the prototype&rsquo;s video: a proper rhythm game where you have to beatbox in sync with the beat to score points.</p>
     </div>
     <div class="tr-proto__body">
