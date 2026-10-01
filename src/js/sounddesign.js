@@ -1,10 +1,7 @@
-/* Two sound redesigns: the spotting-sheet players.
-   Each reel gets a burnt-in timecode that runs with the video, a ruler whose
-   playhead follows playback, and cue timecodes that play the clip from half a
-   second before the sound lands. While a cue sounds, the burn-in also shows
-   its spotting note (data-note): what that sound is made of, gone 3s after
-   onset like the cue name above it. local-video.js (loaded earlier) keeps a
-   poster button over an unstarted video; a cue presses it, so the native
+/* Two sound redesigns: cue buttons.
+   Each cue time plays the clip from half a second before the sound lands, and
+   the cue that is sounding gets a marker. local-video.js (loaded earlier) keeps
+   a poster button over an unstarted video; a cue presses it, so the native
    controls come back exactly as with a direct play. Without JavaScript the
    cue list stays plain text and the videos keep their native controls.
    Playback only ever starts from a reader's click; nothing plays on its own. */
@@ -20,35 +17,14 @@
   var reduced = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var videos = [];
 
-  function pad(n) { return (n < 10 ? '0' : '') + n; }
-  function timecode(t, fps) {
-    var frames = Math.max(0, Math.floor(t * fps + 1e-6));
-    var secs = Math.floor(frames / fps);
-    return '00:' + pad(Math.floor(secs / 60)) + ':' + pad(secs % 60) + ':' + pad(frames % fps);
-  }
-
   reels.forEach(function (reel) {
     var video = reel.querySelector('video');
     if (!video) return;
     videos.push(video);
 
-    var fps = parseFloat(reel.getAttribute('data-fps')) || 60;
-    var duration = parseFloat(reel.getAttribute('data-duration')) || 0;
-    var burnTc = reel.querySelector('.sd-burn__tc');
-    var burnCue = reel.querySelector('.sd-burn__cue');
-    var burnNote = reel.querySelector('.sd-burn__note');
-    var ruler = reel.querySelector('.sd-ruler');
-    var head = reel.querySelector('.sd-ruler__head');
-    var fill = reel.querySelector('.sd-ruler__fill');
     var cues = [].slice.call(reel.querySelectorAll('.sd-cue[data-t]'));
-    var marks = [].slice.call(reel.querySelectorAll('.sd-ruler__mark'));
     var times = cues.map(function (cue) { return parseFloat(cue.getAttribute('data-t')) || 0; });
     var frame = 0;
-
-    function light(i, on) {
-      if (cues[i]) cues[i].classList.toggle('is-lit', on);
-      if (marks[i]) marks[i].classList.toggle('is-lit', on);
-    }
 
     // On one column the sheet sits under the picture: bring the picture into
     // view so the reader sees the moment they asked for.
@@ -92,28 +68,14 @@
         try { button.focus({ preventScroll: true }); } catch (e) { button.focus(); }
         reveal();
       });
-      button.addEventListener('focus', function () { light(i, true); });
-      button.addEventListener('blur', function () { light(i, false); });
-      cue.addEventListener('mouseenter', function () { light(i, true); });
-      cue.addEventListener('mouseleave', function () { light(i, false); });
     });
 
     function render() {
       var t = video.currentTime || 0;
-      if (burnTc) burnTc.textContent = timecode(t, fps);
       var now = -1;
       for (var i = 0; i < times.length; i++) if (t >= times[i] - 0.04) now = i;
       if (now > -1 && t > times[now] + 3) now = -1;
       cues.forEach(function (cue, j) { cue.classList.toggle('is-now', j === now); });
-      marks.forEach(function (mark, j) { mark.classList.toggle('is-now', j === now); });
-      if (burnCue) burnCue.textContent = now > -1 ? (cues[now].getAttribute('data-short') || '') : '';
-      // The spotting note: what the sounding cue is made of, same 3s window as the name above.
-      if (burnNote) burnNote.textContent = now > -1 ? (cues[now].getAttribute('data-note') || '') : '';
-      if (duration) {
-        var x = Math.min(100, (t / duration) * 100) + '%';
-        if (head) head.style.left = x;
-        if (fill) fill.style.width = x;
-      }
     }
 
     function tick() {
@@ -129,15 +91,5 @@
     ['pause', 'seeked', 'timeupdate', 'ended'].forEach(function (type) {
       video.addEventListener(type, render);
     });
-
-    // Pointer shortcut: a click on the ruler plays from that point. Keyboard
-    // readers have the cue timecodes and the native controls.
-    if (ruler && duration) {
-      ruler.addEventListener('click', function (event) {
-        var box = ruler.getBoundingClientRect();
-        if (!box.width) return;
-        playFrom(Math.max(0, Math.min(1, (event.clientX - box.left) / box.width)) * duration);
-      });
-    }
   });
 })();

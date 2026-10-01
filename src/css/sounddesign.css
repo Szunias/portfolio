@@ -1,11 +1,10 @@
 /* Two sound redesigns: page-owned styles, loaded only on sounddesign.html.
 
-   The page is a sound editor's spotting session: each clip is a monitor with
-   a burnt-in timecode, a ruler with a mark where each cue lands, and the cue
-   sheet beside it. The palette is sampled from the clips' own frames:
+   Each clip sits beside its cue list. The palette is sampled from the clips'
+   own frames:
      tavern shadow in the Baldur's Gate 3 clip   #03080f -> page #0c0f13
      Ice Storm highlight (brightest tenth)       #76a8d4 -> accent #8fc3ec
-     Ice Storm, most saturated tenth             #5493cf -> cue marks, progress
+     Ice Storm, most saturated tenth             #5493cf -> page glow
      God of War rock face (brightest tenth)      #b6c3cb -> body ink #b7c0c7
    On #0c0f13: ink-3 7.4:1, ink-2 10.4:1, accent 10.2:1, marks 5.9:1. */
 :root {
@@ -25,9 +24,6 @@
   --c-line-2: rgba(214, 228, 240, .16);
   --c-line-3: rgba(214, 228, 240, .30);
   --ice: #8fc3ec;
-  --sd-vivid: #5493cf;
-  --sd-burn-bg: rgba(0, 0, 0, .74);
-  --sd-burn-ink: #f3f7fa;
   --sd-cols: minmax(0, 1.72fr) minmax(300px, 1fr);
   --sd-gap: clamp(28px, 3.8vw, 56px);
 }
@@ -69,7 +65,7 @@ body::before { background: radial-gradient(ellipse at 22% 0, rgba(84, 147, 207, 
 .sd .sd-lead { margin: 0 0 14px; max-width: 44ch; color: var(--c-ink); font-size: 18px; line-height: 1.55; }
 .sd .sd-note { margin: 0 0 16px; max-width: 48ch; color: var(--c-ink-2); font-size: 15px; line-height: 1.6; }
 
-/* ---------- A reel: the monitor and its spotting sheet ---------- */
+/* ---------- A reel: the video and its cue list ---------- */
 .sd .sd-reel {
   row-gap: 28px;
   padding-bottom: clamp(48px, 6vw, 80px);
@@ -95,98 +91,7 @@ body::before { background: radial-gradient(ellipse at 22% 0, rgba(84, 147, 207, 
   background: #000;
 }
 
-/* Burnt-in timecode, as on a work picture. The cue name joins it while that
-   cue sounds, with the spotting note (what the sound is made of) underneath:
-   block layout, not flex, so the box sizes to its longest line instead of
-   growing to fit all three parts on one row. */
-.sd .sd-burn {
-  position: absolute;
-  z-index: 2;
-  top: 12px;
-  left: 12px;
-  display: block;
-  max-width: calc(100% - 24px);
-  margin: 0;
-  padding: 5px 9px 4px;
-  background: var(--sd-burn-bg);
-  color: var(--sd-burn-ink);
-  font: 400 13px/1.25 var(--f-mono);
-  letter-spacing: .05em;
-  font-variant-numeric: tabular-nums;
-  pointer-events: none;
-}
-.sd .sd-burn__cue { margin-left: 12px; color: var(--c-accent); text-transform: uppercase; }
-.sd .sd-burn__cue:empty { display: none; }
-.sd .sd-burn__note {
-  display: block;
-  margin-top: 1px;
-  color: var(--c-ink-2);
-  letter-spacing: .02em;
-}
-.sd .sd-burn__note:empty { display: none; }
-
-/* The ruler: a tick per second, a longer one every five, a mark where each cue lands. */
-.sd .sd-ruler {
-  --d: 13.5;
-  --sec: calc(100% / var(--d));
-  position: relative;
-  height: 32px;
-  margin-top: 14px;
-  cursor: pointer;
-  touch-action: manipulation;
-  background:
-    linear-gradient(var(--c-line-3), var(--c-line-3)) 0 0 / 100% 1px no-repeat,
-    repeating-linear-gradient(90deg, var(--c-line-3) 0 1px, transparent 1px var(--sec)) 0 0 / 100% 6px no-repeat,
-    repeating-linear-gradient(90deg, var(--c-ink-3) 0 1px, transparent 1px calc(var(--sec) * 5)) 0 0 / 100% 10px no-repeat;
-}
-.sd .sd-ruler__fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 2px;
-  background: var(--sd-vivid);
-}
-.sd .sd-ruler__label {
-  position: absolute;
-  top: 15px;
-  left: calc(var(--t) / var(--d) * 100%);
-  padding-left: 5px;
-  color: var(--c-ink-3);
-  font: 400 11px/1 var(--f-mono);
-  letter-spacing: .06em;
-}
-.sd .sd-ruler__mark {
-  position: absolute;
-  top: -7px;
-  left: calc(var(--t) / var(--d) * 100%);
-  width: 1px;
-  height: 17px;
-  background: var(--sd-vivid);
-}
-.sd .sd-ruler__mark::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -4px;
-  width: 9px;
-  height: 7px;
-  background: var(--sd-vivid);
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-}
-.sd .sd-ruler__mark.is-lit,
-.sd .sd-ruler__mark.is-now,
-.sd .sd-ruler__mark.is-lit::before,
-.sd .sd-ruler__mark.is-now::before { background: var(--c-accent-hi); }
-.sd .sd-ruler__head {
-  position: absolute;
-  top: -14px;
-  width: 2px;
-  height: 30px;
-  margin-left: -1px;
-  background: var(--c-accent-hi);
-}
-
-/* ---------- The spotting sheet ---------- */
+/* ---------- The cue list ---------- */
 .sd .sd-sheet { min-width: 0; }
 .sd .sd-sheet h2 {
   margin: 0 0 12px;
@@ -204,7 +109,7 @@ body::before { background: radial-gradient(ellipse at 22% 0, rgba(84, 147, 207, 
 .sd .sd-cue {
   position: relative;
   display: grid;
-  grid-template-columns: 124px minmax(0, 1fr);
+  grid-template-columns: 64px minmax(0, 1fr);
   column-gap: 14px;
   margin: 0;
   padding: 13px 10px 14px;
@@ -251,8 +156,7 @@ body::before { background: radial-gradient(ellipse at 22% 0, rgba(84, 147, 207, 
   font-size: 15px;
   line-height: 1.55;
 }
-.sd .sd-cue:hover,
-.sd .sd-cue.is-lit { background: linear-gradient(90deg, var(--c-accent-weak), transparent 85%); }
+.sd .sd-cue:hover { background: linear-gradient(90deg, var(--c-accent-weak), transparent 85%); }
 .sd .sd-cue.is-now { box-shadow: inset 2px 0 0 var(--c-accent); }
 .sd .sd-cue.is-now .sd-cue__name { color: var(--c-accent-hi); }
 
@@ -261,7 +165,7 @@ body::before { background: radial-gradient(ellipse at 22% 0, rgba(84, 147, 207, 
   /* Below this, the sheet column ran 325px: cue names broke ("Glyph of /
      Warding: Fire") and the sheet grew taller than its monitor. */
   .cine.sd { --sd-cols: minmax(0, 1.3fr) minmax(340px, 1fr); }
-  .sd .sd-cue { grid-template-columns: 112px minmax(0, 1fr); column-gap: 12px; padding-inline: 6px; }
+  .sd .sd-cue { grid-template-columns: 64px minmax(0, 1fr); column-gap: 12px; padding-inline: 6px; }
 }
 
 /* ---------- Narrow screens ---------- */
@@ -278,11 +182,8 @@ body::before { background: radial-gradient(ellipse at 22% 0, rgba(84, 147, 207, 
 @media (max-width: 600px) {
   .sd h1 { font-size: clamp(40px, 12vw, 58px); }
   .sd .sd-lead { font-size: 17px; }
-  .sd .sd-burn { top: 8px; left: 8px; padding: 4px 7px 3px; font-size: 11.5px; max-width: calc(100% - 16px); }
-  .sd .sd-burn__cue { margin-left: 9px; }
-  .sd .sd-ruler__label { font-size: 10.5px; }
   .sd .sd-reel { row-gap: 32px; }
-  .sd .sd-cue { grid-template-columns: 112px minmax(0, 1fr); column-gap: 10px; padding-inline: 6px; }
+  .sd .sd-cue { grid-template-columns: 64px minmax(0, 1fr); column-gap: 10px; padding-inline: 6px; }
 }
 @media (max-width: 359px) {
   .sd .sd-cue { grid-template-columns: minmax(0, 1fr); }
