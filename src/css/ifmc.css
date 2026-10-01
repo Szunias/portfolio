@@ -28,10 +28,28 @@
 }
 .ifmc .if-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 
-.ifmc .ft-hero h1 { max-width: 11ch; font-size: clamp(48px, 7vw, 112px); line-height: .94; text-wrap: balance; }
+.ifmc .ft-hero h1 { max-width: 12ch; text-wrap: balance; }
 .ifmc .ft-hero__stage > video { object-position: 50% 60%; }
 /* The two films sit on their two bands, edge to edge. */
 .ifmc .ft-band + .ft-band { margin-top: 0; }
+.ifmc .ft-band { padding-bottom: clamp(52px, 5vw, 72px); }
+
+/* Each film: its words in one column beside its picture, the heading at the top of the column. */
+.ifmc .if-pair { align-items: start; }
+.ifmc .if-copy .ft-head { margin: 0 0 clamp(14px, 1.4vw, 20px); }
+.ifmc .if-still { margin-top: clamp(20px, 2vw, 28px); }
+@media (min-width: 900px) {
+  .ifmc .ft-row--left.if-pair > * { grid-row: 1; }
+  /* The flight fills the height of its column, so the row has no hole under it. */
+  .ifmc .ft-row--left.if-pair > .ft-media { position: relative; align-self: stretch; }
+  .ifmc .ft-row--left.if-pair > .ft-media > img { position: absolute; inset: 0; height: 100%; object-fit: cover; object-position: 36% 50%; }
+  .ifmc .ft-row--right.if-pair > .ft-media { grid-column: c 6 / full-end; }
+  .ifmc .ft-row--right.if-pair > :not(.ft-media) { grid-column: content-start / c 5; }
+}
+/* Stacked, the heading and words come before the film they describe. */
+@media (max-width: 899px) {
+  .ifmc .ft-row--right.if-pair > .ft-media { grid-row: auto; }
+}
 
 .if-film--walter { --film: #c4dce6; --film-dim: #4a6b7c; }
 .if-film--clap { --film: #dcdedb; --film-dim: #565a5f; }
@@ -46,8 +64,8 @@
 }
 .ifmc .if-screen .if-watch {
   position: absolute;
-  bottom: clamp(20px, 3vw, 40px);
-  left: max(var(--page-gutter), calc((100% - var(--page-max)) / 2));
+  bottom: clamp(16px, 2vw, 28px);
+  left: clamp(16px, 2vw, 28px);
   z-index: 1;
 }
 .ifmc .if-screen .yt-facade__launch:hover .if-watch { opacity: .88; }
@@ -73,7 +91,7 @@
 .ifmc .if-ruler .is-end { left: auto; right: 0; padding: 2px 7px 0 0; border-left: 0; border-right: 1px solid var(--ft-rule); }
 .ifmc .if-lane {
   position: relative;
-  height: clamp(110px, 11vw, 168px);
+  height: clamp(72px, 7vw, 104px);
   border-bottom: 1px solid var(--ft-rule);
 }
 .ifmc .if-wave { position: absolute; inset: 0; display: block; width: 100%; height: 100%; fill: var(--film); }
@@ -113,7 +131,7 @@
 }
 .ifmc .if-lane:has(.if-scrub:focus-visible) { outline: 2px solid var(--ft-accent); outline-offset: 4px; }
 
-.ifmc .if-transport { display: none; align-items: center; gap: 22px; margin-top: 22px; }
+.ifmc .if-transport { display: none; align-items: center; gap: 20px; margin-top: 14px; }
 .ifmc .if-reel.is-live .if-transport { display: flex; }
 .ifmc .if-reel audio { display: block; width: 100%; margin-top: 16px; }
 .ifmc .if-reel.is-live audio { display: none; }
@@ -121,13 +139,13 @@
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  min-height: 52px;
-  padding: 0 24px 0 20px;
+  min-height: 48px;
+  padding: 0 22px 0 18px;
   border: 1px solid var(--ft-accent);
   border-radius: 6px;
   background: transparent;
   color: var(--ft-ink);
-  font: 600 17px/1 var(--f-display);
+  font: 600 16px/1 var(--f-display);
   cursor: pointer;
   transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
 }
@@ -137,24 +155,36 @@
 .ifmc .if-play.is-playing { background: var(--ft-accent); color: var(--ft-accent-ink); }
 .ifmc .if-play.is-playing .if-i-play { display: none; }
 .ifmc .if-play.is-playing .if-i-pause { display: inline; }
-.ifmc .if-time { color: var(--ft-ink-3); font: 400 16px/1 var(--f-mono); font-variant-numeric: tabular-nums; }
+.ifmc .if-time { color: var(--ft-ink-3); font: 400 15px/1 var(--f-mono); font-variant-numeric: tabular-nums; }
 .ifmc .if-time b { color: var(--ft-ink); font-weight: 600; }
 
 /* ---------- Moments in the score: each one plays it from just before ---------- */
-.ifmc .if-cues { align-self: center; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--ft-rule); }
+/* The list sits under the reel it plays, the last moment's hallway beside it. */
+.ifmc .if-moments {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  column-gap: var(--ft-gap);
+  align-items: start;
+}
+@supports (grid-template-columns: subgrid) {
+  .ifmc .if-moments { grid-template-columns: subgrid; }
+  .ifmc .if-moments > .if-cues { grid-column: 1 / 8; }
+  .ifmc .if-moments > .ft-media { grid-column: 8 / -1; }
+}
+.ifmc .if-cues { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--ft-rule); }
 .ifmc .if-cues li { margin: 0; padding: 0; border-bottom: 1px solid var(--ft-rule); }
 .ifmc .if-cue {
   display: grid;
   grid-template-columns: 82px minmax(0, 1fr);
   gap: 14px;
   width: 100%;
-  min-height: 52px;
+  min-height: 48px;
   margin: 0;
-  padding: 16px 0;
+  padding: 12px 0;
   border: 0;
   background: none;
   color: var(--ft-ink-2);
-  font: 400 18px/1.5 var(--f-body);
+  font: 400 16.5px/1.5 var(--f-body);
   text-align: left;
   cursor: pointer;
   transition: color var(--dur) var(--ease);
@@ -163,9 +193,9 @@
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  height: 27px;
+  height: 25px;
   color: var(--ft-head);
-  font: 600 16px/1 var(--f-mono);
+  font: 600 15px/1 var(--f-mono);
   font-variant-numeric: tabular-nums;
 }
 .ifmc .if-tc::before {
@@ -181,19 +211,20 @@
 .ifmc .if-cue:focus-visible { outline-offset: -2px; }
 .ifmc .if-cues li.is-now .if-cue { color: var(--ft-ink); }
 .ifmc .if-cues li.is-now .if-tc { color: var(--ft-accent); }
-.ifmc .if-quote { margin: -4px 0 0; padding: 0 0 18px 96px; color: var(--ft-ink-3); font-size: 16px; line-height: 1.55; }
+.ifmc .if-quote { margin: -2px 0 0; padding: 0 0 14px 96px; color: var(--ft-ink-3); font-size: 15px; line-height: 1.55; }
 .ifmc .if-quote a { white-space: nowrap; }
 
 @media (max-width: 699px) {
   .ifmc .if-screen .yt-facade:not(.is-loaded) { aspect-ratio: 3 / 2; }
-  .ifmc .if-screen .if-watch { bottom: 16px; min-height: 46px; padding: 0 18px 0 16px; font-size: 16px; }
-  .ifmc .ft-hero h1 { font-size: clamp(40px, 12vw, 60px); }
+  .ifmc .if-screen .if-watch { min-height: 46px; padding: 0 18px 0 16px; font-size: 16px; }
   .ifmc .if-ruler .is-late { display: none; }
-  .ifmc .if-lane { height: 96px; }
+  .ifmc .if-lane { height: 72px; }
   .ifmc .if-transport { gap: 16px; }
-  .ifmc .if-cue { grid-template-columns: 66px minmax(0, 1fr); gap: 10px; font-size: 17px; }
-  .ifmc .if-tc { font-size: 15px; }
-  .ifmc .if-quote { padding-left: 76px; font-size: 15px; }
+  .ifmc .if-moments,
+  .ifmc .if-moments > * { display: block; }
+  .ifmc .if-moments > .ft-media { margin-top: 24px; }
+  .ifmc .if-cue { grid-template-columns: 66px minmax(0, 1fr); gap: 10px; font-size: 16px; }
+  .ifmc .if-quote { padding-left: 76px; }
 }
 @media (max-width: 380px) {
   .ifmc .if-screen .if-watch { width: auto; }
