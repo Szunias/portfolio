@@ -1,125 +1,48 @@
-/* Amorak: page-owned styles, loaded only on amorak.html.
-   Moonlight through the basement hatch: a near-black with the cold cast of the
-   basement frames and one moonlight accent taken from the rim light on the
-   creature. Nothing warm: the fire and the gums stay in the pictures. Tokens
-   are overridden on :root because this stylesheet only loads on this page. */
+/* Amorak: page-owned styles, loaded only on amorak.html after feature.css.
+   The palette is sampled from the film: the near-black of the basement, the
+   creature's gums (#250c0b) darkened for the voice band, the cold teal of the
+   basement walls (#11202b) for the second band, the bone grey of the title
+   card's letters for heads, and the moonlight on the floor for the controls. */
 :root {
-  --c-bg-0: #070a0c;          /* basement darks #03080a (basement.png), lifted */
-  --c-bg-1: #0a0e10;          /* chains frame darks #020809, lifted to page level */
-  --c-bg-2: #0f1518;
-  --c-bg-3: #142026;
-  --c-ink: #e3ebee;
-  --c-ink-2: #b1c0c6;
-  --c-ink-3: #8a9ea6;
-  --c-line: rgba(196, 222, 232, .08);
-  --c-line-2: rgba(196, 222, 232, .15);
-  --c-line-3: rgba(196, 222, 232, .28);
-  --c-accent: #8ec3d5;        /* creature rim light #326f84 / #668b9d, lifted */
-  --c-accent-hi: #b3d9e6;
-  --c-accent-weak: rgba(142, 195, 213, .12);
-  --c-accent-line: rgba(142, 195, 213, .45);
-  --c-accent-ink: #071014;
-  --ice: #8ec3d5;
-  --am-moon: #8ec3d5;
-  --am-trace: #6aa9be;        /* hatch rim light #537988, lifted */
-  --am-iron: #d3dcdb;         /* title letters #8f968e, lifted */
-  --am-well: #0c1215;
+  --ft-bg: #07090b;
+  --ft-band: #1c0c0c;
+  --ft-band-2: #0c171c;
+  --ft-ink: #e8ecec;
+  --ft-ink-2: #c2ccce;
+  --ft-ink-3: #98a8ad;
+  --ft-head: #dfe3df;
+  --ft-accent: #8ec3d5;
+  --ft-accent-ink: #061014;
+  --am-trace: #8ec3d5;
 }
 
-/* The site's faint ice glow becomes moonlight from above. */
-body:has(.cine.am)::before {
-  background: radial-gradient(70% 50% at 22% -8%, rgba(95, 159, 180, .10), transparent 66%);
-}
-
-/* Opt out of the shared heading-left / paragraph-right grid (cine.css). */
-.cine.am { padding-top: clamp(20px, 3vw, 40px); }
-.cine.am > section:not(.cine-split) { display: block; }
-
-.am .am-label {
-  display: block;
-  max-width: none;
-  margin: 0;
-  color: var(--c-ink-3);
-  font: 500 12px/1.5 var(--f-mono);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  text-wrap: wrap;
-}
-
-/* ---------- Opening: the film's own title card is the heading ---------- */
-.am .am-open { margin: 0 0 clamp(44px, 5.4vw, 72px); }
-/* amorak-title-*.webp is amoraktitle.png cropped to x 215-1720, y 330-760.
-   The crop keeps 22 px before the A, pulled back so the letter meets the
-   text column. Lighten drops the card's black into the page. */
+/* ---------- The film's title card as the heading ---------- */
+/* The crop keeps 22 px before the A, pulled back so the letter meets the text edge. */
 .am .am-title {
-  width: min(100%, 980px);
-  margin: 0 0 clamp(14px, 2vw, 26px) calc(min(100%, 980px) * -0.0146);
+  width: clamp(280px, 46vw, 680px);
+  margin: 0 0 clamp(14px, 1.8vw, 26px) calc(clamp(280px, 46vw, 680px) * -0.0146);
   font-size: 0;
   line-height: 0;
+  text-shadow: none;
 }
 .am .am-title img {
   display: block;
   width: 100%;
   max-width: none;
   height: auto;
-  mix-blend-mode: lighten;
 }
-.am .am-lead {
-  max-width: 56ch;
-  margin: 0 0 18px;
-  color: var(--c-ink);
-  font-size: clamp(18px, 1.5vw, 21px);
-  line-height: 1.55;
-}
-.am .am-meta {
-  max-width: none;
-  margin: 0;
-  color: var(--c-ink-3);
-  font: 400 12px/1.8 var(--f-mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-.am .am-meta span { white-space: nowrap; }
-.am .am-br { display: none; }
+/* The roar sits right of centre; keep its jaws in the frame on narrow screens. */
+.am .ft-hero__stage > video { object-position: 62% 50%; }
 
-/* ---------- The film and the ear balance under it ---------- */
-.am .am-film { margin: 0 0 clamp(96px, 11vw, 150px); }
-.am .am-film__bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 6px 24px;
-  margin: 0 0 12px;
-}
-.am .am-yt { color: var(--c-ink-2); font-size: 14px; }
-.am .am-yt:hover { color: var(--c-ink); text-decoration-color: var(--am-moon); }
-
-.am .am-screen {
-  overflow: hidden;
-  border: 1px solid var(--c-line-2);
-  border-bottom: 0;
-  border-radius: 10px 10px 0 0;
-  background: #000;
-}
-.am .am-screen video {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  background: #000;
-  object-fit: contain;
-}
-
-.am .am-ears { margin: 0; }
+/* ---------- Which ear is louder: a measurement of the mix, drawn once ---------- */
+.am .am-ears { grid-column: content; margin: 0; }
 .am .am-ears__panel {
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
+  grid-template-columns: 32px minmax(0, 1fr);
   grid-template-areas: "head track" ". ticks";
-  padding: 16px 20px 12px 0;
-  border: 1px solid var(--c-line-2);
-  border-radius: 0 0 10px 10px;
-  background: linear-gradient(180deg, #0e1417, var(--am-well));
+  padding: 24px 24px 16px 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ft-ink) 4%, var(--ft-bg));
 }
 .am .am-ears__head {
   grid-area: head;
@@ -127,219 +50,89 @@ body:has(.cine.am)::before {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  height: 108px;
-  color: var(--c-ink-2);
-  font: 500 11px/1 var(--f-mono);
+  height: 150px;
+  color: var(--ft-ink-2);
+  font: 600 13px/1 var(--f-mono);
 }
-
-.am .am-ears__track {
-  grid-area: track;
-  position: relative;
-  height: 108px;
-  border-radius: 3px;
-}
+.am .am-ears__track { grid-area: track; position: relative; height: 150px; }
 .am .am-ears__svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.am .am-ears__tail { fill: rgba(196, 222, 232, .035); }
-.am .am-ears__guide { stroke: rgba(196, 222, 232, .28); stroke-width: 1; stroke-dasharray: 1 5; vector-effect: non-scaling-stroke; }
-.am .am-ears__mid { stroke: rgba(196, 222, 232, .22); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.am .am-ears__tail { fill: color-mix(in srgb, var(--ft-ink) 4%, transparent); }
+.am .am-ears__guide { stroke: color-mix(in srgb, var(--ft-ink) 26%, transparent); stroke-width: 1; stroke-dasharray: 1 5; vector-effect: non-scaling-stroke; }
+.am .am-ears__mid { stroke: color-mix(in srgb, var(--ft-ink) 22%, transparent); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .am .am-ears__line {
   fill: none;
   stroke: var(--am-trace);
-  stroke-width: 1.7;
+  stroke-width: 2;
   stroke-linejoin: round;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
 }
-.am .am-ears__line--tail { stroke: var(--c-ink-3); opacity: .5; }
+.am .am-ears__line--tail { stroke: var(--ft-ink-3); opacity: .55; }
 
 /* Labels sit on the panel's own colour so the line doesn't strike through them. */
 .am .am-ears__tail-label,
 .am .am-mark > span {
   position: absolute;
   z-index: 1;
-  padding: 1px 3px;
-  margin-left: -3px;
+  padding: 2px 4px;
+  margin-left: -4px;
   border-radius: 2px;
-  color: var(--c-ink-3);
-  font: 500 10.5px/1.2 var(--f-mono);
-  letter-spacing: .05em;
-  text-transform: uppercase;
+  background: color-mix(in srgb, var(--ft-ink) 4%, var(--ft-bg));
+  color: var(--ft-ink-2);
+  font: 500 14px/1.2 var(--f-body);
   white-space: nowrap;
   pointer-events: none;
 }
-.am .am-ears__tail-label { left: 60.94%; top: 4px; padding-left: 5px; margin-left: 3px; background: #131a1d; }
+.am .am-ears__tail-label { left: 60.94%; top: 4px; margin-left: 4px; color: var(--ft-ink-3); background: color-mix(in srgb, var(--ft-ink) 7%, var(--ft-bg)); }
 .am .am-mark {
   position: absolute;
   top: 0;
   bottom: 0;
   left: calc(var(--t) * 100%);
   width: 0;
-  border-left: 1px dashed rgba(196, 222, 232, .26);
+  border-left: 1px dashed color-mix(in srgb, var(--ft-ink) 28%, transparent);
   pointer-events: none;
 }
-.am .am-mark > span { top: 4px; left: 6px; color: var(--c-ink-2); background: #0e1417; }
-.am .am-mark--low > span { top: auto; bottom: 4px; background: #0d1316; }
+.am .am-mark > span { top: 4px; left: 8px; }
+.am .am-mark--low > span { top: auto; bottom: 4px; }
 
-.am .am-ears__ticks { grid-area: ticks; position: relative; height: 16px; margin-top: 10px; }
+.am .am-ears__ticks { grid-area: ticks; position: relative; height: 18px; margin-top: 12px; }
 .am .am-ears__ticks span {
   position: absolute;
   top: 0;
   left: calc(var(--t) * 100%);
   transform: translateX(-50%);
-  color: var(--c-ink-3);
-  font: 400 10.5px/1 var(--f-mono);
-  letter-spacing: .04em;
+  color: var(--ft-ink-3);
+  font: 500 13px/1 var(--f-mono);
+  font-variant-numeric: tabular-nums;
 }
 .am .am-ears__ticks span:first-child { transform: none; }
-.am .am-ears__cap {
-  max-width: 92ch;
-  margin: 14px 0 0;
-  color: var(--c-ink-3);
-  font-size: 13.5px;
-  line-height: 1.6;
-}
+.am .am-ears__cap { max-width: 46em; margin: 14px 0 0; color: var(--ft-ink-3); font-size: 15px; line-height: 1.5; }
 
-/* ---------- The creature's voice: the recipe as one sentence ---------- */
-.am .am-voice { margin: 0 0 clamp(88px, 10vw, 136px); }
-.am .am-voice > .am-label { margin: 0 0 20px; }
-.am .am-voice__line {
-  max-width: 29ch;
-  margin: 0 0 clamp(22px, 2.6vw, 34px);
-  color: var(--c-ink-3);
-  font: 500 clamp(28px, 3.35vw, 48px)/1.14 var(--f-display);
-  letter-spacing: -.028em;
-  text-wrap: balance;
-}
-.am .am-voice__line b { color: var(--am-iron); font-weight: 600; }
-.am .am-voice__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 36px; }
-.am .am-voice__foot p { max-width: 52ch; margin: 0; color: var(--c-ink-2); font-size: 17px; line-height: 1.65; }
-
-.am .am-seek {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 42px;
-  padding: 0 16px 0 11px;
-  border: 1px solid var(--c-accent-line);
-  border-radius: 6px;
-  background: transparent;
-  color: var(--am-moon);
-  font: 500 12px/1 var(--f-mono);
-  letter-spacing: .07em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-.am .am-seek svg { width: 18px; height: 18px; fill: currentColor; }
-.am .am-seek:hover { border-color: var(--am-moon); background: var(--c-accent-weak); }
-.am .am-seek:focus-visible { outline: 2px solid var(--am-moon); outline-offset: 3px; }
-
-/* ---------- The basement: the text and the two frames that start the film ---------- */
-/* Its own two columns; the shared grid would stretch both children across
-   the row (cine.css, min-width 901px). */
-.cine.am > section.am-room {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  column-gap: clamp(28px, 4.2vw, 64px);
-  row-gap: 22px;
-  align-items: start;
-  margin: 0 0 clamp(88px, 10vw, 128px);
-}
-.cine.am > section.am-room > div { grid-column: auto; }
-.am .am-room .am-label { margin: 0 0 18px; }
-.am .am-room__text p { max-width: 52ch; margin: 0; color: var(--c-ink-2); font-size: 17px; line-height: 1.7; }
-.am .am-room__frames { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(10px, 1.3vw, 18px); padding-top: 4px; }
-.am .am-frame {
-  position: relative;
-  display: block;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  border: 1px solid var(--c-line-2);
-  border-radius: 6px;
-  background: #000;
-  cursor: pointer;
-}
-.am .am-frame img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
-.am .am-frame__t {
-  position: absolute;
-  left: 10px;
-  bottom: 9px;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 4px 8px 4px 7px;
-  border-radius: 3px;
-  background: rgba(7, 10, 12, .78);
-  color: var(--c-ink);
-  font: 500 11px/1.2 var(--f-mono);
-  letter-spacing: .05em;
-}
-.am .am-frame__t::before {
-  content: "";
-  border-left: 6px solid var(--am-moon);
-  border-top: 4px solid transparent;
-  border-bottom: 4px solid transparent;
-}
-.am .am-frame:hover { border-color: var(--c-accent-line); }
-.am .am-frame:focus-visible { outline: 2px solid var(--am-moon); outline-offset: 3px; }
-
-/* ---------- Film credits, then the closing links ---------- */
-.am .am-credit {
-  max-width: 88ch;
-  margin: 0 0 clamp(22px, 2.4vw, 30px);
-  color: var(--c-ink-3);
-  font-size: 13.5px;
-  line-height: 1.65;
-}
-
-/* From 1180 px the title card and the lead share one row, so the film and
-   its play button stay on the first screen of a 1440x900 laptop instead of
-   sitting under the fold below a full-width card. */
-@media (min-width: 1180px) {
-  .am .am-open {
-    display: grid;
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    column-gap: clamp(44px, 4.4vw, 72px);
-    align-items: end;
-    margin-bottom: 48px;
-  }
-  .am .am-title { margin-bottom: 0; }
-  /* The card has ~7% of black under the letters; lift the text to the letters' baseline. */
-  .am .am-open__text { padding-bottom: 1.1%; }
-  .am .am-lead { max-width: none; font-size: 19px; line-height: 1.55; margin-bottom: 16px; }
-  .am .am-br { display: inline; }
-  .am .am-sep { display: none; }
-}
+.am .am-credit { grid-column: content-start / c 8; margin: 0; }
 
 /* The hatch is above the basement in the film, so its marker keeps the long
    word out of the strip label sooner than the general short/long swap below. */
 @media (max-width: 900px) {
   .am .am-mark .am-long { display: none; }
 }
-
 @media (min-width: 721px) {
   .am .am-short { display: none; }
 }
-
+@media (max-width: 1099px) {
+  .am .am-credit { grid-column: content-start / c 10; }
+}
 @media (max-width: 720px) {
   .am .am-long { display: none; }
-  .am .am-lead { font-size: 18px; }
-  .am .am-br { display: inline; }
-  .am .am-sep { display: none; }
-  .am .am-screen { border-radius: 8px 8px 0 0; }
-  .am .am-ears__panel { grid-template-columns: 22px minmax(0, 1fr); padding: 12px 12px 10px 0; border-radius: 0 0 8px 8px; }
-  .am .am-ears__head { height: 88px; font-size: 10.5px; }
-  .am .am-ears__track { height: 88px; }
-  .am .am-ears__cap { font-size: 13px; }
-  .am .am-voice__line { font-size: clamp(26px, 7.4vw, 34px); line-height: 1.16; }
-  .am .am-voice__foot { gap: 18px; }
-  .cine.am > section.am-room { grid-template-columns: minmax(0, 1fr); }
-  .am .am-room__frames { gap: 10px; }
-  .am .am-frame__t { left: 7px; bottom: 7px; }
+  .am .am-ears__panel { grid-template-columns: 24px minmax(0, 1fr); padding: 16px 14px 12px 0; }
+  .am .am-ears__head,
+  .am .am-ears__track { height: 110px; }
+  .am .am-ears__tail-label,
+  .am .am-mark > span { font-size: 12.5px; }
+  .am .am-ears__ticks span { font-size: 12px; }
 }
-
-@media (max-width: 360px) {
-  .am .am-label,
-  .am .am-meta { letter-spacing: .03em; }
+@media (max-width: 699px) {
+  .am .am-title { width: min(88vw, 420px); margin-left: calc(min(88vw, 420px) * -0.0146); }
+  .am .am-credit { grid-column: content; }
+  .am .ft-hero__stage > video { object-position: 66% 50%; }
 }
