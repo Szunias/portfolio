@@ -106,7 +106,7 @@ body:has(.cine.nt)::before { background: none; }
 .nt-open {
   display: grid;
   grid-template-columns: minmax(0, 1.62fr) minmax(300px, 1fr);
-  grid-template-areas: "title title" "run text" "panel text";
+  grid-template-areas: "title title" "run text" "panel panel";
   column-gap: clamp(32px, 4.4vw, 64px);
   margin-bottom: clamp(96px, 10vw, 150px);
 }
@@ -145,45 +145,82 @@ body:has(.cine.nt)::before { background: none; }
 }
 .nt .nt-note { max-width: 60ch; margin: 14px 0 0; color: var(--c-ink-3); font-size: 14px; line-height: 1.55; }
 
-/* Each stage of the run: its text, its time as a cue into the video, and its own Audio/Sounds folders. */
-.nt-panel { grid-area: panel; margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--c-line-2); }
-.nt-s + .nt-s { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--c-line); }
+/* The run in five stages: a real frame from the recording, its time, its text and its own
+   Audio/Sounds folders. The frame and the time both play the run from that moment.
+   Wide screens: one row of five under the video. Narrower: frame left, text right. */
+.nt-panel { grid-area: panel; margin-top: clamp(40px, 4.4vw, 64px); }
+.nt .nt-stages {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0 clamp(18px, 1.8vw, 28px);
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nt-s { min-width: 0; margin: 0; }
+.nt .nt-s__frame { display: block; border-radius: 3px; background: #000; }
+.nt .nt-s__frame img {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 3px;
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+  transition: outline-color .2s var(--ease);
+}
+.nt .nt-s__frame:hover img { outline-color: var(--c-accent-line); }
+.nt .nt-s__frame:focus-visible { outline: none; }
+.nt .nt-s__frame:focus-visible img { outline: 2px solid var(--c-accent); }
+.nt-s__body { padding-top: 16px; }
 .nt .nt-s h3 {
   display: flex;
   align-items: baseline;
-  gap: 12px;
+  gap: 10px;
   margin: 0 0 8px;
   color: var(--c-ink);
-  font: 500 23px/1.2 var(--f-display);
+  font: 500 20px/1.2 var(--f-display);
   letter-spacing: -.01em;
 }
-.nt .nt-s h3 .nt-cue { font-size: 12.5px; }
-.nt .nt-s p { max-width: 46ch; margin: 0; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.6; }
+.nt .nt-s h3 .nt-cue {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: 500 13px/1.2 var(--f-mono);
+}
+.nt .nt-s h3 .nt-cue::before { content: none; }
+.nt .nt-s h3 .nt-cue:hover { background: none; color: var(--c-accent-hi); }
+.nt .nt-s p { max-width: 46ch; margin: 0; color: var(--c-ink-2); font-size: 15px; line-height: 1.58; }
 
-/* Each stage's own folders sit under its text; there is no separate 17-chip cloud. */
+/* Each stage's own folders sit under its text. */
 .nt .nt-s .nt-dirs {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  max-width: none;
-  margin: 14px 0 0;
-  padding: 0;
+  gap: 2px 12px;
+  margin: 12px 0 0;
   color: var(--c-ink-3);
-  font: 400 12.5px/1.4 var(--f-mono);
+  font: 400 12px/1.5 var(--f-mono);
 }
-.nt .nt-s .nt-dirs span::before { content: "\00b7"; margin-right: 6px; color: var(--c-ink-3); }
-.nt .nt-s .nt-dirs .nt-dirs__k {
-  margin-right: 4px;
-  font-size: 11px;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-.nt .nt-s .nt-dirs .nt-dirs__k::before,
-.nt .nt-s .nt-dirs .nt-dirs__k + span::before { content: none; }
-.nt .nt-all { max-width: none; margin: 18px 0 0; font: 400 12.5px/1.5 var(--f-mono); }
+.nt .nt-all { max-width: none; margin: 28px 0 0; font: 400 12.5px/1.5 var(--f-mono); }
 .nt .nt-all a { color: var(--c-ink-3); }
 .nt .nt-all a:hover { color: var(--c-ink); }
+
+@media (max-width: 1179px) {
+  .nt .nt-stages { grid-template-columns: minmax(0, 1fr); }
+  .nt-s { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 0 clamp(20px, 3vw, 36px); align-items: start; }
+  .nt-s + .nt-s { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--c-line); }
+  .nt-s__body { padding-top: 0; }
+}
+@media (max-width: 600px) {
+  .nt-s { grid-template-columns: minmax(0, 40%) minmax(0, 1fr); gap: 0 14px; }
+  .nt-s + .nt-s { margin-top: 18px; padding-top: 18px; }
+  .nt .nt-s h3 { gap: 8px; margin-bottom: 6px; font-size: 17px; }
+  .nt .nt-s h3 .nt-cue { font-size: 12px; }
+  .nt .nt-s p { font-size: 14.5px; line-height: 1.55; }
+  .nt .nt-s .nt-dirs { margin-top: 8px; font-size: 11.5px; gap: 0 10px; }
+}
 
 /* Time cues: play the run from the moment named in the text beside them. */
 .nt .nt-cue {
