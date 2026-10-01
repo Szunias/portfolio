@@ -1,256 +1,32 @@
-/* Pause & Deserve: page-owned styles, loaded only on pausedeserve.html.
-
-   The page takes its colours from the game's own frames: the red of the
-   corridor, the white of the ceiling lamp and the blue of the HUD bar in
-   the corner of every screenshot. Sampled values: corridor floor #5b0306,
-   wall in shadow #290001, lamp core #fed6c7, torch-lit trunk #e3423b,
-   HUD bar #0a99cf. Backgrounds stay near-neutral; the
-   accent is the torch red lifted and pulled away from orange (hue 356). */
+/* Pause & Deserve: page-owned styles, loaded only on pausedeserve.html after feature.css.
+   The palette is sampled from the trailer's corridor: the wall in shadow (#230001) under the
+   page, the lit wall (#520002) darkened for the band, and the near-white of the ceiling lamp
+   and the game's scratched lettering for heads, cues and the one filled button. */
 :root {
-  --c-bg-0: #080606;
-  --c-bg-1: #0e0a0a;
-  --c-bg-2: #150f0f;
-  --c-bg-3: #1d1414;
-  --c-ink: #f4ecea;
-  --c-ink-2: #c8bbb9;
-  --c-ink-3: #a19290;
-  --c-accent: #ff4d58;
-  --c-accent-hi: #ff7a82;
-  --c-accent-ink: #140405;
-  --c-accent-line: rgba(255, 77, 88, .42);
-  --c-accent-weak: rgba(255, 77, 88, .10);
-  --c-line: rgba(255, 226, 222, .08);
-  --c-line-2: rgba(255, 226, 222, .15);
-  --c-line-3: rgba(255, 226, 222, .28);
-  --ice: #ff4d58;
-  --pd-hud: #0a99cf;
+  --ft-bg: #0d0606;
+  --ft-band: #2a0607;
+  --ft-band-2: #1c0708;
+  --ft-ink: #f7ecea;
+  --ft-ink-2: #e2cfcc;
+  --ft-ink-3: #c0a7a3;
+  --ft-head: #fff1ee;
+  --ft-accent: #fbe3de;
+  --ft-accent-ink: #250405;
 }
 
-/* The site's ice glow becomes the red spill of the game screen. */
-body:has(.cine.pd)::before {
-  background: radial-gradient(46% 38% at 30% 22%, rgba(91, 3, 6, .26), transparent 74%);
-}
+/* The game's title lettering is wide and thin: it gets more width than a squarer logo. */
+.pd .pd-title { width: clamp(300px, 56vw, 820px); }
 
-/* Opt out of the shared heading-left / paragraph-right grid in cine.css. */
-.cine.pd > section:not(.cine-split) { display: block; }
-.cine.pd a:hover { text-decoration-color: var(--c-accent); }
+/* Three chapters, not five. */
+.pd .ft-chapters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
-.cine.pd .pd-label {
-  color: var(--c-ink-3);
-  font: 500 11.5px/1.4 var(--f-mono);
-  letter-spacing: .1em;
-  text-transform: uppercase;
+@media (max-width: 1099px) {
+  .pd .ft-chapters { grid-template-columns: minmax(0, 1fr); }
 }
-
-/* Times read like the white timer at the top of every game frame: the hero
-   and run links, and the chapter buttons under the trailer. */
-.cine.pd .pd-time {
-  color: var(--c-ink);
-  font: 500 .92em/1 var(--f-mono);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: .02em;
+@media (max-width: 699px) {
+  .pd .pd-title { width: 100%; max-width: 520px; }
 }
-
-/* ---------- Opening: the game screen ---------- */
-.cine.pd .pd-open {
-  display: grid;
-  grid-template-columns: minmax(0, 1.72fr) minmax(300px, 1fr);
-  gap: clamp(32px, 4.4vw, 64px);
-  align-items: start;
-  margin-bottom: clamp(88px, 10vw, 140px);
-}
-.cine.pd .pd-open__text { grid-column: 2; grid-row: 1; padding-top: 4px; }
-.cine.pd .pd-screen { grid-column: 1; grid-row: 1; min-width: 0; }
-
-.cine.pd .pd-open h1 {
-  margin: 0 0 22px;
-  font-family: var(--f-display);
-  font-size: clamp(2.5rem, 4.6vw, 4.125rem);
-  font-weight: 600;
-  line-height: .98;
-  letter-spacing: -.045em;
-  text-wrap: balance;
-}
-.cine.pd .pd-lead {
-  max-width: 40ch;
-  margin: 0 0 24px;
-  color: var(--c-ink);
-  font-size: clamp(1.125rem, 1.42vw, 1.28rem);
-  line-height: 1.55;
-}
-.cine.pd .pd-meta {
-  max-width: none;
-  margin: 0 0 6px;
-  color: var(--c-ink-3);
-  font: 400 12px/1.7 var(--f-mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-.cine.pd .pd-meta > span { white-space: nowrap; }
-.cine.pd .pd-links { max-width: none; margin: 0; font-size: 14.5px; }
-.cine.pd .pd-links a { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--c-ink); }
-/* inline-block keeps the link underline off the time. */
-.cine.pd .pd-links .pd-time { display: inline-block; color: var(--c-ink-2); }
-
-.cine.pd .pd-view {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  background: #000;
-  border: 1px solid var(--c-line-2);
-}
-.cine.pd .pd-shot {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* The game is authored for a dark room; same lift as cine.css gives its frames. */
-  filter: brightness(1.55) contrast(1.04);
-}
-
-/* ---------- Sound, logic and level: trailer in the screen column, credits beside it ---------- */
-.cine.pd > section.pd-made {
-  display: grid;
-  grid-template-columns: minmax(0, 1.72fr) minmax(300px, 1fr);
-  grid-template-rows: auto auto 1fr auto;
-  grid-template-areas:
-    "video head"
-    "video list"
-    "video ."
-    "strip strip";
-  column-gap: clamp(32px, 4.4vw, 64px);
-  row-gap: 0;
-  align-items: start;
-  margin-bottom: clamp(64px, 8vw, 110px);
-}
-.cine.pd .pd-made > h2 { grid-area: head; margin: -6px 0 22px; }
-.cine.pd .pd-made__video { grid-area: video; margin: 0; }
-.cine.pd .pd-strip { grid-area: strip; margin: clamp(48px, 5vw, 72px) 0 0; }
-
-.cine.pd .pd-credits {
-  grid-area: list;
-  display: block;
-  max-width: none;
-  margin: 0;
-  border-top: 1px solid var(--c-line-2);
-}
-/* The column beside the trailer is narrow: credits read top to bottom,
-   name over line, instead of the two-column label/value row. */
-.cine.pd .pd-credits > div {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 3px;
-  padding: 13px 0 14px;
-  border-bottom: 1px solid var(--c-line);
-}
-.cine.pd .pd-credits dt {
-  color: var(--c-ink);
-  font: 500 12px/1.95 var(--f-mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-.cine.pd .pd-credits dd { margin: 0; color: var(--c-ink-2); font-size: 15.5px; line-height: 1.55; }
-.cine.pd .pd-credits__other dt,
-.cine.pd .pd-credits__other dd { color: var(--c-ink-3); }
-
-.cine.pd .pd-made__video video {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background: #000;
-  border: 1px solid var(--c-line-2);
-}
-.cine.pd .pd-made__video .local-video { border: 1px solid var(--c-line-2); overflow: hidden; }
-.cine.pd .pd-made__video .local-video > video { border: 0; }
-.cine.pd .pd-made figcaption { margin-top: 12px; color: var(--c-ink-3); font-size: 14px; line-height: 1.5; }
-.cine.pd .pd-made__video figcaption { margin-top: 10px; }
-.cine.pd .pd-made__video figcaption a { color: var(--c-ink-2); white-space: nowrap; }
-
-/* ---------- Chapter jumps under the trailer, in the game's HUD language ---------- */
-.cine.pd .pd-chapters[hidden] { display: none; }
-.cine.pd .pd-chapters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0 22px;
-  margin-top: 6px;
-  border-bottom: 1px solid var(--c-line);
-}
-.cine.pd .pd-chapters ol {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 22px;
-  max-width: none;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.cine.pd .pd-chapters button {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  min-height: 44px;
-  padding: 0;
-  border: 0;
-  border-bottom: 1px solid transparent;
-  background: none;
-  color: var(--c-ink-2);
-  font: 500 12px/1.4 var(--f-mono);
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: color 180ms var(--cine-ease), border-color 180ms var(--cine-ease);
-}
-.cine.pd .pd-chapters button .pd-time { font-size: 13px; letter-spacing: .02em; }
-.cine.pd .pd-chapters button:hover { color: var(--c-ink); border-bottom-color: var(--c-line-3); }
-.cine.pd .pd-chapters button:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
-/* The chapter that is playing takes the blue of the game's HUD bar. */
-.cine.pd .pd-chapters button[aria-current="true"] { color: var(--c-ink); border-bottom-color: var(--pd-hud); }
-.cine.pd .pd-chapters button[aria-current="true"] .pd-time { color: var(--pd-hud); }
-
-.cine.pd .pd-strip__frames {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(10px, 1.2vw, 16px);
-}
-.cine.pd .pd-strip__frames img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border: 1px solid var(--c-line);
-  background: #000;
-  filter: brightness(1.35) contrast(1.04);
-}
-
-.cine.pd .pd-close { border-top-color: var(--c-line-2); }
-
-/* ---------- Narrow screens ---------- */
-@media (max-width: 900px) {
-  .cine.pd .pd-open { grid-template-columns: minmax(0, 1fr); gap: 28px; margin-bottom: 76px; }
-  .cine.pd .pd-open__text,
-  .cine.pd .pd-screen { grid-column: 1; grid-row: auto; }
-  .cine.pd > section.pd-made {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: none;
-    grid-template-areas: "head" "video" "list" "strip";
-    row-gap: 0;
-  }
-  .cine.pd .pd-made > h2 { margin: 0 0 20px; }
-  .cine.pd .pd-credits { margin-top: 34px; }
-  .cine.pd .pd-strip { margin-top: 40px; }
-}
-
-@media (max-width: 600px) {
-  /* Two frames side by side still read on a tablet; stacked they each grew
-     as large as the trailer. */
-  .cine.pd .pd-strip__frames { grid-template-columns: minmax(0, 1fr); }
-  .cine.pd .pd-chapters { gap: 0 16px; }
-  .cine.pd .pd-chapters ol { gap: 0 18px; }
-  .cine.pd .pd-chapters .pd-label { flex-basis: 100%; padding-top: 6px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cine.pd .pd-chapters button { transition: none; }
+/* Keeps "Watch the trailer with sound" on one line in the full-width button at 320. */
+@media (max-width: 380px) {
+  .pd .ft-watch { gap: 9px; padding-inline: 12px; font-size: 16px; }
 }
