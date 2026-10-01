@@ -1,168 +1,27 @@
-/* HUSHABYE only. Near-neutral darks with the faint green of the HUSH-1's
-   infrared picture, and that phosphor tint as the one accent. */
+/* HUSHABYE: page-owned styles, loaded only on hushabye.html after feature.css.
+   The palette is sampled from update 7.2.6: the near-black of the unlit house,
+   the grey-green of the HUSH-1's infrared picture for the opening band, heads and
+   the one filled button, and the red the house turns when it leaves the crib for
+   the second band. */
 :root {
-  --c-bg-0: #080909;
-  --c-bg-1: #0d0f0e;
-  --c-bg-2: #141716;
-  --c-bg-3: #1b1f1d;
-  --c-ink: #eef1ee;
-  --c-ink-2: #b9bfbb;
-  --c-ink-3: #9ea8a2;
-  --c-accent: #bfd6c8;   /* the infrared picture (#acc1ad on CAM 1), lifted to read as text */
-  --c-accent-hi: #d9e8df;
-  --c-accent-ink: #0b0f0d;
-  --c-accent-line: rgba(191, 214, 200, .45);
-  --c-accent-weak: rgba(191, 214, 200, .12);
-  --c-line: rgba(233, 240, 236, .08);
-  --c-line-2: rgba(233, 240, 236, .16);
-  --c-line-3: rgba(233, 240, 236, .30);
-  --ice: #bfd6c8;
-}
-body::before { background: none; }
-
-/* ---------- Opening: one still across the page, the title set on it ---------- */
-.hu-hero {
-  position: relative;
-  height: min(48vw, 760px);
-  min-height: 300px;
-  overflow: hidden;
-  background: var(--c-bg-0);
-}
-.hu-hero__img {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 55%;
-}
-/* The still fades into the page at the foot and darkens behind the title. */
-.hu-hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(180deg, rgba(13, 15, 14, 0) 42%, rgba(13, 15, 14, .6) 76%, var(--c-bg-1) 100%),
-    linear-gradient(90deg, rgba(13, 15, 14, .72) 0%, rgba(13, 15, 14, 0) 52%);
-}
-.hu-hero__title {
-  position: absolute;
-  z-index: 1;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: var(--page-frame);
-  margin-inline: auto;
-  padding: 0 var(--page-gutter) clamp(20px, 3.4vw, 44px);
-}
-.hu-kicker {
-  margin: 0 0 16px;
-  color: var(--c-accent);
-  font: 400 var(--t-m1)/1.5 var(--f-mono);
-  letter-spacing: var(--tr-m);
-  text-transform: uppercase;
-}
-.hu-kicker > span { white-space: nowrap; }
-.hu-hero h1 {
-  margin: 0;
-  color: var(--c-ink);
-  font: 500 clamp(48px, 5.7vw, 86px)/1.01 var(--f-display);
-  /* Unlike the mixed-case project titles, no negative tracking: Space Grotesk kerns
-     the capital A into the B's spur. */
-  letter-spacing: .015em;
+  --ft-bg: #0b0d0d;
+  --ft-band: #141a19;
+  --ft-band-2: #2a1110;
+  --ft-ink: #eef1ee;
+  --ft-ink-2: #cdd4d0;
+  --ft-ink-3: #a7b1ac;
+  --ft-head: #dde9e2;
+  --ft-accent: #bfd6c8;
+  --ft-accent-ink: #0b0f0d;
 }
 
-/* ---------- Page body on the shared project frame ---------- */
-.cine.hu-body { padding-top: clamp(28px, 3.4vw, 44px); }
-/* Opt out of the shared heading-left / paragraph-right grid (cine.css, .cine > section). */
-.cine.hu-body > section:not(.cine-split) { display: block; }
-.hu-body figure { margin: 0; min-width: 0; }
-.hu-body figcaption { margin-top: 12px; color: var(--c-ink-3); font-size: 14px; line-height: 1.5; }
-.cine.hu-body h2 { margin-bottom: clamp(22px, 2.6vw, 34px); }
+/* The game's own title is set in capitals; open the tracking slightly so the
+   capital A does not run into the B. */
+.hu .ft-hero h1 { letter-spacing: .01em; }
 
-.hu-intro { margin-bottom: clamp(40px, 5vw, 64px); }
-.cine.hu-body .hu-lead {
-  max-width: 60ch;
-  margin: 0 0 18px;
-  color: var(--c-ink);
-  font-size: clamp(18px, 1.5vw, 21px);
-  line-height: 1.6;
-}
-.cine.hu-body .hu-meta {
-  max-width: none;
-  margin: 0;
-  color: var(--c-ink-3);
-  font: 400 var(--t-m1)/1.7 var(--f-mono);
-  letter-spacing: .02em;
-}
-.hu-meta > span { white-space: nowrap; }
+/* On the red band the captions sit on red, so lift them. */
+.hu .ft-band--alt { --ft-ink-3: #c9b5b1; --ft-ink-2: #e2d3d0; }
 
-/* ---------- The gameplay demo, in the shared media frame ---------- */
-.hu-film .yt-facade {
-  border: 1px solid var(--c-line);
-  border-radius: var(--r-m);
-  box-shadow: 0 24px 64px #0003;
-}
-
-/* ---------- How it plays: three moves, one line each ---------- */
-.hu-play { margin-top: clamp(80px, 8vw, 120px); }
-.cine.hu-body .hu-steps {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(20px, 2.4vw, 32px);
-  max-width: none;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.hu-steps li { margin: 0; }
-.hu-steps img,
-.hu-grid img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--c-line);
-  border-radius: var(--r-m);
-  background: var(--c-bg-0);
-}
-.cine.hu-body .hu-steps h3 { margin: 20px 0 6px; font-size: 22px; letter-spacing: -.02em; }
-.cine.hu-body .hu-steps p { max-width: 36ch; margin: 0; font-size: 16px; line-height: 1.6; }
-
-/* ---------- What I built: one line of evidence per part ---------- */
-.hu-built { margin-top: clamp(80px, 8vw, 120px); }
-.cine.hu-body .hu-stack {
-  display: block;
-  max-width: 980px;
-  margin: 0;
-  font-size: 16px;
-}
-.hu-stack > div {
-  display: grid;
-  grid-template-columns: minmax(150px, .3fr) minmax(0, 1fr);
-  gap: 6px 32px;
-  padding: 18px 0;
-  border-top: 1px solid var(--c-line);
-}
-.hu-stack > div:last-child { border-bottom: 1px solid var(--c-line); }
-.cine.hu-body .hu-stack dt { color: var(--c-ink); font: 500 18px/1.4 var(--f-display); letter-spacing: -.01em; }
-.cine.hu-body .hu-stack dd { max-width: 64ch; margin: 0; color: var(--c-ink-2); line-height: 1.65; }
-
-/* ---------- Stills: one grid, one ratio ---------- */
-.hu-stills { margin-top: clamp(80px, 8vw, 120px); margin-bottom: clamp(64px, 7vw, 96px); }
-.hu-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(20px, 2.4vw, 32px);
-}
-.hu-grid img { aspect-ratio: 16 / 9; object-fit: cover; }
-
-@media (max-width: 900px) {
-  .hu-stack > div { grid-template-columns: 1fr; }
-}
-@media (max-width: 760px) {
-  .hu-kicker { margin-bottom: 10px; font-size: 11px; letter-spacing: .05em; }
-  .cine.hu-body .hu-steps { grid-template-columns: 1fr; gap: 40px; }
-  .hu-grid { grid-template-columns: 1fr; }
+@media (max-width: 699px) {
+  .hu .ft-hero__stage > video { object-position: 46% 50%; }
 }
