@@ -102,6 +102,7 @@ an intermediate width and desktop, including long titles and player controls.
 | `cine.js` | One-shot reveals for `[data-reveal]` (no page uses them at present). |
 | `local-video.js` | Local-video enhancement on configured project pages. |
 | `video-facade.js` | Click-to-load YouTube embeds on the pages that configure it: the poster button is replaced by the player (`autoplay=1&rel=0&enablejsapi=1`), so a page script can pause it through postMessage. |
+| `poster-loop.js` | Silent gameplay loops (`video[data-poster-loop]`) inside a YouTube facade's poster: load once on screen, play while half visible, never under reduced motion, data saving or a hidden tab; the facade click removes them. |
 | `prefetch.js` | Same-origin navigation prefetch. |
 | `shadowframes.js` | Drives the ten-slot investigation board: the range input (native keyboard support) and its two buttons toggle .is-pinned on the photo slots, develop each newly pinned photo from black, and rewrite the aria-live ProgressiveAmbience stage/layers readout from a static Wwise stage table copied off SC_AMB_Progressive; the slots themselves are a pointer/touch shortcut only, staying aria-hidden. |
 | `transientica.js` | Transientica: a button that jumps the 2025 prototype video straight to its live-demo timestamp. |
