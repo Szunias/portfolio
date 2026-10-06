@@ -28,10 +28,17 @@
     });
   }
 
+  // Which recording a link names: a YouTube id, or the local file without its #t.
+  function source(link) {
+    return link.getAttribute('data-ft-yt') || link.getAttribute('href').split('#')[0];
+  }
+
   function open(link, t) {
-    if (film) return film;
+    // A page can cue more than one recording (HUSHABYE: the newest update in the
+    // hero, an older one for the chapters); a different one replaces the player.
+    if (film && film.getAttribute('data-ft-source') === source(link)) return film;
     var loop = stage.querySelector('video[data-poster-loop]');
-    var label = stage.getAttribute('data-ft-label') || 'Recording with sound';
+    var label = link.getAttribute('aria-label') || stage.getAttribute('data-ft-label') || 'Recording with sound';
     var yt = link.getAttribute('data-ft-yt');
     if (yt) {
       film = document.createElement('iframe');
@@ -51,6 +58,7 @@
       film.src = link.getAttribute('href').split('#')[0];
     }
     film.className = 'ft-hero__film';
+    film.setAttribute('data-ft-source', source(link));
     clearStage();
     stage.appendChild(film);
     hero.classList.add('is-film');
@@ -63,7 +71,7 @@
 
   function play(link) {
     var t = Number(link.getAttribute('data-t')) || 0;
-    var opened = !!film;
+    var opened = !!film && film.getAttribute('data-ft-source') === source(link);
     var video = open(link, t);
     pauseOthers();
     if (video.tagName === 'IFRAME') {
