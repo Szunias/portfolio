@@ -7,7 +7,7 @@
     </div>
     <div class="ft-hero__text">
       <h1><img class="ft-hero__logo" src="assets/nottoday/nottoday-logo-1200.webp" srcset="assets/nottoday/nottoday-logo-640.webp 640w, assets/nottoday/nottoday-logo-1200.webp 1200w" sizes="(min-width: 1100px) 360px, (min-width: 600px) 30vw, 220px" width="1200" height="813" alt="Not Today, Darling!" fetchpriority="high"></h1>
-      <p class="ft-hero__who">Sole audio designer: the engines, pickups, power-ups, the grannies&rsquo; voices and the mix.</p>
+      <p class="ft-hero__who">Sole audio designer: the MetaSounds engines, pickups and power-ups, the grannies&rsquo; voices and the mix.</p>
       <p class="ft-hero__acts">
         <a class="ft-watch" href="old/public/assets/images/projects-nottoday/nottoday-run-720p.mp4" data-ft-play data-t="0">Watch the run with sound</a>
         <a href="https://freyaspes.itch.io/not-today-darling" target="_blank" rel="noopener noreferrer">Play on itch.io <span aria-hidden="true">&nearr;</span></a>
@@ -19,10 +19,10 @@
     <p class="ft-deck">A couch kart racer for up to four players: grannies on mobility scooters race over a course built from household objects in a living room.</p>
     <p class="ft-facts">2025, Howest DAE, a six-person student team. Unreal Engine 5, MetaSounds, Blueprints, REAPER.</p>
 
-    <h2 class="ft-head" id="nt-run-title">From the menu to the win screen</h2>
+    <h2 class="ft-head" id="nt-run-title">One run as Betsy, from menu to win screen</h2>
     <ol class="ft-chapters">
       <li><a class="ft-cue" href="old/public/assets/images/projects-nottoday/nottoday-run-720p.mp4" data-ft-play data-t="0" aria-label="Play the run from 0:00, Menu"><b>0:00</b><span>Menu</span></a><p>Every button has a hover and a click sound, over the menu music.</p></li>
-      <li><a class="ft-cue" href="old/public/assets/images/projects-nottoday/nottoday-run-720p.mp4#t=17" data-ft-play data-t="17" aria-label="Play the run from 0:17, Intro"><b>0:17</b><span>Intro</span></a><p>The skippable intro cutscene has its own music. Then each player joins and picks a granny.</p></li>
+      <li><a class="ft-cue" href="old/public/assets/images/projects-nottoday/nottoday-run-720p.mp4#t=17" data-ft-play data-t="17" aria-label="Play the run from 0:17, Intro"><b>0:17</b><span>Intro</span></a><p>The intro cutscene has its own music and can be skipped. Then each player joins and picks a granny.</p></li>
       <li><a class="ft-cue" href="old/public/assets/images/projects-nottoday/nottoday-run-720p.mp4#t=54" data-ft-play data-t="54" aria-label="Play the run from 0:54, Countdown"><b>0:54</b><span>Countdown</span></a><p>The countdown from three to GO has its own sounds.</p></li>
       <li><a class="ft-cue" href="old/public/assets/images/projects-nottoday/nottoday-run-720p.mp4#t=58" data-ft-play data-t="58" aria-label="Play the run from 0:58, Race"><b>0:58</b><span>Race</span></a><p>Betsy&rsquo;s engine runs under the whole race, and the commentator names every item.</p></li>
       <li><a class="ft-cue" href="old/public/assets/images/projects-nottoday/nottoday-run-720p.mp4#t=104" data-ft-play data-t="104" aria-label="Play the run from 1:44, Win"><b>1:44</b><span>Win</span></a><p>The win screen plays a victory fanfare, the win music and the commentator&rsquo;s line for the winner.</p></li>
@@ -42,7 +42,7 @@
       </figure>
       <div class="ft-body">
         <p>I smoothed fast control changes, so the pitch follows the kart without jumping. Hear it from <a class="ft-cue" href="old/public/assets/images/projects-nottoday/nottoday-run-720p.mp4#t=58" data-ft-play data-t="58" aria-label="Play the run from 0:58, where the race starts">0:58</a>.</p>
-        <p>Launch pads, teleporters, gift&#8209;box pickups and the jam and fan zones each have their own sound.</p>
+        <p>Launch pads, teleporters and gift&#8209;box pickups each have a sound of their own.</p>
         <p class="ft-links"><a href="old/public/assets/images/projects-nottoday/SoundStructures.png" target="_blank" rel="noopener noreferrer">All 17 folders in Audio/Sounds <span aria-hidden="true">&nearr;</span></a></p>
       </div>
     </div>
@@ -53,7 +53,7 @@
       </figure>
       <div class="ft-body">
         <p>Pickups and power-ups share one MetaSound patch, <code>MSP_MonoArray</code>. Each time it plays, it picks a file from its array, never the same one twice in a row, at a random pitch within a set range.</p>
-        <p><code>MS_Pickup</code> layers two of these players into one stereo mix; <code>MS_Powerups</code> feeds a single one with <code>CreamPiePickupSounds</code>.</p>
+        <p><code>MS_Pickup</code> layers two of these players into one stereo mix; <code>MS_Powerups</code> feeds a single one with <code>CreamPiePickupSounds</code> and also writes it to the <code>AB_Ducker</code> audio bus.</p>
         <p class="ft-links"><a href="old/public/assets/images/projects-nottoday/MSP_MonoArray.png" target="_blank" rel="noopener noreferrer">MSP_MonoArray <span aria-hidden="true">&nearr;</span></a> <a href="old/public/assets/images/projects-nottoday/MS_Pickup.png" target="_blank" rel="noopener noreferrer">MS_Pickup <span aria-hidden="true">&nearr;</span></a> <a href="old/public/assets/images/projects-nottoday/MS_Powerups.png" target="_blank" rel="noopener noreferrer">MS_Powerups <span aria-hidden="true">&nearr;</span></a></p>
       </div>
     </div>
@@ -68,6 +68,7 @@
       </figure>
       <div class="ft-body">
         <p>I sorted the sounds into three priority tiers with concurrency limits, so kart feedback, major crashes and pickups stay audible in a pile-up, and distant engines and minor sounds give way first.</p>
+        <p>Master, Music, SFX and Voices each have a Sound Class and a class mix. Distance falloff comes from four shared attenuation presets: characters, deaths, ghosts and jump pads.</p>
         <p class="ft-links"><a href="old/public/assets/images/projects-nottoday/SoundClasses.png" target="_blank" rel="noopener noreferrer">Sound Classes <span aria-hidden="true">&nearr;</span></a> <a href="old/public/assets/images/projects-nottoday/SoundClassMixes.png" target="_blank" rel="noopener noreferrer">Class mixes <span aria-hidden="true">&nearr;</span></a> <a href="old/public/assets/images/projects-nottoday/AttenuationPresets.png" target="_blank" rel="noopener noreferrer">Attenuation presets <span aria-hidden="true">&nearr;</span></a></p>
       </div>
     </div>
@@ -80,7 +81,7 @@
         </div>
       </figure>
       <div class="ft-body">
-        <p>A zone plays its sound once, when the first granny enters, however many follow, and fades it out when the last one leaves. Hear the fans from <a class="ft-cue" href="old/public/assets/images/projects-nottoday/nottoday-run-720p.mp4#t=76" data-ft-play data-t="76" aria-label="Play the run with sound from 1:16, at the fans">1:16</a>.</p>
+        <p>Jam slows a kart down and fans push it on. A zone plays its sound once, when the first granny enters, however many follow, and fades it out when the last one leaves. Hear the fans from <a class="ft-cue" href="old/public/assets/images/projects-nottoday/nottoday-run-720p.mp4#t=76" data-ft-play data-t="76" aria-label="Play the run with sound from 1:16, at the fans">1:16</a>.</p>
         <p>The commentator ducks the rest of the mix, so the item names stay clear.</p>
       </div>
     </div>
