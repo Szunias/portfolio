@@ -26,11 +26,11 @@
           <video id="tr-loop-readout" data-poster-loop data-src="assets/transientica/transientica-loop-readout.mp4" poster="assets/transientica/transientica-loop-readout.webp" width="1280" height="560" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
           <button class="ft-toggle" type="button" data-loop-toggle aria-controls="tr-loop-readout" hidden>Pause</button>
         </div>
-        <figcaption class="ft-cap">The top of the screen during a song, at full size. <a class="ft-cue" href="https://www.youtube.com/watch?v=r9IC7t0GPOU&amp;t=38s" data-ft-play data-ft-yt="r9IC7t0GPOU" data-t="38" aria-label="Play the gameplay with sound from 0:38">Play from 0:38</a></figcaption>
+        <figcaption class="ft-cap">The top of the screen during a song. <a class="ft-cue" href="https://www.youtube.com/watch?v=r9IC7t0GPOU&amp;t=38s" data-ft-play data-ft-yt="r9IC7t0GPOU" data-t="38" aria-label="Play the gameplay with sound from 0:38">Play from 0:38</a></figcaption>
       </figure>
       <div class="ft-body">
-        <p>Before the first song, the player records at least ten kicks, snares and hi&#8209;hats with their own microphone. The game measures seven numbers from each recording and saves them, labelled by sound, in a JSON file, so a player can retrain between rounds.</p>
-        <p>During a song, every hit the microphone registers goes through a 512&#8209;sample FFT and gets the same seven numbers. The training recordings closest to it decide which sound it was, and the game shows that sound at the top of the screen with the classifier&rsquo;s confidence under it.</p>
+        <p>Before the first song, the player records at least ten kicks, snares and hi&#8209;hats with their own microphone. From each recording the game measures seven features (spectral centroid, rolloff, flux, zero&#8209;crossing rate, RMS, attack time and spectral flatness) and saves them, labelled by sound, in a JSON file, so a player can retrain between rounds. Training tests itself with leave&#8209;one&#8209;out cross&#8209;validation and asks for clearer recordings below 70% accuracy.</p>
+        <p>During a song, every hit the microphone registers goes through a 512&#8209;sample FFT and gets the same seven features. Its five nearest training recordings vote, weighted by distance, and the game shows the winning sound at the top of the screen with the classifier&rsquo;s confidence under it.</p>
       </div>
     </div>
 
@@ -46,7 +46,8 @@
         <figcaption class="ft-cap">A hi&#8209;hat on the hit line, judged PERFECT. <a class="ft-cue" href="https://www.youtube.com/watch?v=r9IC7t0GPOU&amp;t=42s" data-ft-play data-ft-yt="r9IC7t0GPOU" data-t="42" aria-label="Play the gameplay with sound from 0:42">Play from 0:42</a></figcaption>
       </figure>
       <div class="ft-body">
-        <p>Each hit is matched to the nearest note on Unity&rsquo;s audio clock and scored by its timing. A short calibration estimates the microphone delay, and the offset can be adjusted in 1&nbsp;ms steps.</p>
+        <p>Each hit is timed on Unity&rsquo;s audio clock (<code>dspTime</code>), moved back half an FFT window (about 5.8&nbsp;ms) for the analysis delay, and matched to the nearest note: within 60&nbsp;ms is Perfect, 130&nbsp;ms Great, 200&nbsp;ms Good.</p>
+        <p>For the microphone delay, a calibration plays clicks at 100&nbsp;BPM while the player beatboxes along, and the median gap becomes the offset, adjustable afterwards in 1&nbsp;ms steps.</p>
         <p>Around the recognition I built the rest of the game: song selection, beatmaps, scoring and saved results.</p>
       </div>
     </div>
@@ -63,8 +64,7 @@
         <figcaption class="ft-cap">The 2025 prototype in the Unity editor, with sound. <button class="tr-jump" type="button" data-tr-jump="65" hidden>Play from 1:05, the live demo</button></figcaption>
       </figure>
       <div class="ft-body">
-        <p>The first version was a Python script. It found each hit with onset detection, classified it with a machine learning model I had trained on three beatbox sounds (a boom for the kick, a sharp ch for the snare, a crisp ts for the hi&#8209;hat) and sent the result to Unity over OSC.</p>
-        <p>The video ends with the plan for the game I am building now.</p>
+        <p>The first version was a Python script. It found each hit with onset detection, classified it with a machine learning model I had trained on three beatbox sounds (a boom for the kick, a sharp ch for the snare, a crisp ts for the hi&#8209;hat) and sent the result to Unity over OSC, where the lane for that sound reacted.</p>
       </div>
     </div>
   </section>
