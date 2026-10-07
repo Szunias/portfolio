@@ -33,14 +33,14 @@
   <section class="ft-sec aq-chain" aria-labelledby="aq-chain-title">
     <h2 class="ft-head" id="aq-chain-title">From the file player to the output</h2>
     <div class="ft-body aq-intro">
-      <p>The audio passes through the panels in this fixed order. The filters and the compressor are JUCE modules. This is the chain in the source on GitHub, updated in July 2026. The download there is still v1.0.0, and I have not yet tested AudioQ across hosts, operating systems, sample rates and channel layouts.</p>
+      <p>The panels group the controls, but the audio passes through them in this fixed order. The filters and the compressor are JUCE modules. The chain is the one in the GitHub source as of July 2026. That source builds a VST3 and a standalone app; the release is still v1.0.0, a Windows VST3, and I have not yet tested AudioQ across hosts, operating systems, sample rates and channel layouts.</p>
     </div>
     <p class="ft-pull aq-pull">I wrote the file player, the make-up gain and everything from the tremolo on.</p>
 
     <div class="aq-group">
       <figure class="ft-media aq-panel"><img src="old/public/assets/images/projects-audioq/frames/aq-source-loop.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-source-loop-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-source-loop-884.webp 884w" sizes="(min-width: 1100px) 420px, (min-width: 700px) 40vw, 100vw" width="884" height="340" alt="The AudioQ source display: a waveform with a lit loop region and the playhead standing to its left" loading="lazy" decoding="async"></figure>
       <ol class="aq-steps">
-        <li><h3>Source</h3><p>Loops a region dragged on the waveform, or jumps between regions in random and granular modes. <code>AudioFilePlayer</code></p></li>
+        <li><h3>Source</h3><p>Plays a WAV, AIFF or MP3 dropped on the plug-in and loops a region dragged on the waveform. Tempo resamples the file, so speed and pitch move together. Random mode jumps between regions 0.1 to 3&nbsp;s long, granular mode between grains of 50 to 200&nbsp;ms. <code>AudioFilePlayer</code></p></li>
       </ol>
     </div>
 
@@ -50,16 +50,18 @@
         <li><h3>Filters</h3><p>Low-pass and high-pass, skewed so halfway round the knob is about 2&nbsp;kHz. <code>juce::dsp::StateVariableTPTFilter</code></p></li>
         <li><h3>Compressor</h3><p>Then a make-up gain I added, worked out from threshold and ratio, capped at 18&nbsp;dB. <code>juce::dsp::Compressor</code></p>
 <pre class="aq-code"><code>float makeupDb = juce::jlimit(0.0f, 18.0f,
-    (-cThresh) * (1.0f - (1.0f / juce::jmax(1.0f, cRatio))) * 0.35f);</code></pre></li>
+    (-cThresh)
+    * (1.0f - (1.0f / juce::jmax(1.0f, cRatio)))
+    * 0.35f);</code></pre></li>
       </ol>
     </div>
 
     <div class="aq-group">
       <figure class="ft-media aq-panel"><img src="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch.jpg" srcset="old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-640.webp 640w, old/public/assets/images/projects-audioq/frames/aq-tremolo-glitch-785.webp 785w" sizes="(min-width: 1100px) 420px, (min-width: 700px) 40vw, 100vw" width="785" height="302" alt="The tremolo panel with its switch, rate and depth, beside the glitch panel with the crush, downsample, stutter, reverse and dry / wet controls" loading="lazy" decoding="async"></figure>
       <ol class="aq-steps aq-steps--two" start="4">
-        <li><h3>Tremolo</h3><p>A squared sine LFO, so the level stays longer in the dips. From depth 0.5 they reach silence.</p></li>
-        <li><h3>Bitcrusher</h3><p>Rounds each sample to steps of 1/2<sup>bits</sup>. Downsample holds it for up to 40 samples.</p></li>
-        <li><h3>Stutter</h3><p>Repeats the latest chunk of a one-second history buffer, one period of the stutter rate long.</p></li>
+        <li><h3>Tremolo</h3><p>A squared sine LFO at 0.1 to 10&nbsp;Hz, so the level stays longer in the dips. From depth 0.5 they reach silence.</p></li>
+        <li><h3>Bitcrusher</h3><p>Rounds each sample to steps of 1/2<sup>bits</sup>, from 16 bits down to&nbsp;1. Downsample holds it for up to 40 samples.</p></li>
+        <li><h3>Stutter</h3><p>Repeats the latest chunk of a one-second history buffer, one period of the 2 to 32&nbsp;Hz stutter rate long.</p></li>
         <li><h3>Reverse</h3><p>Reads the same buffer backwards, 180&nbsp;ms at a time.</p></li>
         <li><h3>Dry/wet</h3><p>Blends in a dry copy taken straight after the file player, before the filters.</p></li>
       </ol>
