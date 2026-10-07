@@ -16,14 +16,14 @@
 
   <section class="ft-sec ft-band" aria-labelledby="mw-dictate-title">
     <p class="ft-deck">Hold <kbd>F8</kbd>, speak, release, and the text appears where you were typing.</p>
-    <p class="ft-facts">2026. Windows 10/11 x64, MIT licence. Settings app in Polish and English. The name comes from <span lang="pl">m&oacute;wi&cacute;</span>, Polish for &ldquo;to speak&rdquo;.</p>
+    <p class="ft-facts">2026, Windows 10/11 x64, MIT licence. I wrote everything around the speech model: the microphone buffer, the sound cues, voice commands on F7 and a settings app in Polish and English. The name comes from <span lang="pl">m&oacute;wi&cacute;</span>, Polish for &ldquo;to speak&rdquo;.</p>
 
     <div class="mw-pair mw-pair--shot">
       <div class="ft-body">
         <h2 class="ft-head" id="mw-dictate-title">From key press to pasted text</h2>
         <p>M&oacute;wik keeps the microphone open and holds the last 300&nbsp;ms of audio in RAM. Every recording starts with that buffer and runs 120&nbsp;ms past release, so the first and last syllables survive a key pressed late or let go early.</p>
-        <p><span class="mw-nw">faster-whisper</span> transcribes on the same computer, in float16 on an NVIDIA GPU or in int8 on the processor when CUDA cannot start. The quality profiles run from <code>small</code> to <code>large-v3</code>, with <code>large-v3-turbo</code> as the default.</p>
-        <p>The audio is dropped after transcription and the log never records what was said. A private vocabulary covers names and specialist terms. An optional local Ollama model can tidy the punctuation, and if it changes a number or a negation, or rewrites too much, M&oacute;wik keeps the original.</p>
+        <p><span class="mw-nw">faster-whisper</span> transcribes on the same computer, in float16 on an NVIDIA GPU or in int8 on the processor when CUDA cannot start. Three quality profiles run from <code>small</code> to <code>large-v3</code>; the default, Recommended, uses <code>large-v3-turbo</code>.</p>
+        <p>The text is pasted into the active window, copied to the clipboard, or both. The audio is dropped after transcription and the log never records what was said. A private vocabulary covers names and specialist terms. An optional local Ollama model can tidy the punctuation, and if it changes a number or a negation, or rewrites too much, M&oacute;wik keeps the original.</p>
       </div>
       <figure class="ft-media">
         <a class="image-zoom" data-image-zoom href="old/public/assets/images/projects-mowik/mowik-dictation-en.png" aria-label="Enlarge image: M&oacute;wik dictation settings in English"><img src="assets/mowik/mowik-dictation-en-1680.webp" srcset="assets/mowik/mowik-dictation-en-960.webp 960w, assets/mowik/mowik-dictation-en-1680.webp 1680w" sizes="(min-width: 1100px) 50vw, 100vw" width="1680" height="1170" alt="M&oacute;wik dictation settings in English: quality profiles, shortcut with the Detect button, microphone, language and a collapsed advanced section" loading="lazy" decoding="async"></a>
@@ -49,7 +49,7 @@
           <button type="button" class="ln ln--in ln--cue" data-cue="error" aria-label="Play the error cue: E4 then C sharp 4">"error": ((329.63, 75, 8), (277.18, 95, 0)),</button>
           <span class="ln">}</span>
         </div>
-        <p class="mw-notes__gloss">The comment reads: frequency in Hz, tone length in ms, silence after the tone in ms. Each line plays its cue, rendered in your browser from these numbers.</p>
+        <p class="mw-notes__gloss">The Polish comment reads: frequency in Hz, tone length in ms, silence after the tone in ms. The cues on this page are rendered in your browser from these numbers with the same envelope as in <span class="mw-nw">mowik.py</span>.</p>
       </figure>
     </div>
   </section>
@@ -58,7 +58,7 @@
     <div class="mw-pair">
       <h2 class="ft-head" id="mw-commands-title">Commands on <kbd class="is-cmd">F7</kbd></h2>
       <div class="ft-body">
-        <p><kbd class="is-cmd">F7</kbd> is a second push-to-talk key that reacts only to phrases saved in M&oacute;wik Center, matched word for word. Anything else does nothing and is never typed out as dictation.</p>
+        <p><kbd class="is-cmd">F7</kbd> is a second push-to-talk key that reacts only to phrases saved in M&oacute;wik Center, matched word for word, and each phrase runs one of three actions. Anything else does nothing and is never typed out as dictation.</p>
       </div>
     </div>
     <dl class="mw-actions">
@@ -72,7 +72,7 @@
     <div class="mw-pair mw-pair--even">
       <div class="ft-body">
         <h2 class="ft-head" id="mw-release-title">Installer and releases</h2>
-        <p>The installer needs no administrator rights. The speech model downloads on first launch, then transcription works offline. The CUDA libraries, close to a gigabyte, download only when a model first starts on an NVIDIA GPU, checked against checksums pinned in the release.</p>
+        <p>The installer needs no administrator rights. The speech model downloads on first launch, then transcription works offline. The CUDA libraries weigh close to a gigabyte and only help on NVIDIA cards, so I left them out of the installer: M&oacute;wik downloads them the first time a model starts on the GPU and checks them against checksums pinned in the release.</p>
         <p>GitHub Actions builds every release from pinned, hash-checked dependencies, then installs, repairs, launches and uninstalls it in English and Polish on a fresh Windows image. Upgrades and the Windows&nbsp;10 1809 minimum still need a manual run in a virtual machine, and hosted CI has no microphone.</p>
       </div>
       <div class="ft-body">
