@@ -175,7 +175,7 @@ async function main() {
         await assertTextFits(page, route === 'autotrim.html' ? '.ft' : '.error-page');
         if (route === 'autotrim.html') {
           assert.equal(await page.locator('#at-flow-title').count(), 1, 'The homepage links to #at-flow-title');
-          assert.match(await page.locator('section:has(#at-release-title)').textContent(), /development source/i);
+          assert.match(await page.locator('section:has(#at-release-title)').textContent(), /queue/i);
           await recordEvidence(page, `autotrim-${width}`);
         }
         results.push({ page: route, width, passed: true });
