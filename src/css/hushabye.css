@@ -25,8 +25,8 @@
 /* Text beside a picture sits at its middle, whichever of the two is taller. */
 .hu .ft-row { align-items: center; }
 
-/* Two captures side by side on the text edges: the monitor's feed with the hiding
-   loop, and two rooms of the house under the sound section. */
+/* Two captures side by side on the text edges: the baby with the CAM 2 feed under
+   the voice section, and the loading screen with the menu under the monitor section. */
 .hu-pair {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -34,7 +34,22 @@
   align-items: start;
 }
 
+/* The preview trailer's facade: the play label sits on the poster, as on SIDAR. */
+.hu .hu-film .yt-facade__launch::after { background: linear-gradient(180deg, transparent 50%, rgba(4, 8, 6, .55)); }
+.hu .hu-film .ft-watch {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  z-index: 1;
+}
+.hu .hu-film .yt-facade__launch:hover .ft-watch { opacity: .88; }
+.hu .hu-film .yt-facade__launch:focus-visible { outline: 2px solid var(--ft-accent); outline-offset: -4px; }
+
 @media (max-width: 699px) {
   .hu .ft-hero__stage > video { object-position: 46% 50%; }
   .hu-pair { grid-template-columns: minmax(0, 1fr); }
+  .hu .hu-film .ft-watch { left: 12px; bottom: 12px; min-height: 44px; padding: 0 16px 0 14px; font-size: 15px; }
+}
+@media (max-width: 380px) {
+  .hu .hu-film .ft-watch { width: auto; }
 }
