@@ -1,4 +1,6 @@
-/* Original-image links work without JavaScript; the dialog adds an in-page preview. */
+/* Original-image links work without JavaScript; the dialog adds an in-page preview.
+   Links inside one [data-image-group] (the HUSHABYE house gallery) also get
+   Previous and Next buttons and the left/right arrow keys, wrapping at the ends. */
 (function () {
   'use strict';
   var links = document.querySelectorAll('[data-image-zoom]');
@@ -12,6 +14,8 @@
   dialog.innerHTML = '<div class="image-viewer__toolbar">' +
     '<button type="button" data-zoom-toggle aria-pressed="false">Zoom in</button>' +
     '<a data-original target="_blank" rel="noopener noreferrer">Open original</a>' +
+    '<button type="button" data-step="-1" aria-label="Previous image" hidden><span aria-hidden="true">&larr;</span><span class="image-viewer__step-label">Previous</span></button>' +
+    '<button type="button" data-step="1" aria-label="Next image" hidden><span class="image-viewer__step-label">Next</span><span aria-hidden="true">&rarr;</span></button>' +
     '<button type="button" data-close aria-label="Close image preview" autofocus><span class="image-viewer__close-label">Close</span><span aria-hidden="true">&times;</span></button>' +
     '</div><div class="image-viewer__surface" tabindex="0" role="region" aria-label="Image detail"></div>' +
     '<p class="image-viewer__caption" id="image-viewer-caption"></p>';
@@ -24,7 +28,9 @@
   var original = dialog.querySelector('[data-original]');
   var zoom = dialog.querySelector('[data-zoom-toggle]');
   var close = dialog.querySelector('[data-close]');
+  var steps = [].slice.call(dialog.querySelectorAll('[data-step]'));
   var trigger;
+  var group = [];
 
   function setZoom(active) {
     dialog.classList.toggle('is-zoomed', active);
@@ -34,28 +40,52 @@
     surface.scrollLeft = 0;
   }
 
+  function show(link) {
+    trigger = link;
+    var thumbnail = link.querySelector('img');
+    // A link with no thumbnail (plain "Capture" text) names its own image
+    // via data-caption; falling back to the link text keeps it captioned
+    // even when a page forgets the attribute.
+    var text = thumbnail ? thumbnail.alt : (link.getAttribute('data-caption') || link.textContent.trim());
+    image.alt = text;
+    image.src = link.href;
+    // Keep the unused dialog free of an image with no source.
+    if (!image.parentNode) surface.appendChild(image);
+    caption.textContent = text;
+    original.href = link.href;
+    setZoom(false);
+  }
+
+  function step(by) {
+    if (group.length < 2) return;
+    var i = group.indexOf(trigger);
+    show(group[(i + by + group.length) % group.length]);
+  }
+
   links.forEach(function (link) {
     link.setAttribute('aria-haspopup', 'dialog');
     link.addEventListener('click', function (event) {
       if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
-      trigger = link;
-      var thumbnail = link.querySelector('img');
-      // A link with no thumbnail (plain "Capture" text) names its own image
-      // via data-caption; falling back to the link text keeps it captioned
-      // even when a page forgets the attribute.
-      var text = thumbnail ? thumbnail.alt : (link.getAttribute('data-caption') || link.textContent.trim());
-      image.alt = text;
-      image.src = link.href;
-      // Keep the unused dialog free of an image with no source.
-      if (!image.parentNode) surface.appendChild(image);
-      caption.textContent = text;
-      original.href = link.href;
-      setZoom(false);
+      var set = link.closest && link.closest('[data-image-group]');
+      group = set ? [].slice.call(set.querySelectorAll('[data-image-zoom]')) : [link];
+      steps.forEach(function (button) { button.hidden = group.length < 2; });
+      show(link);
       dialog.showModal();
       document.documentElement.classList.add('image-viewer-open');
       close.focus({ preventScroll: true });
     });
+  });
+
+  steps.forEach(function (button) {
+    button.addEventListener('click', function () { step(Number(button.getAttribute('data-step'))); });
+  });
+  // The arrow keys page through a group; while zoomed they pan the image instead.
+  dialog.addEventListener('keydown', function (event) {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    if (group.length < 2 || dialog.classList.contains('is-zoomed')) return;
+    event.preventDefault();
+    step(event.key === 'ArrowRight' ? 1 : -1);
   });
 
   zoom.addEventListener('click', function () { setZoom(!dialog.classList.contains('is-zoomed')); });

@@ -94,7 +94,7 @@ an intermediate width and desktop, including long titles and player controls.
 | --- | --- |
 | `home-showreel.js` | Compact silent preview, full showreel, close and focus restoration. |
 | `home-transition.js` | Scroll-driven hero exit, whole-wave transforms and showreel coverage state. |
-| `image-viewer.js` | Original-image dialog, zoom and focus restoration on project screenshots. |
+| `image-viewer.js` | Original-image dialog, zoom and focus restoration on project screenshots; inside a `[data-image-group]` (the HUSHABYE house gallery) it adds Previous/Next buttons and the arrow keys, wrapping at the ends. |
 | `project-previews.js` | Lazy, silent previews on project-card hover or keyboard focus. |
 | `copy-email.js` | Copies the visible address on the homepage and contact pages and marks the clicked button and the status with `data-copy-state` for 4 s. |
 | `page-motion.js` | Header state on scroll. |
@@ -118,6 +118,7 @@ an intermediate width and desktop, including long titles and player controls.
 | `ai-audio-research.js` | AI Audio Research: the sample table's play buttons, one sample at a time. |
 | `sounddesign.js` | Three sound redesigns: the second stage (Baldur's Gate 3) turns into its clip in place, and only one clip plays at a time. |
 | `ifmc.js` | Drives both IFMC score reels (play/pause, scrub, cues against a pre-measured loudness trace) and keeps the reels, the hero film (feature.js) and the second film (video-facade.js) from playing together. |
+| `hushabye.js` | HUSHABYE: the CAM 1-6 switcher in the monitor section. Turns the no-JS grid of six camera views into one view chosen with six `aria-pressed` buttons (arrow keys move between them) and announces the camera through a polite live region. |
 | `richter.js` | Richter: the main-theme player, which keeps the theme and the film from playing at once. |
 | `ray.js` | Ray: the Credits theme play/pause button, which keeps the film and the theme from playing at once. |
 
