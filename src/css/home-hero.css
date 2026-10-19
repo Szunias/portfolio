@@ -132,45 +132,57 @@
 }
 .hero__base {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  gap: clamp(32px, 5vw, 80px);
+  gap: 32px;
   margin-top: auto;
   padding-top: 60px;
 }
 .hero__introduction p { margin: 0; }
 .hero__introduction .hero__name { margin-bottom: 8px; font-size: 16px; font-weight: 500; }
 .hero__role { color: var(--c-ink-2); font-size: 14px; line-height: 1.65; }
-.hero__work-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 28px;
-  min-height: 48px;
-  color: var(--c-ink);
-  font-size: 14px;
-  text-decoration: none;
-}
-.hero__work-link > span:last-child { font-size: 24px; }
-.hero-reel__launch {
+/* The two exits are one pair of pills on the site's ghost-button border, the
+   same height, so neither reads as a stray label. The reel pill carries the
+   looping preview in a round well at its left end. */
+.hero__actions {
   display: flex;
   align-items: center;
-  gap: 16px;
-  min-height: 72px;
-  padding: 0;
-  border: 0;
-  background: transparent;
+  gap: 12px;
+}
+.hero__work-link,
+.hero-reel__launch {
+  display: inline-flex;
+  align-items: center;
+  min-height: 56px;
+  border: 1px solid var(--c-control);
+  border-radius: var(--r-pill);
   color: var(--c-ink);
-  font: 500 14px/1.4 var(--f-body);
+  font: 500 14px/1.2 var(--f-body);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+.hero__work-link:hover,
+.hero-reel__launch:hover {
+  border-color: var(--c-control-hi);
+  background: rgba(236, 238, 240, .04);
+}
+.hero__work-link { gap: 12px; padding: 0 22px 0 24px; }
+.hero__work-link > span:last-child { color: var(--c-ink-2); font-size: 16px; }
+.hero-reel__launch {
+  gap: 14px;
+  padding: 5px 24px 5px 5px;
+  background: var(--c-bg-2);
   text-align: left;
   cursor: pointer;
 }
 .hero-reel__preview {
   position: relative;
-  flex: 0 0 132px;
-  width: 132px;
-  height: 82px;
+  flex: 0 0 auto;
+  width: 64px;
+  height: 44px;
   overflow: hidden;
-  border: 1px solid var(--c-line-2);
+  border-radius: var(--r-pill);
 }
 .hero-reel__preview > img,
 .hero-reel__preview > video {
@@ -182,7 +194,14 @@
 }
 .hero-reel__preview > video { transition: opacity .3s; }
 .hero.is-settled .hero-reel__preview > video { opacity: 0; }
-.hero-reel__preview::after { position: absolute; inset: 0; background: #0003; content: ""; }
+.hero-reel__preview::after {
+  position: absolute;
+  inset: 0;
+  background: #0006;
+  content: "";
+  transition: background var(--dur) var(--ease);
+}
+.hero-reel__launch:hover .hero-reel__preview::after { background: #0002; }
 .hero-reel__launch-icon {
   position: absolute;
   z-index: 1;
@@ -191,11 +210,9 @@
   place-items: center;
   color: #fff;
 }
-.hero-reel__launch-icon svg { width: 40px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.5; }
-.hero-reel__launch-icon .hero-reel__play { fill: currentColor; stroke: none; }
-.hero-reel__copy { display: flex; flex-direction: column; gap: 8px; white-space: nowrap; }
-.hero-reel__copy small { color: var(--c-ink-3); font: 11px/1.4 var(--f-mono); }
-.hero-reel__arrow { margin-left: 4px; font-size: 23px; }
+.hero-reel__launch-icon svg { width: 12px; height: 12px; fill: currentColor; }
+.hero-reel__copy { display: flex; align-items: baseline; gap: 10px; }
+.hero-reel__copy small { color: var(--c-ink-3); font: 12px/1 var(--f-mono); }
 .hero__cinema {
   position: absolute;
   z-index: 4;
@@ -261,9 +278,6 @@
     text-align: right;
   }
   .hero__base { gap: 24px; padding-top: 0; }
-  .hero-reel__preview { flex-basis: 94px; width: 94px; height: 68px; }
-  .hero-reel__arrow { display: none; }
-  .hero__work-link { gap: 16px; }
 }
 @media (max-width: 760px) {
   .hero { min-height: max(650px, calc(100svh - var(--site-header-height))); padding-top: 26px; padding-bottom: 28px; }
@@ -273,14 +287,14 @@
   .hero h1.hero__statement { font-size: clamp(86px, 24vw, 112px); }
   .hero__statement > span:last-child { font-size: clamp(38px, 11vw, 72px); }
   .hero__service { margin-top: 20px; font-size: 14px; }
-  .hero__base { grid-template-columns: 1fr auto; column-gap: 20px; row-gap: 22px; }
-  .hero__introduction { grid-column: 1 / -1; }
+  .hero__base { grid-template-columns: 1fr; row-gap: 22px; }
   .hero__introduction .hero__name { margin-bottom: 6px; font-size: 15px; }
-  .hero__work-link { gap: 12px; font-size: 13px; }
-  .hero-reel__launch { gap: 12px; min-height: 52px; font-size: 14px; }
-  .hero-reel__preview { flex-basis: 64px; width: 64px; height: 50px; }
-  .hero-reel__launch-icon svg { width: 30px; height: 24px; }
-  .hero-reel__copy { gap: 5px; }
+  .hero__actions { flex-direction: row-reverse; justify-content: flex-end; gap: 10px; }
+  .hero__work-link,
+  .hero-reel__launch { min-height: 52px; font-size: 14px; }
+  .hero__work-link { padding: 0 18px 0 20px; }
+  .hero-reel__launch { gap: 12px; padding-right: 18px; }
+  .hero-reel__preview { width: 56px; height: 40px; }
 }
 /* Safari on a phone shows only about 660px of the page on arrival, so phones
    put the frame after the controls: the name, the role and "Watch showreel"
@@ -292,13 +306,18 @@
   .hero-still__caption { font-size: 10px; }
 }
 @media (max-width: 380px) {
-  .hero__base { column-gap: 12px; }
-  .hero__work-link { gap: 8px; font-size: 12px; }
-  .hero__work-link > span:last-child { font-size: 16px; }
-  .hero-reel__launch { gap: 9px; font-size: 13px; }
-  .hero-reel__preview { flex-basis: 46px; width: 46px; height: 46px; }
+  .hero__actions { gap: 8px; }
+  .hero__work-link,
+  .hero-reel__launch { font-size: 13px; }
+  .hero__work-link { gap: 8px; padding: 0 14px 0 16px; }
+  .hero-reel__launch { gap: 10px; padding-right: 14px; }
+  .hero-reel__preview { width: 44px; }
+  .hero-reel__copy small { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-reel__preview > video { transition: none; }
+  .hero-reel__preview > video,
+  .hero-reel__preview::after,
+  .hero__work-link,
+  .hero-reel__launch { transition: none; }
 }
