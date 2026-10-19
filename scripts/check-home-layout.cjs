@@ -130,12 +130,12 @@ async function main() {
       await page.goto(origin, { waitUntil: 'load' });
       await loadImages(page);
       await assertTextFits(page, '#work, #about, #contact');
-      assert.equal(await page.locator('a.prow--featured').count(), 6);
-      assert.equal(await page.locator('a.prow--tool').count(), 4);
-      // The music card shows no cover art, only the first three pieces of the set list.
+      assert.equal(await page.locator('a.prow--featured').count(), 7);
+      assert.equal(await page.locator('a.prow--tool').count(), 3);
+      // The music card shows no cover art, only the three scores to picture that open the set list.
       assert.equal(await page.locator('.music-cta img').count(), 0);
       assert.deepEqual(await page.locator('.music-cta__list li').evaluateAll((items) => items.map((item) => item.textContent.replace(/\s+/g, ' ').trim())),
-        ['01 Ray 0:22', '02 Cage 1:50', '03 Electronic sketch 2:30']);
+        ['Walter Wordless animation, IFMC Winter 2025', 'When The Clapping Stops Live-action short, IFMC Winter 2025', 'Richter Earthquake short, 2024']);
       assert.equal(await page.locator('.earlier-work nav a').count(), 8);
       assert.equal(await page.locator('.tool-feature a, .tool-feature button, .music-cta__link a, .music-cta__link button').count(), 0, 'Feature links must not contain interactive descendants');
       const geometry = await page.evaluate(() => {
@@ -148,7 +148,7 @@ async function main() {
           sidarFit: style('.wcard--sidar img').objectFit,
         };
       });
-      assert.equal(geometry.toolColumns, width >= 1200 ? 3 : 1);
+      assert.equal(geometry.toolColumns, width >= 1000 ? 2 : 1);
       assert.equal(geometry.featureColumns, width >= 900 ? 2 : 1);
       assert.equal(geometry.musicColumns, width >= 640 ? 2 : 1);
       assert.equal(geometry.panelBottomPadding, '0px');

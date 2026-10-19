@@ -1,8 +1,12 @@
 /* AudioQ: page-owned styles, loaded only on audioq.html after feature.css.
    The palette is sampled from the plug-in window: the near-black under its panels for the
    page, the slate of its display panels for the opening band, and for the one accent the
-   blue of the earlier version's output display (JUCE Colours::blue.brighter(0.3f), #3628e7),
-   lifted for text. The plug-in's own orange stays inside its screenshots. */
+   orange of its knobs and waveforms (#f8b048 in the window capture), so the controls
+   match the screenshot they sit beside.
+
+   The hero is the tool, not footage: the window carries its own labels, so the title and
+   links sit beside it on the page colour instead of over it. Watch turns the hero into the
+   shared player layout; below 900px the window stands whole above the title. */
 :root {
   --ft-bg: #0d1116;
   --ft-band: #171c23;
@@ -11,22 +15,45 @@
   --ft-ink-2: #c6cdd6;
   --ft-ink-3: #9ea8b4;
   --ft-head: #f4f6f9;
-  --ft-accent: #aeb4ff;
+  --ft-accent: #f6ae48;
   --ft-accent-ink: #0d1116;
   --aq-box: #0a0d12;      /* code, the plug-in's inset fields */
   --aq-frame: #2a313a;    /* the hairline round the plug-in's own panels */
 }
 
-/* The window fills the hero from its displays down to the knob row; its title bar repeats the h1. */
-.aq .ft-hero__stage > img { object-position: 50% 86%; }
-/* The window's small panel labels sit under the title, so the left side fades a little further. */
-@media (min-width: 700px) {
-  .aq .ft-hero:not(.is-film) .ft-hero__stage::after {
-    background:
-      linear-gradient(90deg, color-mix(in srgb, var(--ft-fade) 92%, transparent) 0%, color-mix(in srgb, var(--ft-fade) 74%, transparent) 54%, transparent 80%),
-      linear-gradient(0deg, var(--ft-fade) 0%, transparent 25%);
+/* ---------- Hero: title and links beside the window ---------- */
+@media (min-width: 900px) {
+  .aq .ft-hero:not(.is-film) {
+    --ft-fade: var(--ft-bg);
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    align-items: center;
+    gap: 32px var(--ft-gap);
+    padding: clamp(32px, 4vw, 56px) max(var(--page-gutter), calc((100% - var(--page-max)) / 2)) clamp(40px, 4.4vw, 64px);
   }
+  .aq .ft-hero:not(.is-film) .ft-hero__text {
+    position: static;
+    grid-column: 1;
+    grid-row: 1;
+    display: block;
+    padding: 0;
+  }
+  .aq .ft-hero:not(.is-film) .ft-hero__stage {
+    grid-column: 2;
+    grid-row: 1;
+    height: auto;
+    aspect-ratio: 2028 / 1389;
+    border: 1px solid var(--aq-frame);
+    border-radius: 8px;
+    background: var(--aq-box);
+  }
+  .aq .ft-hero:not(.is-film) .ft-hero__stage::after { content: none; }
+  .aq .ft-hero:not(.is-film) .ft-hero__acts { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .aq .ft-hero:not(.is-film) .ft-hero__acts .ft-watch { margin-bottom: 10px; }
 }
+/* The title sits on the plain page, not on the screenshot, so it needs no shadow. */
+.aq .ft-hero h1,
+.aq .ft-hero__who { text-shadow: none; }
 /* The link to the full-size window stays on one line. */
 .aq .ft-facts a { white-space: nowrap; }
 
@@ -41,11 +68,13 @@
 
 /* ---------- The chain: four real panels, each with its stages beside it, in order ---------- */
 .aq-chain { counter-reset: aq-stage; row-gap: 28px; }
-/* The note on the source and the line on what I wrote sit side by side under the head. */
+/* The note on the order and the note on the source and release keep the reading column. */
 @media (min-width: 1100px) {
-  .aq-chain .aq-intro { grid-column: content-start / c 7; grid-row: 2; }
-  .aq-chain .aq-pull { grid-column: c 8 / content-end; grid-row: 2; align-self: start; }
+  .aq-chain .aq-intro,
+  .aq-chain .aq-status { grid-column: content-start / c 8; }
 }
+.aq-chain .aq-status { padding-top: 22px; border-top: 1px solid var(--ft-rule); }
+.aq-chain .aq-status p { color: var(--ft-ink-2); }
 .aq-group {
   grid-column: content;
   display: grid;
@@ -94,8 +123,9 @@
   background: var(--aq-box);
   color: var(--ft-ink-2);
   font: 400 13.5px/1.55 var(--f-mono);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+  /* Lines keep their breaks and indents; a narrow screen scrolls the block instead. */
+  white-space: pre;
+  overflow-x: auto;
 }
 .aq-code code { color: inherit; font: inherit; }
 
@@ -105,11 +135,15 @@
   .aq-group > .aq-steps { grid-column: c 5 / content-end; }
   .aq-steps--two { grid-template-columns: minmax(0, 1fr); }
 }
-@media (max-width: 699px) {
-  /* On a phone a crop of the window is unreadable behind the title: the whole window, the title under it. */
+@media (max-width: 899px) {
+  /* Too narrow for the two columns: the whole window, the title under it. */
   .aq .ft-hero:not(.is-film) .ft-hero__stage { height: auto; aspect-ratio: 2028 / 1389; }
   .aq .ft-hero:not(.is-film) .ft-hero__stage::after { background: linear-gradient(0deg, var(--ft-fade) 0%, transparent 18%); }
   .aq .ft-hero__text { position: static; padding-top: 28px; }
+}
+@media (max-width: 699px) {
+  /* Long lines wrap at the box edge; there is no visible cue that the block scrolls. */
+  .aq-code { white-space: pre-wrap; overflow-wrap: anywhere; }
   .aq-chapters { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 4px; }
   .aq-chapters li { padding: 10px 0 6px; }
   .aq-chapters span { font-size: 17px; }

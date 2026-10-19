@@ -59,7 +59,14 @@
   left: 0;
   width: calc(100% + 1px);
   height: 12px;
-  background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--ft-ink) 45%, transparent) 0 1px, transparent 1px 25%);
+  /* One 1px tick per second, each placed on its own: a repeating gradient with 1px stops drops lines in Firefox. */
+  --ar-tick: linear-gradient(color-mix(in srgb, var(--ft-ink) 45%, transparent), color-mix(in srgb, var(--ft-ink) 45%, transparent));
+  background:
+    var(--ar-tick) 0 0 / 1px 100% no-repeat,
+    var(--ar-tick) 25% 0 / 1px 100% no-repeat,
+    var(--ar-tick) 50% 0 / 1px 100% no-repeat,
+    var(--ar-tick) 75% 0 / 1px 100% no-repeat,
+    var(--ar-tick) 100% 0 / 1px 100% no-repeat;
 }
 .ar .ar-axis__s {
   position: absolute;
@@ -105,9 +112,13 @@
   content: "";
   position: absolute;
   inset: 0;
+  --ar-grid: linear-gradient(var(--ft-rule), var(--ft-rule));
   background:
     linear-gradient(90deg, color-mix(in srgb, var(--ft-accent) 20%, transparent) 0 3.75%, transparent 3.75%),
-    repeating-linear-gradient(90deg, var(--ft-rule) 0 1px, transparent 1px 25%);
+    var(--ar-grid) 0 0 / 1px 100% no-repeat,
+    var(--ar-grid) 25% 0 / 1px 100% no-repeat,
+    var(--ar-grid) 50% 0 / 1px 100% no-repeat,
+    var(--ar-grid) 75% 0 / 1px 100% no-repeat;
 }
 .ar .ar-bar,
 .ar .ar-dot { position: absolute; top: 50%; }
@@ -141,7 +152,7 @@
 .ar .ar-cache tr.ar-group { height: auto; }
 .ar .ar-ruler .ft-cap { max-width: 72em; margin-top: 18px; }
 
-/* ---------- Same prompt, four methods: one play button per sample (ai-audio-research.js) ---------- */
+/* ---------- Listening comparison: one play button per sample (ai-audio-research.js) ---------- */
 .ar .ar-matrix { grid-column: content; width: 100%; border-collapse: collapse; table-layout: fixed; }
 .ar .ar-matrix thead th:first-child { width: 30%; }
 .ar .ar-matrix th,
@@ -202,6 +213,55 @@
 }
 .ar .ar-play.is-playing .ar-play__icon { width: 12px; height: 12px; margin: 0; border: 0; background: currentColor; }
 
+/* ---------- The door frame: the server log shown again, large enough to read ---------- */
+/* The same 1920px capture, cropped in CSS to requests 1 to 6 (x 866-1526, y 888-1036). */
+.ar .ar-log {
+  position: relative;
+  display: block;
+  max-width: 560px;
+  margin-top: 14px;
+  aspect-ratio: 660 / 148;
+  overflow: hidden;
+  border: 1px solid var(--ft-rule);
+  border-radius: 6px;
+  background: #0c0c0c;
+}
+.ar .ft-media .ar-log img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(1920 / 660 * 100%);
+  max-width: none;
+  height: auto;
+  transform: translate(calc(-866 / 1920 * 100%), calc(-888 / 1140 * 100%));
+}
+@supports (grid-template-columns: subgrid) {
+  .ar .ar-ready > .ft-media > .ar-log { grid-column: content-start / -1; }
+  @media (max-width: 699px) { .ar .ar-ready > .ft-media > .ar-log { grid-column: content; } }
+}
+
+/* After a failed generation: the order the server falls back in. */
+.ar .ar-fallback {
+  max-width: 34em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: ar-fall;
+}
+.ar .ar-fallback li {
+  counter-increment: ar-fall;
+  display: flex;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--ft-rule);
+}
+.ar .ar-fallback li::before {
+  content: counter(ar-fall);
+  min-width: 1.2em;
+  color: var(--ft-accent);
+  font: 600 15px/1.6 var(--f-mono);
+}
+
 /* The prototype recording keeps its own shape. */
 .ar .ar-lab { --shot-ar: 1722 / 916; }
 
@@ -214,8 +274,9 @@
 }
 /* Picture and text split the width evenly while they still sit side by side. */
 @media (min-width: 900px) {
-  .ar .ar-ready,
-  .ar .ar-proto { align-items: center; }
+  .ar .ar-ready { align-items: center; }
+  /* The short note on the prototype sits level with the top of its recording. */
+  .ar .ar-proto { align-items: start; }
   .ar .ar-ready > .ft-media { grid-column: full-start / c 6; }
   .ar .ar-ready > :not(.ft-media) { grid-column: c 6 / content-end; }
   .ar .ar-proto > .ft-media { grid-column: c 6 / full-end; }

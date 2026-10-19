@@ -26,6 +26,16 @@
 
 /* The logo is the title; at this size the role line and Watch stay well inside the first screen. */
 .nt .ft-hero__logo { width: clamp(180px, 25vw, 360px); }
+/* The hero is a still from the race start: the karts sit in the middle of the frame,
+   right of the title, and the countdown at the top stays inside the stage. */
+.nt .ft-hero__stage > .nt-hero__still { object-position: 50% 10%; }
+/* The race-start frame is bright HUD art in every corner, so the shared fade
+   is darker and wider here to keep the logo and role line on a quiet field. */
+.nt .ft-hero:not(.is-film) .ft-hero__stage::after {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--ft-fade) 94%, transparent) 0%, color-mix(in srgb, var(--ft-fade) 82%, transparent) 34%, color-mix(in srgb, var(--ft-fade) 30%, transparent) 62%, transparent 80%),
+    linear-gradient(0deg, var(--ft-fade) 0%, transparent 25%);
+}
 
 /* ---------- Two columns: a picture with its own text under it, side by side ---------- */
 .nt-col--a { grid-column: content-start / c 6; }
@@ -114,7 +124,12 @@
   .nt-col > .ft-body { margin-top: 16px; }
 }
 @media (max-width: 699px) {
-  .ft-hero .ft-hero__stage > video { object-position: 38% 50%; }
+  .nt .ft-hero__stage > .nt-hero__still { object-position: 45% 50%; }
+  .nt .ft-hero:not(.is-film) .ft-hero__stage::after {
+    background: linear-gradient(0deg, var(--ft-fade) 0%, color-mix(in srgb, var(--ft-fade) 86%, transparent) 40%, color-mix(in srgb, var(--ft-fade) 72%, transparent) 100%);
+  }
+  /* Gwen's intro and Penny's win, one above the other, so the tiles stay readable. */
+  .nt-shots { grid-template-columns: minmax(0, 1fr); }
   /* The run's five cues: time and name on one line, so the list stays short on a phone. */
   .nt .ft-chapters li { padding: 6px 0 14px; }
   .nt .ft-chapters .ft-cue { flex-wrap: nowrap; align-items: center; }

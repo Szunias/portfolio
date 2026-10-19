@@ -111,32 +111,35 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
    appears only with a project. Each link carries the accent of the page it
    opens, copied from that page's own stylesheet; update both together. */
 .track-hushabye { --track: #d6e8dc; }
-.track-shadowframes { --track: #d3d5d8; }
-.track-sidar { --track: #c2cea3; }
-.track-xrlabs { --track: #5ec8b6; --track-line: rgba(94,200,182,.45); }
-.track-transientica { --track: #3fe0cc; --track-line: rgba(63,224,204,.45); }
-.track-nottoday { --track: #f28cbd; --track-line: rgba(242,140,189,.45); }
+.track-shadowframes { --track: #d7d8db; }
+.track-sidar { --track: #b4dcc0; }
+.track-xrlabs { --track: #5ec8b6; }
+.track-transientica { --track: #3fe0cc; }
+.track-nottoday { --track: #f1e6c8; }
 .track-autotrim { --track: #96a2ff; --track-line: rgba(150,162,255,.45); }
-.track-audioq { --track: #a5acff; }
-.track-mowik { --track: #38bdf8; }
-.track-ai-audio-research { --track: #6cb2ea; }
-.track-wwiseprojects { --track: #cf9be8; }
+.track-audioq { --track: #f6ae48; }
+.track-mowik { --track: #60a5fa; }
+.track-ai-audio-research { --track: #c6d7a0; }
+.track-wwiseprojects { --track: #c6dccd; }
 .track-sounddesign { --track: #8fc3ec; }
 .track-amorak { --track: #8ec3d5; }
-.track-akantilado { --track: #db86c3; }
-.track-ray { --track: #aeb8e0; }
-.track-richter { --track: #a9bcc6; }
-.track-pausedeserve { --track: #ff4d58; }
-.track-ifmc { --track: #d09fb1; }
+.track-akantilado { --track: #e29acf; }
+.track-ray { --track: #e8e3dc; }
+.track-richter { --track: #b9cbd4; }
+.track-pausedeserve { --track: #fbe3de; }
+.track-ifmc { --track: #e6d9b8; }
 
-/* Section names stay small; the project titles carry the display type. */
+/* Section names sit on the section rung of the ladder, above every project
+   title, so the sections order the page. About and Contact step down one rung
+   so the address stays the largest line of the closing band. */
 .sec-title,
 .plist__group {
   margin: 0;
   color: var(--ink);
-  font: 500 clamp(24px,2.1vw,30px)/1.1 var(--f-display);
-  letter-spacing: -.03em;
+  font: 500 var(--t-t1)/var(--lh-t1) var(--f-display);
+  letter-spacing: -.035em;
 }
+.closing-band .sec-title { font-size: var(--t-t2); line-height: var(--lh-t2); letter-spacing: -.03em; }
 
 /* Selected work: preserve the lead project and previews; read role before stack. */
 .panel {
@@ -210,7 +213,7 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 }
 .wcard__title {
   font-family: var(--display);
-  font-size: clamp(27px,2.7vw,40px);
+  font-size: var(--t-t2);
   font-weight: 500;
   line-height: var(--lh-t2);
   letter-spacing: -.04em;
@@ -240,9 +243,10 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 }
 .wcard:active .wcard__title { color: var(--track,var(--ice)); }
 
-/* The lead's title sits on its Polaroid, so the sentence becomes the caption,
-   and one line of what I made for the game fills the column beside it. */
-.wcard--lead .wcard__body { align-self: end; gap: 16px; padding-bottom: 26px; }
+/* The lead's title sits on its frame, so the sentence becomes the caption,
+   and one line of what I made for the game fills the column beside it. The
+   column is centred on the picture in both lead cards. */
+.wcard--lead .wcard__body { align-self: center; gap: 16px; }
 .wcard--lead .wcard__desc {
   max-width: 26ch;
   color: var(--c-ink);
@@ -257,63 +261,48 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   text-wrap: pretty;
 }
 
-/* Each card frames its picture with an object from the project's page. */
+/* One frame for every card: the same inset, edge and radius, with the edge
+   in the project's track colour. Only the title keeps the project's own type. */
 .wcard__frame {
   position: relative;
   min-width: 0;
-  transition: border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease);
+  padding: 12px;
+  border: 1px solid var(--c-line-2);
+  border: 1px solid color-mix(in srgb,var(--track,var(--c-ink)) 18%,transparent);
+  border-radius: 8px;
+  background: var(--c-bg-2);
+  transition: border-color var(--dur) var(--ease);
 }
+.wcard__frame .wcard__media { border-color: transparent; border-radius: 3px; }
+.wcard:hover .wcard__frame,
+.wcard:focus-visible .wcard__frame { border-color: color-mix(in srgb,var(--track,var(--c-ink)) 50%,transparent); }
 
-/* HUSHABYE: the page's hero frame across the whole card. The baby monitor sits
-   bottom left, so the name goes on the dark wall above it. */
-.wcard__frame--still {
-  border-radius: var(--r-s);
-  box-shadow: 0 0 0 1px rgba(191,214,200,.14),0 34px 70px -34px rgba(0,0,0,.95);
-}
-.wcard__frame--still .wcard__media { border: 0; }
+/* HUSHABYE: the nursery frame from the alpha film; the name sits on the dark door at its top left. */
 .wcard__frame--still .wcard__media::after { box-shadow: inset 0 150px 110px -70px rgba(8,9,9,.75); }
 .wcard__frame--still .wcard__title {
   position: absolute;
-  top: 20px;
-  left: 24px;
+  top: 32px;
+  left: 36px;
   z-index: 1;
   color: #eef1ee;
-  font-size: clamp(30px,3.3vw,48px);
+  font-size: clamp(30px,2.8vw,40px);
   line-height: 1;
   letter-spacing: .01em;
 }
-.wcard:hover .wcard__frame--still,
-.wcard:focus-visible .wcard__frame--still { box-shadow: 0 0 0 1px rgba(191,214,200,.45),0 34px 70px -34px rgba(0,0,0,.95); }
 
-/* Shadow Frames: the Polaroid from the page hero, on graphite paper. */
-.wcard__frame--polaroid {
-  padding: 12px 12px 0;
-  border-radius: 3px;
-  background: linear-gradient(177deg,#212428 0%,#1a1c1f 62%,#15171a 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.06),0 0 0 1px rgba(211,213,216,.16),0 34px 70px -34px rgba(0,0,0,.95);
-}
-.wcard__frame--polaroid .wcard__media { border: 0; border-radius: 1px; background: #0a0b0c; }
-.wcard__frame--polaroid .wcard__media::after { box-shadow: inset 0 0 0 1px rgba(0,0,0,.4),inset 0 -50px 60px -50px rgba(0,0,0,.6); }
+/* Shadow Frames: the name written under the picture, as on a Polaroid. */
+.wcard__frame--polaroid { padding-bottom: 0; }
+.wcard__frame--polaroid .wcard__media { background: #0a0b0c; }
 .wcard__frame--polaroid .wcard__title {
   padding: 20px 6px 24px;
   color: #d3d5d8;
-  font-size: clamp(30px,3.3vw,48px);
+  font-size: clamp(30px,2.8vw,40px);
   line-height: 1;
   letter-spacing: -.045em;
 }
-.wcard:hover .wcard__frame--polaroid,
-.wcard:focus-visible .wcard__frame--polaroid { box-shadow: inset 0 1px 0 rgba(255,255,255,.08),0 0 0 1px rgba(211,213,216,.45),0 34px 70px -34px rgba(0,0,0,.95); }
 
-/* SIDAR NULL: the Annex04 terminal. The letterbox bars become its screen. */
-.wcard__frame--terminal {
-  padding: 12px;
-  border: 1px solid #30382b;
-  border-radius: 12px;
-  background: linear-gradient(180deg,#1b2117,#141911);
-  box-shadow: inset 0 1px 0 rgba(232,232,220,.05);
-}
-.wcard__frame--terminal .wcard__media { border-color: #262d22; border-radius: 6px; background: #020303; }
-.wcard__frame--terminal .wcard__media::after { box-shadow: inset 0 0 0 1px rgba(194,206,163,.06),inset 0 0 70px rgba(0,0,0,.55); }
+/* SIDAR NULL: the Annex04 teaser's letterbox bars become its screen. */
+.wcard__frame--terminal .wcard__media { background: #020303; }
 /* Sits in the lower letterbox bar: 6.4% of the teaser's height, less half the label. */
 .wcard__screen-bar {
   position: absolute;
@@ -329,8 +318,6 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   text-transform: uppercase;
   pointer-events: none;
 }
-.wcard:hover .wcard__frame--terminal,
-.wcard:focus-visible .wcard__frame--terminal { border-color: #6d7a5d; }
 .sidar-title { display: flex; align-items: baseline; gap: 16px; }
 .sidar-title__name { letter-spacing: -.05em; }
 .sidar-title__null {
@@ -339,40 +326,12 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   letter-spacing: .95em;
 }
 
-/* XR Labs: a plain dark mount around the still. */
-.wcard__frame--tape {
-  padding: 12px;
-  border-radius: 2px;
-  background: #131513;
-}
-.wcard__frame--tape .wcard__media { border-color: transparent; border-radius: 1px; }
-.wcard:hover .wcard__frame--tape .wcard__media,
-.wcard:focus-visible .wcard__frame--tape .wcard__media { border-color: var(--track-line); }
-
-/* Transientica: lane colours in the line. */
-.wcard__frame--lanes {
-  padding: 12px;
-  border: 1px solid rgba(63,224,204,.16);
-  border-radius: 8px;
-  background: linear-gradient(180deg,#11131a,#0b0c10);
-}
-.wcard__frame--lanes .wcard__media { border-color: rgba(63,224,204,.2); }
+/* Transientica: the three lane colours in its description. */
 .lane-kick { color: #ff5566; }
 .lane-snare { color: #7f9aff; }
 .lane-hat { color: #52e08f; }
-.wcard:hover .wcard__frame--lanes,
-.wcard:focus-visible .wcard__frame--lanes { border-color: var(--track-line); }
 
 /* Not Today, Darling!: the name spelled in the game's letter tiles. */
-.wcard__frame--rack {
-  padding: 12px;
-  border: 1px solid rgba(242,140,189,.2);
-  border-radius: 8px;
-  background: #1a171a;
-}
-.wcard__frame--rack .wcard__media { border-color: rgba(242,140,189,.16); }
-.wcard:hover .wcard__frame--rack,
-.wcard:focus-visible .wcard__frame--rack { border-color: var(--track-line); }
 .tile-title { display: flex; align-items: center; min-height: 1.1em; }
 .wcard:hover .wcard__title.tile-title,
 .wcard:focus-visible .wcard__title.tile-title { text-decoration: none; }
@@ -417,9 +376,18 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
     align-items: center;
     gap: 56px;
   }
+  /* A card left alone at the end of the pairs takes the row, with its frame in
+     the left column at the size of the cards above and its text in the right.
+     This holds while the leads come in an even number. */
+  .wgrid > li:last-child:nth-child(odd):not(:has(> .wcard--lead)) { grid-column: 1 / -1; }
+  .wgrid > li:last-child:nth-child(odd):not(:has(> .wcard--lead)) > .wcard {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    align-items: center;
+    gap: 32px;
+  }
 }
 
-/* One full-width software feature, followed by compact supporting tools. */
+/* One full-width software feature, followed by two compact supporting tools. */
 .plist { margin-top: 112px; }
 .plist__rows {
   display: grid;
@@ -439,9 +407,10 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 }
 .tool-feature__body,
 .tool-feature__media { min-width: 0; }
+/* Set like a project card title, a rung below the section name. */
 .tool-feature__body h3 {
-  margin: 0 0 20px;
-  font: 500 clamp(32px,3.6vw,52px)/1.08 var(--display);
+  margin: 0 0 16px;
+  font: 500 var(--t-t2)/var(--lh-t2) var(--display);
   letter-spacing: -.04em;
   transition: color var(--dur) var(--ease);
 }
@@ -539,9 +508,11 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   .tool-feature { grid-template-columns: minmax(0,1fr) minmax(0,1.2fr); gap: 64px; }
   .tool-feature__media { order: 0; }
 }
-/* Share both text rows so wrapped descriptions and metadata keep common baselines. */
-@media (min-width: 1200px) {
-  .plist__rows { grid-template-columns: repeat(3,minmax(0,1fr)); }
+/* The two supporting tools sit on the same two columns as the project cards
+   and share both text rows, so wrapped descriptions and metadata keep common
+   baselines. */
+@media (min-width: 1000px) {
+  .plist__rows { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .plist__rows > li:not(.plist__featured) {
     display: grid;
     grid-row: span 2;
@@ -619,8 +590,8 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 .archive-project-link:hover .archive-project-link__desc,
 .archive-project-link:focus-visible .archive-project-link__desc { color: var(--muted); }
 
-/* The collection introduced by the first three pieces of its set list, set
-   as they are on the music page. A link, not a player, and no cover art. */
+/* The collection introduced by three scores to picture and the film each was
+   written for. A link, not a player: no cover art, numbers or durations. */
 .music-cta { margin-top: 104px; }
 .music-cta__link {
   display: grid;
@@ -639,8 +610,8 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
 .music-cta__body { min-width: 0; }
 .music-cta__body h2 {
   margin: 0 0 16px;
-  font: 500 clamp(30px,3vw,44px)/1.05 var(--display);
-  letter-spacing: -.04em;
+  font: 500 var(--t-t1)/var(--lh-t1) var(--display);
+  letter-spacing: -.035em;
 }
 .music-cta__body p {
   max-width: 38ch;
@@ -655,21 +626,19 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   list-style: none;
   border-top: 1px solid var(--rule);
 }
+/* The film sits under each title, so a long title never squeezes its note. */
 .music-cta__list li {
   display: grid;
-  grid-template-columns: 30px minmax(0,1fr) auto;
-  align-items: baseline;
-  column-gap: 14px;
-  padding: 15px 8px 15px 6px;
+  grid-template-columns: minmax(0,1fr);
+  gap: 4px;
+  padding: 14px 8px 14px 6px;
   border-bottom: 1px solid var(--c-line);
 }
-.music-cta__no,
-.music-cta__time {
-  font: 400 13px/1.3 var(--mono);
+.music-cta__note {
   color: var(--faint);
-  font-variant-numeric: tabular-nums;
+  font-size: var(--t-s1);
+  line-height: 1.4;
 }
-.music-cta__time { text-align: right; }
 .music-cta__name {
   font: 500 16px/1.3 var(--body);
   letter-spacing: -.01em;
@@ -794,7 +763,7 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   #about { padding-block: 48px 8px; }
 }
 @media (min-width: 640px) and (max-width: 999.98px) {
-  /* Room for "Electronic sketch" on one line; the column split only has to
+  /* A wider list column for the film titles; the column split only has to
      match the project cards from 1000px. */
   .music-cta__link { grid-template-columns: minmax(0,.85fr) minmax(0,1.15fr); }
 }
@@ -808,18 +777,18 @@ a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
   .panel__inner { padding-block: 64px 0; }
   .wgrid { margin-top: 40px; gap: 56px; }
   .wcard { gap: 18px; }
-  .wcard__title { font-size: 30px; line-height: 1.08; }
+  .wcard__title { font-size: var(--t-sv-t2); line-height: 1.08; }
   .wcard__desc { line-height: 1.55; }
-  .wcard--lead .wcard__body { padding-bottom: 0; }
   .wcard--lead .wcard__desc { font-size: 19px; }
   .wcard--lead .wcard__built { font-size: 15px; line-height: 1.6; }
-  .wcard__frame--polaroid { padding: 9px 9px 0; }
-  .wcard__frame--polaroid .wcard__title { padding: 15px 4px 18px; font-size: 30px; line-height: 1; }
-  .wcard__frame--still .wcard__title { top: 14px; left: 16px; font-size: 30px; }
-  .wcard__frame--terminal,
-  .wcard__frame--tape,
-  .wcard__frame--lanes,
-  .wcard__frame--rack { padding: 9px; }
+  .sec-title,
+  .plist__group,
+  .music-cta__body h2 { font-size: var(--t-sv-t1); }
+  .closing-band .sec-title { font-size: var(--t-sv-t2); }
+  .wcard__frame { padding: 9px; }
+  .wcard__frame--polaroid { padding-bottom: 0; }
+  .wcard__frame--polaroid .wcard__title { padding: 15px 4px 18px; font-size: var(--t-sv-t2); line-height: 1; }
+  .wcard__frame--still .wcard__title { top: 23px; left: 25px; font-size: var(--t-sv-t2); }
   .wcard__screen-bar { left: 20px; right: 20px; bottom: calc(9px + (100% - 18px) * .064 - 4.5px); font-size: 9px; letter-spacing: .1em; }
   .sidar-title { gap: 12px; }
   .tile-title__tiles { gap: 8px 10px; }

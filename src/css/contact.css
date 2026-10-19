@@ -145,10 +145,25 @@ img { max-width: 100%; }
    the line that is not redundant. */
 .colophon__links { display: none; }
 
-/* The footer's Graz time points at this very page, where the real clock is
-   the largest thing on screen: here it would be the same fact twice. The
-   wrapper carries its separator, so the line ends on "AT". */
+/* The footer's Graz time points at this very page, where the real clock
+   already shows it: here it would be the same fact twice. The wrapper
+   carries its separator, so the line ends on "AT". */
 .colophon .colophon__graz { display: none; }
+
+/* The address and the actions lead on a desktop. The Graz clock is a
+   secondary note beside them: a small dial with the time and zone under it,
+   still windable. contact-wind.css sizes it as the page's centrepiece and
+   loads after this file, so the element selector outranks it here. */
+@media (min-width: 821px) {
+  section.ck.ck--contact .ck__room {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  section.ck.ck--contact .ck__plate {
+    width: min(100%, 200px);
+    gap: var(--s-2);
+  }
+}
 
 
 /* =========================================================

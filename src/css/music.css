@@ -832,18 +832,47 @@ a { color: var(--paper); }
   .library.library--shelf { padding-top: 64px; }
   .library--shelf .library__head { margin-bottom: 32px; }
 
+  /* Turned titles are hard to scan at phone width, so the shelf becomes
+     rows like the sketches below it: year, title and note, length. */
   .library--shelf .library-shelf {
-    --spine-h: 264px;
-    --shelf-gap: 28px;
-    grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
-    gap: var(--shelf-gap) 6px;
+    display: block;
+    padding: 0;
+    background: none;
   }
 
-  .spine { row-gap: 10px; padding-block: 11px 10px; }
-  .spine__title { font-size: 14px; }
-  .spine__note { margin-block-start: 3px; font-size: 12px; }
-  .spine__year,
-  .spine__time { font-size: 12px; }
+  .spine {
+    grid-template-columns: 50px minmax(0, 1fr) auto;
+    grid-template-rows: none;
+    justify-items: stretch;
+    align-items: center;
+    gap: 10px;
+    height: auto;
+    min-height: 44px;
+    padding: 7px 6px 7px 4px;
+    border: 0;
+    border-bottom: 1px solid var(--c-line);
+    border-radius: 0;
+    background: transparent;
+    text-align: left;
+  }
+
+  .spine:hover,
+  .spine:focus-visible { background: color-mix(in srgb, var(--c-ink) 5%, transparent); }
+
+  .spine.active {
+    background: color-mix(in srgb, var(--c-accent) 9%, transparent);
+    box-shadow: inset 2px 0 0 var(--c-accent);
+  }
+
+  .spine__text {
+    grid-area: 1 / 2;
+    max-height: none;
+    writing-mode: horizontal-tb;
+  }
+
+  .spine__title { font: 400 15px/1.35 var(--f-body); }
+  .spine__note { margin-block-start: 0; }
+  .spine__time { grid-area: 1 / 3; text-align: right; }
 
   .library-sketchbook { margin-top: 64px; }
   .library-sketchbook__years { grid-template-columns: minmax(0, 1fr); gap: 36px; }

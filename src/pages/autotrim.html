@@ -3,7 +3,7 @@
   <header class="ft-hero">
     <div class="ft-hero__text">
       <h1>AutoTrim Exporter</h1>
-      <p class="ft-hero__who">I designed and built this REAPER tool for delivering sound effects: it gathers a sound&rsquo;s layers from several tracks, trims the silence and verifies every render before the named file reaches the delivery folder.</p>
+      <p class="ft-hero__who">I designed and built this REAPER tool for delivering sound effects. It trims the silence around each sound and checks every render before delivery.</p>
       <p class="ft-hero__acts">
         <a class="ft-watch" href="assets/autotrim/autotrim-tour.mp4" data-ft-play data-t="0">Watch the interface tour</a>
         <a href="https://github.com/Szunias/autotrim-exporter-releases/releases/latest" target="_blank" rel="noopener noreferrer">Download the current release <span aria-hidden="true">&nearr;</span></a>
@@ -11,12 +11,12 @@
       <p class="at-facts">2026 &middot; Lua ReaScript and ReaImGui &middot; REAPER 7.37+ on Windows, macOS and Linux. Screens and tour from v3.4.3; the current release is v3.11.0.</p>
     </div>
     <div class="ft-hero__stage" data-ft-stage data-ft-label="AutoTrim Exporter 3.4.3 interface tour through Export, Trim and fades, Loudness, Format and delivery and Preflight">
-      <a class="at-window" data-image-zoom href="old/public/assets/images/projects-autotrim/autotrim-3.4.3-export.png"><img src="old/public/assets/images/projects-autotrim/autotrim-3.4.3-export.png" srcset="old/public/assets/images/projects-autotrim/autotrim-3.4.3-export-640.webp 640w, old/public/assets/images/projects-autotrim/autotrim-3.4.3-export-1200.webp 1200w, old/public/assets/images/projects-autotrim/autotrim-3.4.3-export.png 1680w" sizes="(min-width: 1440px) 850px, (min-width: 900px) 60vw, (min-width: 700px) 92vw, 120vw" width="1680" height="1140" alt="AutoTrim Exporter 3.4.3, Export page: 3 items across 3 tracks, WAV at 48 kHz, per-item render mode and a preview of the file names" fetchpriority="high" decoding="async"></a>
+      <a class="at-window" data-image-zoom href="old/public/assets/images/projects-autotrim/autotrim-3.4.3-export.png"><img src="old/public/assets/images/projects-autotrim/autotrim-3.4.3-export.png" srcset="old/public/assets/images/projects-autotrim/autotrim-3.4.3-export-640.webp 640w, old/public/assets/images/projects-autotrim/autotrim-3.4.3-export-1200.webp 1200w, old/public/assets/images/projects-autotrim/autotrim-3.4.3-export.png 1680w" sizes="(min-width: 1440px) 850px, (min-width: 900px) 60vw, 100vw" width="1680" height="1140" alt="AutoTrim Exporter 3.4.3, Export page: 3 items across 3 tracks, WAV at 48 kHz, per-item render mode and a preview of the file names" fetchpriority="high" decoding="async"></a>
     </div>
   </header>
 
   <section class="ft-sec ft-band" aria-labelledby="at-flow-title">
-    <h2 class="ft-head at-side" id="at-flow-title">One sound across several tracks</h2>
+    <h2 class="ft-head at-side" id="at-flow-title">Gathering a sound&rsquo;s layers from several tracks</h2>
     <div class="ft-body at-beside">
       <p>Sound effects rarely sit on one track: an impact, its debris and a sub layer can be three items on three tracks, with a long ambience running underneath. I built Export around the item that anchors the sound.</p>
       <p>One command, Select overlapping (V), collects the items on other tracks that overlap it, leaves the long ambience out and frames the result in the arrange view without moving anything on the timeline.</p>
@@ -55,8 +55,8 @@
           <figcaption class="ft-cap">Format &amp; delivery. <a class="ft-cue" href="assets/autotrim/autotrim-tour.mp4#t=5.5" data-ft-play data-t="5.5" aria-label="Play the interface tour from 0:05, Format and delivery">Play from 0:05</a></figcaption>
         </figure>
         <div class="ft-body">
-          <p>Game audio ships dry and the middleware owns the final level, so the Game / Wwise profile renders 48&nbsp;kHz, 24&#8209;bit WAV and leaves the level untouched. Positional sounds usually go out mono, and the channel policy is set per batch.</p>
-          <p>A saved profile keeps format, loudness, destination, naming and metadata together. Names can follow UCS 8.2.1, and each batch can get a delivery report with a verdict for every file.</p>
+          <p>The Game / Wwise profile renders 48&nbsp;kHz, 24&#8209;bit WAV and leaves the level untouched for the middleware to set. Positional sounds usually go out mono, and the channel policy is set per batch.</p>
+          <p>A saved profile keeps format, loudness, destination, naming and metadata together.</p>
         </div>
       </div>
     </div>
@@ -70,7 +70,7 @@
       </figure>
       <div class="ft-body">
         <h2 class="ft-head" id="at-preflight-title">Preflight before every export</h2>
-        <p class="ft-pull">A blocker, a setting that would make the delivered file wrong, stops the render.</p>
+        <p>Preflight stops the render when a setting would make the delivered file wrong.</p>
         <p>Preflight also lists what the render will and will not pass through, and a second list names where the file will differ from what you hear in the session. A per-item render, for example, takes the media items directly and skips track, folder and master processing.</p>
       </div>
     </div>
@@ -80,8 +80,8 @@
     <div class="at-two at-two--text">
       <div class="ft-body">
         <h2 class="at-sub" id="at-release-title">v3.11.0, the current release</h2>
-        <p>Published 23 September 2026, v3.11.0 is the first public release since 3.4.4. It rolls up the unpublished builds 3.4.5 to 3.10.0 and runs on rendering engine 2.14.0. An export stays bound to the REAPER project tab it started from, and a failed or interrupted export cannot silently alter another project, overwrite source media or lose its Undo journal.</p>
-        <p>Every batch writes a CSV and HTML delivery report with edge QC, and a manifest that groups the files into asset families for Wwise, FMOD or Unity. Names can follow UCS&nbsp;8.2.1, and iXML, BWF and ASWG metadata are embedded at render time.</p>
+        <p>Published 23 September 2026, v3.11.0 is the first public release since 3.4.4 and rolls up the unpublished builds 3.4.5 to 3.10.0. An export stays bound to the REAPER project tab it started from, and a failed or interrupted export cannot silently change another project or overwrite source media.</p>
+        <p>Each batch writes a CSV and HTML delivery report with edge QC, and a manifest that groups the files into asset families for Wwise, FMOD or Unity. Names can follow UCS&nbsp;8.2.1, and iXML, BWF and ASWG metadata are embedded at render time.</p>
         <p class="ft-links"><a href="https://github.com/Szunias/autotrim-exporter-releases/releases/tag/v3.11.0" target="_blank" rel="noopener noreferrer">Release notes <span aria-hidden="true">&nearr;</span></a> <a href="https://github.com/Szunias/autotrim-exporter-releases/releases/latest" target="_blank" rel="noopener noreferrer">Download the current release <span aria-hidden="true">&nearr;</span></a></p>
       </div>
       <div class="ft-body">

@@ -17,6 +17,21 @@
 /* The playfield sits in the middle of the frame, so on a wide screen the line stays in the dark band beside it. */
 .tr .ft-hero__who { max-width: 30ch; }
 
+/* The hero shows the lanes and the hit line. The loop is anchored to its bottom edge and the
+   stage is kept to at most 43vw, so the classifier readout at the top of the frame (shown whole in
+   the readout loop further down) always falls outside the stage instead of being cut mid-word. */
+@media (min-width: 700px) {
+  .tr .ft-hero:not(.is-film) .ft-hero__stage { height: max(300px, min(calc(82svh - var(--site-header-height)), 43vw)); }
+  .tr .ft-hero:not(.is-film) .ft-hero__stage > video { object-position: 50% 100%; }
+}
+/* On a phone the title would sit on the brightest part of the frame: the frame first, the title under it. */
+@media (max-width: 699px) {
+  .tr .ft-hero:not(.is-film) .ft-hero__stage { height: auto; aspect-ratio: 4 / 3; }
+  .tr .ft-hero:not(.is-film) .ft-hero__stage > video { object-position: 50% 100%; }
+  .tr .ft-hero:not(.is-film) .ft-hero__stage::after { background: linear-gradient(0deg, var(--ft-fade) 0%, transparent 18%); }
+  .tr .ft-hero__text { position: static; padding-top: 28px; }
+}
+
 /* Text beside media gets five columns on both sides, about 60 characters a line. */
 @media (min-width: 1100px) {
   /* Text and picture share a middle line, so the shorter one leaves no empty band above it. */

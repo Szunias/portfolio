@@ -29,7 +29,7 @@
   </section>
 
   <section class="ft-sec" aria-labelledby="ar-delay-title">
-    <h2 class="ft-head ar-side-head" id="ar-delay-title">From event to sound</h2>
+    <h2 class="ft-head ar-side-head" id="ar-delay-title">Measured latency</h2>
     <div class="ft-body ar-side-body">
       <p>I timed every request in Unreal from the gameplay event to audible playback, with generation or network transfer and decoding included. Footsteps, impacts and UI sounds have a budget of 100 to 150&nbsp;ms. Generated on the spot, a footstep arrives more than a second late.</p>
     </div>
@@ -77,10 +77,11 @@
     <div class="ft-row ft-row--left ar-ready">
       <figure class="ft-media">
         <a href="old/public/assets/images/projects-ai-audio-research/frames/prototype-door-ready.jpg" target="_blank" rel="noopener"><img src="old/public/assets/images/projects-ai-audio-research/frames/prototype-door-ready-1200.webp" srcset="old/public/assets/images/projects-ai-audio-research/frames/prototype-door-ready-640.webp 640w, old/public/assets/images/projects-ai-audio-research/frames/prototype-door-ready-1200.webp 1200w, assets/ai-audio-research/ar-door-ready-1920.webp 1920w" sizes="(min-width: 1100px) 50vw, (min-width: 700px) 92vw, 100vw" width="1920" height="1140" alt="The demo in the Unreal editor: the player still on the path beside the chapel door, while the server window already lists request 6, wooden door creaking open" loading="lazy" decoding="async"></a>
-        <figcaption class="ft-cap">The door sound is already requested while the player is on the path.</figcaption>
+        <a class="ar-log" href="old/public/assets/images/projects-ai-audio-research/frames/prototype-door-ready.jpg" target="_blank" rel="noopener"><img src="assets/ai-audio-research/ar-door-ready-1920.webp" width="1920" height="1140" alt="Close-up of the server log in the same frame: requests 1 to 5 with their generation times, and request 6, wooden door creaking open, still without a time" loading="lazy" decoding="async"></a>
+        <figcaption class="ft-cap">The player is still on the path, and the server log already lists request&nbsp;6, &ldquo;wooden door creaking open&rdquo;.</figcaption>
       </figure>
       <div class="ft-body">
-        <p>Generation works for sounds the game can ask for early, play again or wait for, such as ambience. So my system hides the delay: it prepares sounds before the player reaches them, keeps every result and plays a procedural sound when nothing else is ready.</p>
+        <p>Generation works for sounds the game can ask for early, play again or wait for, such as ambience. My system works around the delay. It prepares sounds before the player reaches them, keeps every result, and plays a procedural sound when nothing else is ready.</p>
         <p>Unreal sends each prompt through a C++ WebSocket client to the Python server. The PCM audio arrives on a network thread, and since Unreal creates a <code>USoundWave</code> only on the game thread, a task-graph dispatch builds it there.</p>
         <p>The server stores each result under a <span class="ar-nw">SHA-256</span> hash of the prompt, model, length and sample rate, up to 500&nbsp;MB in RAM and the rest on disk. Unreal varies each cached copy with a pitch shift within 2&nbsp;semitones, a volume change within 3&nbsp;dB, a low-pass for occlusion and the reverb of its zone.</p>
       </div>
@@ -88,7 +89,12 @@
 
     <div class="ar-pair">
       <div class="ft-body">
-        <p>The rule I set in the thesis is that a mediocre sound on time is better than a perfect one late. A generation fails when it comes back silent, misses its length by more than 20%, takes over 10&nbsp;seconds or crashes the decoder. In a stress test of 500 generations per method, 24 (ElevenLabs) to 69 (MMAudio Large) failed and procedural DSP never did. The server then retries once with a new seed, tries another model and finally hands over to the procedural sound.</p>
+        <p>A generation counts as failed when it comes back silent, misses its length by more than 20%, takes over 10&nbsp;seconds or crashes the decoder. In a stress test of 500 generations per method, 24 (ElevenLabs) to 69 (MMAudio Large) failed and procedural DSP never did. After a failure the server goes down this list:</p>
+        <ol class="ar-fallback">
+          <li>Retry once with a new seed</li>
+          <li>Try another model</li>
+          <li>Hand over to the procedural sound</li>
+        </ol>
       </div>
       <div class="ft-body">
         <p>The local models share the laptop&rsquo;s 8&nbsp;GB GPU with Unreal, which already holds 4 to 5&nbsp;GB, so the server loads and unloads them on demand, and the game plays a cached or procedural sound while one loads.</p>
@@ -98,7 +104,7 @@
   </section>
 
   <section class="ft-sec ft-band ft-band--alt" aria-labelledby="ar-listen-title">
-    <h2 class="ft-head" id="ar-listen-title">Same prompt, four methods</h2>
+    <h2 class="ft-head" id="ar-listen-title">Listening comparison</h2>
 
     <table class="ar-matrix" data-ar-matrix>
       <caption class="sr-only">Four prompts, each generated by four methods</caption>
@@ -155,7 +161,7 @@
         </video>
       </figure>
       <div class="ft-body">
-        <p>I also built a Python prototype, AI Audio Lab: choose an engine, type a prompt, read the generation time against real time, listen and rate the result from 1 to 5. Every generation is logged with its rating.</p>
+        <p>I also built a Python prototype, AI Audio Lab: choose an engine, type a prompt, read the generation time against real time, listen and rate the result from 1 to 5. The prototype logs each generation with its rating.</p>
       </div>
     </div>
   </section>
@@ -165,7 +171,7 @@
       <a href="szuniewicz-ai-audio-thesis-2026.pdf" target="_blank" rel="noopener">Thesis (PDF) <span aria-hidden="true">&nearr;</span></a>
       <a href="/#work">Back to selected work</a>
     </span>
-    <a class="cine-close__next next-project-btn" href="wwiseprojects.html">Next: Three Wwise exercises <span aria-hidden="true">&rarr;</span></a>
+    <a class="cine-close__next next-project-btn" href="sidar.html">Next: SIDAR NULL <span aria-hidden="true">&rarr;</span></a>
   </nav>
 
 </article>

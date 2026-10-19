@@ -177,6 +177,35 @@
   line-height: 1.55;
 }
 
+/* The download checks are for the reader who installs it, so they stay folded. */
+.mw-verify { margin-top: 18px; }
+.mw-verify > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: .5em;
+  min-height: 44px;
+  color: var(--ft-ink);
+  cursor: pointer;
+  list-style: none;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .2em;
+  text-decoration-color: color-mix(in srgb, var(--ft-accent) 45%, transparent);
+}
+.mw-verify > summary::-webkit-details-marker { display: none; }
+.mw-verify > summary::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: .32em solid transparent;
+  border-bottom: .32em solid transparent;
+  border-left: .52em solid var(--ft-accent);
+  transition: transform var(--dur) var(--ease);
+}
+.mw-verify[open] > summary::before { transform: rotate(90deg); }
+.mw-verify > summary:hover { text-decoration-color: var(--ft-accent); }
+.mw-verify > .mw-code { margin-top: 10px; }
+
 /* ---------- Commands: the three actions side by side ---------- */
 .mw-actions {
   display: grid;
@@ -229,5 +258,6 @@
   .mw .mw-notes__gloss { padding: 12px 14px 14px; font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mw-notes .ln--cue { transition: none; }
+  .mw-notes .ln--cue,
+  .mw-verify > summary::before { transition: none; }
 }
