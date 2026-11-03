@@ -48,9 +48,6 @@ jobs:
           npm install --prefix "$RUNNER_TEMP/home-layout" --no-audit --no-fund --package-lock=false playwright@1.63.0
           node "$RUNNER_TEMP/home-layout/node_modules/playwright/cli.js" install --with-deps chromium
       - name: Check responsive layouts and interactions
-        env:
-          # The hero is deliberately fixed only for this refresh, not for later redesigns.
-          REFRESH_BASE: ${{ github.head_ref == 'feat/portfolio-section-refresh-20260908' && github.event.pull_request.base.sha || '' }}
         run: NODE_PATH="$RUNNER_TEMP/home-layout/node_modules" node scripts/check-home-layout.cjs
       - name: Check all registered routes and motion preferences
         run: NODE_PATH="$RUNNER_TEMP/home-layout/node_modules" node scripts/check-site-interactions.cjs

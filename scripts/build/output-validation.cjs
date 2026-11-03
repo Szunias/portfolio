@@ -142,6 +142,10 @@ function validateGeneratedHtml(htmlFiles, { dist, config }) {
         if (/\balt=(["'])\1/i.test(tag) && !isAriaHidden && !isLightboxImage) {
           issues.push(`${file}: empty image alt without aria-hidden`);
         }
+        // sizes only selects from a srcset; without one, phones fetch the full src.
+        if (hasAttr(tag, 'sizes') && !hasAttr(tag, 'srcset')) {
+          issues.push(`${file}: image has sizes without srcset`);
+        }
       }
     }
 
