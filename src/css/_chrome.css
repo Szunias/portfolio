@@ -203,12 +203,13 @@
 .colophon__pair,
 .colophon__graz { flex-wrap: nowrap; white-space: nowrap; }
 
+/* Each link hugs its word, so the separators sit evenly; ::before keeps a
+   short word such as "CV" at least 24px wide. */
 .colophon a {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   min-height: 44px;
-  min-width: 24px;
   color: var(--c-ink-3);
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -216,6 +217,8 @@
   text-decoration-color: var(--c-line-2);
   transition: color var(--dur) var(--ease), text-decoration-color var(--dur) var(--ease);
 }
+
+.colophon a::before { content: ""; position: absolute; inset: 0 -5px; }
 
 .colophon a:hover { color: var(--c-ink); text-decoration-color: var(--c-ink); }
 
@@ -241,7 +244,4 @@
     justify-content: start;
     gap: 0 var(--s-3);
   }
-  /* In the grid each word starts on its column edge; centred in its 24px box,
-     "CV" sat 3px right of "Email" above it. */
-  .colophon__links a { justify-content: flex-start; }
 }
