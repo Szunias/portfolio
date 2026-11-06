@@ -95,7 +95,9 @@ test('active playback still reports loading, buffering and recovery', async () =
   await f.audio.emit('loadstart');
   assert.equal(f.status.textContent, 'Loading');
   await f.audio.emit('loadedmetadata');
-  assert.equal(f.status.textContent, 'Ready to play');
+  // An idle, ready player shows no status text; loading has finished.
+  assert.equal(f.status.textContent, '');
+  assert.equal(f.bar.getAttribute('aria-busy'), 'false');
   await f.play.emit('click');
   f.attempts[0].resolve();
   await f.audio.emit('playing');
