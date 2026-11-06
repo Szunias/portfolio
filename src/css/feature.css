@@ -133,6 +133,9 @@ body:has(.ft)::before { background: none; }
   letter-spacing: -.035em;
   text-wrap: balance;
 }
+/* A heading right after the opening facts starts a new part of the band, as far
+   below the facts as a new section. */
+.ft-facts + .ft-head { margin-top: clamp(16px, 3.4vw, 56px); }
 .ft-deck {
   grid-column: content-start / c 8;
   color: var(--ft-ink);
@@ -202,6 +205,10 @@ body:has(.ft)::before { background: none; }
   border-bottom: .36em solid transparent;
   border-left: .6em solid currentColor;
 }
+
+/* A cue in a 15px caption line keeps a 44px touch target. */
+.ft-cap > a.ft-cue { position: relative; }
+.ft-cap > a.ft-cue::after { content: ""; position: absolute; inset: -11px -6px; }
 
 .ft-chapters {
   display: grid;
@@ -298,6 +305,8 @@ body:has(.ft)::before { background: none; }
   cursor: pointer;
   transition: border-color var(--dur) var(--ease);
 }
+/* The pill stays 36px tall; this invisible margin makes the target 44px. */
+.ft-toggle::after { content: ""; position: absolute; inset: -5px 0; }
 .ft-toggle:hover { border-color: var(--ft-ink); }
 .ft-toggle[hidden] { display: none; }
 

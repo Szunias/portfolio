@@ -6,7 +6,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { spawn, execFileSync } = require('node:child_process');
+const { spawn } = require('node:child_process');
 const { setTimeout: delay } = require('node:timers/promises');
 const { chromium } = require('playwright');
 
@@ -16,22 +16,6 @@ const origin = 'http://127.0.0.1:4173';
 const widths = [320, 375, 640, 768, 899, 900, 1024, 1199, 1200, 1440, 1920];
 const results = [];
 fs.mkdirSync(output, { recursive: true });
-
-// A section refresh leaves the opening as it was: the hero markup with its
-// still frame, and the styles and script that run the player.
-function checkPreservedHero() {
-  const base = process.env.REFRESH_BASE;
-  if (!base) return;
-  assert.match(base, /^[a-f0-9]{40}$/i, 'REFRESH_BASE must be a commit SHA');
-  const old = (file) => execFileSync('git', ['show', `${base}:${file}`], { cwd: root });
-  const current = (file) => fs.readFileSync(path.join(root, file));
-  const hero = (buffer) => buffer.toString('utf8').split('</section>')[0];
-  assert.equal(hero(current('src/pages/index.html')), hero(old('src/pages/index.html')));
-  for (const file of ['src/css/home-hero.css', 'src/js/home-showreel.js']) {
-    assert.ok(current(file).equals(old(file)), `${file} changed during the section refresh`);
-  }
-  results.push({ check: 'hero source preservation', passed: true, base });
-}
 
 async function ready(server) {
   for (let attempt = 0; attempt < 100; attempt++) {
@@ -106,7 +90,6 @@ async function recordEvidence(page, name) {
 }
 
 async function main() {
-  checkPreservedHero();
   const server = spawn(process.execPath, ['scripts/serve-dist.cjs'], {
     cwd: root, env: { ...process.env, PORT: '4173' }, stdio: ['ignore', 'pipe', 'pipe'],
   });

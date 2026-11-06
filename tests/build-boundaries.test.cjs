@@ -156,3 +156,14 @@ test('generated video caption IDs do not collide with existing IDs', t => {
   assert.equal((html.match(/id="video-caption-1"/g) || []).length, 1);
   assert.equal((html.match(/id="video-caption-2"/g) || []).length, 1);
 });
+
+test('an image with sizes must also carry a srcset', t => {
+  const f = buildFixture(t);
+  f.write('src/assets/frame-640.webp', 'fixture');
+  f.write('src/assets/frame.webp', 'fixture');
+  const page = srcset => `<h1>gamma</h1><img src="assets/frame.webp"${srcset} sizes="100vw" width="1280" height="720" alt="A frame"><a class="next-project-btn" href="alpha.html">Next</a>`;
+  f.write('src/pages/gamma.html', page(' srcset="assets/frame-640.webp 640w, assets/frame.webp 1280w"'));
+  f.build.main();
+  f.write('src/pages/gamma.html', page(''));
+  assert.throws(() => f.build.main(), /gamma\.html: image has sizes without srcset/);
+});

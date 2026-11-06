@@ -23,9 +23,11 @@ render([
 if (fs.statSync(path.join(root, delivery)).size > 80 * 1024 * 1024) {
   throw new Error('Website delivery exceeds the 80 MiB per-file build budget.');
 }
+// The Watch showreel button shows this loop at 64 x 44 CSS pixels at most;
+// 256 x 144 still covers a 3x screen and keeps the eager download small.
 render([
   '-ss', '4', '-i', master, '-t', '8', '-map', '0:v:0', '-an',
-  '-vf', 'fps=24,scale=480:270:flags=lanczos,setsar=1',
+  '-vf', 'fps=24,scale=256:144:flags=lanczos,setsar=1',
   '-c:v', 'libx264', '-preset', 'medium', '-crf', '24',
   '-pix_fmt', 'yuv420p', '-movflags', '+faststart', preview,
 ]);
