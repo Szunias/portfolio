@@ -9,24 +9,22 @@
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  const { partNumber, phaseName, setHand, addTicks } = PortfolioClockFace;
+  const { timeParts, phaseName, setHand, addTicks } = PortfolioClockFace;
   addTicks(svg, ticks);
 
   function tick() {
-    const now = new Date();
-    const hour = partNumber(now, 'hour');
-    const minute = partNumber(now, 'minute');
-    const second = partNumber(now, 'second');
-    setHand(hourHand, (hour % 12) * 30 + minute * 0.5);
-    setHand(minuteHand, minute * 6 + second * 0.1);
+    const now = Date.now();
+    const t = timeParts(new Date(now));
+    setHand(hourHand, (t.hour % 12) * 30 + t.minute * 0.5);
+    setHand(minuteHand, t.minute * 6 + t.second * 0.1);
     if (secondHand) {
       if (reducedMotion.matches) secondHand.setAttribute('visibility', 'hidden');
       else {
         secondHand.removeAttribute('visibility');
-        setHand(secondHand, second * 6);
+        setHand(secondHand, t.second * 6);
       }
     }
-    root.setAttribute('data-phase', phaseName(hour));
+    root.setAttribute('data-phase', phaseName(now));
   }
 
   let clockTimer = 0;

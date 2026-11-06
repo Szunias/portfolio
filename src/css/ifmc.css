@@ -1,0 +1,248 @@
+/* IFMC: page-owned styles, loaded only on ifmc.html after feature.css.
+   The palette is sampled from the two films: the night blue of Walter's greenhouse
+   for the page and its band, the grey of June's hallway for the second band, and the
+   cream of Walter's hat for heads and controls. Each score's loudness trace takes its
+   film's light: the glowing seeds for Walter, the window light for When The Clapping Stops. */
+:root {
+  --ft-bg: #0c1216;
+  --ft-band: #13212a;
+  --ft-band-2: #1a1b1f;
+  --ft-ink: #f0eee8;
+  --ft-ink-2: #d4d7d6;
+  --ft-ink-3: #a9b2b6;
+  --ft-head: #ece2c9;
+  --ft-accent: #e6d9b8;
+  --ft-accent-ink: #13181b;
+}
+
+.ifmc .if-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.ifmc .if-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+.ifmc .ft-hero h1 { max-width: 12ch; text-wrap: balance; }
+.ifmc .ft-hero__stage > video { object-position: 50% 60%; }
+/* The two films sit on their two bands, edge to edge. */
+.ifmc .ft-band + .ft-band { margin-top: 0; }
+.ifmc .ft-band { padding-bottom: clamp(52px, 5vw, 72px); }
+
+/* Each film: its words in one column beside its picture, the heading at the top of the column. */
+.ifmc .if-pair { align-items: start; }
+.ifmc .if-copy .ft-head { margin: 0 0 clamp(14px, 1.4vw, 20px); }
+.ifmc .if-still { margin-top: clamp(20px, 2vw, 28px); }
+@media (min-width: 900px) {
+  .ifmc .ft-row--left.if-pair > * { grid-row: 1; }
+  /* The flight fills the height of its column, so the row has no hole under it. */
+  .ifmc .ft-row--left.if-pair > .ft-media { position: relative; align-self: stretch; }
+  .ifmc .ft-row--left.if-pair > .ft-media > img { position: absolute; inset: 0; height: 100%; object-fit: cover; object-position: 36% 50%; }
+  .ifmc .ft-row--right.if-pair > .ft-media { grid-column: c 6 / full-end; }
+  .ifmc .ft-row--right.if-pair > :not(.ft-media) { grid-column: content-start / c 5; }
+}
+/* Stacked, the heading and words come before the film they describe. */
+@media (max-width: 899px) {
+  .ifmc .ft-row--right.if-pair > .ft-media { grid-row: auto; }
+}
+
+.if-film--walter { --film: #c4dce6; --film-dim: #4a6b7c; }
+.if-film--clap { --film: #dcdedb; --film-dim: #565a5f; }
+
+/* ---------- The film on the band, played in place ---------- */
+/* The build writes the poster ratio inline as --shot-ar, so the ratio is set here directly. */
+.ifmc .if-screen .yt-facade { aspect-ratio: 2 / 1; background: #000; }
+.ifmc .if-screen .yt-facade__launch img { height: 100%; object-fit: cover; }
+.ifmc .if-screen .yt-facade.is-loaded { aspect-ratio: 16 / 9; max-height: calc(100svh - var(--anchor-offset, 100px)); margin-inline: auto; }
+.ifmc .if-screen .yt-facade__launch::after {
+  background: linear-gradient(0deg, color-mix(in srgb, var(--ft-band-2) 70%, transparent) 0%, transparent 34%);
+}
+.ifmc .if-screen .if-watch {
+  position: absolute;
+  bottom: clamp(16px, 2vw, 28px);
+  left: clamp(16px, 2vw, 28px);
+  z-index: 1;
+}
+.ifmc .if-screen .yt-facade__launch:hover .if-watch { opacity: .88; }
+.ifmc .if-screen .yt-facade__launch:focus-visible { outline: 2px solid var(--ft-accent); outline-offset: -4px; }
+
+/* ---------- The score: measured loudness of the published track ---------- */
+.ifmc .if-reel { --pos: 0; position: relative; }
+.ifmc .if-ruler {
+  position: relative;
+  height: 24px;
+  color: var(--ft-ink-3);
+  font: 400 13px/1 var(--f-mono);
+  font-variant-numeric: tabular-nums;
+}
+.ifmc .if-ruler span {
+  position: absolute;
+  bottom: 0;
+  left: calc(var(--t) / var(--if-dur) * 100%);
+  height: 24px;
+  padding: 2px 0 0 7px;
+  border-left: 1px solid var(--ft-rule);
+}
+.ifmc .if-ruler .is-end { left: auto; right: 0; padding: 2px 7px 0 0; border-left: 0; border-right: 1px solid var(--ft-rule); }
+.ifmc .if-lane {
+  position: relative;
+  height: clamp(72px, 7vw, 104px);
+  border-bottom: 1px solid var(--ft-rule);
+}
+.ifmc .if-wave { position: absolute; inset: 0; display: block; width: 100%; height: 100%; fill: var(--film); }
+.ifmc .if-wave--base { fill: var(--film-dim); }
+.ifmc .if-wave--lit { clip-path: inset(0 calc((1 - var(--pos)) * 100%) 0 0); }
+.ifmc .if-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--at) / var(--if-dur) * 100%);
+  width: 1px;
+  background: color-mix(in srgb, var(--ft-ink) 38%, transparent);
+  pointer-events: none;
+}
+.ifmc .if-tick.is-now { width: 2px; background: var(--ft-accent); }
+.ifmc .if-head {
+  position: absolute;
+  top: 0;
+  bottom: -1px;
+  left: calc(var(--pos) * 100%);
+  z-index: 1;
+  width: 2px;
+  background: var(--ft-ink);
+  opacity: 0;
+  pointer-events: none;
+}
+.ifmc .if-reel.is-started .if-head { opacity: 1; }
+.ifmc .if-scrub {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.ifmc .if-lane:has(.if-scrub:focus-visible) { outline: 2px solid var(--ft-accent); outline-offset: 4px; }
+
+.ifmc .if-transport { display: none; align-items: center; gap: 20px; margin-top: 14px; }
+.ifmc .if-reel.is-live .if-transport { display: flex; }
+.ifmc .if-reel audio { display: block; width: 100%; margin-top: 16px; }
+.ifmc .if-reel.is-live audio { display: none; }
+.ifmc .if-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 22px 0 18px;
+  border: 1px solid var(--ft-accent);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ft-ink);
+  font: 600 16px/1 var(--f-display);
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.ifmc .if-play svg { width: 15px; height: 15px; fill: currentColor; }
+.ifmc .if-play .if-i-pause { display: none; }
+.ifmc .if-play:hover { background: color-mix(in srgb, var(--ft-accent) 12%, transparent); }
+.ifmc .if-play.is-playing { background: var(--ft-accent); color: var(--ft-accent-ink); }
+.ifmc .if-play.is-playing .if-i-play { display: none; }
+.ifmc .if-play.is-playing .if-i-pause { display: inline; }
+.ifmc .if-time { color: var(--ft-ink-3); font: 400 15px/1 var(--f-mono); font-variant-numeric: tabular-nums; }
+.ifmc .if-time b { color: var(--ft-ink); font-weight: 600; }
+
+/* ---------- Moments in the score: each one plays it from just before ---------- */
+/* The list sits under the reel it plays, the last moment's hallway beside it. */
+.ifmc .if-moments {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  column-gap: var(--ft-gap);
+  align-items: start;
+}
+@supports (grid-template-columns: subgrid) {
+  .ifmc .if-moments { grid-template-columns: subgrid; }
+  .ifmc .if-moments > .if-cues { grid-column: 1 / 8; }
+  .ifmc .if-moments > .ft-media { grid-column: 8 / -1; }
+}
+/* The hallway fills the height of the list beside it, never shorter than its own
+   1040:640 frame (cropped from the film's 2:1 shot to leave out the burnt-in
+   credit and contest logo on the left). */
+@media (min-width: 700px) {
+  .ifmc .if-moments > .ft-media { position: relative; align-self: stretch; }
+  .ifmc .if-moments > .ft-media::before { content: ""; display: block; padding-top: 61.54%; }
+  .ifmc .if-moments > .ft-media > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 25% 60%; }
+}
+.ifmc .if-cues { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--ft-rule); }
+.ifmc .if-cues li { margin: 0; padding: 0; border-bottom: 1px solid var(--ft-rule); }
+.ifmc .if-cue {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  gap: 14px;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 12px 0;
+  border: 0;
+  background: none;
+  color: var(--ft-ink-2);
+  font: 400 16.5px/1.5 var(--f-body);
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease);
+}
+.ifmc .if-tc {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 25px;
+  color: var(--ft-head);
+  font: 600 15px/1 var(--f-mono);
+  font-variant-numeric: tabular-nums;
+}
+.ifmc .if-tc::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: .36em solid transparent;
+  border-bottom: .36em solid transparent;
+  border-left: .6em solid currentColor;
+}
+.ifmc .if-cue:hover { color: var(--ft-ink); }
+.ifmc .if-cue:hover > span:last-child { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; text-decoration-color: var(--ft-accent); }
+.ifmc .if-cue:focus-visible { outline-offset: -2px; }
+.ifmc .if-cues li.is-now .if-cue { color: var(--ft-ink); }
+.ifmc .if-cues li.is-now .if-tc { color: var(--ft-accent); }
+.ifmc .if-quote { margin: -2px 0 0; padding: 0 0 14px 96px; color: var(--ft-ink-3); font-size: 15px; line-height: 1.55; }
+.ifmc .if-quote a { white-space: nowrap; }
+
+@media (max-width: 699px) {
+  .ifmc .if-screen .yt-facade:not(.is-loaded) { aspect-ratio: 3 / 2; }
+  /* The narrower crop leaves out the director's credit at the left edge of the frame. */
+  .ifmc .if-screen .yt-facade__launch img { object-position: 75% 50%; }
+  .ifmc .if-screen .if-watch { min-height: 46px; padding: 0 18px 0 16px; font-size: 16px; }
+  .ifmc .if-ruler .is-late { display: none; }
+  .ifmc .if-lane { height: 72px; }
+  .ifmc .if-transport { gap: 16px; }
+  .ifmc .if-moments,
+  .ifmc .if-moments > * { display: block; }
+  .ifmc .if-moments > .ft-media { margin-top: 24px; }
+  .ifmc .if-cue { grid-template-columns: 66px minmax(0, 1fr); gap: 10px; font-size: 16px; }
+  .ifmc .if-quote { padding-left: 76px; }
+}
+@media (max-width: 380px) {
+  .ifmc .if-screen .if-watch { width: auto; }
+  .ifmc .if-transport { gap: 14px; }
+  .ifmc .if-play { padding: 0 16px 0 14px; white-space: nowrap; }
+  .ifmc .if-time { font-size: 14px; white-space: nowrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ifmc .if-play,
+  .ifmc .if-cue { transition: none; }
+}

@@ -1,0 +1,305 @@
+/* Shadow Frames: page-owned styles, loaded only on shadowframes.html after feature.css.
+   The palette is sampled from the game's black-and-white frames: the near-black of the
+   bar counter for the page, the stage's grey for the board band, its lit back wall for
+   the enemy band, and the silver of the candle wax for heads, the button and the pins.
+   The rest of this sheet is the investigation board (shadowframes.js): ten dark Polaroids
+   wired to the ProgressiveAmbience switch group. */
+:root {
+  --ft-bg: #0f0f11;
+  --ft-band: #19191b;
+  --ft-band-2: #202124;
+  --ft-ink: #ecedee;
+  --ft-ink-2: #c9cbcd;
+  --ft-ink-3: #a5a8ab;
+  --ft-head: #f4f4f2;
+  --ft-accent: #d7d8db;
+  --ft-accent-ink: #111214;
+  /* Polaroids are printed dark: graphite paper, silver ink. */
+  --sf-print: #222427;
+  --sf-print-edge: inset 0 1px 0 rgba(255, 255, 255, .06), 0 0 0 1px rgba(215, 216, 219, .16);
+  --sf-cork-hi: #2b2d30; /* the lit centre of the board in the game, darkened */
+  --sf-cork: #141517;
+  --sf-string: #5c6166;
+  --sf-gap: clamp(8px, 1.3vw, 18px);
+}
+
+.sf [data-image-zoom] img { cursor: zoom-in; }
+.sf .ft-hero h1 { max-width: 7ch; }
+
+/* ---------- The board ---------- */
+.sf-board {
+  position: relative;
+  padding: clamp(24px, 2.6vw, 36px) clamp(16px, 2.6vw, 40px) clamp(20px, 2.2vw, 30px);
+  border-radius: 4px;
+  background: radial-gradient(80% 110% at 50% 0%, var(--sf-cork-hi), var(--sf-cork) 75%);
+  box-shadow: inset 0 0 0 1px rgba(236, 237, 238, .08);
+  overflow: hidden;
+}
+.sf-slots {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: var(--sf-gap);
+  margin: 0 0 clamp(20px, 2.2vw, 30px);
+  padding: 10px 0 0;
+  list-style: none;
+}
+.sf-slot { position: relative; margin: 0; cursor: pointer; }
+.sf-slot__print {
+  display: block;
+  padding: 7% 7% 30%;
+  outline: 1px dashed rgba(215, 216, 219, .16);
+  outline-offset: -1px;
+  transform-origin: 50% 0;
+  transition: background-color .35s var(--ease), box-shadow .35s var(--ease);
+}
+.sf-slot__img { display: block; aspect-ratio: 1; overflow: hidden; background: rgba(0, 0, 0, .35); }
+.sf-slot__img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  /* Lifted so a print still reads at thumbnail size on the dark board. */
+  filter: grayscale(1) contrast(1.12) brightness(1.34);
+}
+.sf-slot.is-pinned .sf-slot__print {
+  outline: 0;
+  background: var(--sf-print);
+  box-shadow: var(--sf-print-edge), 0 12px 18px -12px #000;
+  transform: rotate(var(--tilt, -1.4deg));
+}
+.sf-slot.is-pinned .sf-slot__img { background: #070808; }
+.sf-slot.is-pinned img { opacity: 1; }
+.sf-slot:nth-child(3n + 2) { --tilt: 1.2deg; }
+.sf-slot:nth-child(3n) { --tilt: -.5deg; }
+.sf-slot:hover .sf-slot__print { outline-color: rgba(215, 216, 219, .45); }
+/* pin */
+.sf-slot::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: -5px;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  margin-left: -4.5px;
+  border-radius: 50%;
+  background: rgba(215, 216, 219, .18);
+}
+.sf-slot.is-pinned::after { background: #e9eaec; box-shadow: 0 2px 3px rgba(0, 0, 0, .7); }
+/* string from the previous pin to this one */
+.sf-slot.is-pinned + .sf-slot.is-pinned::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: -1px;
+  right: 50%;
+  width: calc(100% + var(--sf-gap));
+  height: 1px;
+  background: var(--sf-string);
+}
+
+/* JS on: a pinned photograph develops from black once its image has loaded. */
+.sf-board.is-live .sf-slot img { opacity: 0; transition: opacity 1.6s var(--ease); }
+.sf-board.is-live .sf-slot.is-pinned img.is-ready { opacity: 1; }
+
+.sf-deck {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.3fr);
+  gap: 22px clamp(28px, 4vw, 64px);
+  padding-top: 20px;
+  border-top: 1px solid var(--ft-rule);
+}
+.sf .sf-label {
+  display: block;
+  margin: 0 0 10px;
+  color: var(--ft-ink-2);
+  font-size: 16px;
+  line-height: 1.4;
+}
+.sf-ctrl__row { display: flex; align-items: center; gap: 18px; }
+.sf-count {
+  flex: none;
+  min-width: 4.2em;
+  color: var(--ft-ink-3);
+  font: 400 17px/1 var(--f-body);
+  text-align: right;
+}
+.sf-count b { color: var(--ft-head); font: 600 32px/1 var(--f-display); letter-spacing: -.03em; }
+
+.sf-range {
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.sf-range::-webkit-slider-runnable-track { height: 2px; background: var(--sf-string); }
+.sf-range::-moz-range-track { height: 2px; background: var(--sf-string); }
+.sf-range::-moz-range-progress { height: 2px; background: var(--ft-accent); }
+.sf-range::-webkit-slider-thumb {
+  width: 22px;
+  height: 22px;
+  margin-top: -10px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ft-accent);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .6);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.sf-range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ft-accent);
+}
+
+.sf-btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.sf-btn {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid color-mix(in srgb, var(--ft-ink) 34%, transparent);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ft-ink);
+  font: 600 15px/1 var(--f-display);
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+.sf-btn:hover { border-color: var(--ft-ink); }
+.sf-btn--paper { border-color: var(--ft-accent); background: var(--ft-accent); color: var(--ft-accent-ink); }
+.sf-btn--paper:hover { border-color: var(--ft-accent); opacity: .88; }
+.sf-btn:disabled { opacity: .38; cursor: default; }
+
+.sf .sf-readout { margin: 0; }
+.sf-readout > div {
+  display: grid;
+  grid-template-columns: minmax(150px, 13em) minmax(0, 1fr);
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--ft-rule);
+}
+.sf-readout > div:first-child { padding-top: 0; }
+.sf .sf-readout dt { color: var(--ft-ink-3); font-size: 15px; line-height: 1.7; }
+.sf .sf-readout dd { margin: 0; color: var(--ft-ink); }
+.sf-readout [data-sf-stage] { color: var(--ft-head); font: 600 22px/1.2 var(--f-display); letter-spacing: -.015em; }
+.sf-readout [data-sf-layers] { display: flex; flex-wrap: wrap; gap: 8px; }
+.sf .sf-readout code {
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: rgba(215, 216, 219, .08);
+  color: var(--ft-ink-2);
+  font-size: 14px;
+}
+.sf .sf-readout code.is-new { background: rgba(215, 216, 219, .2); color: #fff; box-shadow: inset 0 -1px 0 var(--ft-accent); }
+
+/* What the board does and how it is built in Wwise, above the two captures.
+   The captures sit side by side, each cropped to the part that carries the
+   claim; the columns follow the crops' aspect ratios (1410/796 and 1115/940),
+   so both pictures are the same height. The zoom opens the full window. */
+.sf-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 1.771fr) minmax(0, 1.186fr);
+  gap: 32px var(--ft-gap);
+  align-items: start;
+}
+.sf-proof__text { grid-column: 1 / -1; max-width: 46em; }
+.sf-proof__text p { margin: 0 0 .8em; text-wrap: pretty; }
+.sf-proof__text > :last-child { margin-bottom: 0; }
+
+/* The crop: the box keeps the fragment's aspect ratio and the picture is
+   scaled and shifted inside it. Percentages are of the box width, so the
+   crop holds at every size. Measured on the 1869 x 856 and 1920 x 1121 captures. */
+.sf-crop > a { overflow: hidden; aspect-ratio: var(--crop-ar); background: var(--c-bg-0); }
+.sf .sf-crop img { width: var(--crop-w); margin: var(--crop-y) 0 0 var(--crop-x); }
+/* The step chart, without the Project Explorer and the tab strip. */
+.sf-crop--group { --crop-ar: 1410 / 796; --crop-w: 132.55%; --crop-x: -31.56%; --crop-y: -4.26%; }
+/* The Assigned Objects list: every stage with its layers. */
+.sf-crop--container { --crop-ar: 1115 / 940; --crop-w: 172.2%; --crop-x: -31.84%; --crop-y: -4.48%; }
+
+/* ---------- Anomaly sounds and voice lines ---------- */
+/* Both pictures stay inside the text grid: the viewfinder at five columns,
+   the voice-line capture at seven, so neither is cut by the screen edge. */
+.sf-vf { align-items: center; }
+.sf-vf > .ft-media { grid-column: content-start / c 5; }
+.sf-vf > :not(.ft-media) { grid-column: c 5 / content-end; }
+.sf .sf-clues__lead { margin: 0 0 20px; }
+.sf-steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px var(--ft-gap);
+  margin: 0 0 22px;
+  padding: 0;
+  list-style: none;
+}
+.sf-steps li { padding-top: 12px; border-top: 1px solid var(--ft-rule); }
+.sf-steps b { display: block; color: var(--ft-head); font: 600 19px/1.25 var(--f-display); letter-spacing: -.01em; }
+.sf-steps p { margin: 6px 0 0; color: var(--ft-ink-2); font-size: 16px; line-height: 1.5; text-wrap: pretty; }
+.sf-clues > .ft-cap { max-width: 44em; margin: 0; }
+
+.sf-voice { align-items: center; }
+.sf-voice > .ft-media { grid-column: c 5 / content-end; }
+.sf-voice > :not(.ft-media) { grid-column: content-start / c 5; }
+
+/* ---------- Footsteps and the enemy: two captures side by side ---------- */
+/* The section's premise opens the text column under its head. */
+.sf-mix > .sf-lead { grid-column: content-start / c 7; max-width: 34em; text-wrap: pretty; }
+.sf-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px var(--ft-gap);
+  align-items: start;
+}
+.sf-pair__col > .ft-media { margin-bottom: 18px; }
+.sf-pair__col > p { max-width: 34em; margin: 0 0 .9em; text-wrap: pretty; }
+.sf-pair__col > :last-child { margin-bottom: 0; }
+
+/* ---------- Medium: the rows stay side by side, on wider shares ---------- */
+@media (max-width: 1099px) {
+  .sf-deck { grid-template-columns: minmax(0, 1fr); }
+  /* One column: the text, then each capture at the full text width. */
+  .sf-proof { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .sf .sf-proof__text { max-width: 40em; }
+  .sf-vf { align-items: start; }
+  .sf-vf > .ft-media { grid-column: content-start / c 5; }
+  .sf-vf > :not(.ft-media) { grid-column: c 5 / content-end; }
+  .sf-voice > .ft-media { grid-column: c 6 / content-end; }
+  .sf-voice > :not(.ft-media) { grid-column: content-start / c 6; grid-row: 1; }
+  .sf-mix > .sf-lead { grid-column: content-start / c 10; }
+}
+
+/* ---------- Phone: one column ---------- */
+@media (max-width: 699px) {
+  .ft-hero .ft-hero__stage > video { object-position: 62% 50%; }
+  .sf-voice > .ft-media { grid-column: full; }
+  .sf-voice > :not(.ft-media) { grid-column: content; grid-row: auto; }
+  .sf-vf > .ft-media { grid-column: full; }
+  .sf-vf > .ft-media img { aspect-ratio: 2 / 1; object-fit: cover; object-position: 50% 70%; }
+  .sf-vf > :not(.ft-media) { grid-column: content; }
+  .sf-board { padding-inline: 14px; }
+  .sf-slots { grid-template-columns: repeat(5, minmax(0, 1fr)); row-gap: 18px; }
+  .sf-slot:nth-child(6)::before { display: none; }
+  .sf-readout > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .sf-pair { grid-template-columns: minmax(0, 1fr); }
+  .sf-proof { gap: 22px; }
+  .sf-proof .ft-cap { margin-top: 8px; font-size: 14px; }
+  .sf-steps { grid-template-columns: minmax(0, 1fr); row-gap: 14px; }
+  .sf-steps li { padding-top: 10px; }
+  .sf-steps b { display: inline; margin-right: .3em; font-size: 17px; }
+  .sf-steps p { display: inline; margin: 0; }
+}
+@media (max-width: 380px) {
+  .sf-btn { flex: 1 1 100%; }
+  .sf .sf-readout code { font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sf-board.is-live .sf-slot img,
+  .sf-slot__print,
+  .sf-btn { transition: none; }
+}

@@ -34,7 +34,8 @@ function buildFixture(t, options = {}) {
   for (const css of ['_fonts','_tokens','_chrome','fixture']) write(`src/css/${css}.css`, '');
   write('src/js/fixture.js', 'window.fixtureLoaded = true;');
   write('src/pages/index.html', '<h1>Fixture</h1><a class="prow prow--featured" href="alpha.html">Alpha</a><a class="prow prow--tool" href="beta.html">Beta</a><a class="archive-project-link" href="gamma.html">Gamma</a>');
-  for (const slug of ['alpha','beta','gamma']) write(`src/pages/${slug}.html`, `<h1>${slug}</h1><a class="next-project-btn" href="${slug}.html">Next</a>`);
+  const nextOf = { alpha: 'beta', beta: 'gamma', gamma: 'alpha' }; // one Next cycle in homepage order
+  for (const slug of ['alpha','beta','gamma']) write(`src/pages/${slug}.html`, `<h1>${slug}</h1><a class="next-project-btn" href="${nextOf[slug]}.html">Next</a>`);
   write('src/pages/404.html', '<h1>Missing</h1>');
   write('src/pages/music.html', '<h1>Music</h1><div class="library__list" id="musicLibrary"></div><div id="trackData" hidden><div class="track-card" data-title="Fixture" data-year="2026"></div></div>');
   write('snapshot.html', '<!doctype html><html lang="en"><head><title>Snapshot</title></head><body><h1>Snapshot</h1></body></html>');

@@ -1,0 +1,153 @@
+/* Amorak: page-owned styles, loaded only on amorak.html after feature.css.
+   The palette is sampled from the film: the near-black of the basement, the
+   creature's gums (#250c0b) darkened for the voice band, the cold teal of the
+   basement walls (#11202b) for the second band, the bone grey of the title
+   card's letters for heads, and the moonlight on the floor for the controls. */
+:root {
+  --ft-bg: #07090b;
+  --ft-band: #1c0c0c;
+  --ft-band-2: #0c171c;
+  --ft-ink: #e8ecec;
+  --ft-ink-2: #c2ccce;
+  --ft-ink-3: #98a8ad;
+  --ft-head: #dfe3df;
+  --ft-accent: #8ec3d5;
+  --ft-accent-ink: #061014;
+  --am-trace: #8ec3d5;
+}
+
+/* ---------- The film's title card as the heading ---------- */
+/* The crop keeps 22 px before the A, pulled back so the letter meets the text edge. */
+.am .am-title {
+  width: clamp(260px, 38vw, 540px);
+  margin: 0 0 clamp(14px, 1.6vw, 22px) calc(clamp(260px, 38vw, 540px) * -0.0146);
+  font-size: 0;
+  line-height: 0;
+  text-shadow: none;
+}
+.am .am-title img {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+}
+/* The roar sits right of centre; keep its jaws in the frame on narrow screens. */
+.am .ft-hero__stage > video { object-position: 62% 50%; }
+/* The creature's close-up is the darkest frame of the film; lifted so the teeth read. */
+.am .am-jaws { filter: brightness(1.3); }
+/* The cue keeps its full stop on the same line. */
+.am .am-nw { white-space: nowrap; }
+
+/* ---------- Text beside the pictures ---------- */
+/* Each picture illustrates one paragraph, so it takes half the width and
+   the paragraph sits level with its middle instead of under a tall block. */
+@media (min-width: 1100px) {
+  .am .ft-row { align-items: center; }
+  .am .ft-row--right > .ft-media { grid-column: c 6 / full-end; }
+  .am .ft-row--right > :not(.ft-media) { grid-column: content-start / c 5; }
+  .am .ft-row--left > .ft-media { grid-column: full-start / c 6; }
+  .am .ft-row--left > :not(.ft-media) { grid-column: c 7 / content-end; }
+}
+
+/* ---------- Which ear is louder: a measurement of the mix, drawn once ---------- */
+.am .am-ears { grid-column: content; margin: 0; }
+.am .am-ears__panel {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  grid-template-areas: "head track" ". ticks";
+  padding: 24px 24px 16px 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ft-ink) 4%, var(--ft-bg));
+}
+.am .am-ears__head {
+  grid-area: head;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 150px;
+  color: var(--ft-ink-2);
+  font: 600 13px/1 var(--f-mono);
+}
+.am .am-ears__track { grid-area: track; position: relative; height: 150px; }
+.am .am-ears__svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.am .am-ears__tail { fill: color-mix(in srgb, var(--ft-ink) 4%, transparent); }
+.am .am-ears__guide { stroke: color-mix(in srgb, var(--ft-ink) 26%, transparent); stroke-width: 1; stroke-dasharray: 1 5; vector-effect: non-scaling-stroke; }
+.am .am-ears__mid { stroke: color-mix(in srgb, var(--ft-ink) 22%, transparent); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.am .am-ears__line {
+  fill: none;
+  stroke: var(--am-trace);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.am .am-ears__line--tail { stroke: var(--ft-ink-3); opacity: .55; }
+
+/* Labels sit on the panel's own colour so the line doesn't strike through them. */
+.am .am-ears__tail-label,
+.am .am-mark > span {
+  position: absolute;
+  z-index: 1;
+  padding: 2px 4px;
+  margin-left: -4px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--ft-ink) 4%, var(--ft-bg));
+  color: var(--ft-ink-2);
+  font: 500 14px/1.2 var(--f-body);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.am .am-ears__tail-label { left: 60.94%; top: 4px; margin-left: 4px; color: var(--ft-ink-3); background: color-mix(in srgb, var(--ft-ink) 7%, var(--ft-bg)); }
+.am .am-mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--t) * 100%);
+  width: 0;
+  border-left: 1px dashed color-mix(in srgb, var(--ft-ink) 28%, transparent);
+  pointer-events: none;
+}
+.am .am-mark > span { top: 4px; left: 8px; }
+.am .am-mark--low > span { top: auto; bottom: 4px; }
+
+.am .am-ears__ticks { grid-area: ticks; position: relative; height: 18px; margin-top: 12px; }
+.am .am-ears__ticks span {
+  position: absolute;
+  top: 0;
+  left: calc(var(--t) * 100%);
+  transform: translateX(-50%);
+  color: var(--ft-ink-3);
+  font: 500 13px/1 var(--f-mono);
+  font-variant-numeric: tabular-nums;
+}
+.am .am-ears__ticks span:first-child { transform: none; }
+.am .am-ears__cap { max-width: 46em; margin: 14px 0 0; color: var(--ft-ink-3); font-size: 15px; line-height: 1.5; }
+
+.am .am-credit { grid-column: content-start / c 8; margin: 0; }
+
+/* The hatch is above the basement in the film, so its marker keeps the long
+   word out of the strip label sooner than the general short/long swap below. */
+@media (max-width: 900px) {
+  .am .am-mark .am-long { display: none; }
+}
+@media (min-width: 721px) {
+  .am .am-short { display: none; }
+}
+@media (max-width: 1099px) {
+  .am .am-credit { grid-column: content-start / c 10; }
+}
+@media (max-width: 720px) {
+  .am .am-long { display: none; }
+  .am .am-ears__panel { grid-template-columns: 24px minmax(0, 1fr); padding: 16px 14px 12px 0; }
+  .am .am-ears__head,
+  .am .am-ears__track { height: 110px; }
+  .am .am-ears__tail-label,
+  .am .am-mark > span { font-size: 12.5px; }
+  .am .am-ears__ticks span { font-size: 12px; }
+}
+@media (max-width: 699px) {
+  .am .am-title { width: min(88vw, 420px); margin-left: calc(min(88vw, 420px) * -0.0146); }
+  .am .am-credit { grid-column: content; }
+  .am .ft-hero__stage > video { object-position: 66% 50%; }
+}

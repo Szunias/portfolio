@@ -1,0 +1,78 @@
+/* Transientica: page-owned styles, loaded only on transientica.html after feature.css.
+   The palette is sampled from the gameplay: the stage black behind the lanes, the navy
+   of the snare lane for the opening band, the dark green of the hi-hat lane for the
+   prototype, and the cyan of the hit line for controls and rules. */
+:root {
+  --ft-bg: #07080c;
+  --ft-band: #0a1828;
+  --ft-band-2: #0a1f17;
+  --ft-ink: #eef1f4;
+  --ft-ink-2: #c6ccd4;
+  --ft-ink-3: #a3acb6;
+  --ft-head: #e4faf6;
+  --ft-accent: #3fe0cc;
+  --ft-accent-ink: #04120f;
+}
+
+/* The playfield sits in the middle of the frame, so on a wide screen the line stays in the dark band beside it. */
+.tr .ft-hero__who { max-width: 30ch; }
+
+/* The hero shows the lanes and the hit line. The loop is anchored to its bottom edge and the
+   stage is kept to at most 43vw, so the classifier readout at the top of the frame (shown whole in
+   the readout loop further down) always falls outside the stage instead of being cut mid-word. */
+@media (min-width: 700px) {
+  .tr .ft-hero:not(.is-film) .ft-hero__stage { height: max(300px, min(calc(82svh - var(--site-header-height)), 43vw)); }
+  .tr .ft-hero:not(.is-film) .ft-hero__stage > video { object-position: 50% 100%; }
+}
+/* On a phone the title would sit on the brightest part of the frame: the frame first, the title under it. */
+@media (max-width: 699px) {
+  .tr .ft-hero:not(.is-film) .ft-hero__stage { height: auto; aspect-ratio: 4 / 3; }
+  .tr .ft-hero:not(.is-film) .ft-hero__stage > video { object-position: 50% 100%; }
+  .tr .ft-hero:not(.is-film) .ft-hero__stage::after { background: linear-gradient(0deg, var(--ft-fade) 0%, transparent 18%); }
+  .tr .ft-hero__text { position: static; padding-top: 28px; }
+}
+
+/* Text beside media gets five columns on both sides, about 60 characters a line. */
+@media (min-width: 1100px) {
+  /* Text and picture share a middle line, so the shorter one leaves no empty band above it. */
+  .tr .ft-row { align-items: center; }
+  .tr .ft-row--right > .ft-media { grid-column: c 6 / full-end; }
+  .tr .ft-row--right > :not(.ft-media) { grid-column: content-start / c 5; }
+}
+/* The readout loop is a wide strip of the screen; it shows uncropped. */
+.tr .tr-readout video { --shot-ar: 1280 / 560; }
+
+/* The prototype video's own control: play from the live demo. */
+.tr .tr-jump {
+  display: flex;
+  align-items: center;
+  gap: .4em;
+  min-height: 44px;
+  margin: 2px 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ft-head);
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .2em;
+  text-decoration-color: color-mix(in srgb, var(--ft-accent) 45%, transparent);
+  cursor: pointer;
+}
+.tr .tr-jump::before {
+  content: "";
+  flex: none;
+  width: 0;
+  height: 0;
+  border-top: .36em solid transparent;
+  border-bottom: .36em solid transparent;
+  border-left: .6em solid currentColor;
+}
+.tr .tr-jump:hover { text-decoration-color: var(--ft-accent); }
+.tr .tr-jump[hidden] { display: none; }
+.tr .tr-proto .local-video { background: #000; }
+
+@media (max-width: 380px) {
+  .tr .ft-watch { gap: 10px; padding-inline: 14px; font-size: 16px; }
+}

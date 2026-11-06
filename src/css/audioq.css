@@ -1,0 +1,156 @@
+/* AudioQ: page-owned styles, loaded only on audioq.html after feature.css.
+   The palette is sampled from the plug-in window: the near-black under its panels for the
+   page, the slate of its display panels for the opening band, and for the one accent the
+   orange of its knobs and waveforms (#f8b048 in the window capture), so the controls
+   match the screenshot they sit beside.
+
+   The hero is the tool, not footage: the window carries its own labels, so the title and
+   links sit beside it on the page colour instead of over it. Watch turns the hero into the
+   shared player layout; below 900px the window stands whole above the title. */
+:root {
+  --ft-bg: #0d1116;
+  --ft-band: #171c23;
+  --ft-band-2: #1f242a;
+  --ft-ink: #eef1f5;
+  --ft-ink-2: #c6cdd6;
+  --ft-ink-3: #9ea8b4;
+  --ft-head: #f4f6f9;
+  --ft-accent: #f6ae48;
+  --ft-accent-ink: #0d1116;
+  --aq-box: #0a0d12;      /* code, the plug-in's inset fields */
+  --aq-frame: #2a313a;    /* the hairline round the plug-in's own panels */
+}
+
+/* ---------- Hero: title and links beside the window ---------- */
+@media (min-width: 900px) {
+  .aq .ft-hero:not(.is-film) {
+    --ft-fade: var(--ft-bg);
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    align-items: center;
+    gap: 32px var(--ft-gap);
+    padding: clamp(32px, 4vw, 56px) max(var(--page-gutter), calc((100% - var(--page-max)) / 2)) clamp(40px, 4.4vw, 64px);
+  }
+  .aq .ft-hero:not(.is-film) .ft-hero__text {
+    position: static;
+    grid-column: 1;
+    grid-row: 1;
+    display: block;
+    padding: 0;
+  }
+  .aq .ft-hero:not(.is-film) .ft-hero__stage {
+    grid-column: 2;
+    grid-row: 1;
+    height: auto;
+    aspect-ratio: 2028 / 1389;
+    border: 1px solid var(--aq-frame);
+    border-radius: 8px;
+    background: var(--aq-box);
+  }
+  .aq .ft-hero:not(.is-film) .ft-hero__stage::after { content: none; }
+  .aq .ft-hero:not(.is-film) .ft-hero__acts { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .aq .ft-hero:not(.is-film) .ft-hero__acts .ft-watch { margin-bottom: 10px; }
+}
+/* The title sits on the plain page, not on the screenshot, so it needs no shadow. */
+.aq .ft-hero h1,
+.aq .ft-hero__who { text-shadow: none; }
+/* The link to the full-size window stays on one line. */
+.aq .ft-facts a { white-space: nowrap; }
+
+/* ---------- The demo's six chapters: a time and a name each, read across like a track list ---------- */
+.aq-chapters { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.aq-chapters li { padding-top: 12px; }
+.aq-chapters span { white-space: normal; }
+@media (max-width: 1099px) {
+  .aq-chapters { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 8px; }
+  .aq-chapters li { display: block; padding-block: 12px 0; }
+}
+
+/* ---------- The chain: four real panels, each with its stages beside it, in order ---------- */
+.aq-chain { counter-reset: aq-stage; row-gap: 28px; }
+/* The note on the order and the note on the source and release keep the reading column. */
+@media (min-width: 1100px) {
+  .aq-chain .aq-intro,
+  .aq-chain .aq-status { grid-column: content-start / c 8; }
+}
+.aq-chain .aq-status { padding-top: 22px; border-top: 1px solid var(--ft-rule); }
+.aq-chain .aq-status p { color: var(--ft-ink-2); }
+.aq-group {
+  grid-column: content;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: start;
+  padding-top: 22px;
+  border-top: 1px solid var(--ft-rule);
+}
+.aq-group > .aq-panel { grid-column: content-start / c 4; }
+.aq-group > .aq-steps { grid-column: c 4 / content-end; }
+.aq-panel img {
+  border: 1px solid var(--aq-frame);
+  border-radius: 8px;
+  background: #0b0f14;
+}
+
+.aq .aq-steps { margin: 0; padding: 0; list-style: none; }
+.aq-steps > li { margin: 0; counter-increment: aq-stage; }
+.aq-steps > li + li { margin-top: 18px; }
+.aq-steps--two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px var(--ft-gap); }
+.aq-steps--two > li + li { margin-top: 0; }
+.aq .aq-steps h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 2px;
+  color: var(--ft-head);
+  font: 600 19px/1.3 var(--f-display);
+  letter-spacing: -.01em;
+}
+.aq .aq-steps h3::before {
+  content: counter(aq-stage, decimal-leading-zero);
+  color: var(--ft-accent);
+  font: 600 14px/1 var(--f-mono);
+  letter-spacing: 0;
+}
+.aq .aq-steps p { margin: 0; max-width: 36em; color: var(--ft-ink-2); font-size: 16.5px; line-height: 1.55; text-wrap: pretty; }
+.aq .aq-steps p code { display: block; margin-top: 2px; color: var(--ft-ink-3); font-size: 14px; }
+.aq-steps sup { line-height: 0; }
+.aq-code {
+  width: fit-content;
+  max-width: 100%;
+  margin: 12px 0 0;
+  padding: 10px 14px;
+  border-left: 2px solid var(--ft-accent);
+  background: var(--aq-box);
+  color: var(--ft-ink-2);
+  font: 400 13.5px/1.55 var(--f-mono);
+  /* Lines keep their breaks and indents; a narrow screen scrolls the block instead. */
+  white-space: pre;
+  overflow-x: auto;
+}
+.aq-code code { color: inherit; font: inherit; }
+
+@media (max-width: 1099px) {
+  /* The panel keeps its place beside its stages; the stages go to one column. */
+  .aq-group > .aq-panel { grid-column: content-start / c 5; }
+  .aq-group > .aq-steps { grid-column: c 5 / content-end; }
+  .aq-steps--two { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 899px) {
+  /* Too narrow for the two columns: the whole window, the title under it. */
+  .aq .ft-hero:not(.is-film) .ft-hero__stage { height: auto; aspect-ratio: 2028 / 1389; }
+  .aq .ft-hero:not(.is-film) .ft-hero__stage::after { background: linear-gradient(0deg, var(--ft-fade) 0%, transparent 18%); }
+  .aq .ft-hero__text { position: static; padding-top: 28px; }
+}
+@media (max-width: 699px) {
+  /* Long lines wrap at the box edge; there is no visible cue that the block scrolls. */
+  .aq-code { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .aq-chapters { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 4px; }
+  .aq-chapters li { padding: 10px 0 6px; }
+  .aq-chapters span { font-size: 17px; }
+  .aq-group { row-gap: 16px; padding-top: 20px; }
+  .aq-group > .aq-panel,
+  .aq-group > .aq-steps { grid-column: content; }
+  .aq-steps--two { grid-template-columns: minmax(0, 1fr); }
+  .aq .aq-steps p { font-size: 16px; }
+  .aq-code { font-size: 12.5px; padding: 10px 12px; }
+}

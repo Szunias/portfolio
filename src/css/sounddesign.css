@@ -1,0 +1,67 @@
+/* Two sound redesigns: page-owned styles, loaded only on sounddesign.html after feature.css.
+   The palette is sampled from the two clips: the Baldur's Gate 3 tavern shadow for the page,
+   the God of War rock in shade for the fight's band, the blue night of the spells for theirs,
+   and the Ice Storm highlight for cues and the filled buttons. */
+:root {
+  --ft-bg: #0b0f15;
+  --ft-band: #1d1917;
+  --ft-band-2: #101a26;
+  --ft-ink: #eef1f4;
+  --ft-ink-2: #cdd3d9;
+  --ft-ink-3: #a6afb8;
+  --ft-head: #eef1f4;
+  --ft-accent: #8fc3ec;
+  --ft-accent-ink: #07090c;
+}
+
+/* Each game is one row: its picture on one side, the words and the cues beside it. */
+.sd .sd-row { align-items: center; }
+.sd .sd-chapters { grid-template-columns: minmax(0, 1fr); margin-top: 22px; }
+.sd .sd-chapters li { padding-block: 10px 12px; }
+.sd .sd-row .sd-chapters p { font-size: 15.5px; }
+.sd .sd-chapters li:last-child { border-bottom: 1px solid var(--ft-rule); }
+.sd .sd-watch { margin: 20px 0 0; }
+
+/* ---------- The spells: a second stage that becomes its own player ---------- */
+.sd .sd-stage {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+}
+.sd .sd-stage > video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  object-fit: cover;
+}
+.sd .sd-stage.is-film {
+  max-height: calc(100svh - var(--anchor-offset, 100px));
+  margin-inline: auto;
+}
+.sd .sd-stage.is-film > video { object-fit: contain; background: #000; }
+/* The game's own "Pause / Cancel" prompt sits bottom right; the loop's pause button goes top left. */
+.sd .sd-stage > .ft-toggle { top: 16px; right: auto; bottom: auto; left: 16px; }
+.sd .sd-row:has(.sd-stage.is-film) .sd-watch { display: none; }
+
+@media (max-width: 1099px) {
+  .sd .sd-chapters li { display: block; }
+  /* The cue list outgrows the picture here; the picture stays level with the first line, under its heading. */
+  .sd .sd-row { align-items: start; }
+}
+/* A narrow laptop still has room for the fight's few words beside its picture. */
+@media (min-width: 900px) and (max-width: 1099px) {
+  .sd .ft-row--right > .ft-media { grid-column: c 6 / full-end; grid-row: 1; }
+  .sd .ft-row--right > :not(.ft-media) { grid-column: content-start / c 5; grid-row: 1; }
+}
+@media (max-width: 699px) {
+  /* The clip is shot from above with the game's interface at its edges; the loop shows its middle. */
+  .sd .sd-stage:not(.is-film) { aspect-ratio: 4 / 3; }
+  .ft-hero .ft-hero__stage > video { object-position: 62% 50%; }
+}
+
+/* The two clips meet edge to edge: the band's colour changes with the game. */
+.sd .ft-band + .ft-band { margin-top: 0; }
+@media (max-width: 359px) {
+  .sd .ft-watch { padding-inline: 14px; font-size: 15.5px; white-space: nowrap; }
+}

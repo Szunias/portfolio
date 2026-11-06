@@ -1,0 +1,53 @@
+/* Akantilado: page-owned styles, loaded only on akantilado.html after feature.css.
+   The palette is sampled from the film's frames: the near-black of the jungle's
+   shadows for the page, the dark moss of the canopy for the first band, the plum of
+   the fur shadows for the cats, and the magenta of the pink cat's fur, lifted, for
+   heads, rules and the one filled button. The gold of the fur and of the filigree
+   ball stays in the pictures. */
+:root {
+  --ft-bg: #110e0b;
+  --ft-band: #1b1c10;
+  --ft-band-2: #26131b;
+  --ft-ink: #f5efe9;
+  --ft-ink-2: #dad1c9;
+  --ft-ink-3: #b4aaa1;
+  --ft-head: #f6dfee;
+  --ft-accent: #e29acf;
+  --ft-accent-ink: #1a0d16;
+}
+
+/* The wide shot is the darkest frame; lifted so both cats read at phone width. */
+.ak-wide img { filter: brightness(1.22) saturate(1.05); }
+
+/* ---------- Ambience: the wide shot beside the close one ---------- */
+.ak-two {
+  grid-column: content;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px var(--ft-gap);
+  align-items: start;
+}
+
+/* ---------- The cats: the Foley notes beside the two portraits ---------- */
+.ak-cats > .ft-head { grid-column: content; }
+.ak-cats > .ft-body { grid-column: content-start / c 4; grid-row: 2; }
+.ak-cats > .ft-media { grid-row: 2; align-self: start; }
+.ak-cats > .ft-media:nth-of-type(1) { grid-column: c 4 / c 8; }
+.ak-cats > .ft-media:nth-of-type(2) { grid-column: c 8 / content-end; }
+
+@media (max-width: 1099px) {
+  .ak-cats > .ft-body { grid-column: content-start / c 10; }
+  .ak-cats > .ft-media { grid-row: 3; }
+  .ak-cats > .ft-media:nth-of-type(1) { grid-column: content-start / c 6; }
+  .ak-cats > .ft-media:nth-of-type(2) { grid-column: c 6 / content-end; }
+}
+@media (max-width: 699px) {
+  .ak-two { grid-template-columns: minmax(0, 1fr); }
+  .ak-cats > .ft-body,
+  .ak-cats > .ft-media:nth-of-type(1),
+  .ak-cats > .ft-media:nth-of-type(2) { grid-column: content; grid-row: auto; }
+}
+/* "Watch the film (1:11)" stays on one line on the narrowest phones. */
+@media (max-width: 359px) {
+  .ak .ft-watch { gap: 10px; padding-inline: 14px 12px; font-size: 16px; }
+}

@@ -22,9 +22,11 @@
 
 /* Interface text should retain its original contrast. */
 .cine .image-zoom img { filter: none; }
-/* Reserve lazy screenshots before their intrinsic size is available. */
-.cine-shot .image-zoom { width: 100%; max-width: var(--image-natural-width, 100%); }
-.cine-row .cine-shot .image-zoom img { width: 100%; }
+/* The link fills the well, so a narrow capture sits centred and the Enlarge
+   hint lands in the empty corner instead of over its bottom rows. The natural
+   width still reserves lazy screenshots before they load. */
+.cine-shot .image-zoom { display: flex; justify-content: center; align-items: flex-start; width: 100%; }
+.cine-row .cine-shot .image-zoom img { width: 100%; max-width: var(--image-natural-width, 100%); }
 .image-zoom:hover .image-zoom__hint { border-color: var(--c-accent); color: var(--c-accent); }
 .image-viewer-open { overflow: hidden; }
 
@@ -63,6 +65,10 @@
   cursor: pointer;
 }
 .image-viewer__toolbar [data-close] { margin-left: auto; }
+.image-viewer__toolbar [hidden] { display: none; }
+/* In a gallery, Previous and Next stand beside Close on the right. */
+.image-viewer__toolbar [data-step="-1"] { margin-left: auto; }
+.image-viewer__toolbar [data-step="-1"]:not([hidden]) ~ [data-close] { margin-left: 0; }
 .image-viewer__toolbar button:hover,
 .image-viewer__toolbar a:hover { border-color: var(--c-accent); }
 .image-viewer__surface { min-height: 0; overflow: auto; background: var(--c-bg-0); }
@@ -75,6 +81,8 @@
   .image-viewer__toolbar { gap: 6px; }
   .image-viewer__toolbar button,
   .image-viewer__toolbar a { padding-inline: 8px; font-size: 13px; }
-  .image-viewer__close-label { display: none; }
+  .image-viewer__close-label,
+  .image-viewer__step-label { display: none; }
+  .image-viewer__toolbar [data-step] { width: 44px; padding: 0; font-size: 20px; }
   .image-viewer__toolbar [data-close] { width: 44px; padding: 0; font-size: 24px; }
 }

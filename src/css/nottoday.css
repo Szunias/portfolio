@@ -1,0 +1,146 @@
+/* Not Today, Darling!: page-owned styles, loaded only on nottoday.html after feature.css.
+   The palette is sampled from the run: the living room's near-black brown, the rust of the
+   bookshelves for the opening band, the dusky rose of the walls for the voices, and the
+   cream of the game's letter tiles for heads, cues and the one filled button. */
+:root {
+  --ft-bg: #120c0b;
+  --ft-band: #2b140d;
+  --ft-band-2: #2e191a;
+  --ft-ink: #f6efe6;
+  --ft-ink-2: #dccfc2;
+  --ft-ink-3: #b3a598;
+  --ft-head: #f1e6c8;
+  --ft-accent: #f1e6c8;
+  --ft-accent-ink: #1f1a14;
+  --nt-tile-hi: #f6eed6;
+  --nt-tile: #e3d5b2;
+  --nt-tile-ink: #1f1a14;
+  --nt-tile-num: #5e5547;
+}
+
+/* The filled button is a letter tile too. */
+.nt .ft-watch {
+  background: linear-gradient(180deg, var(--nt-tile-hi), var(--nt-tile));
+  box-shadow: inset 0 -3px 0 rgba(40, 30, 16, .2), 0 10px 26px -12px #000;
+}
+
+/* The logo is the title; at this size the role line and Watch stay well inside the first screen. */
+.nt .ft-hero__logo { width: clamp(180px, 25vw, 360px); }
+/* The hero is a still from the race start: the karts sit in the middle of the frame,
+   right of the title, and the countdown at the top stays inside the stage. */
+.nt .ft-hero__stage > .nt-hero__still { object-position: 50% 10%; }
+/* The race-start frame is bright HUD art in every corner, so the shared fade
+   is darker and wider here to keep the logo and role line on a quiet field. */
+.nt .ft-hero:not(.is-film) .ft-hero__stage::after {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--ft-fade) 94%, transparent) 0%, color-mix(in srgb, var(--ft-fade) 82%, transparent) 34%, color-mix(in srgb, var(--ft-fade) 30%, transparent) 62%, transparent 80%),
+    linear-gradient(0deg, var(--ft-fade) 0%, transparent 25%);
+}
+
+/* ---------- Two columns: a picture with its own text under it, side by side ---------- */
+.nt-col--a { grid-column: content-start / c 6; }
+.nt-col--b { grid-column: c 6 / content-end; }
+.nt-col > .ft-body { margin-top: 20px; }
+
+/* ---------- The voices: the two screens a line belongs to, the text beside them ---------- */
+.nt-shots {
+  grid-column: content-start / c 7;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ft-gap);
+  align-self: center;
+}
+.nt-shots img { display: block; width: 100%; max-width: none; height: auto; aspect-ratio: 16 / 9; object-fit: cover; background: var(--c-bg-0); }
+.ft-sec > .nt-voices { grid-column: c 7 / content-end; align-self: center; }
+.ft-sec > .nt-credits { grid-column: content-start / c 5; margin: 0; }
+
+/* ---------- Letter tiles from the game's name plates; letters and points come from data-l / data-v ---------- */
+.nt-tiles {
+  --t: clamp(28px, calc((100vw - 2 * var(--page-gutter)) / 18.6), 72px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: calc(var(--t) * .26) calc(var(--t) * .4);
+}
+.nt-word { display: inline-flex; align-items: flex-end; gap: calc(var(--t) * .07); }
+.nt-tile {
+  --r: 0deg;
+  --y: 0;
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--t);
+  height: calc(var(--t) * 1.04);
+  border-radius: calc(var(--t) * .11);
+  background: linear-gradient(180deg, var(--nt-tile-hi), var(--nt-tile));
+  box-shadow: inset 0 calc(var(--t) * -.06) 0 rgba(40, 30, 16, .22), 0 calc(var(--t) * .16) calc(var(--t) * .3) calc(var(--t) * -.08) rgba(0, 0, 0, .85);
+  color: var(--nt-tile-ink);
+  font: 700 calc(var(--t) * .6)/1 var(--f-display);
+  font-style: normal;
+  transform: rotate(var(--r)) translateY(calc(var(--t) * var(--y)));
+}
+.nt-tile:nth-child(4n + 1) { --r: -2.6deg; --y: .02; }
+.nt-tile:nth-child(4n + 2) { --r: 2.2deg; --y: -.04; }
+.nt-tile:nth-child(4n + 3) { --r: -1.2deg; --y: .03; }
+.nt-tile:nth-child(4n + 4) { --r: 3.2deg; --y: -.02; }
+.nt-word:nth-child(2n) .nt-tile:nth-child(odd) { --r: 1.6deg; }
+.nt-tile::before { content: attr(data-l); }
+.nt-tile::after {
+  content: attr(data-v);
+  position: absolute;
+  right: 9%;
+  bottom: 6%;
+  color: var(--nt-tile-num);
+  font: 600 calc(var(--t) * .2)/1 var(--f-mono);
+}
+.nt-punct { margin-left: calc(var(--t) * .04); color: var(--nt-tile); font: 700 calc(var(--t) * 1.02)/.82 var(--f-display); }
+.nt-punct::before { content: attr(data-l); }
+
+/* ---------- The five grannies: portrait and name plate ---------- */
+.nt-cast {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 24px 32px;
+  padding: 0;
+  list-style: none;
+}
+.nt-cast li { display: flex; align-items: center; gap: 14px; }
+.nt-cast img { width: 64px; height: 64px; border-radius: 50%; background: var(--ft-bg); }
+.nt-cast .nt-tiles { --t: 30px; flex-wrap: nowrap; }
+
+@media (max-width: 1099px) {
+  .nt-cast { justify-content: flex-start; gap: 24px 40px; }
+  .ft-sec > .nt-credits { grid-column: content-start / c 7; }
+}
+/* Below this the two columns would be too narrow to read: they stack, picture then text. */
+@media (max-width: 899px) {
+  .nt-col--a,
+  .nt-col--b,
+  .nt-shots,
+  .ft-sec > .nt-voices,
+  .ft-sec > .nt-credits { grid-column: content; }
+  .nt-col > .ft-body { margin-top: 16px; }
+}
+@media (max-width: 699px) {
+  .nt .ft-hero__stage > .nt-hero__still { object-position: 45% 50%; }
+  .nt .ft-hero:not(.is-film) .ft-hero__stage::after {
+    background: linear-gradient(0deg, var(--ft-fade) 0%, color-mix(in srgb, var(--ft-fade) 86%, transparent) 40%, color-mix(in srgb, var(--ft-fade) 72%, transparent) 100%);
+  }
+  /* Gwen's intro and Penny's win, one above the other, so the tiles stay readable. */
+  .nt-shots { grid-template-columns: minmax(0, 1fr); }
+  /* The run's five cues: time and name on one line, so the list stays short on a phone. */
+  .nt .ft-chapters li { padding: 6px 0 14px; }
+  .nt .ft-chapters .ft-cue { flex-wrap: nowrap; align-items: center; }
+  .nt .ft-chapters span { width: auto; }
+  .nt .ft-chapters p { margin-top: 0; }
+  .nt-cast { display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); gap: 18px 24px; }
+  .nt-cast li { gap: 10px; }
+  .nt-cast img { width: 40px; height: 40px; }
+  .nt-cast .nt-tiles { --t: 21px; }
+}
+@media (max-width: 359px) {
+  .nt-cast .nt-tiles { --t: 18px; }
+  .nt-cast img { width: 34px; height: 34px; }
+}

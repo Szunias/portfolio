@@ -57,16 +57,30 @@ The files in the page's `css` array follow in exactly that order.
 - `portfolio.css` applies the current public theme and shared motion styles.
   Review variants keep their own configured styles. An override belongs to the
   component's owner unless it is intentionally part of the shared theme.
-- `home.css` owns work, tools and research, music, about and closing sections,
-  plus the 404 content. `home-hero.css` owns the Edition 03 editorial opening,
-  decorative waveform, compact showreel preview and full player. The header uses `_chrome.css`.
+- `home.css` owns work (with the tools desk and project track colours), tools
+  and research, music, the about and contact closing band, plus the 404
+  content. `home-hero.css` owns the Edition 03 editorial opening,
+  one still frame from Shadow Frames, compact showreel preview and full player. The header uses `_chrome.css`.
   Homepage order is `home`, `portfolio`, `home-hero`.
-- `cine.css` styles the public project pages. `case-plain.css` supports project
-  review variants.
+- `cine.css` styles the public project pages.
+- `feature.css` is the opt-in long-form project layout (Not Today, Darling! first):
+  a full-bleed hero loop that becomes the player, poster-scale section heads,
+  pull-out lines, a 12-column grid whose media can bleed off either edge, and
+  tinted bands. A page opts in with `feature` in its `css` list (after
+  `portfolio`) and `class="ft <slug>"` on its article; its own stylesheet then
+  sets only the `--ft-*` palette on `:root` and its motif. The block list and
+  tokens are documented at the top of the file.
 - `sidar.css` owns SIDAR's trailer-first layout and its Annex04 palette. It is
   loaded only on `sidar.html`; the shared project styles stay unchanged.
-- `music.css` owns the library and player. `music-stage.css` owns the listening
-  stage; `music-crate.css` and `music-reel.css` are review layouts.
+- Every other project page also owns a stylesheet named after its slug
+  (`shadowframes.css`, `ray.css` and so on). It holds that page's motif and
+  overrides colour tokens for that page only; `cine.css` and `portfolio.css`
+  stay the shared base.
+- `music.css` owns the library (the published shelf of spines and sketch
+  notebook, and the review pages' cover shelf) and the player. `music-stage.css`
+  owns the listening stage: the meter bridge stage of `music.html` and the cover
+  stage of the music-alt review page. `music-crate.css` and `music-reel.css` are
+  review layouts.
 - `contact.css`, `contact-time.css` and `contact-wind.css` compose the public
   contact page. Other `contact-*` styles belong to their registered review pages.
 
@@ -80,22 +94,33 @@ an intermediate width and desktop, including long titles and player controls.
 | --- | --- |
 | `home-showreel.js` | Compact silent preview, full showreel, close and focus restoration. |
 | `home-transition.js` | Scroll-driven hero exit, whole-wave transforms and showreel coverage state. |
-| `image-viewer.js` | Original-image dialog, zoom and focus restoration on project screenshots. |
+| `image-viewer.js` | Original-image dialog, zoom and focus restoration on project screenshots; inside a `[data-image-group]` (the HUSHABYE house gallery) it adds Previous/Next buttons and the arrow keys, wrapping at the ends. |
 | `project-previews.js` | Lazy, silent previews on project-card hover or keyboard focus. |
-| `copy-email.js` | Copies the visible address on the homepage and contact pages. |
-| `page-motion.js` | Shared entrance effects and header state. |
-| `music-library.js` | Track dates and labels, artwork styles, finished-piece shelf and sketch ledger markup. |
-| `music-player.js` | Track selection, queue, transport, seek, volume, filters, artwork transitions and player state. |
-| `music-visualizer.js` | Cover proportions, sampled artwork brightness and audio spectrum. |
+| `copy-email.js` | Copies the visible address on the homepage and contact pages and marks the clicked button and the status with `data-copy-state` for 4 s. |
+| `page-motion.js` | Header state on scroll. |
+| `music-library.js` | Track dates, display names and labels; the published shelf of spines and sketch notebook (`data-layout="spines"`), and the cover shelf and sketch ledger of the review pages. |
+| `music-player.js` | Track selection and the display roles it fills (name, note, facts, film link), queue, transport, seek, volume, filters, review-page covers, lock-screen artwork and player state. |
+| `music-visualizer.js` | The meter-bridge audio analyser and the level meter of the playing list row. |
 | `contact-actions.js` | Contact-page actions and progressive enhancement. |
-| `clock-face.js` | Shared Vienna time parts, phase labels, hand transforms and SVG ticks for contact clocks. |
-| `contact-clock.js` | Windable contact clock and its interaction state. |
+| `clock-face.js` | Shared Vienna time parts and UTC offset, the sun over Graz (altitude and phase of the day), hand transforms and SVG ticks for contact clocks. |
+| `contact-clock.js` | Windable contact clock: daylight face, crown, caption (with the visitor's own clock), hold after release, ratchet click and interaction state. |
 | `contact-time.js` | Clock treatment on the separate contact-time review page. |
 | `colophon-clock.js` | Time display in the shared footer. |
-| `cine.js` | One-shot project reveals, including live reduced-motion changes. |
+| `cine.js` | One-shot reveals for `[data-reveal]` (no page uses them at present). |
 | `local-video.js` | Local-video enhancement on configured project pages. |
-| `video-facade.js` | Lazy embedded-video activation on configured review pages. |
+| `video-facade.js` | Click-to-load YouTube embeds on the pages that configure it: the poster button is replaced by the player (`autoplay=1&rel=0&enablejsapi=1`), so a page script can pause it through postMessage. |
+| `poster-loop.js` | Silent gameplay loops (`video[data-poster-loop]`): load once on screen, play while half visible, never under reduced motion, data saving or a hidden tab. Inside a YouTube facade's poster the facade click removes them; on feature pages a `button[data-loop-toggle]` (its `aria-controls` names the loop) pauses and resumes one and is hidden while loops may not run. |
+| `feature.js` | Feature pages (`.ft`, feature.css): every `a[data-ft-play]` (the hero's "Watch with sound" and the play-from cues) replaces the hero's silent loop in `[data-ft-stage]` with the full recording from its `href`, with native controls and sound, and plays it from `data-t`; a cue lower on the page scrolls the hero back into view. The only thing that starts sound. |
 | `prefetch.js` | Same-origin navigation prefetch. |
+| `shadowframes.js` | Drives the ten-slot investigation board: the range input (native keyboard support) and its two buttons toggle .is-pinned on the photo slots, develop each newly pinned photo from black, and rewrite the aria-live ProgressiveAmbience stage/layers readout from a static Wwise stage table copied off SC_AMB_Progressive; the slots themselves are a pointer/touch shortcut only, staying aria-hidden. |
+| `transientica.js` | Transientica: a button that jumps the 2025 prototype video straight to its live-demo timestamp. |
+| `mowik.js` | Mówik: the cue table, which plays each built-in sound cue. |
+| `ai-audio-research.js` | AI Audio Research: the sample table's play buttons, one sample at a time. |
+| `sounddesign.js` | Three sound redesigns: the second stage (Baldur's Gate 3) turns into its clip in place, and only one clip plays at a time. |
+| `ifmc.js` | Drives both IFMC score reels (play/pause, scrub, cues against a pre-measured loudness trace) and keeps the reels, the hero film (feature.js) and the second film (video-facade.js) from playing together. |
+| `hushabye.js` | HUSHABYE: the CAM 1-6 switcher in the monitor section. Turns the no-JS grid of six camera views into one view chosen with six `aria-pressed` buttons (arrow keys move between them) and announces the camera through a polite live region. |
+| `richter.js` | Richter: the main-theme player, which keeps the theme and the film from playing at once. |
+| `ray.js` | Ray: the Credits theme play/pause button, which keeps the film and the theme from playing at once. |
 
 Scripts use local scopes and DOM hooks. Keep their loading order in configuration
 and preserve accessible markup when JavaScript is unavailable.
@@ -105,7 +130,7 @@ Each contact clock loads `clock-face.js` before its controller. The read-only
 all timers, audio and interaction state. The contact clocks observe live motion
 preferences and keep one refresh timer.
 The windable clock's sound is optional: Web Audio failures must not interrupt
-pointer, keyboard or ARIA state. Temporary tone nodes disconnect when finished.
+pointer, keyboard or ARIA state. Temporary click nodes disconnect when finished.
 
 Music has one explicit audio element in `player-bar.html`. `music-player.js` owns
 it; `music-visualizer.js` observes it after player initialization. Do not replace
@@ -119,7 +144,14 @@ local media paths, not secrets. Catalog edits also update sitemap lastmod.
 `default` serves music and music-alt. `review` preserves the gradient-only
 Electronic sketch and Miss You artwork in music-crate and music-reel. Overrides
 may change artwork only; titles, dates and audio paths stay shared. Featured
-selections and their order remain authored in each page. Use
+selections and their order remain authored in each page.
+
+A record's `title` is its key: selection, saved state and the lock screen use
+it unchanged. The optional `name`, `note`, `about` (the stage sentence) and
+`page` (the film page behind "Watch it with the film") are what the page,
+player bar and sheet show. `art-kind` classifies the cover art as `genuine`,
+`genuine?`, `ai?` or `ai`; music.html shows no cover, and a lock screen shows
+one only when its kind starts with `genuine`, otherwise the track's gradient. Use
 `npm run inspect -- --file src/data/music-tracks.json` to find all consumers.
 
 Every music route loads `music-library.js` before `music-player.js`. Its explicit
@@ -135,21 +167,23 @@ saving and page visibility, and pauses while the separate `.hero__film` plays.
 The full showreel starts only from its launch button. Keep the close control and
 return keyboard focus to the launch button after closing.
 
-The waveform is decorative, not an audio analyser. `assets/hero-waveform.svg`
-provides its fixed geometry. `home-transition.js` changes only whole-layer
+The hero's picture is one still frame from Shadow Frames (the bar,
+`22_ShadowFrames_01` in 640/1200/1920 webp), faded into the page with CSS masks;
+nothing in it moves or takes input. `home-transition.js` changes only whole-layer
 transforms and hero opacity as projects cover the opening. It has no continuous
 drawing loop. Reduced motion uses normal document flow without the transforms.
 Coverage changes pause the thumbnail or close a completely covered full player.
 
-The music spectrum sits below the cover and reads the existing audio element.
-It draws only during playback while visible, with reduced motion disabled.
-Stopping the drawing loop must not interrupt audio output.
+The music analyser spans the stage under the selected piece and reads the
+existing audio element. It draws only during playback while the bridge or the
+playing row's level meter is visible, with reduced motion disabled; at rest it
+shows its unlit segments. Stopping the drawing loop must not interrupt audio output.
 
 Project-card videos use `[data-card-preview]` with a validated `data-src` path.
 Only one runs at a time; its source loads on deliberate hover or keyboard focus.
 Touch, reduced motion and data-saving preferences retain the still images.
-Software-card crops use the original application screenshots and CSS variables
-on `.tool-art`; the full screenshots remain available on their project pages.
+Every homepage project link carries a `track-<slug>` class whose colour is copied
+from that project's stylesheet. Update it when a project's palette changes.
 
 ## Build and validation
 
@@ -197,7 +231,7 @@ These checks do not certify third-party embeds, all codecs or Safari/iOS behavio
 
 | Location | Purpose |
 | --- | --- |
-| `src/assets/` | Current website assets, including the waveform fallback and compact showreel preview. |
+| `src/assets/` | Current website assets, including the compact showreel preview. |
 | `old/public/assets/` | Images, audio, videos and other media retained from the earlier site. |
 | `showreel/timeline.json` | Full showreel cuts, titles, transitions and gains. |
 | `showreel/render.cjs` | Full renderer, mastering and media QA; documented in `showreel/README.md`. |

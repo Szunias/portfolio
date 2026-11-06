@@ -114,12 +114,18 @@ async function clockMotion(context, entry, width) {
     await page.waitForFunction(() => document.querySelector('[data-hand="second"]').getAttribute('visibility') === 'hidden');
     if (entry.js.includes('contact-clock')) {
       const dial = page.locator('.ck__dial');
+      // contact.html's two-line caption; the contact-wind review page keeps [data-cap-preview].
+      const where = page.locator('[data-cap-where]');
+      const twoLine = await where.count() > 0;
       await dial.focus();
       await page.keyboard.press('ArrowRight');
       assert.equal(await dial.getAttribute('aria-valuenow'), '1');
+      assert.match(await dial.getAttribute('aria-valuetext'), / in Graz, in 1 hour, (day|dawn|dusk|night)$/);
+      if (twoLine) assert.match(await where.textContent(), /^in 1 h · (day|dawn|dusk|night)$/);
       await page.keyboard.press('Home');
       assert.equal(await dial.getAttribute('aria-valuenow'), '0');
       assert.equal(await page.locator('[data-cap-preview]').isVisible(), false);
+      if (twoLine) assert.equal(await where.textContent(), 'Graz, Austria');
     }
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.waitForFunction(() => !document.querySelector('[data-hand="second"]').hasAttribute('visibility'));
@@ -236,7 +242,9 @@ async function main() {
     await ready(server);
     if (serverError) throw serverError;
     browser = await chromium.launch();
-    const context = await browser.newContext({ reducedMotion: 'reduce' });
+    // Graz time: contact.html adds the visitor's own clock to the dial's text
+    // on any other zone (a UTC runner), and the clock checks read Graz only.
+    const context = await browser.newContext({ reducedMotion: 'reduce', timezoneId: 'Europe/Vienna' });
     context.setDefaultTimeout(10000);
     // A local regression check must not depend on third-party availability.
     // Deliberately launched external embeds are outside this smoke test.
@@ -252,7 +260,8 @@ async function main() {
     // Exercise only features that are actually present in registered pages.
     const projects = pages.filter(entry => (entry.js || []).includes('cine') &&
       /\bdata-reveal\b/.test(fs.readFileSync(path.join(root, 'src/pages', entry.slug + '.html'), 'utf8')));
-    assert.ok(projects.length, 'No configured project with reveal markup was found');
+    // Project pages now own their motion; skip the reveal check, visibly, once no page uses it.
+    if (!projects.length) results.push({ check: 'project motion', passed: true, skipped: 'no registered page uses data-reveal' });
     for (const width of [320, 1440]) {
       for (const entry of projects) {
         await record({ check: 'project motion', page: entry.slug, width }, () => projectMotion(context, entry, width));

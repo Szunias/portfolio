@@ -56,12 +56,14 @@ rather than expecting `showreel:sources` to restore it.
 
 ## Website previews
 
-The homepage uses the static `src/assets/hero-waveform.svg`, moved as a whole
-by `src/js/home-transition.js` when projects cover the hero. The full showreel,
+The homepage hero shows one still frame from Shadow Frames and the compact silent
+preview of this reel inside the Watch showreel button. The full showreel,
 with audio and project credits, plays only after the visitor launches it.
 
-The thumbnail is `src/assets/showreel-preview-editorial-v2.mp4`: 480×270, 24 fps,
+The thumbnail is `src/assets/showreel-preview-editorial-v2.mp4`: 256×144, 24 fps,
 eight seconds from the approved extended cut, H.264 CRF 24 and fast-start metadata.
+The button shows it at 64×44 CSS pixels at most, so 256×144 still covers a 3x
+screen and keeps this eager download near 110 KB.
 It has no audio stream and is shared across viewport sizes. It pauses offscreen
 or while the full player is open; reduced motion and data saving retain a still.
 Rebuild it from the repository root with:

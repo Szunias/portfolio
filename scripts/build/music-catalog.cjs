@@ -1,9 +1,18 @@
-/* Build-time track data; browser controllers continue to read #trackData. */
+/* Build-time track data; browser controllers continue to read #trackData.
+   `title` is the key (selection, saved state, lock screen). The optional
+   `name`, `note`, `about` and `page` fields are what the page, player bar and
+   sheet display; `art-kind` classifies the cover art for the lock screen. */
 const { escAttr } = require('./html-utils.cjs');
 
-const FIELDS = ['title', 'artist', 'duration', 'year', 'kind', 'src-e', 'thumb', 'art', 'art-size', 'gradient'];
+const FIELDS = ['title', 'name', 'note', 'about', 'page', 'artist', 'duration', 'year', 'kind', 'src-e',
+  'thumb', 'art', 'art-size', 'art-kind', 'gradient'];
 const REQUIRED = ['title', 'artist', 'duration', 'year', 'kind', 'src-e'];
 const ARTWORK = ['thumb', 'art', 'art-size', 'gradient'];
+// "genuine?" and "ai?" are covers Igor has not confirmed yet. Only a cover
+// whose kind starts with "genuine" may be shown on a lock screen.
+const ART_KINDS = ['genuine', 'genuine?', 'ai?', 'ai'];
+// A film page on this site, linked as "Watch it with the film".
+const PAGE = /^[a-z0-9-]+\.html$/;
 const MARKER = '<!-- MUSIC_TRACKS -->';
 
 function renderMusicCatalog(catalog, variant) {
@@ -20,6 +29,12 @@ function renderMusicCatalog(catalog, variant) {
       throw new Error('Music catalog records must contain supported string fields and required metadata');
     }
     if (titles.has(track.title)) throw new Error(`Duplicate music catalog title: ${track.title}`);
+    if (track['art-kind'] !== undefined && !ART_KINDS.includes(track['art-kind'])) {
+      throw new Error(`Unknown music art-kind for ${track.title}: ${track['art-kind']}`);
+    }
+    if (track.page !== undefined && !PAGE.test(track.page)) {
+      throw new Error(`Music page link must name a local .html page: ${track.title}`);
+    }
     titles.add(track.title);
   }
   const overrides = catalog.artworkVariants[variant];

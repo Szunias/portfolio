@@ -1,85 +1,103 @@
-<article class="cine">
+<article class="ft mw">
 
-  <header class="cine-split cine-open">
-    <div class="cine-split__body">
-      <p class="cine-kicker">2026 &middot; Windows dictation tool</p>
+  <header class="ft-hero mw-hero">
+    <div class="ft-hero__text">
       <h1>M&oacute;wik</h1>
-      <p class="cine-lead">I built M&oacute;wik, a Windows dictation app that turns speech into text in the active window. I wrote the Python application, local transcription pipeline and Polish and English interface.</p>
-      <p class="cine-meta">Python&nbsp;&middot; faster-whisper&nbsp;&middot; Windows 10/11 x64&nbsp;&middot; MIT</p>
-      <p class="cine-links">
-        <a href="https://github.com/Szunias/Mowik/releases" target="_blank" rel="noopener noreferrer">Get M&oacute;wik <span aria-hidden="true">&nearr;</span></a>
-        <a href="https://github.com/Szunias/Mowik" target="_blank" rel="noopener noreferrer">Read the source <span aria-hidden="true">&nearr;</span></a>
+      <p class="ft-hero__who">Push-to-talk dictation for Windows that I wrote in Python around <span class="mw-nw">faster-whisper</span>.</p>
+      <p class="ft-hero__acts">
+        <a class="ft-watch mw-get" href="https://github.com/Szunias/Mowik/releases" target="_blank" rel="noopener noreferrer">Get M&oacute;wik <span aria-hidden="true">&nearr;</span></a>
+        <a href="https://github.com/Szunias/Mowik" target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">&nearr;</span></a>
       </p>
     </div>
-    <div class="cine-split__media">
-      <img src="old/public/assets/images/projects-mowik/mowik-home-pl.png" srcset="old/public/assets/images/projects-mowik/mowik-home-pl-640.webp 640w, old/public/assets/images/projects-mowik/mowik-home-pl-1200.webp 1200w, old/public/assets/images/projects-mowik/mowik-home-pl.png 1680w" sizes="(min-width: 900px) 690px, calc(100vw - 40px)" width="1680" height="1170" alt="Dark M&oacute;wik Center in Polish with dictation shortcut, command mode, microphone and quality settings" fetchpriority="high" decoding="async">
+    <div class="ft-hero__stage">
+      <img src="assets/mowik/mowik-dictation-en-1680.webp" srcset="assets/mowik/mowik-dictation-en-960.webp 960w, assets/mowik/mowik-dictation-en-1680.webp 1680w" sizes="(min-width: 700px) 50vw, 100vw" width="1680" height="1170" alt="M&oacute;wik dictation settings in English: quality profiles, shortcut with the Detect button, microphone, language and a collapsed advanced section" fetchpriority="high" decoding="async">
     </div>
   </header>
 
-  <section aria-labelledby="mw-dictate-title">
-    <h2 id="mw-dictate-title" data-reveal>Dictating with F8</h2>
-    <p data-reveal>Hold F8 to record, then release it to transcribe. A short audio buffer helps retain the first syllable. The result goes into the active window, the clipboard or both; the shortcut can be changed in Settings.</p>
-    <div class="cine-row cine-row--2" data-reveal>
-      <figure>
-        <img src="old/public/assets/images/projects-mowik/mowik-dictation-en.png" srcset="old/public/assets/images/projects-mowik/mowik-dictation-en-640.webp 640w, old/public/assets/images/projects-mowik/mowik-dictation-en-1200.webp 1200w, old/public/assets/images/projects-mowik/mowik-dictation-en.png 1680w" sizes="(min-width: 900px) 590px, calc(100vw - 40px)" width="1680" height="1170" alt="Dark English M&oacute;wik dictation settings with quality profiles, shortcut, microphone, language and advanced recognition controls" loading="lazy" decoding="async">
-        <p class="cine-row__num">01</p>
-        <h3>Dictation settings</h3>
-        <p>Shortcut, microphone, language and quality profile. Model, device, speech detection and buffer controls sit under Advanced.</p>
+  <section class="ft-sec ft-band" aria-labelledby="mw-dictate-title">
+    <p class="ft-deck">Hold <kbd>F8</kbd>, speak, release, and the text appears where you were typing.</p>
+    <p class="ft-facts">2026, Windows 10/11 x64, MIT licence. I wrote everything around the speech model: the microphone buffer, the sound cues, voice commands on F7 and a settings app in Polish and English. The name comes from <span lang="pl">m&oacute;wi&cacute;</span>, Polish for &ldquo;to speak&rdquo;.</p>
+
+    <div class="mw-pair mw-pair--shot">
+      <div class="ft-body">
+        <h2 class="ft-head" id="mw-dictate-title">From key press to pasted text</h2>
+        <p>M&oacute;wik keeps the microphone open and holds the last 300&nbsp;ms of audio in RAM. Every recording starts with that buffer and runs 120&nbsp;ms past release, so the first and last syllables survive a key pressed late or let go early. In the dictation settings, Detect&hellip; binds any keyboard key or mouse button in place of F8, side buttons included.</p>
+        <p><span class="mw-nw">faster-whisper</span> transcribes on the same computer, in float16 on an NVIDIA GPU or in int8 on the processor when CUDA cannot start. Three quality profiles run from <code>small</code> to <code>large-v3</code>; the default, Recommended, uses <code>large-v3-turbo</code>.</p>
+        <p>The text is pasted into the active window, copied to the clipboard, or both. The audio is dropped after transcription and the log never records what was said. A private vocabulary covers names and specialist terms. An optional local Ollama model can tidy the punctuation, and if it changes a number or a negation, or rewrites too much, M&oacute;wik keeps the original.</p>
+      </div>
+      <figure class="ft-media">
+        <a class="image-zoom" data-image-zoom href="old/public/assets/images/projects-mowik/mowik-home-pl.png" aria-label="Enlarge image: M&oacute;wik Center in Polish"><img src="assets/mowik/mowik-home-pl-1680.webp" srcset="assets/mowik/mowik-home-pl-960.webp 960w, assets/mowik/mowik-home-pl-1680.webp 1680w" sizes="(min-width: 1100px) 50vw, 100vw" width="1680" height="1170" alt="M&oacute;wik Center in Polish: the home page with the F8 dictation shortcut, command mode, microphone and quality profile" loading="lazy" decoding="async"></a>
+        <figcaption class="ft-cap">The home page of M&oacute;wik Center in Polish. The settings app has a Polish and an English interface.</figcaption>
       </figure>
-      <figure>
-        <img src="old/public/assets/images/projects-mowik/mowik-sounds-en.png" srcset="old/public/assets/images/projects-mowik/mowik-sounds-en-640.webp 640w, old/public/assets/images/projects-mowik/mowik-sounds-en-1200.webp 1200w, old/public/assets/images/projects-mowik/mowik-sounds-en.png 1680w" sizes="(min-width: 900px) 590px, calc(100vw - 40px)" width="1680" height="1170" alt="Dark English M&oacute;wik sound and notification settings for recording and transcription feedback" loading="lazy" decoding="async">
-        <p class="cine-row__num">02</p>
-        <h3>Recording and transcription cues</h3>
-        <p>Optional sounds confirm when recording starts and transcription finishes.</p>
+    </div>
+  </section>
+
+  <section class="ft-sec" aria-labelledby="mw-cues-title">
+    <div class="mw-pair mw-pair--code">
+      <div class="ft-body">
+        <h2 class="ft-head" id="mw-cues-title">Sound cues synthesised in Python</h2>
+        <p>Each note is a sine wave with a quiet second harmonic, an <span class="mw-nw">8&nbsp;ms fade-in</span> and a <span class="mw-nw">32&nbsp;ms fade-out</span>, so none of them clicks. The key press plays C5 and the release G4, a fourth lower. Delivered text answers with a rising major third, C5 to E5, and an error with a falling minor third, E4 to C&sharp;4. Any cue can be replaced with a WAV file.</p>
+      </div>
+      <figure class="mw-code mw-notes" data-mw-notes>
+        <figcaption>mowik.py</figcaption>
+        <div class="mw-notes__src">
+          <span class="ln">BUILTIN_SOUND_NOTES: dict[str, tuple[tuple[float, int, int], ...]] = {</span>
+          <span class="ln ln--in c" lang="pl"># częstotliwość Hz, czas tonu ms, cisza po tonie ms</span>
+          <button type="button" class="ln ln--in ln--cue" data-cue="start" aria-label="Play the start cue: C5, 72 ms">"start": ((523.25, 72, 0),),</button>
+          <button type="button" class="ln ln--in ln--cue" data-cue="stop" aria-label="Play the stop cue: G4, 68 ms">"stop": ((392.00, 68, 0),),</button>
+          <button type="button" class="ln ln--in ln--cue" data-cue="done" aria-label="Play the done cue: C5 then E5">"done": ((523.25, 55, 10), (659.25, 74, 0)),</button>
+          <button type="button" class="ln ln--in ln--cue" data-cue="error" aria-label="Play the error cue: E4 then C sharp 4">"error": ((329.63, 75, 8), (277.18, 95, 0)),</button>
+          <span class="ln">}</span>
+        </div>
+        <p class="mw-notes__gloss">The Polish comment reads: frequency in Hz, tone length in ms, silence after the tone in ms. The cues on this page are rendered in your browser from these numbers with the same envelope as in <span class="mw-nw">mowik.py</span>.</p>
       </figure>
     </div>
-    <p class="cine-cap">Screenshots from the v2.7.4 working build. Current installers and release notes are on GitHub.</p>
   </section>
 
-  <section class="cine-split cine-split--flip" aria-labelledby="mw-local-title">
-    <div class="cine-split__body">
-      <h2 id="mw-local-title">Local transcription and audio handling</h2>
-      <p>M&oacute;wik does not upload audio or dictated text. Recognition runs through faster-whisper on the computer, not a remote speech service.</p>
+  <section class="ft-sec" aria-labelledby="mw-commands-title">
+    <div class="mw-pair">
+      <h2 class="ft-head" id="mw-commands-title">Commands on <kbd class="is-cmd">F7</kbd></h2>
+      <div class="ft-body">
+        <p><kbd class="is-cmd">F7</kbd> is a second push-to-talk key that reacts only to phrases saved in M&oacute;wik Center, matched word for word, and each phrase runs one of three actions. Anything else does nothing and is never typed out as dictation.</p>
+      </div>
     </div>
-    <div class="cine-split__media">
-      <dl>
-        <dt>Audio</dt><dd>Kept in RAM, discarded after transcription and not saved to disk.</dd>
-        <dt>Transcript</dt><dd>Typed or copied on request. Technical logs omit the dictated text.</dd>
-        <dt>Model</dt><dd>Downloaded once over the internet. Recognition then uses NVIDIA CUDA in float16 when available, and CPU int8 when CUDA cannot start.</dd>
-        <dt>Correction</dt><dd>Off by default. When it is enabled, Ollama runs locally.</dd>
-      </dl>
-    </div>
+    <dl class="mw-actions">
+      <div><dt>Insert text</dt><dd>Pastes a saved block exactly as written. A block of several lines asks first, because pasted into a terminal it could run.</dd></div>
+      <div><dt>Open an app, file or website</dt><dd>Existing local paths and HTTPS addresses only, always after a confirmation. Scripts, shortcuts and network paths are blocked.</dd></div>
+      <div><dt>Open a terminal</dt><dd>Opens in the folder of the active File Explorer window. Words spoken after the phrase can become a one-line draft that M&oacute;wik checks and copies to the clipboard. It never types into the terminal or presses Enter.</dd></div>
+    </dl>
   </section>
 
-  <section class="cine-split" aria-labelledby="mw-commands-title">
-    <div class="cine-split__body">
-      <h2 id="mw-commands-title">Voice commands on a separate shortcut</h2>
-      <p>F7 activates command mode. Configured phrases can insert saved text, open a target or prepare a terminal command.</p>
-      <ul>
-        <li>Insert text: types a predefined phrase into the active window.</li>
-        <li>Open a trusted target: a configured app, file or HTTPS address, after confirmation.</li>
-        <li>Copy a terminal command: validated text goes to the clipboard. M&oacute;wik does not run it or press Enter.</li>
-      </ul>
-    </div>
-    <div class="cine-split__media">
-      <img src="old/public/assets/images/projects-mowik/mowik-commands-en.png" srcset="old/public/assets/images/projects-mowik/mowik-commands-en-640.webp 640w, old/public/assets/images/projects-mowik/mowik-commands-en-1200.webp 1200w, old/public/assets/images/projects-mowik/mowik-commands-en.png 1680w" sizes="(min-width: 900px) 690px, calc(100vw - 40px)" width="1680" height="1170" alt="Dark English M&oacute;wik custom commands page with the F7 shortcut, command list and safety notice" loading="lazy" decoding="async">
-      <p class="cine-cap">Command phrases and their configured actions.</p>
-    </div>
-  </section>
+  <section class="ft-sec ft-band ft-band--alt" aria-labelledby="mw-release-title">
+    <div class="mw-pair mw-pair--even">
+      <div class="ft-body">
+        <h2 class="ft-head" id="mw-release-title">Installer and releases</h2>
+        <p>The installer needs no administrator rights. The speech model downloads on first launch, then transcription works offline. The CUDA libraries weigh close to a gigabyte and only help on NVIDIA cards, so I left them out of the installer: M&oacute;wik downloads them the first time a model starts on the GPU and checks them against checksums pinned in the release.</p>
+        <p>GitHub Actions builds every release from pinned, hash-checked dependencies, then installs, repairs, launches and uninstalls it in English and Polish on a fresh Windows image. Upgrades and the Windows&nbsp;10 1809 minimum still need a manual run in a virtual machine, and hosted CI has no microphone.</p>
+      </div>
+      <div class="ft-body">
+        <p>The installer is not code-signed, so Windows may show <em>Unknown publisher</em> or a SmartScreen warning. Each release carries SHA-256 checksums and a provenance attestation, which two commands check before the file runs.</p>
+        <details class="mw-verify">
+        <summary>The two PowerShell commands</summary>
+        <figure class="mw-code mw-code--ps">
+          <figcaption>PowerShell</figcaption>
+          <pre><code><span class="c"># compare the hash with SHA256SUMS.txt from the same release</span>
+Get-FileHash .\Mowik-x.y.z-Setup-UNSIGNED.exe -Algorithm SHA256
 
-  <section aria-labelledby="mw-release-title">
-    <h2 id="mw-release-title">Installing on Windows</h2>
-    <p>The installer supports 64-bit Windows 10 version 1809 or newer and Windows 11. The speech model downloads on first launch; transcription works offline once it is available.</p>
-    <p>The installer is unsigned, so Windows may show <em>Unknown publisher</em> or SmartScreen. Each <a href="https://github.com/Szunias/Mowik/releases" target="_blank" rel="noopener noreferrer">GitHub release</a> includes installation notes, checksums and build verification details.</p>
+gh attestation verify .\Mowik-x.y.z-Setup-UNSIGNED.exe --repo Szunias/Mowik</code></pre>
+        </figure>
+        </details>
+      </div>
+    </div>
   </section>
 
   <nav class="cine-close" aria-label="Project links and navigation">
     <span>
-      <a href="https://github.com/Szunias/Mowik/releases" target="_blank" rel="noopener noreferrer">Releases on GitHub</a>
-      <a href="https://github.com/Szunias/Mowik" target="_blank" rel="noopener noreferrer">Source code on GitHub</a>
+      <a href="https://github.com/Szunias/Mowik/releases" target="_blank" rel="noopener noreferrer">Get M&oacute;wik <span aria-hidden="true">&nearr;</span></a>
+      <a href="https://github.com/Szunias/Mowik" target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">&nearr;</span></a>
       <a href="/#work">Back to selected work</a>
     </span>
-    <a class="cine-close__next next-project-btn" href="ai-audio-research.html">Next: AI Audio Research <span aria-hidden="true">&rarr;</span></a>
+    <a class="cine-close__next next-project-btn" href="wwiseprojects.html">Next: Three Wwise exercises <span aria-hidden="true">&rarr;</span></a>
   </nav>
 
 </article>

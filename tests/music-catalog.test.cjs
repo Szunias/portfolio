@@ -10,8 +10,9 @@ const catalog = require('../src/data/music-tracks.json');
 
 function sample() {
   return {
-    tracks: [{ title: 'A < B & "C" $&', artist: 'Artist', duration: '0:02', year: '2026-09-12',
-      kind: 'release', 'src-e': btoa('assets/tone.wav'), thumb: 'assets/cover.webp', gradient: 'black' }],
+    tracks: [{ title: 'A < B & "C" $&', name: 'A <b> & "C"', note: 'Note & <i>it</i>', about: 'About "A" $1 & more',
+      page: 'ray.html', artist: 'Artist', duration: '0:02', year: '2026-09-12',
+      kind: 'release', 'src-e': btoa('assets/tone.wav'), thumb: 'assets/cover.webp', 'art-kind': 'genuine?', gradient: 'black' }],
     artworkVariants: { default: {}, review: { 'A < B & "C" $&': { thumb: null, gradient: 'gray' } } },
   };
 }
@@ -21,6 +22,11 @@ test('catalog escaping preserves literal metadata and artwork-only variants', ()
   const original = structuredClone(data);
   const normal = injectMusicCatalog('before\n<!-- MUSIC_TRACKS -->\nafter', data, 'default');
   assert.match(normal, /data-title="A &lt; B &amp; &quot;C&quot; \$&amp;"/);
+  assert.match(normal, /data-name="A &lt;b&gt; &amp; &quot;C&quot;"/);
+  assert.match(normal, /data-note="Note &amp; &lt;i&gt;it&lt;\/i&gt;"/);
+  assert.match(normal, /data-about="About &quot;A&quot; \$1 &amp; more"/);
+  assert.match(normal, /data-page="ray.html"/);
+  assert.match(normal, /data-art-kind="genuine\?"/);
   assert.match(normal, /data-thumb="assets\/cover.webp"/);
   assert.ok(normal.endsWith('\nafter'));
   const review = renderMusicCatalog(data, 'review');
@@ -86,6 +92,29 @@ test('catalog rejects duplicate titles, broken variants and misplaced markers', 
   delete data.artworkVariants.review.Unknown;
   data.artworkVariants.review[data.tracks[0].title].title = 'Different title';
   assert.throws(() => renderMusicCatalog(data, 'review'), /only change artwork/);
+});
+
+test('catalog accepts only known cover kinds and local film page links', () => {
+  const kind = sample();
+  kind.tracks[0]['art-kind'] = 'real';
+  assert.throws(() => renderMusicCatalog(kind, 'default'), /art-kind/);
+  for (const page of ['https://example.test/ray.html', '../ray.html', 'ray.html#film', 'ray']) {
+    const data = sample();
+    data.tracks[0].page = page;
+    assert.throws(() => renderMusicCatalog(data, 'default'), /local \.html page/, page);
+  }
+});
+
+test('every cover in the catalogue is classified and every film link is a built page', () => {
+  const slugs = new Set(config.pages.map(page => page.slug));
+  for (const track of catalog.tracks) {
+    if (track.art) assert.ok(track['art-kind'], `${track.title} needs an art-kind for the lock screen`);
+    if (track.page) assert.ok(slugs.has(track.page.replace(/\.html$/, '')), `${track.title} links to an unregistered page`);
+    if (track.about || track.page) assert.ok(track.name, `${track.title} needs a display name`);
+  }
+  // Nothing the listener sees may still carry the old suffixes.
+  const names = catalog.tracks.map(track => track.name || track.title);
+  assert.ok(!names.some(name => /\(Cover by|Rescore$| - /.test(name)), names.join(', '));
 });
 
 test('inspector reports missing and unregistered catalog data', t => {

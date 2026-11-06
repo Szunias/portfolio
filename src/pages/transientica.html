@@ -1,89 +1,79 @@
-<article class="cine">
+<article class="ft tr">
 
-  <header class="cine-split cine-open">
-    <div class="cine-split__body">
-      <p class="cine-kicker">2025&ndash;present &middot; Rhythm game in development</p>
-      <h1>Transientica</h1>
-      <p class="cine-lead">A rhythm game I am developing solo in Unity. I wrote the C# audio recognition system that turns the player&rsquo;s beatboxing into kick, snare and hi-hat inputs.</p>
-      <p class="cine-meta">Unity 6&nbsp;&middot; C#&nbsp;&middot; KNN&nbsp;&middot; FFT</p>
-      <p class="cine-links">
-        <a href="https://www.youtube.com/watch?v=r9IC7t0GPOU" target="_blank" rel="noopener noreferrer">Gameplay demo <span aria-hidden="true">&nearr;</span></a>
-      </p>
+  <header class="ft-hero">
+    <div class="ft-hero__stage" data-ft-stage data-ft-label="Transientica gameplay demo from the March 2026 build, with sound">
+      <video id="tr-loop-hero" data-poster-loop data-src="assets/transientica/transientica-loop-lanes.mp4" poster="old/public/assets/images/video-posters/transientica-current-1600.webp" width="1280" height="720" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      <button class="ft-toggle" type="button" data-loop-toggle aria-controls="tr-loop-hero" hidden>Pause</button>
     </div>
-    <div class="cine-split__media">
-      <img src="transienticascreenshot.png" srcset="transienticascreenshot-640.webp 640w, transienticascreenshot-1200.webp 1200w" sizes="(min-width: 900px) 690px, calc(100vw - 40px)" width="2560" height="1440" alt="Transientica gameplay: three lanes labelled KICK, SNARE and HI-HAT, a note falling towards the line at the bottom, a score and a combo counter" fetchpriority="high" decoding="async">
+    <div class="ft-hero__text">
+      <h1>Transientica</h1>
+      <p class="ft-hero__who">A rhythm game you play by beatboxing. I am developing it solo in Unity&nbsp;6 and wrote its audio recognition in&nbsp;C#.</p>
+      <p class="ft-hero__acts">
+        <a class="ft-watch" href="https://www.youtube.com/watch?v=r9IC7t0GPOU" data-ft-play data-ft-yt="r9IC7t0GPOU" data-t="0">Watch the demo with sound</a>
+      </p>
     </div>
   </header>
 
-  <section class="cine-split" aria-labelledby="tr-train-title">
-    <div class="cine-split__body">
-      <h2 id="tr-train-title">Training with the player&rsquo;s voice</h2>
-      <p>Players record at least ten examples of each beatbox sound with their own microphone. The classifier learns from these examples, then identifies live hits during a song.</p>
-      <p>The game compares each hit with the beatmap and scores its timing.</p>
+  <section class="ft-sec ft-band" aria-labelledby="tr-lane-title">
+    <p class="ft-deck">The game learns how each player makes a kick, a snare and a hi&#8209;hat, then reads every live hit as an input on one of three lanes.</p>
+    <p class="ft-facts">2025 to now. Around the recognition I built the rest of the game: song selection, beatmaps, scoring and saved results. The gameplay on this page is from the March&nbsp;2026 build.</p>
+
+    <h2 class="ft-head" id="tr-lane-title">Trained on the player&rsquo;s own kick, snare and hi&#8209;hat</h2>
+
+    <div class="ft-row ft-row--right">
+      <figure class="ft-media tr-readout">
+        <div class="ft-media__frame">
+          <video id="tr-loop-readout" data-poster-loop data-src="assets/transientica/transientica-loop-readout.mp4" poster="assets/transientica/transientica-loop-readout.webp" width="1280" height="560" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+          <button class="ft-toggle" type="button" data-loop-toggle aria-controls="tr-loop-readout" hidden>Pause</button>
+        </div>
+        <figcaption class="ft-cap">The top of the screen during a song. <a class="ft-cue" href="https://www.youtube.com/watch?v=r9IC7t0GPOU&amp;t=38s" data-ft-play data-ft-yt="r9IC7t0GPOU" data-t="38" aria-label="Play the gameplay with sound from 0:38">Play from 0:38</a></figcaption>
+      </figure>
+      <div class="ft-body">
+        <p>Before the first song, the player records at least ten kicks, snares and hi&#8209;hats with their own microphone. From each recording the game measures seven features (spectral centroid, rolloff, flux, zero&#8209;crossing rate, RMS, attack time and spectral flatness) and saves them, labelled by sound, in a JSON file, so a player can retrain between rounds. Training tests itself with leave&#8209;one&#8209;out cross&#8209;validation and asks for clearer recordings below 70% accuracy.</p>
+        <p>During a song, every hit the microphone registers goes through a 512&#8209;sample FFT and gets the same seven features. Its five nearest training recordings vote, weighted by distance, and the game shows the winning sound at the top of the screen with the classifier&rsquo;s confidence under it.</p>
+      </div>
     </div>
-    <div class="cine-split__media">
-      <div class="yt-facade" data-yt-facade data-video-id="r9IC7t0GPOU"><button class="yt-facade__launch" type="button" data-yt-launch data-video-title="Transientica gameplay demo" aria-label="Play the Transientica gameplay demo"><img src="old/public/assets/images/video-posters/transientica-current-1600.webp" alt="" width="1600" height="900" loading="lazy" aria-hidden="true"><span class="yt-facade__play" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 7.5v9l7-4.5-7-4.5Z"/></svg></span></button><noscript><iframe src="https://www.youtube-nocookie.com/embed/r9IC7t0GPOU" title="Transientica gameplay demo" allow="encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe></noscript></div>
-      <p class="cine-cap">Training and gameplay in the current C# build.</p>
+
+    <p class="ft-pull">The FFT and the k&#8209;nearest&#8209;neighbours (KNN) classifier are my own C# code, so the recognition runs inside the game with no Python beside it.</p>
+  </section>
+
+  <section class="ft-sec" aria-labelledby="tr-clock-title">
+    <h2 class="ft-head" id="tr-clock-title">Judged on the audio clock</h2>
+
+    <div class="ft-row ft-row--left">
+      <figure class="ft-media">
+        <img src="assets/transientica/hit-line-perfect-1200.webp" srcset="assets/transientica/hit-line-perfect-640.webp 640w, assets/transientica/hit-line-perfect-1200.webp 1200w" sizes="(min-width: 1100px) 60vw, 100vw" width="1200" height="675" alt="Close-up of the three lanes: a hi-hat note lands on the cyan hit line in a burst of sparks, with PERFECT! 69x in yellow above it" loading="lazy" decoding="async">
+        <figcaption class="ft-cap">A hi&#8209;hat on the hit line, judged PERFECT. <a class="ft-cue" href="https://www.youtube.com/watch?v=r9IC7t0GPOU&amp;t=42s" data-ft-play data-ft-yt="r9IC7t0GPOU" data-t="42" aria-label="Play the gameplay with sound from 0:42">Play from 0:42</a></figcaption>
+      </figure>
+      <div class="ft-body">
+        <p>Each hit is timed on Unity&rsquo;s audio clock (<code>dspTime</code>), moved back half a 512&#8209;sample FFT window (about 5.8&nbsp;ms at 44.1&nbsp;kHz) for the analysis delay, and matched to the nearest note: within 60&nbsp;ms is Perfect, 130&nbsp;ms Great, 200&nbsp;ms Good.</p>
+        <p>For the microphone delay, a calibration plays clicks at 100&nbsp;BPM while the player beatboxes along, and the median gap becomes the offset, adjustable afterwards in 1&nbsp;ms steps.</p>
+      </div>
     </div>
   </section>
 
-  <section aria-labelledby="tr-path-title">
-    <h2 id="tr-path-title" data-reveal>Audio recognition and note timing</h2>
-    <p data-reveal>The current build captures, analyses and scores the microphone input inside Unity.</p>
-    <div class="cine-row" data-reveal>
-      <figure>
-        <img src="old/public/assets/images/projects-transientica/frames/01-lanes-open.jpg" srcset="old/public/assets/images/projects-transientica/frames/01-lanes-open-640.webp 640w, old/public/assets/images/projects-transientica/frames/01-lanes-open-1200.webp 1200w" sizes="(min-width: 900px) 390px, calc(100vw - 40px)" width="1920" height="1080" alt="The three empty lanes at the start of a song, labelled KICK, SNARE and HI-HAT, with the score at zero and a MIC ON meter at the right edge" loading="lazy" decoding="async">
-        <p class="cine-row__num">01</p>
-        <h3>Microphone input</h3>
-        <p>One lane each for kick, snare and hi-hat, with the microphone open before the first note.</p>
-      </figure>
-      <figure>
-        <img src="old/public/assets/images/projects-transientica/frames/02-hit-classified.jpg" srcset="old/public/assets/images/projects-transientica/frames/02-hit-classified-640.webp 640w, old/public/assets/images/projects-transientica/frames/02-hit-classified-1200.webp 1200w" sizes="(min-width: 900px) 390px, calc(100vw - 40px)" width="1920" height="1080" alt="A hit named SNARE across the top of the screen with a confidence figure under it, and the upcoming notes listed in a strip below" loading="lazy" decoding="async">
-        <p class="cine-row__num">02</p>
-        <h3>Sound classification</h3>
-        <p>An onset triggers a 512-sample FFT and seven features. A KNN classifier compares them with the player&rsquo;s own recordings.</p>
-      </figure>
-      <figure>
-        <img src="old/public/assets/images/projects-transientica/frames/03-note-scored.jpg" srcset="old/public/assets/images/projects-transientica/frames/03-note-scored-640.webp 640w, old/public/assets/images/projects-transientica/frames/03-note-scored-1200.webp 1200w" sizes="(min-width: 900px) 390px, calc(100vw - 40px)" width="1920" height="1080" alt="A hi-hat note inside its ring on the way to the line, with the judgement and combo count beside it and sparks where the last note landed" loading="lazy" decoding="async">
-        <p class="cine-row__num">03</p>
-        <h3>Timing and calibration</h3>
-        <p>The hit is matched to the nearest note on Unity&rsquo;s audio clock. A short calibration estimates the microphone delay, adjustable in 1 ms steps.</p>
-      </figure>
-    </div>
-  </section>
+  <section class="ft-sec ft-band ft-band--alt" aria-labelledby="tr-proto-title">
+    <h2 class="ft-head" id="tr-proto-title">The 2025 Python prototype</h2>
 
-  <section class="cine-split cine-split--flip" aria-labelledby="tr-rebuild-title">
-    <div class="cine-split__body">
-      <h2 id="tr-rebuild-title">Moving recognition from Python to C#</h2>
-      <p>The first version used a separate Python classifier and sent its results to Unity over OSC. I replaced it with a KNN classifier and FFT written in C#, keeping the audio processing and gameplay in one application.</p>
-    </div>
-    <div class="cine-split__media">
-      <video controls playsinline preload="none" poster="old/public/assets/images/video-posters/transientica-prototype-editor.webp" aria-label="Transientica beatboxing-controlled rhythm game prototype" style="--shot-ar:984/554">
-        <source src="old/public/assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4" type="video/mp4">
-        Your browser does not support the video element.
-      </video>
-      <p class="cine-cap">The 2025 prototype, with its Python classifier.</p>
-    </div>
-  </section>
-
-  <section class="cine-split" aria-labelledby="tr-loop-title">
-    <div class="cine-split__body">
-      <h2 id="tr-loop-title">Song selection and saved training</h2>
-      <p>The current build includes song selection, beatmaps, scoring and saved results. Player recordings are stored as labelled features in JSON, so training can be updated between rounds.</p>
-      <p>The C# rebuild has not yet had a like-for-like accuracy and latency benchmark against the earlier Python prototype.</p>
-    </div>
-    <div class="cine-split__media">
-      <img src="old/public/assets/images/projects-transientica/frames/04-track-select.jpg" srcset="old/public/assets/images/projects-transientica/frames/04-track-select-640.webp 640w, old/public/assets/images/projects-transientica/frames/04-track-select-1200.webp 1200w" sizes="(min-width: 900px) 690px, calc(100vw - 40px)" width="1920" height="1080" alt="The track select screen with START and BACK buttons, arrows for moving between tracks, and a panel naming the chosen song with its tempo and note count" loading="lazy" decoding="async">
-      <p class="cine-cap">Choosing a beatmap in the current build.</p>
+    <div class="ft-row ft-row--right">
+      <figure class="ft-media tr-proto">
+        <video controls playsinline preload="none" poster="assets/transientica/transientica-prototype-demo.webp" width="1280" height="720" aria-label="The 2025 Transientica prototype, with its Python classifier">
+          <source src="old/public/assets/videos/AudioLab_2425_Szuniewiczigor_NIMEorGAMEDemoVideo_Title.mp4" type="video/mp4">
+        </video>
+        <figcaption class="ft-cap">The 2025 prototype in the Unity editor, with sound. <button class="tr-jump" type="button" data-tr-jump="65" hidden>Play from 1:05, the live demo</button></figcaption>
+      </figure>
+      <div class="ft-body">
+        <p>The first version was a Python script. It found each hit with onset detection, classified it with a machine learning model I had trained on three beatbox sounds (a boom for the kick, a sharp ch for the snare, a crisp ts for the hi&#8209;hat) and sent the result to Unity over OSC, where the lane for that sound reacted.</p>
+      </div>
     </div>
   </section>
 
   <nav class="cine-close" aria-label="Project links and navigation">
     <span>
-      <a href="https://www.youtube.com/watch?v=r9IC7t0GPOU" target="_blank" rel="noopener noreferrer">Gameplay on YouTube</a>
+      <a href="https://www.youtube.com/watch?v=r9IC7t0GPOU" target="_blank" rel="noopener noreferrer">Gameplay on YouTube <span aria-hidden="true">&nearr;</span></a>
       <a href="/#work">Back to selected work</a>
     </span>
-    <a class="cine-close__next next-project-btn" href="nottoday.html">Next: Not Today, Darling! <span aria-hidden="true">&rarr;</span></a>
+    <a class="cine-close__next next-project-btn" href="ai-audio-research.html">Next: AI Audio Research <span aria-hidden="true">&rarr;</span></a>
   </nav>
 
 </article>

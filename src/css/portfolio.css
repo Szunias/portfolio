@@ -11,7 +11,6 @@
   --dur: 240ms;
   --dur-slow: 650ms;
   --ease: cubic-bezier(.22,1,.36,1);
-  --motion-ease: cubic-bezier(.22,1,.36,1);
 }
 
 html {
@@ -54,48 +53,6 @@ summary:focus-visible {
 
 .btn {
   transition: background .2s ease,border-color .2s ease;
-}
-
-.motion-enter {
-  animation: studio-enter .5s var(--motion-ease) both;
-  animation-delay: var(--motion-delay,0ms);
-}
-
-@keyframes studio-enter {
-  from {
-    opacity: 0;
-    transform: translate3d(0,12px,0);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate3d(0,0,0);
-  }
-}
-
-@view-transition {
-  navigation: auto;
-}
-
-::view-transition-old(root) {
-  animation: studio-page-out .22s ease both;
-}
-
-::view-transition-new(root) {
-  animation: studio-page-in .45s var(--ease) both;
-}
-
-@keyframes studio-page-out {
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes studio-page-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
 }
 
 .cine {
@@ -148,6 +105,14 @@ summary:focus-visible {
 .cine-split:not(.cine-open) {
   margin-bottom: 100px;
   gap: clamp(28px,5vw,80px);
+}
+
+.cine-text { margin-bottom: 100px; }
+
+/* Plain sections share the split tracks, so their text column starts on the
+   same edge as the text or picture beside a split. */
+@media (min-width:901px) {
+  .cine > section:not(.cine-split) { column-gap: clamp(28px,5vw,80px); }
 }
 
 .cine-row {
@@ -217,42 +182,6 @@ summary:focus-visible {
   opacity: 1;
 }
 
-.stage__room {
-  padding-block: 64px 80px;
-  gap: clamp(32px,6vw,96px);
-}
-
-.stage__title {
-  font-size: clamp(52px,6.5vw,94px);
-  font-weight: 500;
-  letter-spacing: -.055em;
-  margin-bottom: 32px;
-}
-
-.stage__art {
-  border-radius: 16px;
-  box-shadow: 0 35px 90px #0008;
-}
-
-.stage__set-title {
-  color: var(--c-ink-3);
-  margin-bottom: 16px;
-}
-
-.stage__caption>span,
-.stage .track-tile__note,
-.stage .track-tile__time { font-size: 13px; }
-
-.library {
-  padding-top: 88px;
-}
-
-.library .section-heading h2 {
-  font-size: clamp(30px,3.5vw,48px);
-  font-weight: 500;
-  letter-spacing: -.035em;
-}
-
 .player-bar {
   border-top-color: var(--c-line-3);
   background: rgba(16,16,18,.96);
@@ -262,6 +191,9 @@ summary:focus-visible {
 .ck {
   background: var(--c-bg-0);
 }
+/* The contact room is a shade darker than other pages; the footer below it
+   takes the same shade, so the page does not end in a lighter band. */
+body:has(.ck--contact) { background: var(--c-bg-0); }
 
 .ck--contact .ck__room {
   grid-template-columns: minmax(0,1.3fr) minmax(200px,.7fr);
@@ -289,6 +221,8 @@ summary:focus-visible {
 .ck--contact .ck__status { min-height: 20px; margin: 6px 0 0; text-transform: none; letter-spacing: 0; }
 .ck--contact .ck__out { margin-top: 24px; gap: 8px 24px; }
 .ck--contact .ck__cv { color: var(--c-ink); gap: 8px; }
+/* Only the words underline: the link is a flex row, so the arrow would get its own dash. */
+.ck--contact .ck__cv:hover .ck__cv-text { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em; }
 
 .ck__dial {
   width: min(100%,280px,42vh);
@@ -306,37 +240,10 @@ summary:focus-visible {
   letter-spacing: 0;
 }
 
+/* The music stage fills the viewport under the header and the player bar. */
 @media (min-width:981px) and (max-height:900px) {
   .stage {
     min-height: calc(100svh - 86px - var(--player-height));
-  }
-
-  .stage__room {
-    padding-block: 16px;
-  }
-
-  .stage__title {
-    font-size: 64px;
-    margin-bottom: 16px;
-  }
-
-  .stage__copy {
-    margin-bottom: 16px;
-  }
-}
-
-@media (max-width:980px) {
-  .stage__room {
-    grid-template-columns: minmax(200px,.85fr) minmax(0,1.15fr);
-    padding-block: 40px;
-  }
-
-  .stage__plate {
-    width: 100%;
-  }
-
-  .stage__title {
-    font-size: 58px;
   }
 }
 
@@ -358,7 +265,8 @@ summary:focus-visible {
   }
 
   .cine-split:not(.cine-open),
-  .cine-row {
+  .cine-row,
+  .cine-text {
     margin-bottom: 64px;
   }
 
@@ -384,36 +292,6 @@ summary:focus-visible {
 }
 
 @media (max-width:620px) {
-  .stage__room {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding-block: 24px 40px;
-  }
-
-  .stage__side { display: contents; }
-  .stage__copy { grid-row: 1; width: 100%; margin: 0; }
-  .stage__record {
-    grid-row: 2;
-    grid-template-columns: 88px minmax(0,1fr);
-    gap: 6px 16px;
-    justify-items: start;
-    align-items: center;
-  }
-  .stage__record .stage__plate { grid-column: 1; grid-row: 1 / 3; width: 88px; }
-  .stage__caption { grid-column: 2; padding: 0; text-align: left; text-wrap: initial; }
-  .stage__caption>span { margin-top: 4px; }
-  .stage__spectrum { grid-column: 2; height: 24px; }
-  .stage .featured { grid-row: 3; width: 100%; }
-
-  .stage__title {
-    font-size: 48px;
-    margin-bottom: 0;
-  }
-
-  .library {
-    padding-top: 48px;
-  }
-
   .cine-open h1 {
     overflow-wrap: anywhere;
   }
@@ -431,24 +309,4 @@ summary:focus-visible {
     transition: none!important;
   }
 
-  .motion-enter,
-  .motion-line {
-    opacity: 1;
-    transform: none;
-    clip-path: none;
-  }
-
-  @view-transition {
-    navigation: none;
-  }
-}
-
-@media print {
-  .motion-enter,
-  .motion-line {
-    opacity: 1;
-    transform: none;
-    clip-path: none;
-    animation: none;
-  }
 }

@@ -41,7 +41,7 @@ The current compact showreel thumbnail is a separate output. Rebuild it with
 | Opening appearance and showreel controls | `src/css/home-hero.css`, `src/js/home-showreel.js` |
 | Project-card video previews | `src/js/project-previews.js`, `src/assets/previews/` |
 | Homepage sections below the film | `src/css/home.css` |
-| CV text, layout and fonts | `src/cv/content.json`, `scripts/build-cv.py`; see [CV instructions](src/cv/README.md) |
+| CV text, layout and fonts | `src/cv/cv.html`, `scripts/build-cv.cjs`; see [CV instructions](src/cv/README.md) |
 | Shared public theme and motion styling | `src/css/portfolio.css` |
 | Shared header, footer and metadata markup | `src/partials/` |
 | Shared fonts, design tokens and page chrome | `src/css/_fonts.css`, `_tokens.css`, `_chrome.css` |
@@ -64,7 +64,7 @@ Console checks and the custom-domain audit.
 
 1. Add `src/pages/<slug>.html` containing page content only.
 2. Register the route, layout, ordered CSS/JS and metadata in `site.config.cjs`.
-3. Add its homepage card and update the project navigation cycle.
+3. Add its homepage card and link it into the "Next" cycle, which follows the homepage order.
 4. Follow the content rules in [AGENTS.md](AGENTS.md).
 5. Run tests and the build, then check the page at 320 px and desktop widths.
    Exercise any changed interactions.

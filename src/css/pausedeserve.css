@@ -1,0 +1,51 @@
+/* Pause & Deserve: page-owned styles, loaded only on pausedeserve.html after feature.css.
+   The palette is sampled from the trailer's corridor: the wall in shadow (#230001) under the
+   page, the lit wall (#520002) darkened for the band, and the near-white of the ceiling lamp
+   and the game's scratched lettering for heads, cues and the one filled button. */
+:root {
+  --ft-bg: #0d0606;
+  --ft-band: #2a0607;
+  --ft-band-2: #1c0708;
+  --ft-ink: #f7ecea;
+  --ft-ink-2: #e2cfcc;
+  --ft-ink-3: #c0a7a3;
+  --ft-head: #fff1ee;
+  --ft-accent: #fbe3de;
+  --ft-accent-ink: #250405;
+}
+
+/* The game's title lettering is wide and thin: it gets more width than a squarer logo. */
+.pd .pd-title { width: clamp(280px, 40vw, 600px); }
+
+/* Three chapters, not five. */
+.pd .ft-chapters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* The two short sections sit side by side: a picture, a head and a few sentences each. */
+.pd .pd-item { display: flex; flex-direction: column; gap: 0; }
+.pd .pd-item:first-child { grid-column: content-start / c 6; padding-right: calc(var(--ft-gap) * .75); }
+.pd .pd-item:last-child { grid-column: c 6 / content-end; padding-left: calc(var(--ft-gap) * .75); }
+.pd .pd-head {
+  margin: 28px 0 10px;
+  color: var(--ft-head);
+  font: 600 clamp(24px, 2.2vw, 32px)/1.1 var(--f-display);
+  letter-spacing: -.025em;
+  text-wrap: balance;
+}
+.pd .pd-item > p { max-width: 34em; margin: 0; text-wrap: pretty; }
+.pd .pd-item .ft-media img,
+.pd .pd-item .ft-media video { aspect-ratio: 16 / 9; object-fit: cover; }
+
+@media (max-width: 1099px) {
+  .pd .ft-chapters { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 699px) {
+  .pd .pd-title { width: 100%; max-width: 440px; }
+  .pd .pd-pair { row-gap: 44px; }
+  .pd .pd-item:first-child,
+  .pd .pd-item:last-child { grid-column: content; padding: 0; }
+  .pd .pd-head { margin-top: 22px; }
+}
+/* Keeps "Watch the trailer with sound" on one line in the full-width button at 320. */
+@media (max-width: 380px) {
+  .pd .ft-watch { gap: 9px; padding-inline: 12px; font-size: 16px; }
+}

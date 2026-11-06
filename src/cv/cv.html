@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Igor Szuniewicz CV</title>
+<meta name="author" content="Igor Szuniewicz">
+<meta name="description" content="Igor Szuniewicz, Technical Sound Designer / Audio Programmer, Graz, Austria">
+<style>
+@font-face { font-family: 'CV Inter'; font-weight: 400; src: url(fonts/Inter-Regular.ttf) format('truetype'); }
+@font-face { font-family: 'CV Inter'; font-weight: 600; src: url(fonts/Inter-Semibold.ttf) format('truetype'); }
+/* The site's accent face (home-hero.css: "Times New Roman" italic). It is a system
+   font, so the real italic is named first and the macOS and Windows files follow,
+   which keeps Firefox from synthesising a slanted regular. */
+@font-face { font-family: 'CV Serif'; font-style: italic; font-weight: 400; src: local('Times New Roman Italic'), local('TimesNewRomanPS-ItalicMT'), url('file:///System/Library/Fonts/Supplemental/Times%20New%20Roman%20Italic.ttf') format('truetype'), url('file:///C:/Windows/Fonts/timesi.ttf') format('truetype'); }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 400; src: url(../assets/fonts/ibm-plex-mono-latin.woff2) format('woff2'); }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 600; src: url(../assets/fonts/ibm-plex-mono-latin-600.woff2) format('woff2'); }
+
+@page { size: A4; margin: 0; }
+:root {
+  --bg-0: #0b0b0d;
+  --bg: #101012;
+  --ink: #f1f0eb;
+  --ink-2: #c4c6c8;
+  --ink-3: #a3a8ac;
+  --line: rgba(236, 238, 240, .13);
+  --line-2: rgba(236, 238, 240, .3);
+  --accent: #aac6de;
+  --f-body: 'CV Inter', sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --f-serif: 'CV Serif', 'Times New Roman', serif;
+  --serif-scale: 1.1;   /* one rule everywhere: serif word = 1.1x its line, weight 400 */
+  --gx: 15mm;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 210mm; height: 297mm; overflow: hidden; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 9pt/1.45 var(--f-body);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  font-feature-settings: 'calt' 0;
+}
+h1, h2, h3, b, .meta, .when, .label { font-kerning: none; }
+a { color: inherit; text-decoration: none; }
+em.s {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: calc(var(--serif-scale) * 1em);
+  letter-spacing: -.02em;
+}
+.page { position: relative; width: 210mm; height: 297mm; display: flex; flex-direction: column; overflow: hidden; }
+.wrap { padding: 0 var(--gx); }
+.page > .wrap { padding-bottom: 7mm; }
+
+/* ---------- masthead ---------- */
+.head { padding-top: 10mm; display: grid; grid-template-columns: 1fr 25mm; column-gap: 8mm; align-items: end; }
+.name { font-weight: 400; font-size: 54pt; line-height: .9; letter-spacing: -.06em; margin-left: -.9mm; white-space: nowrap; }
+.name em.s { letter-spacing: -.035em; }
+.role { margin-top: 4.6mm; font: 400 16pt/1.15 var(--f-body); letter-spacing: -.015em; }
+.tag { margin-top: 1.6mm; font-size: 10pt; color: var(--accent); }
+.portrait { width: 25mm; height: 25mm; object-fit: cover; object-position: 66% 40%; display: block; }
+
+.contact { margin-top: 5mm; padding-top: 2.4mm; border-top: .35mm solid var(--ink); display: flex; justify-content: space-between; font: 400 8.5pt/1.3 var(--f-mono); }
+.where { display: flex; justify-content: space-between; padding-top: 1.2mm; font: 400 8.5pt/1.3 var(--f-mono); color: var(--ink-2); }
+.where .avail { color: var(--accent); }
+
+.now { margin-top: 3.8mm; display: flex; align-items: baseline; gap: 5mm; padding: 2.5mm 0; border-top: .2mm solid var(--line-2); border-bottom: .2mm solid var(--line-2); }
+.label { font: 600 8.5pt/1.3 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.now p { font-size: 10pt; color: var(--ink-2); }
+.now b { color: var(--ink); font-weight: 600; }
+.now .dot { color: var(--ink-3); margin: 0 .5em; }
+
+/* ---------- section heads ---------- */
+section.sec { margin-top: 7mm; }
+.entry:last-child { padding-bottom: 0; }
+.sh { display: flex; align-items: baseline; gap: 2.8mm; margin-bottom: 3mm; }
+.sh .no { font: 400 8.5pt/1 var(--f-mono); color: var(--ink-3); }
+.sh h2 { font: 400 13pt/1 var(--f-body); letter-spacing: -.015em; }
+.sh .rule { flex: 1; border-top: .2mm solid var(--line); align-self: center; }
+
+/* ---------- featured ---------- */
+.frames { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 5.5mm; }
+.frame .img { aspect-ratio: 560 / 250; overflow: hidden; background: var(--bg-0); }
+.frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* title, meta and caption share one line pitch so text extractors keep each frame together */
+.frame .txt { margin-top: 2.2mm; line-height: 4.5mm; }
+.frame h3.ft { font: 600 11pt/4.5mm var(--f-body); color: var(--ink); }
+/* link cue as a border, not text-decoration: PDFKit splits text blocks at decoration lines */
+.frame h3.ft a { border-bottom: .2mm solid rgba(170,198,222,.5); }
+.meta { font: 400 8.5pt/1.4 var(--f-mono); color: var(--accent); }
+.frame .meta { line-height: 4.5mm; }
+.frame p.cap { color: var(--ink-2); line-height: 4.5mm; }
+.frame .credit { float: right; color: var(--ink-3); }
+
+/* ---------- experience ---------- */
+.entry { padding: 1.9mm 0; border-top: .2mm solid var(--line); }
+.sh + .entry { border-top: 0; padding-top: 0; }
+.entry h3 { font: 600 10pt/1.35 var(--f-body); font-feature-settings: 'calt' 0, 'case' 0; }
+.entry h3 .org { font-weight: 400; color: var(--ink-2); }
+.entry h3.th { font-weight: 400; }
+.when { font: 400 8.5pt/1.35 var(--f-mono); color: var(--ink-3); white-space: nowrap; }
+.entry h3 .when { margin-left: 2.4mm; font-weight: 400; }
+.entry p.t { color: var(--ink-2); }
+
+/* ---------- projects ---------- */
+.projs { list-style: none; }
+.projs li { padding: 1.15mm 0; border-top: .2mm solid var(--line); color: var(--ink-2); }
+.projs li:first-child { border-top: 0; padding-top: 0; }
+.projs b { font: 600 9.5pt/1.3 var(--f-body); color: var(--ink); margin-right: 1.8mm; }
+.projs .when { margin-right: 1.8mm; }
+
+/* ---------- colophon band ---------- */
+.band { margin-top: auto; background: var(--bg-0); border-top: .2mm solid var(--line-2); padding: 5mm var(--gx) 6.5mm; }
+.band .grid { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 5.5mm; row-gap: .8mm; }
+.band .label { display: block; margin-bottom: .8mm; }
+.band p { color: var(--ink-2); line-height: 1.4; }
+.band .tools { grid-column: 1 / 3; grid-row: 1; }
+.band .tools p { color: var(--ink); }
+.band .full { grid-column: 1 / 3; grid-row: 2; margin-top: 2.6mm; }
+.band .edu { grid-row: 3; }
+.edu h3 { font: 600 9pt/1.35 var(--f-body); }
+.edu p { line-height: 1.35; }
+.band .line { grid-row: 4; grid-column: 1 / -1; margin-top: 3mm; }
+.band .line .label { display: inline; margin: 0 1.6mm 0 0; }
+.band .line .label.second { margin-left: 10mm; }
+.qr { grid-column: 3; grid-row: 1 / 3; justify-self: end; align-self: start; display: flex; align-items: flex-end; gap: 2.4mm; }
+.qr img { width: 16mm; height: 16mm; display: block; background: #fff; padding: .7mm; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="wrap">
+    <header class="head">
+      <div>
+        <h1 class="name">Igor <em class="s">Szuniewicz</em></h1>
+        <p class="role">Technical Sound Designer / Audio Programmer</p>
+        <p class="tag">Looking for studio roles and freelance projects</p>
+      </div>
+      <img class="portrait" src="img/portrait.jpg" alt="Portrait of Igor Szuniewicz">
+    </header>
+
+    <p class="contact">
+      <a href="https://igorszuniewicz.com/">igorszuniewicz.com</a>
+      <a href="mailto:igorszuniewiczwork@gmail.com">igorszuniewiczwork@gmail.com</a>
+      <a href="tel:+48605117516">+48 605 117 516</a>
+      <a href="https://linkedin.com/in/igorszuniewicz">linkedin.com/in/igorszuniewicz</a>
+    </p>
+    <p class="where"><span>Graz, Austria – open to relocate</span></p>
+
+    <div class="now">
+      <h2 class="label">Now</h2>
+      <p><b>Master, Sound Design</b>, FH Joanneum<span class="dot">/</span><b>HUSHABYE</b><span class="dot">/</span><b>Freelance</b></p>
+    </div>
+
+    <section class="sec">
+      <div class="sh"><span class="no">01</span><h2>Selected <em class="s">work</em></h2><span class="rule"></span></div>
+      <div class="frames">
+        <article class="frame">
+          <div class="img"><img src="img/hushabye.jpg" alt="HUSHABYE: the nursery at night, the crib under the shadow of the mobile"></div>
+          <div class="txt">
+            <h3 class="ft"><a href="https://igorszuniewicz.com/hushabye.html">HUSHABYE</a></h3>
+            <p class="meta">2026 / solo / in production</p>
+            <p class="cap">Voice-controlled horror, all disciplines: Unity 6, C#, Wwise, DSP.</p>
+          </div>
+        </article>
+        <article class="frame">
+          <div class="img"><img src="img/shadowframes.jpg" alt="Shadow Frames: the bar of the abandoned pub in black and white"></div>
+          <div class="txt">
+            <h3 class="ft"><a href="https://igorszuniewicz.com/shadowframes.html">Shadow Frames</a></h3>
+            <p class="meta">2025 / UE5 / team</p>
+            <p class="cap">Sole audio designer: 200+ Wwise events, VO, enemy-distance mix.</p>
+          </div>
+        </article>
+        <article class="frame">
+          <div class="img"><img src="img/xrlabs.jpg" alt="XR Labs: trainees with VR headsets in a training hall"></div>
+          <div class="txt">
+            <h3 class="ft"><a href="https://igorszuniewicz.com/xrlabs.html">XR Labs</a></h3>
+            <p class="meta">2026 / Unity / VR <span class="credit">© XR Labs</span></p>
+            <p class="cap">Weapon audio system, in-headset Steam Audio spatialisation.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sh"><span class="no">02</span><h2>Experience &amp; <em class="s">research</em></h2><span class="rule"></span></div>
+      <div class="entry">
+        <h3>Freelance Sound Designer &amp; Audio Programmer <span class="when">2026 – present</span></h3>
+        <p class="t">WeirdJohnny Studios: sound design, a sound effects package (NDA).</p>
+      </div>
+      <div class="entry">
+        <h3>Technical Sound Designer <span class="org">/ XR Labs</span> <span class="when">Feb – Jun 2026 / Brussels</span></h3>
+        <p class="t">Police, military and customs VR training; Taser T10 sounds.</p>
+      </div>
+      <div class="entry">
+        <h3 class="th"><a href="https://igorszuniewicz.com/ai-audio-research.html">Real-Time AI-Generated Sound Effects for Video Games</a> <span class="org">/ Bachelor thesis</span> <span class="when">2026 / Howest DAE</span></h3>
+        <p class="t">Event-to-playback latency: Unreal client, Python server, cache, synthesis fallback. 68 pages.</p>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sh"><span class="no">03</span><h2>More <em class="s">projects</em></h2><span class="rule"></span></div>
+      <ul class="projs">
+        <li><b><a href="https://igorszuniewicz.com/nottoday.html">Not Today, Darling!</a></b> <span class="when">2025 / team</span> Sole audio designer: MetaSounds kart engines, priority mix.</li>
+        <li><b><a href="https://igorszuniewicz.com/transientica.html">Transientica</a></b> <span class="when">2025 – present / solo</span> Beatbox rhythm game; custom C# KNN classifier for live vocal hits.</li>
+        <li><b><a href="https://igorszuniewicz.com/sidar.html">SIDAR NULL</a></b> <span class="when">in development / solo</span> Horror prototype, sound-pulse scanner; C++, Wwise.</li>
+        <li><b><a href="https://igorszuniewicz.com/audioq.html">AudioQ</a></b> <span class="when">2024 / solo</span> Granular VST3 sampler, C++ and JUCE.</li>
+      </ul>
+    </section>
+  </div>
+
+  <footer class="band">
+    <div class="grid">
+      <div class="tools">
+        <h2 class="label">Tools</h2>
+        <p>Wwise, FMOD, MetaSounds, Steam Audio, UE5, Unity, REAPER, Pro Tools<br>C++, C#, Python, JUCE, Perforce, Git</p>
+      </div>
+      <a class="qr" href="https://igorszuniewicz.com/">
+        <img src="portfolio-qr.png" alt="QR code to igorszuniewicz.com">
+      </a>
+      <h2 class="label full">Education</h2>
+      <div class="edu">
+        <h3>Master, Sound Design</h3>
+        <p>FH Joanneum, Graz<br><span class="when">2026 – present</span></p>
+      </div>
+      <div class="edu">
+        <h3>Bachelor, Game Sound Integration</h3>
+        <p>Howest DAE, Kortrijk<br><span class="when">2023 – 2026</span></p>
+      </div>
+      <div class="edu">
+        <h3>Classical Piano &amp; Music Theory</h3>
+        <p>State Music School, Kołobrzeg<br><span class="when">2013 – 2019</span></p>
+      </div>
+      <p class="line"><span class="label">Languages</span> Polish (native), English (fluent), German (basic)<span class="label second">Interests</span> Javelin, swimming, gym</p>
+    </div>
+  </footer>
+</div>
+</body>
+</html>
