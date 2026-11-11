@@ -368,7 +368,7 @@ module.exports = {
       slug: 'shadowframes',
       layout: 'project',
       css: ['cine', 'portfolio', 'feature', 'image-viewer', 'shadowframes'],
-      js: ['prefetch', 'colophon-clock', 'poster-loop', 'image-viewer', 'shadowframes', 'feature', 'page-motion'],
+      js: ['prefetch', 'colophon-clock', 'poster-loop', 'image-viewer', 'shadowframes', 'local-video', 'feature', 'page-motion'],
       schemaType: 'VideoGame',
       schemaRole: 'contributor',
       title: 'Shadow Frames | Sound Design and Wwise for a UE5 Horror Game',

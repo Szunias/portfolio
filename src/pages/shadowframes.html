@@ -119,6 +119,32 @@
         <p><code>DA_Enemy_Presence</code> runs dread layers on <code>RTPC_Enemy_Proximity</code> (max distance 700, min 100) and a breathing loop on the player&rsquo;s stress level. The layers start at one threshold (5.0) and stop at a lower one (2.0), so they hold steady while the enemy hovers near the edge.</p>
       </div>
     </div>
+
+    <figure class="ft-media sf-profiler">
+      <video controls playsinline preload="none" poster="assets/shadowframes/profiler-poster-1280.webp" width="1920" height="1024" aria-label="A walk through the pub with the Wwise profiler connected, with sound, 1 minute 6 seconds">
+        <source src="old/public/assets/images/projects-shadowframes/videodemoprod3withwwiseprofiler.mp4" type="video/mp4">
+      </video>
+      <figcaption class="ft-cap">A walk through the pub during production, with sound and the Wwise profiler connected. In the Game Sync Monitor at the top right, the player&rsquo;s <code>FootstepSurface</code> switch goes from Wood to Tiles to Concrete, and <code>AmbienceZone</code> from Corridor to FemaleBathroom to Stage. The Game Object 3D Viewer above it shows the emitters and reverb zones.</figcaption>
+    </figure>
+  </section>
+
+  <section class="ft-sec sf-music" aria-labelledby="sf-music-title">
+    <h2 class="ft-head" id="sf-music-title">Music and the bus layout</h2>
+
+    <div class="sf-capture">
+      <figure class="ft-media">
+        <a href="old/public/assets/images/projects-shadowframes/Gameplaymusicconfiguration.png" data-image-zoom data-caption="The BC_MusicS blend container in Wwise" aria-label="Zoom: the BC_MusicS blend container in Wwise"><img src="assets/shadowframes/music-blend-710.webp" width="710" height="236" alt="The blend track of BC_MusicS in Wwise: three music parts crossfading along RTPC_Photos_OnBoard, with the third part covering the axis from 2 to 14" loading="lazy" decoding="async"></a>
+        <figcaption class="ft-cap">The blend track of <code>BC_MusicS</code>, on <code>RTPC_Photos_OnBoard</code>.</figcaption>
+      </figure>
+      <p>The gameplay music runs as three parts in one blend container. They crossfade on <code>RTPC_Photos_OnBoard</code>, the parameter that also drives the ambience stages. Both crossfades sit below a count of two, so the third part plays for most of the game.</p>
+    </div>
+
+    <div class="sf-capture sf-capture--bus">
+      <figure class="ft-media">
+        <img src="assets/shadowframes/bus-hierarchy-379.webp" width="379" height="426" alt="The Master-Mixer Hierarchy in Wwise: Ambient_Master, Dialogue, EnvironmentBus, Music, Player and SFX under the Master Audio Bus, then DistortionBus and a Reverbs bus holding LargeRoomverb, MediumRoomverb and SmallRoomverb" loading="lazy" decoding="async">
+      </figure>
+      <p>Ambience, dialogue, environment, music, the player and SFX each have a bus under the master. Reverb runs on three auxiliary buses, for small, medium and large rooms, and distortion on a fourth.</p>
+    </div>
   </section>
 
   <nav class="cine-close" aria-label="Project links and navigation">

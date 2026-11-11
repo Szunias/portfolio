@@ -260,6 +260,25 @@
 .sf-pair__col > p { max-width: 34em; margin: 0 0 .9em; text-wrap: pretty; }
 .sf-pair__col > :last-child { margin-bottom: 0; }
 
+/* The profiler capture keeps its whole frame: the Wwise windows sit in the
+   top right corner and a cover crop would cut them. */
+.sf-profiler { --shot-ar: 1920 / 1024; margin-top: clamp(8px, 1.4vw, 20px); }
+.sf .sf-profiler video { object-fit: contain; }
+.sf-profiler > .ft-cap { max-width: 46em; }
+
+/* ---------- Music and the bus layout ---------- */
+/* Two Wwise captures at their own pixel size, each with its sentence beside
+   it. Both rows share the columns, so the two sentences start on one edge. */
+.sf-music { padding-bottom: var(--ft-space); }
+.sf-capture {
+  display: grid;
+  grid-template-columns: minmax(0, 710px) minmax(0, 1fr);
+  gap: 20px var(--ft-gap);
+  align-items: center;
+}
+.sf-capture > p { max-width: 30em; margin: 0; text-wrap: pretty; }
+.sf-capture--bus > .ft-media { max-width: 379px; }
+
 /* ---------- Medium: the rows stay side by side, on wider shares ---------- */
 @media (max-width: 1099px) {
   .sf-deck { grid-template-columns: minmax(0, 1fr); }
@@ -287,6 +306,7 @@
   .sf-slot:nth-child(6)::before { display: none; }
   .sf-readout > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .sf-pair { grid-template-columns: minmax(0, 1fr); }
+  .sf-capture { grid-template-columns: minmax(0, 1fr); }
   .sf-proof { gap: 22px; }
   .sf-proof .ft-cap { margin-top: 8px; font-size: 14px; }
   .sf-steps { grid-template-columns: minmax(0, 1fr); row-gap: 14px; }
