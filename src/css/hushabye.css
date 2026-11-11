@@ -345,6 +345,74 @@
   .hu .ft-deck { max-width: 28em; font-size: 22px; }
 }
 
+/* ---------- The monitor effect on a frequency axis ----------
+   A logarithmic axis from 20 Hz to 20 kHz. --x, --a and --b are positions on
+   it in percent, worked out as log10(f / 20) / 3. The block is the band the
+   effect keeps; the line is the hum it adds. A drawing of settings, so the
+   edges are square: no slope is claimed. */
+.hu-band { margin: 0; }
+.hu-band__plot { max-width: 880px; }
+.hu-band__track {
+  position: relative;
+  height: 76px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ft-ink) 34%, transparent);
+}
+.hu-band__pass,
+.hu-band__hum { position: absolute; bottom: 0; }
+.hu-band__pass {
+  left: var(--a);
+  width: calc(var(--b) - var(--a));
+  height: 46px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--ft-accent) 26%, transparent);
+  border-top: 2px solid var(--ft-accent);
+}
+.hu-band__hum {
+  left: var(--x);
+  width: 2px;
+  height: 46px;
+  background: var(--ft-ink-2);
+}
+.hu-band__plot b {
+  color: var(--ft-head);
+  font: 400 13px/1.2 var(--f-mono);
+  white-space: nowrap;
+}
+.hu-band__pass i { font-style: normal; }
+.hu-band__hum b { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); color: var(--ft-ink-2); }
+.hu-band__ticks { position: relative; height: 24px; }
+.hu-band__ticks span {
+  position: absolute;
+  top: 8px;
+  left: var(--x);
+  transform: translateX(-50%);
+  color: var(--ft-ink-3);
+  font: 400 12.5px/1 var(--f-mono);
+  white-space: nowrap;
+}
+.hu-band__ticks span::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 1px;
+  height: 5px;
+  background: color-mix(in srgb, var(--ft-ink) 50%, transparent);
+}
+.hu-band__ticks span:first-child { transform: none; }
+.hu-band__ticks span:first-child::before { left: 0; }
+.hu-band__ticks span.is-end { transform: translateX(-100%); }
+.hu-band__ticks span.is-end::before { left: auto; right: 0; }
+.hu-band > .ft-cap { max-width: 44em; }
+@media (max-width: 479px) {
+  .hu-band__plot b,
+  .hu-band__ticks span { font-size: 11.5px; }
+  .hu-band__pass i { display: none; }
+  /* 1 kHz sits too close to its neighbours on a phone. */
+  .hu-band__ticks span:nth-child(4) { display: none; }
+}
+
 /* ---------- Phone: the vertical key frame, the text under it ---------- */
 @media (max-width: 699px) {
   .hu .ft-hero__stage { height: min(125vw, calc(86svh - var(--site-header-height))); aspect-ratio: auto; }

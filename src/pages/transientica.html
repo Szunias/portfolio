@@ -34,6 +34,18 @@
       </div>
     </div>
 
+    <figure class="tr-chain" aria-labelledby="tr-chain-cap">
+      <ol class="tr-chain__steps">
+        <li><b>Microphone</b><p>44.1&nbsp;kHz into a lock-free ring buffer.</p><code>MicrophoneCapture</code></li>
+        <li><b>Onset</b><p>An RMS threshold and a first-derivative gate over an adaptive noise floor, then a 200&nbsp;ms cooldown.</p><code>OnsetDetector</code></li>
+        <li><b>FFT</b><p>Radix-2, on a Hann window.</p><code>FFTProcessor</code></li>
+        <li><b>Features</b><p>Seven values per hit.</p><code>FeatureExtractor</code></li>
+        <li><b>Classifier</b><p>KNN with K&nbsp;=&nbsp;5 on min-max normalised features. Rules on the spectrum take over when no model is trained.</p><code>AudioClassifier</code></li>
+        <li><b>Judge</b><p>The nearest active note on the lane.</p><code>HitJudge</code></li>
+      </ol>
+      <figcaption class="ft-cap" id="tr-chain-cap">One hit, in the order the code runs it. Onset detection, the FFT and feature extraction allocate no memory, so garbage collection does not interrupt a song.</figcaption>
+    </figure>
+
     <p class="ft-pull">The FFT and the k&#8209;nearest&#8209;neighbours (KNN) classifier are my own C# code, so the recognition runs inside the game with no Python beside it.</p>
   </section>
 
@@ -46,10 +58,20 @@
         <figcaption class="ft-cap">A hi&#8209;hat on the hit line, judged PERFECT. <a class="ft-cue" href="https://www.youtube.com/watch?v=r9IC7t0GPOU&amp;t=42s" data-ft-play data-ft-yt="r9IC7t0GPOU" data-t="42" aria-label="Play the gameplay with sound from 0:42">Play from 0:42</a></figcaption>
       </figure>
       <div class="ft-body">
-        <p>Each hit is timed on Unity&rsquo;s audio clock (<code>dspTime</code>), moved back half a 512&#8209;sample FFT window (about 5.8&nbsp;ms at 44.1&nbsp;kHz) for the analysis delay, and matched to the nearest note: within 60&nbsp;ms is Perfect, 130&nbsp;ms Great, 200&nbsp;ms Good.</p>
+        <p>Each hit is timed on Unity&rsquo;s audio clock (<code>dspTime</code>), moved back half a 512&#8209;sample FFT window (about 5.8&nbsp;ms at 44.1&nbsp;kHz) for the analysis delay, and matched to the nearest note. Its distance from that note decides the judgement.</p>
         <p>For the microphone delay, a calibration plays clicks at 100&nbsp;BPM while the player beatboxes along, and the median gap becomes the offset, adjustable afterwards in 1&nbsp;ms steps.</p>
       </div>
     </div>
+
+    <figure class="tr-windows" aria-labelledby="tr-windows-cap">
+      <div class="tr-windows__plot" role="img" aria-label="Timing windows around a note: Perfect within 60 milliseconds, Great within 130, Good within 200. Anything further is a miss.">
+        <div class="tr-windows__row"><span>Perfect</span><i style="--w:60"></i><span>&plusmn;60&nbsp;ms</span></div>
+        <div class="tr-windows__row"><span>Great</span><i style="--w:130"></i><span>&plusmn;130&nbsp;ms</span></div>
+        <div class="tr-windows__row"><span>Good</span><i style="--w:200"></i><span>&plusmn;200&nbsp;ms</span></div>
+        <div class="tr-windows__axis" aria-hidden="true"><span></span><div><b style="--x:0%">&minus;200</b><b style="--x:50%">note</b><b style="--x:100%">+200&nbsp;ms</b></div><span></span></div>
+      </div>
+      <figcaption class="ft-cap" id="tr-windows-cap">The timing windows around a note, to scale. A hit further than 200&nbsp;ms away is a miss.</figcaption>
+    </figure>
   </section>
 
   <section class="ft-sec ft-band ft-band--alt" aria-labelledby="tr-proto-title">
