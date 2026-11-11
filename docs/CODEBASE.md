@@ -59,8 +59,8 @@ The files in the page's `css` array follow in exactly that order.
   component's owner unless it is intentionally part of the shared theme.
 - `home.css` owns work (with the tools desk and project track colours), tools
   and research, music, the about and contact closing band, plus the 404
-  content. `home-hero.css` owns the Edition 03 editorial opening,
-  one still frame from Shadow Frames, compact showreel preview and full player. The header uses `_chrome.css`.
+  content. `home-hero.css` owns the opening: the role
+  statement, the showreel loop that launches the film, its cue list and the full player. The header uses `_chrome.css`.
   Homepage order is `home`, `portfolio`, `home-hero`.
 - `cine.css` styles the public project pages.
 - `feature.css` is the opt-in long-form project layout (Not Today, Darling! first):
@@ -92,7 +92,7 @@ an intermediate width and desktop, including long titles and player controls.
 
 | File under `src/js/` | Responsibility |
 | --- | --- |
-| `home-showreel.js` | Compact silent preview, full showreel, close and focus restoration. |
+| `home-showreel.js` | Silent showreel loop, full showreel, cues that open it at a project's start, close and focus restoration. |
 | `home-transition.js` | Scroll-driven hero exit, whole-wave transforms and showreel coverage state. |
 | `image-viewer.js` | Original-image dialog, zoom and focus restoration on project screenshots; inside a `[data-image-group]` (the HUSHABYE house gallery) it adds Previous/Next buttons and the arrow keys, wrapping at the ends. |
 | `project-previews.js` | Lazy, silent previews on project-card hover or keyboard focus. |
@@ -161,15 +161,16 @@ metadata; selection, filtering and event handlers stay in the player. Keep this
 order in `site.config.cjs`; the interaction tests execute each configured bundle.
 See [browser maintenance notes](../src/js/README.md) for state and async boundaries.
 
-The homepage's `[data-preview-video]` loops `assets/showreel-preview-editorial-v2.mp4` inside
-the showreel button at every viewport size. It observes reduced motion, data
+The homepage's `[data-preview-video]` loops `assets/showreel-preview-hero.mp4` inside
+the showreel launch button at every viewport size. It observes reduced motion, data
 saving and page visibility, and pauses while the separate `.hero__film` plays.
-The full showreel starts only from its launch button. Keep the close control and
-return keyboard focus to the launch button after closing.
+The full showreel starts only from its launch button or from a
+`[data-showreel-cue]` button, whose value is the second its project starts at.
+Keep the close control and return keyboard focus to the launch button after closing.
 
-The hero's picture is one still frame from Shadow Frames (the bar,
-`22_ShadowFrames_01` in 640/1200/1920 webp), faded into the page with CSS masks;
-nothing in it moves or takes input. `home-transition.js` changes only whole-layer
+The opening has no backdrop picture: the reel's own frame is its image. Every
+control of the opening sits inside `.hero__base`, which `home-transition.js`
+makes inert while the work section covers it. `home-transition.js` changes only whole-layer
 transforms and hero opacity as projects cover the opening. It has no continuous
 drawing loop. Reduced motion uses normal document flow without the transforms.
 Coverage changes pause the thumbnail or close a completely covered full player.

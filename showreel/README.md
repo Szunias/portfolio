@@ -56,17 +56,20 @@ rather than expecting `showreel:sources` to restore it.
 
 ## Website previews
 
-The homepage hero shows one still frame from Shadow Frames and the compact silent
-preview of this reel inside the Watch showreel button. The full showreel,
+The homepage opening shows a silent loop of this reel beside a list of cues,
+one per project in the cut. The loop is the button that starts the full
+showreel; a cue starts it at the second that project begins. The full showreel,
 with audio and project credits, plays only after the visitor launches it.
 
-The thumbnail is `src/assets/showreel-preview-editorial-v2.mp4`: 256×144, 24 fps,
-eight seconds from the approved extended cut, H.264 CRF 24 and fast-start metadata.
-The button shows it at 64×44 CSS pixels at most, so 256×144 still covers a 3x
-screen and keeps this eager download near 110 KB.
-It has no audio stream and is shared across viewport sizes. It pauses offscreen
-or while the full player is open; reduced motion and data saving retain a still.
-Rebuild it from the repository root with:
+The loop is `src/assets/showreel-preview-hero.mp4`: 854×480, 24 fps, 2.5 seconds
+from each of the seven projects in the approved extended cut, H.264 CRF 31 and
+fast-start metadata, about 0.8 MB. Its first frame is exported as
+`src/assets/showreel-preview-hero.webp`, the poster and the still shown under
+reduced motion and data saving. It has no audio stream and is shared across
+viewport sizes. It loads lazily and pauses offscreen or while the full player
+is open. The cue times in `src/pages/index.html` are the `timelineStart` values
+of this edition's `output/render-report.json`, rounded up to a whole second;
+update both after a re-cut. Rebuild the loop from the repository root with:
 
 ```powershell
 node showreel/render-web.cjs
@@ -75,8 +78,8 @@ node showreel/render-web.cjs
 The older preview source, `src/assets/hero-motion.mp4`, retains three five-second cuts:
 Ray at 74 seconds, Shadow Frames at 312.77 seconds and Akantilado at 10.33 seconds,
 with 0.6-second crossfades. The large 1920×1080 encode and retained 720×1280
-portrait variant use H.264 CRF 21/slow at 24 fps. They are no longer fullscreen
-homepage backgrounds. Ray comes from the original 720p AV1 recording, which
+portrait variant use H.264 CRF 21/slow at 24 fps. They are no longer used on
+the homepage. Ray comes from the original 720p AV1 recording, which
 limits its detail. After restoring the source mirrors, use
 `npm run showreel:preview -- --hero-only` to rebuild both large encodes, then
 rerun the thumbnail command. `--hero-mobile` rebuilds only the retained portrait.

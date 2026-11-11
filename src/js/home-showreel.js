@@ -1,4 +1,5 @@
-/* Looping thumbnail and an explicitly opened, separately controlled showreel. */
+/* Looping preview, an explicitly opened, separately controlled showreel, and
+   cues that open it at the second a project starts. */
 (function () {
   'use strict';
   var scope = document.querySelector('.hero');
@@ -62,12 +63,25 @@
     scope.dispatchEvent(new CustomEvent('hero:playback', { detail:{ playing:false } }));
     if (returnFocus) focusVisible(launch);
   }
-  launch.addEventListener('click', function () {
+  // A cue passes the second its project starts at; the launch button passes
+  // nothing and the film carries on from wherever it was left.
+  function seek(at) {
+    function apply() { try { video.currentTime = at; } catch (error) { /* not seekable yet */ } }
+    apply();
+    // With preload="none" the file has no timeline before the first play.
+    if (video.readyState < 1) video.addEventListener('loadedmetadata', apply, { once:true });
+  }
+  function open(at) {
     scope.dispatchEvent(new CustomEvent('hero:reveal'));
     revealPlayer();
     if (close) focusVisible(close);
+    if (typeof at === 'number' && isFinite(at)) seek(at);
     var attempt = video.play();
     if (attempt) attempt.catch(function () { if (playing) video.controls = true; });
+  }
+  launch.addEventListener('click', function () { open(); });
+  [].forEach.call(scope.querySelectorAll('[data-showreel-cue]'), function (cue) {
+    cue.addEventListener('click', function () { open(parseFloat(cue.getAttribute('data-showreel-cue'))); });
   });
   video.addEventListener('play', function () {
     // A queued play event may arrive after Close has already paused the video.

@@ -33,7 +33,7 @@ Assets:
   `src/assets/fonts/inter-latin.woff2` with FontTools' variable-font instancer.
   Inter is licensed under the [SIL Open Font License](../assets/fonts/OFL-Inter.txt).
   IBM Plex Mono comes from `src/assets/fonts/`. The italic serif is the system
-  Times New Roman Italic, the face the website uses for its accent word.
+  Times New Roman Italic.
 - `img/` holds the frames at the size they print (700 x 312 JPEG): HUSHABYE's
   nursery from `src/assets/hushabye/hushabye-film-1280.webp`, Shadow Frames and the
   XR Labs still, and a 300 px grayscale crop of `portrait.png`.

@@ -1,19 +1,11 @@
-/* Edition 03 opening: editorial typography, one still frame from Shadow
-   Frames, and the real reel. */
+/* Opening: the role in one sentence, the reel as a silent loop that starts
+   the film, and one timecode cue per project in it. */
 .home-scene {
   position: relative;
   isolation: isolate;
   background: var(--c-bg-0);
 }
 .home-scene__opening { position: relative; z-index: 0; }
-.home-scene__backdrop {
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  container-type: size;
-}
 .home-scene .panel { position: relative; z-index: 2; background: var(--c-bg-1); }
 /* The panel supplies its own heading space and should cover the whole opening. */
 .home-scene #work { scroll-margin-top: calc(var(--site-header-height) - var(--anchor-offset)); }
@@ -39,150 +31,89 @@
   background: transparent;
   color: var(--c-ink);
 }
+/* Two columns: the role in words on the left, the reel on the right. The
+   left column spans both rows, so the reel and its cue list stack beside it
+   and the link to the work sits on the bottom edge under the words. */
 .hero__editorial {
-  display: flex;
+  position: relative;
+  z-index: 2;
   flex: 1;
-  flex-direction: column;
   width: 100%;
   max-width: var(--page-max);
   min-width: 0;
   margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  grid-template-rows: auto 1fr;
+  column-gap: clamp(40px, 5vw, 72px);
+  row-gap: 20px;
+  align-content: center;
 }
-.hero__overline,
-.hero__statement,
-.hero__service,
-.hero__base { position: relative; z-index: 2; }
-.hero__overline {
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
-}
-.hero__overline p {
-  margin: 0;
-  color: var(--c-ink-2);
-  font: 11px/1.6 var(--f-mono);
-  letter-spacing: .04em;
-  text-transform: uppercase;
-}
-.hero__overline span { margin-inline: 8px; color: var(--c-ink-3); }
-.hero__overline .hero__location { color: var(--c-ink-3); white-space: nowrap; }
+.hero__lead { grid-column: 1; grid-row: 1 / 3; align-self: start; }
 .hero h1.hero__statement {
-  max-width: 800px;
-  margin: clamp(40px, 4.8vw, 48px) 0 0;
-  font-family: var(--f-body);
-  font-size: clamp(112px, 12.4vw, 198px);
-  font-weight: 400;
-  line-height: .96;
-  letter-spacing: -.085em;
-  white-space: nowrap;
-  pointer-events: none;
-}
-.hero__statement > span { display: block; }
-.hero__statement > span:last-child {
-  margin-top: 12px;
-  font-size: clamp(72px, 7.4vw, 116px);
-  line-height: .94;
-}
-.hero__statement em {
-  font-family: "Times New Roman", Times, serif;
-  font-size: inherit;
-  font-weight: 400;
-  line-height: inherit;
-  letter-spacing: -.065em;
+  max-width: 11em;
+  margin: 0;
+  font: 500 var(--t-d2)/var(--lh-d2) var(--f-display);
+  letter-spacing: var(--tr-d2);
+  text-wrap: balance;
 }
 .hero__service {
-  max-width: 36ch;
-  margin: 24px 0 0;
+  max-width: 30em;
+  margin: 28px 0 0;
   color: var(--c-ink-2);
-  font-size: 17px;
+  font-size: var(--t-b1);
+  line-height: var(--lh-b1);
+  text-wrap: pretty;
+}
+.hero__status {
+  margin: 20px 0 0;
+  color: var(--c-ink-3);
+  font-size: var(--t-s1);
   line-height: 1.6;
 }
-/* One real frame: the Shadow Frames bar (candles and the Polaroid camera on
-   the counter), still and untouched. It fills the right of the opening and
-   fades into the page towards the words and the controls. Existing webp sizes
-   640/1200/1920; nothing moves and nothing needs a click. */
-.hero-still__frame {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 64%;
-}
-.hero-still__img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 40% 42%;
-  opacity: .9;
-  mask-image:
-    linear-gradient(90deg, transparent, #000 42%),
-    linear-gradient(#000 50%, transparent 82%);
-  mask-composite: intersect;
-}
-.hero-still__caption {
-  position: absolute;
-  right: calc(var(--page-gutter) + max(0px, (100cqw - 2 * var(--page-gutter) - var(--page-max)) / 2));
-  bottom: 176px;
-  margin: 0;
-  color: var(--c-ink-3);
-  font: 11px/1.6 var(--f-mono);
-  letter-spacing: .04em;
-  text-transform: uppercase;
-}
-.hero__base {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 32px;
-  margin-top: auto;
-  padding-top: 60px;
-}
-.hero__introduction p { margin: 0; }
-.hero__introduction .hero__name { margin-bottom: 8px; font-size: 16px; font-weight: 500; }
-.hero__role { color: var(--c-ink-2); font-size: 14px; line-height: 1.65; }
-/* The two exits are one pair of pills on the site's ghost-button border, the
-   same height, so neither reads as a stray label. The reel pill carries the
-   looping preview in a round well at its left end. */
-.hero__actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.hero__work-link,
-.hero-reel__launch {
+/* The wrapper holds the controls for home-transition.js and adds no box. */
+.hero__base { display: contents; }
+.hero__work-link {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: end;
+  justify-self: start;
   display: inline-flex;
   align-items: center;
-  min-height: 56px;
-  border: 1px solid var(--c-control);
-  border-radius: var(--r-pill);
+  gap: 10px;
+  min-height: 44px;
   color: var(--c-ink);
-  font: 500 14px/1.2 var(--f-body);
-  text-decoration: none;
-  white-space: nowrap;
-  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
+  font: 500 var(--t-s1)/1.2 var(--f-body);
+  text-decoration: underline;
+  text-decoration-color: var(--c-control);
+  text-decoration-thickness: 1px;
+  text-underline-offset: .32em;
+  transition: text-decoration-color var(--dur) var(--ease);
 }
-.hero__work-link:hover,
-.hero-reel__launch:hover {
-  border-color: var(--c-control-hi);
-  background: rgba(236, 238, 240, .04);
-}
-.hero__work-link { gap: 12px; padding: 0 22px 0 24px; }
-.hero__work-link > span:last-child { color: var(--c-ink-2); font-size: 16px; }
+.hero__work-link:hover { text-decoration-color: var(--c-ink); }
+.hero__work-link > span:last-child { color: var(--c-ink-2); }
+
+/* The reel: one frame of the film, looping silently, which is also the
+   button that starts it. No rounded well and no matte: the film's own
+   frame is the edge. */
 .hero-reel__launch {
-  gap: 14px;
-  padding: 5px 24px 5px 5px;
-  background: var(--c-bg-2);
+  grid-column: 2;
+  grid-row: 1;
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: var(--c-bg-0);
+  color: var(--c-ink);
   text-align: left;
   cursor: pointer;
 }
 .hero-reel__preview {
   position: relative;
-  flex: 0 0 auto;
-  width: 64px;
-  height: 44px;
+  display: block;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: var(--r-pill);
 }
 .hero-reel__preview > img,
 .hero-reel__preview > video {
@@ -194,25 +125,79 @@
 }
 .hero-reel__preview > video { transition: opacity .3s; }
 .hero.is-settled .hero-reel__preview > video { opacity: 0; }
-.hero-reel__preview::after {
+/* The label sits over the top left corner: the film's own caption occupies
+   the lower third of every frame. */
+.hero-reel__copy {
   position: absolute;
-  inset: 0;
-  background: #0006;
-  content: "";
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 16px 0 12px;
+  background: var(--c-ink);
+  color: var(--c-accent-ink);
+  font: 500 var(--t-s1)/1.2 var(--f-body);
   transition: background var(--dur) var(--ease);
 }
-.hero-reel__launch:hover .hero-reel__preview::after { background: #0002; }
-.hero-reel__launch-icon {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  color: #fff;
-}
+.hero-reel__launch:hover .hero-reel__copy,
+.hero-reel__launch:focus-visible .hero-reel__copy { background: #fff; }
+.hero-reel__launch-icon { display: grid; place-items: center; }
 .hero-reel__launch-icon svg { width: 12px; height: 12px; fill: currentColor; }
-.hero-reel__copy { display: flex; align-items: baseline; gap: 10px; }
-.hero-reel__copy small { color: var(--c-ink-3); font: 12px/1 var(--f-mono); }
+.hero-reel__copy small { font: var(--t-m1)/1 var(--f-mono); opacity: .72; }
+
+/* One cue per project in the film. The timecode is where that project
+   starts; pressing it opens the film there. */
+.hero-reel__index { grid-column: 2; grid-row: 2; align-self: start; }
+.hero-reel__label {
+  margin: 0 0 4px;
+  color: var(--c-ink-3);
+  font: 400 var(--t-s1)/1.6 var(--f-body);
+  letter-spacing: 0;
+}
+/* Read down the first column, then the second, in the film's order. */
+.hero-reel__cues {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(4, auto);
+  grid-auto-flow: column;
+  column-gap: var(--s-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hero-reel__cues > li { border-top: 1px solid var(--c-line-2); }
+.reel-cue {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  column-gap: 8px;
+  align-items: baseline;
+  width: 100%;
+  min-height: 52px;
+  padding: 8px 0;
+  border: 0;
+  background: none;
+  color: var(--c-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.reel-cue__t {
+  grid-row: 1 / 3;
+  color: var(--c-accent);
+  font: var(--t-m1)/1.5 var(--f-mono);
+  font-variant-numeric: tabular-nums;
+}
+.reel-cue__name { font-size: 15px; font-weight: 500; line-height: 1.35; }
+.reel-cue__what { grid-column: 2; color: var(--c-ink-3); font-size: 13px; line-height: 1.4; }
+.reel-cue:hover .reel-cue__name,
+.reel-cue:focus-visible .reel-cue__name {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .2em;
+  text-decoration-color: var(--c-accent);
+}
 .hero__cinema {
   position: absolute;
   z-index: 4;
@@ -240,86 +225,41 @@
 }
 .hero__close[hidden] { display: none; }
 .hero__close span { font-size: 24px; font-weight: 400; }
-.hero.is-started .hero__editorial,
-.hero.is-started .hero-still { visibility: hidden; pointer-events: none; }
+.hero.is-started .hero__editorial { visibility: hidden; pointer-events: none; }
 .hero.is-started .hero__cinema { visibility: visible; pointer-events: auto; }
 
-@media (min-width: 1001px) and (max-width: 1299.98px) {
-  .hero-still__frame { width: 60%; }
-  .hero-still__img { object-position: 46% 42%; }
-}
-/* Below 1000px the hero stacks: the frame becomes a full-bleed band between
-   the words and the controls, fading at both edges. */
+/* Below 1000px the opening is one column: the words, the reel, its cues,
+   then the link to the work. */
 @media (max-width: 1000px) {
-  .home-scene__backdrop {
-    position: relative;
-    inset: auto;
-    display: flex;
-    flex: 1 0 auto;
-    flex-direction: column;
-    justify-content: center;
-    margin: 18px 0 20px;
-    container-type: inline-size;
+  .hero__editorial {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    row-gap: 0;
+    align-content: start;
   }
-  .home-scene__backdrop.hero-still { margin: 22px calc(-1 * var(--page-gutter)) 22px; }
-  .hero-still__frame {
-    position: relative;
-    inset: auto;
-    width: 100%;
-    height: clamp(230px, 34svh, 380px);
-  }
-  .hero-still__img {
-    object-position: 44% 46%;
-    mask-image: linear-gradient(transparent, #000 20%, #000 74%, transparent);
-  }
-  .hero-still__caption {
-    position: static;
-    margin: 6px var(--page-gutter) 0 auto;
-    text-align: right;
-  }
-  .hero__base { gap: 24px; padding-top: 0; }
+  .hero__lead,
+  .hero__work-link,
+  .hero-reel__launch,
+  .hero-reel__index { grid-column: 1; grid-row: auto; }
+  .hero-reel__launch { margin-top: 32px; }
+  .hero-reel__index { margin-top: 16px; }
+  .hero__work-link { order: 1; margin-top: 16px; }
 }
 @media (max-width: 760px) {
-  .hero { min-height: max(650px, calc(100svh - var(--site-header-height))); padding-top: 26px; padding-bottom: 28px; }
-  .hero__overline p { font-size: 10px; letter-spacing: .02em; }
-  .hero__overline span { margin-inline: 4px; }
-  .hero__location { display: none; }
-  .hero h1.hero__statement { font-size: clamp(86px, 24vw, 112px); }
-  .hero__statement > span:last-child { font-size: clamp(38px, 11vw, 72px); }
-  .hero__service { margin-top: 20px; font-size: 14px; }
-  .hero__base { grid-template-columns: 1fr; row-gap: 22px; }
-  .hero__introduction .hero__name { margin-bottom: 6px; font-size: 15px; }
-  /* The pair wraps instead of overflowing; each pill grows to fill its row, so
-     a narrow phone gets two full-width buttons and a wide one gets one row. */
-  .hero__actions { flex-wrap: wrap; gap: 10px; }
-  .hero-reel__launch { order: -1; }
-  .hero__work-link,
-  .hero-reel__launch { flex: 1 1 auto; justify-content: center; min-height: 52px; font-size: 14px; }
-  .hero__work-link { padding: 0 18px 0 20px; }
-  .hero-reel__launch { gap: 12px; padding-right: 18px; }
-  .hero-reel__preview { width: 56px; height: 40px; }
+  .hero { padding-top: 28px; padding-bottom: 28px; }
+  .hero h1.hero__statement { font-size: clamp(34px, 9.6vw, 44px); line-height: 1.02; }
+  .hero__service { margin-top: 18px; font-size: var(--t-b0); line-height: 1.6; }
+  .hero__status { margin-top: 12px; }
+  .hero-reel__launch { margin-top: 24px; }
 }
-/* Safari on a phone shows only about 660px of the page on arrival, so phones
-   put the frame after the controls: the name, the role and "Watch showreel"
-   come first, and the frame still starts inside the first screen. */
-@media (max-width: 639.98px) {
-  .home-scene__backdrop.hero-still { order: 1; }
-  .hero__base { margin-top: 30px; }
-  .hero-still__frame { height: clamp(200px, 30svh, 270px); }
-  .hero-still__caption { font-size: 10px; }
-}
-@media (max-width: 380px) {
-  .hero__actions { gap: 8px; }
-  .hero__work-link,
-  .hero-reel__launch { font-size: 13px; }
-  .hero__work-link { gap: 8px; padding: 0 14px 0 16px; }
-  .hero-reel__launch { gap: 10px; padding-right: 14px; }
-  .hero-reel__preview { width: 44px; }
+/* A phone lists the cues in one column so no description is cut. */
+@media (max-width: 559.98px) {
+  .hero-reel__cues { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-flow: row; }
+  .hero-reel__copy small { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-reel__preview > video,
-  .hero-reel__preview::after,
-  .hero__work-link,
-  .hero-reel__launch { transition: none; }
+  .hero-reel__copy,
+  .hero__work-link { transition: none; }
 }
