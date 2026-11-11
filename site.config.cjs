@@ -626,7 +626,7 @@ module.exports = {
       js: ['prefetch', 'colophon-clock', 'poster-loop', 'cine', 'feature', 'page-motion'],
       // No schemaType: XR Labs Belgium is the employer, not a work Igor authored.
       title: 'XR Labs | Spatial Audio for Unity VR Training',
-      description: 'Igor Szuniewicz worked on audio for Unity VR training at XR Labs Belgium, February to June 2026: the weapon audio system and Steam Audio tuned in the headset.',
+      description: 'As Technical Sound Designer at XR Labs, February to June 2026, Igor Szuniewicz built the weapon audio system for Unity VR training and tuned Steam Audio.',
       canonical: `${SITE}/xrlabs.html`,
       ogImage: `${SITE}/old/public/assets/images/social/xrlabs-1200x630.webp`,
       ogImageAlt: 'Three trainees in camouflage and VR headsets move in file with rifles across a marked VR training floor',

@@ -81,7 +81,7 @@
         <figcaption class="ft-cap">The player is still on the path, and the server log already lists request&nbsp;6, &ldquo;wooden door creaking open&rdquo;.</figcaption>
       </figure>
       <div class="ft-body">
-        <p>Generation works for sounds the game can ask for early, play again or wait for, such as ambience. My system works around the delay: it prepares sounds before the player reaches them, keeps every result, and plays a procedural sound when nothing else is ready.</p>
+        <p>With AudioGen, a 3-second ambience preview took 3200&nbsp;ms on a first request, 120&nbsp;ms from the cache and under 20&nbsp;ms when it had been generated before the player reached the zone. So the client asks early, keeps every result, and plays a procedural sound when nothing else is ready.</p>
         <p>Unreal sends each prompt through a C++ WebSocket client to the Python server. The PCM audio arrives on a network thread, and since Unreal creates a <code>USoundWave</code> only on the game thread, a task-graph dispatch builds it there.</p>
         <p>The server stores each result under a <span class="ar-nw">SHA-256</span> hash of the prompt, model, length and sample rate, up to 500&nbsp;MB in RAM and the rest on disk. Unreal varies each cached copy with a pitch shift within 2&nbsp;semitones, a volume change within 3&nbsp;dB, a low-pass for occlusion and the reverb of its zone.</p>
       </div>
