@@ -696,6 +696,19 @@ function validateConfig(cfg) {
   }
 }
 
+// The CV keeps one public filename, so phones that opened or downloaded an
+// earlier PDF kept showing it from their cache. A content hash in the query
+// string gives every new CV a new URL; the file on disk stays where it was.
+const CV_FILE = 'Igor_Szuniewicz_CV.pdf';
+
+function fileVersion(file) {
+  return crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex').slice(0, 10);
+}
+
+function versionCvLinks(html, version) {
+  return html.replace(/(href=["'](?:\/)?Igor_Szuniewicz_CV\.pdf)(["'])/g, `$1?v=${version}$2`);
+}
+
 // Staged build orchestration; publication is the final step.
 function main() {
   // Exported main() may be called again in the same process. A new staging
@@ -717,9 +730,10 @@ function main() {
   const htmlOutputs = [];
 
   // Build templated pages
+  const cvVersion = fileVersion(path.join(__dirname, CV_FILE));
   for (const page of config.pages) {
     try {
-      const html = buildPage(page);
+      const html = versionCvLinks(buildPage(page), cvVersion);
       const outPath = safeDistPath(`${page.slug}.html`);
       if (!outPath) throw new Error(`Unsafe page output path for slug: ${page.slug}`);
       fs.writeFileSync(outPath, html, 'utf8');
